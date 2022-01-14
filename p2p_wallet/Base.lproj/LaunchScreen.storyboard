@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -17,14 +17,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="intro-lines-bg" translatesAutoresizingMaskIntoConstraints="NO" id="UTc-Is-59k">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lock-background" translatesAutoresizingMaskIntoConstraints="NO" id="UTc-Is-59k">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="p2p-wallet-logo" translatesAutoresizingMaskIntoConstraints="NO" id="xqn-Zd-f0w">
-                                <rect key="frame" x="155.5" y="414" width="103" height="78"/>
+                                <rect key="frame" x="98.5" y="366" width="217" height="164"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="102.98" id="jiE-Kz-bbm"/>
-                                    <constraint firstAttribute="height" constant="78" id="va9-KN-nUZ"/>
+                                    <constraint firstAttribute="width" constant="217" id="jiE-Kz-bbm"/>
+                                    <constraint firstAttribute="height" constant="164" id="va9-KN-nUZ"/>
                                 </constraints>
                             </imageView>
                         </subviews>
@@ -33,7 +33,7 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="UTc-Is-59k" secondAttribute="trailing" id="9UR-b1-fIu"/>
                             <constraint firstItem="UTc-Is-59k" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="KSc-Ht-Q6k"/>
-                            <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="Ni6-Cj-jnS"/>
+                            <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" constant="-5" id="Ni6-Cj-jnS"/>
                             <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="WSK-ck-VNb"/>
                             <constraint firstItem="UTc-Is-59k" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="lOe-Ff-IwN"/>
                             <constraint firstAttribute="bottom" secondItem="UTc-Is-59k" secondAttribute="bottom" id="rQd-Kr-hOy"/>
@@ -46,7 +46,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="intro-lines-bg" width="375" height="812"/>
+        <image name="lock-background" width="375" height="812"/>
         <image name="p2p-wallet-logo" width="103.5" height="78"/>
         <namedColor name="h5887ff">
             <color red="0.34509803921568627" green="0.52941176470588236" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

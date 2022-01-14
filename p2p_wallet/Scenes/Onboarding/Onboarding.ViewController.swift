@@ -11,11 +11,17 @@ import UIKit
 extension Onboarding {
     class ViewController: BaseVC {
         // MARK: - Dependencies
-        @Injected private var viewModel: OnboardingViewModelType
+        private let viewModel: OnboardingViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private lazy var childNavigationController = UINavigationController()
+        
+        // MARK: - Initializer
+        init(viewModel: OnboardingViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {
@@ -49,7 +55,7 @@ extension Onboarding {
             case .setUpBiometryAuthentication:
                 askForEnablingBiometry()
             case .setUpNotifications:
-                let enableNotificationsVC = EnableNotificationsVC()
+                let enableNotificationsVC = EnableNotificationsVC(viewModel: viewModel)
                 childNavigationController.pushViewController(enableNotificationsVC, animated: true)
             case .dismiss:
                 dismiss(animated: true, completion: nil)

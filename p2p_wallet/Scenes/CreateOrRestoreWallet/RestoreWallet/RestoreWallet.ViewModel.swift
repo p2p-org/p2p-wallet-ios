@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 
-protocol RestoreWalletViewModelType: ReserveNameHandler {
+protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandler {
     var navigatableSceneDriver: Driver<RestoreWallet.NavigatableScene?> { get }
     var isLoadingDriver: Driver<Bool> { get }
     var isRestorableUsingIcloud: Driver<Bool> { get }
@@ -75,11 +75,11 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     
     // MARK: - Actions
     func restoreFromICloud() {
-        deviceOwnerAuthenticationHandler.requiredOwner { [weak self] in
-            self?._restoreFromIcloud()
-        } onFailure: { [weak self] error in
+        deviceOwnerAuthenticationHandler.requiredOwner {
+            self._restoreFromIcloud()
+        } onFailure: { error in
             guard let error = error else {return}
-            self?.errorSubject.accept(error)
+            self.errorSubject.accept(error)
         }
     }
     
@@ -142,7 +142,8 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     }
 }
 
-extension RestoreWallet.ViewModel: AccountRestorationHandler {
+// MARK: - AccountRestorationHandler
+extension RestoreWallet.ViewModel {
     func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath, phrases: [String]) {
         analyticsManager.log(event: .recoveryRestoreClick)
         self.derivablePath = derivablePath

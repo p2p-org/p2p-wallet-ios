@@ -15,10 +15,16 @@ extension DAppContainer {
         private let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        @Injected private var viewModel: DAppContainerViewModelType
+        private let viewModel: DAppContainerViewModelType
         
         // MARK: - Subviews
         private lazy var webView = WKWebView(frame: .zero, configuration: viewModel.getWebviewConfiguration())
+        
+        // MARK: - Initializer
+        init(viewModel: DAppContainerViewModelType) {
+            self.viewModel = viewModel
+            super.init(frame: .zero)
+        }
         
         // MARK: - Methods
         override func commonInit() {

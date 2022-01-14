@@ -21,20 +21,17 @@ extension OrcaSwapV2 {
         private lazy var nextButton = WLStepButton.main(image: .buttonCheckSmall, text: L10n.reviewAndConfirm)
             .onTap(self, action: #selector(buttonNextDidTouch))
 
-        private let mainView: OrcaSwapV2.MainSwapView
+        private lazy var mainView = OrcaSwapV2.MainSwapView(viewModel: viewModel)
         private let showDetailsButton = OrcaSwapV2.ShowDetailsButton()
-        private let detailsView: OrcaSwapV2.DetailsView
+        private lazy var detailsView = OrcaSwapV2.DetailsView(viewModel: viewModel)
         
-        // MARK: - Methods
+        // MARK: - Initializer
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
-
-            detailsView = .init(viewModel: viewModel)
-            mainView = .init(viewModel: viewModel)
-
             super.init(frame: .zero)
         }
-
+        
+        // MARK: - Methods
         override func commonInit() {
             super.commonInit()
             scrollView.showsVerticalScrollIndicator = false

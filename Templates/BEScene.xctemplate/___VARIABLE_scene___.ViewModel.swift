@@ -9,11 +9,6 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-// TODO: - Add to AppDelegate+Injection.swift
-// register {___VARIABLE_scene___.ViewModel()}
-//    .implements(___VARIABLE_scene___ViewModelType.self)
-//    .scope(.shared)
-
 protocol ___VARIABLE_scene___ViewModelType {
     var navigationDriver: Driver<___VARIABLE_scene___.NavigatableScene?> {get}
     func navigate(to scene: ___VARIABLE_scene___.NavigatableScene)

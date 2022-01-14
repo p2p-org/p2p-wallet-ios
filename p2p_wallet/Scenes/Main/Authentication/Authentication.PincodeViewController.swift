@@ -21,7 +21,7 @@ extension Authentication {
         #endif
         
         // MARK: - Dependencies
-        @Injected private var viewModel: AuthenticationViewModelType
+        private let viewModel: AuthenticationViewModelType
         
         // MARK: - Properties
         override var title: String? { didSet { navigationBar.titleLabel.text = title } }
@@ -59,6 +59,12 @@ extension Authentication {
             button.isHidden = true
             return button
         }()
+        
+        // MARK: - Initializer
+        init(viewModel: AuthenticationViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func viewDidLoad() {

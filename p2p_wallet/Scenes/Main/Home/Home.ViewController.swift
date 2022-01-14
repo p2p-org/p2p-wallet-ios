@@ -10,16 +10,6 @@ import UIKit
 import Action
 import RxCocoa
 
-protocol HomeScenesFactory {
-    func makeWalletDetailViewController(pubkey: String, symbol: String) -> WalletDetail.ViewController
-    func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
-    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
-    func makeSettingsVC(reserveNameHandler: ReserveNameHandler) -> Settings.ViewController
-    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
-}
-
 extension Home {
     class ViewController: BaseVC, TabBarNeededViewController {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -27,17 +17,15 @@ extension Home {
         }
         
         // MARK: - Dependencies
-        private let viewModel: HomeViewModelType
-        private let scenesFactory: HomeScenesFactory
         @Injected private var analyticsManager: AnalyticsManagerType
+        private let viewModel: HomeViewModelType
         
         // MARK: - Properties
         fileprivate let interactor = MenuInteractor()
         
         // MARK: - Initializer
-        init(viewModel: HomeViewModelType, scenesFactory: HomeScenesFactory) {
+        init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
         }
         
@@ -103,16 +91,19 @@ extension Home {
             guard let scene = scene else {return}
             switch scene {
             case .buyToken:
-                do {
-                    let vc = try scenesFactory.makeBuyTokenViewController(token: [])
-                    analyticsManager.log(event: .mainScreenBuyOpen)
-                    show(vc, sender: nil)
-                } catch {
-                    showAlert(title: L10n.error, message: error.readableDescription)
-                }
+                let vm = BuyRoot.ViewModel()
+                let vc = BuyRoot.ViewController(viewModel: vm)
+                show(vc, sender: nil)
             case .receiveToken:
-                if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: nil)
-                {
+                if let pubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
+                    let isDevnet = Defaults.apiEndPoint.network == .devnet
+                    let renBTCMint: SolanaSDK.PublicKey = isDevnet ? .renBTCMintDevnet : .renBTCMint
+                    
+                    let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
+                        $0.token.address == renBTCMint.base58EncodedString
+                    })
+                    let vm = ReceiveToken.SceneModel(solanaPubkey: pubkey, solanaTokenWallet: nil, isRenBTCWalletCreated: isRenBTCWalletCreated)
+                    let vc = ReceiveToken.ViewController(viewModel: vm)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
                     show(vc, sender: true)
@@ -140,13 +131,14 @@ extension Home {
                     self.present(vc, animated: true, completion: nil)
                 }
             case .sendToken(let address):
-                let vc = scenesFactory
-                    .makeSendTokenViewController(walletPubkey: nil, destinationAddress: address)
+                let vm = SendToken.ViewModel(walletPubkey: nil, destinationAddress: address)
+                let vc = SendToken.ViewController(viewModel: vm)
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
                 show(vc, sender: nil)
             case .swapToken:
-                let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: nil)
+                let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
+                let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 analyticsManager.log(event: .mainScreenSwapOpen)
                 analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
                 self.show(vc, sender: nil)
@@ -154,13 +146,13 @@ extension Home {
                 analyticsManager.log(event: .mainScreenSettingsOpen)
                 analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
                 
-                let vc = scenesFactory.makeSettingsVC(reserveNameHandler: viewModel)
+                let vm = Settings.ViewModel(reserveNameHandler: viewModel)
+                let vc = Settings.ViewController(viewModel: vm)
                 self.show(vc, sender: nil)
             case .reserveName(let owner):
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
-                    nameService: Resolver.resolve(),
                     reserveNameHandler: viewModel
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
@@ -176,13 +168,14 @@ extension Home {
                 guard let pubkey = wallet.pubkey else {return}
                 
                 analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
-                
-                let vc = scenesFactory.makeWalletDetailViewController(pubkey: pubkey, symbol: wallet.token.symbol)
+                let vm = WalletDetail.ViewModel(pubkey: pubkey, symbol: wallet.token.symbol)
+                let vc = WalletDetail.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .walletSettings(let wallet):
                 guard let pubkey = wallet.pubkey else {return}
-                let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
-                self.present(vc, animated: true, completion: nil)
+                let vm = TokenSettingsViewModel(pubkey: pubkey)
+                let vc = TokenSettingsViewController(viewModel: vm)
+                present(vc, animated: true, completion: nil)
             case let .closeReserveNameAlert(handler):
                 showAlert(
                     title: L10n.proceedWithoutAUsername,

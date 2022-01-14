@@ -12,7 +12,7 @@ class TransactionInfoRootView: ScrollableVStackRootView {
     // MARK: - Constants
     
     // MARK: - Properties
-    let viewModel: TransactionInfoViewModel
+    private let viewModel: TransactionInfoViewModel
     let disposeBag = DisposeBag()
     
     // MARK: - Headers

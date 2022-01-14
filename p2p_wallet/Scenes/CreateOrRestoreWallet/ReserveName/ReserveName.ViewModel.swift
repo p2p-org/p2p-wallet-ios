@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import GT3Captcha
 import UIKit
+import Resolver
 
 protocol ReserveNameViewModelType: AnyObject {
     var navigationDriver: Driver<ReserveName.NavigatableScene?> { get }
@@ -31,7 +32,7 @@ extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
         @Injected private var notificationsService: NotificationsServiceType
-        private let nameService: NameServiceType
+        private let nameService: NameServiceType = Resolver.resolve()
         private let owner: String
         private let reserveNameHandler: ReserveNameHandler
         private lazy var manager: GT3CaptchaManager = {
@@ -62,11 +63,9 @@ extension ReserveName {
         init(
             kind: ReserveNameKind,
             owner: String,
-            nameService: NameServiceType,
             reserveNameHandler: ReserveNameHandler
         ) {
             self.kind = kind
-            self.nameService = nameService
             self.owner = owner
             self.reserveNameHandler = reserveNameHandler
             

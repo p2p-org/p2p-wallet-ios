@@ -13,14 +13,14 @@ import Down
 
 extension ReceiveToken {
     class NetworkSelectionScene: BEScene {
-        let viewModel: ReceiveSceneModel
+        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+        
+        private let viewModel: ReceiveSceneModel
         
         init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
             super.init()
         }
-        
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
         override func build() -> UIView {
             BESafeArea {

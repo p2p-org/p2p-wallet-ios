@@ -9,10 +9,10 @@ import UIKit
 import BECollectionView
 
 class TokenSettingsRootView: BEView {
-    // MARK: - Constants
+    // MARK: - Dependencies
+    private let viewModel: TokenSettingsViewModel
     
-    // MARK: - Properties
-    let viewModel: TokenSettingsViewModel
+    // MARK: - Subviews
     lazy var collectionView: BEStaticSectionsCollectionView = {
         let collectionView = BEStaticSectionsCollectionView(sections: [
             TokenSettingsSection(
@@ -32,9 +32,7 @@ class TokenSettingsRootView: BEView {
         return collectionView
     }()
     
-    // MARK: - Subviews
-    
-    // MARK: - Initializers
+    // MARK: - Initializer
     init(viewModel: TokenSettingsViewModel) {
         self.viewModel = viewModel
         super.init(frame: .zero)
