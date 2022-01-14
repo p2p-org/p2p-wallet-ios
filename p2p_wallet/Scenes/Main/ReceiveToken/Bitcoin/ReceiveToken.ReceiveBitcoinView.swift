@@ -33,8 +33,8 @@ extension ReceiveToken {
                 QrCodeCard(token: .renBTC)
                     .onCopy { [unowned self] _ in
                         self.viewModel.copyToClipboard()
-                    }.onShare { [unowned self] _ in
-                        self.viewModel.share()
+                    }.onShare { [unowned self] image in
+                        self.viewModel.share(image: image)
                     }.onSave { image in
                         self.viewModel.saveAction(image: image)
                     }.setupWithType(QrCodeCard.self) { card in
@@ -46,6 +46,7 @@ extension ReceiveToken {
                     UIStackView(axis: .horizontal) {
                         UIImageView(image: .receiveSquircle)
                             .frame(width: 44, height: 44)
+                            .padding(.init(only: .right, inset: 12))
                         UIStackView(axis: .vertical, alignment: .fill) {
                             UILabel(text: L10n.statusesReceived, textSize: 17)
                             UILabel(text: "\(L10n.theLastOne) 0m ago", textSize: 13, textColor: .secondaryLabel)
@@ -87,7 +88,7 @@ extension ReceiveToken {
                 
                 // Description
                 UIView.greyBannerView(spacing: 12) {
-                    ReceiveToken.textBuilder(text: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin).asMarkdown())
+                    ReceiveToken.textBuilder(text: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin).asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                         .setup { view in
@@ -107,7 +108,7 @@ extension ReceiveToken {
                         }
                 }
                 
-                WLStepButton.main(image: .external, imageSize: .init(width: 14, height: 14), text: L10n.viewInExplorer("Solana"))
+                WLStepButton.main(image: .external, imageSize: .init(width: 14, height: 14), text: L10n.viewInExplorer(L10n.bitcoin))
                     .padding(.init(only: .top, inset: 18))
                     .onTap { [unowned self] in self.viewModel.showBTCAddressInExplorer() }
             }
