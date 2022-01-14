@@ -12,7 +12,7 @@ import RxCocoa
 class TransactionInfoViewController: WLIndicatorModalVC, CustomPresentableViewController {
     
     // MARK: - Properties
-    let viewModel: TransactionInfoViewModel
+    private let viewModel: TransactionInfoViewModel
     lazy var rootView = TransactionInfoRootView(viewModel: viewModel)
     var viewTranslation = CGPoint(x: 0, y: 0)
     var transitionManager: UIViewControllerTransitioningDelegate?

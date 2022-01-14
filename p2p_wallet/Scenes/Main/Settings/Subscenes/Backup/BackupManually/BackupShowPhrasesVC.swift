@@ -42,7 +42,7 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
     )
         .onTap(self, action: #selector(backupUsingICloudButtonDidTouch))
     
-    @Injected private var authenticationHandler: AuthenticationHandler
+    @Injected private var authenticationHandler: AuthenticationHandlerType
     
     override func setUp() {
         super.setUp()

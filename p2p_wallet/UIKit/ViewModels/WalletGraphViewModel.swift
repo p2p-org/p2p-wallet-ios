@@ -11,12 +11,11 @@ import BECollectionView
 
 class WalletGraphViewModel: BEListViewModel<PriceRecord> {
     let symbol: String
-    let pricesService: PricesServiceType
+    @Injected private var pricesService: PricesServiceType
     var period: Period = .last1h
     
-    init(symbol: String, pricesService: PricesServiceType) {
+    init(symbol: String) {
         self.symbol = symbol
-        self.pricesService = pricesService
         super.init()
     }
     
