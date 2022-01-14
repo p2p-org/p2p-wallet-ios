@@ -21,6 +21,10 @@ extension Root {
             super.init()
         }
         
+        override func loadView() {
+            view = LockView()
+        }
+        
         // MARK: - Methods
         override func setUp() {
             super.setUp()
