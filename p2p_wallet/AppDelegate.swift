@@ -56,7 +56,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // set rootVC
-        let vc = Root.ViewController()
+        let vm = Root.ViewModel()
+        let vc = Root.ViewController(viewModel: vm)
         window?.rootViewController = vc
         
         window?.makeKeyAndVisible()

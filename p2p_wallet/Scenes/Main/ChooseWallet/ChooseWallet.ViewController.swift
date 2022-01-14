@@ -25,9 +25,7 @@ extension ChooseWallet {
         // MARK: - Initializer
         init(title: String?, viewModel: ViewModel) {
             self.viewModel = viewModel
-
             super.init()
-
             self.title = title ?? L10n.selectToken
         }
         // MARK: - Methods

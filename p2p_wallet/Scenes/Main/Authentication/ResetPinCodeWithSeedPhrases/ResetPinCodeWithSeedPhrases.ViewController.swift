@@ -11,7 +11,7 @@ import UIKit
 extension ResetPinCodeWithSeedPhrases {
     class ViewController: WLIndicatorModalVC {
         // MARK: - Dependencies
-        @Injected private var viewModel: ResetPinCodeWithSeedPhrasesViewModelType
+        private let viewModel: ResetPinCodeWithSeedPhrasesViewModelType
         
         // MARK: - Properties
         var childNavigationController: UINavigationController!
@@ -26,6 +26,12 @@ extension ResetPinCodeWithSeedPhrases {
             vc.dismissAfterCompletion = false
             return vc
         }()
+        
+        // MARK: - Initializer
+        init(viewModel: ResetPinCodeWithSeedPhrasesViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {
