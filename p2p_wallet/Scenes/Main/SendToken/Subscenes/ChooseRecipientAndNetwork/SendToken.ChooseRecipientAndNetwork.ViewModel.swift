@@ -42,13 +42,13 @@ extension SendToken.ChooseRecipientAndNetwork {
         
         // MARK: - Initializers
         init(
-            sendTokenViewModel: SendTokenViewModelType,
             showAfterConfirmation: Bool,
-            preSelectedNetwork: SendToken.Network?
+            preSelectedNetwork: SendToken.Network?,
+            sendTokenViewModel: SendTokenViewModelType
         ) {
-            self.sendTokenViewModel = sendTokenViewModel
             self.showAfterConfirmation = showAfterConfirmation
             self.preSelectedNetwork = preSelectedNetwork
+            self.sendTokenViewModel = sendTokenViewModel
             bind()
             
             if let preSelectedNetwork = preSelectedNetwork {

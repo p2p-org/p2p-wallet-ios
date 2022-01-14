@@ -11,11 +11,11 @@ import RxCocoa
 
 extension SolanaBuyToken {
     class Scene: BEScene {
-        private var viewModel: SolanaBuyTokenSceneModel
+        private let viewModel: SolanaBuyTokenSceneModel
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
-        init(buyViewModel: BuyViewModelType) {
-            viewModel = SceneModel(rootViewModel: buyViewModel)
+        init(viewModel: SolanaBuyTokenSceneModel) {
+            self.viewModel = viewModel
             super.init()
         }
         

@@ -39,24 +39,20 @@ extension ReceiveToken {
         init(
             solanaPubkey: SolanaSDK.PublicKey,
             solanaTokenWallet: Wallet? = nil,
-            tokensRepository: TokensRepository,
-            renVMService: RenVMLockAndMintServiceType,
-            isRenBTCWalletCreated: Bool,
-            associatedTokenAccountHandler: AssociatedTokenAccountHandler
+            isRenBTCWalletCreated: Bool
         ) {
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
                 solanaTokenWallet: solanaTokenWallet,
-                tokensRepository: tokensRepository,
                 navigationSubject: navigationSubject
             )
             
             receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
-                renVMService: renVMService,
                 navigationSubject: navigationSubject,
-                isRenBTCWalletCreated: isRenBTCWalletCreated,
-                associatedTokenAccountHandler: associatedTokenAccountHandler
+                isRenBTCWalletCreated: isRenBTCWalletCreated
             )
+            
+            super.init()
             
             if let token = solanaTokenWallet?.token,
                token.isRenBTC {

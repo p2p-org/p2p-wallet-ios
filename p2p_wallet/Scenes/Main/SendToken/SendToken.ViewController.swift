@@ -10,17 +10,6 @@ import UIKit
 import BEPureLayout
 import RxSwift
 
-protocol SendTokenScenesFactory {
-    func makeChooseWalletViewController(
-        title: String?,
-        customFilter: ((Wallet) -> Bool)?,
-        showOtherWallets: Bool,         
-        selectedWallet: Wallet?,
-        handler: WalletDidSelectHandler
-    ) -> ChooseWallet.ViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-}
-
 extension SendToken {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -29,16 +18,13 @@ extension SendToken {
         
         // MARK: - Dependencies
         private let viewModel: SendTokenViewModelType
-        private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
         private var childNavigationController: UINavigationController!
         
         // MARK: - Initializer
-        init(viewModel: SendTokenViewModelType, scenesFactory: SendTokenScenesFactory) {
+        init(viewModel: SendTokenViewModelType) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
-            
             super.init()
         }
         
@@ -63,12 +49,12 @@ extension SendToken {
                 back()
             case .chooseTokenAndAmount(let showAfterConfirmation):
                 let vm = ChooseTokenAndAmount.ViewModel(
-                    sendTokenViewModel: viewModel,
                     initialAmount: viewModel.getSelectedAmount(),
                     showAfterConfirmation: showAfterConfirmation,
-                    selectedNetwork: viewModel.getSelectedNetwork()
+                    selectedNetwork: viewModel.getSelectedNetwork(),
+                    sendTokenViewModel: viewModel
                 )
-                let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
+                let vc = ChooseTokenAndAmount.ViewController(viewModel: vm)
                 
                 if showAfterConfirmation {
                     childNavigationController.pushViewController(vc, animated: true)
@@ -78,9 +64,9 @@ extension SendToken {
                 }
             case .chooseRecipientAndNetwork(let showAfterConfirmation, let preSelectedNetwork):
                 let vm = ChooseRecipientAndNetwork.ViewModel(
-                    sendTokenViewModel: viewModel,
                     showAfterConfirmation: showAfterConfirmation,
-                    preSelectedNetwork: preSelectedNetwork
+                    preSelectedNetwork: preSelectedNetwork,
+                    sendTokenViewModel: viewModel
                 )
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
@@ -88,7 +74,8 @@ extension SendToken {
                 let vc = ConfirmViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
             case .processTransaction(let request, let transactionType):
-                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
+                let vc = ProcessTransaction.ViewController(viewModel: vm)
                 vc.delegate = self
                 present(vc, animated: true, completion: nil)
             case .chooseNetwork:

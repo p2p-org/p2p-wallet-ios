@@ -17,7 +17,7 @@ extension RestoreWallet {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: RestoreWalletViewModelType
+        private let viewModel: RestoreWalletViewModelType
 
         // MARK: - Subviews
         private lazy var iCloudRestoreButton = WLStepButton.main(
@@ -30,6 +30,12 @@ extension RestoreWallet {
                 text: L10n.restoreManually
             )
             .onTap(self, action: #selector(restoreManually))
+        
+        // MARK: - Initializer
+        init(viewModel: RestoreWalletViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {
@@ -92,20 +98,20 @@ extension RestoreWallet {
             
             switch scene {
             case .enterPhrases:
-                let vc = EnterSeed.ViewController(viewModel: Resolver.resolve())
+                let vm = EnterSeed.ViewModel()
+                let vc = EnterSeed.ViewController(viewModel: vm, accountRestorationHandler: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .restoreFromICloud:
-                let vc = RestoreICloud.ViewController()
+                let vc = RestoreICloud.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .derivableAccounts(let phrases):
-                let viewModel = DerivableAccounts.ViewModel(phrases: phrases)
+                let viewModel = DerivableAccounts.ViewModel(phrases: phrases, handler: viewModel)
                 let vc = DerivableAccounts.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .reserveName(let owner):
                 let viewModel = ReserveName.ViewModel(
                     kind: .reserveCreateWalletPart,
                     owner: owner,
-                    nameService: Resolver.resolve(),
                     reserveNameHandler: viewModel
                 )
                 let viewController = ReserveName.ViewController(viewModel: viewModel)
