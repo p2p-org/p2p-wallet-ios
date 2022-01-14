@@ -33,7 +33,7 @@ class TransactionInfoViewModel {
     
     // MARK: - Initializers
     init(transaction: SolanaSDK.ParsedTransaction) {
-        self.transaction = BehaviorRelay<SolanaSDK.ParsedTransaction>(value: transaction)
+        self.transaction = .init(value: transaction)
     }
     
     deinit {

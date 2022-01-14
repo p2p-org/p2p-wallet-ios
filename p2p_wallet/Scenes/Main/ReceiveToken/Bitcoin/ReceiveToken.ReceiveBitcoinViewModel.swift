@@ -40,45 +40,40 @@ extension ReceiveToken {
         private let disposeBag = DisposeBag()
         
         // MARK: - Dependencies
-        private let renVMService: RenVMLockAndMintServiceType
+        @Injected private var renVMService: RenVMLockAndMintServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
         private let navigationSubject: PublishRelay<NavigatableScene?>
-        private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
+        @Injected private var associatedTokenAccountHandler: AssociatedTokenAccountHandler
         
         // MARK: - Subjects
         private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: true)
-        private let createRenBTCSubject: LoadableRelay<String>
+        private lazy var createRenBTCSubject: LoadableRelay<String> = .init(
+            request: associatedTokenAccountHandler
+                .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
+                .catch {error in
+                    if error.isAlreadyInUseSolanaError {
+                        return .just("")
+                    }
+                    throw error
+                }
+        )
         private let timerSubject = PublishRelay<Void>()
         
         // MARK: - Initializers
         init(
-            renVMService: RenVMLockAndMintServiceType,
             navigationSubject: PublishRelay<NavigatableScene?>,
-            isRenBTCWalletCreated: Bool,
-            associatedTokenAccountHandler: AssociatedTokenAccountHandler
+            isRenBTCWalletCreated: Bool
         ) {
-            self.renVMService = renVMService
             self.navigationSubject = navigationSubject
-            self.associatedTokenAccountHandler = associatedTokenAccountHandler
-            
-            self.createRenBTCSubject = .init(
-                request: associatedTokenAccountHandler
-                    .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
-                    .catch { error in
-                        if error.isAlreadyInUseSolanaError {
-                            return .just("")
-                        }
-                        throw error
-                    }
-            )
+
+            super.init()
             
             if isRenBTCWalletCreated {
                 createRenBTCSubject.accept(nil, state: .loaded)
             }
             
-            super.init()
             bind()
         }
         

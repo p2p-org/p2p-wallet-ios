@@ -12,11 +12,11 @@ import RxCocoa
 extension OrcaSwapV2 {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected var authenticationHandler: AuthenticationHandler
+        @Injected var authenticationHandler: AuthenticationHandlerType
         @Injected var analyticsManager: AnalyticsManagerType
-        let feeService: FeeServiceType
-        let orcaSwap: OrcaSwapType
-        let walletsRepository: WalletsRepository
+        @Injected var feeService: FeeServiceType
+        @Injected var orcaSwap: OrcaSwapType
+        @Injected var walletsRepository: WalletsRepository
         
         // MARK: - Properties
         let disposeBag = DisposeBag()
@@ -39,19 +39,12 @@ extension OrcaSwapV2 {
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
         let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
 
-        // MARK: - Initializer
+        // MARK: - setter
         init(
-            feeService: FeeServiceType,
-            orcaSwap: OrcaSwapType,
-            walletsRepository: WalletsRepository,
             initialWallet: Wallet?
         ) {
-            self.feeService = feeService
-            self.orcaSwap = orcaSwap
-            self.walletsRepository = walletsRepository
-
             reload()
-            bind(initialWallet: initialWallet)
+            bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
         }
         
         deinit {

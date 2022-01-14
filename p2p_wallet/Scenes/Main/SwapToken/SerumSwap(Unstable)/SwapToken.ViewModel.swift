@@ -63,7 +63,7 @@ extension SerumSwapV1 {
         private let feeAPIClient: FeeAPIClient
         private let walletsRepository: WalletsRepository
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var authenticationHandler: AuthenticationHandlerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()

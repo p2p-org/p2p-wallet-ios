@@ -26,7 +26,6 @@ extension OrcaSwapV2 {
 
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
-
             super.init(frame: .zero)
 
             layout()

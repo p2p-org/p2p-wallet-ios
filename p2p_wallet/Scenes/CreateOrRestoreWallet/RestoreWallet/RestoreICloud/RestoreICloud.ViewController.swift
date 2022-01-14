@@ -16,7 +16,7 @@ extension RestoreICloud {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: RestoreWalletViewModelType
+        private let viewModel: RestoreWalletViewModelType
         
         // MARK: - Properties
         private let accountsListViewModel = AccountsListViewModel()
@@ -38,12 +38,18 @@ extension RestoreICloud {
             ]
         )
         
+        // MARK: - Initializer
+        init(viewModel: RestoreWalletViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
+        // MARK: - Methods
         override func viewDidLoad() {
             super.viewDidLoad()
             accountsListViewModel.reload()
         }
         
-        // MARK: - Methods
         override func setUp() {
             super.setUp()
             

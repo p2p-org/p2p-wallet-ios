@@ -32,12 +32,12 @@ extension SendToken {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var addressFormatter: AddressFormatterType
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let walletsRepository: WalletsRepository
-        var solanaAPIClient: SendTokenAPIClient
-        let pricesService: PricesServiceType
-        private let renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+        @Injected private var pricesService: PricesServiceType
+        @Injected private var walletsRepository: WalletsRepository
+        @Injected var solanaAPIClient: SendTokenAPIClient
+        @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
         private let initialWalletPubkey: String?
@@ -55,25 +55,17 @@ extension SendToken {
         
         // MARK: - Initializers
         init(
-            repository: WalletsRepository,
-            pricesService: PricesServiceType,
             walletPubkey: String?,
-            destinationAddress: String?,
-            apiClient: SendTokenAPIClient,
-            renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+            destinationAddress: String?
         ) {
-            self.walletsRepository = repository
-            self.pricesService = pricesService
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
-            self.solanaAPIClient = apiClient
-            self.renVMBurnAndReleaseService = renVMBurnAndReleaseService
             
             // accept initial values
             if let pubkey = walletPubkey {
-                walletSubject.accept(repository.getWallets().first(where: {$0.pubkey == pubkey}))
+                walletSubject.accept(walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}))
             } else {
-                walletSubject.accept(repository.nativeWallet)
+                walletSubject.accept(walletsRepository.nativeWallet)
             }
         }
         

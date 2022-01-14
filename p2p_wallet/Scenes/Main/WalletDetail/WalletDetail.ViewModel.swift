@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol WalletDetailViewModelType {
+    var walletsRepository: WalletsRepository {get}
     var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
     var nativePubkey: Driver<String?> {get}
@@ -30,33 +31,22 @@ protocol WalletDetailViewModelType {
 extension WalletDetail {
     class ViewModel {
         // MARK: - Dependencies
-        private let walletsRepository: WalletsRepository
-        private let pricesService: PricesServiceType
-        private let processingTransactionRepository: ProcessingTransactionsRepository
-        private let transactionsRepository: TransactionsRepository
-        private let notificationsRepository: WLNotificationsRepository
-        private let feeRelayer: FeeRelayerType
+        @Injected var walletsRepository: WalletsRepository
+        @Injected private var pricesService: PricesServiceType
+        @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
+        @Injected private var transactionsRepository: TransactionsRepository
+        @Injected private var notificationsRepository: WLNotificationsRepository
         private let pubkey: String
         private let symbol: String
         @Injected var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        lazy var graphViewModel: WalletGraphViewModel = {
-            WalletGraphViewModel(
-                symbol: symbol,
-                pricesService: pricesService
-            )
-        }()
+        lazy var graphViewModel = WalletGraphViewModel(symbol: symbol)
         
         lazy var transactionsViewModel = TransactionsViewModel(
             account: pubkey,
-            accountSymbol: symbol,
-            repository: transactionsRepository,
-            pricesService: pricesService,
-            processingTransactionRepository: processingTransactionRepository,
-            feeRelayer: feeRelayer,
-            notificationsRepository: notificationsRepository
+            accountSymbol: symbol
         )
         
         // MARK: - Subject
@@ -64,25 +54,9 @@ extension WalletDetail {
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializer
-        init(
-            pubkey: String,
-            symbol: String,
-            walletsRepository: WalletsRepository,
-            processingTransactionRepository: ProcessingTransactionsRepository,
-            pricesService: PricesServiceType,
-            transactionsRepository: TransactionsRepository,
-            feeRelayer: FeeRelayerType,
-            notificationsRepository: WLNotificationsRepository
-        ) {
+        init(pubkey: String, symbol: String) {
             self.pubkey = pubkey
             self.symbol = symbol
-            self.walletsRepository = walletsRepository
-            self.pricesService = pricesService
-            self.processingTransactionRepository = processingTransactionRepository
-            self.transactionsRepository = transactionsRepository
-            self.feeRelayer = feeRelayer
-            self.notificationsRepository = notificationsRepository
-            
             bind()
         }
         

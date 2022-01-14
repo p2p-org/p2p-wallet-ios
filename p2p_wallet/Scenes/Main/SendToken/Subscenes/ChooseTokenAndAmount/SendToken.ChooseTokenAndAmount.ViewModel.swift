@@ -56,15 +56,15 @@ extension SendToken.ChooseTokenAndAmount {
         
         // MARK: - Initializer
         init(
-            sendTokenViewModel: SendTokenViewModelType,
             initialAmount: Double? = nil,
             showAfterConfirmation: Bool = false,
-            selectedNetwork: SendToken.Network?
+            selectedNetwork: SendToken.Network?,
+            sendTokenViewModel: SendTokenViewModelType
         ) {
-            self.sendTokenViewModel = sendTokenViewModel
             self.initialAmount = initialAmount
             self.showAfterConfirmation = showAfterConfirmation
             self.selectedNetwork = selectedNetwork
+            self.sendTokenViewModel = sendTokenViewModel
             bind()
         }
         
