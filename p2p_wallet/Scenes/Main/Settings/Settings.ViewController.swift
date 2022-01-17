@@ -44,10 +44,10 @@ extension Settings {
                         ).onTap { [unowned self] in viewModel.navigate(to: .username) }
                         
                         // Contact
-                        CellView(icon: .contactIcon, title: L10n.contact.onlyUppercaseFirst())
+                        // CellView(icon: .contactIcon, title: L10n.contact.onlyUppercaseFirst())
                         
                         // History
-                        CellView(icon: .historyIcon, title: L10n.history.onlyUppercaseFirst())
+                        // CellView(icon: .historyIcon, title: L10n.history.onlyUppercaseFirst())
                         
                         // Sign out button
                         BECenter {
@@ -86,6 +86,7 @@ extension Settings {
                         ).onTap { [unowned self] in viewModel.navigate(to: .changePincode) }
                         
                         // Face id
+                        /*
                         CellView(
                             icon: .faceIdIcon,
                             title: L10n.useFaceId.onlyUppercaseFirst(),
@@ -100,11 +101,13 @@ extension Settings {
                             trailing: UISwitch(),
                             nextArrowEnable: false
                         )
+                        */
                         
                         // Network
                         CellView(icon: .networkIcon, title: L10n.network.onlyUppercaseFirst())
                             .onTap { [unowned self] in viewModel.navigate(to: .network) }
                         
+                        /*
                         // Fee
                         CellView(
                             icon: .payFeeIcon,
@@ -112,9 +115,11 @@ extension Settings {
                             trailing: UILabel(text: "SOL"),
                             dividerEnable: false
                         )
+                        */
                     }
                     
                     // Appearance section
+                    /*
                     SectionView(title: L10n.profile) {
                         // Notification
                         CellView(
@@ -161,7 +166,9 @@ extension Settings {
                             dividerEnable: false
                         )
                     }
+                    */
                     
+                    /*
                     // Appearance section
                     SectionView {
                         // Ask
@@ -170,6 +177,7 @@ extension Settings {
                         // Version
                         CellView(icon: .appVersionIcon, title: L10n.appVersion, dividerEnable: false)
                     }
+                    */
                 }
             }
         }
