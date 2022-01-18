@@ -35,7 +35,7 @@ class NotificationsService: NotificationsServiceType {
 extension UIApplication {
     fileprivate func showToast(
         message: String?,
-        backgroundColor: UIColor = .black,
+        backgroundColor: UIColor = .h2c2c2e,
         alpha: CGFloat = 0.8,
         shadowColor: UIColor = .h6d6d6d.onDarkMode(.black),
         completion: (() -> Void)? = nil
@@ -53,7 +53,7 @@ extension UIApplication {
         toast.backgroundColor = backgroundColor
         toast.mainView.alpha = alpha
         
-        let label = UILabel(text: message, textSize: 15, weight: .semibold, textColor: .white, numberOfLines: 0, textAlignment: .center)
+        let label = UILabel(text: message, textSize: 15, textColor: .white, numberOfLines: 0, textAlignment: .center)
         label.tag = 1
         
         toast.stackView.addArrangedSubview(label)
