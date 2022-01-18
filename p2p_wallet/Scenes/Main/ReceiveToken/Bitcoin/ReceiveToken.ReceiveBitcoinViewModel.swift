@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol ReceiveTokenBitcoinViewModelType {
+protocol ReceiveTokenBitcoinViewModelType: class {
     var notificationsService: NotificationsServiceType { get }
     var isReceivingRenBTCDriver: Driver<Bool> { get }
     var isLoadingDriver: Driver<Bool> { get }
@@ -156,7 +156,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
     
     func copyToClipboard() {
-        guard let address = renVMService.getCurrentAddress() else {return}
+        guard let address = renVMService.getCurrentAddress() else { return }
         clipboardManager.copyToClipboard(address)
         analyticsManager.log(event: .receiveAddressCopy)
     }

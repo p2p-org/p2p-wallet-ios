@@ -59,6 +59,11 @@ extension RenBTCReceivingStatuses {
                         ),
                         headerBuilder: { (view, section) in
                             guard let view = view as? SectionHeaderView else { return }
+                            guard let section = section else {
+                                view.setUp(headerTitle: "")
+                                return
+                            }
+                            
                             let date = section.userInfo as? Date ?? Date()
                             let dateFormatter = DateFormatter()
                             dateFormatter.dateStyle = .medium
