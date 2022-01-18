@@ -57,7 +57,7 @@ extension SerumSwap: SwapProviderType {
                 // if paying directly with SOL
                 if isPayingWithSOL {
                     fees.append(contentsOf: [
-                        .init(type: .accountCreationFee, lamports: networkFees.accountCreationFee, token: .nativeSolana, toString: nil),
+                        .init(type: .accountCreationFee(token: nil), lamports: networkFees.accountCreationFee, token: .nativeSolana, toString: nil),
                         .init(type: .orderCreationFee, lamports: networkFees.serumOrderCreationFee, token: .nativeSolana, toString: nil),
                         .init(type: .transactionFee, lamports: networkFees.transactionFee, token: .nativeSolana, toString: nil)
                     ])
@@ -98,7 +98,7 @@ extension SerumSwap: SwapProviderType {
                             }
                             .map { neededAmounts -> [PayingFee] in
                                 fees.append(contentsOf: [
-                                    .init(type: .accountCreationFee, lamports: neededAmounts.0, token: sourceWallet.token, toString: nil),
+                                    .init(type: .accountCreationFee(token: nil), lamports: neededAmounts.0, token: sourceWallet.token, toString: nil),
                                     .init(type: .orderCreationFee, lamports: neededAmounts.1, token: sourceWallet.token, toString: nil),
                                     .init(type: .transactionFee, lamports: neededAmounts.2, token: sourceWallet.token, toString: nil)
                                 ])

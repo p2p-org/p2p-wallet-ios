@@ -125,7 +125,9 @@ extension OrcaSwapV2 {
             Observable.combineLatest(
                 bestPoolsPairSubject,
                 inputAmountSubject,
-                slippageSubject
+                slippageSubject,
+                destinationWalletSubject,
+                sourceWalletSubject
             )
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: {[weak self] _ in
@@ -445,7 +447,7 @@ extension OrcaSwapV2.ViewModel {
             if let creationFee = fees.accountCreationFee {
                 allFees.append(
                     .init(
-                        type: .accountCreationFee,
+                        type: .accountCreationFee(token: destinationWallet?.token.symbol),
                         lamports: creationFee,
                         token: .nativeSolana
                     )
