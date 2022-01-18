@@ -8,9 +8,9 @@
 import Foundation
 
 struct PayingFee {
-    enum FeeType {
+    enum FeeType: Equatable {
         case liquidityProviderFee
-        case accountCreationFee
+        case accountCreationFee(token: String?)
         case orderCreationFee
         case transactionFee
         
@@ -18,8 +18,12 @@ struct PayingFee {
             switch self {
             case .liquidityProviderFee:
                 return L10n.liquidityProviderFee
-            case .accountCreationFee:
-                return L10n.accountCreationFee
+            case let .accountCreationFee(token: token):
+                if let token = token {
+                    return "\(token) \(L10n.accountCreationFee)"
+                } else {
+                    return L10n.accountCreationFee
+                }
             case .orderCreationFee:
                 return L10n.serumOrderCreationPaidOncePerPair
             case .transactionFee:
