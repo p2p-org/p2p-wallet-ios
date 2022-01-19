@@ -25,14 +25,13 @@ extension WalletDetail {
         private lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
-            let editButton = UIImageView(width: 24, height: 24, image: .navigationBarEdit)
-                .onTap(self, action: #selector(showWalletSettings))
-            navigationBar.rightItems.addArrangedSubview(editButton)
+
             return navigationBar
         }()
+        private lazy var balanceView = BalanceView(viewModel: viewModel)
+        private let actionsView = ColorfulHorizontalView()
         
         // MARK: - Subscene
-        private lazy var infoVC = InfoViewController(viewModel: viewModel)
         private lazy var historyVC = HistoryViewController(viewModel: viewModel)
         
         // MARK: - Initializer
@@ -46,27 +45,46 @@ extension WalletDetail {
             super.setUp()
             view.addSubview(navigationBar)
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-            
+
             let containerView = UIView(forAutoLayout: ())
-            view.addSubview(containerView)
-            containerView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
-            containerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
-            
-            let pagesVC = WLSegmentedPagesVC(items: [
-                .init(label: L10n.info, viewController: infoVC),
-                .init(label: L10n.history, viewController: historyVC)
-            ])
-            add(child: pagesVC, to: containerView)
+
+            actionsView.autoSetDimension(.height, toSize: 80)
+
+            let stackView = UIStackView(
+                axis: .vertical,
+                spacing: 18,
+                alignment: .fill
+            ) {
+                balanceView.padding(.init(x: 18, y: 16))
+                actionsView.padding(.init(x: 18, y: 0))
+                containerView.padding(.init(top: 16, left: 8, bottom: 0, right: 8))
+            }
+
+            view.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            stackView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+
+            add(child: historyVC, to: containerView)
         }
         
         override func bind() {
             super.bind()
-            viewModel.walletDriver.map { $0?.name }
+            viewModel.walletDriver.map { $0?.token.name }
                 .drive(navigationBar.titleLabel.rx.text)
                 .disposed(by: disposeBag)
             
             viewModel.navigatableSceneDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
+                .disposed(by: disposeBag)
+
+            viewModel.walletActionsDriver
+                .drive(
+                    onNext: { [weak self] in
+                        guard let self = self else  { return }
+
+                        self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
+                    }
+                )
                 .disposed(by: disposeBag)
         }
         
@@ -110,6 +128,12 @@ extension WalletDetail {
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             default:
                 break
+            }
+        }
+
+        private func createWalletActionView(actionType: WalletActionType) -> UIView {
+            return WalletActionButton(actionType: actionType) { [weak self] in
+                self?.viewModel.start(action: actionType)
             }
         }
         
