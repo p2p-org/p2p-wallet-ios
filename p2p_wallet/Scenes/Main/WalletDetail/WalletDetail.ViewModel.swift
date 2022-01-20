@@ -13,6 +13,7 @@ protocol WalletDetailViewModelType {
     var walletsRepository: WalletsRepository {get}
     var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
+    var walletActionsDriver: Driver<[WalletActionType]> {get}
     var nativePubkey: Driver<String?> {get}
     var graphViewModel: WalletGraphViewModel {get}
     var transactionsViewModel: TransactionsViewModel {get}
@@ -20,10 +21,7 @@ protocol WalletDetailViewModelType {
     
     func renameWallet(to newName: String)
     func showWalletSettings()
-    func sendTokens()
-    func buyTokens()
-    func receiveTokens()
-    func swapTokens()
+    func start(action: WalletActionType)
     func showTransaction(_ transaction: SolanaSDK.ParsedTransaction)
     func tokenDetailsActivityDidScroll(to pageNum: Int)
 }
@@ -52,7 +50,17 @@ extension WalletDetail {
         // MARK: - Subject
         private let navigatableSceneSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        
+        private lazy var walletActionsSubject = walletSubject
+            .map { wallet -> [WalletActionType] in
+                guard let wallet = wallet else { return [] }
+
+                if wallet.isNativeSOL {
+                    return [.buy, .receive, .send, .swap]
+                } else {
+                    return [.receive, .send, .swap]
+                }
+            }
+
         // MARK: - Initializer
         init(pubkey: String, symbol: String) {
             self.pubkey = pubkey
@@ -87,10 +95,50 @@ extension WalletDetail {
                 })
                 .disposed(by: disposeBag)
         }
+
+        private func sendTokens() {
+            guard let wallet = walletSubject.value else {return}
+            analyticsManager.log(event: .tokenDetailsSendClick)
+            analyticsManager.log(event: .sendOpen(fromPage: "token_details"))
+            navigatableSceneSubject.accept(.send(wallet: wallet))
+        }
+
+        private func buyTokens() {
+            var tokens = BuyProviders.Crypto.eth
+            if symbol == "SOL" {
+                tokens = .sol
+            }
+            if symbol == "USDT" {
+                tokens = .usdt
+            }
+            analyticsManager.log(event: .tokenDetailsBuyClick)
+            navigatableSceneSubject.accept(.buy(tokens: tokens))
+        }
+
+        private func receiveTokens() {
+            guard let pubkey = walletSubject.value?.pubkey else {return}
+            analyticsManager.log(event: .tokenDetailQrClick)
+            analyticsManager.log(event: .tokenDetailsReceiveClick)
+            analyticsManager.log(event: .receiveOpen(fromPage: "token_details"))
+            navigatableSceneSubject.accept(.receive(walletPubkey: pubkey))
+        }
+
+        private func swapTokens() {
+            guard let wallet = walletSubject.value else {return}
+            analyticsManager.log(event: .tokenDetailsSwapClick)
+            analyticsManager.log(event: .swapOpen(fromPage: "token_details"))
+            navigatableSceneSubject.accept(.swap(fromWallet: wallet))
+        }
+
     }
 }
 
 extension WalletDetail.ViewModel: WalletDetailViewModelType {
+    var walletActionsDriver: Driver<[WalletActionType]> {
+        walletActionsSubject
+            .asDriver(onErrorJustReturn: [])
+    }
+
     var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> {
         navigatableSceneSubject.asDriver()
     }
@@ -125,41 +173,20 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
         
         walletsRepository.updateWallet(wallet, withName: newName)
     }
-    
-    func sendTokens() {
-        guard let wallet = walletSubject.value else {return}
-        analyticsManager.log(event: .tokenDetailsSendClick)
-        analyticsManager.log(event: .sendOpen(fromPage: "token_details"))
-        navigatableSceneSubject.accept(.send(wallet: wallet))
-    }
-    
-    func buyTokens() {
-        var tokens = BuyProviders.Crypto.eth
-        if symbol == "SOL" {
-            tokens = .sol
+
+    func start(action: WalletActionType) {
+        switch action {
+        case .receive:
+            receiveTokens()
+        case .buy:
+            buyTokens()
+        case .send:
+            sendTokens()
+        case .swap:
+            swapTokens()
         }
-        if symbol == "USDT" {
-            tokens = .usdt
-        }
-        analyticsManager.log(event: .tokenDetailsBuyClick)
-        navigatableSceneSubject.accept(.buy(tokens: tokens))
     }
-    
-    func receiveTokens() {
-        guard let pubkey = walletSubject.value?.pubkey else {return}
-        analyticsManager.log(event: .tokenDetailQrClick)
-        analyticsManager.log(event: .tokenDetailsReceiveClick)
-        analyticsManager.log(event: .receiveOpen(fromPage: "token_details"))
-        navigatableSceneSubject.accept(.receive(walletPubkey: pubkey))
-    }
-    
-    func swapTokens() {
-        guard let wallet = walletSubject.value else {return}
-        analyticsManager.log(event: .tokenDetailsSwapClick)
-        analyticsManager.log(event: .swapOpen(fromPage: "token_details"))
-        navigatableSceneSubject.accept(.swap(fromWallet: wallet))
-    }
-    
+
     func showTransaction(_ transaction: SolanaSDK.ParsedTransaction) {
         analyticsManager.log(event: .tokenDetailsDetailsOpen)
         navigatableSceneSubject.accept(.transactionInfo(transaction))

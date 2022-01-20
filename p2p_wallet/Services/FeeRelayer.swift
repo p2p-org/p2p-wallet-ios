@@ -9,11 +9,7 @@ import Foundation
 import RxSwift
 import FeeRelayerSwift
 
-protocol FeeRelayerType {
-    func getFeePayerPubkey() -> Single<String>
-}
-
-private extension FeeRelayer.SwapTokensParamsSwapAccount {
+private extension FeeRelayer.Compensation.SwapTokensParamsSwapAccount {
     init(
         pool: SolanaSDK.Pool,
         transferAuthority: String,
@@ -34,7 +30,7 @@ private extension FeeRelayer.SwapTokensParamsSwapAccount {
     }
 }
 
-extension FeeRelayer: FeeRelayerType, SolanaCustomFeeRelayerProxy {
+extension FeeRelayer.APIClient: SolanaCustomFeeRelayerProxy {
     public func getFeePayer() -> Single<String> {
         getFeePayerPubkey()
     }
@@ -130,7 +126,7 @@ extension FeeRelayer: FeeRelayerType, SolanaCustomFeeRelayerProxy {
         )
     }
     
-    private func sendTransactionAndLog(_ requestType: RequestType) -> Single<SolanaSDK.TransactionID> {
+    private func sendTransactionAndLog(_ requestType: FeeRelayer.RequestType) -> Single<SolanaSDK.TransactionID> {
         // log request
         if let data = try? requestType.getParams(),
            let message = String(data: data, encoding: .utf8)
