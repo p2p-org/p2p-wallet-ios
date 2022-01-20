@@ -11,15 +11,9 @@ import UIKit
 extension ___VARIABLE_scene___ {
     class ViewController: BaseVC {
         // MARK: - Dependencies
-        private let viewModel: ___VARIABLE_scene___ViewModelType
+        @Injected private var viewModel: ___VARIABLE_scene___ViewModelType
         
         // MARK: - Properties
-        
-        // MARK: - Initializer
-        init(viewModel: ___VARIABLE_scene___ViewModelType) {
-            self.viewModel = viewModel
-            super.init()
-        }
         
         // MARK: - Methods
         override func loadView() {
