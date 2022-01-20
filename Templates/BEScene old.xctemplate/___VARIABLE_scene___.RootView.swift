@@ -14,15 +14,9 @@ extension ___VARIABLE_scene___ {
         let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        private var viewModel: ___VARIABLE_scene___ViewModelType
+        @Injected private var viewModel: ___VARIABLE_scene___ViewModelType
         
         // MARK: - Subviews
-        
-        // MARK: - Initializer
-        init(viewModel: ___VARIABLE_scene___ViewModelType) {
-            self.viewModel = viewModel
-            super.init(frame: .zero)
-        }
         
         // MARK: - Methods
         override func commonInit() {
@@ -47,7 +41,7 @@ extension ___VARIABLE_scene___ {
         
         // MARK: - Actions
         @objc private func showDetail() {
-            viewModel.navigate(to: .detail)
+            viewModel.navigate(to: detail)
         }
     }
 }

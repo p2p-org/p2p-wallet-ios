@@ -691,3 +691,5 @@
 "Statuses received" = "Статусы получены";
 "Statuses received (%@)" = "Полученные статусы (%@)";
 "The last one: " = "Последний:";
+"Username %@ was reserved" = "Имя пользователя %@ было зарезервировано";
+"None" = "Никто";

@@ -36,7 +36,7 @@ extension SolanaSDK: SendTokenAPIClient {
             to: destination,
             amount: amount,
             isSimulation: isSimulation,
-            customProxy: withoutFee ? FeeRelayer(): nil
+            customProxy: withoutFee ? FeeRelayer.APIClient(version: 1): nil
         )
     }
     
@@ -48,7 +48,7 @@ extension SolanaSDK: SendTokenAPIClient {
             to: destinationAddress,
             amount: amount,
             isSimulation: isSimulation,
-            customProxy: withoutFee ? FeeRelayer(): nil
+            customProxy: withoutFee ? FeeRelayer.APIClient(version: 1): nil
         )
     }
     

@@ -691,3 +691,5 @@
 "Statuses received" = "Statuses received";
 "Statuses received (%@)" = "Statuses received (%@)";
 "The last one: " = "The last one:";
+"Username %@ was reserved" = "Username %@ was reserved";
+"None" = "None";

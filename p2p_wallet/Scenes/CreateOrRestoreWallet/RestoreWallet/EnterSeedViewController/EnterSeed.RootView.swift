@@ -87,6 +87,9 @@ extension EnterSeed {
             let navigationBar = EnterSeed.NavigationBar(
                 backHandler: { [weak viewModel] in
                     viewModel?.goBack()
+                },
+                infoHandler: { [weak viewModel] in
+                    viewModel?.showInfo()
                 }
             )
 
