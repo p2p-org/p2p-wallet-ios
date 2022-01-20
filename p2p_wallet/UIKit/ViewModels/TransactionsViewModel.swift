@@ -9,6 +9,7 @@ import Foundation
 import BECollectionView
 import RxSwift
 import RxCocoa
+import FeeRelayerSwift
 
 class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     // MARK: - Dependencies
@@ -18,7 +19,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     @Injected private var repository: TransactionsRepository
     @Injected private var pricesService: PricesServiceType
     @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
-    @Injected private var feeRelayer: FeeRelayerType
+    @Injected private var feeRelayer: FeeRelayerAPIClientType
     @Injected private var notificationsRepository: WLNotificationsRepository
     
     // MARK: - Properties

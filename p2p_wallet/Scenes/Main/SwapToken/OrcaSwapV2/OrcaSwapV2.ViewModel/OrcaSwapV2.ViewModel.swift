@@ -399,7 +399,6 @@ extension OrcaSwapV2.ViewModel {
                 myWalletsMints: myWalletsMints,
                 fromWalletPubkey: sourceWalletPubkey,
                 toWalletPubkey: destinationWallet?.pubkey,
-                feeRelayerFeePayerPubkey: nil, // TODO: - Fee relayer
                 bestPoolsPair: bestPoolsPair,
                 inputAmount: inputAmount,
                 slippage: slippage,

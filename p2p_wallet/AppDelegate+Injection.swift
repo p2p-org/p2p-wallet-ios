@@ -76,8 +76,8 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionHandler.self)
             .scope(.session)
         
-        register { FeeRelayer() }
-            .implements(FeeRelayerType.self)
+        register { FeeRelayer.APIClient(version: 1) }
+            .implements(FeeRelayerAPIClientType.self)
             .scope(.session)
         
         // MARK: - PricesService
