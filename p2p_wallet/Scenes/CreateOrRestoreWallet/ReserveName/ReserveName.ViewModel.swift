@@ -135,6 +135,9 @@ extension ReserveName {
                 .subscribe(onSuccess: { [weak self] _ in
                     self?.stopLoading()
                     self?.nameDidReserve(name)
+                    self?.notificationsService.showInAppNotification(
+                        .message(L10n.usernameWasReserved(name))
+                    )
                 }, onFailure: { [weak self] error in
                     self?.stopLoading()
                     self?.notificationsService.showInAppNotification(.error(error))

@@ -3,8 +3,8 @@
 import Foundation
 
 extension ___FILEBASENAME___ {
-    class Scene: BEScene {
-        @BENavigationBinding private var viewModel: ___FILEBASENAME___SceneModel!
+    class ViewController: BEScene {
+        private let viewModel: ___FILEBASENAME___ViewModelType!
 
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
