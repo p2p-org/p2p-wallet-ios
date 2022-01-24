@@ -96,9 +96,14 @@ extension WalletDetail {
                     let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
                         $0.token.address == renBTCMint.base58EncodedString
                     })
-                    let vm = ReceiveToken.SceneModel(solanaPubkey: solanaPubkey, solanaTokenWallet: tokenWallet, isRenBTCWalletCreated: isRenBTCWalletCreated)
-                    let vc = ReceiveToken.ViewController(viewModel: vm)
-                    show(vc, sender: true)
+                    let vm = ReceiveToken.SceneModel(
+                        solanaPubkey: solanaPubkey,
+                        solanaTokenWallet: tokenWallet,
+                        isRenBTCWalletCreated: isRenBTCWalletCreated,
+                        isOpeningFromToken: true
+                    )
+                    let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
+                    present(vc, animated: true)
                 }
             case .swap(let wallet):
                 let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
