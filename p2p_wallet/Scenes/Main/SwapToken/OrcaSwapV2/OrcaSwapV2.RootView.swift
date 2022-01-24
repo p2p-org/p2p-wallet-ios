@@ -22,7 +22,7 @@ extension OrcaSwapV2 {
             .onTap(self, action: #selector(buttonNextDidTouch))
 
         private lazy var mainView = OrcaSwapV2.MainSwapView(viewModel: viewModel)
-        private let showDetailsButton = OrcaSwapV2.ShowDetailsButton()
+        private let showDetailsButton = ShowHideButton(closedText: L10n.showDetails, openedText: L10n.hideDetails)
         private lazy var detailsView = OrcaSwapV2.DetailsView(viewModel: viewModel)
         
         // MARK: - Initializer
@@ -68,7 +68,7 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver
-                .drive(showDetailsButton.rx.isShown)
+                .drive(showDetailsButton.rx.isOpened)
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver

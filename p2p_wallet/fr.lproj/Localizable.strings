@@ -693,3 +693,8 @@
 "Statuses received" = "Statuts reçus";
 "Statuses received (%@)" = "Statuts reçus (%@)";
 "The last one: " = "Le dernier:";
+"Hide direct and mint addresses" = "Masquer les adresses directes et menthe";
+"Show direct and mint addresses" = "Afficher les adresses directes et menthe";
+"Tap and hold to copy" = "Appuyez et maintenez pour copier";
+"Receive %@" = "Recevoir %@";
+"You can receive %@ by providing this address, QR code or username:" = "Vous pouvez recevoir %@ en fournissant cette adresse, ce code QR ou ce nom d'utilisateur :";

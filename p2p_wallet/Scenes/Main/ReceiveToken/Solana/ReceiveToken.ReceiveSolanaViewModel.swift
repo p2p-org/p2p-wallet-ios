@@ -39,11 +39,7 @@ extension ReceiveToken {
             navigationSubject: PublishRelay<NavigatableScene?>
         ) {
             self.pubkey = solanaPubkey
-            var tokenWallet = solanaTokenWallet
-            if solanaTokenWallet?.pubkey == solanaPubkey {
-                tokenWallet = nil
-            }
-            self.tokenWallet = tokenWallet
+            self.tokenWallet = solanaTokenWallet?.pubkey == solanaPubkey ? nil : solanaTokenWallet
             self.navigationSubject = navigationSubject
         }
         

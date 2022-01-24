@@ -4,12 +4,16 @@
 
 import Foundation
 import Resolver
+import BEPureLayout
+import UIKit
 
 extension ReceiveToken {
-    class ViewController: BEScene {
+    final class ViewController: BEScene {
         private var viewModel: ReceiveSceneModel
+        private let isOpeningFromToken: Bool
         
-        init(viewModel: ReceiveSceneModel) {
+        init(viewModel: ReceiveSceneModel, isOpeningFromToken: Bool) {
+            self.isOpeningFromToken = isOpeningFromToken
             self.viewModel = viewModel
             super.init()
             viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
@@ -20,8 +24,18 @@ extension ReceiveToken {
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
                 // Navbar
-                NewWLNavigationBar(initialTitle: L10n.receive, separatorEnable: false)
-                    .onBack { [unowned self] in self.back() }
+                if isOpeningFromToken {
+                    ModalNavigationBar(
+                        title: L10n.receive(viewModel.tokenWallet?.token.name ?? ""),
+                        rightButtonTitle: L10n.close,
+                        closeHandler: { [weak self] in
+                            self?.dismiss(animated: true)
+                        }
+                    )
+                } else {
+                    NewWLNavigationBar(initialTitle: L10n.receive, separatorEnable: false)
+                        .onBack { [unowned self] in self.back() }
+                }
                 
                 BEScrollView(contentInsets: .init(x: .defaultPadding, y: .defaultPadding), spacing: 16) {
                     // Network button
@@ -36,7 +50,6 @@ extension ReceiveToken {
                                     UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
                                     UILabel(text: L10n.network("Solana"), textSize: 17)
                                         .setup { view in
-                                            guard let view = view as? UILabel else { return }
                                             viewModel.tokenTypeDriver
                                                 .map { L10n.network($0.localizedName).onlyUppercaseFirst() }
                                                 .drive(view.rx.text)
@@ -51,6 +64,12 @@ extension ReceiveToken {
                         }
                     }
                     // Children
+                    if viewModel.hasHintViewOnTop {
+                        UIView.greyBannerView {
+                            createQRHint()
+                        }
+                    }
+
                     ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
                         .setup { view in
                             viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden).disposed(by: disposeBag)
@@ -59,6 +78,35 @@ extension ReceiveToken {
                         .setup { view in
                             viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden).disposed(by: disposeBag)
                         }
+                    if viewModel.hasAddressesInfo {
+                        ShowHideButton(
+                            closedText: L10n.showDirectAndMintAddresses,
+                            openedText: L10n.hideDirectAndMintAddresses
+                        )
+                            .setup { view in
+                                viewModel.hasAddressesInfoDriver
+                                    .map { !$0 }
+                                    .drive(view.rx.isHidden)
+                                    .disposed(by: disposeBag)
+                                viewModel.addressesInfoIsOpenedDriver
+                                    .drive(view.rx.isOpened)
+                                    .disposed(by: disposeBag)
+                                view.rx.tap
+                                    .bind(to: viewModel.showHideAddressesInfoButtonTapSubject)
+                                    .disposed(by: disposeBag)
+                            }
+                        TokenAddressesView(viewModel: viewModel)
+                            .setup { view in
+                                viewModel.addressesInfoIsOpenedDriver
+                                    .drive { [weak view] isOpened in
+                                        UIView.animate(withDuration: 0.3) {
+                                            view?.isHidden = !isOpened
+                                        }
+                                    }
+                                    .disposed(by: disposeBag)
+                            }
+                            .padding(.init(only: .top, inset: 18))
+                    }
                 }
             }
         }
@@ -71,6 +119,37 @@ extension ReceiveToken {
         override func viewWillDisappear(_ animated: Bool) { // As soon as vc disappears
             super.viewWillDisappear(true)
             self.tabBarController?.tabBar.isHidden = true
+        }
+
+        private func createQRHint() -> UILabel {
+            let symbol = viewModel.tokenWallet?.token.symbol ?? ""
+            let qrCodeHint = UILabel(numberOfLines: 0)
+            let highlightedText = L10n.receive(symbol)
+            let fullText = L10n.youCanReceiveByProvidingThisAddressQRCodeOrUsername(symbol)
+
+            let normalFont = UIFont.systemFont(ofSize: 15, weight: .regular)
+            let highlightedFont = UIFont.systemFont(ofSize: 15, weight: .bold)
+
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.lineHeightMultiple = 1.17
+            paragraphStyle.alignment = .center
+
+            let attributedText = NSMutableAttributedString(
+                string: fullText,
+                attributes: [
+                    .font: normalFont,
+                    .kern: -0.24,
+                    .paragraphStyle: paragraphStyle,
+                    .foregroundColor: UIColor.textBlack
+                ]
+            )
+
+            let highlightedRange = (attributedText.string as NSString).range(of: highlightedText, options: .caseInsensitive)
+            attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
+
+            qrCodeHint.attributedText = attributedText
+
+            return qrCodeHint
         }
     }
 }
