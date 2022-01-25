@@ -103,7 +103,7 @@ extension Home {
                         $0.token.address == renBTCMint.base58EncodedString
                     })
                     let vm = ReceiveToken.SceneModel(solanaPubkey: pubkey, solanaTokenWallet: nil, isRenBTCWalletCreated: isRenBTCWalletCreated)
-                    let vc = ReceiveToken.ViewController(viewModel: vm)
+                    let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: false)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
                     show(vc, sender: true)

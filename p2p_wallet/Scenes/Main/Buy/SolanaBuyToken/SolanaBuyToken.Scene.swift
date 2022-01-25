@@ -73,7 +73,6 @@ extension SolanaBuyToken {
                                     placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
                                     autocorrectionType: .no
                                 ).setup { [weak self] view in
-                                    guard let view = view as? TokenAmountTextField else { return }
                                     view.delegate = self
                                     view.rx.text
                                         .map { $0?.double }
@@ -97,7 +96,6 @@ extension SolanaBuyToken {
                             // Output amount
                             UIStackView(axis: .horizontal) {
                                 UILabel(text: "0.00 ETH").setup { view in
-                                    guard let view = view as? UILabel else { return }
                                     self.viewModel.quoteAmount.map { value in "\(value) ETH" }
                                         .drive(view.rx.text).disposed(by: disposeBag)
                                 }
@@ -134,7 +132,6 @@ extension SolanaBuyToken {
                 UILabel(text: label, textColor: .secondaryLabel)
                 UIView.spacer
                 UILabel(text: initial).setup { view in
-                    guard let view = view as? UILabel else { return }
                     trailingDriver?.drive(view.rx.text).disposed(by: disposeBag)
                 }
             }
