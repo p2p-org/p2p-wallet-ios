@@ -8,6 +8,7 @@ excluded:
  - BECollectionView
  - THPinViewController
  - FeeRelayerSwift
+ - OrcaSwapSwift
  - TransakSwift
  - Templates
 
