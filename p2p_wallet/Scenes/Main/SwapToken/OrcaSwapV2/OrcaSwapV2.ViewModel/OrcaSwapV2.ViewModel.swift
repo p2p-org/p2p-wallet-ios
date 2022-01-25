@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import OrcaSwapSwift
 
 extension OrcaSwapV2 {
     class ViewModel {
