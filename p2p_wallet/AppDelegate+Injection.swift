@@ -92,7 +92,11 @@ extension Resolver: ResolverRegistering {
             .implements(WLNotificationsRepository.self)
             .scope(.session)
         
-        // MARK: - OrcaSwap
+        // MARK: - Swap
+        register { SwapManager() }
+            .implements(SwapManagerType.self)
+            .scope(.session)
+        
         register { OrcaSwap(
             apiClient: OrcaSwap.APIClient(
                 network: Defaults.apiEndPoint.network.cluster
