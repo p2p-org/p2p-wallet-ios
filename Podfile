@@ -15,6 +15,7 @@ target 'p2p_wallet' do
   pod 'LazySubject', :path => 'LazySubject'
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
+  pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
