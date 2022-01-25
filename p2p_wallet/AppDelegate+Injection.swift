@@ -7,6 +7,7 @@
 
 import SolanaSwift
 import FeeRelayerSwift
+import OrcaSwapSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
