@@ -698,3 +698,5 @@
 "Tap and hold to copy" = "Tap and hold to copy";
 "Receive %@" = "Receive %@";
 "You can receive %@ by providing this address, QR code or username:" = "You can receive %@ by providing this address, QR code or username:";
+"Username %@ was reserved" = "Username %@ was reserved";
+"None" = "None";
