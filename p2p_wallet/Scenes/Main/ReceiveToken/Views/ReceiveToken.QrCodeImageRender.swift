@@ -7,7 +7,7 @@ import BEPureLayout
 import RxSwift
 
 protocol QrCodeImageRender {
-    func render(username: String?, address: String?, token: SolanaSDK.Token?) -> Single<UIImage>
+    func render(username: String?, address: String?, token: SolanaSDK.Token?, showTokenIcon: Bool) -> Single<UIImage>
 }
 
 extension ReceiveToken {
@@ -82,14 +82,16 @@ extension ReceiveToken {
                 BECenter {
                     BEZStack {
                         UIImageView(image: qrCode(data: address)).withTag(1)
-                        UIImageView(width: 56, height: 56, image: tokenImage, contentMode: .scaleAspectFit)
-                            .setup { view in
-                                view.layer.borderWidth = 4
-                                view.layer.borderColor = UIColor.textWhite.cgColor
-                                view.layer.backgroundColor = UIColor.textWhite.cgColor
-                                view.layer.cornerRadius = 28
-                                view.layer.masksToBounds = true
-                            }.withTag(2)
+                        if tokenImage != nil {
+                            UIImageView(width: 56, height: 56, image: tokenImage, contentMode: .scaleAspectFit)
+                                .setup { view in
+                                    view.layer.borderWidth = 4
+                                    view.layer.borderColor = UIColor.textWhite.cgColor
+                                    view.layer.backgroundColor = UIColor.textWhite.cgColor
+                                    view.layer.cornerRadius = 28
+                                    view.layer.masksToBounds = true
+                                }.withTag(2)
+                        }
                     }.setup { view in
                             if let qrView = view.viewWithTag(1) { qrView.autoPinEdgesToSuperviewEdges() }
                             if let tokenView = view.viewWithTag(2) { tokenView.autoCenterInSuperview() }
@@ -107,7 +109,7 @@ extension ReceiveToken {
                     }.padding(.init(top: 18, left: 48, bottom: 32, right: 48))
                 
                 // Logo
-                UIImageView(image: .p2pValidatorLogo, tintColor: theme.logoColor)
+                UIImageView(image: .p2pWalletBigLogo, tintColor: theme.logoColor)
                     .frame(width: 106, height: 36)
                     .centered(.horizontal)
                     .padding(.init(only: .bottom, inset: 19))
@@ -116,9 +118,13 @@ extension ReceiveToken {
                 .backgroundColor(color: theme.backgroundColor)
         }
         
-        func render(username: String?, address: String?, token: SolanaSDK.Token?) -> Single<UIImage> {
+        func render(username: String?, address: String?, token: SolanaSDK.Token?, showTokenIcon: Bool) -> Single<UIImage> {
             guard let address = address else {
                 return .just(UIImage())
+            }
+            
+            if !showTokenIcon {
+                return .just(renderAsView(username: username, address: address, tokenImage: nil).asImageInBackground())
             }
             
             return tokenIcon(urlString: token?.logoURI ?? SolanaSDK.Token.nativeSolana.logoURI).map { [unowned self] image in

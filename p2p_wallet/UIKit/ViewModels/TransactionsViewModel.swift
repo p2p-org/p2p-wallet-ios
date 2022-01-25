@@ -9,17 +9,18 @@ import Foundation
 import BECollectionView
 import RxSwift
 import RxCocoa
+import FeeRelayerSwift
 
 class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     // MARK: - Dependencies
     private let account: String
     private let accountSymbol: String
     private var before: String?
-    private let repository: TransactionsRepository
-    private let pricesService: PricesServiceType
-    private let processingTransactionRepository: ProcessingTransactionsRepository
-    private let feeRelayer: FeeRelayerType
-    private let notificationsRepository: WLNotificationsRepository
+    @Injected private var repository: TransactionsRepository
+    @Injected private var pricesService: PricesServiceType
+    @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
+    @Injected private var feeRelayer: FeeRelayerAPIClientType
+    @Injected private var notificationsRepository: WLNotificationsRepository
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
@@ -32,20 +33,10 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     // MARK: - Subjects
     init(
         account: String,
-        accountSymbol: String,
-        repository: TransactionsRepository,
-        pricesService: PricesServiceType,
-        processingTransactionRepository: ProcessingTransactionsRepository,
-        feeRelayer: FeeRelayerType,
-        notificationsRepository: WLNotificationsRepository
+        accountSymbol: String
     ) {
         self.account = account
         self.accountSymbol = accountSymbol
-        self.repository = repository
-        self.pricesService = pricesService
-        self.processingTransactionRepository = processingTransactionRepository
-        self.feeRelayer = feeRelayer
-        self.notificationsRepository = notificationsRepository
         super.init(isPaginationEnabled: true, limit: 10)
     }
     

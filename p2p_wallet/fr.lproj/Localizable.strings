@@ -704,3 +704,10 @@
 "Confirm transactions" = "Confirmer les transactions";
 "Pay fees with" = "Payer les frais avec";
 "App icon" = "Icône de l'application";
+"Hide direct and mint addresses" = "Masquer les adresses directes et menthe";
+"Show direct and mint addresses" = "Afficher les adresses directes et menthe";
+"Tap and hold to copy" = "Appuyez et maintenez pour copier";
+"Receive %@" = "Recevoir %@";
+"You can receive %@ by providing this address, QR code or username:" = "Vous pouvez recevoir %@ en fournissant cette adresse, ce code QR ou ce nom d'utilisateur :";
+"Username %@ was reserved" = "Le nom d'utilisateur %@ était réservé";
+"None" = "Rien";

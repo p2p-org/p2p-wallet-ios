@@ -44,10 +44,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultCheckBoxActiveColor = .h5887ff
         
         // Use Firebase library to configure APIs
-        #if DEBUG
-        #else
+//        #if DEBUG
+//        #else
         FirebaseApp.configure()
-        #endif
+//        #endif
         
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -56,7 +56,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // set rootVC
-        let vc = Root.ViewController()
+        let vm = Root.ViewModel()
+        let vc = Root.ViewController(viewModel: vm)
         window?.rootViewController = vc
         
         window?.makeKeyAndVisible()

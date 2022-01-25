@@ -16,7 +16,13 @@ extension Onboarding {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: OnboardingViewModelType
+        private let viewModel: OnboardingViewModelType
+        
+        // MARK: - Initializer
+        init(viewModel: OnboardingViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {

@@ -13,14 +13,14 @@ import Down
 
 extension ReceiveToken {
     class NetworkSelectionScene: BEScene {
-        let viewModel: ReceiveSceneModel
+        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+        
+        private let viewModel: ReceiveSceneModel
         
         init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
             super.init()
         }
-        
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
         override func build() -> UIView {
             BESafeArea {
@@ -35,7 +35,6 @@ extension ReceiveToken {
                             networkDescription: L10n.receiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletList,
                             icon: .squircleSolanaIcon
                         ).setup { [unowned self] view in
-                            let view = view as! NetworkCell
                             self.viewModel.tokenTypeDriver
                                 .map { type -> Bool in type == .solana }
                                 .asDriver()
@@ -54,7 +53,6 @@ extension ReceiveToken {
                             networkDescription: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin("Bitcoin"),
                             icon: .squircleBitcoinIcon
                         ).setup { [unowned self] view in
-                            let view = view as! NetworkCell
                             self.viewModel.tokenTypeDriver
                                 .map { type -> Bool in type == .btc }
                                 .asDriver()

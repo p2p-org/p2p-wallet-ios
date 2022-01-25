@@ -89,14 +89,14 @@ extension ReceiveToken {
                         .onTap { [unowned self] in self.onCopy?(pubKey) }
                     UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
                         .onTap { [unowned self] in
-                            qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
+                            qrImageRender.render(username: username, address: pubKey, token: token, showTokenIcon: showCoinLogo).subscribe(onSuccess: { image in
                                     self.onShare?(image)
                                 })
                                 .disposed(by: disposeBag)
                         }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in
-                            qrImageRender.render(username: username, address: pubKey, token: token).subscribe(onSuccess: { image in
+                            qrImageRender.render(username: username, address: pubKey, token: token, showTokenIcon: showCoinLogo).subscribe(onSuccess: { image in
                                     self.onSave?(image)
                                 })
                                 .disposed(by: disposeBag)

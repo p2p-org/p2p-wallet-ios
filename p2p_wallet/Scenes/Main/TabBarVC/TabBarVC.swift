@@ -9,24 +9,12 @@ import Foundation
 import UIKit
 import RxSwift
 
-protocol TabBarScenesFactory {
-    func makeHomeViewController() -> Home.ViewController
-    func makeInvestmentsViewController() -> InvestmentsViewController
-    func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController // TODO: - Replace by DAppsCollection.ViewController later
-}
-
 protocol TabBarNeededViewController: UIViewController {}
 
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     private let disposeBag = DisposeBag()
     private var tabBarTopConstraint: NSLayoutConstraint!
-    
-    let scenesFactory: TabBarScenesFactory
-    init(scenesFactory: TabBarScenesFactory) {
-        self.scenesFactory = scenesFactory
-        super.init()
-    }
     
     deinit {
         debugPrint("\(String(describing: self)) deinited")
@@ -36,16 +24,20 @@ class TabBarVC: BEPagesVC {
         super.setUp()
         view.backgroundColor = .background
         
-        // pages
-        let mainVC = scenesFactory.makeHomeViewController()
-        let investmentsVC = scenesFactory.makeInvestmentsViewController()
-        let dAppContainerVC = scenesFactory.makeDAppContainerViewController(dapp: .fake)
-        
         viewControllers = [
-            createNavigationController(rootVC: mainVC),
-            createNavigationController(rootVC: investmentsVC),
+            createNavigationController(rootVC: Home.ViewController(
+                viewModel: Home.ViewModel()
+            )),
+            createNavigationController(rootVC: InvestmentsViewController(
+                viewModel: InvestmentsViewModel(
+                    newsViewModel: NewsViewModel(),
+                    defisViewModel: DefisViewModel()
+                )
+            )),
             createNavigationController(rootVC: _PlaceholderVC()),
-            createNavigationController(rootVC: dAppContainerVC),
+            createNavigationController(rootVC: DAppContainer.ViewController(
+                viewModel: DAppContainer.ViewModel(dapp: .fake)
+            )),
             createNavigationController(rootVC: _PlaceholderVC())
         ]
         
