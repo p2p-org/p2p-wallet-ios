@@ -41,7 +41,8 @@ extension Settings {
                                     .drive(label.rx.text)
                                     .disposed(by: disposeBag)
                             }
-                        ).onTap { [unowned self] in viewModel.navigate(to: .username) }
+                        )
+                            .onTap { [unowned self] in viewModel.navigate(to: .username) }
                         
                         // Contact
                         // CellView(icon: .contactIcon, title: L10n.contact.onlyUppercaseFirst())
@@ -76,7 +77,8 @@ extension Settings {
                                     .drive(label.rx.textColor)
                                     .disposed(by: disposeBag)
                             }
-                        ).onTap { [unowned self] in viewModel.navigate(to: .backup) }
+                        )
+                            .onTap { [unowned self] in viewModel.navigate(to: .backup) }
                         
                         // Pin
                         CellView(
@@ -86,7 +88,6 @@ extension Settings {
                         ).onTap { [unowned self] in viewModel.navigate(to: .changePincode) }
                         
                         // Face id
-                        /*
                         CellView(
                             icon: .faceIdIcon,
                             title: L10n.useFaceId.onlyUppercaseFirst(),
@@ -95,6 +96,7 @@ extension Settings {
                         )
                         
                         // Transaction
+                        /*
                         CellView(
                             icon: .securityIcon,
                             title: L10n.confirmTransactions.onlyUppercaseFirst(),
@@ -119,8 +121,8 @@ extension Settings {
                     }
                     
                     // Appearance section
-                    /*
                     SectionView(title: L10n.profile) {
+                        /*
                         // Notification
                         CellView(
                             icon: .notification,
@@ -128,6 +130,7 @@ extension Settings {
                             trailing: UISwitch(),
                             nextArrowEnable: false
                         )
+                        */
                         
                         // Currency
                         CellView(
@@ -135,23 +138,26 @@ extension Settings {
                             title: L10n.pinCode.onlyUppercaseFirst(),
                             trailing: UISwitch(),
                             nextArrowEnable: false
-                        )
+                        ).onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
+                        
                         
                         // Appearance
                         CellView(
                             icon: .appearanceIcon,
                             title: L10n.useFaceId.onlyUppercaseFirst(),
                             trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
-                        )
+                        ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
                         
                         // Hide zero balance
+                        
                         CellView(
                             icon: .hideZeroBalance,
                             title: L10n.transaction.onlyUppercaseFirst(),
                             trailing: UISwitch(),
                             nextArrowEnable: false
                         )
-                        
+    
+                        /*
                         // App icon
                         CellView(
                             icon: .appIcon,
@@ -165,8 +171,8 @@ extension Settings {
                             title: L10n.swapping.onlyUppercaseFirst(),
                             dividerEnable: false
                         )
+                        */
                     }
-                    */
                     
                     /*
                     // Appearance section
