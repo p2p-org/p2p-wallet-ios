@@ -35,6 +35,7 @@ protocol SettingsViewModelType {
     var themeDriver: Driver<UIUserInterfaceStyle?> { get }
     var hideZeroBalancesDriver: Driver<Bool> { get }
     var logoutAlertSignal: Signal<Void> { get }
+    var isBiometryEnabled: Driver<Bool> { get }
     
     func getUserAddress() -> String?
     func getUsername() -> String?
@@ -90,6 +91,7 @@ extension Settings {
         private let currentLanguageSubject = BehaviorRelay<String?>(value: Locale.current.uiLanguageLocalizedString?.uppercaseFirst)
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?.overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
+        private let isBiometryEnabledSubject = BehaviorRelay<Bool>(value: Defaults.isBiometryEnabled)
         private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
@@ -264,6 +266,8 @@ extension Settings.ViewModel: SettingsViewModelType {
         changeNetworkResponder.changeAPIEndpoint(to: endpoint)
     }
     
+    var isBiometryEnabled: Driver<Bool> { isBiometryEnabledSubject.asDriver() }
+    
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void) {
         // pause authentication
         authenticationHandler.pauseAuthentication(true)
@@ -277,6 +281,7 @@ extension Settings.ViewModel: SettingsViewModelType {
             DispatchQueue.main.async { [weak self] in
                 if success {
                     Defaults.isBiometryEnabled.toggle()
+                    self?.isBiometryEnabledSubject.accept(Defaults.isBiometryEnabled)
                     self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                     self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
                 } else {

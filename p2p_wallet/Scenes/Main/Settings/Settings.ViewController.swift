@@ -91,7 +91,19 @@ extension Settings {
                         CellView(
                             icon: .faceIdIcon,
                             title: L10n.useFaceId.onlyUppercaseFirst(),
-                            trailing: UISwitch().setupWithType(UISwitch.self) { _ in },
+                            trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
+                                viewModel.isBiometryEnabled.drive(switcher.rx.value).disposed(by: disposeBag)
+                                switcher.rx
+                                    .controlEvent(.valueChanged)
+                                    .withLatestFrom(switcher.rx.value)
+                                    .subscribe { [unowned self] value in
+                                        self.viewModel.setEnabledBiometry(value) { [weak self] error in
+                                            guard let error = error else { return }
+                                            self?.showError(error)
+                                        }
+                                    }
+                                    .disposed(by: disposeBag)
+                            },
                             nextArrowEnable: false
                         )
                         
@@ -135,16 +147,19 @@ extension Settings {
                         // Currency
                         CellView(
                             icon: .currency,
-                            title: L10n.pinCode.onlyUppercaseFirst(),
-                            trailing: UISwitch(),
-                            nextArrowEnable: false
+                            title: L10n.currency.onlyUppercaseFirst(),
+                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel).setupWithType(UILabel.self) { label in
+                                viewModel.fiatDriver
+                                    .map { fiat in fiat.name }
+                                    .drive(label.rx.text)
+                                    .disposed(by: disposeBag)
+                            }
                         ).onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
-                        
                         
                         // Appearance
                         CellView(
                             icon: .appearanceIcon,
-                            title: L10n.useFaceId.onlyUppercaseFirst(),
+                            title: L10n.appearance.onlyUppercaseFirst(),
                             trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
                         ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
                         
@@ -152,11 +167,17 @@ extension Settings {
                         
                         CellView(
                             icon: .hideZeroBalance,
-                            title: L10n.transaction.onlyUppercaseFirst(),
-                            trailing: UISwitch(),
+                            title: L10n.hideZeroBalances.onlyUppercaseFirst(),
+                            trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
+                                viewModel.hideZeroBalancesDriver.drive(switcher.rx.value).disposed(by: disposeBag)
+                                switcher.rx.controlEvent(.valueChanged)
+                                    .withLatestFrom(switcher.rx.value)
+                                    .subscribe { [unowned self] in viewModel.setHideZeroBalances($0) }
+                                    .disposed(by: disposeBag)
+                            },
                             nextArrowEnable: false
                         )
-    
+                        
                         /*
                         // App icon
                         CellView(
