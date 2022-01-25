@@ -6,6 +6,20 @@
 	objectVersion = 51;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		41D57D29279FEBD600ECC2FB /* Periphery */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 41D57D2C279FEBD600ECC2FB /* Build configuration list for PBXAggregateTarget "Periphery" */;
+			buildPhases = (
+				41D57D2D279FEBF400ECC2FB /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Periphery;
+			productName = Periphery;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */; };
@@ -2561,6 +2575,9 @@
 				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
+					41D57D29279FEBD600ECC2FB = {
+						CreatedOnToolsVersion = 13.2.1;
+					};
 					BCB2231425412AF8002D997F = {
 						CreatedOnToolsVersion = 12.0.1;
 					};
@@ -2583,6 +2600,7 @@
 			projectRoot = "";
 			targets = (
 				BCB2231425412AF8002D997F /* p2p_wallet */,
+				41D57D29279FEBD600ECC2FB /* Periphery */,
 			);
 		};
 /* End PBXProject section */
@@ -2662,6 +2680,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		41D57D2D279FEBF400ECC2FB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nperiphery scan --format xcode\n";
 		};
 		78311C6F52E6F43FD0DAC80A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3258,6 +3293,24 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		41D57D2A279FEBD600ECC2FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8RV4545BMW;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		41D57D2B279FEBD600ECC2FB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 8RV4545BMW;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		BCB2233D25412AF9002D997F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC4B9E732713EE57005B9ECA /* Config.xcconfig */;
@@ -3479,6 +3532,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		41D57D2C279FEBD600ECC2FB /* Build configuration list for PBXAggregateTarget "Periphery" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				41D57D2A279FEBD600ECC2FB /* Debug */,
+				41D57D2B279FEBD600ECC2FB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BCB2231025412AF8002D997F /* Build configuration list for PBXProject "p2p_wallet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

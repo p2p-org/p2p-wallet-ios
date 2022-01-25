@@ -131,6 +131,7 @@ PODS:
   - OrcaSwapSwift (1.0.0):
     - RxAlamofire (~> 6.1.1)
     - SolanaSwift (= 1.1.9)
+  - Periphery (2.8.6)
   - PromisesObjC (2.0.0)
   - PureLayout (3.1.9)
   - Resolver (1.5.0)
@@ -186,6 +187,7 @@ DEPENDENCIES:
   - LazySubject (from `LazySubject`)
   - "ListPlaceholder (from `git@github.com:p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)"
   - OrcaSwapSwift (from `OrcaSwapSwift`)
+  - Periphery
   - Resolver
   - RxAppState
   - RxCocoa
@@ -221,6 +223,7 @@ SPEC REPOS:
     - KeychainSwift
     - Kingfisher
     - nanopb
+    - Periphery
     - PromisesObjC
     - PureLayout
     - Resolver
@@ -302,6 +305,7 @@ SPEC CHECKSUMS:
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OrcaSwapSwift: 7bc28ffaeb26ced9b817b77abb1731600534cb9b
+  Periphery: 2b693a570f0878ccc825728e7dbf31934f7a5aee
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
@@ -323,6 +327,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 1ba7dc440bde56253a13e755c3dc9fe3d24d1edd
+PODFILE CHECKSUM: 076cd3f4f9c1565b439795770760c2ee24367c58
 
 COCOAPODS: 1.11.2

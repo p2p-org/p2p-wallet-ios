@@ -1,0 +1,6 @@
+schemes:
+- p2p_wallet
+targets:
+- p2p_wallet
+verbose: true
+workspace: p2p_wallet.xcworkspace
