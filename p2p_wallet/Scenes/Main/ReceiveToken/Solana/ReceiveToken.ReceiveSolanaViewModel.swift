@@ -26,7 +26,7 @@ extension ReceiveToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
-        private let tokensRepository: TokensRepository
+        @Injected private var tokensRepository: TokensRepository
         private let navigationSubject: PublishRelay<NavigatableScene?>
         
         let pubkey: String
@@ -36,16 +36,10 @@ extension ReceiveToken {
         init(
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
-            tokensRepository: TokensRepository,
             navigationSubject: PublishRelay<NavigatableScene?>
         ) {
             self.pubkey = solanaPubkey
-            self.tokensRepository = tokensRepository
-            var tokenWallet = solanaTokenWallet
-            if solanaTokenWallet?.pubkey == solanaPubkey {
-                tokenWallet = nil
-            }
-            self.tokenWallet = tokenWallet
+            self.tokenWallet = solanaTokenWallet?.pubkey == solanaPubkey ? nil : solanaTokenWallet
             self.navigationSubject = navigationSubject
         }
         

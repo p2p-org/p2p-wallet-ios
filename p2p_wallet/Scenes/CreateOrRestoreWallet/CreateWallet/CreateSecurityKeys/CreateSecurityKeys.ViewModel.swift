@@ -30,7 +30,7 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var createWalletViewModel: CreateWalletViewModelType
+        private let createWalletViewModel: CreateWalletViewModelType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
@@ -44,7 +44,8 @@ extension CreateSecurityKeys {
         private let errorSubject = PublishRelay<String>()
         
         // MARK: - Initializer
-        init() {
+        init(createWalletViewModel: CreateWalletViewModelType) {
+            self.createWalletViewModel = createWalletViewModel
             createPhrases()
         }
         
@@ -90,11 +91,11 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     @objc func saveToICloud() {
-        deviceOwnerAuthenticationHandler.requiredOwner { [weak self] in
-            self?._saveToIcloud()
-        } onFailure: { [weak self] error in
+        deviceOwnerAuthenticationHandler.requiredOwner {
+            self._saveToIcloud()
+        } onFailure: { error in
             guard let error = error else {return}
-            self?.errorSubject.accept(error)
+            self.errorSubject.accept(error)
         }
     }
 

@@ -8,15 +8,16 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import OrcaSwapSwift
 
 extension OrcaSwapV2 {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected var authenticationHandler: AuthenticationHandler
+        @Injected var authenticationHandler: AuthenticationHandlerType
         @Injected var analyticsManager: AnalyticsManagerType
-        let feeService: FeeServiceType
-        let orcaSwap: OrcaSwapType
-        let walletsRepository: WalletsRepository
+        @Injected var feeService: FeeServiceType
+        @Injected var orcaSwap: OrcaSwapType
+        @Injected var walletsRepository: WalletsRepository
         
         // MARK: - Properties
         let disposeBag = DisposeBag()
@@ -39,19 +40,12 @@ extension OrcaSwapV2 {
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
         let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
 
-        // MARK: - Initializer
+        // MARK: - setter
         init(
-            feeService: FeeServiceType,
-            orcaSwap: OrcaSwapType,
-            walletsRepository: WalletsRepository,
             initialWallet: Wallet?
         ) {
-            self.feeService = feeService
-            self.orcaSwap = orcaSwap
-            self.walletsRepository = walletsRepository
-
             reload()
-            bind(initialWallet: initialWallet)
+            bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
         }
         
         deinit {
@@ -132,7 +126,9 @@ extension OrcaSwapV2 {
             Observable.combineLatest(
                 bestPoolsPairSubject,
                 inputAmountSubject,
-                slippageSubject
+                slippageSubject,
+                destinationWalletSubject,
+                sourceWalletSubject
             )
                 .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
                 .subscribe(onNext: {[weak self] _ in
@@ -406,7 +402,6 @@ extension OrcaSwapV2.ViewModel {
                 myWalletsMints: myWalletsMints,
                 fromWalletPubkey: sourceWalletPubkey,
                 toWalletPubkey: destinationWallet?.pubkey,
-                feeRelayerFeePayerPubkey: nil, // TODO: - Fee relayer
                 bestPoolsPair: bestPoolsPair,
                 inputAmount: inputAmount,
                 slippage: slippage,
@@ -452,7 +447,7 @@ extension OrcaSwapV2.ViewModel {
             if let creationFee = fees.accountCreationFee {
                 allFees.append(
                     .init(
-                        type: .accountCreationFee,
+                        type: .accountCreationFee(token: destinationWallet?.token.symbol),
                         lamports: creationFee,
                         token: .nativeSolana
                     )

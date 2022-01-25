@@ -13,3 +13,6 @@
 [submodule "FeeRelayerSwift"]
 	path = FeeRelayerSwift
 	url = git@github.com:p2p-org/FeeRelayerSwift.git
+[submodule "OrcaSwapSwift"]
+	path = OrcaSwapSwift
+	url = git@github.com:p2p-org/OrcaSwapSwift.git

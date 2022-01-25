@@ -27,7 +27,7 @@ protocol VerifySecurityKeysViewModelType {
 extension VerifySecurityKeys {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var createWalletViewModel: CreateWalletViewModelType
+        private let createWalletViewModel: CreateWalletViewModelType
         
         // MARK: - Properties
         let numberOfQuestions: Int = 4
@@ -37,8 +37,9 @@ extension VerifySecurityKeys {
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let questionsSubject = BehaviorRelay<[Question]>(value: [])
         
-        init(keyPhrase: [String]) {
+        init(keyPhrase: [String], createWalletViewModel: CreateWalletViewModelType) {
             self.keyPhrase = keyPhrase
+            self.createWalletViewModel = createWalletViewModel
         }
         
         deinit {

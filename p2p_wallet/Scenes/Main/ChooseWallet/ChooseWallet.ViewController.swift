@@ -25,9 +25,7 @@ extension ChooseWallet {
         // MARK: - Initializer
         init(title: String?, viewModel: ViewModel) {
             self.viewModel = viewModel
-
             super.init()
-
             self.title = title ?? L10n.selectToken
         }
         // MARK: - Methods
@@ -40,14 +38,13 @@ extension ChooseWallet {
                 alignment: .fill,
                 distribution: .fill,
                 arrangedSubviews: [
-                    NavigationBar(
+                    ModalNavigationBar(
                         title: title,
                         rightButtonTitle: viewModel.selectedWallet == nil ? L10n.close : L10n.done,
                         closeHandler: { [weak self] in
                             self?.dismiss(animated: true)
                         }
                     ),
-                    UIView(height: 0.5, backgroundColor: .black.withAlphaComponent(0.3)),
                     rootView
                 ]
             )

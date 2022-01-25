@@ -202,6 +202,11 @@ extension KeychainStorage: AccountStorageType {
         account?.phrase
     }
     
+    func save(_ account: SolanaSDK.Account) throws {
+        let phrases = account.phrase
+        try save(phrases: phrases)
+    }
+    
     func save(phrases: [String]) throws {
         keychain.set(phrases.joined(separator: " "), forKey: phrasesKey)
         _account = nil

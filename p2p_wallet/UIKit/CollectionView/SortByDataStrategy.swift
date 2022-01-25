@@ -10,7 +10,7 @@ struct CollectionViewMappingStrategy {
         let transactions = viewModel.getData(type: forType)
         
         let dictionary = Dictionary(grouping: transactions) { item -> Date in
-            let date = item[keyPath: datePath] ?? Date()
+            let date = item[keyPath: datePath] 
             return Calendar.current.startOfDay(for: date)
         }
         
@@ -29,8 +29,6 @@ struct CollectionViewMappingStrategy {
     }
     
     private static func dateFormatter<T: Hashable>(dictionary: [Date: [T]]) -> [BEDynamicSectionsCollectionView.SectionInfo] {
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .none

@@ -217,7 +217,6 @@ extension Settings {
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
-                    nameService: Resolver.resolve(),
                     reserveNameHandler: handler
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
