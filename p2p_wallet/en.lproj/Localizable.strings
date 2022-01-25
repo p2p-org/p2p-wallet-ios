@@ -691,5 +691,10 @@
 "Statuses received" = "Statuses received";
 "Statuses received (%@)" = "Statuses received (%@)";
 "The last one: " = "The last one:";
+"Hide direct and mint addresses" = "Hide direct and mint addresses";
+"Show direct and mint addresses" = "Show direct and mint addresses";
+"Tap and hold to copy" = "Tap and hold to copy";
+"Receive %@" = "Receive %@";
+"You can receive %@ by providing this address, QR code or username:" = "You can receive %@ by providing this address, QR code or username:";
 "Username %@ was reserved" = "Username %@ was reserved";
 "None" = "None";
