@@ -27,7 +27,7 @@ extension Settings {
                         .padding(.init(top: 0, left: 18, bottom: 8, right: 0))
                 }
                 UIStackView(axis: .vertical, alignment: .fill, arrangedSubviews: children)
-                    .backgroundColor(color: .white)
+                    .backgroundColor(color: .contentBackground)
                     .border(width: 1, color: .f2f2f7)
                     .box(cornerRadius: 12)
                     .lightShadow()
