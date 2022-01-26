@@ -112,7 +112,7 @@
 		41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */; };
 		84699019D2C5C5E05EC8466A /* BuyToken.WidgetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699FF3E0F973EDC052ED23 /* BuyToken.WidgetViewController.swift */; };
 		84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */; };
-		8469909BF439BFBF5D697A69 /* SwapServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469958379338AA33064ECA9 /* SwapServiceType.swift */; };
+		8469909BF439BFBF5D697A69 /* Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469958379338AA33064ECA9 /* Swap.swift */; };
 		84699154DB17DE5EB2D0DF08 /* BuyRoot.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469996FE57E1A717BD82B85 /* BuyRoot.ViewModel.swift */; };
 		846991795DC72E1D4E1078B7 /* SolanaBuyToken.Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993C80C502EDC0FBF1067 /* SolanaBuyToken.Scene.swift */; };
 		84699180BD00AC7A82B3DC28 /* SortByDataStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C3549A12D49D22AA2EE /* SortByDataStrategy.swift */; };
@@ -122,6 +122,7 @@
 		84699260E4D199A70FC4ED2A /* VerifySecurityKeys.Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */; };
 		8469926908C12A54B0D0850E /* DAppContainer.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */; };
 		8469928B2607C3CDDA2B1A4C /* DAppContainer.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */; };
+		846992D8898D895565C4EFD3 /* Cell.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699843D0D43ABFAA0417BA /* Cell.View.swift */; };
 		846993316E60603167DE5520 /* LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D31FA9B8B77AD4DAD1 /* LockView.swift */; };
 		846993C005071DBC7474F46B /* BuyRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990E0164D14FE11A72F13 /* BuyRoot.swift */; };
 		846993CA42DD22FB3BA39BB1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699683F51C51791FD590A0 /* Utils.swift */; };
@@ -141,9 +142,11 @@
 		8469996FB7AC9BB16D283B3B /* BuyToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699603F79402208A4B88C8 /* BuyToken.ViewController.swift */; };
 		8469998D03BF3A0606D0D42D /* VerifySecurityKeys.Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */; };
 		8469999E0EBB5974E6962119 /* BuyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469967326CA93BB243D75A9 /* BuyProvider.swift */; };
+		846999AD4696D6B6BC592165 /* Section.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699524C5183F1B5AF8FCD6 /* Section.View.swift */; };
 		846999D7A0F0B2DC6E8C8A9B /* UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */; };
 		84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D5BC06C25591CFA36D /* WLWebView.swift */; };
 		84699B6058901C761662F138 /* TransakProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C355CE538F8E06A9A33 /* TransakProvider.swift */; };
+		84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699AC2656E48F105F10AB1 /* BESuperScene.swift */; };
 		84699D16FF2505EBC817719F /* Moonpay.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C4EC5492AD6214BAD3D /* Moonpay.Service.swift */; };
 		84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C929DA7046907362DFE /* ColumnFlowLayout.swift */; };
 		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */; };
@@ -270,7 +273,6 @@
 		BC4B9E85271425B9005B9ECA /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E81271425B9005B9ECA /* Settings.swift */; };
 		BC4B9E86271425B9005B9ECA /* Settings.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E82271425B9005B9ECA /* Settings.ViewController.swift */; };
 		BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */; };
-		BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */; };
 		BC4B9E8A27142AF5005B9ECA /* Settings.Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */; };
 		BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */; };
 		BC4B9E9527153EBB005B9ECA /* Settings.BackupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */; };
@@ -639,9 +641,10 @@
 		846994BA772A5F92F29C172E /* WLCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLCard.swift; sourceTree = "<group>"; };
 		846994C1EE7DDD16BD91B4FD /* CreateSecurityKeys.KeysView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.KeysView.swift; sourceTree = "<group>"; };
 		846995031B01D0F8C08F3F79 /* BuyToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyToken.swift; sourceTree = "<group>"; };
+		84699524C5183F1B5AF8FCD6 /* Section.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.View.swift; sourceTree = "<group>"; };
 		8469954152E62DED5A6CA387 /* Moonpay.Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Model.swift; sourceTree = "<group>"; };
 		8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateWallet.ExplanationVC.swift; sourceTree = "<group>"; };
-		8469958379338AA33064ECA9 /* SwapServiceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwapServiceType.swift; sourceTree = "<group>"; };
+		8469958379338AA33064ECA9 /* Swap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
 		84699587C4376EAA8208663D /* MoonpayProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonpayProvider.swift; sourceTree = "<group>"; };
 		846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.ViewController.swift; sourceTree = "<group>"; };
 		846995D0006E36B802E2110E /* ReceiveToken.QrCodeImageRender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeImageRender.swift; sourceTree = "<group>"; };
@@ -652,12 +655,14 @@
 		84699683F51C51791FD590A0 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		84699696974A7AE7835EE4CE /* SolanaBuyToken.SceneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.SceneModel.swift; sourceTree = "<group>"; };
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
+		84699843D0D43ABFAA0417BA /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
 		8469995401F6BFC283896AD6 /* UIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
 		8469996FE57E1A717BD82B85 /* BuyRoot.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.ViewModel.swift; sourceTree = "<group>"; };
 		846999B04075AE392A600C35 /* ReceiveToken.QrCodeCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeCard.swift; sourceTree = "<group>"; };
 		846999ECE924BFEFC88F9F71 /* SolanaBuyToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.swift; sourceTree = "<group>"; };
 		84699A1D9765DC3DFB275A4E /* ReceiveToken.HelpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.HelpViewController.swift; sourceTree = "<group>"; };
+		84699AC2656E48F105F10AB1 /* BESuperScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BESuperScene.swift; sourceTree = "<group>"; };
 		84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Button.swift; sourceTree = "<group>"; };
 		84699C3549A12D49D22AA2EE /* SortByDataStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByDataStrategy.swift; sourceTree = "<group>"; };
 		84699C355CE538F8E06A9A33 /* TransakProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakProvider.swift; sourceTree = "<group>"; };
@@ -795,7 +800,6 @@
 		BC4B9E81271425B9005B9ECA /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		BC4B9E82271425B9005B9ECA /* Settings.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ViewController.swift; sourceTree = "<group>"; };
 		BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ViewModel.swift; sourceTree = "<group>"; };
-		BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.RootView.swift; sourceTree = "<group>"; };
 		BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Helpers.swift; sourceTree = "<group>"; };
 		BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.UsernameViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.BackupViewController.swift; sourceTree = "<group>"; };
@@ -1299,6 +1303,15 @@
 			path = DApps;
 			sourceTree = "<group>";
 		};
+		846998220F2414FAD758943C /* View */ = {
+			isa = PBXGroup;
+			children = (
+				84699524C5183F1B5AF8FCD6 /* Section.View.swift */,
+				84699843D0D43ABFAA0417BA /* Cell.View.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		84699866B25B71F747902988 /* SolanaBuyToken */ = {
 			isa = PBXGroup;
 			children = (
@@ -1323,6 +1336,7 @@
 			children = (
 				84699C86FA5FC79DB0199B0B /* BEScene.swift */,
 				84699CFE43666FACF9062699 /* BESceneModel.swift */,
+				84699AC2656E48F105F10AB1 /* BESuperScene.swift */,
 			);
 			path = Scene;
 			sourceTree = "<group>";
@@ -1500,8 +1514,8 @@
 				BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */,
 				BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */,
 				BC4B9E82271425B9005B9ECA /* Settings.ViewController.swift */,
-				BC4B9E84271425B9005B9ECA /* Settings.RootView.swift */,
 				BC4B9EA227154088005B9ECA /* Subscenes */,
+				846998220F2414FAD758943C /* View */,
 			);
 			path = Settings;
 			sourceTree = "<group>";
@@ -2062,7 +2076,6 @@
 				3B78CB562773147F00FB3C4C /* ClipboardManager.swift */,
 				3B78CB502773067100FB3C4C /* NotificationsService.swift */,
 				3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */,
-				8469958379338AA33064ECA9 /* SwapServiceType.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2951,7 +2964,6 @@
 				BC2297912700A274003F7118 /* RestoreICloud.swift in Sources */,
 				86A90D1A273D306400D180EF /* VerifySecurityKeys.ViewModel.swift in Sources */,
 				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
-				BC4B9E88271425B9005B9ECA /* Settings.RootView.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
 				BC85EA69266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift in Sources */,
 				41CA05762754725200953322 /* ReserveName.ViewController.swift in Sources */,
@@ -3227,7 +3239,9 @@
 				84699180BD00AC7A82B3DC28 /* SortByDataStrategy.swift in Sources */,
 				84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */,
 				846993316E60603167DE5520 /* LockView.swift in Sources */,
-				8469909BF439BFBF5D697A69 /* SwapServiceType.swift in Sources */,
+				84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */,
+				846999AD4696D6B6BC592165 /* Section.View.swift in Sources */,
+				846992D8898D895565C4EFD3 /* Cell.View.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
