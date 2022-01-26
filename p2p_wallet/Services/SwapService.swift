@@ -145,5 +145,5 @@ class SwapServiceImpl: SwapServiceType {
 }
 
 fileprivate extension OrcaSwap.PoolsPair {
-    func toPoolsPair() -> SwapServiceImpl.PoolsPair { .init(orcaPoolPair: self) }
+    func toPoolsPair() -> SwapService.PoolsPair { .init(orcaPoolPair: self) }
 }
