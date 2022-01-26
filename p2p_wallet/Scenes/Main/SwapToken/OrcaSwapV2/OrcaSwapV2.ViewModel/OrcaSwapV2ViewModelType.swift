@@ -23,7 +23,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     
 //    var feesContentDriver: Driver<Loadable<OrcaSwapV2.DetailedFeesContent>> { get }
     var feesDriver: Driver<Loadable<[PayingFee]>> {get}
-    var payingTokenSubject: BehaviorRelay<PayingToken> { get }
+    var payingTokenModeSubject: BehaviorRelay<PayingToken> { get }
     var feePayingTokenDriver: Driver<String?> { get }
     var payingTokenDriver: Driver<PayingToken> {get}
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}

@@ -67,7 +67,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                       let inputAmount = inputAmount?.toLamport(decimals: sourceDecimals),
                       let destinationDecimals = destinationWallet?.token.decimals
                 else {return nil}
-                return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?.convertToBalance(decimals: destinationDecimals)
+                return poolsPair.orcaPoolPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?.convertToBalance(decimals: destinationDecimals)
             }
             .asDriver(onErrorJustReturn: nil)
     }
@@ -120,7 +120,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
     
     var payingTokenDriver: Driver<PayingToken> {
-        payingTokenSubject.asDriver()
+        payingTokenModeSubject.asDriver()
     }
     
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {
@@ -159,7 +159,6 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         loadingStateSubject.accept(.loading)
 
         Completable.zip(
-            orcaSwap.load(),
             feeService.load()
         )
             .subscribe(onCompleted: {[weak self] in
@@ -186,8 +185,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func chooseDestinationWallet() {
         var destinationMints = [String]()
         if let sourceWallet = sourceWalletSubject.value,
-           let validMints = try? orcaSwap.findPosibleDestinationMints(fromMint: sourceWallet.token.address)
-        {
+           let validMints = try? swapService.findPosibleDestinationMints(fromMint: sourceWallet.token.address) {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
@@ -224,8 +222,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
            let inputAmount = amount?.toLamport(decimals: sourceDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
-           let bestPoolsPair = try? orcaSwap.findBestPoolsPairForInputAmount(inputAmount, from: poolsPairs),
-           let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)
+           let bestPoolsPair = poolsPairs.findBestPoolsPairForInputAmount(inputAmount),
+           let bestEstimatedAmount = bestPoolsPair.orcaPoolPair.getOutputAmount(fromInputAmount: inputAmount)
         {
             estimatedAmountSubject.accept(bestEstimatedAmount.convertToBalance(decimals: destinationDecimals))
             bestPoolsPairSubject.accept(bestPoolsPair)
@@ -243,8 +241,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
            let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
-           let bestPoolsPair = try? orcaSwap.findBestPoolsPairForEstimatedAmount(estimatedAmount, from: poolsPairs),
-           let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
+           let bestPoolsPair = poolsPairs.findBestPoolsPairForEstimatedAmount(estimatedAmount),
+           let bestInputAmount = bestPoolsPair.orcaPoolPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
         {
             inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
             bestPoolsPairSubject.accept(bestPoolsPair)

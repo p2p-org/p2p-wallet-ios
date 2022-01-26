@@ -7,13 +7,13 @@
 
 enum PayingToken: String, CaseIterable {
     case nativeSOL
-    case transactionToken
+    case splToken
     
     var description: String {
         switch self {
         case .nativeSOL:
             return L10n.nativeSolanaToken
-        case .transactionToken:
+        case .splToken:
             return L10n.transactionToken
         }
     }
