@@ -24,13 +24,13 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
-        register {AnalyticsManager()}
+        register { AnalyticsManager() }
             .implements(AnalyticsManagerType.self)
             .scope(.application)
-        register {CryptoComparePricesFetcher()}
+        register { CryptoComparePricesFetcher() }
             .implements(PricesFetcher.self)
             .scope(.application)
-        register {NameService()}
+        register { NameService() }
             .implements(NameServiceType.self)
             .scope(.application)
         register { AddressFormatter() }
@@ -94,14 +94,14 @@ extension Resolver: ResolverRegistering {
         
         // MARK: - Swap
         register {
-            SwapManager(
+            SwapServiceImpl(
                 solanaClient: Resolver.resolve(),
                 accountStorage: Resolver.resolve(),
                 feeRelay: Resolver.resolve(),
                 orcaSwap: Resolver.resolve()
             )
         }
-            .implements(SwapManagerType.self)
+            .implements(SwapServiceType.self)
             .scope(.session)
         
         register {
@@ -117,7 +117,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
         
         // MARK: - RenVM
-        register { RenVM.RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet: .testnet) }
+        register { RenVM.RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
             .implements(RenVMRpcClientType.self)
             .scope(.session)
         
@@ -175,17 +175,17 @@ extension Resolver: ResolverRegistering {
             .implements(DAppChannelType.self)
         
         // MARK: - Moonpay
-        register{Moonpay.MoonpayServiceImpl(api: Moonpay.API.fromEnvironment())}
+        register { Moonpay.MoonpayServiceImpl(api: Moonpay.API.fromEnvironment()) }
             .implements(MoonpayService.self)
             .scope(.shared)
-    
+        
         // MARK: - BuyProvider
-        register{BuyProviders.MoonpayFactory()}
+        register { BuyProviders.MoonpayFactory() }
             .implements(BuyProviderFactory.self)
             .scope(.application)
         
         // MARK: - AppEventHandler
-        register {AppEventHandler()}
+        register { AppEventHandler() }
             .implements(AppEventHandlerType.self)
             .implements(DeviceOwnerAuthenticationHandler.self)
             .implements(ChangeNetworkResponder.self)
@@ -196,11 +196,11 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
         
         // MARK: - AuthenticationHandler
-        register {AuthenticationHandler()}
+        register { AuthenticationHandler() }
             .implements(AuthenticationHandlerType.self)
             .scope(.session)
         
-        register{ReceiveToken.QrCodeImageRenderImpl()}
+        register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
             .scope(.application)
     }
