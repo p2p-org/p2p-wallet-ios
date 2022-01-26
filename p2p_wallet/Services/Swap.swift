@@ -81,10 +81,11 @@ struct Swap {
 }
 
 class SwapServiceWithRelayImpl: SwapServiceType {
-    let solanaClient: SolanaSDK
-    let accountStorage: SolanaSDKAccountStorage
-    let feeRelay: FeeRelayerAPIClientType
-    let orcaSwap: OrcaSwapType
+    private let solanaClient: SolanaSDK
+    private let accountStorage: SolanaSDKAccountStorage
+    private let feeRelayApi: FeeRelayerAPIClientType
+    private let orcaSwap: OrcaSwapType
+    private var feeRelay: FeeRelayer.Relay? = nil
     
     // TODO: Remove me
     @Injected var notificationsService: NotificationsServiceType
@@ -92,12 +93,26 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     init(solanaClient: SolanaSDK, accountStorage: SolanaSDKAccountStorage, feeRelay: FeeRelayerAPIClientType, orcaSwap: OrcaSwapType) {
         self.solanaClient = solanaClient
         self.accountStorage = accountStorage
-        self.feeRelay = feeRelay
+        self.feeRelayApi = feeRelay
         self.orcaSwap = orcaSwap
     }
     
     func load() -> Completable {
-        orcaSwap.load()
+        do {
+            feeRelay = try FeeRelayer.Relay(
+                apiClient: feeRelayApi,
+                solanaClient: solanaClient,
+                accountStorage: accountStorage,
+                orcaSwapClient: orcaSwap
+            )
+    
+            return .zip(
+                orcaSwap.load(),
+                feeRelay!.load()
+            )
+        } catch {
+            return .error(error)
+        }
     }
     
     func getSwapInfo(from sourceToken: SolanaSDK.Token, to destinationToken: SolanaSDK.Token) -> Swap.SwapInfo {
@@ -169,10 +184,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 return .error(OrcaSwapError.invalidPool)
             }
             
-            #if DEBUG
             notificationsService.showInAppNotification(.message("Use orca"))
-            #endif
-            
             return orcaSwap.swap(
                 fromWalletPubkey: sourceAddress,
                 toWalletPubkey: destinationAddress,
@@ -187,10 +199,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 return .error(OrcaSwapError.invalidPool)
             }
             
-            #if DEBUG
             notificationsService.showInAppNotification(.message("Use orca"))
-            #endif
-            
             return orcaSwap.swap(
                 fromWalletPubkey: sourceAddress,
                 toWalletPubkey: destinationAddress,
@@ -201,37 +210,22 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             ).map { response in [response.transactionId] }
         }
         
-        guard let sourceTokenMint = sourceTokenMint else { return .error(SolanaSDK.Error.other("Invalid mint address"))}
+        guard let feeRelay = feeRelay else { return .error(SolanaSDK.Error.other("Fee relay is not ready")) }
+        guard let sourceTokenMint = sourceTokenMint else { return .error(SolanaSDK.Error.other("Invalid source mint address")) }
+        guard let destinationTokenMint = destinationTokenMint else { return .error(SolanaSDK.Error.other("Invalid destination mint address")) }
         
         // spl -> spl, use relay
-        do {
-            let relay = try FeeRelayer.Relay(
-                apiClient: feeRelay,
-                solanaClient: solanaClient,
-                accountStorage: accountStorage,
-                orcaSwapClient: orcaSwap
-            )
-            
-            #if DEBUG
-            notificationsService.showInAppNotification(.message("Use relay"))
-            #endif
-            
-            return relay
-            .load()
-            .andThen(
-                relay.topUpAndSwap(
-                    sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
-                    destinationTokenMint: destinationAddress,
-                    destinationAddress: destinationTokenMint,
-                    payingFeeToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
-                    swapPools: poolPair.orcaPoolPair,
-                    inputAmount: amount,
-                    slippage: slippage
-                )
-            )
-        } catch {
-            return .error(error)
-        }
+        notificationsService.showInAppNotification(.message("Use relay"))
+        
+        return feeRelay.topUpAndSwap(
+            sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
+            destinationTokenMint: destinationTokenMint,
+            destinationAddress: destinationAddress,
+            payingFeeToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
+            swapPools: poolPair.orcaPoolPair,
+            inputAmount: amount,
+            slippage: slippage
+        )
     }
 }
 
