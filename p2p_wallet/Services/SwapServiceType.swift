@@ -16,8 +16,8 @@ protocol SwapServiceType {
         from sourceMint: String,
         to destinationMint: String,
         amount: UInt64,
-        as inputMode: SwapService.InputMode
-    ) -> Single<SwapService.PoolsPairsResult?>
+        as inputMode: SwapServiceType.InputMode
+    ) -> Single<SwapServiceType.PoolsPairsResult?>
     
     func swap(
         sourceAddress: String,
@@ -26,13 +26,13 @@ protocol SwapServiceType {
         destinationTokenMint: String?,
         payingTokenAddress: String,
         payingTokenMint: String,
-        poolPair: SwapService.PoolsPair,
+        poolPair: SwapServiceType.PoolsPair,
         amount: UInt64,
         slippage: Double
     ) throws -> Single<[String]>
 }
 
-struct SwapService {
+struct SwapServiceType {
     enum InputMode {
         case source
         case target
@@ -73,9 +73,9 @@ class SwapServiceImpl: SwapServiceType {
         self.orcaSwap = orcaSwap
     }
     
-    func getSwapInfo(from sourceToken: SolanaSDK.Token, to destinationToken: SolanaSDK.Token) -> SwapService.SwapInfo {
+    func getSwapInfo(from sourceToken: SolanaSDK.Token, to destinationToken: SolanaSDK.Token) -> SwapServiceType.SwapInfo {
         // Determine a mode for paying fee
-        var payingTokenMode: SwapService.PayingTokenMode = .any
+        var payingTokenMode: SwapServiceType.PayingTokenMode = .any
         if (sourceToken.isNativeSOL && !destinationToken.isNativeSOL) {
             payingTokenMode = .onlySol
         } else if (!sourceToken.isNativeSOL && destinationToken.isNativeSOL) {
@@ -89,10 +89,10 @@ class SwapServiceImpl: SwapServiceType {
         from sourceMint: String,
         to destinationMint: String,
         amount: UInt64,
-        as inputMode: SwapService.InputMode
-    ) -> Single<SwapService.PoolsPairsResult?> {
+        as inputMode: SwapServiceType.InputMode
+    ) -> Single<SwapServiceType.PoolsPairsResult?> {
         orcaSwap.getTradablePoolsPairs(fromMint: sourceMint, toMint: destinationMint)
-            .map { [weak self] pairs -> SwapService.PoolsPairsResult? in
+            .map { [weak self] pairs -> SwapServiceType.PoolsPairsResult? in
                 guard let self = self, pairs.count > 0 else { return nil }
                 
                 var bestPoolPair: OrcaSwap.PoolsPair
@@ -117,7 +117,7 @@ class SwapServiceImpl: SwapServiceType {
         destinationTokenMint: String?,
         payingTokenAddress: String,
         payingTokenMint: String,
-        poolPair: SwapService.PoolsPair,
+        poolPair: SwapServiceType.PoolsPair,
         amount: UInt64,
         slippage: Double
     ) throws -> Single<[String]> {
@@ -145,5 +145,5 @@ class SwapServiceImpl: SwapServiceType {
 }
 
 fileprivate extension OrcaSwap.PoolsPair {
-    func toPoolsPair() -> SwapService.PoolsPair { .init(orcaPoolPair: self) }
+    func toPoolsPair() -> SwapServiceType.PoolsPair { .init(orcaPoolPair: self) }
 }
