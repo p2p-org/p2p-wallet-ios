@@ -112,7 +112,7 @@ extension Settings {
             })
             
             let context = LAContext()
-            if (context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)) {
+            if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
                 isBiometryAvailableSubject.accept(true)
             }
         }

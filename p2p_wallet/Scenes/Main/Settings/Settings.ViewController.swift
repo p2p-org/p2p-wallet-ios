@@ -43,7 +43,7 @@ extension Settings {
                             }
                         )
                             .onTap { [unowned self] in
-                                if (self.viewModel.getUsername() == nil) {
+                                if self.viewModel.getUsername() == nil {
                                     viewModel.showOrReserveUsername()
                                 } else {
                                     viewModel.navigate(to: .username)
