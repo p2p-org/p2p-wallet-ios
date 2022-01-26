@@ -93,17 +93,25 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
         
         // MARK: - Swap
-        register { SwapManager() }
+        register {
+            SwapManager(
+                solanaClient: Resolver.resolve(),
+                accountStorage: Resolver.resolve(),
+                feeRelay: Resolver.resolve(),
+                orcaSwap: Resolver.resolve()
+            )
+        }
             .implements(SwapManagerType.self)
             .scope(.session)
         
-        register { OrcaSwap(
-            apiClient: OrcaSwap.APIClient(
-                network: Defaults.apiEndPoint.network.cluster
-            ),
-            solanaClient: resolve(),
-            accountProvider: resolve(),
-            notificationHandler: resolve())
+        register {
+            OrcaSwap(
+                apiClient: OrcaSwap.APIClient(
+                    network: Defaults.apiEndPoint.network.cluster
+                ),
+                solanaClient: resolve(),
+                accountProvider: resolve(),
+                notificationHandler: resolve())
         }
             .implements(OrcaSwapType.self)
             .scope(.session)
