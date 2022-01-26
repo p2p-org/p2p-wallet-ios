@@ -94,14 +94,14 @@ extension Resolver: ResolverRegistering {
         
         // MARK: - Swap
         register {
-            SwapServiceImpl(
+            SwapServiceWithRelayImpl(
                 solanaClient: Resolver.resolve(),
                 accountStorage: Resolver.resolve(),
                 feeRelay: Resolver.resolve(),
                 orcaSwap: Resolver.resolve()
             )
         }
-            .implements(SwapServiceType.self)
+            .implements(Swap.Service.self)
             .scope(.session)
         
         register {
