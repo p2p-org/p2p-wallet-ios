@@ -159,7 +159,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         loadingStateSubject.accept(.loading)
 
         Completable.zip(
-            feeService.load()
+            feeService.load(),
+            swapService.load()
         )
             .subscribe(onCompleted: {[weak self] in
                 self?.loadingStateSubject.accept(.loaded)

@@ -12,6 +12,8 @@ import FeeRelayerSwift
 import OrcaSwapSwift
 
 protocol SwapServiceType {
+    func load() -> Completable
+    
     func getPoolPair(
         from sourceMint: String,
         to destinationMint: String,
@@ -21,14 +23,14 @@ protocol SwapServiceType {
     
     func swap(
         sourceAddress: String,
-        sourceTokenMint: String,
+        sourceTokenMint: String?,
         destinationAddress: String,
         destinationTokenMint: String?,
         payingTokenAddress: String,
         payingTokenMint: String,
         poolPair: Swap.PoolsPair,
-        amount: UInt64,
-        slippage: Double
+        amount: UInt64, slippage:
+        Double
     ) -> Single<[String]>
     
     func getFees(
@@ -84,11 +86,18 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     let feeRelay: FeeRelayerAPIClientType
     let orcaSwap: OrcaSwapType
     
+    // TODO: Remove me
+    @Injected var notificationsService: NotificationsServiceType
+    
     init(solanaClient: SolanaSDK, accountStorage: SolanaSDKAccountStorage, feeRelay: FeeRelayerAPIClientType, orcaSwap: OrcaSwapType) {
         self.solanaClient = solanaClient
         self.accountStorage = accountStorage
         self.feeRelay = feeRelay
         self.orcaSwap = orcaSwap
+    }
+    
+    func load() -> Completable {
+        orcaSwap.load()
     }
     
     func getSwapInfo(from sourceToken: SolanaSDK.Token, to destinationToken: SolanaSDK.Token) -> Swap.SwapInfo {
@@ -110,7 +119,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         as inputMode: Swap.InputMode
     ) -> Single<[Swap.PoolsPair]> {
         orcaSwap.getTradablePoolsPairs(fromMint: sourceMint, toMint: destinationMint)
-            .map { result in result.map { $0.toPoolsPair() } }
+        .map { result in result.map { $0.toPoolsPair() } }
     }
     
     func getFees(
@@ -145,7 +154,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     
     func swap(
         sourceAddress: String,
-        sourceTokenMint: String,
+        sourceTokenMint: String?,
         destinationAddress: String,
         destinationTokenMint: String?,
         payingTokenAddress: String,
@@ -154,6 +163,47 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         amount: UInt64,
         slippage: Double
     ) -> Single<[String]> {
+        if sourceAddress == accountStorage.account?.publicKey.base58EncodedString {
+            // sol -> spl, replay doesn't support it
+            guard let decimals = poolPair.orcaPoolPair[0].getTokenADecimals() else {
+                return .error(OrcaSwapError.invalidPool)
+            }
+            
+            #if DEBUG
+            notificationsService.showInAppNotification(.message("Use orca"))
+            #endif
+            
+            return orcaSwap.swap(
+                fromWalletPubkey: sourceAddress,
+                toWalletPubkey: destinationAddress,
+                bestPoolsPair: poolPair.orcaPoolPair,
+                amount: amount.convertToBalance(decimals: decimals),
+                slippage: slippage,
+                isSimulation: false
+            ).map { response in [response.transactionId] }
+        } else if destinationAddress == accountStorage.account?.publicKey.base58EncodedString {
+            // spl -> sol, bug in error
+            guard let decimals = poolPair.orcaPoolPair[0].getTokenADecimals() else {
+                return .error(OrcaSwapError.invalidPool)
+            }
+            
+            #if DEBUG
+            notificationsService.showInAppNotification(.message("Use orca"))
+            #endif
+            
+            return orcaSwap.swap(
+                fromWalletPubkey: sourceAddress,
+                toWalletPubkey: destinationAddress,
+                bestPoolsPair: poolPair.orcaPoolPair,
+                amount: amount.convertToBalance(decimals: decimals),
+                slippage: slippage,
+                isSimulation: false
+            ).map { response in [response.transactionId] }
+        }
+        
+        guard let sourceTokenMint = sourceTokenMint else { return .error(SolanaSDK.Error.other("Invalid mint address"))}
+        
+        // spl -> spl, use relay
         do {
             let relay = try FeeRelayer.Relay(
                 apiClient: feeRelay,
@@ -162,19 +212,23 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 orcaSwapClient: orcaSwap
             )
             
+            #if DEBUG
+            notificationsService.showInAppNotification(.message("Use relay"))
+            #endif
+            
             return relay
-                .load()
-                .andThen(
-                    relay.topUpAndSwap(
-                        sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
-                        destinationTokenMint: destinationAddress,
-                        destinationAddress: destinationTokenMint,
-                        payingFeeToken: FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint),
-                        swapPools: poolPair.orcaPoolPair,
-                        inputAmount: amount,
-                        slippage: slippage
-                    )
+            .load()
+            .andThen(
+                relay.topUpAndSwap(
+                    sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
+                    destinationTokenMint: destinationAddress,
+                    destinationAddress: destinationTokenMint,
+                    payingFeeToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
+                    swapPools: poolPair.orcaPoolPair,
+                    inputAmount: amount,
+                    slippage: slippage
                 )
+            )
         } catch {
             return .error(error)
         }
@@ -205,14 +259,14 @@ extension Array where Element == Swap.PoolsPair {
     }
     
     func findBestPoolsPairForInputAmount(_ inputAmount: UInt64) -> Swap.PoolsPair? {
-        guard count > 0 else {return nil}
+        guard count > 0 else { return nil }
         
         var bestPools: Swap.PoolsPair?
         var bestEstimatedAmount: UInt64 = 0
         
         for pair in self {
             guard let estimatedAmount = pair.orcaPoolPair.getOutputAmount(fromInputAmount: inputAmount)
-                else {continue}
+                else { continue }
             if estimatedAmount > bestEstimatedAmount {
                 bestEstimatedAmount = estimatedAmount
                 bestPools = pair
