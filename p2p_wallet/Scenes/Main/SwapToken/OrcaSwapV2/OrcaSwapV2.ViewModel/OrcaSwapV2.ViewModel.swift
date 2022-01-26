@@ -16,7 +16,7 @@ extension OrcaSwapV2 {
         @Injected var authenticationHandler: AuthenticationHandlerType
         @Injected var analyticsManager: AnalyticsManagerType
         @Injected var feeService: FeeServiceType
-        @Injected var orcaSwap: OrcaSwapType
+        @Injected var swapService: Swap.Service
         @Injected var walletsRepository: WalletsRepository
         
         // MARK: - Properties
@@ -29,13 +29,15 @@ extension OrcaSwapV2 {
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        let tradablePoolsPairsSubject = LoadableRelay<[OrcaSwap.PoolsPair]>(request: .just([]))
-        let bestPoolsPairSubject = BehaviorRelay<OrcaSwap.PoolsPair?>(value: nil)
+        let tradablePoolsPairsSubject = LoadableRelay<[Swap.PoolsPair]>(request: .just([]))
+        let bestPoolsPairSubject = BehaviorRelay<Swap.PoolsPair?>(value: nil)
         let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
         let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
         let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
         let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
-        let payingTokenSubject = BehaviorRelay<PayingToken>(value: .nativeSOL) // FIXME
+        let payingTokenModeSubject = BehaviorRelay<PayingToken>(value: .nativeSOL) // FIXME
+        let payingTokenSubject = BehaviorRelay<(String, String)>(value: ("", "")) // FIXME address, mint
+        
         let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
         let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
@@ -63,6 +65,8 @@ extension OrcaSwapV2 {
                     })
                     .disposed(by: disposeBag)
             }
+    
+            payingTokenSubject.accept((walletsRepository.nativeWallet!.pubkey!, walletsRepository.nativeWallet!.mintAddress))
             
             // update wallet after swapping
             walletsRepository.dataObservable
@@ -99,10 +103,13 @@ extension OrcaSwapV2 {
                         return
                     }
                     
-                    self.tradablePoolsPairsSubject.request = self.orcaSwap.getTradablePoolsPairs(
-                        fromMint: sourceWallet.token.address,
-                        toMint: destinationWallet.token.address
+                    self.tradablePoolsPairsSubject.request = self.swapService.getPoolPair(
+                        from: sourceWallet.token.address,
+                        to: destinationWallet.token.address,
+                        amount: 1000, // TODO: fix me
+                        as: .source
                     )
+                    
                     self.tradablePoolsPairsSubject.reload()
                     self.fixPayingToken()
                 })
@@ -147,7 +154,7 @@ extension OrcaSwapV2 {
                 bestPoolsPairSubject,
                 feesSubject.valueObservable,
                 slippageSubject,
-                payingTokenSubject
+                payingTokenModeSubject
             )
                 .map {[weak self] _ in self?.verify() }
                 .bind(to: errorSubject)
@@ -208,15 +215,17 @@ extension OrcaSwapV2 {
             )
             
             // form request
-            let request = orcaSwap.swap(
-                fromWalletPubkey: sourceWallet.pubkey!,
-                toWalletPubkey: destinationWallet.pubkey,
-                bestPoolsPair: bestPoolsPair,
-                amount: inputAmount,
-                slippage: slippageSubject.value,
-                isSimulation: false
-            )
-                .map {$0 as ProcessTransactionResponseType}
+            let request = swapService.swap(
+                sourceAddress: sourceWallet.pubkey!,
+                sourceTokenMint: sourceWallet.mintAddress,
+                destinationAddress: destinationWallet.pubkey!,
+                destinationTokenMint: destinationWallet.mintAddress,
+                payingTokenAddress: payingTokenSubject.value.0,
+                payingTokenMint: payingTokenSubject.value.1,
+                poolPair: bestPoolsPair,
+                amount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
+                slippage: slippageSubject.value
+            ).map {$0.first ?? "" as ProcessTransactionResponseType}
             
             // show processing scene
             navigationSubject.accept(
@@ -248,7 +257,7 @@ extension OrcaSwapV2.ViewModel {
             payingToken = .nativeSOL
         }
 
-        payingTokenSubject.accept(payingToken)
+        payingTokenModeSubject.accept(payingToken)
     }
     
     /// Verify error in current context IN ORDER
@@ -322,7 +331,7 @@ extension OrcaSwapV2.ViewModel {
         }
         
         // paying with SOL
-        if payingTokenSubject.value == .nativeSOL {
+        if payingTokenModeSubject.value == .nativeSOL {
             guard let wallet = walletsRepository.nativeWallet else {
                 return .nativeWalletNotFound
             }
@@ -362,7 +371,7 @@ extension OrcaSwapV2.ViewModel {
         }
 
         // paying with native wallet
-        if payingTokenSubject.value == .nativeSOL && !sourceWallet.isNativeSOL {
+        if payingTokenModeSubject.value == .nativeSOL && !sourceWallet.isNativeSOL {
             return sourceWallet.amount
         }
         // paying with wallet itself
@@ -398,11 +407,11 @@ extension OrcaSwapV2.ViewModel {
             let myWalletsMints = self.walletsRepository.getWallets().compactMap {$0.token.address}
             let slippage = self.slippageSubject.value
             
-            guard let fees = try? self.orcaSwap.getFees(
+            guard let fees = try? self.swapService.getFees(
                 myWalletsMints: myWalletsMints,
                 fromWalletPubkey: sourceWalletPubkey,
                 toWalletPubkey: destinationWallet?.pubkey,
-                bestPoolsPair: bestPoolsPair,
+                bestPoolsPair: bestPoolsPair?.orcaPoolPair,
                 inputAmount: inputAmount,
                 slippage: slippage,
                 lamportsPerSignature: lamportsPerSignature,
@@ -424,7 +433,7 @@ extension OrcaSwapV2.ViewModel {
                         )
                     )
                 } else if fees.liquidityProviderFees.count == 2 {
-                    if let intermediaryTokenName = bestPoolsPair?[0].tokenBName, let decimals = bestPoolsPair?[0].getTokenBDecimals() {
+                    if let intermediaryTokenName = bestPoolsPair?.orcaPoolPair[0].tokenBName, let decimals = bestPoolsPair?.orcaPoolPair[0].getTokenBDecimals() {
                         allFees.append(
                             .init(
                                 type: .liquidityProviderFee,

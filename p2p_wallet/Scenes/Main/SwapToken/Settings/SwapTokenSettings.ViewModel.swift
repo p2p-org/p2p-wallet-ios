@@ -43,7 +43,7 @@ extension SwapTokenSettings {
                 .init(
                     wallet: nativeWallet,
                     tokenLabelText: nativeWallet?.token.symbol,
-                    isSelected: swapViewModel.payingTokenSubject.value == .nativeSOL,
+                    isSelected: swapViewModel.payingTokenModeSubject.value == .nativeSOL,
                     onTapHandler: { [weak self] in
                         self?.swapViewModel.changePayingToken(to: .nativeSOL)
                     }
@@ -55,9 +55,9 @@ extension SwapTokenSettings {
                     .init(
                         wallet: nil,
                         tokenLabelText: tokensName,
-                        isSelected: swapViewModel.payingTokenSubject.value == .transactionToken,
+                        isSelected: swapViewModel.payingTokenModeSubject.value == .splToken,
                         onTapHandler: { [weak self] in
-                            self?.swapViewModel.changePayingToken(to: .transactionToken)
+                            self?.swapViewModel.changePayingToken(to: .splToken)
                         }
                     )
                 )
