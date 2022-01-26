@@ -20,7 +20,7 @@ extension Settings {
         
         override func setUp() {
             super.setUp()
-            view.backgroundColor = .fafafc
+            view.backgroundColor = .settingsBackground
         }
         
         override func build() -> UIView {
@@ -42,7 +42,13 @@ extension Settings {
                                     .disposed(by: disposeBag)
                             }
                         )
-                            .onTap { [unowned self] in viewModel.navigate(to: .username) }
+                            .onTap { [unowned self] in
+                                if (self.viewModel.getUsername() == nil) {
+                                    viewModel.showOrReserveUsername()
+                                } else {
+                                    viewModel.navigate(to: .username)
+                                }
+                            }
                         
                         // Contact
                         // CellView(icon: .contactIcon, title: L10n.contact.onlyUppercaseFirst())
@@ -92,7 +98,8 @@ extension Settings {
                             icon: .faceIdIcon,
                             title: L10n.useFaceId.onlyUppercaseFirst(),
                             trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
-                                viewModel.isBiometryEnabled.drive(switcher.rx.value).disposed(by: disposeBag)
+                                viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled).disposed(by: disposeBag)
+                                viewModel.isBiometryEnabledDriver.drive(switcher.rx.value).disposed(by: disposeBag)
                                 switcher.rx
                                     .controlEvent(.valueChanged)
                                     .withLatestFrom(switcher.rx.value)
@@ -154,7 +161,8 @@ extension Settings {
                                     .drive(label.rx.text)
                                     .disposed(by: disposeBag)
                             }
-                        ).onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
+                        )
+                            .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
                         
                         // Appearance
                         CellView(
