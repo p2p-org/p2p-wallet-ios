@@ -36,7 +36,7 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
-        @Injected var solanaAPIClient: SendTokenAPIClient
+        @Injected var sendService: SendServiceType
         @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
@@ -93,7 +93,7 @@ extension SendToken {
             switch network {
             case .solana:
                 if wallet.isNativeSOL {
-                    request = solanaAPIClient.sendNativeSOL(
+                    request = sendService.sendNativeSOL(
                         to: receiver,
                         amount: amount,
                         withoutFee: Defaults.useFreeTransaction,
@@ -103,7 +103,7 @@ extension SendToken {
                 
                 // other tokens
                 else {
-                    request = solanaAPIClient.sendSPLTokens(
+                    request = sendService.sendSPLTokens(
                         mintAddress: wallet.mintAddress,
                         decimals: wallet.token.decimals,
                         from: sender,
@@ -166,8 +166,8 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         ]
     }
     
-    func getAPIClient() -> SendTokenAPIClient {
-        solanaAPIClient
+    func getAPIClient() -> SendServiceType {
+        sendService
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
@@ -217,6 +217,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         guard let recipient = recipientSubject.value else {return false}
         return recipient.name == nil &&
             recipient.address
-                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()))
+                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: sendService.isTestNet()))
     }
 }

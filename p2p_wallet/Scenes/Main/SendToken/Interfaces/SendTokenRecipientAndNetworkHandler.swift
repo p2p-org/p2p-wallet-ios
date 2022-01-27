@@ -13,7 +13,7 @@ protocol SendTokenRecipientAndNetworkHandler {
     var networkSubject: BehaviorRelay<SendToken.Network> {get}
     
     func getSelectedWallet() -> Wallet?
-    func getAPIClient() -> SendTokenAPIClient
+    func getAPIClient() -> SendServiceType
 }
 
 extension SendTokenRecipientAndNetworkHandler {
