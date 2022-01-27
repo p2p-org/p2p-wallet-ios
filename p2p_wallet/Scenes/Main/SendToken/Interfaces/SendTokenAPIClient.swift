@@ -1,5 +1,5 @@
 //
-//  SendTokenAPIClient.swift
+//  SendServiceType.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 27/09/2021.
@@ -8,14 +8,16 @@
 import Foundation
 import RxSwift
 import FeeRelayerSwift
+import OrcaSwapSwift
 
-protocol SendTokenAPIClient {
+protocol SendServiceType {
+    func load() -> Completable
     func getFees() -> Single<SolanaSDK.Fee>
     func checkAccountValidation(account: String) -> Single<Bool>
     func sendNativeSOL(
         to destination: String,
         amount: UInt64,
-        withoutFee: Bool,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?,
         isSimulation: Bool
     ) -> Single<SolanaSDK.TransactionID>
     func sendSPLTokens(
@@ -24,53 +26,85 @@ protocol SendTokenAPIClient {
         from fromPublicKey: String,
         to destinationAddress: String,
         amount: UInt64,
-        withoutFee: Bool,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?,
         isSimulation: Bool
     ) -> Single<SolanaSDK.TransactionID>
     func isTestNet() -> Bool
 }
 
-extension SolanaSDK: SendTokenAPIClient {
-    func sendNativeSOL(to destination: String, amount: UInt64, withoutFee: Bool, isSimulation: Bool) -> Single<TransactionID> {
-        if withoutFee {
-            let feeRelayerAPIClient = FeeRelayer.APIClient(version: 1)
-            
+class SendService: SendServiceType {
+    @Injected private var solanaSDK: SolanaSDK
+    @Injected private var orcaSwap: OrcaSwapType
+    @Injected private var feeRelayerAPIClient: FeeRelayerAPIClientType
+    @Injected private var relayService: FeeRelayerRelayType
+    
+    func load() -> Completable {
+        orcaSwap.load()
+            .andThen(relayService.load())
+    }
+    
+    func getFees() -> Single<SolanaSDK.Fee> {
+        solanaSDK.getFees(commitment: nil)
+    }
+    
+    func checkAccountValidation(account: String) -> Single<Bool> {
+        solanaSDK.checkAccountValidation(account: account)
+    }
+    
+    func sendNativeSOL(
+        to destination: String,
+        amount: UInt64,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?,
+        isSimulation: Bool
+    ) -> Single<SolanaSDK.TransactionID> {
+        // fee relayer
+        if let payingFeeToken = payingFeeToken,
+           payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+        {
             return feeRelayerAPIClient.getFeePayerPubkey()
                 .flatMap { [weak self] feePayer -> Single<SolanaSDK.PreparedTransaction> in
                     guard let self = self else {return .error(SolanaSDK.Error.unknown)}
                     let feePayer = try SolanaSDK.PublicKey(string: feePayer)
-                    return self.prepareSendingNativeSOL(to: destination, amount: amount, feePayer: feePayer)
+                    return self.solanaSDK.prepareSendingNativeSOL(to: destination, amount: amount, feePayer: feePayer)
                 }
                 .flatMap { [weak self] preparedTransaction in
-                    guard let self = self, let blockhash = preparedTransaction.transaction.recentBlockhash else {return .error(SolanaSDK.Error.unknown)}
-                    guard let account = self.accountStorage.account else {return .error(SolanaSDK.Error.unauthorized)}
-                    let signature = try preparedTransaction.findSignature(publicKey: account.publicKey)
-                    return feeRelayerAPIClient.sendTransactionAndLog(
-                        .transferSOL(
-                            .init(
-                                sender: account.publicKey.base58EncodedString,
-                                recipient: destination,
-                                amount: amount,
-                                signature: signature,
-                                blockhash: blockhash
-                            )
-                        )
+                    guard let self = self else { throw SolanaSDK.Error.unknown }
+                    return self.relayService.topUpAndRelayTransaction(
+                        preparedTransaction: preparedTransaction,
+                        payingFeeToken: payingFeeToken
                     )
+                        .map {$0.first ?? ""}
                 }
-        } else {
-            return sendNativeSOL(to: destination, amount: amount, isSimulation: isSimulation)
+                .do(onSuccess: {
+                    Logger.log(message: "\($0)", event: .response)
+                }, onError: {
+                    Logger.log(message: "\($0)", event: .error)
+                })
+        }
+        // no fee relayer
+        else {
+            return solanaSDK.sendNativeSOL(to: destination, amount: amount, isSimulation: isSimulation)
         }
     }
     
-    func sendSPLTokens(mintAddress: String, decimals: Decimals, from fromPublicKey: String, to destinationAddress: String, amount: UInt64, withoutFee: Bool, isSimulation: Bool) -> Single<TransactionID> {
-        if withoutFee {
-            let feeRelayerAPIClient = FeeRelayer.APIClient(version: 1)
-            
+    func sendSPLTokens(
+        mintAddress: String,
+        decimals: SolanaSDK.Decimals,
+        from fromPublicKey: String,
+        to destinationAddress: String,
+        amount: UInt64,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?,
+        isSimulation: Bool
+    ) -> Single<SolanaSDK.TransactionID> {
+        // fee relayer
+        if let payingFeeToken = payingFeeToken,
+           payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+        {
             return feeRelayerAPIClient.getFeePayerPubkey()
-                .flatMap { [weak self] feePayer -> Single<(preparedTransaction: PreparedTransaction, realDestination: String)> in
+                .flatMap { [weak self] feePayer -> Single<(preparedTransaction: SolanaSDK.PreparedTransaction, realDestination: String)> in
                     guard let self = self else {return .error(SolanaSDK.Error.unknown)}
                     let feePayer = try SolanaSDK.PublicKey(string: feePayer)
-                    return self.prepareSendingSPLTokens(
+                    return self.solanaSDK.prepareSendingSPLTokens(
                         mintAddress: mintAddress,
                         decimals: decimals,
                         from: fromPublicKey,
@@ -80,29 +114,23 @@ extension SolanaSDK: SendTokenAPIClient {
                         transferChecked: true
                     )
                 }
-                .flatMap { [weak self] result in
-                    let preparedTransaction = result.preparedTransaction
-                    let realDestination = result.realDestination
-                    guard let self = self, let blockhash = preparedTransaction.transaction.recentBlockhash else {return .error(SolanaSDK.Error.unknown)}
-                    guard let account = self.accountStorage.account else {return .error(SolanaSDK.Error.unauthorized)}
-                    let signature = try preparedTransaction.findSignature(publicKey: account.publicKey)
-                    return feeRelayerAPIClient.sendTransactionAndLog(
-                        .transferSPLToken(
-                            .init(
-                                sender: fromPublicKey,
-                                recipient: realDestination,
-                                mintAddress: mintAddress,
-                                authority: account.publicKey.base58EncodedString,
-                                amount: amount,
-                                decimals: decimals,
-                                signature: signature,
-                                blockhash: blockhash
-                            )
-                        )
+                .flatMap { [weak self] params in
+                    guard let self = self else { throw SolanaSDK.Error.unknown }
+                    let preparedTransaction = params.preparedTransaction
+//                    let realDestination = params.realDestination
+                    return self.relayService.topUpAndRelayTransaction(
+                        preparedTransaction: preparedTransaction,
+                        payingFeeToken: payingFeeToken
                     )
+                        .map {$0.first ?? ""}
                 }
+                .do(onSuccess: {
+                    Logger.log(message: "\($0)", event: .response)
+                }, onError: {
+                    Logger.log(message: "\($0)", event: .error)
+                })
         } else {
-            return sendSPLTokens(
+            return solanaSDK.sendSPLTokens(
                 mintAddress: mintAddress,
                 decimals: decimals,
                 from: fromPublicKey,
@@ -113,31 +141,7 @@ extension SolanaSDK: SendTokenAPIClient {
         }
     }
     
-    func getFees() -> Single<Fee> {
-        getFees(commitment: nil)
-    }
-    
     func isTestNet() -> Bool {
-        endpoint.network.isTestnet
-    }
-}
-
-private extension FeeRelayer.APIClient {
-    func sendTransactionAndLog(_ requestType: FeeRelayer.RequestType) -> Single<SolanaSDK.TransactionID> {
-        // log request
-        if let data = try? requestType.getParams(),
-           let message = String(data: data, encoding: .utf8)
-        {
-            Logger.log(message: message, event: .request)
-        }
-        
-        // send
-        return sendTransaction(requestType)
-            .map {$0.replacingOccurrences(of: "\"", with: "")}
-            .do(onSuccess: {
-                Logger.log(message: "\($0)", event: .response)
-            }, onError: {
-                Logger.log(message: "\($0)", event: .error)
-            })
+        solanaSDK.endpoint.network.isTestnet
     }
 }
