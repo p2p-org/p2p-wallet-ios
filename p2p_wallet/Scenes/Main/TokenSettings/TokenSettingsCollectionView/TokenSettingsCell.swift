@@ -10,7 +10,7 @@ import Action
 import BECollectionView
 
 protocol TokenSettingsCellDelegate: AnyObject {
-    func tokenSettingsCellDidToggleVisibility(_ cell: TokenSettingsCell)
+    func tokenSettingsCellDidToggleVisibility(_: TokenSettingsCell)
 }
 
 class TokenSettingsCell: BaseCollectionViewCell {
@@ -44,10 +44,10 @@ class TokenSettingsCell: BaseCollectionViewCell {
         addSubview(separator)
         separator.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
         
-        isVisibleSwitcher.addTarget(self, action: #selector(switchChanged(_:)), for: .valueChanged)
+        isVisibleSwitcher.addTarget(self, action: #selector(switchChanged), for: .valueChanged)
     }
     
-    @objc func switchChanged(_ mySwitch: UISwitch) {
+    @objc func switchChanged() {
         delegate?.tokenSettingsCellDidToggleVisibility(self)
     }
 }

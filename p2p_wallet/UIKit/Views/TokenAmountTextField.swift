@@ -9,9 +9,6 @@ import Foundation
 
 class TokenAmountTextField: BEDecimalTextField {
     private var decimals: SolanaSDK.Decimals?
-    var value: Double {
-        text.map {$0.double ?? 0} ?? 0
-    }
     
     func setUp(decimals: SolanaSDK.Decimals?) {
         self.decimals = decimals

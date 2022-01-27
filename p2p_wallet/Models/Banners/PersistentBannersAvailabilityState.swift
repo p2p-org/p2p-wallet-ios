@@ -36,11 +36,4 @@ final class PersistentBannersAvailabilityState: BannersAvailabilityStateType {
             self?.usernameBannerIsAvailableSubject.accept(isAvailable)
         })
     }
-
-    private func keypath(of banner: BannerKind) -> KeyPath<DefaultsKeys, DefaultsKey<Bool>> {
-        switch banner {
-        case .reserveUsername:
-            return \.forceCloseNameServiceBanner
-        }
-    }
 }

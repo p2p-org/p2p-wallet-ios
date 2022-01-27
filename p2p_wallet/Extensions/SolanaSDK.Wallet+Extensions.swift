@@ -11,11 +11,6 @@ typealias Wallet = SolanaSDK.Wallet
 
 struct SolanaWalletUserInfo: Hashable {
     var price: CurrentPrice?
-    var _isHidden = false
-    var isProcessing: Bool?
-    var _customName: String?
-    var isBeingCreated: Bool?
-    var creatingError: String?
 }
 
 extension SolanaSDK.Wallet {
@@ -41,39 +36,6 @@ extension SolanaSDK.Wallet {
         return false
     }
     
-    var isBeingCreated: Bool? {
-        get {
-            getParsedUserInfo().isBeingCreated
-        }
-        set {
-            var userInfo = getParsedUserInfo()
-            userInfo.isBeingCreated = newValue
-            self.userInfo = userInfo
-        }
-    }
-    
-    var creatingError: String? {
-        get {
-            getParsedUserInfo().creatingError
-        }
-        set {
-            var userInfo = getParsedUserInfo()
-            userInfo.creatingError = newValue
-            self.userInfo = userInfo
-        }
-    }
-    
-    var isProcessing: Bool? {
-        get {
-            getParsedUserInfo().isProcessing
-        }
-        set {
-            var userInfo = getParsedUserInfo()
-            userInfo.isProcessing = newValue
-            self.userInfo = userInfo
-        }
-    }
-    
     var price: CurrentPrice? {
         get {
             getParsedUserInfo().price
@@ -92,19 +54,7 @@ extension SolanaSDK.Wallet {
     var amountInCurrentFiat: Double {
         amount * priceInCurrentFiat
     }
-    
-    mutating func updateVisibility() {
-        var userInfo = getParsedUserInfo()
-        userInfo._isHidden = isHidden
-        self.userInfo = userInfo
-    }
-    
-    mutating func setName(_ name: String) {
-        var userInfo = getParsedUserInfo()
-        userInfo._customName = name
-        self.userInfo = userInfo
-    }
-    
+        
     func getParsedUserInfo() -> SolanaWalletUserInfo {
         userInfo as? SolanaWalletUserInfo ?? SolanaWalletUserInfo()
     }

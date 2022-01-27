@@ -42,10 +42,6 @@ class WLNavigationBar: BEView {
         
         backgroundColor = .background
     }
-    
-    func setTitle(_ title: String?) {
-        titleLabel.text = title
-    }
 }
 
 class NewWLNavigationBar: BECompositionView {
@@ -63,14 +59,7 @@ class NewWLNavigationBar: BECompositionView {
         self.actions = BEContainer()
         super.init()
     }
-    
-    init(initialTitle: String? = nil, separatorEnable: Bool = true, @BEViewBuilder actions: Builder) {
-        self.initialTitle = initialTitle
-        self.separatorEnable = separatorEnable
-        self.actions = actions().build()
-        super.init()
-    }
-    
+
     @discardableResult
     func onBack(_ callback: @escaping () -> Void) -> Self {
         backButton.onTap(callback)
@@ -91,7 +80,7 @@ class NewWLNavigationBar: BECompositionView {
                     
                     // Title
                     UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
-                        .setup { view in
+                        .setup { _ in
                             self.titleLabel = titleLabel
                         }
                     

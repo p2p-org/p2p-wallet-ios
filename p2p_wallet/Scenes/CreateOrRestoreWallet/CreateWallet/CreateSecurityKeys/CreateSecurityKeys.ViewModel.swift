@@ -18,7 +18,6 @@ protocol CreateSecurityKeysViewModelType: AnyObject {
     func copyToClipboard()
     func renewPhrases()
 
-    func showTermsAndConditions()
     func saveToICloud()
     func back()
     func verifyPhrase()
@@ -35,9 +34,6 @@ extension CreateSecurityKeys {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
 
-        // MARK: - Properties
-        private let disposeBag = DisposeBag()
-        
         // MARK: - Subjects
         private let showTermsAndConditionsSubject = PublishRelay<Void>()
         private let phrasesSubject = BehaviorRelay<[String]>(value: [])
@@ -74,11 +70,6 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
 
     // MARK: - Actions
-    func showTermsAndConditions() {
-        analyticsManager.log(event: .createWalletTermsAndConditionsClick)
-        showTermsAndConditionsSubject.accept(())
-    }
-    
     func renewPhrases() {
         analyticsManager.log(event: .createWalletRenewSeedClick)
         createPhrases()

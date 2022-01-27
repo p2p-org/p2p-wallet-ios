@@ -15,9 +15,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandl
     var isLoadingDriver: Driver<Bool> { get }
     var isRestorableUsingIcloud: Driver<Bool> { get }
     var errorSignal: Signal<String> { get }
-    var finishedSignal: Signal<Void> { get }
-    
-    func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?)
+
     func handleICloudAccount(_ account: Account)
     func restoreFromICloud()
     func restoreManually()
@@ -68,11 +66,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     var errorSignal: Signal<String> {
         errorSubject.asSignal()
     }
-    
-    var finishedSignal: Signal<Void> {
-        finishedSubject.asSignal()
-    }
-    
+
     // MARK: - Actions
     func restoreFromICloud() {
         deviceOwnerAuthenticationHandler.requiredOwner {

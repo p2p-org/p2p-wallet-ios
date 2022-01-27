@@ -11,7 +11,6 @@ import RxSwift
 extension EnterSeedInfo {
     class RootView: BEView {
         // MARK: - Constants
-        let disposeBag = DisposeBag()
         
         // MARK: - Properties
         private let viewModel: EnterSeedInfoViewModelType

@@ -32,7 +32,7 @@ class WLOverviewView: WLFloatingPanelView {
         fatalError("Must override")
     }
     
-    func createButton(image: UIImage, title: String) -> UIView {
+    func createButton(title: String) -> UIView {
         let view = UIView(forAutoLayout: ())
         
         let stackView = UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill)

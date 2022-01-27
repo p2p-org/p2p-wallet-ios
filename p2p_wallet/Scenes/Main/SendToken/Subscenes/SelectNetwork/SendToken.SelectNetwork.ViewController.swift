@@ -103,7 +103,6 @@ extension SendToken.SelectNetwork {
     }
     
     private class _NetworkView: SendToken.NetworkView {
-        fileprivate var network: SendToken.Network?
         fileprivate lazy var tickView = UIImageView(width: 14.3, height: 14.19, image: .tick, tintColor: .h5887ff)
         
         override init() {

@@ -9,8 +9,6 @@ import Foundation
 import RxSwift
 import BECollectionView
 
-protocol AccountsListViewModelType: BEListViewModelType {}
-
 extension RestoreICloud {
     class AccountsListViewModel: BEListViewModel<ParsedAccount> {
         // MARK: - Dependencies

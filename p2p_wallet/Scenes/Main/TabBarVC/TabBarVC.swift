@@ -13,7 +13,6 @@ protocol TabBarNeededViewController: UIViewController {}
 
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
-    private let disposeBag = DisposeBag()
     private var tabBarTopConstraint: NSLayoutConstraint!
     
     deinit {

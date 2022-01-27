@@ -60,9 +60,4 @@ class ErrorView: MessageView {
         stackView.setCustomSpacing(56.adaptiveHeight, after: descriptionLabel)
         
     }
-    
-    func setUpWithError(_ error: Error) {
-        let description = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-        descriptionLabel.text = description + "\n" + L10n.pleaseTryAgainLater.uppercaseFirst
-    }
 }

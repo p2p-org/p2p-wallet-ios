@@ -18,7 +18,7 @@ class TokenSettingsSection: BEStaticSectionsCollectionView.Section {
 }
 
 extension TokenSettingsSection: TokenSettingsCellDelegate {
-    func tokenSettingsCellDidToggleVisibility(_ cell: TokenSettingsCell) {
+    func tokenSettingsCellDidToggleVisibility(_: TokenSettingsCell) {
         (self.viewModel as? TokenSettingsViewModel)?.toggleHideWallet()
     }
 }

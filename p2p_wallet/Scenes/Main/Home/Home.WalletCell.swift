@@ -60,12 +60,6 @@ extension Home {
                 indicatorColorView.backgroundColor = item.token.indicatorColor
             }
         }
-        
-        private func row(arrangedSubviews: [UIView]) -> UIStackView {
-            let stackView = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .equalSpacing)
-            stackView.addArrangedSubviews(arrangedSubviews)
-            return stackView
-        }
     }
 }
 

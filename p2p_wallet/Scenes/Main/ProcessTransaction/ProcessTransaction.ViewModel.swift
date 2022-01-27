@@ -105,30 +105,30 @@ extension ProcessTransaction {
                     fees: fees
                 )
                 
-            case .swap(let provider, let from, let to, let inputAmount, let estimatedAmount, let fees, let slippage, let isSimulation):
-                // form transaction
-                let transaction = SolanaSDK.SwapTransaction(
-                    source: from,
-                    sourceAmount: inputAmount,
-                    destination: to,
-                    destinationAmount: estimatedAmount,
-                    myAccountSymbol: nil
-                )
-                
-                // Execute
-                requestIndex = markAsRequestingAndSendRequest(
-                    transaction: transaction,
-                    fees: fees,
-                    overridingRequest: provider
-                        .swap(
-                            fromWallet: from,
-                            toWallet: to,
-                            amount: inputAmount,
-                            slippage: slippage,
-                            isSimulation: isSimulation
-                        )
-                        .map {$0 as ProcessTransactionResponseType}
-                )
+//            case .swap(let provider, let from, let to, let inputAmount, let estimatedAmount, let fees, let slippage, let isSimulation):
+//                // form transaction
+//                let transaction = SolanaSDK.SwapTransaction(
+//                    source: from,
+//                    sourceAmount: inputAmount,
+//                    destination: to,
+//                    destinationAmount: estimatedAmount,
+//                    myAccountSymbol: nil
+//                )
+//                
+//                // Execute
+//                requestIndex = markAsRequestingAndSendRequest(
+//                    transaction: transaction,
+//                    fees: fees,
+//                    overridingRequest: provider
+//                        .swap(
+//                            fromWallet: from,
+//                            toWallet: to,
+//                            amount: inputAmount,
+//                            slippage: slippage,
+//                            isSimulation: isSimulation
+//                        )
+//                        .map {$0 as ProcessTransactionResponseType}
+//                )
                 
             case .closeAccount(let wallet):
                 // form transaction
@@ -208,7 +208,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         switch transactionType {
         case .send:
             analyticsManager.log(event: .sendExplorerClick(txStatus: transactionStatus))
-        case .orcaSwap, .swap:
+        case .orcaSwap:
             analyticsManager.log(event: .swapExplorerClick(txStatus: transactionStatus))
         case .closeAccount:
             break
@@ -224,7 +224,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         switch transactionType {
         case .send:
             analyticsManager.log(event: .sendDoneClick(txStatus: transactionStatus))
-        case .orcaSwap, .swap:
+        case .orcaSwap:
             analyticsManager.log(event: .swapDoneClick(txStatus: transactionStatus))
         case .closeAccount:
             break
@@ -243,7 +243,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             switch transactionType {
             case .send:
                 event = .sendTryAgainClick(error: error)
-            case .orcaSwap, .swap:
+            case .orcaSwap:
                 event = .swapTryAgainClick(error: error)
             case .closeAccount:
                 break
@@ -267,7 +267,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             switch transactionType {
             case .send:
                 event = .sendCancelClick(error: error)
-            case .orcaSwap, .swap:
+            case .orcaSwap:
                 event = .swapCancelClick(error: error)
             case .closeAccount:
                 break

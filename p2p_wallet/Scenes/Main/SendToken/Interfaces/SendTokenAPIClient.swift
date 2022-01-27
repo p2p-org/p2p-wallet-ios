@@ -10,7 +10,6 @@ import RxSwift
 import FeeRelayerSwift
 
 protocol SendTokenAPIClient {
-    func getFees() -> Single<SolanaSDK.Fee>
     func checkAccountValidation(account: String) -> Single<Bool>
     func sendNativeSOL(
         to destination: String,

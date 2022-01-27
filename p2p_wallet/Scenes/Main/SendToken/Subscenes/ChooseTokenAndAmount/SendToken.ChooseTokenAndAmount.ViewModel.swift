@@ -17,8 +17,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {get}
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {get}
     var showAfterConfirmation: Bool {get}
-    var selectedNetwork: SendToken.Network? {get}
-    
+
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)
     func cancelSending()
     func toggleCurrencyMode()
@@ -39,7 +38,6 @@ extension SendTokenChooseTokenAndAmountViewModelType {
 extension SendToken.ChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var analyticsManager: AnalyticsManagerType
         private let sendTokenViewModel: SendTokenViewModelType
         
         // MARK: - Properties

@@ -12,9 +12,6 @@ import RxCocoa
 protocol PricesServiceType {
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {get}
     
-    func observePrice(of coinName: String) -> Observable<CurrentPrice?>
-    
-    func getCurrentPrices() -> [String: CurrentPrice]
     func currentPrice(for coinName: String) -> CurrentPrice?
     func clearCurrentPrices()
     
@@ -23,12 +20,6 @@ protocol PricesServiceType {
     
     func startObserving()
     func stopObserving()
-}
-
-extension PricesServiceType {
-    var solPrice: CurrentPrice? {
-        currentPrice(for: "SOL")
-    }
 }
 
 class PricesService {
@@ -108,16 +99,7 @@ extension PricesService: PricesServiceType {
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
         currentPricesSubject.asDriver()
     }
-    
-    func observePrice(of coinName: String) -> Observable<CurrentPrice?> {
-        currentPricesSubject.valueObservable
-            .map {$0?[coinName]}
-    }
-    
-    func getCurrentPrices() -> [String: CurrentPrice] {
-        currentPricesSubject.value ?? [:]
-    }
-    
+        
     func currentPrice(for coinName: String) -> CurrentPrice? {
         currentPricesSubject.value?[coinName]
     }

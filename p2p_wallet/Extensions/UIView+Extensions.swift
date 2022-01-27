@@ -9,13 +9,6 @@ import Foundation
 import Action
 
 extension UIView {
-    static func copyToClipboardButton(spacing: CGFloat = 10, tintColor: UIColor = .textSecondary) -> UIStackView {
-        UIStackView(axis: .horizontal, spacing: spacing, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: tintColor),
-            UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: tintColor)
-        ])
-    }
-    
     func showIndetermineHud() {
         // Hide all previous hud
         hideHud()

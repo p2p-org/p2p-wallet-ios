@@ -11,12 +11,8 @@ import RxCocoa
 
 extension ReceiveToken {
     class ReceiveSolanaView: BECompositionView {
-        private let disposeBag = DisposeBag()
-        
         private let viewModel: ReceiveTokenSolanaViewModelType
-        
-        private var qrView: UIView!
-        
+                
         init(viewModel: ReceiveTokenSolanaViewModelType) {
             self.viewModel = viewModel
             super.init()

@@ -22,9 +22,7 @@ extension ResetPinCodeWithSeedPhrases {
         // MARK: - Dependencies
         @Injected private var storage: PincodeSeedPhrasesStorage
         
-        // MARK: - Properties
-        private let disposeBag = DisposeBag()
-        
+        // MARK: - Properties        
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }

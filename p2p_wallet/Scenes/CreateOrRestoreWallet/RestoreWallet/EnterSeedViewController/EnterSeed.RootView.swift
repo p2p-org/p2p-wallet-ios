@@ -74,11 +74,6 @@ extension EnterSeed {
             textView.paste()
         }
 
-        @objc func resetAndTryAgainButtonDidTouch() {
-            textView.set(text: nil)
-            textView.becomeFirstResponder()
-        }
-
         // MARK: - Layout
         private func layout() {
             let separatorView = UIView()

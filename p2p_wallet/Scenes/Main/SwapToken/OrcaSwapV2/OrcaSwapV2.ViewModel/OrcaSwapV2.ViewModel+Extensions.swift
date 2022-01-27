@@ -169,11 +169,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             })
             .disposed(by: disposeBag)
     }
-    
-    func log(_ event: AnalyticsEvent) {
-        analyticsManager.log(event: event)
-    }
-    
+
     func navigate(to scene: OrcaSwapV2.NavigatableScene) {
         navigationSubject.accept(scene)
     }
@@ -193,11 +189,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         isSelectingSourceWallet = false
         navigationSubject.accept(.chooseDestinationWallet(currentlySelectedWallet: destinationWalletSubject.value, validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
     }
-    
-    func retryLoadingRoutes() {
-        tradablePoolsPairsSubject.reload()
-    }
-    
+
     func swapSourceAndDestination() {
         let source = sourceWalletSubject.value
         sourceWalletSubject.accept(destinationWalletSubject.value)
@@ -254,11 +246,6 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         }
     }
     
-    func changeSlippage(to slippage: Double) {
-        Defaults.slippage = slippage
-        slippageSubject.accept(slippage)
-    }
-
     func changePayingToken(to payingToken: PayingToken) {
         Defaults.payingToken = payingToken
         fixPayingToken()

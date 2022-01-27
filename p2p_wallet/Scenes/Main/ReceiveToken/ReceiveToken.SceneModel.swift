@@ -16,7 +16,6 @@ protocol ReceiveSceneModel: BESceneModel {
     var showHideAddressesInfoButtonTapSubject: PublishRelay<Void> { get }
     var addressesHintIsHiddenDriver: Driver<Bool> { get }
     var hideAddressesHintSubject: PublishRelay<Void> { get }
-    var updateLayoutDriver: Driver<Void> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
     var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
     var shouldShowChainsSwitcher: Bool { get }
@@ -26,7 +25,6 @@ protocol ReceiveSceneModel: BESceneModel {
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
 
     func switchToken(_ tokenType: ReceiveToken.TokenType)
-    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
     func showSelectionNetwork()
     func copyDirectAddress()
     func copyMintAddress()
@@ -34,7 +32,6 @@ protocol ReceiveSceneModel: BESceneModel {
 
 extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
-        @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
 
@@ -91,18 +88,6 @@ extension ReceiveToken {
         }
         
         var tokenTypeDriver: Driver<ReceiveToken.TokenType> { tokenTypeSubject.asDriver() }
-        
-        var updateLayoutDriver: Driver<Void> {
-            Driver.combineLatest(
-                    tokenTypeDriver,
-                    receiveBitcoinViewModel.isReceivingRenBTCDriver,
-                    receiveBitcoinViewModel.renBTCWalletCreatingDriver,
-                    receiveBitcoinViewModel.conditionAcceptedDriver,
-                    receiveBitcoinViewModel.addressDriver,
-                    receiveBitcoinViewModel.processingTxsDriver
-                )
-                .map { _ in () }.asDriver()
-        }
 
         var hasAddressesInfoDriver: Driver<Bool> {
             .just(hasAddressesInfo)
@@ -119,12 +104,7 @@ extension ReceiveToken {
         func switchToken(_ tokenType: ReceiveToken.TokenType) {
             tokenTypeSubject.accept(tokenType)
         }
-        
-        func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
-            clipboardManager.copyToClipboard(address)
-            analyticsManager.log(event: logEvent)
-        }
-        
+
         var shouldShowChainsSwitcher: Bool {
             receiveSolanaViewModel.tokenWallet == nil
         }

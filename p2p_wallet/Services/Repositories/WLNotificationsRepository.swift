@@ -14,7 +14,6 @@ enum WLNotification: Equatable {
 }
 
 protocol WLNotificationsRepository {
-    func getAllNotifications() -> [WLNotification]
     func observeAllNotifications() -> Observable<WLNotification>
 }
 

@@ -30,13 +30,7 @@ extension Moonpay {
         private let api: API
         
         init(api: API) { self.api = api }
-        
-        struct BuyQuoteRequest: Encodable {
-            let apiKey: String
-            let baseCurrencyCode: String
-            let baseCurrencyAmount: Int
-        }
-        
+                
         func getBuyQuote(baseCurrencyCode: String, quoteCurrencyCode: String, baseCurrencyAmount: Double) -> Single<BuyQuote> {
             request(.get, api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote",
                 parameters: [

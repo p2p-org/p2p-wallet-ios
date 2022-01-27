@@ -95,11 +95,6 @@ class CoinLogoImageView: BEView {
         }
     }
     
-    func with(wallet: Wallet) -> Self {
-        setUp(wallet: wallet)
-        return self
-    }
-    
     func with(token: SolanaSDK.Token?) -> Self {
         setUp(token: token)
         return self

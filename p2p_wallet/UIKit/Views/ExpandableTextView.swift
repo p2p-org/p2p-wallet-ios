@@ -92,10 +92,6 @@ final class ExpandableTextView: UIView {
         animatePlaceholder(reversed: textIsEmpty, force: !textIsEmpty)
     }
 
-    func setDidTouch(handler: (() -> Void)?) {
-        didTouchView = handler
-    }
-
     func paste() {
         textView.paste(nil)
     }

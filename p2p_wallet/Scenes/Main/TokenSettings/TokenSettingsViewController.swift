@@ -11,7 +11,7 @@ import Action
 import RxSwift
 
 @objc protocol TokenSettingsViewControllerDelegate: AnyObject {
-    @objc optional func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController)
+    @objc optional func tokenSettingsViewControllerDidCloseToken()
 }
 
 class TokenSettingsViewController: WLIndicatorModalVC {
@@ -100,7 +100,7 @@ extension TokenSettingsViewController: ProcessTransactionViewControllerDelegate 
         vc.dismiss(animated: true) { [weak self] in
             self?.dismiss(animated: true, completion: { [weak self] in
                 guard let strongSelf = self else {return}
-                strongSelf.delegate?.tokenSettingsViewControllerDidCloseToken?(strongSelf)
+                strongSelf.delegate?.tokenSettingsViewControllerDidCloseToken?()
             })
         }
     }

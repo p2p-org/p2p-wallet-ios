@@ -109,20 +109,20 @@ class NameService: NameServiceType {
 
 extension NameService {
     struct Name: Decodable {
-        let address: String?
         let name: String?
-        let parent: String?
     }
 
     struct Owner: Decodable {
-        let parentName, owner, ownerClass: String
+//        let parentName: String
+//        let ownerClass: String
+        let owner: String
         let name: String?
 //        let data: [JSONAny]
         
         enum CodingKeys: String, CodingKey {
-            case parentName = "parent_name"
+//            case parentName = "parent_name"
             case owner
-            case ownerClass = "class"
+//            case ownerClass = "class"
             case name
 //            case data
         }
@@ -140,6 +140,6 @@ extension NameService {
     }
     
     struct PostResponse: Decodable {
-        let signature: String
+//        let signature: String
     }
 }

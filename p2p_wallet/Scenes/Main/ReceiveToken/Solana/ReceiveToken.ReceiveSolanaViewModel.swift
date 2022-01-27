@@ -26,13 +26,11 @@ extension ReceiveToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
-        @Injected private var tokensRepository: TokensRepository
         private let navigationSubject: PublishRelay<NavigatableScene?>
         
         let pubkey: String
         let tokenWallet: Wallet?
-        private let disposeBag = DisposeBag()
-        
+
         init(
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
@@ -65,7 +63,7 @@ extension ReceiveToken {
             UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
         }
         
-        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        @objc private func saveImageCallback(_: UIImage, didFinishSavingWithError error: Error?, _: UnsafeRawPointer) {
             if let error = error {
                 notificationsService.showInAppNotification(.error(error))
             } else {

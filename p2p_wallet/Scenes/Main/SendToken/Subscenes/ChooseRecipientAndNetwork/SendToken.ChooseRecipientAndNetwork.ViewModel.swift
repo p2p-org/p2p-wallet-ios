@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenSelectNetworkViewModelType {
-    var showAfterConfirmation: Bool {get}
     var preSelectedNetwork: SendToken.Network? {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {get}
     var walletDriver: Driver<Wallet?> {get}
@@ -19,7 +18,6 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
     func getAPIClient() -> SendTokenAPIClient
-    func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
     func save()
     func navigateNext()
@@ -100,11 +98,7 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     func getAPIClient() -> SendTokenAPIClient {
         sendTokenViewModel.getAPIClient()
     }
-    
-    func getPrice(for symbol: String) -> Double {
-        sendTokenViewModel.getPrice(for: symbol)
-    }
-    
+
     func getSOLAndRenBTCPrices() -> [String: Double] {
         sendTokenViewModel.getSOLAndRenBTCPrices()
     }

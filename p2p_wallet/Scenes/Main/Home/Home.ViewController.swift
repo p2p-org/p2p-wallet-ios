@@ -130,8 +130,8 @@ extension Home {
                     vc.modalPresentationStyle = .custom
                     self.present(vc, animated: true, completion: nil)
                 }
-            case .sendToken(let address):
-                let vm = SendToken.ViewModel(walletPubkey: nil, destinationAddress: address)
+            case .sendToken:
+                let vm = SendToken.ViewModel(walletPubkey: nil)
                 let vc = SendToken.ViewController(viewModel: vm)
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))

@@ -70,12 +70,12 @@ class DimmingPresentationController: UIPresentationController {
         dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         dimmingView.alpha = 0.0
         
-        let recognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap(recognizer:)))
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         dimmingView.addGestureRecognizer(recognizer)
     }
     
     // MARK: - Actions
-    @objc func handleTap(recognizer: UITapGestureRecognizer) {
+    @objc func handleTap() {
         presentingViewController.dismiss(animated: true)
     }
     

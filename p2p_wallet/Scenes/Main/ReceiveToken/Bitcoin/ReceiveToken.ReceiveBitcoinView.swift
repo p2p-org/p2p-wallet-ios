@@ -14,15 +14,10 @@ extension ReceiveToken {
     class ReceiveBitcoinView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: ReceiveTokenBitcoinViewModelType
-        private let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        
+
         // MARK: - Initializers
-        init(
-            viewModel: ReceiveTokenBitcoinViewModelType,
-            receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        ) {
+        init(viewModel: ReceiveTokenBitcoinViewModelType) {
             self.viewModel = viewModel
-            self.receiveSolanaViewModel = receiveSolanaViewModel
             super.init(frame: .zero)
         }
         

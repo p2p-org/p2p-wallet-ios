@@ -74,7 +74,7 @@ extension ReceiveToken {
                         .setup { view in
                             viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden).disposed(by: disposeBag)
                         }
-                    ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel, receiveSolanaViewModel: viewModel.receiveSolanaViewModel)
+                    ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel)
                         .setup { view in
                             viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden).disposed(by: disposeBag)
                         }

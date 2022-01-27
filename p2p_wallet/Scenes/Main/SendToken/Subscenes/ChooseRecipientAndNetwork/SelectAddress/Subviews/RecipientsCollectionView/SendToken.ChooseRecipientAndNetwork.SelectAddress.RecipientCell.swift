@@ -23,10 +23,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             fatalError("init(coder:) has not been implemented")
         }
 
-        func setRecipient(_ recipient: SendToken.Recipient) {
-            recipientView.setRecipient(recipient)
-        }
-
         private func addSubviews() {
             [recipientView].forEach(addSubview)
         }

@@ -16,10 +16,8 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
     func verifyPhrase(_ phrases: [String])
     func handlePhrases(_ phrases: [String])
     func handleName(_ name: String?)
-    func finish()
 
     func navigateToCreatePhrases()
-    func navigateToReserveName(owner: String)
     func back()
 }
 
@@ -31,7 +29,6 @@ extension CreateWallet {
         @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
-        private let bag = DisposeBag()
         private var phrases: [String]?
         private var name: String?
         
@@ -97,12 +94,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     func navigateToExplanation() {
         navigationSubject.accept(.explanation)
     }
-    
-    func dismiss() {
-        navigationSubject.accept(.dismiss)
-        navigationSubject.accept(.none)
-    }
-    
+        
     func back() {
         navigationSubject.accept(.back)
         navigationSubject.accept(.none)

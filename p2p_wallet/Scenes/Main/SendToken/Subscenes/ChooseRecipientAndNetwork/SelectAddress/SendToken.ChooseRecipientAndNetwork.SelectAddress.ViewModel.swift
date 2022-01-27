@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
-    var showAfterConfirmation: Bool {get}
     var preSelectedNetwork: SendToken.Network? {get}
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {get}
@@ -22,8 +21,6 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var isValidDriver: Driver<Bool> {get}
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
-    func getCurrentSearchKey() -> String?
-    func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
     func navigateToChoosingNetworkScene()
@@ -50,10 +47,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         @Injected private var clipboardManager: ClipboardManagerType
         
         // MARK: - Properties
-        private let disposeBag = DisposeBag()
         let recipientsListViewModel = RecipientsListViewModel()
-        let showAfterConfirmation: Bool
-        
+
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
@@ -61,7 +56,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool) {
             self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
-            self.showAfterConfirmation = showAfterConfirmation
             recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getAPIClient()
             recipientsListViewModel.preSelectedNetwork = preSelectedNetwork
             
@@ -112,15 +106,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
         inputStateSubject.value
     }
-    
-    func getCurrentSearchKey() -> String? {
-        searchTextSubject.value
-    }
-    
-    func getPrice(for symbol: String) -> Double {
-        chooseRecipientAndNetworkViewModel.getPrice(for: symbol)
-    }
-    
+        
     func getSOLAndRenBTCPrices() -> [String: Double] {
         chooseRecipientAndNetworkViewModel.getSOLAndRenBTCPrices()
     }

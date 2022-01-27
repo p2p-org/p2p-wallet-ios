@@ -9,14 +9,8 @@
 import Foundation
 
 enum SolanaBuyToken {
-    enum NavigatableScene {
-        case back
-        case buy
-    }
-    
     enum State {
         case result(quote: Moonpay.BuyQuote)
-        case requiredMinimalAmount
         case error(_ description: String)
         case none
         

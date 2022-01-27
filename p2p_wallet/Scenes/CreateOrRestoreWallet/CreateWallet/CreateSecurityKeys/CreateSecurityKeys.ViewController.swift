@@ -17,10 +17,6 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
         private let viewModel: CreateSecurityKeysViewModelType
         
-        // MARK: - Subviews
-        lazy var backButton = UIImageView(width: 36, height: 36, image: .backSquare)
-            .onTap(self, action: #selector(back))
-        
         // MARK: - Initializer
         init(viewModel: CreateSecurityKeysViewModelType) {
             self.viewModel = viewModel

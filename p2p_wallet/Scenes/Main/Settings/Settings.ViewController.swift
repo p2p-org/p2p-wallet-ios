@@ -115,7 +115,7 @@ extension Settings {
 }
 
 extension Settings.ViewController: BackupManuallyVCDelegate {
-    func backupManuallyVCDidBackup(_ vc: BackupManuallyVC) {
+    func backupManuallyVCDidBackup(_: BackupManuallyVC) {
         viewModel.setDidBackupOffline()
     }
 }

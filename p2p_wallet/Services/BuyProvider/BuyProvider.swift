@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol BuyProvider {
+protocol BuyProvider {
     func getUrl() -> String
 }
 
@@ -26,20 +26,10 @@ struct BuyProviders {
         case eth = "eth"
         case sol = "sol"
         case usdt = "usdt"
-        
-        static let all: Set<Crypto> = [.eth, .sol, .usdt]
-        
-        func toWallet() -> String {
-            switch self {
-            case .eth: return "ETH"
-            case .sol: return "SOL"
-            case .usdt: return "USDT"
-            }
-        }
     }
     
     class MoonpayFactory: BuyProviderFactory {
-        func create(walletRepository: WalletsRepository, crypto: Crypto, initialAmount: Double, currency: Currency) throws -> BuyProvider {
+        func create(walletRepository _: WalletsRepository, crypto: Crypto, initialAmount: Double, currency: Currency) throws -> BuyProvider {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
 //                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }

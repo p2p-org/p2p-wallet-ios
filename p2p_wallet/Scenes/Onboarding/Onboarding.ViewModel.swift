@@ -30,7 +30,6 @@ protocol OnboardingViewModelType {
     
     func navigateNext()
     func cancelOnboarding()
-    func endOnboarding()
 }
 
 extension Onboarding {
@@ -41,7 +40,6 @@ extension Onboarding {
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
-        private let bag = DisposeBag()
         private let context = LAContext()
         
         // MARK: - Subjects
@@ -176,7 +174,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
         handler.onboardingDidCancel()
     }
     
-    func endOnboarding() {
+    private func endOnboarding() {
         navigationSubject.accept(.dismiss)
         handler.onboardingDidComplete()
     }

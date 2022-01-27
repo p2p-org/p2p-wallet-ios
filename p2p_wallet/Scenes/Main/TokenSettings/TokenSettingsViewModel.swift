@@ -22,7 +22,6 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     // MARK: - Dependencies
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var solanaSDK: SolanaSDK
-    @Injected private var pricesService: PricesServiceType
     
     // MARK: - Properties
     let disposeBag = DisposeBag()

@@ -17,17 +17,17 @@ enum AnalyticsEvent: MirrorableEnum {
     case createWalletCopySeedClick
     case createWalletSaveSeedToPhotosClick
     case createWalletRenewSeedClick
-    case createWalletTermsAndConditionsClick
+//    case createWalletTermsAndConditionsClick
     case createWalletBackupToIcloudClick
     case createWalletVerifyManuallyClick
     // setup
     case setupOpen(fromPage: String)
-    case setupPinKeydown1
-    case setupPinKeydown2
+//    case setupPinKeydown1
+//    case setupPinKeydown2
     case setupFaceidOpen
     case setupFaceidClick(faceID: Bool)
     case setupAllowPushOpen
-    case setupAllowPushSelected(push: Bool)
+//    case setupAllowPushSelected(push: Bool)
     case setupFinishOpen
     case setupFinishClick
     case setupWelcomeBackOpen
@@ -35,17 +35,17 @@ enum AnalyticsEvent: MirrorableEnum {
     case recoveryOpen(fromPage: String)
     case recoveryRestoreManualyClick
     case recoveryRestoreIcloudClick
-    case recoveryEnterSeedOpen
-    case recoveryEnterSeedKeydown
-    case recoveryEnterSeedPaste
-    case recoveryDoneClick
+//    case recoveryEnterSeedOpen
+//    case recoveryEnterSeedKeydown
+//    case recoveryEnterSeedPaste
+//    case recoveryDoneClick
     case recoveryDerivableAccountsOpen
     case recoveryDerivableAccountsPathSelected(path: String)
     case recoveryRestoreClick
 
     // main_screen
     case mainScreenWalletsOpen
-    case mainScreenBuyOpen
+//    case mainScreenBuyOpen
     case mainScreenReceiveOpen
     case mainScreenSendOpen
     case mainScreenSwapOpen
@@ -59,14 +59,14 @@ enum AnalyticsEvent: MirrorableEnum {
     case tokenDetailsReceiveClick
     case tokenDetailsSendClick
     case tokenDetailsSwapClick
-    case tokenDetailsAddressCopy
-    case tokenDetailsActivityScroll(pageNum: Int)
+//    case tokenDetailsAddressCopy
+//    case tokenDetailsActivityScroll(pageNum: Int)
     case tokenDetailsDetailsOpen
     // receive
     case receiveOpen(fromPage: String)
-    case receiveNameCopy
+//    case receiveNameCopy
     case receiveAddressCopy
-    case receiveNameShare
+//    case receiveNameShare
     case receiveAddressShare
     case receiveWalletAddressCopy
     case receiveQrcodeShare
@@ -75,11 +75,11 @@ enum AnalyticsEvent: MirrorableEnum {
     // send
     case sendOpen(fromPage: String)
     case sendSelectTokenClick(tokenTicker: String)
-    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR), Token
+//    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR), Token
     case sendAmountKeydown(sum: Double)
-    case sendAvailableClick(sum: Double)
-    case sendAddressKeydown
-    case sendScanQrClick
+//    case sendAvailableClick(sum: Double)
+//    case sendAddressKeydown
+//    case sendScanQrClick
     case sendSendClick(tokenTicker: String, sum: Double)
     case sendDoneClick(txStatus: String)
     case sendExplorerClick(txStatus: String)
@@ -91,13 +91,13 @@ enum AnalyticsEvent: MirrorableEnum {
     case swapTokenBSelectClick(tokenTicker: String)
     case swapTokenAAmountKeydown(sum: Double)
     case swapTokenBAmountKeydown(sum: Double)
-    case swapAvailableClick(sum: Double)
-    case swapReverseClick
-    case swapSettingsClick
-    case swapSlippageClick
-    case swapPayNetworkFeeWithClick
-    case swapSwapFeesClick
-    case swapSlippageKeydown(slippage: Double)
+//    case swapAvailableClick(sum: Double)
+//    case swapReverseClick
+//    case swapSettingsClick
+//    case swapSlippageClick
+//    case swapPayNetworkFeeWithClick
+//    case swapSwapFeesClick
+//    case swapSlippageKeydown(slippage: Double)
     case swapSwapClick(tokenA: String, tokenB: String, sumA: Double, sumB: Double)
     case swapDoneClick(txStatus: String)
     case swapExplorerClick(txStatus: String)
@@ -111,7 +111,7 @@ enum AnalyticsEvent: MirrorableEnum {
     case settingsOpen(fromPage: String)
     case settingsNetworkSelected(network: String)
     case settingsHideBalancesClick(hide: Bool)
-    case settingsBackupOpen
+//    case settingsBackupOpen
     case settingsSecuritySelected(faceId: Bool)
     case settingsLanguageSelected(language: String)
     case settingsAppearanceSelected(appearance: String)

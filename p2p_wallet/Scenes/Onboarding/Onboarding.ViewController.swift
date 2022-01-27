@@ -12,7 +12,6 @@ extension Onboarding {
     class ViewController: BaseVC {
         // MARK: - Dependencies
         private let viewModel: OnboardingViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         private lazy var childNavigationController = UINavigationController()

@@ -31,7 +31,6 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
 extension SendToken {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var addressFormatter: AddressFormatterType
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var pricesService: PricesServiceType
@@ -40,12 +39,7 @@ extension SendToken {
         @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
-        private let initialWalletPubkey: String?
-        private let initialDestinationWalletPubkey: String?
-        
-        private var selectedNetwork: SendToken.Network?
-        private var selectableNetworks: [SendToken.Network]?
-        
+
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(showAfterConfirmation: false))
         let walletSubject = BehaviorRelay<Wallet?>(value: nil)
@@ -54,13 +48,7 @@ extension SendToken {
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         
         // MARK: - Initializers
-        init(
-            walletPubkey: String?,
-            destinationAddress: String?
-        ) {
-            self.initialWalletPubkey = walletPubkey
-            self.initialDestinationWalletPubkey = destinationAddress
-            
+        init(walletPubkey: String?) {
             // accept initial values
             if let pubkey = walletPubkey {
                 walletSubject.accept(walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}))
@@ -210,13 +198,5 @@ extension SendToken.ViewModel: SendTokenViewModelType {
                     }
                 )
         )
-    }
-    
-    // MARK: - Helpers
-    private func isRecipientBTCAddress() -> Bool {
-        guard let recipient = recipientSubject.value else {return false}
-        return recipient.name == nil &&
-            recipient.address
-                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()))
     }
 }

@@ -14,7 +14,6 @@ class TransactionInfoViewController: WLIndicatorModalVC, CustomPresentableViewCo
     // MARK: - Properties
     private let viewModel: TransactionInfoViewModel
     lazy var rootView = TransactionInfoRootView(viewModel: viewModel)
-    var viewTranslation = CGPoint(x: 0, y: 0)
     var transitionManager: UIViewControllerTransitioningDelegate?
     
     // MARK: - Initializer

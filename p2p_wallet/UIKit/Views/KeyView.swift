@@ -77,8 +77,4 @@ class KeyView: BEView {
             backgroundColor = .h5887ff
         }
     }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }

@@ -12,7 +12,6 @@ import RxSwift
 extension SendToken {
     class NetworkView: UIStackView {
         // MARK: - Dependencies
-        private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
         private lazy var coinImageView = UIImageView(width: 44, height: 44, image: nil)

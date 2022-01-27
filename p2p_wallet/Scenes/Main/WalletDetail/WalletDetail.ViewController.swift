@@ -101,7 +101,7 @@ extension WalletDetail {
                 vc.delegate = self
                 self.present(vc, animated: true, completion: nil)
             case .send(let wallet):
-                let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil)
+                let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey)
                 let vc = SendToken.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .receive(let pubkey):
@@ -141,16 +141,11 @@ extension WalletDetail {
                 self?.viewModel.start(action: actionType)
             }
         }
-        
-        // MARK: - Actions
-        @objc func showWalletSettings() {
-            viewModel.showWalletSettings()
-        }
     }
 }
 
 extension WalletDetail.ViewController: TokenSettingsViewControllerDelegate {
-    func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController) {
+    func tokenSettingsViewControllerDidCloseToken() {
         dismiss(animated: true, completion: nil)
     }
 }

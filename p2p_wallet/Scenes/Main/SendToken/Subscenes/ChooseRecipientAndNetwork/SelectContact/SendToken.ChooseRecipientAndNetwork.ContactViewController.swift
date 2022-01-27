@@ -14,11 +14,11 @@ extension SendToken.ChooseRecipientAndNetwork {
         }
         
         // MARK: - Dependencies
-        private let viewModel: SendTokenChooseRecipientAndNetworkViewModelType
+//        private let viewModel: SendTokenChooseRecipientAndNetworkViewModelType
         
         // MARK: - Initializer
-        init(viewModel: SendTokenChooseRecipientAndNetworkViewModelType) {
-            self.viewModel = viewModel
+        init(viewModel _: SendTokenChooseRecipientAndNetworkViewModelType) {
+//            self.viewModel = viewModel
             super.init()
         }
         

@@ -11,12 +11,10 @@ import BECollectionView
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     final class RecipientsCollectionView: BEStaticSectionsCollectionView {
         // MARK: - Dependencies
-        private let recipientsListViewModel: RecipientsListViewModel
+//        private let recipientsListViewModel: RecipientsListViewModel
         
         // MARK: - Initializer
-        init(recipientsListViewModel: RecipientsListViewModel) {
-            self.recipientsListViewModel = recipientsListViewModel
-            
+        init(recipientsListViewModel: RecipientsListViewModel) {            
             let section = BEStaticSectionsCollectionView.Section(
                 index: 0,
                 layout: .init(

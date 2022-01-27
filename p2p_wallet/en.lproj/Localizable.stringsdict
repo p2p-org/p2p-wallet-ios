@@ -18,22 +18,6 @@
 			<string>%d hidden wallets</string>
 		</dict>
 	</dict>
-	<key>%d day ago</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d day ago</string>
-			<key>other</key>
-			<string>%d days ago</string>
-		</dict>
-	</dict>
 	<key>Wrong Pin-code, %d attempt(s) left</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

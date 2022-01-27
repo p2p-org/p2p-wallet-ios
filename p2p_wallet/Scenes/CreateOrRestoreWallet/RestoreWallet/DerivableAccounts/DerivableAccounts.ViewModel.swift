@@ -26,14 +26,10 @@ protocol DrivableAccountsViewModelType {
 
 extension DerivableAccounts {
     class ViewModel {
-        // MARK: - Nested type
-        typealias Path = SolanaSDK.DerivablePath
-        
         // MARK: - Dependencies
         private let handler: AccountRestorationHandler
         
         // MARK: - Properties
-        private let disposeBag = DisposeBag()
         private let phrases: [String]
         let accountsListViewModel: DerivableAccountsListViewModelType
         

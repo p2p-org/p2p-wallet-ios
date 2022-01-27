@@ -120,10 +120,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                     lamport: balance
                 )
                 wallets.insert(solWallet, at: 0)
-                
-                // update visibility
-                wallets = self.mapVisibility(wallets: wallets)
-                
+
                 // map prices
                 wallets = self.mapPrices(wallets: wallets)
                 
@@ -155,7 +152,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                     .filter {wl in !data.contains(where: {$0.pubkey == wl.pubkey})}
                     .filter {$0.lamports != 0}
                 newWallets = self.mapPrices(wallets: newWallets)
-                newWallets = self.mapVisibility(wallets: newWallets)
                 data.append(contentsOf: newWallets)
                 data.sort(by: Wallet.defaultSorter)
                 return data
@@ -179,11 +175,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     func hiddenWallets() -> [Wallet] {
         data.filter {$0.isHidden}
     }
-    
-    func shownWallets() -> [Wallet] {
-        data.filter { !hiddenWallets().contains($0) }
-    }
-    
+        
     // MARK: - Actions
     @objc func toggleIsHiddenWalletShown() {
         isHiddenWalletsShown.accept(!isHiddenWalletsShown.value)
@@ -196,16 +188,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             hideWallet(wallet)
         }
     }
-    
-    func updateWallet(_ wallet: Wallet, withName name: String) {
-        Defaults.walletName[wallet.pubkey!] = name
-        updateItem(where: {wallet.pubkey == $0.pubkey}, transform: {
-            var newItem = $0
-            newItem.setName(name)
-            return newItem
-        })
-    }
-    
+
     // MARK: - Mappers
     private func mapPrices(wallets: [Wallet]) -> [Wallet] {
         var wallets = wallets
@@ -214,16 +197,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         }
         return wallets
     }
-    
-    private func mapVisibility(wallets: [Wallet]) -> [Wallet] {
-        var wallets = wallets
-        for i in 0..<wallets.count {
-            // update visibility
-            wallets[i].updateVisibility()
-        }
-        return wallets
-    }
-    
+
     // MARK: - Helpers
     private func updatePrices() {
         guard currentState == .loaded else {return}
@@ -233,32 +207,19 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     private func updateWalletsVisibility() {
         guard currentState == .loaded else {return}
-        let wallets = mapVisibility(wallets: data)
-        overrideData(by: wallets)
+        overrideData(by: data)
     }
     
     private func hideWallet(_ wallet: Wallet) {
         Defaults.unhiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
         Defaults.hiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
-        updateVisibility(for: wallet)
     }
     
     private func unhideWallet(_ wallet: Wallet) {
         Defaults.unhiddenWalletPubkey.appendIfNotExist(wallet.pubkey)
         Defaults.hiddenWalletPubkey.removeAll(where: {$0 == wallet.pubkey})
-        updateVisibility(for: wallet)
     }
-    
-    private func updateVisibility(for wallet: Wallet) {
-        self.updateItem(where: {
-            $0.pubkey == wallet.pubkey
-        }) { wallet -> Wallet? in
-            var wallet = wallet
-            wallet.updateVisibility()
-            return wallet
-        }
-    }
-    
+
     // MARK: - App state
     private(set) var shouldUpdateBalance = false
     private func appDidBecomeActive() {

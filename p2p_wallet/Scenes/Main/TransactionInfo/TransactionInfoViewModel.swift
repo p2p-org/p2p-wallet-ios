@@ -17,8 +17,7 @@ class TransactionInfoViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
-    let disposeBag = DisposeBag()
-    
+
     // MARK: - Dependencies
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationsServiceType
@@ -48,11 +47,7 @@ class TransactionInfoViewModel {
     @objc func toggleShowDetailTransaction() {
         showDetailTransaction.accept(!showDetailTransaction.value)
     }
-    
-    @objc func copySignatureToClipboard() {
-        copyToClipboardAndShowNotification(transaction.value.signature)
-    }
-    
+        
     @objc func copySourceAddressToClipboard() {
         switch transaction.value.value {
         case let transferTransaction as SolanaSDK.TransferTransaction:

@@ -8,14 +8,7 @@
 import Foundation
 
 class TransactionIndicatorView: BEView {
-    public var percent: CGFloat = 0.0 {
-        didSet {
-            indicatorViewWidthConstraint = indicatorViewWidthConstraint?.setMultiplier(multiplier: percent)
-            indicatorView.setNeedsLayout()
-        }
-    }
-    
-    override public var tintColor: UIColor! {
+    override var tintColor: UIColor! {
         didSet {
             indicatorView.backgroundColor = tintColor
         }

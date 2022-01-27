@@ -93,7 +93,6 @@ class WLBannerView: BEView {
 }
 
 // handy radians
-private func radian(degree: Double) -> Double { return degree * Double.pi / 180 }
 private func radian(degree: CGFloat) -> CGFloat { return degree * CGFloat(Double.pi / 180) }
 
 private func gradientPoints(size: CGSize, cssAngle: CGFloat) -> (start: CGPoint, end: CGPoint) {

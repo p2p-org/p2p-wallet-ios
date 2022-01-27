@@ -9,20 +9,19 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-enum InvestmentsNavigatableScene {
+// enum InvestmentsNavigatableScene {
 //    case detail
-}
+// }
 
 class InvestmentsViewModel {
     // MARK: - Constants
     
     // MARK: - Properties
-    let disposeBag = DisposeBag()
     let newsViewModel: NewsViewModel
     let defisViewModel: DefisViewModel
     
     // MARK: - Subjects
-    let navigationSubject = PublishSubject<InvestmentsNavigatableScene>()
+//    let navigationSubject = PublishSubject<InvestmentsNavigatableScene>()
     
     // MARK: - Input
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)

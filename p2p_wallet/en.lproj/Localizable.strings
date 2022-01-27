@@ -1,702 +1,1197 @@
+
+
+"%@ Closed" = "%@ Closed";
+
+
+"%@ Created" = "%@ Created";
+
+
+"%@ Network" = "%@ Network";
+
+
+"%@ is available" = "%@ is available";
+
+
+"%@ is the remaining time to safely send the assets." = "**%@** is the remaining time to safely send the assets.";
+
+
+"%@ is unavailable" = "%@ is unavailable";
+
+
+"%@ mint address" = "%@ mint address";
+
+
+"%@ successfully sent" = "%@ successfully sent";
+
+
+"%@ to %@" = "%@ to %@";
+
+
+"%@ → %@ swapped successfully" = "%@ → %@ swapped successfully";
+
+
+"%@-compatible address" = "%@-compatible address";
+
+
+"%@h ago" = "%@h ago";
+
+
+"%@m ago" = "%@m ago";
+
+
+"1 %@ Price" = "1 %@ Price";
+
+
+"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "A %@ is a difference between the expected price and the actual price at which a trade is executed";
+
+
+"Account creation fee" = "Account creation fee";
+
+
+"Address" = "Address";
+
+
+"Address copied to clipboard!" = "Address copied to clipboard!";
+
+
+"All the ways to buy" = "All the ways to buy";
+
+
+"All tokens" = "All tokens";
+
+
+"Allow" = "Allow";
+
+
+"Allow notifications" = "Allow notifications";
+
+
+"Allow push notifications so you don’t miss any important updates on your account." = "Allow push notifications so you don’t miss any important updates on your account.";
+
+
+"Amount is too small" = "Amount is too small";
+
+
+"Any token can be received using username regardless of whether it is in your wallets list" = "Any token can be received using username regardless of whether it is in your wallets list";
+
+
+"Anytime you want, you can easily reserve a username by going to the settings" = "Anytime you want, you can easily reserve a username by going to the settings";
+
+
+"Appearance" = "Appearance";
+
+
+"Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet.";
+
+
+"Backing up" = "Backing up";
+
+
+"Backup" = "Backup";
+
+
+"Backup manually" = "Backup manually";
+
+
+"Backup to iCloud" = "Backup to iCloud";
+
+
+"Backup using iCloud" = "Backup using iCloud";
+
+
+"Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed.";
+
+
+"Bitcoin" = "Bitcoin";
+
+
+"Block number" = "Block number";
+
+
+"Blockhash not found" = "Blockhash not found";
+
+
+"British pound sterling" = "British pound sterling";
+
+
+"Buy" = "Buy";
+
+
+"Buy %@ on Moonpay" = "Buy %@ on Moonpay";
+
+
+"Buy Cryptos with Credit Card, Fiat or Apple Pay" = "Buy Cryptos with Credit Card, Fiat or Apple Pay";
+
+
+"By continuing, you agree to wallet's %@" = "By continuing, you agree to wallet's\n%@";
+
+
+"By continuing, you agree to wallet's %@ and %@" = "By continuing, you agree to wallet's %@ and %@";
+
+
+"Calculating fees" = "Calculating fees";
+
+
+"Cancel" = "Cancel";
+
+
+"Capitalized Terms and Conditions" = "Terms and Conditions";
+
+
+"Caution: this address has no funds" = "Caution: this address has no funds";
+
+
+"Change" = "Change";
+
+
+"Change the network?" = "Change the network?";
+
+
+"Change the token?" = "Change the token?";
+
+
+"Change your search phrase" = "Change your search phrase";
+
+
+"Change your settings to use camera for scanning Qr Code" = "Change your settings to use camera for scanning Qr Code";
+
+
+"Changed language to %@" = "Changed language to %@";
+
+
+"Check entered account info for sending. It should be account in Solana network" = "Check entered account info for sending.\nIt should be account in Solana network";
+
+
+"Check enterred wallet address and try again." = "Check enterred wallet address and try again.";
+
+
+"Checking name’s availability" = "Checking name’s availability";
+
+
+"Chinese Yuan" = "Chinese Yuan";
+
+
+"Choose another destination wallet" = "Choose another destination wallet";
+
+
+"Choose another slippage" = "Choose another slippage";
+
+
+"Choose available username" = "Choose available username";
+
+
+"Choose correct words" = "Choose correct words";
+
+
+"Choose destination wallet" = "Choose destination wallet";
+
+
+"Choose source wallet" = "Choose source wallet";
+
+
+"Choose the network" = "Choose the network";
+
+
+"Choose the recipient" = "Choose the recipient";
+
+
+"Choose the recipient to proceed" = "Choose the recipient to proceed";
+
+
+"Choose your wallet" = "Choose your wallet";
+
+
+"Close" = "Close";
+
+
+"Close %@ account" = "Close %@ account";
+
+
+"Close account" = "Close Account";
+
+
+"Close token account" = "Close token account";
+
+
+"Closed wallet" = "Closed wallet";
+
+
+"Colon Receive at least" = "Receive at least:";
+
+
+"Combined tokens value" = "Combined tokens value";
+
+
+"Completed" = "Completed";
+
+
+"Confirm PIN-code" = "Confirm PIN-code";
+
+
+"Confirm it's you" = "Confirm it's you";
+
+
+"Confirm sending %@" = "Confirm sending %@";
+
+
+"Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
+
+
+"Confirm your wallet PIN" = "Confirm your wallet PIN";
+
+
+"Connection problem" = "Connection problem";
+
+
+"Contact" = "Contact";
+
+
+"Continue" = "Continue";
+
+
+"Copied to clipboard" = "Copied to clipboard";
+
+
+"Copy" = "Copy";
+
+
+"Copy to clipboard" = "Copy to clipboard";
+
+
+"Could not calculating fees" = "Could not calculating fees";
+
+
+"Could not connect to wallet" = "Could not connect to wallet";
+
+
+"Could not create capture session" = "Could not create capture session";
+
+
+"Could not retrieve account info" = "Could not retrieve account info";
+
+
+"Create a new wallet" = "Create a new wallet";
+
+
+"Create a new wallet" = "Create a new wallet";
+
+
+"Create account" = "Create Account";
+
+
+"Currency" = "Currency";
+
+
+"Currency changed" = "Currency changed";
+
+
+"Custom" = "Custom";
+
+
+"Custom slippage" = "Custom slippage";
+
+
+"DApps" = "DApps";
+
+
+"Dark" = "Dark";
+
+
+"Default" = "Default";
+
+
+"Default secure check" = "Default secure check";
+
+
+"Derivable Accounts" = "Derivable Accounts";
+
+
+"Derivation path" = "Derivation path";
+
+
+"Direct %@ address" = "Direct %@ address";
+
+
+"Discard" = "Discard";
+
+
+"Do you really want to logout?" = "Do you really want to logout?";
+
+
+"Do you really want to switch to" = "Do you really want to switch to";
+
+
+"Do you want to allow P2P Wallet to use %@?" = "Do you want to allow P2P Wallet to use %@?";
+
+
+"Done" = "Done";
+
+
+"Don’t Allow" = "Don’t Allow";
+
+
+"Earn" = "Earn";
+
+
+"Enter PIN-code" = "Enter PIN-code";
+
+
+"Enter a seed phrase from your account" = "Enter a seed phrase from your account";
+
+
+"Enter correct security key" = "Enter correct security key";
+
+
+"Enter current PIN-code" = "Enter current PIN-code";
+
+
+"Enter seed phrases in a correct order to recover your wallet" = "Enter seed phrases in a correct order to recover your wallet";
+
+
+"Enter the amount" = "Enter the amount";
+
+
+"Enter the amount to proceed" = "Enter the amount to proceed";
+
+
+"Enter username" = "Enter username";
+
+
+"Enter username or skip" = "Enter username or skip";
+
+
+"Enter your security key" = "Enter your security key";
+
+
+"Error processing instruction 0:custom program error: 0x1" = "Error processing instruction 0:custom program error: 0x1";
+
+
+"Error sending transaction" = "Error sending transaction";
+
+
+"Error when updating prices" = "Error when updating prices";
+
+
+"Euro" = "Euro";
+
+
+"Explore DeFi" = "Explore DeFi";
+
+
+"Fee" = "Fee";
+
+
+"Free" = "Free";
+
+
+"From" = "From";
+
+
+"From token %@" = "From %@";
+
+
+"Get up to 8%% APY on staking USDC" = "Get up to 8%% APY on staking USDC";
+
+
+"Go back" = "Go back";
+
+
+"Go back to profile" = "Go back to profile";
+
+
+"Hidden" = "Hidden";
+
+
+"Hide" = "Hide";
+
+
+"Hide details" = "Hide details";
+
+
+"Hide direct and mint addresses" = "Hide direct and mint addresses";
+
+
+"Hide transaction details" = "Hide transaction details";
+
+
+"Hide zero balances" = "Hide zero balances";
+
+
+"I understand" = "I understand";
+
+
+"Identify yourself!" = "Identify yourself!";
+
+
+"If lost, no one can restore it Keep it private, even from us" = " · If lost, no one can restore it\n · Keep it private, even from us";
+
+
+"If the network is changed to %@, the address field must be filled in with a %@." = "If the network is changed to %@, the address field must be filled in with a %@.";
+
+
+"If the token is changed to %@, the address field must be filled in with a %@." = "If the token is changed to %@, the address field must be filled in with a %@.";
+
+
+"If you create a new wallet account" = "If you create a new wallet account, you will receive your security key that you must write down somewhere safe. This is the only way to recover your wallet.\n\nIf you still have access to your old wallet, sometimes you can recover your security key from it.\n\nUsing Custodian wallet, you still have the option to regain access to your data by asking a third party.";
+
+
+"If you lose this device, you can recover your encrypted wallet backup from iCloud" = "If you lose this device, you can recover your encrypted wallet backup from iCloud";
+
+
+"If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases";
+
+
+"Import a wallet" = "Import a wallet";
+
+
+"Input amount is not valid" = "Input amount is not valid";
+
+
+"Insufficient funds" = "Insufficient funds";
+
+
+"Interface language changed" = "Interface language changed";
+
+
+"Invalid account info" = "Invalid account info";
+
+
+"Invalid request" = "Invalid request";
+
+
+"It must be an %@ wallet address " = "It must be an %@ wallet address";
+
+
+"Language" = "Language";
+
+
+"Let’s stay in touch" = "Let’s stay in touch";
+
+
+"Light" = "Light";
+
+
+"Liquidity provider fee" = "Liquidity provider fee";
+
+
+"Loading" = "Loading";
+
+
+"Logout" = "Logout";
+
+
+"Make sure you understand the aspects" = "Make sure you understand the aspects";
+
+
+"Make your crypto working on you" = "Make your crypto working on you";
+
+
+"Max" = "Max";
+
+
+"Max price slippage" = "Max price slippage";
+
+
+"Minimum transaction amount of %@" = "Minimum transaction amount of **%@**.";
+
+
+"Minting" = "Minting";
+
+
+"Network" = "Network";
+
+
+"Network changed" = "Network changed";
+
+
+"Network fee" = "Network fee";
+
+
+"New PIN-code" = "New PIN-code";
+
+
+"New staking option available" = "New staking option available";
+
+
+"New wallet" = "New wallet";
+
+
+"No chart data available." = "No chart data available.";
+
+
+"No hidden costs" = "No hidden costs";
+
+
+"No more than 15 alphanumerical latin lowercase characters and dashes" = "No more than 15 alphanumerical latin lowercase characters and dashes";
+
+
+"No transactions yet" = "No transactions yet";
+
+
+"Nobody can access your private keys. Your data is fully safe" = "Nobody can access your private keys.\nYour data is fully safe";
+
+
+"None" = "None";
+
+
+"Not Found" = "Not Found";
+
+
+"Not yet reserved" = "Not yet reserved";
+
+
+"Nothing found" = "Nothing found";
+
+
+"OK" = "OK";
+
+
+"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";
+
+
+"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals.\n\nHowever, before sending your funds, make sure to double-check the selected network.";
+
+
+"P2P Wallet" = "P2P Wallet";
+
+
+"P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "P2P Wallet uses %@ to restrict unauthorized users from accessing the app";
+
+
+"P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it.";
+
+
+"PIN doesn’t match. Try again" = "PIN doesn’t match. Try again";
+
+
+"PIN-code" = "PIN-code";
+
+
+"PIN-code changed!" = "PIN-code changed!";
+
+
+"Paid by p2p.org" = "Paid by p2p.org";
+
+
+"Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";
+
+
+"Paste" = "Paste";
+
+
+"Pay swap fees with" = "Pay swap fees with";
+
+
+"Prices updated" = "Prices updated";
+
+
+"Privacy Policy" = "Privacy Policy";
+
+
+"Private and secure" = "Private & secure";
+
+
+"Proceed" = "Proceed";
+
+
+"Proceed & don’t show again" = "Proceed & don’t show again";
+
+
+"Proceed without a username?" = "Proceed without a username?";
+
+
+"Processing fee" = "Processing fee";
+
+
+"Profile" = "Profile";
+
+
+"Receive" = "Receive";
+
+
+"Receive %@" = "Receive %@";
+
+
+"Receive any token within the Solana network even if it is not included in your wallet list" = "Receive **any token** within the Solana network even if it is not included in your wallet list";
+
+
+"Receive at least" = "Receive at least";
+
+
+"Received %@" = "Received %@";
+
+
+"Received %@ renBTC" = "Received %@ renBTC";
+
+
+"Receiving %@ renBTC" = "Receiving %@ renBTC";
+
+
+"Receiving status" = "Receiving status";
+
+
+"Receiving statuses" = "Receiving statuses";
+
+
+"Receiving via Bitcoin network" = "Receiving via Bitcoin network";
+
+
+"Recipient" = "Recipient";
+
+
+"Refresh" = "Refresh";
+
+
+"Renew" = "Renew";
+
+
+"Reserve P2P username" = "Reserve P2P username";
+
+
+"Reserve your P2P username now" = "Reserve your P2P username now";
+
+
+"Reset PIN with a seed phrase" = "Reset PIN with a seed phrase";
+
+
+"Reset and try again" = "Reset and try again";
+
+
+"Response error" = "Response error";
+
+
+"Restore manually" = "Restore manually";
+
+
+"Restore using iCloud" = "Restore using iCloud";
+
+
+"Review and confirm" = "Review & confirm";
+
+
+"Russian Ruble" = "Russian Ruble";
+
+
+"SELECT" = "SELECT";
+
+
+"SOL and SPL Tokens" = "SOL and SPL Tokens";
+
+
+"Save" = "Save";
+
+
+"Save & Continue" = "Save & Continue";
+
+
+"Save & Continue" = "Save & Continue";
+
+
+"Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup.";
+
+
+"Saved to iCloud" = "Saved to iCloud";
+
+
+"Saved to photo library" = "Saved to photo library";
+
+
+"Scan QR" = "Scan QR";
+
+
+"Scan QR Code" = "Scan QR Code";
+
+
+"Scanning QrCode not supported" = "Scanning QrCode not supported";
+
+
+"Secure your wallet" = "Secure your wallet";
+
+
+"Secure your wallet" = "Secure your wallet";
+
+
+"Security" = "Security";
+
+
+"Security key can't be saved into icloud. Please try again." = "Security key can't be saved into icloud. Please try again.";
+
+
+"Seed phrase must have at least 12 words" = "Seed phrase must have at least 12 words";
+
+
+"Select the first token" = "Select the first token";
+
+
+"Select the second token" = "Select the second token";
+
+
+"Select token" = "Select token";
+
+
+"Select word #%@" = "Select word #%@";
+
+
+"Send" = "Send";
+
+
+"Send %@ %@" = "Send %@ %@";
+
+
+"Send BTC, ETH, USDC with no fees. Swap BTC with only $1" = "Send BTC, ETH, USDC with no fees.\nSwap BTC with only $1";
+
+
+"Send Now" = "Send Now";
+
+
+"Sending" = "Sending";
+
+
+"Serum order creation (paid once per pair)" = "Serum order creation (paid once per pair)";
+
+
+"Set up a wallet PIN" = "Set up a wallet PIN";
+
+
+"Settings" = "Settings";
+
+
+"Share" = "Share";
+
+
+"Show details" = "Show details";
+
+
+"Show direct and mint addresses" = "Show direct and mint addresses";
+
+
+"Show transaction details" = "Show transaction details";
+
+
+"Show your security key" = "Show your security key";
+
+
+"Show your security key" = "Show your security key";
+
+
+"Showing my address for" = "Showing my address for";
+
+
+"Slippage" = "Slippage";
+
+
+"Slippage can occur at any time, but it is most prevalent during periods of %@" = "Slippage can occur at any time, but it is most prevalent during periods of %@";
+
+
+"Slippage error" = "Slippage error";
+
+
+"Slippage tolerance %@" = "Slippage tolerance %@";
+
+
+"Socket returns an error" = "Socket returns an error";
+
+
+"Solana" = "Solana";
+
+
+"Something went wrong" = "Something went wrong";
+
+
+"Something went wrong!\nPlease try again later" = "Something went wrong!\nPlease try again later";
+
+
+"Spend" = "Spend";
+
+
+"Start using P2P Wallet" = "Start using P2P Wallet";
+
+
+"Statuses received" = "Statuses received";
+
+
+"Statuses received (%@)" = "Statuses received (%@)";
+
+
+"Submitting to RenVM" = "Submitting to RenVM";
+
+
+"Success" = "Success";
+
+
+"Successfully minted %@ renBTC!" = "Successfully minted %@ renBTC!";
+
+
+"Swap" = "Swap";
+
+
+"Swap %@ → %@" = "Swap %@ → %@";
+
+
+"Swap fees" = "Swap fees";
+
+
+"Swap instruction exceeds desired slippage limit" = "Swap instruction exceeds desired slippage limit";
+
+
+"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "Swap instruction exceeds desired slippage limit.\nSet another slippage and try again.";
+
+
+"Swap settings" = "Swap settings";
+
+
+"Swapping" = "Swapping";
+
+
+"Swapping is currently unavailable" = "Swapping is currently unavailable";
+
+
+"Switch language?" = "Switch language?";
+
+
+"Switch network?" = "Switch network?";
+
+
+"System" = "System";
+
+
+"System error" = "System error";
+
+
+"Tap and hold to copy" = "Tap and hold to copy";
+
+
+"Terms of Use" = "Terms of Use";
+
+
+"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC-20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications.";
+
+
+"The definition" = "The definition";
+
+
+"The fee calculation failed due to overflow, underflow or unexpected 0" = "The fee calculation failed due to overflow, underflow or unexpected 0";
+
+
+"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "The following words are security key that you must keep in a safe place, written in the correct sequence.\n\nIf lost, no one can restore it.\nKeep it private, even from us";
+
+
+"The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "The future of non-custodial banking: the easy way to buy, sell and hold cryptos";
+
+
+"The last one: " = "The last one:";
+
+
+"The list is empty" = "The list is empty";
+
+
+"The phrases you has entered is not correct" = "The phrases you has entered is not correct";
+
+
+"The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup";
+
+
+"There are %@ free transactions left for today" = "There are %@ free transactions left for today";
+
+
+"There is an error occurred, please try again" = "There is an error occurred, please try again";
+
+
+"There is no P2P Wallet saved in your iCloud" = "There is no P2P Wallet saved in your iCloud";
+
+
+"There is something wrong with your camera!\nPlease try again later!" = "There is something wrong with your camera!\nPlease try again later!";
+
+
+"There’s no address like this" = "There’s no address like this";
+
+
+"These words don’t match" = "These words don’t match";
+
+
+"This address accepts only %@. You may lose assets by sending another coin." = "This address accepts **only %@**. You may lose assets by sending another coin.";
+
+
+"This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!" = "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!";
+
+
+"This is the thing you use to get all your accounts from your mnemonic phrase. By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet." = "This is the thing you use to get all your accounts from your mnemonic phrase. By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet.";
+
+
+"This trading pair is not supported" = "This trading pair is not supported";
+
+
+"To" = "To";
+
+
+"To %@" = "To %@";
+
+
+"To recover your wallet enter your security key's 12 or 24 words separated by single spaces in the correct order" = "To recover your wallet enter your security key's 12 or 24 words separated by single spaces in the correct order";
+
+
+"Today" = "Today";
+
+
+"Token account should be zero" = "Token account should be zero";
+
+
+"Total" = "Total";
+
+
+"Total fees" = "Total fees";
+
+
+"Transaction" = "Transaction";
+
+
+"Transaction ID" = "Transaction ID";
+
+
+"Transaction Token" = "Transaction Token";
+
+
+"Transaction fee" = "Transaction fee";
+
+
+"Transaction has been confirmed" = "Transaction has been confirmed";
+
+
+"Transaction processing" = "Transaction processing";
+
+
+"Transactions that exceed 20% slippage tolerance may be %@" = "Transactions that exceed 20%% slippage tolerance may be %@";
+
+
+"Transfer" = "Transfer";
+
+
+"Transfer fee" = "Transfer fee";
+
+
+"Try again" = "Try again";
+
+
+"Turn on" = "Turn on";
+
+
+"Unauthorized" = "Unauthorized";
+
+
+"United States Dollar" = "United States Dollar";
+
+
+"Unknown date" = "Unknown date";
+
+
+"Unknown error" = "Unknown error";
+
+
+"Unknown token" = "Unknown token";
+
+
+"Updating prices" = "Updating prices";
+
+
+"Username %@ is successfully reserved" = "Username %@ is successfully reserved";
+
+
+"Username %@ was reserved" = "Username %@ was reserved";
+
+
+"Value" = "Value";
+
+
+"Verify manually" = "Verify manually";
+
+
+"Verify your security key" = "Verify your security key";
+
+
+"Vietnamese Dong" = "Vietnamese Dong";
+
+
+"View in %@ explorer" = "View in %@ explorer";
+
+
+"View recovery key" = "View recovery key";
+
+
+"Visibility in token list" = "Visibility in token list";
+
+
+"Visible" = "Visible";
+
+
+"Waiting for deposit confirmation" = "Waiting for deposit confirmation";
+
+
+"Wallet" = "Wallet";
+
+
+"Wallet address is not valid" = "Wallet address is not valid";
+
+
+"Wallet settings" = "Wallet settings";
+
+
+"Warning" = "Warning";
+
+
+"Welcome back!" = "Welcome back!";
+
+
+"Welcome back, %@" = "Welcome back, %@";
+
+
+"Welcome to P2P Family!" = "Welcome to P2P Family!";
+
+
+"Welcome to P2P Family, %@" = "Welcome to P2P Family, %@";
+
+
+"We’ve locked your wallet, try again in %@" = "We’ve locked your wallet, try again in %@";
+
+
+"What is a security key?" = "What is a security key?";
+
+
+"When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address.";
+
+
+"Where I can find one?" = "Where I can find one?";
+
+
+"Will be as a primary secure check" = "Will be as a primary secure check";
+
+
+"Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud";
+
+
+"Wrong order or seed phrase, please check it and try again" = "Wrong order or seed phrase, please check it and try again";
+
+
+"Wrong wallet address" = "Wrong wallet address";
+
+
+"Yesterday" = "Yesterday";
+
+
+"You can compare a cryptocurrency wallet" = "You can compare a cryptocurrency wallet to a password manager for crypto, and a security key to a master password.\n\nA security key is a series of 12 or 24 words generated by the wallet that give you access to its associated crypto.";
+
+
+"You can not send tokens to yourself" = "You can not send tokens to yourself";
+
+
+"You can receive %@ by providing this address, QR code or username:" = "You can receive %@ by providing this address, QR code or username:";
+
+
+"You get" = "You get";
+
+
+"You have not made any transaction yet" = "You have not made any transaction yet";
+
+
+"You pay" = "You pay";
+
+
+"Your P2P Wallet is fully set up.\nGet ready to explore the Crypto world" = "Your P2P Wallet is fully set up.\nGet ready to explore the Crypto world";
+
+
+"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list.";
+
+
+"Your account does not have enough %@ to cover fees" = "Your account does not have enough %@ to cover fees";
+
+
+"Your account does not have enough SOL to cover fee" = "Your account does not have enough SOL to cover fee";
+
+
+"Your connection to the Internet has been interrupted." = "Your connection to the Internet has been interrupted.";
+
+
+"Your device does not support scanning a code from an item. Please use a device with a camera." = "Your device does not support scanning a code from an item. Please use a device with a camera.";
+
+
+"Your p2p username" = "Your p2p username";
+
+
+"Your security key" = "Your security key";
+
+
+"Your wallet is backed up" = "Your wallet is backed up";
+
+
+"Your wallet needs backup" = "Your wallet needs backup";
+
+
+"amount" = "amount";
+
+
+"cannot exceed 50%" = "cannot exceed 50%%";
+
+
+"create new wallet" = "create new wallet";
+
+
+"deprecated" = "deprecated";
+
+
+"error" = "error";
+
+
+"frontrun" = "frontrun";
+
+
+"higher volatility" = "higher volatility";
+
+
+"i've already had a wallet" = "i've already had a wallet";
+
+
+"iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "iCloud restore is for returning users.\nPasting the security key manually is for everyone";
+
+
+"just now" = "just now";
+
+
+"minutes" = "minutes";
+
 /* 
   Localizable.strings
   p2p_wallet
 
   Created by Chung Tran on 10/23/20.
   
-*/
+ */
 "next" = "next";
-"Wowlet for people, not for tokens" = "Wowlet for people, not for tokens";
-"create new wallet" = "create new wallet";
-"i've already had a wallet" = "i've already had a wallet";
-"Terms and conditions" = "Terms and conditions";
-"By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy";
-"Cancel" = "Cancel";
-"Accept" = "Accept";
-"Congratulations!" = "Congratulations!";
-"Your wallet has been successfully created!" = "Your wallet has been successfully created!";
-"Backup" = "Backup";
-"error" = "error";
-"OK" = "OK";
-"please try again later!" = "please try again later!";
-"creating an account" = "creating an account";
-"security key" = "security key";
-"WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future." = "WARNING: The seed phrase will not be shown again, copy it down or save in your password manager to recover this wallet in the future.";
-"tap refresh button to retry" = "tap refresh button to retry";
-"we've created some security keywords for you." = "we've created some security keywords for you.";
-"save to Keychain" = "save to Keychain";
-"Create a PIN-code to protect your wallet" = "Create a PIN-code to protect your wallet";
-"passcodes do not match" = "passcodes do not match";
-"Use your FaceID for quick access?" = "Use your FaceID for quick access?";
-"Use FaceId" = "Use FaceId";
-"Do this later" = "Do this later";
-"unsupported" = "unsupported";
-"Your device does not support biometrics authentication" = "Your device does not support biometrics authentication";
-"We use FaceID to secure your transactions" = "We use FaceID to secure your transactions";
-"Identify yourself!" = "Identify yourself!";
-"We have not supported this type of biometry authentication yet" = "We have not supported this type of biometry authentication yet";
-"Use TouchId" = "Use TouchId";
-"Use your TouchID for quick access?" = "Use your TouchID for quick access?";
-"Almost done!" = "Almost done!";
-"We suggest you also to enable push notifications" = "We suggest you also to enable push notifications";
-"Enable now" = "Enable now";
-"Well done!" = "Well done!";
-"Finish setup" = "Finish setup";
-"Enter security keys" = "Enter security keys";
-"Go to wallet" = "Go to wallet";
-"Restoring wallet" = "Restoring wallet";
-"Send" = "Send";
-"Receive" = "Receive";
-"Swap" = "Swap";
-"Slide to scan" = "Slide to scan";
-"Wallets" = "Wallets";
-"Savings" = "Savings";
-"Make your crypto working on you" = "Make your crypto working on you";
-"Explore DeFi" = "Explore DeFi";
-"Activities" = "Activities";
-"Scan QR Code" = "Scan QR Code";
-"Scan an P2P address" = "Scan an P2P address";
-"Receive token" = "Receive token";
-"Send coins" = "Send coins";
-"amount" = "amount";
-"Wallet address" = "Wallet address";
-"Send Now" = "Send Now";
-"Something went wrong!\nPlease try again later" = "Something went wrong!\nPlease try again later";
-"Try again" = "Try again";
-"There is nothing in here!" = "There is nothing in here!";
-"Copy" = "Copy";
-"Share" = "Share";
-"Copied to clipboard" = "Copied to clipboard";
-"Scanning QrCode not supported" = "Scanning QrCode not supported";
-"Your device does not support scanning a code from an item. Please use a device with a camera." = "Your device does not support scanning a code from an item. Please use a device with a camera.";
-"Change your settings to use camera for scanning Qr Code" = "Change your settings to use camera for scanning Qr Code";
-"This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!" = "This app does not have permission to use your camera for scanning Qr Code. Please enable it in settings!";
-"Copy to clipboard" = "Copy to clipboard";
-"I have saved these words in a safe place" = "I have saved these words in a safe place";
-"Max" = "Max";
-"Amount is not valid" = "Amount is not valid";
-"Insufficient funds" = "Insufficient funds";
-"The address is not valid" = "The address is not valid";
-"Sending token..." = "Sending token...";
-"Token sent!" = "Token sent!";
-"From" = "From";
-"To" = "To";
-"Swap now" = "Swap now";
-"Your wallets" = "Your wallets";
-"Add a token to your wallet.\nThis will cost" = "Add a token to your wallet.\nThis will cost";
-"Getting creation fee" = "Getting creation fee";
-"Error when retrieving creation fee.\nTap to try again" = "Error when retrieving creation fee.\nTap to try again";
-"Close" = "Close";
-"Confirm it's you" = "Confirm it's you";
-"Warning" = "Warning";
-"was turned off.\nDo you want to turn it on?" = "was turned off.\nDo you want to turn it on?";
-"Turn on" = "Turn on";
-"Authentication failed" = "Authentication failed";
-"Retry after" = "Retry after";
-"seconds" = "seconds";
-"Tap button to retry!" = "Tap button to retry!";
-"Or saving into Keychain" = "Or saving into Keychain";
-"Continue" = "Continue";
-"Saved to Keychain" = "Saved to Keychain";
-"Saving to Keychain" = "Saving to Keychain";
-"Save to iCloud" = "Save to iCloud";
-"Saving to iCloud" = "Saving to iCloud";
-"Saved to iCloud" = "Saved to iCloud";
-"Restore using iCloud" = "Restore using iCloud";
-"Restore manually" = "Restore manually";
-"No account" = "No account";
-"Processing" = "Processing";
-"Done" = "Done";
-"Transaction ID" = "Transaction ID";
-"View in blockchain explorer" = "View in blockchain explorer";
-"Go back to wallet" = "Go back to wallet";
-"Send tokens" = "Send tokens";
-"Receive tokens" = "Receive tokens";
-"Add wallet" = "Add wallet";
-"Confirmed" = "Confirmed";
-"Loading" = "Loading";
-"Creating" = "Creating";
-"Mint address" = "Mint address";
-"Fee" = "Fee";
-"Tap here to retry" = "Tap here to retry";
-"Transaction" = "Transaction";
-"Block number" = "Block number";
-"Retry" = "Retry";
-"Enter seed phrases in a correct order to recover your wallet" = "Enter seed phrases in a correct order to recover your wallet";
-"PIN-codes do not match" = "PIN-codes do not match";
-"day" = "day";
-"week" = "week";
-"month" = "month";
-"year" = "year";
-"all" = "all";
-"Address copied!" = "Address copied!";
-"Profile" = "Profile";
-"Network" = "Network";
-"Security" = "Security";
-"Logout" = "Logout";
-"Do you really want to logout?" = "Do you really want to logout?";
-"Back" = "Back";
-"Your wallet needs backup" = "Your wallet needs backup";
-"If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases" = "If you lose this device, you can recover your encrypted wallet by using iCloud or mannually inputing your secret phrases";
-"Backup using iCloud" = "Backup using iCloud";
-"Backup manually" = "Backup manually";
-"Leave this page?" = "Leave this page?";
-"You have unsaved changes that will be lost if you decide to leave" = "You have unsaved changes that will be lost if you decide to leave";
-"Stay" = "Stay";
-"Leave" = "Leave";
-"Switch network?" = "Switch network?";
-"Do you really want to switch to" = "Do you really want to switch to";
-"Switching to" = "Switching to";
-"Will be as a primary secure check" = "Will be as a primary secure check";
-"PIN-code" = "PIN-code";
-"Default secure check" = "Default secure check";
-"Change PIN-code" = "Change PIN-code";
-"Current PIN-code" = "Current PIN-code";
-"New PIN-code" = "New PIN-code";
-"Repeat new PIN-code" = "Repeat new PIN-code";
-"Incorrect PIN-code" = "Incorrect PIN-code";
-"Please re-enter PIN-code" = "Please re-enter PIN-code";
-"PIN-code must have 6 digits" = "PIN-code must have 6 digits";
-"Successfully changed PIN-code" = "Successfully changed PIN-code";
-"Backup now" = "Backup now";
-"Secure non-custodial bank of future" = "Secure non-custodial bank of future";
-"Simple finance for everyone" = "Simple finance for everyone";
-"Decline" = "Decline";
-"Wallet name" = "Wallet name";
-"24 hours" = "24 hours";
-"Send to your wallet" = "Send to your wallet";
-"All deposits are stored 100% non-custodiallity with keys held on this device" = "All deposits are stored 100%% non-custodiallity with keys held on this device";
-"Home" = "Home";
-"Friends" = "Friends";
-"All my products" = "All my products";
-"Payments" = "Payments";
-"Exchange" = "Exchange";
-"Total balance" = "Total balance";
-"Balances" = "Balances";
-"for the last 24 hours" = "for the last 24 hours";
-"My balances" = "My balances";
-"Available" = "Available";
-"will cost" = "will cost";
-"All my tokens" = "All my tokens";
-"Search token" = "Search token";
-"Add token" = "Add token";
-"Adding token to your wallet" = "Adding token to your wallet";
-"We couldn’t add a token to your wallet.\nCheck your internet connection and try again." = "We couldn’t add a token to your wallet.\nCheck your internet connection and try again.";
-"Date" = "Date";
-"Value" = "Value";
-"Explore P2P Wallet and deposit funds when you’re ready." = "Explore P2P Wallet and deposit funds when you’re ready.";
-"Language" = "Language";
-"Switch language?" = "Switch language?";
-"Appearance" = "Appearance";
-"Dark" = "Dark";
-"Light" = "Light";
-"System" = "System";
-"P2P Wallet" = "P2P Wallet";
-"Paste" = "Paste";
-"P2P Wallet recovery" = "P2P Wallet recovery";
-"Recover your P2P wallet manually or using cloud services" = "Recover your P2P wallet manually or using cloud services";
-"There is no P2P Wallet saved in your iCloud" = "There is no P2P Wallet saved in your iCloud";
-"Welcome back to P2P Wallet!" = "Welcome back to P2P Wallet!";
-"Welcome back!" = "Welcome back!";
-"Enable FaceID" = "Enable FaceID";
-"Enable TouchID" = "Enable TouchID";
-"Swapping from %@ to %@ is currently unsupported" = "Swapping from %@ to %@ is currently unsupported";
-"You can not swap %@ to itself.\nPlease choose another token" = "You can not swap %@ to itself.\nPlease choose another token";
-"Minimum receive" = "Minimum receive";
-"Slippage" = "Slippage";
-"Balance" = "Balance";
-"Estimating..." = "Estimating...";
-"Exchange rate" = "Exchange rate";
-"per" = "per";
-"Slippage settings" = "Slippage settings";
-"Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used." = "Slippage refers to the difference between the expected price of a trade and the price at which the trade is executed. Slippage can occur at any time but is most prevalent during periods of higher volatility when market orders are used.";
-"Slippage isn't valid" = "Slippage isn't valid";
-"Swapping is currently unavailable" = "Swapping is currently unavailable";
-"Swapping pools not found" = "Swapping pools not found";
-"Swapping" = "Swapping";
-"Account not found" = "Account not found";
-"PublicKey not found" = "PublicKey not found";
-"Invalid URL" = "Invalid URL";
-"Invalid status code" = "Invalid status code";
-"Unknown error" = "Unknown error";
-"Select wallet" = "Select wallet";
-"Send to" = "Send to";
-"wallet_rename" = "wallet";
-"1h" = "1h";
-"4h" = "4h";
-"1d" = "1d";
-"1w" = "1w";
-"1m" = "1m";
-"Unauthorized" = "Unauthorized";
-"Not Found" = "Not Found";
-"Invalid request" = "Invalid request";
-"Reason" = "Reason";
-"Response error" = "Response error";
-"Socket returns an error" = "Socket returns an error";
-"Swap instruction exceeds desired slippage limit" = "Swap instruction exceeds desired slippage limit";
-"Blockhash not found" = "Blockhash not found";
-"Could not retrieve balance" = "Could not retrieve balance";
-"Could not derivate private key" = "Could not derivate private key";
-"Blockhash required" = "Blockhash required";
-"You must select a wallet to send" = "You must select a wallet to send";
-"Price" = "Price";
-"Select currency" = "Select currency";
-"The wallet address is not valid, it must be a %@ wallet address" = "The wallet address is not valid, it must be a %@ wallet address";
-"Invalid account info" = "Invalid account info";
-"Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud" = "Write down or duplicate these words in the correct order and keep them in a safe place.\nCopy them manually or backup to iCloud";
-"Allow notifications" = "Allow notifications";
-"You can not send tokens to yourself" = "You can not send tokens to yourself";
-"or your SOL account's address" = "or your SOL account's address";
-"no signer found" = "no signer found";
-"Visibility in token list" = "Visibility in token list";
-"Visible" = "Visible";
-"Invisible" = "Invisible";
-"Close token account" = "Close token account";
-"Wallet settings" = "Wallet settings";
-"Close %@ account" = "Close %@ account";
-"Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone." = "Your balance will be converted and transferred to your main SOL wallet and your %@ address will be disabled. This action can not be undone.";
-"Hidden" = "Hidden";
-"Hidden wallets" = "Hidden wallets";
-"Hide" = "Hide";
-"Non-native account can only be closed if its balance is zero" = "Non-native account can only be closed if its balance is zero";
-"Your tokens" = "Your tokens";
-"All tokens" = "All tokens";
-"Activity" = "Activity";
-"Sending" = "Sending";
-"Transaction processing" = "Transaction processing";
-"Success" = "Success";
-"Transaction has been confirmed" = "Transaction has been confirmed";
-"Something went wrong" = "Something went wrong";
-"Your wallet is backed up" = "Your wallet is backed up";
-"If you lose this device, you can recover your encrypted wallet backup from iCloud" = "If you lose this device, you can recover your encrypted wallet backup from iCloud";
-"View recovery key" = "View recovery key";
-"Backup to iCloud" = "Backup to iCloud";
-"We’ve locked your wallet, try again in %@" = "We’ve locked your wallet, try again in %@";
-"minutes" = "minutes";
-"Hide zero balances" = "Hide zero balances";
-"Wrong order or seed phrase, please check it and try again" = "Wrong order or seed phrase, please check it and try again";
-"Your public %@ address" = "Your public %@ address";
-"Select token" = "Select token";
-"To see %@ wallet address, you must add this token to your token list" = "To see %@ wallet address, you must add this token to your token list";
-"Add token to see wallet address" = "Add token to see wallet address";
-"%@ mint address" = "%@ mint address";
-"Token's mint address is not valid" = "Token's mint address is not valid";
-"Powered by Project Serum" = "Powered by Project Serum";
-"PIN-code changed!" = "PIN-code changed!";
-"Go back to profile" = "Go back to profile";
-"Enter current PIN-code" = "Enter current PIN-code";
-"Reset and try again" = "Reset and try again";
-"Confirm PIN-code" = "Confirm PIN-code";
-"Enter PIN-code" = "Enter PIN-code";
-"Enter a seed phrase from your account" = "Enter a seed phrase from your account";
-"Wrapped %@ by %@" = "Wrapped %@ by %@";
-"Transfer" = "Transfer";
-"Create account" = "Create Account";
-"Close account" = "Close Account";
-"%@ to %@" = "%@ to %@";
-"%@ Closed" = "%@ Closed";
-"%@ Created" = "%@ Created";
-"To %@" = "To %@";
-"From token %@" = "From %@";
-"Completed" = "Completed";
-"Show transaction details" = "Show transaction details";
-"Hide transaction details" = "Hide transaction details";
-"New wallet" = "New wallet";
-"Closed wallet" = "Closed wallet";
-"Nothing found" = "Nothing found";
-"Change your search phrase" = "Change your search phrase";
-"No transactions yet" = "No transactions yet";
-"You have not made any transaction yet" = "You have not made any transaction yet";
-"The list is empty" = "The list is empty";
-"Check entered account info for sending. It should be account in Solana network" = "Check entered account info for sending.\nIt should be account in Solana network";
-"Wallet address is not valid" = "Wallet address is not valid";
-"It must be an %@ wallet address " = "It must be an %@ wallet address";
-"Slippage error" = "Slippage error";
-"Swap instruction exceeds desired slippage limit.\nSet another slippage and try again." = "Swap instruction exceeds desired slippage limit.\nSet another slippage and try again.";
-"The fee calculation failed due to overflow, underflow or unexpected 0" = "The fee calculation failed due to overflow, underflow or unexpected 0";
-"Error processing instruction 0:custom program error: 0x1" = "Error processing instruction 0:custom program error: 0x1";
-"System error" = "System error";
-"Token balance must be empty" = "Token balance must be empty";
-"Token account should be zero" = "Token account should be zero";
-"Wrong wallet address" = "Wrong wallet address";
-"Check enterred wallet address and try again." = "Check enterred wallet address and try again.";
+
+
 "or reset it with a seed phrase" = "or reset it with a seed phrase";
-"Reset PIN with a seed phrase" = "Reset PIN with a seed phrase";
-"Your %@ address will be disabled. This action can not be undone" = "Your %@ address will be disabled. This action can not be undone";
-"Switching network..." = "Switching network...";
-"Currency" = "Currency";
-"United States Dollar" = "United States Dollar";
-"Euro" = "Euro";
-"Changing currency" = "Changing currency";
-"Chinese Yuan" = "Chinese Yuan";
-"Russian Ruble" = "Russian Ruble";
-"Vietnamese Dong" = "Vietnamese Dong";
-"French Franc" = "French Franc";
-"British pound sterling" = "British pound sterling";
-"Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet." = "Are you sure you want to delete this token account? This will permanently disable token transfers to this address and remove it from your wallet.";
-"Powered by" = "Powered by";
-"Connection problem" = "Connection problem";
-"Your connection to the Internet has been interrupted." = "Your connection to the Internet has been interrupted.";
-"Refresh" = "Refresh";
-"Use free transactions" = "Use free transactions";
-"Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below" = "Your %@ wallet has not been created yet.\nBut you can receive %@ by using your SOL wallet's address below";
-"Receive token using SOL wallet's address" = "Receive token using SOL wallet's address";
-"Derivable Accounts" = "Derivable Accounts";
-"Select Derivable Path" = "Select Derivable Path";
-"Restore" = "Restore";
-"Info" = "Info";
-"By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet." = "By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet. To use an alternative path, try restoring an existing wallet.";
-"Could not retrieve account info" = "Could not retrieve account info";
-"deprecated" = "deprecated";
-"Will be paid by p2p.org\nWe take care of all transfers costs." = "Will be paid by p2p.org\nWe take care of all transfers costs.";
-"Great!" = "Great!";
-"Paid by p2p.org" = "Paid by p2p.org";
-"Connection rate limits exceeded" = "Connection rate limits exceeded";
-"Could not retrieve balances for this tokens pair. Please try selecting again!" = "Could not retrieve balances for this tokens pair. Please try selecting again!";
-"Scan or copy QR code" = "Scan or copy QR code";
-"Direct %@ address" = "Direct %@ address";
-"View in %@ explorer" = "View in %@ explorer";
-"Show address detail" = "Show address detail";
-"Hide address detail" = "Hide address detail";
-"This address has no funds. Are you sure it's correct?" = "This address has no funds. Are you sure it's correct?";
-"I'm sure, It's correct" = "I'm sure, It's correct";
-"Checking address' validity" = "Checking address' validity";
-"Error checking address' validity. Are you sure it's correct?" = "Error checking address' validity. Are you sure it's correct?";
-"Address copied to clipboard!" = "Address copied to clipboard!";
-"Liquidity provider fee" = "Liquidity provider fee";
-"Currency changed" = "Currency changed";
-"Network changed" = "Network changed";
-"Insufficient funds for fee" = "Insufficient funds for fee";
-"Settings" = "Settings";
-"One unified address to receive SOL or SPL Tokens" = "One unified address to receive SOL or SPL Tokens";
-"SOL and SPL Tokens" = "SOL and SPL Tokens";
-"The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications." = "The Solana Program Library (SPL) is a collection of on-chain programs maintained by the Solana team. The SPL Token program is the token standard of the Solana blockchain.\n\nSimilar to ERC-20 tokens on the Ethereum network, SPL Tokens are designed for DeFi applications.";
-"Send SOL or any SPL Tokens on one address" = "Send SOL or any SPL Tokens on one address";
-"Backing up" = "Backing up";
-"The phrases you has entered is not correct" = "The phrases you has entered is not correct";
+
+
 "pending" = "pending";
-"Save that seed phrase and keep it in the safe place. Will be used for recovery and backup." = "Save that seed phrase and keep it in the safe place. Will be used for recovery and backup.";
-"Could not create capture session" = "Could not create capture session";
-"There is something wrong with your camera!\nPlease try again later!" = "There is something wrong with your camera!\nPlease try again later!";
-"Seed phrase must have 12 or 24 words" = "Seed phrase must have 12 or 24 words";
-"Seed phrase must have at least 12 words" = "Seed phrase must have at least 12 words";
-"No chart data available." = "No chart data available.";
-"Today" = "Today";
-"Yesterday" = "Yesterday";
-"Unknown date" = "Unknown date";
-"✅ Seed phrase copied to clipboard!" = "✅ Seed phrase copied to clipboard!";
-"Wallet" = "Wallet";
-"Error sending transaction" = "Error sending transaction";
-"This is the thing you use to get all your accounts from your mnemonic phrase. By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet." = "This is the thing you use to get all your accounts from your mnemonic phrase. By default, P2P wallet will use m/44'/501'/0'/0' as the derivation path for the main wallet.";
-"Default" = "Default";
-"Error retrieving receipt" = "Error retrieving receipt";
-"Fetching receipt" = "Fetching receipt";
-"Attempt to debit an account but found no record of a prior credit." = "Attempt to debit an account but found no record of a prior credit.";
-"Received new tokens. Downloading receipt..." = "Received new tokens. Downloading receipt...";
-"Unknown token" = "Unknown token";
-"Interface language changed" = "Interface language changed";
-"Changed language to %@" = "Changed language to %@";
-"Source account is not valid" = "Source account is not valid";
-"Given pool token amount results in zero trading tokens" = "Given pool token amount results in zero trading tokens";
-"Wrong signature" = "Wrong signature";
-"Buy" = "Buy";
-"There is no %@ wallet in your account" = "There is no %@ wallet in your account";
-"Wrong hash format" = "Wrong hash format";
-"Wrong pubkey format" = "Wrong pubkey format";
-"Wrong keypair format" = "Wrong keypair format";
-"Wrong signature format" = "Wrong signature format";
-"Signer error" = "Signer error";
-"Solana RPC client error" = "Solana RPC client error";
-"Solana program error" = "Solana program error";
-"Token account not found" = "Token account not found";
-"Incorrect account's owner" = "Incorrect account's owner";
-"Unsupported recipient's address" = "Unsupported recipient's address";
-"Fee calculator not found" = "Fee calculator not found";
-"Amount is too small" = "Amount is too small";
-"Not enough balance" = "Not enough balance";
-"Not enough token balance" = "Not enough token balance";
-"Decimals mismatch" = "Decimals mismatch";
-"Token mint mismatch" = "Token mint mismatch";
-"Not enough output amount" = "Not enough output amount";
-"expected" = "expected";
-"minimum" = "minimum";
-"actual" = "actual";
-"found" = "found";
-"Current price" = "Current price";
-"Max price slippage" = "Max price slippage";
-"Receive at least" = "Receive at least";
-"Swap fees" = "Swap fees";
-"Your transaction may be frontrun" = "Your transaction may be frontrun";
-"Slippage exceeds maximum" = "Slippage exceeds maximum";
-"Enter a number less than %d%" = "Enter a number less than %d%";
-"Not enough %@ to pay network fee" = "Not enough %@ to pay network fee";
-"Your account does not have enough SOL to cover fee" = "Your account does not have enough SOL to cover fee";
-"Native Solana Token" = "Native Solana Token";
-"Transaction Token" = "Transaction Token";
-"Swap settings" = "Swap settings";
-"Pay network fee with" = "Pay network fee with";
-"Network fee" = "Network fee";
-"Fee compensation pool not found" = "Fee compensation pool not found";
-"Please choose paying with SOL" = "Please choose paying with SOL";
-"Could not retrieve exchange rate" = "Could not retrieve exchange rate";
-"Some parameters are missing" = "Some parameters are missing";
-"Exchange rate is not valid" = "Exchange rate is not valid";
-"SELECT" = "SELECT";
-"Enter the amount" = "Enter the amount";
-"Don’t go over the available funds" = "Don’t go over the available funds";
-"Error fetching market %@" = "Error fetching market %@";
-"Tap to try again" = "Tap to try again";
-"Loading exchange rate" = "Loading exchange rate";
-"Calculating fees" = "Calculating fees";
-"Could not calculate exchange rate or swapping fees from current token pair" = "Could not calculate exchange rate or swapping fees from current token pair";
-"Solana" = "Solana";
-"Bitcoin" = "Bitcoin";
-"I want to receive renBTC" = "I want to receive renBTC";
-"Show address" = "Show address";
-"Bitcoin deposit address" = "Bitcoin deposit address";
-"is only open for 36 hours" = "is only open for 36 hours";
-"but you can send to it multiple times within this session" = "but you can send to it multiple times within this session";
-"Each transaction to this deposit address takes about 60 minutes to complete. For security reasons, you will need to wait for 6 block confirmations before you can mint renBTC on Solana." = "Each transaction to this deposit address takes about 60 minutes to complete. For security reasons, you will need to wait for 6 block confirmations before you can mint renBTC on Solana.";
-"If you cannot complete this transaction within the required time, please return at a later date." = "If you cannot complete this transaction within the required time, please return at a later date.";
-"If you do not finish your transaction within this period/session/time frame, you risk losing the deposits." = "If you do not finish your transaction within this period/session/time frame, you risk losing the deposits.";
-"I can complete this transaction within time" = "I can complete this transaction within time";
-"Be sure you can complete this transaction" = "Be sure you can complete this transaction";
-"This address accepts %@. You may lose assets by sending another coin." = "This address accepts %@. You may lose assets by sending another coin.";
-"only Bitcoin" = "only Bitcoin";
-"Minimum transaction amount of %@" = "Minimum transaction amount of **%@**.";
-"%@ is the remaining time to safely send the assets." = "**%@** is the remaining time to safely send the assets.";
-"Received %@ renBTC" = "Received %@ renBTC";
-"Receiving %@ renBTC: Pending" = "Receiving %@ renBTC: Pending";
-"Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL." = "Solana Associated Token Account Required. This will require you to sign a transaction and spend some SOL.";
-"Create Token Account" = "Create Token Account";
-"Creating Token Account" = "Creating Token Account";
-"Which cryptocurrencies can I use?" = "Which cryptocurrencies can I use?";
-"I want to receive" = "I want to receive";
-"Choose wallet" = "Choose wallet";
-"Multiple wallets found" = "Multiple wallets found";
-"Transfer fee" = "Transfer fee";
-"Free" = "Free";
-"Destination network" = "Destination network";
-"Receive at least: %@ %@" = "Receive at least: %@ %@";
-"Are you sure that this %@ address is valid?" = "Are you sure that this %@ address is valid?";
-"Input amount is too small, minimum amount for swapping is %@" = "Input amount is too small, minimum amount for swapping is %@";
-"Calculating minimum transaction amount…" = "Calculating minimum transaction amount…";
-"Enter the recipient's address" = "Enter the recipient's address";
-"Account creation fee" = "Account creation fee";
-"Serum order creation (paid once per pair)" = "Serum order creation (paid once per pair)";
-"Transaction fee" = "Transaction fee";
-"Total fees" = "Total fees";
-"Receiving status" = "Receiving status";
-"Waiting for deposit confirmation" = "Waiting for deposit confirmation";
-"Deposit confirmed" = "Deposit confirmed";
-"Submitting to RenVM" = "Submitting to RenVM";
-"Submitted to RenVM" = "Submitted to RenVM";
-"Minting" = "Minting";
-"Successfully minted %@ renBTC!" = "Successfully minted %@ renBTC!";
-"Receiving statuses" = "Receiving statuses";
-"Receiving %@ renBTC" = "Receiving %@ renBTC";
-"Reserve your P2P username" = "Reserve your P2P username";
-"username" = "username";
-"Use any latin and special symbols or emojis." = "Use any latin and special symbols or emojis.";
-"You can also %@ this step and reserve a username later." = "You can also %@ this step and reserve a username later.";
+
+
+"please try again later!" = "please try again later!";
+
+
+"seconds" = "seconds";
+
+
+"security key" = "security key";
+
+
 "skip" = "skip";
-"By continuing, you agree to wallet's %@ and %@" = "By continuing, you agree to wallet's %@ and %@";
-"Terms of Use" = "Terms of Use";
-"Privacy Policy" = "Privacy Policy";
-"Checking name’s availability" = "Checking name’s availability";
-"%@ is available" = "%@ is available";
-"name" = "name";
-"%@ isn’t available" = "%@ isn’t available";
-"Could not check name’s availability. Please check your internet connection!" = "Could not check name’s availability. Please check your internet connection!";
-"Reserve your P2P username now" = "Reserve your P2P username now";
-"Any token can be received using username regardless of whether it is in your wallets list" = "Any token can be received using username regardless of whether it is in your wallets list";
-"Username %@.p2p.sol has already been reserved for this user" = "Username %@.p2p.sol has already been reserved for this user";
-"Username %@ is successfully reserved" = "Username %@ is successfully reserved";
-"Not yet reserved" = "Not yet reserved";
-"Your p2p username" = "Your p2p username";
-"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list.";
-"Save" = "Save";
-"Saved to photo library" = "Saved to photo library";
-"There is an error occurred. You can either retry or reserve name later in Settings" = "There is an error occurred. You can either retry or reserve name later in Settings";
-"Use any lowercased latin characters and hyphens" = "Use any lowercased latin characters and hyphens";
-"Name copied to clipboard" = "Name copied to clipboard";
-"The username %@ is not available" = "The username %@ is not available";
-"Maximum 15 latin characters and hyphens" = "Maximum 15 latin characters and hyphens";
-"Username must contain less than 15 characters" = "Username must contain less than 15 characters";
-"Finding swapping routes" = "Finding swapping routes";
-"No routes for swapping current token pair" = "No routes for swapping current token pair";
-"Error finding swapping routes. Tap here to try again!" = "Error finding swapping routes. Tap here to try again!";
-"This trading pair is not supported" = "This trading pair is not supported";
-"Choose source wallet" = "Choose source wallet";
-"Choose destination wallet" = "Choose destination wallet";
-"Enter input amount" = "Enter input amount";
-"Choose another destination wallet" = "Choose another destination wallet";
-"Could not calculating fees" = "Could not calculating fees";
-"Input amount is not valid" = "Input amount is not valid";
-"Choose another slippage" = "Choose another slippage";
-"Could not connect to wallet" = "Could not connect to wallet";
-"Invalid estimated amount" = "Invalid estimated amount";
-"Your account does not have enough %@ to cover fees" = "Your account does not have enough %@ to cover fees";
-"Recipient" = "Recipient";
-"Found associated wallet address" = "Found associated wallet address";
-"Result" = "Result";
-"This username is not associated with anyone" = "This username is not associated with anyone";
-"There is an error occured, please try typing name again." = "There is an error occured, please try typing name again.";
-"Security key can't be saved into icloud. Please try again." = "Security key can't be saved into icloud. Please try again.";
-"You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list.";
-"Combined tokens value" = "Combined tokens value";
-"P2P username / SOL address" = "P2P username / SOL address";
-"The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "The future of non-custodial banking: the easy way to buy, sell and hold cryptos";
-"Welcome to P2P Family Camp!" = "Welcome to\nP2P Family Camp!";
-"All the ways to buy" = "All the ways to buy";
-"Buy Cryptos with Credit Card, Fiat or Apple Pay" = "Buy Cryptos with Credit Card, Fiat or Apple Pay";
-"Nobody can access your private keys. Your data is fully safe" = "Nobody can access your private keys.\nYour data is fully safe";
-"No hidden costs" = "No hidden costs";
-"Send BTC, ETH, USDC with no fees. Swap BTC with only $1" = "Send BTC, ETH, USDC with no fees.\nSwap BTC with only $1";
-"Private and secure" = "Private & secure";
-"Show your security key" = "Show your security key";
-"Secure your wallet" = "Secure your wallet";
-"Create a new wallet" = "Create a new wallet";
-"Import a wallet" = "Import a wallet";
-"iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "iCloud restore is for returning users.\nPasting the security key manually is for everyone";
-"Show your security key" = "Show your security key";
-"Secure your wallet" = "Secure your wallet";
-"Create a new wallet" = "Create a new wallet";
-"Your security key" = "Your security key";
-"Verify manually" = "Verify manually";
-"Renew" = "Renew";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "The following words are security key that you must keep in a safe place, written in the correct sequence.\n\nIf lost, no one can restore it.\nKeep it private, even from us";
-"Proceed without a username?" = "Proceed without a username?";
-"Anytime you want, you can easily reserve a username by going to the settings" = "Anytime you want, you can easily reserve a username by going to the settings";
-"Proceed" = "Proceed";
-"Proceed & don’t show again" = "Proceed & don’t show again";
-"Welcome to P2P Family!" = "Welcome to P2P Family!";
-"Your P2P Wallet is fully set up.\nGet ready to explore the Crypto world" = "Your P2P Wallet is fully set up.\nGet ready to explore the Crypto world";
-"Start using P2P Wallet" = "Start using P2P Wallet";
-"Welcome to P2P Family, %@" = "Welcome to P2P Family, %@";
-"Welcome back, %@" = "Welcome back, %@";
-"To recover your wallet enter your security key's 12 or 24 words separated by single spaces in the correct order" = "To recover your wallet enter your security key's 12 or 24 words separated by single spaces in the correct order";
-"Enter your security key" = "Enter your security key";
-"Save & Continue" = "Save & Continue";
-"Enter correct security key" = "Enter correct security key";
-"You can compare a cryptocurrency wallet" = "You can compare a cryptocurrency wallet to a password manager for crypto, and a security key to a master password.\n\nA security key is a series of 12 or 24 words generated by the wallet that give you access to its associated crypto.";
-"The definition" = "The definition";
-"If lost, no one can restore it Keep it private, even from us" = " · If lost, no one can restore it\n · Keep it private, even from us";
-"Where I can find one?" = "Where I can find one?";
-"If you create a new wallet account" = "If you create a new wallet account, you will receive your security key that you must write down somewhere safe. This is the only way to recover your wallet.\n\nIf you still have access to your old wallet, sometimes you can recover your security key from it.\n\nUsing Custodian wallet, you still have the option to regain access to your data by asking a third party.";
-"What is a security key?" = "What is a security key?";
-"Verify your security key" = "Verify your security key";
-"Choose correct words" = "Choose correct words";
-"Save & Continue" = "Save & Continue";
-"These words don’t match" = "These words don’t match";
-"The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup";
-"Go back" = "Go back";
-"Set up a wallet PIN" = "Set up a wallet PIN";
-"Confirm your wallet PIN" = "Confirm your wallet PIN";
-"Choose your wallet" = "Choose your wallet";
-"PIN doesn’t match. Try again" = "PIN doesn’t match. Try again";
-"Allow push notifications so you don’t miss any important updates on your account." = "Allow push notifications so you don’t miss any important updates on your account.";
-"New staking option available" = "New staking option available";
-"Get up to 8%% APY on staking USDC" = "Get up to 8%% APY on staking USDC";
-"just now" = "just now";
-"%@m ago" = "%@m ago";
-"%@ successfully sent" = "%@ successfully sent";
-"%@h ago" = "%@h ago";
-"Received %@" = "Received %@";
-"%@ → %@ swapped successfully" = "%@ → %@ swapped successfully";
-"Let’s stay in touch" = "Let’s stay in touch";
-"Do you want to allow P2P Wallet to use %@?" = "Do you want to allow P2P Wallet to use %@?";
-"P2P Wallet uses %@ to restrict unauthorized users from accessing the app" = "P2P Wallet uses %@ to restrict unauthorized users from accessing the app";
-"Don’t Allow" = "Don’t Allow";
-"Allow" = "Allow";
-"Updating prices" = "Updating prices";
-"Prices updated" = "Prices updated";
-"Error when updating prices" = "Error when updating prices";
-"Capitalized Terms and Conditions" = "Terms and Conditions";
-"DApps" = "DApps";
-"Earn" = "Earn";
-"By continuing, you agree to wallet's %@" = "By continuing, you agree to wallet's\n%@";
-"Derivation path" = "Derivation path";
-"History" = "History";
-"Show wallet address" = "Show wallet address";
-"Colon Receive at least" = "Receive at least:";
-"Show details" = "Show details";
-"Hide details" = "Hide details";
-"%@ is unavailable" = "%@ is unavailable";
-"No more than 15 alphanumerical latin lowercase characters and dashes" = "No more than 15 alphanumerical latin lowercase characters and dashes";
-"P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it.";
-"Enter username or skip" = "Enter username or skip";
-"Choose available username" = "Choose available username";
-"Enter the amount to proceed" = "Enter the amount to proceed";
-"Choose the recipient" = "Choose the recipient";
-"Address" = "Address";
-"Contact" = "Contact";
-"Scan QR" = "Scan QR";
-"There’s no address like this" = "There’s no address like this";
-"This address has no funds" = "This address has no funds";
-"Caution: this address has no funds" = "Caution: this address has no funds";
-"There is an error occurred, please try again" = "There is an error occurred, please try again";
-"Send %@ %@" = "Send %@ %@";
-"%@ Network" = "%@ Network";
-"Choose the network" = "Choose the network";
-"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals.\n\nHowever, before sending your funds, make sure to double-check the selected network.";
-"Paid by p2p" = "Paid by p2p";
-"Choose the recipient to proceed" = "Choose the recipient to proceed";
-"Review and confirm" = "Review & confirm";
-"Confirm sending %@" = "Confirm sending %@";
-"Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed." = "Be sure all details are correct before confirming the transaction. Once confirmed, it cannot be reversed.";
-"Recipient’s\naddress" = "Recipient’s\naddress";
-"Total" = "Total";
-"1 %@ Price" = "1 %@ Price";
-"Pay swap fees with" = "Pay swap fees with";
-"Total fee" = "Total fee";
-"Showing my address for" = "Showing my address for";
-"Reserve P2P username" = "Reserve P2P username";
-"Enter username" = "Enter username";
-"Change the token?" = "Change the token?";
-"If the token is changed to %@, the address field must be filled in with a %@." = "If the token is changed to %@, the address field must be filled in with a %@.";
-"%@-compatible address" = "%@-compatible address";
-"Discard" = "Discard";
-"Change" = "Change";
+
+
+"username" = "username";
+
+
 "username or address" = "username / address";
-"Change the network?" = "Change the network?";
-"If the network is changed to %@, the address field must be filled in with a %@." = "If the network is changed to %@, the address field must be filled in with a %@.";
-"There are %@ free transactions left for today" = "There are %@ free transactions left for today";
-"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";
-"Select word #%@" = "Select word #%@";
-"Receive any token within the Solana network even if it is not included in your wallet list" = "Receive **any token** within the Solana network even if it is not included in your wallet list";
-"When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address.";
-"You pay" = "You pay";
-"You get" = "You get";
-"Processing fee" = "Processing fee";
-"SOL Price" = "SOL Price";
-"Buy %@ on Moonpay" = "Buy %@ on Moonpay";
-"I understand" = "I understand";
-"Receiving via Bitcoin network" = "Receiving via Bitcoin network";
-"Make sure you understand the aspects" = "Make sure you understand the aspects";
-"Select the second token" = "Select the second token";
-"Select the first token" = "Select the first token";
-"Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
-"Spend" = "Spend";
-"Swap %@ → %@" = "Swap %@ → %@";
-"Custom" = "Custom";
-"Custom slippage" = "Custom slippage";
-"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "A %@ is a difference between the expected price and the actual price at which a trade is executed";
-"Slippage can occur at any time, but it is most prevalent during periods of %@" = "Slippage can occur at any time, but it is most prevalent during periods of %@";
-"Transactions that exceed 20% slippage tolerance may be %@" = "Transactions that exceed 20%% slippage tolerance may be %@";
-"Slippage tolerance %@" = "Slippage tolerance %@";
-"cannot exceed 50%" = "cannot exceed 50%%";
-"frontrun" = "frontrun";
-"higher volatility" = "higher volatility";
-"This address accepts only %@. You may lose assets by sending another coin." = "This address accepts **only %@**. You may lose assets by sending another coin.";
-"Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";
-"Statuses received" = "Statuses received";
-"Statuses received (%@)" = "Statuses received (%@)";
-"The last one: " = "The last one:";
-"Hide direct and mint addresses" = "Hide direct and mint addresses";
-"Show direct and mint addresses" = "Show direct and mint addresses";
-"Tap and hold to copy" = "Tap and hold to copy";
-"Receive %@" = "Receive %@";
-"You can receive %@ by providing this address, QR code or username:" = "You can receive %@ by providing this address, QR code or username:";
-"Username %@ was reserved" = "Username %@ was reserved";
-"None" = "None";
+
+
+"was turned off.\nDo you want to turn it on?" = "was turned off.\nDo you want to turn it on?";
+
+
+"✅ Seed phrase copied to clipboard!" = "✅ Seed phrase copied to clipboard!";

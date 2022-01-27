@@ -21,9 +21,7 @@ extension WalletDetail {
         private lazy var collectionView: TransactionsCollectionView = {
             let collectionView = TransactionsCollectionView(
                 transactionViewModel: viewModel.transactionsViewModel,
-                graphViewModel: viewModel.graphViewModel,
-                wallet: viewModel.walletDriver,
-                nativePubkey: viewModel.nativePubkey
+                graphViewModel: viewModel.graphViewModel
             )
             collectionView.delegate = self
             return collectionView

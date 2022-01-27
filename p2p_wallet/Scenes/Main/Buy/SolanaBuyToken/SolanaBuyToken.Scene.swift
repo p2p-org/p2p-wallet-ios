@@ -26,7 +26,6 @@ extension SolanaBuyToken {
                 // Bottom Button
                 WLStepButton.main(text: L10n.continue)
                     .setup { view in
-                        guard let view = view as? WLStepButton else { return }
                         viewModel.nextStatus.map { $0.text }.drive(view.rx.text).disposed(by: disposeBag)
                         viewModel.nextStatus.map { $0.isEnable }.drive(view.rx.isEnabled).disposed(by: disposeBag)
                     }

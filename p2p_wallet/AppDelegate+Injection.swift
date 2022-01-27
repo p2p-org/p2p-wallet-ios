@@ -33,9 +33,6 @@ extension Resolver: ResolverRegistering {
         register {NameService()}
             .implements(NameServiceType.self)
             .scope(.application)
-        register { AddressFormatter() }
-            .implements(AddressFormatterType.self)
-            .scope(.application)
         register { LocalizationManager() }
             .implements(LocalizationManagerType.self)
         
@@ -126,8 +123,7 @@ extension Resolver: ResolverRegistering {
                 rpcClient: resolve(),
                 solanaClient: resolve(),
                 account: resolve(SolanaSDK.self).accountStorage.account!,
-                transactionStorage: RenVM.BurnAndRelease.TransactionStorage(),
-                transactionHandler: resolve()
+                transactionStorage: RenVM.BurnAndRelease.TransactionStorage()
             )
         }
             .implements(RenVMBurnAndReleaseServiceType.self)

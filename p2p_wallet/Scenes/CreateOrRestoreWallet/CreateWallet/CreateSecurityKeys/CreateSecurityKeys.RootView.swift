@@ -118,7 +118,7 @@ extension CreateSecurityKeys {
             UIImageWriteToSavedPhotosAlbum(keysView.asImage(), self, #selector(saveImageCallback), nil)
         }
         
-        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        @objc private func saveImageCallback(_: UIImage, didFinishSavingWithError error: Error?, _: UnsafeRawPointer) {
             if let error = error {
                 showErrorView(error: error)
             } else {

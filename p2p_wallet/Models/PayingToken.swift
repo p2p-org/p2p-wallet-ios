@@ -8,13 +8,4 @@
 enum PayingToken: String, CaseIterable {
     case nativeSOL
     case transactionToken
-    
-    var description: String {
-        switch self {
-        case .nativeSOL:
-            return L10n.nativeSolanaToken
-        case .transactionToken:
-            return L10n.transactionToken
-        }
-    }
 }

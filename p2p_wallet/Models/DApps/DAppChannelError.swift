@@ -8,7 +8,6 @@
 import Foundation
 
 enum DAppChannelError {
-    static var platformIsNotReady = Self.createError(code: 400, message: "Platform is not ready")
     static var canNotFindWalletAddress = Self.createError(code: 400, message: "Can not find wallet address")
     static var invalidTransaction = Self.createError(code: 400, message: "Invalid transactions")
     static var unauthorized = Self.createError(code: 400, message: "Unauthorized")

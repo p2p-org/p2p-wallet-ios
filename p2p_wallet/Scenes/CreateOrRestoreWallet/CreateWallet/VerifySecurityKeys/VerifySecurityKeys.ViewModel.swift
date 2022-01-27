@@ -30,7 +30,6 @@ extension VerifySecurityKeys {
         private let createWalletViewModel: CreateWalletViewModelType
         
         // MARK: - Properties
-        let numberOfQuestions: Int = 4
         let keyPhrase: [String]
         
         // MARK: - Subject

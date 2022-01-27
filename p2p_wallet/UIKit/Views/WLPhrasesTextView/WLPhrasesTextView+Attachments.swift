@@ -97,19 +97,3 @@ extension WLPhrasesTextView {
         }
     }
 }
-
-extension WLPhrasesTextView {
-    func isPlaceholder(at range: NSRange) -> Bool {
-        if range.length > 1 {return false}
-        var flag = false
-        textStorage.enumerateAttribute(.attachment, in: range, options: []) { (value, _, _) in
-            if value is PlaceholderAttachment {
-                flag = true
-                return
-            } else {
-                return
-            }
-        }
-        return flag
-    }
-}

@@ -7,7 +7,7 @@
 
 import WebKit
 
-public protocol BuyTokenWidgetLoadingView: UIView {
+protocol BuyTokenWidgetLoadingView: UIView {
     func startLoading()
     func stopLoading()
 }
@@ -21,19 +21,20 @@ extension UIActivityIndicatorView: BuyTokenWidgetLoadingView {
     }
 }
 
-open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
+class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     // MARK: - Properties
     var loadsCount = 0
     let provider: BuyProvider
 
     // MARK: - Initializers
-    public init(provider: BuyProvider, loadingView: BuyTokenWidgetLoadingView = UIActivityIndicatorView()) {
+    init(provider: BuyProvider, loadingView: BuyTokenWidgetLoadingView = UIActivityIndicatorView()) {
         self.provider = provider
         self.loadingView = loadingView
         super.init(nibName: nil, bundle: nil)
     }
-    
-    required public init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -72,17 +73,17 @@ open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavig
         }
     }
     
-    public func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         if let serverTrust = challenge.protectionSpace.serverTrust {
             completionHandler(.useCredential, URLCredential(trust: serverTrust))
         }
     }
     
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         loadsCount += 1
     }
     
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         loadsCount -= 1
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in

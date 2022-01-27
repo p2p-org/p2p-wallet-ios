@@ -44,7 +44,6 @@ protocol SettingsViewModelType {
     func backupUsingICloud()
     func backupManually()
     func setDidBackupOffline()
-    func setDidBackup(_ didBackup: Bool)
     func setFiat(_ fiat: Fiat)
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void)
@@ -264,7 +263,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         changeNetworkResponder.changeAPIEndpoint(to: endpoint)
     }
     
-    func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void) {
+    func setEnabledBiometry(_: Bool, onError: @escaping (Error?) -> Void) {
         // pause authentication
         authenticationHandler.pauseAuthentication(true)
         

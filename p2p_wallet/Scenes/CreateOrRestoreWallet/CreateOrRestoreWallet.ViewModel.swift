@@ -21,9 +21,6 @@ extension CreateOrRestoreWallet {
         // MARK: - Dependencies
         @Injected var analyticsManager: AnalyticsManagerType
         
-        // MARK: - Properties
-        private let bag = DisposeBag()
-        
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }

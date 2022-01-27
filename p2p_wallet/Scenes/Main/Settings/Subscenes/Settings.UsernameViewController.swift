@@ -54,7 +54,7 @@ extension Settings {
             UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.saveImageCallback), nil)
         }
         
-        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        @objc private func saveImageCallback(_: UIImage, didFinishSavingWithError error: Error?, _: UnsafeRawPointer) {
             if let error = error {
                 showError(error)
             } else {

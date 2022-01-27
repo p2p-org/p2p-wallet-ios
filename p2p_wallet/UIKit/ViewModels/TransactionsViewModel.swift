@@ -26,9 +26,9 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private let disposeBag = DisposeBag()
     private var fetchedFeePayer = false
     private let isFetchingReceiptSubject = BehaviorRelay<Bool>(value: false)
-    var isFetchingReceiptDriver: Driver<Bool> {
-        isFetchingReceiptSubject.asDriver()
-    }
+//    var isFetchingReceiptDriver: Driver<Bool> {
+//        isFetchingReceiptSubject.asDriver()
+//    }
     
     // MARK: - Subjects
     init(

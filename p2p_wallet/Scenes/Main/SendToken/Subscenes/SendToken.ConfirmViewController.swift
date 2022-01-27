@@ -321,8 +321,7 @@ extension SendToken {
 private extension SendToken {
     class AmountSummaryView: UIStackView {
         // MARK: - Dependencies
-        private let disposeBag = DisposeBag()
-        
+
         // MARK: - Subviews
         private lazy var coinImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private lazy var equityValueLabel = UILabel(text: "<Amount: ~$150>")
@@ -361,8 +360,7 @@ private extension SendToken {
     
     class RecipientView: UIStackView {
         // MARK: - Dependencies
-        private let disposeBag = DisposeBag()
-        
+
         // MARK: - Subviews
         private lazy var nameLabel = UILabel(text: "<Recipient: a.p2p.sol>")
         private lazy var addressLabel = UILabel(text: "<DkmTQHutnUn9xWmismkm2zSvLQfiEkPQCq6rAXZKJnBw>", textSize: 17, weight: .semibold, numberOfLines: 0)
@@ -398,7 +396,6 @@ private extension SendToken {
     
     class SectionView: UIStackView {
         // MARK: - Dependencies
-        private let disposeBag = DisposeBag()
         
         // MARK: - Subviews
         lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)

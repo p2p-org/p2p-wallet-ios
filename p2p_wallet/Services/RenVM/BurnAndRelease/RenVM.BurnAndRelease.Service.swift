@@ -10,8 +10,6 @@ import RxSwift
 import RxCocoa
 
 protocol RenVMBurnAndReleaseServiceType {
-    func isTestNet() -> Bool
-    func getFee() -> Single<Double>
     func burn(recipient: String, amount: UInt64) -> Single<String>
 }
 
@@ -27,8 +25,7 @@ extension RenVM.BurnAndRelease {
         private let solanaClient: RenVMSolanaAPIClientType
         private let account: SolanaSDK.Account
         private var transactionStorage: RenVMBurnAndReleaseTransactionStorageType
-        private let transactionHandler: TransactionHandler
-        
+
         // MARK: - Properties
         private var releasingTxs = [BurnDetails]()
         private let burnQueue = DispatchQueue(label: "burnQueue", qos: .background)
@@ -41,14 +38,12 @@ extension RenVM.BurnAndRelease {
             rpcClient: RenVMRpcClientType,
             solanaClient: RenVMSolanaAPIClientType,
             account: SolanaSDK.Account,
-            transactionStorage: RenVMBurnAndReleaseTransactionStorageType,
-            transactionHandler: TransactionHandler
+            transactionStorage: RenVMBurnAndReleaseTransactionStorageType
         ) {
             self.rpcClient = rpcClient
             self.solanaClient = solanaClient
             self.account = account
             self.transactionStorage = transactionStorage
-            self.transactionHandler = transactionHandler
             self.burnAndReleaseSubject = .init(
                 request: .error(RenVM.Error.unknown)
             )
@@ -85,16 +80,7 @@ extension RenVM.BurnAndRelease {
         func reload() {
             burnAndReleaseSubject.reload()
         }
-        
-        func isTestNet() -> Bool {
-            rpcClient.network.isTestnet
-        }
-        
-        func getFee() -> Single<Double> {
-            rpcClient.getTransactionFee(mintTokenSymbol: mintTokenSymbol)
-                .map {$0.convertToBalance(decimals: 8)}
-        }
-        
+
         func burn(recipient: String, amount: UInt64) -> Single<String> {
             getBurnAndRelease()
                 .flatMap {[weak self] burnAndRelease -> Single<BurnDetails> in

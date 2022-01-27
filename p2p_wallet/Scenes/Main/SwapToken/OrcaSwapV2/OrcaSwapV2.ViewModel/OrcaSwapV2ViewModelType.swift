@@ -25,7 +25,6 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     var payingTokenSubject: BehaviorRelay<PayingToken> { get }
     var feePayingTokenDriver: Driver<String?> { get }
-    var payingTokenDriver: Driver<PayingToken> {get}
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
     var isSendingMaxAmountDriver: Driver<Bool> { get }
     var isShowingDetailsDriver: Driver<Bool> { get }
@@ -35,16 +34,13 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     var transactionTokensName: String? { get }
 
     func reload()
-    func log(_ event: AnalyticsEvent)
     func navigate(to scene: OrcaSwapV2.NavigatableScene)
     func chooseSourceWallet()
     func chooseDestinationWallet()
-    func retryLoadingRoutes()
     func swapSourceAndDestination()
     func useAllBalance()
     func enterInputAmount(_ amount: Double?)
     func enterEstimatedAmount(_ amount: Double?)
-    func changeSlippage(to slippage: Double)
     func changePayingToken(to payingToken: PayingToken)
     func choosePayFee()
     func openSettings()

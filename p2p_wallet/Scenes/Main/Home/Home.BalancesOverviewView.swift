@@ -26,13 +26,13 @@ extension Home {
             return chartView
         }()
 
-        private lazy var buyButton = createButton(image: .buttonSend, title: L10n.buy)
+        private lazy var buyButton = createButton(title: L10n.buy)
             .onTap { [unowned self] in self.didTapBuy?() }
-        private lazy var sendButton = createButton(image: .buttonSend, title: L10n.send)
+        private lazy var sendButton = createButton(title: L10n.send)
             .onTap { [unowned self] in self.didTapSend?() }
-        private lazy var receiveButton = createButton(image: .buttonReceive, title: L10n.receive)
+        private lazy var receiveButton = createButton(title: L10n.receive)
             .onTap { [unowned self] in self.didTapReceive?() }
-        private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
+        private lazy var swapButton = createButton(title: L10n.swap)
             .onTap { [unowned self] in self.didTapSwap?() }
         
         public lazy var topStackConstraint = stackView.autoPinEdge(toSuperviewEdge: .top)
@@ -120,21 +120,6 @@ extension Home {
             
             chartView.data = data
             chartView.highlightValues(nil)
-        }
-        
-        @objc
-        private func buttonSendDidTouch() {
-            didTapSend?()
-        }
-        
-        @objc
-        private func buttonReceiveDidTouch() {
-            didTapReceive?()
-        }
-        
-        @objc
-        private func buttonSwapDidTouch() {
-            didTapSwap?()
         }
     }
 }

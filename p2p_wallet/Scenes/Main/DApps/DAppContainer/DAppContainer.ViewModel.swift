@@ -13,8 +13,7 @@ import Resolver
 
 protocol DAppContainerViewModelType {
     var navigationDriver: Driver<DAppContainer.NavigatableScene?> { get }
-    func navigate(to scene: DAppContainer.NavigatableScene)
-    
+
     func getWebviewConfiguration() -> WKWebViewConfiguration
     func getDAppURL() -> String
 }
@@ -22,7 +21,7 @@ protocol DAppContainerViewModelType {
 extension DAppContainer {
     class ViewModel: NSObject {
         // MARK: - Dependencies
-        @Injected private var dAppChannel: DAppChannel
+        @Injected private var dAppChannel: DAppChannelType
         @Injected private var accountStorage: SolanaSDKAccountStorage
         @Injected private var walletsRepository: WalletsRepository
         
@@ -49,11 +48,7 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
         navigationSubject.asDriver()
     }
     
-    // MARK: - Actions
-    func navigate(to scene: DAppContainer.NavigatableScene) {
-        navigationSubject.accept(scene)
-    }
-    
+    // MARK: - Actions    
     func getWebviewConfiguration() -> WKWebViewConfiguration {
         dAppChannel.getWebviewConfiguration()
     }

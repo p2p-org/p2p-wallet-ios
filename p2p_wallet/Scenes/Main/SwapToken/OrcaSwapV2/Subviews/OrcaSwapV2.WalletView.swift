@@ -17,7 +17,6 @@ extension OrcaSwapV2 {
             case source, destination
         }
         
-        var wallet: Wallet?
         private let disposeBag = DisposeBag()
         private let viewModel: OrcaSwapV2ViewModelType
         private let type: WalletType
@@ -221,8 +220,6 @@ extension OrcaSwapV2 {
             amountTextField.setUp(decimals: wallet?.token.decimals)
             iconImageView.setUp(token: wallet?.token, placeholder: .tokenIconPlaceholder)
             tokenSymbolLabel.text = wallet?.token.symbol ?? L10n.select
-            
-            self.wallet = wallet
         }
         
         @objc private func useAllBalance() {

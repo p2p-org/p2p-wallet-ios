@@ -29,11 +29,7 @@ extension WLStepButton {
     }
     
     /// Sub button for not-recommended action
-    static func sub(
-        image: UIImage? = nil,
-        imageSize: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight),
-        text: String?
-    ) -> WLStepButton {
+    static func sub(text: String?) -> WLStepButton {
         .init(
             enabledBgColor: .clear,
             enabledTintColor: .h5887ff,

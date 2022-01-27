@@ -111,79 +111,14 @@ extension UIView {
         image: UIImage?,
         tintColor: UIColor = .iconSecondary,
         padding: UIEdgeInsets = .init(all: 12.25),
-        cornerRadius: CGFloat = 12
+        cornerRadius _: CGFloat = 12
     ) -> UIView {
         UIImageView(width: imageSize, height: imageSize, image: image, tintColor: tintColor)
             .padding(padding, backgroundColor: backgroundColor, cornerRadius: 12)
     }
-    
-    static func allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice(
-    ) -> UIStackView {
-        UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
-            UIImageView(width: 20, height: 20, image: .lock, tintColor: .iconSecondary)
-            
-            UILabel(
-                text: L10n
-                    .allDepositsAreStored100NonCustodiallityWithKeysHeldOnThisDevice,
-                textSize: 13,
-                weight: .medium,
-                textColor: .iconSecondary,
-                numberOfLines: 0
-            )
-        }
-    }
-    
+
     static func defaultSeparator(height: CGFloat = 1) -> UIView {
         .separator(height: height, color: .separator)
-    }
-    
-    static func createSectionView(
-        title: String? = nil,
-        label: UIView? = nil,
-        contentView: UIView,
-        rightView: UIView? = .defaultNextArrow().padding(.init(x: 9 - 2.5, y: 6 - 2.5)),
-        addSeparatorOnTop: Bool = true
-    ) -> UIStackView {
-        let stackView = UIStackView(axis: .horizontal, spacing: 5, alignment: .center, distribution: .fill) {
-            UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
-                label ?? UILabel(
-                    text: title,
-                    textSize: 13,
-                    weight: .medium,
-                    textColor: .textSecondary
-                )
-                contentView
-            }
-        }
-        
-        if let rightView = rightView {
-            stackView.addArrangedSubview(rightView)
-        }
-        
-        if !addSeparatorOnTop {
-            return stackView
-        } else {
-            return UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill) {
-                UIView.defaultSeparator()
-                stackView
-            }
-        }
-    }
-    
-    static func switchField(text: String, switch switcher: UISwitch) -> UIView {
-        let view = UIView(forAutoLayout: ())
-        
-        let label = UILabel(text: text, textSize: 15, weight: .semibold, numberOfLines: 0)
-        view.addSubview(label)
-        label.autoPinEdgesToSuperviewEdges(with: .init(top: 0, left: 0, bottom: 0, right: 51))
-        
-        view.addSubview(switcher)
-        switcher.autoAlignAxis(.horizontal, toSameAxisOf: label)
-        switcher.autoPinEdge(toSuperviewEdge: .trailing)
-        
-        return view
-            .padding(.init(all: 20), cornerRadius: 12)
-            .border(width: 1, color: .defaultBorder)
     }
     
     static func defaultNextArrow() -> UIView {

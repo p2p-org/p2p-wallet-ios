@@ -10,16 +10,11 @@ import RxSwift
 
 extension SwapTokenSettings {
     final class RootView: BEView {
-        // MARK: - Properties
-        private let viewModel: NewSwapTokenSettingsViewModelType
-
         // MARK: - Subviews
         private let navigationBar: NavigationBar
         private let significantView: SignificantView
 
         init(viewModel: NewSwapTokenSettingsViewModelType) {
-            self.viewModel = viewModel
-
             navigationBar = NavigationBar(
                 backHandler: { [weak viewModel] in
                     viewModel?.goBack()

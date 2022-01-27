@@ -40,10 +40,10 @@ extension Home {
                 )
             )
             collectionView.delegate = self
-            collectionView.walletCellEditAction = Action<Wallet, Void> { [weak self] wallet in
-                self?.viewModel.navigate(to: .walletSettings(wallet: wallet))
-                return .just(())
-            }
+//            collectionView.walletCellEditAction = Action<Wallet, Void> { [weak self] wallet in
+//                self?.viewModel.navigate(to: .walletSettings(wallet: wallet))
+//                return .just(())
+//            }
             collectionView.showHideHiddenWalletsAction = CocoaAction { [weak self] in
                 self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                 return .just(())

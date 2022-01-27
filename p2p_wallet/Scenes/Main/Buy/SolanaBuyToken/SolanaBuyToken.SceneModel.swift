@@ -30,7 +30,6 @@ extension SolanaBuyToken {
     }
     
     class SceneModel: SolanaBuyTokenSceneModel {
-        private let navigationSubject = PublishSubject<NavigatableScene>()
         @Injected private var moonpayService: MoonpayService
         private let rootViewModel: BuyViewModelType
         let disposeBag = DisposeBag()

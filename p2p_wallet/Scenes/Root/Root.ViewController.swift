@@ -9,9 +9,7 @@ import Foundation
 import UIKit
 
 extension Root {
-    class ViewController: BaseVC {
-        private var statusBarStyle: UIStatusBarStyle = .default
-        
+    class ViewController: BaseVC {        
         // MARK: - Dependencies
         private let viewModel: RootViewModelType
         

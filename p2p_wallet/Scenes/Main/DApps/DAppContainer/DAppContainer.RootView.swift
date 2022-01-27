@@ -12,7 +12,6 @@ import WebKit
 extension DAppContainer {
     class RootView: BEView {
         // MARK: - Constants
-        private let disposeBag = DisposeBag()
         
         // MARK: - Properties
         private let viewModel: DAppContainerViewModelType

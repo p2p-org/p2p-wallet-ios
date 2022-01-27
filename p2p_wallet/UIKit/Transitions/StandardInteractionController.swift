@@ -41,7 +41,7 @@ class StandardInteractionController: NSObject, InteractionControlling {
 
         switch gestureRecognizer.state {
         case .began: gestureBegan()
-        case .changed: gestureChanged(translation: translation + interruptedTranslation, velocity: velocity)
+        case .changed: gestureChanged(translation: translation + interruptedTranslation)
         case .cancelled: gestureCancelled(translation: translation + interruptedTranslation, velocity: velocity)
         case .ended: gestureEnded(translation: translation + interruptedTranslation, velocity: velocity)
         default: break
@@ -62,7 +62,7 @@ class StandardInteractionController: NSObject, InteractionControlling {
         }
     }
 
-    private func gestureChanged(translation: CGFloat, velocity: CGFloat) {
+    private func gestureChanged(translation: CGFloat) {
         var progress = interactionDistance == 0 ? 0 : (translation / interactionDistance)
         if progress < 0 { progress /= (1.0 + abs(progress * 20)) }
         update(progress: progress)

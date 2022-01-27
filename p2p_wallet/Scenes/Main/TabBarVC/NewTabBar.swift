@@ -6,7 +6,7 @@ import Foundation
 import BEPureLayout
 
 class NewTabBar: BEView {
-    public lazy var stackView = UIStackView(
+    lazy var stackView = UIStackView(
         axis: .horizontal,
         spacing: 10, 
         alignment: .center, 

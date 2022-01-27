@@ -21,12 +21,12 @@ class WalletsCollectionView: BEStaticSectionsCollectionView {
         }
     }
     
-    var walletCellEditAction: Action<Wallet, Void>? {
-        didSet {
-            activeWalletsSection.walletCellEditAction = walletCellEditAction
-            hiddenWalletsSection.walletCellEditAction = walletCellEditAction
-        }
-    }
+//    var walletCellEditAction: Action<Wallet, Void>? {
+//        didSet {
+//            activeWalletsSection.walletCellEditAction = walletCellEditAction
+//            hiddenWalletsSection.walletCellEditAction = walletCellEditAction
+//        }
+//    }
     
     init(
         header: BECollectionViewHeaderFooterViewLayout? = nil,

@@ -12,15 +12,10 @@ import RxCocoa
 import Resolver
 
 protocol RenVMLockAndMintServiceType {
-    var isLoadingDriver: Driver<Bool> {get}
-    var errorDriver: Driver<String?> {get}
     var conditionAcceptedDriver: Driver<Bool> {get}
     var addressDriver: Driver<String?> {get}
-    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {get}
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
     
-    func reload()
-    func reloadMinimumTransactionAmount()
     func acceptConditionAndLoadAddress()
     func expireCurrentSession()
     func getSessionEndDate() -> Date?
@@ -357,14 +352,6 @@ extension RenVM.LockAndMint {
 }
 
 extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
-    var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
-    }
-    
-    var errorDriver: Driver<String?> {
-        errorSubject.asDriver()
-    }
-    
     var conditionAcceptedDriver: Driver<Bool> {
         conditionAcceptedSubject.asDriver()
     }
@@ -372,11 +359,7 @@ extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
     var addressDriver: Driver<String?> {
         addressSubject.asDriver()
     }
-    
-    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {
-        minimumTransactionAmountSubject.asDriver()
-    }
-    
+
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
         sessionStorage.processingTxsDriver
     }

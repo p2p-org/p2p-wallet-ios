@@ -17,8 +17,4 @@ extension String {
     func matches(oneOfRegexes regexes: NSRegularExpression...) -> Bool {
         regexes.contains(where: {$0.matches(self)})
     }
-    
-    func matches(allOfRegexes regexes: NSRegularExpression...) -> Bool {
-        regexes.allSatisfy {$0.matches(self)}
-    }
 }

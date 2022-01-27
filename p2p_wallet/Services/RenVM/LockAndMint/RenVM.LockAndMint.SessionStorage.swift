@@ -61,7 +61,6 @@ protocol RenVMLockAndMintSessionStorageType {
     func processingTx(tx: RenVM.LockAndMint.TxDetail, didSubmitAt submittedAt: Date)
     func processingTx(tx: RenVM.LockAndMint.TxDetail, didMintAt mintedAt: Date)
     
-    func isMinted(txid: String) -> Bool
     func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx?
     func getAllProcessingTx() -> [RenVM.LockAndMint.ProcessingTx]
     func removeMintedTx(txid: String)
@@ -152,11 +151,7 @@ extension RenVM.LockAndMint {
                 return true
             }
         }
-        
-        func isMinted(txid: String) -> Bool {
-            getAllProcessingTx().contains(where: {$0.tx.txid == txid && $0.mintedAt != nil})
-        }
-        
+
         func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx? {
             Defaults.renVMProcessingTxs.first(where: {$0.tx.txid == txid})
         }
@@ -188,10 +183,6 @@ extension RenVM.LockAndMint {
 }
 
 private extension Array where Element == RenVM.LockAndMint.ProcessingTx {
-    func hasTx(_ tx: RenVM.LockAndMint.TxDetail) -> Bool {
-        contains(where: {$0.tx.txid == tx.txid})
-    }
-    
     func indexOf(_ tx: RenVM.LockAndMint.TxDetail) -> Int? {
         firstIndex(where: {$0.tx.txid == tx.txid})
     }

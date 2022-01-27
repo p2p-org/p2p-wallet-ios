@@ -27,15 +27,6 @@ extension UIImageView {
         }
         kf.setImage(with: url, placeholder: placeholder, options: [.processor(ImgProcessor())])
     }
-    
-    func with(urlString: String?) -> Self {
-        setImage(urlString: urlString)
-        return self
-    }
-    
-    static var walletIntro: UIImageView {
-        UIImageView(width: 90, height: 90, image: .walletIntro)
-    }
 }
 
 private struct ImgProcessor: ImageProcessor {

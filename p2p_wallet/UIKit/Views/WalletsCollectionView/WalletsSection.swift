@@ -10,7 +10,7 @@ import BECollectionView
 import Action
 
 class WalletsSection: BEStaticSectionsCollectionView.Section {
-    var walletCellEditAction: Action<Wallet, Void>?
+//    var walletCellEditAction: Action<Wallet, Void>?
     
     init(
         index: Int,
@@ -53,10 +53,10 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         if let cell = cell as? EditableWalletCell {
-            cell.editAction = CocoaAction { [weak self] in
-                self?.walletCellEditAction?.execute(item.value as! Wallet)
-                return .just(())
-            }
+//            cell.editAction = CocoaAction { [weak self] in
+//                self?.walletCellEditAction?.execute(item.value as! Wallet)
+//                return .just(())
+//            }
             cell.hideAction = CocoaAction { [weak self] in
                 let viewModel = self?.viewModel as? WalletsRepository
                 viewModel?.toggleWalletVisibility(item.value as! Wallet)
