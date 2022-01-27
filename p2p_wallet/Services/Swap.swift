@@ -29,8 +29,8 @@ protocol SwapServiceType {
         payingTokenAddress: String,
         payingTokenMint: String,
         poolPair: Swap.PoolsPair,
-        amount: UInt64, slippage:
-        Double
+        amount: UInt64,
+        slippage: Double
     ) -> Single<[String]>
     
     func getFees(
@@ -85,7 +85,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     private let accountStorage: SolanaSDKAccountStorage
     private let feeRelayApi: FeeRelayerAPIClientType
     private let orcaSwap: OrcaSwapType
-    private var feeRelay: FeeRelayer.Relay? = nil
+    private var feeRelay: FeeRelayer.Relay?
     
     // TODO: Remove me
     @Injected var notificationsService: NotificationsServiceType
@@ -118,9 +118,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     func getSwapInfo(from sourceToken: SolanaSDK.Token, to destinationToken: SolanaSDK.Token) -> Swap.SwapInfo {
         // Determine a mode for paying fee
         var payingTokenMode: Swap.PayingTokenMode = .any
-        if (sourceToken.isNativeSOL && !destinationToken.isNativeSOL) {
+        if sourceToken.isNativeSOL && !destinationToken.isNativeSOL {
             payingTokenMode = .onlySol
-        } else if (!sourceToken.isNativeSOL && destinationToken.isNativeSOL) {
+        } else if !sourceToken.isNativeSOL && destinationToken.isNativeSOL {
             payingTokenMode = .onlySol
         }
         
