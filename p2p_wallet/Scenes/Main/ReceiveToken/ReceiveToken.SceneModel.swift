@@ -49,6 +49,7 @@ extension ReceiveToken {
         private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
         let tokenWallet: Wallet?
+        let shouldShowChainsSwitcher: Bool
 
         let hasAddressesInfo: Bool
         let hasHintViewOnTop: Bool
@@ -61,27 +62,26 @@ extension ReceiveToken {
             isRenBTCWalletCreated: Bool,
             isOpeningFromToken: Bool = false
         ) {
+            let isRenBTC = solanaTokenWallet?.token.isRenBTC ?? false
+            let hasExplorerButton = !isOpeningFromToken
             self.tokenWallet = solanaTokenWallet
-            self.hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            self.hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil && !isRenBTC
             self.hasHintViewOnTop = isOpeningFromToken
-
+            self.shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
                 solanaTokenWallet: solanaTokenWallet,
-                navigationSubject: navigationSubject
+                navigationSubject: navigationSubject,
+                hasExplorerButton: hasExplorerButton
             )
             
             receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
                 navigationSubject: navigationSubject,
-                isRenBTCWalletCreated: isRenBTCWalletCreated
+                isRenBTCWalletCreated: isRenBTCWalletCreated,
+                hasExplorerButton: hasExplorerButton
             )
             
             super.init()
-            
-            if let token = solanaTokenWallet?.token,
-               token.isRenBTC {
-                tokenTypeSubject.accept(.btc)
-            }
 
             bind()
         }
@@ -124,11 +124,7 @@ extension ReceiveToken {
             clipboardManager.copyToClipboard(address)
             analyticsManager.log(event: logEvent)
         }
-        
-        var shouldShowChainsSwitcher: Bool {
-            receiveSolanaViewModel.tokenWallet == nil
-        }
-        
+
         func showSelectionNetwork() {
             navigationSubject.accept(.networkSelection)
         }
