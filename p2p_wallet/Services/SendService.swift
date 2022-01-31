@@ -16,8 +16,7 @@ protocol SendServiceType {
     func checkAccountValidation(account: String) -> Single<Bool>
     func getFees(
         from wallet: Wallet,
-        receiver: String,
-        amount: Double,
+        receiver: String?,
         network: SendToken.Network
     ) -> Single<SolanaSDK.FeeAmount>
     func send(
@@ -39,8 +38,12 @@ class SendService: SendServiceType {
     @Injected private var feeService: FeeServiceType
     
     func load() -> Completable {
-        orcaSwap.load()
-            .andThen(relayService.load())
+        .zip(
+            orcaSwap.load()
+                .andThen(relayService.load()),
+            feeService.load()
+        )
+        
     }
     
     func getFees() -> Single<SolanaSDK.Fee> {
@@ -57,10 +60,13 @@ class SendService: SendServiceType {
     
     func getFees(
         from wallet: Wallet,
-        receiver: String,
-        amount: Double,
+        receiver: String?,
         network: SendToken.Network
     ) -> Single<SolanaSDK.FeeAmount> {
+        guard let receiver = receiver else {
+            return .just(.init(transaction: 0, accountBalances: 0))
+        }
+
         switch network {
         case .bitcoin:
             return .just(
@@ -76,8 +82,10 @@ class SendService: SendServiceType {
             return prepareForSendingToSolanaNetwork(
                 from: wallet,
                 receiver: receiver,
-                amount: amount,
-                payingFeeToken: nil
+                amount: 10000, // placeholder
+                payingFeeToken: nil,
+                recentBlockhash: "FR1GgH83nmcEdoNXyztnpUL2G13KkUv6iwJPwVfnqEgW", // placeholder
+                lamportsPerSignature: feeService.lamportsPerSignature // cached lamportsPerSignature
             )
                 .map {$0.expectedFee}
         }
@@ -154,7 +162,9 @@ class SendService: SendServiceType {
         from wallet: Wallet,
         receiver: String,
         amount: Double,
-        payingFeeToken: FeeRelayer.Relay.TokenInfo?
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?,
+        recentBlockhash: String? = nil,
+        lamportsPerSignature: SolanaSDK.Lamports? = nil
     ) -> Single<SolanaSDK.PreparedTransaction> {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         guard let sender = wallet.pubkey else {return .error(SolanaSDK.Error.other("Source wallet is not valid"))}
@@ -187,7 +197,9 @@ class SendService: SendServiceType {
                 return self.solanaSDK.prepareSendingNativeSOL(
                     to: receiver,
                     amount: amount,
-                    feePayer: feePayer
+                    feePayer: feePayer,
+                    recentBlockhash: recentBlockhash,
+                    lamportsPerSignature: lamportsPerSignature
                 )
             }
             
@@ -200,7 +212,9 @@ class SendService: SendServiceType {
                     to: receiver,
                     amount: amount,
                     feePayer: feePayer,
-                    transferChecked: useFeeRelayer // create transferChecked instruction when using fee relayer
+                    transferChecked: useFeeRelayer, // create transferChecked instruction when using fee relayer
+                    recentBlockhash: recentBlockhash,
+                    lamportsPerSignature: lamportsPerSignature
                 ).map {$0.preparedTransaction}
             }
         }

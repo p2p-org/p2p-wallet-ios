@@ -6,9 +6,12 @@
 //
 
 import Foundation
+import RxSwift
 import RxCocoa
+import SolanaSwift
 
-protocol SendTokenRecipientAndNetworkHandler {
+protocol SendTokenRecipientAndNetworkHandler: AnyObject {
+    var sendService: SendServiceType {get}
     var recipientSubject: BehaviorRelay<SendToken.Recipient?> {get}
     var networkSubject: BehaviorRelay<SendToken.Network> {get}
     
@@ -23,6 +26,23 @@ extension SendTokenRecipientAndNetworkHandler {
     
     var networkDriver: Driver<SendToken.Network> {
         networkSubject.asDriver()
+    }
+    
+    var feesDriver: Driver<SolanaSDK.FeeAmount> {
+        Observable.combineLatest(
+            recipientSubject,
+            networkSubject
+        )
+            .flatMap {[weak self] recipient, network -> Single<SolanaSDK.FeeAmount> in
+                guard let self = self else {throw SolanaSDK.Error.unknown}
+                guard let wallet = self.getSelectedWallet() else {return .just(.init(transaction: 0, accountBalances: 0))}
+                return self.sendService.getFees(
+                    from: wallet,
+                    receiver: recipient?.address,
+                    network: network
+                )
+            }
+            .asDriver(onErrorJustReturn: .init(transaction: 0, accountBalances: 0))
     }
     
     func getSelectedRecipient() -> SendToken.Recipient? {
