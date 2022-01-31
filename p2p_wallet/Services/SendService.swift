@@ -14,21 +14,13 @@ protocol SendServiceType {
     func load() -> Completable
     func getFees() -> Single<SolanaSDK.Fee>
     func checkAccountValidation(account: String) -> Single<Bool>
-    func sendNativeSOL(
-        to destination: String,
-        amount: UInt64,
-        payingFeeToken: FeeRelayer.Relay.TokenInfo?,
-        isSimulation: Bool
-    ) -> Single<SolanaSDK.TransactionID>
-    func sendSPLTokens(
-        mintAddress: String,
-        decimals: SolanaSDK.Decimals,
-        from fromPublicKey: String,
-        to destinationAddress: String,
-        amount: UInt64,
-        payingFeeToken: FeeRelayer.Relay.TokenInfo?,
-        isSimulation: Bool
-    ) -> Single<SolanaSDK.TransactionID>
+    func send(
+        from wallet: Wallet,
+        receiver: String,
+        amount: Double,
+        network: SendToken.Network,
+        payingFeeWallet: Wallet?
+    ) -> Single<String>
     func isTestNet() -> Bool
 }
 
@@ -37,6 +29,7 @@ class SendService: SendServiceType {
     @Injected private var orcaSwap: OrcaSwapType
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClientType
     @Injected private var relayService: FeeRelayerRelayType
+    @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
     
     func load() -> Completable {
         orcaSwap.load()
@@ -51,7 +44,70 @@ class SendService: SendServiceType {
         solanaSDK.checkAccountValidation(account: account)
     }
     
-    func sendNativeSOL(
+    func isTestNet() -> Bool {
+        solanaSDK.endpoint.network.isTestnet
+    }
+    
+    func send(
+        from wallet: Wallet,
+        receiver: String,
+        amount: Double,
+        network: SendToken.Network,
+        payingFeeWallet: Wallet?
+    ) -> Single<String> {
+        let amount = amount.toLamport(decimals: wallet.token.decimals)
+        guard let sender = wallet.pubkey else {return .error(SolanaSDK.Error.other("Source wallet is not valid"))}
+        // form request
+        if receiver == sender {
+            return .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
+        }
+        
+        // detect network
+        let request: Single<String>
+        switch network {
+        case .solana:
+            let payingFeeToken: FeeRelayer.Relay.TokenInfo?
+            
+            if let payingFeeWallet = payingFeeWallet {
+                guard let address = payingFeeWallet.pubkey else {
+                    return .error(SolanaSDK.Error.other("Paying fee wallet is not valid"))
+                }
+                payingFeeToken = .init(address: address, mint: payingFeeWallet.mintAddress)
+            } else {
+                payingFeeToken = nil
+            }
+            
+            if wallet.isNativeSOL {
+                request = sendNativeSOL(
+                    to: receiver,
+                    amount: amount,
+                    payingFeeToken: payingFeeToken,
+                    isSimulation: false
+                )
+            }
+            
+            // other tokens
+            else {
+                request = sendSPLTokens(
+                    mintAddress: wallet.mintAddress,
+                    decimals: wallet.token.decimals,
+                    from: sender,
+                    to: receiver,
+                    amount: amount,
+                    payingFeeToken: payingFeeToken,
+                    isSimulation: false
+                )
+            }
+        case .bitcoin:
+            request = renVMBurnAndReleaseService.burn(
+                recipient: receiver,
+                amount: amount
+            )
+        }
+        return request
+    }
+    
+    private func sendNativeSOL(
         to destination: String,
         amount: UInt64,
         payingFeeToken: FeeRelayer.Relay.TokenInfo?,
@@ -87,7 +143,7 @@ class SendService: SendServiceType {
         }
     }
     
-    func sendSPLTokens(
+    private func sendSPLTokens(
         mintAddress: String,
         decimals: SolanaSDK.Decimals,
         from fromPublicKey: String,
@@ -139,9 +195,5 @@ class SendService: SendServiceType {
                 isSimulation: isSimulation
             )
         }
-    }
-    
-    func isTestNet() -> Bool {
-        solanaSDK.endpoint.network.isTestnet
     }
 }
