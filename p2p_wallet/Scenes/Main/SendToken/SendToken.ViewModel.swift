@@ -37,7 +37,6 @@ extension SendToken {
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
         @Injected var sendService: SendServiceType
-        @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
         private let initialWalletPubkey: String?
@@ -75,50 +74,27 @@ extension SendToken {
         
         private func send() {
             guard let wallet = walletSubject.value,
-                  let sender = wallet.pubkey,
-                  let amount = amountSubject.value?.toLamport(decimals: wallet.token.decimals),
+                  let amount = amountSubject.value,
                   let receiver = recipientSubject.value?.address
             else {return}
             
             let network = networkSubject.value
             
             // form request
-            var request: Single<String>!
-            if receiver == sender {
-                request = .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
-            }
+            let request = sendService.send(
+                from: wallet,
+                receiver: receiver,
+                amount: amount,
+                network: network,
+                payingFeeWallet: <#T##Wallet?#>
+            )
             
             // detect network
             let fee: SolanaSDK.Lamports
             switch network {
             case .solana:
-                if wallet.isNativeSOL {
-                    request = sendService.sendNativeSOL(
-                        to: receiver,
-                        amount: amount,
-                        withoutFee: Defaults.useFreeTransaction,
-                        isSimulation: false
-                    )
-                }
-                
-                // other tokens
-                else {
-                    request = sendService.sendSPLTokens(
-                        mintAddress: wallet.mintAddress,
-                        decimals: wallet.token.decimals,
-                        from: sender,
-                        to: receiver,
-                        amount: amount,
-                        withoutFee: Defaults.useFreeTransaction,
-                        isSimulation: false
-                    )
-                }
                 fee = 0
             case .bitcoin:
-                request = renVMBurnAndReleaseService.burn(
-                    recipient: receiver,
-                    amount: amount
-                )
                 fee = network.defaultFees.first(where: {$0.unit == "renBTC"})?.amount.toLamport(decimals: 8) ?? 0 // TODO: solana fee
             }
             
@@ -126,7 +102,7 @@ extension SendToken {
             analyticsManager.log(
                 event: .sendSendClick(
                     tokenTicker: wallet.token.symbol,
-                    sum: amount.convertToBalance(decimals: wallet.token.decimals)
+                    sum: amount
                 )
             )
             
@@ -137,7 +113,7 @@ extension SendToken {
                     transactionType: .send(
                         from: wallet,
                         to: receiver,
-                        lamport: amount,
+                        lamport: amount.toLamport(decimals: wallet.token.decimals),
                         feeInLamports: fee
                     )
                 )
