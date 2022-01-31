@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var showAfterConfirmation: Bool {get}
@@ -19,6 +20,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var walletDriver: Driver<Wallet?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
+    var feesDriver: Driver<SolanaSDK.FeeAmount> {get}
     var isValidDriver: Driver<Bool> {get}
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
@@ -103,6 +105,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     var networkDriver: Driver<SendToken.Network> {
         chooseRecipientAndNetworkViewModel.networkDriver
+    }
+    
+    var feesDriver: Driver<SolanaSDK.FeeAmount> {
+        chooseRecipientAndNetworkViewModel.feesDriver
     }
     
     var isValidDriver: Driver<Bool> {
