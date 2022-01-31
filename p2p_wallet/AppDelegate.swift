@@ -17,6 +17,7 @@ import BECollectionView
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    private var lockViewController: LockScreenWrapperViewController?
     
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -28,7 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.overrideUserInterfaceStyle = style
         }
     }
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         Bundle.swizzleLocalization()
@@ -58,18 +59,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // set rootVC
         let vm = Root.ViewModel()
         let vc = Root.ViewController(viewModel: vm)
-        window?.rootViewController = vc
+        lockViewController = LockScreenWrapperViewController(vc)
+        window?.rootViewController = lockViewController
         
         window?.makeKeyAndVisible()
         return true
     }
     
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        
+    func applicationWillResignActive(_ application: UIApplication) {
+        print("Lock")
+        lockViewController?.isLocked = true
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        
+        print("Unlock")
+        lockViewController?.isLocked = false
     }
     
     func application(
