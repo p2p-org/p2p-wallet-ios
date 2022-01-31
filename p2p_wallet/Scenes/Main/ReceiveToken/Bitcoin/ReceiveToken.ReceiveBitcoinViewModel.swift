@@ -20,6 +20,7 @@ protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     var timerSignal: Signal<Void> { get }
     var minimumTransactionAmountDriver: Driver<Loadable<Double>> { get }
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
+    var hasExplorerButton: Bool { get }
     
     func reload()
     func reloadMinimumTransactionAmount()
@@ -38,7 +39,8 @@ extension ReceiveToken {
     class ReceiveBitcoinViewModel: NSObject {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
-        
+        let hasExplorerButton: Bool
+
         // MARK: - Dependencies
         @Injected private var renVMService: RenVMLockAndMintServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
@@ -64,9 +66,11 @@ extension ReceiveToken {
         // MARK: - Initializers
         init(
             navigationSubject: PublishRelay<NavigatableScene?>,
-            isRenBTCWalletCreated: Bool
+            isRenBTCWalletCreated: Bool,
+            hasExplorerButton: Bool
         ) {
             self.navigationSubject = navigationSubject
+            self.hasExplorerButton = hasExplorerButton
 
             super.init()
             
