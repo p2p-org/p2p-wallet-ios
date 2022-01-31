@@ -85,7 +85,8 @@ class SendService: SendServiceType {
                 amount: 10000, // placeholder
                 payingFeeToken: nil,
                 recentBlockhash: "FR1GgH83nmcEdoNXyztnpUL2G13KkUv6iwJPwVfnqEgW", // placeholder
-                lamportsPerSignature: feeService.lamportsPerSignature // cached lamportsPerSignature
+                lamportsPerSignature: feeService.lamportsPerSignature, // cached lamportsPerSignature
+                minRentExemption: feeService.minimumBalanceForRenExemption
             )
                 .map {$0.expectedFee}
         }
@@ -164,7 +165,8 @@ class SendService: SendServiceType {
         amount: Double,
         payingFeeToken: FeeRelayer.Relay.TokenInfo?,
         recentBlockhash: String? = nil,
-        lamportsPerSignature: SolanaSDK.Lamports? = nil
+        lamportsPerSignature: SolanaSDK.Lamports? = nil,
+        minRentExemption: SolanaSDK.Lamports? = nil
     ) -> Single<SolanaSDK.PreparedTransaction> {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         guard let sender = wallet.pubkey else {return .error(SolanaSDK.Error.other("Source wallet is not valid"))}
@@ -214,7 +216,8 @@ class SendService: SendServiceType {
                     feePayer: feePayer,
                     transferChecked: useFeeRelayer, // create transferChecked instruction when using fee relayer
                     recentBlockhash: recentBlockhash,
-                    lamportsPerSignature: lamportsPerSignature
+                    lamportsPerSignature: lamportsPerSignature,
+                    minRentExemption: minRentExemption
                 ).map {$0.preparedTransaction}
             }
         }
