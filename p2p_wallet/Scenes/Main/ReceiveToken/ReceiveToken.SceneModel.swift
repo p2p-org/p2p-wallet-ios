@@ -17,6 +17,7 @@ protocol ReceiveSceneModel: BESceneModel {
     var addressesHintIsHiddenDriver: Driver<Bool> { get }
     var hideAddressesHintSubject: PublishRelay<Void> { get }
     var updateLayoutDriver: Driver<Void> { get }
+    var tokenListAvailabilityDriver: Driver<Bool> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
     var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
     var shouldShowChainsSwitcher: Bool { get }
@@ -50,6 +51,7 @@ extension ReceiveToken {
         private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
         let tokenWallet: Wallet?
 
+        private let canOpenTokensList: Bool
         let hasAddressesInfo: Bool
         let hasHintViewOnTop: Bool
         let addressesHintIsHiddenSubject = BehaviorRelay<Bool>(value: false)
@@ -64,6 +66,7 @@ extension ReceiveToken {
             self.tokenWallet = solanaTokenWallet
             self.hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
             self.hasHintViewOnTop = isOpeningFromToken
+            self.canOpenTokensList = !isOpeningFromToken
 
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
@@ -114,6 +117,18 @@ extension ReceiveToken {
 
         var addressesHintIsHiddenDriver: Driver<Bool> {
             addressesHintIsHiddenSubject.asDriver()
+        }
+
+        var tokenListAvailabilityDriver: Driver<Bool> {
+            tokenTypeDriver
+                .map { [weak self] in
+                    switch $0 {
+                    case .solana:
+                        return self?.canOpenTokensList ?? false
+                    case .btc:
+                        return false
+                    }
+                }
         }
 
         func switchToken(_ tokenType: ReceiveToken.TokenType) {
