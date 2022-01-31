@@ -191,7 +191,7 @@ class SendService: SendServiceType {
         // request
         let createSendRequest: (String?) throws -> Single<SolanaSDK.PreparedTransaction> = {[weak self] feePayer in
             guard let self = self else {return .error(SolanaSDK.Error.unknown)}
-            let feePayer = try SolanaSDK.PublicKey(string: feePayer)
+            let feePayer = feePayer == nil ? nil: try SolanaSDK.PublicKey(string: feePayer)
             
             if wallet.isNativeSOL {
                 return self.solanaSDK.prepareSendingNativeSOL(
