@@ -36,7 +36,7 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
-        @Injected private var sendService: SendServiceType
+        @Injected var sendService: SendServiceType
         
         // MARK: - Properties
         private let initialWalletPubkey: String?
