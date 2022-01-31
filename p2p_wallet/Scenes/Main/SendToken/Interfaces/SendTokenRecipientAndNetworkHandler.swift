@@ -41,6 +41,7 @@ extension SendTokenRecipientAndNetworkHandler {
                     receiver: recipient?.address,
                     network: network
                 )
+                    .catchAndReturn(.init(transaction: 0, accountBalances: 0))
             }
             .asDriver(onErrorJustReturn: .init(transaction: 0, accountBalances: 0))
     }

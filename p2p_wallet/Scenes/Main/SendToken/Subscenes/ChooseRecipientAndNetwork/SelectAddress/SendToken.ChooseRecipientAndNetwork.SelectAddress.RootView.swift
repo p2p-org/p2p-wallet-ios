@@ -282,8 +282,8 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount) -> NSAt
             NSMutableAttributedString()
                 .text(L10n.accountCreationFee, size: 13, color: .textSecondary)
                 .text(" ")
-                .text(feeAmount.accountBalances.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true), size: 13)
-                .text(" SOL", size: 13)
+                .text(feeAmount.accountBalances.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true), size: 13, weight: .semibold)
+                .text(" SOL", size: 13, weight: .semibold)
         )
     }
     
@@ -292,8 +292,8 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount) -> NSAt
             NSMutableAttributedString()
                 .text(L10n.transactionFee, size: 13, color: .textSecondary)
                 .text(" ")
-                .text(feeAmount.transaction.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true), size: 13)
-                .text(" SOL", size: 13)
+                .text(feeAmount.transaction.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true), size: 13, weight: .semibold)
+                .text(" SOL", size: 13, weight: .semibold)
         )
     }
     
