@@ -255,7 +255,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     UILabel(text: "Account creation fee", textSize: 13, numberOfLines: 0)
                         .setup { label in
                             self.viewModel.feesDriver
-                                .map {feeAmountToAttributedString(feeAmount: $0)}
+                                .map {[weak self] in feeAmountToAttributedString(feeAmount: $0, solPrice: self?.viewModel.getPrice(for: "SOL"))}
                                 .drive(label.rx.attributedText)
                                 .disposed(by: disposeBag)
                         }
@@ -275,34 +275,34 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView: BECollecti
     }
 }
 
-private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount) -> NSAttributedString {
-    var attributedString = [NSMutableAttributedString]()
+private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount, solPrice: Double?) -> NSAttributedString {
+    var titles = [String]()
     if feeAmount.accountBalances > 0 {
-        attributedString.append(
-            NSMutableAttributedString()
-                .text(L10n.accountCreationFee, size: 13, color: .textSecondary)
-                .text(" ")
-                .text(feeAmount.accountBalances.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true), size: 13, weight: .semibold)
-                .text(" SOL", size: 13, weight: .semibold)
-        )
+        titles.append(L10n.accountCreationFee)
     }
     
     if feeAmount.transaction > 0 {
-        attributedString.append(
-            NSMutableAttributedString()
-                .text(L10n.transactionFee, size: 13, color: .textSecondary)
-                .text(" ")
-                .text(feeAmount.transaction.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true), size: 13, weight: .semibold)
-                .text(" SOL", size: 13, weight: .semibold)
-        )
+        titles.append(L10n.transactionFee)
     }
     
-    if attributedString.count == 2 {
-        attributedString.insert(NSMutableAttributedString().text(", "), at: 1)
+    let title = titles.joined(separator: " + ")
+    var amount = feeAmount.total.convertToBalance(decimals: 9)
+    var amountString = amount.toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " SOL"
+    if let solPrice = solPrice {
+        amount *= solPrice
+        amountString = "~\(Defaults.fiat.symbol)" + amount.toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true)
     }
     
-    return attributedString.reduce(NSMutableAttributedString(), {result, attributedString in
-        result.append(attributedString)
-        return result
-    })
+    let attrString = NSMutableAttributedString()
+        .text(title, size: 13, color: .textSecondary)
+        .text(" ")
+        .text(amountString, size: 13, weight: .semibold)
+    
+    #if DEBUG
+    attrString
+        .text(" ")
+        .text(feeAmount.total.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9) + " SOL", size: 13, color: .red)
+    #endif
+    
+    return attrString
 }
