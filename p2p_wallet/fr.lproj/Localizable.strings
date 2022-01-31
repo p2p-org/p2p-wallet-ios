@@ -701,3 +701,4 @@
 "Username %@ was reserved" = "Le nom d'utilisateur %@ était réservé";
 "None" = "Rien";
 "Select token to pay fees" = "Sélectionnez le jeton pour payer les frais";
+"Choose the token to pay fees" = "Choisissez le jeton pour payer les frais";

@@ -701,3 +701,4 @@
 "Username %@ was reserved" = "Имя пользователя %@ было зарезервировано";
 "None" = "Никто";
 "Select token to pay fees" = "Выберите токен для оплаты комиссии";
+"Choose the token to pay fees" = "Выберите токен для оплаты сборов";
