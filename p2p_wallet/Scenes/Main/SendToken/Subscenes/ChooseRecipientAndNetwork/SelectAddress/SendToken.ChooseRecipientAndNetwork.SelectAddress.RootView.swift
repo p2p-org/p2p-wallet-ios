@@ -43,6 +43,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
             .padding(.init(x: 20, y: 0))
         private lazy var errorLabel = UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
+        private lazy var feeView = FeeView(viewModel: viewModel)
         
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
             .onTap(self, action: #selector(actionButtonDidTouch))
@@ -78,6 +79,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 networkView
                 errorView
                 recipientCollectionView
+                BEStackViewSpacing(18)
+                feeView
             }
             
             addSubview(actionButton)
@@ -149,6 +152,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     self?.errorView.isHidden = shouldHideErrorView
                     self?.errorLabel.text = errorText
                 })
+                .disposed(by: disposeBag)
+            
+            // fee view
+            isSearchingDriver
+                .drive(feeView.rx.isHidden)
                 .disposed(by: disposeBag)
             
             viewModel.inputStateDriver
@@ -226,6 +234,31 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     )
                 })
                 .disposed(by: disposeBag)
+        }
+    }
+    
+    private class FeeView: WLFloatingPanelView {
+        private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
+        private let disposeBag = DisposeBag()
+        private let coinLogoImageView = CoinLogoImageView(size: 44)
+        
+        init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
+            self.viewModel = viewModel
+            super.init(contentInset: .init(all: 18))
+            stackView.alignment = .center
+            stackView.axis = .horizontal
+            stackView.spacing = 12
+            stackView.addArrangedSubviews {
+                coinLogoImageView
+                UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
+                    UILabel(text: "Account creation fee", textSize: 13, numberOfLines: 0)
+                        .setup { view in
+                            
+                        }
+                    UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold)
+                }
+                UIView.defaultNextArrow()
+            }
         }
     }
 }
