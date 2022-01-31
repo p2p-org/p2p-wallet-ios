@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import BEPureLayout
 import BECollectionView
+import SolanaSwift
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RootView: ScrollableVStackRootView {
@@ -252,8 +253,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 coinLogoImageView
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                     UILabel(text: "Account creation fee", textSize: 13, numberOfLines: 0)
-                        .setup { view in
-                            
+                        .setup { label in
+                            self.viewModel.feesDriver
+                                .map {feeAmountToAttributedString(feeAmount: $0)}
+                                .drive(label.rx.attributedText)
+                                .disposed(by: disposeBag)
                         }
                     UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold)
                 }
@@ -269,4 +273,36 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView: BECollecti
         viewModel.selectRecipient(recipient)
         endEditing(true)
     }
+}
+
+private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount) -> NSAttributedString {
+    var attributedString = [NSMutableAttributedString]()
+    if feeAmount.accountBalances > 0 {
+        attributedString.append(
+            NSMutableAttributedString()
+                .text(L10n.accountCreationFee, size: 13, color: .textSecondary)
+                .text(" ")
+                .text(feeAmount.accountBalances.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true), size: 13)
+                .text(" SOL", size: 13)
+        )
+    }
+    
+    if feeAmount.transaction > 0 {
+        attributedString.append(
+            NSMutableAttributedString()
+                .text(L10n.transactionFee, size: 13, color: .textSecondary)
+                .text(" ")
+                .text(feeAmount.transaction.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true), size: 13)
+                .text(" SOL", size: 13)
+        )
+    }
+    
+    if attributedString.count == 2 {
+        attributedString.insert(NSMutableAttributedString().text(", "), at: 1)
+    }
+    
+    return attributedString.reduce(NSMutableAttributedString(), {result, attributedString in
+        result.append(attributedString)
+        return result
+    })
 }
