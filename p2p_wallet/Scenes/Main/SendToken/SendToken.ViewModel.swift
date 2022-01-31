@@ -166,7 +166,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         ]
     }
     
-    func getAPIClient() -> SendServiceType {
+    func getSendService() -> SendServiceType {
         sendService
     }
     

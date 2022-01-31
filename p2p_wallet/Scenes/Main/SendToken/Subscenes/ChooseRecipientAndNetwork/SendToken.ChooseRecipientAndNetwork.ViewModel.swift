@@ -18,7 +18,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
-    func getAPIClient() -> SendServiceType
+    func getSendService() -> SendServiceType
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
     func save()
@@ -97,8 +97,8 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         return vm
     }
     
-    func getAPIClient() -> SendServiceType {
-        sendTokenViewModel.getAPIClient()
+    func getSendService() -> SendServiceType {
+        sendTokenViewModel.getSendService()
     }
     
     func getPrice(for symbol: String) -> Double {

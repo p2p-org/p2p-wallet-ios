@@ -13,7 +13,7 @@ protocol SendTokenRecipientAndNetworkHandler {
     var networkSubject: BehaviorRelay<SendToken.Network> {get}
     
     func getSelectedWallet() -> Wallet?
-    func getAPIClient() -> SendServiceType
+    func getSendService() -> SendServiceType
 }
 
 extension SendTokenRecipientAndNetworkHandler {
@@ -65,6 +65,6 @@ extension SendTokenRecipientAndNetworkHandler {
         guard let recipient = recipientSubject.value else {return false}
         return recipient.name == nil &&
             recipient.address
-                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getAPIClient().isTestNet()))
+                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
     }
 }
