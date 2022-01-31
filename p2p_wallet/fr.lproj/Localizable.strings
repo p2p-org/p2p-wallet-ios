@@ -700,3 +700,7 @@
 "You can receive %@ by providing this address, QR code or username:" = "Vous pouvez recevoir %@ en fournissant cette adresse, ce code QR ou ce nom d'utilisateur :";
 "Username %@ was reserved" = "Le nom d'utilisateur %@ était réservé";
 "None" = "Rien";
+"List of supported tokens" = "Liste des jetons pris en charge";
+"Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address." = "Chaque jeton de cette liste est disponible pour la réception avec cette adresse ;  vous pouvez rechercher un token en saisissant son nom ou son ticker.\n\nSi un token ne figure pas dans cette liste, nous vous déconseillons de l'envoyer à cette adresse.";
+"we do not recommend sending it to this address." = "nous vous déconseillons de l'envoyer à cette adresse.";
+"What tokens can I receive?" = "Quels jetons puis-je recevoir ?";
