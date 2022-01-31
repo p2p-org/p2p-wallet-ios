@@ -13,7 +13,8 @@ protocol ReceiveTokenSolanaViewModelType: BESceneModel {
     var pubkey: String { get }
     var tokenWallet: Wallet? { get }
     var username: String? { get }
-    
+    var hasExplorerButton: Bool { get }
+
     func showSOLAddressInExplorer()
     func copyAction()
     func shareAction(image: UIImage)
@@ -31,16 +32,19 @@ extension ReceiveToken {
         
         let pubkey: String
         let tokenWallet: Wallet?
+        let hasExplorerButton: Bool
         private let disposeBag = DisposeBag()
         
         init(
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
-            navigationSubject: PublishRelay<NavigatableScene?>
+            navigationSubject: PublishRelay<NavigatableScene?>,
+            hasExplorerButton: Bool
         ) {
             self.pubkey = solanaPubkey
             self.tokenWallet = solanaTokenWallet?.pubkey == solanaPubkey ? nil : solanaTokenWallet
             self.navigationSubject = navigationSubject
+            self.hasExplorerButton = hasExplorerButton
         }
         
         deinit {
