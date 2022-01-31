@@ -188,8 +188,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .drive(actionButton.rx.image)
                 .disposed(by: disposeBag)
             
-            viewModel.isValidDriver
-                .map {$0 ? L10n.reviewAndConfirm: L10n.chooseTheRecipientToProceed}
+            Driver.combineLatest(
+                viewModel.recipientDriver,
+                viewModel.payingWalletDriver
+            )
+                .map {$0 == nil ? L10n.chooseTheRecipientToProceed: $1 == nil ? L10n.chooseTheTokenToPayFees: L10n.reviewAndConfirm}
                 .drive(actionButton.rx.text)
                 .disposed(by: disposeBag)
         }

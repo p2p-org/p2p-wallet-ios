@@ -701,3 +701,4 @@
 "Username %@ was reserved" = "Tên người dùng %@ đã được bảo lưu";
 "None" = "Không có";
 "Select token to pay fees" = "Chọn token để thanh toán phí";
+"Choose the token to pay fees" = "Chọn token để thanh toán phí";
