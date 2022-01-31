@@ -700,3 +700,4 @@
 "You can receive %@ by providing this address, QR code or username:" = "Вы можете получить %@, указав этот адрес, QR-код или имя пользователя:";
 "Username %@ was reserved" = "Имя пользователя %@ было зарезервировано";
 "None" = "Никто";
+"Select token to pay fees" = "Выберите токен для оплаты комиссии";

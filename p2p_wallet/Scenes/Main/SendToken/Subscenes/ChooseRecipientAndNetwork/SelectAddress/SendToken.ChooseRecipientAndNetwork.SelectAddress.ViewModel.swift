@@ -117,7 +117,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     var isValidDriver: Driver<Bool> {
-        chooseRecipientAndNetworkViewModel.recipientDriver.map {$0 != nil}
+        Driver.combineLatest([
+            payingWalletDriver.map {$0 != nil},
+            recipientDriver.map {$0 != nil}
+        ])
+            .map {$0.allSatisfy {$0}}
     }
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
