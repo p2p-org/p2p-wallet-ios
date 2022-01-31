@@ -51,6 +51,7 @@ extension SendToken {
         let amountSubject = BehaviorRelay<Double?>(value: nil)
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
+        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializers
         init(

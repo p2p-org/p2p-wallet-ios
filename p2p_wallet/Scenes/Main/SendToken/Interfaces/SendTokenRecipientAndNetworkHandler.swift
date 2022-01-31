@@ -14,6 +14,7 @@ protocol SendTokenRecipientAndNetworkHandler: AnyObject {
     var sendService: SendServiceType {get}
     var recipientSubject: BehaviorRelay<SendToken.Recipient?> {get}
     var networkSubject: BehaviorRelay<SendToken.Network> {get}
+    var payingWalletSubject: BehaviorRelay<Wallet?> {get}
     
     func getSelectedWallet() -> Wallet?
     func getSendService() -> SendServiceType
@@ -44,6 +45,10 @@ extension SendTokenRecipientAndNetworkHandler {
                     .catchAndReturn(.init(transaction: 0, accountBalances: 0))
             }
             .asDriver(onErrorJustReturn: .init(transaction: 0, accountBalances: 0))
+    }
+    
+    var payingWalletDriver: Driver<Wallet?> {
+        payingWalletSubject.asDriver()
     }
     
     func getSelectedRecipient() -> SendToken.Recipient? {
@@ -79,6 +84,10 @@ extension SendTokenRecipientAndNetworkHandler {
             networkSubject.accept(.solana)
         }
         networkSubject.accept(network)
+    }
+    
+    func selectPayingWallet(_ payingWallet: Wallet) {
+        payingWalletSubject.accept(payingWallet)
     }
     
     // MARK: - Helpers
