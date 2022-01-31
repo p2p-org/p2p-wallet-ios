@@ -12,6 +12,7 @@ extension SendToken.ChooseRecipientAndNetwork {
     enum SelectAddress {
         enum NavigatableScene {
             case scanQrCode
+            case selectPayingWallet
         }
         
         enum InputState: Equatable {

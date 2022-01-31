@@ -54,6 +54,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 UIView.defaultNextArrow()
             }
+            
+            onTap { [weak self] in
+                self?.viewModel.navigate(to: .selectPayingWallet)
+            }
         }
     }
 }
