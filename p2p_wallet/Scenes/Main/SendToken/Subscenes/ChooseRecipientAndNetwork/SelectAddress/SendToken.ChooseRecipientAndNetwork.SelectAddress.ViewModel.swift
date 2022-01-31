@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import SolanaSwift
 
-protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDidSelectHandler {
     var showAfterConfirmation: Bool {get}
     var preSelectedNetwork: SendToken.Network? {get}
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
@@ -152,6 +152,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     func userDidTapPaste() {
         search(clipboardManager.stringFromClipboard())
+    }
+    
+    func walletDidSelect(_ wallet: Wallet) {
+        chooseRecipientAndNetworkViewModel.payingWalletSubject.accept(wallet)
     }
     
     func search(_ address: String?) {
