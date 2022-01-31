@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     final class FeeView: WLFloatingPanelView {
@@ -36,12 +37,15 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                 .drive(label.rx.attributedText)
                                 .disposed(by: disposeBag)
                         }
-                    UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold)
+                    UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold, numberOfLines: 0)
                         .setup { label in
-                            self.viewModel.payingWalletDriver
-                                .map {$0 == nil}
-//                                .drive(imageView.rx.isHidden)
-//                                .disposed(by: disposeBag)
+                            Driver.combineLatest(
+                                viewModel.payingWalletDriver,
+                                viewModel.feesDriver
+                            )
+                                .map {[weak self] in payingWalletToString(payingWallet: $0, feeAmount: $1, tokenPrice: self?.viewModel.getPrice(for: $0?.token.symbol ?? ""), solPrice: self?.viewModel.getPrice(for: "SOL"))}
+                                .drive(label.rx.text)
+                                .disposed(by: disposeBag)
                         }
                 }
                 UIView.defaultNextArrow()
@@ -80,4 +84,27 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount, solPric
     #endif
     
     return attrString
+}
+
+private func payingWalletToString(
+    payingWallet: Wallet?,
+    feeAmount: SolanaSDK.FeeAmount,
+    tokenPrice: Double?,
+    solPrice: Double?
+) -> String? {
+    guard let payingWallet = payingWallet else {
+        return L10n.selectTokenToPayFees
+    }
+    
+    var amount = feeAmount.total.convertToBalance(decimals: 9)
+    var amountString = amount.toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " SOL"
+    
+    if let solPrice = solPrice,
+       let tokenPrice = tokenPrice,
+       tokenPrice > 0
+    {
+        amount = amount * solPrice / tokenPrice
+        amountString = amount.toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(payingWallet.token.symbol)"
+    }
+    return amountString
 }

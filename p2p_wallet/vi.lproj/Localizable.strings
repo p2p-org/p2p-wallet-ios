@@ -700,3 +700,4 @@
 "You can receive %@ by providing this address, QR code or username:" = "Bạn có thể nhận %@ bằng cách cung cấp địa chỉ, mã QR hoặc tên người dùng này:";
 "Username %@ was reserved" = "Tên người dùng %@ đã được bảo lưu";
 "None" = "Không có";
+"Select token to pay fees" = "Chọn token để thanh toán phí";
