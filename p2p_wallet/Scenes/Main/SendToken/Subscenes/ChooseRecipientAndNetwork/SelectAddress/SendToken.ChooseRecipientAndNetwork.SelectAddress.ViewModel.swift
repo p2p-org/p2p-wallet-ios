@@ -62,7 +62,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool) {
             self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
             self.showAfterConfirmation = showAfterConfirmation
-            recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getAPIClient()
+            recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getSendService()
             recipientsListViewModel.preSelectedNetwork = preSelectedNetwork
             
             if chooseRecipientAndNetworkViewModel.getSelectedRecipient() != nil {
