@@ -35,18 +35,18 @@ extension Root {
             super.bind()
             // remove all childs
             viewModel.resetSignal
-                .emit(onNext: {[weak self] in self?.removeAllChilds()})
+                .emit(onNext: { [weak self] in self?.removeAllChilds() })
                 .disposed(by: disposeBag)
             
             // navigation scene
             viewModel.navigationSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
             
             // loadingView
             viewModel.isLoadingDriver
                 .drive(onNext: { [weak self] isLoading in
-                    isLoading ? self?.showIndetermineHud(): self?.hideHud()
+                    isLoading ? self?.showIndetermineHud() : self?.hideHud()
                 })
                 .disposed(by: disposeBag)
         }
