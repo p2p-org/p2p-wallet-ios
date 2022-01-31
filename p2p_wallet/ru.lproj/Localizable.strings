@@ -691,6 +691,17 @@
 "Statuses received" = "Статусы получены";
 "Statuses received (%@)" = "Полученные статусы (%@)";
 "The last one: " = "Последний:";
+"Backup required" = "Требуется резервная копия";
+"Backup is ready" = "Резервная копия готова";
+"Your PIN" = "Ваш PIN-код";
+"PIN is set" = "PIN-код установлен";
+"Notifications" = "Уведомления";
+"classic" = "классический";
+"Ask a question / Request a feature" = "Задать вопрос / Запросить функцию";
+"App version" = "Версия приложения";
+"Confirm transactions" = "Подтвердить транзакции";
+"Pay fees with" = "Оплатить комиссию с";
+"App icon" = "Значок приложения";
 "Hide direct and mint addresses" = "Скрыть прямые и мятные адреса";
 "Show direct and mint addresses" = "Показать прямые и мятные адреса";
 "Tap and hold to copy" = "Нажмите и удерживайте, чтобы скопировать";
