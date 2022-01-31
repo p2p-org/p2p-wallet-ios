@@ -14,6 +14,12 @@ protocol SendServiceType {
     func load() -> Completable
     func getFees() -> Single<SolanaSDK.Fee>
     func checkAccountValidation(account: String) -> Single<Bool>
+    func getFees(
+        from wallet: Wallet,
+        receiver: String,
+        amount: Double,
+        network: SendToken.Network
+    ) -> Single<SolanaSDK.FeeAmount>
     func send(
         from wallet: Wallet,
         receiver: String,
@@ -30,6 +36,7 @@ class SendService: SendServiceType {
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClientType
     @Injected private var relayService: FeeRelayerRelayType
     @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+    @Injected private var feeService: FeeServiceType
     
     func load() -> Completable {
         orcaSwap.load()
@@ -46,6 +53,28 @@ class SendService: SendServiceType {
     
     func isTestNet() -> Bool {
         solanaSDK.endpoint.network.isTestnet
+    }
+    
+    func getFees(
+        from wallet: Wallet,
+        receiver: String,
+        amount: Double,
+        network: SendToken.Network
+    ) -> Single<SolanaSDK.FeeAmount> {
+        switch network {
+        case .bitcoin:
+            return .just(
+                .init(
+                    transaction: 20000,
+                    accountBalances: 0,
+                    others: [
+                        .init(amount: 0.0002, unit: "renBTC")
+                    ]
+                )
+            )
+        case .solana:
+            fatalError()
+        }
     }
     
     func send(

@@ -45,7 +45,7 @@ enum SendToken {
                 return .squircleBitcoinIcon
             }
         }
-        var defaultFees: [Fee] {
+        var defaultFees: [SolanaSDK.FeeAmount.OtherFee] {
             switch self {
             case .solana:
                 return [.init(amount: 0, unit: Defaults.fiat.symbol)]
@@ -54,14 +54,9 @@ enum SendToken {
             }
         }
     }
-    
-    struct Fee {
-        var amount: Double
-        let unit: String
-    }
 }
 
-extension Array where Element == SendToken.Fee {
+extension Array where Element == SolanaSDK.FeeAmount.OtherFee {
     func attributedString(
         prices: [String: Double],
         textSize: CGFloat = 15,
