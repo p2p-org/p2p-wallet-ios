@@ -28,6 +28,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                             .map {$0 == nil}
                             .drive(imageView.rx.isHidden)
                             .disposed(by: disposeBag)
+                        
+                        self.viewModel.payingWalletDriver
+                            .drive(onNext: {[weak imageView] in imageView?.setUp(wallet: $0)})
+                            .disposed(by: disposeBag)
                     }
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                     UILabel(text: "Account creation fee", textSize: 13, numberOfLines: 0)
