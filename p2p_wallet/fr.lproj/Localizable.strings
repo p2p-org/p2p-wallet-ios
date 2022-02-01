@@ -693,6 +693,17 @@
 "Statuses received" = "Statuts reçus";
 "Statuses received (%@)" = "Statuts reçus (%@)";
 "The last one: " = "Le dernier:";
+"Backup required" = "Sauvegarde requise";
+"Backup is ready" = "La sauvegarde est prête";
+"Your PIN" = "Votre NIP";
+"PIN is set" = "Le code PIN est défini";
+"Notifications" = "Notifications";
+"classic" = "classique";
+"Ask a question / Request a feature" = "Poser une question / Demander une fonctionnalité";
+"App version" = "Version de l'application";
+"Confirm transactions" = "Confirmer les transactions";
+"Pay fees with" = "Payer les frais avec";
+"App icon" = "Icône de l'application";
 "Hide direct and mint addresses" = "Masquer les adresses directes et menthe";
 "Show direct and mint addresses" = "Afficher les adresses directes et menthe";
 "Tap and hold to copy" = "Appuyez et maintenez pour copier";
