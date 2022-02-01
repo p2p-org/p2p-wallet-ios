@@ -711,3 +711,5 @@
 "You can receive %@ by providing this address, QR code or username:" = "You can receive %@ by providing this address, QR code or username:";
 "Username %@ was reserved" = "Username %@ was reserved";
 "None" = "None";
+"Security & Network" = "Security";
+"Face ID" = "Face ID";

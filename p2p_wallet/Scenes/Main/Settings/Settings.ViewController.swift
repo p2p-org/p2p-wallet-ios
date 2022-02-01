@@ -24,7 +24,7 @@ extension Settings {
         }
         
         override func build() -> UIView {
-            UIStackView(axis: .vertical, alignment: .fill) {
+            BEVStack {
                 NewWLNavigationBar(initialTitle: L10n.settings, separatorEnable: false)
                     .onBack { [unowned self] in self.back() }
                 
@@ -39,6 +39,9 @@ extension Settings {
                             trailing: UILabel(textSize: 15).setupWithType(UILabel.self) { label in
                                 viewModel.usernameDriver.map { $0 != nil ? $0! : L10n.notYetReserved }
                                     .drive(label.rx.text)
+                                    .disposed(by: disposeBag)
+                                viewModel.usernameDriver.map { $0 != nil ? UIColor.black : UIColor.ff3b30 }
+                                    .drive(label.rx.textColor)
                                     .disposed(by: disposeBag)
                             }
                         )
@@ -65,7 +68,7 @@ extension Settings {
                     }
                     
                     // Security & network section
-                    SectionView(title: L10n.security) {
+                    SectionView(title: L10n.securityNetwork) {
                         
                         // Backup
                         CellView(
@@ -89,14 +92,14 @@ extension Settings {
                         // Pin
                         CellView(
                             icon: .pinIcon,
-                            title: L10n.yourPIN.onlyUppercaseFirst(),
+                            title: L10n.yourPIN.uppercaseFirst,
                             trailing: UILabel(text: L10n.pinIsSet, textSize: 15, textColor: .h34c759)
                         ).onTap { [unowned self] in viewModel.navigate(to: .changePincode) }
                         
                         // Face id
                         CellView(
                             icon: .faceIdIcon,
-                            title: L10n.useFaceId.onlyUppercaseFirst(),
+                            title: L10n.faceID,
                             trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
                                 viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled).disposed(by: disposeBag)
                                 viewModel.isBiometryEnabledDriver.drive(switcher.rx.value).disposed(by: disposeBag)
@@ -140,7 +143,7 @@ extension Settings {
                     }
                     
                     // Appearance section
-                    SectionView(title: L10n.profile) {
+                    SectionView(title: L10n.appearance) {
                         /*
                         // Notification
                         CellView(
