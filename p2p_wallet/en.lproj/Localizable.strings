@@ -693,6 +693,17 @@
 "Statuses received" = "Statuses received";
 "Statuses received (%@)" = "Statuses received (%@)";
 "The last one: " = "The last one:";
+"Backup required" = "Backup required";
+"Backup is ready" = "Backup is ready";
+"Your PIN" = "Your PIN";
+"PIN is set" = "PIN is set";
+"Notifications" = "Notifications";
+"classic" = "classic";
+"Ask a question / Request a feature" = "Ask a question / Request a feature";
+"App version" = "App version";
+"Confirm transactions" = "Confirm transactions";
+"Pay fees with" = "Pay fees with";
+"App icon" = "App icon";
 "Hide direct and mint addresses" = "Hide direct and mint addresses";
 "Show direct and mint addresses" = "Show direct and mint addresses";
 "Tap and hold to copy" = "Tap and hold to copy";
