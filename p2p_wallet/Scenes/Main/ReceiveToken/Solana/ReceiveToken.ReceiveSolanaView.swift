@@ -39,9 +39,8 @@ extension ReceiveToken {
                     }
                 
                 // Explore button
-                WLStepButton.main(image: .external, imageSize: .init(width: 14, height: 14), text: L10n.viewInExplorer("Solana"))
-                    .padding(.init(only: .top, inset: 18))
-                    .onTap { [unowned self] in self.viewModel.showSOLAddressInExplorer() }
+                ExplorerButton(title: L10n.viewInExplorer("Solana"))
+                    .onTap { [weak self] in self?.viewModel.showSOLAddressInExplorer() }
             }
         }
     }
