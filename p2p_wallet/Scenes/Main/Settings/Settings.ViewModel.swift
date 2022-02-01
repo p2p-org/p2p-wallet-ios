@@ -35,6 +35,7 @@ protocol SettingsViewModelType {
     var themeDriver: Driver<UIUserInterfaceStyle?> { get }
     var hideZeroBalancesDriver: Driver<Bool> { get }
     var logoutAlertSignal: Signal<Void> { get }
+    var biometryTypeDriver: Driver<Settings.BiometryType> { get }
     var isBiometryEnabledDriver: Driver<Bool> { get }
     var isBiometryAvailableDriver: Driver<Bool> { get }
     
@@ -92,6 +93,7 @@ extension Settings {
         private let currentLanguageSubject = BehaviorRelay<String?>(value: Locale.current.uiLanguageLocalizedString?.uppercaseFirst)
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?.overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
+        private let biometryTypeSubject = BehaviorRelay<BiometryType>(value: .face)
         private let isBiometryEnabledSubject = BehaviorRelay<Bool>(value: Defaults.isBiometryEnabled)
         private let isBiometryAvailableSubject = BehaviorRelay<Bool>(value: false)
         private let logoutAlertSubject = PublishRelay<Void>()
@@ -114,6 +116,15 @@ extension Settings {
             let context = LAContext()
             if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
                 isBiometryAvailableSubject.accept(true)
+            }
+    
+            switch context.biometryType {
+            case .faceID:
+                biometryTypeSubject.accept(.face)
+            case .touchID:
+                biometryTypeSubject.accept(.touch)
+            default:
+                biometryTypeSubject.accept(.none)
             }
         }
         
@@ -276,6 +287,8 @@ extension Settings.ViewModel: SettingsViewModelType {
     var isBiometryEnabledDriver: Driver<Bool> { isBiometryEnabledSubject.asDriver() }
     
     var isBiometryAvailableDriver: Driver<Bool> { isBiometryAvailableSubject.asDriver() }
+    
+    var biometryTypeDriver: Driver<Settings.BiometryType> { biometryTypeSubject.asDriver() }
     
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void) {
         // pause authentication
