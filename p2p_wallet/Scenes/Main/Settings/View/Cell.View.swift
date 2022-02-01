@@ -12,12 +12,12 @@ import RxCocoa
 extension Settings {
     class CellView: BECompositionView {
         let icon: UIImage
-        let title: String
+        let title: UIView
         let trailing: UIView?
         let dividerEnable: Bool
         let nextArrowEnable: Bool
         
-        init(icon: UIImage, title: String, trailing: UIView? = nil, dividerEnable: Bool = true, nextArrowEnable: Bool = true) {
+        init(icon: UIImage, title: UIView, trailing: UIView? = nil, dividerEnable: Bool = true, nextArrowEnable: Bool = true) {
             self.icon = icon
             self.title = title
             self.trailing = trailing
@@ -31,7 +31,7 @@ extension Settings {
                 UIStackView(axis: .horizontal, alignment: .center) {
                     UIImageView(width: 24, height: 24, image: icon)
                         .padding(.init(only: .right, inset: 8))
-                    UILabel(text: title)
+                    title
                     UIView.spacer
                     if trailing != nil { trailing! }
                     if nextArrowEnable { UIView.defaultNextArrow().padding(.init(only: .left, inset: 16)) }
