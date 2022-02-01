@@ -19,7 +19,7 @@ PODS:
   - CocoaLumberjack/Core (3.7.4)
   - CryptoSwift (1.4.2)
   - Down (0.11.0)
-  - FeeRelayerSwift (2.0.10):
+  - FeeRelayerSwift (2.0.12):
     - OrcaSwapSwift (= 1.0.5)
     - RxAlamofire (~> 6.1.1)
     - SolanaSwift (= 1.1.17)
@@ -284,7 +284,7 @@ SPEC CHECKSUMS:
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
   CryptoSwift: a532e74ed010f8c95f611d00b8bbae42e9fe7c17
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
-  FeeRelayerSwift: f418b4448194666b1b40b554300e218818dfef35
+  FeeRelayerSwift: cd96145bbd359393d708126be4d9d7603af1014d
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
   FirebaseAnalytics: 319c9b3b1bdd400d60e2f415dff0c5f6959e6760
   FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440
@@ -323,6 +323,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 1ba7dc440bde56253a13e755c3dc9fe3d24d1edd
+PODFILE CHECKSUM: aace93ca88037cd454c22843f58665f034558029
 
 COCOAPODS: 1.11.2
