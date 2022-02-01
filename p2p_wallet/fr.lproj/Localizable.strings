@@ -711,3 +711,5 @@
 "You can receive %@ by providing this address, QR code or username:" = "Vous pouvez recevoir %@ en fournissant cette adresse, ce code QR ou ce nom d'utilisateur :";
 "Username %@ was reserved" = "Le nom d'utilisateur %@ était réservé";
 "None" = "Rien";
+"Security & Network" = "Sécurité";
+"Face ID" = "Identification faciale";
