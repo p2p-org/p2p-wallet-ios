@@ -11,6 +11,8 @@ import SolanaSwift
 import FeeRelayerSwift
 import OrcaSwapSwift
 
+protocol SwapServicePoolsPair {}
+
 protocol SwapServiceType {
     func load() -> Completable
     
@@ -28,16 +30,17 @@ protocol SwapServiceType {
         destinationTokenMint: String?,
         payingTokenAddress: String,
         payingTokenMint: String,
-        poolPair: Swap.PoolsPair,
+        poolsPair: Swap.PoolsPair,
         amount: UInt64,
         slippage: Double
     ) -> Single<[String]>
     
     func getFees(
-        myWalletsMints: [String],
-        fromWalletPubkey: String,
-        toWalletPubkey: String?,
-        bestPoolsPair: OrcaSwap.PoolsPair?,
+        source: String,
+        availableSourceMints: [String],
+        destination: String?,
+        destinationToken: SolanaSDK.Token?,
+        bestPoolsPair: Swap.PoolsPair?,
         inputAmount: Double?,
         slippage: Double,
         lamportsPerSignature: UInt64,
@@ -47,18 +50,18 @@ protocol SwapServiceType {
     func findPosibleDestinationMints(fromMint: String) throws -> [String]
 }
 
+enum SwapError: Error {
+    case incompatiblePoolsPair
+}
+
 struct Swap {
     typealias Service = SwapServiceType
+    typealias PoolsPair = SwapServicePoolsPair
+    typealias Error = SwapError
     
     enum InputMode {
         case source
         case target
-    }
-    
-    // TODO: make this class abstract
-    struct PoolsPair {
-        // TODO: Hide direct access. We have to abstract it
-        let orcaPoolPair: OrcaSwap.PoolsPair
     }
     
     enum PayingTokenMode {
@@ -74,9 +77,7 @@ struct Swap {
     }
     
     struct FeeInfo {
-        public let transactionFees: UInt64
-        public let accountCreationFee: UInt64?
-        public let liquidityProviderFees: [UInt64]
+        let fees: [PayingFee]
     }
 }
 
@@ -87,10 +88,12 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     private let orcaSwap: OrcaSwapType
     private var feeRelay: FeeRelayer.Relay?
     
-    // TODO: Remove me
-    @Injected var notificationsService: NotificationsServiceType
-    
-    init(solanaClient: SolanaSDK, accountStorage: SolanaSDKAccountStorage, feeRelay: FeeRelayerAPIClientType, orcaSwap: OrcaSwapType) {
+    init(
+        solanaClient: SolanaSDK,
+        accountStorage: SolanaSDKAccountStorage,
+        feeRelay: FeeRelayerAPIClientType,
+        orcaSwap: OrcaSwapType
+    ) {
         self.solanaClient = solanaClient
         self.accountStorage = accountStorage
         self.feeRelayApi = feeRelay
@@ -105,7 +108,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 accountStorage: accountStorage,
                 orcaSwapClient: orcaSwap
             )
-    
+            
             return .zip(
                 orcaSwap.load(),
                 feeRelay!.load()
@@ -134,38 +137,90 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         as inputMode: Swap.InputMode
     ) -> Single<[Swap.PoolsPair]> {
         orcaSwap.getTradablePoolsPairs(fromMint: sourceMint, toMint: destinationMint)
-        .map { result in result.map { $0.toPoolsPair() } }
+            .map { result in result.map { $0.toPoolsPair() } }
     }
     
     func getFees(
-        myWalletsMints: [String],
-        fromWalletPubkey: String,
-        toWalletPubkey: String?,
-        bestPoolsPair: OrcaSwap.PoolsPair?,
+        source: String,
+        availableSourceMints: [String],
+        destination: String?,
+        destinationToken: SolanaSDK.Token?,
+        bestPoolsPair: Swap.PoolsPair?,
         inputAmount: Double?,
         slippage: Double,
         lamportsPerSignature: UInt64,
         minRentExempt: UInt64
     ) throws -> Swap.FeeInfo {
-        let result = try orcaSwap.getFees(
-            myWalletsMints: myWalletsMints,
-            fromWalletPubkey: fromWalletPubkey,
-            toWalletPubkey: toWalletPubkey,
-            bestPoolsPair: bestPoolsPair,
+        guard let bestPoolsPair = bestPoolsPair as? PoolsPair else { throw Swap.Error.incompatiblePoolsPair }
+        
+        let fees = try orcaSwap.getFees(
+            myWalletsMints: availableSourceMints,
+            fromWalletPubkey: source,
+            toWalletPubkey: destination,
+            bestPoolsPair: bestPoolsPair.orcaPoolPair,
             inputAmount: inputAmount,
             slippage: slippage,
             lamportsPerSignature: lamportsPerSignature,
             minRentExempt: minRentExempt
         )
         
-        return .init(
-            transactionFees: result.transactionFees,
-            accountCreationFee: result.accountCreationFee,
-            liquidityProviderFees: result.liquidityProviderFees
+        var allFees = [PayingFee]()
+        
+        if let destinationWallet = destination,
+           let destinationToken = destinationToken {
+            if fees.liquidityProviderFees.count == 1 {
+                allFees.append(
+                    .init(
+                        type: .liquidityProviderFee,
+                        lamports: fees.liquidityProviderFees.first!,
+                        token: destinationToken
+                    )
+                )
+            } else if fees.liquidityProviderFees.count == 2 {
+                if let intermediaryTokenName = bestPoolsPair?.orcaPoolPair[0].tokenBName, let decimals = bestPoolsPair?.orcaPoolPair[0].getTokenBDecimals() {
+                    allFees.append(
+                        .init(
+                            type: .liquidityProviderFee,
+                            lamports: fees.liquidityProviderFees.first!,
+                            token: .unsupported(mint: nil, decimals: decimals, symbol: intermediaryTokenName)
+                        )
+                    )
+                }
+                
+                allFees.append(
+                    .init(
+                        type: .liquidityProviderFee,
+                        lamports: fees.liquidityProviderFees.last!,
+                        token: destinationToken
+                    )
+                )
+            }
+        }
+        
+        if let creationFee = fees.accountCreationFee {
+            allFees.append(
+                .init(
+                    type: .accountCreationFee(token: destinationToken.symbol),
+                    lamports: creationFee,
+                    token: .nativeSolana
+                )
+            )
+        }
+        
+        allFees.append(
+            .init(
+                type: .transactionFee,
+                lamports: fees.transactionFees,
+                token: .nativeSolana
+            )
         )
+        
+        return .init(fees: allFees)
     }
     
-    public func findPosibleDestinationMints(fromMint: String) throws -> [String] { try orcaSwap.findPosibleDestinationMints(fromMint: fromMint) }
+    public func findPosibleDestinationMints(
+        fromMint: String
+    ) throws -> [String] { try orcaSwap.findPosibleDestinationMints(fromMint: fromMint) }
     
     func swap(
         sourceAddress: String,
@@ -174,36 +229,36 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationTokenMint: String?,
         payingTokenAddress: String,
         payingTokenMint: String,
-        poolPair: Swap.PoolsPair,
+        poolsPair: Swap.PoolsPair,
         amount: UInt64,
         slippage: Double
     ) -> Single<[String]> {
+        guard let poolsPair = poolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
+        
         if sourceAddress == accountStorage.account?.publicKey.base58EncodedString {
             // sol -> spl, replay doesn't support it
-            guard let decimals = poolPair.orcaPoolPair[0].getTokenADecimals() else {
+            guard let decimals = poolsPair.orcaPoolPair[0].getTokenADecimals() else {
                 return .error(OrcaSwapError.invalidPool)
             }
             
-            notificationsService.showInAppNotification(.message("Use orca"))
             return orcaSwap.swap(
                 fromWalletPubkey: sourceAddress,
                 toWalletPubkey: destinationAddress,
-                bestPoolsPair: poolPair.orcaPoolPair,
+                bestPoolsPair: poolsPair.orcaPoolPair,
                 amount: amount.convertToBalance(decimals: decimals),
                 slippage: slippage,
                 isSimulation: false
             ).map { response in [response.transactionId] }
         } else if destinationAddress == accountStorage.account?.publicKey.base58EncodedString {
             // spl -> sol, bug in error
-            guard let decimals = poolPair.orcaPoolPair[0].getTokenADecimals() else {
+            guard let decimals = poolsPair.orcaPoolPair[0].getTokenADecimals() else {
                 return .error(OrcaSwapError.invalidPool)
             }
             
-            notificationsService.showInAppNotification(.message("Use orca"))
             return orcaSwap.swap(
                 fromWalletPubkey: sourceAddress,
                 toWalletPubkey: destinationAddress,
-                bestPoolsPair: poolPair.orcaPoolPair,
+                bestPoolsPair: poolsPair.orcaPoolPair,
                 amount: amount.convertToBalance(decimals: decimals),
                 slippage: slippage,
                 isSimulation: false
@@ -215,25 +270,27 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let destinationTokenMint = destinationTokenMint else { return .error(SolanaSDK.Error.other("Invalid destination mint address")) }
         
         // spl -> spl, use relay
-        notificationsService.showInAppNotification(.message("Use relay"))
-        
         return feeRelay.topUpAndSwap(
             sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
             destinationTokenMint: destinationTokenMint,
             destinationAddress: destinationAddress,
             payingFeeToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
-            swapPools: poolPair.orcaPoolPair,
+            swapPools: poolsPair.orcaPoolPair,
             inputAmount: amount,
             slippage: slippage
         )
     }
+    
+    struct PoolsPair: Swap.PoolsPair {
+        let orcaPoolPair: OrcaSwap.PoolsPair
+    }
 }
 
 fileprivate extension OrcaSwap.PoolsPair {
-    func toPoolsPair() -> Swap.PoolsPair { .init(orcaPoolPair: self) }
+    func toPoolsPair() -> SwapServiceWithRelayImpl.PoolsPair { .init(orcaPoolPair: self) }
 }
 
-extension Array where Element == Swap.PoolsPair {
+extension Array where Element == SwapServiceWithRelayImpl.PoolsPair {
     func findBestPoolsPairForEstimatedAmount(_ estimatedAmount: UInt64) -> Swap.PoolsPair? {
         guard count > 0 else { return nil }
         
