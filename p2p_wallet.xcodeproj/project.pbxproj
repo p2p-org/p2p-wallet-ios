@@ -123,6 +123,7 @@
 		8469928B2607C3CDDA2B1A4C /* DAppContainer.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */; };
 		846992D8898D895565C4EFD3 /* Cell.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699843D0D43ABFAA0417BA /* Cell.View.swift */; };
 		846993316E60603167DE5520 /* LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D31FA9B8B77AD4DAD1 /* LockView.swift */; };
+		846993B035ABF4D39F688EC5 /* .swift-format in Sources */ = {isa = PBXBuildFile; fileRef = 8469936C75691A4470C22EC1 /* .swift-format */; };
 		846993C005071DBC7474F46B /* BuyRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990E0164D14FE11A72F13 /* BuyRoot.swift */; };
 		846993CA42DD22FB3BA39BB1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699683F51C51791FD590A0 /* Utils.swift */; };
 		846993CEE73D894A69FE84A6 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469995401F6BFC283896AD6 /* UIButton.swift */; };
@@ -136,6 +137,7 @@
 		846995ACEC50F650033C707E /* DAppContainer.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */; };
 		846996465818387C8B28FC1F /* ReceiveToken.HelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699A1D9765DC3DFB275A4E /* ReceiveToken.HelpViewController.swift */; };
 		846996AAD0560194436016E0 /* CreateWallet.ExplanationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */; };
+		8469979B102FA207AE6E656F /* OrcaSwapV2.Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469958B1AED78C19AC43943 /* OrcaSwapV2.Helper.swift */; };
 		8469985B6793A5DA662E5BF3 /* Moonpay.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469954152E62DED5A6CA387 /* Moonpay.Model.swift */; };
 		8469991B25D5A9AF775E714B /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469964AD773095EEFA52701 /* CALayer+Extensions.swift */; };
 		8469996FB7AC9BB16D283B3B /* BuyToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699603F79402208A4B88C8 /* BuyToken.ViewController.swift */; };
@@ -637,6 +639,7 @@
 		846992CDA843C0A10ABB2B6C /* NewTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewTabBar.swift; sourceTree = "<group>"; };
 		846993534B18B8841213679D /* BuyRoot.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.ViewController.swift; sourceTree = "<group>"; };
 		84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.ViewController.swift; sourceTree = "<group>"; };
+		8469936C75691A4470C22EC1 /* .swift-format */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = "file.swift-format"; path = ".swift-format"; sourceTree = "<group>"; };
 		846993C80C502EDC0FBF1067 /* SolanaBuyToken.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.Scene.swift; sourceTree = "<group>"; };
 		84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.RootView.swift; sourceTree = "<group>"; };
 		846994BA772A5F92F29C172E /* WLCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLCard.swift; sourceTree = "<group>"; };
@@ -646,6 +649,7 @@
 		8469954152E62DED5A6CA387 /* Moonpay.Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Model.swift; sourceTree = "<group>"; };
 		8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateWallet.ExplanationVC.swift; sourceTree = "<group>"; };
 		84699587C4376EAA8208663D /* MoonpayProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonpayProvider.swift; sourceTree = "<group>"; };
+		8469958B1AED78C19AC43943 /* OrcaSwapV2.Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.Helper.swift; sourceTree = "<group>"; };
 		846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.ViewController.swift; sourceTree = "<group>"; };
 		846995D0006E36B802E2110E /* ReceiveToken.QrCodeImageRender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeImageRender.swift; sourceTree = "<group>"; };
 		84699603F79402208A4B88C8 /* BuyToken.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyToken.ViewController.swift; sourceTree = "<group>"; };
@@ -1070,6 +1074,7 @@
 				653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */,
 				737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */,
 				A342CCD45E7CDE0BA60EFBB2 /* Pods_p2p_walletTests.framework */,
+				8469936C75691A4470C22EC1 /* .swift-format */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2543,6 +2548,7 @@
 				BCFEDC022727F860008AE4AD /* OrcaSwapV2ViewModelType.swift */,
 				BC4B9EBA27191843005B9ECA /* OrcaSwapV2.ViewModel.swift */,
 				3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */,
+				8469958B1AED78C19AC43943 /* OrcaSwapV2.Helper.swift */,
 			);
 			path = OrcaSwapV2.ViewModel;
 			sourceTree = "<group>";
@@ -3244,6 +3250,8 @@
 				84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */,
 				846999AD4696D6B6BC592165 /* Section.View.swift in Sources */,
 				846992D8898D895565C4EFD3 /* Cell.View.swift in Sources */,
+				8469979B102FA207AE6E656F /* OrcaSwapV2.Helper.swift in Sources */,
+				846993B035ABF4D39F688EC5 /* .swift-format in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

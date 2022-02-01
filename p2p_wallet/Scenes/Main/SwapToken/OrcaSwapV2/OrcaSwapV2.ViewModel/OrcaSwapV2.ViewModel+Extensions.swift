@@ -67,7 +67,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                       let inputAmount = inputAmount?.toLamport(decimals: sourceDecimals),
                       let destinationDecimals = destinationWallet?.token.decimals
                 else {return nil}
-                return poolsPair.orcaPoolPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?.convertToBalance(decimals: destinationDecimals)
+                return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?.convertToBalance(decimals: destinationDecimals)
             }
             .asDriver(onErrorJustReturn: nil)
     }
@@ -224,7 +224,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let inputAmount = amount?.toLamport(decimals: sourceDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
            let bestPoolsPair = poolsPairs.findBestPoolsPairForInputAmount(inputAmount),
-           let bestEstimatedAmount = bestPoolsPair.orcaPoolPair.getOutputAmount(fromInputAmount: inputAmount)
+           let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)
         {
             estimatedAmountSubject.accept(bestEstimatedAmount.convertToBalance(decimals: destinationDecimals))
             bestPoolsPairSubject.accept(bestPoolsPair)
@@ -243,7 +243,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
            let bestPoolsPair = poolsPairs.findBestPoolsPairForEstimatedAmount(estimatedAmount),
-           let bestInputAmount = bestPoolsPair.orcaPoolPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
+           let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
         {
             inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
             bestPoolsPairSubject.accept(bestPoolsPair)
