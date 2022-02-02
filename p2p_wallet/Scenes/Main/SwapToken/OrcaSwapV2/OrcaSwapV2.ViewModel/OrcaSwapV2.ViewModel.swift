@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import OrcaSwapSwift
 import RxCocoa
 import RxSwift
 
