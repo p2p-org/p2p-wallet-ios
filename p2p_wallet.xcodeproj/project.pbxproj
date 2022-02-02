@@ -146,6 +146,7 @@
 		8469999E0EBB5974E6962119 /* BuyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469967326CA93BB243D75A9 /* BuyProvider.swift */; };
 		846999AD4696D6B6BC592165 /* Section.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699524C5183F1B5AF8FCD6 /* Section.View.swift */; };
 		846999D7A0F0B2DC6E8C8A9B /* UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */; };
+		846999D9075FC7FEABA5C584 /* BEBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998D0EDD6FB43EA5CC2F0 /* BEBuilder.swift */; };
 		84699A6D4F4F205F8857968B /* Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699019F6FCF4619A83ADEC /* Swap.swift */; };
 		84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D5BC06C25591CFA36D /* WLWebView.swift */; };
 		84699B6058901C761662F138 /* TransakProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C355CE538F8E06A9A33 /* TransakProvider.swift */; };
@@ -664,6 +665,7 @@
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
 		84699843D0D43ABFAA0417BA /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
+		846998D0EDD6FB43EA5CC2F0 /* BEBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEBuilder.swift; sourceTree = "<group>"; };
 		8469995401F6BFC283896AD6 /* UIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
 		8469996FE57E1A717BD82B85 /* BuyRoot.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.ViewModel.swift; sourceTree = "<group>"; };
 		846999B04075AE392A600C35 /* ReceiveToken.QrCodeCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeCard.swift; sourceTree = "<group>"; };
@@ -1292,6 +1294,14 @@
 				846995031B01D0F8C08F3F79 /* BuyToken.swift */,
 			);
 			path = BuyToken;
+			sourceTree = "<group>";
+		};
+		846992CB0EF277412AB1D177 /* BEPureLayout+RxSwift */ = {
+			isa = PBXGroup;
+			children = (
+				846998D0EDD6FB43EA5CC2F0 /* BEBuilder.swift */,
+			);
+			path = "BEPureLayout+RxSwift";
 			sourceTree = "<group>";
 		};
 		846994BA8A55C5445F0CEF4B /* CollectionView */ = {
@@ -1934,6 +1944,7 @@
 				BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */,
 				84699C1E63119375D8F976D2 /* Scene */,
 				846994BA8A55C5445F0CEF4B /* CollectionView */,
+				846992CB0EF277412AB1D177 /* BEPureLayout+RxSwift */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -3264,6 +3275,7 @@
 				846993B035ABF4D39F688EC5 /* .swift-format in Sources */,
 				84699A6D4F4F205F8857968B /* Swap.swift in Sources */,
 				8469943E0F32D87C8DE07D57 /* SwapServiceWithRelayImpl.swift in Sources */,
+				846999D9075FC7FEABA5C584 /* BEBuilder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

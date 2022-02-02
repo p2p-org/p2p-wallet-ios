@@ -12,7 +12,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     private let accountStorage: SolanaSDKAccountStorage
     private let feeRelayApi: FeeRelayerAPIClientType
     private let orcaSwap: OrcaSwapType
-    private var feeRelay: FeeRelayer.Relay?
+    private var feeRelay: FeeRelayerRelayType?
 
     init(
         solanaClient: SolanaSDK,
