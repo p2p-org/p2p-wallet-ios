@@ -170,9 +170,9 @@ extension OrcaSwapV2.ViewModel {
 
             guard
                 let feeInfo = try? self.swapService.getFees(
-                    source: sourceWalletPubkey,
-                    availableSourceMints: myWalletsMints,
-                    destination: destinationWallet?.pubkey,
+                    sourceAddress: sourceWalletPubkey,
+                    availableSourceMintAddresses: myWalletsMints,
+                    destinationAddress: destinationWallet?.pubkey,
                     destinationToken: destinationWallet?.token,
                     bestPoolsPair: bestPoolsPair,
                     inputAmount: inputAmount,
