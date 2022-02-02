@@ -32,7 +32,6 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     var isShowingShowDetailsButtonDriver: Driver<Bool> { get }
     var showHideDetailsButtonTapSubject: PublishRelay<Void> { get }
     var slippageSubject: BehaviorRelay<Double> { get }
-    var transactionTokensName: String? { get }
 
     func reload()
     func log(_ event: AnalyticsEvent)

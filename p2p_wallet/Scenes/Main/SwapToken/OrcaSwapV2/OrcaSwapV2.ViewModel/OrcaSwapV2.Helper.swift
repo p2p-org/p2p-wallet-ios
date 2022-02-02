@@ -7,20 +7,6 @@ import RxSwift
 
 // MARK: - Helpers
 extension OrcaSwapV2.ViewModel {
-    func fixPayingToken() {
-        // TODO: - Later
-        var payingToken = Defaults.payingToken
-
-        // Force using native sol when source or destination is nativeSOL
-        if sourceWalletSubject.value?.isNativeSOL == true
-            || destinationWalletSubject.value?.isNativeSOL == true  // FIXME: - Fee relayer will support case where destination is native sol
-        {
-            payingToken = .nativeSOL
-        }
-
-        payingTokenModeSubject.accept(payingToken)
-    }
-
     /// Verify error in current context IN ORDER
     /// - Returns: String or nil if no error
     func verify() -> OrcaSwapV2.VerificationError? {

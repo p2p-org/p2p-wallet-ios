@@ -21,7 +21,6 @@ extension OrcaSwapV2 {
         // MARK: - Properties
         let disposeBag = DisposeBag()
         var isSelectingSourceWallet = false  // indicate if selecting source wallet or destination wallet
-        var transactionTokensName: String?
 
         // MARK: - Subject
         let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -95,7 +94,6 @@ extension OrcaSwapV2 {
                 else {
                     self?.tradablePoolsPairsSubject.request = .just([])
                     self?.tradablePoolsPairsSubject.reload()
-                    self?.fixPayingToken()
                     return
                 }
 
@@ -107,7 +105,6 @@ extension OrcaSwapV2 {
                 )
 
                 self.tradablePoolsPairsSubject.reload()
-                self.fixPayingToken()
             })
             .disposed(by: disposeBag)
 
@@ -165,16 +162,23 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
 
+            // Setup default paying token
             Observable.combineLatest(
                 sourceWalletSubject.distinctUntilChanged(),
                 destinationWalletSubject.distinctUntilChanged()
             )
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] source, destination in
-                var symbols = [String]()
-                if let source = source { symbols.append(source.token.symbol) }
-                if let destination = destination { symbols.append(destination.token.symbol) }
-                self?.transactionTokensName = symbols.isEmpty ? nil : symbols.joined(separator: "+")
+                guard let source = source else {
+                    self?.payingTokenModeSubject.accept(.nativeSOL)
+                    return
+                }
+                
+                if (source.isNativeSOL) {
+                    self?.payingTokenModeSubject.accept(.nativeSOL)
+                } else {
+                    self?.payingTokenModeSubject.accept(Defaults.payingToken)
+                }
             })
             .disposed(by: disposeBag)
         }

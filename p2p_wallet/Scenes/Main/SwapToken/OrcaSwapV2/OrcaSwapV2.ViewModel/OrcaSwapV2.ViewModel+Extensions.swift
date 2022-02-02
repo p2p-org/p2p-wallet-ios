@@ -91,31 +91,13 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     var feePayingTokenDriver: Driver<String?> {
         Driver.combineLatest(
             sourceWalletDriver,
-            destinationWalletDriver,
             payingTokenDriver
         )
-            .map { source, destination, payingToken in
-                var symbols = [String]()
-                if let source = source {symbols.append(source.token.symbol)}
-                if let destination = destination {symbols.append(destination.token.symbol)}
-
-                let transactionTokensName = symbols.isEmpty ? nil: symbols.joined(separator: "+")
-
-                let text: String
-                // if source or destination is native wallet
-                if source == nil && destination == nil {
-                    text = payingToken == .nativeSOL ? "SOL": L10n.transactionToken
-                } else if
-                    source?.isNativeSOL == true
-                    || destination?.isNativeSOL == true
-                    || payingToken == .nativeSOL
-                {
-                    text = "SOL"
-                } else {
-                    text = transactionTokensName ?? L10n.transactionToken
+            .map { source, payingToken in
+                switch payingToken {
+                case .nativeSOL: return "SOL"
+                case .splToken: return source?.token.symbol
                 }
-
-                return text
             }
     }
     
@@ -259,8 +241,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func changePayingToken(to payingToken: PayingToken) {
+        payingTokenModeSubject.accept(payingToken)
         Defaults.payingToken = payingToken
-        fixPayingToken()
     }
     
     func choosePayFee() {

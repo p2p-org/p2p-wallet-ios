@@ -6,14 +6,14 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 protocol NewSwapTokenSettingsViewModelType: AnyObject {
     var navigationDriver: Driver<SwapTokenSettings.NavigatableScene?> { get }
     var possibleSlippageTypes: [SwapTokenSettings.SlippageType] { get }
     var slippageType: SwapTokenSettings.SlippageType { get }
-    var feesContent: [SwapTokenSettings.FeeCellContent] { get }
+    var feesContentDriver: Driver<[SwapTokenSettings.FeeCellContent]> { get }
     var customSlippageIsOpenedDriver: Driver<Bool> { get }
 
     func slippageSelected(_ selected: SwapTokenSettings.SlippageType)
@@ -37,34 +37,41 @@ extension SwapTokenSettings {
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let customSlippageIsOpenedSubject = BehaviorRelay<Bool>(value: false)
 
-        // MARK: NewSwapTokenSettingsViewModelType
-        lazy var feesContent: [FeeCellContent] = {
-            var result: [FeeCellContent] = [
-                .init(
-                    wallet: nativeWallet,
-                    tokenLabelText: nativeWallet?.token.symbol,
-                    isSelected: swapViewModel.payingTokenModeSubject.value == .nativeSOL,
-                    onTapHandler: { [weak self] in
-                        self?.swapViewModel.changePayingToken(to: .nativeSOL)
-                    }
-                )
-            ]
-
-            if let tokensName = swapViewModel.transactionTokensName {
-                result.append(
+        var feesContentDriver: Driver<[FeeCellContent]> {
+            Driver.combineLatest(
+                swapViewModel.sourceWalletDriver,
+                swapViewModel.payingTokenDriver
+            ).map { [weak self] sourceWallet, payingToken in
+                guard let self = self else { return [] }
+                var list: [FeeCellContent] = [
                     .init(
-                        wallet: nil,
-                        tokenLabelText: tokensName,
-                        isSelected: swapViewModel.payingTokenModeSubject.value == .splToken,
+                        wallet: self.nativeWallet,
+                        tokenLabelText: self.nativeWallet?.token.symbol,
+                        isSelected: self.swapViewModel.payingTokenModeSubject.value == .nativeSOL,
                         onTapHandler: { [weak self] in
-                            self?.swapViewModel.changePayingToken(to: .splToken)
+                            self?.swapViewModel.changePayingToken(to: .nativeSOL)
                         }
                     )
-                )
-            }
+                ]
 
-            return result
-        }()
+                if let sourceWallet = sourceWallet, !sourceWallet.isNativeSOL {
+                    list.append(
+                        .init(
+                            wallet: sourceWallet,
+                            tokenLabelText: sourceWallet.token.symbol,
+                            isSelected: self.swapViewModel.payingTokenModeSubject.value == .splToken,
+                            onTapHandler: { [weak self] in
+                                self?.swapViewModel.changePayingToken(to: .splToken)
+                            }
+                        )
+                    )
+                }
+
+                return list
+            }
+        }
+
+        // MARK: NewSwapTokenSettingsViewModelType
         var possibleSlippageTypes: [SlippageType] {
             SlippageType.allCases
         }
@@ -93,8 +100,7 @@ extension SwapTokenSettings {
         }
 
         func customSlippageChanged(_ value: Double?) {
-            if
-                let value = SlippageType.custom(value).doubleValue,
+            if let value = SlippageType.custom(value).doubleValue,
                 customSlippageIsOpenedSubject.value
             {
                 swapViewModel.slippageSubject.accept(value)
