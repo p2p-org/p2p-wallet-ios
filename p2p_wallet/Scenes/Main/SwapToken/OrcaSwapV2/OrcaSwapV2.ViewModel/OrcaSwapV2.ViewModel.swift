@@ -35,8 +35,7 @@ extension OrcaSwapV2 {
         let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
         let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
         let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
-        let payingTokenModeSubject = BehaviorRelay<PayingToken>(value: .nativeSOL)  // FIXME
-        let payingTokenSubject = BehaviorRelay<(String, String)>(value: ("", ""))  // FIXME address, mint
+        let payingTokenModeSubject = BehaviorRelay<PayingToken>(value: .nativeSOL)
 
         let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
@@ -65,8 +64,6 @@ extension OrcaSwapV2 {
                     })
                     .disposed(by: disposeBag)
             }
-
-            payingTokenSubject.accept((walletsRepository.nativeWallet!.pubkey!, walletsRepository.nativeWallet!.mintAddress))
 
             // update wallet after swapping
             walletsRepository.dataObservable
@@ -215,14 +212,37 @@ extension OrcaSwapV2 {
                 )
             )
 
+            // Determine a fee paying address
+            let payingTokenAddress: String
+            let payingTokenMint: String
+            switch payingTokenModeSubject.value {
+            case .nativeSOL:
+                guard
+                    let nativeWallet = walletsRepository.nativeWallet,
+                    let solPubKey = nativeWallet.pubkey
+                else {
+                    errorSubject.accept(.nativeWalletNotFound)
+                    return
+                }
+                payingTokenAddress = solPubKey
+                payingTokenMint = nativeWallet.mintAddress
+            case .splToken:
+                guard let sourcePubKey = sourceWallet.pubkey else {
+                    errorSubject.accept(.nativeWalletNotFound)
+                    return
+                }
+                payingTokenAddress = sourcePubKey
+                payingTokenMint = sourceWallet.mintAddress
+            }
+
             // form request
             let request = swapService.swap(
                 sourceAddress: sourceWallet.pubkey!,
                 sourceTokenMint: sourceWallet.mintAddress,
                 destinationAddress: destinationWallet.pubkey!,
                 destinationTokenMint: destinationWallet.mintAddress,
-                payingTokenAddress: payingTokenSubject.value.0,
-                payingTokenMint: payingTokenSubject.value.1,
+                payingTokenAddress: payingTokenAddress,
+                payingTokenMint: payingTokenMint,
                 poolsPair: bestPoolsPair,
                 amount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
                 slippage: slippageSubject.value

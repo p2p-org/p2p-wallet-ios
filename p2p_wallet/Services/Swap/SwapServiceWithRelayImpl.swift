@@ -1,98 +1,11 @@
 //
-//  SwapManager.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 25/01/2022.
+// Created by Giang Long Tran on 01.02.2022.
 //
 
 import FeeRelayerSwift
 import Foundation
 import OrcaSwapSwift
 import RxSwift
-import SolanaSwift
-
-protocol SwapServicePoolsPair {
-    func getMinimumAmountOut(
-        inputAmount: UInt64,
-        slippage: Double
-    ) -> UInt64?
-    
-    func getInputAmount(
-        fromEstimatedAmount estimatedAmount: UInt64
-    ) -> UInt64?
-    
-    func getOutputAmount(
-        fromInputAmount inputAmount: UInt64
-    ) -> UInt64?
-}
-
-protocol SwapServiceType {
-    func load() -> Completable
-
-    func getPoolPair(
-        from sourceMint: String,
-        to destinationMint: String,
-        amount: UInt64,
-        as inputMode: Swap.InputMode
-    ) -> Single<[Swap.PoolsPair]>
-
-    func swap(
-        sourceAddress: String,
-        sourceTokenMint: String?,
-        destinationAddress: String,
-        destinationTokenMint: String?,
-        payingTokenAddress: String,
-        payingTokenMint: String,
-        poolsPair: Swap.PoolsPair,
-        amount: UInt64,
-        slippage: Double
-    ) -> Single<[String]>
-
-    func getFees(
-        source: String,
-        availableSourceMints: [String],
-        destination: String?,
-        destinationToken: SolanaSDK.Token?,
-        bestPoolsPair: Swap.PoolsPair?,
-        inputAmount: Double?,
-        slippage: Double,
-        lamportsPerSignature: UInt64,
-        minRentExempt: UInt64
-    ) throws -> Swap.FeeInfo
-
-    func findPosibleDestinationMints(fromMint: String) throws -> [String]
-}
-
-enum SwapError: Error {
-    case incompatiblePoolsPair
-}
-
-struct Swap {
-    typealias Service = SwapServiceType
-    typealias PoolsPair = SwapServicePoolsPair
-    typealias Error = SwapError
-
-    enum InputMode {
-        case source
-        case target
-    }
-
-    enum PayingTokenMode {
-        /// Allow to use any token to pay a fee
-        case any
-        /// Only allow to use native sol to pay a fee
-        case onlySol
-    }
-
-    struct SwapInfo {
-        /// This property defines a mode for paying fee.
-        let payingTokenMode: PayingTokenMode
-    }
-
-    struct FeeInfo {
-        let fees: [PayingFee]
-    }
-}
 
 class SwapServiceWithRelayImpl: SwapServiceType {
     private let solanaClient: SolanaSDK
@@ -156,9 +69,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
 
     func getFees(
-        source: String,
-        availableSourceMints: [String],
-        destination: String?,
+        sourceAddress: String,
+        availableSourceMintAddresses: [String],
+        destinationAddress: String?,
         destinationToken: SolanaSDK.Token?,
         bestPoolsPair: Swap.PoolsPair?,
         inputAmount: Double?,
@@ -169,9 +82,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let bestPoolsPair = bestPoolsPair as? PoolsPair else { throw Swap.Error.incompatiblePoolsPair }
 
         let fees = try orcaSwap.getFees(
-            myWalletsMints: availableSourceMints,
-            fromWalletPubkey: source,
-            toWalletPubkey: destination,
+            myWalletsMints: availableSourceMintAddresses,
+            fromWalletPubkey: sourceAddress,
+            toWalletPubkey: destinationAddress,
             bestPoolsPair: bestPoolsPair.orcaPoolPair,
             inputAmount: inputAmount,
             slippage: slippage,
@@ -180,10 +93,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         )
 
         var allFees = [PayingFee]()
-
-        if let destinationWallet = destination,
-            let destinationToken = destinationToken
-        {
+        
+        if destinationAddress != nil, let destinationToken = destinationToken {
             if fees.liquidityProviderFees.count == 1 {
                 allFees.append(
                     .init(
@@ -302,15 +213,15 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
     struct PoolsPair: Swap.PoolsPair {
         let orcaPoolPair: OrcaSwap.PoolsPair
-        
+
         func getMinimumAmountOut(inputAmount: UInt64, slippage: Double) -> UInt64? {
             orcaPoolPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
         }
-    
+
         func getInputAmount(fromEstimatedAmount estimatedAmount: UInt64) -> UInt64? {
             orcaPoolPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
         }
-    
+
         func getOutputAmount(fromInputAmount inputAmount: UInt64) -> UInt64? {
             orcaPoolPair.getOutputAmount(fromInputAmount: inputAmount)
         }
@@ -319,42 +230,4 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
 extension OrcaSwap.PoolsPair {
     fileprivate func toPoolsPair() -> SwapServiceWithRelayImpl.PoolsPair { .init(orcaPoolPair: self) }
-}
-
-extension Array where Element == Swap.PoolsPair {
-    func findBestPoolsPairForEstimatedAmount(_ estimatedAmount: UInt64) -> Swap.PoolsPair? {
-        guard count > 0 else { return nil }
-
-        var bestPools: Swap.PoolsPair?
-        var bestEstimatedAmount: UInt64 = 0
-
-        for pair in self {
-            guard let estimatedAmount = pair.getInputAmount(fromEstimatedAmount: estimatedAmount)
-            else { continue }
-            if estimatedAmount > bestEstimatedAmount {
-                bestEstimatedAmount = estimatedAmount
-                bestPools = pair
-            }
-        }
-
-        return bestPools
-    }
-
-    func findBestPoolsPairForInputAmount(_ inputAmount: UInt64) -> Swap.PoolsPair? {
-        guard count > 0 else { return nil }
-
-        var bestPools: Swap.PoolsPair?
-        var bestEstimatedAmount: UInt64 = 0
-
-        for pair in self {
-            guard let estimatedAmount = pair.getOutputAmount(fromInputAmount: inputAmount)
-            else { continue }
-            if estimatedAmount > bestEstimatedAmount {
-                bestEstimatedAmount = estimatedAmount
-                bestPools = pair
-            }
-        }
-
-        return bestPools
-    }
 }
