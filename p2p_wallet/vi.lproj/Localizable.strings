@@ -721,3 +721,4 @@
 "Face ID" = "Face ID";
 "Touch ID" = "ID cảm ứng";
 "Paying token is not valid. Please choose another one" = "Token thanh toán không hợp lệ. Vui lòng chọn token khác";
+"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Địa chỉ này dường như không có tài khoản %@. Bạn phải trả phí một lần để tạo tài khoản %@ cho địa chỉ này. Bạn có thể chọn đơn vị tiền tệ để thanh toán bên dưới.";
