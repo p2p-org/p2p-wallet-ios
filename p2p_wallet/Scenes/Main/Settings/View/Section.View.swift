@@ -23,7 +23,7 @@ extension Settings {
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
                 if title != nil {
-                    UILabel(text: title, textSize: 12, textColor: .secondaryLabel)
+                    UILabel(text: title?.uppercased(), textSize: 12, textColor: .secondaryLabel)
                         .padding(.init(top: 0, left: 18, bottom: 8, right: 0))
                 }
                 UIStackView(axis: .vertical, alignment: .fill, arrangedSubviews: children)

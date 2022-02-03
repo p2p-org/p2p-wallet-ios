@@ -24,7 +24,7 @@ extension Settings {
         }
         
         override func build() -> UIView {
-            UIStackView(axis: .vertical, alignment: .fill) {
+            BEVStack {
                 NewWLNavigationBar(initialTitle: L10n.settings, separatorEnable: false)
                     .onBack { [unowned self] in self.back() }
                 
@@ -35,10 +35,13 @@ extension Settings {
                         // Profile
                         CellView(
                             icon: .profileIcon,
-                            title: L10n.username.onlyUppercaseFirst(),
+                            title: UILabel(text: L10n.username.onlyUppercaseFirst()),
                             trailing: UILabel(textSize: 15).setupWithType(UILabel.self) { label in
                                 viewModel.usernameDriver.map { $0 != nil ? $0! : L10n.notYetReserved }
                                     .drive(label.rx.text)
+                                    .disposed(by: disposeBag)
+                                viewModel.usernameDriver.map { $0 != nil ? UIColor.black : UIColor.ff3b30 }
+                                    .drive(label.rx.textColor)
                                     .disposed(by: disposeBag)
                             }
                         )
@@ -65,12 +68,12 @@ extension Settings {
                     }
                     
                     // Security & network section
-                    SectionView(title: L10n.security) {
+                    SectionView(title: L10n.securityNetwork) {
                         
                         // Backup
                         CellView(
                             icon: .backupIcon,
-                            title: L10n.backup.onlyUppercaseFirst(),
+                            title: UILabel(text: L10n.backup.onlyUppercaseFirst()),
                             trailing: UILabel(textSize: 15).setupWithType(UILabel.self) { label in
                                 // Text
                                 viewModel.didBackupDriver
@@ -89,14 +92,22 @@ extension Settings {
                         // Pin
                         CellView(
                             icon: .pinIcon,
-                            title: L10n.yourPIN.onlyUppercaseFirst(),
+                            title: UILabel(text: L10n.yourPIN.uppercaseFirst),
                             trailing: UILabel(text: L10n.pinIsSet, textSize: 15, textColor: .h34c759)
                         ).onTap { [unowned self] in viewModel.navigate(to: .changePincode) }
                         
                         // Face id
                         CellView(
                             icon: .faceIdIcon,
-                            title: L10n.useFaceId.onlyUppercaseFirst(),
+                            title: UILabel().setupWithType(UILabel.self) { view in
+                                viewModel.biometryTypeDriver.map {
+                                        switch $0 {
+                                        case .touch: return L10n.touchID
+                                        default: return L10n.faceID
+                                        }
+                                    }.drive(view.rx.text)
+                                    .disposed(by: disposeBag)
+                            },
                             trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
                                 viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled).disposed(by: disposeBag)
                                 viewModel.isBiometryEnabledDriver.drive(switcher.rx.value).disposed(by: disposeBag)
@@ -125,7 +136,7 @@ extension Settings {
                         */
                         
                         // Network
-                        CellView(icon: .networkIcon, title: L10n.network.onlyUppercaseFirst())
+                        CellView(icon: .networkIcon, title: UILabel(text: L10n.network.onlyUppercaseFirst()))
                             .onTap { [unowned self] in viewModel.navigate(to: .network) }
                         
                         /*
@@ -140,7 +151,7 @@ extension Settings {
                     }
                     
                     // Appearance section
-                    SectionView(title: L10n.profile) {
+                    SectionView(title: L10n.appearance) {
                         /*
                         // Notification
                         CellView(
@@ -154,7 +165,7 @@ extension Settings {
                         // Currency
                         CellView(
                             icon: .currency,
-                            title: L10n.currency.onlyUppercaseFirst(),
+                            title: UILabel(text: L10n.currency.onlyUppercaseFirst()),
                             trailing: UILabel(text: L10n.system, textColor: .secondaryLabel).setupWithType(UILabel.self) { label in
                                 viewModel.fiatDriver
                                     .map { fiat in fiat.name }
@@ -167,7 +178,7 @@ extension Settings {
                         // Appearance
                         CellView(
                             icon: .appearanceIcon,
-                            title: L10n.appearance.onlyUppercaseFirst(),
+                            title: UILabel(text: L10n.appearance.onlyUppercaseFirst()),
                             trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
                         ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
                         
@@ -175,7 +186,7 @@ extension Settings {
                         
                         CellView(
                             icon: .hideZeroBalance,
-                            title: L10n.hideZeroBalances.onlyUppercaseFirst(),
+                            title: UILabel(text: L10n.hideZeroBalances.onlyUppercaseFirst()),
                             trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
                                 viewModel.hideZeroBalancesDriver.drive(switcher.rx.value).disposed(by: disposeBag)
                                 switcher.rx.controlEvent(.valueChanged)
