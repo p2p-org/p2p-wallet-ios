@@ -720,3 +720,4 @@
 "Security & Network" = "Безопасность";
 "Face ID" = "Идентификатор лица";
 "Touch ID" = "Сенсорный идентификатор";
+"Paying token is not valid. Please choose another one" = "Платежный токен недействителен. Пожалуйста, выберите другой";

@@ -13,6 +13,10 @@ import OrcaSwapSwift
 protocol SendServiceType {
     func load() -> Completable
     func getFees() -> Single<SolanaSDK.Fee>
+    func getFeesInPayingToken(
+        feeInSOL: SolanaSDK.Lamports,
+        payingFeeWallet: Wallet
+    ) -> Single<SolanaSDK.Lamports?>
     func checkAccountValidation(account: String) -> Single<Bool>
     func getFees(
         from wallet: Wallet,
@@ -48,6 +52,18 @@ class SendService: SendServiceType {
     
     func getFees() -> Single<SolanaSDK.Fee> {
         solanaSDK.getFees(commitment: nil)
+    }
+    
+    func getFeesInPayingToken(
+        feeInSOL: SolanaSDK.Lamports,
+        payingFeeWallet: Wallet
+    ) -> Single<SolanaSDK.Lamports?> {
+        guard let payingFeeWalletAddress = payingFeeWallet.pubkey else {return .just(nil)}
+        if payingFeeWallet.isNativeSOL {return .just(feeInSOL)}
+        return relayService.calculateFeeInPayingToken(
+            feeInSOL: feeInSOL,
+            payingFeeToken: .init(address: payingFeeWalletAddress, mint: payingFeeWallet.mintAddress)
+        )
     }
     
     func checkAccountValidation(account: String) -> Single<Bool> {

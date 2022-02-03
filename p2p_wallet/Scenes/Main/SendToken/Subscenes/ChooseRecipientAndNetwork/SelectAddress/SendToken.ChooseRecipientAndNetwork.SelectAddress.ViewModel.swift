@@ -22,6 +22,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var networkDriver: Driver<SendToken.Network> {get}
     var feesDriver: Driver<SolanaSDK.FeeAmount?> {get}
     var payingWalletDriver: Driver<Wallet?> {get}
+    var payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus> {get}
     var isValidDriver: Driver<Bool> {get}
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
@@ -116,10 +117,15 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         chooseRecipientAndNetworkViewModel.payingWalletDriver
     }
     
+    var payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus> {
+        chooseRecipientAndNetworkViewModel.payingWalletStatusDriver
+    }
+    
     var isValidDriver: Driver<Bool> {
         Driver.combineLatest([
             payingWalletDriver.map {$0 != nil},
-            recipientDriver.map {$0 != nil}
+            recipientDriver.map {$0 != nil},
+            payingWalletStatusDriver.map {$0.isValidAndEnoughBalance}
         ])
             .map {$0.allSatisfy {$0}}
     }
