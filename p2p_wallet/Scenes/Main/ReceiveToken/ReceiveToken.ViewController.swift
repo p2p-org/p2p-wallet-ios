@@ -16,6 +16,7 @@ extension ReceiveToken {
             self.isOpeningFromToken = isOpeningFromToken
             self.viewModel = viewModel
             super.init()
+
             viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
         }
         
@@ -41,26 +42,47 @@ extension ReceiveToken {
                     // Network button
                     if viewModel.shouldShowChainsSwitcher {
                         WLCard {
-                            UIStackView(axis: .horizontal) {
-                                // Wallet Icon
-                                UIImageView(width: 44, height: 44)
-                                    .with(.image, drivenBy: viewModel.tokenTypeDriver.map({ type in type.icon }), disposedBy: disposeBag)
-                                // Text
-                                UIStackView(axis: .vertical, alignment: .leading) {
-                                    UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
-                                    UILabel(text: L10n.network("Solana"), textSize: 17)
-                                        .setup { view in
-                                            viewModel.tokenTypeDriver
-                                                .map { L10n.network($0.localizedName).onlyUppercaseFirst() }
-                                                .drive(view.rx.text)
-                                                .disposed(by: disposeBag)
-                                        }
-                                }.padding(.init(x: 12, y: 0))
-                                // Next icon
-                                UIView.defaultNextArrow()
-                            }.padding(.init(x: 15, y: 15))
-                        }.onTap { [unowned self] in
-                            self.viewModel.showSelectionNetwork()
+                            UIStackView(axis: .vertical, alignment: .fill) {
+                                UIStackView(axis: .horizontal) {
+                                    // Wallet Icon
+                                    UIImageView(width: 44, height: 44)
+                                        .with(.image, drivenBy: viewModel.tokenTypeDriver.map({ type in type.icon }), disposedBy: disposeBag)
+                                    // Text
+                                    UIStackView(axis: .vertical, alignment: .leading) {
+                                        UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
+                                        UILabel(text: L10n.network("Solana"), textSize: 17)
+                                            .setup { view in
+                                                viewModel.tokenTypeDriver
+                                                    .map { L10n.network($0.localizedName).onlyUppercaseFirst() }
+                                                    .drive(view.rx.text)
+                                                    .disposed(by: disposeBag)
+                                            }
+                                    }.padding(.init(x: 12, y: 0))
+                                    // Next icon
+                                    UIView.defaultNextArrow()
+                                }
+                                    .padding(.init(x: 15, y: 15))
+                                    .onTap { [unowned self] in
+                                        self.viewModel.showSelectionNetwork()
+                                    }
+                                UIStackView(axis: .vertical, alignment: .fill) {
+                                    UIView(height: 1, backgroundColor: .f2f2f7)
+                                    UIButton(
+                                        height: 50,
+                                        label: L10n.whatTokensCanIReceive,
+                                        labelFont: .systemFont(ofSize: 15, weight: .medium),
+                                        textColor: .h5887ff
+                                    ).onTap { [weak self] in
+                                        self?.navigate(to: .showSupportedTokens)
+                                    }
+                                }
+                                .setup { [weak viewModel] view in
+                                    viewModel?.tokenListAvailabilityDriver
+                                        .map { !$0 }
+                                        .drive(view.rx.isHidden)
+                                        .disposed(by: disposeBag)
+                                }
+                            }
                         }
                     }
                     // Children
@@ -192,6 +214,10 @@ extension ReceiveToken.ViewController {
         case .networkSelection:
             let vc = ReceiveToken.NetworkSelectionScene(viewModel: viewModel)
             show(vc, sender: nil)
+        case .showSupportedTokens:
+            let vm = SupportedTokens.ViewModel()
+            let vc = SupportedTokens.ViewController(viewModel: vm)
+            present(vc, animated: true)
         default:
             return
         }

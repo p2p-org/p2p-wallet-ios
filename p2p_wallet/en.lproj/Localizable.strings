@@ -711,6 +711,10 @@
 "You can receive %@ by providing this address, QR code or username:" = "You can receive %@ by providing this address, QR code or username:";
 "Username %@ was reserved" = "Username %@ was reserved";
 "None" = "None";
+"List of supported tokens" = "List of supported tokens";
+"Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address." = "Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address.";
+"we do not recommend sending it to this address." = "we do not recommend sending it to this address.";
+"What tokens can I receive?" = "What tokens can I receive?";
 "Security & Network" = "Security";
 "Face ID" = "Face ID";
 "Touch ID" = "Touch ID";

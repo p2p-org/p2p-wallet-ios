@@ -18,6 +18,7 @@ protocol ReceiveSceneModel: BESceneModel {
     var addressesHintIsHiddenDriver: Driver<Bool> { get }
     var hideAddressesHintSubject: PublishRelay<Void> { get }
     var updateLayoutDriver: Driver<Void> { get }
+    var tokenListAvailabilityDriver: Driver<Bool> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
     var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
     var shouldShowChainsSwitcher: Bool { get }
@@ -50,6 +51,9 @@ extension ReceiveToken {
         private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
         let tokenWallet: Wallet?
+        private let canOpenTokensList: Bool
+        let hasAddressesInfo: Bool
+        let hasHintViewOnTop: Bool
         let shouldShowChainsSwitcher: Bool
         private let screenCanHaveAddressesInfo: Bool
         private let screenCanHaveHint: Bool
@@ -63,6 +67,9 @@ extension ReceiveToken {
             let isRenBTC = solanaTokenWallet?.token.isRenBTC ?? false
             let hasExplorerButton = !isOpeningFromToken
             self.tokenWallet = solanaTokenWallet
+            self.hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            self.hasHintViewOnTop = isOpeningFromToken
+            self.canOpenTokensList = !isOpeningFromToken
             self.screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
             self.screenCanHaveHint = isOpeningFromToken
             self.shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
@@ -124,6 +131,17 @@ extension ReceiveToken {
             addressesHintIsHiddenSubject.asDriver()
         }
 
+        var tokenListAvailabilityDriver: Driver<Bool> {
+            tokenTypeDriver
+                .map { [weak self] in
+                    switch $0 {
+                    case .solana:
+                        return self?.canOpenTokensList ?? false
+                    case .btc:
+                        return false
+                    }
+                }
+        }
         var hasHintViewOnTopDriver: Driver<Bool> {
             tokenTypeDriver
                 .map { [weak self] tokenType in
