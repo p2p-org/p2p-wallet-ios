@@ -14,6 +14,13 @@ extension SendToken.ChooseTokenAndAmount {
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
         
         // MARK: - Properties
+        private lazy var nextButton: UIButton = {
+            let nextButton = UIButton(label: L10n.next.uppercaseFirst, labelFont: .systemFont(ofSize: 17), textColor: .h5887ff)
+                .onTap(self, action: #selector(buttonNextDidTouch))
+            nextButton.setTitleColor(.h5887ff, for: .normal)
+            nextButton.setTitleColor(.textSecondary, for: .disabled)
+            return nextButton
+        }()
         
         // MARK: - Initializer
         init(
@@ -28,10 +35,7 @@ extension SendToken.ChooseTokenAndAmount {
             super.setUp()
             navigationBar.titleLabel.text = L10n.send
             navigationBar.backButton.onTap(self, action: #selector(_back))
-            navigationBar.rightItems.addArrangedSubview(
-                UILabel(text: L10n.next.uppercaseFirst, textSize: 17, textColor: .h5887ff)
-                    .onTap(self, action: #selector(buttonNextDidTouch))
-            )
+            navigationBar.rightItems.addArrangedSubview(nextButton)
             
             let rootView = RootView(viewModel: viewModel)
             view.addSubview(rootView)
@@ -43,6 +47,11 @@ extension SendToken.ChooseTokenAndAmount {
             super.bind()
             viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .disposed(by: disposeBag)
+            
+            viewModel.errorDriver
+                .map {$0 == nil}
+                .drive(nextButton.rx.isEnabled)
                 .disposed(by: disposeBag)
         }
         
