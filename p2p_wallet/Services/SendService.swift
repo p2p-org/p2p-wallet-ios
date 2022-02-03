@@ -40,6 +40,7 @@ class SendService: SendServiceType {
     @Injected private var relayService: FeeRelayerRelayType
     @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
     @Injected private var feeService: FeeServiceType
+    private var cachedFeePayerPubkey: String?
     
     func load() -> Completable {
         .zip(
@@ -102,7 +103,8 @@ class SendService: SendServiceType {
                 payingFeeToken: nil,
                 recentBlockhash: "FR1GgH83nmcEdoNXyztnpUL2G13KkUv6iwJPwVfnqEgW", // placeholder
                 lamportsPerSignature: feeService.lamportsPerSignature, // cached lamportsPerSignature
-                minRentExemption: feeService.minimumBalanceForRenExemption
+                minRentExemption: feeService.minimumBalanceForRenExemption,
+                usingCachedFeePayerPubkey: true
             )
                 .map {$0.expectedFee}
         }
@@ -182,7 +184,8 @@ class SendService: SendServiceType {
         payingFeeToken: FeeRelayer.Relay.TokenInfo?,
         recentBlockhash: String? = nil,
         lamportsPerSignature: SolanaSDK.Lamports? = nil,
-        minRentExemption: SolanaSDK.Lamports? = nil
+        minRentExemption: SolanaSDK.Lamports? = nil,
+        usingCachedFeePayerPubkey: Bool = false
     ) -> Single<SolanaSDK.PreparedTransaction> {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         guard let sender = wallet.pubkey else {return .error(SolanaSDK.Error.other("Source wallet is not valid"))}
@@ -198,48 +201,50 @@ class SendService: SendServiceType {
         if let payingFeeToken = payingFeeToken,
            payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
         {
-            feePayerRequest = feeRelayerAPIClient.getFeePayerPubkey()
-                .map(Optional.init)
+            if usingCachedFeePayerPubkey, let pubkey = cachedFeePayerPubkey {
+                feePayerRequest = .just(pubkey)
+            } else {
+                feePayerRequest = feeRelayerAPIClient.getFeePayerPubkey()
+                    .map(Optional.init)
+                    .do(onSuccess: {[weak self] in self?.cachedFeePayerPubkey = $0})
+            }
             useFeeRelayer = true
         } else {
             feePayerRequest = .just(nil)
             useFeeRelayer = false
         }
         
-        // request
-        let createSendRequest: (String?) throws -> Single<SolanaSDK.PreparedTransaction> = {[weak self] feePayer in
-            guard let self = self else {return .error(SolanaSDK.Error.unknown)}
-            let feePayer = feePayer == nil ? nil: try SolanaSDK.PublicKey(string: feePayer)
-            
-            if wallet.isNativeSOL {
-                return self.solanaSDK.prepareSendingNativeSOL(
-                    to: receiver,
-                    amount: amount,
-                    feePayer: feePayer,
-                    recentBlockhash: recentBlockhash,
-                    lamportsPerSignature: lamportsPerSignature
-                )
-            }
-            
-            // other tokens
-            else {
-                return self.solanaSDK.prepareSendingSPLTokens(
-                    mintAddress: wallet.mintAddress,
-                    decimals: wallet.token.decimals,
-                    from: sender,
-                    to: receiver,
-                    amount: amount,
-                    feePayer: feePayer,
-                    transferChecked: useFeeRelayer, // create transferChecked instruction when using fee relayer
-                    recentBlockhash: recentBlockhash,
-                    lamportsPerSignature: lamportsPerSignature,
-                    minRentExemption: minRentExemption
-                ).map {$0.preparedTransaction}
-            }
-        }
-        
         return feePayerRequest
-            .flatMap(createSendRequest)
+            .flatMap { [weak self] feePayer in
+                guard let self = self else {return .error(SolanaSDK.Error.unknown)}
+                let feePayer = feePayer == nil ? nil: try SolanaSDK.PublicKey(string: feePayer)
+                
+                if wallet.isNativeSOL {
+                    return self.solanaSDK.prepareSendingNativeSOL(
+                        to: receiver,
+                        amount: amount,
+                        feePayer: feePayer,
+                        recentBlockhash: recentBlockhash,
+                        lamportsPerSignature: lamportsPerSignature
+                    )
+                }
+                
+                // other tokens
+                else {
+                    return self.solanaSDK.prepareSendingSPLTokens(
+                        mintAddress: wallet.mintAddress,
+                        decimals: wallet.token.decimals,
+                        from: sender,
+                        to: receiver,
+                        amount: amount,
+                        feePayer: feePayer,
+                        transferChecked: useFeeRelayer, // create transferChecked instruction when using fee relayer
+                        recentBlockhash: recentBlockhash,
+                        lamportsPerSignature: lamportsPerSignature,
+                        minRentExemption: minRentExemption
+                    ).map {$0.preparedTransaction}
+                }
+            }
     }
     
     private func getPayingFeeToken(payingFeeWallet: Wallet?) throws -> FeeRelayer.Relay.TokenInfo? {
