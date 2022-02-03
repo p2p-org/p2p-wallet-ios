@@ -721,3 +721,4 @@
 "Face ID" = "Идентификатор лица";
 "Touch ID" = "Сенсорный идентификатор";
 "Paying token is not valid. Please choose another one" = "Платежный токен недействителен. Пожалуйста, выберите другой";
+"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Этот адрес не имеет учетной записи %@. Вы должны заплатить единовременную плату, чтобы создать учетную запись %@ для этого адреса. Ниже вы можете выбрать, в какой валюте платить.";
