@@ -45,9 +45,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                         .setup { label in
                             Driver.combineLatest(
                                 viewModel.payingWalletDriver,
-                                viewModel.feesDriver
+                                viewModel.payingWalletStatusDriver
                             )
-                                .map {[weak self] in payingWalletToString(payingWallet: $0, feeAmount: $1, tokenPrice: self?.viewModel.getPrice(for: $0?.token.symbol ?? ""), solPrice: self?.viewModel.getPrice(for: "SOL"))}
+                                .map {
+                                    payingWalletToString(
+                                        payingWallet: $0,
+                                        payingWalletStatus: $1
+                                    )
+                                }
                                 .drive(label.rx.text)
                                 .disposed(by: disposeBag)
                         }
@@ -100,27 +105,20 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPri
 
 private func payingWalletToString(
     payingWallet: Wallet?,
-    feeAmount: SolanaSDK.FeeAmount?,
-    tokenPrice: Double?,
-    solPrice: Double?
+    payingWalletStatus: SendToken.PayingWalletStatus
 ) -> String? {
-    guard let feeAmount = feeAmount else {
-        return nil
-    }
-    
     guard let payingWallet = payingWallet else {
-        return L10n.selectTokenToPayFees
+        return L10n.chooseTheTokenToPayFees
     }
     
-    var amount = feeAmount.total.convertToBalance(decimals: 9)
-    var amountString = amount.toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " SOL"
-    
-    if let solPrice = solPrice,
-       let tokenPrice = tokenPrice,
-       tokenPrice > 0
-    {
-        amount = amount * solPrice / tokenPrice
-        amountString = amount.toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(payingWallet.token.symbol)"
+    switch payingWalletStatus {
+    case .loading:
+        return L10n.calculatingFees
+    case .invalid:
+        return L10n.couldNotCalculatingFees
+    case .valid(let amount, _):
+        return amount.convertToBalance(decimals: payingWallet.token.decimals)
+            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(payingWallet.token.symbol)"
+            
     }
-    return amountString
 }
