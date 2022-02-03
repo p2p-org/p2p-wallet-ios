@@ -44,7 +44,15 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
             .padding(.init(x: 20, y: 0))
         private lazy var errorLabel = UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
-        private lazy var feeView = FeeView(viewModel: viewModel)
+        private lazy var feeView = SendToken.FeeView(
+            solPrice: viewModel.getPrice(for: "SOL"),
+            feesDriver: viewModel.feesDriver,
+            payingWalletDriver: viewModel.payingWalletDriver,
+            payingWalletStatusDriver: viewModel.payingWalletStatusDriver
+        )
+            .onTap { [weak self] in
+                self?.viewModel.navigate(to: .selectPayingWallet)
+            }
         
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
             .onTap(self, action: #selector(actionButtonDidTouch))
