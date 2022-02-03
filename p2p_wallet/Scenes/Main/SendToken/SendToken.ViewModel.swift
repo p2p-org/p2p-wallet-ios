@@ -87,7 +87,7 @@ extension SendToken {
                 receiver: receiver,
                 amount: amount,
                 network: network,
-                payingFeeWallet: <#T##Wallet?#>
+                payingFeeWallet: payingWalletSubject.value
             )
             
             // detect network
