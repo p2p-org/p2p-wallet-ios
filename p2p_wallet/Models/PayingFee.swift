@@ -36,6 +36,45 @@ struct PayingFee {
     let lamports: SolanaSDK.Lamports
     let token: SolanaSDK.Token
     var toString: (() -> String?)?
+    
+    let isFree: Bool
+    let info: Info?
+    
+    init(
+        type: FeeType,
+        lamports: SolanaSDK.Lamports,
+        token: SolanaSDK.Token,
+        toString: (() -> String?)? = nil
+    ) {
+        self.type = type
+        self.lamports = lamports
+        self.token = token
+        self.isFree = false
+        self.toString = toString
+        self.info = nil
+    }
+    
+    init(
+        type: FeeType,
+        lamports: SolanaSDK.Lamports,
+        token: SolanaSDK.Token,
+        toString: (() -> String?)?,
+        isFree: Bool,
+        info: Info?
+    ) {
+        self.type = type
+        self.lamports = lamports
+        self.token = token
+        self.toString = toString
+        self.isFree = isFree
+        self.info = info
+    }
+    
+    struct Info {
+        let alertTitle: String
+        let alertDescription: String
+        let payBy: String?
+    }
 }
 
 extension Array where Element == PayingFee {

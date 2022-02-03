@@ -125,7 +125,7 @@ protocol SwapServiceType {
         slippage: Double,
         lamportsPerSignature: UInt64,
         minRentExempt: UInt64
-    ) throws -> Swap.FeeInfo
+    ) -> Single<Swap.FeeInfo>
     
     /**
      Find all possible destination mint addresses.
@@ -138,6 +138,7 @@ protocol SwapServiceType {
 
 enum SwapError: Error {
     case incompatiblePoolsPair
+    case feeRelayIsNotReady
 }
 
 extension Array where Element == Swap.PoolsPair {

@@ -132,48 +132,33 @@ extension OrcaSwapV2.ViewModel {
     }
 
     func feesRequest() -> Single<[PayingFee]> {
-        Single.create { [weak self] observer in
-
-            guard let self = self else {
-                observer(.success([]))
-                return Disposables.create()
-            }
-
-            guard let sourceWallet = self.sourceWalletSubject.value,
-                let sourceWalletPubkey = sourceWallet.pubkey,
-                let lamportsPerSignature = self.feeService.lamportsPerSignature,
-                let minRenExempt = self.feeService.minimumBalanceForRenExemption
-            else {
-                observer(.success([]))
-                return Disposables.create()
-            }
-
-            let destinationWallet = self.destinationWalletSubject.value
-            let bestPoolsPair = self.bestPoolsPairSubject.value
-            let inputAmount = self.inputAmountSubject.value
-            let myWalletsMints = self.walletsRepository.getWallets().compactMap { $0.token.address }
-            let slippage = self.slippageSubject.value
-
-            guard
-                let feeInfo = try? self.swapService.getFees(
-                    sourceAddress: sourceWalletPubkey,
-                    availableSourceMintAddresses: myWalletsMints,
-                    destinationAddress: destinationWallet?.pubkey,
-                    destinationToken: destinationWallet?.token,
-                    bestPoolsPair: bestPoolsPair,
-                    inputAmount: inputAmount,
-                    slippage: slippage,
-                    lamportsPerSignature: lamportsPerSignature,
-                    minRentExempt: minRenExempt
-                )
-            else {
-                observer(.success([]))
-                return Disposables.create()
-            }
-
-            observer(.success(feeInfo.fees))
-            return Disposables.create()
+        guard
+            let sourceWallet = self.sourceWalletSubject.value,
+            let sourceWalletPubkey = sourceWallet.pubkey,
+            let lamportsPerSignature = self.feeService.lamportsPerSignature,
+            let minRenExempt = self.feeService.minimumBalanceForRenExemption
+        else {
+            return .just([])
         }
+
+        let destinationWallet = self.destinationWalletSubject.value
+        let bestPoolsPair = self.bestPoolsPairSubject.value
+        let inputAmount = self.inputAmountSubject.value
+        let myWalletsMints = self.walletsRepository.getWallets().compactMap { $0.token.address }
+        let slippage = self.slippageSubject.value
+
+        return swapService.getFees(
+            sourceAddress: sourceWalletPubkey,
+            availableSourceMintAddresses: myWalletsMints,
+            destinationAddress: destinationWallet?.pubkey,
+            destinationToken: destinationWallet?.token,
+            bestPoolsPair: bestPoolsPair,
+            inputAmount: inputAmount,
+            slippage: slippage,
+            lamportsPerSignature: lamportsPerSignature,
+            minRentExempt: minRenExempt
+        )
+        .map { info in info.fees }
         .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
     }
 }

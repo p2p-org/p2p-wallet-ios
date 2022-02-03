@@ -13,6 +13,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     private let feeRelayApi: FeeRelayerAPIClientType
     private let orcaSwap: OrcaSwapType
     private var feeRelay: FeeRelayerRelayType?
+    @Injected var notification: NotificationsServiceType
 
     init(
         solanaClient: SolanaSDK,
@@ -39,8 +40,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 orcaSwap.load(),
                 feeRelay!.load()
             )
-        }
-        catch {
+        } catch {
             return .error(error)
         }
     }
@@ -50,8 +50,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         var payingTokenMode: Swap.PayingTokenMode = .any
         if sourceToken.isNativeSOL && !destinationToken.isNativeSOL {
             payingTokenMode = .onlySol
-        }
-        else if !sourceToken.isNativeSOL && destinationToken.isNativeSOL {
+        } else if !sourceToken.isNativeSOL && destinationToken.isNativeSOL {
             payingTokenMode = .onlySol
         }
 
@@ -78,73 +77,102 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         slippage: Double,
         lamportsPerSignature: UInt64,
         minRentExempt: UInt64
-    ) throws -> Swap.FeeInfo {
-        guard let bestPoolsPair = bestPoolsPair as? PoolsPair else { throw Swap.Error.incompatiblePoolsPair }
+    ) -> Single<Swap.FeeInfo> {
+        guard let bestPoolsPair = bestPoolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
+        guard let feeRelay = feeRelay else { return .error(Swap.Error.feeRelayIsNotReady) }
 
-        let fees = try orcaSwap.getFees(
-            myWalletsMints: availableSourceMintAddresses,
-            fromWalletPubkey: sourceAddress,
-            toWalletPubkey: destinationAddress,
-            bestPoolsPair: bestPoolsPair.orcaPoolPair,
-            inputAmount: inputAmount,
-            slippage: slippage,
-            lamportsPerSignature: lamportsPerSignature,
-            minRentExempt: minRentExempt
-        )
+        do {
+            let fees = try orcaSwap.getFees(
+                myWalletsMints: availableSourceMintAddresses,
+                fromWalletPubkey: sourceAddress,
+                toWalletPubkey: destinationAddress,
+                bestPoolsPair: bestPoolsPair.orcaPoolPair,
+                inputAmount: inputAmount,
+                slippage: slippage,
+                lamportsPerSignature: lamportsPerSignature,
+                minRentExempt: minRentExempt
+            )
 
-        var allFees = [PayingFee]()
-        
-        if destinationAddress != nil, let destinationToken = destinationToken {
-            if fees.liquidityProviderFees.count == 1 {
-                allFees.append(
-                    .init(
-                        type: .liquidityProviderFee,
-                        lamports: fees.liquidityProviderFees.first!,
-                        token: destinationToken
-                    )
-                )
-            }
-            else if fees.liquidityProviderFees.count == 2 {
-                let intermediaryTokenName = bestPoolsPair.orcaPoolPair[0].tokenBName
-                if let decimals = bestPoolsPair.orcaPoolPair[0].getTokenBDecimals() {
+            var allFees = [PayingFee]()
+
+            if destinationAddress != nil, let destinationToken = destinationToken {
+                if fees.liquidityProviderFees.count == 1 {
                     allFees.append(
                         .init(
                             type: .liquidityProviderFee,
                             lamports: fees.liquidityProviderFees.first!,
-                            token: .unsupported(mint: nil, decimals: decimals, symbol: intermediaryTokenName)
+                            token: destinationToken
+                        )
+                    )
+                } else if fees.liquidityProviderFees.count == 2 {
+                    let intermediaryTokenName = bestPoolsPair.orcaPoolPair[0].tokenBName
+                    if let decimals = bestPoolsPair.orcaPoolPair[0].getTokenBDecimals() {
+                        allFees.append(
+                            .init(
+                                type: .liquidityProviderFee,
+                                lamports: fees.liquidityProviderFees.first!,
+                                token: .unsupported(mint: nil, decimals: decimals, symbol: intermediaryTokenName)
+                            )
+                        )
+                    }
+
+                    allFees.append(
+                        .init(
+                            type: .liquidityProviderFee,
+                            lamports: fees.liquidityProviderFees.last!,
+                            token: destinationToken
                         )
                     )
                 }
+            }
 
+            if let creationFee = fees.accountCreationFee {
                 allFees.append(
                     .init(
-                        type: .liquidityProviderFee,
-                        lamports: fees.liquidityProviderFees.last!,
-                        token: destinationToken
+                        type: .accountCreationFee(token: destinationToken?.symbol),
+                        lamports: creationFee,
+                        token: .nativeSolana
                     )
                 )
             }
-        }
 
-        if let creationFee = fees.accountCreationFee {
-            allFees.append(
-                .init(
-                    type: .accountCreationFee(token: destinationToken?.symbol),
-                    lamports: creationFee,
-                    token: .nativeSolana
-                )
-            )
-        }
-
-        allFees.append(
-            .init(
+            var transactionFee = PayingFee(
                 type: .transactionFee,
                 lamports: fees.transactionFees,
                 token: .nativeSolana
             )
-        )
 
-        return .init(fees: allFees)
+            return
+                feeRelay.canUseFeeRelayer(useCache: true)
+                .flatMap { info in
+                    if info.canUseFeeRelayer {
+                        allFees.append(
+                            .init(
+                                type: .transactionFee,
+                                lamports: fees.transactionFees,
+                                token: .nativeSolana,
+                                toString: nil,
+                                isFree: true,
+                                info: .init(
+                                    alertTitle: L10n.thereAreFreeTransactionsLeftForToday(info.maxUsage - info.currentUsage),
+                                    alertDescription: L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee,
+                                    payBy: L10n.PaidByP2p.org
+                                )
+                            )
+                        )
+                    } else {
+                        allFees.append(transactionFee)
+                    }
+                    return .just(Swap.FeeInfo(fees: allFees))
+                }
+                .catch { [weak self] error in
+                    self?.notification.showInAppNotification(.error(error))
+                    allFees.append(transactionFee)
+                    return .just(Swap.FeeInfo(fees: allFees))
+                }
+        } catch {
+            return .error(error)
+        }
     }
 
     public func findPosibleDestinationMints(
@@ -178,8 +206,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 slippage: slippage,
                 isSimulation: false
             ).map { response in [response.transactionId] }
-        }
-        else if destinationAddress == accountStorage.account?.publicKey.base58EncodedString {
+        } else if destinationAddress == accountStorage.account?.publicKey.base58EncodedString {
             // spl -> sol, bug in error
             guard let decimals = poolsPair.orcaPoolPair[0].getTokenADecimals() else {
                 return .error(OrcaSwapError.invalidPool)
