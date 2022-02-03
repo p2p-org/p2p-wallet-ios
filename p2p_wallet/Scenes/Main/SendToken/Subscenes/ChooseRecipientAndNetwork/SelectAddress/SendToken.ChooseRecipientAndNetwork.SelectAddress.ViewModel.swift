@@ -20,7 +20,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var walletDriver: Driver<Wallet?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
-    var feesDriver: Driver<SolanaSDK.FeeAmount> {get}
+    var feesDriver: Driver<SolanaSDK.FeeAmount?> {get}
     var payingWalletDriver: Driver<Wallet?> {get}
     var isValidDriver: Driver<Bool> {get}
     
@@ -108,7 +108,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         chooseRecipientAndNetworkViewModel.networkDriver
     }
     
-    var feesDriver: Driver<SolanaSDK.FeeAmount> {
+    var feesDriver: Driver<SolanaSDK.FeeAmount?> {
         chooseRecipientAndNetworkViewModel.feesDriver
     }
     

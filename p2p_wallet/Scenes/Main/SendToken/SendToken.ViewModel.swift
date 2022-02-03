@@ -39,6 +39,7 @@ extension SendToken {
         @Injected var sendService: SendServiceType
         
         // MARK: - Properties
+        private let disposeBag = DisposeBag()
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
         
@@ -90,35 +91,32 @@ extension SendToken {
                 payingFeeWallet: payingWalletSubject.value
             )
             
-            // detect network
-            let fee: SolanaSDK.Lamports
-            switch network {
-            case .solana:
-                fee = 0
-            case .bitcoin:
-                fee = network.defaultFees.first(where: {$0.unit == "renBTC"})?.amount.toLamport(decimals: 8) ?? 0 // TODO: solana fee
-            }
-            
-            // log
-            analyticsManager.log(
-                event: .sendSendClick(
-                    tokenTicker: wallet.token.symbol,
-                    sum: amount
-                )
-            )
-            
-            // show processing scene
-            navigationSubject.accept(
-                .processTransaction(
-                    request: request.map {$0 as ProcessTransactionResponseType},
-                    transactionType: .send(
-                        from: wallet,
-                        to: receiver,
-                        lamport: amount.toLamport(decimals: wallet.token.decimals),
-                        feeInLamports: fee
+            // get fees
+            getFees()
+                .subscribe(onSuccess: {[weak self] feeAmount in
+                    let feeAmount = feeAmount ?? .zero
+                    // log
+                    self?.analyticsManager.log(
+                        event: .sendSendClick(
+                            tokenTicker: wallet.token.symbol,
+                            sum: amount
+                        )
                     )
-                )
-            )
+                    
+                    // show processing scene
+                    self?.navigationSubject.accept(
+                        .processTransaction(
+                            request: request.map {$0 as ProcessTransactionResponseType},
+                            transactionType: .send(
+                                from: wallet,
+                                to: receiver,
+                                lamport: amount.toLamport(decimals: wallet.token.decimals),
+                                feeInLamports: feeAmount.total
+                            )
+                        )
+                    )
+                })
+                .disposed(by: disposeBag)
         }
     }
 }
