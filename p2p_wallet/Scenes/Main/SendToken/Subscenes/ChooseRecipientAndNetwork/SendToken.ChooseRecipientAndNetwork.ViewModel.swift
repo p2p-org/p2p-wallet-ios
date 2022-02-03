@@ -66,6 +66,10 @@ extension SendToken.ChooseRecipientAndNetwork {
             sendTokenViewModel.networkDriver
                 .drive(networkSubject)
                 .disposed(by: disposeBag)
+            
+            sendTokenViewModel.payingWalletDriver
+                .drive(payingWalletSubject)
+                .disposed(by: disposeBag)
         }
     }
 }
