@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import SolanaSwift
+import FeeRelayerSwift
 
 protocol SendTokenRecipientAndNetworkHandler: AnyObject {
     var sendService: SendServiceType {get}
@@ -39,6 +40,31 @@ extension SendTokenRecipientAndNetworkHandler {
                 return self.getFees(recipient: recipient, network: network)
             }
             .asDriver(onErrorJustReturn: nil)
+    }
+    
+    var payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus> {
+        Observable.combineLatest(
+            feesDriver.asObservable().distinctUntilChanged(),
+            payingWalletSubject.distinctUntilChanged()
+        )
+            .flatMap {[weak self] fees, payingWallet -> Single<SendToken.PayingWalletStatus> in
+                guard let self = self, let feeInSOL = fees?.total, let payingWallet = payingWallet else {return .just(.loading)}
+                return self.sendService.getFeesInPayingToken(feeInSOL: feeInSOL, payingFeeWallet: payingWallet)
+                    .map {amount -> SendToken.PayingWalletStatus in
+                        guard let amount = amount else {return .invalid}
+                        return .valid(amount: amount, enoughBalance: (payingWallet.lamports ?? 0) >= amount)
+                    }
+                    .catch { error in
+                        if let error = error as? FeeRelayer.Error,
+                           error == FeeRelayer.Error.swapPoolsNotFound
+                        {
+                            return .just(.invalid)
+                        }
+                        throw error
+                    }
+                    .catchAndReturn(.invalid)
+            }
+            .asDriver(onErrorJustReturn: .invalid)
     }
     
     var payingWalletDriver: Driver<Wallet?> {

@@ -720,3 +720,4 @@
 "Security & Network" = "Sécurité";
 "Face ID" = "Identification faciale";
 "Touch ID" = "ID tactile";
+"Paying token is not valid. Please choose another one" = "Le jeton de paiement n'est pas valide. Veuillez en choisir un autre";

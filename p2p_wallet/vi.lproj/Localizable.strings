@@ -720,3 +720,4 @@
 "Security & Network" = "Bảo vệ";
 "Face ID" = "Face ID";
 "Touch ID" = "ID cảm ứng";
+"Paying token is not valid. Please choose another one" = "Token thanh toán không hợp lệ. Vui lòng chọn token khác";

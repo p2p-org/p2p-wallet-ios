@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
 enum SendToken {
     enum NavigatableScene {
@@ -51,6 +52,30 @@ enum SendToken {
                 return [.init(amount: 0, unit: Defaults.fiat.symbol)]
             case .bitcoin:
                 return [.init(amount: 0.0002, unit: "renBTC"), .init(amount: 0.0002, unit: "SOL")]
+            }
+        }
+    }
+    
+    enum PayingWalletStatus: Equatable {
+        case loading
+        case invalid
+        case valid(amount: SolanaSDK.Lamports, enoughBalance: Bool)
+        
+        var isValidAndEnoughBalance: Bool {
+            switch self {
+            case .valid(_, let enoughBalance):
+                return enoughBalance
+            default:
+                return false
+            }
+        }
+        
+        var feeAmount: SolanaSDK.Lamports? {
+            switch self {
+            case .valid(let amount, _):
+                return amount
+            default:
+                return nil
             }
         }
     }

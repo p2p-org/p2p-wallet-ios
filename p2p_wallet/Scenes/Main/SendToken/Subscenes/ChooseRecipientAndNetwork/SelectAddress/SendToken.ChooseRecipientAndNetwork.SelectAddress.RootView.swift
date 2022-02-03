@@ -190,9 +190,31 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             
             Driver.combineLatest(
                 viewModel.recipientDriver,
-                viewModel.payingWalletDriver
+                viewModel.payingWalletDriver,
+                viewModel.payingWalletStatusDriver
             )
-                .map {$0 == nil ? L10n.chooseTheRecipientToProceed: $1 == nil ? L10n.chooseTheTokenToPayFees: L10n.reviewAndConfirm}
+                .map { recipient, payingWallet, payingWalletStatus in
+                    if recipient == nil {
+                        return L10n.chooseTheRecipientToProceed
+                    }
+                    
+                    if let payingWallet = payingWallet {
+                        switch payingWalletStatus {
+                        case .loading:
+                            return L10n.calculatingFees
+                        case .invalid:
+                            return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                        case .valid(_, let enoughBalance):
+                            if !enoughBalance {
+                                return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                            }
+                        }
+                    } else {
+                        return L10n.chooseTheTokenToPayFees
+                    }
+                    
+                    return L10n.reviewAndConfirm
+                }
                 .drive(actionButton.rx.text)
                 .disposed(by: disposeBag)
         }
