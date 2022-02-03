@@ -86,11 +86,17 @@ extension ReceiveToken {
                         }
                     }
                     // Children
-                    if viewModel.hasHintViewOnTop {
-                        UIView.greyBannerView {
-                            createQRHint()
-                        }
+                    UIView.greyBannerView {
+                        createQRHint()
                     }
+                        .setup { [weak self] view in
+                            guard let self = self else { return }
+
+                            self.viewModel.hasHintViewOnTopDriver
+                                .map { !$0 }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: self.disposeBag)
+                        }
 
                     ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
                         .setup { view in
@@ -100,16 +106,13 @@ extension ReceiveToken {
                         .setup { view in
                             viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden).disposed(by: disposeBag)
                         }
-                    if viewModel.hasAddressesInfo {
+
+                    UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
                         ShowHideButton(
                             closedText: L10n.showDirectAndMintAddresses,
                             openedText: L10n.hideDirectAndMintAddresses
                         )
                             .setup { view in
-                                viewModel.hasAddressesInfoDriver
-                                    .map { !$0 }
-                                    .drive(view.rx.isHidden)
-                                    .disposed(by: disposeBag)
                                 viewModel.addressesInfoIsOpenedDriver
                                     .drive(view.rx.isOpened)
                                     .disposed(by: disposeBag)
@@ -129,6 +132,12 @@ extension ReceiveToken {
                             }
                             .padding(.init(only: .top, inset: 18))
                     }
+                        .setup { view in
+                            viewModel.hasAddressesInfoDriver
+                                .map { !$0 }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
                 }
             }
         }
