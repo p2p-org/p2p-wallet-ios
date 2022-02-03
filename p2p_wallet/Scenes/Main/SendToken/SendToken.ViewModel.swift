@@ -68,6 +68,7 @@ extension SendToken {
             } else {
                 walletSubject.accept(walletsRepository.nativeWallet)
             }
+            sendService.load().subscribe(onCompleted: {}).disposed(by: disposeBag)
         }
         
         deinit {
