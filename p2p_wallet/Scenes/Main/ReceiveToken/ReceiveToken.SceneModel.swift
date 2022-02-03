@@ -12,17 +12,17 @@ import RxCocoa
 protocol ReceiveSceneModel: BESceneModel {
     var tokenTypeDriver: Driver<ReceiveToken.TokenType> { get }
     var hasAddressesInfoDriver: Driver<Bool> { get }
+    var hasHintViewOnTopDriver: Driver<Bool> { get }
     var addressesInfoIsOpenedDriver: Driver<Bool> { get }
     var showHideAddressesInfoButtonTapSubject: PublishRelay<Void> { get }
     var addressesHintIsHiddenDriver: Driver<Bool> { get }
     var hideAddressesHintSubject: PublishRelay<Void> { get }
     var updateLayoutDriver: Driver<Void> { get }
+    var tokenListAvailabilityDriver: Driver<Bool> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
     var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
     var shouldShowChainsSwitcher: Bool { get }
     var tokenWallet: Wallet? { get }
-    var hasAddressesInfo: Bool { get }
-    var hasHintViewOnTop: Bool { get }
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
 
     func switchToken(_ tokenType: ReceiveToken.TokenType)
@@ -45,16 +45,18 @@ extension ReceiveToken {
 
         // MARK: - Subjects
         let showHideAddressesInfoButtonTapSubject = PublishRelay<Void>()
+        let addressesHintIsHiddenSubject = BehaviorRelay<Bool>(value: false)
+        let hideAddressesHintSubject = PublishRelay<Void>()
         private let navigationSubject = PublishRelay<NavigatableScene?>()
         private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
         let tokenWallet: Wallet?
-        let shouldShowChainsSwitcher: Bool
-
+        private let canOpenTokensList: Bool
         let hasAddressesInfo: Bool
         let hasHintViewOnTop: Bool
-        let addressesHintIsHiddenSubject = BehaviorRelay<Bool>(value: false)
-        let hideAddressesHintSubject = PublishRelay<Void>()
+        let shouldShowChainsSwitcher: Bool
+        private let screenCanHaveAddressesInfo: Bool
+        private let screenCanHaveHint: Bool
 
         init(
             solanaPubkey: SolanaSDK.PublicKey,
@@ -65,8 +67,11 @@ extension ReceiveToken {
             let isRenBTC = solanaTokenWallet?.token.isRenBTC ?? false
             let hasExplorerButton = !isOpeningFromToken
             self.tokenWallet = solanaTokenWallet
-            self.hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil && !isRenBTC
+            self.hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
             self.hasHintViewOnTop = isOpeningFromToken
+            self.canOpenTokensList = !isOpeningFromToken
+            self.screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            self.screenCanHaveHint = isOpeningFromToken
             self.shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
@@ -105,7 +110,17 @@ extension ReceiveToken {
         }
 
         var hasAddressesInfoDriver: Driver<Bool> {
-            .just(hasAddressesInfo)
+            tokenTypeDriver
+                .map { [weak self] tokenType in
+                    guard let self = self else { return false }
+
+                    switch tokenType {
+                    case .solana:
+                        return self.screenCanHaveAddressesInfo
+                    case .btc:
+                        return false
+                    }
+                }
         }
 
         var addressesInfoIsOpenedDriver: Driver<Bool> {
@@ -114,6 +129,31 @@ extension ReceiveToken {
 
         var addressesHintIsHiddenDriver: Driver<Bool> {
             addressesHintIsHiddenSubject.asDriver()
+        }
+
+        var tokenListAvailabilityDriver: Driver<Bool> {
+            tokenTypeDriver
+                .map { [weak self] in
+                    switch $0 {
+                    case .solana:
+                        return self?.canOpenTokensList ?? false
+                    case .btc:
+                        return false
+                    }
+                }
+        }
+        var hasHintViewOnTopDriver: Driver<Bool> {
+            tokenTypeDriver
+                .map { [weak self] tokenType in
+                    guard let self = self else { return false }
+
+                    switch tokenType {
+                    case .solana:
+                        return self.screenCanHaveHint
+                    case .btc:
+                        return false
+                    }
+                }
         }
 
         func switchToken(_ tokenType: ReceiveToken.TokenType) {
@@ -130,14 +170,14 @@ extension ReceiveToken {
         }
 
         func copyDirectAddress() {
-            guard let address = receiveSolanaViewModel.tokenWallet?.pubkey else { return assertionFailure() }
+            guard let address = tokenWallet?.pubkey else { return assertionFailure() }
 
             clipboardManager.copyToClipboard(address)
             showCopied()
         }
 
         func copyMintAddress() {
-            guard let address = receiveSolanaViewModel.tokenWallet?.mintAddress else { return assertionFailure() }
+            guard let address = tokenWallet?.mintAddress else { return assertionFailure() }
 
             clipboardManager.copyToClipboard(address)
             showCopied()

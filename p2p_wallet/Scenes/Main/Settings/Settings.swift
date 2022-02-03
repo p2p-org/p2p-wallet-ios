@@ -23,4 +23,10 @@ enum Settings {
         case appearance
         case share(item: Any)
     }
+    
+    enum BiometryType {
+        case none
+        case touch
+        case face
+    }
 }
