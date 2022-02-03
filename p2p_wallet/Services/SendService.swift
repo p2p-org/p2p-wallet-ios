@@ -149,11 +149,23 @@ class SendService: SendServiceType {
                        payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
                     {
                         // use fee relayer
-                        return self.relayService.topUpAndRelayTransaction(
-                            preparedTransaction: preparedTransaction,
-                            payingFeeToken: payingFeeToken
-                        )
-                            .map {$0.first ?? ""}
+                        if wallet.isNativeSOL {
+                            return self.relayService.topUpAndRelayTransaction(
+                                preparedTransaction: preparedTransaction,
+                                payingFeeToken: payingFeeToken
+                            )
+                                .map {$0.first ?? ""}
+                        } else {
+                            return self.relayService.topUpAndSend(
+                                sourceToken: .init(address: wallet.pubkey!, mint: wallet.mintAddress),
+                                destinationAddress: receiver,
+                                tokenMint: wallet.mintAddress,
+                                inputAmount: amount,
+                                payingFeeToken: payingFeeToken
+                            )
+                                .map {$0.first ?? ""}
+                        }
+                        
                     } else {
                         // send normally, paid by SOL
                         return self.solanaSDK.serializeAndSend(
