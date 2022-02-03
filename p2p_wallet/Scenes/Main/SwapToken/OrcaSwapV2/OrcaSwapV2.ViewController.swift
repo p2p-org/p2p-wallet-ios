@@ -110,6 +110,8 @@ extension OrcaSwapV2 {
                 present(vc, animated: true, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
+            case let .info(title, description):
+                showAlert(title: title, message: description)
             case .none:
                 break
             }

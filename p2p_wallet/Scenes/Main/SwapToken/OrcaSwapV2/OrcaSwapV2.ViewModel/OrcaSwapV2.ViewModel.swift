@@ -116,8 +116,7 @@ extension OrcaSwapV2 {
                     guard let self = self else { return }
                     if let inputAmount = self.inputAmountSubject.value {
                         self.enterInputAmount(inputAmount)
-                    }
-                    else if let estimatedAmount = self.estimatedAmountSubject.value {
+                    } else if let estimatedAmount = self.estimatedAmountSubject.value {
                         self.enterEstimatedAmount(estimatedAmount)
                     }
                 })
@@ -168,13 +167,13 @@ extension OrcaSwapV2 {
                 destinationWalletSubject.distinctUntilChanged()
             )
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] source, destination in
+            .subscribe(onNext: { [weak self] source, _ in
                 guard let source = source else {
                     self?.payingTokenModeSubject.accept(.nativeSOL)
                     return
                 }
-                
-                if (source.isNativeSOL) {
+
+                if source.isNativeSOL {
                     self?.payingTokenModeSubject.accept(.nativeSOL)
                 } else {
                     self?.payingTokenModeSubject.accept(Defaults.payingToken)

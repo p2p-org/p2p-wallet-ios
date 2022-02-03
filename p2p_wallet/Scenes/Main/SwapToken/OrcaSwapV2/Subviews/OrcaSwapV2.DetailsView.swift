@@ -5,10 +5,10 @@
 //  Created by Andrew Vasiliev on 03.12.2021.
 //
 
-import UIKit
-import RxSwift
-import RxCocoa
 import BEPureLayout
+import RxCocoa
+import RxSwift
+import UIKit
 
 extension OrcaSwapV2 {
     final class DetailsView: UIStackView {
@@ -76,6 +76,11 @@ extension OrcaSwapV2 {
 
             payFeesWithView.clickHandler = { [weak viewModel] in
                 viewModel?.choosePayFee()
+            }
+
+            feesView.clickHandler = { [weak viewModel] fee in
+                guard let info = fee.info else { return }
+                viewModel?.navigate(to: .info(title: info.alertTitle, description: info.alertDescription))
             }
         }
     }

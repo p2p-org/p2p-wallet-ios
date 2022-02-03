@@ -14,6 +14,7 @@ extension OrcaSwapV2 {
     final class DetailFeesView: BECompositionView {
         private let feesDriver: Driver<Loadable<[PayingFee]>>
         private let disposeBag = DisposeBag()
+        var clickHandler: ((PayingFee) -> Void)?
 
         init(feesDriver: Driver<Loadable<[PayingFee]>>) {
             self.feesDriver = feesDriver
@@ -32,7 +33,21 @@ extension OrcaSwapV2 {
                     return BEVStack {
                         // Fee categories
                         for (header, fees) in group {
-                            self.row(title: header, descriptions: fees.map { self.formatAmount(fee: $0) })
+                            if fees.contains(where: { fee in fee.isFree }) {
+                                // Free fee
+                                self.customRow(
+                                    title: header,
+                                    trailing: BEVStack {
+                                        for fee in fees {
+                                            self.freeFee(fee: fee)
+                                                .onTap { [unowned self] in self.clickHandler?(fee) }
+                                        }
+                                    }
+                                )
+                            } else {
+                                // Normal fee
+                                self.row(title: header, descriptions: fees.map { self.formatAmount(fee: $0) })
+                            }
                         }
                         // Separator
                         if value.count > 0 { UIView.defaultSeparator().padding(.init(only: .bottom, inset: 12)) }
@@ -67,6 +82,31 @@ extension OrcaSwapV2 {
             return ""
         }
 
+        func customRow(title: String, trailing: UIView?) -> UIView {
+            BEHStack {
+                UILabel(text: title, textColor: .h8e8e93)
+                UIView.spacer
+                if let trailing = trailing {
+                    trailing
+                }
+            }.padding(.init(only: .bottom, inset: 12))
+        }
+
+        func freeFee(fee: PayingFee) -> UIView {
+            BEHStack {
+                UILabel(text: L10n.free)
+                if let payBy = fee.info?.payBy {
+                    UILabel(text: "(\(payBy))", textColor: .h34c759)
+                        .padding(.init(only: .left, inset: 4))
+                }
+                if let info = fee.info {
+                    UIImageView(width: 16, height: 16, image: .info, tintColor: .h34c759)
+                        .padding(.init(only: .left, inset: 4))
+                }
+            }
+
+        }
+
         func row(title: String, descriptions: [String]) -> UIView {
             BEHStack(alignment: .top) {
                 UILabel(text: title, textColor: .h8e8e93)
@@ -75,8 +115,7 @@ extension OrcaSwapV2 {
                     for (index, description) in descriptions.enumerated() {
                         if index == 0 {
                             UILabel(text: description)
-                        }
-                        else {
+                        } else {
                             UILabel(text: "+ \(description)")
                         }
                     }
