@@ -8,15 +8,19 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
-extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
+extension SendToken {
     final class FeeView: WLFloatingPanelView {
-        private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
         private let disposeBag = DisposeBag()
         private let coinLogoImageView = CoinLogoImageView(size: 44)
         
-        init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
-            self.viewModel = viewModel
+        init(
+            solPrice: Double,
+            feesDriver: Driver<SolanaSDK.FeeAmount?>,
+            payingWalletDriver: Driver<Wallet?>,
+            payingWalletStatusDriver: Driver<PayingWalletStatus>
+        ) {
             super.init(contentInset: .init(all: 18))
             stackView.alignment = .center
             stackView.axis = .horizontal
@@ -24,28 +28,28 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             stackView.addArrangedSubviews {
                 coinLogoImageView
                     .setup { imageView in
-                        self.viewModel.payingWalletDriver
+                        payingWalletDriver
                             .map {$0 == nil}
                             .drive(imageView.rx.isHidden)
                             .disposed(by: disposeBag)
                         
-                        self.viewModel.payingWalletDriver
+                        payingWalletDriver
                             .drive(onNext: {[weak imageView] in imageView?.setUp(wallet: $0)})
                             .disposed(by: disposeBag)
                     }
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                     UILabel(text: "Account creation fee", textSize: 13, numberOfLines: 0)
                         .setup { label in
-                            self.viewModel.feesDriver
-                                .map {[weak self] in feeAmountToAttributedString(feeAmount: $0, solPrice: self?.viewModel.getPrice(for: "SOL"))}
+                            feesDriver
+                                .map {feeAmountToAttributedString(feeAmount: $0, solPrice: solPrice)}
                                 .drive(label.rx.attributedText)
                                 .disposed(by: disposeBag)
                         }
                     UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold, numberOfLines: 0)
                         .setup { label in
                             Driver.combineLatest(
-                                viewModel.payingWalletDriver,
-                                viewModel.payingWalletStatusDriver
+                                payingWalletDriver,
+                                payingWalletStatusDriver
                             )
                                 .map {
                                     payingWalletToString(
@@ -58,10 +62,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                         }
                 }
                 UIView.defaultNextArrow()
-            }
-            
-            onTap { [weak self] in
-                self?.viewModel.navigate(to: .selectPayingWallet)
             }
         }
     }
