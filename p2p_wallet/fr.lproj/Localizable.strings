@@ -693,6 +693,17 @@
 "Statuses received" = "Statuts reçus";
 "Statuses received (%@)" = "Statuts reçus (%@)";
 "The last one: " = "Le dernier:";
+"Backup required" = "Sauvegarde requise";
+"Backup is ready" = "La sauvegarde est prête";
+"Your PIN" = "Votre NIP";
+"PIN is set" = "Le code PIN est défini";
+"Notifications" = "Notifications";
+"classic" = "classique";
+"Ask a question / Request a feature" = "Poser une question / Demander une fonctionnalité";
+"App version" = "Version de l'application";
+"Confirm transactions" = "Confirmer les transactions";
+"Pay fees with" = "Payer les frais avec";
+"App icon" = "Icône de l'application";
 "Hide direct and mint addresses" = "Masquer les adresses directes et menthe";
 "Show direct and mint addresses" = "Afficher les adresses directes et menthe";
 "Tap and hold to copy" = "Appuyez et maintenez pour copier";
@@ -704,3 +715,6 @@
 "Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address." = "Chaque jeton de cette liste est disponible pour la réception avec cette adresse ;  vous pouvez rechercher un token en saisissant son nom ou son ticker.\n\nSi un token ne figure pas dans cette liste, nous vous déconseillons de l'envoyer à cette adresse.";
 "we do not recommend sending it to this address." = "nous vous déconseillons de l'envoyer à cette adresse.";
 "What tokens can I receive?" = "Quels jetons puis-je recevoir ?";
+"Security & Network" = "Sécurité";
+"Face ID" = "Identification faciale";
+"Touch ID" = "ID tactile";

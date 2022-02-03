@@ -54,9 +54,10 @@ extension ReceiveToken {
                             viewModel.timeRemainsDriver().drive(textLabel.rx.attributedText).disposed(by: disposeBag)
                         }
                 }
-
-                ExplorerButton(title: L10n.viewInExplorer(L10n.bitcoin))
-                    .onTap { [weak self] in self?.viewModel.showBTCAddressInExplorer() }
+                if viewModel.hasExplorerButton {
+                    ExplorerButton(title: L10n.viewInExplorer(L10n.bitcoin))
+                        .onTap { [weak self] in self?.viewModel.showBTCAddressInExplorer() }
+                }
             }
         }
         

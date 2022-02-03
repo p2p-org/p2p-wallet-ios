@@ -39,8 +39,10 @@ extension ReceiveToken {
                     }
                 
                 // Explore button
-                ExplorerButton(title: L10n.viewInExplorer("Solana"))
-                    .onTap { [weak self] in self?.viewModel.showSOLAddressInExplorer() }
+                if viewModel.hasExplorerButton {
+                    ExplorerButton(title: L10n.viewInExplorer("Solana"))
+                        .onTap { [weak self] in self?.viewModel.showSOLAddressInExplorer() }
+                }
             }
         }
     }

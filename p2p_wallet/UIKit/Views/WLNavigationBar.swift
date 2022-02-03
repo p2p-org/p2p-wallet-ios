@@ -91,9 +91,7 @@ class NewWLNavigationBar: BECompositionView {
                     
                     // Title
                     UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
-                        .setup { view in
-                            self.titleLabel = titleLabel
-                        }
+                        .setupWithType(UILabel.self) { view in self.titleLabel = view }
                     
                     // Actions
                     actions
