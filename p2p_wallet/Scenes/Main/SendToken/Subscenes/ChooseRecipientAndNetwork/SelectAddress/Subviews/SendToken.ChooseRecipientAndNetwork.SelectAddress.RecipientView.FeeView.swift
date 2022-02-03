@@ -62,7 +62,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     }
 }
 
-private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount, solPrice: Double?) -> NSAttributedString {
+private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPrice: Double?) -> NSAttributedString {
+    guard let feeAmount = feeAmount else {
+        return NSAttributedString()
+    }
+    
     var titles = [String]()
     if feeAmount.accountBalances > 0 {
         titles.append(L10n.accountCreationFee)
@@ -96,10 +100,14 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount, solPric
 
 private func payingWalletToString(
     payingWallet: Wallet?,
-    feeAmount: SolanaSDK.FeeAmount,
+    feeAmount: SolanaSDK.FeeAmount?,
     tokenPrice: Double?,
     solPrice: Double?
 ) -> String? {
+    guard let feeAmount = feeAmount else {
+        return nil
+    }
+    
     guard let payingWallet = payingWallet else {
         return L10n.selectTokenToPayFees
     }

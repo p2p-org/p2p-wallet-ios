@@ -29,22 +29,16 @@ extension SendTokenRecipientAndNetworkHandler {
         networkSubject.asDriver()
     }
     
-    var feesDriver: Driver<SolanaSDK.FeeAmount> {
+    var feesDriver: Driver<SolanaSDK.FeeAmount?> {
         Observable.combineLatest(
             recipientSubject,
             networkSubject
         )
-            .flatMap {[weak self] recipient, network -> Single<SolanaSDK.FeeAmount> in
+            .flatMap {[weak self] recipient, network -> Single<SolanaSDK.FeeAmount?> in
                 guard let self = self else {throw SolanaSDK.Error.unknown}
-                guard let wallet = self.getSelectedWallet() else {return .just(.init(transaction: 0, accountBalances: 0))}
-                return self.sendService.getFees(
-                    from: wallet,
-                    receiver: recipient?.address,
-                    network: network
-                )
-                    .catchAndReturn(.init(transaction: 0, accountBalances: 0))
+                return self.getFees(recipient: recipient, network: network)
             }
-            .asDriver(onErrorJustReturn: .init(transaction: 0, accountBalances: 0))
+            .asDriver(onErrorJustReturn: nil)
     }
     
     var payingWalletDriver: Driver<Wallet?> {
@@ -65,6 +59,10 @@ extension SendTokenRecipientAndNetworkHandler {
             networks.append(.bitcoin)
         }
         return networks
+    }
+    
+    func getFees() -> Single<SolanaSDK.FeeAmount?> {
+        getFees(recipient: recipientSubject.value, network: networkSubject.value)
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient?) {
@@ -96,5 +94,15 @@ extension SendTokenRecipientAndNetworkHandler {
         return recipient.name == nil &&
             recipient.address
                 .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
+    }
+    
+    private func getFees(recipient: SendToken.Recipient?, network: SendToken.Network) -> Single<SolanaSDK.FeeAmount?> {
+        guard let wallet = getSelectedWallet() else {return .just(nil)}
+        return sendService.getFees(
+            from: wallet,
+            receiver: recipient?.address,
+            network: network
+        )
+            .catchAndReturn(nil)
     }
 }

@@ -18,7 +18,7 @@ protocol SendServiceType {
         from wallet: Wallet,
         receiver: String?,
         network: SendToken.Network
-    ) -> Single<SolanaSDK.FeeAmount>
+    ) -> Single<SolanaSDK.FeeAmount?>
     func send(
         from wallet: Wallet,
         receiver: String,
@@ -62,9 +62,9 @@ class SendService: SendServiceType {
         from wallet: Wallet,
         receiver: String?,
         network: SendToken.Network
-    ) -> Single<SolanaSDK.FeeAmount> {
+    ) -> Single<SolanaSDK.FeeAmount?> {
         guard let receiver = receiver else {
-            return .just(.init(transaction: 0, accountBalances: 0))
+            return .just(nil)
         }
 
         switch network {
