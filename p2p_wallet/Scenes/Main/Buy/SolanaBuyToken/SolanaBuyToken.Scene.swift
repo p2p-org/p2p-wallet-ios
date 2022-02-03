@@ -13,10 +13,35 @@ extension SolanaBuyToken {
     class Scene: BEScene {
         private let viewModel: SolanaBuyTokenSceneModel
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+
+        private lazy var tokenAmountField = TokenAmountTextField(
+            font: .systemFont(ofSize: 27, weight: .semibold),
+            textColor: .textBlack,
+            textAlignment: .right,
+            keyboardType: .decimalPad,
+            placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+            autocorrectionType: .no
+        ).setup { [weak self] view in
+            view.delegate = self
+            view.rx.text
+                .map { $0?.double }
+                .distinctUntilChanged()
+                .subscribe(onNext: { [weak self] amount in
+                    guard let amount = amount else { return }
+                    self?.viewModel.setAmount(value: amount)
+                })
+                .disposed(by: disposeBag)
+        }
         
         init(viewModel: SolanaBuyTokenSceneModel) {
             self.viewModel = viewModel
             super.init()
+        }
+
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+
+            tokenAmountField.becomeFirstResponder()
         }
         
         override func build() -> UIView {
@@ -65,24 +90,8 @@ extension SolanaBuyToken {
                                     font: .systemFont(ofSize: 27, weight: .semibold),
                                     textColor: .textBlack
                                 ).padding(.init(x: 4, y: 0))
-                                TokenAmountTextField(
-                                    font: .systemFont(ofSize: 27, weight: .semibold),
-                                    textColor: .textBlack,
-                                    textAlignment: .right,
-                                    keyboardType: .decimalPad,
-                                    placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
-                                    autocorrectionType: .no
-                                ).setup { [weak self] view in
-                                    view.delegate = self
-                                    view.rx.text
-                                        .map { $0?.double }
-                                        .distinctUntilChanged()
-                                        .subscribe(onNext: { [weak self] amount in
-                                            guard let amount = amount else { return }
-                                            self?.viewModel.setAmount(value: amount)
-                                        })
-                                        .disposed(by: disposeBag)
-                                }
+
+                                tokenAmountField
                             }
                         }
                         
@@ -123,7 +132,6 @@ extension SolanaBuyToken {
                         descriptionRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
                     }.padding(.init(all: 18))
                 }
-                
             }
         }
         
