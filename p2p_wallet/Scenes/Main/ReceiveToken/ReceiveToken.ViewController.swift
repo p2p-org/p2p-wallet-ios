@@ -48,9 +48,9 @@ extension ReceiveToken {
                                     UIImageView(width: 44, height: 44)
                                         .with(.image, drivenBy: viewModel.tokenTypeDriver.map({ type in type.icon }), disposedBy: disposeBag)
                                     // Text
-                                    UIStackView(axis: .vertical, alignment: .leading) {
+                                    UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
                                         UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
-                                        UILabel(text: L10n.network("Solana"), textSize: 17)
+                                        UILabel(text: L10n.network("Solana"), textSize: 17, weight: .semibold)
                                             .setup { view in
                                                 viewModel.tokenTypeDriver
                                                     .map { L10n.network($0.localizedName).onlyUppercaseFirst() }
