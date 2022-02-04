@@ -18,7 +18,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
-    func getAPIClient() -> SendTokenAPIClient
+    func getSendService() -> SendServiceType
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
     func save()
@@ -28,6 +28,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewModel {
         // MARK: - Dependencies
+        @Injected var sendService: SendServiceType
         private let sendTokenViewModel: SendTokenViewModelType
         let showAfterConfirmation: Bool
         let preSelectedNetwork: SendToken.Network?
@@ -39,6 +40,7 @@ extension SendToken.ChooseRecipientAndNetwork {
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
+        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializers
         init(
@@ -63,6 +65,10 @@ extension SendToken.ChooseRecipientAndNetwork {
             
             sendTokenViewModel.networkDriver
                 .drive(networkSubject)
+                .disposed(by: disposeBag)
+            
+            sendTokenViewModel.payingWalletDriver
+                .drive(payingWalletSubject)
                 .disposed(by: disposeBag)
         }
     }
@@ -97,8 +103,8 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         return vm
     }
     
-    func getAPIClient() -> SendTokenAPIClient {
-        sendTokenViewModel.getAPIClient()
+    func getSendService() -> SendServiceType {
+        sendTokenViewModel.getSendService()
     }
     
     func getPrice(for symbol: String) -> Double {
@@ -116,6 +122,7 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     func save() {
         sendTokenViewModel.selectRecipient(recipientSubject.value)
         sendTokenViewModel.selectNetwork(networkSubject.value)
+        sendTokenViewModel.payingWalletSubject.accept(payingWalletSubject.value)
     }
     
     func navigateNext() {

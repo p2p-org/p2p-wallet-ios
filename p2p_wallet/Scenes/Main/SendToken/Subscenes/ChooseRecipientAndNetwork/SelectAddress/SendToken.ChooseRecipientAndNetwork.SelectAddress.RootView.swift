@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import BEPureLayout
 import BECollectionView
+import SolanaSwift
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RootView: ScrollableVStackRootView {
@@ -43,6 +44,16 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
             .padding(.init(x: 20, y: 0))
         private lazy var errorLabel = UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
+        private lazy var feeView = _FeeView(
+            walletDriver: viewModel.walletDriver,
+            solPrice: viewModel.getPrice(for: "SOL"),
+            feesDriver: viewModel.feesDriver,
+            payingWalletDriver: viewModel.payingWalletDriver,
+            payingWalletStatusDriver: viewModel.payingWalletStatusDriver
+        )
+            .onTap { [weak self] in
+                self?.viewModel.navigate(to: .selectPayingWallet)
+            }
         
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
             .onTap(self, action: #selector(actionButtonDidTouch))
@@ -78,6 +89,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 networkView
                 errorView
                 recipientCollectionView
+                BEStackViewSpacing(18)
+                feeView
             }
             
             addSubview(actionButton)
@@ -151,6 +164,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 })
                 .disposed(by: disposeBag)
             
+            // fee view
+            isSearchingDriver
+                .drive(feeView.rx.isHidden)
+                .disposed(by: disposeBag)
+            
             viewModel.inputStateDriver
                 .skip(1)
                 .drive(onNext: {[weak self] _ in
@@ -179,8 +197,33 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .drive(actionButton.rx.image)
                 .disposed(by: disposeBag)
             
-            viewModel.isValidDriver
-                .map {$0 ? L10n.reviewAndConfirm: L10n.chooseTheRecipientToProceed}
+            Driver.combineLatest(
+                viewModel.recipientDriver,
+                viewModel.payingWalletDriver,
+                viewModel.payingWalletStatusDriver
+            )
+                .map { recipient, payingWallet, payingWalletStatus in
+                    if recipient == nil {
+                        return L10n.chooseTheRecipientToProceed
+                    }
+                    
+                    if let payingWallet = payingWallet {
+                        switch payingWalletStatus {
+                        case .loading:
+                            return L10n.calculatingFees
+                        case .invalid:
+                            return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                        case .valid(_, let enoughBalance):
+                            if !enoughBalance {
+                                return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                            }
+                        }
+                    } else {
+                        return L10n.chooseTheTokenToPayFees
+                    }
+                    
+                    return L10n.reviewAndConfirm
+                }
                 .drive(actionButton.rx.text)
                 .disposed(by: disposeBag)
         }
@@ -235,5 +278,45 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView: BECollecti
         guard let recipient = item as? SendToken.Recipient else {return}
         viewModel.selectRecipient(recipient)
         endEditing(true)
+    }
+}
+
+private class _FeeView: UIStackView {
+    private let disposeBag = DisposeBag()
+    private let feeView: SendToken.FeeView
+    private let attentionLabel = UILabel(
+        text: nil,
+        textSize: 15,
+        numberOfLines: 0
+    )
+    
+    init(
+        walletDriver: Driver<Wallet?>,
+        solPrice: Double,
+        feesDriver: Driver<SolanaSDK.FeeAmount?>,
+        payingWalletDriver: Driver<Wallet?>,
+        payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus>
+    ) {
+        self.feeView = .init(solPrice: solPrice, feesDriver: feesDriver, payingWalletDriver: payingWalletDriver, payingWalletStatusDriver: payingWalletStatusDriver)
+        super.init(frame: .zero)
+        set(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
+        addArrangedSubviews {
+            attentionLabel
+                .padding(.init(all: 18), backgroundColor: .fffaf2, cornerRadius: 12, borderColor: .ff9500)
+            feeView
+        }
+        
+        feesDriver.map {$0?.accountBalances ?? 0 == 0}
+            .drive(attentionLabel.superview!.rx.isHidden)
+            .disposed(by: disposeBag)
+        
+        walletDriver.map {$0?.token.symbol ?? ""}
+            .map {L10n.ThisAddressDoesNotAppearToHaveAAccount.YouHaveToPayOneTimeFeeToCreateAAccountForThisAddress.youCanChooseWhichCurrencyToPayInBelow($0, $0)}
+            .drive(attentionLabel.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    required init(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
