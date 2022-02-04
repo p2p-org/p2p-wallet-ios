@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
 enum SendToken {
     enum NavigatableScene {
@@ -45,7 +46,7 @@ enum SendToken {
                 return .squircleBitcoinIcon
             }
         }
-        var defaultFees: [Fee] {
+        var defaultFees: [SolanaSDK.FeeAmount.OtherFee] {
             switch self {
             case .solana:
                 return [.init(amount: 0, unit: Defaults.fiat.symbol)]
@@ -55,13 +56,32 @@ enum SendToken {
         }
     }
     
-    struct Fee {
-        var amount: Double
-        let unit: String
+    enum PayingWalletStatus: Equatable {
+        case loading
+        case invalid
+        case valid(amount: SolanaSDK.Lamports, enoughBalance: Bool)
+        
+        var isValidAndEnoughBalance: Bool {
+            switch self {
+            case .valid(_, let enoughBalance):
+                return enoughBalance
+            default:
+                return false
+            }
+        }
+        
+        var feeAmount: SolanaSDK.Lamports? {
+            switch self {
+            case .valid(let amount, _):
+                return amount
+            default:
+                return nil
+            }
+        }
     }
 }
 
-extension Array where Element == SendToken.Fee {
+extension Array where Element == SolanaSDK.FeeAmount.OtherFee {
     func attributedString(
         prices: [String: Double],
         textSize: CGFloat = 15,

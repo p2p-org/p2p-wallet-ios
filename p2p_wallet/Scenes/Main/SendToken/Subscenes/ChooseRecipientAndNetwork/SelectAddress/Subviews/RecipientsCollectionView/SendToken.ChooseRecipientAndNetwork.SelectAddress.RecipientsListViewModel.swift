@@ -13,7 +13,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RecipientsListViewModel: BEListViewModel<SendToken.Recipient> {
         // MARK: - Dependencies
         @Injected private var nameService: NameServiceType
-        var solanaAPIClient: SendTokenAPIClient!
+        var solanaAPIClient: SendServiceType!
         var preSelectedNetwork: SendToken.Network!
         
         // MARK: - Properties

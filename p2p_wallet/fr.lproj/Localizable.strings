@@ -711,6 +711,8 @@
 "You can receive %@ by providing this address, QR code or username:" = "Vous pouvez recevoir %@ en fournissant cette adresse, ce code QR ou ce nom d'utilisateur :";
 "Username %@ was reserved" = "Le nom d'utilisateur %@ était réservé";
 "None" = "Rien";
+"Select token to pay fees" = "Sélectionnez le jeton pour payer les frais";
+"Choose the token to pay fees" = "Choisissez le jeton pour payer les frais";
 "List of supported tokens" = "Liste des jetons pris en charge";
 "Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address." = "Chaque jeton de cette liste est disponible pour la réception avec cette adresse ;  vous pouvez rechercher un token en saisissant son nom ou son ticker.\n\nSi un token ne figure pas dans cette liste, nous vous déconseillons de l'envoyer à cette adresse.";
 "we do not recommend sending it to this address." = "nous vous déconseillons de l'envoyer à cette adresse.";
@@ -718,3 +720,5 @@
 "Security & Network" = "Sécurité";
 "Face ID" = "Identification faciale";
 "Touch ID" = "ID tactile";
+"Paying token is not valid. Please choose another one" = "Le jeton de paiement n'est pas valide. Veuillez en choisir un autre";
+"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Cette adresse ne semble pas avoir de compte %@. Vous devez payer des frais uniques pour créer un compte %@ pour cette adresse. Vous pouvez choisir la devise dans laquelle payer ci-dessous.";
