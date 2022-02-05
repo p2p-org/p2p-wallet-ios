@@ -718,3 +718,4 @@
 "Security & Network" = "Bảo vệ";
 "Face ID" = "Face ID";
 "Touch ID" = "ID cảm ứng";
+"Could not create renBTC token, please try again later" = "Không thể tạo token renBTC, vui lòng thử lại sau";

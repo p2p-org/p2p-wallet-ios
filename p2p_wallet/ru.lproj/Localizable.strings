@@ -718,3 +718,4 @@
 "Security & Network" = "Безопасность";
 "Face ID" = "Идентификатор лица";
 "Touch ID" = "Сенсорный идентификатор";
+"Could not create renBTC token, please try again later" = "Не удалось создать токен renBTC. Повторите попытку позже.";
