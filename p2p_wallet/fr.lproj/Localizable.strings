@@ -718,3 +718,4 @@
 "Security & Network" = "Sécurité";
 "Face ID" = "Identification faciale";
 "Touch ID" = "ID tactile";
+"Could not create renBTC token, please try again later" = "Impossible de créer le jeton renBTC, veuillez réessayer plus tard";
