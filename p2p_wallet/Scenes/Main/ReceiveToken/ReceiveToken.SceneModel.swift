@@ -37,7 +37,7 @@ protocol ReceiveSceneModel: BESceneModel {
 
 extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
-        @Injected private var solanaSDK: SolanaSDK
+        @Injected private var handler: AssociatedTokenAccountHandler
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
@@ -193,7 +193,7 @@ extension ReceiveToken {
         }
         
         func acceptReceivingRenBTC() -> Completable {
-            return solanaSDK.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
+            return handler.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
                 .catch {error in
                     if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
                         return .just(false)
@@ -203,12 +203,11 @@ extension ReceiveToken {
                 .flatMapCompletable { [weak self] isRenBtcCreated in
                     guard let self = self else {return .error(SolanaSDK.Error.unknown)}
                     if isRenBtcCreated {
+                        self.receiveBitcoinViewModel.acceptConditionAndLoadAddress()
+                        self.switchToken(.btc)
                         return .empty()
                     }
-                    return self.solanaSDK.createAssociatedTokenAccount(
-                        for: self.solanaSDK.accountStorage.account!.publicKey,
-                        tokenMint: .renBTCMint
-                    )
+                    return self.handler.createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
                         .asCompletable()
                 }
         }
