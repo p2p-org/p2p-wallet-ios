@@ -717,7 +717,7 @@
 "Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address." = "Chaque jeton de cette liste est disponible pour la réception avec cette adresse ;  vous pouvez rechercher un token en saisissant son nom ou son ticker.\n\nSi un token ne figure pas dans cette liste, nous vous déconseillons de l'envoyer à cette adresse.";
 "we do not recommend sending it to this address." = "nous vous déconseillons de l'envoyer à cette adresse.";
 "What tokens can I receive?" = "Quels jetons puis-je recevoir ?";
-"Security & Network" = "Sécurité";
+"Security & Network" = "Sécurité & Réseau";
 "Face ID" = "Identification faciale";
 "Touch ID" = "ID tactile";
 "Paying token is not valid. Please choose another one" = "Le jeton de paiement n'est pas valide. Veuillez en choisir un autre";
