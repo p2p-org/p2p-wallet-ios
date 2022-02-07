@@ -66,7 +66,9 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
         
         // MARK: - Send service
-        register { SendService() }
+        register { _, args in
+            SendService(relayMethod: args())
+        }
             .implements(SendServiceType.self)
             .scope(.session)
         

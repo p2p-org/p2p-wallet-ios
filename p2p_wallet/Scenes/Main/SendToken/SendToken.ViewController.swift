@@ -66,7 +66,8 @@ extension SendToken {
                 let vm = ChooseRecipientAndNetwork.ViewModel(
                     showAfterConfirmation: showAfterConfirmation,
                     preSelectedNetwork: preSelectedNetwork,
-                    sendTokenViewModel: viewModel
+                    sendTokenViewModel: viewModel,
+                    relayMethod: viewModel.relayMethod
                 )
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
