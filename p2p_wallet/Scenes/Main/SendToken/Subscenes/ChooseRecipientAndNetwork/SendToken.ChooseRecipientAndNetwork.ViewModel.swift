@@ -101,7 +101,8 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
         let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
             chooseRecipientAndNetworkViewModel: self,
-            showAfterConfirmation: showAfterConfirmation
+            showAfterConfirmation: showAfterConfirmation,
+            relayMethod: relayMethod
         )
         return vm
     }
