@@ -7,9 +7,9 @@
 
 import Foundation
 
-enum SendTokenRelayMethod: Int {
-    case relay = 0, compensation = 1
+enum SendTokenRelayMethod: Int, CaseIterable {
+    case relay = 0, reward = 1
     static var `default`: Self {
-        .compensation // TODO: default is compensation, as relay is not ready, replace later
+        .reward // TODO: default is reward, as relay is not ready, replace later
     }
 }
