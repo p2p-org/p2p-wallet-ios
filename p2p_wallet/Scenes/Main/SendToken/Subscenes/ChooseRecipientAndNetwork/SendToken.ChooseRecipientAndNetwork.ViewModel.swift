@@ -28,12 +28,13 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected var sendService: SendServiceType
+        lazy var sendService: SendServiceType = Resolver.resolve(args: relayMethod)
         private let sendTokenViewModel: SendTokenViewModelType
         let showAfterConfirmation: Bool
         let preSelectedNetwork: SendToken.Network?
         
         // MARK: - Properties
+        private let relayMethod: SendTokenRelayMethod
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
@@ -46,11 +47,13 @@ extension SendToken.ChooseRecipientAndNetwork {
         init(
             showAfterConfirmation: Bool,
             preSelectedNetwork: SendToken.Network?,
-            sendTokenViewModel: SendTokenViewModelType
+            sendTokenViewModel: SendTokenViewModelType,
+            relayMethod: SendTokenRelayMethod
         ) {
             self.showAfterConfirmation = showAfterConfirmation
             self.preSelectedNetwork = preSelectedNetwork
             self.sendTokenViewModel = sendTokenViewModel
+            self.relayMethod = relayMethod
             bind()
             
             if let preSelectedNetwork = preSelectedNetwork {
@@ -98,7 +101,8 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
         let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
             chooseRecipientAndNetworkViewModel: self,
-            showAfterConfirmation: showAfterConfirmation
+            showAfterConfirmation: showAfterConfirmation,
+            relayMethod: relayMethod
         )
         return vm
     }
