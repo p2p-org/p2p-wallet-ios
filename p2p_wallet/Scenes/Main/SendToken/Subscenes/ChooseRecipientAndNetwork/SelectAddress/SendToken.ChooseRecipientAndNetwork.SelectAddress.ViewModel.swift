@@ -8,8 +8,10 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
-protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDidSelectHandler {
+    var relayMethod: SendTokenRelayMethod {get}
     var showAfterConfirmation: Bool {get}
     var preSelectedNetwork: SendToken.Network? {get}
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
@@ -19,6 +21,9 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var walletDriver: Driver<Wallet?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
+    var feesDriver: Driver<SolanaSDK.FeeAmount?> {get}
+    var payingWalletDriver: Driver<Wallet?> {get}
+    var payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus> {get}
     var isValidDriver: Driver<Bool> {get}
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
@@ -50,6 +55,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         @Injected private var clipboardManager: ClipboardManagerType
         
         // MARK: - Properties
+        let relayMethod: SendTokenRelayMethod
         private let disposeBag = DisposeBag()
         let recipientsListViewModel = RecipientsListViewModel()
         let showAfterConfirmation: Bool
@@ -59,10 +65,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
         
-        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool) {
+        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool, relayMethod: SendTokenRelayMethod) {
+            self.relayMethod = relayMethod
             self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
             self.showAfterConfirmation = showAfterConfirmation
-            recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getAPIClient()
+            recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getSendService()
             recipientsListViewModel.preSelectedNetwork = preSelectedNetwork
             
             if chooseRecipientAndNetworkViewModel.getSelectedRecipient() != nil {
@@ -105,8 +112,30 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         chooseRecipientAndNetworkViewModel.networkDriver
     }
     
+    var feesDriver: Driver<SolanaSDK.FeeAmount?> {
+        chooseRecipientAndNetworkViewModel.feesDriver
+    }
+    
+    var payingWalletDriver: Driver<Wallet?> {
+        chooseRecipientAndNetworkViewModel.payingWalletDriver
+    }
+    
+    var payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus> {
+        chooseRecipientAndNetworkViewModel.payingWalletStatusDriver
+    }
+    
     var isValidDriver: Driver<Bool> {
-        chooseRecipientAndNetworkViewModel.recipientDriver.map {$0 != nil}
+        var conditionDrivers: [Driver<Bool>] = [
+            recipientDriver.map {$0 != nil}
+        ]
+        
+        if relayMethod == .relay {
+            conditionDrivers.append(payingWalletStatusDriver.map {$0.isValidAndEnoughBalance})
+            conditionDrivers.append(payingWalletDriver.map {$0 != nil})
+        }
+        
+        return Driver.combineLatest(conditionDrivers)
+            .map {$0.allSatisfy {$0}}
     }
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
@@ -137,6 +166,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     func userDidTapPaste() {
         search(clipboardManager.stringFromClipboard())
+    }
+    
+    func walletDidSelect(_ wallet: Wallet) {
+        chooseRecipientAndNetworkViewModel.payingWalletSubject.accept(wallet)
     }
     
     func search(_ address: String?) {

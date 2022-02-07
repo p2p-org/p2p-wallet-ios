@@ -10,7 +10,7 @@ import Foundation
 protocol SendTokenSelectNetworkViewModelType {
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
-    func getAPIClient() -> SendTokenAPIClient
+    func getSendService() -> SendServiceType
     func getSOLAndRenBTCPrices() -> [String: Double]
     func getSelectedNetwork() -> SendToken.Network
     func selectRecipient(_ recipient: SendToken.Recipient?)
