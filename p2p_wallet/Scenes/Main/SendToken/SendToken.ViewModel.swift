@@ -37,7 +37,7 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
-        lazy var sendService: SendServiceType = Resolver.resolve(args: relayMethod)
+        let sendService: SendServiceType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -65,6 +65,7 @@ extension SendToken {
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
             self.relayMethod = relayMethod
+            self.sendService = Resolver.resolve(args: relayMethod)
             
             // accept initial values
             if let pubkey = walletPubkey {
