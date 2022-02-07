@@ -154,6 +154,9 @@ extension OrcaSwapV2 {
             case .none:
                 text = L10n.reviewAndConfirm
                 image = .buttonCheckSmall
+            case .some(.payingFeeWalletNotFound):
+                // TODO: fix
+                text =  "payingFeeWalletNotFound"
             }
 
             nextButton.setTitle(text: text)

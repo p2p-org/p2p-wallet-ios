@@ -40,6 +40,7 @@ enum OrcaSwapV2 {
         case bestPoolsPairsIsEmpty
         case slippageIsNotValid
         case nativeWalletNotFound
+        case payingFeeWalletNotFound
         case notEnoughSOLToCoverFees
         case notEnoughBalanceToCoverFees
         case unknown

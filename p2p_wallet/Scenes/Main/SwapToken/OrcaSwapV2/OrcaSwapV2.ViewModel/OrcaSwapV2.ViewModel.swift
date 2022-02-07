@@ -33,7 +33,7 @@ extension OrcaSwapV2 {
         let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
         let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
         let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
-        let payingTokenModeSubject = BehaviorRelay<PayingToken>(value: .nativeSOL)
+        let payingTokenSubject = BehaviorRelay<Wallet?>(value: nil)
 
         let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
@@ -43,6 +43,7 @@ extension OrcaSwapV2 {
         init(
             initialWallet: Wallet?
         ) {
+            payingTokenSubject.accept(walletsRepository.nativeWallet)
             reload()
             bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
         }
@@ -147,7 +148,7 @@ extension OrcaSwapV2 {
                 bestPoolsPairSubject,
                 feesSubject.valueObservable,
                 slippageSubject,
-                payingTokenModeSubject
+                payingTokenSubject
             )
             .map { [weak self] _ in self?.verify() }
             .bind(to: errorSubject)
@@ -160,26 +161,6 @@ extension OrcaSwapV2 {
                     self.isShowingDetailsSubject.accept(!self.isShowingDetailsSubject.value)
                 })
                 .disposed(by: disposeBag)
-
-            // Setup default paying token
-            Observable.combineLatest(
-                sourceWalletSubject.distinctUntilChanged(),
-                destinationWalletSubject.distinctUntilChanged()
-            )
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] source, _ in
-                guard let source = source else {
-                    self?.payingTokenModeSubject.accept(.nativeSOL)
-                    return
-                }
-
-                if source.isNativeSOL {
-                    self?.payingTokenModeSubject.accept(.nativeSOL)
-                } else {
-                    self?.payingTokenModeSubject.accept(Defaults.payingToken)
-                }
-            })
-            .disposed(by: disposeBag)
         }
 
         func authenticateAndSwap() {
@@ -214,27 +195,12 @@ extension OrcaSwapV2 {
                 )
             )
 
-            // Determine a fee paying address
-            let payingTokenAddress: String
-            let payingTokenMint: String
-            switch payingTokenModeSubject.value {
-            case .nativeSOL:
-                guard
-                    let nativeWallet = walletsRepository.nativeWallet,
-                    let solPubKey = nativeWallet.pubkey
-                else {
-                    errorSubject.accept(.nativeWalletNotFound)
-                    return
-                }
-                payingTokenAddress = solPubKey
-                payingTokenMint = nativeWallet.mintAddress
-            case .splToken:
-                guard let sourcePubKey = sourceWallet.pubkey else {
-                    errorSubject.accept(.nativeWalletNotFound)
-                    return
-                }
-                payingTokenAddress = sourcePubKey
-                payingTokenMint = sourceWallet.mintAddress
+            guard
+                let payingTokenAddress = payingTokenSubject.value?.pubkey,
+                let payingTokenMint = payingTokenSubject.value?.mintAddress
+            else {
+                errorSubject.accept(.payingFeeWalletNotFound)
+                return
             }
 
             // form request
