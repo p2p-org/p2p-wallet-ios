@@ -52,11 +52,13 @@ class SendService: SendServiceType {
     
     // MARK: - Methods
     func load() -> Completable {
-        .zip(
-            orcaSwap.load()
-                .andThen(relayService.load()),
-            feeService.load()
-        )
+        var completables = [feeService.load()]
+        
+        if relayMethod == .relay {
+            completables.append(orcaSwap.load().andThen(relayService.load()))
+        }
+        
+        return .zip(completables)
     }
     
     func checkAccountValidation(account: String) -> Single<Bool> {
@@ -321,10 +323,10 @@ class SendService: SendServiceType {
             ),
             solanaSDK.getRecentBlockhash(commitment: nil)
         )
-            .flatMap { [weak self] preparedTransaction, recentBlockhash in
+            .flatMap { [weak self] params, recentBlockhash in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
                 // get signature
-                guard let data = preparedTransaction.transaction.findSignature(pubkey: owner.publicKey)?.signature
+                guard let data = params.0.transaction.findSignature(pubkey: owner.publicKey)?.signature
                 else { throw SolanaSDK.Error.other("Signature not found")}
                 
                 let authoritySignature = Base58.encode(data.bytes)
@@ -347,7 +349,7 @@ class SendService: SendServiceType {
                         .transferSPLToken(
                             .init(
                                 sender: sender,
-                                recipient: receiver,
+                                recipient: params.1!,
                                 mintAddress: wallet.mintAddress,
                                 authority: owner.publicKey.base58EncodedString,
                                 amount: amount,
@@ -376,7 +378,7 @@ class SendService: SendServiceType {
         lamportsPerSignature: SolanaSDK.Lamports? = nil,
         minRentExemption: SolanaSDK.Lamports? = nil,
         usingCachedFeePayerPubkey: Bool = false
-    ) -> Single<SolanaSDK.PreparedTransaction> {
+    ) -> Single<(SolanaSDK.PreparedTransaction, String?)> {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         guard let sender = wallet.pubkey else {return .error(SolanaSDK.Error.other("Source wallet is not valid"))}
         // form request
@@ -406,7 +408,7 @@ class SendService: SendServiceType {
                         feePayer: feePayer,
                         recentBlockhash: recentBlockhash,
                         lamportsPerSignature: lamportsPerSignature
-                    )
+                    ).map {($0, nil)}
                 }
                 
                 // other tokens
@@ -422,7 +424,7 @@ class SendService: SendServiceType {
                         recentBlockhash: recentBlockhash,
                         lamportsPerSignature: lamportsPerSignature,
                         minRentExemption: minRentExemption
-                    ).map {$0.preparedTransaction}
+                    ).map {($0.preparedTransaction, $0.realDestination)}
                 }
             }
     }
