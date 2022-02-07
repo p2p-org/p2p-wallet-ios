@@ -30,6 +30,7 @@ extension SwapTokenSettings {
 
         private let nativeWallet: Wallet?
         private let swapViewModel: OrcaSwapV2ViewModelType
+        @Injected private var walletRepository: WalletsRepository
 
         // MARK: - Subject
         var customSlippageIsOpenedDriver: Driver<Bool> { customSlippageIsOpenedSubject.asDriver() }
@@ -40,28 +41,20 @@ extension SwapTokenSettings {
         var feesContentDriver: Driver<[FeeCellContent]> {
             Driver.combineLatest(
                 swapViewModel.sourceWalletDriver,
-                swapViewModel.payingTokenDriver
-            ).map { [weak self] sourceWallet, _ in
+                swapViewModel.feePayingTokenDriver
+            ).map { [weak self] sourceWallet, feePayingToken in
                 guard let self = self else { return [] }
-                var list: [FeeCellContent] = [
-                    .init(
-                        wallet: self.nativeWallet,
-                        tokenLabelText: self.nativeWallet?.token.symbol,
-                        isSelected: self.swapViewModel.payingTokenModeSubject.value == .nativeSOL,
-                        onTapHandler: { [weak self] in
-                            self?.swapViewModel.changePayingToken(to: .nativeSOL)
-                        }
-                    )
-                ]
+                var list: [FeeCellContent] = []
 
-                if let sourceWallet = sourceWallet, !sourceWallet.isNativeSOL {
+                for wallet in self.walletRepository.getWallets().filter({ wallet in wallet.amount > 0 }) {
                     list.append(
                         .init(
-                            wallet: sourceWallet,
-                            tokenLabelText: sourceWallet.token.symbol,
-                            isSelected: self.swapViewModel.payingTokenModeSubject.value == .splToken,
-                            onTapHandler: { [weak self] in
-                                self?.swapViewModel.changePayingToken(to: .splToken)
+                            wallet: wallet,
+                            tokenLabelText: wallet.token.symbol,
+                            isSelected: feePayingToken == wallet,
+                            onTapHandler: {
+                                [weak self] in
+                                self?.swapViewModel.changeFeePayingToken(to: wallet)
                             }
                         )
                     )

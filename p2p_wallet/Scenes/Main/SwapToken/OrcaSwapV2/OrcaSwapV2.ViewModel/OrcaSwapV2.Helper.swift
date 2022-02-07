@@ -74,9 +74,13 @@ extension OrcaSwapV2.ViewModel {
         guard feesSubject.state == .loaded else {
             return .feesIsBeingCalculated
         }
+        
+        guard let payingFeeWallet = payingTokenSubject.value else {
+            return .payingFeeWalletNotFound
+        }
 
         // paying with SOL
-        if payingTokenModeSubject.value == .nativeSOL {
+        if payingTokenSubject.value?.isNativeSOL ?? false {
             guard let wallet = walletsRepository.nativeWallet else {
                 return .nativeWalletNotFound
             }
@@ -109,14 +113,16 @@ extension OrcaSwapV2.ViewModel {
     }
 
     func calculateAvailableAmount() -> Double? {
-        guard let sourceWallet = sourceWalletSubject.value,
+        guard
+            let sourceWallet = sourceWalletSubject.value,
+            let payingFeeWallet = payingTokenSubject.value,
             let fees = feesSubject.value?.transactionFees(of: sourceWallet.token.symbol)
         else {
             return sourceWalletSubject.value?.amount
         }
 
         // paying with native wallet
-        if payingTokenModeSubject.value == .nativeSOL && !sourceWallet.isNativeSOL {
+        if payingFeeWallet.isNativeSOL && !sourceWallet.isNativeSOL {
             return sourceWallet.amount
         }
         // paying with wallet itself

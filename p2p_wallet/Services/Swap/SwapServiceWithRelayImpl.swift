@@ -136,7 +136,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 )
             }
 
-            var transactionFee = PayingFee(
+            let transactionFee = PayingFee(
                 type: .transactionFee,
                 lamports: fees.transactionFees,
                 token: .nativeSolana
@@ -175,9 +175,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         }
     }
 
-    public func findPosibleDestinationMints(
-        fromMint: String
-    ) throws -> [String] { try orcaSwap.findPosibleDestinationMints(fromMint: fromMint) }
+    public func findPosibleDestinationMints(fromMint: String) throws -> [String] { try orcaSwap.findPosibleDestinationMints(fromMint: fromMint) }
 
     func swap(
         sourceAddress: String,
@@ -192,21 +190,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     ) -> Single<[String]> {
         guard let poolsPair = poolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
 
-        if sourceAddress == accountStorage.account?.publicKey.base58EncodedString {
-            // sol -> spl, replay doesn't support it
-            guard let decimals = poolsPair.orcaPoolPair[0].getTokenADecimals() else {
-                return .error(OrcaSwapError.invalidPool)
-            }
-
-            return orcaSwap.swap(
-                fromWalletPubkey: sourceAddress,
-                toWalletPubkey: destinationAddress,
-                bestPoolsPair: poolsPair.orcaPoolPair,
-                amount: amount.convertToBalance(decimals: decimals),
-                slippage: slippage,
-                isSimulation: false
-            ).map { response in [response.transactionId] }
-        } else if destinationAddress == accountStorage.account?.publicKey.base58EncodedString {
+        // handle spl -> sol case, we use simple orca swap
+        if destinationAddress == accountStorage.account?.publicKey.base58EncodedString {
             // spl -> sol, bug in error
             guard let decimals = poolsPair.orcaPoolPair[0].getTokenADecimals() else {
                 return .error(OrcaSwapError.invalidPool)
@@ -226,7 +211,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let sourceTokenMint = sourceTokenMint else { return .error(SolanaSDK.Error.other("Invalid source mint address")) }
         guard let destinationTokenMint = destinationTokenMint else { return .error(SolanaSDK.Error.other("Invalid destination mint address")) }
 
-        // spl -> spl, use relay
+        // if it's spl -> spl or sol -> spl, then use relay
         return feeRelay.topUpAndSwap(
             sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
             destinationTokenMint: destinationTokenMint,

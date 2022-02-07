@@ -36,6 +36,9 @@ struct Swap {
     }
 }
 
+/**
+ Swap configuration
+ */
 protocol SwapServicePoolsPair {
     func getMinimumAmountOut(
         inputAmount: UInt64,

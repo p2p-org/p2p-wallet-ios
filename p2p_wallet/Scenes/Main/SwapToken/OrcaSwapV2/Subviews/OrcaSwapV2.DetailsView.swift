@@ -64,7 +64,7 @@ extension OrcaSwapV2 {
                 }
                 .disposed(by: disposeBag)
 
-            viewModel.feePayingTokenDriver
+            viewModel.feePayingTokenStringDriver
                 .drive { [weak payFeesWithView] in
                     payFeesWithView?.setValue(text: $0)
                 }
