@@ -334,7 +334,7 @@ class SendService: SendServiceType {
                 let request: Single<String>
                 if wallet.isNativeSOL {
                     request = self.feeRelayerAPIClient.sendTransaction(
-                        .transferSOL(
+                        .rewardTransferSOL(
                             .init(
                                 sender: sender,
                                 recipient: receiver,
@@ -346,7 +346,7 @@ class SendService: SendServiceType {
                     )
                 } else {
                     request = self.feeRelayerAPIClient.sendTransaction(
-                        .transferSPLToken(
+                        .rewardTransferSPLToken(
                             .init(
                                 sender: sender,
                                 recipient: params.1!,
