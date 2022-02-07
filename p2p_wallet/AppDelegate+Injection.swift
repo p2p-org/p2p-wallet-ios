@@ -58,12 +58,18 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionsRepository.self)
             .implements(AssociatedTokenAccountHandler.self)
             .implements(RenVMSolanaAPIClientType.self)
-            .implements(SendTokenAPIClient.self)
             .implements(FeeAPIClient.self)
             .implements(OrcaSwapSolanaClient.self)
             .implements(OrcaSwapAccountProvider.self)
             .implements(OrcaSwapSignatureConfirmationHandler.self)
             .implements(ProcessTransactionAPIClient.self)
+            .scope(.session)
+        
+        // MARK: - Send service
+        register { _, args in
+            SendService(relayMethod: args())
+        }
+            .implements(SendServiceType.self)
             .scope(.session)
         
         // MARK: - Fee service
@@ -77,8 +83,18 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionHandler.self)
             .scope(.session)
         
+        // MARK: - FeeRelayer
         register { FeeRelayer.APIClient(version: 1) }
             .implements(FeeRelayerAPIClientType.self)
+            .scope(.session)
+        
+        register { try! FeeRelayer.Relay(
+            apiClient: resolve(),
+            solanaClient: resolve(),
+            accountStorage: resolve(SolanaSDK.self).accountStorage,
+            orcaSwapClient: resolve()
+        ) }
+            .implements(FeeRelayerRelayType.self)
             .scope(.session)
         
         // MARK: - PricesService
