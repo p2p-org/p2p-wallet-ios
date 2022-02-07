@@ -28,7 +28,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewModel {
         // MARK: - Dependencies
-        lazy var sendService: SendServiceType = Resolver.resolve(args: relayMethod)
+        let sendService: SendServiceType
         private let sendTokenViewModel: SendTokenViewModelType
         let showAfterConfirmation: Bool
         let preSelectedNetwork: SendToken.Network?
@@ -54,6 +54,7 @@ extension SendToken.ChooseRecipientAndNetwork {
             self.preSelectedNetwork = preSelectedNetwork
             self.sendTokenViewModel = sendTokenViewModel
             self.relayMethod = relayMethod
+            self.sendService = Resolver.resolve(args: relayMethod)
             bind()
             
             if let preSelectedNetwork = preSelectedNetwork {
