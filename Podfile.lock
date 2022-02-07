@@ -19,10 +19,10 @@ PODS:
   - CocoaLumberjack/Core (3.7.4)
   - CryptoSwift (1.4.2)
   - Down (0.11.0)
-  - FeeRelayerSwift (2.0.12):
-    - OrcaSwapSwift (= 1.0.5)
+  - FeeRelayerSwift (2.0.16):
+    - OrcaSwapSwift (= 1.0.7)
     - RxAlamofire (~> 6.1.1)
-    - SolanaSwift (= 1.1.17)
+    - SolanaSwift (= 1.2.0)
   - Firebase/Analytics (8.10.0):
     - Firebase/Core
   - Firebase/Core (8.10.0):
@@ -128,9 +128,9 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - OrcaSwapSwift (1.0.5):
+  - OrcaSwapSwift (1.0.7):
     - RxAlamofire (~> 6.1.1)
-    - SolanaSwift (= 1.1.17)
+    - SolanaSwift (= 1.2.0)
   - PromisesObjC (2.0.0)
   - PureLayout (3.1.9)
   - Resolver (1.5.0)
@@ -150,7 +150,7 @@ PODS:
     - RxSwift (= 6.2.0)
   - RxSwift (6.2.0)
   - secp256k1.swift (0.1.4)
-  - SolanaSwift (1.1.17):
+  - SolanaSwift (1.2.0):
     - BufferLayoutSwift (~> 0.9.0)
     - CryptoSwift (~> 1.4.1)
     - RxAlamofire (~> 6.1.1)
@@ -284,7 +284,7 @@ SPEC CHECKSUMS:
   CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
   CryptoSwift: a532e74ed010f8c95f611d00b8bbae42e9fe7c17
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
-  FeeRelayerSwift: cd96145bbd359393d708126be4d9d7603af1014d
+  FeeRelayerSwift: 232ef17b1acec146e77c01b12e5ae1cf33933e33
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
   FirebaseAnalytics: 319c9b3b1bdd400d60e2f415dff0c5f6959e6760
   FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440
@@ -301,7 +301,7 @@ SPEC CHECKSUMS:
   LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  OrcaSwapSwift: eabcb047424b97153273167ccdb716724ea58e61
+  OrcaSwapSwift: 63e815528506b775bf4a0d0077a55828816a368d
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
@@ -312,7 +312,7 @@ SPEC CHECKSUMS:
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaSwift: acd47d10133a5d2f185ffdcba62180b065e33072
+  SolanaSwift: 60d18e31e831f0f72892264c336df659740c920d
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SVGKit: 3c8468aab0026048532a3b27a0c81cdd939f0649

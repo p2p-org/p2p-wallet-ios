@@ -14,6 +14,7 @@ enum ReceiveToken {
         case showRenBTCReceivingStatus
         case share(address: String? = nil, qrCode: UIImage? = nil)
         case networkSelection
+        case showSupportedTokens
         case help
     }
     

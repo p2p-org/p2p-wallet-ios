@@ -41,11 +41,21 @@ extension SendToken {
         }()
         
         private lazy var receiveSection = SectionView(title: L10n.receive)
+        
+        // relayMethod == .reward
         private lazy var transferFeeSection = SectionView(title: L10n.transferFee)
         private lazy var freeFeeInfoButton = UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
             .onTap(self, action: #selector(freeFeeInfoButtonDidTouch))
-        private lazy var totalSection = SectionView(title: L10n.total)
         
+        // relayMethod == .relay
+        private lazy var feeView = FeeView(
+            solPrice: viewModel.getPrice(for: "SOL"),
+            feesDriver: viewModel.feesDriver,
+            payingWalletDriver: viewModel.payingWalletDriver,
+            payingWalletStatusDriver: viewModel.payingWalletStatusDriver
+        )
+        
+        private lazy var totalSection = SectionView(title: L10n.total)
         private lazy var tokenToFiatSection = SectionView(title: "<1 renBTC>")
         private lazy var fiatToTokenSection = SectionView(title: "<1 USD>")
         
@@ -80,11 +90,20 @@ extension SendToken {
                 
                 BEStackViewSpacing(26)
                 
+                if viewModel.relayMethod == .relay {
+                    feeView
+                        .onTap(self, action: #selector(recipientViewDidTouch))
+                }
+                
+                BEStackViewSpacing(18)
+                
                 UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
                     receiveSection
-                    UIStackView(axis: .horizontal, spacing: 4, alignment: .top, distribution: .fill) {
-                        transferFeeSection
-                        freeFeeInfoButton
+                    if viewModel.relayMethod == .reward {
+                        UIStackView(axis: .horizontal, spacing: 4, alignment: .top, distribution: .fill) {
+                            transferFeeSection
+                            freeFeeInfoButton
+                        }
                     }
                     UIStackView(axis: .horizontal) {
                         UIView.spacer
@@ -177,30 +196,32 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // transfer fee
-            viewModel.networkDriver
-                .map {[weak self] network in
-                    guard let self = self else {return NSAttributedString()}
-                    switch network {
-                    case .solana:
-                        return NSMutableAttributedString()
-                            .text(L10n.free + " ", size: 15, weight: .semibold)
-                            .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
-                    case .bitcoin:
-                        return network.defaultFees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
-                            .withParagraphStyle(lineSpacing: 8, alignment: .right)
+            if viewModel.relayMethod == .reward {
+                viewModel.networkDriver
+                    .map {[weak self] network in
+                        guard let self = self else {return NSAttributedString()}
+                        switch network {
+                        case .solana:
+                            return NSMutableAttributedString()
+                                .text(L10n.free + " ", size: 15, weight: .semibold)
+                                .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                        case .bitcoin:
+                            return network.defaultFees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                                .withParagraphStyle(lineSpacing: 8, alignment: .right)
+                        }
                     }
-                }
-                .drive(transferFeeSection.rightLabel.rx.attributedText)
-                .disposed(by: disposeBag)
-            
-            viewModel.networkDriver
-                .map {$0 != .solana}
-                .do(afterNext: {[weak self] _ in
-                    self?.transferFeeSection.rightLabel.setNeedsLayout()
-                    self?.transferFeeSection.layoutIfNeeded()
-                })
-                .drive(freeFeeInfoButton.rx.isHidden)
-                .disposed(by: disposeBag)
+                    .drive(transferFeeSection.rightLabel.rx.attributedText)
+                    .disposed(by: disposeBag)
+
+                viewModel.networkDriver
+                    .map {$0 != .solana}
+                    .do(afterNext: {[weak self] _ in
+                        self?.transferFeeSection.rightLabel.setNeedsLayout()
+                        self?.transferFeeSection.layoutIfNeeded()
+                    })
+                    .drive(freeFeeInfoButton.rx.isHidden)
+                    .disposed(by: disposeBag)
+            }
                     
             // total
             Driver.combineLatest(
@@ -303,9 +324,19 @@ extension SendToken {
         }
         
         @objc private func freeFeeInfoButtonDidTouch() {
+            let title: String
+            let message: String
+            switch viewModel.relayMethod {
+            case .reward:
+                title = L10n.free.uppercaseFirst
+                message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
+            case .relay:
+                title = L10n.thereAreFreeTransactionsLeftForToday(100)
+                message = L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee
+            }
             showAlert(
-                title: L10n.thereAreFreeTransactionsLeftForToday(100),
-                message: L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee,
+                title: title,
+                message: message,
                 buttonTitles: [L10n.ok],
                 highlightedButtonIndex: 0,
                 completion: nil

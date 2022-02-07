@@ -54,11 +54,9 @@ extension ReceiveToken {
                             viewModel.timeRemainsDriver().drive(textLabel.rx.attributedText).disposed(by: disposeBag)
                         }
                 }
-
                 if viewModel.hasExplorerButton {
-                    WLStepButton.main(image: .external, imageSize: .init(width: 14, height: 14), text: L10n.viewInExplorer(L10n.bitcoin))
-                        .padding(.init(only: .top, inset: 18))
-                        .onTap { [unowned self] in self.viewModel.showBTCAddressInExplorer() }
+                    ExplorerButton(title: L10n.viewInExplorer(L10n.bitcoin))
+                        .onTap { [weak self] in self?.viewModel.showBTCAddressInExplorer() }
                 }
             }
         }
