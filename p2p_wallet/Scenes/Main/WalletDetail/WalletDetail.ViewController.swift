@@ -102,7 +102,7 @@ extension WalletDetail {
                 self.present(vc, animated: true, completion: nil)
             case .send(let wallet):
                 #if DEBUG
-                showAlert(title: "[DEBUG] Relay method", message: "Choose relay method", buttonTitles: ["Relay", "Compensation"], highlightedButtonIndex: 0, destroingIndex: 1) {[weak self] selected in
+                showAlert(title: "[DEBUG] Relay method", message: "Choose relay method", buttonTitles: SendTokenRelayMethod.allCases.map {"\($0)"}) {[weak self] selected in
                     guard let self = self else {return}
                     let relayMethod: SendTokenRelayMethod = .init(rawValue: selected)!
                     let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil, relayMethod: relayMethod)
