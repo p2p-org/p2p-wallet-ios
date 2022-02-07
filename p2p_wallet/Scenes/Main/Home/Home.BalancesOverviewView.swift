@@ -62,7 +62,7 @@ extension Home {
         
         override func createButtonsView() -> UIView {
             UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually) {
-                buyButton
+//                buyButton
                 sendButton
                 receiveButton
                 swapButton
