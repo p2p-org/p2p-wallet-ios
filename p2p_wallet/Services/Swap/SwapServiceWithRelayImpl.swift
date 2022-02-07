@@ -192,7 +192,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
         // handle spl -> sol case, we use simple orca swap
         if destinationAddress == accountStorage.account?.publicKey.base58EncodedString {
-            // spl -> sol, bug in error
             guard let decimals = poolsPair.orcaPoolPair[0].getTokenADecimals() else {
                 return .error(OrcaSwapError.invalidPool)
             }
@@ -216,7 +215,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
             destinationTokenMint: destinationTokenMint,
             destinationAddress: destinationAddress,
-            payingFeeToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
+            payingFeeToken: FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint),
             swapPools: poolsPair.orcaPoolPair,
             inputAmount: amount,
             slippage: slippage
