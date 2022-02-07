@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
 protocol ReceiveSceneModel: BESceneModel {
     var tokenTypeDriver: Driver<ReceiveToken.TokenType> { get }
@@ -25,6 +26,8 @@ protocol ReceiveSceneModel: BESceneModel {
     var tokenWallet: Wallet? { get }
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
 
+    func isRenBtcCreated() -> Bool
+    func acceptReceivingRenBTC() -> Completable
     func switchToken(_ tokenType: ReceiveToken.TokenType)
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
     func showSelectionNetwork()
@@ -34,9 +37,11 @@ protocol ReceiveSceneModel: BESceneModel {
 
 extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
+        @Injected private var handler: AssociatedTokenAccountHandler
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var walletsRepository: WalletsRepository
 
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -181,6 +186,30 @@ extension ReceiveToken {
 
             clipboardManager.copyToClipboard(address)
             showCopied()
+        }
+        
+        func isRenBtcCreated() -> Bool {
+            walletsRepository.getWallets().contains(where: {$0.token.isRenBTC})
+        }
+        
+        func acceptReceivingRenBTC() -> Completable {
+            return handler.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
+                .catch {error in
+                    if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
+                        return .just(false)
+                    }
+                    throw error
+                }
+                .flatMapCompletable { [weak self] isRenBtcCreated in
+                    guard let self = self else {return .error(SolanaSDK.Error.unknown)}
+                    if isRenBtcCreated {
+                        self.receiveBitcoinViewModel.acceptConditionAndLoadAddress()
+                        self.switchToken(.btc)
+                        return .empty()
+                    }
+                    return self.handler.createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
+                        .asCompletable()
+                }
         }
         
         var navigation: Driver<NavigatableScene?> { navigationSubject.asDriver(onErrorDriveWith: Driver.empty()) }
