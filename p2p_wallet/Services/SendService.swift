@@ -11,6 +11,7 @@ import FeeRelayerSwift
 import OrcaSwapSwift
 
 protocol SendServiceType {
+    var relayMethod: SendTokenRelayMethod { get }
     func load() -> Completable
     func getFees() -> Single<SolanaSDK.Fee>
     func getFeesInPayingToken(
@@ -34,6 +35,7 @@ protocol SendServiceType {
 }
 
 class SendService: SendServiceType {
+    let relayMethod: SendTokenRelayMethod
     @Injected private var solanaSDK: SolanaSDK
     @Injected private var orcaSwap: OrcaSwapType
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClientType
@@ -41,6 +43,10 @@ class SendService: SendServiceType {
     @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
     @Injected private var feeService: FeeServiceType
     private var cachedFeePayerPubkey: String?
+    
+    init(relayMethod: SendTokenRelayMethod) {
+        self.relayMethod = relayMethod
+    }
     
     func load() -> Completable {
         .zip(
