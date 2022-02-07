@@ -722,3 +722,4 @@
 "Touch ID" = "ID tactile";
 "Paying token is not valid. Please choose another one" = "Le jeton de paiement n'est pas valide. Veuillez en choisir un autre";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Cette adresse ne semble pas avoir de compte %@. Vous devez payer des frais uniques pour créer un compte %@ pour cette adresse. Vous pouvez choisir la devise dans laquelle payer ci-dessous.";
+"Could not create renBTC token, please try again later" = "Impossible de créer le jeton renBTC, veuillez réessayer plus tard";
