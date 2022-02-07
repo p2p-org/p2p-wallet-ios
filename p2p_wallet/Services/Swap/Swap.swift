@@ -94,7 +94,7 @@ protocol SwapServiceType {
     func swap(
         sourceAddress: String,
         sourceTokenMint: String?,
-        destinationAddress: String,
+        destinationAddress: String?,
         destinationTokenMint: String?,
         payingTokenAddress: String,
         payingTokenMint: String,

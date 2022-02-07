@@ -207,7 +207,7 @@ extension OrcaSwapV2 {
             let request = swapService.swap(
                 sourceAddress: sourceWallet.pubkey!,
                 sourceTokenMint: sourceWallet.mintAddress,
-                destinationAddress: destinationWallet.pubkey!,
+                destinationAddress: destinationWallet.pubkey,
                 destinationTokenMint: destinationWallet.mintAddress,
                 payingTokenAddress: payingTokenAddress,
                 payingTokenMint: payingTokenMint,
