@@ -67,10 +67,23 @@ extension ReceiveToken {
                                     self?.viewModel.switchToken(.btc)
                                     self?.back()
                                 } else {
-                                    let vc = BitcoinConfirmScene { [weak self] in
-                                        self?.viewModel.receiveBitcoinViewModel.acceptConditionAndLoadAddress()
-                                        self?.viewModel.switchToken(.btc)
-                                        self?.back()
+                                    let vc = BitcoinConfirmScene(isRenBTCCreated: viewModel.isRenBtcCreated()) { [weak self] in
+                                        guard let self = self else {return}
+                                        self.showIndetermineHud()
+                                        self.viewModel.acceptReceivingRenBTC()
+                                            .subscribe(onCompleted: { [weak self] in
+                                                guard let self = self else {return}
+                                                self.hideHud()
+                                                self.back()
+                                            }, onError: { [weak self] error in
+                                                guard let self = self else {return}
+                                                #if DEBUG
+                                                print("Create renBTC error: \(error)")
+                                                #endif
+                                                self.hideHud()
+                                                self.showAlert(title: L10n.error.uppercaseFirst, message: L10n.couldNotCreateRenBTCTokenPleaseTryAgainLater)
+                                            })
+                                            .disposed(by: self.disposeBag)
                                     }
                                     self?.present(vc, animated: true)
                                 }

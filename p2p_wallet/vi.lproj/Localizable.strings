@@ -717,8 +717,9 @@
 "Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address." = "Mỗi token trong danh sách này đều có sẵn để nhận bằng địa chỉ này;  bạn có thể tìm kiếm token bằng cách nhập tên hoặc mã của nó. \n \n Nếu token không có trong danh sách này, chúng tôi khuyên bạn không nên gửi mã đến địa chỉ này.";
 "we do not recommend sending it to this address." = "chúng tôi không khuyên bạn nên gửi nó đến địa chỉ này.";
 "What tokens can I receive?" = "Tôi có thể nhận được những token nào?";
-"Security & Network" = "Bảo vệ";
+"Security & Network" = "Bảo mật & Mạng";
 "Face ID" = "Face ID";
 "Touch ID" = "ID cảm ứng";
 "Paying token is not valid. Please choose another one" = "Token thanh toán không hợp lệ. Vui lòng chọn token khác";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Địa chỉ này dường như không có tài khoản %@. Bạn phải trả phí một lần để tạo tài khoản %@ cho địa chỉ này. Bạn có thể chọn đơn vị tiền tệ để thanh toán bên dưới.";
+"Could not create renBTC token, please try again later" = "Không thể tạo token renBTC, vui lòng thử lại sau";

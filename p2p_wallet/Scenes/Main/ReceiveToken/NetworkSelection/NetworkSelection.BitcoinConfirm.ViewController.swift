@@ -9,12 +9,15 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import BEPureLayout
 
 extension ReceiveToken {
     class BitcoinConfirmScene: WLBottomSheet {
         let onAccept: (() -> Void)?
+        let isRenBTCCreated: Bool
         
-        init(onAccept: (() -> Void)? = nil) {
+        init(isRenBTCCreated: Bool, onAccept: (() -> Void)? = nil) {
+            self.isRenBTCCreated = isRenBTCCreated
             self.onAccept = onAccept
             super.init()
         }
@@ -56,6 +59,15 @@ extension ReceiveToken {
                     ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                 }.padding(.init(x: 18, y: 0))
+                
+                // 2nd description
+                if !isRenBTCCreated {
+                    BEStackViewSpacing(18)
+                    
+                    UIView.greyBannerView {
+                        UILabel(text: L10n.SolanaAssociatedTokenAccountRequired.thisWillRequireYouToSignATransactionAndSpendSomeSOL, textSize: 15, numberOfLines: 0)
+                    }.padding(.init(x: 18, y: 0))
+                }
                 
                 // Accept button
                 WLStepButton.main(image: .check.withTintColor(.white), text: L10n.iUnderstand)

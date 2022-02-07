@@ -315,14 +315,17 @@ class SendService: SendServiceType {
         guard let owner = solanaSDK.accountStorage.account,
               let sender = wallet.pubkey
         else {return .error(SolanaSDK.Error.unauthorized)}
-        return Single.zip(
-            prepareForSendingToSolanaNetworkViaRewardMethod(
-                from: wallet,
-                receiver: receiver,
-                amount: amount.convertToBalance(decimals: wallet.token.decimals)
-            ),
-            solanaSDK.getRecentBlockhash(commitment: nil)
-        )
+        return solanaSDK.getRecentBlockhash(commitment: nil)
+            .flatMap {[weak self] recentBlockhash -> Single<((SolanaSDK.PreparedTransaction, String?), String)> in
+                guard let self = self else { throw SolanaSDK.Error.unknown }
+                return self.prepareForSendingToSolanaNetworkViaRewardMethod(
+                    from: wallet,
+                    receiver: receiver,
+                    amount: amount.convertToBalance(decimals: wallet.token.decimals),
+                    recentBlockhash: recentBlockhash
+                )
+                    .map {($0, recentBlockhash)}
+            }
             .flatMap { [weak self] params, recentBlockhash in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
                 // get signature
