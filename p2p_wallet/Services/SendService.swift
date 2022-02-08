@@ -104,6 +104,17 @@ class SendService: SendServiceType {
                     usingCachedFeePayerPubkey: true
                 )
                     .map {$0.expectedFee}
+                    .flatMap { [weak self] expectedFee in
+                        guard let self = self else {throw SolanaSDK.Error.unknown}
+                        return self.relayService.getRelayAccountStatus(reuseCache: true)
+                            .map { [weak self] relayAccountStatus -> SolanaSDK.FeeAmount in
+                                guard let self = self else {throw SolanaSDK.Error.unknown}
+                                if relayAccountStatus == .notYetCreated {
+                                    return .init(transaction: expectedFee.transaction, accountBalances: expectedFee.accountBalances + self.relayService.getRelayAccountCreationCost())
+                                }
+                                return expectedFee
+                            }
+                    }
             case .reward:
                 return .just(.zero)
             }
