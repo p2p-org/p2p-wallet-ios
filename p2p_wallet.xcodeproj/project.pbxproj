@@ -91,6 +91,7 @@
 		41CA05802754BC3100953322 /* TopAlignLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA057F2754BC3100953322 /* TopAlignLabel.swift */; };
 		41CA05822754BDD700953322 /* ReserveName.MainButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05812754BDD700953322 /* ReserveName.MainButtonState.swift */; };
 		41D57D28279E405100ECC2FB /* ReceiveToken.TapAndHoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D57D27279E405100ECC2FB /* ReceiveToken.TapAndHoldView.swift */; };
+		41D59FE127AD1CA400829B90 /* CachedTokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */; };
 		41D59FD927ABC68A00829B90 /* IntercomUserAttributesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D59FD827ABC68A00829B90 /* IntercomUserAttributesService.swift */; };
 		41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6AB2739109D00453B61 /* HorizontalFlowLayout.swift */; };
 		41D7F6AE2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6AC2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift */; };
@@ -615,6 +616,7 @@
 		41CA057F2754BC3100953322 /* TopAlignLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAlignLabel.swift; sourceTree = "<group>"; };
 		41CA05812754BDD700953322 /* ReserveName.MainButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.MainButtonState.swift; sourceTree = "<group>"; };
 		41D57D27279E405100ECC2FB /* ReceiveToken.TapAndHoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.TapAndHoldView.swift; sourceTree = "<group>"; };
+		41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedTokensRepository.swift; sourceTree = "<group>"; };
 		41D59FD827ABC68A00829B90 /* IntercomUserAttributesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntercomUserAttributesService.swift; sourceTree = "<group>"; };
 		41D7F6AB2739109D00453B61 /* HorizontalFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalFlowLayout.swift; sourceTree = "<group>"; };
 		41D7F6AC2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageableHorizontalLayoutScrollHandler.swift; sourceTree = "<group>"; };
@@ -2130,6 +2132,7 @@
 				3B78CB562773147F00FB3C4C /* ClipboardManager.swift */,
 				3B78CB502773067100FB3C4C /* NotificationsService.swift */,
 				3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */,
+				41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2911,6 +2914,7 @@
 				41CA057C27548C9900953322 /* AgreeTermsAndPolicyView.swift in Sources */,
 				41BDBD6027A8E15300000EF7 /* ReceiveToken.ExplorerButton.swift in Sources */,
 				BC18CAA3263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift in Sources */,
+				41D59FE127AD1CA400829B90 /* CachedTokensRepository.swift in Sources */,
 				BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */,
 				4183007E2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift in Sources */,
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,
