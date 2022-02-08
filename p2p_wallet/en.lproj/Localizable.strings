@@ -712,3 +712,15 @@
 "Username %@ was reserved" = "Username %@ was reserved";
 "None" = "None";
 "Feedback" = "Feedback";
+"Select token to pay fees" = "Select token to pay fees";
+"Choose the token to pay fees" = "Choose the token to pay fees";
+"List of supported tokens" = "List of supported tokens";
+"Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address." = "Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address.";
+"we do not recommend sending it to this address." = "we do not recommend sending it to this address.";
+"What tokens can I receive?" = "What tokens can I receive?";
+"Security & Network" = "Security & Network";
+"Face ID" = "Face ID";
+"Touch ID" = "Touch ID";
+"Paying token is not valid. Please choose another one" = "Paying token is not valid. Please choose another one";
+"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below.";
+"Could not create renBTC token, please try again later" = "Could not create renBTC token, please try again later";

@@ -52,6 +52,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 vc.modalPresentationStyle = .custom
                 present(vc, animated: true, completion: nil)
+            case .selectPayingWallet:
+                let vm = ChooseWallet.ViewModel(selectedWallet: nil, handler: viewModel, showOtherWallets: false)
+                vm.customFilter = { $0.amount > 0}
+                let vc = ChooseWallet.ViewController(
+                    title: nil,
+                    viewModel: vm
+                )
+                present(vc, animated: true, completion: nil)
             }
         }
     }
