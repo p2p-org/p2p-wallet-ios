@@ -23,5 +23,7 @@ final class CachedTokensRepository: TokensRepository {
         }
 
         return .just(cache)
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
     }
 }
