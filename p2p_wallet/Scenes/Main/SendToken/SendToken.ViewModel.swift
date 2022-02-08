@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
+    var relayMethod: SendTokenRelayMethod {get}
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     
     func getPrice(for symbol: String) -> Double
@@ -36,12 +37,13 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
-        @Injected var sendService: SendServiceType
+        let sendService: SendServiceType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
+        let relayMethod: SendTokenRelayMethod
         
         private var selectedNetwork: SendToken.Network?
         private var selectableNetworks: [SendToken.Network]?
@@ -57,10 +59,13 @@ extension SendToken {
         // MARK: - Initializers
         init(
             walletPubkey: String?,
-            destinationAddress: String?
+            destinationAddress: String?,
+            relayMethod: SendTokenRelayMethod
         ) {
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
+            self.relayMethod = relayMethod
+            self.sendService = Resolver.resolve(args: relayMethod)
             
             // accept initial values
             if let pubkey = walletPubkey {

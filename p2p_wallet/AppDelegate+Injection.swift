@@ -27,6 +27,9 @@ extension Resolver: ResolverRegistering {
         register {AnalyticsManager()}
             .implements(AnalyticsManagerType.self)
             .scope(.application)
+        register { IntercomMessengerLauncher() }
+            .implements(HelpCenterLauncher.self)
+            .scope(.session)
         register {CryptoComparePricesFetcher()}
             .implements(PricesFetcher.self)
             .scope(.application)
@@ -66,7 +69,9 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
         
         // MARK: - Send service
-        register { SendService() }
+        register { _, args in
+            SendService(relayMethod: args())
+        }
             .implements(SendServiceType.self)
             .scope(.session)
         

@@ -131,11 +131,22 @@ extension Home {
                     self.present(vc, animated: true, completion: nil)
                 }
             case .sendToken(let address):
-                let vm = SendToken.ViewModel(walletPubkey: nil, destinationAddress: address)
+                #if DEBUG
+                showAlert(title: "[DEBUG] Relay method", message: "Choose relay method", buttonTitles: SendTokenRelayMethod.allCases.map {"\($0)"}) {[weak self] selected in
+                    guard let self = self else {return}
+                    let relayMethod: SendTokenRelayMethod = .init(rawValue: selected)!
+                    let vm = SendToken.ViewModel(walletPubkey: nil, destinationAddress: address, relayMethod: relayMethod)
+                    let vc = SendToken.ViewController(viewModel: vm)
+                    self.show(vc, sender: nil)
+                }
+                #else
+                let vm = SendToken.ViewModel(walletPubkey: nil, destinationAddress: address, relayMethod: .default)
                 let vc = SendToken.ViewController(viewModel: vm)
+                show(vc, sender: nil)
+                #endif
+                
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
-                show(vc, sender: nil)
             case .swapToken:
                 let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
                 let vc = OrcaSwapV2.ViewController(viewModel: vm)

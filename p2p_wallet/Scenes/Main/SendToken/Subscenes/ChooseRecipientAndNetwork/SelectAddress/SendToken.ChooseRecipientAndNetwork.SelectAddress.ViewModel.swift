@@ -11,6 +11,7 @@ import RxCocoa
 import SolanaSwift
 
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDidSelectHandler {
+    var relayMethod: SendTokenRelayMethod {get}
     var showAfterConfirmation: Bool {get}
     var preSelectedNetwork: SendToken.Network? {get}
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
@@ -54,6 +55,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         @Injected private var clipboardManager: ClipboardManagerType
         
         // MARK: - Properties
+        let relayMethod: SendTokenRelayMethod
         private let disposeBag = DisposeBag()
         let recipientsListViewModel = RecipientsListViewModel()
         let showAfterConfirmation: Bool
@@ -63,7 +65,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
         
-        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool) {
+        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool, relayMethod: SendTokenRelayMethod) {
+            self.relayMethod = relayMethod
             self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
             self.showAfterConfirmation = showAfterConfirmation
             recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getSendService()
@@ -122,11 +125,16 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     var isValidDriver: Driver<Bool> {
-        Driver.combineLatest([
-            payingWalletDriver.map {$0 != nil},
-            recipientDriver.map {$0 != nil},
-            payingWalletStatusDriver.map {$0.isValidAndEnoughBalance}
-        ])
+        var conditionDrivers: [Driver<Bool>] = [
+            recipientDriver.map {$0 != nil}
+        ]
+        
+        if relayMethod == .relay {
+            conditionDrivers.append(payingWalletStatusDriver.map {$0.isValidAndEnoughBalance})
+            conditionDrivers.append(payingWalletDriver.map {$0 != nil})
+        }
+        
+        return Driver.combineLatest(conditionDrivers)
             .map {$0.allSatisfy {$0}}
     }
     
