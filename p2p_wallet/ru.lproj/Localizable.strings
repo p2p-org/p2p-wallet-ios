@@ -711,14 +711,16 @@
 "You can receive %@ by providing this address, QR code or username:" = "Вы можете получить %@, указав этот адрес, QR-код или имя пользователя:";
 "Username %@ was reserved" = "Имя пользователя %@ было зарезервировано";
 "None" = "Никто";
+"Feedback" = "Обратная связь";
 "Select token to pay fees" = "Выберите токен для оплаты комиссии";
 "Choose the token to pay fees" = "Выберите токен для оплаты сборов";
 "List of supported tokens" = "Список поддерживаемых токенов";
 "Each token in this list is available for receiving with this address; you can search for a token by typing its name or ticker.\n\nIf a token is not on this list, we do not recommend sending it to this address." = "Каждый токен в этом списке доступен для получения с этим адресом;  вы можете найти токен, введя его имя или тикер.\n\nЕсли токена нет в этом списке, мы не рекомендуем отправлять его на этот адрес.";
 "we do not recommend sending it to this address." = "мы не рекомендуем отправлять его на этот адрес.";
 "What tokens can I receive?" = "Какие токены я могу получить?";
-"Security & Network" = "Безопасность";
+"Security & Network" = "Безопасность и сеть";
 "Face ID" = "Идентификатор лица";
 "Touch ID" = "Сенсорный идентификатор";
 "Paying token is not valid. Please choose another one" = "Платежный токен недействителен. Пожалуйста, выберите другой";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Этот адрес не имеет учетной записи %@. Вы должны заплатить единовременную плату, чтобы создать учетную запись %@ для этого адреса. Ниже вы можете выбрать, в какой валюте платить.";
+"Could not create renBTC token, please try again later" = "Не удалось создать токен renBTC. Повторите попытку позже.";

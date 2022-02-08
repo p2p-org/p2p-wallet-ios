@@ -44,7 +44,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
             .padding(.init(x: 20, y: 0))
         private lazy var errorLabel = UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
-        private lazy var feeView = _FeeView(
+        private lazy var feeView = _FeeView( // for relayMethod == .relay only
             walletDriver: viewModel.walletDriver,
             solPrice: viewModel.getPrice(for: "SOL"),
             feesDriver: viewModel.feesDriver,
@@ -90,7 +90,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 errorView
                 recipientCollectionView
                 BEStackViewSpacing(18)
-                feeView
+                if viewModel.relayMethod == .relay {
+                    feeView
+                }
             }
             
             addSubview(actionButton)
@@ -202,26 +204,28 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 viewModel.payingWalletDriver,
                 viewModel.payingWalletStatusDriver
             )
-                .map { recipient, payingWallet, payingWalletStatus in
+                .map { [weak self] recipient, payingWallet, payingWalletStatus in
+                    guard let self = self else {return ""}
                     if recipient == nil {
                         return L10n.chooseTheRecipientToProceed
                     }
                     
-                    if let payingWallet = payingWallet {
-                        switch payingWalletStatus {
-                        case .loading:
-                            return L10n.calculatingFees
-                        case .invalid:
-                            return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
-                        case .valid(_, let enoughBalance):
-                            if !enoughBalance {
-                                return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                    if self.viewModel.relayMethod == .relay {
+                        if let payingWallet = payingWallet {
+                            switch payingWalletStatus {
+                            case .loading:
+                                return L10n.calculatingFees
+                            case .invalid:
+                                return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                            case .valid(_, let enoughBalance):
+                                if !enoughBalance {
+                                    return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                                }
                             }
+                        } else {
+                            return L10n.chooseTheTokenToPayFees
                         }
-                    } else {
-                        return L10n.chooseTheTokenToPayFees
                     }
-                    
                     return L10n.reviewAndConfirm
                 }
                 .drive(actionButton.rx.text)
