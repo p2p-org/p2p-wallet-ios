@@ -18,7 +18,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
-    func getAPIClient() -> SendTokenAPIClient
+    func getSendService() -> SendServiceType
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
     func save()
@@ -28,27 +28,33 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewModel {
         // MARK: - Dependencies
+        let sendService: SendServiceType
         private let sendTokenViewModel: SendTokenViewModelType
         let showAfterConfirmation: Bool
         let preSelectedNetwork: SendToken.Network?
         
         // MARK: - Properties
+        private let relayMethod: SendTokenRelayMethod
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
+        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializers
         init(
             showAfterConfirmation: Bool,
             preSelectedNetwork: SendToken.Network?,
-            sendTokenViewModel: SendTokenViewModelType
+            sendTokenViewModel: SendTokenViewModelType,
+            relayMethod: SendTokenRelayMethod
         ) {
             self.showAfterConfirmation = showAfterConfirmation
             self.preSelectedNetwork = preSelectedNetwork
             self.sendTokenViewModel = sendTokenViewModel
+            self.relayMethod = relayMethod
+            self.sendService = Resolver.resolve(args: relayMethod)
             bind()
             
             if let preSelectedNetwork = preSelectedNetwork {
@@ -63,6 +69,10 @@ extension SendToken.ChooseRecipientAndNetwork {
             
             sendTokenViewModel.networkDriver
                 .drive(networkSubject)
+                .disposed(by: disposeBag)
+            
+            sendTokenViewModel.payingWalletDriver
+                .drive(payingWalletSubject)
                 .disposed(by: disposeBag)
         }
     }
@@ -92,13 +102,14 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
         let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
             chooseRecipientAndNetworkViewModel: self,
-            showAfterConfirmation: showAfterConfirmation
+            showAfterConfirmation: showAfterConfirmation,
+            relayMethod: relayMethod
         )
         return vm
     }
     
-    func getAPIClient() -> SendTokenAPIClient {
-        sendTokenViewModel.getAPIClient()
+    func getSendService() -> SendServiceType {
+        sendTokenViewModel.getSendService()
     }
     
     func getPrice(for symbol: String) -> Double {
@@ -116,6 +127,7 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     func save() {
         sendTokenViewModel.selectRecipient(recipientSubject.value)
         sendTokenViewModel.selectNetwork(networkSubject.value)
+        sendTokenViewModel.payingWalletSubject.accept(payingWalletSubject.value)
     }
     
     func navigateNext() {

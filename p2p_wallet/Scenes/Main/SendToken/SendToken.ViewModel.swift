@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
+    var relayMethod: SendTokenRelayMethod {get}
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     
     func getPrice(for symbol: String) -> Double
@@ -36,12 +37,13 @@ extension SendToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
-        @Injected var solanaAPIClient: SendTokenAPIClient
-        @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+        let sendService: SendServiceType
         
         // MARK: - Properties
+        private let disposeBag = DisposeBag()
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
+        let relayMethod: SendTokenRelayMethod
         
         private var selectedNetwork: SendToken.Network?
         private var selectableNetworks: [SendToken.Network]?
@@ -52,14 +54,18 @@ extension SendToken {
         let amountSubject = BehaviorRelay<Double?>(value: nil)
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
+        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializers
         init(
             walletPubkey: String?,
-            destinationAddress: String?
+            destinationAddress: String?,
+            relayMethod: SendTokenRelayMethod
         ) {
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
+            self.relayMethod = relayMethod
+            self.sendService = Resolver.resolve(args: relayMethod)
             
             // accept initial values
             if let pubkey = walletPubkey {
@@ -67,6 +73,7 @@ extension SendToken {
             } else {
                 walletSubject.accept(walletsRepository.nativeWallet)
             }
+            sendService.load().subscribe(onCompleted: {}).disposed(by: disposeBag)
         }
         
         deinit {
@@ -75,73 +82,47 @@ extension SendToken {
         
         private func send() {
             guard let wallet = walletSubject.value,
-                  let sender = wallet.pubkey,
-                  let amount = amountSubject.value?.toLamport(decimals: wallet.token.decimals),
+                  let amount = amountSubject.value,
                   let receiver = recipientSubject.value?.address
             else {return}
             
             let network = networkSubject.value
             
             // form request
-            var request: Single<String>!
-            if receiver == sender {
-                request = .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
-            }
-            
-            // detect network
-            let fee: SolanaSDK.Lamports
-            switch network {
-            case .solana:
-                if wallet.isNativeSOL {
-                    request = solanaAPIClient.sendNativeSOL(
-                        to: receiver,
-                        amount: amount,
-                        withoutFee: Defaults.useFreeTransaction,
-                        isSimulation: false
-                    )
-                }
-                
-                // other tokens
-                else {
-                    request = solanaAPIClient.sendSPLTokens(
-                        mintAddress: wallet.mintAddress,
-                        decimals: wallet.token.decimals,
-                        from: sender,
-                        to: receiver,
-                        amount: amount,
-                        withoutFee: Defaults.useFreeTransaction,
-                        isSimulation: false
-                    )
-                }
-                fee = 0
-            case .bitcoin:
-                request = renVMBurnAndReleaseService.burn(
-                    recipient: receiver,
-                    amount: amount
-                )
-                fee = network.defaultFees.first(where: {$0.unit == "renBTC"})?.amount.toLamport(decimals: 8) ?? 0 // TODO: solana fee
-            }
-            
-            // log
-            analyticsManager.log(
-                event: .sendSendClick(
-                    tokenTicker: wallet.token.symbol,
-                    sum: amount.convertToBalance(decimals: wallet.token.decimals)
-                )
+            let request = sendService.send(
+                from: wallet,
+                receiver: receiver,
+                amount: amount,
+                network: network,
+                payingFeeWallet: payingWalletSubject.value
             )
             
-            // show processing scene
-            navigationSubject.accept(
-                .processTransaction(
-                    request: request.map {$0 as ProcessTransactionResponseType},
-                    transactionType: .send(
-                        from: wallet,
-                        to: receiver,
-                        lamport: amount,
-                        feeInLamports: fee
+            // get fees
+            getFees()
+                .subscribe(onSuccess: {[weak self] feeAmount in
+                    let feeAmount = feeAmount ?? .zero
+                    // log
+                    self?.analyticsManager.log(
+                        event: .sendSendClick(
+                            tokenTicker: wallet.token.symbol,
+                            sum: amount
+                        )
                     )
-                )
-            )
+                    
+                    // show processing scene
+                    self?.navigationSubject.accept(
+                        .processTransaction(
+                            request: request.map {$0 as ProcessTransactionResponseType},
+                            transactionType: .send(
+                                from: wallet,
+                                to: receiver,
+                                lamport: amount.toLamport(decimals: wallet.token.decimals),
+                                feeInLamports: feeAmount.total
+                            )
+                        )
+                    )
+                })
+                .disposed(by: disposeBag)
         }
     }
 }
@@ -166,8 +147,8 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         ]
     }
     
-    func getAPIClient() -> SendTokenAPIClient {
-        solanaAPIClient
+    func getSendService() -> SendServiceType {
+        sendService
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
@@ -217,6 +198,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         guard let recipient = recipientSubject.value else {return false}
         return recipient.name == nil &&
             recipient.address
-                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()))
+                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: sendService.isTestNet()))
     }
 }
