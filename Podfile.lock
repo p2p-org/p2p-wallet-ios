@@ -116,6 +116,7 @@ PODS:
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
   - GT3Captcha-iOS (0.14.12)
+  - Intercom (11.1.1)
   - JazziconSwift (1.0.0)
   - KeychainSwift (19.0.0)
   - Kingfisher (7.1.2)
@@ -180,6 +181,7 @@ DEPENDENCIES:
   - Firebase/Analytics
   - Firebase/Crashlytics
   - GT3Captcha-iOS
+  - Intercom
   - JazziconSwift
   - KeychainSwift (~> 19.0)
   - Kingfisher
@@ -217,6 +219,7 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - GT3Captcha-iOS
+    - Intercom
     - JazziconSwift
     - KeychainSwift
     - Kingfisher
@@ -295,6 +298,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   GT3Captcha-iOS: 6638e1da8eed760cb57c9cc592dd1f892d9161c0
+  Intercom: 6909dc0c5cffc3d89fde9fe16f94b9dec8f587d3
   JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 44ed6a8504763f27bab46163adfac83f5deb240c
@@ -323,6 +327,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 1ba7dc440bde56253a13e755c3dc9fe3d24d1edd
+PODFILE CHECKSUM: 160c4424bd3d817fae8ffb3dd09e09161c9db652
 
 COCOAPODS: 1.11.2
