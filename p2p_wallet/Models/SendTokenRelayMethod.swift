@@ -10,6 +10,6 @@ import Foundation
 enum SendTokenRelayMethod: Int, CaseIterable {
     case relay = 0, reward = 1
     static var `default`: Self {
-        .reward // TODO: default is reward, as relay is not ready, replace later
+        .relay
     }
 }
