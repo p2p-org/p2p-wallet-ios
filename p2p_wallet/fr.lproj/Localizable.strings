@@ -709,6 +709,7 @@
 "You can receive %@ by providing this address, QR code or username:" = "Vous pouvez recevoir %@ en fournissant cette adresse, ce code QR ou ce nom d'utilisateur :";
 "Username %@ was reserved" = "Le nom d'utilisateur %@ était réservé";
 "None" = "Rien";
+"Feedback" = "Retour";
 "Select token to pay fees" = "Sélectionnez le jeton pour payer les frais";
 "Choose the token to pay fees" = "Choisissez le jeton pour payer les frais";
 "List of supported tokens" = "Liste des jetons pris en charge";
