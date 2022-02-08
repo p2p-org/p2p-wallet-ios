@@ -709,6 +709,7 @@
 "You can receive %@ by providing this address, QR code or username:" = "You can receive %@ by providing this address, QR code or username:";
 "Username %@ was reserved" = "Username %@ was reserved";
 "None" = "None";
+"Feedback" = "Feedback";
 "Select token to pay fees" = "Select token to pay fees";
 "Choose the token to pay fees" = "Choose the token to pay fees";
 "List of supported tokens" = "List of supported tokens";

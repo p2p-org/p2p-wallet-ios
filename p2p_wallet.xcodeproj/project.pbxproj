@@ -94,6 +94,8 @@
 		41CA05802754BC3100953322 /* TopAlignLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA057F2754BC3100953322 /* TopAlignLabel.swift */; };
 		41CA05822754BDD700953322 /* ReserveName.MainButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41CA05812754BDD700953322 /* ReserveName.MainButtonState.swift */; };
 		41D57D28279E405100ECC2FB /* ReceiveToken.TapAndHoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D57D27279E405100ECC2FB /* ReceiveToken.TapAndHoldView.swift */; };
+		41D59FE127AD1CA400829B90 /* CachedTokensRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */; };
+		41D59FD927ABC68A00829B90 /* IntercomUserAttributesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D59FD827ABC68A00829B90 /* IntercomUserAttributesService.swift */; };
 		41D7F6AD2739109D00453B61 /* HorizontalFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6AB2739109D00453B61 /* HorizontalFlowLayout.swift */; };
 		41D7F6AE2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6AC2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift */; };
 		41D7F6B2273910F900453B61 /* Home.BannersCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41D7F6B0273910F900453B61 /* Home.BannersCollectionViewDataSource.swift */; };
@@ -120,6 +122,9 @@
 		41EA3B092777389000832109 /* SwapTokenSettings.FeesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EA3B082777389000832109 /* SwapTokenSettings.FeesView.swift */; };
 		41EA3B0B2777418000832109 /* SwapTokenSettings.FeesTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EA3B0A2777418000832109 /* SwapTokenSettings.FeesTable.swift */; };
 		41EA3B0D2777448000832109 /* SwapTokenSettings.FeeCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EA3B0C2777448000832109 /* SwapTokenSettings.FeeCell.swift */; };
+		41EB2E6227B23CF7007D5F7F /* IntercomMessengerLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EB2E6127B23CF7007D5F7F /* IntercomMessengerLauncher.swift */; };
+		41EB2E6527B23D44007D5F7F /* IntercomStartingConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EB2E6427B23D44007D5F7F /* IntercomStartingConfigurator.swift */; };
+		41EB2E6727B23E76007D5F7F /* HelpCenterLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */; };
 		41F4476E2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */; };
 		41F447702779B7FE00BFC46D /* SwapTokenSettings.SeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F4476F2779B7FE00BFC46D /* SwapTokenSettings.SeparatorView.swift */; };
 		41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */; };
@@ -614,6 +619,8 @@
 		41CA057F2754BC3100953322 /* TopAlignLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopAlignLabel.swift; sourceTree = "<group>"; };
 		41CA05812754BDD700953322 /* ReserveName.MainButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.MainButtonState.swift; sourceTree = "<group>"; };
 		41D57D27279E405100ECC2FB /* ReceiveToken.TapAndHoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiveToken.TapAndHoldView.swift; sourceTree = "<group>"; };
+		41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedTokensRepository.swift; sourceTree = "<group>"; };
+		41D59FD827ABC68A00829B90 /* IntercomUserAttributesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntercomUserAttributesService.swift; sourceTree = "<group>"; };
 		41D7F6AB2739109D00453B61 /* HorizontalFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalFlowLayout.swift; sourceTree = "<group>"; };
 		41D7F6AC2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PageableHorizontalLayoutScrollHandler.swift; sourceTree = "<group>"; };
 		41D7F6B0273910F900453B61 /* Home.BannersCollectionViewDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BannersCollectionViewDataSource.swift; sourceTree = "<group>"; };
@@ -640,6 +647,9 @@
 		41EA3B082777389000832109 /* SwapTokenSettings.FeesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeesView.swift; sourceTree = "<group>"; };
 		41EA3B0A2777418000832109 /* SwapTokenSettings.FeesTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeesTable.swift; sourceTree = "<group>"; };
 		41EA3B0C2777448000832109 /* SwapTokenSettings.FeeCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeeCell.swift; sourceTree = "<group>"; };
+		41EB2E6127B23CF7007D5F7F /* IntercomMessengerLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntercomMessengerLauncher.swift; sourceTree = "<group>"; };
+		41EB2E6427B23D44007D5F7F /* IntercomStartingConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntercomStartingConfigurator.swift; sourceTree = "<group>"; };
+		41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCenterLauncher.swift; sourceTree = "<group>"; };
 		41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeeCellContent.swift; sourceTree = "<group>"; };
 		41F4476F2779B7FE00BFC46D /* SwapTokenSettings.SeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.SeparatorView.swift; sourceTree = "<group>"; };
 		41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.SignificantView.swift; sourceTree = "<group>"; };
@@ -1306,6 +1316,17 @@
 				410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		41EB2E6327B23CFD007D5F7F /* Intercom */ = {
+			isa = PBXGroup;
+			children = (
+				41D59FD827ABC68A00829B90 /* IntercomUserAttributesService.swift */,
+				41EB2E6127B23CF7007D5F7F /* IntercomMessengerLauncher.swift */,
+				41EB2E6427B23D44007D5F7F /* IntercomStartingConfigurator.swift */,
+				41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */,
+			);
+			path = Intercom;
 			sourceTree = "<group>";
 		};
 		41F447712779F26100BFC46D /* Model */ = {
@@ -2088,6 +2109,7 @@
 		BCB22370254137C2002D997F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				41EB2E6327B23CFD007D5F7F /* Intercom */,
 				BC19DF4E270169CF00A3A8D8 /* SendService.swift */,
 				3B1681F8278B3E5E00838F1B /* AppEventHandler */,
 				41DD026B2760A95E00545A73 /* TextChangesFilters */,
@@ -2110,6 +2132,7 @@
 				3B78CB562773147F00FB3C4C /* ClipboardManager.swift */,
 				3B78CB502773067100FB3C4C /* NotificationsService.swift */,
 				3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */,
+				41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2891,10 +2914,12 @@
 				41CA057C27548C9900953322 /* AgreeTermsAndPolicyView.swift in Sources */,
 				41BDBD6027A8E15300000EF7 /* ReceiveToken.ExplorerButton.swift in Sources */,
 				BC18CAA3263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift in Sources */,
+				41D59FE127AD1CA400829B90 /* CachedTokensRepository.swift in Sources */,
 				BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */,
 				4183007E2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift in Sources */,
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
+				41EB2E6527B23D44007D5F7F /* IntercomStartingConfigurator.swift in Sources */,
 				41DE53D02797BCDD00F24B0B /* WalletActionButton.swift in Sources */,
 				BCC0663C269891E00017B34E /* TransactionsCollectionView.SectionHeaderView.swift in Sources */,
 				BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */,
@@ -2974,6 +2999,7 @@
 				4183007C2758A489007BBEBF /* OrcaSwapV2.ShowDetailsButton.swift in Sources */,
 				BC38556126AE9CD100BD8BF7 /* ChooseWallet.CollectionsView+Subviews.swift in Sources */,
 				BCE04C6A268D901400CE131A /* ModalTransitionAnimator.swift in Sources */,
+				41EB2E6727B23E76007D5F7F /* HelpCenterLauncher.swift in Sources */,
 				BC85EA68266E1324005006D5 /* ReceiveToken.SceneModel.swift in Sources */,
 				BC5257D225CBA7770076317E /* BonfidaPricesFetcher+Models.swift in Sources */,
 				41EA3B0D2777448000832109 /* SwapTokenSettings.FeeCell.swift in Sources */,
@@ -2986,6 +3012,7 @@
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */,
+				41EB2E6227B23CF7007D5F7F /* IntercomMessengerLauncher.swift in Sources */,
 				417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */,
 				412DBFDE273D7B81000F514E /* EnterSeed.ViewModel.swift in Sources */,
 				3B78CB53277306BA00FB3C4C /* InAppNotification.swift in Sources */,
@@ -3286,6 +3313,7 @@
 				84699FAFF6F54DA93EE08CD8 /* ReceiveToken.QrCodeView.swift in Sources */,
 				8469923A8BD54C585185546C /* ReceiveToken.QrCodeCard.swift in Sources */,
 				84699180BD00AC7A82B3DC28 /* SortByDataStrategy.swift in Sources */,
+				41D59FD927ABC68A00829B90 /* IntercomUserAttributesService.swift in Sources */,
 				84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */,
 				846993316E60603167DE5520 /* LockView.swift in Sources */,
 			);
@@ -3467,7 +3495,7 @@
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 59;
+				CURRENT_PROJECT_VERSION = 62;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3512,7 +3540,7 @@
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 59;
+				CURRENT_PROJECT_VERSION = 62;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
