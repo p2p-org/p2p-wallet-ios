@@ -96,8 +96,10 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPri
     
     #if DEBUG
     attrString
-        .text(" ")
-        .text(feeAmount.total.convertToBalance(decimals: 9).toString(maximumFractionDigits: 9) + " SOL", size: 13, color: .red)
+        .text("\n")
+        .text("Transaction fee: \(feeAmount.transaction) lamports", size: 13, color: .red)
+        .text(", ")
+        .text("Account creation fee: \(feeAmount.accountBalances) lamports", size: 13, color: .red)
     #endif
     
     return attrString

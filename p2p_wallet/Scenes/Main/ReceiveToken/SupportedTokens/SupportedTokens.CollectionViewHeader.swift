@@ -17,7 +17,7 @@ extension SupportedTokens.CollectionView {
         }
 
         private func createHint() -> UILabel {
-            let qrCodeHint = UILabel(numberOfLines: 0)
+            let hintLabel = UILabel(numberOfLines: 0)
             let highlightedText = L10n.weDoNotRecommendSendingItToThisAddress
             let fullText = L10n
                 .EachTokenInThisListIsAvailableForReceivingWithThisAddressYouCanSearchForATokenByTypingItsNameOrTicker
@@ -28,7 +28,7 @@ extension SupportedTokens.CollectionView {
 
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.lineHeightMultiple = 1.17
-            paragraphStyle.alignment = .center
+            paragraphStyle.alignment = .left
 
             let attributedText = NSMutableAttributedString(
                 string: fullText,
@@ -43,9 +43,9 @@ extension SupportedTokens.CollectionView {
             let highlightedRange = (attributedText.string as NSString).range(of: highlightedText, options: .caseInsensitive)
             attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
 
-            qrCodeHint.attributedText = attributedText
+            hintLabel.attributedText = attributedText
 
-            return qrCodeHint
+            return hintLabel
         }
     }
 }
