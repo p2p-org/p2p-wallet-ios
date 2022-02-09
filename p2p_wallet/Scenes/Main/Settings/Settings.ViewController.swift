@@ -40,7 +40,7 @@ extension Settings {
                                 viewModel.usernameDriver.map { $0 != nil ? $0! : L10n.notYetReserved }
                                     .drive(label.rx.text)
                                     .disposed(by: disposeBag)
-                                viewModel.usernameDriver.map { $0 != nil ? UIColor.black : UIColor.ff3b30 }
+                                viewModel.usernameDriver.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
                                     .drive(label.rx.textColor)
                                     .disposed(by: disposeBag)
                             }
