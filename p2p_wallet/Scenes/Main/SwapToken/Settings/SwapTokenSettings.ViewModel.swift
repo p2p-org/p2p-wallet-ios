@@ -41,8 +41,9 @@ extension SwapTokenSettings {
         var feesContentDriver: Driver<[FeeCellContent]> {
             Driver.combineLatest(
                 swapViewModel.sourceWalletDriver,
+                swapViewModel.destinationWalletDriver,
                 swapViewModel.feePayingTokenDriver
-            ).map { [weak self] sourceWallet, feePayingToken in
+            ).map { [weak self] sourceWallet, _ ,feePayingToken in
                 guard let self = self else { return [] }
                 var list: [FeeCellContent] = []
 

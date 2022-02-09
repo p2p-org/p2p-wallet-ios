@@ -211,15 +211,19 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let destinationTokenMint = destinationTokenMint else { return .error(SolanaSDK.Error.other("Invalid destination mint address")) }
 
         // if it's spl -> spl or sol -> spl, then use relay
-        return feeRelay.topUpAndSwap(
+        let payingFeeToken =  FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
+        return feeRelay.prepareSwapTransaction(
             sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
             destinationTokenMint: destinationTokenMint,
             destinationAddress: destinationAddress,
-            payingFeeToken: FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint),
+            payingFeeToken: payingFeeToken,
             swapPools: poolsPair.orcaPoolPair,
             inputAmount: amount,
             slippage: slippage
-        )
+        ).flatMap { [weak self] transaction in
+            guard let feeRelay = self?.feeRelay else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
+            return feeRelay.topUpAndRelayTransaction(preparedTransaction: transaction, payingFeeToken: payingFeeToken)
+        }
     }
 
     struct PoolsPair: Swap.PoolsPair {
