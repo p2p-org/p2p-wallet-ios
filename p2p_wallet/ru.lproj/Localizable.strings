@@ -723,3 +723,8 @@
 "Paying token is not valid. Please choose another one" = "Платежный токен недействителен. Пожалуйста, выберите другой";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Этот адрес не имеет учетной записи %@. Вы должны заплатить единовременную плату, чтобы создать учетную запись %@ для этого адреса. Ниже вы можете выбрать, в какой валюте платить.";
 "Could not create renBTC token, please try again later" = "Не удалось создать токен renBTC. Повторите попытку позже.";
+"Top up your account" = "Пополнить свой счет";
+"Your wallet list does not contain a renBTC account, and to create one you need to make a transaction." = "В вашем списке кошельков нет учетной записи renBTC, и для ее создания вам необходимо совершить транзакцию.";
+"A renBTC account is required to receive bitcoins over the Bitcoin network." = "Для получения биткойнов через сеть биткойнов требуется учетная запись renBTC.";
+"You don't have funds to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "У вас нет средств для оплаты создания аккаунта, но если кто-то отправит renBTC на ваш адрес, он будет создан для вас.";
+"Share your Solana network address" = "Поделитесь своим сетевым адресом Solana";

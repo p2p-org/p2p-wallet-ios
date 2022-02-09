@@ -723,3 +723,8 @@
 "Paying token is not valid. Please choose another one" = "Token thanh toán không hợp lệ. Vui lòng chọn token khác";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Địa chỉ này dường như không có tài khoản %@. Bạn phải trả phí một lần để tạo tài khoản %@ cho địa chỉ này. Bạn có thể chọn đơn vị tiền tệ để thanh toán bên dưới.";
 "Could not create renBTC token, please try again later" = "Không thể tạo token renBTC, vui lòng thử lại sau";
+"Top up your account" = "Nạp tiền vào tài khoản của bạn";
+"Your wallet list does not contain a renBTC account, and to create one you need to make a transaction." = "Danh sách ví của bạn không chứa tài khoản renBTC và để tạo một tài khoản, bạn cần thực hiện giao dịch.";
+"A renBTC account is required to receive bitcoins over the Bitcoin network." = "Cần có tài khoản renBTC để nhận bitcoin qua mạng Bitcoin.";
+"You don't have funds to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "Bạn không có tiền để thanh toán cho việc tạo tài khoản, nhưng nếu ai đó gửi renBTC đến địa chỉ của bạn, nó sẽ được tạo cho bạn.";
+"Share your Solana network address" = "Chia sẻ địa chỉ mạng Solana của bạn";

@@ -723,3 +723,8 @@
 "Paying token is not valid. Please choose another one" = "Paying token is not valid. Please choose another one";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below.";
 "Could not create renBTC token, please try again later" = "Could not create renBTC token, please try again later";
+"Top up your account" = "Top up your account";
+"Your wallet list does not contain a renBTC account, and to create one you need to make a transaction." = "Your wallet list does not contain a renBTC account, and to create one **you need to make a transaction.**";
+"A renBTC account is required to receive bitcoins over the Bitcoin network." = "A **renBTC account is required** to receive bitcoins over the Bitcoin network.";
+"You don't have funds to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "You **don't have funds** to pay for account creation, but if someone sends renBTC to your address, it will be created for you.";
+"Share your Solana network address" = "Share your Solana network address";
