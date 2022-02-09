@@ -31,6 +31,8 @@ target 'p2p_wallet' do
   pod 'Kingfisher'
   pod 'SVGKit', :git => 'https://github.com/SVGKit/SVGKit.git', :branch => '3.x'
   pod 'ListPlaceholder', :git => 'git@github.com:p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
+  pod 'Intercom'
+
   
   # Firebase
   pod 'Firebase/Analytics'

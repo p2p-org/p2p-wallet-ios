@@ -27,7 +27,10 @@ extension Resolver: ResolverRegistering {
         register { AnalyticsManager() }
             .implements(AnalyticsManagerType.self)
             .scope(.application)
-        register { CryptoComparePricesFetcher() }
+        register { IntercomMessengerLauncher() }
+            .implements(HelpCenterLauncher.self)
+            .scope(.session)
+        register {CryptoComparePricesFetcher()}
             .implements(PricesFetcher.self)
             .scope(.application)
         register { NameService() }

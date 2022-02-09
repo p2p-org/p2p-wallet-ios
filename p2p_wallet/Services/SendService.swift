@@ -20,7 +20,8 @@ protocol SendServiceType {
     func getFees(
         from wallet: Wallet,
         receiver: String?,
-        network: SendToken.Network
+        network: SendToken.Network,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?
     ) -> Single<SolanaSDK.FeeAmount?>
     func getFeesInPayingToken(
         feeInSOL: SolanaSDK.Lamports,
@@ -73,7 +74,8 @@ class SendService: SendServiceType {
     func getFees(
         from wallet: Wallet,
         receiver: String?,
-        network: SendToken.Network
+        network: SendToken.Network,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?
     ) -> Single<SolanaSDK.FeeAmount?> {
         guard let receiver = receiver else {
             return .just(nil)
@@ -97,13 +99,16 @@ class SendService: SendServiceType {
                     from: wallet,
                     receiver: receiver,
                     amount: 10000, // placeholder
-                    payingFeeToken: nil,
+                    payingFeeToken: payingFeeToken,
                     recentBlockhash: "FR1GgH83nmcEdoNXyztnpUL2G13KkUv6iwJPwVfnqEgW", // placeholder
                     lamportsPerSignature: feeService.lamportsPerSignature, // cached lamportsPerSignature
                     minRentExemption: feeService.minimumBalanceForRenExemption,
                     usingCachedFeePayerPubkey: true
                 )
-                    .map {$0.expectedFee}
+                    .map { [weak self] preparedTransaction in
+                        guard let self = self else {throw SolanaSDK.Error.unknown}
+                        return self.relayService.calculateFee(preparedTransaction: preparedTransaction)
+                    }
             case .reward:
                 return .just(.zero)
             }
@@ -194,23 +199,11 @@ class SendService: SendServiceType {
                    payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
                 {
                     // use fee relayer
-                    if wallet.isNativeSOL {
-                        return self.relayService.topUpAndRelayTransaction(
-                            preparedTransaction: preparedTransaction,
-                            payingFeeToken: payingFeeToken
-                        )
-                            .map {$0.first ?? ""}
-                    } else {
-                        return self.relayService.topUpAndSend(
-                            sourceToken: .init(address: wallet.pubkey!, mint: wallet.mintAddress),
-                            destinationAddress: receiver,
-                            tokenMint: wallet.mintAddress,
-                            inputAmount: amount,
-                            payingFeeToken: payingFeeToken
-                        )
-                            .map {$0.first ?? ""}
-                    }
-                    
+                    return self.relayService.topUpAndRelayTransaction(
+                        preparedTransaction: preparedTransaction,
+                        payingFeeToken: payingFeeToken
+                    )
+                        .map {$0.first ?? ""}
                 } else {
                     // send normally, paid by SOL
                     return self.solanaSDK.serializeAndSend(
