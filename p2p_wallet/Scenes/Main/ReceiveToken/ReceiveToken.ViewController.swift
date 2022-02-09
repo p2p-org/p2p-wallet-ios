@@ -215,7 +215,7 @@ extension ReceiveToken.ViewController {
             let vc = ReceiveToken.NetworkSelectionScene(viewModel: viewModel)
             show(vc, sender: nil)
         case .showSupportedTokens:
-            let vm = SupportedTokens.ViewModel()
+            let vm = SupportedTokens.ViewModel(tokensRepository: CachedTokensRepository())
             let vc = SupportedTokens.ViewController(viewModel: vm)
             present(vc, animated: true)
         default:
