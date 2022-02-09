@@ -711,6 +711,7 @@
 "You can receive %@ by providing this address, QR code or username:" = "Вы можете получить %@, указав этот адрес, QR-код или имя пользователя:";
 "Username %@ was reserved" = "Имя пользователя %@ было зарезервировано";
 "None" = "Никто";
+"Feedback" = "Обратная связь";
 "Select token to pay fees" = "Выберите токен для оплаты комиссии";
 "Choose the token to pay fees" = "Выберите токен для оплаты сборов";
 "List of supported tokens" = "Список поддерживаемых токенов";

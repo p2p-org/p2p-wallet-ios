@@ -8,11 +8,14 @@
 import Foundation
 import UIKit
 import RxSwift
+import Intercom
+import Resolver
 
 protocol TabBarNeededViewController: UIViewController {}
 
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
+    @Injected private var helpCenterLauncher: HelpCenterLauncher
     private let disposeBag = DisposeBag()
     private var tabBarTopConstraint: NSLayoutConstraint!
     
@@ -95,6 +98,7 @@ class TabBarVC: BEPagesVC {
             buttonTabBarItem(image: .tabbarPlus, title: L10n.buy, tag: 2),
             buttonTabBarItem(image: .tabbarPlanet, title: L10n.dApps, tag: 3),
             buttonTabBarItem(image: .tabbarInfo, title: L10n.profile, tag: 4),
+            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 5),
             .spacer
         ])
     }
@@ -121,6 +125,11 @@ class TabBarVC: BEPagesVC {
         if currentPage == index {
             return
         }
+
+        guard index != 5 else {
+            return helpCenterLauncher.launch()
+        }
+
         super.moveToPage(index)
         
         let items = tabBar.stackView.arrangedSubviews[1..<tabBar.stackView.arrangedSubviews.count - 1]

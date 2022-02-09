@@ -20,17 +20,38 @@ protocol SupportedTokensViewModelType: BEListViewModelType {
 extension SupportedTokens {
     final class ViewModel: BEListViewModel<SolanaSDK.Token> {
         // MARK: - Dependencies
-        @Injected private var tokensRepository: TokensRepository
+        private let tokensRepository: TokensRepository
 
         // MARK: - Properties
+        private let disposeBag = DisposeBag()
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private var keyword: String?
+        private var keywordSubject = BehaviorRelay<String?>(value: nil)
+
+        init(tokensRepository: TokensRepository) {
+            self.tokensRepository = tokensRepository
+
+            super.init()
+
+            keywordSubject
+                .distinctUntilChanged()
+                .throttle(.milliseconds(400), scheduler: MainScheduler.instance)
+                .subscribe(onNext: { [weak self] _ in
+                    self?.reload()
+                })
+                .disposed(by: disposeBag)
+        }
 
         override func createRequest() -> Single<[SolanaSDK.Token]> {
+            var existingSymbols: Set<String> = []
+
             return tokensRepository.getTokensList()
-                .map { $0.excludingSpecialTokens() }
+                .map { tokens -> [SolanaSDK.Token] in
+                    tokens
+                        .excludingSpecialTokens()
+                        .filter { existingSymbols.insert($0.symbol).inserted }
+                }
         }
 
         override func map(newData: [SolanaSDK.Token]) -> [SolanaSDK.Token] {
@@ -45,7 +66,7 @@ extension SupportedTokens {
                         return firstTokenPriority > secondTokenPriority
                     }
                 }
-            if let keyword = keyword {
+            if let keyword = keywordSubject.value, !keyword.isEmpty {
                 data = data.filter { $0.hasKeyword(keyword) }
             }
             return data
@@ -77,9 +98,7 @@ extension SupportedTokens.ViewModel: SupportedTokensViewModelType {
 
     // MARK: - Actions
     func search(keyword: String) {
-        guard self.keyword != keyword else { return }
-        self.keyword = keyword
-        reload()
+        keywordSubject.accept(keyword)
     }
 }
 
