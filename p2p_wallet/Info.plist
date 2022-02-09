@@ -34,6 +34,8 @@
 	<string>This is required for the app to read wallet addresses from QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>This is required for the app to authenticate user with TouchID or FaceID.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This is required for the app to send photos</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This is required for the app to save generated QR codes or back up of your seed phrases to your photo library.</string>
 	<key>RPCPOOL_API_KEY</key>

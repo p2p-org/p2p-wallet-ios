@@ -58,7 +58,7 @@ extension SupportedTokens.CollectionView {
             coinSymbolLabel.text = item.symbol.isEmpty
                 ? item.address.prefix(4) + "..." + item.address.suffix(4)
                 : item.symbol
-            coinFullnameLabel.text = item.name
+            coinFullnameLabel.text = item.symbol == "SOL" ? L10n.solana : item.name
         }
 
         lazy var addressLabel = UILabel(textSize: 13, textColor: .textSecondary)

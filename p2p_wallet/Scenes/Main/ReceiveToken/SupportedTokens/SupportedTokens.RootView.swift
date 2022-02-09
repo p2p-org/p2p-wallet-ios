@@ -53,11 +53,6 @@ extension SupportedTokens {
             bind()
         }
 
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-            viewModel.reload()
-        }
-
         // MARK: - Layout
         private func layout() {
             addSubview(searchBar)
