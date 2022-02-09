@@ -20,7 +20,8 @@ protocol SendServiceType {
     func getFees(
         from wallet: Wallet,
         receiver: String?,
-        network: SendToken.Network
+        network: SendToken.Network,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?
     ) -> Single<SolanaSDK.FeeAmount?>
     func getFeesInPayingToken(
         feeInSOL: SolanaSDK.Lamports,
@@ -73,7 +74,8 @@ class SendService: SendServiceType {
     func getFees(
         from wallet: Wallet,
         receiver: String?,
-        network: SendToken.Network
+        network: SendToken.Network,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?
     ) -> Single<SolanaSDK.FeeAmount?> {
         guard let receiver = receiver else {
             return .just(nil)
@@ -97,7 +99,7 @@ class SendService: SendServiceType {
                     from: wallet,
                     receiver: receiver,
                     amount: 10000, // placeholder
-                    payingFeeToken: nil,
+                    payingFeeToken: payingFeeToken,
                     recentBlockhash: "FR1GgH83nmcEdoNXyztnpUL2G13KkUv6iwJPwVfnqEgW", // placeholder
                     lamportsPerSignature: feeService.lamportsPerSignature, // cached lamportsPerSignature
                     minRentExemption: feeService.minimumBalanceForRenExemption,
