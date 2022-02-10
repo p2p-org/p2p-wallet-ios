@@ -11,6 +11,7 @@ import RxCocoa
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var relayMethod: SendTokenRelayMethod {get}
+    var canGoBack: Bool { get }
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     
     func getPrice(for symbol: String) -> Double
@@ -44,6 +45,7 @@ extension SendToken {
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
         let relayMethod: SendTokenRelayMethod
+        let canGoBack: Bool
         
         private var selectedNetwork: SendToken.Network?
         private var selectableNetworks: [SendToken.Network]?
@@ -60,11 +62,13 @@ extension SendToken {
         init(
             walletPubkey: String?,
             destinationAddress: String?,
-            relayMethod: SendTokenRelayMethod
+            relayMethod: SendTokenRelayMethod,
+            canGoBack: Bool = true
         ) {
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
             self.relayMethod = relayMethod
+            self.canGoBack = canGoBack
             self.sendService = Resolver.resolve(args: relayMethod)
             
             // accept initial values
