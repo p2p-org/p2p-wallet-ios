@@ -31,7 +31,9 @@ extension SendToken {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            
+            view.onTap { [weak self] in
+                self?.view.endEditing(true)
+            }
         }
         
         override func bind() {
@@ -90,7 +92,12 @@ extension SendToken {
 extension SendToken.ViewController: ProcessTransactionViewControllerDelegate {
     func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
         vc.dismiss(animated: true) { [weak self] in
-            self?.back()
+            guard let self = self else {return}
+            if self.viewModel.canGoBack {
+                self.back()
+            } else {
+                self.childNavigationController.popToRootViewController(animated: true)
+            }
         }
     }
 }

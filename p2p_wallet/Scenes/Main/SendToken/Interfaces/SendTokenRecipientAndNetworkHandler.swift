@@ -33,11 +33,12 @@ extension SendTokenRecipientAndNetworkHandler {
     var feesDriver: Driver<SolanaSDK.FeeAmount?> {
         Observable.combineLatest(
             recipientSubject,
-            networkSubject
+            networkSubject,
+            payingWalletSubject
         )
-            .flatMap {[weak self] recipient, network -> Single<SolanaSDK.FeeAmount?> in
+            .flatMap {[weak self] recipient, network, payingWallet -> Single<SolanaSDK.FeeAmount?> in
                 guard let self = self else {throw SolanaSDK.Error.unknown}
-                return self.getFees(recipient: recipient, network: network)
+                return self.getFees(recipient: recipient, network: network, payingFeeToken: getPayingToken(payingWallet: payingWallet))
             }
             .asDriver(onErrorJustReturn: nil)
     }
@@ -88,7 +89,7 @@ extension SendTokenRecipientAndNetworkHandler {
     }
     
     func getFees() -> Single<SolanaSDK.FeeAmount?> {
-        getFees(recipient: recipientSubject.value, network: networkSubject.value)
+        getFees(recipient: recipientSubject.value, network: networkSubject.value, payingFeeToken: getPayingToken(payingWallet: payingWalletSubject.value))
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient?) {
@@ -122,13 +123,26 @@ extension SendTokenRecipientAndNetworkHandler {
                 .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
     }
     
-    private func getFees(recipient: SendToken.Recipient?, network: SendToken.Network) -> Single<SolanaSDK.FeeAmount?> {
+    private func getFees(
+        recipient: SendToken.Recipient?,
+        network: SendToken.Network,
+        payingFeeToken: FeeRelayer.Relay.TokenInfo?
+    ) -> Single<SolanaSDK.FeeAmount?> {
         guard let wallet = getSelectedWallet() else {return .just(nil)}
         return sendService.getFees(
             from: wallet,
             receiver: recipient?.address,
-            network: network
+            network: network,
+            payingFeeToken: payingFeeToken
         )
             .catchAndReturn(nil)
     }
+}
+
+private func getPayingToken(payingWallet wallet: Wallet?) -> FeeRelayer.Relay.TokenInfo? {
+    guard let wallet = wallet, let address = wallet.pubkey
+    else {
+        return nil
+    }
+    return .init(address: address, mint: wallet.mintAddress)
 }

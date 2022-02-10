@@ -38,6 +38,7 @@ protocol SettingsViewModelType {
     var biometryTypeDriver: Driver<Settings.BiometryType> { get }
     var isBiometryEnabledDriver: Driver<Bool> { get }
     var isBiometryAvailableDriver: Driver<Bool> { get }
+    var canGoBack: Bool { get }
     
     func getUserAddress() -> String?
     func getUsername() -> String?
@@ -82,6 +83,7 @@ extension Settings {
         
         // MARK: - Properties
         private var disposables = [DefaultsDisposable]()
+        let canGoBack: Bool
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -99,8 +101,9 @@ extension Settings {
         private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
-        init(reserveNameHandler: ReserveNameHandler) {
+        init(reserveNameHandler: ReserveNameHandler, canGoBack: Bool = true) {
             self.reserveNameHandler = reserveNameHandler
+            self.canGoBack = canGoBack
             bind()
         }
         

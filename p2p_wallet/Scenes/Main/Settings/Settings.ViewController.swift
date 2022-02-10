@@ -27,6 +27,7 @@ extension Settings {
             BEVStack {
                 NewWLNavigationBar(initialTitle: L10n.settings, separatorEnable: false)
                     .onBack { [unowned self] in self.back() }
+                    .backIsHidden(!viewModel.canGoBack)
                 
                 BEScrollView(contentInsets: .init(x: 18, y: 18), spacing: 36) {
                     
@@ -40,7 +41,7 @@ extension Settings {
                                 viewModel.usernameDriver.map { $0 != nil ? $0! : L10n.notYetReserved }
                                     .drive(label.rx.text)
                                     .disposed(by: disposeBag)
-                                viewModel.usernameDriver.map { $0 != nil ? UIColor.black : UIColor.ff3b30 }
+                                viewModel.usernameDriver.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
                                     .drive(label.rx.textColor)
                                     .disposed(by: disposeBag)
                             }
