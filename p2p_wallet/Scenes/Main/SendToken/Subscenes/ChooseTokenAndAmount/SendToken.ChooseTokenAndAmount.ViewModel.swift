@@ -18,6 +18,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {get}
     var showAfterConfirmation: Bool {get}
     var selectedNetwork: SendToken.Network? {get}
+    var canGoBack: Bool { get }
     
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)
     func cancelSending()
@@ -85,6 +86,10 @@ extension SendToken.ChooseTokenAndAmount {
 }
 
 extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmountViewModelType {
+    var canGoBack: Bool {
+        sendTokenViewModel.canGoBack
+    }
+
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {
         navigationSubject.asDriver()
     }

@@ -27,6 +27,7 @@ extension Settings {
             BEVStack {
                 NewWLNavigationBar(initialTitle: L10n.settings, separatorEnable: false)
                     .onBack { [unowned self] in self.back() }
+                    .backIsHidden(!viewModel.canGoBack)
                 
                 BEScrollView(contentInsets: .init(x: 18, y: 18), spacing: 36) {
                     
