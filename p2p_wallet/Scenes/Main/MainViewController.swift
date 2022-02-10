@@ -37,9 +37,7 @@ class MainViewController: BaseVC {
     // MARK: - Methods
     override func setUp() {
         super.setUp()
-        let vm = Home.ViewModel()
-        let vc = Home.ViewController(viewModel: vm)
-        add(child: UINavigationController(rootViewController: vc)) // FIXME: - TabBarVC
+        add(child: TabBarVC())
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
     }
