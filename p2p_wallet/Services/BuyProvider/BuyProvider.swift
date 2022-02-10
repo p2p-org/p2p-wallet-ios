@@ -52,7 +52,7 @@ struct BuyProviders {
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
                 currencyCode: crypto.rawValue,
-//                walletAddress: walletAddress,
+                walletAddress: walletRepository.nativeWallet?.pubkey,
                 baseCurrencyCode: currency.rawValue,
                 baseCurrencyAmount: initialAmount
             )
