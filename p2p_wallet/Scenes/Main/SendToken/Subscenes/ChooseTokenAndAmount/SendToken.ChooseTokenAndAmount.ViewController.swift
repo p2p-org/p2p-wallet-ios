@@ -34,6 +34,7 @@ extension SendToken.ChooseTokenAndAmount {
         override func setUp() {
             super.setUp()
             navigationBar.titleLabel.text = L10n.send
+            navigationBar.backButton.isHidden = !viewModel.canGoBack
             navigationBar.backButton.onTap(self, action: #selector(_back))
             navigationBar.rightItems.addArrangedSubview(nextButton)
             
