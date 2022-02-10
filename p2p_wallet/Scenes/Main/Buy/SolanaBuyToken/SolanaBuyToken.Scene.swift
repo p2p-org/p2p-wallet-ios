@@ -47,23 +47,19 @@ extension SolanaBuyToken {
         override func build() -> UIView {
             BEZStack {
                 // Content
-                content().withTag(1)
-                // Bottom Button
-                WLStepButton.main(text: L10n.continue)
-                    .setup { view in
-                        guard let view = view as? WLStepButton else { return }
-                        viewModel.nextStatus.map { $0.text }.drive(view.rx.text).disposed(by: disposeBag)
-                        viewModel.nextStatus.map { $0.isEnable }.drive(view.rx.isEnabled).disposed(by: disposeBag)
-                    }
-                    .onTap { [unowned self] in viewModel.next() }
-                    .padding(.init(all: 18))
-                    .withTag(2)
-            }.setup { view in
-                view.viewWithTag(1)?.autoPinEdgesToSuperviewSafeArea()
-                
-                view.viewWithTag(2)?.autoPinBottomToSuperViewAvoidKeyboard()
-                view.viewWithTag(2)?.autoPinEdge(toSuperviewEdge: .leading)
-                view.viewWithTag(2)?.autoPinEdge(toSuperviewEdge: .trailing)
+                BEZStackPosition(mode: .fill) {
+                    content()
+                }
+                BEZStackPosition(mode: .pinEdges(top: false, left: true, bottom: true, right: true, avoidKeyboard: true)) {
+                    // Bottom Button
+                    WLStepButton.main(text: L10n.continue)
+                        .setup { view in
+                            viewModel.nextStatus.map { $0.text }.drive(view.rx.text).disposed(by: disposeBag)
+                            viewModel.nextStatus.map { $0.isEnable }.drive(view.rx.isEnabled).disposed(by: disposeBag)
+                        }
+                        .onTap { [unowned self] in self.viewModel.next() }
+                        .padding(.init(all: 18))
+                }
             }.onTap { [unowned self] in
                 // dismiss keyboard
                 view.endEditing(true)

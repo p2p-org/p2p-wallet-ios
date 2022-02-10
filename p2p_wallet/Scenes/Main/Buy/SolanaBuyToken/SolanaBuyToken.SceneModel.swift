@@ -45,6 +45,8 @@ extension SolanaBuyToken {
                 .asObservable()
                 .bind(to: exchangePrice)
                 .disposed(by: disposeBag)
+            
+            total.drive(totalAmount).disposed(by: disposeBag)
         }
         
         private let input = BehaviorRelay<Double?>(value: nil)
@@ -69,11 +71,13 @@ extension SolanaBuyToken {
             }
         }
         
+        private let totalAmount = BehaviorRelay<Double>(value: 0)
+        
         private let exchangePrice = BehaviorSubject<Double>(value: 0)
         
         func setAmount(value: Double?) { input.accept(value) }
         
-        func next() { rootViewModel.navigate(to: .buyToken(crypto: .eth, amount: input.value ?? 0)) }
+        func next() { rootViewModel.navigate(to: .buyToken(crypto: .eth, amount: totalAmount.value)) }
         
         func back() { rootViewModel.navigate(to: .back) }
         
