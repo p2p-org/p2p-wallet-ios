@@ -31,7 +31,9 @@ extension SendToken {
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            
+            view.onTap { [weak self] in
+                self?.view.endEditing(true)
+            }
         }
         
         override func bind() {
