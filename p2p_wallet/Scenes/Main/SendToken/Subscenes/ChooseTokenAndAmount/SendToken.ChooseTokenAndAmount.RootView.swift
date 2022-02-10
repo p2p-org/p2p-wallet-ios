@@ -121,7 +121,7 @@ extension SendToken.ChooseTokenAndAmount {
             }
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewSafeArea(with: .init(top: 8, left: 18, bottom: 18, right: 18), excludingEdge: .bottom)
-            stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 10)
+            stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
             
             #if DEBUG
             stackView.addArrangedSubview(errorLabel)
