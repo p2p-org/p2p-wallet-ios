@@ -32,8 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-        // TODO: - Swizzle localization later
-//        Bundle.swizzleLocalization()
+        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
         // BEPureLayoutConfiguration
