@@ -77,6 +77,18 @@ extension SendToken {
             } else {
                 walletSubject.accept(walletsRepository.nativeWallet)
             }
+            
+            if walletSubject.value == nil {
+                walletsRepository.dataObservable
+                    .map {$0?.first(where: {$0.isNativeSOL})}
+                    .filter {$0 != nil}
+                    .take(1)
+                    .asSingle()
+                    .subscribe(onSuccess: { [weak self] wallet in
+                        self?.walletSubject.accept(wallet)
+                    })
+                    .disposed(by: disposeBag)
+            }
             sendService.load().subscribe(onCompleted: {}).disposed(by: disposeBag)
         }
         
