@@ -50,15 +50,14 @@ extension SolanaBuyToken {
                 BEZStackPosition(mode: .fill) {
                     content()
                 }
-                BEZStackPosition(mode: .pinEdges(top: false, left: true, bottom: true, right: true)) {
+                BEZStackPosition(mode: .pinEdges(top: false, left: true, bottom: true, right: true, avoidKeyboard: true)) {
                     // Bottom Button
                     WLStepButton.main(text: L10n.continue)
                         .setup { view in
-                            guard let view = view as? WLStepButton else { return }
                             viewModel.nextStatus.map { $0.text }.drive(view.rx.text).disposed(by: disposeBag)
                             viewModel.nextStatus.map { $0.isEnable }.drive(view.rx.isEnabled).disposed(by: disposeBag)
                         }
-                        .onTap { [unowned self] in viewModel.next() }
+                        .onTap { [unowned self] in self.viewModel.next() }
                         .padding(.init(all: 18))
                 }
             }.onTap { [unowned self] in
