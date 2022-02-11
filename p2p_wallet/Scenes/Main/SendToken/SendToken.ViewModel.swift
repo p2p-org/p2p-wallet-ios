@@ -11,6 +11,7 @@ import RxCocoa
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var relayMethod: SendTokenRelayMethod {get}
+    var canGoBack: Bool { get }
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
     
     func getPrice(for symbol: String) -> Double
@@ -44,6 +45,7 @@ extension SendToken {
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
         let relayMethod: SendTokenRelayMethod
+        let canGoBack: Bool
         
         private var selectedNetwork: SendToken.Network?
         private var selectableNetworks: [SendToken.Network]?
@@ -60,11 +62,13 @@ extension SendToken {
         init(
             walletPubkey: String?,
             destinationAddress: String?,
-            relayMethod: SendTokenRelayMethod
+            relayMethod: SendTokenRelayMethod,
+            canGoBack: Bool = true
         ) {
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
             self.relayMethod = relayMethod
+            self.canGoBack = canGoBack
             self.sendService = Resolver.resolve(args: relayMethod)
             
             // accept initial values
@@ -72,6 +76,18 @@ extension SendToken {
                 walletSubject.accept(walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}))
             } else {
                 walletSubject.accept(walletsRepository.nativeWallet)
+            }
+            
+            if walletSubject.value == nil {
+                walletsRepository.dataObservable
+                    .map {$0?.first(where: {$0.isNativeSOL})}
+                    .filter {$0 != nil}
+                    .take(1)
+                    .asSingle()
+                    .subscribe(onSuccess: { [weak self] wallet in
+                        self?.walletSubject.accept(wallet)
+                    })
+                    .disposed(by: disposeBag)
             }
             sendService.load().subscribe(onCompleted: {}).disposed(by: disposeBag)
         }
