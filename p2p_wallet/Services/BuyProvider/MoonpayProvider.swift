@@ -59,34 +59,14 @@ public struct MoonpayProvider: BuyProvider {
             "baseCurrencyAmount": baseCurrencyAmount != nil ? "\(baseCurrencyAmount!)" : nil,
             "quoteCurrencyAmount": quoteCurrencyAmount != nil ? "\(quoteCurrencyAmount!)" : nil
         ]
-        
-        let paramStr = params.query
-        let originalUrl = environment.endpoint + "?" + paramStr
-        
-        debugPrint(originalUrl + "&signature=\(sign(originalUrl: originalUrl))")
-        return originalUrl + "&signature=\(sign(originalUrl: originalUrl))"
-    }
     
-    private func sign(originalUrl: String) -> String {
-        hmacWithSHA256(message: originalUrl, with: apiKey)
+        let path = environment.endpoint + "?" + params.query
+        debugPrint(path)
+        
+        return path
     }
 }
 
 extension MoonpayProvider.Environment {
-    var endpoint: String {
-        switch self {
-        case .staging:
-            return "https://buy-staging.moonpay.com"
-        case .production:
-            return "https://buy.moonpay.com"
-        }
-    }
-}
-
-private func hmacWithSHA256(message: String, with key: String) -> String {
-    let keyData = SymmetricKey(data: key.data(using: .utf8)!)
-    let messageData = message.data(using: .utf8)!
-    
-    let signature = HMAC<SHA256>.authenticationCode(for: messageData, using: keyData)
-    return Data(signature).base64urlEncodedString()
+    var endpoint: String { "https://moonpay.wallet.p2p.org/" }
 }
