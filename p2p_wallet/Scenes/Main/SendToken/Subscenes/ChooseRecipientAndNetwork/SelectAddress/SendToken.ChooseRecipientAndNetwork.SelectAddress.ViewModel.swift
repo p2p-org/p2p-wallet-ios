@@ -129,10 +129,33 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
             recipientDriver.map {$0 != nil}
         ]
         
-        if relayMethod == .relay {
-            conditionDrivers.append(payingWalletStatusDriver.map {$0.isValidAndEnoughBalance})
-            conditionDrivers.append(payingWalletDriver.map {$0 != nil})
-        }
+        conditionDrivers.append(
+            Driver.combineLatest(
+                networkDriver,
+                payingWalletStatusDriver,
+                payingWalletDriver,
+                feesDriver
+            )
+                .map {[weak self] network, payingWalletStatus, payingWallet, fees -> Bool in
+                    guard let self = self else {return false}
+                    switch network {
+                    case .solana:
+                        switch self.relayMethod {
+                        case .relay:
+                            // if free fee
+                            if fees?.total == 0 {
+                                return true
+                            } else {
+                                return payingWalletStatus.isValidAndEnoughBalance && payingWallet != nil
+                            }
+                        case .reward:
+                            return true
+                        }
+                    case .bitcoin:
+                        return true
+                    }
+                }
+        )
         
         return Driver.combineLatest(conditionDrivers)
             .map {$0.allSatisfy {$0}}

@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum SendTokenRelayMethod: Int, CaseIterable {
-    case relay = 0, reward = 1
+enum SendTokenRelayMethod: String, CaseIterable {
+    case relay, reward
     static var `default`: Self {
         .relay
     }

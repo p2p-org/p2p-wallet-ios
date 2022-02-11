@@ -26,22 +26,29 @@ class TabBarVC: BEPagesVC {
     override func setUp() {
         super.setUp()
         view.backgroundColor = .background
-        
+
+        let homeViewModel = Home.ViewModel()
+        let homeVC = Home.ViewController(viewModel: homeViewModel)
         viewControllers = [
-            createNavigationController(rootVC: Home.ViewController(
-                viewModel: Home.ViewModel()
-            )),
-            createNavigationController(rootVC: InvestmentsViewController(
-                viewModel: InvestmentsViewModel(
-                    newsViewModel: NewsViewModel(),
-                    defisViewModel: DefisViewModel()
+            createNavigationController(rootVC: homeVC),
+            createNavigationController(
+                rootVC: SendToken.ViewController(
+                    viewModel: SendToken.ViewModel(
+                        walletPubkey: nil,
+                        destinationAddress: nil,
+                        relayMethod: .default,
+                        canGoBack: false
+                    )
                 )
-            )),
-            createNavigationController(rootVC: _PlaceholderVC()),
-            createNavigationController(rootVC: DAppContainer.ViewController(
-                viewModel: DAppContainer.ViewModel(dapp: .fake)
-            )),
-            createNavigationController(rootVC: _PlaceholderVC())
+            ),
+            createNavigationController(
+                rootVC: Settings.ViewController(
+                    viewModel: Settings.ViewModel(
+                        reserveNameHandler: homeViewModel,
+                        canGoBack: false
+                    )
+                )
+            )
         ]
         
         // disable scrolling
@@ -94,11 +101,9 @@ class TabBarVC: BEPagesVC {
         tabBar.stackView.addArrangedSubviews([
             .spacer,
             buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
-            buttonTabBarItem(image: .tabbarTransaction, title: L10n.earn, tag: 1),
-            buttonTabBarItem(image: .tabbarPlus, title: L10n.buy, tag: 2),
-            buttonTabBarItem(image: .tabbarPlanet, title: L10n.dApps, tag: 3),
-            buttonTabBarItem(image: .tabbarInfo, title: L10n.profile, tag: 4),
-            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 5),
+            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 1),
+            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
+            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 2),
             .spacer
         ])
     }
@@ -126,7 +131,7 @@ class TabBarVC: BEPagesVC {
             return
         }
 
-        guard index != 5 else {
+        guard index != 10 else {
             return helpCenterLauncher.launch()
         }
 

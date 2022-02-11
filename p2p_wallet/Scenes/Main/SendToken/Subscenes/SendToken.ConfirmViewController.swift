@@ -92,6 +92,11 @@ extension SendToken {
                 
                 if viewModel.relayMethod == .relay {
                     feeView
+                        .setup {view in
+                            viewModel.networkDriver.map {$0 == .bitcoin}
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
                         .onTap(self, action: #selector(recipientViewDidTouch))
                 }
                 
@@ -99,11 +104,9 @@ extension SendToken {
                 
                 UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
                     receiveSection
-                    if viewModel.relayMethod == .reward {
-                        UIStackView(axis: .horizontal, spacing: 4, alignment: .top, distribution: .fill) {
-                            transferFeeSection
-                            freeFeeInfoButton
-                        }
+                    UIStackView(axis: .horizontal, spacing: 4, alignment: .top, distribution: .fill) {
+                        transferFeeSection
+                        freeFeeInfoButton
                     }
                     UIStackView(axis: .horizontal) {
                         UIView.spacer
@@ -170,10 +173,14 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // network view
-            viewModel.networkDriver
-                .drive(with: self, onNext: { `self`, network in
+            Driver.combineLatest(
+                viewModel.networkDriver,
+                viewModel.feesDriver
+            )
+                .drive(with: self, onNext: { `self`, params in
                     self.networkView.setUp(
-                        network: network,
+                        network: params.0,
+                        feeAmount: params.1,
                         prices: self.viewModel.getSOLAndRenBTCPrices()
                     )
                 })
@@ -197,8 +204,11 @@ extension SendToken {
             
             // transfer fee
             if viewModel.relayMethod == .reward {
-                viewModel.networkDriver
-                    .map {[weak self] network in
+                Driver.combineLatest(
+                    viewModel.networkDriver,
+                    viewModel.feesDriver
+                )
+                    .map {[weak self] network, feeAmount in
                         guard let self = self else {return NSAttributedString()}
                         switch network {
                         case .solana:
@@ -206,7 +216,8 @@ extension SendToken {
                                 .text(L10n.free + " ", size: 15, weight: .semibold)
                                 .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
                         case .bitcoin:
-                            return network.defaultFees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                            guard let feeAmount = feeAmount else {return NSAttributedString()}
+                            return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
                                 .withParagraphStyle(lineSpacing: 8, alignment: .right)
                         }
                     }
@@ -224,27 +235,10 @@ extension SendToken {
             }
                     
             // total
-            Driver.combineLatest(
-                walletAndAmountDriver,
-                viewModel.networkDriver
-            )
-                .map {[weak self] walletAndAmount, network -> NSAttributedString in
-                    guard let self = self else {return NSAttributedString()}
-                    let amount = walletAndAmount.1 ?? 0
-                    let wallet = walletAndAmount.0
-                    let symbol = wallet?.token.symbol ?? ""
-                    
-                    var fees = network.defaultFees
-                    
-                    if let index = fees.firstIndex(where: {$0.unit == symbol}) {
-                        fees[index].amount += amount
-                    } else {
-                        fees.append(.init(amount: amount, unit: symbol))
-                    }
-                    
-                    fees.removeAll(where: {$0.amount == 0})
-                    
-                    return fees.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+            viewModel.feesDriver
+                .map {[weak self] feeAmount -> NSAttributedString in
+                    guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
+                    return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
                         .withParagraphStyle(lineSpacing: 8, alignment: .right)
                 }
                 .drive(totalSection.rightLabel.rx.attributedText)

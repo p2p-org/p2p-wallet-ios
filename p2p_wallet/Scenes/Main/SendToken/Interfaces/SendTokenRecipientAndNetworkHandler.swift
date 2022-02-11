@@ -36,9 +36,9 @@ extension SendTokenRecipientAndNetworkHandler {
             networkSubject,
             payingWalletSubject
         )
-            .flatMap {[weak self] recipient, network, payingWallet -> Single<SolanaSDK.FeeAmount?> in
+            .flatMap {[weak self] _ -> Single<SolanaSDK.FeeAmount?> in
                 guard let self = self else {throw SolanaSDK.Error.unknown}
-                return self.getFees(recipient: recipient, network: network, payingFeeToken: getPayingToken(payingWallet: payingWallet))
+                return self.getFees()
             }
             .asDriver(onErrorJustReturn: nil)
     }
@@ -89,7 +89,27 @@ extension SendTokenRecipientAndNetworkHandler {
     }
     
     func getFees() -> Single<SolanaSDK.FeeAmount?> {
-        getFees(recipient: recipientSubject.value, network: networkSubject.value, payingFeeToken: getPayingToken(payingWallet: payingWalletSubject.value))
+        guard let wallet = getSelectedWallet() else {return .just(nil)}
+        return sendService.getFees(
+            from: wallet,
+            receiver: recipientSubject.value?.address,
+            network: networkSubject.value,
+            payingFeeToken: getPayingToken(payingWallet: payingWalletSubject.value)
+        )
+            .catch { _ in
+                if wallet.token.isRenBTC {
+                    return .just(
+                        .init(
+                            transaction: 20000,
+                            accountBalances: 0,
+                            others: [
+                                .init(amount: 0.0002, unit: "renBTC")
+                            ]
+                        )
+                    )
+                }
+                return .just(nil)
+            }
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient?) {
@@ -121,21 +141,6 @@ extension SendTokenRecipientAndNetworkHandler {
         return recipient.name == nil &&
             recipient.address
                 .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
-    }
-    
-    private func getFees(
-        recipient: SendToken.Recipient?,
-        network: SendToken.Network,
-        payingFeeToken: FeeRelayer.Relay.TokenInfo?
-    ) -> Single<SolanaSDK.FeeAmount?> {
-        guard let wallet = getSelectedWallet() else {return .just(nil)}
-        return sendService.getFees(
-            from: wallet,
-            receiver: recipient?.address,
-            network: network,
-            payingFeeToken: payingFeeToken
-        )
-            .catchAndReturn(nil)
     }
 }
 
