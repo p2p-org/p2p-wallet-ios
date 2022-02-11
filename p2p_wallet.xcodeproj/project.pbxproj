@@ -2165,7 +2165,6 @@
 				3B78CB562773147F00FB3C4C /* ClipboardManager.swift */,
 				3B78CB502773067100FB3C4C /* NotificationsService.swift */,
 				3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */,
-				84699C897A8A796CF8746166 /* Swap */,
 				41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */,
 				84699EEE2AAF2DB90B7E2EF4 /* Swap */,
 				4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */,
@@ -3540,7 +3539,7 @@
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 63;
+				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3585,7 +3584,7 @@
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 63;
+				CURRENT_PROJECT_VERSION = 66;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
