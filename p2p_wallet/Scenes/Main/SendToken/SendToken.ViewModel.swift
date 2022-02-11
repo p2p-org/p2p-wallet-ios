@@ -100,20 +100,15 @@ extension SendToken {
         }
         
         func reload() {
-            switch relayMethod {
-            case .relay:
-                loadingStateSubject.accept(.loading)
+            loadingStateSubject.accept(.loading)
 
-                sendService.load()
-                    .subscribe(onCompleted: {[weak self] in
-                        self?.loadingStateSubject.accept(.loaded)
-                    }, onError: {[weak self] error in
-                        self?.loadingStateSubject.accept(.error(error.readableDescription))
-                    })
-                    .disposed(by: disposeBag)
-            case .reward:
-                loadingStateSubject.accept(.loaded)
-            }
+            sendService.load()
+                .subscribe(onCompleted: {[weak self] in
+                    self?.loadingStateSubject.accept(.loaded)
+                }, onError: {[weak self] error in
+                    self?.loadingStateSubject.accept(.error(error.readableDescription))
+                })
+                .disposed(by: disposeBag)
         }
         
         private func send() {
