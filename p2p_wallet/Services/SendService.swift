@@ -179,12 +179,7 @@ class SendService: SendServiceType {
         payingFeeWallet: Wallet?
     ) -> Single<String> {
         // get paying fee token
-        let payingFeeToken: FeeRelayer.Relay.TokenInfo?
-        do {
-            payingFeeToken = try getPayingFeeToken(payingFeeWallet: payingFeeWallet)
-        } catch {
-            return .error(error)
-        }
+        let payingFeeToken = try? getPayingFeeToken(payingFeeWallet: payingFeeWallet)
         
         return prepareForSendingToSolanaNetworkViaRelayMethod(
             from: wallet,
@@ -195,21 +190,19 @@ class SendService: SendServiceType {
             .flatMap { [weak self] preparedTransaction in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
                 
-                if let payingFeeToken = payingFeeToken,
-                   payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-                {
+                if payingFeeToken?.mint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                    // send normally, paid by SOL
+                    return self.solanaSDK.serializeAndSend(
+                        preparedTransaction: preparedTransaction,
+                        isSimulation: false
+                    )
+                } else {
                     // use fee relayer
                     return self.relayService.topUpAndRelayTransaction(
                         preparedTransaction: preparedTransaction,
                         payingFeeToken: payingFeeToken
                     )
                         .map {$0.first ?? ""}
-                } else {
-                    // send normally, paid by SOL
-                    return self.solanaSDK.serializeAndSend(
-                        preparedTransaction: preparedTransaction,
-                        isSimulation: false
-                    )
                 }
             }
             .do(onSuccess: {
@@ -240,9 +233,10 @@ class SendService: SendServiceType {
         let feePayerRequest: Single<String?>
         let useFeeRelayer: Bool
         
-        if let payingFeeToken = payingFeeToken,
-           payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-        {
+        if payingFeeToken?.mint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+            feePayerRequest = .just(nil)
+            useFeeRelayer = false
+        } else {
             if usingCachedFeePayerPubkey, let pubkey = cachedFeePayerPubkey {
                 feePayerRequest = .just(pubkey)
             } else {
@@ -251,9 +245,6 @@ class SendService: SendServiceType {
                     .do(onSuccess: {[weak self] in self?.cachedFeePayerPubkey = $0})
             }
             useFeeRelayer = true
-        } else {
-            feePayerRequest = .just(nil)
-            useFeeRelayer = false
         }
         
         return feePayerRequest
