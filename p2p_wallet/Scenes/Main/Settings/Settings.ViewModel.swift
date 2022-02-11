@@ -60,7 +60,8 @@ protocol SettingsViewModelType {
     
     func showLogoutAlert()
     func copyUsernameToClipboard()
-    func share(image: UIImage)
+    func share()
+    func save()
     func logout()
 }
 

@@ -40,8 +40,8 @@ protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
     func showReceivingStatuses()
     func copyToClipboard()
-    func share(image: UIImage)
-    func saveAction(image: UIImage)
+    func share()
+    func saveAction()
     func showBTCAddressInExplorer()
     func getStatus() -> Single<ReceiveTokenBitcoinViewModelStatus>
 }
@@ -227,14 +227,28 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         analyticsManager.log(event: .receiveAddressCopy)
     }
 
-    func share(image: UIImage) {
+    func share() {
         analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.accept(.share(qrCode: image))
+    
+        generateQrCode()
+            .subscribe(onSuccess: { [weak self] image in self?.navigationSubject.accept(.share(qrCode: image)) })
+            .disposed(by: disposeBag)
     }
 
-    func saveAction(image: UIImage) {
+    func saveAction() {
         analyticsManager.log(event: .receiveQrcodeSave)
-        UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
+    
+        generateQrCode()
+            .subscribe(onSuccess: { [weak self] image in
+                guard let self = self else { return }
+                UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.saveImageCallback), nil)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func generateQrCode() -> Single<UIImage> {
+        let render: QrCodeImageRender = Resolver.resolve()
+        return render.render(username: nil, address: renVMService.getCurrentAddress(), token: .renBTC, showTokenIcon: true)
     }
 
     @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {

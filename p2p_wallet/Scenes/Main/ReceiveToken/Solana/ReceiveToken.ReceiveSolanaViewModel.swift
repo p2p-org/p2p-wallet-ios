@@ -17,8 +17,8 @@ protocol ReceiveTokenSolanaViewModelType: BESceneModel {
 
     func showSOLAddressInExplorer()
     func copyAction()
-    func shareAction(image: UIImage)
-    func saveAction(image: UIImage)
+    func shareAction()
+    func saveAction()
 }
 
 extension ReceiveToken {
@@ -59,14 +59,28 @@ extension ReceiveToken {
             notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         }
         
-        func shareAction(image: UIImage) {
+        func shareAction() {
             analyticsManager.log(event: .receiveQrcodeShare)
-            navigationSubject.accept(.share(qrCode: image))
+    
+            generateQrCode()
+                .subscribe(onSuccess: { [weak self] image in self?.navigationSubject.accept(.share(qrCode: image)) })
+                .disposed(by: disposeBag)
         }
         
-        func saveAction(image: UIImage) {
+        func saveAction() {
             analyticsManager.log(event: .receiveQrcodeSave)
-            UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
+    
+            generateQrCode()
+                .subscribe(onSuccess: { [weak self] image in
+                    guard let self = self else { return }
+                    UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.saveImageCallback), nil)
+                })
+                .disposed(by: disposeBag)
+        }
+    
+        func generateQrCode() -> Single<UIImage> {
+            let render: QrCodeImageRender = Resolver.resolve()
+            return render.render(username: username, address: pubkey, token: .renBTC, showTokenIcon: true)
         }
         
         @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {

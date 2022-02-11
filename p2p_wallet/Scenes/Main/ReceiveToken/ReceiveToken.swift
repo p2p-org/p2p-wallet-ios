@@ -19,6 +19,9 @@ enum ReceiveToken {
         case showRentBTCTopUpAccount(onCompletion: BEVoidCallback)
         case showRentBTCCreateAccount(onCompletion: BEVoidCallback)
         case help
+        
+        case showBuy
+        case showWalletAddress
     }
     
     enum TokenType: CaseIterable {

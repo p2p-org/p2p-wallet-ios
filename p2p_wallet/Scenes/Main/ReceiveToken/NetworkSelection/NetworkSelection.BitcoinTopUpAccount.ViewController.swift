@@ -6,13 +6,14 @@ import BEPureLayout
 import RxCocoa
 import RxSwift
 import UIKit
+import Resolver
 
 extension ReceiveToken {
     class BitcoinTopUpAccountScene: WLBottomSheet {
-        let viewModel: ReceiveTokenBitcoinViewModelType
+        let viewModel: ReceiveSceneModel
         let onCompletion: BEVoidCallback?
     
-        init(viewModel: ReceiveTokenBitcoinViewModelType, onCompletion: BEVoidCallback?) {
+        init(viewModel: ReceiveSceneModel, onCompletion: BEVoidCallback?) {
             self.viewModel = viewModel
             self.onCompletion = onCompletion
             super.init()
@@ -49,25 +50,27 @@ extension ReceiveToken {
                     }
                 }.padding(.init(x: 0, y: 18))
 
-                // Description
+                // Content
                 UIStackView(axis: .vertical, spacing: 12, alignment: .fill) {
                     ReceiveToken.textBuilder(text: L10n.aRenBTCAccountIsRequiredToReceiveBitcoinsOverTheBitcoinNetwork.asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.yourWalletListDoesNotContainARenBTCAccountAndToCreateOneYouNeedToMakeATransaction.asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.youDonTHaveFundsToPayForAccountCreationButIfSomeoneSendsRenBTCToYourAddressItWillBeCreatedForYou.asMarkdown())
-                }.padding(.init(x: 18, y: 0))
-
-                // Accept button
-                WLStepButton.main(image: .walletAdd.withTintColor(.white), text: L10n.topUpYourAccount)
-                    .onTap { [unowned self] in
-                        self.back()
-                    }
-                    .padding(.init(only: .top, inset: 36))
-
-                WLStepButton.sub(text: L10n.shareYourSolanaNetworkAddress)
-                    .onTap {
                     
-                    }
-                    .padding(.init(x: 28, y: 0))
+                    // Buy button
+                    WLStepButton.main(image: .walletAdd.withTintColor(.white), text: L10n.topUpYourAccount)
+                        .onTap { [unowned self] in
+                            viewModel.showBuyScreen()
+                            self.back()
+                        }
+                        .padding(.init(only: .top, inset: 36))
+    
+                    WLStepButton.sub(text: L10n.shareYourSolanaNetworkAddress)
+                        .onTap { [unowned self] in
+                            viewModel.receiveSolanaViewModel.saveAction()
+                            self.back()
+                        }
+                        .padding(.init(x: 28, y: 0))
+                }.padding(.init(x: 18, y: 0))
             }
         }
     }

@@ -31,6 +31,7 @@ protocol ReceiveSceneModel: BESceneModel {
     func showSelectionNetwork()
     func copyDirectAddress()
     func copyMintAddress()
+    func showBuyScreen()
 }
 
 extension ReceiveToken {
@@ -244,6 +245,10 @@ extension ReceiveToken {
 
         private func showCopied() {
             notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
+        }
+    
+        func showBuyScreen() {
+            navigationSubject.accept(.showBuy)
         }
     }
 }

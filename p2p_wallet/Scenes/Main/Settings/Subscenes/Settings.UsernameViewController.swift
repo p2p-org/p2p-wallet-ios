@@ -29,13 +29,9 @@ extension Settings {
                             pubKey: viewModel.getUserAddress(),
                             token: .nativeSolana,
                             showCoinLogo: false)
-                        .onCopy { [weak self] _ in
-                            self?.viewModel.copyUsernameToClipboard()
-                        }.onShare { [weak self] image in
-                            self?.viewModel.share(image: image)
-                        }.onSave { [weak self] image in
-                            self?.save(image: image)
-                        }
+                        .onCopy {  [unowned self] in viewModel.copyUsernameToClipboard() }
+                        .onShare { [unowned self]  in viewModel.share() }
+                        .onSave { [unowned self] in viewModel.save() }
                     
                     UIView.greyBannerView {
                         UILabel(

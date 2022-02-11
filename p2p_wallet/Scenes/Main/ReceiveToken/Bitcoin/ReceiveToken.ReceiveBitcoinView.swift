@@ -31,13 +31,10 @@ extension ReceiveToken {
                 
                 // Qr code
                 QrCodeCard(token: .renBTC)
-                    .onCopy { [unowned self] _ in
-                        self.viewModel.copyToClipboard()
-                    }.onShare { [unowned self] image in
-                        self.viewModel.share(image: image)
-                    }.onSave { image in
-                        self.viewModel.saveAction(image: image)
-                    }.setupWithType(QrCodeCard.self) { card in
+                    .onCopy { [unowned self] in viewModel.copyToClipboard() }
+                    .onShare { [unowned self] in self.viewModel.share() }
+                    .onSave { [unowned self] in self.viewModel.saveAction() }
+                    .setupWithType(QrCodeCard.self) { card in
                         viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
                     }
                 

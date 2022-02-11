@@ -223,7 +223,13 @@ extension ReceiveToken.ViewController {
         case .showRentBTCCreateAccount(let onCompletion):
             present(ReceiveToken.BitcoinCreateAccountScene(viewModel: ReceiveToken.BitcoinCreateAccountScene.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel), onCompletion: onCompletion), animated: true)
         case .showRentBTCTopUpAccount(let onCompletion):
-            present(ReceiveToken.BitcoinTopUpAccountScene(viewModel: viewModel.receiveBitcoinViewModel, onCompletion: onCompletion), animated: true)
+            present(ReceiveToken.BitcoinTopUpAccountScene(viewModel: viewModel, onCompletion: onCompletion), animated: true)
+        case .showBuy:
+            let vm = BuyRoot.ViewModel()
+            let vc = BuyRoot.ViewController(viewModel: vm)
+            present(vc, animated: true, completion: nil)
+        case .showWalletAddress:
+            let vc = Detail
         default:
             return
         }

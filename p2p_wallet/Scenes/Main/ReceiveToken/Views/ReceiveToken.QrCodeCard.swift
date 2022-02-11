@@ -8,7 +8,6 @@ import RxCocoa
 
 extension ReceiveToken {
     class QrCodeCard: BECompositionView {
-        @Injected var qrImageRender: QrCodeImageRender
         let disposeBag = DisposeBag()
         
         var username: String? {
@@ -30,9 +29,9 @@ extension ReceiveToken {
         
         private let showCoinLogo: Bool
         
-        private var onCopy: BECallback<String?>?
-        private var onShare: BECallback<UIImage>?
-        private var onSave: BECallback<UIImage>?
+        private var onCopy: BEVoidCallback?
+        private var onShare: BEVoidCallback?
+        private var onSave: BEVoidCallback?
         
         private var pubKeyView: UILabel?
         private var usernameLabel: UILabel!
@@ -86,21 +85,11 @@ extension ReceiveToken {
                 // Action buttons
                 UIStackView(axis: .horizontal, alignment: .fill, distribution: .fillEqually) {
                     UIButton.text(text: L10n.copy, image: .copyIcon, tintColor: .h5887ff)
-                        .onTap { [unowned self] in self.onCopy?(pubKey) }
+                        .onTap { [unowned self] in onCopy?() }
                     UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
-                        .onTap { [unowned self] in
-                            qrImageRender.render(username: username, address: pubKey, token: token, showTokenIcon: showCoinLogo).subscribe(onSuccess: { image in
-                                    self.onShare?(image)
-                                })
-                                .disposed(by: disposeBag)
-                        }
+                        .onTap { [unowned self] in onShare?() }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
-                        .onTap { [unowned self] in
-                            qrImageRender.render(username: username, address: pubKey, token: token, showTokenIcon: showCoinLogo).subscribe(onSuccess: { image in
-                                    self.onSave?(image)
-                                })
-                                .disposed(by: disposeBag)
-                        }
+                        .onTap { [unowned self] in onSave?() }
                 }.padding(.init(x: 0, y: 4))
                 
             }.border(width: 1, color: .f2f2f7)
@@ -127,17 +116,17 @@ extension ReceiveToken {
             pubKeyView?.attributedText = address
         }
         
-        func onCopy(callback: @escaping BECallback<String?>) -> Self {
+        func onCopy(callback: @escaping BEVoidCallback) -> Self {
             onCopy = callback
             return self
         }
         
-        func onShare(callback: @escaping BECallback<UIImage>) -> Self {
+        func onShare(callback: @escaping BEVoidCallback) -> Self {
             onShare = callback
             return self
         }
         
-        func onSave(callback: @escaping BECallback<UIImage>) -> Self {
+        func onSave(callback: @escaping BEVoidCallback) -> Self {
             onSave = callback
             return self
         }
