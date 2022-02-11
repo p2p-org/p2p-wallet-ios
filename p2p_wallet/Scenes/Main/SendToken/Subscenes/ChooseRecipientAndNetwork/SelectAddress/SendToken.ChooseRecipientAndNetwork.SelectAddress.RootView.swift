@@ -93,6 +93,19 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 if viewModel.relayMethod == .relay {
                     feeView
                 }
+                #if DEBUG
+                UILabel(textColor: .red, numberOfLines: 0, textAlignment: .center)
+                    .setup { label in
+                        viewModel.feesDriver
+                            .drive(onNext: {[weak label] feeAmount in
+                                label?.attributedText = NSMutableAttributedString()
+                                    .text("Transaction fee: \(feeAmount?.transaction ?? 0) lamports", size: 13, color: .red)
+                                    .text(", ")
+                                    .text("Account creation fee: \(feeAmount?.accountBalances ?? 0) lamports", size: 13, color: .red)
+                            })
+                            .disposed(by: disposeBag)
+                    }
+                #endif
             }
             
             addSubview(actionButton)
@@ -167,7 +180,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
             
             // fee view
-            isSearchingDriver
+            Driver.combineLatest(
+                isSearchingDriver,
+                viewModel.feesDriver.map {$0?.total == 0}
+            )
+                .map {$0 || $1}
                 .drive(feeView.rx.isHidden)
                 .disposed(by: disposeBag)
             
