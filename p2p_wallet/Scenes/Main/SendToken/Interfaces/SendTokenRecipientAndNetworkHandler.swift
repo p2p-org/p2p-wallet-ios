@@ -96,7 +96,20 @@ extension SendTokenRecipientAndNetworkHandler {
             network: networkSubject.value,
             payingFeeToken: getPayingToken(payingWallet: payingWalletSubject.value)
         )
-            .catchAndReturn(nil)
+            .catch { _ in
+                if wallet.token.isRenBTC {
+                    return .just(
+                        .init(
+                            transaction: 20000,
+                            accountBalances: 0,
+                            others: [
+                                .init(amount: 0.0002, unit: "renBTC")
+                            ]
+                        )
+                    )
+                }
+                return .just(nil)
+            }
     }
     
     func selectRecipient(_ recipient: SendToken.Recipient?) {
