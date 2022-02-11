@@ -142,10 +142,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 token: .nativeSolana
             )
 
-            return
-                feeRelay.canUseFeeRelayer(useCache: true)
+            return feeRelay.getFreeTransactionFeeLimit(useCache: true)
                 .flatMap { info in
-                    if info.canUseFeeRelayer {
+                    if info.isFreeTransactionFeeAvailable(transactionFee: fees.transactionFees) {
                         allFees.append(
                             .init(
                                 type: .transactionFee,

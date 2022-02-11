@@ -63,6 +63,8 @@
 		4183007C2758A489007BBEBF /* OrcaSwapV2.ShowDetailsButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4183007B2758A489007BBEBF /* OrcaSwapV2.ShowDetailsButton.swift */; };
 		4183007E2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4183007D2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift */; };
 		418300802758BA1F007BBEBF /* OrcaSwapV2.DetailFeesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4183007F2758BA1F007BBEBF /* OrcaSwapV2.DetailFeesView.swift */; };
+		4185ABF927B63DB500BA9A83 /* PhotoLibraryAlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4185ABF827B63DB500BA9A83 /* PhotoLibraryAlertPresenter.swift */; };
+		4185ABFD27B6956D00BA9A83 /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */; };
 		418A5D982755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A5D972755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift */; };
 		418A5DA32755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A5DA22755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift */; };
 		41B351F5275F131C0027328E /* OrcaSwapV2.ClickableRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B351F4275F131C0027328E /* OrcaSwapV2.ClickableRow.swift */; };
@@ -593,6 +595,8 @@
 		4183007B2758A489007BBEBF /* OrcaSwapV2.ShowDetailsButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ShowDetailsButton.swift; sourceTree = "<group>"; };
 		4183007D2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.RatesStackView.swift; sourceTree = "<group>"; };
 		4183007F2758BA1F007BBEBF /* OrcaSwapV2.DetailFeesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.DetailFeesView.swift; sourceTree = "<group>"; };
+		4185ABF827B63DB500BA9A83 /* PhotoLibraryAlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryAlertPresenter.swift; sourceTree = "<group>"; };
+		4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		418A5D972755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.NavigationBar.swift; sourceTree = "<group>"; };
 		418A5DA22755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.MainSwapView.swift; sourceTree = "<group>"; };
 		41B351F4275F131C0027328E /* OrcaSwapV2.ClickableRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ClickableRow.swift; sourceTree = "<group>"; };
@@ -2164,6 +2168,7 @@
 				84699C897A8A796CF8746166,
 				41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */,
 				84699EEE2AAF2DB90B7E2EF4 /* Swap */,
+				4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2622,6 +2627,7 @@
 				41DE53C92797A29700F24B0B /* ColorfulHorizontalView.swift */,
 				41DE53CB2797A5CC00F24B0B /* ColorfulRadialGradientView.swift */,
 				41DE53CF2797BCDD00F24B0B /* WalletActionButton.swift */,
+				4185ABF827B63DB500BA9A83 /* PhotoLibraryAlertPresenter.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -3141,6 +3147,7 @@
 				BC2EC1F92553FF6A006EEDA5 /* DashedButton.swift in Sources */,
 				BCE04C67268D901400CE131A /* OneWayPanGestureRecognizer.swift in Sources */,
 				BC53E2202654BFAA005624CC /* DerivablePaths.ViewModel.swift in Sources */,
+				4185ABF927B63DB500BA9A83 /* PhotoLibraryAlertPresenter.swift in Sources */,
 				41F4476E2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift in Sources */,
 				BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */,
 				412DBFD7273D79EC000F514E /* EnterSeed.NavigationBar.swift in Sources */,
@@ -3192,6 +3199,7 @@
 				41EA3B0B2777418000832109 /* SwapTokenSettings.FeesTable.swift in Sources */,
 				BCF7D953256220F100961D31 /* ErrorView.swift in Sources */,
 				BC0E7DCC25B17AB2009AD08B /* Bundle+Extensions.swift in Sources */,
+				4185ABFD27B6956D00BA9A83 /* ImageSaver.swift in Sources */,
 				41D7F6C42739534500453B61 /* BannersAvailabilityStateType.swift in Sources */,
 				414C365B2775024C007B2194 /* SwapTokenSettings.ParagraphView.swift in Sources */,
 				BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */,

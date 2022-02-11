@@ -115,15 +115,7 @@ extension CreateSecurityKeys {
         
         func saveToPhoto() {
             analyticsManager.log(event: .createWalletSaveSeedToPhotosClick)
-            UIImageWriteToSavedPhotosAlbum(keysView.asImage(), self, #selector(saveImageCallback), nil)
-        }
-        
-        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-            if let error = error {
-                showErrorView(error: error)
-            } else {
-                viewModel.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
-            }
+            viewModel.saveKeysImage(keysView.asImage())
         }
     }
 }
