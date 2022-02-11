@@ -64,7 +64,7 @@
 		4183007E2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4183007D2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift */; };
 		418300802758BA1F007BBEBF /* OrcaSwapV2.DetailFeesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4183007F2758BA1F007BBEBF /* OrcaSwapV2.DetailFeesView.swift */; };
 		4185ABF927B63DB500BA9A83 /* PhotoLibraryAlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4185ABF827B63DB500BA9A83 /* PhotoLibraryAlertPresenter.swift */; };
-		4185ABFB27B644DA00BA9A83 /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4185ABFA27B644DA00BA9A83 /* ImageSaver.swift */; };
+		4185ABFD27B6956D00BA9A83 /* ImageSaver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */; };
 		418A5D982755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A5D972755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift */; };
 		418A5DA32755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418A5DA22755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift */; };
 		41B351F5275F131C0027328E /* OrcaSwapV2.ClickableRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41B351F4275F131C0027328E /* OrcaSwapV2.ClickableRow.swift */; };
@@ -591,7 +591,7 @@
 		4183007D2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.RatesStackView.swift; sourceTree = "<group>"; };
 		4183007F2758BA1F007BBEBF /* OrcaSwapV2.DetailFeesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.DetailFeesView.swift; sourceTree = "<group>"; };
 		4185ABF827B63DB500BA9A83 /* PhotoLibraryAlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryAlertPresenter.swift; sourceTree = "<group>"; };
-		4185ABFA27B644DA00BA9A83 /* ImageSaver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ImageSaver.swift; path = ../../../../ImageSaver.swift; sourceTree = "<group>"; };
+		4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageSaver.swift; sourceTree = "<group>"; };
 		418A5D972755E0CE00C2D387 /* OrcaSwapV2.NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.NavigationBar.swift; sourceTree = "<group>"; };
 		418A5DA22755EFC600C2D387 /* OrcaSwapV2.MainSwapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.MainSwapView.swift; sourceTree = "<group>"; };
 		41B351F4275F131C0027328E /* OrcaSwapV2.ClickableRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ClickableRow.swift; sourceTree = "<group>"; };
@@ -2137,7 +2137,7 @@
 				3B78CB502773067100FB3C4C /* NotificationsService.swift */,
 				3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */,
 				41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */,
-				4185ABFA27B644DA00BA9A83 /* ImageSaver.swift */,
+				4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -3166,7 +3166,7 @@
 				41EA3B0B2777418000832109 /* SwapTokenSettings.FeesTable.swift in Sources */,
 				BCF7D953256220F100961D31 /* ErrorView.swift in Sources */,
 				BC0E7DCC25B17AB2009AD08B /* Bundle+Extensions.swift in Sources */,
-				4185ABFB27B644DA00BA9A83 /* ImageSaver.swift in Sources */,
+				4185ABFD27B6956D00BA9A83 /* ImageSaver.swift in Sources */,
 				41D7F6C42739534500453B61 /* BannersAvailabilityStateType.swift in Sources */,
 				414C365B2775024C007B2194 /* SwapTokenSettings.ParagraphView.swift in Sources */,
 				BC54DD8E25872FE500A65566 /* HorizontalPicker.swift in Sources */,
