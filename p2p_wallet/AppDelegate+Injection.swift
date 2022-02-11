@@ -217,8 +217,8 @@ extension Resolver: ResolverRegistering {
                 solanaSDK: resolve(),
                 feeRelayerApi: resolve(),
                 accountStorage: resolve(),
-                walletRepository: resolve(),
-                orcaSwap: resolve()
+                orcaSwap: resolve(),
+                walletRepository: resolve()
             )
         }
             .implements(RentBTC.Service.self)

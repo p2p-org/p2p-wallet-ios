@@ -21,15 +21,13 @@ class RentBtcServiceImpl: RentBTC.Service {
         feeRelayerApi: FeeRelayerAPIClientType,
         accountStorage: AccountStorageType,
         orcaSwap: OrcaSwapType,
-        walletRepository: WalletsRepository,
-        feeRelayer: FeeRelayer.Relay?
+        walletRepository: WalletsRepository
     ) {
         self.solanaSDK = solanaSDK
         self.feeRelayerApi = feeRelayerApi
         self.accountStorage = accountStorage
         self.orcaSwap = orcaSwap
         self.walletRepository = walletRepository
-        self.feeRelayer = feeRelayer
     }
 
     func load() -> Completable {

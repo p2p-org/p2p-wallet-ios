@@ -729,3 +729,4 @@
 "A renBTC account is required to receive bitcoins over the Bitcoin network." = "Для получения биткойнов через сеть биткойнов требуется учетная запись renBTC.";
 "You don't have funds to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "У вас нет средств для оплаты создания аккаунта, но если кто-то отправит renBTC на ваш адрес, он будет создан для вас.";
 "Share your Solana network address" = "Поделитесь своим сетевым адресом Solana";
+"Tap to select" = "Нажмите, чтобы выбрать";

@@ -36,7 +36,6 @@ protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     func reload()
     func reloadMinimumTransactionAmount()
     func getSessionEndDate() -> Date?
-    func createRenBTCWallet()
     func acceptConditionAndLoadAddress()
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
     func showReceivingStatuses()
@@ -104,15 +103,14 @@ extension ReceiveToken {
         }
 
         func createRenBTCWallet() {
-            rentBTCService.createAssociatedTokenAccount(payingFeeAddress: <#T##String##Swift.String#>, payingFeeMintAddress: <#T##String##Swift.String#>)
             createRenBTCSubject.reload()
         }
-
+        
         func acceptConditionAndLoadAddress() {
             renVMService.acceptConditionAndLoadAddress()
         }
 
-        func acceptReceivingRenBTC() -> Completable {
+//        func acceptReceivingRenBTC() -> Completable {
             //            return handler.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
             //                .catch {error in
             //                    if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
@@ -130,7 +128,7 @@ extension ReceiveToken {
             //                    return self.handler.createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
             //                        .asCompletable()
             //                }
-        }
+//        }
 
         private func bind() {
             Timer.observable(seconds: 1)

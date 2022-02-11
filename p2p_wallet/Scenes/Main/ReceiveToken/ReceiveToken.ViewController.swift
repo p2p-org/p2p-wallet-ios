@@ -219,11 +219,11 @@ extension ReceiveToken.ViewController {
             let vc = SupportedTokens.ViewController(viewModel: vm)
             present(vc, animated: true)
         case .showRentBTCConfirm(let onCompletion):
-            present(ReceiveToken.BitcoinConfirmScene(viewModel: viewModel.receiveBitcoinViewModel, onCompletion: onCompletion))
+            present(ReceiveToken.BitcoinConfirmScene(viewModel: viewModel.receiveBitcoinViewModel, onCompletion: onCompletion), animated: true)
         case .showRentBTCCreateAccount(let onCompletion):
-            present(ReceiveToken.BitcoinCreateAccountScene(viewModel: viewModel.receiveBitcoinViewModel, onCompletion: onCompletion))
+            present(ReceiveToken.BitcoinCreateAccountScene(viewModel: ReceiveToken.BitcoinCreateAccountScene.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel), onCompletion: onCompletion), animated: true)
         case .showRentBTCTopUpAccount(let onCompletion):
-            present(ReceiveToken.BitcoinCreateAccountScene(viewModel: viewModel.receiveBitcoinViewModel, onCompletion: onCompletion))
+            present(ReceiveToken.BitcoinTopUpAccountScene(viewModel: viewModel.receiveBitcoinViewModel, onCompletion: onCompletion), animated: true)
         default:
             return
         }

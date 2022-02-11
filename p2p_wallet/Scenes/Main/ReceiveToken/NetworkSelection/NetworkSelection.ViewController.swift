@@ -41,8 +41,7 @@ extension ReceiveToken {
                                 .drive(view.rx.isSelected)
                                 .disposed(by: disposeBag)
                         }.onTap { [unowned self] in
-                            self.viewModel.switchToken(.solana)
-                            self.back()
+                            self.viewModel.switchToken(.solana) { self.back() }
                         }
 
                         UIView.defaultSeparator().padding(.init(x: 0, y: 25))

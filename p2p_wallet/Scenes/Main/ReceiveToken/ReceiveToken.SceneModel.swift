@@ -26,7 +26,6 @@ protocol ReceiveSceneModel: BESceneModel {
     var tokenWallet: Wallet? { get }
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
 
-    func isRenBtcCreated() -> Bool
     func switchToken(_ tokenType: ReceiveToken.TokenType, onCompletion: BEVoidCallback?)
     func copyToClipboard(address: String, logEvent: AnalyticsEvent)
     func showSelectionNetwork()
@@ -163,7 +162,9 @@ extension ReceiveToken {
         func switchToken(_ tokenType: ReceiveToken.TokenType, onCompletion: BEVoidCallback?) {
             switch tokenType {
             case .btc: switchToRentBtc(onCompletion: onCompletion)
-            default: tokenTypeSubject.accept(tokenType)
+            default:
+                tokenTypeSubject.accept(tokenType)
+                onCompletion?()
             }
         }
 
@@ -174,6 +175,7 @@ extension ReceiveToken {
                     switch status {
                     case .ready:
                         self.tokenTypeSubject.accept(.btc)
+                        onCompletion?()
                     case .needAcceptCondition:
                         self.navigationSubject.accept(
                             .showRentBTCConfirm {
