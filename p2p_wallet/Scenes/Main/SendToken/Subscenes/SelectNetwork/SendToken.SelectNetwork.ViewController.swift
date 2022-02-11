@@ -41,16 +41,7 @@ extension SendToken.SelectNetwork {
                     
                     // Solana cell
                     if viewModel.getSelectableNetworks().contains(.solana) {
-                        _NetworkView()
-                            .setUp(network: .solana, prices: viewModel.getSOLAndRenBTCPrices())
-                            .setupWithType(_NetworkView.self) { view in
-                                selectedNetwork.asDriver()
-                                    .map { network in network != .solana }
-                                    .drive(view.tickView.rx.isHidden)
-                                    .disposed(by: disposeBag)
-                            }
-                            .onTap { [unowned self] in self.switchNetwork(to: .solana) }
-                        
+                        createNetworkView(network: .solana)
                         UIView.greenBannerView(contentInset: .init(x: 12, y: 8)) {
                             UILabel(
                                 text: L10n
@@ -66,19 +57,27 @@ extension SendToken.SelectNetwork {
                     // Bitcoin cell
                     if viewModel.getSelectableNetworks().contains(.bitcoin) {
                         UIView.defaultSeparator().padding(.init(top: 16, left: 0, bottom: 25, right: 0))
-                        _NetworkView()
-                            .setUp(network: .bitcoin, prices: viewModel.getSOLAndRenBTCPrices())
-                            .setupWithType(_NetworkView.self) { view in
-                                selectedNetwork.asDriver()
-                                    .map { network in network != .bitcoin }
-                                    .drive(view.tickView.rx.isHidden)
-                                    .disposed(by: disposeBag)
-                            }
-                            .onTap { [unowned self] in self.switchNetwork(to: .bitcoin) }
+                        createNetworkView(network: .bitcoin)
                     }
-                    
                 }
             }
+        }
+        
+        private func createNetworkView(network: SendToken.Network) -> _NetworkView {
+            _NetworkView()
+                .setup {view in
+                    viewModel.feesDriver
+                        .drive(onNext: {[weak view, weak self] feeAmount in
+                            view?.setUp(network: network, feeAmount: feeAmount, prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:])
+                        })
+                        .disposed(by: disposeBag)
+                    
+                    selectedNetwork.asDriver()
+                        .map { $0 != network }
+                        .drive(view.tickView.rx.isHidden)
+                        .disposed(by: disposeBag)
+                }
+                .onTap { [unowned self] in self.switchNetwork(to: network) }
         }
         
         private func switchNetwork(to network: SendToken.Network) {

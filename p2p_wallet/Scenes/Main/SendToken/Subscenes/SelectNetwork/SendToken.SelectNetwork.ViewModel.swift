@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import RxCocoa
 
 protocol SendTokenSelectNetworkViewModelType {
+    var feesDriver: Driver<SolanaSDK.FeeAmount?> {get}
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSendService() -> SendServiceType

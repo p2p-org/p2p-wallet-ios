@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import RxSwift
+import SolanaSwift
 
 extension SendToken {
     class NetworkView: UIStackView {
@@ -37,22 +38,17 @@ extension SendToken {
         }
         
         @discardableResult
-        func setUp(network: SendToken.Network, prices: [String: Double]) -> Self {
+        func setUp(network: SendToken.Network, feeAmount: SolanaSDK.FeeAmount?, prices: [String: Double]) -> Self {
             coinImageView.image = network.icon
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
             
             let attributedText = NSMutableAttributedString()
                 .text(L10n.transferFee + ": ", size: 13, color: .textSecondary)
             
-            let fees = network.defaultFees
-            
-            if fees.map(\.amount).reduce(0.0, +) == 0 {
-                attributedText
-                    .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
-            } else {
+            if let feeAmount = feeAmount {
                 attributedText
                     .append(
-                        network.defaultFees
+                        feeAmount
                             .attributedString(
                                 prices: prices,
                                 textSize: 13,
@@ -63,6 +59,7 @@ extension SendToken {
                             )
                     )
             }
+            
             feeLabel.attributedText = attributedText
             
             return self
