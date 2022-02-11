@@ -144,6 +144,8 @@ PODS:
   - RxAppState (1.7.1):
     - RxCocoa (~> 6.2)
     - RxSwift (~> 6.2)
+  - RxBlocking (6.2.0):
+    - RxSwift (= 6.2.0)
   - RxCocoa (6.2.0):
     - RxRelay (= 6.2.0)
     - RxSwift (= 6.2.0)
@@ -190,6 +192,7 @@ DEPENDENCIES:
   - OrcaSwapSwift (from `OrcaSwapSwift`)
   - Resolver
   - RxAppState
+  - RxBlocking
   - RxCocoa
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
@@ -230,6 +233,7 @@ SPEC REPOS:
     - Runtime
     - RxAlamofire
     - RxAppState
+    - RxBlocking
     - RxCocoa
     - RxRelay
     - RxSwift
@@ -312,6 +316,7 @@ SPEC CHECKSUMS:
   Runtime: 67741bd196fb4ad821c4d259ccc527bf734d8806
   RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
+  RxBlocking: 0b29f7d2079109a8de49c411381bed7c33ef1eeb
   RxCocoa: 4baf94bb35f2c0ab31bc0cb9f1900155f646ba42
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
@@ -327,6 +332,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 160c4424bd3d817fae8ffb3dd09e09161c9db652
+PODFILE CHECKSUM: 8bea22bdf1a21c3bd23b41f2b429a881b2c85120
 
 COCOAPODS: 1.11.2

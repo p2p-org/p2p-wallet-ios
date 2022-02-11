@@ -19,6 +19,8 @@ protocol RenVMLockAndMintServiceType {
     var minimumTransactionAmountDriver: Driver<Loadable<Double>> {get}
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
     
+    var isConditionAccepted: Bool {get}
+    
     func reload()
     func reloadMinimumTransactionAmount()
     func acceptConditionAndLoadAddress()
@@ -357,6 +359,10 @@ extension RenVM.LockAndMint {
 }
 
 extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
+    var isConditionAccepted: Bool {
+        conditionAcceptedSubject.value
+    }
+    
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
     }

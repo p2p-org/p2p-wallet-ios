@@ -9,8 +9,21 @@ import UIKit
 
 extension ReceiveToken {
     class BitcoinCreateAccountScene: WLBottomSheet {
-        override init() {
+        @Injected var walletRepository: WalletsRepository
+        private let viewModel: ReceiveTokenBitcoinViewModelType
+        private let onCompletion: BEVoidCallback?
+    
+        // Internal state
+        var payingTokenRelay: BehaviorRelay<PayingFeeToken?> = BehaviorRelay(value: nil)
+    
+        init(viewModel: ReceiveTokenBitcoinViewModelType, onCompletion: BEVoidCallback?) {
+            self.viewModel = viewModel
+            self.onCompletion = onCompletion
             super.init()
+    
+            if let wallet = walletRepository.getWallets().first { $0.amount > 0 } {
+                payingTokenRelay.accept(try? PayingFeeToken.fromWallet(wallet: wallet))
+            }
         }
 
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
@@ -46,7 +59,7 @@ extension ReceiveToken {
 
                 UIStackView(axis: .vertical, spacing: 12, alignment: .fill) {
                     ReceiveToken.textBuilder(text: L10n.yourWalletListDoesNotContainARenBTCAccountAndToCreateOneYouNeedToMakeATransaction.asMarkdown())
-
+                    
                     WLCard {
                         BEHStack(alignment: .center) {
                             UIImageView(width: 44, height: 44, image: .squircleSolanaIcon)
@@ -64,11 +77,13 @@ extension ReceiveToken {
                     ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                 }.padding(.init(x: 18, y: 0))
-
+                
                 // Accept button
                 WLStepButton.main(text: L10n.topUpYourAccount)
                     .onTap { [unowned self] in
+                        self.viewModel.createRenBTCWallet()
                         self.back()
+                        self.onCompletion?()
                     }
                     .padding(.init(x: 18, y: 36))
             }

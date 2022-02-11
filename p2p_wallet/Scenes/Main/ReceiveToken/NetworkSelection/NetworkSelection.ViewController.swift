@@ -6,28 +6,28 @@
 //
 //
 
-import UIKit
-import RxSwift
-import RxCocoa
 import Down
+import RxCocoa
+import RxSwift
+import UIKit
 
 extension ReceiveToken {
     class NetworkSelectionScene: BEScene {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-        
+
         private let viewModel: ReceiveSceneModel
-        
+
         init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
                     NewWLNavigationBar(initialTitle: L10n.chooseTheNetwork, separatorEnable: false)
                         .onBack { [unowned self] in self.back() }
-                    
+
                     BEScrollView(contentInsets: .init(all: 18)) {
                         // Solana network
                         NetworkCell(
@@ -44,9 +44,9 @@ extension ReceiveToken {
                             self.viewModel.switchToken(.solana)
                             self.back()
                         }
-                        
+
                         UIView.defaultSeparator().padding(.init(x: 0, y: 25))
-                        
+
                         // Bitcoin network
                         NetworkCell(
                             networkName: "Bitcoin",
@@ -59,39 +59,9 @@ extension ReceiveToken {
                                 .drive(view.rx.isSelected)
                                 .disposed(by: disposeBag)
                         }.onTap { [unowned self] in
-                            Driver.combineLatest(
-                                self.viewModel.receiveBitcoinViewModel.isReceivingRenBTCDriver,
-                                self.viewModel.receiveBitcoinViewModel.conditionAcceptedDriver
-                            ).drive { [weak self] (isRenBTCCreated, conditionalAccepted) in
-                                if isRenBTCCreated && conditionalAccepted {
-                                    self?.viewModel.switchToken(.btc)
-                                    self?.back()
-                                } else {
-//                                    let vc = BitcoinConfirmScene(isRenBTCCreated: viewModel.isRenBtcCreated()) { [weak self] in
-//                                        guard let self = self else {return}
-//                                        self.showIndetermineHud()
-//                                        self.viewModel.acceptReceivingRenBTC()
-//                                            .subscribe(onCompleted: { [weak self] in
-//                                                guard let self = self else {return}
-//                                                self.hideHud()
-//                                                self.back()
-//                                            }, onError: { [weak self] error in
-//                                                guard let self = self else {return}
-//                                                #if DEBUG
-//                                                print("Create renBTC error: \(error)")
-//                                                #endif
-//                                                self.hideHud()
-//                                                self.showAlert(title: L10n.error.uppercaseFirst, message: L10n.couldNotCreateRenBTCTokenPleaseTryAgainLater)
-//                                            })
-//                                            .disposed(by: self.disposeBag)
-//                                    }
-                                let vc = BitcoinCreateAccountScene()
-                                    self?.present(vc, animated: true)
-                                }
-                            }.disposed(by: disposeBag)
-                            
+                            self.viewModel.switchToken(.btc) { self.back() }
                         }
-                        
+
                         // Description
                         UIView.greyBannerView(spacing: 12, alignment: .fill) {
                             UILabel(text: "Solana", textSize: 17, weight: .semibold)
@@ -117,7 +87,7 @@ extension ReceiveToken {
             }
         }
     }
-    
+
     fileprivate class NetworkCell: BECompositionView {
         let networkName: String
         let networkDescription: String
@@ -127,10 +97,10 @@ extension ReceiveToken {
                 selectionView.hidden(!isSelected)
             }
         }
-        
+
         // Refs
         var selectionView: UIView!
-        
+
         init(networkName: String, networkDescription: String, icon: UIImage, isSelected: Bool = false) {
             self.networkName = networkName
             self.networkDescription = networkDescription
@@ -138,7 +108,7 @@ extension ReceiveToken {
             self.isSelected = isSelected
             super.init()
         }
-        
+
         override func build() -> UIView {
             UIStackView(axis: .horizontal, alignment: .top) {
                 UIImageView(width: 44, height: 44, image: icon)
@@ -147,9 +117,11 @@ extension ReceiveToken {
                     UILabel(
                         textColor: .secondaryLabel,
                         numberOfLines: 3
-                    ).setAttributeString(networkDescription.asMarkdown(
-                        textColor: .secondaryLabel
-                    ))
+                    ).setAttributeString(
+                        networkDescription.asMarkdown(
+                            textColor: .secondaryLabel
+                        )
+                    )
                 }.padding(.init(only: .left, inset: 12))
                 UIImageView(width: 22, height: 22, image: .checkBoxIOS)
                     .setup { view in self.selectionView = view }

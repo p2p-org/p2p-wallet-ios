@@ -15,6 +15,9 @@ enum ReceiveToken {
         case share(address: String? = nil, qrCode: UIImage? = nil)
         case networkSelection
         case showSupportedTokens
+        case showRentBTCConfirm(onCompletion: BEVoidCallback)
+        case showRentBTCTopUpAccount(onCompletion: BEVoidCallback)
+        case showRentBTCCreateAccount(onCompletion: BEVoidCallback)
         case help
     }
     

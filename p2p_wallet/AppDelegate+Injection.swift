@@ -210,6 +210,19 @@ extension Resolver: ResolverRegistering {
         register{ReceiveToken.QrCodeImageRenderImpl()}
             .implements(QrCodeImageRender.self)
             .scope(.application)
+        
+        // MARK: - RentBTC
+        register {
+            RentBtcServiceImpl(
+                solanaSDK: resolve(),
+                feeRelayerApi: resolve(),
+                accountStorage: resolve(),
+                walletRepository: resolve(),
+                orcaSwap: resolve()
+            )
+        }
+            .implements(RentBTC.Service.self)
+            .scope(.session)
     }
 }
 

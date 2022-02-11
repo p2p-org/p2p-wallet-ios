@@ -13,12 +13,12 @@ import BEPureLayout
 
 extension ReceiveToken {
     class BitcoinConfirmScene: WLBottomSheet {
-        let onAccept: (() -> Void)?
-        let isRenBTCCreated: Bool
+        let onCompletion: (() -> Void)?
+        let viewModel: ReceiveTokenBitcoinViewModelType
         
-        init(isRenBTCCreated: Bool, onAccept: (() -> Void)? = nil) {
-            self.isRenBTCCreated = isRenBTCCreated
-            self.onAccept = onAccept
+        init(viewModel: ReceiveTokenBitcoinViewModelType, onCompletion: (() -> Void)? = nil) {
+            self.onCompletion = onCompletion
+            self.viewModel = viewModel
             super.init()
         }
         
@@ -60,21 +60,13 @@ extension ReceiveToken {
                     ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                 }.padding(.init(x: 18, y: 0))
                 
-                // 2nd description
-                if !isRenBTCCreated {
-                    BEStackViewSpacing(18)
-                    
-                    UIView.greyBannerView {
-                        UILabel(text: L10n.SolanaAssociatedTokenAccountRequired.thisWillRequireYouToSignATransactionAndSpendSomeSOL, textSize: 15, numberOfLines: 0)
-                    }.padding(.init(x: 18, y: 0))
-                }
-                
                 // Accept button
                 WLStepButton.main(image: .check.withTintColor(.white), text: L10n.iUnderstand)
                     .padding(.init(only: .top, inset: 36))
                     .onTap { [unowned self] in
+                        self.viewModel.acceptConditionAndLoadAddress()
                         self.back()
-                        self.onAccept?()
+                        self.onCompletion?()
                     }
                     .padding(.init(x: 18, y: 4))
             }

@@ -9,10 +9,12 @@ import UIKit
 
 extension ReceiveToken {
     class BitcoinTopUpAccountScene: WLBottomSheet {
-        let onTopUp: (() -> Void)?
-
-        init(onAccept: (() -> Void)? = nil) {
-            self.onTopUp = onAccept
+        let viewModel: ReceiveTokenBitcoinViewModelType
+        let onCompletion: BEVoidCallback?
+    
+        init(viewModel: ReceiveTokenBitcoinViewModelType, onCompletion: BEVoidCallback?) {
+            self.viewModel = viewModel
+            self.onCompletion = onCompletion
             super.init()
         }
 
@@ -58,7 +60,6 @@ extension ReceiveToken {
                 WLStepButton.main(image: .walletAdd.withTintColor(.white), text: L10n.topUpYourAccount)
                     .onTap { [unowned self] in
                         self.back()
-                        self.onTopUp?()
                     }
                     .padding(.init(only: .top, inset: 36))
 

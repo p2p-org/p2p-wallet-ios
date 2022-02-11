@@ -12,19 +12,24 @@ class RentBtcServiceImpl: RentBTC.Service {
     private let feeRelayerApi: FeeRelayerAPIClientType
     private let accountStorage: AccountStorageType
     private let orcaSwap: OrcaSwapType
+    private let walletRepository: WalletsRepository
 
     private var feeRelayer: FeeRelayer.Relay? = nil
-
+    
     init(
         solanaSDK: SolanaSDK,
         feeRelayerApi: FeeRelayerAPIClientType,
         accountStorage: AccountStorageType,
-        orcaSwap: OrcaSwapType
+        orcaSwap: OrcaSwapType,
+        walletRepository: WalletsRepository,
+        feeRelayer: FeeRelayer.Relay?
     ) {
         self.solanaSDK = solanaSDK
         self.feeRelayerApi = feeRelayerApi
         self.accountStorage = accountStorage
         self.orcaSwap = orcaSwap
+        self.walletRepository = walletRepository
+        self.feeRelayer = feeRelayer
     }
 
     func load() -> Completable {
@@ -43,24 +48,38 @@ class RentBtcServiceImpl: RentBTC.Service {
 
     func hasAssociatedTokenAccountBeenCreated() -> Single<Bool> {
         solanaSDK.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
+            .catch {error in
+                if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
+                    return .just(false)
+                }
+                throw error
+            }
     }
-
+    
+    func isAssociatedAccountCreatable() -> Single<Bool> {
+        .just(walletRepository.getWallets().filter { $0.amount > 0}.count > 0)
+    }
+    
     func createAssociatedTokenAccount(payingFeeAddress: String, payingFeeMintAddress: String) -> Single<SolanaSDK.TransactionID> {
         guard let account = accountStorage.account else { return .error(SolanaSDK.Error.unauthorized) }
+        guard let feeRelayer = feeRelayer else {return .error(SolanaSDK.Error.other("Fee relay is not ready"))}
         
         return Single.zip(
             solanaSDK.getMinimumBalanceForRentExemption(span: 165),
             solanaSDK.getLamportsPerSignature(),
+            solanaSDK.getRecentBlockhash(),
             feeRelayerApi.getFeePayerPubkey()
-        ).flatMap { minimumBalanceForRentExemption, lamports, payer in
+        ).flatMap { minimumBalanceForRentExemption, lamports, recentBlockHash,feePayer in
             var transaction = SolanaSDK.Transaction()
             transaction.instructions.append(
-                try solanaSDK.createAssociatedTokenAccountInstruction(
+                try self.solanaSDK.createAssociatedTokenAccountInstruction(
                     for: account.publicKey,
                     tokenMint: .renBTCMint,
-                    payer: try SolanaSDK.PublicKey(string: payer)
+                    payer: try SolanaSDK.PublicKey(string: feePayer)
                 )
             )
+            transaction.feePayer = try SolanaSDK.PublicKey(string: feePayer)
+            transaction.recentBlockhash = recentBlockHash
 
             let transactionFee = try transaction.calculateTransactionFee(lamportsPerSignatures: lamports)
             let accountCreationFee = minimumBalanceForRentExemption
@@ -76,13 +95,13 @@ class RentBtcServiceImpl: RentBTC.Service {
                 expectedFee: expectedFee
             )
 
-            feeRelayer?.topUpAndRelayTransaction(
+            return feeRelayer.topUpAndRelayTransaction(
                 preparedTransaction: preparedTransaction,
                 payingFeeToken: FeeRelayer.Relay.TokenInfo(
                     address: payingFeeAddress,
                     mint: payingFeeMintAddress
                 )
-            )
+            ).map { transactionIds in transactionIds.first ?? "" }
         }
     }
 
