@@ -166,7 +166,9 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     
     func share(image: UIImage) {
         analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.accept(.share(qrCode: image))
+        navigationSubject.accept(
+            .share(address: renVMService.getCurrentAddress() ?? "", qrCode: image)
+        )
     }
     
     func saveAction(image: UIImage) {
