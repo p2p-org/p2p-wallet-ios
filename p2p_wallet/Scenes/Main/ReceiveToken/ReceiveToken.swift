@@ -12,7 +12,7 @@ enum ReceiveToken {
         case showInExplorer(address: String)
         case showBTCExplorer(address: String)
         case showRenBTCReceivingStatus
-        case share(address: String? = nil, qrCode: UIImage? = nil)
+        case share(address: String, qrCode: UIImage)
         case networkSelection
         case showSupportedTokens
         case help

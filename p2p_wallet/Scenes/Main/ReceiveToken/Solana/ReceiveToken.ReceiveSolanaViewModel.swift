@@ -61,7 +61,7 @@ extension ReceiveToken {
         
         func shareAction(image: UIImage) {
             analyticsManager.log(event: .receiveQrcodeShare)
-            navigationSubject.accept(.share(qrCode: image))
+            navigationSubject.accept(.share(address: pubkey, qrCode: image))
         }
         
         func saveAction(image: UIImage) {
