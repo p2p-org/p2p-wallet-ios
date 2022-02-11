@@ -722,3 +722,6 @@
 "Paying token is not valid. Please choose another one" = "Token thanh toán không hợp lệ. Vui lòng chọn token khác";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Địa chỉ này dường như không có tài khoản %@. Bạn phải trả phí một lần để tạo tài khoản %@ cho địa chỉ này. Bạn có thể chọn đơn vị tiền tệ để thanh toán bên dưới.";
 "Could not create renBTC token, please try again later" = "Không thể tạo token renBTC, vui lòng thử lại sau";
+"This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Điều này là bắt buộc để ứng dụng lưu mã QR đã tạo hoặc sao lưu các cụm từ hạt giống vào thư viện ảnh của bạn.";
+"Allow access to save your photos" = "Cho phép truy cập để lưu ảnh của bạn";
+"Open settings" = "Mở cài đặt";

@@ -722,3 +722,6 @@
 "Paying token is not valid. Please choose another one" = "Paying token is not valid. Please choose another one";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below.";
 "Could not create renBTC token, please try again later" = "Could not create renBTC token, please try again later";
+"This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library.";
+"Allow access to save your photos" = "Allow access to save your photos";
+"Open settings" = "Open settings";
