@@ -722,3 +722,6 @@
 "Paying token is not valid. Please choose another one" = "Платежный токен недействителен. Пожалуйста, выберите другой";
 "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Этот адрес не имеет учетной записи %@. Вы должны заплатить единовременную плату, чтобы создать учетную запись %@ для этого адреса. Ниже вы можете выбрать, в какой валюте платить.";
 "Could not create renBTC token, please try again later" = "Не удалось создать токен renBTC. Повторите попытку позже.";
+"This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Это необходимо для того, чтобы приложение могло сохранять сгенерированные QR-коды или создавать резервные копии исходных фраз в вашей библиотеке фотографий.";
+"Allow access to save your photos" = "Разрешите доступ для сохранения ваших фотографий";
+"Open settings" = "Открыть настройки";

@@ -5,9 +5,9 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
-import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol ReceiveTokenSolanaViewModelType: BESceneModel {
     var pubkey: String { get }
@@ -22,12 +22,13 @@ protocol ReceiveTokenSolanaViewModelType: BESceneModel {
 }
 
 extension ReceiveToken {
-    class SolanaViewModel: NSObject, ReceiveTokenSolanaViewModelType {
+    class SolanaViewModel: ReceiveTokenSolanaViewModelType {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
         @Injected private var tokensRepository: TokensRepository
+        @Injected private var imageSaver: ImageSaverType
         private let navigationSubject: PublishRelay<NavigatableScene?>
         
         let pubkey: String
@@ -61,22 +62,28 @@ extension ReceiveToken {
         
         func shareAction(image: UIImage) {
             analyticsManager.log(event: .receiveQrcodeShare)
-            navigationSubject.accept(.share(qrCode: image))
+            navigationSubject.accept(.share(address: pubkey, qrCode: image))
         }
         
         func saveAction(image: UIImage) {
             analyticsManager.log(event: .receiveQrcodeSave)
-            UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
-        }
-        
-        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-            if let error = error {
-                notificationsService.showInAppNotification(.error(error))
-            } else {
-                notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+            imageSaver.save(image: image) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+                case let .failure(error):
+                    switch error {
+                    case .noAccess:
+                        self?.navigationSubject.accept(.showPhotoLibraryUnavailable)
+                    case .restrictedRightNow:
+                        break
+                    case let .unknown(error):
+                        self?.notificationsService.showInAppNotification(.error(error))
+                    }
+                }
             }
         }
-        
+
         func showSOLAddressInExplorer() {
             analyticsManager.log(event: .receiveViewExplorerOpen)
             navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
