@@ -40,7 +40,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 orcaSwap.load(),
                 feeRelay!.load()
             )
-        } catch {
+        }
+        catch {
             return .error(error)
         }
     }
@@ -50,7 +51,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         var payingTokenMode: Swap.PayingTokenMode = .any
         if sourceToken.isNativeSOL && !destinationToken.isNativeSOL {
             payingTokenMode = .onlySol
-        } else if !sourceToken.isNativeSOL && destinationToken.isNativeSOL {
+        }
+        else if !sourceToken.isNativeSOL && destinationToken.isNativeSOL {
             payingTokenMode = .onlySol
         }
 
@@ -104,7 +106,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                             token: destinationToken
                         )
                     )
-                } else if fees.liquidityProviderFees.count == 2 {
+                }
+                else if fees.liquidityProviderFees.count == 2 {
                     let intermediaryTokenName = bestPoolsPair.orcaPoolPair[0].tokenBName
                     if let decimals = bestPoolsPair.orcaPoolPair[0].getTokenBDecimals() {
                         allFees.append(
@@ -159,7 +162,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                                 )
                             )
                         )
-                    } else {
+                    }
+                    else {
                         allFees.append(transactionFee)
                     }
                     return .just(Swap.FeeInfo(fees: allFees))
@@ -169,7 +173,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                     allFees.append(transactionFee)
                     return .just(Swap.FeeInfo(fees: allFees))
                 }
-        } catch {
+        }
+        catch {
             return .error(error)
         }
     }
@@ -190,7 +195,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let poolsPair = poolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
 
         // handle spl -> sol case, we use simple orca swap
-        if destinationAddress == accountStorage.account?.publicKey.base58EncodedString {
+        if destinationAddress == accountStorage.account?.publicKey.base58EncodedString || payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
             guard let decimals = poolsPair.orcaPoolPair[0].getTokenADecimals() else {
                 return .error(OrcaSwapError.invalidPool)
             }
@@ -210,7 +215,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let destinationTokenMint = destinationTokenMint else { return .error(SolanaSDK.Error.other("Invalid destination mint address")) }
 
         // if it's spl -> spl or sol -> spl, then use relay
-        let payingFeeToken =  FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
+        let payingFeeToken = FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
         return feeRelay.prepareSwapTransaction(
             sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
             destinationTokenMint: destinationTokenMint,
