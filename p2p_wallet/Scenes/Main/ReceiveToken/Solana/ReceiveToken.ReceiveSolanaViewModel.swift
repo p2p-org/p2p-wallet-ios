@@ -80,7 +80,7 @@ extension ReceiveToken {
     
         func generateQrCode() -> Single<UIImage> {
             let render: QrCodeImageRender = Resolver.resolve()
-            return render.render(username: username, address: pubkey, token: .renBTC, showTokenIcon: true)
+            return render.render(username: username, address: pubkey, token: .nativeSolana, showTokenIcon: true)
         }
         
         @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {

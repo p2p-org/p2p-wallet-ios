@@ -228,8 +228,6 @@ extension ReceiveToken.ViewController {
             let vm = BuyRoot.ViewModel()
             let vc = BuyRoot.ViewController(viewModel: vm)
             present(vc, animated: true, completion: nil)
-        case .showWalletAddress:
-            let vc = Detail
         default:
             return
         }

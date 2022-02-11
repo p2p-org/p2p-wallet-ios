@@ -6,6 +6,7 @@ import FeeRelayerSwift
 import Foundation
 import OrcaSwapSwift
 import RxSwift
+import SolanaSwift
 
 class RentBtcServiceImpl: RentBTC.Service {
     private let solanaSDK: SolanaSDK
@@ -13,61 +14,71 @@ class RentBtcServiceImpl: RentBTC.Service {
     private let accountStorage: AccountStorageType
     private let orcaSwap: OrcaSwapType
     private let walletRepository: WalletsRepository
+    private var feeRelayer: FeeRelayer.Relay
 
-    private var feeRelayer: FeeRelayer.Relay? = nil
-    
     init(
         solanaSDK: SolanaSDK,
         feeRelayerApi: FeeRelayerAPIClientType,
         accountStorage: AccountStorageType,
         orcaSwap: OrcaSwapType,
         walletRepository: WalletsRepository
-    ) {
+    ) throws {
         self.solanaSDK = solanaSDK
         self.feeRelayerApi = feeRelayerApi
         self.accountStorage = accountStorage
         self.orcaSwap = orcaSwap
         self.walletRepository = walletRepository
-    }
 
-    func load() -> Completable {
-        do {
-            feeRelayer = try FeeRelayer.Relay(
-                apiClient: feeRelayerApi,
-                solanaClient: solanaSDK,
-                accountStorage: accountStorage,
-                orcaSwapClient: orcaSwap
-            )
-        } catch {
-            return .error(error)
-        }
-        return .empty()
+        feeRelayer = try FeeRelayer.Relay(
+            apiClient: feeRelayerApi,
+            solanaClient: solanaSDK,
+            accountStorage: accountStorage,
+            orcaSwapClient: orcaSwap
+        )
     }
 
     func hasAssociatedTokenAccountBeenCreated() -> Single<Bool> {
         solanaSDK.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
-            .catch {error in
+            .catch { error in
                 if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
                     return .just(false)
                 }
                 throw error
             }
     }
-    
+
     func isAssociatedAccountCreatable() -> Single<Bool> {
-        .just(walletRepository.getWallets().filter { $0.amount > 0}.count > 0)
+        .just(walletRepository.getWallets().filter { $0.amount > 0 }.count > 0)
     }
-    
+
     func createAssociatedTokenAccount(payingFeeAddress: String, payingFeeMintAddress: String) -> Single<SolanaSDK.TransactionID> {
+        if payingFeeMintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+            return createAssociatedTokenAccount()
+        } else {
+            return createAssociatedTokenAccountWithRelay(
+                payingFeeAddress: payingFeeAddress,
+                payingFeeMintAddress: payingFeeMintAddress
+            )
+        }
+    }
+
+    private func createAssociatedTokenAccount() -> Single<SolanaSDK.TransactionID> {
+        do {
+            return solanaSDK.createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
+        } catch {
+            return .error(error)
+        }
+    }
+
+    private func createAssociatedTokenAccountWithRelay(payingFeeAddress: String, payingFeeMintAddress: String) -> Single<SolanaSDK.TransactionID> {
         guard let account = accountStorage.account else { return .error(SolanaSDK.Error.unauthorized) }
-        guard let feeRelayer = feeRelayer else {return .error(SolanaSDK.Error.other("Fee relay is not ready"))}
-        
+
         return Single.zip(
             solanaSDK.getMinimumBalanceForRentExemption(span: 165),
             solanaSDK.getLamportsPerSignature(),
             solanaSDK.getRecentBlockhash(),
             feeRelayerApi.getFeePayerPubkey()
-        ).flatMap { minimumBalanceForRentExemption, lamports, recentBlockHash,feePayer in
+        ).flatMap { minimumBalanceForRentExemption, lamports, recentBlockHash, feePayer in
             var transaction = SolanaSDK.Transaction()
             transaction.instructions.append(
                 try self.solanaSDK.createAssociatedTokenAccountInstruction(
@@ -93,14 +104,80 @@ class RentBtcServiceImpl: RentBTC.Service {
                 expectedFee: expectedFee
             )
 
-            return feeRelayer.topUpAndRelayTransaction(
-                preparedTransaction: preparedTransaction,
-                payingFeeToken: FeeRelayer.Relay.TokenInfo(
-                    address: payingFeeAddress,
-                    mint: payingFeeMintAddress
-                )
-            ).map { transactionIds in transactionIds.first ?? "" }
+            return self.feeRelayer
+                .load()
+                .andThen(
+                    self.feeRelayer.topUpAndRelayTransaction(
+                        preparedTransaction: preparedTransaction,
+                        payingFeeToken: FeeRelayer.Relay.TokenInfo(
+                            address: payingFeeAddress,
+                            mint: payingFeeMintAddress
+                        )
+                    )
+                ).map { transactionIds in transactionIds.first ?? "" }
         }
     }
 
+    func getCreationFee(payingFeeAddress: String, payingFeeMintAddress: String) -> Single<SolanaSDK.Lamports> {
+        Completable.zip(
+            orcaSwap.load(),
+            feeRelayer.load()
+        ).andThen(
+            Single.zip(
+                solanaSDK.getMinimumBalanceForRentExemption(span: 165),
+                solanaSDK.getLamportsPerSignature()
+            ).flatMap { [weak self] minimumBalance, lamportPerSignature -> Single<SolanaSDK.Lamports> in
+                guard let self = self else { return .error(SolanaSDK.Error.unknown) }
+
+                if payingFeeMintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                    // Create fake transaction
+                    var transaction = SolanaSDK.Transaction()
+                    transaction.instructions.append(
+                        try self.solanaSDK.createAssociatedTokenAccountInstruction(
+                            for: SolanaSDK.PublicKey.fake,
+                            tokenMint: .renBTCMint,
+                            payer: SolanaSDK.PublicKey.fake
+                        )
+                    )
+                    transaction.feePayer = SolanaSDK.PublicKey.fake
+                    transaction.recentBlockhash = ""
+
+                    let transactionFee = try transaction.calculateTransactionFee(lamportsPerSignatures: lamportPerSignature)
+                    let accountCreationFee = minimumBalance
+
+                    let feeAmount = transactionFee + accountCreationFee
+
+                    return .just(feeAmount)
+                } else {
+                    var transaction = SolanaSDK.Transaction()
+                    transaction.instructions.append(
+                        try self.solanaSDK.createAssociatedTokenAccountInstruction(
+                            for: SolanaSDK.PublicKey.fake,
+                            tokenMint: .renBTCMint,
+                            payer: SolanaSDK.PublicKey.fake
+                        )
+                    )
+                    transaction.feePayer = SolanaSDK.PublicKey.fake
+                    transaction.recentBlockhash = ""
+
+                    let transactionFee = try transaction.calculateTransactionFee(lamportsPerSignatures: lamportPerSignature)
+                    let accountCreationFee = minimumBalance
+
+                    let expectedFee = SolanaSDK.FeeAmount(
+                        transaction: transactionFee,
+                        accountBalances: accountCreationFee
+                    )
+
+                    let feeAmount = self.feeRelayer.calculateFee(preparedTransaction: .init(transaction: transaction, signers: [], expectedFee: expectedFee))
+                    return self.orcaSwap.getTradablePoolsPairs(
+                        fromMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString,
+                        toMint: payingFeeMintAddress
+                    ).map { pairs -> SolanaSDK.Lamports in
+                        let pair = try self.orcaSwap.findBestPoolsPairForInputAmount(feeAmount.total, from: pairs)
+                        return pair?.getOutputAmount(fromInputAmount: feeAmount.total) ?? 0
+                    }
+                }
+            }
+        )
+    }
 }

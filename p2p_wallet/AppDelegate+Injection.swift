@@ -213,7 +213,7 @@ extension Resolver: ResolverRegistering {
         
         // MARK: - RentBTC
         register {
-            RentBtcServiceImpl(
+            try! RentBtcServiceImpl(
                 solanaSDK: resolve(),
                 feeRelayerApi: resolve(),
                 accountStorage: resolve(),

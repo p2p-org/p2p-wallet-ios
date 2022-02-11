@@ -59,15 +59,15 @@ extension ReceiveToken {
                     // Buy button
                     WLStepButton.main(image: .walletAdd.withTintColor(.white), text: L10n.topUpYourAccount)
                         .onTap { [unowned self] in
-                            viewModel.showBuyScreen()
                             self.back()
+                            viewModel.showBuyScreen()
                         }
                         .padding(.init(only: .top, inset: 36))
     
                     WLStepButton.sub(text: L10n.shareYourSolanaNetworkAddress)
                         .onTap { [unowned self] in
-                            viewModel.receiveSolanaViewModel.saveAction()
                             self.back()
+                            viewModel.receiveSolanaViewModel.shareAction()
                         }
                         .padding(.init(x: 28, y: 0))
                 }.padding(.init(x: 18, y: 0))

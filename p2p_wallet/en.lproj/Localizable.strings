@@ -730,3 +730,4 @@
 "You don't have funds to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "You **don't have funds** to pay for account creation, but if someone sends renBTC to your address, it will be created for you.";
 "Share your Solana network address" = "Share your Solana network address";
 "Tap to select" = "Tap to select";
+"Pay %@ & Continue" = "Pay %@ & Continue";

@@ -21,7 +21,6 @@ enum ReceiveToken {
         case help
         
         case showBuy
-        case showWalletAddress
     }
     
     enum TokenType: CaseIterable {

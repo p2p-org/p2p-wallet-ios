@@ -18,11 +18,24 @@ extension ReceiveToken {
             self.viewModel = viewModel
             self.onCompletion = onCompletion
             super.init()
+
+            self.viewModel
+                .isLoadingDriver
+                .drive(onNext: { [weak self] value in
+                    if value {
+                        self?.showIndetermineHud()
+                    } else {
+                        self?.hideHud()
+                    }
+                })
+                .disposed(by: disposeBag)
         }
 
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
 
         override var padding: UIEdgeInsets { .zero }
+    
+        func presentationControllerShouldDismiss(_ presentationController: UIPresentationController) -> Bool { false }
 
         override func build() -> UIView? {
             UIStackView(axis: .vertical, alignment: .fill) {
@@ -53,38 +66,66 @@ extension ReceiveToken {
 
                 UIStackView(axis: .vertical, spacing: 12, alignment: .fill) {
                     ReceiveToken.textBuilder(text: L10n.yourWalletListDoesNotContainARenBTCAccountAndToCreateOneYouNeedToMakeATransaction.asMarkdown())
+                    ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
+                    ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
 
                     BEBuilder(driver: viewModel.payingWallet) { [weak self] selectedWallet in
                         guard let self = self else { return UIView() }
+
                         return WLCard {
                             BEHStack(alignment: .center) {
-                                UIImageView(width: 44, height: 44, image: .squircleSolanaIcon)
-                                BEVStack {
-                                    BEHStack {
-                                        if selectedWallet == nil {
-                                            UILabel(text: L10n.tapToSelect)
-                                        } else {
+                                if selectedWallet == nil {
+                                    UILabel(text: L10n.tapToSelect)
+                                } else {
+                                    UIImageView(width: 44, height: 44)
+                                        .setupWithType(UIImageView.self) { view in
+                                            self.viewModel
+                                                .payingWallet
+                                                .compactMap { $0?.token.logoURI }
+                                                .drive { [weak view] url in view?.setImage(urlString: url) }
+                                                .disposed(by: self.disposeBag)
+                                        }
+                                        .box(cornerRadius: 12)
+                                    BEVStack {
+                                        BEHStack {
                                             UILabel(text: L10n.accountCreationFee, textSize: 13, textColor: .secondaryLabel)
                                             UILabel(text: "~0.5$", textSize: 13)
                                         }
-                                    }
-                                    UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold)
-                                }.padding(.init(only: .left, inset: 12))
+                                        UILabel(text: "", textSize: 17, weight: .semibold)
+                                            .setupWithType(UILabel.self) { view in
+                                                self.viewModel
+                                                    .feeAmount
+                                                    .map { str in "~\(str)" }
+                                                    .drive(view.rx.text)
+                                                    .disposed(by: self.disposeBag)
+                                            }
+                                    }.padding(.init(only: .left, inset: 12))
+                                }
                                 UIView.defaultNextArrow()
                             }.padding(.init(x: 18, y: 14))
                         }.onTap {
-                            let vm = ChooseWallet.ViewModel(selectedWallet: selectedWallet, handler: self, showOtherWallets: true)
+                            let vm = ChooseWallet.ViewModel(selectedWallet: selectedWallet, handler: self, showOtherWallets: false)
                             let vc = ChooseWallet.ViewController(title: L10n.chooseWallet, viewModel: vm)
                             self.present(vc, animated: true)
                         }
                     }
-
-                    ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
-                    ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                 }.padding(.init(x: 18, y: 0))
 
                 // Accept button
-                WLStepButton.main(text: L10n.topUpYourAccount)
+                WLStepButton.main(text: "")
+                    .setupWithType(WLStepButton.self) { view in
+                        viewModel
+                            .payingWallet
+                            .map { $0 != nil }
+                            .drive(view.rx.isEnabled)
+                            .disposed(by: disposeBag)
+
+                        viewModel
+                            .feeAmount
+                            .map { str in L10n.payContinue(str) }
+                            .drive(view.rx.text)
+                            .disposed(by: disposeBag)
+                    }
                     .onTap { [unowned self] in
                         viewModel
                             .create()
@@ -103,6 +144,7 @@ extension ReceiveToken {
 protocol BitcoinCreateAccountViewModelType {
     var isLoadingDriver: Driver<Bool> { get }
     var payingWallet: Driver<Wallet?> { get }
+    var feeAmount: Driver<String> { get }
 
     func create() -> Completable
     func selectWallet(wallet: Wallet)
@@ -113,8 +155,9 @@ extension ReceiveToken.BitcoinCreateAccountScene {
         @Injected var solanaSDK: SolanaSDK
         @Injected var walletRepository: WalletsRepository
         @Injected var rentBTCService: RentBTC.Service
+        @Injected var notification: NotificationsServiceType
         private let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
-        
+
         private let payingWalletRelay: BehaviorRelay<Wallet?> = BehaviorRelay(value: nil)
         private let isLoadingRelay: BehaviorRelay<Bool> = BehaviorRelay(value: false)
 
@@ -138,24 +181,54 @@ extension ReceiveToken.BitcoinCreateAccountScene {
                 isLoadingRelay.accept(false)
                 return .error(NSError(domain: "ReceiveToken.BitcoinCreateAccountScene.ViewModel.NotSelected", code: 1))
             }
-            
+
             return rentBTCService.createAssociatedTokenAccount(
                 payingFeeAddress: payingAddress,
                 payingFeeMintAddress: payingWallet.mintAddress
-            ).flatMap { [weak self] id -> Single<Any?> in
+            )
+            .flatMap { [weak self] id -> Single<Any?> in
+                print("HERE: \(id)")
                 guard let self = self else { return .error(NSError(domain: "ReceiveToken.BitcoinCreateAccountScene.ViewModel", code: 1)) }
                 return self.solanaSDK.waitForConfirmation(signature: id).andThen(.just(nil))
-            }.asCompletable()
+            }
+            .do(onError: { [weak self] error in
+                self?.notification.showInAppNotification(.error(error))
+                self?.isLoadingRelay.accept(false)
+            })
+            .asCompletable()
+
         }
-    
+
         func selectWallet(wallet: Wallet) {
             payingWalletRelay.accept(wallet)
+        }
+
+        var feeAmount: Driver<String> {
+            payingWalletRelay
+                .flatMap { [weak self] wallet -> Single<String> in
+                    guard
+                        let self = self,
+                        let wallet = wallet,
+                        let address = wallet.pubkey
+                    else {
+                        return .just("")
+                    }
+
+                    return self
+                        .rentBTCService
+                        .getCreationFee(payingFeeAddress: address, payingFeeMintAddress: wallet.mintAddress)
+                        .map { lamports in "\(lamports.convertToBalance(decimals: wallet.token.decimals)) \(wallet.token.symbol)" }
+                }
+                .asDriver { error in
+                    print(error)
+                    return .just("")
+                }
         }
     }
 }
 
 extension ReceiveToken.BitcoinCreateAccountScene: WalletDidSelectHandler {
     func walletDidSelect(_ wallet: Wallet) {
-
+        viewModel.selectWallet(wallet: wallet)
     }
 }

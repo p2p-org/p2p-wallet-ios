@@ -28,7 +28,16 @@ protocol RentBTCServiceType {
      - Parameters:
        - payingFeeAddress: the address that will pay a fee
        - payingFeeMintAddress: the mint address that will pay a fee
-     - Returns:
+     - Returns: transaction id
      */
     func createAssociatedTokenAccount(payingFeeAddress: String, payingFeeMintAddress: String) -> Single<SolanaSDK.TransactionID>
+    
+    /**
+     Get amount of feed needed for creating a account
+     - Parameters:
+       - payingFeeAddress: the address that will pay a fee
+       - payingFeeMintAddress: the mint address that will pay a fee
+     - Returns: the amount of fee
+     */
+    func getCreationFee(payingFeeAddress: String, payingFeeMintAddress: String) -> Single<SolanaSDK.Lamports>
 }

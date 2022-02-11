@@ -730,3 +730,4 @@
 "You don't have funds to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "Vous n'avez pas de fonds pour payer la création de compte, mais si quelqu'un envoie renBTC à votre adresse, il sera créé pour vous.";
 "Share your Solana network address" = "Partagez votre adresse réseau Solana";
 "Tap to select" = "Appuyez pour sélectionner";
+"Pay %@ & Continue" = "Payer %@";

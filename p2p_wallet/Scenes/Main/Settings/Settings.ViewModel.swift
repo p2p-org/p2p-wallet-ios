@@ -66,7 +66,7 @@ protocol SettingsViewModelType {
 }
 
 extension Settings {
-    class ViewModel {
+    class ViewModel: NSObject {
         // MARK: - Dependencies
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
@@ -100,11 +100,15 @@ extension Settings {
         private let isBiometryEnabledSubject = BehaviorRelay<Bool>(value: Defaults.isBiometryEnabled)
         private let isBiometryAvailableSubject = BehaviorRelay<Bool>(value: false)
         private let logoutAlertSubject = PublishRelay<Void>()
+        private let disposeBag = DisposeBag()
         
         // MARK: - Initializer
         init(reserveNameHandler: ReserveNameHandler, canGoBack: Bool = true) {
             self.reserveNameHandler = reserveNameHandler
             self.canGoBack = canGoBack
+            
+            super.init()
+            
             bind()
         }
         
@@ -368,8 +372,41 @@ extension Settings.ViewModel: SettingsViewModelType {
         notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
     
-    func share(image: UIImage) {
-        navigate(to: .share(item: image))
+    func share() {
+        analyticsManager.log(event: .receiveAddressShare)
+        
+        generateQrCode()
+            .subscribe(onSuccess: { [weak self] image in self?.navigationSubject.accept(.share(item: image)) })
+            .disposed(by: disposeBag)
+    }
+    
+    func save() {
+        analyticsManager.log(event: .receiveQrcodeSave)
+        
+        generateQrCode()
+            .subscribe(onSuccess: { [weak self] image in
+                guard let self = self else { return }
+                UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.saveImageCallback), nil)
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func generateQrCode() -> Single<UIImage> {
+        let render: QrCodeImageRender = Resolver.resolve()
+        return render.render(
+            username: getUsername(),
+            address: getUserAddress(),
+            token: .nativeSolana,
+            showTokenIcon: false
+        )
+    }
+    
+    @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
+        if let error = error {
+            notificationsService.showInAppNotification(.error(error))
+        } else {
+            notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+        }
     }
     
     func logout() {
