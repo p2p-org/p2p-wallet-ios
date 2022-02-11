@@ -5,9 +5,9 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
-import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol ReceiveTokenSolanaViewModelType: BESceneModel {
     var pubkey: String { get }

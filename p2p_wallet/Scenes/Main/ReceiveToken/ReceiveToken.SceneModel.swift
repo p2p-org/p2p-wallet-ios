@@ -179,12 +179,11 @@ extension ReceiveToken {
                         onCompletion?()
                     case .needAcceptCondition:
                         self.navigationSubject.accept(
-                            .showRentBTCCreateAccount {
+                            .showRentBTCConfirm {
                                 self.tokenTypeSubject.accept(.btc)
                                 onCompletion?()
                             }
                         )
-
                     case .needCreateAccount:
                         self.navigationSubject.accept(
                             .showRentBTCCreateAccount {

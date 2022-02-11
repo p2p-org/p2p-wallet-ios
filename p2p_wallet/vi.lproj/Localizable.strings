@@ -731,3 +731,6 @@
 "Share your Solana network address" = "Chia sẻ địa chỉ mạng Solana của bạn";
 "Tap to select" = "Nhấn để chọn";
 "Pay %@ & Continue" = "Thanh toán %@";
+"This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Điều này là bắt buộc để ứng dụng lưu mã QR đã tạo hoặc sao lưu các cụm từ hạt giống vào thư viện ảnh của bạn.";
+"Allow access to save your photos" = "Cho phép truy cập để lưu ảnh của bạn";
+"Open settings" = "Mở cài đặt";

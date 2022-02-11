@@ -731,3 +731,6 @@
 "Share your Solana network address" = "Поделитесь своим сетевым адресом Solana";
 "Tap to select" = "Нажмите, чтобы выбрать";
 "Pay %@ & Continue" = "Оплатить %@";
+"This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Это необходимо для того, чтобы приложение могло сохранять сгенерированные QR-коды или создавать резервные копии исходных фраз в вашей библиотеке фотографий.";
+"Allow access to save your photos" = "Разрешите доступ для сохранения ваших фотографий";
+"Open settings" = "Открыть настройки";

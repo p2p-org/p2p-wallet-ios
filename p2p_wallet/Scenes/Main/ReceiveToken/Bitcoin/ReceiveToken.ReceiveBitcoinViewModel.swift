@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import Resolver
 
 enum ReceiveTokenBitcoinViewModelStatus {
     case ready
@@ -56,6 +57,7 @@ extension ReceiveToken {
         @Injected private var renVMService: RenVMLockAndMintServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
+        @Injected private var imageSaver: ImageSaverType
         @Injected var notificationsService: NotificationsServiceType
         private let navigationSubject: PublishRelay<NavigatableScene?>
         @Injected private var associatedTokenAccountHandler: AssociatedTokenAccountHandler
