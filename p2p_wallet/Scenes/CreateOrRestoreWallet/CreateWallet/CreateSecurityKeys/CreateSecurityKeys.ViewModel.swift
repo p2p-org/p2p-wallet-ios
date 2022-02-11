@@ -8,10 +8,12 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
     var notificationsService: NotificationsServiceType { get }
     var showTermsAndConditionsSignal: Signal<Void> { get }
+    var showPhotoLibraryUnavailableSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
 
@@ -23,6 +25,7 @@ protocol CreateSecurityKeysViewModelType: AnyObject {
     func back()
     func verifyPhrase()
     func termsAndConditions()
+    func saveKeysImage(_: UIImage)
 }
 
 extension CreateSecurityKeys {
@@ -34,12 +37,14 @@ extension CreateSecurityKeys {
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
+        @Injected var imageSaver: ImageSaverType
 
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
         private let showTermsAndConditionsSubject = PublishRelay<Void>()
+        private let showPhotoLibraryUnavailableSubject = PublishRelay<Void>()
         private let phrasesSubject = BehaviorRelay<[String]>(value: [])
         private let errorSubject = PublishRelay<String>()
         
@@ -61,6 +66,10 @@ extension CreateSecurityKeys {
 }
 
 extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
+    var showPhotoLibraryUnavailableSignal: Signal<Void> {
+        showPhotoLibraryUnavailableSubject.asSignal()
+    }
+
     var showTermsAndConditionsSignal: Signal<Void> {
         showTermsAndConditionsSubject.asSignal()
     }
@@ -88,6 +97,24 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         analyticsManager.log(event: .createWalletCopySeedClick)
         clipboardManager.copyToClipboard(phrasesSubject.value.joined(separator: " "))
         notificationsService.showInAppNotification(.message(L10n.seedPhraseCopiedToClipboard))
+    }
+
+    func saveKeysImage(_ image: UIImage) {
+        imageSaver.save(image: image) { [weak self] result in
+            switch result {
+            case .success:
+                self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+            case let .failure(error):
+                switch error {
+                case .noAccess:
+                    self?.showPhotoLibraryUnavailableSubject.accept(())
+                case .restrictedRightNow:
+                    break
+                case let .unknown(error):
+                    self?.notificationsService.showInAppNotification(.error(error))
+                }
+            }
+        }
     }
     
     @objc func saveToICloud() {

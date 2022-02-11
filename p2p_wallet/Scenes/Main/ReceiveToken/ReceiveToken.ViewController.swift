@@ -201,13 +201,8 @@ extension ReceiveToken.ViewController {
             let vc = RenBTCReceivingStatuses.NewViewController(viewModel: vm)
             show(vc, sender: nil)
         case .share(let address, let qrCode):
-            if let qrCode = qrCode {
-                let vc = UIActivityViewController(activityItems: [qrCode], applicationActivities: nil)
-                present(vc, animated: true)
-            } else if let address = address {
-                let vc = UIActivityViewController(activityItems: [address], applicationActivities: nil)
-                present(vc, animated: true)
-            }
+            let vc = UIActivityViewController(activityItems: [qrCode, address], applicationActivities: nil)
+            present(vc, animated: true)
         case .help:
             let vc = ReceiveToken.HelpViewController()
             present(vc, animated: true)
@@ -218,7 +213,9 @@ extension ReceiveToken.ViewController {
             let vm = SupportedTokens.ViewModel(tokensRepository: CachedTokensRepository())
             let vc = SupportedTokens.ViewController(viewModel: vm)
             present(vc, animated: true)
-        default:
+        case .showPhotoLibraryUnavailable:
+            PhotoLibraryAlertPresenter().present(on: self)
+        case .none:
             return
         }
     }

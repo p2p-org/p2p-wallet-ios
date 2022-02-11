@@ -30,7 +30,10 @@ extension Resolver: ResolverRegistering {
         register { IntercomMessengerLauncher() }
             .implements(HelpCenterLauncher.self)
             .scope(.session)
-        register { CryptoComparePricesFetcher() }
+        register { ImageSaver() }
+            .implements(ImageSaverType.self)
+            .scope(.unique)
+        register {CryptoComparePricesFetcher()}
             .implements(PricesFetcher.self)
             .scope(.application)
         register { NameService() }

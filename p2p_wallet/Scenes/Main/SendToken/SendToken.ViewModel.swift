@@ -11,7 +11,9 @@ import RxCocoa
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var relayMethod: SendTokenRelayMethod {get}
+    var canGoBack: Bool { get }
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
+    var loadingStateDriver: Driver<LoadableState> {get}
     
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
@@ -20,6 +22,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func getSelectedNetwork() -> SendToken.Network
     func getSelectedAmount() -> Double?
     
+    func reload()
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
     
@@ -44,6 +47,7 @@ extension SendToken {
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
         let relayMethod: SendTokenRelayMethod
+        let canGoBack: Bool
         
         private var selectedNetwork: SendToken.Network?
         private var selectableNetworks: [SendToken.Network]?
@@ -55,16 +59,19 @@ extension SendToken {
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         
         // MARK: - Initializers
         init(
             walletPubkey: String?,
             destinationAddress: String?,
-            relayMethod: SendTokenRelayMethod
+            relayMethod: SendTokenRelayMethod,
+            canGoBack: Bool = true
         ) {
             self.initialWalletPubkey = walletPubkey
             self.initialDestinationWalletPubkey = destinationAddress
             self.relayMethod = relayMethod
+            self.canGoBack = canGoBack
             self.sendService = Resolver.resolve(args: relayMethod)
             
             // accept initial values
@@ -73,11 +80,35 @@ extension SendToken {
             } else {
                 walletSubject.accept(walletsRepository.nativeWallet)
             }
-            sendService.load().subscribe(onCompleted: {}).disposed(by: disposeBag)
+            
+            if walletSubject.value == nil {
+                walletsRepository.dataObservable
+                    .map {$0?.first(where: {$0.isNativeSOL})}
+                    .filter {$0 != nil}
+                    .take(1)
+                    .asSingle()
+                    .subscribe(onSuccess: { [weak self] wallet in
+                        self?.walletSubject.accept(wallet)
+                    })
+                    .disposed(by: disposeBag)
+            }
+            reload()
         }
         
         deinit {
             debugPrint("\(String(describing: self)) deinited")
+        }
+        
+        func reload() {
+            loadingStateSubject.accept(.loading)
+
+            sendService.load()
+                .subscribe(onCompleted: {[weak self] in
+                    self?.loadingStateSubject.accept(.loaded)
+                }, onError: {[weak self] error in
+                    self?.loadingStateSubject.accept(.error(error.readableDescription))
+                })
+                .disposed(by: disposeBag)
         }
         
         private func send() {
@@ -130,6 +161,10 @@ extension SendToken {
 extension SendToken.ViewModel: SendTokenViewModelType {
     var navigationDriver: Driver<SendToken.NavigatableScene> {
         navigationSubject.asDriver()
+    }
+    
+    var loadingStateDriver: Driver<LoadableState> {
+        loadingStateSubject.asDriver()
     }
     
     func getSelectedWallet() -> Wallet? {
