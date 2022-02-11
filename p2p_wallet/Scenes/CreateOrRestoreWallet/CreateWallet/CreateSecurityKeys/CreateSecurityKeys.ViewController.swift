@@ -40,6 +40,13 @@ extension CreateSecurityKeys {
                     self?.present(vc, interactiveDismissalType: .standard, completion: nil)
                 })
                 .disposed(by: disposeBag)
+
+            viewModel.showPhotoLibraryUnavailableSignal
+                .emit(onNext: { [weak self] in
+                    guard let self = self else { return }
+                    PhotoLibraryAlertPresenter().present(on: self)
+                })
+                .disposed(by: disposeBag)
             
             viewModel.errorSignal
                 .emit(onNext: {[weak self] error in
