@@ -13,6 +13,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     var relayMethod: SendTokenRelayMethod {get}
     var canGoBack: Bool { get }
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
+    var loadingStateDriver: Driver<LoadableState> {get}
     
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
@@ -21,6 +22,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func getSelectedNetwork() -> SendToken.Network
     func getSelectedAmount() -> Double?
     
+    func reload()
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
     
@@ -57,6 +59,7 @@ extension SendToken {
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         
         // MARK: - Initializers
         init(
@@ -89,11 +92,28 @@ extension SendToken {
                     })
                     .disposed(by: disposeBag)
             }
-            sendService.load().subscribe(onCompleted: {}).disposed(by: disposeBag)
+            reload()
         }
         
         deinit {
             debugPrint("\(String(describing: self)) deinited")
+        }
+        
+        func reload() {
+            switch relayMethod {
+            case .relay:
+                loadingStateSubject.accept(.loading)
+
+                sendService.load()
+                    .subscribe(onCompleted: {[weak self] in
+                        self?.loadingStateSubject.accept(.loaded)
+                    }, onError: {[weak self] error in
+                        self?.loadingStateSubject.accept(.error(error.readableDescription))
+                    })
+                    .disposed(by: disposeBag)
+            case .reward:
+                loadingStateSubject.accept(.loaded)
+            }
         }
         
         private func send() {
@@ -146,6 +166,10 @@ extension SendToken {
 extension SendToken.ViewModel: SendTokenViewModelType {
     var navigationDriver: Driver<SendToken.NavigatableScene> {
         navigationSubject.asDriver()
+    }
+    
+    var loadingStateDriver: Driver<LoadableState> {
+        loadingStateSubject.asDriver()
     }
     
     func getSelectedWallet() -> Wallet? {
