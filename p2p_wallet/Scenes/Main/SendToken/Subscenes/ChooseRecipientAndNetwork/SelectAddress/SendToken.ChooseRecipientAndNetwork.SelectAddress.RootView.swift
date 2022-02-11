@@ -183,9 +183,18 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             Driver.combineLatest(
                 isSearchingDriver,
                 viewModel.networkDriver,
-                viewModel.feesDriver.map {$0?.total == 0}
+                viewModel.feesDriver
             )
-                .map {$0 || $1 != .solana || $2}
+                .map {isSearching, network, fee in
+                    if isSearching || network != .solana {
+                        return true
+                    }
+                    if let fee = fee {
+                        return fee.total == 0
+                    } else {
+                        return true
+                    }
+                }
                 .drive(feeView.rx.isHidden)
                 .disposed(by: disposeBag)
             
