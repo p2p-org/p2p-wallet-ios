@@ -5,9 +5,9 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
-import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     var notificationsService: NotificationsServiceType { get }
@@ -36,7 +36,7 @@ protocol ReceiveTokenBitcoinViewModelType: AnyObject {
 }
 
 extension ReceiveToken {
-    class ReceiveBitcoinViewModel: NSObject {
+    class ReceiveBitcoinViewModel {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
         let hasExplorerButton: Bool
@@ -45,6 +45,7 @@ extension ReceiveToken {
         @Injected private var renVMService: RenVMLockAndMintServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
+        @Injected private var imageSaver: ImageSaverType
         @Injected var notificationsService: NotificationsServiceType
         private let navigationSubject: PublishRelay<NavigatableScene?>
         @Injected private var associatedTokenAccountHandler: AssociatedTokenAccountHandler
@@ -71,8 +72,6 @@ extension ReceiveToken {
         ) {
             self.navigationSubject = navigationSubject
             self.hasExplorerButton = hasExplorerButton
-
-            super.init()
             
             if isRenBTCWalletCreated {
                 createRenBTCSubject.accept(nil, state: .loaded)
@@ -174,17 +173,23 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     
     func saveAction(image: UIImage) {
         analyticsManager.log(event: .receiveQrcodeSave)
-        UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveImageCallback), nil)
-    }
-    
-    @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
-            notificationsService.showInAppNotification(.error(error))
-        } else {
-            notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+        imageSaver.save(image: image) { [weak self] result in
+            switch result {
+            case .success:
+                self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+            case let .failure(error):
+                switch error {
+                case .noAccess:
+                    self?.navigationSubject.accept(.showPhotoLibraryUnavailable)
+                case .restrictedRightNow:
+                    break
+                case let .unknown(error):
+                    self?.notificationsService.showInAppNotification(.error(error))
+                }
+            }
         }
     }
-    
+
     func showBTCAddressInExplorer() {
         guard let address = renVMService.getCurrentAddress() else { return }
         analyticsManager.log(event: .receiveViewExplorerOpen)

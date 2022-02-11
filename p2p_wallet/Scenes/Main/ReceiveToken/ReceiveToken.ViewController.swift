@@ -213,7 +213,9 @@ extension ReceiveToken.ViewController {
             let vm = SupportedTokens.ViewModel(tokensRepository: CachedTokensRepository())
             let vc = SupportedTokens.ViewController(viewModel: vm)
             present(vc, animated: true)
-        default:
+        case .showPhotoLibraryUnavailable:
+            PhotoLibraryAlertPresenter().present(on: self)
+        case .none:
             return
         }
     }
