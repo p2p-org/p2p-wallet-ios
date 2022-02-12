@@ -1155,6 +1155,14 @@
 			path = Interfaces;
 			sourceTree = "<group>";
 		};
+		3B856FC527B76D1A00973039 /* Confirm */ = {
+			isa = PBXGroup;
+			children = (
+				BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */,
+			);
+			path = Confirm;
+			sourceTree = "<group>";
+		};
 		3B87A14F2762FC6B00F09883 /* SelectNetwork */ = {
 			isa = PBXGroup;
 			children = (
@@ -2166,7 +2174,7 @@
 				BCB286C0274CCA800074E1D5 /* ChooseTokenAndAmount */,
 				BCB286D72754B4DA0074E1D5 /* ChooseRecipientAndNetwork */,
 				3B87A14F2762FC6B00F09883 /* SelectNetwork */,
-				BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */,
+				3B856FC527B76D1A00973039 /* Confirm */,
 			);
 			path = Subscenes;
 			sourceTree = "<group>";

@@ -42,12 +42,10 @@ extension SendToken {
         
         private lazy var receiveSection = SectionView(title: L10n.receive)
         
-        // relayMethod == .reward
         private lazy var transferFeeSection = SectionView(title: L10n.transferFee)
         private lazy var freeFeeInfoButton = UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
             .onTap(self, action: #selector(freeFeeInfoButtonDidTouch))
         
-        // relayMethod == .relay
         private lazy var feeView = FeeView(
             solPrice: viewModel.getPrice(for: "SOL"),
             feesDriver: viewModel.feesDriver,
@@ -203,36 +201,48 @@ extension SendToken {
                 .disposed(by: disposeBag)
             
             // transfer fee
-            if viewModel.relayMethod == .reward {
-                Driver.combineLatest(
-                    viewModel.networkDriver,
-                    viewModel.feesDriver
-                )
-                    .map {[weak self] network, feeAmount in
-                        guard let self = self else {return NSAttributedString()}
-                        switch network {
-                        case .solana:
-                            return NSMutableAttributedString()
-                                .text(L10n.free + " ", size: 15, weight: .semibold)
-                                .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
-                        case .bitcoin:
-                            guard let feeAmount = feeAmount else {return NSAttributedString()}
-                            return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
-                                .withParagraphStyle(lineSpacing: 8, alignment: .right)
-                        }
+            let networkAndFeesDriver = Driver.combineLatest(
+                viewModel.networkDriver,
+                viewModel.feesDriver
+            )
+            
+            networkAndFeesDriver
+                .map {[weak self] network, feeAmount in
+                    guard let self = self else {return NSAttributedString()}
+                    switch network {
+                    case .solana:
+                        return NSMutableAttributedString()
+                            .text(L10n.free + " ", size: 15, weight: .semibold)
+                            .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                    case .bitcoin:
+                        guard let feeAmount = feeAmount else {return NSAttributedString()}
+                        return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                            .withParagraphStyle(lineSpacing: 8, alignment: .right)
                     }
-                    .drive(transferFeeSection.rightLabel.rx.attributedText)
-                    .disposed(by: disposeBag)
+                }
+                .drive(transferFeeSection.rightLabel.rx.attributedText)
+                .disposed(by: disposeBag)
+            
+            networkAndFeesDriver
+                .map {network, fee in
+                    if network != .solana {return true}
+                    if let fee = fee {
+                        return fee.total == 0
+                    } else {
+                        return true
+                    }
+                }
+                .drive(feeView.rx.isHidden)
+                .disposed(by: disposeBag)
 
-                viewModel.networkDriver
-                    .map {$0 != .solana}
-                    .do(afterNext: {[weak self] _ in
-                        self?.transferFeeSection.rightLabel.setNeedsLayout()
-                        self?.transferFeeSection.layoutIfNeeded()
-                    })
-                    .drive(freeFeeInfoButton.rx.isHidden)
-                    .disposed(by: disposeBag)
-            }
+            viewModel.networkDriver
+                .map {$0 != .solana}
+                .do(afterNext: {[weak self] _ in
+                    self?.transferFeeSection.rightLabel.setNeedsLayout()
+                    self?.transferFeeSection.layoutIfNeeded()
+                })
+                .drive(freeFeeInfoButton.rx.isHidden)
+                .disposed(by: disposeBag)
                     
             // total
             viewModel.feesDriver
