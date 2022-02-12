@@ -16,21 +16,12 @@ extension SendToken {
         // MARK: - Dependencies
         private let viewModel: SendTokenViewModelType
         
-        // MARK: - Properties
-        
         // MARK: - Subviews
         private lazy var alertBannerView = UIView.greyBannerView(axis: .horizontal, spacing: 18, alignment: .top) {
             UILabel(text: L10n.BeSureAllDetailsAreCorrectBeforeConfirmingTheTransaction.onceConfirmedItCannotBeReversed, textSize: 15, numberOfLines: 0)
             UIView.closeBannerButton()
                 .onTap(self, action: #selector(closeBannerButtonDidTouch))
         }
-        
-        private lazy var totalSection = SectionView(title: L10n.total)
-        private lazy var tokenToFiatSection = SectionView(title: "<1 renBTC>")
-        private lazy var fiatToTokenSection = SectionView(title: "<1 USD>")
-        
-        private lazy var actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.sendNow)
-            .onTap(self, action: #selector(actionButtonDidTouch))
         
         // MARK: - Initializer
         init(viewModel: SendTokenViewModelType) {
@@ -205,16 +196,60 @@ extension SendToken {
                         UIView.defaultSeparator()
                             .frame(width: 246, height: 1)
                     }
-                    totalSection
+                    SectionView(title: L10n.total)
+                        .setup { view in
+                            viewModel.feesDriver
+                                .map {[weak self] feeAmount -> NSAttributedString in
+                                    guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
+                                    return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                                        .withParagraphStyle(lineSpacing: 8, alignment: .right)
+                                }
+                                .drive(view.rightLabel.rx.attributedText)
+                                .disposed(by: disposeBag)
+                        }
                 }
                 
                 BEStackViewSpacing(18)
                 
                 UIView.defaultSeparator()
                 
+                // Prices
                 UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                    fiatToTokenSection
-                    tokenToFiatSection
+                    SectionView(title: "<1 USD>")
+                        .setup { view in
+                            view.leftLabel.text = "1 \(Defaults.fiat.code)"
+                            viewModel.walletDriver
+                                .map {[weak self] in
+                                    (self?.viewModel.getPrice(for: $0?.token.symbol ?? ""),
+                                     $0?.token.symbol ?? "")
+                                }
+                                .map { price, symbol in
+                                    let price: Double = price == 0 ? 0: 1/price
+                                    return price.toString(maximumFractionDigits: 9) + " " + symbol
+                                }
+                                .drive(view.rightLabel.rx.text)
+                                .disposed(by: disposeBag)
+                        }
+                    
+                    SectionView(title: "<1 renBTC>")
+                        .setup { view in
+                            viewModel.walletDriver
+                                .map {$0?.token.symbol ?? ""}
+                                .map {"1 \($0)"}
+                                .drive(view.leftLabel.rx.text)
+                                .disposed(by: disposeBag)
+                            
+                            viewModel.walletDriver
+                                .map {[weak self] in
+                                    (self?.viewModel.getPrice(for: $0?.token.symbol ?? ""),
+                                     $0?.token.symbol ?? "")
+                                }
+                                .map {price, _ in
+                                    return price?.toString(maximumFractionDigits: 9) + " " + Defaults.fiat.code
+                                }
+                                .drive(view.rightLabel.rx.text)
+                                .disposed(by: disposeBag)
+                        }
                 }
             }
             
@@ -227,6 +262,33 @@ extension SendToken {
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
             
+            let actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.sendNow)
+                .setup {view in
+                    Driver.combineLatest(
+                        viewModel.walletDriver,
+                        viewModel.amountDriver
+                    )
+                        .map { wallet, amount in
+                            let amount = amount ?? 0
+                            let symbol = wallet?.token.symbol ?? ""
+                            return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+                        }
+                        .drive(view.rx.text)
+                        .disposed(by: disposeBag)
+                    
+                    Driver.combineLatest([
+                        viewModel.walletDriver.map {$0 != nil},
+                        viewModel.amountDriver.map {$0 != nil},
+                        viewModel.recipientDriver.map {$0 != nil}
+                    ])
+                        .map {$0.allSatisfy {$0}}
+                        .drive(view.rx.isEnabled)
+                        .disposed(by: disposeBag)
+                }
+                .onTap {[weak self] in
+                    self?.viewModel.authenticateAndSend()
+                }
+            
             view.addSubview(actionButton)
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 8)
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
@@ -234,78 +296,11 @@ extension SendToken {
         
         override func bind() {
             super.bind()
-            let walletAndAmountDriver = Driver.combineLatest(
-                viewModel.walletDriver,
-                viewModel.amountDriver
-            )
-            
             // title
             viewModel.walletDriver
                 .map {L10n.confirmSending($0?.token.symbol ?? "")}
                 .drive(navigationBar.titleLabel.rx.text)
                 .disposed(by: disposeBag)
-                    
-            // total
-            viewModel.feesDriver
-                .map {[weak self] feeAmount -> NSAttributedString in
-                    guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
-                    return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
-                        .withParagraphStyle(lineSpacing: 8, alignment: .right)
-                }
-                .drive(totalSection.rightLabel.rx.attributedText)
-                .disposed(by: disposeBag)
-            
-            // prices
-            let priceDriver = viewModel.walletDriver
-                .map {[weak self] in
-                    (self?.viewModel.getPrice(for: $0?.token.symbol ?? ""),
-                     $0?.token.symbol ?? "")
-                }
-            
-            // fiat to token
-            fiatToTokenSection.leftLabel.text = "1 \(Defaults.fiat.code)"
-            
-            priceDriver
-                .map { price, symbol in
-                    let price: Double = price == 0 ? 0: 1/price
-                    return price.toString(maximumFractionDigits: 9) + " " + symbol
-                }
-                .drive(fiatToTokenSection.rightLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            // token to fiat
-            viewModel.walletDriver
-                .map {$0?.token.symbol ?? ""}
-                .map {"1 \($0)"}
-                .drive(tokenToFiatSection.leftLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            priceDriver
-                .map {price, _ in
-                    return price?.toString(maximumFractionDigits: 9) + " " + Defaults.fiat.code
-                }
-                .drive(tokenToFiatSection.rightLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            // action button
-            walletAndAmountDriver
-                .map { wallet, amount in
-                    let amount = amount ?? 0
-                    let symbol = wallet?.token.symbol ?? ""
-                    return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
-                }
-                .drive(actionButton.rx.text)
-                .disposed(by: disposeBag)
-            
-            Driver.combineLatest([
-                viewModel.walletDriver.map {$0 != nil},
-                viewModel.amountDriver.map {$0 != nil},
-                viewModel.recipientDriver.map {$0 != nil}
-            ])
-                .map {$0.allSatisfy {$0}}
-                .drive(actionButton.rx.isEnabled)
-                .disposed(by: disposeBag)
-                
         }
         
         // MARK: - Actions
@@ -334,10 +329,6 @@ extension SendToken {
                 highlightedButtonIndex: 0,
                 completion: nil
             )
-        }
-        
-        @objc private func actionButtonDidTouch() {
-            viewModel.authenticateAndSend()
         }
     }
 }
