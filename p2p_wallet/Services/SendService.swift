@@ -28,6 +28,9 @@ protocol SendServiceType {
         payingFeeWallet: Wallet
     ) -> Single<SolanaSDK.Lamports?>
     
+    func getFreeTransactionFeeLimit(
+    ) -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
+    
     func send(
         from wallet: Wallet,
         receiver: String,
@@ -126,6 +129,10 @@ class SendService: SendServiceType {
             feeInSOL: feeInSOL,
             payingFeeToken: .init(address: payingFeeWalletAddress, mint: payingFeeWallet.mintAddress)
         )
+    }
+    
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+        relayService.getFreeTransactionFeeLimit(useCache: true)
     }
     
     // MARK: - Send method

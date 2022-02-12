@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import FeeRelayerSwift
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var relayMethod: SendTokenRelayMethod {get}
@@ -21,6 +22,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network
     func getSelectedAmount() -> Double?
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
     
     func reload()
     func navigate(to scene: SendToken.NavigatableScene)
@@ -184,6 +186,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func getSendService() -> SendServiceType {
         sendService
+    }
+    
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+        sendService.getFreeTransactionFeeLimit()
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {

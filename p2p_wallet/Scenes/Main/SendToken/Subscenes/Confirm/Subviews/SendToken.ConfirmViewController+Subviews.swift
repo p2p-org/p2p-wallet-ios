@@ -210,17 +210,26 @@ extension SendToken.ConfirmViewController {
         }
         
         @objc func feeInfoButtonDidTap() {
-            let title: String
-            let message: String
+            
             switch self.viewModel.relayMethod {
             case .reward:
-                title = L10n.free.uppercaseFirst
-                message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
+                let title = L10n.free.uppercaseFirst
+                let message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
+                feeInfoDidTouch(title, message)
             case .relay:
-                title = L10n.thereAreFreeTransactionsLeftForToday(100)
-                message = L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee
+                showIndetermineHud()
+                viewModel.getFreeTransactionFeeLimit()
+                    .subscribe(onSuccess: {[weak self] limit in
+                        self?.hideHud()
+                        guard let self = self else {return}
+                        let title = L10n.thereAreFreeTransactionsLeftForToday(limit.maxUsage-limit.currentUsage)
+                        let message = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(limit.maxUsage)
+                        self.feeInfoDidTouch(title, message)
+                    }, onFailure: {[weak self] _ in
+                        self?.hideHud()
+                    })
+                    .disposed(by: disposeBag)
             }
-            self.feeInfoDidTouch(title, message)
         }
     }
 }
