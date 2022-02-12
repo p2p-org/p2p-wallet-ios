@@ -310,7 +310,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 viewModel.feesDriver
             )
                 .drive(onNext: {[weak self] network, feeAmount in
-                    print("feeAmount: \(feeAmount)")
                     self?._networkView.setUp(
                         network: network,
                         feeAmount: feeAmount,
