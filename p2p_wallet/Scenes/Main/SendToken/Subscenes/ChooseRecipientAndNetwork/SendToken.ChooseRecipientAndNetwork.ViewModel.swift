@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import FeeRelayerSwift
 
 protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenSelectNetworkViewModelType {
     var showAfterConfirmation: Bool {get}
@@ -118,6 +119,10 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     
     func getSOLAndRenBTCPrices() -> [String: Double] {
         sendTokenViewModel.getSOLAndRenBTCPrices()
+    }
+    
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+        sendTokenViewModel.getFreeTransactionFeeLimit()
     }
     
     func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
