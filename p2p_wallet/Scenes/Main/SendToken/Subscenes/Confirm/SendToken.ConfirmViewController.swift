@@ -129,7 +129,7 @@ extension SendToken {
                 BEStackViewSpacing(18)
                 
                 // Fee sections
-                UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
+                UIStackView(axis: .vertical, spacing: 12, alignment: .fill, distribution: .fill) {
                     // Receive
                     SectionView(title: L10n.receive)
                         .setup { view in
