@@ -24,34 +24,12 @@ extension SendToken {
             UIView.closeBannerButton()
                 .onTap(self, action: #selector(closeBannerButtonDidTouch))
         }
-        private lazy var amountView: AmountSummaryView = {
-            let amountView = AmountSummaryView()
-            amountView.addArrangedSubview(.defaultNextArrow())
-            return amountView
-        }()
-        private lazy var recipientView: RecipientView = {
-            let recipientView = RecipientView()
-            recipientView.addArrangedSubview(.defaultNextArrow())
-            return recipientView
-        }()
-        private lazy var networkView: NetworkView = {
-            let networkView = NetworkView()
-            networkView.addArrangedSubview(.defaultNextArrow())
-            return networkView
-        }()
         
         private lazy var receiveSection = SectionView(title: L10n.receive)
         
         private lazy var transferFeeSection = SectionView(title: L10n.transferFee)
         private lazy var freeFeeInfoButton = UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
             .onTap(self, action: #selector(freeFeeInfoButtonDidTouch))
-        
-        private lazy var feeView = FeeView(
-            solPrice: viewModel.getPrice(for: "SOL"),
-            feesDriver: viewModel.feesDriver,
-            payingWalletDriver: viewModel.payingWalletDriver,
-            payingWalletStatusDriver: viewModel.payingWalletStatusDriver
-        )
         
         private lazy var totalSection = SectionView(title: L10n.total)
         private lazy var tokenToFiatSection = SectionView(title: "<1 renBTC>")
@@ -71,31 +49,96 @@ extension SendToken {
             
             // layout
             let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                UIView.floatingPanel {
-                    amountView
+                // Alert banner
+                if viewModel.shouldShowConfirmAlert() {
+                    alertBannerView
                 }
-                    .onTap(self, action: #selector(amountViewDidTouch))
                 
+                // Amount
                 UIView.floatingPanel {
-                    recipientView
+                    AmountSummaryView()
+                        .setup { view in
+                            view.addArrangedSubview(.defaultNextArrow())
+                            Driver.combineLatest(
+                                viewModel.walletDriver,
+                                viewModel.amountDriver
+                            )
+                                .drive(with: view, onNext: {view, param in
+                                    view.setUp(wallet: param.0, amount: param.1 ?? 0)
+                                })
+                                .disposed(by: disposeBag)
+                        }
                 }
-                    .onTap(self, action: #selector(recipientViewDidTouch))
+                    .onTap { [weak self] in
+                        self?.viewModel.navigate(to: .chooseTokenAndAmount(showAfterConfirmation: true))
+                    }
                 
+                // Recipient
                 UIView.floatingPanel {
-                    networkView
+                    RecipientView()
+                        .setup { view in
+                            view.addArrangedSubview(.defaultNextArrow())
+                            viewModel.recipientDriver
+                                .drive(with: view, onNext: { view, recipient in
+                                    view.setUp(recipient: recipient)
+                                })
+                                .disposed(by: disposeBag)
+                        }
                 }
-                    .onTap(self, action: #selector(networkViewDidTouch))
+                    .onTap { [weak self] in
+                        self?.viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
+                    }
                 
-                BEStackViewSpacing(26)
+                // Network
+                UIView.floatingPanel {
+                    NetworkView()
+                        .setup { view in
+                            view.addArrangedSubview(.defaultNextArrow())
+                            Driver.combineLatest(
+                                viewModel.networkDriver,
+                                viewModel.feesDriver
+                            )
+                                .drive(with: view, onNext: { view, params in
+                                    view.setUp(
+                                        network: params.0,
+                                        feeAmount: params.1,
+                                        prices: self.viewModel.getSOLAndRenBTCPrices()
+                                    )
+                                })
+                                .disposed(by: disposeBag)
+                        }
+                }
+                    .onTap { [weak self] in
+                        self?.viewModel.navigate(to: .chooseNetwork)
+                    }
                 
+                // Paying fee token
                 if viewModel.relayMethod == .relay {
-                    feeView
+                    FeeView(
+                        solPrice: viewModel.getPrice(for: "SOL"),
+                        feesDriver: viewModel.feesDriver,
+                        payingWalletDriver: viewModel.payingWalletDriver,
+                        payingWalletStatusDriver: viewModel.payingWalletStatusDriver
+                    )
                         .setup {view in
-                            viewModel.networkDriver.map {$0 == .bitcoin}
+                            Driver.combineLatest(
+                                viewModel.networkDriver,
+                                viewModel.feesDriver
+                            )
+                                .map {network, fee in
+                                    if network != .solana {return true}
+                                    if let fee = fee {
+                                        return fee.total == 0
+                                    } else {
+                                        return true
+                                    }
+                                }
                                 .drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
-                        .onTap(self, action: #selector(recipientViewDidTouch))
+                        .onTap { [weak self] in
+                            self?.viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
+                        }
                 }
                 
                 BEStackViewSpacing(18)
@@ -136,11 +179,6 @@ extension SendToken {
             view.addSubview(actionButton)
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 8)
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
-            
-            // alert
-            if viewModel.shouldShowConfirmAlert() {
-                stackView.insertArrangedSubview(alertBannerView, at: 0)
-            }
         }
         
         override func bind() {
@@ -154,34 +192,6 @@ extension SendToken {
             viewModel.walletDriver
                 .map {L10n.confirmSending($0?.token.symbol ?? "")}
                 .drive(navigationBar.titleLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            // amount
-            walletAndAmountDriver
-                .drive(with: self, onNext: {`self`, param in
-                    self.amountView.setUp(wallet: param.0, amount: param.1 ?? 0)
-                })
-                .disposed(by: disposeBag)
-            
-            // recipient
-            viewModel.recipientDriver
-                .drive(with: self, onNext: { `self`, recipient in
-                    self.recipientView.setUp(recipient: recipient)
-                })
-                .disposed(by: disposeBag)
-            
-            // network view
-            Driver.combineLatest(
-                viewModel.networkDriver,
-                viewModel.feesDriver
-            )
-                .drive(with: self, onNext: { `self`, params in
-                    self.networkView.setUp(
-                        network: params.0,
-                        feeAmount: params.1,
-                        prices: self.viewModel.getSOLAndRenBTCPrices()
-                    )
-                })
                 .disposed(by: disposeBag)
             
             // receive
@@ -221,18 +231,6 @@ extension SendToken {
                     }
                 }
                 .drive(transferFeeSection.rightLabel.rx.attributedText)
-                .disposed(by: disposeBag)
-            
-            networkAndFeesDriver
-                .map {network, fee in
-                    if network != .solana {return true}
-                    if let fee = fee {
-                        return fee.total == 0
-                    } else {
-                        return true
-                    }
-                }
-                .drive(feeView.rx.isHidden)
                 .disposed(by: disposeBag)
 
             viewModel.networkDriver
@@ -315,18 +313,6 @@ extension SendToken {
             }
         }
         
-        @objc private func amountViewDidTouch() {
-            viewModel.navigate(to: .chooseTokenAndAmount(showAfterConfirmation: true))
-        }
-        
-        @objc private func recipientViewDidTouch() {
-            viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
-        }
-        
-        @objc private func networkViewDidTouch() {
-            viewModel.navigate(to: .chooseNetwork)
-        }
-        
         @objc private func freeFeeInfoButtonDidTouch() {
             let title: String
             let message: String
@@ -349,110 +335,6 @@ extension SendToken {
         
         @objc private func actionButtonDidTouch() {
             viewModel.authenticateAndSend()
-        }
-    }
-}
-
-private extension SendToken {
-    class AmountSummaryView: UIStackView {
-        // MARK: - Dependencies
-        private let disposeBag = DisposeBag()
-        
-        // MARK: - Subviews
-        private lazy var coinImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
-        private lazy var equityValueLabel = UILabel(text: "<Amount: ~$150>")
-        private lazy var amountLabel = UILabel(text: "<1 BTC>", textSize: 17, weight: .semibold)
-        
-        init() {
-            super.init(frame: .zero)
-            
-            set(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill)
-            addArrangedSubviews {
-                coinImageView
-                UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
-                    equityValueLabel
-                    amountLabel
-                }
-            }
-        }
-        
-        required init(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        func setUp(wallet: Wallet?, amount: Double) {
-            coinImageView.setUp(wallet: wallet)
-            
-            let amount = amount
-            let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
-            
-            equityValueLabel.attributedText = NSMutableAttributedString()
-                .text(L10n.amount.uppercaseFirst + ": ", size: 13, color: .textSecondary)
-                .text(Defaults.fiat.symbol + amountInFiat.toString(maximumFractionDigits: 2), size: 13, weight: .medium)
-            
-            amountLabel.text = amount.toString(maximumFractionDigits: 9)
-        }
-    }
-    
-    class RecipientView: UIStackView {
-        // MARK: - Dependencies
-        private let disposeBag = DisposeBag()
-        
-        // MARK: - Subviews
-        private lazy var nameLabel = UILabel(text: "<Recipient: a.p2p.sol>")
-        private lazy var addressLabel = UILabel(text: "<DkmTQHutnUn9xWmismkm2zSvLQfiEkPQCq6rAXZKJnBw>", textSize: 17, weight: .semibold, numberOfLines: 0)
-        
-        init() {
-            super.init(frame: .zero)
-            
-            set(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill)
-            addArrangedSubviews {
-                UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
-                    nameLabel
-                    addressLabel
-                }
-            }
-        }
-        
-        required init(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
-        }
-        
-        func setUp(recipient: Recipient?) {
-            nameLabel.isHidden = false
-            if let recipientName = recipient?.name {
-                nameLabel.attributedText = NSMutableAttributedString()
-                    .text(L10n.recipient.uppercaseFirst + ": ", size: 13, color: .textSecondary)
-                    .text(recipientName, size: 13, weight: .medium)
-            } else {
-                nameLabel.isHidden = true
-            }
-            addressLabel.text = recipient?.address ?? L10n.chooseTheRecipient
-        }
-    }
-    
-    class SectionView: UIStackView {
-        // MARK: - Dependencies
-        private let disposeBag = DisposeBag()
-        
-        // MARK: - Subviews
-        lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
-        lazy var rightLabel = UILabel(text: "<0.00227631 renBTC (~$150)>", textSize: 15, numberOfLines: 0, textAlignment: .right)
-            .withContentHuggingPriority(.required, for: .vertical)
-        
-        init(title: String) {
-            super.init(frame: .zero)
-            
-            set(axis: .horizontal, spacing: 0, alignment: .top, distribution: .equalSpacing)
-            addArrangedSubviews {
-                leftLabel
-                rightLabel
-            }
-            leftLabel.text = title
-        }
-        
-        required init(coder: NSCoder) {
-            fatalError("init(coder:) has not been implemented")
         }
     }
 }
