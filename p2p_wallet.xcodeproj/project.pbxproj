@@ -25,6 +25,7 @@
 		3B78CB512773067100FB3C4C /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB502773067100FB3C4C /* NotificationsService.swift */; };
 		3B78CB53277306BA00FB3C4C /* InAppNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB52277306BA00FB3C4C /* InAppNotification.swift */; };
 		3B78CB572773147F00FB3C4C /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB562773147F00FB3C4C /* ClipboardManager.swift */; };
+		3B856FC827B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B856FC727B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift */; };
 		3B87A1512762FCAA00F09883 /* SendToken.SelectNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */; };
 		3B87A1532762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1522762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift */; };
 		3B87A1552762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */; };
@@ -556,6 +557,7 @@
 		3B78CB502773067100FB3C4C /* NotificationsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
 		3B78CB52277306BA00FB3C4C /* InAppNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotification.swift; sourceTree = "<group>"; };
 		3B78CB562773147F00FB3C4C /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
+		3B856FC727B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SendToken.ConfirmViewController+Subviews.swift"; sourceTree = "<group>"; };
 		3B87A1502762FCAA00F09883 /* SendToken.SelectNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.swift; sourceTree = "<group>"; };
 		3B87A1522762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewModel.swift; sourceTree = "<group>"; };
 		3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewController.swift; sourceTree = "<group>"; };
@@ -1164,6 +1166,23 @@
 				3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */,
 			);
 			path = Interfaces;
+			sourceTree = "<group>";
+		};
+		3B856FC527B76D1A00973039 /* Confirm */ = {
+			isa = PBXGroup;
+			children = (
+				BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */,
+				3B856FC627B76DEE00973039 /* Subviews */,
+			);
+			path = Confirm;
+			sourceTree = "<group>";
+		};
+		3B856FC627B76DEE00973039 /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				3B856FC727B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift */,
+			);
+			path = Subviews;
 			sourceTree = "<group>";
 		};
 		3B87A14F2762FC6B00F09883 /* SelectNetwork */ = {
@@ -2196,7 +2215,7 @@
 				BCB286C0274CCA800074E1D5 /* ChooseTokenAndAmount */,
 				BCB286D72754B4DA0074E1D5 /* ChooseRecipientAndNetwork */,
 				3B87A14F2762FC6B00F09883 /* SelectNetwork */,
-				BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */,
+				3B856FC527B76D1A00973039 /* Confirm */,
 			);
 			path = Subscenes;
 			sourceTree = "<group>";
@@ -3087,6 +3106,7 @@
 				BC7533AA257F31D3007A00D9 /* LazyLabel.swift in Sources */,
 				BCFEDC002727B43C008AE4AD /* WLMarkdownVC.swift in Sources */,
 				BCA93F5525E77C240081DDF6 /* TokenSettingsViewController.swift in Sources */,
+				3B856FC827B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift in Sources */,
 				BC6FED95270BF5C1002B6255 /* RenBTCReceivingStatuses.Cells.swift in Sources */,
 				412DBFCE273D180E000F514E /* ReserveUsernameBannerAvailabilityRepository.swift in Sources */,
 				BC6EE7CA254BBF8900FE1025 /* UIApplication+Extensions.swift in Sources */,

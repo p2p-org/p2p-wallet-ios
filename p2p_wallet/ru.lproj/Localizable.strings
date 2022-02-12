@@ -662,7 +662,7 @@
 "Change the network?" = "Сменить сеть?";
 "If the network is changed to %@, the address field must be filled in with a %@." = "Если сеть изменена на %@, поле адреса должно быть заполнено %@.";
 "There are %@ free transactions left for today" = "На сегодня осталось %@ бесплатных транзакций";
-"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "В сети Solana первые 100 транзакций в день оплачиваются P2P.org. Последующие транзакции будут взиматься на основе платы за газ блокчейна Solana.";
+"On the Solana network, the first %@ transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "В сети Solana первые %@ транзакций в день оплачиваются P2P.org. Последующие транзакции будут взиматься на основе платы за газ блокчейна Solana.";
 "Select word #%@" = "Выберите слово №%@";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Получите любой токен в сети Solana, даже если он не включен в список вашего кошелька";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Когда вы выбираете сеть Биткойн, ваш адрес принимает только Биткойн.  Вы можете потерять активы, отправив еще одну монету. \n 0,000112 BTC - это минимальная сумма транзакции, и у вас есть 36 часов, чтобы завершить транзакцию после получения адреса.";

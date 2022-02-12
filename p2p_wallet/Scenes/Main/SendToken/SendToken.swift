@@ -113,4 +113,50 @@ extension SolanaSDK.FeeAmount {
         }
         return attributedText
     }
+    
+    func attributedStringForTransactionFee(solPrice: Double?) -> NSMutableAttributedString {
+        if transaction == 0 {
+            return NSMutableAttributedString()
+                .text(L10n.free + " ", size: 15, weight: .semibold)
+                .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+        } else {
+            let fee = transaction.convertToBalance(decimals: 9)
+            return feeAttributedString(fee: fee, unit: "SOL", price: solPrice)
+        }
+    }
+    
+    func attributedStringForAccountCreationFee(solPrice: Double?) -> NSMutableAttributedString? {
+        guard accountBalances > 0 else {return nil}
+        let fee = accountBalances.convertToBalance(decimals: 9)
+        return feeAttributedString(fee: fee, unit: "SOL", price: solPrice)
+    }
+    
+    func attributedStringForTotalFee(solPrice: Double?) -> NSMutableAttributedString {
+        let fee = total.convertToBalance(decimals: 9)
+        return feeAttributedString(fee: fee, unit: "SOL", price: solPrice)
+    }
+    
+    func attributedStringForOtherFees(
+        prices: [String: Double],
+        attributedSeparator: NSAttributedString = NSAttributedString(string: "\n")
+    ) -> NSMutableAttributedString? {
+        guard let others = others, !others.isEmpty else {return nil}
+        let attributedText = NSMutableAttributedString()
+        for (index, fee) in others.enumerated() {
+            attributedText
+                .append(feeAttributedString(fee: fee.amount, unit: fee.unit, price: prices[fee.unit]))
+            if index < others.count - 1 {
+                attributedText
+                    .append(attributedSeparator)
+            }
+        }
+        return attributedText
+    }
+}
+
+private func feeAttributedString(fee: Double, unit: String, price: Double?) -> NSMutableAttributedString {
+    let feeInFiat = fee * price
+    return NSMutableAttributedString()
+        .text("\(fee.toString(maximumFractionDigits: 9)) \(unit)", size: 15, color: .textBlack)
+        .text(" (~\(Defaults.fiat.symbol)\(feeInFiat.toString(maximumFractionDigits: 2)))", size: 15, color: .textSecondary)
 }

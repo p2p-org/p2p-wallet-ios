@@ -44,13 +44,18 @@ extension SendToken.SelectNetwork {
                         createNetworkView(network: .solana)
                         UIView.greenBannerView(contentInset: .init(x: 12, y: 8)) {
                             UILabel(
-                                text: L10n
-                                    .OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P
-                                    .Org
-                                    .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee,
+                                text: nil,
                                 textColor: .h34c759,
                                 numberOfLines: 5
                             )
+                                .setup { label in
+                                    viewModel.getFreeTransactionFeeLimit()
+                                        .map {$0.maxUsage}
+                                        .subscribe(onSuccess: {[weak label] maxUsage in
+                                            label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage)
+                                        })
+                                        .disposed(by: disposeBag)
+                                }
                         }.padding(.init(only: .top, inset: 18))
                     }
                     
