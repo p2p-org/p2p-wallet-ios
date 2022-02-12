@@ -152,61 +152,16 @@ extension SendToken {
                                 .disposed(by: disposeBag)
                         }
                     
-                    // Transfer fee
-                    UIStackView(axis: .horizontal, spacing: 4, alignment: .top, distribution: .fill) {
-                        // fee
-                        SectionView(title: L10n.transferFee)
-                            .setup { view in
-                                Driver.combineLatest(
-                                    viewModel.networkDriver,
-                                    viewModel.feesDriver
-                                )
-                                    .map {[weak self] network, feeAmount in
-                                        guard let self = self else {return NSAttributedString()}
-                                        switch network {
-                                        case .solana:
-                                            return NSMutableAttributedString()
-                                                .text(L10n.free + " ", size: 15, weight: .semibold)
-                                                .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
-                                        case .bitcoin:
-                                            guard let feeAmount = feeAmount else {return NSAttributedString()}
-                                            return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
-                                                .withParagraphStyle(lineSpacing: 8, alignment: .right)
-                                        }
-                                    }
-                                    .do(afterNext: {[weak view] _ in
-                                        view?.rightLabel.setNeedsLayout()
-                                        view?.layoutIfNeeded()
-                                    })
-                                    .drive(view.rightLabel.rx.attributedText)
-                                    .disposed(by: disposeBag)
-                            }
-                        // info
-                        UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
-                            .setup {view in
-                                viewModel.networkDriver
-                                    .map {$0 != .solana}
-                                    .drive(view.rx.isHidden)
-                                    .disposed(by: disposeBag)
-                            }
-                            .onTap(self, action: #selector(freeFeeInfoButtonDidTouch))
+                    // Fees
+                    FeesView(viewModel: viewModel) { [weak self] title, message in
+                        self?.showAlert(
+                            title: title,
+                            message: message,
+                            buttonTitles: [L10n.ok],
+                            highlightedButtonIndex: 0,
+                            completion: nil
+                        )
                     }
-                    UIStackView(axis: .horizontal) {
-                        UIView.spacer
-                        UIView.defaultSeparator()
-                            .frame(width: 246, height: 1)
-                    }
-                    SectionView(title: L10n.total)
-                        .setup { view in
-                            viewModel.feesDriver
-                                .map {[weak self] feeAmount -> NSAttributedString in
-                                    guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
-                                    return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
-                                        .withParagraphStyle(lineSpacing: 8, alignment: .right)
-                                }
-                                .drive(view.rightLabel.rx.attributedText)
-                                .disposed(by: disposeBag)
-                        }
                 }
                 
                 BEStackViewSpacing(18)
@@ -309,26 +264,6 @@ extension SendToken {
             UIView.animate(withDuration: 0.3) {
                 self.alertBannerView.isHidden = true
             }
-        }
-        
-        @objc private func freeFeeInfoButtonDidTouch() {
-            let title: String
-            let message: String
-            switch viewModel.relayMethod {
-            case .reward:
-                title = L10n.free.uppercaseFirst
-                message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
-            case .relay:
-                title = L10n.thereAreFreeTransactionsLeftForToday(100)
-                message = L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee
-            }
-            showAlert(
-                title: title,
-                message: message,
-                buttonTitles: [L10n.ok],
-                highlightedButtonIndex: 0,
-                completion: nil
-            )
         }
     }
 }
