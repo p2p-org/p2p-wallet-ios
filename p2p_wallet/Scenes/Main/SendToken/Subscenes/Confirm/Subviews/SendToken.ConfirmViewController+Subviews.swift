@@ -149,6 +149,12 @@ extension SendToken.ConfirmViewController {
                                 .map {$0 != .solana}
                                 .drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
+                            
+                            viewModel.getFreeTransactionFeeLimit()
+                                .subscribe(onSuccess: {[weak view] limit in
+                                    view?.tintColor = limit.currentUsage >= limit.maxUsage ? .textSecondary: .h34c759
+                                })
+                                .disposed(by: disposeBag)
                         }
                         .onTap(self, action: #selector(feeInfoButtonDidTap))
                 }
@@ -210,7 +216,6 @@ extension SendToken.ConfirmViewController {
         }
         
         @objc func feeInfoButtonDidTap() {
-            
             switch self.viewModel.relayMethod {
             case .reward:
                 let title = L10n.free.uppercaseFirst
