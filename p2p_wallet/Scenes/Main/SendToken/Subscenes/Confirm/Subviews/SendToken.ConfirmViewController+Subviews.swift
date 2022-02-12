@@ -150,20 +150,7 @@ extension SendToken.ConfirmViewController {
                                 .drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
-                        .onTap { [weak self] in
-                            guard let self = self else {return}
-                            let title: String
-                            let message: String
-                            switch self.viewModel.relayMethod {
-                            case .reward:
-                                title = L10n.free.uppercaseFirst
-                                message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
-                            case .relay:
-                                title = L10n.thereAreFreeTransactionsLeftForToday(100)
-                                message = L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee
-                            }
-                            self.feeInfoDidTouch(title, message)
-                        }
+                        .onTap(self, action: #selector(feeInfoButtonDidTap))
                 }
                 
                 // Account creation fee, other fees
@@ -220,6 +207,20 @@ extension SendToken.ConfirmViewController {
                             .disposed(by: disposeBag)
                     }
             }
+        }
+        
+        @objc func feeInfoButtonDidTap() {
+            let title: String
+            let message: String
+            switch self.viewModel.relayMethod {
+            case .reward:
+                title = L10n.free.uppercaseFirst
+                message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
+            case .relay:
+                title = L10n.thereAreFreeTransactionsLeftForToday(100)
+                message = L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee
+            }
+            self.feeInfoDidTouch(title, message)
         }
     }
 }
