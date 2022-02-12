@@ -128,22 +128,12 @@ extension SendToken.ConfirmViewController {
                     // fee
                     SectionView(title: L10n.transferFee)
                         .setup { view in
-                            Driver.combineLatest(
-                                viewModel.networkDriver,
-                                viewModel.feesDriver
-                            )
-                                .map {[weak self] network, feeAmount in
+                            viewModel.feesDriver
+                                .map {[weak self] feeAmount in
                                     guard let self = self else {return NSAttributedString()}
-                                    switch network {
-                                    case .solana:
-                                        return NSMutableAttributedString()
-                                            .text(L10n.free + " ", size: 15, weight: .semibold)
-                                            .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
-                                    case .bitcoin:
-                                        guard let feeAmount = feeAmount else {return NSAttributedString()}
-                                        return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
-                                            .withParagraphStyle(lineSpacing: 8, alignment: .right)
-                                    }
+                                    guard let feeAmount = feeAmount else {return NSAttributedString()}
+                                    let prices = self.viewModel.getSOLAndRenBTCPrices()
+                                    return feeAmount.attributedStringForTransactionFee(solPrice: prices["SOL"])
                                 }
                                 .do(afterNext: {[weak view] _ in
                                     view?.rightLabel.setNeedsLayout()
@@ -176,6 +166,41 @@ extension SendToken.ConfirmViewController {
                         }
                 }
                 
+                // Account creation fee, other fees
+                SectionView(title: L10n.accountCreationFee)
+                    .setup { view in
+                        Driver.combineLatest(
+                            viewModel.networkDriver,
+                            viewModel.feesDriver
+                        )
+                            .do(afterNext: {[weak view] _ in
+                                view?.rightLabel.setNeedsLayout()
+                                view?.layoutIfNeeded()
+                            })
+                            .drive(onNext: { [weak self, weak view] network, feeAmount in
+                                guard let self = self else {return}
+                                guard let feeAmount = feeAmount else {
+                                    view?.isHidden = true
+                                    return
+                                }
+                                let prices = self.viewModel.getSOLAndRenBTCPrices()
+                                switch network {
+                                case .solana:
+                                    view?.leftLabel.text = L10n.accountCreationFee
+                                    if let attributedString = feeAmount.attributedStringForAccountCreationFee(solPrice: prices["SOL"])
+                                    {
+                                        view?.rightLabel.attributedText = attributedString
+                                    } else {
+                                        view?.isHidden = true
+                                    }
+                                case .bitcoin:
+                                    view?.leftLabel.text = ""
+                                    view?.rightLabel.attributedText = feeAmount.attributedStringForOtherFees(prices: prices)
+                                }
+                            })
+                            .disposed(by: disposeBag)
+                    }
+                
                 // Separator
                 UIStackView(axis: .horizontal) {
                     UIView.spacer
@@ -189,8 +214,7 @@ extension SendToken.ConfirmViewController {
                         viewModel.feesDriver
                             .map {[weak self] feeAmount -> NSAttributedString in
                                 guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
-                                return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
-                                    .withParagraphStyle(lineSpacing: 8, alignment: .right)
+                                return feeAmount.attributedStringForTotalFee(solPrice: self.viewModel.getSOLAndRenBTCPrices()["SOL"])
                             }
                             .drive(view.rightLabel.rx.attributedText)
                             .disposed(by: disposeBag)
