@@ -6,6 +6,9 @@
 //
 
 import Foundation
+import UIKit
+import RxCocoa
+import RxSwift
 
 extension SendToken.ConfirmViewController {
     class AmountSummaryView: UIStackView {
@@ -98,6 +101,101 @@ extension SendToken.ConfirmViewController {
         
         required init(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+    }
+    
+    class FeesView: UIStackView {
+        private let disposeBag = DisposeBag()
+        private let viewModel: SendTokenViewModelType
+        private let feeInfoDidTouch: (String, String) -> Void
+        
+        init(viewModel: SendTokenViewModelType, feeInfoDidTouch: @escaping (String, String) -> Void) {
+            self.viewModel = viewModel
+            self.feeInfoDidTouch = feeInfoDidTouch
+            super.init(frame: .zero)
+            set(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill)
+            layout()
+        }
+        
+        required init(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+        
+        private func layout() {
+            addArrangedSubviews {
+                // Transfer fee
+                UIStackView(axis: .horizontal, spacing: 4, alignment: .top, distribution: .fill) {
+                    // fee
+                    SectionView(title: L10n.transferFee)
+                        .setup { view in
+                            Driver.combineLatest(
+                                viewModel.networkDriver,
+                                viewModel.feesDriver
+                            )
+                                .map {[weak self] network, feeAmount in
+                                    guard let self = self else {return NSAttributedString()}
+                                    switch network {
+                                    case .solana:
+                                        return NSMutableAttributedString()
+                                            .text(L10n.free + " ", size: 15, weight: .semibold)
+                                            .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                                    case .bitcoin:
+                                        guard let feeAmount = feeAmount else {return NSAttributedString()}
+                                        return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                                            .withParagraphStyle(lineSpacing: 8, alignment: .right)
+                                    }
+                                }
+                                .do(afterNext: {[weak view] _ in
+                                    view?.rightLabel.setNeedsLayout()
+                                    view?.layoutIfNeeded()
+                                })
+                                .drive(view.rightLabel.rx.attributedText)
+                                .disposed(by: disposeBag)
+                        }
+                    // info
+                    UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
+                        .setup {view in
+                            viewModel.networkDriver
+                                .map {$0 != .solana}
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
+                        .onTap { [weak self] in
+                            guard let self = self else {return}
+                            let title: String
+                            let message: String
+                            switch self.viewModel.relayMethod {
+                            case .reward:
+                                title = L10n.free.uppercaseFirst
+                                message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
+                            case .relay:
+                                title = L10n.thereAreFreeTransactionsLeftForToday(100)
+                                message = L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee
+                            }
+                            self.feeInfoDidTouch(title, message)
+                        }
+                }
+                
+                // Separator
+                UIStackView(axis: .horizontal) {
+                    UIView.spacer
+                    UIView.defaultSeparator()
+                        .frame(width: 246, height: 1)
+                }
+                
+                // Total fee
+                SectionView(title: L10n.total)
+                    .setup { view in
+                        viewModel.feesDriver
+                            .map {[weak self] feeAmount -> NSAttributedString in
+                                guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
+                                return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                                    .withParagraphStyle(lineSpacing: 8, alignment: .right)
+                            }
+                            .drive(view.rightLabel.rx.attributedText)
+                            .disposed(by: disposeBag)
+                    }
+            }
         }
     }
 }
