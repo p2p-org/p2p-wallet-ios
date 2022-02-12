@@ -25,12 +25,6 @@ extension SendToken {
                 .onTap(self, action: #selector(closeBannerButtonDidTouch))
         }
         
-        private lazy var receiveSection = SectionView(title: L10n.receive)
-        
-        private lazy var transferFeeSection = SectionView(title: L10n.transferFee)
-        private lazy var freeFeeInfoButton = UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
-            .onTap(self, action: #selector(freeFeeInfoButtonDidTouch))
-        
         private lazy var totalSection = SectionView(title: L10n.total)
         private lazy var tokenToFiatSection = SectionView(title: "<1 renBTC>")
         private lazy var fiatToTokenSection = SectionView(title: "<1 USD>")
@@ -143,11 +137,68 @@ extension SendToken {
                 
                 BEStackViewSpacing(18)
                 
+                // Fee sections
                 UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                    receiveSection
+                    // Receive
+                    SectionView(title: L10n.receive)
+                        .setup { view in
+                            Driver.combineLatest(
+                                viewModel.walletDriver,
+                                viewModel.amountDriver
+                            )
+                                .map {wallet, amount in
+                                    let amount = amount
+                                    let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
+                                    
+                                    return NSMutableAttributedString()
+                                        .text(
+                                            "\(amount.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "") ",
+                                            size: 15
+                                        )
+                                        .text("(~\(Defaults.fiat.symbol)\(amountInFiat.toString(maximumFractionDigits: 2)))", size: 15, color: .textSecondary)
+                                }
+                                .drive(view.rightLabel.rx.attributedText)
+                                .disposed(by: disposeBag)
+                        }
+                    
+                    // Transfer fee
                     UIStackView(axis: .horizontal, spacing: 4, alignment: .top, distribution: .fill) {
-                        transferFeeSection
-                        freeFeeInfoButton
+                        // fee
+                        SectionView(title: L10n.transferFee)
+                            .setup { view in
+                                Driver.combineLatest(
+                                    viewModel.networkDriver,
+                                    viewModel.feesDriver
+                                )
+                                    .map {[weak self] network, feeAmount in
+                                        guard let self = self else {return NSAttributedString()}
+                                        switch network {
+                                        case .solana:
+                                            return NSMutableAttributedString()
+                                                .text(L10n.free + " ", size: 15, weight: .semibold)
+                                                .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                                        case .bitcoin:
+                                            guard let feeAmount = feeAmount else {return NSAttributedString()}
+                                            return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
+                                                .withParagraphStyle(lineSpacing: 8, alignment: .right)
+                                        }
+                                    }
+                                    .do(afterNext: {[weak view] _ in
+                                        view?.rightLabel.setNeedsLayout()
+                                        view?.layoutIfNeeded()
+                                    })
+                                    .drive(view.rightLabel.rx.attributedText)
+                                    .disposed(by: disposeBag)
+                            }
+                        // info
+                        UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
+                            .setup {view in
+                                viewModel.networkDriver
+                                    .map {$0 != .solana}
+                                    .drive(view.rx.isHidden)
+                                    .disposed(by: disposeBag)
+                            }
+                            .onTap(self, action: #selector(freeFeeInfoButtonDidTouch))
                     }
                     UIStackView(axis: .horizontal) {
                         UIView.spacer
@@ -192,54 +243,6 @@ extension SendToken {
             viewModel.walletDriver
                 .map {L10n.confirmSending($0?.token.symbol ?? "")}
                 .drive(navigationBar.titleLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            // receive
-            walletAndAmountDriver
-                .map {wallet, amount in
-                    let amount = amount
-                    let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
-                    
-                    return NSMutableAttributedString()
-                        .text(
-                            "\(amount.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "") ",
-                            size: 15
-                        )
-                        .text("(~\(Defaults.fiat.symbol)\(amountInFiat.toString(maximumFractionDigits: 2)))", size: 15, color: .textSecondary)
-                }
-                .drive(receiveSection.rightLabel.rx.attributedText)
-                .disposed(by: disposeBag)
-            
-            // transfer fee
-            let networkAndFeesDriver = Driver.combineLatest(
-                viewModel.networkDriver,
-                viewModel.feesDriver
-            )
-            
-            networkAndFeesDriver
-                .map {[weak self] network, feeAmount in
-                    guard let self = self else {return NSAttributedString()}
-                    switch network {
-                    case .solana:
-                        return NSMutableAttributedString()
-                            .text(L10n.free + " ", size: 15, weight: .semibold)
-                            .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
-                    case .bitcoin:
-                        guard let feeAmount = feeAmount else {return NSAttributedString()}
-                        return feeAmount.attributedString(prices: self.viewModel.getSOLAndRenBTCPrices())
-                            .withParagraphStyle(lineSpacing: 8, alignment: .right)
-                    }
-                }
-                .drive(transferFeeSection.rightLabel.rx.attributedText)
-                .disposed(by: disposeBag)
-
-            viewModel.networkDriver
-                .map {$0 != .solana}
-                .do(afterNext: {[weak self] _ in
-                    self?.transferFeeSection.rightLabel.setNeedsLayout()
-                    self?.transferFeeSection.layoutIfNeeded()
-                })
-                .drive(freeFeeInfoButton.rx.isHidden)
                 .disposed(by: disposeBag)
                     
             // total
