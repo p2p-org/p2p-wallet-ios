@@ -157,7 +157,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                                 isFree: true,
                                 info: .init(
                                     alertTitle: L10n.thereAreFreeTransactionsLeftForToday(info.maxUsage - info.currentUsage),
-                                    alertDescription: L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee,
+                                    alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(info.maxUsage),
                                     payBy: L10n.PaidByP2p.org
                                 )
                             )
