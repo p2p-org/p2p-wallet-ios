@@ -22,7 +22,7 @@ extension BuyToken {
             .padding(.init(all: 20))
         
         // MARK: - Methods
-        init(provider: Buy.ProcessingService) {
+        init(provider: Buy.Processing) {
             widgetVC = .init(provider: provider, loadingView: WLSpinnerView(size: 65, endColor: .h5887ff))
             super.init()
         }

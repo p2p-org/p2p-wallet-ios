@@ -4,7 +4,7 @@
 
 import Foundation
 
-protocol BuyProcessingServiceType {
+protocol BuyProcessingType {
     func getUrl() -> String
 }
 
@@ -16,17 +16,17 @@ protocol BuyProviderFactory {
         crypto: Buy.CryptoCurrency,
         initialAmount: Double,
         currency: Buy.FiatCurrency
-    ) throws -> BuyProcessingServiceType
+    ) throws -> BuyProcessingType
 }
 
 extension Buy {
     class MoonpayFactory: BuyProviderFactory {
-        func create(walletRepository: WalletsRepository, crypto: CryptoCurrency, initialAmount: Double, currency: FiatCurrency) throws -> BuyProcessingServiceType {
+        func create(walletRepository: WalletsRepository, crypto: CryptoCurrency, initialAmount: Double, currency: FiatCurrency) throws -> BuyProcessingType {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
 //                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }
             
-            return MoonpayProvider(
+            return MoonpayBuyProcessing(
                 environment: Defaults.apiEndPoint.network == .mainnetBeta ?
                     .production :
                     .staging,
