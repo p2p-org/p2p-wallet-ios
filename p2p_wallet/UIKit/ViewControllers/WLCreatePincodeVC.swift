@@ -22,7 +22,7 @@ class WLCreatePincodeVC: BaseVC {
     private lazy var createPincodeVC = WLPincodeVC()
     
     // MARK: - Callback
-    var onSuccess: ((UInt) -> Void)?
+    var onSuccess: ((String) -> Void)?
     var onCancel: (() -> Void)?
     
     // MARK: - Initializers
