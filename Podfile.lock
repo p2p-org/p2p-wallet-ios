@@ -164,7 +164,7 @@ PODS:
     - TweetNacl (~> 1.0.2)
   - Starscream (4.0.4)
   - SubviewAttachingTextView (1.5.0)
-  - SVGKit (3.1.0):
+  - SVGKit (3.0.0):
     - CocoaLumberjack (~> 3.0)
   - SwiftGen (6.5.1)
   - SwiftLint (0.45.1)
@@ -197,7 +197,7 @@ DEPENDENCIES:
   - RxCocoa
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
-  - SVGKit (from `https://github.com/SVGKit/SVGKit.git`, branch `3.x`)
+  - SVGKit
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
@@ -240,6 +240,7 @@ SPEC REPOS:
     - secp256k1.swift
     - Starscream
     - SubviewAttachingTextView
+    - SVGKit
     - SwiftGen
     - SwiftLint
     - SwiftyUserDefaults
@@ -267,9 +268,6 @@ EXTERNAL SOURCES:
     :path: RenVMSwift
   SolanaSwift:
     :path: SolanaSwift
-  SVGKit:
-    :branch: 3.x
-    :git: https://github.com/SVGKit/SVGKit.git
 
 CHECKOUT OPTIONS:
   Down:
@@ -278,9 +276,6 @@ CHECKOUT OPTIONS:
   ListPlaceholder:
     :commit: a729fd45aa22b9d087477d1ccedb9f4292762a58
     :git: "git@github.com:p2p-org/ListPlaceholder.git"
-  SVGKit:
-    :commit: e9bc636845fb4d6d5d8e25a9bd08e75c5cf92de9
-    :git: https://github.com/SVGKit/SVGKit.git
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
@@ -326,7 +321,7 @@ SPEC CHECKSUMS:
   SolanaSwift: 7fb3d45c5de3840032c5735a62729cb9764147f4
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
-  SVGKit: 3c8468aab0026048532a3b27a0c81cdd939f0649
+  SVGKit: 1ad7513f8c74d9652f94ed64ddecda1a23864dea
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
   SwiftLint: 06ac37e4d38c7068e0935bb30cda95f093bec761
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
@@ -334,6 +329,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 4b92b49b632a9fe63b6479450bb119c1536fb80f
+PODFILE CHECKSUM: 5bdc8acbd947da056440d6dd11a97693df0247f5
 
 COCOAPODS: 1.11.2
