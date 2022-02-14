@@ -48,6 +48,9 @@ final class WLPinCodeView: BEView {
     private lazy var numpadView = _NumpadView(bottomLeftButton: bottomLeftButton)
     private let bottomLeftButton: UIView?
     
+    #if DEBUG
+    private lazy var currentPincodeLabel = UILabel(text: nil, textColor: .red)
+    #endif
     // MARK: - Initializer
     init(correctPincode: UInt? = nil, maxAttemptsCount: Int? = nil, bottomLeftButton: UIView? = nil) {
         self.correctPincode = correctPincode
@@ -69,6 +72,16 @@ final class WLPinCodeView: BEView {
         errorLabel.autoPinEdge(toSuperviewSafeArea: .trailing)
         errorLabel.autoPinEdge(.top, to: .bottom, of: dotsView, withOffset: 10)
         
+        #if DEBUG
+        let pinLabel = UILabel(text: "\(correctPincode ?? 0)", textColor: .red, textAlignment: .center)
+        addSubview(pinLabel)
+        pinLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: 18)
+        pinLabel.autoAlignAxis(toSuperviewAxis: .vertical)
+        
+        addSubview(currentPincodeLabel)
+        currentPincodeLabel.autoPinEdge(.bottom, to: .top, of: pinLabel, withOffset: 10)
+        currentPincodeLabel.autoAlignAxis(toSuperviewAxis: .vertical)
+        #endif
         // calbacks
         numpadView.didChooseNumber = { [weak self] in self?.add(digit: $0) }
         
@@ -101,6 +114,9 @@ final class WLPinCodeView: BEView {
         }
 
         currentPincode = newValue
+        #if DEBUG
+        currentPincodeLabel.text = "\(currentPincode ?? 0)"
+        #endif
     }
     
     private func backspace() {
