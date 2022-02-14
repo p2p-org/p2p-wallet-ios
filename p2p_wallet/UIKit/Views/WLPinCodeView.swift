@@ -13,14 +13,17 @@ private let pincodeLength = 6
 final class WLPinCodeView: BEView {
     // MARK: - Properties
     /// Correct pincode for comparision, if not defined, the validation will always returns true
-    private let correctPincode: UInt?
+    private let correctPincode: String?
     
     /// Max attempts for retrying, default is nil (infinite)
     private let maxAttemptsCount: Int?
     
-    private var currentPincode: UInt? {
+    private var currentPincode: String? {
         didSet {
             validatePincode()
+            #if DEBUG
+            currentPincodeLabel.text = currentPincode
+            #endif
         }
     }
     
@@ -34,12 +37,16 @@ final class WLPinCodeView: BEView {
     
     // MARK: - Callbacks
     /// onSuccess, return newPincode if needed
-    var onSuccess: ((UInt?) -> Void)?
+    var onSuccess: ((String?) -> Void)?
     var onFailed: (() -> Void)?
     var onFailedAndExceededMaxAttemps: (() -> Void)?
     
     // MARK: - Subviews
     private lazy var stackView = UIStackView(axis: .vertical, spacing: stackViewSpacing, alignment: .center, distribution: .fill) {
+        #if DEBUG
+        UILabel(text: correctPincode, textColor: .red, textAlignment: .center)
+        currentPincodeLabel
+        #endif
         dotsView
         numpadView
     }
@@ -52,7 +59,7 @@ final class WLPinCodeView: BEView {
     private lazy var currentPincodeLabel = UILabel(text: nil, textColor: .red)
     #endif
     // MARK: - Initializer
-    init(correctPincode: UInt? = nil, maxAttemptsCount: Int? = nil, bottomLeftButton: UIView? = nil) {
+    init(correctPincode: String? = nil, maxAttemptsCount: Int? = nil, bottomLeftButton: UIView? = nil) {
         self.correctPincode = correctPincode
         self.maxAttemptsCount = maxAttemptsCount
         self.bottomLeftButton = bottomLeftButton
@@ -72,16 +79,6 @@ final class WLPinCodeView: BEView {
         errorLabel.autoPinEdge(toSuperviewSafeArea: .trailing)
         errorLabel.autoPinEdge(.top, to: .bottom, of: dotsView, withOffset: 10)
         
-        #if DEBUG
-        let pinLabel = UILabel(text: "\(correctPincode ?? 0)", textColor: .red, textAlignment: .center)
-        addSubview(pinLabel)
-        pinLabel.autoPinEdge(toSuperviewEdge: .bottom, withInset: 18)
-        pinLabel.autoAlignAxis(toSuperviewAxis: .vertical)
-        
-        addSubview(currentPincodeLabel)
-        currentPincodeLabel.autoPinEdge(.bottom, to: .top, of: pinLabel, withOffset: 10)
-        currentPincodeLabel.autoAlignAxis(toSuperviewAxis: .vertical)
-        #endif
         // calbacks
         numpadView.didChooseNumber = { [weak self] in self?.add(digit: $0) }
         
@@ -103,28 +100,26 @@ final class WLPinCodeView: BEView {
     
     // MARK: - Private methods
     private func add(digit: Int) {
+        guard String(digit).count == 1 else { return }
         // calculate value
-        let newValue = (currentPincode ?? 0) * 10 + UInt(digit)
-        let numberOfDigits = String(newValue).count
+        let newValue = (currentPincode ?? "") + String(digit) // (currentPincode ?? 0) * 10 + UInt(digit)
+        let numberOfDigits = newValue.count
         
         // override
         guard numberOfDigits <= pincodeLength else {
-            currentPincode = UInt(digit)
+            currentPincode = String(digit)
             return
         }
 
         currentPincode = newValue
-        #if DEBUG
-        currentPincodeLabel.text = "\(currentPincode ?? 0)"
-        #endif
     }
     
     private func backspace() {
-        guard String(currentPincode ?? 0).count > 1 else {
+        guard let currentPincode = currentPincode, currentPincode.count > 1 else {
             currentPincode = nil
             return
         }
-        currentPincode = currentPincode! / 10
+        self.currentPincode = String(currentPincode.dropLast())
     }
     
     private func validatePincode() {
@@ -134,7 +129,7 @@ final class WLPinCodeView: BEView {
         
         // pin code nil
         guard let currentPincode = currentPincode,
-              String(currentPincode).count <= pincodeLength
+              currentPincode.count <= pincodeLength
         else {
             numpadView.setDeleteButtonHidden(true)
             dotsView.pincodeEntered(numberOfDigits: 0)
@@ -142,7 +137,7 @@ final class WLPinCodeView: BEView {
         }
         
         // highlight dots
-        let numberOfDigits = String(currentPincode).count
+        let numberOfDigits = currentPincode.count
         dotsView.pincodeEntered(numberOfDigits: numberOfDigits)
         
         // delete button
