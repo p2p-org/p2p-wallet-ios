@@ -7,6 +7,7 @@
 
 import Foundation
 import RxCocoa
+import RenVMSwift
 
 extension RenVM.LockAndMint {
     struct ProcessingTx: Codable, Hashable {
