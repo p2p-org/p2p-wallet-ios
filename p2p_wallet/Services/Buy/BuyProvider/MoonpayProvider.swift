@@ -5,7 +5,7 @@
 import Foundation
 import CryptoKit
 
-public struct MoonpayProvider: BuyProvider {
+public struct MoonpayProvider: BuyProcessingServiceType {
     public enum Environment {
         case staging
         case production

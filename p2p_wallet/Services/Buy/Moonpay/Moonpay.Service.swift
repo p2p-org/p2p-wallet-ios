@@ -42,7 +42,8 @@ extension Moonpay {
                 parameters: [
                     "apiKey": api.apiKey,
                     "baseCurrencyCode": baseCurrencyCode,
-                    "baseCurrencyAmount": baseCurrencyAmount
+                    "baseCurrencyAmount": baseCurrencyAmount,
+                    "areFeesIncluded": true,
                 ]
             ).responseData()
                 .map { response, data in

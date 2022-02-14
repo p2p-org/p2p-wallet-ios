@@ -4,42 +4,24 @@
 
 import Foundation
 
-public protocol BuyProvider {
+protocol BuyProcessingServiceType {
     func getUrl() -> String
 }
+
+protocol BuyCurrencyType {}
 
 protocol BuyProviderFactory {
     func create(
         walletRepository: WalletsRepository,
-        crypto: BuyProviders.Crypto,
+        crypto: Buy.CryptoCurrency,
         initialAmount: Double,
-        currency: BuyProviders.Currency
-    ) throws -> BuyProvider
+        currency: Buy.FiatCurrency
+    ) throws -> BuyProcessingServiceType
 }
 
-struct BuyProviders {
-    enum Currency: String {
-        case usd = "usd"
-    }
-    
-    enum Crypto: String {
-        case eth = "eth"
-        case sol = "sol"
-        case usdt = "usdt"
-        
-        static let all: Set<Crypto> = [.eth, .sol, .usdt]
-        
-        func toWallet() -> String {
-            switch self {
-            case .eth: return "ETH"
-            case .sol: return "SOL"
-            case .usdt: return "USDT"
-            }
-        }
-    }
-    
+extension Buy {
     class MoonpayFactory: BuyProviderFactory {
-        func create(walletRepository: WalletsRepository, crypto: Crypto, initialAmount: Double, currency: Currency) throws -> BuyProvider {
+        func create(walletRepository: WalletsRepository, crypto: CryptoCurrency, initialAmount: Double, currency: FiatCurrency) throws -> BuyProcessingServiceType {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
 //                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }

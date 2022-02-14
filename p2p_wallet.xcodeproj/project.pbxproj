@@ -129,11 +129,15 @@
 		41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */; };
 		84699019D2C5C5E05EC8466A /* BuyToken.WidgetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699FF3E0F973EDC052ED23 /* BuyToken.WidgetViewController.swift */; };
 		84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */; };
+		8469908B746E9269D205BED1 /* TransakProccessingProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998347726DB596CBF222F /* TransakProccessingProvider.swift */; };
+		846990E62B84EA986396F411 /* Moonpay.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995C3B1170829D092925A /* Moonpay.API.swift */; };
+		8469912EE6DF3F3A482AC615 /* Moonpay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993C4156CB7E86FE0B9C6 /* Moonpay.swift */; };
 		84699154DB17DE5EB2D0DF08 /* BuyRoot.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469996FE57E1A717BD82B85 /* BuyRoot.ViewModel.swift */; };
 		846991795DC72E1D4E1078B7 /* SolanaBuyToken.Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993C80C502EDC0FBF1067 /* SolanaBuyToken.Scene.swift */; };
 		84699180BD00AC7A82B3DC28 /* SortByDataStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C3549A12D49D22AA2EE /* SortByDataStrategy.swift */; };
-		846991A0C502273386D8C0CF /* Moonpay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D5B1D1C3353913C717D /* Moonpay.swift */; };
 		846991CD8786E160F2D18E67 /* NetworkSelection.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */; };
+		846991E94E5B357F70EACC4C /* Buy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993A9B7C558B1E379CF0C /* Buy.swift */; };
+		8469922B1734B0B5200C4641 /* MoonpayProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699F9FD88FC765CD82349A /* MoonpayProvider.swift */; };
 		8469923A8BD54C585185546C /* ReceiveToken.QrCodeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846999B04075AE392A600C35 /* ReceiveToken.QrCodeCard.swift */; };
 		84699260E4D199A70FC4ED2A /* VerifySecurityKeys.Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */; };
 		8469926908C12A54B0D0850E /* DAppContainer.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */; };
@@ -141,33 +145,30 @@
 		846992D8898D895565C4EFD3 /* Cell.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699843D0D43ABFAA0417BA /* Cell.View.swift */; };
 		846993316E60603167DE5520 /* LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D31FA9B8B77AD4DAD1 /* LockView.swift */; };
 		846993C005071DBC7474F46B /* BuyRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990E0164D14FE11A72F13 /* BuyRoot.swift */; };
-		846993CA42DD22FB3BA39BB1 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699683F51C51791FD590A0 /* Utils.swift */; };
 		846993CEE73D894A69FE84A6 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469995401F6BFC283896AD6 /* UIButton.swift */; };
 		84699496D82FBB9BD9FB9660 /* BuyToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995031B01D0F8C08F3F79 /* BuyToken.swift */; };
-		8469949E8213E3F341DA2668 /* MoonpayProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699587C4376EAA8208663D /* MoonpayProvider.swift */; };
 		846994C5A78A76EC59DD3F5B /* NewTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992CDA843C0A10ABB2B6C /* NewTabBar.swift */; };
 		846995027222B9BE2C4B0698 /* WLCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994BA772A5F92F29C172E /* WLCard.swift */; };
 		846995192F640AE9B9541C87 /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469907019755990A0585C61 /* KeyView.swift */; };
 		84699577969579C1429B4D04 /* CreateSecurityKeys.KeysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994C1EE7DDD16BD91B4FD /* CreateSecurityKeys.KeysView.swift */; };
 		846995A6F31CA183C1D3A133 /* BEScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C86FA5FC79DB0199B0B /* BEScene.swift */; };
 		846995ACEC50F650033C707E /* DAppContainer.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */; };
+		846995B44F93AE61062A013A /* Moonpay.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699AE165CDDD329D59973E /* Moonpay.Service.swift */; };
 		846996465818387C8B28FC1F /* ReceiveToken.HelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699A1D9765DC3DFB275A4E /* ReceiveToken.HelpViewController.swift */; };
 		846996AAD0560194436016E0 /* CreateWallet.ExplanationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */; };
-		8469985B6793A5DA662E5BF3 /* Moonpay.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469954152E62DED5A6CA387 /* Moonpay.Model.swift */; };
 		8469991B25D5A9AF775E714B /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469964AD773095EEFA52701 /* CALayer+Extensions.swift */; };
+		846999379F9F0FA61EA1FC1F /* BuyProcessingServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991C6995BDBA42CB0CA45 /* BuyProcessingServiceType.swift */; };
 		8469996FB7AC9BB16D283B3B /* BuyToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699603F79402208A4B88C8 /* BuyToken.ViewController.swift */; };
 		8469998D03BF3A0606D0D42D /* VerifySecurityKeys.Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */; };
-		8469999E0EBB5974E6962119 /* BuyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469967326CA93BB243D75A9 /* BuyProvider.swift */; };
 		846999AD4696D6B6BC592165 /* Section.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699524C5183F1B5AF8FCD6 /* Section.View.swift */; };
 		846999D7A0F0B2DC6E8C8A9B /* UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */; };
+		84699AF5B3069ECD1CBDE3B5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990F92D4739D72B04E397 /* Utils.swift */; };
 		84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D5BC06C25591CFA36D /* WLWebView.swift */; };
-		84699B6058901C761662F138 /* TransakProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C355CE538F8E06A9A33 /* TransakProvider.swift */; };
+		84699B4C2143C29A8ACBEDCB /* Moonpay.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995482C41B5DDC71C86C5 /* Moonpay.Model.swift */; };
 		84699BC8F8E381B99A1DC0C5 /* LockScreenWrapperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991527AA06D6CED6CBB08 /* LockScreenWrapperViewController.swift */; };
 		84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699AC2656E48F105F10AB1 /* BESuperScene.swift */; };
-		84699D16FF2505EBC817719F /* Moonpay.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C4EC5492AD6214BAD3D /* Moonpay.Service.swift */; };
 		84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C929DA7046907362DFE /* ColumnFlowLayout.swift */; };
 		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */; };
-		84699DBA47203BDF184D7907 /* Moonpay.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699DE92661FB71D4AFE677 /* Moonpay.API.swift */; };
 		84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995D0006E36B802E2110E /* ReceiveToken.QrCodeImageRender.swift */; };
 		84699E4EC4356224948E529A /* DAppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991A1202889DFF6E4671A /* DAppContainer.swift */; };
 		84699E6257F040107D97BA94 /* SolanaBuyToken.SceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699696974A7AE7835EE4CE /* SolanaBuyToken.SceneModel.swift */; };
@@ -661,8 +662,10 @@
 		7EF7143B121F6324037B556D /* Pods-p2p wallet-p2p walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet-p2p walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet-p2p walletUITests/Pods-p2p wallet-p2p walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		8469907019755990A0585C61 /* KeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		846990E0164D14FE11A72F13 /* BuyRoot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.swift; sourceTree = "<group>"; };
+		846990F92D4739D72B04E397 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		846991527AA06D6CED6CBB08 /* LockScreenWrapperViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockScreenWrapperViewController.swift; sourceTree = "<group>"; };
 		846991A1202889DFF6E4671A /* DAppContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.swift; sourceTree = "<group>"; };
+		846991C6995BDBA42CB0CA45 /* BuyProcessingServiceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProcessingServiceType.swift; sourceTree = "<group>"; };
 		846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewController.swift; sourceTree = "<group>"; };
 		846991D31FA9B8B77AD4DAD1 /* LockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockView.swift; sourceTree = "<group>"; };
 		846991D5BC06C25591CFA36D /* WLWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLWebView.swift; sourceTree = "<group>"; };
@@ -670,24 +673,25 @@
 		846992CDA843C0A10ABB2B6C /* NewTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewTabBar.swift; sourceTree = "<group>"; };
 		846993534B18B8841213679D /* BuyRoot.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.ViewController.swift; sourceTree = "<group>"; };
 		84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.ViewController.swift; sourceTree = "<group>"; };
+		846993A9B7C558B1E379CF0C /* Buy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buy.swift; sourceTree = "<group>"; };
+		846993C4156CB7E86FE0B9C6 /* Moonpay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.swift; sourceTree = "<group>"; };
 		846993C80C502EDC0FBF1067 /* SolanaBuyToken.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.Scene.swift; sourceTree = "<group>"; };
 		84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.RootView.swift; sourceTree = "<group>"; };
 		846994BA772A5F92F29C172E /* WLCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLCard.swift; sourceTree = "<group>"; };
 		846994C1EE7DDD16BD91B4FD /* CreateSecurityKeys.KeysView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.KeysView.swift; sourceTree = "<group>"; };
 		846995031B01D0F8C08F3F79 /* BuyToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyToken.swift; sourceTree = "<group>"; };
 		84699524C5183F1B5AF8FCD6 /* Section.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.View.swift; sourceTree = "<group>"; };
-		8469954152E62DED5A6CA387 /* Moonpay.Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Model.swift; sourceTree = "<group>"; };
+		846995482C41B5DDC71C86C5 /* Moonpay.Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Model.swift; sourceTree = "<group>"; };
 		8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateWallet.ExplanationVC.swift; sourceTree = "<group>"; };
-		84699587C4376EAA8208663D /* MoonpayProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonpayProvider.swift; sourceTree = "<group>"; };
 		846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.ViewController.swift; sourceTree = "<group>"; };
+		846995C3B1170829D092925A /* Moonpay.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
 		846995D0006E36B802E2110E /* ReceiveToken.QrCodeImageRender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeImageRender.swift; sourceTree = "<group>"; };
 		84699603F79402208A4B88C8 /* BuyToken.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyToken.ViewController.swift; sourceTree = "<group>"; };
 		8469964AD773095EEFA52701 /* CALayer+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CALayer+Extensions.swift"; sourceTree = "<group>"; };
 		84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.BitcoinConfirm.ViewController.swift; sourceTree = "<group>"; };
-		8469967326CA93BB243D75A9 /* BuyProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProvider.swift; sourceTree = "<group>"; };
-		84699683F51C51791FD590A0 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		84699696974A7AE7835EE4CE /* SolanaBuyToken.SceneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.SceneModel.swift; sourceTree = "<group>"; };
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
+		846998347726DB596CBF222F /* TransakProccessingProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakProccessingProvider.swift; sourceTree = "<group>"; };
 		84699843D0D43ABFAA0417BA /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
 		8469995401F6BFC283896AD6 /* UIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
@@ -696,18 +700,16 @@
 		846999ECE924BFEFC88F9F71 /* SolanaBuyToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.swift; sourceTree = "<group>"; };
 		84699A1D9765DC3DFB275A4E /* ReceiveToken.HelpViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.HelpViewController.swift; sourceTree = "<group>"; };
 		84699AC2656E48F105F10AB1 /* BESuperScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BESuperScene.swift; sourceTree = "<group>"; };
+		84699AE165CDDD329D59973E /* Moonpay.Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Service.swift; sourceTree = "<group>"; };
 		84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Button.swift; sourceTree = "<group>"; };
 		84699C3549A12D49D22AA2EE /* SortByDataStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByDataStrategy.swift; sourceTree = "<group>"; };
-		84699C355CE538F8E06A9A33 /* TransakProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakProvider.swift; sourceTree = "<group>"; };
-		84699C4EC5492AD6214BAD3D /* Moonpay.Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Service.swift; sourceTree = "<group>"; };
 		84699C86FA5FC79DB0199B0B /* BEScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEScene.swift; sourceTree = "<group>"; };
 		84699C929DA7046907362DFE /* ColumnFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColumnFlowLayout.swift; sourceTree = "<group>"; };
 		84699CB4D013E8D2ECC9D2DA /* CreateSecurityKeys.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.RootView.swift; sourceTree = "<group>"; };
 		84699CFE43666FACF9062699 /* BESceneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BESceneModel.swift; sourceTree = "<group>"; };
 		84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIStackView.swift; sourceTree = "<group>"; };
-		84699D5B1D1C3353913C717D /* Moonpay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.swift; sourceTree = "<group>"; };
-		84699DE92661FB71D4AFE677 /* Moonpay.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
 		84699E5ED9376E01FBD8B3DB /* ReceiveToken.ViewBuilders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewBuilders.swift; sourceTree = "<group>"; };
+		84699F9FD88FC765CD82349A /* MoonpayProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonpayProvider.swift; sourceTree = "<group>"; };
 		84699FF3E0F973EDC052ED23 /* BuyToken.WidgetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyToken.WidgetViewController.swift; sourceTree = "<group>"; };
 		86A90D13273D306400D180EF /* VerifySecurityKeys.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.RootView.swift; sourceTree = "<group>"; };
 		86A90D14273D306400D180EF /* VerifySecurityKeys.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.ViewController.swift; sourceTree = "<group>"; };
@@ -1343,6 +1345,16 @@
 			path = BuyToken;
 			sourceTree = "<group>";
 		};
+		846993CD4CD0FE97413DF87A /* Buy */ = {
+			isa = PBXGroup;
+			children = (
+				8469992E9FC66628181FDDA6 /* Moonpay */,
+				84699EDD189457834A1EEC31 /* BuyProvider */,
+				846993A9B7C558B1E379CF0C /* Buy.swift */,
+			);
+			path = Buy;
+			sourceTree = "<group>";
+		};
 		846994BA8A55C5445F0CEF4B /* CollectionView */ = {
 			isa = PBXGroup;
 			children = (
@@ -1378,6 +1390,17 @@
 			path = SolanaBuyToken;
 			sourceTree = "<group>";
 		};
+		8469992E9FC66628181FDDA6 /* Moonpay */ = {
+			isa = PBXGroup;
+			children = (
+				84699AE165CDDD329D59973E /* Moonpay.Service.swift */,
+				846995C3B1170829D092925A /* Moonpay.API.swift */,
+				846993C4156CB7E86FE0B9C6 /* Moonpay.swift */,
+				846995482C41B5DDC71C86C5 /* Moonpay.Model.swift */,
+			);
+			path = Moonpay;
+			sourceTree = "<group>";
+		};
 		846999988BEEA5BD03EDDF11 /* NetworkSelection */ = {
 			isa = PBXGroup;
 			children = (
@@ -1397,17 +1420,6 @@
 			path = Scene;
 			sourceTree = "<group>";
 		};
-		84699C98681FF7B583A45CA9 /* BuyProvider */ = {
-			isa = PBXGroup;
-			children = (
-				84699683F51C51791FD590A0 /* Utils.swift */,
-				84699C355CE538F8E06A9A33 /* TransakProvider.swift */,
-				84699587C4376EAA8208663D /* MoonpayProvider.swift */,
-				8469967326CA93BB243D75A9 /* BuyProvider.swift */,
-			);
-			path = BuyProvider;
-			sourceTree = "<group>";
-		};
 		84699D6074F3B4957DBEB23A /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -1422,15 +1434,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		84699FA4ED2E68B9123A4952 /* Moonpay */ = {
+		84699EDD189457834A1EEC31 /* BuyProvider */ = {
 			isa = PBXGroup;
 			children = (
-				84699C4EC5492AD6214BAD3D /* Moonpay.Service.swift */,
-				84699DE92661FB71D4AFE677 /* Moonpay.API.swift */,
-				84699D5B1D1C3353913C717D /* Moonpay.swift */,
-				8469954152E62DED5A6CA387 /* Moonpay.Model.swift */,
+				846990F92D4739D72B04E397 /* Utils.swift */,
+				846998347726DB596CBF222F /* TransakProccessingProvider.swift */,
+				84699F9FD88FC765CD82349A /* MoonpayProvider.swift */,
+				846991C6995BDBA42CB0CA45 /* BuyProcessingServiceType.swift */,
 			);
-			path = Moonpay;
+			path = BuyProvider;
 			sourceTree = "<group>";
 		};
 		86A90D12273D306400D180EF /* VerifySecurityKeys */ = {
@@ -2128,16 +2140,15 @@
 				BC63110926D78AC300516C38 /* SwapProvider */,
 				BCCF23C126FAE76400D08724 /* RenVM */,
 				BC6FEDA2270D57D1002B6255 /* NameService.swift */,
-				84699C98681FF7B583A45CA9 /* BuyProvider */,
 				41446332272A84560099B327 /* LocalizationManager.swift */,
 				BCB28692274B62920074E1D5 /* FeeService.swift */,
 				BCB286CD275084A10074E1D5 /* DAppChannel.swift */,
-				84699FA4ED2E68B9123A4952 /* Moonpay */,
 				3B78CB562773147F00FB3C4C /* ClipboardManager.swift */,
 				3B78CB502773067100FB3C4C /* NotificationsService.swift */,
 				3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */,
 				41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */,
 				4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */,
+				846993CD4CD0FE97413DF87A /* Buy */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -3266,13 +3277,9 @@
 				4183007A275884A0007BBEBF /* OrcaSwapV2.DetailsView.swift in Sources */,
 				BC09B9A3273ECB03009CAF4E /* Authentication.ViewController.swift in Sources */,
 				BC185EFA26E3B81F00280FE6 /* LoadableRelay.swift in Sources */,
-				846993CA42DD22FB3BA39BB1 /* Utils.swift in Sources */,
-				84699B6058901C761662F138 /* TransakProvider.swift in Sources */,
-				8469949E8213E3F341DA2668 /* MoonpayProvider.swift in Sources */,
 				41BDBD5A27A66DD100000EF7 /* SupportedTokens.CollectionView.swift in Sources */,
 				41C4601D2771BCA1009C12D9 /* SwapTokenSettings.ViewController.swift in Sources */,
 				41BDBD5827A6670F00000EF7 /* SupportedTokens.RootView.swift in Sources */,
-				8469999E0EBB5974E6962119 /* BuyProvider.swift in Sources */,
 				846996AAD0560194436016E0 /* CreateWallet.ExplanationVC.swift in Sources */,
 				84699577969579C1429B4D04 /* CreateSecurityKeys.KeysView.swift in Sources */,
 				84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */,
@@ -3298,10 +3305,6 @@
 				84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */,
 				846996465818387C8B28FC1F /* ReceiveToken.HelpViewController.swift in Sources */,
 				846991CD8786E160F2D18E67 /* NetworkSelection.ViewController.swift in Sources */,
-				84699D16FF2505EBC817719F /* Moonpay.Service.swift in Sources */,
-				84699DBA47203BDF184D7907 /* Moonpay.API.swift in Sources */,
-				846991A0C502273386D8C0CF /* Moonpay.swift in Sources */,
-				8469985B6793A5DA662E5BF3 /* Moonpay.Model.swift in Sources */,
 				846991795DC72E1D4E1078B7 /* SolanaBuyToken.Scene.swift in Sources */,
 				84699E6257F040107D97BA94 /* SolanaBuyToken.SceneModel.swift in Sources */,
 				84699FB6CA3886D764B9B4D1 /* SolanaBuyToken.swift in Sources */,
@@ -3324,6 +3327,15 @@
 				84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */,
 				846999AD4696D6B6BC592165 /* Section.View.swift in Sources */,
 				846992D8898D895565C4EFD3 /* Cell.View.swift in Sources */,
+				846995B44F93AE61062A013A /* Moonpay.Service.swift in Sources */,
+				846990E62B84EA986396F411 /* Moonpay.API.swift in Sources */,
+				8469912EE6DF3F3A482AC615 /* Moonpay.swift in Sources */,
+				84699B4C2143C29A8ACBEDCB /* Moonpay.Model.swift in Sources */,
+				84699AF5B3069ECD1CBDE3B5 /* Utils.swift in Sources */,
+				8469908B746E9269D205BED1 /* TransakProccessingProvider.swift in Sources */,
+				8469922B1734B0B5200C4641 /* MoonpayProvider.swift in Sources */,
+				846999379F9F0FA61EA1FC1F /* BuyProcessingServiceType.swift in Sources */,
+				846991E94E5B357F70EACC4C /* Buy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -191,7 +191,7 @@ extension Resolver: ResolverRegistering {
             .scope(.shared)
     
         // MARK: - BuyProvider
-        register{BuyProviders.MoonpayFactory()}
+        register{Buy.MoonpayFactory()}
             .implements(BuyProviderFactory.self)
             .scope(.application)
         
