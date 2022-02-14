@@ -95,7 +95,7 @@ extension Settings {
                             icon: .pinIcon,
                             title: UILabel(text: L10n.yourPIN.uppercaseFirst),
                             trailing: UILabel(text: L10n.pinIsSet, textSize: 15, textColor: .h34c759)
-                        ).onTap { [unowned self] in viewModel.navigate(to: .changePincode) }
+                        ).onTap { [unowned self] in viewModel.changePincode() }
                         
                         // Face id
                         CellView(
