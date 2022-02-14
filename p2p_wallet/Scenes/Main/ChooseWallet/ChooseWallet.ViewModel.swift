@@ -18,6 +18,7 @@ extension ChooseWallet {
         let handler: WalletDidSelectHandler!
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var tokensRepository: TokensRepository
+        @Injected private var analyticsManager: AnalyticsManagerType
         let showOtherWallets: Bool!
         private var keyword: String?
     
@@ -71,10 +72,12 @@ extension ChooseWallet {
         func search(keyword: String) {
             guard self.keyword != keyword else {return}
             self.keyword = keyword
+            analyticsManager.log(event: .tokenListSearching(searchString: keyword))
             reload()
         }
         
         func selectWallet(_ wallet: Wallet) {
+            analyticsManager.log(event: .tokenChosen(tokenName: wallet.token.symbol))
             handler.walletDidSelect(wallet)
         }
     }

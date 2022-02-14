@@ -14,7 +14,7 @@ class WLPincodeVC: BaseVC {
     
     // MARK: - Properties
     /// current pin code for confirming, if nil, the scene is create pincode
-    private let currentPincode: UInt?
+    private let currentPincode: String?
     override var title: String? {
         didSet {
             navigationBar.titleLabel.text = title
@@ -22,8 +22,8 @@ class WLPincodeVC: BaseVC {
     }
     
     // MARK: - Callback
-    var onCreate: ((UInt) -> Void)?
-    var onSuccess: ((UInt) -> Void)?
+    var onCreate: ((String) -> Void)?
+    var onSuccess: ((String) -> Void)?
     var onCancel: (() -> Void)?
     
     // MARK: - Subviews
@@ -31,7 +31,7 @@ class WLPincodeVC: BaseVC {
     private lazy var pincodeView = WLPinCodeView(correctPincode: currentPincode)
     
     // MARK: - Initializer
-    init(currentPincode: UInt? = nil) {
+    init(currentPincode: String? = nil) {
         self.currentPincode = currentPincode
         super.init()
     }

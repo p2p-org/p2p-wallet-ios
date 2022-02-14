@@ -36,7 +36,7 @@ extension Authentication {
         // MARK: - Subviews
         fileprivate let navigationBar = WLNavigationBar(forAutoLayout: ())
         private lazy var pincodeView = WLPinCodeView(
-            correctPincode: viewModel.getCurrentPincode() == nil ? nil: UInt(viewModel.getCurrentPincode()!),
+            correctPincode: viewModel.getCurrentPincode(),
             maxAttemptsCount: 3,
             bottomLeftButton: biometryButton
         )

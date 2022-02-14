@@ -89,12 +89,12 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     func renewPhrases() {
-        analyticsManager.log(event: .createWalletRenewSeedClick)
+        analyticsManager.log(event: .backingUpRenewing)
         createPhrases()
     }
     
     func copyToClipboard() {
-        analyticsManager.log(event: .createWalletCopySeedClick)
+        analyticsManager.log(event: .backingUpCopying)
         clipboardManager.copyToClipboard(phrasesSubject.value.joined(separator: " "))
         notificationsService.showInAppNotification(.message(L10n.seedPhraseCopiedToClipboard))
     }
@@ -127,7 +127,6 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
 
     private func _saveToIcloud() {
-        analyticsManager.log(event: .createWalletBackupToIcloudClick)
         let result = iCloudStorage.saveToICloud(
             account: .init(
                 name: nil,
@@ -137,9 +136,11 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         )
         
         if result {
+            analyticsManager.log(event: .backingUpIcloud)
             notificationsService.showInAppNotification(.done(L10n.savedToICloud))
             createWalletViewModel.handlePhrases(phrasesSubject.value)
         } else {
+            analyticsManager.log(event: .backingUpError)
             errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
         }
     }
@@ -149,7 +150,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
 
     func verifyPhrase() {
-        analyticsManager.log(event: .createWalletVerifyManuallyClick)
+        analyticsManager.log(event: .backingUpManually)
         createWalletViewModel.verifyPhrase(phrasesSubject.value)
     }
 
