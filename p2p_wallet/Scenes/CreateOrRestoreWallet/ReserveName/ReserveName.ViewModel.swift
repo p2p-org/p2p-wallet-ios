@@ -32,6 +32,7 @@ extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
         @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var analyticsManager: AnalyticsManagerType
         private let nameService: NameServiceType = Resolver.resolve()
         private let owner: String
         private let reserveNameHandler: ReserveNameHandler
@@ -118,6 +119,7 @@ extension ReserveName {
             geetest_validate: String
         ) {
             guard let name = textFieldTextSubject.value else { return }
+            self.analyticsManager.log(event: .usernameSaved(lastScreen: "Onboarding"))
 
             startLoading()
             nameService
@@ -135,6 +137,7 @@ extension ReserveName {
                 .subscribe(onSuccess: { [weak self] _ in
                     self?.stopLoading()
                     self?.nameDidReserve(name)
+                    self?.analyticsManager.log(event: .usernameReserved)
                     self?.notificationsService.showInAppNotification(
                         .message(L10n.usernameWasReserved(name))
                     )
@@ -177,6 +180,8 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     func skipButtonPressed() {
         navigationSubject.accept(
             .skipAlert({ [weak self] in
+                let isFilled = self?.textFieldStateSubject.value == ReserveName.TextFieldState.empty ? "Not_Filled" : "Filled"
+                self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
                 self?.handleSkipAlertAction(isProceed: $0)
             })
         )
