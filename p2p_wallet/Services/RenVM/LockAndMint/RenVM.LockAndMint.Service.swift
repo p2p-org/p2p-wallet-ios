@@ -10,6 +10,7 @@ import RxAlamofire
 import RxSwift
 import RxCocoa
 import Resolver
+import RenVMSwift
 
 protocol RenVMLockAndMintServiceType {
     var isLoadingDriver: Driver<Bool> {get}

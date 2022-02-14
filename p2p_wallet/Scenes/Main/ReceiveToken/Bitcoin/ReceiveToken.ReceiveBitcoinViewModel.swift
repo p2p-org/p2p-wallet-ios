@@ -8,6 +8,7 @@
 import RxSwift
 import RxCocoa
 import Resolver
+import RenVMSwift
 
 protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     var notificationsService: NotificationsServiceType { get }

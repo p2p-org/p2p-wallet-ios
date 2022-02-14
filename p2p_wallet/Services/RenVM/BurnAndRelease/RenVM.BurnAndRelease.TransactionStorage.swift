@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RenVMSwift
 
 protocol RenVMBurnAndReleaseTransactionStorageType {
 //    func burnTransactionObservable() -> Observable<[RenVM.BurnAndRelease.BurnDetails]> // MEMORY LEAK
