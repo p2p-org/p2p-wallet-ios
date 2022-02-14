@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct TransakProvider: BuyProvider {
+public struct TransakProccessingProvider: Buy.ProcessingService {
     public enum Environment {
         case staging
         case production
@@ -68,7 +68,7 @@ public struct TransakProvider: BuyProvider {
     }
 }
 
-extension TransakProvider.Environment {
+extension TransakProccessingProvider.Environment {
     var endpoint: String {
         switch self {
         case .staging:

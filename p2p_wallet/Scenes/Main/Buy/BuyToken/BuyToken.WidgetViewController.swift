@@ -24,10 +24,10 @@ extension UIActivityIndicatorView: BuyTokenWidgetLoadingView {
 open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     // MARK: - Properties
     var loadsCount = 0
-    let provider: BuyProvider
+    let provider: Buy.ProcessingService
 
     // MARK: - Initializers
-    public init(provider: BuyProvider, loadingView: BuyTokenWidgetLoadingView = UIActivityIndicatorView()) {
+    init(provider: Buy.ProcessingService, loadingView: BuyTokenWidgetLoadingView = UIActivityIndicatorView()) {
         self.provider = provider
         self.loadingView = loadingView
         super.init(nibName: nil, bundle: nil)
