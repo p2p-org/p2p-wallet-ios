@@ -6,7 +6,7 @@
 //
 
 extension ReserveName {
-    enum TextFieldState {
+    enum TextFieldState: Equatable {
         case available(name: String)
         case unavailable(name: String)
         case empty
