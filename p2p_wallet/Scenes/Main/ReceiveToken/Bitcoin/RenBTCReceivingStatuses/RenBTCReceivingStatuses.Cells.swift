@@ -7,6 +7,7 @@
 
 import Foundation
 import BECollectionView
+import RenVMSwift
 
 extension RenBTCReceivingStatuses {
     class TxCell: BECollectionCell, BECollectionViewCell {
