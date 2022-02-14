@@ -114,7 +114,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     
     // MARK: - Actions
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene) {
-        if (scene == .chooseWallet) {
+        if scene == .chooseWallet {
             analyticsManager.log(event: .tokenListViewed(lastScreen: "Send", tokenListLocation: "Token_A"))
         }
         navigationSubject.accept(scene)
