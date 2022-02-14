@@ -99,7 +99,7 @@ extension WalletDetail {
         private func sendTokens() {
             guard let wallet = walletSubject.value else {return}
             analyticsManager.log(event: .tokenDetailsSendClick)
-            analyticsManager.log(event: .sendViewed(fromPage: "token_details"))
+            analyticsManager.log(event: .sendViewed(lastScreen: "token_details"))
             navigatableSceneSubject.accept(.send(wallet: wallet))
         }
 
@@ -126,7 +126,7 @@ extension WalletDetail {
         private func swapTokens() {
             guard let wallet = walletSubject.value else {return}
             analyticsManager.log(event: .tokenDetailsSwapClick)
-            analyticsManager.log(event: .swapViewed(fromPage: "token_details"))
+            analyticsManager.log(event: .swapViewed(lastScreen: "token_details"))
             navigatableSceneSubject.accept(.swap(fromWallet: wallet))
         }
 

@@ -279,7 +279,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {
         endpointSubject.accept(endpoint)
         
-        analyticsManager.log(event: .networkChanging(network: endpoint.address))
+        analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
         if Defaults.apiEndPoint.network != endpoint.network {
             renVMService.expireCurrentSession()
         }
