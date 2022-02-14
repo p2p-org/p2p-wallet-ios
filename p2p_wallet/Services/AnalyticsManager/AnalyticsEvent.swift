@@ -115,7 +115,7 @@ enum AnalyticsEvent: MirrorableEnum {
     case scanQrSuccess
     case scanQrClose
     // settings
-    case settingsOpen(fromPage: String)
+    case settingsOpen(lastScreen: String)
     case networkChanging(networkName: String)
     case settingsHideBalancesClick(hide: Bool)
     case settingsBackupOpen

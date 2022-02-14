@@ -180,7 +180,8 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     func skipButtonPressed() {
         navigationSubject.accept(
             .skipAlert({ [weak self] in
-                self?.analyticsManager.log(event: .usernameSkipped(usernameField: textFieldStateSubject.value == .empty ? "Not_Filled" : "Filled"))
+                let isFilled = self?.textFieldStateSubject.value == ReserveName.TextFieldState.empty ? "Not_Filled" : "Filled"
+                self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
                 self?.handleSkipAlertAction(isProceed: $0)
             })
         )

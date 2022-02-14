@@ -411,10 +411,10 @@ extension SerumSwapV1.ViewModel {
     
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
-            analyticsManager.log(event: .swapChangingTokenA(tokenTicker: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenA(tokenAName: wallet.token.symbol))
             sourceWalletRelay.accept(wallet)
         } else {
-            analyticsManager.log(event: .swapChangingTokenB(tokenTicker: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenB(tokenBName: wallet.token.symbol))
             destinationWalletRelay.accept(wallet)
         }
     }

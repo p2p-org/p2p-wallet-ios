@@ -276,10 +276,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
-            analyticsManager.log(event: .swapChangingTokenA(tokenTicker: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenA(tokenAName: wallet.token.symbol))
             sourceWalletSubject.accept(wallet)
         } else {
-            analyticsManager.log(event: .swapChangingTokenB(tokenTicker: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenB(tokenBName: wallet.token.symbol))
             destinationWalletSubject.accept(wallet)
         }
     }
