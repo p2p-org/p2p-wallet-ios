@@ -22,12 +22,13 @@ protocol ReceiveTokenSolanaViewModelType: BESceneModel {
 }
 
 extension ReceiveToken {
-    class SolanaViewModel: NSObject, ReceiveTokenSolanaViewModelType {
+    class SolanaViewModel: ReceiveTokenSolanaViewModelType {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
         @Injected private var tokensRepository: TokensRepository
+        @Injected private var imageSaver: ImageSaverType
         private let navigationSubject: PublishRelay<NavigatableScene?>
         
         let pubkey: String
@@ -61,39 +62,42 @@ extension ReceiveToken {
         
         func shareAction() {
             analyticsManager.log(event: .receiveQrcodeShare)
-    
             generateQrCode()
-                .subscribe(onSuccess: { [weak self] image in self?.navigationSubject.accept(.share(qrCode: image)) })
+                .subscribe(onSuccess: { [weak self] image in self?.navigationSubject.accept(.share(address: self?.pubkey, qrCode: image)) })
                 .disposed(by: disposeBag)
         }
         
         func saveAction() {
             analyticsManager.log(event: .receiveQrcodeSave)
-    
             generateQrCode()
                 .subscribe(onSuccess: { [weak self] image in
-                    guard let self = self else { return }
-                    UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.saveImageCallback), nil)
+                    self?.imageSaver.save(image: image) { [weak self] result in
+                        switch result {
+                        case .success:
+                            self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+                        case let .failure(error):
+                            switch error {
+                            case .noAccess:
+                                self?.navigationSubject.accept(.showPhotoLibraryUnavailable)
+                            case .restrictedRightNow:
+                                break
+                            case let .unknown(error):
+                                self?.notificationsService.showInAppNotification(.error(error))
+                            }
+                        }
+                    }
                 })
                 .disposed(by: disposeBag)
         }
-    
-        func generateQrCode() -> Single<UIImage> {
-            let render: QrCodeImageRender = Resolver.resolve()
-            return render.render(username: username, address: pubkey, token: .nativeSolana, showTokenIcon: true)
-        }
-        
-        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-            if let error = error {
-                notificationsService.showInAppNotification(.error(error))
-            } else {
-                notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
-            }
-        }
-        
+
         func showSOLAddressInExplorer() {
             analyticsManager.log(event: .receiveViewExplorerOpen)
             navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
+        }
+            
+        func generateQrCode() -> Single<UIImage> {
+            let render: QrCodeImageRender = Resolver.resolve()
+            return render.render(username: username, address: pubkey, token: .nativeSolana, showTokenIcon: true)
         }
     }
 }

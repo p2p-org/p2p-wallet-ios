@@ -48,7 +48,7 @@ protocol ReceiveTokenBitcoinViewModelType: AnyObject {
 }
 
 extension ReceiveToken {
-    class ReceiveBitcoinViewModel: NSObject {
+    class ReceiveBitcoinViewModel {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
         let hasExplorerButton: Bool
@@ -86,9 +86,7 @@ extension ReceiveToken {
         ) {
             self.navigationSubject = navigationSubject
             self.hasExplorerButton = hasExplorerButton
-
-            super.init()
-
+            
             if isRenBTCWalletCreated {
                 createRenBTCSubject.accept(nil, state: .loaded)
             }
@@ -233,7 +231,11 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         analyticsManager.log(event: .receiveAddressShare)
     
         generateQrCode()
-            .subscribe(onSuccess: { [weak self] image in self?.navigationSubject.accept(.share(qrCode: image)) })
+            .subscribe(onSuccess: { [weak self] image in
+                self?.navigationSubject.accept(
+                    .share(address: self?.renVMService.getCurrentAddress() ?? "", qrCode: image)
+                )
+            })
             .disposed(by: disposeBag)
     }
 
@@ -243,7 +245,21 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         generateQrCode()
             .subscribe(onSuccess: { [weak self] image in
                 guard let self = self else { return }
-                UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.saveImageCallback), nil)
+                self.imageSaver.save(image: image) { [weak self] result in
+                    switch result {
+                    case .success:
+                        self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+                    case let .failure(error):
+                        switch error {
+                        case .noAccess:
+                            self?.navigationSubject.accept(.showPhotoLibraryUnavailable)
+                        case .restrictedRightNow:
+                            break
+                        case let .unknown(error):
+                            self?.notificationsService.showInAppNotification(.error(error))
+                        }
+                    }
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -251,14 +267,6 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     func generateQrCode() -> Single<UIImage> {
         let render: QrCodeImageRender = Resolver.resolve()
         return render.render(username: nil, address: renVMService.getCurrentAddress(), token: .renBTC, showTokenIcon: true)
-    }
-
-    @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-        if let error = error {
-            notificationsService.showInAppNotification(.error(error))
-        } else {
-            notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
-        }
     }
 
     func showBTCAddressInExplorer() {
