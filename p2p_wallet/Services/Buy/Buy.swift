@@ -5,7 +5,7 @@
 import Foundation
 
 struct Buy {
-  public typealias ProcessingService = BuyProcessingServiceType
+  public typealias Processing = BuyProcessingType
   public typealias Currency = BuyCurrencyType
 
   enum FiatCurrency: String, BuyCurrencyType {
