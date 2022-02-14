@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RenVMSwift
 
 protocol RenVMBurnAndReleaseServiceType {
     func isTestNet() -> Bool

@@ -16,3 +16,6 @@
 [submodule "OrcaSwapSwift"]
 	path = OrcaSwapSwift
 	url = git@github.com:p2p-org/OrcaSwapSwift.git
+[submodule "RenVMSwift"]
+	path = RenVMSwift
+	url = git@github.com:p2p-org/RenVMSwift.git
