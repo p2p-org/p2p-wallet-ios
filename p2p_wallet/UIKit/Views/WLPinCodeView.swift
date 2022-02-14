@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import BEPureLayout
 
 private let pincodeLength = 6
 
@@ -45,7 +46,9 @@ final class WLPinCodeView: BEView {
     private lazy var stackView = UIStackView(axis: .vertical, spacing: stackViewSpacing, alignment: .center, distribution: .fill) {
         #if DEBUG
         UILabel(text: correctPincode, textColor: .red, textAlignment: .center)
+        BEStackViewSpacing(10)
         currentPincodeLabel
+        BEStackViewSpacing(10)
         #endif
         dotsView
         numpadView
@@ -100,7 +103,7 @@ final class WLPinCodeView: BEView {
     
     // MARK: - Private methods
     private func add(digit: Int) {
-        guard String(digit).count == 1 else { return }
+        guard digit >= 0 && digit < 10 else { return }
         // calculate value
         let newValue = (currentPincode ?? "") + String(digit) // (currentPincode ?? 0) * 10 + UInt(digit)
         let numberOfDigits = newValue.count
