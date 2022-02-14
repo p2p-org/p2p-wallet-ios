@@ -114,7 +114,7 @@ extension CreateSecurityKeys {
         }
         
         func saveToPhoto() {
-            analyticsManager.log(event: .createWalletSaveSeedToPhotosClick)
+            analyticsManager.log(event: .backingUpSaving)
             viewModel.saveKeysImage(keysView.asImage())
         }
     }
