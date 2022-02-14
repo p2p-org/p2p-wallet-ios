@@ -90,7 +90,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
             notificationsService.showInAppNotification(.message(L10n.thereIsNoP2PWalletSavedInYourICloud))
             return
         }
-        analyticsManager.log(event: .recoveryRestoreIcloudClick)
+        analyticsManager.log(event: .restoreAppleInvoked)
         
         // if there is only 1 account saved in iCloud
         if accounts.count == 1 {
@@ -103,7 +103,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     }
     
     func restoreManually() {
-        analyticsManager.log(event: .recoveryRestoreManualyClick)
+        analyticsManager.log(event: .restoreManualInvoked)
         navigationSubject.accept(.enterPhrases)
     }
     
