@@ -162,7 +162,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     func copyToClipboard() {
         guard let address = renVMService.getCurrentAddress() else { return }
         clipboardManager.copyToClipboard(address)
-        analyticsManager.log(event: .receiveAddressCopy)
+        analyticsManager.log(event: .receiveAddressCopied)
     }
     
     func share(image: UIImage) {
@@ -173,7 +173,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
     
     func saveAction(image: UIImage) {
-        analyticsManager.log(event: .receiveQrcodeSave)
+        analyticsManager.log(event: .receiveQRSaved)
         imageSaver.save(image: image) { [weak self] result in
             switch result {
             case .success:
@@ -193,7 +193,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
     func showBTCAddressInExplorer() {
         guard let address = renVMService.getCurrentAddress() else { return }
-        analyticsManager.log(event: .receiveViewExplorerOpen)
+        analyticsManager.log(event: .receiveViewingExplorer)
         navigationSubject.accept(.showBTCExplorer(address: address))
     }
     
