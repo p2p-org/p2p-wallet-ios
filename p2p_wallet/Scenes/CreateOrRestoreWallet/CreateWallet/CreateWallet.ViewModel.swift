@@ -109,7 +109,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
     
     func navigateToCreatePhrases() {
-        analyticsManager.log(event: .createWalletOpen)
+        analyticsManager.log(event: .createSeedInvoked)
         navigationSubject.accept(.createPhrases)
     }
     

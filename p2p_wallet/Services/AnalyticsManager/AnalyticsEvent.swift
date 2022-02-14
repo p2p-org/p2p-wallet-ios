@@ -10,31 +10,38 @@ import Foundation
 enum AnalyticsEvent: MirrorableEnum {
     // first_in
     case firstInOpen
-    case firstInCreateWalletClick
-    case firstInIHaveWalletClick
+    case splashCreating
+    case splashRestoring
     // create_wallet
     case createWalletOpen
-    case createWalletCopySeedClick
-    case createWalletSaveSeedToPhotosClick
-    case createWalletRenewSeedClick
+    case createSeedInvoked
+    case backingUpCopying
+    case backingUpSaving
+    case backingUpRenewing
+    case usernameSkipped(usernameField: String)
+    case usernameSaved(lastScreen: String)
+    case usernameReserved
     case createWalletTermsAndConditionsClick
-    case createWalletBackupToIcloudClick
-    case createWalletVerifyManuallyClick
+    case backingUpIcloud
+    case backingUpManually
+    case backingUpError
     // setup
     case setupOpen(fromPage: String)
     case setupPinKeydown1
     case setupPinKeydown2
     case setupFaceidOpen
-    case setupFaceidClick(faceID: Bool)
+    case bioApproved(lastScreen: String)
+    case bioRejected
     case setupAllowPushOpen
-    case setupAllowPushSelected(push: Bool)
+    case pushRejected
+    case pushApproved(lastScreen: String)
     case setupFinishOpen
     case setupFinishClick
     case setupWelcomeBackOpen
     // recovery
     case recoveryOpen(fromPage: String)
-    case recoveryRestoreManualyClick
-    case recoveryRestoreIcloudClick
+    case restoreManualInvoked
+    case restoreAppleInvoked
     case recoveryEnterSeedOpen
     case recoveryEnterSeedKeydown
     case recoveryEnterSeedPaste
@@ -56,44 +63,44 @@ enum AnalyticsEvent: MirrorableEnum {
     case tokenDetailsOpen(tokenTicker: String)
     case tokenDetailQrClick
     case tokenDetailsBuyClick
-    case tokenDetailsReceiveClick
+    case tokenReceiveViewed
     case tokenDetailsSendClick
     case tokenDetailsSwapClick
     case tokenDetailsAddressCopy
     case tokenDetailsActivityScroll(pageNum: Int)
     case tokenDetailsDetailsOpen
     // receive
-    case receiveOpen(fromPage: String)
+    case receiveViewed(fromPage: String)
     case receiveNameCopy
-    case receiveAddressCopy
+    case receiveAddressCopied
     case receiveNameShare
     case receiveAddressShare
     case receiveWalletAddressCopy
-    case receiveQrcodeShare
-    case receiveQrcodeSave
-    case receiveViewExplorerOpen
+    case receiveUsercardShared
+    case receiveQRSaved
+    case receiveViewingExplorer
     // send
-    case sendOpen(fromPage: String)
+    case sendViewed(lastScreen: String)
     case sendSelectTokenClick(tokenTicker: String)
     case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR), Token
     case sendAmountKeydown(sum: Double)
     case sendAvailableClick(sum: Double)
     case sendAddressKeydown
-    case sendScanQrClick
+    case sendQrScanning
     case sendSendClick(tokenTicker: String, sum: Double)
     case sendDoneClick(txStatus: String)
     case sendExplorerClick(txStatus: String)
     case sendTryAgainClick(error: String)
     case sendCancelClick(error: String)
     // swap
-    case swapOpen(fromPage: String)
-    case swapTokenASelectClick(tokenTicker: String)
-    case swapTokenBSelectClick(tokenTicker: String)
+    case swapViewed(lastScreen: String)
+    case swapChangingTokenA(tokenAName: String)
+    case swapChangingTokenB(tokenBName: String)
     case swapTokenAAmountKeydown(sum: Double)
     case swapTokenBAmountKeydown(sum: Double)
     case swapAvailableClick(sum: Double)
-    case swapReverseClick
-    case swapSettingsClick
+    case swapReversing
+    case swapShowingSettings
     case swapSlippageClick
     case swapPayNetworkFeeWithClick
     case swapSwapFeesClick
@@ -109,14 +116,20 @@ enum AnalyticsEvent: MirrorableEnum {
     case scanQrClose
     // settings
     case settingsOpen(fromPage: String)
-    case settingsNetworkSelected(network: String)
+    case networkChanging(networkName: String)
     case settingsHideBalancesClick(hide: Bool)
     case settingsBackupOpen
     case settingsSecuritySelected(faceId: Bool)
     case settingsLanguageSelected(language: String)
     case settingsAppearanceSelected(appearance: String)
     case settingsСurrencySelected(сurrency: String)
-    case settingsLogoutClick
+    case signedOut
+    case signOut(lastScreen: String)
+    
+    // choose token
+    case tokenListViewed(lastScreen: String, tokenListLocation: String)
+    case tokenListSearching(searchString: String)
+    case tokenChosen(tokenName: String)
 }
 
 extension AnalyticsEvent {

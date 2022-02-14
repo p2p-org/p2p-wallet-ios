@@ -349,7 +349,7 @@ extension SerumSwapV1.ViewModel {
         case .chooseDestinationWallet:
             isSelectingSourceWallet = false
         case .settings:
-            log(.swapSettingsClick)
+            log(.swapShowingSettings)
         case .chooseSlippage:
             log(.swapSlippageClick)
         case .processTransaction:
@@ -372,7 +372,7 @@ extension SerumSwapV1.ViewModel {
     }
     
     func swapSourceAndDestination() {
-        analyticsManager.log(event: .swapReverseClick)
+        analyticsManager.log(event: .swapReversing)
         let sourceWallet = sourceWalletRelay.value
         sourceWalletRelay.accept(destinationWalletRelay.value)
         destinationWalletRelay.accept(sourceWallet)
@@ -411,10 +411,10 @@ extension SerumSwapV1.ViewModel {
     
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
-            analyticsManager.log(event: .swapTokenASelectClick(tokenTicker: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenA(tokenTicker: wallet.token.symbol))
             sourceWalletRelay.accept(wallet)
         } else {
-            analyticsManager.log(event: .swapTokenBSelectClick(tokenTicker: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenB(tokenTicker: wallet.token.symbol))
             destinationWalletRelay.accept(wallet)
         }
     }

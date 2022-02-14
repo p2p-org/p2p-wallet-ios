@@ -180,6 +180,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     func chooseSourceWallet() {
         isSelectingSourceWallet = true
+        analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
         navigationSubject.accept(.chooseSourceWallet(currentlySelectedWallet: sourceWalletSubject.value))
     }
     
@@ -191,6 +192,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
+        analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
         navigationSubject.accept(.chooseDestinationWallet(currentlySelectedWallet: destinationWalletSubject.value, validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
     }
     
@@ -274,10 +276,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
-            analyticsManager.log(event: .swapTokenASelectClick(tokenTicker: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenA(tokenTicker: wallet.token.symbol))
             sourceWalletSubject.accept(wallet)
         } else {
-            analyticsManager.log(event: .swapTokenBSelectClick(tokenTicker: wallet.token.symbol))
+            analyticsManager.log(event: .swapChangingTokenB(tokenTicker: wallet.token.symbol))
             destinationWalletSubject.accept(wallet)
         }
     }
