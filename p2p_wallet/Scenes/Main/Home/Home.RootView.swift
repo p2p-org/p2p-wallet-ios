@@ -65,20 +65,6 @@ extension Home {
                     }
                     
                     BEZStack {
-                        BEZStackPosition(mode: .pinEdges(top: true, left: true, bottom: false, right: true)) {
-                            FloatingHeaderView()
-                                .setupWithType(FloatingHeaderView.self) { view in
-                                    headerViewScrollDelegate.headerView = view
-                                    let walletsRepository = viewModel.walletsRepository
-                                    walletsRepository
-                                        .dataObservable
-                                        .withLatestFrom(walletsRepository.stateObservable, resultSelector: { ($0 ?? [], $1) })
-                                        .asDriver(onErrorJustReturn: ([], .loaded))
-                                        .drive(view.balanceView.rx.balance)
-                                        .disposed(by: disposeBag)
-                                }
-                        }
-    
                         // Tokens
                         BEZStackPosition(mode: .fill) {
                             WalletsCollectionView(
@@ -105,9 +91,23 @@ extension Home {
                                     self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                                     return .just(())
                                 }
-                                collectionView.contentInset.modify(dTop: 200, dBottom: 50)
+                                collectionView.contentInset.modify(dTop: 220, dBottom: 50)
                                 collectionView.refresh()
                             }
+                        }
+    
+                        BEZStackPosition(mode: .pinEdges(top: true, left: true, bottom: false, right: true)) {
+                            FloatingHeaderView()
+                                .setupWithType(FloatingHeaderView.self) { view in
+                                    headerViewScrollDelegate.headerView = view
+                                    let walletsRepository = viewModel.walletsRepository
+                                    walletsRepository
+                                        .dataObservable
+                                        .withLatestFrom(walletsRepository.stateObservable, resultSelector: { ($0 ?? [], $1) })
+                                        .asDriver(onErrorJustReturn: ([], .loaded))
+                                        .drive(view.balanceView.rx.balance)
+                                        .disposed(by: disposeBag)
+                                }
                         }
                     }
                 }
