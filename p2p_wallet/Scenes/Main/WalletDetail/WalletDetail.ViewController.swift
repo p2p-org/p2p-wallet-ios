@@ -25,7 +25,14 @@ extension WalletDetail {
         private lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
-
+            #if DEBUG
+            navigationBar.rightItems.addArrangedSubview(
+                UIButton(label: "Settings", textColor: .red)
+                    .onTap {[weak self] in
+                        self?.viewModel.showWalletSettings()
+                    }
+            )
+            #endif
             return navigationBar
         }()
         private lazy var balanceView = BalanceView(viewModel: viewModel)
