@@ -54,7 +54,7 @@
 		414C36592774F53A007B2194 /* SwapTokenSettings.CustomSlippageField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414C36582774F53A007B2194 /* SwapTokenSettings.CustomSlippageField.swift */; };
 		414C365B2775024C007B2194 /* SwapTokenSettings.ParagraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414C365A2775024C007B2194 /* SwapTokenSettings.ParagraphView.swift */; };
 		414C365D277502C1007B2194 /* SwapTokenSettings.DescriptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414C365C277502C1007B2194 /* SwapTokenSettings.DescriptionView.swift */; };
-		4158ADC5274F1B75001C57CE /* Home.BalancesScrollDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4158ADC4274F1B75001C57CE /* Home.BalancesScrollDelegate.swift */; };
+		4158ADC5274F1B75001C57CE /* Home.HeaderScrollDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4158ADC4274F1B75001C57CE /* Home.HeaderScrollDelegate.swift */; };
 		417BB3542727FCDD00EDE6AE /* AddressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */; };
 		417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */; };
 		4183007627573DCB007BBEBF /* HorizontalLabelsWithSpacer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4183007527573DCB007BBEBF /* HorizontalLabelsWithSpacer.swift */; };
@@ -582,7 +582,7 @@
 		414C36582774F53A007B2194 /* SwapTokenSettings.CustomSlippageField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.CustomSlippageField.swift; sourceTree = "<group>"; };
 		414C365A2775024C007B2194 /* SwapTokenSettings.ParagraphView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.ParagraphView.swift; sourceTree = "<group>"; };
 		414C365C277502C1007B2194 /* SwapTokenSettings.DescriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.DescriptionView.swift; sourceTree = "<group>"; };
-		4158ADC4274F1B75001C57CE /* Home.BalancesScrollDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.BalancesScrollDelegate.swift; sourceTree = "<group>"; };
+		4158ADC4274F1B75001C57CE /* Home.HeaderScrollDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.HeaderScrollDelegate.swift; sourceTree = "<group>"; };
 		417BB3532727FCDD00EDE6AE /* AddressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressFormatter.swift; sourceTree = "<group>"; };
 		417EB68827480FA700856C6E /* AgreeTermsAndConditionsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgreeTermsAndConditionsView.swift; sourceTree = "<group>"; };
 		4183007527573DCB007BBEBF /* HorizontalLabelsWithSpacer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalLabelsWithSpacer.swift; sourceTree = "<group>"; };
@@ -2315,7 +2315,7 @@
 				BCB2869E274B921D0074E1D5 /* Home.BalanceView.swift */,
 				BC5140C4272AC0DB00DB84BD /* Home.WalletCell.swift */,
 				411F4718273B0C0B0011EBE3 /* Home.ClosingBannerType.swift */,
-				4158ADC4274F1B75001C57CE /* Home.BalancesScrollDelegate.swift */,
+				4158ADC4274F1B75001C57CE /* Home.HeaderScrollDelegate.swift */,
 				8469944F6EDB2CA34600125C /* Home.Header.swift */,
 			);
 			path = Home;
@@ -3066,7 +3066,7 @@
 				BCE04C36268C632800CE131A /* BackupManuallyBaseVC.swift in Sources */,
 				41D83B27275A04A300B4344F /* OrcaSwapV2.RateRowContent.swift in Sources */,
 				BC11C9C225908F3700E399A9 /* CGFloat+Extensions.swift in Sources */,
-				4158ADC5274F1B75001C57CE /* Home.BalancesScrollDelegate.swift in Sources */,
+				4158ADC5274F1B75001C57CE /* Home.HeaderScrollDelegate.swift in Sources */,
 				BCB286D1275086B00074E1D5 /* DAppChannelError.swift in Sources */,
 				BCE04C6C268D901400CE131A /* ModalTransitionManager.swift in Sources */,
 				BC534D6C2738C9B500BF1750 /* WLStepButton.swift in Sources */,

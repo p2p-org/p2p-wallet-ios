@@ -108,6 +108,7 @@ extension Home {
                                         .drive(view.balanceView.rx.balance)
                                         .disposed(by: disposeBag)
                                 }
+                                .padding(.init(x: 18, y: 0))
                         }
                     }
                 }
