@@ -130,11 +130,17 @@ public class LoadableRelay<T> {
         // Load request
         disposable = request
             .subscribe(onSuccess: {[weak self] data in
-                self?.value = data
-                self?.stateRelay.accept(.loaded)
+                guard let self = self else {return}
+                self.value = self.map(oldData: self.value, newData: data)
+                self.stateRelay.accept(.loaded)
             }, onFailure: {[weak self] error in
                 self?.stateRelay.accept(.error(error.readableDescription))
             })
+    }
+    
+    /// Mapping
+    public func map(oldData: T?, newData: T) -> T {
+        newData
     }
     
     /// Cancel current request
