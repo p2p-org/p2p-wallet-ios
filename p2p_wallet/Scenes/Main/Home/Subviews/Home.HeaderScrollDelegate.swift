@@ -18,6 +18,7 @@ extension Home {
         
         func scrollViewDidScroll(_ scrollView: UIScrollView) {
             guard let headerView = headerView else { return }
+            
             let maxValue = headerView.preferredTopHeight + headerView.bottomMaxHeight
             let offset = (scrollView.contentOffset.y + scrollView.contentInset.top)
             let value = min(max(offset, 0), maxValue)
