@@ -17,12 +17,7 @@ extension Home {
         private let disposeBag = DisposeBag()
         private let viewModel: HomeViewModelType
         
-        // swiftlint:disable weak_delegate
-        private var bannersDelegate: UICollectionViewDelegate!
-        private var bannersDataSource: BannersCollectionViewDataSource!
         private var headerViewScrollDelegate = HeaderScrollDelegate()
-        
-        private var collectionView: BEStaticSectionsCollectionView!
         
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
@@ -103,7 +98,6 @@ extension Home {
                             )
                         ]
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
-                        self.collectionView = collectionView
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
 
