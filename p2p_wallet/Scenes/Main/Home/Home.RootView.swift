@@ -86,13 +86,15 @@ extension Home {
                         activeWalletsSection: .init(
                             index: 0,
                             viewModel: viewModel.walletsRepository,
-                            cellType: NWalletCell.self,
+                            header: .init(viewClass: WalletsSection.Header.self),
+                            cellType: VisibleWalletCell.self,
                             onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
                         ),
                         hiddenWalletsSection: HiddenWalletsSection(
                             index: 1,
                             viewModel: viewModel.walletsRepository,
-                            header: .init(viewClass: HiddenWalletsSectionHeaderView.self)
+                            header: .init(viewClass: HiddenWalletsSectionHeaderView.self),
+                            onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
                         )
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
                         self.collectionView = collectionView
@@ -114,7 +116,7 @@ extension Home {
                             .map { !$0 }
                             .drive(collectionView.rx.isHidden)
                             .disposed(by: disposeBag)
-                    }.padding(.init(only: .top, inset: 10))
+                    }.padding(.init(only: .top, inset: 12))
                 }
                 
                 // Action bar

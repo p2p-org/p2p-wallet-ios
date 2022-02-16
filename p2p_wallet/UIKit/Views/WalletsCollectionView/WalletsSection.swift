@@ -11,7 +11,15 @@ import Action
 import RxSwift
 
 class WalletsSection: BEStaticSectionsCollectionView.Section {
-    var disposedBag = DisposeBag()
+    
+    class Header: BECollectionCell {
+        override func build() -> UIView {
+            UILabel(text: L10n.tokens, textSize: 13, weight: .medium, textColor: .secondaryLabel)
+                .padding(.init(only: .left, inset: 18))
+                .frame(height: 18)
+        }
+    }
+    
     var walletCellEditAction: Action<Wallet, Void>?
     var onSend: BECallback<Wallet>?
     
@@ -23,8 +31,8 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
         background: UICollectionReusableView.Type? = nil,
         cellType: BECollectionViewCell.Type,
         numberOfLoadingCells: Int = 2,
-        customFilter: @escaping ((AnyHashable) -> Bool) = { item in
-            guard let wallet = item as? Wallet else {return false}
+        customFilter: @escaping (AnyHashable) -> Bool = { item in
+            guard let wallet = item as? Wallet else { return false }
             return !wallet.isHidden
         },
         onSend: BECallback<Wallet>? = nil,
@@ -56,41 +64,32 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
         )
     }
     
-    override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
+    override func configureCell(
+        collectionView: UICollectionView,
+        indexPath: IndexPath,
+        item: BECollectionViewItem
+    ) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         
-        if let cell = cell as? SwipeableDelegate {
-            cell
-                .onAction
-                .emit(onNext: { [weak self] action in
-                    guard let action = action as? NWalletCell.Action else { return }
-                    switch action {
-                    case .visible:
-                        let viewModel = self?.viewModel as? WalletsRepository
-                        viewModel?.toggleWalletVisibility(item.value as! Wallet)
-                    case .send:
-                        guard let self = self else { return }
-                        guard let viewModel = self.viewModel as? WalletsRepository else { return }
-                        var wallets = viewModel.getWallets()
-                        if self.customFilter != nil {
-                            wallets = wallets.filter(self.customFilter!)
-                        }
-                        self.onSend?(wallets[indexPath.row])
-                        return
-                    }
-                })
-                .disposed(by: disposedBag)
-        }
-        
-        if let cell = cell as? EditableWalletCell {
-            cell.editAction = CocoaAction { [weak self] in
-                self?.walletCellEditAction?.execute(item.value as! Wallet)
-                return .just(())
+        if let cell = cell as? VisibleWalletCell {
+            cell.onSend = { [weak self] in
+                self?.onSend?((item.value as! Wallet))
             }
-            cell.hideAction = CocoaAction { [weak self] in
+            
+            cell.onHide = { [weak self] in
                 let viewModel = self?.viewModel as? WalletsRepository
                 viewModel?.toggleWalletVisibility(item.value as! Wallet)
-                return .just(())
+            }
+        }
+        
+        if let cell = cell as? HidedWalletCell {
+            cell.onSend = { [weak self] in
+                self?.onSend?((item.value as! Wallet))
+            }
+            
+            cell.onShow = { [weak self] in
+                let viewModel = self?.viewModel as? WalletsRepository
+                viewModel?.toggleWalletVisibility(item.value as! Wallet)
             }
         }
         

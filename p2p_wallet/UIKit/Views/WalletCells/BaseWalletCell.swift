@@ -7,11 +7,9 @@ import BECollectionView
 import RxSwift
 import RxCocoa
 
-class NWalletCell: BECollectionCell, BECollectionViewCell {
-    enum Action {
-        case visible
-        case send
-    }
+class BaseWalletCell: BECompositionView {
+    private let leadingActions: UIView?
+    private let trailingActions: UIView?
     
     private var iconRef = BERef<CoinLogoImageView>()
     private var coinNameRef = BERef<UILabel>()
@@ -19,19 +17,17 @@ class NWalletCell: BECollectionCell, BECollectionViewCell {
     private var amountRef = BERef<UILabel>()
     private var amountInFiatRef = BERef<UILabel>()
     private var contentRef = BERef<UIView>()
-    private var swipeableCellRef = BERef<SwipeableCell>()
+    public var swipeableCellRef = BERef<SwipeableCell>()
     
-    private let onActionSignal = PublishRelay<Action>()
+    init(leadingActions: UIView, trailingActions: UIView) {
+        self.leadingActions = leadingActions
+        self.trailingActions = trailingActions
+        super.init()
+    }
     
     override func build() -> UIView {
         SwipeableCell(
-            leadingActions: BECenter { UIImageView(image: .buttonSendSmall, tintColor: .h5887ff) }
-                .frame(width: 70)
-                .backgroundColor(color: .ebf0fc)
-                .onTap { [unowned self] in
-                    onActionSignal.accept(.send)
-                    swipeableCellRef.view?.centralize()
-                },
+            leadingActions: leadingActions,
             content: content()
                 .bind(contentRef)
                 .padding(.init(x: 18, y: 0))
@@ -39,12 +35,7 @@ class NWalletCell: BECollectionCell, BECollectionViewCell {
                 .padding(.init(x: 0, y: 12))
                 .backgroundColor(color: .background)
                 .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner], radius: 4),
-            trailingActions: BECenter { UIImageView(image: .eyeHide) }
-                .frame(width: 70)
-                .onTap { [unowned self] in
-                    onActionSignal.accept(.visible)
-                    swipeableCellRef.view?.centralize()
-                }
+            trailingActions: trailingActions
         )
             .bind(swipeableCellRef)
             .frame(height: 63)
@@ -80,8 +71,7 @@ class NWalletCell: BECollectionCell, BECollectionViewCell {
         }
     }
     
-    override func prepareForReuse() {
-        super.prepareForReuse()
+    func prepareForReuse() {
         swipeableCellRef.view?.centralize(animated: false)
         iconRef.view?.tokenIcon.cancelPreviousTask()
         iconRef.view?.tokenIcon.image = nil
@@ -115,15 +105,5 @@ class NWalletCell: BECollectionCell, BECollectionViewCell {
     
     func hideLoading() {
         contentRef.view?.hideLoader()
-    }
-}
-
-extension NWalletCell: SwipeableDelegate {
-    private class None {}
-    
-    var onAction: Signal<Any> {
-        onActionSignal
-            .map { action -> Any in action }
-            .asSignal(onErrorJustReturn: None())
     }
 }
