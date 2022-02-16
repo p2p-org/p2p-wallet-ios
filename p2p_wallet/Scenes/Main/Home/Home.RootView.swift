@@ -106,7 +106,7 @@ extension Home {
                         self.collectionView = collectionView
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
-
+                        
                         collectionView.contentInset.modify(dTop: 180, dBottom: 120)
                         collectionView.clipsToBounds = true
                         
@@ -153,6 +153,7 @@ private extension HomeViewModelType {
             }.map { (state, amount) in
                 if state != .loaded { return true }
                 return amount > 0
-            }.asDriver(onErrorJustReturn: true)
+            }.distinctUntilChanged { $0 }
+            .asDriver(onErrorJustReturn: true)
     }
 }
