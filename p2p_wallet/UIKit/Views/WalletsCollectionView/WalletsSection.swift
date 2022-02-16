@@ -13,6 +13,7 @@ import RxSwift
 class WalletsSection: BEStaticSectionsCollectionView.Section {
     var disposedBag = DisposeBag()
     var walletCellEditAction: Action<Wallet, Void>?
+    var onSend: BECallback<Wallet>?
     
     init(
         index: Int,
@@ -26,8 +27,11 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
             guard let wallet = item as? Wallet else {return false}
             return !wallet.isHidden
         },
+        onSend: BECallback<Wallet>? = nil,
         limit: Int? = nil
     ) {
+        self.onSend = onSend
+        
         super.init(
             index: index,
             layout: .init(
@@ -65,6 +69,13 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
                         let viewModel = self?.viewModel as? WalletsRepository
                         viewModel?.toggleWalletVisibility(item.value as! Wallet)
                     case .send:
+                        guard let self = self else { return }
+                        guard let viewModel = self.viewModel as? WalletsRepository else { return }
+                        var wallets = viewModel.getWallets()
+                        if self.customFilter != nil {
+                            wallets = wallets.filter(self.customFilter!)
+                        }
+                        self.onSend?(wallets[indexPath.row])
                         return
                     }
                 })

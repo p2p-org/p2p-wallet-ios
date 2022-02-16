@@ -86,7 +86,8 @@ extension Home {
                         activeWalletsSection: .init(
                             index: 0,
                             viewModel: viewModel.walletsRepository,
-                            cellType: NWalletCell.self
+                            cellType: NWalletCell.self,
+                            onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
                         ),
                         hiddenWalletsSection: HiddenWalletsSection(
                             index: 1,
