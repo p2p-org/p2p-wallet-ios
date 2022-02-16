@@ -7,10 +7,6 @@ import BECollectionView
 import RxSwift
 import RxCocoa
 
-protocol SwipeableDelegate {
-    var onAction: Signal<Any> { get }
-}
-
 class SwipeableCell: BECompositionView {
     let leadingActions: UIView?
     let trailingActions: UIView?
@@ -19,7 +15,7 @@ class SwipeableCell: BECompositionView {
     private let scrollTriggerOffset: CGFloat = 30
     private var scrollViewRef = BERef<BEScrollView>()
     
-    init(leadingActions: UIView, content: UIView, trailingActions: UIView) {
+    init(leadingActions: UIView?, content: UIView, trailingActions: UIView?) {
         self.leadingActions = leadingActions
         self.trailingActions = trailingActions
         self.content = content
