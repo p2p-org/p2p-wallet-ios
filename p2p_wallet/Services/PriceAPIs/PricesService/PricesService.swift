@@ -10,15 +10,20 @@ import RxSwift
 import RxCocoa
 
 protocol PricesServiceType {
+    // Observables
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {get}
-    
     func observePrice(of coinName: String) -> Observable<CurrentPrice?>
     
+    // Getters
+    func getWatchList() -> [String]
     func getCurrentPrices() -> [String: CurrentPrice]
     func currentPrice(for coinName: String) -> CurrentPrice?
-    func clearCurrentPrices()
     
-    func fetchAllTokensPrice()
+    // Actions
+    func clearCurrentPrices()
+    func addToWatchList(_ tokens: [String])
+    func fetchPrices(tokens: [String])
+    func fetchAllTokensPriceInWatchList()
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
     
     func startObserving()
@@ -31,6 +36,19 @@ extension PricesServiceType {
     }
 }
 
+class PricesLoadableRelay: LoadableRelay<[String: CurrentPrice]> {
+    override func map(oldData: [String: CurrentPrice]?, newData: [String: CurrentPrice]) -> [String: CurrentPrice] {
+        guard var data = oldData else {
+            return newData
+        }
+
+        for key in newData.keys {
+            data[key] = newData[key]
+        }
+        return data
+    }
+}
+
 class PricesService {
     enum Error: Swift.Error {
         case notFound
@@ -38,7 +56,7 @@ class PricesService {
     }
     
     // MARK: - Constants
-    private let refreshInterval: TimeInterval = 2 * 60 // 2 minutes
+    private let refreshInterval: TimeInterval = 15 * 60 // 15 minutes
     
     // MARK: - Dependencies
     @Injected private var storage: PricesStorage
@@ -46,8 +64,9 @@ class PricesService {
     @Injected private var tokensRepository: TokensRepository
     
     // MARK: - Properties
+    private var watchList = [String]()
     private var timer: Timer?
-    private lazy var currentPricesSubject = LoadableRelay<[String: CurrentPrice]>(request: .just(storage.retrievePrices()))
+    private lazy var currentPricesSubject = PricesLoadableRelay(request: .just(storage.retrievePrices()))
     
     // MARK: - Initializer
     init() {
@@ -62,31 +81,26 @@ class PricesService {
         timer?.invalidate()
     }
     
-    // MARK: - Methods
-    @objc func fetchAllTokensPrice() {
-        currentPricesSubject.refresh()
-    }
-    
     // MARK: - Helpers
-    private func getCurrentPricesRequest() -> Single<[String: CurrentPrice]> {
-        tokensRepository.getTokensList()
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .flatMap { [weak self] tokens -> Single<[String: CurrentPrice?]> in
-                guard let self = self else {throw Error.unknown}
-                let coins = tokens.excludingSpecialTokens()
-                    .map { token -> String in
-                        var symbol = token.symbol
-                        if symbol == "renBTC" {symbol = "BTC"}
-                        return symbol
-                    }
-                    .filter {!$0.contains("-") && !$0.contains("/")}
-                    .unique
-                return self.fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
-                    .map {prices in
-                        var prices = prices
-                        prices["renBTC"] = prices["BTC"]
-                        return prices
-                    }
+    private func getCurrentPricesRequest(tokens: [String]? = nil) -> Single<[String: CurrentPrice]> {
+        let coins = (tokens ?? watchList).map { token -> String in
+            if token == "renBTC" {
+                return "BTC"
+            }
+            return token
+        }
+            .unique
+            .filter {!$0.contains("-") && !$0.contains("/")}
+        
+        guard !coins.isEmpty else {
+            return .just([:])
+        }
+        
+        return self.fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+            .map {prices -> [String: CurrentPrice?] in
+                var prices = prices
+                prices["renBTC"] = prices["BTC"]
+                return prices
             }
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .map { [weak self] newPrices in
@@ -114,6 +128,10 @@ extension PricesService: PricesServiceType {
             .map {$0?[coinName]}
     }
     
+    func getWatchList() -> [String] {
+        watchList
+    }
+    
     func getCurrentPrices() -> [String: CurrentPrice] {
         currentPricesSubject.value ?? [:]
     }
@@ -125,6 +143,22 @@ extension PricesService: PricesServiceType {
     func clearCurrentPrices() {
         currentPricesSubject.flush()
         storage.savePrices([:])
+    }
+    
+    func addToWatchList(_ tokens: [String]) {
+        for token in tokens {
+            watchList.appendIfNotExist(token)
+        }
+    }
+    
+    func fetchPrices(tokens: [String]) {
+        currentPricesSubject.request = getCurrentPricesRequest(tokens: tokens)
+        currentPricesSubject.refresh()
+    }
+    
+    func fetchAllTokensPriceInWatchList() {
+        guard !watchList.isEmpty else {return}
+        fetchPrices(tokens: watchList)
     }
     
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]> {
@@ -154,9 +188,9 @@ extension PricesService: PricesServiceType {
     }
     
     func startObserving() {
-        fetchAllTokensPrice()
+        fetchAllTokensPriceInWatchList()
         timer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true, block: {[weak self] _ in
-            self?.fetchAllTokensPrice()
+            self?.fetchAllTokensPriceInWatchList()
         })
     }
     

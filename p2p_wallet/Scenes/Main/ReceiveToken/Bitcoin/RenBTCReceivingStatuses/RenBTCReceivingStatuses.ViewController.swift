@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import BECollectionView
+import RenVMSwift
 
 extension RenBTCReceivingStatuses {
     class NewViewController: BEScene {

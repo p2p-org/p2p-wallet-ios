@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import BECollectionView
+import RenVMSwift
 
 protocol RenBTCReceivingStatusesViewModelType: BEListViewModelType {
     var navigationDriver: Driver<RenBTCReceivingStatuses.NavigatableScene?> {get}

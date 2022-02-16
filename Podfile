@@ -16,6 +16,7 @@ target 'p2p_wallet' do
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
+  pod 'RenVMSwift', :path => 'RenVMSwift' 
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
@@ -29,7 +30,6 @@ target 'p2p_wallet' do
   pod 'JazziconSwift'
   pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
-  pod 'SVGKit', :git => 'https://github.com/SVGKit/SVGKit.git', :branch => '3.x'
   pod 'ListPlaceholder', :git => 'git@github.com:p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'Intercom'
 
