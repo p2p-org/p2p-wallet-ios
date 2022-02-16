@@ -93,6 +93,19 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 if viewModel.relayMethod == .relay {
                     feeView
                 }
+                #if DEBUG
+                UILabel(textColor: .red, numberOfLines: 0, textAlignment: .center)
+                    .setup { label in
+                        viewModel.feesDriver
+                            .drive(onNext: {[weak label] feeAmount in
+                                label?.attributedText = NSMutableAttributedString()
+                                    .text("Transaction fee: \(feeAmount?.transaction ?? 0) lamports", size: 13, color: .red)
+                                    .text(", ")
+                                    .text("Account creation fee: \(feeAmount?.accountBalances ?? 0) lamports", size: 13, color: .red)
+                            })
+                            .disposed(by: disposeBag)
+                    }
+                #endif
             }
             
             addSubview(actionButton)
@@ -167,7 +180,21 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
             
             // fee view
-            isSearchingDriver
+            Driver.combineLatest(
+                isSearchingDriver,
+                viewModel.networkDriver,
+                viewModel.feesDriver
+            )
+                .map {isSearching, network, fee in
+                    if isSearching || network != .solana {
+                        return true
+                    }
+                    if let fee = fee {
+                        return fee.total == 0
+                    } else {
+                        return true
+                    }
+                }
                 .drive(feeView.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -202,30 +229,43 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             Driver.combineLatest(
                 viewModel.recipientDriver,
                 viewModel.payingWalletDriver,
-                viewModel.payingWalletStatusDriver
+                viewModel.payingWalletStatusDriver,
+                viewModel.feesDriver,
+                viewModel.networkDriver
             )
-                .map { [weak self] recipient, payingWallet, payingWalletStatus in
+                .map { [weak self] recipient, payingWallet, payingWalletStatus, fees, network in
                     guard let self = self else {return ""}
                     if recipient == nil {
                         return L10n.chooseTheRecipientToProceed
                     }
                     
-                    if self.viewModel.relayMethod == .relay {
-                        if let payingWallet = payingWallet {
-                            switch payingWalletStatus {
-                            case .loading:
-                                return L10n.calculatingFees
-                            case .invalid:
-                                return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
-                            case .valid(_, let enoughBalance):
-                                if !enoughBalance {
-                                    return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                    switch network {
+                    case .solana:
+                        switch self.viewModel.relayMethod {
+                        case .relay:
+                            if fees?.total != 0 {
+                                if let payingWallet = payingWallet {
+                                    switch payingWalletStatus {
+                                    case .loading:
+                                        return L10n.calculatingFees
+                                    case .invalid:
+                                        return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                                    case .valid(_, let enoughBalance):
+                                        if !enoughBalance {
+                                            return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                                        }
+                                    }
+                                } else {
+                                    return L10n.chooseTheTokenToPayFees
                                 }
                             }
-                        } else {
-                            return L10n.chooseTheTokenToPayFees
+                        case .reward:
+                            break
                         }
+                    case .bitcoin:
+                        break
                     }
+                    
                     return L10n.reviewAndConfirm
                 }
                 .drive(actionButton.rx.text)
@@ -265,10 +305,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         private func bind() {
-            viewModel.networkDriver
-                .drive(onNext: {[weak self] network in
+            Driver.combineLatest(
+                viewModel.networkDriver,
+                viewModel.feesDriver
+            )
+                .drive(onNext: {[weak self] network, feeAmount in
                     self?._networkView.setUp(
                         network: network,
+                        feeAmount: feeAmount,
                         prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:]
                     )
                 })

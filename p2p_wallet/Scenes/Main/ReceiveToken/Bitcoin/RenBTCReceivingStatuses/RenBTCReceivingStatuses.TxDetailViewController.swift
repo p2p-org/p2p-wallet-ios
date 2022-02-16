@@ -9,6 +9,7 @@ import Foundation
 import BECollectionView
 import RxSwift
 import RxCocoa
+import RenVMSwift
 
 extension RenBTCReceivingStatuses {
     class TxDetailViewController: BEScene {

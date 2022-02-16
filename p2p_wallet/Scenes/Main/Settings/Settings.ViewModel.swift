@@ -269,7 +269,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         // set default fiat
         Defaults.fiat = fiat
         pricesService.clearCurrentPrices()
-        pricesService.fetchAllTokensPrice()
+        pricesService.fetchAllTokensPriceInWatchList()
         
         // accept new value
         fiatSubject.accept(fiat)
@@ -279,7 +279,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {
         endpointSubject.accept(endpoint)
         
-        analyticsManager.log(event: .settingsNetworkSelected(network: endpoint.address))
+        analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
         if Defaults.apiEndPoint.network != endpoint.network {
             renVMService.expireCurrentSession()
         }
@@ -358,6 +358,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func showLogoutAlert() {
+        analyticsManager.log(event: .signOut(lastScreen: "Settings"))
         logoutAlertSubject.accept(())
     }
     
@@ -372,7 +373,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func logout() {
-        analyticsManager.log(event: .settingsLogoutClick)
+        analyticsManager.log(event: .signedOut)
         logoutResponder.logout()
     }
 }

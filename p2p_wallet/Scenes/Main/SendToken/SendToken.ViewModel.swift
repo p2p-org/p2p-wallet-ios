@@ -8,11 +8,13 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import FeeRelayerSwift
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var relayMethod: SendTokenRelayMethod {get}
     var canGoBack: Bool { get }
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
+    var loadingStateDriver: Driver<LoadableState> {get}
     
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
@@ -20,7 +22,9 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network
     func getSelectedAmount() -> Double?
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
     
+    func reload()
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
     
@@ -57,6 +61,7 @@ extension SendToken {
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         
         // MARK: - Initializers
         init(
@@ -89,11 +94,23 @@ extension SendToken {
                     })
                     .disposed(by: disposeBag)
             }
-            sendService.load().subscribe(onCompleted: {}).disposed(by: disposeBag)
+            reload()
         }
         
         deinit {
             debugPrint("\(String(describing: self)) deinited")
+        }
+        
+        func reload() {
+            loadingStateSubject.accept(.loading)
+
+            sendService.load()
+                .subscribe(onCompleted: {[weak self] in
+                    self?.loadingStateSubject.accept(.loaded)
+                }, onError: {[weak self] error in
+                    self?.loadingStateSubject.accept(.error(error.readableDescription))
+                })
+                .disposed(by: disposeBag)
         }
         
         private func send() {
@@ -148,6 +165,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         navigationSubject.asDriver()
     }
     
+    var loadingStateDriver: Driver<LoadableState> {
+        loadingStateSubject.asDriver()
+    }
+    
     func getSelectedWallet() -> Wallet? {
         walletSubject.value
     }
@@ -165,6 +186,10 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func getSendService() -> SendServiceType {
         sendService
+    }
+    
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+        sendService.getFreeTransactionFeeLimit()
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
