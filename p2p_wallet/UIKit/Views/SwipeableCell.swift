@@ -12,12 +12,12 @@ protocol SwipeableDelegate {
 }
 
 class SwipeableCell: BECompositionView {
-    let leadingActions: UIView
-    let trailingActions: UIView
+    let leadingActions: UIView?
+    let trailingActions: UIView?
     let content: UIView
     
     private let scrollTriggerOffset: CGFloat = 30
-    private var scrollView = BERef<UIScrollView>()
+    private var scrollViewRef = BERef<BEScrollView>()
     
     init(leadingActions: UIView, content: UIView, trailingActions: UIView) {
         self.leadingActions = leadingActions
@@ -32,36 +32,21 @@ class SwipeableCell: BECompositionView {
         BEZStack {
             BEZStackPosition(mode: .fill) { BEContainer().backgroundColor(color: .f6f6f8) }
             BEZStackPosition(mode: .fill) {
-                ContentHuggingScrollView(axis: .horizontal, showsHorizontalScrollIndicator: false, delegate: self) {
-                    // leading action
-                    leadingActions
-                        .withTag(1)
-                    
-                    // content
-                    content
-                        .withTag(2)
-                        .onTap { [unowned self] in centralize() }
-                    
-                    // trailing action
-                    trailingActions
-                        .withTag(3)
-                }.setupWithType(ContentHuggingScrollView.self) { view in
-                    view.addObserver(self, forKeyPath: "contentSize", options: [], context: nil)
-                    
-                    leadingActions.autoPinEdge(toSuperviewEdge: .top)
-                    leadingActions.autoPinEdge(toSuperviewEdge: .bottom)
-                    leadingActions.autoPinEdge(.left, to: .left, of: view.contentView)
-                    // leadingActions.autoPinEdge(.right, to: .right, of: view.contentView)
-                    
-                    content.autoPinEdge(toSuperviewEdge: .top)
-                    content.autoPinEdge(toSuperviewEdge: .bottom)
-                    content.autoPinEdge(.left, to: .right, of: leadingActions)
-                    
-                    trailingActions.autoPinEdge(toSuperviewEdge: .top)
-                    trailingActions.autoPinEdge(toSuperviewEdge: .bottom)
-                    trailingActions.autoPinEdge(.left, to: .right, of: content)
-                    trailingActions.autoPinEdge(.right, to: .right, of: view.contentView)
-                }.bind(scrollView)
+                BEScrollView(axis: .horizontal, showsHorizontalScrollIndicator: false, delegate: self) {
+                    BEHStack {
+                        // leading action
+                        if leadingActions != nil { leadingActions! }
+                        
+                        // content
+                        content
+                            .onTap { [unowned self] in centralize() }
+                        
+                        // trailing action
+                        if trailingActions != nil { trailingActions! }
+                    }
+                }.setupWithType(BEScrollView.self) { view in
+                    view.scrollView.addObserver(self, forKeyPath: "contentSize", options: [], context: nil)
+                }.bind(scrollViewRef)
             }.setup { view in
                 content.autoMatch(.width, to: .width, of: view)
             }
@@ -69,7 +54,7 @@ class SwipeableCell: BECompositionView {
     }
     
     deinit {
-        scrollView.view?.removeObserver(self, forKeyPath: "contentSize")
+        scrollViewRef.view?.scrollView.removeObserver(self, forKeyPath: "contentSize")
     }
     
     override func observeValue(
@@ -86,20 +71,19 @@ class SwipeableCell: BECompositionView {
     private var isFirstRun = true
     
     func contentSizeDidUpdate() {
+        guard let leadingActions = leadingActions else { return }
         if isFirstRun && leadingActions.frame.width > 0 {
             centralize(animated: false)
             isFirstRun = false
         }
     }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        
-    }
-    
+
     func centralize(animated: Bool = true) {
-        scrollView.view?.setContentOffset(.init(x: leadingActions.frame.width, y: 0), animated: animated)
+        guard let leadingActions = leadingActions else {
+            scrollViewRef.view?.scrollView.setContentOffset(.zero, animated: animated)
+            return
+        }
+        scrollViewRef.view?.scrollView.setContentOffset(.init(x: leadingActions.frame.width, y: 0), animated: animated)
     }
 }
 
@@ -118,9 +102,11 @@ extension SwipeableCell: UIScrollViewDelegate {
         
         if offsetFromCenter > scrollTriggerOffset {
             // left
+            guard let leadingActions = leadingActions else { return .zero}
             return .init(x: leadingActions.frame.origin.x, y: offset.y)
         } else if offsetFromCenter < -scrollTriggerOffset {
             // right
+            guard let trailingActions = trailingActions else { return .zero}
             return .init(x: trailingActions.frame.origin.x, y: offset.y)
         } else {
             // center
