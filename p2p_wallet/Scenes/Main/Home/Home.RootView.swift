@@ -83,31 +83,30 @@ extension Home {
                 BEZStackPosition(mode: .fill) {
                     WalletsCollectionView(
                         walletsRepository: viewModel.walletsRepository,
-                        activeWalletsSection: .init(
-                            index: 0,
-                            viewModel: viewModel.walletsRepository,
-                            header: .init(viewClass: WalletsSection.Header.self),
-                            cellType: VisibleWalletCell.self,
-                            onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
-                        ),
-                        hiddenWalletsSection: HiddenWalletsSection(
-                            index: 1,
-                            viewModel: viewModel.walletsRepository,
-                            header: .init(viewClass: HiddenWalletsSectionHeaderView.self),
-                            onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
-                        )
+                        sections: [
+                            WalletsSection.init(
+                                index: 0,
+                                viewModel: viewModel.walletsRepository,
+                                header: .init(viewClass: WalletsSection.Header.self),
+                                cellType: VisibleWalletCell.self,
+                                onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
+                            ),
+                            HiddenWalletsSection(
+                                index: 1,
+                                viewModel: viewModel.walletsRepository,
+                                header: .init(viewClass: HiddenWalletsSectionHeaderView.self),
+                                onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) },
+                                showHideHiddenWalletsAction: CocoaAction { [weak self] in
+                                    self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
+                                    return .just(())
+                                }
+                            )
+                        ]
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
                         self.collectionView = collectionView
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
-                        collectionView.walletCellEditAction = Action<Wallet, Void> { [weak self] wallet in
-                            self?.viewModel.navigate(to: .walletSettings(wallet: wallet))
-                            return .just(())
-                        }
-                        collectionView.showHideHiddenWalletsAction = CocoaAction { [weak self] in
-                            self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
-                            return .just(())
-                        }
+
                         collectionView.contentInset.modify(dTop: 180, dBottom: 120)
                         collectionView.clipsToBounds = true
                         
