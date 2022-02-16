@@ -8,8 +8,10 @@
 import Foundation
 import BECollectionView
 import Action
+import RxSwift
 
 class WalletsSection: BEStaticSectionsCollectionView.Section {
+    var disposedBag = DisposeBag()
     var walletCellEditAction: Action<Wallet, Void>?
     
     init(
@@ -33,10 +35,10 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
                 footer: footer,
                 cellType: cellType,
                 numberOfLoadingCells: numberOfLoadingCells,
-                interGroupSpacing: 30,
+                interGroupSpacing: 0,
                 itemHeight: .estimated(45),
-                contentInsets: NSDirectionalEdgeInsets(top: 0, leading: .defaultPadding, bottom: 0, trailing: .defaultPadding),
-                horizontalInterItemSpacing: .fixed(16),
+                contentInsets: NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0),
+                horizontalInterItemSpacing: .fixed(0),
                 background: background
             ),
             viewModel: viewModel,
@@ -52,6 +54,23 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
     
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
+        
+        if let cell = cell as? SwipeableCell {
+            cell
+                .onAction
+                .emit(onNext: { [weak self] action in
+                    guard let action = action as? NWalletCell.Action else { return }
+                    switch action {
+                    case .visible:
+                        let viewModel = self?.viewModel as? WalletsRepository
+                        viewModel?.toggleWalletVisibility(item.value as! Wallet)
+                    case .send:
+                        return
+                    }
+                })
+                .disposed(by: disposedBag)
+        }
+        
         if let cell = cell as? EditableWalletCell {
             cell.editAction = CocoaAction { [weak self] in
                 self?.walletCellEditAction?.execute(item.value as! Wallet)
@@ -63,6 +82,7 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
                 return .just(())
             }
         }
+        
         return cell
     }
 }

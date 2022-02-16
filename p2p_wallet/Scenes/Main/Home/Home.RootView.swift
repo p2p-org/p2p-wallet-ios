@@ -86,7 +86,7 @@ extension Home {
                         activeWalletsSection: .init(
                             index: 0,
                             viewModel: viewModel.walletsRepository,
-                            cellType: WalletCell.self
+                            cellType: NWalletCell.self
                         ),
                         hiddenWalletsSection: HiddenWalletsSection(
                             index: 1,
