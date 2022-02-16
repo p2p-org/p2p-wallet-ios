@@ -7,10 +7,6 @@ import BECollectionView
 import RxSwift
 import RxCocoa
 
-protocol SwipeableCell {
-    var onAction: Signal<Any> { get }
-}
-
 class NWalletCell: BECollectionCell, BECollectionViewCell {
     enum Action {
         case visible
@@ -24,68 +20,28 @@ class NWalletCell: BECollectionCell, BECollectionViewCell {
     private var amountInFiat = BERef<UILabel>()
     
     private var container = BERef<UIView>()
+    private var swipeableCell = BERef<SwipeableCell>()
     
     private let onActionSignal = PublishRelay<Action>()
     
     override func build() -> UIView {
         SwipeableCell(
-            leadingActions: BECenter {
-                UIImageView(image: .buttonSendSmall, tintColor: .h5887ff)
-            }
+            leadingActions: BECenter { UIImageView(image: .buttonSendSmall, tintColor: .h5887ff) }
                 .frame(width: 70)
                 .backgroundColor(color: .ebf0fc)
                 .onTap { [unowned self] in onActionSignal.accept(.send) },
             content: content()
-            .bind(container)
-            .padding(.init(x: 18, y: 0))
-            .withTag(1)
-            .padding(.init(x: 0, y: 12))
-            .backgroundColor(color: .background)
-            .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner], radius: 4),
-            trailingActions: BECenter {
-                UIImageView(image: .eyeHide)
-            }
+                .bind(container)
+                .padding(.init(x: 18, y: 0))
+                .withTag(1)
+                .padding(.init(x: 0, y: 12))
+                .backgroundColor(color: .background)
+                .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner], radius: 4),
+            trailingActions: BECenter { UIImageView(image: .eyeHide) }
                 .frame(width: 70)
                 .onTap { [unowned self] in onActionSignal.accept(.visible) }
-            
         )
-        
-        BEZStack {
-            BEZStackPosition(mode: .fill) { BEContainer().backgroundColor(color: .f6f6f8) }
-            BEZStackPosition(mode: .fill) {
-                BEScrollView(axis: .horizontal, showsHorizontalScrollIndicator: false, delegate: self) {
-                    BEHStack {
-                        // leading action
-                        BECenter {
-                            UIImageView(image: .buttonSendSmall, tintColor: .h5887ff)
-                        }
-                            .frame(width: 70)
-                            .backgroundColor(color: .ebf0fc)
-                            .onTap { [unowned self] in onActionSignal.accept(.send) }
-                        
-                        // content
-                        content()
-                            .bind(container)
-                            .padding(.init(x: 18, y: 0))
-                            .withTag(1)
-                            .padding(.init(x: 0, y: 12))
-                            .backgroundColor(color: .background)
-                            .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner], radius: 4)
-                        
-                        // trailing action
-                        BECenter {
-                            UIImageView(image: .eyeHide)
-                        }
-                            .frame(width: 70)
-                            .onTap { [unowned self] in onActionSignal.accept(.visible) }
-                        
-                    }.bind(scrollContainer)
-                }
-            }.setup { view in
-                guard let primaryStack = view.viewWithTag(1) else { return }
-                primaryStack.autoMatch(.width, to: .width, of: view)
-            }
-        }
+            .bind(swipeableCell)
             .frame(height: 63)
     }
     
@@ -121,6 +77,7 @@ class NWalletCell: BECollectionCell, BECollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        swipeableCell.view?.centralize(animated: false)
         icon.view?.tokenIcon.cancelPreviousTask()
         icon.view?.tokenIcon.image = nil
     }
@@ -156,7 +113,7 @@ class NWalletCell: BECollectionCell, BECollectionViewCell {
     }
 }
 
-extension NWalletCell: SwipeableCell {
+extension NWalletCell: SwipeableDelegate {
     private class None {}
     
     var onAction: Signal<Any> {

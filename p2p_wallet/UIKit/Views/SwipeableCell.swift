@@ -7,59 +7,132 @@ import BECollectionView
 import RxSwift
 import RxCocoa
 
+protocol SwipeableDelegate {
+    var onAction: Signal<Any> { get }
+}
+
 class SwipeableCell: BECompositionView {
     let leadingActions: UIView
     let trailingActions: UIView
     let content: UIView
     
-    private var scrollContainer = BERef<UIView>()
+    private let scrollTriggerOffset: CGFloat = 30
+    private var scrollView = BERef<UIScrollView>()
     
     init(leadingActions: UIView, content: UIView, trailingActions: UIView) {
         self.leadingActions = leadingActions
         self.trailingActions = trailingActions
         self.content = content
         super.init()
+        
+        layoutIfNeeded()
     }
     
     override func build() -> UIView {
         BEZStack {
             BEZStackPosition(mode: .fill) { BEContainer().backgroundColor(color: .f6f6f8) }
             BEZStackPosition(mode: .fill) {
-                BEScrollView(axis: .horizontal, showsHorizontalScrollIndicator: false, delegate: self) {
-                    BEHStack {
-                        // leading action
-                        leadingActions
-                        
-                        // content
-                        content
-                        
-                        // trailing action
-                        trailingActions
-                        
-                    }.bind(scrollContainer)
-                }
+                ContentHuggingScrollView(axis: .horizontal, showsHorizontalScrollIndicator: false, delegate: self) {
+                    // leading action
+                    leadingActions
+                        .withTag(1)
+                    
+                    // content
+                    content
+                        .withTag(2)
+                        .onTap { [unowned self] in centralize() }
+                    
+                    // trailing action
+                    trailingActions
+                        .withTag(3)
+                }.setupWithType(ContentHuggingScrollView.self) { view in
+                    view.addObserver(self, forKeyPath: "contentSize", options: [], context: nil)
+                    
+                    leadingActions.autoPinEdge(toSuperviewEdge: .top)
+                    leadingActions.autoPinEdge(toSuperviewEdge: .bottom)
+                    leadingActions.autoPinEdge(.left, to: .left, of: view.contentView)
+                    // leadingActions.autoPinEdge(.right, to: .right, of: view.contentView)
+                    
+                    content.autoPinEdge(toSuperviewEdge: .top)
+                    content.autoPinEdge(toSuperviewEdge: .bottom)
+                    content.autoPinEdge(.left, to: .right, of: leadingActions)
+                    
+                    trailingActions.autoPinEdge(toSuperviewEdge: .top)
+                    trailingActions.autoPinEdge(toSuperviewEdge: .bottom)
+                    trailingActions.autoPinEdge(.left, to: .right, of: content)
+                    trailingActions.autoPinEdge(.right, to: .right, of: view.contentView)
+                }.bind(scrollView)
             }.setup { view in
-                guard let primaryStack = view.viewWithTag(1) else { return }
-                primaryStack.autoMatch(.width, to: .width, of: view)
+                content.autoMatch(.width, to: .width, of: view)
             }
         }
-            .frame(height: 63)
+    }
+    
+    deinit {
+        scrollView.view?.removeObserver(self, forKeyPath: "contentSize")
+    }
+    
+    override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
+        if keyPath == "contentSize" {
+            contentSizeDidUpdate()
+        }
+    }
+    
+    private var isFirstRun = true
+    
+    func contentSizeDidUpdate() {
+        if isFirstRun && leadingActions.frame.width > 0 {
+            centralize(animated: false)
+            isFirstRun = false
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        
+    }
+    
+    func centralize(animated: Bool = true) {
+        scrollView.view?.setContentOffset(.init(x: leadingActions.frame.width, y: 0), animated: animated)
     }
 }
 
 extension SwipeableCell: UIScrollViewDelegate {
-    var maxAnchor: CGPoint {
-        CGPoint(x: scrollContainer.view?.frame.width ?? 0, y: 0)
+    
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if abs(scrollView.contentOffset.x - content.frame.origin.x) < 2 {
+            content.isUserInteractionEnabled = false
+        } else {
+            content.isUserInteractionEnabled = true
+        }
     }
     
     func nearestAnchor(forContentOffset offset: CGPoint) -> CGPoint {
-        guard let scrollContainer = scrollContainer.view else { return .zero }
-        var candidate = scrollContainer.subviews.map { $0.frame.origin }.min(by: { abs($0.x - offset.x) < abs($1.x - offset.x) })!
-        candidate.x = min(candidate.x, maxAnchor.x)
-        return candidate
+        let offsetFromCenter = content.frame.origin.x - offset.x
+        
+        if offsetFromCenter > scrollTriggerOffset {
+            // left
+            return .init(x: leadingActions.frame.origin.x, y: offset.y)
+        } else if offsetFromCenter < -scrollTriggerOffset {
+            // right
+            return .init(x: trailingActions.frame.origin.x, y: offset.y)
+        } else {
+            // center
+            return .init(x: content.frame.origin.x, y: offset.y)
+        }
     }
     
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    func scrollViewWillEndDragging(
+        _ scrollView: UIScrollView,
+        withVelocity velocity: CGPoint,
+        targetContentOffset: UnsafeMutablePointer<CGPoint>
+    ) {
         let decelerationRate = UIScrollView.DecelerationRate.normal.rawValue
         let offsetProjection = scrollView.contentOffset.project(initialVelocity: velocity, decelerationRate: decelerationRate)
         let targetAnchor = nearestAnchor(forContentOffset: offsetProjection)

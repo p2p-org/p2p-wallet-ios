@@ -55,7 +55,7 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
         
-        if let cell = cell as? SwipeableCell {
+        if let cell = cell as? SwipeableDelegate {
             cell
                 .onAction
                 .emit(onNext: { [weak self] action in
