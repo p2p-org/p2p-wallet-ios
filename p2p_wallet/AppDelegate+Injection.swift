@@ -162,26 +162,6 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
         
         // MARK: - Others
-        register { SessionBannersAvailabilityState() }
-            .scope(.session)
-        
-        register { PersistentBannersAvailabilityState() }
-        register {
-            ReserveUsernameBannerAvailabilityRepository(
-                sessionBannersAvailabilityState: resolve(SessionBannersAvailabilityState.self),
-                persistentBannersAvailabilityState: resolve(PersistentBannersAvailabilityState.self),
-                nameStorage: resolve()
-            )
-        }
-            .implements(ReserveUsernameBannerAvailabilityRepositoryType.self)
-            .scope(.unique)
-        register { BannersManager(usernameBannerRepository: resolve()) }
-            .implements(BannersManagerType.self)
-            .scope(.unique)
-        register { BannerKindTransformer() }
-            .implements(BannerKindTransformerType.self)
-            .scope(.unique)
-        
         register { DAppChannel() }
             .implements(DAppChannelType.self)
         
