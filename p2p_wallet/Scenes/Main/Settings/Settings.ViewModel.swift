@@ -269,7 +269,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         // set default fiat
         Defaults.fiat = fiat
         pricesService.clearCurrentPrices()
-        pricesService.fetchAllTokensPrice()
+        pricesService.fetchAllTokensPriceInWatchList()
         
         // accept new value
         fiatSubject.accept(fiat)

@@ -133,6 +133,13 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 return wallets
             }
             .observe(on: MainScheduler.instance)
+            .do(onSuccess: { [weak self] wallets in
+                guard let self = self else {return}
+                let newTokens = wallets.map {$0.token.symbol}
+                    .filter {!self.pricesService.getWatchList().contains($0)}
+                self.pricesService.addToWatchList(newTokens)
+                self.pricesService.fetchPrices(tokens: newTokens)
+            })
     }
     
     override func reload() {
