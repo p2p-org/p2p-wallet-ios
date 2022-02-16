@@ -22,15 +22,15 @@ class HiddenWalletsSectionHeaderView: BECollectionCell {
             UIView.spacer
         }
             .frame(height: 18)
-            .padding(.init(top: 18, left: 18, bottom: 0, right: 0))
+            .padding(.init(top: 18, left: 18, bottom: 18, right: 0))
             .onTap { [unowned self] in showHideHiddenWalletsAction?.execute() }
     }
     
     @discardableResult
     func setUp(isHiddenWalletsShown: Bool, hiddenWalletList: [Wallet]) -> Bool {
         guard let imageView = imageRef.view else { return false }
-        
-        var image = isHiddenWalletsShown ? UIImage.chevronDown : UIImage.chevronUp
+    
+        let image = isHiddenWalletsShown ?  UIImage.chevronUp : UIImage.chevronDown
         UIView.transition(with: imageView,
             duration: 0.3,
             options: .transitionCrossDissolve,

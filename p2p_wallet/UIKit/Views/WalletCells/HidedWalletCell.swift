@@ -19,8 +19,6 @@ class HidedWalletCell: BECollectionCell, BECollectionViewCell {
                 .frame(width: 70)
                 .backgroundColor(color: .ebf0fc)
                 .onTap { [unowned self] in
-                    print("tap")
-                    print(onSend)
                     onSend?()
                     baseWalletRef.view?.swipeableCellRef.view?.centralize()
                 },
