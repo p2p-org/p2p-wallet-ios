@@ -30,17 +30,20 @@ extension Home {
                         .balance
                         .drive(view.rx.text)
                         .disposed(by: disposeBag)
-                    
+    
+                    /*
                     viewModel
                         .isLoading
                         .drive(onNext: { [weak view] state in
                             if state {
-                                view?.showLoader()
+                                view?.hideLoader()
+                                view?.showLoader(customGradientColor: .defaultLoaderGradientColors)
                             } else {
                                 view?.hideLoader()
                             }
                         })
                         .disposed(by: disposeBag)
+                     */
                 }
             }
         }

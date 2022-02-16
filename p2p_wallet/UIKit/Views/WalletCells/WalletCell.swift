@@ -6,9 +6,11 @@
 //
 
 import ListPlaceholder
+import BEPureLayout
+import BECollectionView
 
 class WalletCell: BaseCollectionViewCell {
-    override var padding: UIEdgeInsets {.zero}
+    override var padding: UIEdgeInsets { .zero }
     
     lazy var coinLogoImageView = CoinLogoImageView(size: 45)
     lazy var coinSymbolLabel = UILabel(text: "<Coin name>", weight: .semibold, numberOfLines: 0)
@@ -36,7 +38,7 @@ class WalletCell: BaseCollectionViewCell {
         coinLogoImageView.tokenIcon.cancelPreviousTask()
         coinLogoImageView.tokenIcon.image = nil
     }
-
+    
     func setIsSelected(isSelected: Bool) {
         coinLogoImageView.alpha = isSelected ? 0.2 : 1
         coinCheckMark.isHidden = !isSelected
