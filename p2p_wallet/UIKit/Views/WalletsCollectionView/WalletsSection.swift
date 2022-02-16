@@ -15,8 +15,9 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
     class Header: BECollectionCell {
         override func build() -> UIView {
             UILabel(text: L10n.tokens, textSize: 13, weight: .medium, textColor: .secondaryLabel)
-                .padding(.init(only: .left, inset: 18))
                 .frame(height: 18)
+                .padding(.init(only: .left, inset: 18))
+                .padding(.init(only: .bottom, inset: 18))
         }
     }
     
