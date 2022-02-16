@@ -14,9 +14,6 @@ PODS:
   - Charts (3.6.0):
     - Charts/Core (= 3.6.0)
   - Charts/Core (3.6.0)
-  - CocoaLumberjack (3.7.4):
-    - CocoaLumberjack/Core (= 3.7.4)
-  - CocoaLumberjack/Core (3.7.4)
   - CryptoSwift (1.4.2)
   - Down (0.11.0)
   - FeeRelayerSwift (2.2.2):
@@ -164,8 +161,6 @@ PODS:
     - TweetNacl (~> 1.0.2)
   - Starscream (4.0.4)
   - SubviewAttachingTextView (1.5.0)
-  - SVGKit (3.0.0):
-    - CocoaLumberjack (~> 3.0)
   - SwiftGen (6.5.1)
   - SwiftLint (0.45.1)
   - SwiftyUserDefaults (5.3.0)
@@ -197,7 +192,6 @@ DEPENDENCIES:
   - RxCocoa
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
-  - SVGKit
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
@@ -211,7 +205,6 @@ SPEC REPOS:
     - Amplitude
     - BufferLayoutSwift
     - Charts
-    - CocoaLumberjack
     - CryptoSwift
     - Firebase
     - FirebaseAnalytics
@@ -240,7 +233,6 @@ SPEC REPOS:
     - secp256k1.swift
     - Starscream
     - SubviewAttachingTextView
-    - SVGKit
     - SwiftGen
     - SwiftLint
     - SwiftyUserDefaults
@@ -285,7 +277,6 @@ SPEC CHECKSUMS:
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   BufferLayoutSwift: 94e01c016df92afb017b2f7d4bc434f9915a275a
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
-  CocoaLumberjack: 543c79c114dadc3b1aba95641d8738b06b05b646
   CryptoSwift: a532e74ed010f8c95f611d00b8bbae42e9fe7c17
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: f652a5cc5914635319e4196784ff1e07e24cd627
@@ -321,7 +312,6 @@ SPEC CHECKSUMS:
   SolanaSwift: 7fb3d45c5de3840032c5735a62729cb9764147f4
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
-  SVGKit: 1ad7513f8c74d9652f94ed64ddecda1a23864dea
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
   SwiftLint: 06ac37e4d38c7068e0935bb30cda95f093bec761
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
@@ -329,6 +319,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 5bdc8acbd947da056440d6dd11a97693df0247f5
+PODFILE CHECKSUM: c9afbffabd8958eb2bce220d76dc1a92993b6c34
 
 COCOAPODS: 1.11.2
