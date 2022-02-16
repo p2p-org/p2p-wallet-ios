@@ -29,8 +29,8 @@ class HiddenWalletsSectionHeaderView: BECollectionCell {
     @discardableResult
     func setUp(isHiddenWalletsShown: Bool, hiddenWalletList: [Wallet]) -> Bool {
         guard let imageView = imageRef.view else { return false }
-    
-        let image = isHiddenWalletsShown ?  UIImage.chevronUp : UIImage.chevronDown
+        
+        let image = isHiddenWalletsShown ? UIImage.chevronUp : UIImage.chevronDown
         UIView.transition(with: imageView,
             duration: 0.3,
             options: .transitionCrossDissolve,
@@ -56,8 +56,10 @@ class HiddenWalletsSection: WalletsSection {
         ),
         footer: BECollectionViewSectionFooterLayout? = nil,
         background: UICollectionReusableView.Type? = nil,
-        onSend: BECallback<Wallet>? = nil
+        onSend: BECallback<Wallet>? = nil,
+        showHideHiddenWalletsAction: CocoaAction?
     ) {
+        self.showHideHiddenWalletsAction = showHideHiddenWalletsAction
         super.init(
             index: index,
             viewModel: viewModel,
