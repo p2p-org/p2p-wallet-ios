@@ -120,10 +120,12 @@ protocol SwapServiceType {
      */
     func getFees(
         sourceAddress: String,
+        sourceMint: String,
         availableSourceMintAddresses: [String],
         destinationAddress: String?,
-        destinationToken: SolanaSDK.Token?,
+        destinationToken: SolanaSDK.Token,
         bestPoolsPair: Swap.PoolsPair?,
+        payingTokenMint: String?,
         inputAmount: Double?,
         slippage: Double,
         lamportsPerSignature: UInt64,
