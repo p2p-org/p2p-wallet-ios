@@ -93,11 +93,11 @@ protocol SwapServiceType {
      */
     func swap(
         sourceAddress: String,
-        sourceTokenMint: String?,
+        sourceTokenMint: String,
         destinationAddress: String?,
-        destinationTokenMint: String?,
-        payingTokenAddress: String,
-        payingTokenMint: String,
+        destinationTokenMint: String,
+        payingTokenAddress: String?,
+        payingTokenMint: String?,
         poolsPair: Swap.PoolsPair,
         amount: UInt64,
         slippage: Double
@@ -120,10 +120,12 @@ protocol SwapServiceType {
      */
     func getFees(
         sourceAddress: String,
+        sourceMint: String,
         availableSourceMintAddresses: [String],
         destinationAddress: String?,
-        destinationToken: SolanaSDK.Token?,
+        destinationToken: SolanaSDK.Token,
         bestPoolsPair: Swap.PoolsPair?,
+        payingTokenMint: String?,
         inputAmount: Double?,
         slippage: Double,
         lamportsPerSignature: UInt64,
