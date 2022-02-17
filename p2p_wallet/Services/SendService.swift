@@ -110,7 +110,7 @@ class SendService: SendServiceType {
                 )
                     .map { [weak self] preparedTransaction in
                         guard let self = self else {throw SolanaSDK.Error.unknown}
-                        return self.relayService.calculateFee(preparedTransaction: preparedTransaction)
+                        return self.relayService.calculateNeededTopUpAmount(expectedFee: preparedTransaction.expectedFee)
                     }
             case .reward:
                 return .just(.zero)
