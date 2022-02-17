@@ -67,6 +67,8 @@ extension Home {
                     
                     BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
                         guard let self = self else { return UIView() }
+                        print(state)
+                        print(self.viewModel.walletsRepository.getError())
                         return state ? self.content() : self.emptyScreen()
                     }
                 }
@@ -148,12 +150,14 @@ private extension HomeViewModelType {
                     partialResult,
                     wallet
                 ) in
-                    partialResult + wallet.amountInCurrentFiat
+                    partialResult + wallet.amount
                 }))
             }.map { (state, amount) in
+                print(state, amount)
                 if state != .loaded { return true }
                 return amount > 0
-            }.distinctUntilChanged { $0 }
+            }
+            .distinctUntilChanged { $0 }
             .asDriver(onErrorJustReturn: true)
     }
 }
