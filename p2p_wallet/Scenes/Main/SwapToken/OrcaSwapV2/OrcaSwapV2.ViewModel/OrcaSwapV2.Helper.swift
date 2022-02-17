@@ -139,15 +139,15 @@ extension OrcaSwapV2.ViewModel {
 
     func feesRequest() -> Single<[PayingFee]> {
         guard
-            let sourceWallet = self.sourceWalletSubject.value,
+            let sourceWallet = sourceWalletSubject.value,
             let sourceWalletPubkey = sourceWallet.pubkey,
-            let lamportsPerSignature = self.feeService.lamportsPerSignature,
-            let minRenExempt = self.feeService.minimumBalanceForRenExemption
+            let destinationWallet = destinationWalletSubject.value,
+            let lamportsPerSignature = feeService.lamportsPerSignature,
+            let minRenExempt = feeService.minimumBalanceForRenExemption
         else {
             return .just([])
         }
 
-        let destinationWallet = self.destinationWalletSubject.value
         let bestPoolsPair = self.bestPoolsPairSubject.value
         let inputAmount = self.inputAmountSubject.value
         let myWalletsMints = self.walletsRepository.getWallets().compactMap { $0.token.address }
@@ -155,10 +155,12 @@ extension OrcaSwapV2.ViewModel {
 
         return swapService.getFees(
             sourceAddress: sourceWalletPubkey,
+            sourceMint: sourceWallet.mintAddress,
             availableSourceMintAddresses: myWalletsMints,
-            destinationAddress: destinationWallet?.pubkey,
-            destinationToken: destinationWallet?.token,
+            destinationAddress: destinationWallet.pubkey,
+            destinationToken: destinationWallet.token,
             bestPoolsPair: bestPoolsPair,
+            payingTokenMint: payingTokenSubject.value?.mintAddress,
             inputAmount: inputAmount,
             slippage: slippage,
             lamportsPerSignature: lamportsPerSignature,
