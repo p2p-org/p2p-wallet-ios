@@ -93,11 +93,11 @@ protocol SwapServiceType {
      */
     func swap(
         sourceAddress: String,
-        sourceTokenMint: String?,
+        sourceTokenMint: String,
         destinationAddress: String?,
-        destinationTokenMint: String?,
-        payingTokenAddress: String,
-        payingTokenMint: String,
+        destinationTokenMint: String,
+        payingTokenAddress: String?,
+        payingTokenMint: String?,
         poolsPair: Swap.PoolsPair,
         amount: UInt64,
         slippage: Double

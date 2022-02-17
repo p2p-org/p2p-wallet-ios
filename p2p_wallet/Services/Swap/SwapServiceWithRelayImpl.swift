@@ -183,52 +183,41 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
     func swap(
         sourceAddress: String,
-        sourceTokenMint: String?,
+        sourceTokenMint: String,
         destinationAddress: String?,
-        destinationTokenMint: String?,
-        payingTokenAddress: String,
-        payingTokenMint: String,
+        destinationTokenMint: String,
+        payingTokenAddress: String?,
+        payingTokenMint: String?,
         poolsPair: Swap.PoolsPair,
         amount: UInt64,
         slippage: Double
     ) -> Single<[String]> {
         guard let poolsPair = poolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
         
-        // SWAP FROM SOL OR PAYING WITH SOL
-        if sourceAddress == accountStorage.account?.publicKey.base58EncodedString ||
-            payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-        {
-            guard let decimals = poolsPair.orcaPoolPair[0].getTokenADecimals() else {
-                return .error(OrcaSwapError.invalidPool)
-            }
-            
-            return orcaSwap.swap(
-                fromWalletPubkey: sourceAddress,
-                toWalletPubkey: destinationAddress,
-                bestPoolsPair: poolsPair.orcaPoolPair,
-                amount: amount.convertToBalance(decimals: decimals),
-                slippage: slippage,
-                isSimulation: false
-            ).map { response in [response.transactionId] }
+        // SWAP NATIVELY
+        if isUsingNativeSwap(sourceAddress: sourceAddress, payingTokenMint: payingTokenMint) {
+            return swapNatively(
+                poolsPair: poolsPair.orcaPoolPair,
+                sourceAddress: sourceAddress,
+                destinationAddress: destinationAddress,
+                amount: amount,
+                slippage: slippage
+            )
         }
-
-        guard let feeRelay = feeRelay else { return .error(SolanaSDK.Error.other("Fee relay is not ready")) }
-        guard let sourceTokenMint = sourceTokenMint else { return .error(SolanaSDK.Error.other("Invalid source mint address")) }
-        guard let destinationTokenMint = destinationTokenMint else { return .error(SolanaSDK.Error.other("Invalid destination mint address")) }
-
-        // if it's spl -> spl or sol -> spl, then use relay
-        let payingFeeToken = FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
-        return feeRelay.prepareSwapTransaction(
-            sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
-            destinationTokenMint: destinationTokenMint,
-            destinationAddress: destinationAddress,
-            payingFeeToken: payingFeeToken,
-            swapPools: poolsPair.orcaPoolPair,
-            inputAmount: amount,
-            slippage: slippage
-        ).flatMap { [weak self] transaction in
-            guard let feeRelay = self?.feeRelay else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
-            return feeRelay.topUpAndRelayTransaction(preparedTransaction: transaction, payingFeeToken: payingFeeToken)
+        
+        // SWAP VIA RELAY PROGRAM
+        else {
+            return swapViaRelayProgram(
+                sourceAddress: sourceAddress,
+                sourceTokenMint: sourceTokenMint,
+                destinationAddress: destinationAddress,
+                destinationTokenMint: destinationTokenMint,
+                payingTokenAddress: payingTokenAddress,
+                payingTokenMint: payingTokenMint,
+                poolsPair: poolsPair.orcaPoolPair,
+                amount: amount,
+                slippage: slippage
+            )
         }
     }
 
@@ -245,6 +234,68 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
         func getOutputAmount(fromInputAmount inputAmount: UInt64) -> UInt64? {
             orcaPoolPair.getOutputAmount(fromInputAmount: inputAmount)
+        }
+    }
+    
+    // MARK: - Helpers
+    private func isUsingNativeSwap(
+        sourceAddress: String,
+        payingTokenMint: String?
+    ) -> Bool {
+        sourceAddress == accountStorage.account?.publicKey.base58EncodedString ||
+            payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+    }
+    
+    private func swapNatively(
+        poolsPair: OrcaSwap.PoolsPair,
+        sourceAddress: String,
+        destinationAddress: String?,
+        amount: UInt64,
+        slippage: Double
+    ) -> Single<[String]> {
+        guard let decimals = poolsPair[0].getTokenADecimals() else {
+            return .error(OrcaSwapError.invalidPool)
+        }
+        
+        return orcaSwap.swap(
+            fromWalletPubkey: sourceAddress,
+            toWalletPubkey: destinationAddress,
+            bestPoolsPair: poolsPair,
+            amount: amount.convertToBalance(decimals: decimals),
+            slippage: slippage,
+            isSimulation: false
+        ).map { response in [response.transactionId] }
+    }
+    
+    private func swapViaRelayProgram(
+        sourceAddress: String,
+        sourceTokenMint: String,
+        destinationAddress: String?,
+        destinationTokenMint: String,
+        payingTokenAddress: String?,
+        payingTokenMint: String?,
+        poolsPair: OrcaSwap.PoolsPair,
+        amount: UInt64,
+        slippage: Double
+    ) -> Single<[String]> {
+        guard let feeRelay = feeRelay else { return .error(SolanaSDK.Error.other("Fee relay is not ready")) }
+
+        // if it's spl -> spl or sol -> spl, then use relay
+        var payingFeeToken: FeeRelayer.Relay.TokenInfo?
+        if let payingTokenAddress = payingTokenAddress, let payingTokenMint = payingTokenMint {
+            payingFeeToken = FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
+        }
+        return feeRelay.prepareSwapTransaction(
+            sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
+            destinationTokenMint: destinationTokenMint,
+            destinationAddress: destinationAddress,
+            payingFeeToken: payingFeeToken,
+            swapPools: poolsPair,
+            inputAmount: amount,
+            slippage: slippage
+        ).flatMap { [weak self] transaction in
+            guard let feeRelay = self?.feeRelay else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
+            return feeRelay.topUpAndRelayTransaction(preparedTransaction: transaction, payingFeeToken: payingFeeToken)
         }
     }
 }
