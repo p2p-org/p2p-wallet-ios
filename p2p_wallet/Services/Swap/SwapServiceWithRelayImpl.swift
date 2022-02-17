@@ -335,7 +335,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                     .init(
                         type: .accountCreationFee(token: destinationToken.symbol),
                         lamports: neededTopUpAmount.accountBalances,
-                        token: destinationToken
+                        token: .nativeSolana
                     )
                 )
                 
