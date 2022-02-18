@@ -30,6 +30,15 @@ struct PayingFee {
                 return L10n.transactionFee
             }
         }
+        
+        var isNetworkFee: Bool {
+            switch self {
+            case .transactionFee, .accountCreationFee:
+                return true
+            default:
+                return false
+            }
+        }
     }
     
     let type: FeeType
@@ -92,6 +101,26 @@ extension Array where Element == PayingFee {
         let lamports = array.reduce(SolanaSDK.Lamports(0), {$0 + $1.lamports})
         
         return (lamports: lamports, token: token)
+    }
+    
+    var networkFees: SolanaSDK.FeeAmount? {
+        var transactionFee: UInt64?
+        var accountCreationFee: UInt64?
+        for fee in self {
+            switch fee.type {
+            case .transactionFee:
+                transactionFee = fee.lamports
+            case .accountCreationFee:
+                accountCreationFee = fee.lamports
+            default:
+                break
+            }
+        }
+        
+        if let transactionFee = transactionFee, let accountCreationFee = accountCreationFee {
+            return .init(transaction: transactionFee, accountBalances: accountCreationFee)
+        }
+        return nil
     }
     
     func transactionFees(of token: String) -> SolanaSDK.Lamports {

@@ -128,7 +128,7 @@ class SendService: SendServiceType {
         if payingFeeWallet.isNativeSOL {return .just(feeInSOL)}
         return relayService.calculateFeeInPayingToken(
             feeInSOL: feeInSOL,
-            payingFeeToken: .init(address: payingFeeWalletAddress, mint: payingFeeWallet.mintAddress)
+            payingFeeTokenMint: payingFeeWallet.mintAddress
         )
     }
     

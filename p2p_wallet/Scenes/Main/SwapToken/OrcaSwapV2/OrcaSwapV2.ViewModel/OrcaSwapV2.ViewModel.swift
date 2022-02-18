@@ -185,6 +185,7 @@ extension OrcaSwapV2 {
             let bestPoolsPair = bestPoolsPairSubject.value!
             let inputAmount = inputAmountSubject.value!
             let estimatedAmount = estimatedAmountSubject.value!
+            let payingWallet = payingWalletSubject.value
 
             // log
             analyticsManager.log(
@@ -195,27 +196,47 @@ extension OrcaSwapV2 {
                     sumB: estimatedAmount
                 )
             )
-
-            guard
-                let payingTokenAddress = payingWalletSubject.value?.pubkey,
-                let payingTokenMint = payingWalletSubject.value?.mintAddress
-            else {
-                errorSubject.accept(.payingFeeWalletNotFound)
-                return
+            
+            // check if payingWallet has enough balance to cover fee
+            let checkRequest: Completable
+            if let fees = feesSubject.value?.networkFees,
+               let payingWallet = payingWallet
+            {
+                checkRequest = swapService.calculateNetworkFeeInPayingToken(networkFee: fees, payingTokenMint: payingWallet.mintAddress)
+                    .map { amount -> Bool in
+                        if let amount = amount,
+                            let currentAmount = payingWallet.lamports,
+                            amount > currentAmount
+                        {
+                            throw SolanaSDK.Error.other(
+                                L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                                + ". "
+                                + L10n.needsAtLeast("\(amount.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)")
+                                + ". "
+                                + L10n.pleaseChooseAnotherTokenAndTryAgain
+                            )
+                        }
+                        return true
+                    }
+                    .asCompletable()
+            } else {
+                checkRequest = .empty()
             }
-
-            // form request
-            let request = swapService.swap(
-                sourceAddress: sourceWallet.pubkey!,
-                sourceTokenMint: sourceWallet.mintAddress,
-                destinationAddress: destinationWallet.pubkey,
-                destinationTokenMint: destinationWallet.mintAddress,
-                payingTokenAddress: payingTokenAddress,
-                payingTokenMint: payingTokenMint,
-                poolsPair: bestPoolsPair,
-                amount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
-                slippage: slippageSubject.value
-            ).map { $0.first ?? "" as ProcessTransactionResponseType }
+            
+            let request = checkRequest
+                .andThen(
+                    swapService.swap(
+                        sourceAddress: sourceWallet.pubkey!,
+                        sourceTokenMint: sourceWallet.mintAddress,
+                        destinationAddress: destinationWallet.pubkey,
+                        destinationTokenMint: destinationWallet.mintAddress,
+                        payingTokenAddress: payingWallet?.pubkey,
+                        payingTokenMint: payingWallet?.mintAddress,
+                        poolsPair: bestPoolsPair,
+                        amount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
+                        slippage: slippageSubject.value
+                    ).map { $0.first ?? "" as ProcessTransactionResponseType }
+                )
 
             // show processing scene
             navigationSubject.accept(
