@@ -95,7 +95,7 @@ class BaseWalletCell: BECompositionView {
             exchangePriceRef.view?.isHidden = true
         }
         
-        amountInFiatRef.view?.text = "\(Defaults.fiat.symbol) \(item.amountInCurrentFiat)"
+        amountInFiatRef.view?.text = "\(Defaults.fiat.symbol) \(item.amountInCurrentFiat.toString(maximumFractionDigits: 2))"
     }
     
     func showLoading() {

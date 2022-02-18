@@ -62,6 +62,8 @@ extension Home {
                     
                     BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
                         guard let self = self else { return UIView() }
+                        print(state)
+                        print(self.viewModel.walletsRepository.getError())
                         return state ? self.content() : self.emptyScreen()
                     }
                 }
@@ -100,7 +102,7 @@ extension Home {
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
-
+                        
                         collectionView.contentInset.modify(dTop: 180, dBottom: 120)
                         collectionView.clipsToBounds = true
                         
@@ -142,11 +144,14 @@ private extension HomeViewModelType {
                     partialResult,
                     wallet
                 ) in
-                    partialResult + wallet.amountInCurrentFiat
+                    partialResult + wallet.amount
                 }))
             }.map { (state, amount) in
+                print(state, amount)
                 if state != .loaded { return true }
                 return amount > 0
-            }.asDriver(onErrorJustReturn: true)
+            }
+            .distinctUntilChanged { $0 }
+            .asDriver(onErrorJustReturn: true)
     }
 }
