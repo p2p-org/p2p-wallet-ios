@@ -727,3 +727,5 @@
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library.";
 "Allow access to save your photos" = "Allow access to save your photos";
 "Open settings" = "Open settings";
+"Needs at least %@" = "Needs at least %@";
+"Please choose another token and try again!" = "Please choose another token and try again!";

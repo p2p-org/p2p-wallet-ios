@@ -138,7 +138,17 @@ protocol SwapServiceType {
      - Returns: The list of mint addresses
      - Throws:
      */
-    func findPosibleDestinationMints(fromMint: String) throws -> [String]
+    func findPosibleDestinationMints(
+        fromMint: String
+    ) throws -> [String]
+    
+    /**
+     Calculate amount needed for paying fee in paying token
+     */
+    func calculateNetworkFeeInPayingToken(
+        networkFee: SolanaSDK.FeeAmount,
+        payingTokenMint: String
+    ) -> Single<SolanaSDK.Lamports?>
 }
 
 enum SwapError: Error {
