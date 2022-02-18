@@ -35,7 +35,7 @@ extension ReceiveToken {
                         self.viewModel.copyToClipboard()
                     }.onShare { [unowned self] image in
                         self.viewModel.share(image: image)
-                    }.onSave { image in
+                    }.onSave { [unowned self] image in
                         self.viewModel.saveAction(image: image)
                     }.setupWithType(QrCodeCard.self) { card in
                         viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
