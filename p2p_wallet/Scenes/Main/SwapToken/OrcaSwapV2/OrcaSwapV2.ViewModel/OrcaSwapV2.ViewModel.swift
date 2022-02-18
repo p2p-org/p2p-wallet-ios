@@ -33,7 +33,7 @@ extension OrcaSwapV2 {
         let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
         let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
         let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
-        let payingTokenSubject = BehaviorRelay<Wallet?>(value: nil)
+        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
 
         let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
@@ -43,7 +43,7 @@ extension OrcaSwapV2 {
         init(
             initialWallet: Wallet?
         ) {
-            payingTokenSubject.accept(walletsRepository.nativeWallet)
+            payingWalletSubject.accept(walletsRepository.nativeWallet)
             reload()
             bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
         }
@@ -129,7 +129,8 @@ extension OrcaSwapV2 {
                 inputAmountSubject,
                 slippageSubject,
                 destinationWalletSubject,
-                sourceWalletSubject
+                sourceWalletSubject,
+                payingWalletSubject
             )
             .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
@@ -148,7 +149,7 @@ extension OrcaSwapV2 {
                 bestPoolsPairSubject,
                 feesSubject.valueObservable,
                 slippageSubject,
-                payingTokenSubject
+                payingWalletSubject
             )
             .map { [weak self] _ in self?.verify() }
             .bind(to: errorSubject)
@@ -196,8 +197,8 @@ extension OrcaSwapV2 {
             )
 
             guard
-                let payingTokenAddress = payingTokenSubject.value?.pubkey,
-                let payingTokenMint = payingTokenSubject.value?.mintAddress
+                let payingTokenAddress = payingWalletSubject.value?.pubkey,
+                let payingTokenMint = payingWalletSubject.value?.mintAddress
             else {
                 errorSubject.accept(.payingFeeWalletNotFound)
                 return
