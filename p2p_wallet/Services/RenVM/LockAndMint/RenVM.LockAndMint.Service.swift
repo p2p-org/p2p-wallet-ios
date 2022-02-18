@@ -344,7 +344,7 @@ extension RenVM.LockAndMint {
             state: RenVM.State,
             tx: ProcessingTx
         ) -> Single<(amountOut: String?, signature: String)> {
-            lockAndMint.mint(state: state, signer: self.account.secretKey)
+            lockAndMint.mint(state: state, signer: account.secretKey)
                 .do(onSuccess: { [weak self] _ in
                     self?.sessionStorage.processingTx(tx: tx.tx, didMintAt: Date())
                 }, onError: {[weak self] error in

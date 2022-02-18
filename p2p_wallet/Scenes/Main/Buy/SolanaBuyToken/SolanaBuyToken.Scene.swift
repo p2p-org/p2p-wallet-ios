@@ -101,7 +101,7 @@ extension SolanaBuyToken {
                             // Output amount
                             UIStackView(axis: .horizontal) {
                                 UILabel(text: "0.00 ETH").setup { view in
-                                    self.viewModel.quoteAmount.map { value in "\(value) ETH" }
+                                    viewModel.quoteAmount.map { value in "\(value) ETH" }
                                         .drive(view.rx.text).disposed(by: disposeBag)
                                 }
                                 UIImageView(image: .arrowUpDown)
