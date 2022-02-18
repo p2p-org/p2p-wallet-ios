@@ -70,9 +70,9 @@ class TokenSettingsViewController: WLIndicatorModalVC {
         case .closeConfirmation:
             guard let symbol = viewModel.wallet?.token.symbol else {return}
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
-            vc.completion = {
-                vc.dismiss(animated: true) { [unowned self] in
-                    self.authenticationHandler.authenticate(
+            vc.completion = { [weak vc] in
+                vc?.dismiss(animated: true) { [weak self] in
+                    self?.authenticationHandler.authenticate(
                         presentationStyle: .init(
                             isRequired: false,
                             isFullScreen: false,
@@ -85,12 +85,12 @@ class TokenSettingsViewController: WLIndicatorModalVC {
                     )
                 }
             }
-            self.present(vc, animated: true, completion: nil)
+            present(vc, animated: true, completion: nil)
         case .processTransaction(let request, let transactionType):
             let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
             let vc = ProcessTransaction.ViewController(viewModel: vm)
             vc.delegate = self
-            self.present(vc, animated: true, completion: nil)
+            present(vc, animated: true, completion: nil)
         }
     }
 }

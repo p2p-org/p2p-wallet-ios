@@ -108,9 +108,10 @@ class SendService: SendServiceType {
                     minRentExemption: feeService.minimumBalanceForRenExemption,
                     usingCachedFeePayerPubkey: true
                 )
-                    .map { [weak self] preparedTransaction in
+                    .flatMap { [weak self] preparedTransaction in
                         guard let self = self else {throw SolanaSDK.Error.unknown}
                         return self.relayService.calculateNeededTopUpAmount(expectedFee: preparedTransaction.expectedFee)
+                            .map(Optional.init)
                     }
             case .reward:
                 return .just(.zero)

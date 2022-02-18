@@ -299,13 +299,14 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 sourceTokenMint: sourceMint,
                 destinationTokenMint: destinationToken.address,
                 destinationAddress: destinationAddress
-            ),
+            )
+                .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
+                    guard let self = self else { throw SolanaSDK.Error.unknown }
+                    return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee)
+                },
             relayService!.getFreeTransactionFeeLimit(useCache: true)
         )
-            .map { [weak self] networkFee, freeTransactionFeeLimit in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
-                
-                let neededTopUpAmount = self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee)
+            .map { neededTopUpAmount, freeTransactionFeeLimit in
                 
                 var allFees = [PayingFee]()
                 var isFree = false
