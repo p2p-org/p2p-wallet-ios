@@ -9,6 +9,7 @@ import Foundation
 import BECollectionView
 
 extension Home {
+    
     final class WalletCell: EditableWalletCell {
         lazy var coinFullnameLabel = UILabel(text: "<description>", textSize: 13, textColor: .textSecondary, numberOfLines: 1)
         lazy var indicatorColorView = UIView(width: 3, cornerRadius: 1.5)
