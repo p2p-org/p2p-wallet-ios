@@ -89,13 +89,11 @@ extension ReceiveToken {
                     UIView.greyBannerView {
                         createQRHint()
                     }
-                        .setup { [weak self] view in
-                            guard let self = self else { return }
-
-                            self.viewModel.hasHintViewOnTopDriver
+                        .setup { view in
+                            viewModel.hasHintViewOnTopDriver
                                 .map { !$0 }
                                 .drive(view.rx.isHidden)
-                                .disposed(by: self.disposeBag)
+                                .disposed(by: disposeBag)
                         }
 
                     ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
@@ -144,12 +142,12 @@ extension ReceiveToken {
         
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
-            self.tabBarController?.tabBar.isHidden = false
+            tabBarController?.tabBar.isHidden = false
         }
         
         override func viewWillDisappear(_ animated: Bool) { // As soon as vc disappears
             super.viewWillDisappear(true)
-            self.tabBarController?.tabBar.isHidden = true
+            tabBarController?.tabBar.isHidden = true
         }
 
         private func createQRHint() -> UILabel {

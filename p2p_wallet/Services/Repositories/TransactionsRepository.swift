@@ -16,14 +16,15 @@ protocol TransactionsRepository {
 extension SolanaSDK: TransactionsRepository {
     func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[SolanaSDK.ParsedTransaction]> {
         getSignaturesForAddress(address: account, configs: RequestConfiguration(limit: limit, before: before))
-            .flatMap {activities in
-                
+            .flatMap { [weak self] activities in
+                guard let self = self else {throw Error.unknown}
                 // construct parser
                 let parser = SolanaSDK.TransactionParser(solanaSDK: self)
                 
                 // parse
-                return Single.zip(activities.map { activity in
-                    self.getTransaction(account: account, accountSymbol: accountSymbol, signature: activity.signature, parser: parser, p2pFeePayerPubkeys: p2pFeePayerPubkeys)
+                return Single.zip(try activities.map { [weak self] activity in
+                    guard let self = self else {throw Error.unknown}
+                    return self.getTransaction(account: account, accountSymbol: accountSymbol, signature: activity.signature, parser: parser, p2pFeePayerPubkeys: p2pFeePayerPubkeys)
                         .map {
                             SolanaSDK.ParsedTransaction(
                                 status: $0.status,

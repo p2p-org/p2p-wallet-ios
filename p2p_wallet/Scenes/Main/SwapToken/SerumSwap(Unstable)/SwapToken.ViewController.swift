@@ -132,7 +132,7 @@ extension SerumSwapV1 {
 //                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .processTransaction(let request, let transactionType):
                 let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             default:
                 break
             }

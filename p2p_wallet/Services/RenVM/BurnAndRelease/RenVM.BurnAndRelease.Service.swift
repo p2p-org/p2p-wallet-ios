@@ -137,9 +137,10 @@ extension RenVM.BurnAndRelease {
                     let state = try burnAndRelease.getBurnState(burnDetails: detail)
                     return burnAndRelease.release(state: state, details: detail)
                 }
-                .catch {_ in
+                .catch { [weak self] _ in
+                    guard let self = self else { throw RenVM.Error.unknown }
                     // retry after 3 sec
-                    Single<Void>.just(())
+                    return Single<Void>.just(())
                         .delay(.seconds(3), scheduler: self.scheduler)
                         .flatMap {[weak self] in
                             guard let self = self else {throw RenVM.Error.unknown}
