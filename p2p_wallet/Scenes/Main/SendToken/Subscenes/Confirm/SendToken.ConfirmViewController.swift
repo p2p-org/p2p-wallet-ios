@@ -83,8 +83,9 @@ extension SendToken {
                                 viewModel.networkDriver,
                                 viewModel.feesDriver
                             )
-                                .drive(with: view, onNext: { view, params in
-                                    view.setUp(
+                                .drive(onNext: { [weak self, weak view] params in
+                                    guard let self = self else {return}
+                                    view?.setUp(
                                         network: params.0,
                                         feeAmount: params.1,
                                         prices: self.viewModel.getSOLAndRenBTCPrices()
