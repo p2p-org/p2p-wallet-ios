@@ -129,6 +129,13 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     public func findPosibleDestinationMints(fromMint: String) throws -> [String] {
         try orcaSwap.findPosibleDestinationMints(fromMint: fromMint)
     }
+    
+    func calculateNetworkFeeInPayingToken(
+        networkFee: SolanaSDK.FeeAmount,
+        payingTokenMint: String
+    ) -> Single<SolanaSDK.Lamports?> {
+        relayService!.calculateFeeInPayingToken(feeInSOL: networkFee.total, payingFeeTokenMint: payingTokenMint)
+    }
 
     func swap(
         sourceAddress: String,

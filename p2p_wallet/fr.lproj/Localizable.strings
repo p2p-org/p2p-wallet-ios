@@ -727,3 +727,5 @@
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Ceci est nécessaire pour que l'application enregistre les codes QR générés ou sauvegarde vos phrases de départ dans votre photothèque.";
 "Allow access to save your photos" = "Autoriser l'accès pour enregistrer vos photos";
 "Open settings" = "Ouvrir les paramètres";
+"Needs at least %@" = "Nécessite au moins %@";
+"Please choose another token and try again!" = "Veuillez choisir un autre jeton et réessayer !";
