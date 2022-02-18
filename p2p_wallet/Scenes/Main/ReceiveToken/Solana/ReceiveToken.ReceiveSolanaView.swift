@@ -32,9 +32,9 @@ extension ReceiveToken {
                 )
                     .onCopy { [unowned self] _ in
                         self.viewModel.copyAction()
-                    }.onShare { image in
+                    }.onShare { [unowned self] image in
                         self.viewModel.shareAction(image: image)
-                    }.onSave { image in
+                    }.onSave { [unowned self] image in
                         self.viewModel.saveAction(image: image)
                     }
                 

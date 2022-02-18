@@ -142,14 +142,14 @@ extension Home {
                 let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 analyticsManager.log(event: .mainScreenSwapOpen)
                 analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
-                self.show(vc, sender: nil)
+                show(vc, sender: nil)
             case .settings:
                 analyticsManager.log(event: .mainScreenSettingsOpen)
                 analyticsManager.log(event: .settingsOpen(lastScreen: "main_screen"))
                 
                 let vm = Settings.ViewModel(reserveNameHandler: viewModel)
                 let vc = Settings.ViewController(viewModel: vm)
-                self.show(vc, sender: nil)
+                show(vc, sender: nil)
             case .reserveName(let owner):
                 let vm = ReserveName.ViewModel(
                     kind: .independent,

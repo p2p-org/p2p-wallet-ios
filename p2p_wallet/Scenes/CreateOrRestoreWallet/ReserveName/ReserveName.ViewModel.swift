@@ -119,7 +119,7 @@ extension ReserveName {
             geetest_validate: String
         ) {
             guard let name = textFieldTextSubject.value else { return }
-            self.analyticsManager.log(event: .usernameSaved(lastScreen: "Onboarding"))
+            analyticsManager.log(event: .usernameSaved(lastScreen: "Onboarding"))
 
             startLoading()
             nameService

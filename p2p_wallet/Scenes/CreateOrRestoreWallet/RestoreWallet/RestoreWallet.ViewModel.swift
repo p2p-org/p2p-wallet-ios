@@ -117,8 +117,8 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     }
     
     func handleICloudAccount(_ account: Account) {
-        self.phrases = account.phrase.components(separatedBy: " ")
-        self.derivablePath = account.derivablePath
+        phrases = account.phrase.components(separatedBy: " ")
+        derivablePath = account.derivablePath
         if let name = account.name {
             self.name = name
             finish()
