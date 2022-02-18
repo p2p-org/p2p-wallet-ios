@@ -16,7 +16,7 @@ PODS:
   - Charts/Core (3.6.0)
   - CryptoSwift (1.4.2)
   - Down (0.11.0)
-  - FeeRelayerSwift (2.2.3):
+  - FeeRelayerSwift (2.2.5):
     - OrcaSwapSwift (~> 1.0.17)
     - RxAlamofire (~> 6.1.1)
     - SolanaSwift (~> 1.3.5)
@@ -279,7 +279,7 @@ SPEC CHECKSUMS:
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   CryptoSwift: a532e74ed010f8c95f611d00b8bbae42e9fe7c17
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
-  FeeRelayerSwift: 5ef05484b0524b2814a8b7f28961d1688efde91c
+  FeeRelayerSwift: b2c152c993ad7f000e458e2715332e5cca937937
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
   FirebaseAnalytics: 319c9b3b1bdd400d60e2f415dff0c5f6959e6760
   FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440

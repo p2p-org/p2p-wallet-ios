@@ -216,7 +216,7 @@ extension SendToken.ConfirmViewController {
         }
         
         @objc func feeInfoButtonDidTap() {
-            switch self.viewModel.relayMethod {
+            switch viewModel.relayMethod {
             case .reward:
                 let title = L10n.free.uppercaseFirst
                 let message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
