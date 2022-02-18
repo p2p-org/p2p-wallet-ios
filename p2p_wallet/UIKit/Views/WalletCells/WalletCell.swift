@@ -52,7 +52,7 @@ class WalletCell: BaseCollectionViewCell {
         } else {
             coinSymbolLabel.text = item.name /*+ (item.isProcessing == true ? " (\(L10n.creating))" : "")*/
         }
-        tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
+        tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: Int(item.token.decimals))) \(item.token.symbol)"
         
         if let price = item.price {
             equityValueLabel.isHidden = false
