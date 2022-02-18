@@ -29,16 +29,21 @@ extension OrcaSwapV2 {
                 case .loaded:
                     let value = snapshot.value ?? []
                     let group = Dictionary(grouping: value, by: { $0.type.headerString })
+                        .sorted { el1, el2 in
+                            let id1 = value.firstIndex(where: {$0.type.headerString == el1.value.first?.type.headerString}) ?? 0
+                            let id2 = value.firstIndex(where: {$0.type.headerString == el2.value.first?.type.headerString}) ?? 0
+                            return id1 < id2
+                        }
 
                     return BEVStack {
                         // Fee categories
-                        for (header, fees) in group {
-                            if fees.contains(where: { fee in fee.isFree }) {
+                        for el in group {
+                            if el.value.contains(where: { fee in fee.isFree }) {
                                 // Free fee
                                 self.customRow(
-                                    title: header,
+                                    title: el.key,
                                     trailing: BEVStack {
-                                        for fee in fees {
+                                        for fee in el.value {
                                             self.freeFee(fee: fee)
                                                 .onTap { [unowned self] in self.clickHandler?(fee) }
                                         }
@@ -46,7 +51,7 @@ extension OrcaSwapV2 {
                                 )
                             } else {
                                 // Normal fee
-                                self.row(title: header, descriptions: fees.map { self.formatAmount(fee: $0) })
+                                self.row(title: el.key, descriptions: el.value.map { self.formatAmount(fee: $0) })
                             }
                         }
                         // Separator
@@ -70,7 +75,7 @@ extension OrcaSwapV2 {
         func calculateTotalFee(fees: [PayingFee]) -> String {
             let totalFeesSymbol = fees.first(where: { $0.type == .transactionFee })?.token.symbol
             if let totalFeesSymbol = totalFeesSymbol {
-                let totalFees = fees.filter { $0.token.symbol == totalFeesSymbol }
+                let totalFees = fees.filter { $0.token.symbol == totalFeesSymbol && $0.type != .liquidityProviderFee }
                 let decimals = totalFees.first?.token.decimals ?? 0
                 let amount =
                     totalFees

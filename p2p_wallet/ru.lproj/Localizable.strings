@@ -727,3 +727,5 @@
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Это необходимо для того, чтобы приложение могло сохранять сгенерированные QR-коды или создавать резервные копии исходных фраз в вашей библиотеке фотографий.";
 "Allow access to save your photos" = "Разрешите доступ для сохранения ваших фотографий";
 "Open settings" = "Открыть настройки";
+"Needs at least %@" = "Требуется не менее %@";
+"Please choose another token and try again!" = "Выберите другой токен и повторите попытку!";

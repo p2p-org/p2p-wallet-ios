@@ -248,10 +248,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     var feePayingTokenDriver: Driver<Wallet?> {
-        payingTokenSubject.asDriver()
+        payingWalletSubject.asDriver()
     }
 
     func changeFeePayingToken(to payingToken: Wallet) {
-        payingTokenSubject.accept(payingToken)
+        payingWalletSubject.accept(payingToken)
     }
 }
