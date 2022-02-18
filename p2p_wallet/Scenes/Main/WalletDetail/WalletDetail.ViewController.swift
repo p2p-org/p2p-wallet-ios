@@ -106,7 +106,7 @@ extension WalletDetail {
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             case .send(let wallet):
                 let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil, relayMethod: .default)
                 let vc = SendToken.ViewController(viewModel: vm)

@@ -96,7 +96,7 @@ class PricesService {
             return .just([:])
         }
         
-        return self.fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+        return fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
             .map {prices -> [String: CurrentPrice?] in
                 var prices = prices
                 prices["renBTC"] = prices["BTC"]
@@ -169,8 +169,9 @@ extension PricesService: PricesServiceType {
                 return prices
             }
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .catch { _ in
-                Single.zip(
+            .catch { [weak self] _ in
+                guard let self = self else {throw SolanaSDK.Error.unknown}
+                return Single.zip(
                     self.fetcher.getHistoricalPrice(of: coinName, fiat: "USD", period: period),
                     self.fetcher.getValueInUSD(fiat: Defaults.fiat.code)
                 )
