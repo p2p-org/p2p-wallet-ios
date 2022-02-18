@@ -43,6 +43,7 @@ extension ChooseWallet {
         override func createRequest() -> Single<[Wallet]> {
             if showOtherWallets {
                 return tokensRepository.getTokensList()
+                    .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
                     .map {$0.excludingSpecialTokens()}
                     .map {
                         $0

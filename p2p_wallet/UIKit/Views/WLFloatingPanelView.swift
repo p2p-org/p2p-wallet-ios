@@ -12,14 +12,11 @@ import BEPureLayout
 class WLFloatingPanelView: BERoundedCornerShadowView {
     // MARK: - Initializer
     init(contentInset: UIEdgeInsets = .zero) {
-        super.init(shadowColor: UIColor.black.withAlphaComponent(0.05), radius: 8, offset: CGSize(width: 0, height: 1), opacity: 1, cornerRadius: 8, contentInset: contentInset)
+        super.init(cornerRadius: 0, contentInset: contentInset)
     }
     
     override func commonInit() {
         super.commonInit()
-        layer.cornerRadius = 12
-        layer.masksToBounds = true
-        
         stackView.axis = .vertical
         stackView.alignment = .fill
     }
