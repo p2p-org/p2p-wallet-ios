@@ -7,7 +7,7 @@ import RxSwift
 
 class FeedbackBanner: Banners.Banner {
     static fileprivate let id = "feedback-banner"
-    
+
     init() {
         super.init(
             id: FeedbackBanner.id,
@@ -15,7 +15,7 @@ class FeedbackBanner: Banners.Banner {
             onTap: Banners.OpenScreenAction(screen: "feedback")
         )
     }
-    
+
     override func getInfo() -> [InfoKey: Any] {
         [
             .title: L10n.suggestWaysToImproveP2PWallet,
@@ -28,7 +28,7 @@ class FeedbackBanner: Banners.Banner {
 
 class FeedbackBannerHandler: Banners.Handler {
     weak var delegate: Banners.Service?
-    
+
     func onRegister(with service: Banners.Service) {
         delegate = service
         delegate?.update(banner: FeedbackBanner())

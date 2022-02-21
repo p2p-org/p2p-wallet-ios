@@ -196,12 +196,14 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
         
         // MARK: - Banner
-        register{BannerServiceImpl(handlers: [
-            ReserveNameBannerHandler(nameStorage: resolve()),
-            BackupBannerHandler(backupStorage: resolve()),
-            FeedbackBannerHandler(),
-            NotificationBannerHandler(),
-        ])}
+        register {
+            BannerServiceImpl(handlers: [
+                ReserveNameBannerHandler(nameStorage: resolve()),
+                BackupBannerHandler(backupStorage: resolve()),
+                FeedbackBannerHandler(),
+                NotificationBannerHandler()
+            ])
+        }
             .implements(Banners.Service.self)
             .scope(.application)
     }

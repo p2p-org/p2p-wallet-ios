@@ -2,8 +2,8 @@
 // Created by Giang Long Tran on 18.02.2022.
 //
 
-import Foundation
 import BECollectionView
+import Foundation
 
 extension Home {
     class BannerSection: BEStaticSectionsCollectionView.Section {
@@ -17,7 +17,7 @@ extension Home {
                     contentInsets: NSDirectionalEdgeInsets(top: 0, leading: 4, bottom: 0, trailing: 4),
                     sectionInsets: NSDirectionalEdgeInsets(top: 30, leading: 18, bottom: 30, trailing: 18),
                     horizontalInterItemSpacing: NSCollectionLayoutSpacing.fixed(24),
-                    customLayoutForGroupOnSmallScreen: { env in
+                    customLayoutForGroupOnSmallScreen: { _ in
                         groupLayoutForFirstSection(width: 308, height: 142)
                     },
                     customLayoutForGroupOnLargeScreen: { _ in
@@ -27,7 +27,7 @@ extension Home {
                 viewModel: viewModel
             )
         }
-        
+
         override func configureCell(
             collectionView: UICollectionView,
             indexPath: IndexPath,
@@ -45,9 +45,9 @@ extension Home {
 private func groupLayoutForFirstSection(width: CGFloat, height: CGFloat) -> NSCollectionLayoutGroup {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    
+
     let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(width), heightDimension: .absolute(height))
     let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
-    
+
     return group
 }
