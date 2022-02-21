@@ -124,7 +124,7 @@ class SendService: SendServiceType {
         payingFeeWallet: Wallet
     ) -> Single<SolanaSDK.Lamports?> {
         guard relayMethod == .relay else {return .just(nil)}
-        guard let payingFeeWalletAddress = payingFeeWallet.pubkey else {return .just(nil)}
+        guard payingFeeWallet.pubkey != nil else {return .just(nil)}
         if payingFeeWallet.isNativeSOL {return .just(feeInSOL)}
         return relayService.calculateFeeInPayingToken(
             feeInSOL: feeInSOL,
