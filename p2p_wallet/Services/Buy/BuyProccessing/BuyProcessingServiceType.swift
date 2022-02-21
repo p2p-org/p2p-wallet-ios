@@ -4,24 +4,26 @@
 
 import Foundation
 
-protocol BuyProcessingType {
+protocol BuyProcessingServiceType {
     func getUrl() -> String
 }
 
-protocol BuyCurrencyType {}
+protocol BuyCurrencyType {
+    func toString() -> String
+}
 
-protocol BuyProviderFactory {
+protocol BuyProcessingFactory {
     func create(
         walletRepository: WalletsRepository,
         crypto: Buy.CryptoCurrency,
         initialAmount: Double,
         currency: Buy.FiatCurrency
-    ) throws -> BuyProcessingType
+    ) throws -> BuyProcessingServiceType
 }
 
 extension Buy {
-    class MoonpayFactory: BuyProviderFactory {
-        func create(walletRepository: WalletsRepository, crypto: CryptoCurrency, initialAmount: Double, currency: FiatCurrency) throws -> BuyProcessingType {
+    class MoonpayBuyProcessingFactory: BuyProcessingFactory {
+        func create(walletRepository: WalletsRepository, crypto: CryptoCurrency, initialAmount: Double, currency: FiatCurrency) throws -> BuyProcessingServiceType {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
 //                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }

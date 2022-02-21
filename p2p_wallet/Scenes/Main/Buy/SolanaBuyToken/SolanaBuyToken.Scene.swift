@@ -7,13 +7,14 @@
 //
 
 import Foundation
+import RxSwift
 import RxCocoa
 
 extension SolanaBuyToken {
     class Scene: BEScene {
         private let viewModel: SolanaBuyTokenSceneModel
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-
+        
         private lazy var tokenAmountField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .semibold),
             textColor: .textBlack,
@@ -37,10 +38,10 @@ extension SolanaBuyToken {
             self.viewModel = viewModel
             super.init()
         }
-
+        
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
-
+            
             tokenAmountField.becomeFirstResponder()
         }
         
@@ -86,7 +87,7 @@ extension SolanaBuyToken {
                                     font: .systemFont(ofSize: 27, weight: .semibold),
                                     textColor: .textBlack
                                 ).padding(.init(x: 4, y: 0))
-
+                                
                                 tokenAmountField
                             }
                         }
@@ -100,8 +101,8 @@ extension SolanaBuyToken {
                             UIView.spacer
                             // Output amount
                             UIStackView(axis: .horizontal) {
-                                UILabel(text: "0.00 ETH").setup { view in
-                                    viewModel.quoteAmount.map { value in "\(value) ETH" }
+                                UILabel(text: "0.00 SOL").setup { view in
+                                    viewModel.outputDriver.map { output in "\(output.amount) SOL" }
                                         .drive(view.rx.text).disposed(by: disposeBag)
                                 }
                                 UIImageView(image: .arrowUpDown)
@@ -122,7 +123,7 @@ extension SolanaBuyToken {
                         UILabel(text: "Moonpay", weight: .bold)
                         UIView.defaultSeparator()
                         
-                        descriptionRow(label: "ETH Price", initial: "$ 0.0", viewModel.solanaPrice.map { "$ \($0)" })
+                        descriptionRow(label: "SOL Price", initial: "$ 0.0", viewModel.exchangeRateStringDriver)
                         descriptionRow(label: L10n.processingFee, initial: "$ 0.00", viewModel.feeAmount.map { "$ \($0)" })
                         descriptionRow(label: L10n.networkFee, initial: "$ 0.00", viewModel.networkFee.map { "$ \($0)" })
                         descriptionRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
@@ -144,12 +145,57 @@ extension SolanaBuyToken {
 }
 
 extension SolanaBuyToken.Scene: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(
+        _ textField: UITextField,
+        shouldChangeCharactersIn range: NSRange,
+        replacementString string: String
+    ) -> Bool {
         switch textField {
         case let amountTextField as TokenAmountTextField:
             return amountTextField.shouldChangeCharactersInRange(range, replacementString: string)
         default:
             return true
         }
+    }
+}
+
+private struct NextStatus {
+    let text: String
+    let isEnable: Bool
+}
+
+extension SolanaBuyTokenSceneModel {
+    fileprivate var exchangeRateStringDriver: Driver<String> {
+        exchangeRateDriver
+            .map { rate in
+                if rate != nil {
+                    return "$ \(rate!.amount.toString())"
+                } else {
+                    return ""
+                }
+            }
+    }
+    
+    fileprivate var feeAmount: Driver<Double> {
+        outputDriver.map { $0.processingFee }
+    }
+    
+    fileprivate var networkFee: Driver<Double> {
+        outputDriver.map { $0.networkFee }
+    }
+    
+    fileprivate var total: Driver<Double> {
+        outputDriver.map { $0.total }
+    }
+    
+    fileprivate var nextStatus: Driver<NextStatus> {
+        Driver
+            .zip(outputDriver, errorDriver)
+            .map { output, error in
+                if error != nil {
+                    return NextStatus.init(text: error ?? L10n.error, isEnable: false)
+                }
+                return NextStatus.init(text: L10n.continue, isEnable: true)
+            }
     }
 }
