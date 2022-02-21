@@ -87,22 +87,18 @@ extension FeeRelayer.Error: LocalizedError {
         #if DEBUG
         if data?.type != .clientError {
             string += ": \(additionalMessage)"
+            var details = [String]()
+            if let array = data?.data?.array {
+                details += array
+            }
+            if let dictionary = data?.data?.dict {
+                details += dictionary.map {"\($0.key.localized()): \($0.value)"}
+            }
+            if !details.isEmpty {
+                string += ": \(details.joined(separator: ", ").uppercaseFirst)"
+            }
         }
         #endif
-        
-        #if DEBUG
-        var details = [String]()
-        if let array = data?.data?.array {
-            details += array
-        }
-        if let dictionary = data?.data?.dict {
-            details += dictionary.map {"\($0.key.localized()): \($0.value)"}
-        }
-        if !details.isEmpty {
-            string += ": \(details.joined(separator: ", ").uppercaseFirst)"
-        }
-        #endif
-        
         return string
     }
 }
