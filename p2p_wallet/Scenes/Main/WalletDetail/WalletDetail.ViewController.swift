@@ -25,7 +25,14 @@ extension WalletDetail {
         private lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
-
+            #if DEBUG
+            navigationBar.rightItems.addArrangedSubview(
+                UIButton(label: "Settings", textColor: .red)
+                    .onTap {[weak self] in
+                        self?.viewModel.showWalletSettings()
+                    }
+            )
+            #endif
             return navigationBar
         }()
         private lazy var balanceView = BalanceView(viewModel: viewModel)
@@ -99,7 +106,7 @@ extension WalletDetail {
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             case .send(let wallet):
                 let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil, relayMethod: .default)
                 let vc = SendToken.ViewController(viewModel: vm)

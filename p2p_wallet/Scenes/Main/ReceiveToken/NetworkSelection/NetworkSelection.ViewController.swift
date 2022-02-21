@@ -151,7 +151,7 @@ extension ReceiveToken {
                     ))
                 }.padding(.init(only: .left, inset: 12))
                 UIImageView(width: 22, height: 22, image: .checkBoxIOS)
-                    .setup { view in self.selectionView = view }
+                    .setup { view in selectionView = view }
             }
         }
     }

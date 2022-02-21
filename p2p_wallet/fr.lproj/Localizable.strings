@@ -727,3 +727,8 @@
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Ceci est nécessaire pour que l'application enregistre les codes QR générés ou sauvegarde vos phrases de départ dans votre photothèque.";
 "Allow access to save your photos" = "Autoriser l'accès pour enregistrer vos photos";
 "Open settings" = "Ouvrir les paramètres";
+"beta" = "bêta";
+"Top up your account to get started" = "Rechargez votre compte pour commencer";
+"Make your first deposit or buy with your credit card or Apple Pay" = "Effectuez votre premier dépôt ou achetez avec votre carte de crédit ou Apple Pay";
+"Tokens" = "Jetons";
+"Hidden tokens" = "Jetons cachés";

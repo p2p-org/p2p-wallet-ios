@@ -12,12 +12,11 @@ class WLOverviewView: WLFloatingPanelView {
     override func commonInit() {
         super.commonInit()
         stackView.spacing = 0
-        backgroundColor = .grayMain
+        backgroundColor = .none
 
         let buttonsView = createButtonsView()
         stackView.addArrangedSubviews {
             createTopView()
-            UIView.separator(height: 1, color: .separator)
             buttonsView
         }
 
@@ -30,22 +29,6 @@ class WLOverviewView: WLFloatingPanelView {
     
     func createButtonsView() -> UIView {
         fatalError("Must override")
-    }
-    
-    func createButton(image: UIImage, title: String) -> UIView {
-        let view = UIView(forAutoLayout: ())
-        
-        let stackView = UIStackView(axis: .horizontal, spacing: 4, alignment: .center, distribution: .fill)
-            {
-                // UIImageView(width: 24, height: 24, image: image, tintColor: .h5887ff)
-                UILabel(text: title, textSize: 15, weight: .medium, textColor: .h5887ff)
-            }
-        
-        view.addSubview(stackView)
-        stackView.autoAlignAxis(toSuperviewAxis: .vertical)
-        stackView.autoPinEdge(toSuperviewEdge: .top, withInset: 18)
-        stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 18)
-        return view
     }
     
     func showLoading() {

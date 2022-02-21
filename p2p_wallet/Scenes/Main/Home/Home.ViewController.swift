@@ -105,7 +105,7 @@ extension Home {
                     let vm = ReceiveToken.SceneModel(solanaPubkey: pubkey, solanaTokenWallet: nil, isRenBTCWalletCreated: isRenBTCWalletCreated)
                     let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: false)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
-                    analyticsManager.log(event: .receiveOpen(fromPage: "main_screen"))
+                    analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
                     show(vc, sender: true)
                 }
             case .scanQr:
@@ -136,20 +136,20 @@ extension Home {
                 show(vc, sender: nil)
                 
                 analyticsManager.log(event: .mainScreenSendOpen)
-                analyticsManager.log(event: .sendOpen(fromPage: "main_screen"))
+                analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
             case .swapToken:
                 let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
                 let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 analyticsManager.log(event: .mainScreenSwapOpen)
-                analyticsManager.log(event: .swapOpen(fromPage: "main_screen"))
-                self.show(vc, sender: nil)
+                analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
+                show(vc, sender: nil)
             case .settings:
                 analyticsManager.log(event: .mainScreenSettingsOpen)
-                analyticsManager.log(event: .settingsOpen(fromPage: "main_screen"))
+                analyticsManager.log(event: .settingsOpen(lastScreen: "main_screen"))
                 
                 let vm = Settings.ViewModel(reserveNameHandler: viewModel)
                 let vc = Settings.ViewController(viewModel: vm)
-                self.show(vc, sender: nil)
+                show(vc, sender: nil)
             case .reserveName(let owner):
                 let vm = ReserveName.ViewModel(
                     kind: .independent,

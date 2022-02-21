@@ -53,6 +53,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
         private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
         @Injected private var clipboardManager: ClipboardManagerType
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
         let relayMethod: SendTokenRelayMethod
@@ -156,6 +157,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     // MARK: - Actions
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
+        if scene == .selectPayingWallet {
+            analyticsManager.log(event: .tokenListViewed(lastScreen: "Send", tokenListLocation: "Fee"))
+        }
         navigationSubject.accept(scene)
     }
     

@@ -200,7 +200,7 @@ private extension ExpandableTextView {
 
     func changePlaceholderText(to string: String?) {
         placeholderLabel.text = string
-        animatePlaceholder(reversed: self.placeholderLabel.transform == .identity, force: true)
+        animatePlaceholder(reversed: placeholderLabel.transform == .identity, force: true)
     }
 
     func changeTextViewText(to newString: String?) {

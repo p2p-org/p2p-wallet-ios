@@ -99,7 +99,7 @@ extension WalletDetail {
         private func sendTokens() {
             guard let wallet = walletSubject.value else {return}
             analyticsManager.log(event: .tokenDetailsSendClick)
-            analyticsManager.log(event: .sendOpen(fromPage: "token_details"))
+            analyticsManager.log(event: .sendViewed(lastScreen: "token_details"))
             navigatableSceneSubject.accept(.send(wallet: wallet))
         }
 
@@ -118,15 +118,15 @@ extension WalletDetail {
         private func receiveTokens() {
             guard let pubkey = walletSubject.value?.pubkey else {return}
             analyticsManager.log(event: .tokenDetailQrClick)
-            analyticsManager.log(event: .tokenDetailsReceiveClick)
-            analyticsManager.log(event: .receiveOpen(fromPage: "token_details"))
+            analyticsManager.log(event: .tokenReceiveViewed)
+            analyticsManager.log(event: .receiveViewed(fromPage: "token_details"))
             navigatableSceneSubject.accept(.receive(walletPubkey: pubkey))
         }
 
         private func swapTokens() {
             guard let wallet = walletSubject.value else {return}
             analyticsManager.log(event: .tokenDetailsSwapClick)
-            analyticsManager.log(event: .swapOpen(fromPage: "token_details"))
+            analyticsManager.log(event: .swapViewed(lastScreen: "token_details"))
             navigatableSceneSubject.accept(.swap(fromWallet: wallet))
         }
 

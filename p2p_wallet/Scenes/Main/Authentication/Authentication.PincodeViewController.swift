@@ -36,7 +36,7 @@ extension Authentication {
         // MARK: - Subviews
         fileprivate let navigationBar = WLNavigationBar(forAutoLayout: ())
         private lazy var pincodeView = WLPinCodeView(
-            correctPincode: viewModel.getCurrentPincode() == nil ? nil: UInt(viewModel.getCurrentPincode()!),
+            correctPincode: viewModel.getCurrentPincode(),
             maxAttemptsCount: 3,
             bottomLeftButton: biometryButton
         )
@@ -162,7 +162,7 @@ extension Authentication {
             
             pincodeView.stackViewSpacing = 108
             
-            let lockingTimeInSeconds = self.lockingTimeInSeconds
+            let lockingTimeInSeconds = lockingTimeInSeconds
             
             // Count down to next
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
