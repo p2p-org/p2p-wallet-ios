@@ -20,6 +20,7 @@ protocol SolanaBuyTokenSceneModel: BESceneModel {
     var outputDriver: Driver<Buy.ExchangeOutput> { get }
     var exchangeRateDriver: Driver<Buy.ExchangeRate?> { get }
     var errorDriver: Driver<String?> { get }
+    var input: Buy.ExchangeInput { get }
 }
 
 extension SolanaBuyToken {
@@ -41,10 +42,24 @@ extension SolanaBuyToken {
             inputRelay
                 .flatMap { [weak self] input -> Single<Buy.ExchangeOutput> in
                     guard let self = self else { return .error(NSError(domain: "SolanaBuyToken", code: -1)) }
+                    if input.amount == 0 {
+                        return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
+                    }
                     return self.exchangeService
-                        .convert(input: input, to: self.outputRelay.value.currency)
+                        .convert(input: input, to: input.currency is Buy.FiatCurrency ? Buy.CryptoCurrency.sol : Buy.FiatCurrency.usd)
                         .catch { error in
-                            self.errorRelay.accept(error.localizedDescription)
+                            print(error)
+                            if let error = error as? Buy.Exception {
+                                switch error {
+                                case .invalidInput:
+                                    self.errorRelay.accept("Invalid input")
+                                case .message(let message):
+                                    self.errorRelay.accept(message)
+                                }
+                                
+                            } else {
+                                self.errorRelay.accept(error.localizedDescription)
+                            }
                             return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
                         }
                         .do { output in
@@ -61,6 +76,7 @@ extension SolanaBuyToken {
         private let exchangeRateRelay = BehaviorRelay<Buy.ExchangeRate?>(value: nil)
         
         func setAmount(value: Double?) {
+            if value == input.amount { return }
             // Update amount
             inputRelay.accept(
                 .init(
@@ -71,9 +87,8 @@ extension SolanaBuyToken {
         }
         
         func swap() {
-            let (input, output) = inputRelay.value.swap(with: outputRelay.value)
+            let (input, _) = inputRelay.value.swap(with: outputRelay.value)
             inputRelay.accept(input)
-            outputRelay.accept(output)
         }
         
         var inputDriver: Driver<Buy.ExchangeInput> { inputRelay.asDriver() }
@@ -81,6 +96,8 @@ extension SolanaBuyToken {
         var outputDriver: Driver<Buy.ExchangeOutput> { outputRelay.asDriver() }
         
         var exchangeRateDriver: Driver<Buy.ExchangeRate?> { exchangeRateRelay.asDriver() }
+        
+        var input: Buy.ExchangeInput { inputRelay.value }
         
         var errorDriver: Driver<String?> { errorRelay.asDriver() }
         

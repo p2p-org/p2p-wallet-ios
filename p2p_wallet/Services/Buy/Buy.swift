@@ -54,5 +54,6 @@ struct Buy {
     
     enum Exception: Error {
         case invalidInput
+        case message(String)
     }
 }
