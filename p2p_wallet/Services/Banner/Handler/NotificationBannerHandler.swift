@@ -7,7 +7,7 @@ import RxSwift
 
 class NotificationBanner: Banners.Banner {
     static fileprivate let id = "notification-banner"
-    
+
     init() {
         super.init(
             id: NotificationBanner.id,
@@ -15,7 +15,7 @@ class NotificationBanner: Banners.Banner {
             onTap: Banners.OpenScreenAction(screen: "settings/notification")
         )
     }
-    
+
     override func getInfo() -> [InfoKey: Any] {
         [
             .title: L10n.donTMissOutOnImportantUpdates,
@@ -28,7 +28,7 @@ class NotificationBanner: Banners.Banner {
 
 class NotificationBannerHandler: Banners.Handler {
     weak var delegate: Banners.Service?
-    
+
     func onRegister(with service: Banners.Service) {
         delegate = service
         delegate?.update(banner: NotificationBanner())

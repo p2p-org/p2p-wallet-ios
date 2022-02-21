@@ -8,8 +8,8 @@
 import Action
 import BECollectionView
 import BEPureLayout
-import RxSwift
 import RxCocoa
+import RxSwift
 import UIKit
 
 extension Home {
@@ -17,16 +17,16 @@ extension Home {
         private let disposeBag = DisposeBag()
         private let viewModel: HomeViewModelType
         private let bannerViewModel = BannerViewModel()
-        
+
         private var headerViewScrollDelegate = HeaderScrollDelegate()
-        
+
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
-            
+
             viewModel.walletsRepository.reload()
         }
-        
+
         override func build() -> UIView {
             BESafeArea {
                 BEVStack {
@@ -41,7 +41,7 @@ extension Home {
                                 label.attributedText = p2pWallet
                             }
                     }.padding(.init(x: 0, y: 12))
-                    
+
                     // Indicator
                     WLStatusIndicatorView(forAutoLayout: ()).setupWithType(WLStatusIndicatorView.self) { view in
                         viewModel.currentPricesDriver
@@ -60,7 +60,7 @@ extension Home {
                             })
                             .disposed(by: disposeBag)
                     }
-                    
+
                     BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
                         guard let self = self else { return UIView() }
                         print(state)
@@ -70,11 +70,11 @@ extension Home {
                 }
             }
         }
-        
+
         func emptyScreen() -> UIView {
             EmptyView(viewModel: viewModel)
         }
-        
+
         func content() -> UIView {
             BEZStack {
                 // Tokens
@@ -104,10 +104,10 @@ extension Home {
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
-                        
+
                         collectionView.contentInset.modify(dTop: 180, dBottom: 120)
                         collectionView.clipsToBounds = true
-                        
+
                         viewModel
                             .isWalletReadyDriver
                             .map { !$0 }
@@ -115,7 +115,7 @@ extension Home {
                             .disposed(by: disposeBag)
                     }.padding(.init(only: .top, inset: 12))
                 }
-                
+
                 // Action bar
                 BEZStackPosition(mode: .pinEdges(top: true, left: true, bottom: false, right: true)) {
                     FloatingHeaderView(viewModel: viewModel)
@@ -134,26 +134,19 @@ extension Home.RootView: BECollectionViewDelegate {
     }
 }
 
-private extension HomeViewModelType {
-    var isWalletReadyDriver: Driver<Bool> {
+extension HomeViewModelType {
+    fileprivate var isWalletReadyDriver: Driver<Bool> {
         Observable.zip(
-                walletsRepository.stateObservable,
-                walletsRepository.dataObservable
-            )
-            .map { ($0, $1 ?? []) }
-            .map { (state, wallets) in
-                (state, wallets.reduce(0, { (
-                    partialResult,
-                    wallet
-                ) in
-                    partialResult + wallet.amount
-                }))
-            }.map { (state, amount) in
-                print(state, amount)
-                if state != .loaded { return true }
-                return amount > 0
-            }
-            .distinctUntilChanged { $0 }
-            .asDriver(onErrorJustReturn: true)
+            walletsRepository.stateObservable,
+            walletsRepository.dataObservable
+                .map { $0?.reduce(0) { (partialResult, wallet) in partialResult + wallet.amount } ?? 0 }
+        )
+        .map { (state, amount) in
+            print(state, amount)
+            if state != .loaded { return true }
+            return amount > 0
+        }
+        .distinctUntilChanged { $0 }
+        .asDriver(onErrorJustReturn: true)
     }
 }

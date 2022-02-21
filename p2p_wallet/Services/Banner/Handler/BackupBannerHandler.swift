@@ -7,7 +7,7 @@ import RxSwift
 
 class BackupNameBanner: Banners.Banner {
     static fileprivate let id = "backup-banner"
-    
+
     init() {
         super.init(
             id: BackupNameBanner.id,
@@ -15,7 +15,7 @@ class BackupNameBanner: Banners.Banner {
             onTap: Banners.OpenScreenAction(screen: "settings/backup")
         )
     }
-    
+
     override func getInfo() -> [InfoKey: Any] {
         [
             .title: L10n.yourWalletIsAtRiskIfYouDoNotBackItUp,
@@ -26,18 +26,17 @@ class BackupNameBanner: Banners.Banner {
     }
 }
 
-
 class BackupBannerHandler: Banners.Handler {
-    
+
     weak var delegate: Banners.Service?
     let backupStorage: ICloudStorageType
     let disposeBag = DisposeBag()
-    
+
     init(backupStorage: ICloudStorageType) { self.backupStorage = backupStorage }
-    
+
     func onRegister(with service: Banners.Service) {
         delegate = service
-        
+
         // Subscribe backup on change
         backupStorage
             .onValueChange
@@ -47,7 +46,7 @@ class BackupBannerHandler: Banners.Handler {
                 }
             })
             .disposed(by: disposeBag)
-        
+
         // Check
         if backupStorage.didBackupUsingIcloud == false {
             delegate?.update(banner: BackupNameBanner())

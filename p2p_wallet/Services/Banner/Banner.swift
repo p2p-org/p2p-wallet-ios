@@ -3,24 +3,24 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 class Banners {
     typealias Service = BannerServiceType
     typealias Handler = BannerHandlerType
     typealias Action = BannerAction
-    
+
     enum Priority: Int {
         case low = 1
         case medium = 2
         case veryHigh = 3
     }
-    
+
     struct OpenScreenAction: Action {
         let screen: String
     }
-    
+
     class Banner: Hashable {
         enum InfoKey {
             case title
@@ -28,24 +28,24 @@ class Banners {
             case icon
             case background
         }
-        
+
         let id: String
         let priority: Banners.Priority
         let onTap: Action?
-    
+
         init(id: String, priority: Priority, onTap: Action? = nil) {
             self.id = id
             self.priority = priority
             self.onTap = onTap
         }
-        
+
         func getInfo() -> [InfoKey: Any] { [:] }
-    
+
         func hash(into hasher: inout Hasher) {
             hasher.combine(id)
         }
-    
-        static func ==(lhs: Banner, rhs: Banner) -> Bool {
+
+        static func == (lhs: Banner, rhs: Banner) -> Bool {
             if lhs === rhs { return true }
             if type(of: lhs) != type(of: rhs) { return false }
             if lhs.id != rhs.id { return false }
@@ -56,10 +56,10 @@ class Banners {
 
 protocol BannerServiceType: AnyObject {
     var banners: Driver<[Banners.Banner]> { get }
-    
+
     func register(handler: Banners.Handler)
     func unregister(handler: Banners.Handler)
-    
+
     func update(banner: Banners.Banner)
     func remove(bannerId: String)
 }

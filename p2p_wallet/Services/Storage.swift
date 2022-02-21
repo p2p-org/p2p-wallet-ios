@@ -14,7 +14,7 @@ import RxCocoa
 typealias StorageValueOnChange = (key: String, value: Any?)
 
 protocol StorageType {
-    //listens to value changing
+    // listens to value changing
     var onValueChange: Signal<StorageValueOnChange> { get }
 }
 
