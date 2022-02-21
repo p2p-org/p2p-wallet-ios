@@ -8,7 +8,6 @@
 import Foundation
 import Kingfisher
 import CoreImage.CIFilterBuiltins
-import SVGKit
 
 extension UIImageView {
     static let qrCodeCache = NSCache<NSString, UIImage>()
@@ -50,8 +49,9 @@ private struct ImgProcessor: ImageProcessor {
             print("already an image")
             return image
         case .data(let data):
-            let imsvg = SVGKImage(data: data)
-            return imsvg?.uiImage ?? DefaultImageProcessor.default.process(item: item, options: options)
+            return nil
+//            let imsvg = SVGKImage(data: data)
+//            return imsvg?.uiImage ?? DefaultImageProcessor.default.process(item: item, options: options)
         }
     }
 }

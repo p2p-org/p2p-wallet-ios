@@ -358,6 +358,7 @@ class SendService: SendServiceType {
                 }
                 
                 return request
+                    .map {$0.replacingOccurrences(of: "\"", with: "")}
                     .do(onSuccess: {
                         Logger.log(message: "\($0)", event: .response)
                     }, onError: {

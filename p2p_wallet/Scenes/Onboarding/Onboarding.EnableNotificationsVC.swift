@@ -11,6 +11,8 @@ import BEPureLayout
 
 extension Onboarding {
     class EnableNotificationsVC: BaseVC {
+        @Injected private var analyticsManager: AnalyticsManagerType
+        
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
@@ -81,10 +83,12 @@ extension Onboarding {
         }
         
         @objc private func buttonAllowDidTouch() {
+            analyticsManager.log(event: .pushApproved(lastScreen: "Onboarding"))
             viewModel.requestRemoteNotifications()
         }
         
         @objc private func buttonSkipDidTouch() {
+            analyticsManager.log(event: .pushRejected)
             viewModel.markNotificationsAsSet()
         }
         
