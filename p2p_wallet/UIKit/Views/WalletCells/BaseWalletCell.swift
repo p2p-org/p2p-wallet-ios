@@ -84,7 +84,7 @@ class BaseWalletCell: BECompositionView {
         if item.name.isEmpty {
             coinNameRef.view?.text = item.mintAddress.prefix(4) + "..." + item.mintAddress.suffix(4)
         } else {
-            coinNameRef.view?.text = item.name
+            coinNameRef.view?.text = item.token.name
         }
         amountRef.view?.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
         
