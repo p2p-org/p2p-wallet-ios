@@ -8,14 +8,23 @@
 import Foundation
 import KeychainSwift
 import SolanaSwift
+import RxSwift
+import RxCocoa
 
-protocol ICloudStorageType: AnyObject {
+typealias StorageValueOnChange = (key: String, value: Any?)
+
+protocol StorageType {
+    //listens to value changing
+    var onValueChange: Signal<StorageValueOnChange> { get }
+}
+
+protocol ICloudStorageType: AnyObject, StorageType {
     func saveToICloud(account: Account) -> Bool
     func accountFromICloud() -> [Account]?
     var didBackupUsingIcloud: Bool {get}
 }
 
-protocol NameStorageType {
+protocol NameStorageType: StorageType {
     func save(name: String)
     func getName() -> String?
 }
@@ -42,6 +51,7 @@ protocol PincodeSeedPhrasesStorage: PincodeStorageType {
 
 class KeychainStorage {
     // MARK: - Constants
+    private let onValueChangeSubject = PublishSubject<StorageValueOnChange>()
     private let pincodeKey: String
     private let phrasesKey: String
     private let derivableTypeKey: String
@@ -115,6 +125,12 @@ class KeychainStorage {
     }
 }
 
+extension KeychainStorage: StorageType {
+    var onValueChange: Signal<StorageValueOnChange> {
+        onValueChangeSubject.asSignal(onErrorJustReturn: ("", nil))
+    }
+}
+
 extension KeychainStorage: ICloudStorageType {
     func saveToICloud(account: Account) -> Bool {
         var accountsToSave = [account]
@@ -135,6 +151,9 @@ extension KeychainStorage: ICloudStorageType {
         if let data = try? JSONEncoder().encode(accountsToSave) {
             return keychain.set(data, forKey: iCloudAccountsKey, withAccess: .accessibleAfterFirstUnlock)
         }
+        
+        onValueChangeSubject.on(.next(("didBackupUsingIcloud", didBackupUsingIcloud)))
+        
         return false
     }
     
@@ -153,6 +172,7 @@ extension KeychainStorage: NameStorageType {
     func save(name: String) {
         keychain.set(name, forKey: nameKey)
         saveNameToICloudIfAccountSaved()
+        onValueChangeSubject.on(.next(("getName", name)))
     }
     
     func getName() -> String? {

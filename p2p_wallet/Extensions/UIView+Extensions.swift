@@ -86,4 +86,8 @@ extension UIView {
     func lightShadow() -> Self {
         shadow(color: .black, alpha: 0.05, x: 0, y: 1, blur: 8, spread: 0)
     }
+    
+    func mediumShadow() -> Self {
+        shadow(color: .black, alpha: 0.07, x: 0, y: 2, blur: 8, spread: 0)
+    }
 }

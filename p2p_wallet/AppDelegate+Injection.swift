@@ -194,6 +194,16 @@ extension Resolver: ResolverRegistering {
         register{ReceiveToken.QrCodeImageRenderImpl()}
             .implements(QrCodeImageRender.self)
             .scope(.application)
+        
+        // MARK: - Banner
+        register{BannerServiceImpl(handlers: [
+            ReserveNameBannerHandler(nameStorage: resolve()),
+            BackupBannerHandler(backupStorage: resolve()),
+            FeedbackBannerHandler(),
+            NotificationBannerHandler(),
+        ])}
+            .implements(Banners.Service.self)
+            .scope(.application)
     }
 }
 
