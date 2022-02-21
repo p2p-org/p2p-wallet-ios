@@ -133,7 +133,7 @@ class SendService: SendServiceType {
     }
     
     func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
-        relayService.getFreeTransactionFeeLimit(useCache: true)
+        relayService.getFreeTransactionFeeLimit()
     }
     
     // MARK: - Send method
