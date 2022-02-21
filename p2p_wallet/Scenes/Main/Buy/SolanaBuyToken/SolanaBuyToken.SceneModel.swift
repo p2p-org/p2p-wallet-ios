@@ -12,100 +12,80 @@ import RxCocoa
 
 protocol SolanaBuyTokenSceneModel: BESceneModel {
     func setAmount(value: Double?)
+    func swap()
     func back()
     func next()
     
-    var quoteAmount: Driver<Double> { get }
-    var solanaPrice: Driver<Double> { get }
-    var feeAmount: Driver<Double> { get }
-    var networkFee: Driver<Double> { get }
-    var total: Driver<Double> { get }
-    var nextStatus: Driver<SolanaBuyToken.NextStatus> { get }
+    var inputDriver: Driver<Buy.ExchangeInput> { get }
+    var outputDriver: Driver<Buy.ExchangeOutput> { get }
+    var exchangeRateDriver: Driver<Buy.ExchangeRate?> { get }
+    var errorDriver: Driver<String?> { get }
 }
 
 extension SolanaBuyToken {
-    struct NextStatus {
-        let text: String
-        let isEnable: Bool
-    }
-    
     class SceneModel: SolanaBuyTokenSceneModel {
-        private let navigationSubject = PublishSubject<NavigatableScene>()
-        @Injected private var moonpayService: MoonpayService
-        private let rootViewModel: BuyViewModelType
+        private let exchangeService: Buy.ExchangeService
+        private let buyViewModel: BuyViewModelType
         let disposeBag = DisposeBag()
         
-        init(buyViewModel: BuyViewModelType) {
-            self.rootViewModel = buyViewModel
-            moonpayService.getPrice(for: "eth", as: .usd)
-                .catch { error in
-                    print(error)
-                    return .just(0)
-                }
+        init(buyViewModel: BuyViewModelType, exchangeService: Buy.ExchangeService) {
+            self.buyViewModel = buyViewModel
+            self.exchangeService = exchangeService
+            
+            exchangeService
+                .getExchangeRate(from: .usd, to: .sol)
                 .asObservable()
-                .bind(to: exchangePrice)
+                .bind(to: exchangeRateRelay)
                 .disposed(by: disposeBag)
             
-            total.drive(totalAmount).disposed(by: disposeBag)
-        }
-        
-        private let input = BehaviorRelay<Double?>(value: nil)
-        private var state: Observable<State> {
-            input.flatMap { [weak self] value -> Single<State> in
-                guard let self = self,
-                      let value = value else { return .just(.none) }
-                return self.moonpayService.getBuyQuote(
-                    baseCurrencyCode: "usd",
-                    quoteCurrencyCode: "eth",
-                    baseCurrencyAmount: value
-                ).map { quote in
-                    .result(quote: quote)
-                }.catch { error in
-                    if let error = error as? Moonpay.Error {
-                        switch error {
-                        case .default(let message): return .just(.error(message))
+            inputRelay
+                .flatMap { [weak self] input -> Single<Buy.ExchangeOutput> in
+                    guard let self = self else { return .error(NSError(domain: "SolanaBuyToken", code: -1)) }
+                    return self.exchangeService
+                        .convert(input: input, to: self.outputRelay.value.currency)
+                        .catch { error in
+                            self.errorRelay.accept(error.localizedDescription)
+                            return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
                         }
-                    }
-                    return .just(.error(error.localizedDescription))
+                        .do { output in
+                            self.errorRelay.accept(nil)
+                        }
                 }
-            }
+                .bind(to: outputRelay)
+                .disposed(by: disposeBag)
         }
         
-        private let totalAmount = BehaviorRelay<Double>(value: 0)
+        private let errorRelay = BehaviorRelay<String?>(value: nil)
+        private let inputRelay = BehaviorRelay<Buy.ExchangeInput>(value: .init(amount: 0, currency: Buy.FiatCurrency.usd))
+        private let outputRelay = BehaviorRelay<Buy.ExchangeOutput>(value: .init(amount: 0, currency: Buy.CryptoCurrency.sol, processingFee: 0, networkFee: 0, total: 0))
+        private let exchangeRateRelay = BehaviorRelay<Buy.ExchangeRate?>(value: nil)
         
-        private let exchangePrice = BehaviorSubject<Double>(value: 0)
-        
-        func setAmount(value: Double?) { input.accept(value) }
-        
-        func next() { rootViewModel.navigate(to: .buyToken(crypto: .eth, amount: totalAmount.value)) }
-        
-        func back() { rootViewModel.navigate(to: .back) }
-        
-        var quoteAmount: Driver<Double> {
-            state.map {
-                switch $0 {
-                case .result(let quote): return quote.quoteCurrencyAmount
-                default: return 0
-                }
-            }.asDriver(onErrorJustReturn: 0)
+        func setAmount(value: Double?) {
+            // Update amount
+            inputRelay.accept(
+                .init(
+                    amount: value ?? 0,
+                    currency: inputRelay.value.currency
+                )
+            )
         }
         
-        var feeAmount: Driver<Double> { state.map { $0.asResult()?.feeAmount ?? 0 }.asDriver(onErrorJustReturn: 0) }
-        var networkFee: Driver<Double> { state.map { $0.asResult()?.networkFeeAmount ?? 0 }.asDriver(onErrorJustReturn: 0) }
-        var total: Driver<Double> { state.map { $0.asResult()?.totalAmount ?? 0 }.asDriver(onErrorJustReturn: 0) }
-        var solanaPrice: Driver<Double> { exchangePrice.asDriver(onErrorJustReturn: 0) }
-        
-        var nextStatus: Driver<NextStatus> {
-            state.map { state in
-                switch state {
-                case .result: return .init(text: L10n.continue, isEnable: true)
-                case .error(let message): return .init(text: message, isEnable: false)
-                default: return .init(text: L10n.continue, isEnable: false)
-                }
-            }.asDriver { error in
-                .just(NextStatus(text: error.localizedDescription, isEnable: false))
-            }
+        func swap() {
+            let (input, output) = inputRelay.value.swap(with: outputRelay.value)
+            inputRelay.accept(input)
+            outputRelay.accept(output)
         }
+        
+        var inputDriver: Driver<Buy.ExchangeInput> { inputRelay.asDriver() }
+        
+        var outputDriver: Driver<Buy.ExchangeOutput> { outputRelay.asDriver() }
+        
+        var exchangeRateDriver: Driver<Buy.ExchangeRate?> { exchangeRateRelay.asDriver() }
+        
+        var errorDriver: Driver<String?> { errorRelay.asDriver() }
+        
+        func next() { buyViewModel.navigate(to: .buyToken(crypto: .sol, amount: outputRelay.value.total)) }
+        
+        func back() { buyViewModel.navigate(to: .back) }
     }
-    
 }

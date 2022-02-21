@@ -6,27 +6,8 @@ import Foundation
 import RxSwift
 import RxAlamofire
 
-protocol MoonpayService {
-    func getPrice(for crypto: String, as currency: Moonpay.Currency) -> Single<Double>
-    func getBuyQuote(baseCurrencyCode: String, quoteCurrencyCode: String, baseCurrencyAmount: Double) -> Single<Moonpay.BuyQuote>
-}
-
 extension Moonpay {
-    enum Currency {
-        case usd
-        case eur
-        case gbp
-        
-        func toString() -> String {
-            switch self {
-            case .usd: return "USD"
-            case .eur: return "EUR"
-            case .gbp: return "GBP"
-            }
-        }
-    }
-        
-    class MoonpayServiceImpl: MoonpayService {
+    class Provider {
         private let api: API
         
         init(api: API) { self.api = api }
@@ -37,20 +18,31 @@ extension Moonpay {
             let baseCurrencyAmount: Int
         }
         
-        func getBuyQuote(baseCurrencyCode: String, quoteCurrencyCode: String, baseCurrencyAmount: Double) -> Single<BuyQuote> {
-            request(.get, api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote",
-                parameters: [
-                    "apiKey": api.apiKey,
-                    "baseCurrencyCode": baseCurrencyCode,
-                    "baseCurrencyAmount": baseCurrencyAmount,
-                    "areFeesIncluded": true,
-                ]
-            ).responseData()
+        func getBuyQuote(
+            baseCurrencyCode: String,
+            quoteCurrencyCode: String,
+            baseCurrencyAmount: Double?,
+            quoteCurrencyAmount: Double?
+        ) -> Single<BuyQuote> {
+            var params = [
+                "apiKey": api.apiKey,
+                "baseCurrencyCode": baseCurrencyCode,
+                "areFeesIncluded": "true",
+            ] as [String: Any]
+            
+            if let baseCurrencyAmount = baseCurrencyAmount { params["baseCurrencyAmount"] = baseCurrencyAmount }
+            if let quoteCurrencyAmount = quoteCurrencyAmount { params["quoteCurrencyAmount"] = quoteCurrencyAmount }
+            
+            print(quoteCurrencyCode, params)
+            
+            return request(.get, api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote", parameters: params)
+                .responseData()
                 .map { response, data in
                     switch response.statusCode {
                     case 200...299:
                         return try JSONDecoder().decode(BuyQuote.self, from: data)
                     default:
+                        print(String(data: data, encoding: .utf8))
                         let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
                         throw Error.default(message: data.message)
                     }
@@ -59,14 +51,14 @@ extension Moonpay {
                 .asSingle()
         }
         
-        func getPrice(for crypto: String, as currency: Currency) -> Single<Double> {
+        func getPrice(for crypto: String, as currency: String) -> Single<Double> {
             request(.get, api.endpoint + "/currencies/\(crypto)/ask_price", parameters: ["apiKey": api.apiKey])
                 .responseJSON()
                 .take(1)
                 .asSingle()
                 .map { response -> Double in
                     guard let json = response.value as? [String: Double] else { return 0 }
-                    return json[currency.toString()] ?? 0
+                    return json[currency] ?? 0
                 }
         }
     }

@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct TransakBuyProccessing: Buy.Processing {
+public struct TransakBuyProccessing: Buy.ProcessingService {
     public enum Environment {
         case staging
         case production
