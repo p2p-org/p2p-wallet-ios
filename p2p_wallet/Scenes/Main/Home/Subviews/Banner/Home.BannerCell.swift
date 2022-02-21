@@ -13,9 +13,9 @@ extension Home {
         fileprivate var title = BERef<UILabel>()
         fileprivate var action = BERef<UILabel>()
         fileprivate var icon = BERef<UIImageView>()
-        var onActionHandler: BECallback<Banners.Action>? = nil
+        var onActionHandler: BECallback<Banners.Action>?
 
-        fileprivate var banner: Banners.Banner? = nil {
+        fileprivate var banner: Banners.Banner? {
             didSet {
                 title.view?.text = banner?.getInfo()[.title] as? String
                 action.view?.text = banner?.getInfo()[.action] as? String

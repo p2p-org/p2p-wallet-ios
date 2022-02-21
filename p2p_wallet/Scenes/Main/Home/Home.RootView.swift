@@ -106,7 +106,7 @@ extension Home {
                                     self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                                     return .just(())
                                 }
-                            ),
+                            )
                         ]
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
                         collectionView.delegate = self

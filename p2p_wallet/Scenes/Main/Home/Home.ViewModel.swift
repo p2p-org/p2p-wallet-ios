@@ -18,7 +18,6 @@ protocol HomeViewModelType: ReserveNameHandler {
     var walletsRepository: WalletsRepository {get}
     var bannerViewModel: Home.BannerViewModel {get}
     
-    
     func navigate(to scene: Home.NavigatableScene?)
     func navigateToScanQrCodeWithSwiper(progress: CGFloat, swiperState: UIGestureRecognizer.State)
 }
