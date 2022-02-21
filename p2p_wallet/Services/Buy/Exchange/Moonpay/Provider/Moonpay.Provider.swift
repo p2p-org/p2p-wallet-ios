@@ -33,8 +33,6 @@ extension Moonpay {
             if let baseCurrencyAmount = baseCurrencyAmount { params["baseCurrencyAmount"] = baseCurrencyAmount }
             if let quoteCurrencyAmount = quoteCurrencyAmount { params["quoteCurrencyAmount"] = quoteCurrencyAmount }
             
-            print(quoteCurrencyCode, params)
-            
             return request(.get, api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote", parameters: params)
                 .responseData()
                 .map { response, data in
@@ -42,9 +40,8 @@ extension Moonpay {
                     case 200...299:
                         return try JSONDecoder().decode(BuyQuote.self, from: data)
                     default:
-                        print(String(data: data, encoding: .utf8))
                         let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
-                        throw Error.default(message: data.message)
+                        throw Error.message(message: data.message)
                     }
                 }
                 .take(1)

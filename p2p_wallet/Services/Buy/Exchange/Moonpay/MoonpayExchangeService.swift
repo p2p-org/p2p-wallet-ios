@@ -30,12 +30,21 @@ extension Buy {
                     quoteCurrencyAmount: quoteAmount)
                 .map { quote in
                     .init(
-                        amount: quote.quoteCurrencyAmount,
+                        amount: currency is CryptoCurrency ? quote.quoteCurrencyAmount : quote.totalAmount,
                         currency: currency,
                         processingFee: quote.extraFeeAmount,
                         networkFee: quote.networkFeeAmount,
                         total: quote.totalAmount
                     )
+                }.catch { error in
+                    print(error)
+                    if let error = error as? Moonpay.Error {
+                        switch error {
+                        case .message(message: let message):
+                            throw Exception.message(message)
+                        }
+                    }
+                    throw error
                 }
         }
         
