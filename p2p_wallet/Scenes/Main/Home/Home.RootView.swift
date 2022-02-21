@@ -16,6 +16,7 @@ extension Home {
     class RootView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: HomeViewModelType
+        private let bannerViewModel = BannerViewModel()
         
         private var headerViewScrollDelegate = HeaderScrollDelegate()
         
@@ -88,8 +89,9 @@ extension Home {
                                 cellType: VisibleWalletCell.self,
                                 onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
                             ),
+                            BannerSection(index: 1, viewModel: bannerViewModel),
                             HiddenWalletsSection(
-                                index: 1,
+                                index: 2,
                                 viewModel: viewModel.walletsRepository,
                                 header: .init(viewClass: HiddenWalletsSectionHeaderView.self),
                                 onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) },
