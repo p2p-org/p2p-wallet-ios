@@ -301,19 +301,19 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token
     ) -> Single<[PayingFee]> {
-        Single.zip(
-            relayService!.calculateSwappingNetworkFees(
-                sourceTokenMint: sourceMint,
-                destinationTokenMint: destinationToken.address,
-                destinationAddress: destinationAddress
-            )
-                .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
-                    guard let self = self else { throw SolanaSDK.Error.unknown }
-                    return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee)
-                },
-            relayService!.getFreeTransactionFeeLimit(useCache: true)
+        relayService!.calculateSwappingNetworkFees(
+            sourceTokenMint: sourceMint,
+            destinationTokenMint: destinationToken.address,
+            destinationAddress: destinationAddress
         )
-            .map { neededTopUpAmount, freeTransactionFeeLimit in
+            .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
+                guard let self = self else { throw SolanaSDK.Error.unknown }
+                return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee)
+            }
+            .map { [weak self] neededTopUpAmount in
+                guard let self = self else {throw FeeRelayer.Error.unknown}
+                
+                let freeTransactionFeeLimit = self.relayService?.cache.freeTransactionFeeLimit
                 
                 var allFees = [PayingFee]()
                 var isFree = false
@@ -321,9 +321,18 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 
                 if neededTopUpAmount.transaction == 0 {
                     isFree = true
+                    
+                    var numberOfFreeTransactionsLeft = 100
+                    var maxUsage = 100
+            
+                    if let freeTransactionFeeLimit = freeTransactionFeeLimit {
+                        numberOfFreeTransactionsLeft = freeTransactionFeeLimit.maxUsage - freeTransactionFeeLimit.currentUsage
+                        maxUsage = freeTransactionFeeLimit.maxUsage
+                    }
+                    
                     info = .init(
-                        alertTitle: L10n.thereAreFreeTransactionsLeftForToday(freeTransactionFeeLimit.maxUsage - freeTransactionFeeLimit.currentUsage),
-                        alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(freeTransactionFeeLimit.maxUsage),
+                        alertTitle: L10n.thereAreFreeTransactionsLeftForToday(numberOfFreeTransactionsLeft),
+                        alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
                         payBy: L10n.PaidByP2p.org
                     )
                 }
