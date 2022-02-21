@@ -12,7 +12,7 @@ class FeedbackBanner: Banners.Banner {
         super.init(
             id: FeedbackBanner.id,
             priority: .medium,
-            onTap: Banners.OpenScreenAction(screen: "feedback")
+            onTapAction: Banners.Actions.OpenScreen(screen: "feedback")
         )
     }
 

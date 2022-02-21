@@ -16,8 +16,6 @@ extension Home {
     class RootView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: HomeViewModelType
-        private let bannerViewModel = BannerViewModel()
-
         private var headerViewScrollDelegate = HeaderScrollDelegate()
 
         init(viewModel: HomeViewModelType) {
@@ -63,8 +61,6 @@ extension Home {
 
                     BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
                         guard let self = self else { return UIView() }
-                        print(state)
-                        print(self.viewModel.walletsRepository.getError())
                         return state ? self.content() : self.emptyScreen()
                     }
                 }
@@ -89,7 +85,18 @@ extension Home {
                                 cellType: VisibleWalletCell.self,
                                 onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
                             ),
-                            BannerSection(index: 1, viewModel: bannerViewModel),
+                            BannerSection(index: 1, viewModel: viewModel.bannerViewModel) { [unowned self] action in
+                                if let action = action as? Banners.Actions.OpenScreen {
+                                    switch action.screen {
+                                    case "reserve": viewModel.navigate(to: .reserveName(owner: ""))
+                                    case "feedback": viewModel.navigate(to: .feedback)
+                                    case "backup": viewModel.navigate(to: .backup)
+                                    default:
+                                        return
+                                    }
+                                }
+
+                            },
                             HiddenWalletsSection(
                                 index: 2,
                                 viewModel: viewModel.walletsRepository,
@@ -99,7 +106,7 @@ extension Home {
                                     self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                                     return .just(())
                                 }
-                            )
+                            ),
                         ]
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
                         collectionView.delegate = self

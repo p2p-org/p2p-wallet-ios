@@ -7,7 +7,10 @@ import Foundation
 
 extension Home {
     class BannerSection: BEStaticSectionsCollectionView.Section {
-        init(index: Int, viewModel: BannerViewModel) {
+        let onActionHandler: BECallback<Banners.Action>?
+
+        init(index: Int, viewModel: BannerViewModel, onActionHandler: BECallback<Banners.Action>? = nil) {
+            self.onActionHandler = onActionHandler
             super.init(
                 index: index,
                 layout: .init(
@@ -28,14 +31,11 @@ extension Home {
             )
         }
 
-        override func configureCell(
-            collectionView: UICollectionView,
-            indexPath: IndexPath,
-            item: BECollectionViewItem
-        ) -> UICollectionViewCell {
+        override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
             let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
             if let cell = cell as? BannerCell {
                 cell.setUp(with: item.value)
+                cell.onActionHandler = onActionHandler
             }
             return cell
         }

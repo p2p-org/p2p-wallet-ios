@@ -9,11 +9,12 @@ import RxSwift
 extension Home {
     class BannerViewModel: BEListViewModel<Banners.Banner> {
         let disposeBag = DisposeBag()
-        @Injected var bannerService: Banners.Service
+        var bannerService: Banners.Service
 
         var banners: [Banners.Banner] = []
 
-        init() {
+        init(service: Banners.Service) {
+            bannerService = service
             super.init()
 
             bannerService.banners.drive(onNext: { [weak self] banners in

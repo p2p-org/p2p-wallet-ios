@@ -16,6 +16,8 @@ protocol HomeViewModelType: ReserveNameHandler {
     
     var nameDidReserveSignal: Signal<Void> {get}
     var walletsRepository: WalletsRepository {get}
+    var bannerViewModel: Home.BannerViewModel {get}
+    
     
     func navigate(to scene: Home.NavigatableScene?)
     func navigateToScanQrCodeWithSwiper(progress: CGFloat, swiperState: UIGestureRecognizer.State)
@@ -28,6 +30,7 @@ extension Home {
         @Injected var notificationsService: NotificationsServiceType
         @Injected var walletsRepository: WalletsRepository
         @Injected var pricesService: PricesServiceType
+        let bannerViewModel = BannerViewModel(service: Resolver.resolve())
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)

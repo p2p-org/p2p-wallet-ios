@@ -11,8 +11,8 @@ class BackupNameBanner: Banners.Banner {
     init() {
         super.init(
             id: BackupNameBanner.id,
-            priority: .veryHigh,
-            onTap: Banners.OpenScreenAction(screen: "settings/backup")
+            priority: .hight,
+            onTapAction: Banners.Actions.OpenScreen(screen: "backup")
         )
     }
 

@@ -21,5 +21,7 @@ enum Home {
         case reserveName(owner: String)
         case walletDetail(wallet: Wallet)
         case walletSettings(wallet: Wallet)
+        case feedback
+        case backup
     }
 }

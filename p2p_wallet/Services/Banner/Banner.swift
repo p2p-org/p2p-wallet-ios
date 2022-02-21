@@ -14,11 +14,14 @@ class Banners {
     enum Priority: Int {
         case low = 1
         case medium = 2
-        case veryHigh = 3
+        case hight = 3
+        case veryHigh = 4
     }
-
-    struct OpenScreenAction: Action {
-        let screen: String
+    
+    struct Actions {
+        struct OpenScreen: Action {
+            let screen: String
+        }
     }
 
     class Banner: Hashable {
@@ -31,12 +34,12 @@ class Banners {
 
         let id: String
         let priority: Banners.Priority
-        let onTap: Action?
+        let onTapAction: Action?
 
-        init(id: String, priority: Priority, onTap: Action? = nil) {
+        init(id: String, priority: Priority, onTapAction: Action? = nil) {
             self.id = id
             self.priority = priority
-            self.onTap = onTap
+            self.onTapAction = onTapAction
         }
 
         func getInfo() -> [InfoKey: Any] { [:] }

@@ -9,11 +9,20 @@ import RxSwift
 
 extension Home {
     class BannerCell: BECollectionCell {
-
         fileprivate var header = BERef<UIView>()
         fileprivate var title = BERef<UILabel>()
         fileprivate var action = BERef<UILabel>()
         fileprivate var icon = BERef<UIImageView>()
+        var onActionHandler: BECallback<Banners.Action>? = nil
+
+        fileprivate var banner: Banners.Banner? = nil {
+            didSet {
+                title.view?.text = banner?.getInfo()[.title] as? String
+                action.view?.text = banner?.getInfo()[.action] as? String
+                icon.view?.image = banner?.getInfo()[.icon] as? UIImage
+                header.view?.backgroundColor = banner?.getInfo()[.background] as? UIColor
+            }
+        }
 
         override func build() -> UIView {
             BEZStack {
@@ -38,7 +47,15 @@ extension Home {
                         .bind(icon)
                         .padding(.init(top: 0, left: 0, bottom: 50, right: 0))
                 }
+            }.onTap { [unowned self] in
+                guard let onTapAction = banner?.onTapAction else { return }
+                onActionHandler?(onTapAction)
             }
+        }
+
+        override func prepareForReuse() {
+            super.prepareForReuse()
+            onActionHandler = nil
         }
     }
 }
@@ -49,12 +66,7 @@ extension Home.BannerCell: BECollectionViewCell {
     func showLoading() {}
 
     func setUp(with item: AnyHashable?) {
-        print(item)
         guard let item = item as? Banners.Banner else { return }
-        print(item.getInfo())
-        title.view?.text = item.getInfo()[.title] as? String
-        action.view?.text = item.getInfo()[.action] as? String
-        icon.view?.image = item.getInfo()[.icon] as? UIImage
-        header.view?.backgroundColor = item.getInfo()[.background] as? UIColor
+        banner = item
     }
 }
