@@ -134,7 +134,10 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         networkFee: SolanaSDK.FeeAmount,
         payingTokenMint: String
     ) -> Single<SolanaSDK.Lamports?> {
-        relayService!.calculateFeeInPayingToken(feeInSOL: networkFee.total, payingFeeTokenMint: payingTokenMint)
+        if payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+            return .just(networkFee.total)
+        }
+        return relayService!.calculateFeeInPayingToken(feeInSOL: networkFee.total, payingFeeTokenMint: payingTokenMint)
     }
 
     func swap(
