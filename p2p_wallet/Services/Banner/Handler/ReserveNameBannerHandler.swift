@@ -12,7 +12,7 @@ class ReserveNameBanner: Banners.Banner {
         super.init(
             id: ReserveNameBanner.id,
             priority: .veryHigh,
-            onTap: Banners.OpenScreenAction(screen: "settings/reserve")
+            onTapAction: Banners.Actions.OpenScreen(screen: "reserve")
         )
     }
 

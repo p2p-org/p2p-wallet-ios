@@ -12,7 +12,7 @@ class NotificationBanner: Banners.Banner {
         super.init(
             id: NotificationBanner.id,
             priority: .low,
-            onTap: Banners.OpenScreenAction(screen: "settings/notification")
+            onTapAction: Banners.Actions.OpenScreen(screen: "notification")
         )
     }
 
