@@ -162,7 +162,7 @@ extension Authentication {
             
             pincodeView.stackViewSpacing = 108
             
-            let lockingTimeInSeconds = self.lockingTimeInSeconds
+            let lockingTimeInSeconds = lockingTimeInSeconds
             
             // Count down to next
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in

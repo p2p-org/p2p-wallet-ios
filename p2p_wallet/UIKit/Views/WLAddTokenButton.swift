@@ -77,7 +77,7 @@ class WLAddTokenButton: WLLoadingView {
 extension Reactive where Base: WLAddTokenButton {
     /// Reactive wrapper for `setTitle(_:for:)`
     var isActive: Binder<Bool> {
-        Binder(self.base) { button, isActive in
+        Binder(base) { button, isActive in
             button.isActive = isActive
         }
     }
