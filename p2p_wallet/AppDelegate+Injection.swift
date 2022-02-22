@@ -174,26 +174,6 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
         
         // MARK: - Others
-        register { SessionBannersAvailabilityState() }
-            .scope(.session)
-        
-        register { PersistentBannersAvailabilityState() }
-        register {
-            ReserveUsernameBannerAvailabilityRepository(
-                sessionBannersAvailabilityState: resolve(SessionBannersAvailabilityState.self),
-                persistentBannersAvailabilityState: resolve(PersistentBannersAvailabilityState.self),
-                nameStorage: resolve()
-            )
-        }
-            .implements(ReserveUsernameBannerAvailabilityRepositoryType.self)
-            .scope(.unique)
-        register { BannersManager(usernameBannerRepository: resolve()) }
-            .implements(BannersManagerType.self)
-            .scope(.unique)
-        register { BannerKindTransformer() }
-            .implements(BannerKindTransformerType.self)
-            .scope(.unique)
-        
         register { DAppChannel() }
             .implements(DAppChannelType.self)
         
@@ -228,6 +208,18 @@ extension Resolver: ResolverRegistering {
         
         register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
+            .scope(.application)
+        
+        // MARK: - Banner
+        register {
+            BannerServiceImpl(handlers: [
+                ReserveNameBannerHandler(nameStorage: resolve()),
+                BackupBannerHandler(backupStorage: resolve()),
+                FeedbackBannerHandler(),
+                NotificationBannerHandler()
+            ])
+        }
+            .implements(Banners.Service.self)
             .scope(.application)
     }
 }

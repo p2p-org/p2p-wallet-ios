@@ -55,17 +55,14 @@ class BaseWalletCell: BECompositionView {
                 UILabel(text: "<Coin name>")
                     .bind(coinNameRef)
                 UIView(height: 6)
-                UILabel(text: "<Exchange price>", textSize: 13, weight: .medium, textColor: .secondaryLabel)
-                    .bind(exchangePriceRef)
+                UILabel(text: "<Amount>", textSize: 13, weight: .medium, textColor: .secondaryLabel)
+                    .bind(amountRef)
             }
             UIView.spacer
             
             // Trailing
             BEVStack(alignment: .trailing) {
-                UILabel(text: "<Amount>")
-                    .bind(amountRef)
-                UIView(height: 6)
-                UILabel(text: "<Amount in fiat>", textSize: 13, weight: .medium, textColor: .secondaryLabel)
+                UILabel(text: "<Amount in fiat>", textSize: 17, weight: .semibold)
                     .bind(amountInFiatRef)
             }
         }
@@ -84,7 +81,7 @@ class BaseWalletCell: BECompositionView {
         if item.name.isEmpty {
             coinNameRef.view?.text = item.mintAddress.prefix(4) + "..." + item.mintAddress.suffix(4)
         } else {
-            coinNameRef.view?.text = item.name
+            coinNameRef.view?.text = item.token.name
         }
         amountRef.view?.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
         
