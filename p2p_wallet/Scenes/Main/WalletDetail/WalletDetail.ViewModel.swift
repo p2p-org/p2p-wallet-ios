@@ -104,7 +104,7 @@ extension WalletDetail {
         }
 
         private func buyTokens() {
-            var tokens = BuyProviders.Crypto.eth
+            var tokens = Buy.CryptoCurrency.eth
             if symbol == "SOL" {
                 tokens = .sol
             }

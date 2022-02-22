@@ -7,9 +7,8 @@ import Foundation
 private typealias _Error = Error
 
 extension Moonpay {
-    
     enum Error: _Error {
-        case `default`(message: String)
+        case message(message: String)
     }
     
     struct BuyQuote: Codable {

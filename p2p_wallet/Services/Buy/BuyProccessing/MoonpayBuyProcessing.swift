@@ -5,7 +5,7 @@
 import Foundation
 import CryptoKit
 
-public struct MoonpayProvider: BuyProvider {
+public struct MoonpayBuyProcessing: BuyProcessingServiceType {
     public enum Environment {
         case staging
         case production
@@ -67,6 +67,7 @@ public struct MoonpayProvider: BuyProvider {
     }
 }
 
-extension MoonpayProvider.Environment {
+extension MoonpayBuyProcessing.Environment {
     var endpoint: String { "https://moonpay.wallet.p2p.org/" }
+    // var endpoint: String { "https://buy.moonpay.com" }
 }
