@@ -670,7 +670,7 @@
 "You get" = "Ты получаешь";
 "Processing fee" = "Разовая комиссия";
 "SOL Price" = "Цена SOL";
-"Buy %@ on Moonpay" = "Купить %@ на Moonpay";
+"Buy %@ on Moonpay" = "Купить %@";
 "I understand" = "я понимаю";
 "Receiving via Bitcoin network" = "Получение через сеть Биткойн";
 "Make sure you understand these aspects" = "Убедитесь, что вы понимаете аспекты";
