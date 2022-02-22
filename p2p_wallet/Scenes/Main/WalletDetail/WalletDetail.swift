@@ -10,7 +10,7 @@ import Foundation
 enum WalletDetail {
     enum NavigatableScene {
         case settings(walletPubkey: String)
-        case buy(tokens: BuyProviders.Crypto)
+        case buy(tokens: Buy.CryptoCurrency)
         case send(wallet: Wallet)
         case receive(walletPubkey: String)
         case swap(fromWallet: Wallet)
