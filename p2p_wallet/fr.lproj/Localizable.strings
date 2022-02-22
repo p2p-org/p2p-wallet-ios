@@ -8,7 +8,7 @@
 "next" = "prochain";
 "Wowlet for people, not for tokens" = "Wowlet pour les gens, pas pour les jetons";
 "create new wallet" = "créer un nouveau portefeuille";
-"i've already had a wallet" = "j'ai déjà eu un portefeuille";
+"i already have a wallet" = "j'ai déjà eu un portefeuille";
 "Terms and conditions" = "Termes et conditions";
 "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "En appuyant sur Accepter, vous acceptez les conditions d'utilisation et la politique de confidentialité de P2PWallet";
 "Cancel" = "Annuler";
@@ -565,7 +565,7 @@
 "Your security key" = "Votre clé de sécurité";
 "Verify manually" = "Vérifier manuellement";
 "Renew" = "Renouveler";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\n\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
+"The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\n\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
 "Proceed without a username?" = "Continuer sans nom d'utilisateur ?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "À tout moment, vous pouvez facilement réserver un nom d'utilisateur en allant dans les paramètres";
 "Proceed" = "Procéder";
@@ -582,11 +582,11 @@
 "You can compare a cryptocurrency wallet" = "Vous pouvez comparer un portefeuille de crypto-monnaie à un gestionnaire de mots de passe pour la cryptographie et une clé de sécurité à un mot de passe principal.\n\nUne clé de sécurité est une série de 12 ou 24 mots générés par le wallet qui vous donne accès à sa crypto associée.";
 "The definition" = "La définition";
 "If lost, no one can restore it Keep it private, even from us" = " · En cas de perte, personne ne peut le restaurer\n · Gardez-le privé, même de nous";
-"Where I can find one?" = "Où puis-je en trouver un ?";
+"Where can I find one?" = "Où puis-je en trouver un ?";
 "If you create a new wallet account" = "Si vous créez un nouveau compte portefeuille, vous recevrez votre clé de sécurité que vous devrez noter dans un endroit sûr. C'est le seul moyen de récupérer votre portefeuille.\n\nSi vous avez toujours accès à votre ancien portefeuille, vous pouvez parfois récupérer votre clé de sécurité à partir de celui-ci.\n\nEn utilisant le portefeuille dépositaire, vous avez toujours la possibilité de récupérer l'accès à vos données en demandant à un tiers.";
 "What is a security key?" = "Qu'est-ce qu'une clé de sécurité ?";
 "Verify your security key" = "Vérifiez votre clé de sécurité";
-"Choose correct words" = "Choisissez les mots corrects";
+"Choose the correct words" = "Choisissez les mots corrects";
 "Save & Continue" = "sauvegarder";
 "These words don’t match" = "Ces mots ne correspondent pas";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Les mots de votre clé de sécurité doivent être sélectionnés dans le bon ordre. Alternativement, vous pouvez faire une sauvegarde iCloud";
