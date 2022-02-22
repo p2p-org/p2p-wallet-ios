@@ -59,14 +59,6 @@ extension ChooseWallet {
                         return self.myWallets + $0.filter {otherWallet in !self.myWallets.contains(where: {$0.token.symbol == otherWallet.token.symbol})}
                     }
                     .observe(on: MainScheduler.instance)
-                    .do(onSuccess: { [weak self] wallets in
-                        guard let self = self else {return}
-                        let newTokens = wallets
-                            .filter {!self.pricesService.getWatchList().contains($0.token.symbol)}
-                            .map {$0.token.symbol}
-                        self.pricesService.addToWatchList(newTokens)
-                        self.pricesService.fetchPrices(tokens: newTokens)
-                    })
             }
             return .just(myWallets)
         }
@@ -90,6 +82,8 @@ extension ChooseWallet {
         func selectWallet(_ wallet: Wallet) {
             analyticsManager.log(event: .tokenChosen(tokenName: wallet.token.symbol))
             handler.walletDidSelect(wallet)
+            pricesService.addToWatchList([wallet.token.symbol])
+            pricesService.fetchPrices(tokens: [wallet.token.symbol])
         }
     }
 }
