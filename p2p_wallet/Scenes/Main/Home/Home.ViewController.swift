@@ -194,6 +194,10 @@ extension Home {
                         }
                     }
                 )
+            case .feedback:
+                tabBar()?.moveToPage(10)
+            case .backup:
+                return
             }
         }
         
