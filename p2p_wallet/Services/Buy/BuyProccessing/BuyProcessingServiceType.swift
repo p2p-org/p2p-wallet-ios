@@ -4,47 +4,31 @@
 
 import Foundation
 
-public protocol BuyProvider {
+protocol BuyProcessingServiceType {
     func getUrl() -> String
 }
 
-protocol BuyProviderFactory {
-    func create(
-        walletRepository: WalletsRepository,
-        crypto: BuyProviders.Crypto,
-        initialAmount: Double,
-        currency: BuyProviders.Currency
-    ) throws -> BuyProvider
+protocol BuyCurrencyType {
+    func toString() -> String
 }
 
-struct BuyProviders {
-    enum Currency: String {
-        case usd = "usd"
-    }
-    
-    enum Crypto: String {
-        case eth = "eth"
-        case sol = "sol"
-        case usdt = "usdt"
-        
-        static let all: Set<Crypto> = [.eth, .sol, .usdt]
-        
-        func toWallet() -> String {
-            switch self {
-            case .eth: return "ETH"
-            case .sol: return "SOL"
-            case .usdt: return "USDT"
-            }
-        }
-    }
-    
-    class MoonpayFactory: BuyProviderFactory {
-        func create(walletRepository: WalletsRepository, crypto: Crypto, initialAmount: Double, currency: Currency) throws -> BuyProvider {
+protocol BuyProcessingFactory {
+    func create(
+        walletRepository: WalletsRepository,
+        crypto: Buy.CryptoCurrency,
+        initialAmount: Double,
+        currency: Buy.FiatCurrency
+    ) throws -> BuyProcessingServiceType
+}
+
+extension Buy {
+    class MoonpayBuyProcessingFactory: BuyProcessingFactory {
+        func create(walletRepository: WalletsRepository, crypto: CryptoCurrency, initialAmount: Double, currency: FiatCurrency) throws -> BuyProcessingServiceType {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
 //                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }
             
-            return MoonpayProvider(
+            return MoonpayBuyProcessing(
                 environment: Defaults.apiEndPoint.network == .mainnetBeta ?
                     .production :
                     .staging,
