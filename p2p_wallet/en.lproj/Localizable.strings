@@ -509,7 +509,7 @@
 "%@ isn’t available" = "%@ isn’t available";
 "Could not check name’s availability. Please check your internet connection!" = "Could not check name’s availability. Please check your internet connection!";
 "Reserve your P2P username now" = "Reserve your P2P username now";
-"Any token can be received using username regardless of whether it is in your wallets list" = "Any token can be received using username regardless of whether it is in your wallets list";
+"Any token can be received using username regardless of whether it is in your wallet's list" = "Any token can be received using username regardless of whether it is in your wallet's list";
 "Username %@.p2p.sol has already been reserved for this user" = "Username %@.p2p.sol has already been reserved for this user";
 "Username %@ is successfully reserved" = "Username %@ is successfully reserved";
 "Not yet reserved" = "Not yet reserved";
@@ -639,7 +639,7 @@
 "Send %@ %@" = "Send %@ %@";
 "%@ Network" = "%@ Network";
 "Choose the network" = "Choose the network";
-"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals.\n\nHowever, before sending your funds, make sure to double-check the selected network.";
+"P2P Wallet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Wallet will automatically match your withdrawal target address to the correct network for most withdrawals.\n\nHowever, before sending your funds, make sure to double-check the selected network.";
 "Paid by p2p" = "Paid by p2p";
 "Choose the recipient to proceed" = "Choose the recipient to proceed";
 "Review and confirm" = "Review & confirm";
@@ -673,7 +673,7 @@
 "Buy %@ on Moonpay" = "Buy %@ on Moonpay";
 "I understand" = "I understand";
 "Receiving via Bitcoin network" = "Receiving via Bitcoin network";
-"Make sure you understand the aspects" = "Make sure you understand the aspects";
+"Make sure you understand these aspects" = "Make sure you understand these aspects";
 "Select the second token" = "Select the second token";
 "Select the first token" = "Select the first token";
 "Confirm swapping %@ → %@" = "Confirm swapping %@ → %@";
@@ -681,7 +681,7 @@
 "Swap %@ → %@" = "Swap %@ → %@";
 "Custom" = "Custom";
 "Custom slippage" = "Custom slippage";
-"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "A %@ is a difference between the expected price and the actual price at which a trade is executed";
+"A slippage is a difference between the expected price and the actual price at which a trade is executed" = "A slippage is a difference between the expected price and the actual price at which a trade is executed";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Slippage can occur at any time, but it is most prevalent during periods of %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Transactions that exceed 20%% slippage tolerance may be %@";
 "Slippage tolerance %@" = "Slippage tolerance %@";
@@ -722,7 +722,7 @@
 "Face ID" = "Face ID";
 "Touch ID" = "Touch ID";
 "Paying token is not valid. Please choose another one" = "Paying token is not valid. Please choose another one";
-"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below.";
+"This address does not appear to have a %@ account. You have to pay a one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "This address does not appear to have a %@ account. You have to pay a one-time fee to create a %@ account for this address. You can choose which currency to pay in below.";
 "Could not create renBTC token, please try again later" = "Could not create renBTC token, please try again later";
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library.";
 "Allow access to save your photos" = "Allow access to save your photos";
