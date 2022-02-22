@@ -48,6 +48,12 @@ enum SendToken {
         }
     }
     
+    struct PayingWallet {
+        let wallet: Wallet
+        let isValid: Bool
+        let feeAmount: SolanaSDK.FeeAmount
+    }
+    
     enum PayingWalletStatus: Equatable {
         case loading
         case invalid
