@@ -112,7 +112,7 @@ extension Home {
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
 
-                        collectionView.contentInset.modify(dTop: 180, dBottom: 120)
+                        collectionView.contentInset.modify(dTop: 190, dBottom: 90)
                         collectionView.clipsToBounds = true
 
                         viewModel
