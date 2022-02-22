@@ -66,3 +66,45 @@ extension SendToken {
         }
     }
 }
+
+private extension SolanaSDK.FeeAmount {
+    func attributedString(
+        prices: [String: Double],
+        textSize: CGFloat = 15,
+        tokenColor: UIColor = .textBlack,
+        fiatColor: UIColor = .textSecondary,
+        attributedSeparator: NSAttributedString = NSAttributedString(string: "\n")
+    ) -> NSMutableAttributedString {
+        let attributedText = NSMutableAttributedString()
+        
+        // if empty
+        if total == 0 && (others == nil || others?.isEmpty == true) {
+            attributedText
+                .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
+            return attributedText
+        }
+        
+        // total (in SOL)
+        let totalFeeInSOL = total.convertToBalance(decimals: 9)
+        let totalFeeInUSD = totalFeeInSOL * prices["SOL"]
+        attributedText
+            .text("\(totalFeeInSOL.toString(maximumFractionDigits: 9)) SOL", size: textSize, color: tokenColor)
+            .text(" (~\(Defaults.fiat.symbol)\(totalFeeInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
+        
+        // other fees
+        if let others = others {
+            attributedText.append(attributedSeparator)
+            for (index, fee) in others.enumerated() {
+                let amountInUSD = fee.amount * prices[fee.unit]
+                attributedText
+                    .text("\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)", size: textSize, color: tokenColor)
+                    .text(" (~\(Defaults.fiat.symbol)\(amountInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
+                if index < others.count - 1 {
+                    attributedText
+                        .append(attributedSeparator)
+                }
+            }
+        }
+        return attributedText
+    }
+}
