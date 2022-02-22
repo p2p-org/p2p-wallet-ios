@@ -83,18 +83,16 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         if isUsingNativeSwap(sourceAddress: sourceAddress, payingTokenMint: payingTokenMint) {
             // Network fee for swapping natively
             do {
-                networkFeesRequest = .just(
-                    try getNetworkFeesForSwappingNatively(
-                        availableSourceMintAddresses: availableSourceMintAddresses,
-                        sourceAddress: sourceAddress,
-                        destinationAddress: destinationAddress,
-                        destinationToken: destinationToken,
-                        poolsPair: bestPoolsPair.orcaPoolPair,
-                        inputAmount: inputAmount,
-                        slippage: slippage,
-                        lamportsPerSignature: lamportsPerSignature,
-                        minRentExempt: minRentExempt
-                    )
+                networkFeesRequest = try getNetworkFeesForSwappingNatively(
+                    availableSourceMintAddresses: availableSourceMintAddresses,
+                    sourceAddress: sourceAddress,
+                    destinationAddress: destinationAddress,
+                    destinationToken: destinationToken,
+                    poolsPair: bestPoolsPair.orcaPoolPair,
+                    inputAmount: inputAmount,
+                    slippage: slippage,
+                    lamportsPerSignature: lamportsPerSignature,
+                    minRentExempt: minRentExempt
                 )
             } catch {
                 networkFeesRequest = .error(error)
@@ -264,8 +262,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         slippage: Double,
         lamportsPerSignature: UInt64,
         minRentExempt: UInt64
-    ) throws -> [PayingFee] {
-        let networkFees = try orcaSwap.getNetworkFees(
+    ) throws -> Single<[PayingFee]> {
+        try orcaSwap.getNetworkFees(
             myWalletsMints: availableSourceMintAddresses,
             fromWalletPubkey: sourceAddress,
             toWalletPubkey: destinationAddress,
@@ -275,28 +273,39 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             lamportsPerSignature: lamportsPerSignature,
             minRentExempt: minRentExempt
         )
-
-        var allFees = [PayingFee]()
-        
-        allFees.append(
-            .init(
-                type: .transactionFee,
-                lamports: networkFees.transaction,
-                token: .nativeSolana
-            )
-        )
-        
-        if networkFees.accountBalances > 0 {
-            allFees.append(
-                .init(
-                    type: .accountCreationFee(token: destinationToken?.symbol),
-                    lamports: networkFees.accountBalances,
-                    token: .nativeSolana
+            .map { networkFees in
+                var allFees = [PayingFee]()
+                
+                if networkFees.deposit > 0 {
+                    allFees.append(
+                        .init(
+                            type: .depositWillBeReturned,
+                            lamports: networkFees.deposit,
+                            token: .nativeSolana
+                        )
+                    )
+                }
+                
+                allFees.append(
+                    .init(
+                        type: .transactionFee,
+                        lamports: networkFees.transaction,
+                        token: .nativeSolana
+                    )
                 )
-            )
-        }
-        
-        return allFees
+                
+                if networkFees.accountBalances > 0 {
+                    allFees.append(
+                        .init(
+                            type: .accountCreationFee(token: destinationToken?.symbol),
+                            lamports: networkFees.accountBalances,
+                            token: .nativeSolana
+                        )
+                    )
+                }
+                
+                return allFees
+            }
     }
     
     private func getNetworkFeesForSwappingViaRelayProgram(
@@ -340,6 +349,26 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                     )
                 }
                 
+                if neededTopUpAmount.deposit > 0 {
+                    allFees.append(
+                        .init(
+                            type: .depositWillBeReturned,
+                            lamports: neededTopUpAmount.deposit,
+                            token: .nativeSolana
+                        )
+                    )
+                }
+                
+                if neededTopUpAmount.accountBalances > 0 {
+                    allFees.append(
+                        .init(
+                            type: .accountCreationFee(token: destinationToken.symbol),
+                            lamports: neededTopUpAmount.accountBalances,
+                            token: .nativeSolana
+                        )
+                    )
+                }
+                
                 allFees.append(
                     .init(
                         type: .transactionFee,
@@ -348,14 +377,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                         toString: nil,
                         isFree: isFree,
                         info: info
-                    )
-                )
-                
-                allFees.append(
-                    .init(
-                        type: .accountCreationFee(token: destinationToken.symbol),
-                        lamports: neededTopUpAmount.accountBalances,
-                        token: .nativeSolana
                     )
                 )
                 
