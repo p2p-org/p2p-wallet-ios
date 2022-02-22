@@ -445,6 +445,16 @@ extension OrcaSwapV2.ViewModel {
                             )
                         }
                     }
+                    
+                    if networkFees.deposit > 0 {
+                        allFees.append(
+                            .init(
+                                type: .depositWillBeReturned,
+                                lamports: networkFees.deposit,
+                                token: .nativeSolana
+                            )
+                        )
+                    }
 
                     if networkFees.accountBalances > 0 {
                         allFees.append(
