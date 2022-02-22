@@ -398,7 +398,7 @@ extension OrcaSwapV2.ViewModel {
             let myWalletsMints = self.walletsRepository.getWallets().compactMap {$0.token.address}
             let slippage = self.slippageSubject.value
             
-            guard let fees = try? self.orcaSwap.getFees(
+            guard let networkFees = try? self.orcaSwap.getNetworkFees(
                 myWalletsMints: myWalletsMints,
                 fromWalletPubkey: sourceWalletPubkey,
                 toWalletPubkey: destinationWallet?.pubkey,
@@ -412,23 +412,32 @@ extension OrcaSwapV2.ViewModel {
                 return Disposables.create()
             }
             
+            guard let liquidityProviderFees = try? self.orcaSwap.getLiquidityProviderFee(
+                bestPoolsPair: bestPoolsPair,
+                inputAmount: inputAmount,
+                slippage: slippage
+            ) else {
+                observer(.success([]))
+                return Disposables.create()
+            }
+            
             var allFees = [PayingFee]()
             
             if let destinationWallet = destinationWallet {
-                if fees.liquidityProviderFees.count == 1 {
+                if liquidityProviderFees.count == 1 {
                     allFees.append(
                         .init(
                             type: .liquidityProviderFee,
-                            lamports: fees.liquidityProviderFees.first!,
+                            lamports: liquidityProviderFees.first!,
                             token: destinationWallet.token
                         )
                     )
-                } else if fees.liquidityProviderFees.count == 2 {
+                } else if liquidityProviderFees.count == 2 {
                     if let intermediaryTokenName = bestPoolsPair?[0].tokenBName, let decimals = bestPoolsPair?[0].getTokenBDecimals() {
                         allFees.append(
                             .init(
                                 type: .liquidityProviderFee,
-                                lamports: fees.liquidityProviderFees.first!,
+                                lamports: liquidityProviderFees.first!,
                                 token: .unsupported(mint: nil, decimals: decimals, symbol: intermediaryTokenName)
                             )
                         )
@@ -437,18 +446,18 @@ extension OrcaSwapV2.ViewModel {
                     allFees.append(
                         .init(
                             type: .liquidityProviderFee,
-                            lamports: fees.liquidityProviderFees.last!,
+                            lamports: liquidityProviderFees.last!,
                             token: destinationWallet.token
                         )
                     )
                 }
             }
 
-            if let creationFee = fees.accountCreationFee {
+            if networkFees.accountBalances > 0 {
                 allFees.append(
                     .init(
                         type: .accountCreationFee(token: destinationWallet?.token.symbol),
-                        lamports: creationFee,
+                        lamports: networkFees.accountBalances,
                         token: .nativeSolana
                     )
                 )
@@ -457,7 +466,7 @@ extension OrcaSwapV2.ViewModel {
             allFees.append(
                 .init(
                     type: .transactionFee,
-                    lamports: fees.transactionFees,
+                    lamports: networkFees.transaction,
                     token: .nativeSolana
                 )
             )
