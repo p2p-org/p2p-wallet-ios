@@ -51,7 +51,7 @@ extension CreateWallet {
             let illustration = UIView.ilustrationView(
                 image: .explanationPicture,
                 title: L10n.secureYourWallet,
-                description: L10n.TheFollowingWordsAreSecurityKeyThatYouMustKeepInASafePlaceWrittenInTheCorrectSequence.IfLostNoOneCanRestoreIt.keepItPrivateEvenFromUs)
+                description: L10n.TheFollowingWordsAreTheSecurityKeyThatYouMustKeepInASafePlaceWrittenInTheCorrectSequence.IfLostNoOneCanRestoreIt.keepItPrivateEvenFromUs)
             
             view.addSubview(illustration)
             illustration.autoPinEdge(.top, to: .bottom, of: navigationBar)

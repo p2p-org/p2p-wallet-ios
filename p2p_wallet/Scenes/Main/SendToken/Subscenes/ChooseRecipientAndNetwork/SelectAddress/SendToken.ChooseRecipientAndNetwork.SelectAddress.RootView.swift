@@ -359,7 +359,7 @@ private class _FeeView: UIStackView {
             .disposed(by: disposeBag)
         
         walletDriver.map {$0?.token.symbol ?? ""}
-            .map {L10n.ThisAddressDoesNotAppearToHaveAAccount.YouHaveToPayOneTimeFeeToCreateAAccountForThisAddress.youCanChooseWhichCurrencyToPayInBelow($0, $0)}
+            .map {L10n.ThisAddressDoesNotAppearToHaveAAccount.YouHaveToPayAOneTimeFeeToCreateAAccountForThisAddress.youCanChooseWhichCurrencyToPayInBelow($0, $0)}
             .drive(attentionLabel.rx.text)
             .disposed(by: disposeBag)
     }
