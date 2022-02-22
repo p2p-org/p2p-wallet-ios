@@ -13,6 +13,7 @@ struct PayingFee {
         case accountCreationFee(token: String?)
         case orderCreationFee
         case transactionFee
+        case depositWillBeReturned
         
         var headerString: String {
             switch self {
@@ -28,6 +29,8 @@ struct PayingFee {
                 return L10n.serumOrderCreationPaidOncePerPair
             case .transactionFee:
                 return L10n.transactionFee
+            case .depositWillBeReturned:
+                return L10n.depositWillBeReturned
             }
         }
     }

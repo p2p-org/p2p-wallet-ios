@@ -105,9 +105,10 @@ class SendService: SendServiceType {
                     minRentExemption: feeService.minimumBalanceForRenExemption,
                     usingCachedFeePayerPubkey: true
                 )
-                    .map { [weak self] preparedTransaction in
+                    .flatMap { [weak self] preparedTransaction in
                         guard let self = self else {throw SolanaSDK.Error.unknown}
-                        return self.relayService.calculateFee(preparedTransaction: preparedTransaction)
+                        return self.relayService.calculateNeededTopUpAmount(expectedFee: preparedTransaction.expectedFee)
+                            .map(Optional.init)
                     }
             case .reward:
                 return .just(.zero)
@@ -120,11 +121,10 @@ class SendService: SendServiceType {
         payingFeeWallet: Wallet
     ) -> Single<SolanaSDK.Lamports?> {
         guard relayMethod == .relay else {return .just(nil)}
-        guard let payingFeeWalletAddress = payingFeeWallet.pubkey else {return .just(nil)}
         if payingFeeWallet.isNativeSOL {return .just(feeInSOL)}
         return relayService.calculateFeeInPayingToken(
             feeInSOL: feeInSOL,
-            payingFeeToken: .init(address: payingFeeWalletAddress, mint: payingFeeWallet.mintAddress)
+            payingFeeTokenMint: payingFeeWallet.mintAddress
         )
     }
     
