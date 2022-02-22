@@ -42,7 +42,6 @@ extension SendToken.ChooseRecipientAndNetwork {
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
-        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         
         // MARK: - Initializers
         init(

@@ -15,7 +15,6 @@ protocol SendTokenRecipientAndNetworkHandler: AnyObject {
     var sendService: SendServiceType {get}
     var recipientSubject: BehaviorRelay<SendToken.Recipient?> {get}
     var networkSubject: BehaviorRelay<SendToken.Network> {get}
-    var payingWalletSubject: BehaviorRelay<Wallet?> {get}
     
     func getSelectedWallet() -> Wallet?
     func getSendService() -> SendServiceType
