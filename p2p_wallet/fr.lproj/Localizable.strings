@@ -509,7 +509,7 @@
 "%@ isn’t available" = "%@ n'est pas disponible";
 "Could not check name’s availability. Please check your internet connection!" = "Impossible de vérifier la disponibilité du nom. S'il vous plait, vérifiez votre connexion internet!";
 "Reserve your P2P username now" = "Réservez votre nom d'utilisateur P2P maintenant";
-"Any token can be received using username regardless of whether it is in your wallets list" = "N'importe quel jeton peut être reçu en utilisant le nom d'utilisateur, qu'il soit ou non dans votre liste de portefeuilles";
+"Any token can be received using username regardless of whether it is in your wallet's list" = "N'importe quel jeton peut être reçu en utilisant le nom d'utilisateur, qu'il soit ou non dans votre liste de portefeuilles";
 "Username %@.p2p.sol has already been reserved for this user" = "Le nom d'utilisateur %@.p2p.sol a déjà été réservé pour cet utilisateur";
 "Username %@ is successfully reserved" = "Le nom d'utilisateur %@ est réservé avec succès";
 "Not yet reserved" = "Pas encore réservé";
@@ -639,7 +639,7 @@
 "Send %@ %@" = "Envoyer %@ %@";
 "%@ Network" = "%@ Réseau";
 "Choose the network" = "Choisissez le réseau";
-"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet fera automatiquement correspondre votre adresse cible de retrait au bon réseau pour la plupart des retraits.\n\nCependant, avant d'envoyer vos fonds, assurez-vous de revérifier le réseau sélectionné.";
+"P2P Wallet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet fera automatiquement correspondre votre adresse cible de retrait au bon réseau pour la plupart des retraits.\n\nCependant, avant d'envoyer vos fonds, assurez-vous de revérifier le réseau sélectionné.";
 "Paid by p2p" = "Payé par p2p";
 "Choose the recipient to proceed" = "Choisissez le destinataire pour continuer";
 "Review and confirm" = "Examiner & confirmer";
@@ -673,7 +673,7 @@
 "Buy %@ on Moonpay" = "Achetez %@ sur Moonpay";
 "I understand" = "je comprend";
 "Receiving via Bitcoin network" = "Réception via le réseau Bitcoin";
-"Make sure you understand the aspects" = "Assurez-vous de bien comprendre les aspects";
+"Make sure you understand these aspects" = "Assurez-vous de bien comprendre les aspects";
 "Select the second token" = "Sélectionnez le deuxième jeton";
 "Select the first token" = "Sélectionnez le premier jeton";
 "Confirm swapping %@ → %@" = "Confirmer l'échange %@ → %@";
@@ -681,7 +681,7 @@
 "Swap %@ → %@" = "Échanger %@ → %@";
 "Custom" = "Personnalisé";
 "Custom slippage" = "Glissement personnalisé";
-"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "Un %@ est une différence entre le prix attendu et le prix réel auquel une transaction est exécutée";
+"A slippage is a difference between the expected price and the actual price at which a trade is executed" = "Un Glissement est une différence entre le prix attendu et le prix réel auquel une transaction est exécutée";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Le glissement peut se produire à tout moment, mais il est plus fréquent pendant les périodes de %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Les transactions qui dépassent 20%% de tolérance de glissement peuvent être %@";
 "Slippage tolerance %@" = "Tolérance de glissement %@";
@@ -722,7 +722,7 @@
 "Face ID" = "Identification faciale";
 "Touch ID" = "ID tactile";
 "Paying token is not valid. Please choose another one" = "Le jeton de paiement n'est pas valide. Veuillez en choisir un autre";
-"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Cette adresse ne semble pas avoir de compte %@. Vous devez payer des frais uniques pour créer un compte %@ pour cette adresse. Vous pouvez choisir la devise dans laquelle payer ci-dessous.";
+"This address does not appear to have a %@ account. You have to pay a one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Cette adresse ne semble pas avoir de compte %@. Vous devez payer des frais uniques pour créer un compte %@ pour cette adresse. Vous pouvez choisir la devise dans laquelle payer ci-dessous.";
 "Could not create renBTC token, please try again later" = "Impossible de créer le jeton renBTC, veuillez réessayer plus tard";
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Ceci est nécessaire pour que l'application enregistre les codes QR générés ou sauvegarde vos phrases de départ dans votre photothèque.";
 "Allow access to save your photos" = "Autoriser l'accès pour enregistrer vos photos";

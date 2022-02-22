@@ -45,7 +45,7 @@ class WLBannerView: BEView {
     }()
     
     private lazy var titleLabel = UILabel(text: L10n.reserveYourP2PUsernameNow, textSize: 15, weight: .medium, textColor: .black, numberOfLines: 0)
-    private lazy var descriptionLabel = UILabel(text: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletsList, textSize: 13, textColor: .black, numberOfLines: 0)
+    private lazy var descriptionLabel = UILabel(text: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletSList, textSize: 13, textColor: .black, numberOfLines: 0)
     
     // MARK: - Initializers
     init(title: String? = nil, description: String? = nil) {

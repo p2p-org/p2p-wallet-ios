@@ -37,7 +37,7 @@ final class BannerKindTransformer: BannerKindTransformerType {
     private func chooseDescription(for bannerKind: BannerKind) -> String {
         switch bannerKind {
         case .reserveUsername:
-            return L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletsList
+            return L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletSList
         }
     }
 }
