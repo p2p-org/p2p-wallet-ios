@@ -5,22 +5,22 @@
 //  Created by Chung Tran on 22/11/2021.
 //
 
-import Foundation
-import Charts
 import BECollectionView
-import RxSwift
+import Charts
+import Foundation
 import RxCocoa
+import RxSwift
 
 extension Home {
     class BalanceView: BECompositionView {
         private let viewModel: HomeViewModelType
         private let disposeBag = DisposeBag()
-        
+
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func build() -> UIView {
             BEVStack(alignment: .center) {
                 UILabel(text: L10n.balance)
@@ -30,7 +30,7 @@ extension Home {
                         .balance
                         .drive(view.rx.text)
                         .disposed(by: disposeBag)
-    
+
                     /*
                     viewModel
                         .isLoading
@@ -50,16 +50,16 @@ extension Home {
     }
 }
 
-private extension HomeViewModelType {
-    var isLoading: Driver<Bool> {
+extension HomeViewModelType {
+    fileprivate var isLoading: Driver<Bool> {
         walletsRepository
             .stateObservable
             .map { state in state != .loaded }
             .distinctUntilChanged { $0 }
             .asDriver(onErrorJustReturn: false)
     }
-    
-    var balance: Driver<String> {
+
+    fileprivate var balance: Driver<String> {
         Observable
             .zip(
                 walletsRepository.dataObservable,
@@ -68,7 +68,7 @@ private extension HomeViewModelType {
             .asDriver(onErrorJustReturn: ([], .loaded))
             .map { (data, state) in
                 let data = data ?? []
-                
+
                 switch state {
                 case .initializing:
                     return ""
