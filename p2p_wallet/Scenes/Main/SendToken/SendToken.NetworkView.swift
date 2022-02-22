@@ -78,14 +78,14 @@ private extension SolanaSDK.FeeAmount {
         let attributedText = NSMutableAttributedString()
         
         // if empty
-        if total == 0 && (others == nil || others?.isEmpty == true) {
+        if transaction == 0 && (others == nil || others?.isEmpty == true) {
             attributedText
                 .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
             return attributedText
         }
         
         // total (in SOL)
-        let totalFeeInSOL = total.convertToBalance(decimals: 9)
+        let totalFeeInSOL = transaction.convertToBalance(decimals: 9)
         let totalFeeInUSD = totalFeeInSOL * prices["SOL"]
         attributedText
             .text("\(totalFeeInSOL.toString(maximumFractionDigits: 9)) SOL", size: textSize, color: tokenColor)
