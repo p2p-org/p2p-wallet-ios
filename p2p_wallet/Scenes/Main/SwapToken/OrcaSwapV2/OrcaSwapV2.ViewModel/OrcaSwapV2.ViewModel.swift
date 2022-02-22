@@ -377,9 +377,10 @@ extension OrcaSwapV2.ViewModel {
     }
     
     private func feesRequest() -> Single<[PayingFee]> {
-        .deferred { [weak self] in
+        Single.create { [weak self] observer in
             guard let self = self else {
-                throw SolanaSDK.Error.unknown
+                observer(.success([]))
+                return Disposables.create()
             }
             
             guard let sourceWallet = self.sourceWalletSubject.value,
@@ -387,7 +388,8 @@ extension OrcaSwapV2.ViewModel {
                   let lamportsPerSignature = self.feeService.lamportsPerSignature,
                   let minRenExempt = self.feeService.minimumBalanceForRenExemption
             else {
-                return .just([])
+                observer(.success([]))
+                return Disposables.create()
             }
             
             let destinationWallet = self.destinationWalletSubject.value
@@ -396,7 +398,7 @@ extension OrcaSwapV2.ViewModel {
             let myWalletsMints = self.walletsRepository.getWallets().compactMap {$0.token.address}
             let slippage = self.slippageSubject.value
             
-            return try self.orcaSwap.getNetworkFees(
+            guard let fees = try? self.orcaSwap.getFees(
                 myWalletsMints: myWalletsMints,
                 fromWalletPubkey: sourceWalletPubkey,
                 toWalletPubkey: destinationWallet?.pubkey,
@@ -405,76 +407,63 @@ extension OrcaSwapV2.ViewModel {
                 slippage: slippage,
                 lamportsPerSignature: lamportsPerSignature,
                 minRentExempt: minRenExempt
-            )
-                .map { [weak self] networkFees in
-                    guard let self = self else {throw SolanaSDK.Error.unknown}
-                    let liquidityProviderFees = try self.orcaSwap.getLiquidityProviderFee(
-                        bestPoolsPair: bestPoolsPair,
-                        inputAmount: inputAmount,
-                        slippage: slippage
-                    )
-                    
-                    var allFees = [PayingFee]()
-                    
-                    if let destinationWallet = destinationWallet {
-                        if liquidityProviderFees.count == 1 {
-                            allFees.append(
-                                .init(
-                                    type: .liquidityProviderFee,
-                                    lamports: liquidityProviderFees.first!,
-                                    token: destinationWallet.token
-                                )
-                            )
-                        } else if liquidityProviderFees.count == 2 {
-                            if let intermediaryTokenName = bestPoolsPair?[0].tokenBName, let decimals = bestPoolsPair?[0].getTokenBDecimals() {
-                                allFees.append(
-                                    .init(
-                                        type: .liquidityProviderFee,
-                                        lamports: liquidityProviderFees.first!,
-                                        token: .unsupported(mint: nil, decimals: decimals, symbol: intermediaryTokenName)
-                                    )
-                                )
-                            }
-                            
-                            allFees.append(
-                                .init(
-                                    type: .liquidityProviderFee,
-                                    lamports: liquidityProviderFees.last!,
-                                    token: destinationWallet.token
-                                )
-                            )
-                        }
-                    }
-                    
-                    if networkFees.deposit > 0 {
-                        allFees.append(
-                            .init(
-                                type: .depositWillBeReturned,
-                                lamports: networkFees.deposit,
-                                token: .nativeSolana
-                            )
+            ) else {
+                observer(.success([]))
+                return Disposables.create()
+            }
+            
+            var allFees = [PayingFee]()
+            
+            if let destinationWallet = destinationWallet {
+                if fees.liquidityProviderFees.count == 1 {
+                    allFees.append(
+                        .init(
+                            type: .liquidityProviderFee,
+                            lamports: fees.liquidityProviderFees.first!,
+                            token: destinationWallet.token
                         )
-                    }
-
-                    if networkFees.accountBalances > 0 {
+                    )
+                } else if fees.liquidityProviderFees.count == 2 {
+                    if let intermediaryTokenName = bestPoolsPair?[0].tokenBName, let decimals = bestPoolsPair?[0].getTokenBDecimals() {
                         allFees.append(
                             .init(
-                                type: .accountCreationFee(token: destinationWallet?.token.symbol),
-                                lamports: networkFees.accountBalances,
-                                token: .nativeSolana
+                                type: .liquidityProviderFee,
+                                lamports: fees.liquidityProviderFees.first!,
+                                token: .unsupported(mint: nil, decimals: decimals, symbol: intermediaryTokenName)
                             )
                         )
                     }
                     
                     allFees.append(
                         .init(
-                            type: .transactionFee,
-                            lamports: networkFees.transaction,
-                            token: .nativeSolana
+                            type: .liquidityProviderFee,
+                            lamports: fees.liquidityProviderFees.last!,
+                            token: destinationWallet.token
                         )
                     )
-                    return allFees
                 }
+            }
+
+            if let creationFee = fees.accountCreationFee {
+                allFees.append(
+                    .init(
+                        type: .accountCreationFee(token: destinationWallet?.token.symbol),
+                        lamports: creationFee,
+                        token: .nativeSolana
+                    )
+                )
+            }
+            
+            allFees.append(
+                .init(
+                    type: .transactionFee,
+                    lamports: fees.transactionFees,
+                    token: .nativeSolana
+                )
+            )
+
+            observer(.success(allFees))
+            return Disposables.create()
         }
             .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
     }

@@ -25,7 +25,7 @@ extension CreateOrRestoreWallet {
         )
             .onTap(self, action: #selector(navigateToCreateWalletScene))
         private lazy var restoreWalletButton = WLStepButton.sub(
-            text: L10n.iAlreadyHaveAWallet.uppercaseFirst
+            text: L10n.iVeAlreadyHadAWallet.uppercaseFirst
         )
             .onTap(self, action: #selector(navigateToRestoreWalletScene))
         

@@ -37,7 +37,7 @@ extension EnterSeedInfo {
             )
         }
         private let secondTitle = UILabel(
-            text: L10n.whereCanIFindOne,
+            text: L10n.whereICanFindOne,
             textSize: 28,
             weight: .bold
         )

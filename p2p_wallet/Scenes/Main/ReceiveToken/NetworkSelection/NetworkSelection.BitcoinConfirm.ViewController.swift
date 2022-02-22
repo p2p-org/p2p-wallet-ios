@@ -33,7 +33,7 @@ extension ReceiveToken {
                 UIStackView(axis: .vertical, alignment: .center) {
                     UILabel(text: L10n.receivingViaBitcoinNetwork, textSize: 20, weight: .semibold)
                         .padding(.init(only: .bottom, inset: 4))
-                    UILabel(text: L10n.makeSureYouUnderstandTheseAspects, textColor: .textSecondary)
+                    UILabel(text: L10n.makeSureYouUnderstandTheAspects, textColor: .textSecondary)
                 }.padding(.init(all: 18, excludingEdge: .bottom))
                 
                 // Icon

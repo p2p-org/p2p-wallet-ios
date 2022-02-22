@@ -166,17 +166,14 @@ extension Resolver: ResolverRegistering {
             .implements(DAppChannelType.self)
         
         // MARK: - Moonpay
-        register{Moonpay.Provider(api: Moonpay.API.fromEnvironment())}
+        register{Moonpay.MoonpayServiceImpl(api: Moonpay.API.fromEnvironment())}
+            .implements(MoonpayService.self)
             .scope(.shared)
     
         // MARK: - BuyProvider
-        register{Buy.MoonpayBuyProcessingFactory()}
-            .implements(BuyProcessingFactory.self)
+        register{BuyProviders.MoonpayFactory()}
+            .implements(BuyProviderFactory.self)
             .scope(.application)
-        
-        register{Buy.MoonpayExchange(provider: resolve())}
-            .implements(Buy.ExchangeService.self)
-            .scope(.session)
         
         // MARK: - AppEventHandler
         register {AppEventHandler()}
