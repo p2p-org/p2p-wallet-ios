@@ -398,7 +398,7 @@ extension OrcaSwapV2.ViewModel {
             let myWalletsMints = self.walletsRepository.getWallets().compactMap {$0.token.address}
             let slippage = self.slippageSubject.value
             
-            guard let fees = try? self.orcaSwap.getFees(
+            guard let fees = try? self.orcaSwap.getNetworkFees(
                 myWalletsMints: myWalletsMints,
                 fromWalletPubkey: sourceWalletPubkey,
                 toWalletPubkey: destinationWallet?.pubkey,
