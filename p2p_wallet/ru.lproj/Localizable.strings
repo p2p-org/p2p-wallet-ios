@@ -8,7 +8,7 @@
 "next" = "далее";
 "Wowlet for people, not for tokens" = "Ваулет для людей, а не для токенов";
 "create new wallet" = "создать новый кошелек";
-"i've already had a wallet" = "у меня уже есть кошелек";
+"i already have a wallet" = "у меня уже есть кошелек";
 "Terms and conditions" = "Условия и положения";
 "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "Нажимая \"Принять\", вы соглашаетесь с Условиями использования и Политикой конфиденциальности P2PWallet.";
 "Cancel" = "Отмена";
@@ -509,7 +509,7 @@
 "%@ isn’t available" = "%@ недоступен";
 "Could not check name’s availability. Please check your internet connection!" = "Не удалось проверить наличие имени. Пожалуйста, проверьте ваше интернет-соединение!";
 "Reserve your P2P username now" = "Зарезервируйте свое имя пользователя P2P прямо сейчас";
-"Any token can be received using username regardless of whether it is in your wallets list" = "Любой токен можно получить, используя имя пользователя, независимо от того, есть ли он в списке ваших кошельков.";
+"Any token can be received using username regardless of whether it is in your wallet's list" = "Любой токен можно получить, используя имя пользователя, независимо от того, есть ли он в списке ваших кошельков.";
 "Username %@.p2p.sol has already been reserved for this user" = "Имя пользователя %@.p2p.sol уже зарезервировано для этого пользователя.";
 "Username %@ is successfully reserved" = "Имя пользователя %@ успешно зарезервировано";
 "Not yet reserved" = "Еще не зарезервировано";
@@ -565,7 +565,7 @@
 "Your security key" = "Ваш электронный ключ";
 "Verify manually" = "Проверить вручную";
 "Renew" = "Возобновить";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Следующие слова являются ключом безопасности, который вы должны хранить в надежном месте и писать в правильной последовательности.\n\n Если он утерян, никто не сможет его восстановить. \n Храните его в тайне, даже от нас";
+"The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Следующие слова являются ключом безопасности, который вы должны хранить в надежном месте и писать в правильной последовательности.\n\n Если он утерян, никто не сможет его восстановить. \n Храните его в тайне, даже от нас";
 "Proceed without a username?" = "Продолжить без имени пользователя?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "В любое время вы можете легко зарезервировать имя пользователя, перейдя в настройки";
 "Proceed" = "Продолжить";
@@ -582,11 +582,11 @@
 "You can compare a cryptocurrency wallet" = "Вы можете сравнить кошелек для криптовалюты с менеджером паролей для криптографии, а ключ безопасности - с мастер-паролем.\n\nКлюч безопасности - это серия из 12 или 24 слов, сгенерированных кошельком, которые дают вам доступ к связанной с ним криптовалюте.";
 "The definition" = "Определение";
 "If lost, no one can restore it Keep it private, even from us" = " · В случае утери никто не сможет его восстановить\n · Держите это в секрете, даже от нас";
-"Where I can find one?" = "Где я могу его найти?";
+"Where can I find one?" = "Где я могу его найти?";
 "If you create a new wallet account" = "Если вы создадите новую учетную запись кошелька, вы получите ключ безопасности, который необходимо записать в безопасном месте. Это единственный способ восстановить свой кошелек.\n\nЕсли у вас все еще есть доступ к своему старому кошельку, иногда вы можете восстановить из него свой электронный ключ.\n\nИспользуя кошелек Custodian, у вас по-прежнему есть возможность восстановить доступ к своим данным, обратившись к третьей стороне.";
 "What is a security key?" = "Что такое электронный ключ?";
 "Verify your security key" = "Подтвердите свой электронный ключ";
-"Choose correct words" = "Выберите правильные слова";
+"Choose the correct words" = "Выберите правильные слова";
 "Save & Continue" = "Сохранить & Продолжить";
 "These words don’t match" = "Эти слова не совпадают";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Слова в вашем электронном ключе необходимо выбирать в правильном порядке. Кроме того, вы можете сделать резервную копию iCloud";
@@ -639,7 +639,7 @@
 "Send %@ %@" = "Отправить %@ %@";
 "%@ Network" = "%@ Сеть";
 "Choose the network" = "Выберите сеть";
-"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet автоматически сопоставит ваш целевой адрес вывода с правильной сетью для большинства случаев вывода средств.\n\nОднако перед отправкой средств обязательно перепроверьте выбранную сеть.";
+"P2P Wallet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet автоматически сопоставит ваш целевой адрес вывода с правильной сетью для большинства случаев вывода средств.\n\nОднако перед отправкой средств обязательно перепроверьте выбранную сеть.";
 "Paid by p2p" = "Оплачивается p2p";
 "Choose the recipient to proceed" = "Выберите получателя, чтобы продолжить";
 "Review and confirm" = "Просмотрите & подтвердите";
@@ -673,7 +673,7 @@
 "Buy %@ on Moonpay" = "Купить %@ на Moonpay";
 "I understand" = "я понимаю";
 "Receiving via Bitcoin network" = "Получение через сеть Биткойн";
-"Make sure you understand the aspects" = "Убедитесь, что вы понимаете аспекты";
+"Make sure you understand these aspects" = "Убедитесь, что вы понимаете аспекты";
 "Select the second token" = "Выберите второй токен";
 "Select the first token" = "Выберите первый токен";
 "Confirm swapping %@ → %@" = "Подтвердите замену %@ → %@";
@@ -681,7 +681,7 @@
 "Swap %@ → %@" = "Обменять %@ → %@";
 "Custom" = "Обычай";
 "Custom slippage" = "Пользовательское проскальзывание";
-"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "%@ - это разница между ожидаемой ценой и фактической ценой, по которой совершается сделка.";
+"A slippage is a difference between the expected price and the actual price at which a trade is executed" = "Проскальзывание - это разница между ожидаемой ценой и фактической ценой, по которой совершается сделка.";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Проскальзывание может произойти в любое время, но наиболее часто оно встречается в периоды %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Транзакции, превышающие допуск по проскальзыванию 20%%, могут быть %@";
 "Slippage tolerance %@" = "Допуск по проскальзыванию %@";
@@ -722,7 +722,7 @@
 "Face ID" = "Идентификатор лица";
 "Touch ID" = "Сенсорный идентификатор";
 "Paying token is not valid. Please choose another one" = "Платежный токен недействителен. Пожалуйста, выберите другой";
-"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Этот адрес не имеет учетной записи %@. Вы должны заплатить единовременную плату, чтобы создать учетную запись %@ для этого адреса. Ниже вы можете выбрать, в какой валюте платить.";
+"This address does not appear to have a %@ account. You have to pay a one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Этот адрес не имеет учетной записи %@. Вы должны заплатить единовременную плату, чтобы создать учетную запись %@ для этого адреса. Ниже вы можете выбрать, в какой валюте платить.";
 "Could not create renBTC token, please try again later" = "Не удалось создать токен renBTC. Повторите попытку позже.";
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Это необходимо для того, чтобы приложение могло сохранять сгенерированные QR-коды или создавать резервные копии исходных фраз в вашей библиотеке фотографий.";
 "Allow access to save your photos" = "Разрешите доступ для сохранения ваших фотографий";
@@ -735,3 +735,4 @@
 "Tokens" = "Токены";
 "Hidden tokens" = "Скрытые токены";
 "Exceeded maximum number of instructions allowed" = "Превышено максимально допустимое количество инструкций";
+"Deposit (will be returned)" = "Депозит (будет возвращен)";

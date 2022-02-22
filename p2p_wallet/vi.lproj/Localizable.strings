@@ -8,7 +8,7 @@
 "next" = "kế tiếp";
 "Wowlet for people, not for tokens" = "Wowlet cho mọi người, không phải vì token";
 "create new wallet" = "tạo ví mới";
-"i've already had a wallet" = "tôi đã có ví";
+"i already have a wallet" = "tôi đã có ví";
 "Terms and conditions" = "Các điều khoản và điều kiện";
 "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "Bằng cách nhấn vào chấp nhận, bạn đồng ý với Điều khoản sử dụng và Chính sách quyền riêng tư của P2PWallet";
 "Cancel" = "Huỷ bỏ";
@@ -509,7 +509,7 @@
 "%@ isn’t available" = "%@ không khả dụng";
 "Could not check name’s availability. Please check your internet connection!" = "Không thể kiểm tra tính khả dụng của tên. Xin vui lòng kiểm tra kết nối Internet của bạn!";
 "Reserve your P2P username now" = "Đặt tên người dùng P2P của bạn ngay bây giờ";
-"Any token can be received using username regardless of whether it is in your wallets list" = "Bất kỳ token nào cũng có thể được nhận bằng tên người dùng bất kể nó có trong danh sách ví của bạn hay không";
+"Any token can be received using username regardless of whether it is in your wallet's list" = "Bất kỳ token nào cũng có thể được nhận bằng tên người dùng bất kể nó có trong danh sách ví của bạn hay không";
 "Username %@.p2p.sol has already been reserved for this user" = "Tên người dùng %@.p2p.sol đã được dành riêng cho người dùng này";
 "Username %@ is successfully reserved" = "Tên người dùng %@ đã được bảo lưu thành công";
 "Not yet reserved" = "Chưa được đặt trước";
@@ -565,7 +565,7 @@
 "Your security key" = "Khóa bảo mật của bạn";
 "Verify manually" = "Xác minh thủ công";
 "Renew" = "Thay mới";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở nơi an toàn, được viết theo đúng trình tự.\n\n Nếu bị mất, không ai có thể khôi phục lại. \n Giữ bí mật, kể cả với chúng tôi";
+"The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở nơi an toàn, được viết theo đúng trình tự.\n\n Nếu bị mất, không ai có thể khôi phục lại. \n Giữ bí mật, kể cả với chúng tôi";
 "Proceed without a username?" = "Tiếp tục mà không có tên người dùng?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "Bất cứ lúc nào bạn muốn, bạn có thể dễ dàng đặt trước tên người dùng bằng cách đi tới phần cài đặt";
 "Proceed" = "Tiếp tục";
@@ -582,11 +582,11 @@
 "You can compare a cryptocurrency wallet" = "Bạn có thể so sánh ví tiền điện tử với trình quản lý mật khẩu cho tiền điện tử và khóa bảo mật với mật khẩu chính.\n\nKhóa bảo mật là một chuỗi gồm 12 hoặc 24 từ do ví tạo ra để cung cấp cho bạn quyền truy cập vào tiền điện tử liên quan của nó.";
 "The definition" = "Định nghĩa";
 "If lost, no one can restore it Keep it private, even from us" = " · Nếu bị mất, không ai có thể khôi phục nó\n · Giữ nó ở chế độ riêng tư, ngay cả với chúng tôi";
-"Where I can find one?" = "Tôi có thể tìm thấy một cái ở đâu?";
+"Where can I find one?" = "Tôi có thể tìm thấy một cái ở đâu?";
 "If you create a new wallet account" = "Nếu bạn tạo một tài khoản ví mới, bạn sẽ nhận được khóa bảo mật mà bạn phải ghi vào một nơi an toàn. Đây là cách duy nhất để khôi phục ví của bạn.\n\nNếu bạn vẫn có quyền truy cập vào ví cũ của mình, đôi khi bạn có thể khôi phục khóa bảo mật của mình từ đó.\n\nSử dụng ví Custodian, bạn vẫn có tùy chọn lấy lại quyền truy cập vào dữ liệu của mình bằng cách yêu cầu bên thứ ba.";
 "What is a security key?" = "Khóa bảo mật là gì?";
 "Verify your security key" = "Xác minh khóa bảo mật của bạn";
-"Choose correct words" = "Chọn từ đúng";
+"Choose the correct words" = "Chọn các từ đúng";
 "Save & Continue" = "Lưu & Tiếp tục";
 "These words don’t match" = "Những từ này không khớp";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Các từ trong khóa bảo mật của bạn cần được chọn theo đúng thứ tự. Ngoài ra, bạn có thể tạo bản sao lưu iCloud";
@@ -639,7 +639,7 @@
 "Send %@ %@" = "Gửi %@ %@";
 "%@ Network" = "Mạng %@";
 "Choose the network" = "Chọn mạng";
-"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet sẽ tự động khớp địa chỉ gửi token của bạn với đúng mạng cho hầu hết các lần gửi tiền.\n\nTuy nhiên, trước khi gửi token, hãy đảm bảo kiểm tra kỹ mạng đã chọn.";
+"P2P Wallet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet sẽ tự động khớp địa chỉ gửi token của bạn với đúng mạng cho hầu hết các lần gửi tiền.\n\nTuy nhiên, trước khi gửi token, hãy đảm bảo kiểm tra kỹ mạng đã chọn.";
 "Paid by p2p" = "Thanh toán bởi p2p";
 "Choose the recipient to proceed" = "Chọn người nhận để tiếp tục";
 "Review and confirm" = "Xem lại & xác nhận";
@@ -673,7 +673,7 @@
 "Buy %@ on Moonpay" = "Mua %@ trên Moonpay";
 "I understand" = "Tôi hiểu";
 "Receiving via Bitcoin network" = "Nhận qua mạng Bitcoin";
-"Make sure you understand the aspects" = "Đảm bảo rằng bạn hiểu các khía cạnh";
+"Make sure you understand these aspects" = "Đảm bảo rằng bạn hiểu các thuật ngữ";
 "Select the second token" = "Chọn token thứ hai";
 "Select the first token" = "Chọn token đầu tiên";
 "Confirm swapping %@ → %@" = "Xác nhận hoán đổi %@ → %@";
@@ -681,7 +681,7 @@
 "Swap %@ → %@" = "Hoán đổi %@ → %@";
 "Custom" = "Tuỳ chỉnh";
 "Custom slippage" = "Slippage tùy chỉnh";
-"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "%@ là sự khác biệt giữa giá dự kiến ​​và giá thực tế mà giao dịch được thực hiện";
+"A slippage is a difference between the expected price and the actual price at which a trade is executed" = "Trượt giá là sự khác biệt giữa giá dự kiến ​​và giá thực tế mà giao dịch được thực hiện";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Sự trượt giá có thể xảy ra bất cứ lúc nào, nhưng nó phổ biến nhất trong khoảng thời gian của %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Các giao dịch vượt quá khả năng chịu trượt 20%% có thể là %@";
 "Slippage tolerance %@" = "Khả năng chịu trượt %@";
@@ -722,7 +722,7 @@
 "Face ID" = "Face ID";
 "Touch ID" = "ID cảm ứng";
 "Paying token is not valid. Please choose another one" = "Token thanh toán không hợp lệ. Vui lòng chọn token khác";
-"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Địa chỉ này dường như không có tài khoản %@. Bạn phải trả phí một lần để tạo tài khoản %@ cho địa chỉ này. Bạn có thể chọn đơn vị tiền tệ để thanh toán bên dưới.";
+"This address does not appear to have a %@ account. You have to pay a one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Địa chỉ này dường như không có tài khoản %@. Bạn phải trả phí một lần để tạo tài khoản %@ cho địa chỉ này. Bạn có thể chọn token để thanh toán bên dưới.";
 "Could not create renBTC token, please try again later" = "Không thể tạo token renBTC, vui lòng thử lại sau";
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Điều này là bắt buộc để ứng dụng lưu mã QR đã tạo hoặc sao lưu các cụm từ hạt giống vào thư viện ảnh của bạn.";
 "Allow access to save your photos" = "Cho phép truy cập để lưu ảnh của bạn";
@@ -735,3 +735,6 @@
 "Tokens" = "Mã thông báo";
 "Hidden tokens" = "Mã thông báo ẩn";
 "Exceeded maximum number of instructions allowed" = "Đã vượt quá số lượng instructions tối đa cho phép";
+"Tokens" = "Các tokens";
+"Hidden tokens" = "Các tokens bị ẩn";
+"Deposit (will be returned)" = "Đặt cọc (sẽ được trả lại)";

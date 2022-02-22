@@ -44,7 +44,7 @@ extension DefaultsKeys {
     var walletName: DefaultsKey<[String: String]> {.init(#function, defaultValue: [:])}
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {.init(#function, defaultValue: LocalizedLanguage(code: String(Locale.preferredLanguages[0].prefix(2))))}
     var appearance: DefaultsKey<UIUserInterfaceStyle> {.init(#function, defaultValue: .unspecified)}
-    var slippage: DefaultsKey<Double> {.init(#function, defaultValue: 0.005)}
+    var slippage: DefaultsKey<Double> {.init(#function, defaultValue: 0.01)}
     var fiat: DefaultsKey<Fiat> {.init(#function, defaultValue: .usd)}
     var hiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
     var unhiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
