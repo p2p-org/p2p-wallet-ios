@@ -8,7 +8,7 @@
 "next" = "далее";
 "Wowlet for people, not for tokens" = "Ваулет для людей, а не для токенов";
 "create new wallet" = "создать новый кошелек";
-"i've already had a wallet" = "у меня уже есть кошелек";
+"i already have a wallet" = "у меня уже есть кошелек";
 "Terms and conditions" = "Условия и положения";
 "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "Нажимая \"Принять\", вы соглашаетесь с Условиями использования и Политикой конфиденциальности P2PWallet.";
 "Cancel" = "Отмена";
@@ -565,7 +565,7 @@
 "Your security key" = "Ваш электронный ключ";
 "Verify manually" = "Проверить вручную";
 "Renew" = "Возобновить";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Следующие слова являются ключом безопасности, который вы должны хранить в надежном месте и писать в правильной последовательности.\n\n Если он утерян, никто не сможет его восстановить. \n Храните его в тайне, даже от нас";
+"The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Следующие слова являются ключом безопасности, который вы должны хранить в надежном месте и писать в правильной последовательности.\n\n Если он утерян, никто не сможет его восстановить. \n Храните его в тайне, даже от нас";
 "Proceed without a username?" = "Продолжить без имени пользователя?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "В любое время вы можете легко зарезервировать имя пользователя, перейдя в настройки";
 "Proceed" = "Продолжить";
@@ -582,11 +582,11 @@
 "You can compare a cryptocurrency wallet" = "Вы можете сравнить кошелек для криптовалюты с менеджером паролей для криптографии, а ключ безопасности - с мастер-паролем.\n\nКлюч безопасности - это серия из 12 или 24 слов, сгенерированных кошельком, которые дают вам доступ к связанной с ним криптовалюте.";
 "The definition" = "Определение";
 "If lost, no one can restore it Keep it private, even from us" = " · В случае утери никто не сможет его восстановить\n · Держите это в секрете, даже от нас";
-"Where I can find one?" = "Где я могу его найти?";
+"Where can I find one?" = "Где я могу его найти?";
 "If you create a new wallet account" = "Если вы создадите новую учетную запись кошелька, вы получите ключ безопасности, который необходимо записать в безопасном месте. Это единственный способ восстановить свой кошелек.\n\nЕсли у вас все еще есть доступ к своему старому кошельку, иногда вы можете восстановить из него свой электронный ключ.\n\nИспользуя кошелек Custodian, у вас по-прежнему есть возможность восстановить доступ к своим данным, обратившись к третьей стороне.";
 "What is a security key?" = "Что такое электронный ключ?";
 "Verify your security key" = "Подтвердите свой электронный ключ";
-"Choose correct words" = "Выберите правильные слова";
+"Choose the correct words" = "Выберите правильные слова";
 "Save & Continue" = "Сохранить & Продолжить";
 "These words don’t match" = "Эти слова не совпадают";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Слова в вашем электронном ключе необходимо выбирать в правильном порядке. Кроме того, вы можете сделать резервную копию iCloud";

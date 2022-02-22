@@ -8,7 +8,7 @@
 "next" = "kế tiếp";
 "Wowlet for people, not for tokens" = "Wowlet cho mọi người, không phải vì token";
 "create new wallet" = "tạo ví mới";
-"i've already had a wallet" = "tôi đã có ví";
+"i already have a wallet" = "tôi đã có ví";
 "Terms and conditions" = "Các điều khoản và điều kiện";
 "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "Bằng cách nhấn vào chấp nhận, bạn đồng ý với Điều khoản sử dụng và Chính sách quyền riêng tư của P2PWallet";
 "Cancel" = "Huỷ bỏ";
@@ -565,7 +565,7 @@
 "Your security key" = "Khóa bảo mật của bạn";
 "Verify manually" = "Xác minh thủ công";
 "Renew" = "Thay mới";
-"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở nơi an toàn, được viết theo đúng trình tự.\n\n Nếu bị mất, không ai có thể khôi phục lại. \n Giữ bí mật, kể cả với chúng tôi";
+"The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Các từ sau đây là khóa bảo mật mà bạn phải giữ ở nơi an toàn, được viết theo đúng trình tự.\n\n Nếu bị mất, không ai có thể khôi phục lại. \n Giữ bí mật, kể cả với chúng tôi";
 "Proceed without a username?" = "Tiếp tục mà không có tên người dùng?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "Bất cứ lúc nào bạn muốn, bạn có thể dễ dàng đặt trước tên người dùng bằng cách đi tới phần cài đặt";
 "Proceed" = "Tiếp tục";
@@ -582,11 +582,11 @@
 "You can compare a cryptocurrency wallet" = "Bạn có thể so sánh ví tiền điện tử với trình quản lý mật khẩu cho tiền điện tử và khóa bảo mật với mật khẩu chính.\n\nKhóa bảo mật là một chuỗi gồm 12 hoặc 24 từ do ví tạo ra để cung cấp cho bạn quyền truy cập vào tiền điện tử liên quan của nó.";
 "The definition" = "Định nghĩa";
 "If lost, no one can restore it Keep it private, even from us" = " · Nếu bị mất, không ai có thể khôi phục nó\n · Giữ nó ở chế độ riêng tư, ngay cả với chúng tôi";
-"Where I can find one?" = "Tôi có thể tìm thấy một cái ở đâu?";
+"Where can I find one?" = "Tôi có thể tìm thấy một cái ở đâu?";
 "If you create a new wallet account" = "Nếu bạn tạo một tài khoản ví mới, bạn sẽ nhận được khóa bảo mật mà bạn phải ghi vào một nơi an toàn. Đây là cách duy nhất để khôi phục ví của bạn.\n\nNếu bạn vẫn có quyền truy cập vào ví cũ của mình, đôi khi bạn có thể khôi phục khóa bảo mật của mình từ đó.\n\nSử dụng ví Custodian, bạn vẫn có tùy chọn lấy lại quyền truy cập vào dữ liệu của mình bằng cách yêu cầu bên thứ ba.";
 "What is a security key?" = "Khóa bảo mật là gì?";
 "Verify your security key" = "Xác minh khóa bảo mật của bạn";
-"Choose correct words" = "Chọn từ đúng";
+"Choose the correct words" = "Chọn các từ đúng";
 "Save & Continue" = "Lưu & Tiếp tục";
 "These words don’t match" = "Những từ này không khớp";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Các từ trong khóa bảo mật của bạn cần được chọn theo đúng thứ tự. Ngoài ra, bạn có thể tạo bản sao lưu iCloud";
