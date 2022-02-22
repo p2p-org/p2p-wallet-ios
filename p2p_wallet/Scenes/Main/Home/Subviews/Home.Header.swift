@@ -8,7 +8,7 @@ extension Home {
     class FloatingHeaderView: BECompositionView {
         private let viewModel: HomeViewModelType
 
-        private(set) var preferredTopHeight: CGFloat = 80
+        private(set) var preferredTopHeight: CGFloat = 90
         let bottomMaxHeight: CGFloat = 80
         let bottomMinHeight: CGFloat = 40
 
@@ -25,7 +25,7 @@ extension Home {
             BEContainer {
                 BEZStack {
                     BalanceView(viewModel: viewModel)
-                        .padding(.init(only: .bottom, inset: 24))
+                        .padding(.init(only: .bottom, inset: 35))
                         .withTag(2)
 
                     ColorfulHorizontalView {

@@ -55,17 +55,14 @@ class BaseWalletCell: BECompositionView {
                 UILabel(text: "<Coin name>")
                     .bind(coinNameRef)
                 UIView(height: 6)
-                UILabel(text: "<Exchange price>", textSize: 13, weight: .medium, textColor: .secondaryLabel)
-                    .bind(exchangePriceRef)
+                UILabel(text: "<Amount>", textSize: 13, weight: .medium, textColor: .secondaryLabel)
+                    .bind(amountRef)
             }
             UIView.spacer
             
             // Trailing
             BEVStack(alignment: .trailing) {
-                UILabel(text: "<Amount>")
-                    .bind(amountRef)
-                UIView(height: 6)
-                UILabel(text: "<Amount in fiat>", textSize: 13, weight: .medium, textColor: .secondaryLabel)
+                UILabel(text: "<Amount in fiat>", textSize: 17, weight: .semibold)
                     .bind(amountInFiatRef)
             }
         }
