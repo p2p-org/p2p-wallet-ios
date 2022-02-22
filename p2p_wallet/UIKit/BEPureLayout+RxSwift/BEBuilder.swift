@@ -9,11 +9,10 @@ import BEPureLayout
 
 class BEBuilder<T>: UIView {
     typealias Build<T> = (T) -> UIView
-
-    let driver: Driver<T>
-    let build: Build<T>
-    let disposeBag = DisposeBag()
-
+    private let driver: Driver<T>
+    private let build: Build<T>
+    private let disposeBag = DisposeBag()
+    private var child: UIView?
     init(driver: Driver<T>, build: @escaping Build<T>) {
         self.driver = driver
         self.build = build
@@ -22,15 +21,19 @@ class BEBuilder<T>: UIView {
         driver
             .drive { [weak self] (value: T) in
                 guard let self = self else { return }
-                for subview in self.subviews {
-                    subview.removeFromSuperview()
-                }
-                
+                self.child?.alpha = 0.0
                 let view = self.build(value)
                 self.addSubview(view)
-                view.autoPinEdgesToSuperviewEdges()
+                
+                self.child?.removeFromSuperview()
+                self.child = view
             }
             .disposed(by: disposeBag)
+    }
+    
+    override func addSubview(_ view: UIView) {
+        super.addSubview(view)
+        view.autoPinEdgesToSuperviewEdges()
     }
     
     public required init?(coder aDecoder: NSCoder) {
