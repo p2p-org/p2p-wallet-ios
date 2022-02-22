@@ -152,6 +152,7 @@ extension PricesService: PricesServiceType {
     }
     
     func fetchPrices(tokens: [String]) {
+        guard !tokens.isEmpty else {return}
         currentPricesSubject.request = getCurrentPricesRequest(tokens: tokens)
         currentPricesSubject.refresh()
     }
