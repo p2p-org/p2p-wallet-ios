@@ -350,7 +350,7 @@ private class _FeeView: UIStackView {
         set(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
         addArrangedSubviews {
             attentionLabel
-                .padding(.init(all: 18), backgroundColor: .fffaf2, cornerRadius: 12, borderColor: .ff9500)
+                .padding(.init(all: 18), backgroundColor: .fffaf2.onDarkMode(.a3a5ba.withAlphaComponent(0.05)), cornerRadius: 12, borderColor: .ff9500)
             feeView
         }
         
