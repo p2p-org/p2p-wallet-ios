@@ -48,7 +48,7 @@ extension SolanaBuyToken {
         
         private func content() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                NewWLNavigationBar(initialTitle: L10n.buyOnMoonpay("ETH"))
+                NewWLNavigationBar(initialTitle: L10n.buyOnMoonpay("Solana"))
                     .onBack { [unowned self] in self.viewModel.back() }
                 
                 BEScrollView(contentInsets: .init(top: 18, left: 18, bottom: 90, right: 18), spacing: 18) {
