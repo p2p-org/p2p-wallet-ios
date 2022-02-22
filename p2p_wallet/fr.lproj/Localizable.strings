@@ -8,7 +8,7 @@
 "next" = "prochain";
 "Wowlet for people, not for tokens" = "Wowlet pour les gens, pas pour les jetons";
 "create new wallet" = "créer un nouveau portefeuille";
-"i already have a wallet" = "j'ai déjà eu un portefeuille";
+"i've already had a wallet" = "j'ai déjà eu un portefeuille";
 "Terms and conditions" = "Termes et conditions";
 "By tapping accept, you agree to P2PWallet’s Terms of Use and Privacy Policy" = "En appuyant sur Accepter, vous acceptez les conditions d'utilisation et la politique de confidentialité de P2PWallet";
 "Cancel" = "Annuler";
@@ -509,7 +509,7 @@
 "%@ isn’t available" = "%@ n'est pas disponible";
 "Could not check name’s availability. Please check your internet connection!" = "Impossible de vérifier la disponibilité du nom. S'il vous plait, vérifiez votre connexion internet!";
 "Reserve your P2P username now" = "Réservez votre nom d'utilisateur P2P maintenant";
-"Any token can be received using username regardless of whether it is in your wallet's list" = "N'importe quel jeton peut être reçu en utilisant le nom d'utilisateur, qu'il soit ou non dans votre liste de portefeuilles";
+"Any token can be received using username regardless of whether it is in your wallets list" = "N'importe quel jeton peut être reçu en utilisant le nom d'utilisateur, qu'il soit ou non dans votre liste de portefeuilles";
 "Username %@.p2p.sol has already been reserved for this user" = "Le nom d'utilisateur %@.p2p.sol a déjà été réservé pour cet utilisateur";
 "Username %@ is successfully reserved" = "Le nom d'utilisateur %@ est réservé avec succès";
 "Not yet reserved" = "Pas encore réservé";
@@ -565,7 +565,7 @@
 "Your security key" = "Votre clé de sécurité";
 "Verify manually" = "Vérifier manuellement";
 "Renew" = "Renouveler";
-"The following words are the security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\n\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
+"The following words are security key that you must keep in a safe place, written in the correct sequence.\nIf lost, no one can restore it.\nKeep it private, even from us" = "Les mots suivants sont une clé de sécurité que vous devez conserver dans un endroit sûr, écrite dans le bon ordre.\n\nEn cas de perte, personne ne peut la restaurer.\nGardez-la privée, même de notre part";
 "Proceed without a username?" = "Continuer sans nom d'utilisateur ?";
 "Anytime you want, you can easily reserve a username by going to the settings" = "À tout moment, vous pouvez facilement réserver un nom d'utilisateur en allant dans les paramètres";
 "Proceed" = "Procéder";
@@ -582,11 +582,11 @@
 "You can compare a cryptocurrency wallet" = "Vous pouvez comparer un portefeuille de crypto-monnaie à un gestionnaire de mots de passe pour la cryptographie et une clé de sécurité à un mot de passe principal.\n\nUne clé de sécurité est une série de 12 ou 24 mots générés par le wallet qui vous donne accès à sa crypto associée.";
 "The definition" = "La définition";
 "If lost, no one can restore it Keep it private, even from us" = " · En cas de perte, personne ne peut le restaurer\n · Gardez-le privé, même de nous";
-"Where can I find one?" = "Où puis-je en trouver un ?";
+"Where I can find one?" = "Où puis-je en trouver un ?";
 "If you create a new wallet account" = "Si vous créez un nouveau compte portefeuille, vous recevrez votre clé de sécurité que vous devrez noter dans un endroit sûr. C'est le seul moyen de récupérer votre portefeuille.\n\nSi vous avez toujours accès à votre ancien portefeuille, vous pouvez parfois récupérer votre clé de sécurité à partir de celui-ci.\n\nEn utilisant le portefeuille dépositaire, vous avez toujours la possibilité de récupérer l'accès à vos données en demandant à un tiers.";
 "What is a security key?" = "Qu'est-ce qu'une clé de sécurité ?";
 "Verify your security key" = "Vérifiez votre clé de sécurité";
-"Choose the correct words" = "Choisissez les mots corrects";
+"Choose correct words" = "Choisissez les mots corrects";
 "Save & Continue" = "sauvegarder";
 "These words don’t match" = "Ces mots ne correspondent pas";
 "The words in your security key need to be selected in the right order. Alternatively, you can make an iCloud backup" = "Les mots de votre clé de sécurité doivent être sélectionnés dans le bon ordre. Alternativement, vous pouvez faire une sauvegarde iCloud";
@@ -639,7 +639,7 @@
 "Send %@ %@" = "Envoyer %@ %@";
 "%@ Network" = "%@ Réseau";
 "Choose the network" = "Choisissez le réseau";
-"P2P Wallet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet fera automatiquement correspondre votre adresse cible de retrait au bon réseau pour la plupart des retraits.\n\nCependant, avant d'envoyer vos fonds, assurez-vous de revérifier le réseau sélectionné.";
+"P2P Walet will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "P2P Walet fera automatiquement correspondre votre adresse cible de retrait au bon réseau pour la plupart des retraits.\n\nCependant, avant d'envoyer vos fonds, assurez-vous de revérifier le réseau sélectionné.";
 "Paid by p2p" = "Payé par p2p";
 "Choose the recipient to proceed" = "Choisissez le destinataire pour continuer";
 "Review and confirm" = "Examiner & confirmer";
@@ -673,7 +673,7 @@
 "Buy %@ on Moonpay" = "Achetez %@ sur Moonpay";
 "I understand" = "je comprend";
 "Receiving via Bitcoin network" = "Réception via le réseau Bitcoin";
-"Make sure you understand these aspects" = "Assurez-vous de bien comprendre les aspects";
+"Make sure you understand the aspects" = "Assurez-vous de bien comprendre les aspects";
 "Select the second token" = "Sélectionnez le deuxième jeton";
 "Select the first token" = "Sélectionnez le premier jeton";
 "Confirm swapping %@ → %@" = "Confirmer l'échange %@ → %@";
@@ -681,7 +681,7 @@
 "Swap %@ → %@" = "Échanger %@ → %@";
 "Custom" = "Personnalisé";
 "Custom slippage" = "Glissement personnalisé";
-"A slippage is a difference between the expected price and the actual price at which a trade is executed" = "Un Glissement est une différence entre le prix attendu et le prix réel auquel une transaction est exécutée";
+"A %@ is a difference between the expected price and the actual price at which a trade is executed" = "Un %@ est une différence entre le prix attendu et le prix réel auquel une transaction est exécutée";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Le glissement peut se produire à tout moment, mais il est plus fréquent pendant les périodes de %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Les transactions qui dépassent 20%% de tolérance de glissement peuvent être %@";
 "Slippage tolerance %@" = "Tolérance de glissement %@";
@@ -722,7 +722,7 @@
 "Face ID" = "Identification faciale";
 "Touch ID" = "ID tactile";
 "Paying token is not valid. Please choose another one" = "Le jeton de paiement n'est pas valide. Veuillez en choisir un autre";
-"This address does not appear to have a %@ account. You have to pay a one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Cette adresse ne semble pas avoir de compte %@. Vous devez payer des frais uniques pour créer un compte %@ pour cette adresse. Vous pouvez choisir la devise dans laquelle payer ci-dessous.";
+"This address does not appear to have a %@ account. You have to pay one-time fee to create a %@ account for this address. You can choose which currency to pay in below." = "Cette adresse ne semble pas avoir de compte %@. Vous devez payer des frais uniques pour créer un compte %@ pour cette adresse. Vous pouvez choisir la devise dans laquelle payer ci-dessous.";
 "Could not create renBTC token, please try again later" = "Impossible de créer le jeton renBTC, veuillez réessayer plus tard";
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Ceci est nécessaire pour que l'application enregistre les codes QR générés ou sauvegarde vos phrases de départ dans votre photothèque.";
 "Allow access to save your photos" = "Autoriser l'accès pour enregistrer vos photos";
@@ -732,7 +732,6 @@
 "Make your first deposit or buy with your credit card or Apple Pay" = "Effectuez votre premier dépôt ou achetez avec votre carte de crédit ou Apple Pay";
 "Tokens" = "Jetons";
 "Hidden tokens" = "Jetons cachés";
-"Deposit (will be returned)" = "Caution (sera restituée)";
 "Get your your own short crypto address" = "Obtenez votre propre adresse crypto courte";
 "Reserve your username" = "Réservez votre nom d'utilisateur";
 "Your wallet is at risk if you do not back it up" = "Votre portefeuille est en danger si vous ne le sauvegardez pas";

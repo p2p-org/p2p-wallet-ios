@@ -44,9 +44,10 @@ extension SwapTokenSettings {
         }
 
         private func configureFirstParagraph() {
+            let slippage = L10n.slippage
             let paragraph = createParagraphText(
-                string: L10n.aSlippageIsADifferenceBetweenTheExpectedPriceAndTheActualPriceAtWhichATradeIsExecuted,
-                mainSubstring: L10n.slippage
+                string: L10n.aIsADifferenceBetweenTheExpectedPriceAndTheActualPriceAtWhichATradeIsExecuted(slippage),
+                mainSubstring: slippage
             )
 
             firstParagraph.setText(string: paragraph)

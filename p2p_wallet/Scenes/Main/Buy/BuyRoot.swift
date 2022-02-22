@@ -11,7 +11,7 @@ import RxCocoa
 enum BuyRoot {
     enum NavigatableScene {
         case solanaBuyToken
-        case buyToken(crypto: Buy.CryptoCurrency, amount: Double)
+        case buyToken(crypto: BuyProviders.Crypto, amount: Double)
         case back
         case none
     }

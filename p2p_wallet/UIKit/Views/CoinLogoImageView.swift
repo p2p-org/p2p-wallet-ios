@@ -70,6 +70,7 @@ class CoinLogoImageView: BEView {
         tokenIcon.isHidden = false
         
         // with token
+        let jazzicon: Jazzicon
         if let token = token {
             let key = token.symbol.isEmpty ? token.address : token.symbol
             var seed = Self.cachedJazziconSeeds[key]
@@ -78,13 +79,14 @@ class CoinLogoImageView: BEView {
                 Self.cachedJazziconSeeds[key] = seed
             }
             
-            let jazzicon = Jazzicon(seed: seed!)
-            let jazziconImage = jazzicon.generateImage(size: size)
-            
-            tokenIcon.setImage(urlString: token.logoURI, placeholder: jazziconImage)
+            jazzicon = Jazzicon(seed: seed!)
         } else {
-            tokenIcon.image = placeholder
+            jazzicon = Jazzicon()
         }
+        
+        let jazziconImage = jazzicon.generateImage(size: size)
+        
+        tokenIcon.setImage(urlString: token?.logoURI, placeholder: placeholder ?? jazziconImage)
         
         // wrapped by
         if let wrappedBy = token?.wrappedBy {

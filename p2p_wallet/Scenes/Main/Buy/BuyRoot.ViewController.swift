@@ -17,7 +17,7 @@ extension BuyRoot {
         private let viewModel: BuyViewModelType
         lazy var navigation = UINavigationController(
             rootViewController: SolanaBuyToken.Scene(
-                viewModel: SolanaBuyToken.SceneModel(buyViewModel: viewModel, exchangeService: Resolver.resolve())
+                viewModel: SolanaBuyToken.SceneModel(buyViewModel: viewModel)
             )
         )
         
@@ -50,7 +50,7 @@ extension BuyRoot {
             do {
                 switch scene {
                 case .buyToken(let crypto, let amount):
-                    let factory: BuyProcessingFactory = Resolver.resolve()
+                    let factory: BuyProviderFactory = Resolver.resolve()
                     let provider = try factory.create(
                         walletRepository: viewModel.walletsRepository,
                         crypto: crypto,
