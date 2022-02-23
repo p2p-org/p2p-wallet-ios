@@ -95,13 +95,14 @@ extension SendTokenRecipientAndNetworkHandler {
         network: SendToken.Network? = nil,
         payingWallet: Wallet? = nil
     ) {
+        let payingWallet = payingWallet ?? feeInfoSubject.value?.wallet
         if let wallet = getSelectedWallet() {
             feeInfoSubject.request = sendService
                 .getFees(
                     from: wallet,
                     receiver: recipient ?? recipientSubject.value?.address,
                     network: network ?? networkSubject.value,
-                    isPayingWithSOL: (payingWallet ?? feeInfoSubject.value?.wallet)?.isNativeSOL == true
+                    isPayingWithSOL: payingWallet?.isNativeSOL == true
                 )
                 .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
                     guard let sendService = self?.sendService else {
@@ -122,7 +123,7 @@ extension SendTokenRecipientAndNetworkHandler {
                 }
                 .map { .init(wallet: payingWallet, feeAmount: $0)}
         } else {
-            feeInfoSubject.request = .just(.init(wallet: feeInfoSubject.value?.wallet, feeAmount: .zero))
+            feeInfoSubject.request = .just(.init(wallet: payingWallet, feeAmount: .zero))
         }
         feeInfoSubject.reload()
     }
