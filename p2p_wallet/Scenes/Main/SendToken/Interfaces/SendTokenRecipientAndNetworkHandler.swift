@@ -94,7 +94,7 @@ extension SendTokenRecipientAndNetworkHandler {
             from: wallet,
             receiver: recipientSubject.value?.address,
             network: networkSubject.value,
-            payingFeeToken: getPayingToken(payingWallet: payingWalletSubject.value)
+            isPayingWithSOL: payingWalletSubject.value?.isNativeSOL == true
         )
             .catch { _ in
                 if wallet.token.isRenBTC {
