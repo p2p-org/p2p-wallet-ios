@@ -92,13 +92,23 @@ extension SendTokenRecipientAndNetworkHandler {
                 .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
     }
     
-    func bindFees() {
-        Observable.combineLatest(
-            payingWalletSubject.distinctUntilChanged(),
-            recipientSubject.distinctUntilChanged(),
-            networkSubject.distinctUntilChanged()
-        )
-            .subscribe(onNext: { [weak self] payingWallet, recipient, network in
+    func bindFees(walletSubject: BehaviorRelay<Wallet?>? = nil) {
+        var observables = [
+            payingWalletSubject.distinctUntilChanged().map {$0 as Any},
+            recipientSubject.distinctUntilChanged().map {$0 as Any},
+            networkSubject.distinctUntilChanged().map {$0 as Any}
+        ]
+        
+        if let walletSubject = walletSubject {
+            observables.append(walletSubject.distinctUntilChanged().map {$0 as Any})
+        }
+        
+        Observable.combineLatest(observables)
+            .subscribe(onNext: { [weak self] params in
+                let payingWallet = params[0] as? Wallet
+                let recipient = params[1] as? SendToken.Recipient
+                let network = params[2] as! SendToken.Network
+                
                 guard let self = self else { return }
                 if let wallet = self.getSelectedWallet() {
                     self.feeInfoSubject.request = self.sendService

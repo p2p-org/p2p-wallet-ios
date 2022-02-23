@@ -84,7 +84,7 @@ extension SendToken {
                 walletSubject.accept(selectableWallet)
             }
             
-            bindFees()
+            bindFees(walletSubject: walletSubject)
             reload()
         }
         
