@@ -95,7 +95,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 UILabel(textColor: .red, numberOfLines: 0, textAlignment: .center)
                     .setup { label in
                         viewModel.feeInfoDriver
-                            .map {$0.value?.feeAmount ?? .zero}
+                            .map {$0.value?.feeAmountInSOL ?? .zero}
                             .drive(onNext: {[weak label] feeAmount in
                                 label?.attributedText = NSMutableAttributedString()
                                     .text("Transaction fee: \(feeAmount.transaction) lamports", size: 13, color: .red)
@@ -248,6 +248,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                             case .loaded:
                                 guard let value = feeInfo.value else {
                                     return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                                }
+                                if let wallet = value.wallet,
+                                   let lamports = value.wallet?.lamports,
+                                   lamports < value.feeAmount.total
+                                {
+                                    let neededAmount = value.feeAmount.total
+                                        .convertToBalance(decimals: wallet.token.decimals)
+                                        .toString(maximumFractionDigits: Int(wallet.token.decimals))
+                                    return L10n.yourAccountDoesNotHaveEnoughToCoverFees(wallet.token.symbol)
+                                        + ". "
+                                        + L10n.needsAtLeast(neededAmount + " \(wallet.token.symbol)")
                                 }
                                 if !value.isValid {
                                     return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
