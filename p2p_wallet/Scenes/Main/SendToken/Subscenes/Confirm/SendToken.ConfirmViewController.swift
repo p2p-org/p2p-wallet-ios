@@ -81,13 +81,13 @@ extension SendToken {
                             view.addArrangedSubview(.defaultNextArrow())
                             Driver.combineLatest(
                                 viewModel.networkDriver,
-                                viewModel.feesDriver
+                                viewModel.feeInfoDriver
                             )
                                 .drive(onNext: { [weak self, weak view] params in
                                     guard let self = self else {return}
                                     view?.setUp(
                                         network: params.0,
-                                        feeAmount: params.1,
+                                        feeInfo: params.1.value,
                                         prices: self.viewModel.getSOLAndRenBTCPrices()
                                     )
                                 })
@@ -107,11 +107,11 @@ extension SendToken {
                         .setup {view in
                             Driver.combineLatest(
                                 viewModel.networkDriver,
-                                viewModel.feesDriver
+                                viewModel.feeInfoDriver
                             )
                                 .map {network, fee in
                                     if network != .solana {return true}
-                                    if let fee = fee {
+                                    if let fee = fee.value?.feeAmount {
                                         return fee.total == 0
                                     } else {
                                         return true

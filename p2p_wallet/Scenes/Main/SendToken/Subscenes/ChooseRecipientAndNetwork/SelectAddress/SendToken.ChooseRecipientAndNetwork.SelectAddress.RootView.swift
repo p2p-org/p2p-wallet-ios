@@ -230,7 +230,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 viewModel.feeInfoDriver,
                 viewModel.networkDriver
             )
-                .map { [weak self] recipient, payingWallet, network in
+                .map { [weak self] recipient, feeInfo, network in
                     guard let self = self else {return ""}
                     if recipient == nil {
                         return L10n.chooseTheRecipientToProceed
@@ -240,21 +240,20 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     case .solana:
                         switch self.viewModel.relayMethod {
                         case .relay:
-                            if fees?.total != 0 {
-                                if let payingWallet = payingWallet {
-                                    switch payingWalletStatus {
-                                    case .loading:
-                                        return L10n.calculatingFees
-                                    case .invalid:
-                                        return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
-                                    case .valid(_, let enoughBalance):
-                                        if !enoughBalance {
-                                            return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
-                                        }
-                                    }
-                                } else {
-                                    return L10n.chooseTheTokenToPayFees
+                            switch feeInfo.state {
+                            case .notRequested:
+                                return L10n.chooseTheTokenToPayFees
+                            case .loading:
+                                return L10n.calculatingFees
+                            case .loaded:
+                                guard let value = feeInfo.value else {
+                                    return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                                 }
+                                if !value.isValid {
+                                    return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                                }
+                            case .error:
+                                return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                             }
                         case .reward:
                             break
@@ -309,7 +308,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .drive(onNext: {[weak self] network, feeInfo in
                     self?._networkView.setUp(
                         network: network,
-                        feeAmount: feeAmount,
+                        feeInfo: feeInfo.value,
                         prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:]
                     )
                 })
@@ -349,7 +348,9 @@ private class _FeeView: UIStackView {
             feeView
         }
         
-        feesDriver.map {$0?.accountBalances ?? 0 == 0}
+        feeInfoDriver
+            .map {$0.value?.feeAmount}
+            .map {$0?.accountBalances ?? 0 == 0}
             .drive(attentionLabel.superview!.rx.isHidden)
             .disposed(by: disposeBag)
         
