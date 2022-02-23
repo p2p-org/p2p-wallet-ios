@@ -45,7 +45,7 @@ extension SendToken {
         let sendService: SendServiceType
         
         // MARK: - Properties
-        private let disposeBag = DisposeBag()
+        let disposeBag = DisposeBag()
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
         let relayMethod: SendTokenRelayMethod
@@ -61,6 +61,7 @@ extension SendToken {
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
+        let feeInfoSubject: LoadableRelay<SendToken.FeeInfo>
         
         // MARK: - Initializers
         init(
@@ -74,12 +75,13 @@ extension SendToken {
             self.relayMethod = relayMethod
             self.canGoBack = canGoBack
             self.sendService = Resolver.resolve(args: relayMethod)
+            self.feeInfoSubject = .init(request: .just(.init(wallet: nil, feeAmount: .zero)))
             
             // accept initial values
-            if let pubkey = walletPubkey {
-                walletSubject.accept(walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}))
-            } else {
-                walletSubject.accept(walletsRepository.nativeWallet)
+            if let pubkey = walletPubkey,
+               let selectableWallet = walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}) ?? walletsRepository.nativeWallet
+            {
+                walletSubject.accept(selectableWallet)
             }
             
             if walletSubject.value == nil {
@@ -126,35 +128,27 @@ extension SendToken {
                 receiver: receiver,
                 amount: amount,
                 network: network,
-                payingFeeWallet: payingWalletSubject.value
+                payingFeeWallet: feeInfoSubject.value?.wallet
             )
             
-            // get fees
-            getFees()
-                .subscribe(onSuccess: {[weak self] feeAmount in
-                    let feeAmount = feeAmount ?? .zero
-                    // log
-                    self?.analyticsManager.log(
-                        event: .sendSendClick(
-                            tokenTicker: wallet.token.symbol,
-                            sum: amount
-                        )
+            analyticsManager.log(
+                event: .sendSendClick(
+                    tokenTicker: wallet.token.symbol,
+                    sum: amount
+                )
+            )
+            
+            navigationSubject.accept(
+                .processTransaction(
+                    request: request.map {$0 as ProcessTransactionResponseType},
+                    transactionType: .send(
+                        from: wallet,
+                        to: receiver,
+                        lamport: amount.toLamport(decimals: wallet.token.decimals),
+                        feeInLamports: feeInfoSubject.value?.feeAmount.total ?? .zero
                     )
-                    
-                    // show processing scene
-                    self?.navigationSubject.accept(
-                        .processTransaction(
-                            request: request.map {$0 as ProcessTransactionResponseType},
-                            transactionType: .send(
-                                from: wallet,
-                                to: receiver,
-                                lamport: amount.toLamport(decimals: wallet.token.decimals),
-                                feeInLamports: feeAmount.total
-                            )
-                        )
-                    )
-                })
-                .disposed(by: disposeBag)
+                )
+            )
         }
     }
 }
@@ -207,8 +201,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         walletSubject.accept(wallet)
         
         if !wallet.token.isRenBTC && networkSubject.value == .bitcoin {
-            networkSubject.accept(.solana)
-            recipientSubject.accept(nil)
+            selectNetwork(.solana)
         }
     }
     

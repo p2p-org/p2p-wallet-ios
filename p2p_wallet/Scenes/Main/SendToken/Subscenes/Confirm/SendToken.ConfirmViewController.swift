@@ -102,9 +102,7 @@ extension SendToken {
                 if viewModel.relayMethod == .relay {
                     FeeView(
                         solPrice: viewModel.getPrice(for: "SOL"),
-                        feesDriver: viewModel.feesDriver,
-                        payingWalletDriver: viewModel.payingWalletDriver,
-                        payingWalletStatusDriver: viewModel.payingWalletStatusDriver
+                        feeInfoDriver: viewModel.feeInfoDriver
                     )
                         .setup {view in
                             Driver.combineLatest(

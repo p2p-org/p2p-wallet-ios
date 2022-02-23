@@ -21,9 +21,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var walletDriver: Driver<Wallet?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
-    var feesDriver: Driver<SolanaSDK.FeeAmount?> {get}
-    var payingWalletDriver: Driver<Wallet?> {get}
-    var payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus> {get}
+    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {get}
     var isValidDriver: Driver<Bool> {get}
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
@@ -113,16 +111,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         chooseRecipientAndNetworkViewModel.networkDriver
     }
     
-    var feesDriver: Driver<SolanaSDK.FeeAmount?> {
-        chooseRecipientAndNetworkViewModel.feesDriver
-    }
-    
-    var payingWalletDriver: Driver<Wallet?> {
-        chooseRecipientAndNetworkViewModel.payingWalletDriver
-    }
-    
-    var payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus> {
-        chooseRecipientAndNetworkViewModel.payingWalletStatusDriver
+    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {
+        chooseRecipientAndNetworkViewModel.feeInfoDriver
     }
     
     var isValidDriver: Driver<Bool> {
@@ -133,21 +123,22 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         conditionDrivers.append(
             Driver.combineLatest(
                 networkDriver,
-                payingWalletStatusDriver,
-                payingWalletDriver,
-                feesDriver
+                feeInfoDriver
             )
-                .map {[weak self] network, payingWalletStatus, payingWallet, fees -> Bool in
+                .map {[weak self] network, feeInfo -> Bool in
                     guard let self = self else {return false}
                     switch network {
                     case .solana:
                         switch self.relayMethod {
                         case .relay:
-                            // if free fee
-                            if fees?.total == 0 {
+                            guard let value = feeInfo.value else {
+                                return false
+                            }
+                            
+                            if value.feeAmount.total == 0 {
                                 return true
                             } else {
-                                return payingWalletStatus.isValidAndEnoughBalance && payingWallet != nil
+                                return value.isValid
                             }
                         case .reward:
                             return true
@@ -196,7 +187,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     }
     
     func walletDidSelect(_ wallet: Wallet) {
-        chooseRecipientAndNetworkViewModel.payingWalletSubject.accept(wallet)
+        chooseRecipientAndNetworkViewModel.selectPayingWallet(wallet)
     }
     
     func search(_ address: String?) {

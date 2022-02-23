@@ -148,7 +148,7 @@ protocol SwapServiceType {
     func calculateNetworkFeeInPayingToken(
         networkFee: SolanaSDK.FeeAmount,
         payingTokenMint: String
-    ) -> Single<SolanaSDK.Lamports?>
+    ) -> Single<SolanaSDK.FeeAmount?>
 }
 
 enum SwapError: Error {

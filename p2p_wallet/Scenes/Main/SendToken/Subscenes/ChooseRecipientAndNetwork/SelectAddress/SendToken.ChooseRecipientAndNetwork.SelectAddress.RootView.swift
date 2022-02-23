@@ -47,9 +47,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private lazy var feeView = _FeeView( // for relayMethod == .relay only
             walletDriver: viewModel.walletDriver,
             solPrice: viewModel.getPrice(for: "SOL"),
-            feesDriver: viewModel.feesDriver,
-            payingWalletDriver: viewModel.payingWalletDriver,
-            payingWalletStatusDriver: viewModel.payingWalletStatusDriver
+            feeInfoDriver: viewModel.feeInfoDriver
         )
             .onTap { [weak self] in
                 self?.viewModel.navigate(to: .selectPayingWallet)
@@ -96,12 +94,13 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 #if DEBUG
                 UILabel(textColor: .red, numberOfLines: 0, textAlignment: .center)
                     .setup { label in
-                        viewModel.feesDriver
+                        viewModel.feeInfoDriver
+                            .map {$0.value?.feeAmount ?? .zero}
                             .drive(onNext: {[weak label] feeAmount in
                                 label?.attributedText = NSMutableAttributedString()
-                                    .text("Transaction fee: \(feeAmount?.transaction ?? 0) lamports", size: 13, color: .red)
+                                    .text("Transaction fee: \(feeAmount.transaction) lamports", size: 13, color: .red)
                                     .text(", ")
-                                    .text("Account creation fee: \(feeAmount?.accountBalances ?? 0) lamports", size: 13, color: .red)
+                                    .text("Account creation fee: \(feeAmount.accountBalances) lamports", size: 13, color: .red)
                             })
                             .disposed(by: disposeBag)
                     }
@@ -183,13 +182,13 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             Driver.combineLatest(
                 isSearchingDriver,
                 viewModel.networkDriver,
-                viewModel.feesDriver
+                viewModel.feeInfoDriver
             )
                 .map {isSearching, network, fee in
                     if isSearching || network != .solana {
                         return true
                     }
-                    if let fee = fee {
+                    if let fee = fee.value?.feeAmount {
                         return fee.total == 0
                     } else {
                         return true
@@ -228,12 +227,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             
             Driver.combineLatest(
                 viewModel.recipientDriver,
-                viewModel.payingWalletDriver,
-                viewModel.payingWalletStatusDriver,
-                viewModel.feesDriver,
+                viewModel.feeInfoDriver,
                 viewModel.networkDriver
             )
-                .map { [weak self] recipient, payingWallet, payingWalletStatus, fees, network in
+                .map { [weak self] recipient, payingWallet, network in
                     guard let self = self else {return ""}
                     if recipient == nil {
                         return L10n.chooseTheRecipientToProceed
@@ -307,9 +304,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private func bind() {
             Driver.combineLatest(
                 viewModel.networkDriver,
-                viewModel.feesDriver
+                viewModel.feeInfoDriver
             )
-                .drive(onNext: {[weak self] network, feeAmount in
+                .drive(onNext: {[weak self] network, feeInfo in
                     self?._networkView.setUp(
                         network: network,
                         feeAmount: feeAmount,
@@ -341,11 +338,9 @@ private class _FeeView: UIStackView {
     init(
         walletDriver: Driver<Wallet?>,
         solPrice: Double,
-        feesDriver: Driver<SolanaSDK.FeeAmount?>,
-        payingWalletDriver: Driver<Wallet?>,
-        payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus>
+        feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>
     ) {
-        self.feeView = .init(solPrice: solPrice, feesDriver: feesDriver, payingWalletDriver: payingWalletDriver, payingWalletStatusDriver: payingWalletStatusDriver)
+        self.feeView = .init(solPrice: solPrice, feeInfoDriver: feeInfoDriver)
         super.init(frame: .zero)
         set(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
         addArrangedSubviews {

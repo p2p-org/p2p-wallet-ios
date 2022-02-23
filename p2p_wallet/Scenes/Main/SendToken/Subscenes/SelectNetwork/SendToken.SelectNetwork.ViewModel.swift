@@ -11,7 +11,7 @@ import RxCocoa
 import FeeRelayerSwift
 
 protocol SendTokenSelectNetworkViewModelType {
-    var feesDriver: Driver<SolanaSDK.FeeAmount?> {get}
+    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {get}
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSendService() -> SendServiceType
