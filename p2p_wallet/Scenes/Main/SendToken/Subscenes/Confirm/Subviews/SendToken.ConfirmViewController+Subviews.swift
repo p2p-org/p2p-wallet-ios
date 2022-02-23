@@ -284,8 +284,13 @@ private extension SolanaSDK.FeeAmount {
     }
     
     func attributedStringForTotalFee(price: Double?, symbol: String, decimals: UInt8?) -> NSMutableAttributedString {
-        let fee = total.convertToBalance(decimals: decimals ?? 0)
-        return feeAttributedString(fee: fee, unit: symbol, price: price)
+        if total == 0 {
+            return NSMutableAttributedString()
+                .text("\(Defaults.fiat.symbol)0", size: 15, color: .textBlack)
+        } else {
+            let fee = total.convertToBalance(decimals: decimals ?? 0)
+            return feeAttributedString(fee: fee, unit: symbol, price: price)
+        }
     }
     
     func attributedStringForOtherFees(
