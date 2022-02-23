@@ -81,13 +81,15 @@ extension SendToken {
                             view.addArrangedSubview(.defaultNextArrow())
                             Driver.combineLatest(
                                 viewModel.networkDriver,
+                                viewModel.payingWalletDriver,
                                 viewModel.feeInfoDriver
                             )
-                                .drive(onNext: { [weak self, weak view] params in
+                                .drive(onNext: { [weak self, weak view] network, payingWallet, feeInfo in
                                     guard let self = self else {return}
                                     view?.setUp(
-                                        network: params.0,
-                                        feeInfo: params.1.value,
+                                        network: network,
+                                        payingWallet: payingWallet,
+                                        feeInfo: feeInfo.value,
                                         prices: self.viewModel.getSOLAndRenBTCPrices()
                                     )
                                 })
@@ -102,6 +104,7 @@ extension SendToken {
                 if viewModel.relayMethod == .relay {
                     FeeView(
                         solPrice: viewModel.getPrice(for: "SOL"),
+                        payingWalletDriver: viewModel.payingWalletDriver,
                         feeInfoDriver: viewModel.feeInfoDriver
                     )
                         .setup {view in

@@ -49,20 +49,11 @@ enum SendToken {
     }
     
     struct FeeInfo {
-        let wallet: Wallet?
         let feeAmount: SolanaSDK.FeeAmount
         let feeAmountInSOL: SolanaSDK.FeeAmount
         
-        static var empty: Self {
-            .init(wallet: nil, feeAmount: .zero, feeAmountInSOL: .zero)
-        }
-        
-        var isValid: Bool {
-            if let wallet = wallet {
-                return (wallet.lamports ?? 0) >= feeAmount.total
-            } else {
-                return feeAmount.total == 0
-            }
+        static var zero: Self {
+            .init(feeAmount: .zero, feeAmountInSOL: .zero)
         }
     }
 }

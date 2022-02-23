@@ -12,6 +12,7 @@ import FeeRelayerSwift
 
 protocol SendTokenSelectNetworkViewModelType {
     var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {get}
+    var payingWalletDriver: Driver<Wallet?> {get}
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSendService() -> SendServiceType
