@@ -17,7 +17,6 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     var loadingStateDriver: Driver<LoadableState> {get}
     
     func getPrice(for symbol: String) -> Double
-    func getSOLAndRenBTCPrices() -> [String: Double]
     func getPrices(for symbols: [String]) -> [String: Double]
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
@@ -174,10 +173,6 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     
     func getPrice(for symbol: String) -> Double {
         pricesService.currentPrice(for: symbol)?.value ?? 0
-    }
-    
-    func getSOLAndRenBTCPrices() -> [String: Double] {
-        getPrices(for: ["SOL", "renBTC"])
     }
     
     func getPrices(for symbols: [String]) -> [String: Double] {

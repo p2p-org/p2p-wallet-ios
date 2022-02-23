@@ -324,7 +324,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                         network: network,
                         payingWallet: payingWallet,
                         feeInfo: feeInfo.value,
-                        prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:]
+                        prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
                     )
                 })
                 .disposed(by: disposeBag)

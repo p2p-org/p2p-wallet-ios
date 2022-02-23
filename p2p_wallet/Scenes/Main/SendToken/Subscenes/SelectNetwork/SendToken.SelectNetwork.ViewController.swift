@@ -76,7 +76,7 @@ extension SendToken.SelectNetwork {
                         viewModel.payingWalletDriver
                     )
                         .drive(onNext: {[weak view, weak self] feeInfo, payingWallet in
-                            view?.setUp(network: network, payingWallet: payingWallet, feeInfo: feeInfo.value, prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:])
+                            view?.setUp(network: network, payingWallet: payingWallet, feeInfo: feeInfo.value, prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:])
                         })
                         .disposed(by: disposeBag)
                     
