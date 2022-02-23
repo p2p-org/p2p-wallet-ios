@@ -92,7 +92,7 @@ class SendService: SendServiceType {
                 )
             )
         case .solana:
-            guard receiver == nil else {
+            guard let receiver = receiver else {
                 return .just(nil)
             }
             
@@ -113,8 +113,11 @@ class SendService: SendServiceType {
                     transactionFee += lamportsPerSignature
                 }
                 
-                return solanaSDK.checkIfAssociatedTokenAccountExists(mint: wallet.mintAddress)
-                    .map {!$0}
+                return solanaSDK.findSPLTokenDestinationAddress(
+                    mintAddress: wallet.mintAddress,
+                    destinationAddress: receiver
+                )
+                    .map {$0.isUnregisteredAsocciatedToken}
                     .map {
                         SolanaSDK.FeeAmount(
                             transaction: transactionFee,
