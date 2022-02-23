@@ -61,7 +61,7 @@ extension SendToken {
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
-        let feeInfoSubject: LoadableRelay<SendToken.FeeInfo>
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.init(wallet: nil, feeAmount: .zero)))
         
         // MARK: - Initializers
         init(
@@ -75,7 +75,6 @@ extension SendToken {
             self.relayMethod = relayMethod
             self.canGoBack = canGoBack
             self.sendService = Resolver.resolve(args: relayMethod)
-            self.feeInfoSubject = .init(request: .just(.init(wallet: nil, feeAmount: .zero)))
             
             // accept initial values
             if let pubkey = walletPubkey,
@@ -84,17 +83,6 @@ extension SendToken {
                 walletSubject.accept(selectableWallet)
             }
             
-            if walletSubject.value == nil {
-                walletsRepository.dataObservable
-                    .map {$0?.first(where: {$0.isNativeSOL})}
-                    .filter {$0 != nil}
-                    .take(1)
-                    .asSingle()
-                    .subscribe(onSuccess: { [weak self] wallet in
-                        self?.walletSubject.accept(wallet)
-                    })
-                    .disposed(by: disposeBag)
-            }
             reload()
         }
         
@@ -104,10 +92,25 @@ extension SendToken {
         
         func reload() {
             loadingStateSubject.accept(.loading)
-
-            sendService.load()
+            
+            Completable.zip(
+                sendService.load(),
+                walletsRepository.stateObservable
+                    .filter {$0 == .loaded}
+                    .take(1)
+                    .asSingle()
+                    .asCompletable()
+            )
                 .subscribe(onCompleted: {[weak self] in
-                    self?.loadingStateSubject.accept(.loaded)
+                    guard let self = self else {return}
+                    self.loadingStateSubject.accept(.loaded)
+                    if self.walletSubject.value == nil {
+                        self.walletSubject.accept(self.walletsRepository.getWallets().first(where: {$0.isNativeSOL}))
+                    }
+                    if let payingWallet = self.walletsRepository.getWallets().first(where: {$0.mintAddress == Defaults.payingTokenMint})
+                    {
+                        self.feeInfoSubject.accept(.init(wallet: payingWallet, feeAmount: .zero), state: .loaded)
+                    }
                 }, onError: {[weak self] error in
                     self?.loadingStateSubject.accept(.error(error.readableDescription))
                 })

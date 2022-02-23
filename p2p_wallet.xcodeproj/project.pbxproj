@@ -125,8 +125,6 @@
 		846991795DC72E1D4E1078B7 /* SolanaBuyToken.Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993C80C502EDC0FBF1067 /* SolanaBuyToken.Scene.swift */; };
 		8469917D8E71B0E435F7EA48 /* Moonpay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994818F78BED22E8A733C /* Moonpay.swift */; };
 		84699180BD00AC7A82B3DC28 /* SortByDataStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C3549A12D49D22AA2EE /* SortByDataStrategy.swift */; };
-		846991A0C502273386D8C0CF /* Moonpay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D5B1D1C3353913C717D /* Moonpay.swift */; };
-		846991A8EB23DEEB4EBB0AC1 /* .swift-format in Resources */ = {isa = PBXBuildFile; fileRef = 84699C82F9F4C9432A461EB1 /* .swift-format */; };
 		846991CD8786E160F2D18E67 /* NetworkSelection.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */; };
 		846991E94E5B357F70EACC4C /* Buy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993A9B7C558B1E379CF0C /* Buy.swift */; };
 		84699203BA88E73988650B2B /* Home.ClosingBannerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699E22DF6711217BFBB3BF /* Home.ClosingBannerType.swift */; };
@@ -143,13 +141,11 @@
 		846993C005071DBC7474F46B /* BuyRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990E0164D14FE11A72F13 /* BuyRoot.swift */; };
 		846993CEE73D894A69FE84A6 /* UIButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469995401F6BFC283896AD6 /* UIButton.swift */; };
 		84699496D82FBB9BD9FB9660 /* BuyToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995031B01D0F8C08F3F79 /* BuyToken.swift */; };
-		8469949E8213E3F341DA2668 /* MoonpayProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699587C4376EAA8208663D /* MoonpayProvider.swift */; };
 		846994A2BB42A05CE960DEFC /* BannerServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699B9EE7C837A668F67593 /* BannerServiceImpl.swift */; };
 		846994A554ABD6D624A736CD /* FeedbackBannerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469911222E0E8EAEAA5CC14 /* FeedbackBannerHandler.swift */; };
 		846994C5A78A76EC59DD3F5B /* NewTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992CDA843C0A10ABB2B6C /* NewTabBar.swift */; };
 		846995027222B9BE2C4B0698 /* WLCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994BA772A5F92F29C172E /* WLCard.swift */; };
 		84699508FB9DD0ECAD1BA062 /* NotificationBannerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469902AC70FC9230511E124 /* NotificationBannerHandler.swift */; };
-		846995091E3EDDA68B901334 /* BEBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699550446906435820FA78 /* BEBuilder.swift */; };
 		846995192F640AE9B9541C87 /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469907019755990A0585C61 /* KeyView.swift */; };
 		84699577969579C1429B4D04 /* CreateSecurityKeys.KeysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994C1EE7DDD16BD91B4FD /* CreateSecurityKeys.KeysView.swift */; };
 		846995A6F31CA183C1D3A133 /* BEScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C86FA5FC79DB0199B0B /* BEScene.swift */; };
@@ -158,7 +154,6 @@
 		846996AAD0560194436016E0 /* CreateWallet.ExplanationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */; };
 		84699760FDC373E6F7B6208F /* Home.HeaderScrollDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699E40AD7E88D393DF2EF9 /* Home.HeaderScrollDelegate.swift */; };
 		8469991AEF32235665C24372 /* BEBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469921CB588561D32F0BA43 /* BEBuilder.swift */; };
-		8469985B6793A5DA662E5BF3 /* PBXBuildFile */ = {isa = PBXBuildFile; fileRef = 8469954152E62DED5A6CA387 /* Moonpay.Model.swift */; };
 		8469991B25D5A9AF775E714B /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469964AD773095EEFA52701 /* CALayer+Extensions.swift */; };
 		846999379F9F0FA61EA1FC1F /* BuyProcessingServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991C6995BDBA42CB0CA45 /* BuyProcessingServiceType.swift */; };
 		8469996EF705D60C94EB79FC /* Moonpay.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469973F517781E128015A0E /* Moonpay.API.swift */; };
@@ -172,12 +167,11 @@
 		84699A514766BA921F1CEBBB /* VisibleWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699A6A04BAA3E42E18DB52 /* VisibleWalletCell.swift */; };
 		84699AF5B3069ECD1CBDE3B5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990F92D4739D72B04E397 /* Utils.swift */; };
 		84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D5BC06C25591CFA36D /* WLWebView.swift */; };
-		84699B60E46C2AE4B6243CC2 /* Moonpay.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699B6A026CF93F30D6510E /* Moonpay.Model.swift */; };
 		84699B13FA126D0F569A19A8 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699F6B05B92BB60E73037B /* Banner.swift */; };
-		84699B6058901C761662F138 /* TransakProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C355CE538F8E06A9A33 /* TransakProvider.swift */; };
+		84699B60E46C2AE4B6243CC2 /* Moonpay.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699B6A026CF93F30D6510E /* Moonpay.Model.swift */; };
 		84699B7B4EDF7C7538DBE0A1 /* Home.BalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998DE3DDA2311FDCDC27F /* Home.BalanceView.swift */; };
-		84699BC20CB341D9BDA75595 /* Moonpay.Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998A492BB5B9DDE59C8DA /* Moonpay.Provider.swift */; };
 		84699B9579A39F48DA53CC8D /* ReserveNameBannerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699474E0B586007CA0B9A2 /* ReserveNameBannerHandler.swift */; };
+		84699BC20CB341D9BDA75595 /* Moonpay.Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998A492BB5B9DDE59C8DA /* Moonpay.Provider.swift */; };
 		84699BC8F8E381B99A1DC0C5 /* LockScreenWrapperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991527AA06D6CED6CBB08 /* LockScreenWrapperViewController.swift */; };
 		84699C160676335B4D6F9607 /* Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846996B110978DCB7A6D4A74 /* Swap.swift */; };
 		84699C2074E4A55FAFCD6E19 /* Home.WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699F90852EC3C3B9BA9FC0 /* Home.WalletCell.swift */; };
@@ -185,7 +179,6 @@
 		84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C929DA7046907362DFE /* ColumnFlowLayout.swift */; };
 		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */; };
 		84699DA6AF178F0B0837C438 /* HidedWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699CAA56E35B94E120FA70 /* HidedWalletCell.swift */; };
-		84699DBA47203BDF184D7907 /* PBXBuildFile */ = {isa = PBXBuildFile; fileRef = 84699DE92661FB71D4AFE677 /* Moonpay.API.swift */; };
 		84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995D0006E36B802E2110E /* ReceiveToken.QrCodeImageRender.swift */; };
 		84699E3523D9949680ACF605 /* .swift-format in Resources */ = {isa = PBXBuildFile; fileRef = 84699C5F25ED1E1522BCD136 /* .swift-format */; };
 		84699E4EC4356224948E529A /* DAppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991A1202889DFF6E4671A /* DAppContainer.swift */; };
@@ -198,8 +191,8 @@
 		84699F61097311CBE8F22F40 /* Home.BannerSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469955678B3B37F9F5E84AB /* Home.BannerSection.swift */; };
 		84699FAFF6F54DA93EE08CD8 /* ReceiveToken.QrCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */; };
 		84699FB6CA3886D764B9B4D1 /* SolanaBuyToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846999ECE924BFEFC88F9F71 /* SolanaBuyToken.swift */; };
-		84699FE9610FE1FD6BCE2F65 /* BuyExchangeServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469946C7AC15ACE4B8C7FB2 /* BuyExchangeServiceType.swift */; };
 		84699FDDE8F574B338C7D8FD /* BackupBannerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469947DDA7E2451606C8B03 /* BackupBannerHandler.swift */; };
+		84699FE9610FE1FD6BCE2F65 /* BuyExchangeServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469946C7AC15ACE4B8C7FB2 /* BuyExchangeServiceType.swift */; };
 		86A90D17273D306400D180EF /* VerifySecurityKeys.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A90D13273D306400D180EF /* VerifySecurityKeys.RootView.swift */; };
 		86A90D18273D306400D180EF /* VerifySecurityKeys.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A90D14273D306400D180EF /* VerifySecurityKeys.ViewController.swift */; };
 		86A90D19273D306400D180EF /* VerifySecurityKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A90D15273D306400D180EF /* VerifySecurityKeys.swift */; };
@@ -353,7 +346,6 @@
 		BC5DB13225F739F9003D00BE /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = BC5DB13425F739F9003D00BE /* Localizable.stringsdict */; };
 		BC5ED749256237AB0030572D /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED748256237AB0030572D /* EmptyView.swift */; };
 		BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5ED757256269FE0030572D /* PriceFetcher.swift */; };
-		BC604A2226C6121E00B1DF0F /* PayingToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC604A2126C6121E00B1DF0F /* PayingToken.swift */; };
 		BC63110B26D78AE600516C38 /* SwapProviderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC63110A26D78AE600516C38 /* SwapProviderType.swift */; };
 		BC63110D26D78F9800516C38 /* SerumSwap+SwapProviderType.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC63110C26D78F9800516C38 /* SerumSwap+SwapProviderType.swift */; };
 		BC6342E1268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */; };
@@ -690,16 +682,15 @@
 		846993A9B7C558B1E379CF0C /* Buy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buy.swift; sourceTree = "<group>"; };
 		846993C80C502EDC0FBF1067 /* SolanaBuyToken.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SolanaBuyToken.Scene.swift; sourceTree = "<group>"; };
 		84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.RootView.swift; sourceTree = "<group>"; };
+		8469946C7AC15ACE4B8C7FB2 /* BuyExchangeServiceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyExchangeServiceType.swift; sourceTree = "<group>"; };
 		84699474E0B586007CA0B9A2 /* ReserveNameBannerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReserveNameBannerHandler.swift; sourceTree = "<group>"; };
 		8469947DDA7E2451606C8B03 /* BackupBannerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackupBannerHandler.swift; sourceTree = "<group>"; };
-		8469946C7AC15ACE4B8C7FB2 /* BuyExchangeServiceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyExchangeServiceType.swift; sourceTree = "<group>"; };
 		846994818F78BED22E8A733C /* Moonpay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.swift; sourceTree = "<group>"; };
 		846994BA772A5F92F29C172E /* WLCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLCard.swift; sourceTree = "<group>"; };
 		846994C1EE7DDD16BD91B4FD /* CreateSecurityKeys.KeysView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.KeysView.swift; sourceTree = "<group>"; };
 		846994CA82A154C3617A2A35 /* Home.Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.Header.swift; sourceTree = "<group>"; };
 		846995031B01D0F8C08F3F79 /* BuyToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyToken.swift; sourceTree = "<group>"; };
 		84699524C5183F1B5AF8FCD6 /* Section.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.View.swift; sourceTree = "<group>"; };
-		8469954152E62DED5A6CA387 /* Moonpay.Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Model.swift; sourceTree = "<group>"; };
 		84699550446906435820FA78 /* BEBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEBuilder.swift; sourceTree = "<group>"; };
 		8469955678B3B37F9F5E84AB /* Home.BannerSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BannerSection.swift; sourceTree = "<group>"; };
 		8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateWallet.ExplanationVC.swift; sourceTree = "<group>"; };
@@ -716,8 +707,8 @@
 		84699843D0D43ABFAA0417BA /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		84699858C3DF47632C790981 /* Home.EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.EmptyView.swift; sourceTree = "<group>"; };
 		846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
-		846998AB61BE23DF5EDCBD3B /* OrcaSwapV2.Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.Helper.swift; sourceTree = "<group>"; };
 		846998A492BB5B9DDE59C8DA /* Moonpay.Provider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Provider.swift; sourceTree = "<group>"; };
+		846998AB61BE23DF5EDCBD3B /* OrcaSwapV2.Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.Helper.swift; sourceTree = "<group>"; };
 		846998BD838DC8068136D236 /* Home.BannerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BannerCell.swift; sourceTree = "<group>"; };
 		846998DE3DDA2311FDCDC27F /* Home.BalanceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BalanceView.swift; sourceTree = "<group>"; };
 		8469995401F6BFC283896AD6 /* UIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
@@ -729,13 +720,11 @@
 		84699A6A04BAA3E42E18DB52 /* VisibleWalletCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisibleWalletCell.swift; sourceTree = "<group>"; };
 		84699AC2656E48F105F10AB1 /* BESuperScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BESuperScene.swift; sourceTree = "<group>"; };
 		84699B12507C7B2261FB2514 /* SwipeableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeableCell.swift; sourceTree = "<group>"; };
-		84699B9EE7C837A668F67593 /* BannerServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerServiceImpl.swift; sourceTree = "<group>"; };
 		84699B6A026CF93F30D6510E /* Moonpay.Model.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Model.swift; sourceTree = "<group>"; };
+		84699B9EE7C837A668F67593 /* BannerServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BannerServiceImpl.swift; sourceTree = "<group>"; };
 		84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Button.swift; sourceTree = "<group>"; };
 		84699C3549A12D49D22AA2EE /* SortByDataStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByDataStrategy.swift; sourceTree = "<group>"; };
-		84699C355CE538F8E06A9A33 /* TransakProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakProvider.swift; sourceTree = "<group>"; };
 		84699C4D3EF36C61A55A9482 /* SwapServiceWithRelayImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwapServiceWithRelayImpl.swift; sourceTree = "<group>"; };
-		84699C4EC5492AD6214BAD3D /* Moonpay.Service.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Service.swift; sourceTree = "<group>"; };
 		84699C5F25ED1E1522BCD136 /* .swift-format */ = {isa = PBXFileReference; lastKnownFileType = "file.swift-format"; path = ".swift-format"; sourceTree = "<group>"; };
 		84699C86FA5FC79DB0199B0B /* BEScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEScene.swift; sourceTree = "<group>"; };
 		84699C929DA7046907362DFE /* ColumnFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColumnFlowLayout.swift; sourceTree = "<group>"; };
@@ -743,8 +732,6 @@
 		84699CB4D013E8D2ECC9D2DA /* CreateSecurityKeys.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.RootView.swift; sourceTree = "<group>"; };
 		84699CFE43666FACF9062699 /* BESceneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BESceneModel.swift; sourceTree = "<group>"; };
 		84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIStackView.swift; sourceTree = "<group>"; };
-		84699D5B1D1C3353913C717D /* Moonpay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.swift; sourceTree = "<group>"; };
-		84699DE92661FB71D4AFE677 /* Moonpay.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
 		84699E22DF6711217BFBB3BF /* Home.ClosingBannerType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.ClosingBannerType.swift; sourceTree = "<group>"; };
 		84699E40AD7E88D393DF2EF9 /* Home.HeaderScrollDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.HeaderScrollDelegate.swift; sourceTree = "<group>"; };
 		84699E5ED9376E01FBD8B3DB /* ReceiveToken.ViewBuilders.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewBuilders.swift; sourceTree = "<group>"; };
@@ -919,7 +906,6 @@
 		BC5DB13A25F73A01003D00BE /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = vi; path = vi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		BC5ED748256237AB0030572D /* EmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		BC5ED757256269FE0030572D /* PriceFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PriceFetcher.swift; sourceTree = "<group>"; };
-		BC604A2126C6121E00B1DF0F /* PayingToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PayingToken.swift; sourceTree = "<group>"; };
 		BC63110A26D78AE600516C38 /* SwapProviderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProviderType.swift; sourceTree = "<group>"; };
 		BC63110C26D78F9800516C38 /* SerumSwap+SwapProviderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SerumSwap+SwapProviderType.swift"; sourceTree = "<group>"; };
 		BC6342E0268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.ParsedTransaction.Status+Extensions.swift"; sourceTree = "<group>"; };
@@ -1386,14 +1372,6 @@
 			path = BuyToken;
 			sourceTree = "<group>";
 		};
-		846994A302F19BEB697115DB /* BEPureLayout+RxSwift */ = {
-			isa = PBXGroup;
-			children = (
-				8469921CB588561D32F0BA43 /* BEBuilder.swift */,
-			);
-			path = "BEPureLayout+RxSwift";
-			sourceTree = "<group>";
-		};
 		846993CD4CD0FE97413DF87A /* Buy */ = {
 			isa = PBXGroup;
 			children = (
@@ -1403,6 +1381,14 @@
 				84699B0DA213443B14965D55 /* Exchange */,
 			);
 			path = Buy;
+			sourceTree = "<group>";
+		};
+		846994A302F19BEB697115DB /* BEPureLayout+RxSwift */ = {
+			isa = PBXGroup;
+			children = (
+				8469921CB588561D32F0BA43 /* BEBuilder.swift */,
+			);
+			path = "BEPureLayout+RxSwift";
 			sourceTree = "<group>";
 		};
 		846994BA8A55C5445F0CEF4B /* CollectionView */ = {
@@ -1431,15 +1417,6 @@
 			path = DApps;
 			sourceTree = "<group>";
 		};
-		8469976D7253DCF151D9101E /* Banner */ = {
-			isa = PBXGroup;
-			children = (
-				8469955678B3B37F9F5E84AB /* Home.BannerSection.swift */,
-				846998BD838DC8068136D236 /* Home.BannerCell.swift */,
-			);
-			path = Banner;
-			sourceTree = "<group>";
-		};
 		846997277337DD27D74F5F9F /* Moonpay */ = {
 			isa = PBXGroup;
 			children = (
@@ -1447,6 +1424,15 @@
 				8469935E58251A19EB02F459 /* MoonpayExchangeService.swift */,
 			);
 			path = Moonpay;
+			sourceTree = "<group>";
+		};
+		8469976D7253DCF151D9101E /* Banner */ = {
+			isa = PBXGroup;
+			children = (
+				8469955678B3B37F9F5E84AB /* Home.BannerSection.swift */,
+				846998BD838DC8068136D236 /* Home.BannerCell.swift */,
+			);
+			path = Banner;
 			sourceTree = "<group>";
 		};
 		846998220F2414FAD758943C /* View */ = {
@@ -1542,26 +1528,6 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		84699EEE2AAF2DB90B7E2EF4 /* Swap */ = {
-			isa = PBXGroup;
-			children = (
-				846996B110978DCB7A6D4A74 /* Swap.swift */,
-				84699C4D3EF36C61A55A9482 /* SwapServiceWithRelayImpl.swift */,
-			);
-			path = Swap;
-			sourceTree = "<group>";
-		};
-        84699EE2D8E2B810C19457D5 /* Handler */ = {
-            isa = PBXGroup;
-            children = (
-                84699474E0B586007CA0B9A2 /* ReserveNameBannerHandler.swift */,
-                8469947DDA7E2451606C8B03 /* BackupBannerHandler.swift */,
-                8469911222E0E8EAEAA5CC14 /* FeedbackBannerHandler.swift */,
-                8469902AC70FC9230511E124 /* NotificationBannerHandler.swift */,
-            );
-            path = Handler;
-            sourceTree = "<group>";
-        };
 		84699EDD189457834A1EEC31 /* BuyProccessing */ = {
 			isa = PBXGroup;
 			children = (
@@ -1571,6 +1537,26 @@
 				846991C6995BDBA42CB0CA45 /* BuyProcessingServiceType.swift */,
 			);
 			path = BuyProccessing;
+			sourceTree = "<group>";
+		};
+		84699EE2D8E2B810C19457D5 /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+				84699474E0B586007CA0B9A2 /* ReserveNameBannerHandler.swift */,
+				8469947DDA7E2451606C8B03 /* BackupBannerHandler.swift */,
+				8469911222E0E8EAEAA5CC14 /* FeedbackBannerHandler.swift */,
+				8469902AC70FC9230511E124 /* NotificationBannerHandler.swift */,
+			);
+			path = Handler;
+			sourceTree = "<group>";
+		};
+		84699EEE2AAF2DB90B7E2EF4 /* Swap */ = {
+			isa = PBXGroup;
+			children = (
+				846996B110978DCB7A6D4A74 /* Swap.swift */,
+				84699C4D3EF36C61A55A9482 /* SwapServiceWithRelayImpl.swift */,
+			);
+			path = Swap;
 			sourceTree = "<group>";
 		};
 		86A90D12273D306400D180EF /* VerifySecurityKeys */ = {
@@ -2004,7 +1990,6 @@
 			children = (
 				BCB286CF2750869E0074E1D5 /* DApps */,
 				BC5257E625CBACEA0076317E /* Fiat.swift */,
-				BC604A2126C6121E00B1DF0F /* PayingToken.swift */,
 				BC12550A2653A61C00695A2B /* SelectableDerivablePath.swift */,
 				BC53E2252654FE56005624CC /* DerivableAccount.swift */,
 				BC185EF926E3B81F00280FE6 /* LoadableRelay.swift */,
@@ -3267,7 +3252,6 @@
 				BC3B3DAA258C653000C6117E /* WLIndicatorModalVC (Old design).swift in Sources */,
 				BC65E18B261EA24C00E436C7 /* InvestmentsCollectionView.swift in Sources */,
 				4114D16D2746272400352CDF /* EnterSeedInfo.RootView.swift in Sources */,
-				BC604A2226C6121E00B1DF0F /* PayingToken.swift in Sources */,
 				BC65E257261EF34B00E436C7 /* TransactionInfoRootView.swift in Sources */,
 				3B87A157276357AC00F09883 /* OrcaSwapV2.WalletView.swift in Sources */,
 				BC4B9EBD27191843005B9ECA /* OrcaSwapV2.ViewController.swift in Sources */,
