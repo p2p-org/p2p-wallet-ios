@@ -128,17 +128,16 @@ extension SendToken.ConfirmViewController {
                     // fee
                     SectionView(title: L10n.transferFee)
                         .setup { view in
-                            viewModel.feesDriver
-                                .map {[weak self] feeAmount in
+                            Driver.combineLatest(
+                                viewModel.feeInfoDriver.map {$0.value?.feeAmount},
+                                viewModel.payingWalletDriver
+                            )
+                                .map {[weak self] feeAmount, payingWallet in
                                     guard let self = self else {return NSAttributedString()}
                                     guard let feeAmount = feeAmount else {return NSAttributedString()}
-                                    let prices = self.viewModel.getSOLAndRenBTCPrices()
-                                    return feeAmount.attributedStringForTransactionFee(solPrice: prices["SOL"])
+                                    let prices = self.viewModel.getPrices(for: [payingWallet?.token.symbol ?? ""])
+                                    return feeAmount.attributedStringForTransactionFee(prices: prices, symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
                                 }
-                                .do(afterNext: {[weak view] _ in
-                                    view?.rightLabel.setNeedsLayout()
-                                    view?.layoutIfNeeded()
-                                })
                                 .drive(view.rightLabel.rx.attributedText)
                                 .disposed(by: disposeBag)
                         }
@@ -159,38 +158,62 @@ extension SendToken.ConfirmViewController {
                         .onTap(self, action: #selector(feeInfoButtonDidTap))
                 }
                 
-                // Account creation fee, other fees
+                // Account creation fee
                 SectionView(title: L10n.accountCreationFee)
                     .setup { view in
                         Driver.combineLatest(
                             viewModel.networkDriver,
-                            viewModel.feesDriver
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount}
                         )
-                            .do(afterNext: {[weak view] _ in
-                                view?.rightLabel.setNeedsLayout()
-                                view?.layoutIfNeeded()
-                            })
-                            .drive(onNext: { [weak self, weak view] network, feeAmount in
-                                guard let self = self else {return}
+                            .map { network, feeAmount -> Bool in
+                                if network != .solana {return true}
+                                guard let feeAmount = feeAmount else {return true}
+                                return feeAmount.accountBalances == 0
+                            }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                        
+                        Driver.combineLatest(
+                            viewModel.networkDriver,
+                            viewModel.payingWalletDriver,
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount}
+                        )
+                            .map { [weak self] network, payingWallet, feeAmount -> NSAttributedString? in
+                                if network != .solana {return nil}
                                 guard let feeAmount = feeAmount else {
-                                    view?.isHidden = true
-                                    return
+                                    return nil
                                 }
-                                let prices = self.viewModel.getSOLAndRenBTCPrices()
-                                switch network {
-                                case .solana:
-                                    view?.leftLabel.text = L10n.accountCreationFee
-                                    if let attributedString = feeAmount.attributedStringForAccountCreationFee(solPrice: prices["SOL"])
-                                    {
-                                        view?.rightLabel.attributedText = attributedString
-                                    } else {
-                                        view?.isHidden = true
-                                    }
-                                case .bitcoin:
-                                    view?.leftLabel.text = ""
-                                    view?.rightLabel.attributedText = feeAmount.attributedStringForOtherFees(prices: prices)
+                                return feeAmount.attributedStringForAccountCreationFee(price: self?.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""), symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
+                            }
+                            .drive(view.rightLabel.rx.attributedText)
+                            .disposed(by: disposeBag)
+                    }
+                
+                // Other fees
+                SectionView(title: "")
+                    .setup { view in
+                        Driver.combineLatest(
+                            viewModel.networkDriver,
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount}
+                        )
+                            .map { network, feeAmount -> Bool in
+                                if network != .bitcoin {return true}
+                                guard let otherFees = feeAmount?.others else {return true}
+                                return otherFees.isEmpty
+                            }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                        
+                        viewModel.feeInfoDriver
+                            .map {$0.value?.feeAmountInSOL}
+                            .map { [weak self] feeAmount -> NSAttributedString? in
+                                guard let feeAmount = feeAmount else {
+                                    return nil
                                 }
-                            })
+                                let prices = self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
+                                return feeAmount.attributedStringForOtherFees(prices: prices)
+                            }
+                            .drive(view.rightLabel.rx.attributedText)
                             .disposed(by: disposeBag)
                     }
                 
@@ -204,10 +227,13 @@ extension SendToken.ConfirmViewController {
                 // Total fee
                 SectionView(title: L10n.total)
                     .setup { view in
-                        viewModel.feesDriver
-                            .map {[weak self] feeAmount -> NSAttributedString in
+                        Driver.combineLatest(
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount},
+                            viewModel.payingWalletDriver
+                        )
+                            .map {[weak self] feeAmount, payingWallet -> NSAttributedString in
                                 guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
-                                return feeAmount.attributedStringForTotalFee(solPrice: self.viewModel.getSOLAndRenBTCPrices()["SOL"])
+                                return feeAmount.attributedStringForTotalFee(price: self.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""), symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
                             }
                             .drive(view.rightLabel.rx.attributedText)
                             .disposed(by: disposeBag)
@@ -240,26 +266,31 @@ extension SendToken.ConfirmViewController {
 }
 
 private extension SolanaSDK.FeeAmount {
-    func attributedStringForTransactionFee(solPrice: Double?) -> NSMutableAttributedString {
+    func attributedStringForTransactionFee(prices: [String: Double], symbol: String, decimals: UInt8?) -> NSMutableAttributedString {
         if transaction == 0 {
             return NSMutableAttributedString()
                 .text(L10n.free + " ", size: 15, weight: .semibold)
                 .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
         } else {
-            let fee = transaction.convertToBalance(decimals: 9)
-            return feeAttributedString(fee: fee, unit: "SOL", price: solPrice)
+            let fee = transaction.convertToBalance(decimals: decimals ?? 0)
+            return feeAttributedString(fee: fee, unit: symbol, price: prices[symbol])
         }
     }
     
-    func attributedStringForAccountCreationFee(solPrice: Double?) -> NSMutableAttributedString? {
+    func attributedStringForAccountCreationFee(price: Double?, symbol: String, decimals: UInt8?) -> NSMutableAttributedString? {
         guard accountBalances > 0 else {return nil}
-        let fee = accountBalances.convertToBalance(decimals: 9)
-        return feeAttributedString(fee: fee, unit: "SOL", price: solPrice)
+        let fee = accountBalances.convertToBalance(decimals: decimals ?? 0)
+        return feeAttributedString(fee: fee, unit: symbol, price: price)
     }
     
-    func attributedStringForTotalFee(solPrice: Double?) -> NSMutableAttributedString {
-        let fee = total.convertToBalance(decimals: 9)
-        return feeAttributedString(fee: fee, unit: "SOL", price: solPrice)
+    func attributedStringForTotalFee(price: Double?, symbol: String, decimals: UInt8?) -> NSMutableAttributedString {
+        if total == 0 {
+            return NSMutableAttributedString()
+                .text("\(Defaults.fiat.symbol)0", size: 15, color: .textBlack)
+        } else {
+            let fee = total.convertToBalance(decimals: decimals ?? 0)
+            return feeAttributedString(fee: fee, unit: symbol, price: price)
+        }
     }
     
     func attributedStringForOtherFees(

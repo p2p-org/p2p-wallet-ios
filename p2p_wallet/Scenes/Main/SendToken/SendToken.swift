@@ -48,27 +48,12 @@ enum SendToken {
         }
     }
     
-    enum PayingWalletStatus: Equatable {
-        case loading
-        case invalid
-        case valid(amount: SolanaSDK.Lamports, enoughBalance: Bool)
+    struct FeeInfo {
+        let feeAmount: SolanaSDK.FeeAmount
+        let feeAmountInSOL: SolanaSDK.FeeAmount
         
-        var isValidAndEnoughBalance: Bool {
-            switch self {
-            case .valid(_, let enoughBalance):
-                return enoughBalance
-            default:
-                return false
-            }
-        }
-        
-        var feeAmount: SolanaSDK.Lamports? {
-            switch self {
-            case .valid(let amount, _):
-                return amount
-            default:
-                return nil
-            }
+        static var zero: Self {
+            .init(feeAmount: .zero, feeAmountInSOL: .zero)
         }
     }
 }

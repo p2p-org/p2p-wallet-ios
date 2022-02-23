@@ -204,7 +204,7 @@ extension OrcaSwapV2 {
             {
                 checkRequest = swapService.calculateNetworkFeeInPayingToken(networkFee: fees, payingTokenMint: payingWallet.mintAddress)
                     .map { amount -> Bool in
-                        if let amount = amount,
+                        if let amount = amount?.total,
                             let currentAmount = payingWallet.lamports,
                             amount > currentAmount
                         {

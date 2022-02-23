@@ -15,8 +15,6 @@ extension Fiat: DefaultsSerializable {}
 
 extension SolanaSDK.APIEndPoint: DefaultsSerializable {}
 
-extension PayingToken: DefaultsSerializable {}
-
 extension RenVM.Session: DefaultsSerializable {}
 
 extension RenVM.LockAndMint.ProcessingTx: DefaultsSerializable {}
@@ -52,7 +50,7 @@ extension DefaultsKeys {
     var useFreeTransaction: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
     var p2pFeePayerPubkeys: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
     var prices: DefaultsKey<Data> {.init(#function, defaultValue: Data())}
-    var payingToken: DefaultsKey<PayingToken> {.init(#function, defaultValue: .splToken)}
+    var payingTokenMint: DefaultsKey<String> {.init(#function, defaultValue: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString)}
     var renVMSession: DefaultsKey<RenVM.Session?> {.init(#function, defaultValue: nil)}
     var renVMProcessingTxs: DefaultsKey<[RenVM.LockAndMint.ProcessingTx]> {.init(#function, defaultValue: [])}
     var renVMSubmitedBurnTxDetails: DefaultsKey<[RenVM.BurnAndRelease.BurnDetails]> {.init(#function, defaultValue: [])}

@@ -24,9 +24,9 @@ protocol SendServiceType {
         isPayingWithSOL: Bool
     ) -> Single<SolanaSDK.FeeAmount?>
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.Lamports,
+        feeInSOL: SolanaSDK.FeeAmount,
         payingFeeWallet: Wallet
-    ) -> Single<SolanaSDK.Lamports?>
+    ) -> Single<SolanaSDK.FeeAmount?>
     
     func getFreeTransactionFeeLimit(
     ) -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
@@ -92,7 +92,7 @@ class SendService: SendServiceType {
                 )
             )
         case .solana:
-            guard receiver == nil else {
+            guard let receiver = receiver else {
                 return .just(nil)
             }
             
@@ -113,8 +113,18 @@ class SendService: SendServiceType {
                     transactionFee += lamportsPerSignature
                 }
                 
-                return solanaSDK.checkIfAssociatedTokenAccountExists(mint: wallet.mintAddress)
-                    .map {!$0}
+                let isUnregisteredAsocciatedTokenRequest: Single<Bool>
+                if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                    isUnregisteredAsocciatedTokenRequest = .just(false)
+                } else {
+                    isUnregisteredAsocciatedTokenRequest = solanaSDK.findSPLTokenDestinationAddress(
+                        mintAddress: wallet.mintAddress,
+                        destinationAddress: receiver
+                    )
+                        .map {$0.isUnregisteredAsocciatedToken}
+                }
+                
+                return isUnregisteredAsocciatedTokenRequest
                     .map {
                         SolanaSDK.FeeAmount(
                             transaction: transactionFee,
@@ -133,9 +143,9 @@ class SendService: SendServiceType {
     }
     
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.Lamports,
+        feeInSOL: SolanaSDK.FeeAmount,
         payingFeeWallet: Wallet
-    ) -> Single<SolanaSDK.Lamports?> {
+    ) -> Single<SolanaSDK.FeeAmount?> {
         guard relayMethod == .relay else {return .just(nil)}
         if payingFeeWallet.isNativeSOL {return .just(feeInSOL)}
         return relayService.calculateFeeInPayingToken(
