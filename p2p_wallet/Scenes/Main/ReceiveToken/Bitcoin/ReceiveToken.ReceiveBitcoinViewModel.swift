@@ -162,6 +162,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     func copyToClipboard() {
         guard let address = renVMService.getCurrentAddress() else { return }
         clipboardManager.copyToClipboard(address)
+        notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         analyticsManager.log(event: .receiveAddressCopied)
     }
     
