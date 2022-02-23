@@ -78,6 +78,7 @@ extension SendTokenRecipientAndNetworkHandler {
     }
     
     func selectPayingWallet(_ payingWallet: Wallet) {
+        Defaults.payingTokenMint = payingWallet.mintAddress
         reloadFeeInfoSubject(payingWallet: payingWallet)
     }
     
@@ -104,26 +105,26 @@ extension SendTokenRecipientAndNetworkHandler {
                     network: network ?? networkSubject.value,
                     isPayingWithSOL: payingWallet?.isNativeSOL == true
                 )
-                .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
+                .flatMap { [weak self] feeAmountInSOL -> Single<(SolanaSDK.FeeAmount, SolanaSDK.FeeAmount)> in
                     guard let sendService = self?.sendService else {
                         throw SolanaSDK.Error.unknown
                     }
-                    guard let feeAmount = feeAmount else {
-                        return .just(.zero)
+                    guard let feeAmountInSOL = feeAmountInSOL else {
+                        return .just((.zero, .zero))
                     }
                     guard let payingWallet = payingWallet else {
-                        return .just(feeAmount)
+                        return .just((feeAmountInSOL, .zero))
                     }
 
                     return sendService.getFeesInPayingToken(
-                        feeInSOL: feeAmount,
+                        feeInSOL: feeAmountInSOL,
                         payingFeeWallet: payingWallet
                     )
-                        .map { $0 ?? .zero }
+                        .map { (feeAmountInSOL, ($0 ?? .zero)) }
                 }
-                .map { .init(wallet: payingWallet, feeAmount: $0)}
+                .map { .init(wallet: payingWallet, feeAmount: $0.1, feeAmountInSOL: $0.0)}
         } else {
-            feeInfoSubject.request = .just(.init(wallet: payingWallet, feeAmount: .zero))
+            feeInfoSubject.request = .just(.init(wallet: payingWallet, feeAmount: .zero, feeAmountInSOL: .zero))
         }
         feeInfoSubject.reload()
     }

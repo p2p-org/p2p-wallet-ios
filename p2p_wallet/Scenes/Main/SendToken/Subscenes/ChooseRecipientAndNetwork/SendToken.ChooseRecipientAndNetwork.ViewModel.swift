@@ -42,7 +42,7 @@ extension SendToken.ChooseRecipientAndNetwork {
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
-        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.init(wallet: nil, feeAmount: .zero)))
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.empty))
         
         // MARK: - Initializers
         init(
