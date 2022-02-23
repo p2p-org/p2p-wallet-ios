@@ -158,39 +158,62 @@ extension SendToken.ConfirmViewController {
                         .onTap(self, action: #selector(feeInfoButtonDidTap))
                 }
                 
-                // Account creation fee, other fees
+                // Account creation fee
                 SectionView(title: L10n.accountCreationFee)
                     .setup { view in
+                        Driver.combineLatest(
+                            viewModel.networkDriver,
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount}
+                        )
+                            .map { network, feeAmount -> Bool in
+                                if network != .solana {return true}
+                                guard let feeAmount = feeAmount else {return true}
+                                return feeAmount.accountBalances == 0
+                            }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                        
                         Driver.combineLatest(
                             viewModel.networkDriver,
                             viewModel.payingWalletDriver,
                             viewModel.feeInfoDriver.map {$0.value?.feeAmount}
                         )
-                            .do(afterNext: {[weak view] _ in
-                                view?.rightLabel.setNeedsLayout()
-                                view?.layoutIfNeeded()
-                            })
-                            .drive(onNext: { [weak self, weak view] network, payingWallet, feeAmount in
-                                guard let self = self else {return}
+                            .map { [weak self] network, payingWallet, feeAmount -> NSAttributedString? in
+                                if network != .solana {return nil}
                                 guard let feeAmount = feeAmount else {
-                                    view?.isHidden = true
-                                    return
+                                    return nil
                                 }
-                                let prices = self.viewModel.getPrices(for: ["SOL", "renBTC", payingWallet?.token.symbol ?? ""])
-                                switch network {
-                                case .solana:
-                                    view?.leftLabel.text = L10n.accountCreationFee
-                                    if let attributedString = feeAmount.attributedStringForAccountCreationFee(prices: prices, symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
-                                    {
-                                        view?.rightLabel.attributedText = attributedString
-                                    } else {
-                                        view?.isHidden = true
-                                    }
-                                case .bitcoin:
-                                    view?.leftLabel.text = ""
-                                    view?.rightLabel.attributedText = feeAmount.attributedStringForOtherFees(prices: prices)
+                                return feeAmount.attributedStringForAccountCreationFee(price: self?.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""), symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
+                            }
+                            .drive(view.rightLabel.rx.attributedText)
+                            .disposed(by: disposeBag)
+                    }
+                
+                // Other fees
+                SectionView(title: "")
+                    .setup { view in
+                        Driver.combineLatest(
+                            viewModel.networkDriver,
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount}
+                        )
+                            .map { network, feeAmount -> Bool in
+                                if network != .bitcoin {return true}
+                                guard let otherFees = feeAmount?.others else {return true}
+                                return otherFees.isEmpty
+                            }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                        
+                        viewModel.feeInfoDriver
+                            .map {$0.value?.feeAmountInSOL}
+                            .map { [weak self] feeAmount -> NSAttributedString? in
+                                guard let feeAmount = feeAmount else {
+                                    return nil
                                 }
-                            })
+                                let prices = self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
+                                return feeAmount.attributedStringForOtherFees(prices: prices)
+                            }
+                            .drive(view.rightLabel.rx.attributedText)
                             .disposed(by: disposeBag)
                     }
                 
@@ -254,10 +277,10 @@ private extension SolanaSDK.FeeAmount {
         }
     }
     
-    func attributedStringForAccountCreationFee(prices: [String: Double], symbol: String, decimals: UInt8?) -> NSMutableAttributedString? {
+    func attributedStringForAccountCreationFee(price: Double?, symbol: String, decimals: UInt8?) -> NSMutableAttributedString? {
         guard accountBalances > 0 else {return nil}
         let fee = accountBalances.convertToBalance(decimals: decimals ?? 0)
-        return feeAttributedString(fee: fee, unit: symbol, price: prices[symbol])
+        return feeAttributedString(fee: fee, unit: symbol, price: price)
     }
     
     func attributedStringForTotalFee(price: Double?, symbol: String, decimals: UInt8?) -> NSMutableAttributedString {

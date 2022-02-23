@@ -100,34 +100,6 @@ extension SendToken {
                         self?.viewModel.navigate(to: .chooseNetwork)
                     }
                 
-                // Paying fee token
-                if viewModel.relayMethod == .relay {
-                    FeeView(
-                        solPrice: viewModel.getPrice(for: "SOL"),
-                        payingWalletDriver: viewModel.payingWalletDriver,
-                        feeInfoDriver: viewModel.feeInfoDriver
-                    )
-                        .setup {view in
-                            Driver.combineLatest(
-                                viewModel.networkDriver,
-                                viewModel.feeInfoDriver
-                            )
-                                .map {network, fee in
-                                    if network != .solana {return true}
-                                    if let fee = fee.value?.feeAmount {
-                                        return fee.total == 0
-                                    } else {
-                                        return true
-                                    }
-                                }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
-                        }
-                        .onTap { [weak self] in
-                            self?.viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
-                        }
-                }
-                
                 BEStackViewSpacing(18)
                 
                 // Fee sections
