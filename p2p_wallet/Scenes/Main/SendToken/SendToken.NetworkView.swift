@@ -38,18 +38,19 @@ extension SendToken {
         }
         
         @discardableResult
-        func setUp(network: SendToken.Network, feeAmount: SolanaSDK.FeeAmount?, prices: [String: Double]) -> Self {
+        func setUp(network: SendToken.Network, payingWallet: Wallet?, feeInfo: SendToken.FeeInfo?, prices: [String: Double]) -> Self {
             coinImageView.image = network.icon
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
             
             let attributedText = NSMutableAttributedString()
                 .text(L10n.transferFee + ": ", size: 13, color: .textSecondary)
             
-            if let feeAmount = feeAmount {
+            if let feeInfo = feeInfo {
                 attributedText
                     .append(
-                        feeAmount
+                        feeInfo
                             .attributedString(
+                                payingWallet: payingWallet,
                                 prices: prices,
                                 textSize: 13,
                                 tokenColor: .textSecondary,
@@ -67,8 +68,9 @@ extension SendToken {
     }
 }
 
-private extension SolanaSDK.FeeAmount {
+private extension SendToken.FeeInfo {
     func attributedString(
+        payingWallet wallet: Wallet?,
         prices: [String: Double],
         textSize: CGFloat = 15,
         tokenColor: UIColor = .textBlack,
@@ -78,21 +80,21 @@ private extension SolanaSDK.FeeAmount {
         let attributedText = NSMutableAttributedString()
         
         // if empty
-        if transaction == 0 && (others == nil || others?.isEmpty == true) {
+        if feeAmount.transaction == 0 && (feeAmount.others == nil || feeAmount.others?.isEmpty == true) {
             attributedText
                 .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
             return attributedText
         }
         
         // total (in SOL)
-        let totalFeeInSOL = transaction.convertToBalance(decimals: 9)
-        let totalFeeInUSD = totalFeeInSOL * prices["SOL"]
+        let totalFeeInSOL = feeAmount.transaction.convertToBalance(decimals: 9)
+        let totalFeeInUSD = totalFeeInSOL * prices[wallet?.token.symbol ?? ""]
         attributedText
-            .text("\(totalFeeInSOL.toString(maximumFractionDigits: 9)) SOL", size: textSize, color: tokenColor)
+            .text("\(totalFeeInSOL.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "")", size: textSize, color: tokenColor)
             .text(" (~\(Defaults.fiat.symbol)\(totalFeeInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
         
         // other fees
-        if let others = others {
+        if let others = feeAmount.others {
             attributedText.append(attributedSeparator)
             for (index, fee) in others.enumerated() {
                 let amountInUSD = fee.amount * prices[fee.unit]

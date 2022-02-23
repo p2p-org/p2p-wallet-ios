@@ -81,14 +81,16 @@ extension SendToken {
                             view.addArrangedSubview(.defaultNextArrow())
                             Driver.combineLatest(
                                 viewModel.networkDriver,
-                                viewModel.feesDriver
+                                viewModel.payingWalletDriver,
+                                viewModel.feeInfoDriver
                             )
-                                .drive(onNext: { [weak self, weak view] params in
+                                .drive(onNext: { [weak self, weak view] network, payingWallet, feeInfo in
                                     guard let self = self else {return}
                                     view?.setUp(
-                                        network: params.0,
-                                        feeAmount: params.1,
-                                        prices: self.viewModel.getSOLAndRenBTCPrices()
+                                        network: network,
+                                        payingWallet: payingWallet,
+                                        feeInfo: feeInfo.value,
+                                        prices: self.viewModel.getPrices(for: ["SOL", "renBTC"])
                                     )
                                 })
                                 .disposed(by: disposeBag)
@@ -97,35 +99,6 @@ extension SendToken {
                     .onTap { [weak self] in
                         self?.viewModel.navigate(to: .chooseNetwork)
                     }
-                
-                // Paying fee token
-                if viewModel.relayMethod == .relay {
-                    FeeView(
-                        solPrice: viewModel.getPrice(for: "SOL"),
-                        feesDriver: viewModel.feesDriver,
-                        payingWalletDriver: viewModel.payingWalletDriver,
-                        payingWalletStatusDriver: viewModel.payingWalletStatusDriver
-                    )
-                        .setup {view in
-                            Driver.combineLatest(
-                                viewModel.networkDriver,
-                                viewModel.feesDriver
-                            )
-                                .map {network, fee in
-                                    if network != .solana {return true}
-                                    if let fee = fee {
-                                        return fee.total == 0
-                                    } else {
-                                        return true
-                                    }
-                                }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
-                        }
-                        .onTap { [weak self] in
-                            self?.viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
-                        }
-                }
                 
                 BEStackViewSpacing(18)
                 
@@ -248,6 +221,16 @@ extension SendToken {
             view.addSubview(actionButton)
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 8)
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
+            
+            Driver.combineLatest(
+                viewModel.feeInfoDriver.map {$0.value?.feeAmount},
+                viewModel.payingWalletDriver
+            )
+                .drive(onNext: { [weak stackView, weak view] _ in
+                    stackView?.setNeedsLayout()
+                    view?.layoutIfNeeded()
+                })
+                .disposed(by: disposeBag)
         }
         
         override func bind() {
