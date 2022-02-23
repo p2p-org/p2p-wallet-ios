@@ -32,7 +32,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler {
     
     var feesDriver: Driver<Loadable<[PayingFee]>> {get}
     
-    var payingTokenDriver: Driver<PayingToken> {get}
+    var payingTokenMintDriver: Driver<String> {get}
     
     var errorDriver: Driver<String?> {get}
     
@@ -51,7 +51,7 @@ protocol SwapTokenViewModelType: WalletDidSelectHandler {
     func reverseExchangeRate()
     func authenticateAndSwap()
     func changeSlippage(to slippage: Double)
-    func changePayingToken(to payingToken: PayingToken)
+    func changePayingTokenMint(to payingTokenMint: String)
     func getSourceWallet() -> Wallet?
     func providerSignatureView() -> UIView
 }
@@ -92,7 +92,7 @@ extension SerumSwapV1 {
         private let minOrderSizeRelay: LoadableRelay<Double>
         
         private let slippageRelay = BehaviorRelay<Double>(value: Defaults.slippage)
-        private let payingTokenRelay = BehaviorRelay<PayingToken>(value: Defaults.payingToken)
+        private let payingTokenMintRelay = BehaviorRelay<String>(value: Defaults.payingTokenMint)
         
         private let isExchangeRateReversed = BehaviorRelay<Bool>(value: false)
         
@@ -283,8 +283,8 @@ extension SerumSwapV1.ViewModel: SwapTokenViewModelType {
     var exchangeRateDriver: Driver<Loadable<Double>> { exchangeRateRelay.asDriver() }
     var minOrderSizeDriver: Driver<Loadable<Double>> { minOrderSizeRelay.asDriver() }
     var feesDriver: Driver<Loadable<[PayingFee]>> { feesRelay.asDriver() }
-    var payingTokenDriver: Driver<PayingToken> {
-        payingTokenRelay.asDriver()
+    var payingTokenMintDriver: Driver<String> {
+        payingTokenMintRelay.asDriver()
     }
     var slippageDriver: Driver<Double> { slippageRelay.asDriver() }
     var isExchangeRateReversedDriver: Driver<Bool> {isExchangeRateReversed.asDriver()}
@@ -401,8 +401,8 @@ extension SerumSwapV1.ViewModel {
         slippageRelay.accept(slippage)
     }
     
-    func changePayingToken(to payingToken: PayingToken) {
-        payingTokenRelay.accept(payingToken)
+    func changePayingTokenMint(to payingTokenMint: String) {
+        payingTokenMintRelay.accept(payingTokenMint)
     }
     
     func getSourceWallet() -> Wallet? {
