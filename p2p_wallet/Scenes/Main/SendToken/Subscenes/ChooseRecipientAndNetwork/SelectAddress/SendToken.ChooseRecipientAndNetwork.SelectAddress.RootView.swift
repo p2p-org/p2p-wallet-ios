@@ -47,7 +47,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private lazy var feeView = _FeeView( // for relayMethod == .relay only
             walletDriver: viewModel.walletDriver,
             solPrice: viewModel.getPrice(for: "SOL"),
-            feeInfoDriver: viewModel.feeInfoDriver
+            feeInfoDriver: viewModel.feeInfoDriver,
+            payingWalletDriver: viewModel.payingWalletDriver
         )
             .onTap { [weak self] in
                 self?.viewModel.navigate(to: .selectPayingWallet)
@@ -227,10 +228,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             
             Driver.combineLatest(
                 viewModel.recipientDriver,
+                viewModel.payingWalletDriver,
                 viewModel.feeInfoDriver,
                 viewModel.networkDriver
             )
-                .map { [weak self] recipient, feeInfo, network in
+                .map { [weak self] recipient, payingWallet, feeInfo, network in
                     guard let self = self else {return ""}
                     if recipient == nil {
                         return L10n.chooseTheRecipientToProceed
@@ -249,8 +251,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                 guard let value = feeInfo.value else {
                                     return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                                 }
-                                if let wallet = value.wallet,
-                                   let lamports = value.wallet?.lamports,
+                                if let wallet = payingWallet,
+                                   let lamports = wallet.lamports,
                                    lamports < value.feeAmount.total
                                 {
                                     let neededAmount = value.feeAmount.total
@@ -260,7 +262,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                         + ". "
                                         + L10n.needsAtLeast(neededAmount + " \(wallet.token.symbol)")
                                 }
-                                if !value.isValid {
+                                if value.feeAmount.total == 0 {
                                     return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                                 }
                             case .error:
@@ -314,11 +316,13 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private func bind() {
             Driver.combineLatest(
                 viewModel.networkDriver,
+                viewModel.payingWalletDriver,
                 viewModel.feeInfoDriver
             )
-                .drive(onNext: {[weak self] network, feeInfo in
+                .drive(onNext: {[weak self] network, payingWallet, feeInfo in
                     self?._networkView.setUp(
                         network: network,
+                        payingWallet: payingWallet,
                         feeInfo: feeInfo.value,
                         prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:]
                     )
@@ -348,9 +352,10 @@ private class _FeeView: UIStackView {
     init(
         walletDriver: Driver<Wallet?>,
         solPrice: Double,
-        feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>
+        feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>,
+        payingWalletDriver: Driver<Wallet?>
     ) {
-        self.feeView = .init(solPrice: solPrice, feeInfoDriver: feeInfoDriver)
+        self.feeView = .init(solPrice: solPrice, payingWalletDriver: payingWalletDriver, feeInfoDriver: feeInfoDriver)
         super.init(frame: .zero)
         set(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
         addArrangedSubviews {

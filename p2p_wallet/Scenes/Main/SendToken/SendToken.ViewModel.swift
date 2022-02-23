@@ -61,7 +61,8 @@ extension SendToken {
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
-        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.empty))
+        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.zero))
         
         // MARK: - Initializers
         init(
@@ -83,6 +84,7 @@ extension SendToken {
                 walletSubject.accept(selectableWallet)
             }
             
+            bindFees()
             reload()
         }
         
@@ -109,7 +111,7 @@ extension SendToken {
                     }
                     if let payingWallet = self.walletsRepository.getWallets().first(where: {$0.mintAddress == Defaults.payingTokenMint})
                     {
-                        self.feeInfoSubject.accept(.init(wallet: payingWallet, feeAmount: .zero, feeAmountInSOL: .zero), state: .loaded)
+                        self.payingWalletSubject.accept(payingWallet)
                     }
                 }, onError: {[weak self] error in
                     self?.loadingStateSubject.accept(.error(error.readableDescription))
@@ -131,7 +133,7 @@ extension SendToken {
                 receiver: receiver,
                 amount: amount,
                 network: network,
-                payingFeeWallet: feeInfoSubject.value?.wallet
+                payingFeeWallet: payingWalletSubject.value
             )
             
             analyticsManager.log(

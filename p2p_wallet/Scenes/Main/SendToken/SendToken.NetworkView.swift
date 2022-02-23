@@ -38,7 +38,7 @@ extension SendToken {
         }
         
         @discardableResult
-        func setUp(network: SendToken.Network, feeInfo: SendToken.FeeInfo?, prices: [String: Double]) -> Self {
+        func setUp(network: SendToken.Network, payingWallet: Wallet?, feeInfo: SendToken.FeeInfo?, prices: [String: Double]) -> Self {
             coinImageView.image = network.icon
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
             
@@ -50,6 +50,7 @@ extension SendToken {
                     .append(
                         feeInfo
                             .attributedString(
+                                payingWallet: payingWallet,
                                 prices: prices,
                                 textSize: 13,
                                 tokenColor: .textSecondary,
@@ -69,6 +70,7 @@ extension SendToken {
 
 private extension SendToken.FeeInfo {
     func attributedString(
+        payingWallet wallet: Wallet?,
         prices: [String: Double],
         textSize: CGFloat = 15,
         tokenColor: UIColor = .textBlack,

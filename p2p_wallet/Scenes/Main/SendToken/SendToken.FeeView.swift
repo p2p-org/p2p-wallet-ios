@@ -17,6 +17,7 @@ extension SendToken {
         
         init(
             solPrice: Double,
+            payingWalletDriver: Driver<Wallet?>,
             feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>
         ) {
             super.init(contentInset: .init(all: 18))
@@ -31,8 +32,7 @@ extension SendToken {
                             .drive(imageView.rx.isHidden)
                             .disposed(by: disposeBag)
                         
-                        feeInfoDriver
-                            .map {$0.value?.wallet}
+                        payingWalletDriver
                             .filter {$0 != nil}
                             .map {$0!}
                             .drive(onNext: {[weak imageView] in imageView?.setUp(wallet: $0)})
@@ -49,11 +49,15 @@ extension SendToken {
                         }
                     UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold, numberOfLines: 0)
                         .setup { label in
-                            feeInfoDriver
-                                .map {
+                            Driver.combineLatest(
+                                payingWalletDriver,
+                                feeInfoDriver
+                            )
+                                .map { payingWallet, feeInfo in
                                     payingWalletToString(
-                                        state: $0.state,
-                                        value: $0.value
+                                        state: feeInfo.state,
+                                        value: feeInfo.value,
+                                        payingWallet: payingWallet
                                     )
                                 }
                                 .drive(label.rx.text)
@@ -98,7 +102,8 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPri
 
 private func payingWalletToString(
     state: LoadableState,
-    value: SendToken.FeeInfo?
+    value: SendToken.FeeInfo?,
+    payingWallet: Wallet?
 ) -> String? {
     
     switch state {
@@ -107,7 +112,7 @@ private func payingWalletToString(
     case .loading:
         return L10n.calculatingFees
     case .loaded:
-        guard let value = value, let wallet = value.wallet else {
+        guard let value = value, let wallet = payingWallet else {
             return L10n.couldNotCalculatingFees
         }
         return value.feeAmount.total.convertToBalance(decimals: wallet.token.decimals)

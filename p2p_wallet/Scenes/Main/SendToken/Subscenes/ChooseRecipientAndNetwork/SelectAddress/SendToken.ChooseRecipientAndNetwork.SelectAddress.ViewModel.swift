@@ -21,6 +21,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var walletDriver: Driver<Wallet?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
+    var payingWalletDriver: Driver<Wallet?> {get}
     var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {get}
     var isValidDriver: Driver<Bool> {get}
     
@@ -111,6 +112,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         chooseRecipientAndNetworkViewModel.networkDriver
     }
     
+    var payingWalletDriver: Driver<Wallet?> {
+        chooseRecipientAndNetworkViewModel.payingWalletDriver
+    }
+    
     var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {
         chooseRecipientAndNetworkViewModel.feeInfoDriver
     }
@@ -123,9 +128,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         conditionDrivers.append(
             Driver.combineLatest(
                 networkDriver,
+                payingWalletDriver,
                 feeInfoDriver
             )
-                .map {[weak self] network, feeInfo -> Bool in
+                .map {[weak self] network, payingWallet, feeInfo -> Bool in
                     guard let self = self else {return false}
                     switch network {
                     case .solana:
@@ -138,7 +144,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
                             if value.feeAmount.total == 0 {
                                 return true
                             } else {
-                                return value.isValid
+                                guard let payingWallet = payingWallet else {
+                                    return false
+                                }
+                                return (payingWallet.lamports ?? 0) >= (feeInfo.value?.feeAmount.total ?? 0)
                             }
                         case .reward:
                             return true
