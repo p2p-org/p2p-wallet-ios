@@ -128,7 +128,7 @@ extension SendToken.ConfirmViewController {
                     // fee
                     SectionView(title: L10n.transferFee)
                         .setup { view in
-                            viewModel.feesDriver
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount}
                                 .map {[weak self] feeAmount in
                                     guard let self = self else {return NSAttributedString()}
                                     guard let feeAmount = feeAmount else {return NSAttributedString()}
@@ -164,7 +164,7 @@ extension SendToken.ConfirmViewController {
                     .setup { view in
                         Driver.combineLatest(
                             viewModel.networkDriver,
-                            viewModel.feesDriver
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount}
                         )
                             .do(afterNext: {[weak view] _ in
                                 view?.rightLabel.setNeedsLayout()
@@ -204,7 +204,7 @@ extension SendToken.ConfirmViewController {
                 // Total fee
                 SectionView(title: L10n.total)
                     .setup { view in
-                        viewModel.feesDriver
+                        viewModel.feeInfoDriver.map {$0.value?.feeAmount}
                             .map {[weak self] feeAmount -> NSAttributedString in
                                 guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
                                 return feeAmount.attributedStringForTotalFee(solPrice: self.viewModel.getSOLAndRenBTCPrices()["SOL"])

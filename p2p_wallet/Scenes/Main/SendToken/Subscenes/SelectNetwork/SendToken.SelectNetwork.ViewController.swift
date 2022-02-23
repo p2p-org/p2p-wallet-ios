@@ -71,9 +71,9 @@ extension SendToken.SelectNetwork {
         private func createNetworkView(network: SendToken.Network) -> _NetworkView {
             _NetworkView()
                 .setup {view in
-                    viewModel.feesDriver
-                        .drive(onNext: {[weak view, weak self] feeAmount in
-                            view?.setUp(network: network, feeAmount: feeAmount, prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:])
+                    viewModel.feeInfoDriver
+                        .drive(onNext: {[weak view, weak self] feeInfo in
+                            view?.setUp(network: network, feeInfo: feeInfo.value, prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:])
                         })
                         .disposed(by: disposeBag)
                     
