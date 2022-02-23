@@ -262,7 +262,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                         + ". "
                                         + L10n.needsAtLeast(neededAmount + " \(wallet.token.symbol)")
                                 }
-                                if value.feeAmount.total == 0 {
+                                if value.feeAmount.total == 0 && value.feeAmountInSOL.total > 0 {
                                     return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                                 }
                             case .error:
