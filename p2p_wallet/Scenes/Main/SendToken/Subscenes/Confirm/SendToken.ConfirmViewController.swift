@@ -249,6 +249,16 @@ extension SendToken {
             view.addSubview(actionButton)
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 8)
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
+            
+            Driver.combineLatest(
+                viewModel.feeInfoDriver.map {$0.value?.feeAmount},
+                viewModel.payingWalletDriver
+            )
+                .drive(onNext: { [weak stackView, weak view] _ in
+                    stackView?.setNeedsLayout()
+                    view?.layoutIfNeeded()
+                })
+                .disposed(by: disposeBag)
         }
         
         override func bind() {

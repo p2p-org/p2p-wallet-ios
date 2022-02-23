@@ -138,10 +138,6 @@ extension SendToken.ConfirmViewController {
                                     let prices = self.viewModel.getPrices(for: [payingWallet?.token.symbol ?? ""])
                                     return feeAmount.attributedStringForTransactionFee(prices: prices, symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
                                 }
-                                .do(afterNext: {[weak view] _ in
-                                    view?.rightLabel.setNeedsLayout()
-                                    view?.layoutIfNeeded()
-                                })
                                 .drive(view.rightLabel.rx.attributedText)
                                 .disposed(by: disposeBag)
                         }
@@ -208,10 +204,13 @@ extension SendToken.ConfirmViewController {
                 // Total fee
                 SectionView(title: L10n.total)
                     .setup { view in
-                        viewModel.feeInfoDriver.map {$0.value?.feeAmount}
-                            .map {[weak self] feeAmount -> NSAttributedString in
+                        Driver.combineLatest(
+                            viewModel.feeInfoDriver.map {$0.value?.feeAmount},
+                            viewModel.payingWalletDriver
+                        )
+                            .map {[weak self] feeAmount, payingWallet -> NSAttributedString in
                                 guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
-                                return feeAmount.attributedStringForTotalFee(solPrice: self.viewModel.getPrice(for: "SOL"))
+                                return feeAmount.attributedStringForTotalFee(price: self.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""), symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
                             }
                             .drive(view.rightLabel.rx.attributedText)
                             .disposed(by: disposeBag)
@@ -261,9 +260,9 @@ private extension SolanaSDK.FeeAmount {
         return feeAttributedString(fee: fee, unit: symbol, price: prices[symbol])
     }
     
-    func attributedStringForTotalFee(solPrice: Double?) -> NSMutableAttributedString {
-        let fee = total.convertToBalance(decimals: 9)
-        return feeAttributedString(fee: fee, unit: "SOL", price: solPrice)
+    func attributedStringForTotalFee(price: Double?, symbol: String, decimals: UInt8?) -> NSMutableAttributedString {
+        let fee = total.convertToBalance(decimals: decimals ?? 0)
+        return feeAttributedString(fee: fee, unit: symbol, price: price)
     }
     
     func attributedStringForOtherFees(
