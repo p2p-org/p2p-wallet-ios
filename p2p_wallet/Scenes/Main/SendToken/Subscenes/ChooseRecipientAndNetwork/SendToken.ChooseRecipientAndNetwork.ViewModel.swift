@@ -36,12 +36,13 @@ extension SendToken.ChooseRecipientAndNetwork {
         
         // MARK: - Properties
         private let relayMethod: SendTokenRelayMethod
-        private let disposeBag = DisposeBag()
+        let disposeBag = DisposeBag()
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.init(wallet: nil, feeAmount: .zero)))
         
         // MARK: - Initializers
         init(
@@ -58,7 +59,7 @@ extension SendToken.ChooseRecipientAndNetwork {
             bind()
             
             if let preSelectedNetwork = preSelectedNetwork {
-                networkSubject.accept(preSelectedNetwork)
+                selectNetwork(preSelectedNetwork)
             }
         }
         
@@ -71,8 +72,10 @@ extension SendToken.ChooseRecipientAndNetwork {
                 .drive(networkSubject)
                 .disposed(by: disposeBag)
             
-            sendTokenViewModel.payingWalletDriver
-                .drive(payingWalletSubject)
+            sendTokenViewModel.feeInfoDriver
+                .drive(onNext: { [weak self] value, state, _ in
+                    self?.feeInfoSubject.accept(value, state: state)
+                })
                 .disposed(by: disposeBag)
         }
     }
@@ -131,7 +134,7 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
     func save() {
         sendTokenViewModel.selectRecipient(recipientSubject.value)
         sendTokenViewModel.selectNetwork(networkSubject.value)
-        sendTokenViewModel.payingWalletSubject.accept(payingWalletSubject.value)
+        sendTokenViewModel.feeInfoSubject.accept(feeInfoSubject.value, state: feeInfoSubject.state)
     }
     
     func navigateNext() {

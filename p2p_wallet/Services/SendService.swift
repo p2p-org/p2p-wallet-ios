@@ -24,9 +24,9 @@ protocol SendServiceType {
         isPayingWithSOL: Bool
     ) -> Single<SolanaSDK.FeeAmount?>
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.Lamports,
+        feeInSOL: SolanaSDK.FeeAmount,
         payingFeeWallet: Wallet
-    ) -> Single<SolanaSDK.Lamports?>
+    ) -> Single<SolanaSDK.FeeAmount?>
     
     func getFreeTransactionFeeLimit(
     ) -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
@@ -133,9 +133,9 @@ class SendService: SendServiceType {
     }
     
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.Lamports,
+        feeInSOL: SolanaSDK.FeeAmount,
         payingFeeWallet: Wallet
-    ) -> Single<SolanaSDK.Lamports?> {
+    ) -> Single<SolanaSDK.FeeAmount?> {
         guard relayMethod == .relay else {return .just(nil)}
         if payingFeeWallet.isNativeSOL {return .just(feeInSOL)}
         return relayService.calculateFeeInPayingToken(
