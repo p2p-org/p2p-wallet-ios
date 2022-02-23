@@ -132,7 +132,7 @@ extension SendToken.ConfirmViewController {
                                 .map {[weak self] feeAmount in
                                     guard let self = self else {return NSAttributedString()}
                                     guard let feeAmount = feeAmount else {return NSAttributedString()}
-                                    let prices = self.viewModel.getSOLAndRenBTCPrices()
+                                    let prices = self.viewModel.getPrices(for: ["SOL", "renBTC"])
                                     return feeAmount.attributedStringForTransactionFee(solPrice: prices["SOL"])
                                 }
                                 .do(afterNext: {[weak view] _ in
@@ -176,7 +176,7 @@ extension SendToken.ConfirmViewController {
                                     view?.isHidden = true
                                     return
                                 }
-                                let prices = self.viewModel.getSOLAndRenBTCPrices()
+                                let prices = self.viewModel.getPrices(for: ["SOL", "renBTC"])
                                 switch network {
                                 case .solana:
                                     view?.leftLabel.text = L10n.accountCreationFee
@@ -207,7 +207,7 @@ extension SendToken.ConfirmViewController {
                         viewModel.feeInfoDriver.map {$0.value?.feeAmount}
                             .map {[weak self] feeAmount -> NSAttributedString in
                                 guard let self = self, let feeAmount = feeAmount else {return NSAttributedString()}
-                                return feeAmount.attributedStringForTotalFee(solPrice: self.viewModel.getSOLAndRenBTCPrices()["SOL"])
+                                return feeAmount.attributedStringForTotalFee(solPrice: self.viewModel.getPrice(for: "SOL"))
                             }
                             .drive(view.rightLabel.rx.attributedText)
                             .disposed(by: disposeBag)

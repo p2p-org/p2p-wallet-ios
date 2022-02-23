@@ -21,7 +21,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
     func getSendService() -> SendServiceType
     func getPrice(for symbol: String) -> Double
-    func getSOLAndRenBTCPrices() -> [String: Double]
+    func getPrices(for symbols: [String]) -> [String: Double]
     func save()
     func navigateNext()
 }
@@ -120,8 +120,8 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.getPrice(for: symbol)
     }
     
-    func getSOLAndRenBTCPrices() -> [String: Double] {
-        sendTokenViewModel.getSOLAndRenBTCPrices()
+    func getPrices(for symbols: [String]) -> [String: Double] {
+        sendTokenViewModel.getPrices(for: symbols)
     }
     
     func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
