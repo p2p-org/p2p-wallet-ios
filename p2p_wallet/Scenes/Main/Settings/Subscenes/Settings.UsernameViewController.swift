@@ -34,7 +34,7 @@ extension Settings {
                         }.onShare { [weak self] image in
                             self?.viewModel.share(image: image)
                         }.onSave { [weak self] image in
-                            self?.save(image: image)
+                            self?.viewModel.saveImage(image: image)
                         }
                     
                     UIView.greyBannerView {
@@ -47,18 +47,6 @@ extension Settings {
                     }
                     
                 }.padding(.init(x: 18, y: 0))
-            }
-        }
-        
-        private func save(image: UIImage) {
-            UIImageWriteToSavedPhotosAlbum(image, self, #selector(self.saveImageCallback), nil)
-        }
-        
-        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-            if let error = error {
-                showError(error)
-            } else {
-                viewModel.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
             }
         }
     }

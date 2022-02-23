@@ -316,6 +316,8 @@ extension Settings {
             case .share(let item):
                 let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)
                 present(vc, animated: true, completion: nil)
+            case .accessToPhoto:
+                PhotoLibraryAlertPresenter().present(on: self)
             }
         }
     }
