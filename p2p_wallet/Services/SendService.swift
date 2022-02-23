@@ -113,11 +113,18 @@ class SendService: SendServiceType {
                     transactionFee += lamportsPerSignature
                 }
                 
-                return solanaSDK.findSPLTokenDestinationAddress(
-                    mintAddress: wallet.mintAddress,
-                    destinationAddress: receiver
-                )
-                    .map {$0.isUnregisteredAsocciatedToken}
+                let isUnregisteredAsocciatedTokenRequest: Single<Bool>
+                if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                    isUnregisteredAsocciatedTokenRequest = .just(false)
+                } else {
+                    isUnregisteredAsocciatedTokenRequest = solanaSDK.findSPLTokenDestinationAddress(
+                        mintAddress: wallet.mintAddress,
+                        destinationAddress: receiver
+                    )
+                        .map {$0.isUnregisteredAsocciatedToken}
+                }
+                
+                return isUnregisteredAsocciatedTokenRequest
                     .map {
                         SolanaSDK.FeeAmount(
                             transaction: transactionFee,
