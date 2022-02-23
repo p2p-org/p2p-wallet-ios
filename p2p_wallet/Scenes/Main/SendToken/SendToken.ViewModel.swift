@@ -18,6 +18,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     
     func getPrice(for symbol: String) -> Double
     func getSOLAndRenBTCPrices() -> [String: Double]
+    func getPrices(for symbols: [String]) -> [String: Double]
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network
@@ -176,10 +177,15 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
     
     func getSOLAndRenBTCPrices() -> [String: Double] {
-        [
-            "SOL": getPrice(for: "SOL"),
-            "renBTC": getPrice(for: "renBTC")
-        ]
+        getPrices(for: ["SOL", "renBTC"])
+    }
+    
+    func getPrices(for symbols: [String]) -> [String: Double] {
+        var dict = [String: Double]()
+        for symbol in symbols {
+            dict[symbol] = getPrice(for: symbol)
+        }
+        return dict
     }
     
     func getSendService() -> SendServiceType {
