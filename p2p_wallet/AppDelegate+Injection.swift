@@ -209,6 +209,13 @@ extension Resolver: ResolverRegistering {
         }
             .implements(Banners.Service.self)
             .scope(.application)
+        
+        // MARK: - IntroPlayer
+        register { _, args in
+            IntroPlayer(theme: args())
+        }
+            .implements(IntroPlayerType.self)
+            .scope(.session)
     }
 }
 
