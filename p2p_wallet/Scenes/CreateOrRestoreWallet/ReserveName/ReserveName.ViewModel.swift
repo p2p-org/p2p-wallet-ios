@@ -35,7 +35,7 @@ extension ReserveName {
         @Injected private var analyticsManager: AnalyticsManagerType
         private let nameService: NameServiceType = Resolver.resolve()
         private let owner: String
-        private let reserveNameHandler: ReserveNameHandler
+        private let reserveNameHandler: ReserveNameHandler?
         private lazy var manager: GT3CaptchaManager = {
             let manager = GT3CaptchaManager(
                 api1: nameService.captchaAPI1Url,
@@ -64,7 +64,7 @@ extension ReserveName {
         init(
             kind: ReserveNameKind,
             owner: String,
-            reserveNameHandler: ReserveNameHandler
+            reserveNameHandler: ReserveNameHandler?
         ) {
             self.kind = kind
             self.owner = owner
@@ -149,7 +149,7 @@ extension ReserveName {
         }
 
         private func nameDidReserve(_ name: String) {
-            reserveNameHandler.handleName(name)
+            reserveNameHandler?.handleName(name)
         }
 
         private func startLoading() {
@@ -167,7 +167,7 @@ extension ReserveName {
         }
 
         private func skip() {
-            reserveNameHandler.handleName(nil)
+            reserveNameHandler?.handleName(nil)
         }
     }
 }
