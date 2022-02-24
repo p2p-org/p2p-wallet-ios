@@ -27,6 +27,11 @@ final class ColorfulHorizontalView: BEView {
         layer.cornerRadius = 16
         layer.masksToBounds = true
     }
+    
+    convenience init(@BEViewBuilder builder: Builder) {
+        self.init()
+        setArrangedSubviews(builder())
+    }
 
     func setArrangedSubviews(_ arrangesSubviews: [UIView]) {
         contentView.arrangedSubviews.forEach { $0.removeFromSuperview() }

@@ -98,7 +98,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         super.bind()
         Observable.combineLatest(
             textView.rx.text
-                .map {_ in !self.textView.getPhrases().isEmpty},
+                .map {[weak self] _ in self?.textView.getPhrases().isEmpty == false},
             error.map {$0 == nil}
         )
             .map {$0 && $1}

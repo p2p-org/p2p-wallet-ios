@@ -202,3 +202,10 @@ private final class NavigationController: UINavigationController {
 }
 
 private class _PlaceholderVC: BaseVC, TabBarNeededViewController {}
+
+extension UIViewController {
+    func tabBar() -> TabBarVC? {
+        guard let vc = self as? TabBarVC else { return parent?.tabBar() }
+        return vc
+    }
+}

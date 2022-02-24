@@ -73,8 +73,9 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 })
             })
             // signature subscribe
-            .flatMapCompletable{ signature in
-                self.handler.observeTransactionCompletion(signature: signature)
+            .flatMapCompletable{ [weak self] signature in
+                guard let self = self else {throw SolanaSDK.Error.unknown}
+                return self.handler.observeTransactionCompletion(signature: signature)
                     .timeout(.seconds(60), scheduler: MainScheduler.instance)
                     .catch {_ in .empty()}
             }

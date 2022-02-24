@@ -22,6 +22,7 @@ enum Settings {
         case language
         case appearance
         case share(item: Any)
+        case accessToPhoto
     }
     
     enum BiometryType {
