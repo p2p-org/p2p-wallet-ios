@@ -42,12 +42,7 @@ class TabBarVC: BEPagesVC {
                 )
             ),
             createNavigationController(
-                rootVC: Settings.ViewController(
-                    viewModel: Settings.ViewModel(
-                        reserveNameHandler: homeViewModel,
-                        canGoBack: false
-                    )
-                )
+                rootVC: Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
             )
         ]
         

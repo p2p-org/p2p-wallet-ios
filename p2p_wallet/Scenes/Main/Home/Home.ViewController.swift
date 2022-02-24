@@ -147,14 +147,14 @@ extension Home {
                 analyticsManager.log(event: .mainScreenSettingsOpen)
                 analyticsManager.log(event: .settingsOpen(lastScreen: "main_screen"))
                 
-                let vm = Settings.ViewModel(reserveNameHandler: viewModel)
+                let vm = Settings.ViewModel()
                 let vc = Settings.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .reserveName(let owner):
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
-                    reserveNameHandler: viewModel
+                    reserveNameHandler: nil
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
 
