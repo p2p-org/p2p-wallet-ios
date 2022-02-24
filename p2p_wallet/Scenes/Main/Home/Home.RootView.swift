@@ -129,7 +129,7 @@ extension Home {
                         .setupWithType(FloatingHeaderView.self) { view in headerViewScrollDelegate.headerView = view }
                         .padding(.init(x: 18, y: 0))
                 }
-            }.padding(.init(only: .top, inset: 30))
+            }.padding(.init(only: .top, inset: 20))
         }
     }
 }
