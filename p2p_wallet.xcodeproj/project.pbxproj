@@ -172,7 +172,6 @@
 		84699B7B4EDF7C7538DBE0A1 /* Home.BalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998DE3DDA2311FDCDC27F /* Home.BalanceView.swift */; };
 		84699B9579A39F48DA53CC8D /* ReserveNameBannerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699474E0B586007CA0B9A2 /* ReserveNameBannerHandler.swift */; };
 		84699BC20CB341D9BDA75595 /* Moonpay.Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998A492BB5B9DDE59C8DA /* Moonpay.Provider.swift */; };
-		84699BC8F8E381B99A1DC0C5 /* LockScreenWrapperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991527AA06D6CED6CBB08 /* LockScreenWrapperViewController.swift */; };
 		84699C2074E4A55FAFCD6E19 /* Home.WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699F90852EC3C3B9BA9FC0 /* Home.WalletCell.swift */; };
 		84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699AC2656E48F105F10AB1 /* BESuperScene.swift */; };
 		84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C929DA7046907362DFE /* ColumnFlowLayout.swift */; };
@@ -691,7 +690,6 @@
 		846994C1EE7DDD16BD91B4FD /* CreateSecurityKeys.KeysView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.KeysView.swift; sourceTree = "<group>"; };
 		846994CA82A154C3617A2A35 /* Home.Header.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.Header.swift; sourceTree = "<group>"; };
 		846995031B01D0F8C08F3F79 /* BuyToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyToken.swift; sourceTree = "<group>"; };
-		84699524C5183F1B5AF8FCD6 /* Section.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.View.swift; sourceTree = "<group>"; };
 		84699550446906435820FA78 /* BEBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEBuilder.swift; sourceTree = "<group>"; };
 		8469955678B3B37F9F5E84AB /* Home.BannerSection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BannerSection.swift; sourceTree = "<group>"; };
 		8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CreateWallet.ExplanationVC.swift; sourceTree = "<group>"; };
@@ -1400,15 +1398,6 @@
 				8469935E58251A19EB02F459 /* MoonpayExchangeService.swift */,
 			);
 			path = Moonpay;
-			sourceTree = "<group>";
-		};
-		8469976D7253DCF151D9101E /* Banner */ = {
-			isa = PBXGroup;
-			children = (
-				8469955678B3B37F9F5E84AB /* Home.BannerSection.swift */,
-				846998BD838DC8068136D236 /* Home.BannerCell.swift */,
-			);
-			path = Banner;
 			sourceTree = "<group>";
 		};
 		8469976D7253DCF151D9101E /* Banner */ = {
