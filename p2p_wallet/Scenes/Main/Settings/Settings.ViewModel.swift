@@ -61,6 +61,7 @@ protocol SettingsViewModelType {
     func showLogoutAlert()
     func copyUsernameToClipboard()
     func share(image: UIImage)
+    func saveImage(image: UIImage)
     func logout()
 }
 
@@ -80,6 +81,7 @@ extension Settings {
         @Injected var notificationsService: NotificationsServiceType
         @Injected private var pricesService: PricesServiceType
         @Injected private var renVMService: RenVMLockAndMintServiceType
+        @Injected private var imageSaver: ImageSaverType
         
         // MARK: - Properties
         private var disposables = [DefaultsDisposable]()
@@ -370,6 +372,24 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func share(image: UIImage) {
         navigate(to: .share(item: image))
+    }
+    
+    func saveImage(image: UIImage) {
+        imageSaver.save(image: image) { [weak self] result in
+            switch result {
+            case .success:
+                self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+            case let .failure(error):
+                switch error {
+                case .noAccess:
+                    self?.navigate(to: .accessToPhoto)
+                case .restrictedRightNow:
+                    break
+                case let .unknown(error):
+                    self?.notificationsService.showInAppNotification(.error(error))
+                }
+            }
+        }
     }
     
     func logout() {

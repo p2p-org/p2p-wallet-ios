@@ -33,7 +33,7 @@ extension SendToken.SelectNetwork {
                     UIView.greyBannerView {
                         UILabel(
                             text: L10n
-                                .P2PWaletWillAutomaticallyMatchYourWithdrawalTargetAddressToTheCorrectNetworkForMostWithdrawals
+                                .P2PWalletWillAutomaticallyMatchYourWithdrawalTargetAddressToTheCorrectNetworkForMostWithdrawals
                                 .howeverBeforeSendingYourFundsMakeSureToDoubleCheckTheSelectedNetwork,
                             textSize: 15,
                             numberOfLines: 0)

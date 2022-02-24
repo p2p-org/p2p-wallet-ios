@@ -55,7 +55,7 @@ extension WalletDetail {
                 guard let wallet = wallet else { return [] }
 
                 if wallet.isNativeSOL {
-                    return [/*.buy, */.receive, .send, .swap]
+                    return [.buy, .receive, .send, .swap]
                 } else {
                     return [.receive, .send, .swap]
                 }
@@ -104,7 +104,7 @@ extension WalletDetail {
         }
 
         private func buyTokens() {
-            var tokens = BuyProviders.Crypto.eth
+            var tokens = Buy.CryptoCurrency.eth
             if symbol == "SOL" {
                 tokens = .sol
             }
