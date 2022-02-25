@@ -29,6 +29,8 @@ extension CreateOrRestoreWallet {
         }
         
         // MARK: - Properties
+        private lazy var placeholderImageView = UIImageView(image: .onboardingLastFrame)
+        
         private let theme: String
         private var step = 1
         private var movingToNextStep = false
@@ -40,6 +42,9 @@ extension CreateOrRestoreWallet {
             
             super.init(frame: .zero)
             configureForAutoLayout()
+            addSubview(placeholderImageView)
+            placeholderImageView.autoPinEdgesToSuperviewEdges()
+            placeholderImageView.isHidden = true
             
             playerLayer.player = AVPlayer(playerItem: currentItem)
             bind()
@@ -59,9 +64,23 @@ extension CreateOrRestoreWallet {
                         self.player.seek(to: .zero)
                     } else {
                         self.step += 1
-                        self.player.replaceCurrentItem(with: self.currentItem)
-                        self.player.rate = 1
-                        self.movingToNextStep = false
+                        
+                        // show placeholder to fix slashing problem when changing video file
+                        self.placeholderImageView.isHidden = false
+                        self.setNeedsDisplay()
+                        
+                        DispatchQueue.main.async { [weak self] in
+                            guard let self = self else {return}
+                            
+                            // replace video file
+                            self.player.replaceCurrentItem(with: self.currentItem)
+                            self.player.rate = 1
+                            self.movingToNextStep = false
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) { [weak self] in
+                                self?.placeholderImageView.isHidden = true
+                            }
+                        }
                     }
                     self.player.play()
                 case 2:
