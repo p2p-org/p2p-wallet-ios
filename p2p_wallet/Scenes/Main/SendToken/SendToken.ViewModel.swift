@@ -8,19 +8,23 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import FeeRelayerSwift
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
     var relayMethod: SendTokenRelayMethod {get}
     var canGoBack: Bool { get }
     var navigationDriver: Driver<SendToken.NavigatableScene> {get}
+    var loadingStateDriver: Driver<LoadableState> {get}
     
     func getPrice(for symbol: String) -> Double
-    func getSOLAndRenBTCPrices() -> [String: Double]
+    func getPrices(for symbols: [String]) -> [String: Double]
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network
     func getSelectedAmount() -> Double?
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
     
+    func reload()
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
     
@@ -41,7 +45,7 @@ extension SendToken {
         let sendService: SendServiceType
         
         // MARK: - Properties
-        private let disposeBag = DisposeBag()
+        let disposeBag = DisposeBag()
         private let initialWalletPubkey: String?
         private let initialDestinationWalletPubkey: String?
         let relayMethod: SendTokenRelayMethod
@@ -56,7 +60,9 @@ extension SendToken {
         let amountSubject = BehaviorRelay<Double?>(value: nil)
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<Network>(value: .solana)
+        let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.zero))
         
         // MARK: - Initializers
         init(
@@ -72,28 +78,45 @@ extension SendToken {
             self.sendService = Resolver.resolve(args: relayMethod)
             
             // accept initial values
-            if let pubkey = walletPubkey {
-                walletSubject.accept(walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}))
-            } else {
-                walletSubject.accept(walletsRepository.nativeWallet)
+            if let pubkey = walletPubkey,
+               let selectableWallet = walletsRepository.getWallets().first(where: {$0.pubkey == pubkey}) ?? walletsRepository.nativeWallet
+            {
+                walletSubject.accept(selectableWallet)
             }
             
-            if walletSubject.value == nil {
-                walletsRepository.dataObservable
-                    .map {$0?.first(where: {$0.isNativeSOL})}
-                    .filter {$0 != nil}
-                    .take(1)
-                    .asSingle()
-                    .subscribe(onSuccess: { [weak self] wallet in
-                        self?.walletSubject.accept(wallet)
-                    })
-                    .disposed(by: disposeBag)
-            }
-            sendService.load().subscribe(onCompleted: {}).disposed(by: disposeBag)
+            bindFees(walletSubject: walletSubject)
+            reload()
         }
         
         deinit {
             debugPrint("\(String(describing: self)) deinited")
+        }
+        
+        func reload() {
+            loadingStateSubject.accept(.loading)
+            
+            Completable.zip(
+                sendService.load(),
+                walletsRepository.stateObservable
+                    .filter {$0 == .loaded}
+                    .take(1)
+                    .asSingle()
+                    .asCompletable()
+            )
+                .subscribe(onCompleted: {[weak self] in
+                    guard let self = self else {return}
+                    self.loadingStateSubject.accept(.loaded)
+                    if self.walletSubject.value == nil {
+                        self.walletSubject.accept(self.walletsRepository.getWallets().first(where: {$0.isNativeSOL}))
+                    }
+                    if let payingWallet = self.walletsRepository.getWallets().first(where: {$0.mintAddress == Defaults.payingTokenMint})
+                    {
+                        self.payingWalletSubject.accept(payingWallet)
+                    }
+                }, onError: {[weak self] error in
+                    self?.loadingStateSubject.accept(.error(error.readableDescription))
+                })
+                .disposed(by: disposeBag)
         }
         
         private func send() {
@@ -113,32 +136,24 @@ extension SendToken {
                 payingFeeWallet: payingWalletSubject.value
             )
             
-            // get fees
-            getFees()
-                .subscribe(onSuccess: {[weak self] feeAmount in
-                    let feeAmount = feeAmount ?? .zero
-                    // log
-                    self?.analyticsManager.log(
-                        event: .sendSendClick(
-                            tokenTicker: wallet.token.symbol,
-                            sum: amount
-                        )
+            analyticsManager.log(
+                event: .sendSendClick(
+                    tokenTicker: wallet.token.symbol,
+                    sum: amount
+                )
+            )
+            
+            navigationSubject.accept(
+                .processTransaction(
+                    request: request.map {$0 as ProcessTransactionResponseType},
+                    transactionType: .send(
+                        from: wallet,
+                        to: receiver,
+                        lamport: amount.toLamport(decimals: wallet.token.decimals),
+                        feeInLamports: feeInfoSubject.value?.feeAmount.total ?? .zero
                     )
-                    
-                    // show processing scene
-                    self?.navigationSubject.accept(
-                        .processTransaction(
-                            request: request.map {$0 as ProcessTransactionResponseType},
-                            transactionType: .send(
-                                from: wallet,
-                                to: receiver,
-                                lamport: amount.toLamport(decimals: wallet.token.decimals),
-                                feeInLamports: feeAmount.total
-                            )
-                        )
-                    )
-                })
-                .disposed(by: disposeBag)
+                )
+            )
         }
     }
 }
@@ -146,6 +161,10 @@ extension SendToken {
 extension SendToken.ViewModel: SendTokenViewModelType {
     var navigationDriver: Driver<SendToken.NavigatableScene> {
         navigationSubject.asDriver()
+    }
+    
+    var loadingStateDriver: Driver<LoadableState> {
+        loadingStateSubject.asDriver()
     }
     
     func getSelectedWallet() -> Wallet? {
@@ -156,15 +175,20 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         pricesService.currentPrice(for: symbol)?.value ?? 0
     }
     
-    func getSOLAndRenBTCPrices() -> [String: Double] {
-        [
-            "SOL": getPrice(for: "SOL"),
-            "renBTC": getPrice(for: "renBTC")
-        ]
+    func getPrices(for symbols: [String]) -> [String: Double] {
+        var dict = [String: Double]()
+        for symbol in symbols {
+            dict[symbol] = getPrice(for: symbol)
+        }
+        return dict
     }
     
     func getSendService() -> SendServiceType {
         sendService
+    }
+    
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+        sendService.getFreeTransactionFeeLimit()
     }
     
     func navigate(to scene: SendToken.NavigatableScene) {
@@ -183,8 +207,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         walletSubject.accept(wallet)
         
         if !wallet.token.isRenBTC && networkSubject.value == .bitcoin {
-            networkSubject.accept(.solana)
-            recipientSubject.accept(nil)
+            selectNetwork(.solana)
         }
     }
     

@@ -21,12 +21,15 @@ protocol SendServiceType {
         from wallet: Wallet,
         receiver: String?,
         network: SendToken.Network,
-        payingFeeToken: FeeRelayer.Relay.TokenInfo?
+        isPayingWithSOL: Bool
     ) -> Single<SolanaSDK.FeeAmount?>
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.Lamports,
+        feeInSOL: SolanaSDK.FeeAmount,
         payingFeeWallet: Wallet
-    ) -> Single<SolanaSDK.Lamports?>
+    ) -> Single<SolanaSDK.FeeAmount?>
+    
+    func getFreeTransactionFeeLimit(
+    ) -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
     
     func send(
         from wallet: Wallet,
@@ -75,12 +78,8 @@ class SendService: SendServiceType {
         from wallet: Wallet,
         receiver: String?,
         network: SendToken.Network,
-        payingFeeToken: FeeRelayer.Relay.TokenInfo?
+        isPayingWithSOL: Bool
     ) -> Single<SolanaSDK.FeeAmount?> {
-        guard let receiver = receiver else {
-            return .just(nil)
-        }
-
         switch network {
         case .bitcoin:
             return .just(
@@ -93,21 +92,48 @@ class SendService: SendServiceType {
                 )
             )
         case .solana:
+            guard let receiver = receiver else {
+                return .just(nil)
+            }
+            
             switch relayMethod {
             case .relay:
-                return prepareForSendingToSolanaNetworkViaRelayMethod(
-                    from: wallet,
-                    receiver: receiver,
-                    amount: 10000, // placeholder
-                    payingFeeToken: payingFeeToken,
-                    recentBlockhash: "FR1GgH83nmcEdoNXyztnpUL2G13KkUv6iwJPwVfnqEgW", // placeholder
-                    lamportsPerSignature: feeService.lamportsPerSignature, // cached lamportsPerSignature
-                    minRentExemption: feeService.minimumBalanceForRenExemption,
-                    usingCachedFeePayerPubkey: true
-                )
-                    .flatMap { [weak self] preparedTransaction in
+                // get fee calculator
+                guard let lamportsPerSignature = relayService.cache.lamportsPerSignature,
+                      let minRentExemption = relayService.cache.minimumTokenAccountBalance
+                else {return .error(FeeRelayer.Error.unknown)}
+                
+                var transactionFee: UInt64 = 0
+                
+                // owner's signature
+                transactionFee += lamportsPerSignature
+                
+                // feePayer's signature
+                if !isPayingWithSOL {
+                    transactionFee += lamportsPerSignature
+                }
+                
+                let isUnregisteredAsocciatedTokenRequest: Single<Bool>
+                if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                    isUnregisteredAsocciatedTokenRequest = .just(false)
+                } else {
+                    isUnregisteredAsocciatedTokenRequest = solanaSDK.findSPLTokenDestinationAddress(
+                        mintAddress: wallet.mintAddress,
+                        destinationAddress: receiver
+                    )
+                        .map {$0.isUnregisteredAsocciatedToken}
+                }
+                
+                return isUnregisteredAsocciatedTokenRequest
+                    .map {
+                        SolanaSDK.FeeAmount(
+                            transaction: transactionFee,
+                            accountBalances: $0 ? minRentExemption: 0
+                        )
+                    }
+                    .flatMap { [weak self] expectedFee in
                         guard let self = self else {throw SolanaSDK.Error.unknown}
-                        return self.relayService.calculateNeededTopUpAmount(expectedFee: preparedTransaction.expectedFee)
+                        return self.relayService.calculateNeededTopUpAmount(expectedFee: expectedFee)
                             .map(Optional.init)
                     }
             case .reward:
@@ -117,15 +143,19 @@ class SendService: SendServiceType {
     }
     
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.Lamports,
+        feeInSOL: SolanaSDK.FeeAmount,
         payingFeeWallet: Wallet
-    ) -> Single<SolanaSDK.Lamports?> {
+    ) -> Single<SolanaSDK.FeeAmount?> {
         guard relayMethod == .relay else {return .just(nil)}
         if payingFeeWallet.isNativeSOL {return .just(feeInSOL)}
         return relayService.calculateFeeInPayingToken(
             feeInSOL: feeInSOL,
             payingFeeTokenMint: payingFeeWallet.mintAddress
         )
+    }
+    
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+        relayService.getFreeTransactionFeeLimit()
     }
     
     // MARK: - Send method
@@ -179,12 +209,7 @@ class SendService: SendServiceType {
         payingFeeWallet: Wallet?
     ) -> Single<String> {
         // get paying fee token
-        let payingFeeToken: FeeRelayer.Relay.TokenInfo?
-        do {
-            payingFeeToken = try getPayingFeeToken(payingFeeWallet: payingFeeWallet)
-        } catch {
-            return .error(error)
-        }
+        let payingFeeToken = try? getPayingFeeToken(payingFeeWallet: payingFeeWallet)
         
         return prepareForSendingToSolanaNetworkViaRelayMethod(
             from: wallet,
@@ -195,21 +220,19 @@ class SendService: SendServiceType {
             .flatMap { [weak self] preparedTransaction in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
                 
-                if let payingFeeToken = payingFeeToken,
-                   payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-                {
+                if payingFeeToken?.mint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                    // send normally, paid by SOL
+                    return self.solanaSDK.serializeAndSend(
+                        preparedTransaction: preparedTransaction,
+                        isSimulation: false
+                    )
+                } else {
                     // use fee relayer
                     return self.relayService.topUpAndRelayTransaction(
                         preparedTransaction: preparedTransaction,
                         payingFeeToken: payingFeeToken
                     )
                         .map {$0.first ?? ""}
-                } else {
-                    // send normally, paid by SOL
-                    return self.solanaSDK.serializeAndSend(
-                        preparedTransaction: preparedTransaction,
-                        isSimulation: false
-                    )
                 }
             }
             .do(onSuccess: {
@@ -240,9 +263,10 @@ class SendService: SendServiceType {
         let feePayerRequest: Single<String?>
         let useFeeRelayer: Bool
         
-        if let payingFeeToken = payingFeeToken,
-           payingFeeToken.mint != SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-        {
+        if payingFeeToken?.mint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+            feePayerRequest = .just(nil)
+            useFeeRelayer = false
+        } else {
             if usingCachedFeePayerPubkey, let pubkey = cachedFeePayerPubkey {
                 feePayerRequest = .just(pubkey)
             } else {
@@ -251,9 +275,6 @@ class SendService: SendServiceType {
                     .do(onSuccess: {[weak self] in self?.cachedFeePayerPubkey = $0})
             }
             useFeeRelayer = true
-        } else {
-            feePayerRequest = .just(nil)
-            useFeeRelayer = false
         }
         
         return feePayerRequest

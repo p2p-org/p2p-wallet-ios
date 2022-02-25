@@ -46,61 +46,14 @@ enum SendToken {
                 return .squircleBitcoinIcon
             }
         }
-        var defaultFees: [SolanaSDK.FeeAmount.OtherFee] {
-            switch self {
-            case .solana:
-                return [.init(amount: 0, unit: Defaults.fiat.symbol)]
-            case .bitcoin:
-                return [.init(amount: 0.0002, unit: "renBTC"), .init(amount: 0.0002, unit: "SOL")]
-            }
-        }
     }
     
-    enum PayingWalletStatus: Equatable {
-        case loading
-        case invalid
-        case valid(amount: SolanaSDK.Lamports, enoughBalance: Bool)
+    struct FeeInfo {
+        let feeAmount: SolanaSDK.FeeAmount
+        let feeAmountInSOL: SolanaSDK.FeeAmount
         
-        var isValidAndEnoughBalance: Bool {
-            switch self {
-            case .valid(_, let enoughBalance):
-                return enoughBalance
-            default:
-                return false
-            }
+        static var zero: Self {
+            .init(feeAmount: .zero, feeAmountInSOL: .zero)
         }
-        
-        var feeAmount: SolanaSDK.Lamports? {
-            switch self {
-            case .valid(let amount, _):
-                return amount
-            default:
-                return nil
-            }
-        }
-    }
-}
-
-extension Array where Element == SolanaSDK.FeeAmount.OtherFee {
-    func attributedString(
-        prices: [String: Double],
-        textSize: CGFloat = 15,
-        tokenColor: UIColor = .textBlack,
-        fiatColor: UIColor = .textSecondary,
-        attributedSeparator: NSAttributedString = NSAttributedString(string: "\n")
-    ) -> NSMutableAttributedString {
-        let attributedText = NSMutableAttributedString()
-        
-        for (index, fee) in self.enumerated() {
-            let amountInUSD = fee.amount * prices[fee.unit]
-            attributedText
-                .text("\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)", size: textSize, color: tokenColor)
-                .text(" (~\(Defaults.fiat.symbol)\(amountInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
-            if index < count - 1 {
-                attributedText
-                    .append(attributedSeparator)
-            }
-        }
-        return attributedText
     }
 }

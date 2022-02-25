@@ -21,18 +21,14 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     var slippageDriver: Driver<Double> {get}
     var exchangeRateDriver: Driver<Double?> {get}
     
-//    var feesContentDriver: Driver<Loadable<OrcaSwapV2.DetailedFeesContent>> { get }
     var feesDriver: Driver<Loadable<[PayingFee]>> {get}
-    var payingTokenSubject: BehaviorRelay<PayingToken> { get }
-    var feePayingTokenDriver: Driver<String?> { get }
-    var payingTokenDriver: Driver<PayingToken> {get}
+    var feePayingTokenDriver: Driver<Wallet?> {get}
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
     var isSendingMaxAmountDriver: Driver<Bool> { get }
     var isShowingDetailsDriver: Driver<Bool> { get }
     var isShowingShowDetailsButtonDriver: Driver<Bool> { get }
     var showHideDetailsButtonTapSubject: PublishRelay<Void> { get }
     var slippageSubject: BehaviorRelay<Double> { get }
-    var transactionTokensName: String? { get }
 
     func reload()
     func log(_ event: AnalyticsEvent)
@@ -45,9 +41,15 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     func enterInputAmount(_ amount: Double?)
     func enterEstimatedAmount(_ amount: Double?)
     func changeSlippage(to slippage: Double)
-    func changePayingToken(to payingToken: PayingToken)
+    func changeFeePayingToken(to payingToken: Wallet)
     func choosePayFee()
     func openSettings()
     
     func authenticateAndSwap()
+}
+
+extension OrcaSwapV2ViewModelType {
+    var feePayingTokenStringDriver: Driver<String?> {
+        feePayingTokenDriver.map { wallet in wallet?.token.symbol }
+    }
 }
