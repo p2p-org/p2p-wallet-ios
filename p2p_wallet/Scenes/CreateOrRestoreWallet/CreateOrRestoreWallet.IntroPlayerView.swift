@@ -88,7 +88,6 @@ extension CreateOrRestoreWallet {
                 return
             }
             isAnimating = true
-            player.seek(to: player.currentItem!.duration)
             movingToNextStep = true
         }
     }
