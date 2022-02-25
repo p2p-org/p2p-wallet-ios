@@ -53,7 +53,6 @@ extension CreateOrRestoreWallet {
         private func bind() {
             NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
                 guard let self = self else {return}
-                print(self.step)
                 switch self.step {
                 case 1:
                     if !self.movingToNextStep {
@@ -61,6 +60,7 @@ extension CreateOrRestoreWallet {
                     } else {
                         self.step += 1
                         self.player.replaceCurrentItem(with: self.currentItem)
+                        self.player.rate = 1
                         self.movingToNextStep = false
                     }
                     self.player.play()
@@ -88,6 +88,7 @@ extension CreateOrRestoreWallet {
                 return
             }
             isAnimating = true
+            player.rate = 2
             movingToNextStep = true
         }
     }
