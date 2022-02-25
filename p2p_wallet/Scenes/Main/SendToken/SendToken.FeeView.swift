@@ -17,9 +17,8 @@ extension SendToken {
         
         init(
             solPrice: Double,
-            feesDriver: Driver<SolanaSDK.FeeAmount?>,
             payingWalletDriver: Driver<Wallet?>,
-            payingWalletStatusDriver: Driver<PayingWalletStatus>
+            feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>
         ) {
             super.init(contentInset: .init(all: 18))
             stackView.alignment = .center
@@ -28,19 +27,22 @@ extension SendToken {
             stackView.addArrangedSubviews {
                 coinLogoImageView
                     .setup { imageView in
-                        payingWalletDriver
-                            .map {$0 == nil}
+                        feeInfoDriver
+                            .map {$0.value == nil}
                             .drive(imageView.rx.isHidden)
                             .disposed(by: disposeBag)
                         
                         payingWalletDriver
+                            .filter {$0 != nil}
+                            .map {$0!}
                             .drive(onNext: {[weak imageView] in imageView?.setUp(wallet: $0)})
                             .disposed(by: disposeBag)
                     }
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                     UILabel(text: "Account creation fee", textSize: 13, numberOfLines: 0)
                         .setup { label in
-                            feesDriver
+                            feeInfoDriver
+                                .map {$0.value?.feeAmount}
                                 .map {feeAmountToAttributedString(feeAmount: $0, solPrice: solPrice)}
                                 .drive(label.rx.attributedText)
                                 .disposed(by: disposeBag)
@@ -49,12 +51,13 @@ extension SendToken {
                         .setup { label in
                             Driver.combineLatest(
                                 payingWalletDriver,
-                                payingWalletStatusDriver
+                                feeInfoDriver
                             )
-                                .map {
+                                .map { payingWallet, feeInfo in
                                     payingWalletToString(
-                                        payingWallet: $0,
-                                        payingWalletStatus: $1
+                                        state: feeInfo.state,
+                                        value: feeInfo.value,
+                                        payingWallet: payingWallet
                                     )
                                 }
                                 .drive(label.rx.text)
@@ -94,33 +97,31 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPri
         .text(" ")
         .text(amountString, size: 13, weight: .semibold)
     
-    #if DEBUG
-    attrString
-        .text("\n")
-        .text("Transaction fee: \(feeAmount.transaction) lamports", size: 13, color: .red)
-        .text(", ")
-        .text("Account creation fee: \(feeAmount.accountBalances) lamports", size: 13, color: .red)
-    #endif
-    
     return attrString
 }
 
 private func payingWalletToString(
-    payingWallet: Wallet?,
-    payingWalletStatus: SendToken.PayingWalletStatus
+    state: LoadableState,
+    value: SendToken.FeeInfo?,
+    payingWallet: Wallet?
 ) -> String? {
-    guard let payingWallet = payingWallet else {
-        return L10n.chooseTheTokenToPayFees
-    }
     
-    switch payingWalletStatus {
+    switch state {
+    case .notRequested:
+        return L10n.chooseTheTokenToPayFees
     case .loading:
         return L10n.calculatingFees
-    case .invalid:
+    case .loaded:
+        guard let value = value, let wallet = payingWallet else {
+            return L10n.couldNotCalculatingFees
+        }
+        return value.feeAmount.total.convertToBalance(decimals: wallet.token.decimals)
+            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(wallet.token.symbol)"
+    case .error(let optional):
+        #if DEBUG
+        return optional
+        #else
         return L10n.couldNotCalculatingFees
-    case .valid(let amount, _):
-        return amount.convertToBalance(decimals: payingWallet.token.decimals)
-            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(payingWallet.token.symbol)"
-            
+        #endif
     }
 }

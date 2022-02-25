@@ -41,6 +41,12 @@ extension SendToken {
             viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
+            
+            viewModel.loadingStateDriver
+                .drive(view.rx.loadableState {[weak self] in
+                    self?.viewModel.reload()
+                })
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
