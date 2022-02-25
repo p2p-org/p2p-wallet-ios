@@ -19,6 +19,8 @@ extension CreateOrRestoreWallet {
         @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Subviews
+        private var videoPlayerView: IntroPlayerView!
+        
         private lazy var createWalletButton = WLStepButton.main(
             image: .walletButtonSmall,
             text: L10n.createNewWallet.uppercaseFirst
@@ -64,7 +66,17 @@ extension CreateOrRestoreWallet {
             buttonStackView.autoPinEdge(.top, to: .bottom, of: containerView)
             
             // set up container view
-            add(child: WelcomeVC(), to: containerView)
+//            add(child: WelcomeVC(), to: containerView)
+            
+            videoPlayerView = IntroPlayerView(userInterfaceStyle: traitCollection.userInterfaceStyle)
+            videoPlayerView.autoAdjustWidthHeightRatio(1080/1130)
+            videoPlayerView.autoSetDimension(.height, toSize: 349.adaptiveHeight)
+            
+            let ilustrationView: UIView = .ilustrationView(title: L10n.p2PWallet, description: L10n.theFutureOfNonCustodialBankingTheEasyWayToBuySellAndHoldCryptos, replacingImageWithCustomView: videoPlayerView)
+            
+            containerView.addSubview(ilustrationView)
+            ilustrationView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 20, excludingEdge: .bottom), excludingEdge: .bottom)
+            ilustrationView.autoPinEdge(.bottom, to: .top, of: buttonStackView, withOffset: -55)
         }
         
         override func bind() {
@@ -72,6 +84,11 @@ extension CreateOrRestoreWallet {
             viewModel.navigatableSceneDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
+        }
+        
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            videoPlayerView.resume()
         }
         
         // MARK: - Navigation
@@ -98,11 +115,17 @@ extension CreateOrRestoreWallet {
         }
         
         @objc private func navigateToCreateWalletScene() {
-            viewModel.navigateToCreateWalletScene()
+            videoPlayerView.completion = {[weak self] in
+                self?.viewModel.navigateToCreateWalletScene()
+            }
+            videoPlayerView.playNext()
         }
 
         @objc private func navigateToRestoreWalletScene() {
-            viewModel.navigateToRestoreWalletScene()
+            videoPlayerView.completion = {[weak self] in
+                self?.viewModel.navigateToRestoreWalletScene()
+            }
+            videoPlayerView.playNext()
         }
     }
 }
