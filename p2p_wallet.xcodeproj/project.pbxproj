@@ -22,7 +22,7 @@
 		3B29B69527C788D100D39E7B /* onboarding_02_w.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3B29B69127C788D100D39E7B /* onboarding_02_w.mp4 */; };
 		3B29B69627C788D100D39E7B /* onboarding_02_b.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3B29B69227C788D100D39E7B /* onboarding_02_b.mp4 */; };
 		3B29B69727C788D100D39E7B /* onboarding_01_w.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3B29B69327C788D100D39E7B /* onboarding_01_w.mp4 */; };
-		3B29B69927C796FF00D39E7B /* IntroPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29B69827C796FF00D39E7B /* IntroPlayer.swift */; };
+		3B29B69B27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */; };
 		3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */; };
 		3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */; };
 		3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */; };
@@ -563,7 +563,7 @@
 		3B29B69127C788D100D39E7B /* onboarding_02_w.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_02_w.mp4; sourceTree = "<group>"; };
 		3B29B69227C788D100D39E7B /* onboarding_02_b.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_02_b.mp4; sourceTree = "<group>"; };
 		3B29B69327C788D100D39E7B /* onboarding_01_w.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_01_w.mp4; sourceTree = "<group>"; };
-		3B29B69827C796FF00D39E7B /* IntroPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntroPlayer.swift; sourceTree = "<group>"; };
+		3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWallet.IntroPlayerView.swift; sourceTree = "<group>"; };
 		3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRecipientAndNetworkHandler.swift; sourceTree = "<group>"; };
 		3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
 		3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ConfirmSwappingViewModelType.swift; sourceTree = "<group>"; };
@@ -2248,7 +2248,6 @@
 				4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */,
 				846995C83F49475E5FA6674B /* Banner */,
 				846993CD4CD0FE97413DF87A /* Buy */,
-				3B29B69827C796FF00D39E7B /* IntroPlayer.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -2550,6 +2549,7 @@
 				BCE42DE225DF9BDA0021540E /* CreateOrRestoreWallet.ViewModel.swift */,
 				BCE42DE425DF9BDA0021540E /* CreateOrRestoreWallet.ViewController.swift */,
 				BC32A355254A69EA002156F0 /* CreateOrRestoreWallet.WelcomeVC.swift */,
+				3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */,
 				BCE42DFE25DFA0830021540E /* CreateWallet */,
 				BCE42E1425DFA4F90021540E /* RestoreWallet */,
 			);
@@ -3093,6 +3093,7 @@
 				41C460282771CF5A009C12D9 /* SwapTokenSettings.NavigationBar.swift in Sources */,
 				BC6FEDA3270D57D1002B6255 /* NameService.swift in Sources */,
 				BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */,
+				3B29B69B27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */,
 				BCB286C6274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.ViewController.swift in Sources */,
 				41C460212771BDCB009C12D9 /* SwapTokenSettings.swift in Sources */,
 				3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */,
@@ -3360,7 +3361,6 @@
 				3B1681FC278B3F7D00838F1B /* CreateOrRestoreWalletHandler.swift in Sources */,
 				BC5140C0272ABC0800DB84BD /* Home.swift in Sources */,
 				3B1681FA278B3E7000838F1B /* AppEventHandlerDelegate.swift in Sources */,
-				3B29B69927C796FF00D39E7B /* IntroPlayer.swift in Sources */,
 				BC134FA326FCD1E500DB15BF /* AppDelegate+Injection.swift in Sources */,
 				BC4B9E7D2713FCFB005B9ECA /* AnalyticsManager.swift in Sources */,
 				BC2297962700A320003F7118 /* RestoreICloud.AccountsListViewModel.swift in Sources */,
