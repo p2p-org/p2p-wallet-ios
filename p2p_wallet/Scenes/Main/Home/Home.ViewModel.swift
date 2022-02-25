@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 
-protocol HomeViewModelType: ReserveNameHandler {
+protocol HomeViewModelType {
     var navigationDriver: Driver<Home.NavigatableScene?> {get}
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {get}
     
@@ -62,18 +62,5 @@ extension Home.ViewModel: HomeViewModelType {
     
     func navigateToScanQrCodeWithSwiper(progress: CGFloat, swiperState: UIGestureRecognizer.State) {
         navigationSubject.accept(.scanQrWithSwiper(progress: progress, state: swiperState))
-    }
-    
-    func handleName(_ name: String?) {
-        if let name = name {
-            storage.save(name: name)
-            Defaults.forceCloseNameServiceBanner = true
-            notificationsService.showInAppNotification(
-                .done(
-                    L10n.usernameIsSuccessfullyReserved(name.withNameServiceDomain())
-                )
-            )
-        }
-        nameDidReserveSubject.accept(())
     }
 }
