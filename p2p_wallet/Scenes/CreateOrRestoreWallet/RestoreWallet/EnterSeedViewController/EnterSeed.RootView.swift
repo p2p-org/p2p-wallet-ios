@@ -137,7 +137,7 @@ extension EnterSeed {
 
             nextButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
         }
         
         private func bind() {
