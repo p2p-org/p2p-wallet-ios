@@ -660,7 +660,7 @@
 "Change the network?" = "Change the network?";
 "If the network is changed to %@, the address field must be filled in with a %@." = "If the network is changed to %@, the address field must be filled in with a %@.";
 "There are %@ free transactions left for today" = "There are %@ free transactions left for today";
-"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";
+"On the Solana network, the first %@ transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "On the Solana network, the first %@ transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee.";
 "Select word #%@" = "Select word #%@";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Receive **any token** within the Solana network even if it is not included in your wallet list";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address.";
@@ -725,11 +725,14 @@
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library.";
 "Allow access to save your photos" = "Allow access to save your photos";
 "Open settings" = "Open settings";
+"Needs at least %@" = "Needs at least %@";
+"Please choose another token and try again!" = "Please choose another token and try again!";
 "beta" = "beta";
 "Top up your account to get started" = "Top up your account to get started";
 "Make your first deposit or buy with your credit card or Apple Pay" = "Make your first deposit or buy with your credit card or Apple Pay";
 "Tokens" = "Tokens";
 "Hidden tokens" = "Hidden tokens";
+"Exceeded maximum number of instructions allowed" = "Exceeded maximum number of instructions allowed";
 "Deposit (will be returned)" = "Deposit (will be returned)";
 "Get your your own short crypto address" = "Get your your own short crypto address";
 "Reserve your username" = "Reserve your username";

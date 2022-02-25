@@ -25,7 +25,7 @@ extension SwapTokenSettings {
             layout()
             onTap(self, action: #selector(handleTap))
         }
-
+        
         @available(*, unavailable)
         required init(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
@@ -35,7 +35,8 @@ extension SwapTokenSettings {
             checkMarkImage.isHidden = !isSelected
         }
 
-        func setUp(content: FeeCellContent) {
+        @discardableResult
+        func setUp(content: FeeCellContent) -> Self {
             if let wallet = content.wallet {
                 image.setUp(wallet: wallet)
                 amountLabel.text = "\(wallet.amount.toString(maximumFractionDigits: 9))"
@@ -47,6 +48,10 @@ extension SwapTokenSettings {
             }
 
             tokenLabel.text = content.tokenLabelText
+            setIsSelected(content.isSelected)
+            onTapHandler = content.onTapHandler
+            
+            return self
         }
 
         private func configureSelf() {

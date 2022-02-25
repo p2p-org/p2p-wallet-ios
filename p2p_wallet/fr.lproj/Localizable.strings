@@ -660,7 +660,7 @@
 "Change the network?" = "Changer de réseau ?";
 "If the network is changed to %@, the address field must be filled in with a %@." = "Si le réseau est changé en %@, le champ d'adresse doit être rempli avec un %@.";
 "There are %@ free transactions left for today" = "Il reste %@ transactions gratuites pour aujourd'hui";
-"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Sur le réseau Solana, les 100 premières transactions d'une journée sont payées par P2P.org. Les transactions ultérieures seront facturées sur la base des frais de gaz de la blockchain Solana.";
+"On the Solana network, the first %@ transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "Sur le réseau Solana, les %@ premières transactions d'une journée sont payées par P2P.org. Les transactions ultérieures seront facturées sur la base des frais de gaz de la blockchain Solana.";
 "Select word #%@" = "Sélectionnez le mot #%@";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Recevez n'importe quel jeton au sein du réseau Solana même s'il n'est pas inclus dans votre liste de portefeuille";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Lorsque vous choisissez le réseau Bitcoin, votre adresse n'accepte que Bitcoin.  Vous pouvez perdre des actifs en envoyant une autre pièce.\n0,000112 BTC est le montant minimum de la transaction, et vous avez 36 heures pour terminer la transaction après avoir reçu l'adresse.";
@@ -725,11 +725,14 @@
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Ceci est nécessaire pour que l'application enregistre les codes QR générés ou sauvegarde vos phrases de départ dans votre photothèque.";
 "Allow access to save your photos" = "Autoriser l'accès pour enregistrer vos photos";
 "Open settings" = "Ouvrir les paramètres";
+"Needs at least %@" = "Nécessite au moins %@";
+"Please choose another token and try again!" = "Veuillez choisir un autre jeton et réessayer !";
 "beta" = "bêta";
 "Top up your account to get started" = "Rechargez votre compte pour commencer";
 "Make your first deposit or buy with your credit card or Apple Pay" = "Effectuez votre premier dépôt ou achetez avec votre carte de crédit ou Apple Pay";
 "Tokens" = "Jetons";
 "Hidden tokens" = "Jetons cachés";
+"Exceeded maximum number of instructions allowed" = "Dépassement du nombre maximum d'instructions autorisées";
 "Deposit (will be returned)" = "Caution (sera restituée)";
 "Get your your own short crypto address" = "Obtenez votre propre adresse crypto courte";
 "Reserve your username" = "Réservez votre nom d'utilisateur";

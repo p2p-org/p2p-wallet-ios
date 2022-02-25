@@ -47,9 +47,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private lazy var feeView = _FeeView( // for relayMethod == .relay only
             walletDriver: viewModel.walletDriver,
             solPrice: viewModel.getPrice(for: "SOL"),
-            feesDriver: viewModel.feesDriver,
-            payingWalletDriver: viewModel.payingWalletDriver,
-            payingWalletStatusDriver: viewModel.payingWalletStatusDriver
+            feeInfoDriver: viewModel.feeInfoDriver,
+            payingWalletDriver: viewModel.payingWalletDriver
         )
             .onTap { [weak self] in
                 self?.viewModel.navigate(to: .selectPayingWallet)
@@ -93,6 +92,20 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 if viewModel.relayMethod == .relay {
                     feeView
                 }
+                #if DEBUG
+                UILabel(textColor: .red, numberOfLines: 0, textAlignment: .center)
+                    .setup { label in
+                        viewModel.feeInfoDriver
+                            .map {$0.value?.feeAmountInSOL ?? .zero}
+                            .drive(onNext: {[weak label] feeAmount in
+                                label?.attributedText = NSMutableAttributedString()
+                                    .text("Transaction fee: \(feeAmount.transaction) lamports", size: 13, color: .red)
+                                    .text(", ")
+                                    .text("Account creation fee: \(feeAmount.accountBalances) lamports", size: 13, color: .red)
+                            })
+                            .disposed(by: disposeBag)
+                    }
+                #endif
             }
             
             addSubview(actionButton)
@@ -167,7 +180,21 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
             
             // fee view
-            isSearchingDriver
+            Driver.combineLatest(
+                isSearchingDriver,
+                viewModel.networkDriver,
+                viewModel.feeInfoDriver
+            )
+                .map {isSearching, network, fee in
+                    if isSearching || network != .solana {
+                        return true
+                    }
+                    if let fee = fee.value?.feeAmount {
+                        return fee.total == 0
+                    } else {
+                        return true
+                    }
+                }
                 .drive(feeView.rx.isHidden)
                 .disposed(by: disposeBag)
             
@@ -202,30 +229,52 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             Driver.combineLatest(
                 viewModel.recipientDriver,
                 viewModel.payingWalletDriver,
-                viewModel.payingWalletStatusDriver
+                viewModel.feeInfoDriver,
+                viewModel.networkDriver
             )
-                .map { [weak self] recipient, payingWallet, payingWalletStatus in
+                .map { [weak self] recipient, payingWallet, feeInfo, network in
                     guard let self = self else {return ""}
                     if recipient == nil {
                         return L10n.chooseTheRecipientToProceed
                     }
                     
-                    if self.viewModel.relayMethod == .relay {
-                        if let payingWallet = payingWallet {
-                            switch payingWalletStatus {
+                    switch network {
+                    case .solana:
+                        switch self.viewModel.relayMethod {
+                        case .relay:
+                            switch feeInfo.state {
+                            case .notRequested:
+                                return L10n.chooseTheTokenToPayFees
                             case .loading:
                                 return L10n.calculatingFees
-                            case .invalid:
-                                return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
-                            case .valid(_, let enoughBalance):
-                                if !enoughBalance {
-                                    return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                            case .loaded:
+                                guard let value = feeInfo.value else {
+                                    return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                                 }
+                                if let wallet = payingWallet,
+                                   let lamports = wallet.lamports,
+                                   lamports < value.feeAmount.total
+                                {
+                                    let neededAmount = value.feeAmount.total
+                                        .convertToBalance(decimals: wallet.token.decimals)
+                                        .toString(maximumFractionDigits: Int(wallet.token.decimals))
+                                    return L10n.yourAccountDoesNotHaveEnoughToCoverFees(wallet.token.symbol)
+                                        + ". "
+                                        + L10n.needsAtLeast(neededAmount + " \(wallet.token.symbol)")
+                                }
+                                if value.feeAmount.total == 0 && value.feeAmountInSOL.total > 0 {
+                                    return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                                }
+                            case .error:
+                                return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                             }
-                        } else {
-                            return L10n.chooseTheTokenToPayFees
+                        case .reward:
+                            break
                         }
+                    case .bitcoin:
+                        break
                     }
+                    
                     return L10n.reviewAndConfirm
                 }
                 .drive(actionButton.rx.text)
@@ -265,11 +314,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
         
         private func bind() {
-            viewModel.networkDriver
-                .drive(onNext: {[weak self] network in
+            Driver.combineLatest(
+                viewModel.networkDriver,
+                viewModel.payingWalletDriver,
+                viewModel.feeInfoDriver
+            )
+                .drive(onNext: {[weak self] network, payingWallet, feeInfo in
                     self?._networkView.setUp(
                         network: network,
-                        prices: self?.viewModel.getSOLAndRenBTCPrices() ?? [:]
+                        payingWallet: payingWallet,
+                        feeInfo: feeInfo.value,
+                        prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
                     )
                 })
                 .disposed(by: disposeBag)
@@ -297,20 +352,21 @@ private class _FeeView: UIStackView {
     init(
         walletDriver: Driver<Wallet?>,
         solPrice: Double,
-        feesDriver: Driver<SolanaSDK.FeeAmount?>,
-        payingWalletDriver: Driver<Wallet?>,
-        payingWalletStatusDriver: Driver<SendToken.PayingWalletStatus>
+        feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>,
+        payingWalletDriver: Driver<Wallet?>
     ) {
-        self.feeView = .init(solPrice: solPrice, feesDriver: feesDriver, payingWalletDriver: payingWalletDriver, payingWalletStatusDriver: payingWalletStatusDriver)
+        self.feeView = .init(solPrice: solPrice, payingWalletDriver: payingWalletDriver, feeInfoDriver: feeInfoDriver)
         super.init(frame: .zero)
         set(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
         addArrangedSubviews {
             attentionLabel
-                .padding(.init(all: 18), backgroundColor: .fffaf2, cornerRadius: 12, borderColor: .ff9500)
+                .padding(.init(all: 18), backgroundColor: .fffaf2.onDarkMode(.a3a5ba.withAlphaComponent(0.05)), cornerRadius: 12, borderColor: .ff9500)
             feeView
         }
         
-        feesDriver.map {$0?.accountBalances ?? 0 == 0}
+        feeInfoDriver
+            .map {$0.value?.feeAmount}
+            .map {$0?.accountBalances ?? 0 == 0}
             .drive(attentionLabel.superview!.rx.isHidden)
             .disposed(by: disposeBag)
         

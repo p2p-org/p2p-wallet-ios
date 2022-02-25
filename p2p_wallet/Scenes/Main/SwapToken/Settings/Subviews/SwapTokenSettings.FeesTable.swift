@@ -6,44 +6,27 @@
 //
 
 import UIKit
+import RxCocoa
 
 extension SwapTokenSettings {
-    final class FeesTable: WLFloatingPanelView {
-        private var cells: [FeeCell] = []
-
-        override init(contentInset: UIEdgeInsets = .zero) {
-            super.init(contentInset: contentInset)
-
-            stackView.spacing = 0
+    final class FeesTable: BECompositionView {
+        let cellsContentDriver: Driver<[FeeCellContent]>
+        
+        init(cellsContentDriver: Driver<[FeeCellContent]>) {
+            self.cellsContentDriver = cellsContentDriver
+            super.init()
         }
-
-        func setUp(cellsContent: [FeeCellContent]) {
-            cells = cellsContent.map(createCell)
-            stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-
-            cells.dropLast().forEach {
-                stackView.addArrangedSubview($0)
-                stackView.addArrangedSubview(SeparatorView())
-            }
-
-            if let last = cells.last {
-                stackView.addArrangedSubview(last)
-            }
-        }
-
-        private func createCell(withContent content: FeeCellContent) -> FeeCell {
-            let cell = FeeCell()
-            cell.setUp(content: content)
-            cell.setIsSelected(content.isSelected)
-            cell.onTapHandler = { [weak self, weak cell] in
-                self?.cells.forEach {
-                    $0.setIsSelected($0 == cell)
+    
+        override func build() -> UIView {
+            WLCard {
+                BEBuilder(driver: cellsContentDriver) { cellsContent in
+                    BEVStack {
+                        for content in cellsContent {
+                            FeeCell().setUp(content: content)
+                        }
+                    }
                 }
-
-                content.onTapHandler()
             }
-
-            return cell
         }
     }
 }

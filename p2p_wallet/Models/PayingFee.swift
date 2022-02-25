@@ -33,12 +33,60 @@ struct PayingFee {
                 return L10n.depositWillBeReturned
             }
         }
+        
+        var isNetworkFee: Bool {
+            switch self {
+            case .transactionFee, .accountCreationFee:
+                return true
+            default:
+                return false
+            }
+        }
     }
     
     let type: FeeType
     let lamports: SolanaSDK.Lamports
     let token: SolanaSDK.Token
     var toString: (() -> String?)?
+    
+    let isFree: Bool
+    let info: Info?
+    
+    init(
+        type: FeeType,
+        lamports: SolanaSDK.Lamports,
+        token: SolanaSDK.Token,
+        toString: (() -> String?)? = nil
+    ) {
+        self.type = type
+        self.lamports = lamports
+        self.token = token
+        self.isFree = false
+        self.toString = toString
+        self.info = nil
+    }
+    
+    init(
+        type: FeeType,
+        lamports: SolanaSDK.Lamports,
+        token: SolanaSDK.Token,
+        toString: (() -> String?)?,
+        isFree: Bool,
+        info: Info?
+    ) {
+        self.type = type
+        self.lamports = lamports
+        self.token = token
+        self.toString = toString
+        self.isFree = isFree
+        self.info = info
+    }
+    
+    struct Info {
+        let alertTitle: String
+        let alertDescription: String
+        let payBy: String?
+    }
 }
 
 extension Array where Element == PayingFee {
@@ -56,6 +104,26 @@ extension Array where Element == PayingFee {
         let lamports = array.reduce(SolanaSDK.Lamports(0), {$0 + $1.lamports})
         
         return (lamports: lamports, token: token)
+    }
+    
+    var networkFees: SolanaSDK.FeeAmount? {
+        var transactionFee: UInt64?
+        var accountCreationFee: UInt64?
+        for fee in self {
+            switch fee.type {
+            case .transactionFee:
+                transactionFee = fee.lamports
+            case .accountCreationFee:
+                accountCreationFee = fee.lamports
+            default:
+                break
+            }
+        }
+        
+        if let transactionFee = transactionFee, let accountCreationFee = accountCreationFee {
+            return .init(transaction: transactionFee, accountBalances: accountCreationFee)
+        }
+        return nil
     }
     
     func transactionFees(of token: String) -> SolanaSDK.Lamports {
