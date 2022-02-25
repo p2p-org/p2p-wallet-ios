@@ -662,7 +662,7 @@
 "Change the network?" = "Сменить сеть?";
 "If the network is changed to %@, the address field must be filled in with a %@." = "Если сеть изменена на %@, поле адреса должно быть заполнено %@.";
 "There are %@ free transactions left for today" = "На сегодня осталось %@ бесплатных транзакций";
-"On the Solana network, the first 100 transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "В сети Solana первые 100 транзакций в день оплачиваются P2P.org. Последующие транзакции будут взиматься на основе платы за газ блокчейна Solana.";
+"On the Solana network, the first %@ transactions in a day are paid by P2P.org. Subsequent transactions will be charged based on the Solana blockchain gas fee." = "В сети Solana первые %@ транзакций в день оплачиваются P2P.org. Последующие транзакции будут взиматься на основе платы за газ блокчейна Solana.";
 "Select word #%@" = "Выберите слово №%@";
 "Receive any token within the Solana network even if it is not included in your wallet list" = "Получите любой токен в сети Solana, даже если он не включен в список вашего кошелька";
 "When you choose the Bitcoin network, your address accepts only Bitcoin. You may lose assets by sending another coin.\n0.000112 BTC is the minimum transaction amount, and you have 36 hours to complete the transaction after receiving the address." = "Когда вы выбираете сеть Биткойн, ваш адрес принимает только Биткойн.  Вы можете потерять активы, отправив еще одну монету. \n 0,000112 BTC - это минимальная сумма транзакции, и у вас есть 36 часов, чтобы завершить транзакцию после получения адреса.";
@@ -727,11 +727,14 @@
 "This is required for the app to save generated QR codes or back up of your seed phrases to your photo library." = "Это необходимо для того, чтобы приложение могло сохранять сгенерированные QR-коды или создавать резервные копии исходных фраз в вашей библиотеке фотографий.";
 "Allow access to save your photos" = "Разрешите доступ для сохранения ваших фотографий";
 "Open settings" = "Открыть настройки";
+"Needs at least %@" = "Требуется не менее %@";
+"Please choose another token and try again!" = "Выберите другой токен и повторите попытку!";
 "beta" = "бета";
 "Top up your account to get started" = "Пополните свой счет, чтобы начать";
 "Make your first deposit or buy with your credit card or Apple Pay" = "Внесите свой первый депозит или купите с помощью кредитной карты или Apple Pay";
 "Tokens" = "Токены";
 "Hidden tokens" = "Скрытые токены";
+"Exceeded maximum number of instructions allowed" = "Превышено максимально допустимое количество инструкций";
 "Deposit (will be returned)" = "Депозит (будет возвращен)";
 "Get your your own short crypto address" = "Получите свой собственный короткий крипто-адрес";
 "Reserve your username" = "Зарезервируйте свое имя пользователя";

@@ -16,9 +16,9 @@ extension SwapTokenSettings {
 
         // MARK: - Dependencies
         private let viewModel: NewSwapTokenSettingsViewModelType
-        
+
         // MARK: - Properties
-        
+
         // MARK: - Methods
         init(viewModel: NewSwapTokenSettingsViewModelType) {
             self.viewModel = viewModel
@@ -27,18 +27,18 @@ extension SwapTokenSettings {
         override func loadView() {
             view = RootView(viewModel: viewModel)
         }
-        
+
         override func setUp() {
             super.setUp()
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {

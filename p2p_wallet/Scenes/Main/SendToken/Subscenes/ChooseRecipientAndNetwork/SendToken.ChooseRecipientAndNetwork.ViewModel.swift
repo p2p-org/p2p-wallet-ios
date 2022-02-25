@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import FeeRelayerSwift
 
 protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenSelectNetworkViewModelType {
     var showAfterConfirmation: Bool {get}
@@ -20,7 +21,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
     func getSendService() -> SendServiceType
     func getPrice(for symbol: String) -> Double
-    func getSOLAndRenBTCPrices() -> [String: Double]
+    func getPrices(for symbols: [String]) -> [String: Double]
     func save()
     func navigateNext()
 }
@@ -35,13 +36,14 @@ extension SendToken.ChooseRecipientAndNetwork {
         
         // MARK: - Properties
         private let relayMethod: SendTokenRelayMethod
-        private let disposeBag = DisposeBag()
+        let disposeBag = DisposeBag()
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
         let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.zero))
         
         // MARK: - Initializers
         init(
@@ -58,7 +60,7 @@ extension SendToken.ChooseRecipientAndNetwork {
             bind()
             
             if let preSelectedNetwork = preSelectedNetwork {
-                networkSubject.accept(preSelectedNetwork)
+                selectNetwork(preSelectedNetwork)
             }
         }
         
@@ -74,6 +76,8 @@ extension SendToken.ChooseRecipientAndNetwork {
             sendTokenViewModel.payingWalletDriver
                 .drive(payingWalletSubject)
                 .disposed(by: disposeBag)
+            
+            bindFees()
         }
     }
 }
@@ -116,8 +120,12 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.getPrice(for: symbol)
     }
     
-    func getSOLAndRenBTCPrices() -> [String: Double] {
-        sendTokenViewModel.getSOLAndRenBTCPrices()
+    func getPrices(for symbols: [String]) -> [String: Double] {
+        sendTokenViewModel.getPrices(for: symbols)
+    }
+    
+    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+        sendTokenViewModel.getFreeTransactionFeeLimit()
     }
     
     func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
