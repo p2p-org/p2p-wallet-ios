@@ -70,7 +70,6 @@ extension Settings {
         // MARK: - Dependencies
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
-        private var reserveNameHandler: ReserveNameHandler!
         @Injected private var logoutResponder: LogoutResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
@@ -103,8 +102,7 @@ extension Settings {
         private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
-        init(reserveNameHandler: ReserveNameHandler, canGoBack: Bool = true) {
-            self.reserveNameHandler = reserveNameHandler
+        init(canGoBack: Bool = true) {
             self.canGoBack = canGoBack
             bind()
         }
@@ -207,7 +205,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         if storage.getName() != nil {
             navigate(to: .username)
         } else if let owner = storage.account?.publicKey.base58EncodedString {
-            navigate(to: .reserveUsername(owner: owner, handler: reserveNameHandler))
+            navigate(to: .reserveUsername(owner: owner, handler: nil))
         }
     }
     
