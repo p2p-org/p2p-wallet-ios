@@ -18,6 +18,11 @@
 		3B1681FE278B55B900838F1B /* AuthenticationPresentationStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1681FD278B55B900838F1B /* AuthenticationPresentationStyle.swift */; };
 		3B168200278B55DC00838F1B /* AuthenticationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */; };
 		3B270F42277454FF009B2C97 /* WLModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B270F41277454FF009B2C97 /* WLModalViewController.swift */; };
+		3B29B69427C788D100D39E7B /* onboarding_01_b.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3B29B69027C788D000D39E7B /* onboarding_01_b.mp4 */; };
+		3B29B69527C788D100D39E7B /* onboarding_02_w.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3B29B69127C788D100D39E7B /* onboarding_02_w.mp4 */; };
+		3B29B69627C788D100D39E7B /* onboarding_02_b.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3B29B69227C788D100D39E7B /* onboarding_02_b.mp4 */; };
+		3B29B69727C788D100D39E7B /* onboarding_01_w.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 3B29B69327C788D100D39E7B /* onboarding_01_w.mp4 */; };
+		3B29B69B27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */; };
 		3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */; };
 		3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */; };
 		3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */; };
@@ -557,6 +562,11 @@
 		3B1681FD278B55B900838F1B /* AuthenticationPresentationStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationPresentationStyle.swift; sourceTree = "<group>"; };
 		3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationHandler.swift; sourceTree = "<group>"; };
 		3B270F41277454FF009B2C97 /* WLModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLModalViewController.swift; sourceTree = "<group>"; };
+		3B29B69027C788D000D39E7B /* onboarding_01_b.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_01_b.mp4; sourceTree = "<group>"; };
+		3B29B69127C788D100D39E7B /* onboarding_02_w.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_02_w.mp4; sourceTree = "<group>"; };
+		3B29B69227C788D100D39E7B /* onboarding_02_b.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_02_b.mp4; sourceTree = "<group>"; };
+		3B29B69327C788D100D39E7B /* onboarding_01_w.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_01_w.mp4; sourceTree = "<group>"; };
+		3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWallet.IntroPlayerView.swift; sourceTree = "<group>"; };
 		3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRecipientAndNetworkHandler.swift; sourceTree = "<group>"; };
 		3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
 		3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ConfirmSwappingViewModelType.swift; sourceTree = "<group>"; };
@@ -1173,12 +1183,15 @@
 			path = AppEventHandler;
 			sourceTree = "<group>";
 		};
-		3B184B2C27BF9B1600309EA3 /* Recovered References */ = {
+		3B29B68F27C7888500D39E7B /* mp4 */ = {
 			isa = PBXGroup;
 			children = (
-				84699550446906435820FA78 /* BEBuilder.swift */,
+				3B29B69027C788D000D39E7B /* onboarding_01_b.mp4 */,
+				3B29B69327C788D100D39E7B /* onboarding_01_w.mp4 */,
+				3B29B69227C788D100D39E7B /* onboarding_02_b.mp4 */,
+				3B29B69127C788D100D39E7B /* onboarding_02_w.mp4 */,
 			);
-			name = "Recovered References";
+			path = mp4;
 			sourceTree = "<group>";
 		};
 		3B2BAFA42761E0020008DA0A /* Interfaces */ = {
@@ -1973,6 +1986,7 @@
 		BC753397257F28A8007A00D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3B29B68F27C7888500D39E7B /* mp4 */,
 				BCA7D83327290A29007B070A /* BECollectionView.md */,
 				BC4B9ED6272428A0005B9ECA /* Terms_of_service.txt */,
 				BCFEDBFD2727B3D7008AE4AD /* Privacy_policy.txt */,
@@ -2219,7 +2233,6 @@
 				BCB2231625412AF8002D997F /* Products */,
 				14A0B50387D380623394B692 /* Pods */,
 				0702C5D804E7759F2AE102B8 /* Frameworks */,
-				3B184B2C27BF9B1600309EA3 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2576,6 +2589,7 @@
 				BCE42DE225DF9BDA0021540E /* CreateOrRestoreWallet.ViewModel.swift */,
 				BCE42DE425DF9BDA0021540E /* CreateOrRestoreWallet.ViewController.swift */,
 				BC32A355254A69EA002156F0 /* CreateOrRestoreWallet.WelcomeVC.swift */,
+				3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */,
 				BCE42DFE25DFA0830021540E /* CreateWallet */,
 				BCE42E1425DFA4F90021540E /* RestoreWallet */,
 			);
@@ -2825,6 +2839,8 @@
 				BC5DB13225F739F9003D00BE /* Localizable.stringsdict in Resources */,
 				BCA9946825AE94D7005BD8FB /* Montserrat-Light.ttf in Resources */,
 				BCA9947425AE94D7005BD8FB /* Montserrat-Italic.ttf in Resources */,
+				3B29B69727C788D100D39E7B /* onboarding_01_w.mp4 in Resources */,
+				3B29B69427C788D100D39E7B /* onboarding_01_b.mp4 in Resources */,
 				BCA9947625AE94D7005BD8FB /* Montserrat-ExtraBoldItalic.ttf in Resources */,
 				BCA9946C25AE94D7005BD8FB /* Montserrat-Bold.ttf in Resources */,
 				BCA9947125AE94D7005BD8FB /* Montserrat-ExtraBold.ttf in Resources */,
@@ -2838,9 +2854,12 @@
 				BCA9947225AE94D7005BD8FB /* Montserrat-Black.ttf in Resources */,
 				BC65E9F92542C181005F50CE /* Colors.xcassets in Resources */,
 				BCA9946B25AE94D7005BD8FB /* Montserrat-Thin.ttf in Resources */,
+				3B29B69527C788D100D39E7B /* onboarding_02_w.mp4 in Resources */,
 				BCA9947025AE94D7005BD8FB /* Montserrat-ExtraLightItalic.ttf in Resources */,
 				BCA9946F25AE94D7005BD8FB /* Montserrat-SemiBold.ttf in Resources */,
 				BCB2232225412AF8002D997F /* Assets.xcassets in Resources */,
+				846991A8EB23DEEB4EBB0AC1 /* .swift-format in Resources */,
+				3B29B69627C788D100D39E7B /* onboarding_02_b.mp4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3115,6 +3134,7 @@
 				41C460282771CF5A009C12D9 /* SwapTokenSettings.NavigationBar.swift in Sources */,
 				BC6FEDA3270D57D1002B6255 /* NameService.swift in Sources */,
 				BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */,
+				3B29B69B27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */,
 				BCB286C6274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.ViewController.swift in Sources */,
 				41C460212771BDCB009C12D9 /* SwapTokenSettings.swift in Sources */,
 				3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */,
