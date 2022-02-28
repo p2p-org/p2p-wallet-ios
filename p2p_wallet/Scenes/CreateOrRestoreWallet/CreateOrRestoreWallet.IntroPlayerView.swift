@@ -36,6 +36,7 @@ extension CreateOrRestoreWallet {
         private var movingToNextStep = false
         var completion: (() -> Void)?
         private var isAnimating = false
+        private var isFinished = false
         private var activeResigned = false
         
         init(userInterfaceStyle: UIUserInterfaceStyle) {
@@ -63,6 +64,7 @@ extension CreateOrRestoreWallet {
                 case 1:
                     if !self.movingToNextStep {
                         self.player.seek(to: .zero)
+                        self.player.play()
                     } else {
                         self.step += 1
                         
@@ -77,15 +79,16 @@ extension CreateOrRestoreWallet {
                             self.player.replaceCurrentItem(with: self.currentItem)
                             self.player.rate = 1
                             self.movingToNextStep = false
+                            self.player.play()
                             
                             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) { [weak self] in
                                 self?.placeholderImageView.isHidden = true
                             }
                         }
                     }
-                    self.player.play()
                 case 2:
                     self.completion?()
+                    self.isFinished = true
                     self.isAnimating = false
                 default:
                     return
@@ -108,6 +111,7 @@ extension CreateOrRestoreWallet {
             guard step < 2 else {
                 completion?()
                 isAnimating = false
+                isFinished = true
                 return
             }
             isAnimating = true
@@ -120,7 +124,7 @@ extension CreateOrRestoreWallet {
         }
         
         @objc func appDidBecomeActive() {
-            guard activeResigned else {return}
+            guard activeResigned, !isFinished else {return}
             player.play()
         }
     }
