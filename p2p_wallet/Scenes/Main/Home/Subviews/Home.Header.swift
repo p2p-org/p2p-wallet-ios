@@ -31,7 +31,7 @@ extension Home {
                     ColorfulHorizontalView {
 //                        WalletActionButton(actionType: .buy) { [unowned self] in viewModel.navigate(to: .buyToken) }
                         WalletActionButton(actionType: .receive) { [unowned self] in viewModel.navigate(to: .receiveToken) }
-                        WalletActionButton(actionType: .send) { [unowned self] in viewModel.navigate(to: .sendToken(address: nil)) }
+                        WalletActionButton(actionType: .send) { [unowned self] in viewModel.navigate(to: .sendToken()) }
                         WalletActionButton(actionType: .swap) { [unowned self] in viewModel.navigate(to: .swapToken) }
                     }
                     .withTag(1)

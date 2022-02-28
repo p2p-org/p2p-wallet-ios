@@ -679,7 +679,7 @@
 "Swap %@ → %@" = "Hoán đổi %@ → %@";
 "Custom" = "Tuỳ chỉnh";
 "Custom slippage" = "Slippage tùy chỉnh";
-"A slippage is a difference between the expected price and the actual price at which a trade is executed" = "Trượt giá là sự khác biệt giữa giá dự kiến ​​và giá thực tế mà giao dịch được thực hiện";
+"A slippage is the difference between the expected price and the actual price at which a trade is executed" = "Trượt giá là sự khác biệt giữa giá dự kiến ​​và giá thực tế mà giao dịch được thực hiện";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Sự trượt giá có thể xảy ra bất cứ lúc nào, nhưng nó phổ biến nhất trong khoảng thời gian của %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Các giao dịch vượt quá khả năng chịu trượt 20%% có thể là %@";
 "Slippage tolerance %@" = "Khả năng chịu trượt %@";
