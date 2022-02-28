@@ -61,7 +61,6 @@ class WLButton: UIButton {
         let button = WLButton(backgroundColor: enabledColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .semibold), textColor: textColor)
         button.enabledColor = enabledColor
         button.disabledColor = disabledColor
-        button.setImage(.crossIcon, for: .normal)
 
         button.titleLabel?.lineBreakMode = .byWordWrapping
         button.titleLabel?.textAlignment = .center

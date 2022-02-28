@@ -307,7 +307,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
             self.viewModel = viewModel
-            super.init(contentInset: .init(all: 18))
+            super.init(cornerRadius: 12, contentInset: .init(all: 18))
             _networkView.addArrangedSubview(UIView.defaultNextArrow())
             stackView.addArrangedSubview(_networkView)
             bind()
