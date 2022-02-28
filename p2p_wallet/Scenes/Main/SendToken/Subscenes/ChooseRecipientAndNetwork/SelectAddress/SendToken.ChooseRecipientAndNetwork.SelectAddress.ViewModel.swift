@@ -29,6 +29,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     func getCurrentSearchKey() -> String?
     func getPrice(for symbol: String) -> Double
     func getPrices(for symbols: [String]) -> [String: Double]
+    func getFeeInCurrentFiat() -> String
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
     func navigateToChoosingNetworkScene()
     
@@ -176,6 +177,16 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     func getPrices(for symbols: [String]) -> [String: Double] {
         chooseRecipientAndNetworkViewModel.getPrices(for: symbols)
+    }
+    
+    func getFeeInCurrentFiat() -> String {
+        var fee: Double = 0
+        if let feeInfo = chooseRecipientAndNetworkViewModel.feeInfoSubject.value
+        {
+            let feeInSOL = feeInfo.feeAmountInSOL.total.convertToBalance(decimals: 9)
+            fee = feeInSOL * getPrice(for: "SOL")
+        }
+        return "~\(Defaults.fiat.symbol)\(fee.toString(maximumFractionDigits: 2))"
     }
     
     // MARK: - Actions
