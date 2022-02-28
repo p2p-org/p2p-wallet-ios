@@ -54,7 +54,7 @@ extension OrcaSwapV2 {
             addSubview(nextButton)
             nextButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
             nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
-            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
             
             scrollViewBottomConstraint.isActive = false
             scrollView.autoPinEdge(.bottom, to: .top, of: nextButton, withOffset: 8)

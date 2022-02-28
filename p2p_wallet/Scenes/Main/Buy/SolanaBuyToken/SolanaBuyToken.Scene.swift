@@ -108,7 +108,7 @@ extension SolanaBuyToken {
                             textColor: .textBlack,
                             textAlignment: .right,
                             keyboardType: .decimalPad,
-                            placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+                            placeholder: "0",
                             autocorrectionType: .no
                         ).setup { [weak self] view in
                             view.becomeFirstResponder()
