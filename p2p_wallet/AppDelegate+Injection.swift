@@ -216,7 +216,7 @@ extension Resolver: ResolverRegistering {
                 ReserveNameBannerHandler(nameStorage: resolve()),
                 BackupBannerHandler(backupStorage: resolve()),
                 FeedbackBannerHandler(),
-                NotificationBannerHandler()
+                // NotificationBannerHandler()
             ])
         }
             .implements(Banners.Service.self)
