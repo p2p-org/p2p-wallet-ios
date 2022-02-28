@@ -160,7 +160,7 @@ extension OrcaSwapV2.ViewModel {
             destinationAddress: destinationWallet.pubkey,
             destinationToken: destinationWallet.token,
             bestPoolsPair: bestPoolsPair,
-            payingTokenMint: payingWalletSubject.value?.mintAddress,
+            payingWallet: payingWalletSubject.value,
             inputAmount: inputAmount,
             slippage: slippage,
             lamportsPerSignature: lamportsPerSignature,
