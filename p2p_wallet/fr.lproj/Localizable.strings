@@ -681,7 +681,7 @@
 "Swap %@ → %@" = "Échanger %@ → %@";
 "Custom" = "Personnalisé";
 "Custom slippage" = "Glissement personnalisé";
-"A slippage is a difference between the expected price and the actual price at which a trade is executed" = "Un Glissement est une différence entre le prix attendu et le prix réel auquel une transaction est exécutée";
+"A slippage is the difference between the expected price and the actual price at which a trade is executed" = "Un Glissement est une différence entre le prix attendu et le prix réel auquel une transaction est exécutée";
 "Slippage can occur at any time, but it is most prevalent during periods of %@" = "Le glissement peut se produire à tout moment, mais il est plus fréquent pendant les périodes de %@";
 "Transactions that exceed 20% slippage tolerance may be %@" = "Les transactions qui dépassent 20%% de tolérance de glissement peuvent être %@";
 "Slippage tolerance %@" = "Tolérance de glissement %@";
