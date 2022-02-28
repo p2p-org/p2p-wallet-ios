@@ -177,11 +177,11 @@ extension Settings {
                             .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
                         
                         // Appearance
-                        CellView(
-                            icon: .appearanceIcon,
-                            title: UILabel(text: L10n.appearance.onlyUppercaseFirst()),
-                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
-                        ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
+//                        CellView(
+//                            icon: .appearanceIcon,
+//                            title: UILabel(text: L10n.appearance.onlyUppercaseFirst()),
+//                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
+//                        ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
                         
                         // Hide zero balance
                         
