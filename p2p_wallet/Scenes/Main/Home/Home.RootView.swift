@@ -83,7 +83,7 @@ extension Home {
                                 viewModel: viewModel.walletsRepository,
                                 header: .init(viewClass: WalletsSection.Header.self),
                                 cellType: VisibleWalletCell.self,
-                                onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) }
+                                onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(fromAddress: wallet.pubkey)) }
                             ),
                             BannerSection(index: 1, viewModel: viewModel.bannerViewModel) { [unowned self] action in
                                 if let action = action as? Banners.Actions.OpenScreen {
@@ -101,7 +101,7 @@ extension Home {
                                 index: 2,
                                 viewModel: viewModel.walletsRepository,
                                 header: .init(viewClass: HiddenWalletsSectionHeaderView.self),
-                                onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(address: wallet.pubkey)) },
+                                onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(fromAddress: wallet.pubkey)) },
                                 showHideHiddenWalletsAction: CocoaAction { [weak self] in
                                     self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                                     return .just(())
