@@ -20,7 +20,7 @@ extension SendToken {
             payingWalletDriver: Driver<Wallet?>,
             feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>
         ) {
-            super.init(contentInset: .init(all: 18))
+            super.init(cornerRadius: 12, contentInset: .init(all: 18))
             stackView.alignment = .center
             stackView.axis = .horizontal
             stackView.spacing = 12
