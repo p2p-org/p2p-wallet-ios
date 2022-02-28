@@ -11,10 +11,6 @@ import BEPureLayout
 
 class WLFloatingPanelView: BERoundedCornerShadowView {
     // MARK: - Initializer
-    init(contentInset: UIEdgeInsets = .zero) {
-        super.init(cornerRadius: 0, contentInset: contentInset)
-    }
-    
     override func commonInit() {
         super.commonInit()
         stackView.axis = .vertical
@@ -23,6 +19,6 @@ class WLFloatingPanelView: BERoundedCornerShadowView {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        border(width: 1, color: .f2f2f7.onDarkMode(.white.withAlphaComponent(0.1)))
+        mainView.border(width: 1, color: .f2f2f7.onDarkMode(.white.withAlphaComponent(0.1)))
     }
 }
