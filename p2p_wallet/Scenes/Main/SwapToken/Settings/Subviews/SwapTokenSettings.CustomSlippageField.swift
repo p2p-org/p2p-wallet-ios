@@ -25,7 +25,7 @@ extension SwapTokenSettings {
         }
 
         init() {
-            super.init(contentInset: .init(all: 18))
+            super.init(cornerRadius: 12, contentInset: .init(all: 18))
 
             textField.countAfterDecimalPoint = 2
             textField.maxNumber = 50

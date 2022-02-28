@@ -95,8 +95,7 @@ extension UIView {
         distribution: UIStackView.Distribution = .fill,
         @BEStackViewBuilder builder: () -> [BEStackViewElement]
     ) -> UIView {
-        let panel = WLFloatingPanelView(contentInset: contentInset)
-        panel.layer.cornerRadius = cornerRadius
+        let panel = WLFloatingPanelView(cornerRadius: cornerRadius, contentInset: contentInset)
         panel.stackView.axis = axis
         panel.stackView.spacing = spacing
         panel.stackView.alignment = alignment
