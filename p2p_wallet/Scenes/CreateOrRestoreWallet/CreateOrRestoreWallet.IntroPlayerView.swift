@@ -36,6 +36,7 @@ extension CreateOrRestoreWallet {
         private var movingToNextStep = false
         var completion: (() -> Void)?
         private var isAnimating = false
+        private var activeResigned = false
         
         init(userInterfaceStyle: UIUserInterfaceStyle) {
             theme = userInterfaceStyle == .dark ? "b": "w"
@@ -90,6 +91,9 @@ extension CreateOrRestoreWallet {
                     return
                 }
             }
+            
+            NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.willResignActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
         }
         
         func resume() {
@@ -109,6 +113,15 @@ extension CreateOrRestoreWallet {
             isAnimating = true
             player.rate = 2
             movingToNextStep = true
+        }
+        
+        @objc func appWillResignActive() {
+            activeResigned = true
+        }
+        
+        @objc func appDidBecomeActive() {
+            guard activeResigned else {return}
+            player.play()
         }
     }
 }
