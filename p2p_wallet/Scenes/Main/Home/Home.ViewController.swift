@@ -130,8 +130,8 @@ extension Home {
                     vc.modalPresentationStyle = .custom
                     self.present(vc, animated: true, completion: nil)
                 }
-            case .sendToken(let address):
-                let vm = SendToken.ViewModel(walletPubkey: nil, destinationAddress: address, relayMethod: .default)
+            case .sendToken(let fromAddress, let toAddress):
+                let vm = SendToken.ViewModel(walletPubkey: fromAddress, destinationAddress: toAddress, relayMethod: .default)
                 let vc = SendToken.ViewController(viewModel: vm)
                 show(vc, sender: nil)
                 
@@ -204,7 +204,7 @@ extension Home {
         private func qrCodeScannerHandler(code: String) -> Bool {
             if NSRegularExpression.publicKey.matches(code) {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                    self?.viewModel.navigate(to: .sendToken(address: code))
+                    self?.viewModel.navigate(to: .sendToken(toAddress: code))
                 }
                 return true
             }
