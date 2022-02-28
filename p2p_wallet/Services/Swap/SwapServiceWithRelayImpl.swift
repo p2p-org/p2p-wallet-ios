@@ -71,7 +71,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token,
         bestPoolsPair: Swap.PoolsPair?,
-        payingTokenMint: String?,
+        payingWallet: Wallet?,
         inputAmount: Double?,
         slippage: Double,
         lamportsPerSignature: UInt64,
@@ -80,7 +80,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let bestPoolsPair = bestPoolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
         // Network fees
         let networkFeesRequest: Single<[PayingFee]>
-        if isUsingNativeSwap(sourceAddress: sourceAddress, payingTokenMint: payingTokenMint) {
+        if isUsingNativeSwap(sourceAddress: sourceAddress, payingTokenMint: payingWallet?.mintAddress) {
             // Network fee for swapping natively
             do {
                 networkFeesRequest = try getNetworkFeesForSwappingNatively(
@@ -98,13 +98,16 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 networkFeesRequest = .error(error)
             }
             
-        } else {
+        } else if let payingWallet = payingWallet {
             // Network fee for swapping via relay program
             networkFeesRequest = getNetworkFeesForSwappingViaRelayProgram(
                 sourceMint: sourceMint,
                 destinationAddress: destinationAddress,
-                destinationToken: destinationToken
+                destinationToken: destinationToken,
+                payingWallet: payingWallet
             )
+        } else {
+            networkFeesRequest = .just([])
         }
         
         return networkFeesRequest
@@ -311,7 +314,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     private func getNetworkFeesForSwappingViaRelayProgram(
         sourceMint: String,
         destinationAddress: String?,
-        destinationToken: SolanaSDK.Token
+        destinationToken: SolanaSDK.Token,
+        payingWallet: Wallet
     ) -> Single<[PayingFee]> {
         relayService!.calculateSwappingNetworkFees(
             sourceTokenMint: sourceMint,
@@ -321,6 +325,11 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
                 return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee)
+            }
+            .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
+                guard let self = self else { throw SolanaSDK.Error.unknown }
+                return self.relayService!.calculateFeeInPayingToken(feeInSOL: feeAmount, payingFeeTokenMint: payingWallet.mintAddress)
+                    .map {$0 ?? .zero}
             }
             .map { [weak self] neededTopUpAmount in
                 guard let self = self else {throw FeeRelayer.Error.unknown}
@@ -364,7 +373,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                         .init(
                             type: .accountCreationFee(token: destinationToken.symbol),
                             lamports: neededTopUpAmount.accountBalances,
-                            token: .nativeSolana
+                            token: payingWallet.token
                         )
                     )
                 }
@@ -373,7 +382,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                     .init(
                         type: .transactionFee,
                         lamports: neededTopUpAmount.transaction,
-                        token: .nativeSolana,
+                        token: payingWallet.token,
                         toString: nil,
                         isFree: isFree,
                         info: info

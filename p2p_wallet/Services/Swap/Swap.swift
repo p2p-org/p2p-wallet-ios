@@ -125,7 +125,7 @@ protocol SwapServiceType {
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token,
         bestPoolsPair: Swap.PoolsPair?,
-        payingTokenMint: String?,
+        payingWallet: Wallet?,
         inputAmount: Double?,
         slippage: Double,
         lamportsPerSignature: UInt64,
