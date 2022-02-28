@@ -70,15 +70,23 @@ extension SendToken.ConfirmViewController {
         }
         
         func setUp(recipient: SendToken.Recipient?) {
-            nameLabel.isHidden = false
-            if let recipientName = recipient?.name {
-                nameLabel.attributedText = NSMutableAttributedString()
-                    .text(L10n.recipient.uppercaseFirst + ": ", size: 13, color: .textSecondary)
-                    .text(recipientName, size: 13, weight: .medium)
-            } else {
+            guard let recipient = recipient else {
                 nameLabel.isHidden = true
+                addressLabel.text = L10n.chooseTheRecipient
+                return
             }
-            addressLabel.text = recipient?.address ?? L10n.chooseTheRecipient
+            nameLabel.isHidden = false
+            
+            let attributedString = NSMutableAttributedString()
+                .text(L10n.recipient.uppercaseFirst, size: 13, color: .textSecondary)
+            
+            if let recipientName = recipient.name {
+                attributedString
+                    .text(": ", size: 13, color: .textSecondary)
+                    .text(recipientName, size: 13, weight: .medium)
+            }
+            nameLabel.attributedText = attributedString
+            addressLabel.text = recipient.address
         }
     }
     
