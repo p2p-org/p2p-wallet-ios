@@ -70,6 +70,7 @@ extension Resolver: ResolverRegistering {
             .implements(OrcaSwapAccountProvider.self)
             .implements(OrcaSwapSignatureConfirmationHandler.self)
             .implements(ProcessTransactionAPIClient.self)
+            .implements(FeeRelayerRelaySolanaClient.self)
             .scope(.session)
         
         // MARK: - Send service
@@ -215,12 +216,12 @@ extension Resolver: ResolverRegistering {
             BannerServiceImpl(handlers: [
                 ReserveNameBannerHandler(nameStorage: resolve()),
                 BackupBannerHandler(backupStorage: resolve()),
-                FeedbackBannerHandler(),
+                FeedbackBannerHandler()
                 // NotificationBannerHandler()
             ])
         }
             .implements(Banners.Service.self)
-            .scope(.application)
+            .scope(.shared)
     }
 }
 
