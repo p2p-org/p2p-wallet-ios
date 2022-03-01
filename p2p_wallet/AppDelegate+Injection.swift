@@ -220,7 +220,7 @@ extension Resolver: ResolverRegistering {
             ])
         }
             .implements(Banners.Service.self)
-            .scope(.application)
+            .scope(.shared)
     }
 }
 
