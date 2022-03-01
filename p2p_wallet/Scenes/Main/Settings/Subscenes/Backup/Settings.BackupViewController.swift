@@ -16,7 +16,13 @@ extension Settings {
         lazy var descriptionLabel = UILabel(textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
         lazy var backupUsingIcloudButton = WLButton.stepButton(enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b), textColor: .white, label: " " + L10n.backupUsingICloud)
         lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8.onDarkMode(.h2b2b2b), textColor: .textBlack, label: L10n.backupManually)
-        
+        private let dismissAfterBackup: Bool
+    
+        init(viewModel: SettingsViewModelType, dismissAfterBackup: Bool = false) {
+            self.dismissAfterBackup = dismissAfterBackup
+            super.init(viewModel: viewModel)
+        }
+    
         // MARK: - Methods
         override func setUp() {
             super.setUp()
@@ -71,6 +77,11 @@ extension Settings {
         
         // MARK: - Helpers
         private func handleDidBackup(_ didBackup: Bool) {
+            if didBackup && dismissAfterBackup {
+                back()
+                return
+            }
+            
             var shieldColor = UIColor.alertOrange
             var title = L10n.yourWalletNeedsBackup
             var subtitle = L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases
