@@ -147,13 +147,14 @@ extension KeychainStorage: ICloudStorageType {
             accountsToSave = currentAccounts
         }
         
+        defer {
+            onValueChangeSubject.on(.next(("didBackupUsingIcloud", didBackupUsingIcloud)))
+        }
+        
         // save
         if let data = try? JSONEncoder().encode(accountsToSave) {
             return keychain.set(data, forKey: iCloudAccountsKey, withAccess: .accessibleAfterFirstUnlock)
         }
-        
-        onValueChangeSubject.on(.next(("didBackupUsingIcloud", didBackupUsingIcloud)))
-        
         return false
     }
     

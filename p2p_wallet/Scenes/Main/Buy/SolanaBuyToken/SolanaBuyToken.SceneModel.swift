@@ -47,8 +47,10 @@ extension SolanaBuyToken {
                     }
                     return self.exchangeService
                         .convert(input: input, to: input.currency is Buy.FiatCurrency ? Buy.CryptoCurrency.sol : Buy.FiatCurrency.usd)
+                        .do { output in
+                            self.errorRelay.accept(nil)
+                        }
                         .catch { error in
-                            print(error)
                             if let error = error as? Buy.Exception {
                                 switch error {
                                 case .invalidInput:
@@ -61,9 +63,6 @@ extension SolanaBuyToken {
                                 self.errorRelay.accept(error.localizedDescription)
                             }
                             return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
-                        }
-                        .do { output in
-                            self.errorRelay.accept(nil)
                         }
                 }
                 .bind(to: outputRelay)
@@ -87,7 +86,8 @@ extension SolanaBuyToken {
         }
         
         func swap() {
-            let (input, _) = inputRelay.value.swap(with: outputRelay.value)
+            let (input, output) = inputRelay.value.swap(with: outputRelay.value)
+            outputRelay.accept(output)
             inputRelay.accept(input)
         }
         

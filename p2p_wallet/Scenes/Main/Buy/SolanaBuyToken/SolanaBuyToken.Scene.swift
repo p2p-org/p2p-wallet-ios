@@ -30,7 +30,7 @@ extension SolanaBuyToken {
                 BEZStackPosition(mode: .fill) {
                     content()
                 }
-                BEZStackPosition(mode: .pinEdges(top: false, left: true, bottom: true, right: true, avoidKeyboard: true)) {
+                BEZStackPosition(mode: .pinEdges([.left, .bottom, .right], avoidKeyboard: true)) {
                     // Bottom Button
                     WLStepButton.main(text: L10n.continue)
                         .setup { view in
@@ -280,7 +280,8 @@ extension SolanaBuyTokenSceneModel {
                 if error != nil {
                     return NextStatus.init(text: error ?? L10n.error, isEnable: false)
                 }
-                return NextStatus.init(text: L10n.continue, isEnable: true)
+                
+                return NextStatus.init(text: L10n.continue, isEnable: output.amount > 0.0)
             }
     }
 }

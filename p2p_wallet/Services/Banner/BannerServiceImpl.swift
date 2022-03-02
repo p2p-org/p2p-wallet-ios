@@ -8,7 +8,7 @@ import RxSwift
 
 class BannerServiceImpl: Banners.Service {
     private var _banners: Set<Banners.Banner> = []
-    private var _handler: [WeakHandler] = []
+    private var _handler: [Banners.Handler] = []
 
     init(handlers: [Banners.Handler]) {
         for handler in handlers {
@@ -25,13 +25,11 @@ class BannerServiceImpl: Banners.Service {
 
     func register(handler: Banners.Handler) {
         handler.onRegister(with: self)
-        _handler.append(WeakHandler(handler: handler))
-        _handler = _handler.filter { $0.handler != nil }
+        _handler.append(handler)
     }
 
     func unregister(handler: Banners.Handler) {
-        _handler = _handler.filter { $0.handler !== handler }
-        _handler = _handler.filter { $0.handler != nil }
+        _handler = _handler.filter { $0 !== handler }
     }
 
     func update(banner: Banners.Banner) {
@@ -43,11 +41,5 @@ class BannerServiceImpl: Banners.Service {
     func remove(bannerId: String) {
         _banners = _banners.filter { banner in banner.id != bannerId }
         bannersSubject.accept(_banners)
-    }
-}
-
-extension BannerServiceImpl {
-    private struct WeakHandler {
-        weak var handler: Banners.Handler?
     }
 }

@@ -11,6 +11,7 @@ import BEPureLayout
 import RxCocoa
 import RxSwift
 import UIKit
+import Resolver
 
 extension Home {
     class RootView: BECompositionView {
@@ -124,7 +125,7 @@ extension Home {
                 }
 
                 // Action bar
-                BEZStackPosition(mode: .pinEdges(top: true, left: true, bottom: false, right: true)) {
+                BEZStackPosition(mode: .pinEdges([.top, .left, .right])) {
                     FloatingHeaderView(viewModel: viewModel)
                         .setupWithType(FloatingHeaderView.self) { view in headerViewScrollDelegate.headerView = view }
                         .padding(.init(x: 18, y: 0))
@@ -149,7 +150,6 @@ extension HomeViewModelType {
                 .map { $0?.reduce(0) { (partialResult, wallet) in partialResult + wallet.amount } ?? 0 }
         )
         .map { (state, amount) in
-            print(state, amount)
             if state != .loaded { return true }
             return amount > 0
         }
