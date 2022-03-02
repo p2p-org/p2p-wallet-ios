@@ -11,6 +11,8 @@ import RxCocoa
 
 protocol PTViewModelType {
     var navigationDriver: Driver<PT.NavigatableScene?> {get}
+    var isSwapping: Bool {get}
+    
     func navigate(to scene: PT.NavigatableScene)
 }
 
@@ -36,6 +38,10 @@ extension PT {
 extension PT.ViewModel: PTViewModelType {
     var navigationDriver: Driver<PT.NavigatableScene?> {
         navigationSubject.asDriver()
+    }
+    
+    var isSwapping: Bool {
+        transaction.isSwap
     }
     
     // MARK: - Actions

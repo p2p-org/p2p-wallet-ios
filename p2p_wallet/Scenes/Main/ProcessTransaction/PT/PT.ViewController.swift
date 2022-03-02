@@ -27,7 +27,7 @@ extension PT {
                 BEVStack(spacing: 4) {
                     // The transaction is being processed
                     UILabel(
-                        text: L10n.theTransactionIsBeingProcessed,
+                        text: viewModel.isSwapping ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed,
                         textSize: 20,
                         weight: .bold,
                         numberOfLines: 0,

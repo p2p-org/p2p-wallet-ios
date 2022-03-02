@@ -137,6 +137,7 @@ extension SendToken {
             navigationSubject.accept(
                 .processTransaction(
                     PT.SendTransaction(
+                        sendService: sendService,
                         network: network,
                         sender: wallet,
                         receiver: receiver,
