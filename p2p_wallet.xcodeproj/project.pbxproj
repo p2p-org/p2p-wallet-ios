@@ -33,7 +33,6 @@
 		3B7DE7EB2775B01D00A92429 /* PT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7E72775B01D00A92429 /* PT.swift */; };
 		3B7DE7EC2775B01D00A92429 /* PT.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7E82775B01D00A92429 /* PT.ViewController.swift */; };
 		3B7DE7ED2775B01D00A92429 /* PT.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7E92775B01D00A92429 /* PT.ViewModel.swift */; };
-		3B7DE7EE2775B01D00A92429 /* PT.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7EA2775B01D00A92429 /* PT.RootView.swift */; };
 		3B7DE7F02775B07500A92429 /* PT.DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7EF2775B07500A92429 /* PT.DetailViewController.swift */; };
 		3B7DE7F22775B13E00A92429 /* PT.Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7F12775B13E00A92429 /* PT.Models.swift */; };
 		3B856FC827B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B856FC727B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift */; };
@@ -582,7 +581,6 @@
 		3B7DE7E72775B01D00A92429 /* PT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.swift; sourceTree = "<group>"; };
 		3B7DE7E82775B01D00A92429 /* PT.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.ViewController.swift; sourceTree = "<group>"; };
 		3B7DE7E92775B01D00A92429 /* PT.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.ViewModel.swift; sourceTree = "<group>"; };
-		3B7DE7EA2775B01D00A92429 /* PT.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.RootView.swift; sourceTree = "<group>"; };
 		3B7DE7EF2775B07500A92429 /* PT.DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.DetailViewController.swift; sourceTree = "<group>"; };
 		3B7DE7F12775B13E00A92429 /* PT.Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.Models.swift; sourceTree = "<group>"; };
 		3B856FC727B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SendToken.ConfirmViewController+Subviews.swift"; sourceTree = "<group>"; };
@@ -1246,7 +1244,6 @@
 				3B7DE7F12775B13E00A92429 /* PT.Models.swift */,
 				3B7DE7E92775B01D00A92429 /* PT.ViewModel.swift */,
 				3B7DE7E82775B01D00A92429 /* PT.ViewController.swift */,
-				3B7DE7EA2775B01D00A92429 /* PT.RootView.swift */,
 				3B7DE7EF2775B07500A92429 /* PT.DetailViewController.swift */,
 			);
 			path = PT;
@@ -3177,7 +3174,6 @@
 				BCE04C68268D901400CE131A /* CustomPresentableViewController.swift in Sources */,
 				3B1681F7278B3E0700838F1B /* AppEventHandler.swift in Sources */,
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
-				3B7DE7EE2775B01D00A92429 /* PT.RootView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */,
 				41EB2E6227B23CF7007D5F7F /* IntercomMessengerLauncher.swift in Sources */,

@@ -7,22 +7,95 @@
 
 import Foundation
 import UIKit
+import BEPureLayout
 
 extension PT {
-    class ViewController: BaseVC {
+    class ViewController: WLModalViewController {
         // MARK: - Dependencies
-        @Injected private var viewModel: PTViewModelType
+        private let viewModel: PTViewModelType
         
         // MARK: - Properties
         
-        // MARK: - Methods
-        override func loadView() {
-            view = RootView()
+        init(viewModel: PTViewModelType) {
+            self.viewModel = viewModel
+            super.init()
         }
         
-        override func setUp() {
-            super.setUp()
-            
+        // MARK: - Methods
+        override func build() -> UIView {
+            BEContainer {
+                BEVStack(spacing: 4) {
+                    // The transaction is being processed
+                    UILabel(
+                        text: L10n.theTransactionIsBeingProcessed,
+                        textSize: 20,
+                        weight: .bold,
+                        numberOfLines: 0,
+                        textAlignment: .center
+                    )
+                        .padding(.init(x: 18, y: 0))
+                    
+                    // Detail
+                    UILabel(
+                        text: "0.00227631 renBTC → DkmT...JnBw",
+                        textSize: 15,
+                        textColor: .textSecondary,
+                        numberOfLines: 0,
+                        textAlignment: .center
+                    )
+                        .padding(.init(all: 18, excludingEdge: .top))
+                    
+                    // Loader
+                    BEZStack {
+                        // Process indicator
+                        BEZStackPosition {
+                            UIView(height: 2, backgroundColor: .h5887ff)
+                                .centered(.vertical)
+                        }
+                        
+                        // Icon
+                        BEZStackPosition {
+                            UIImageView(width: 44, height: 44, image: .squircleTransactionProcessing)
+                                .centered(.horizontal)
+                        }
+                    }
+                        .padding(.init(only: .bottom, inset: 18))
+                    
+                    // Transaction ID
+                    BEHStack(spacing: 4, alignment: .top, distribution: .fill) {
+                        UILabel(text: L10n.transactionID, textSize: 15, textColor: .textSecondary)
+                        
+                        BEVStack(spacing: 4, alignment: .fill, distribution: .fill) {
+                            BEHStack(spacing: 4, alignment: .center, distribution: .fill) {
+                                UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
+                                UIImageView(width: 16, height: 16, image: .transactionShowInExplorer, tintColor: .textSecondary)
+                            }
+                            UILabel(text: L10n.tapToViewInExplorer, textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .right)
+                        }
+                            .onTap { [weak self] in
+                                // TODO: - Tap to view in explorer
+                                
+                            }
+                    }
+                        .padding(.init(top: 0, left: 18, bottom: 36, right: 18))
+                    
+                    // Buttons
+                    BEVStack(spacing: 10) {
+                        WLStepButton.main(image: .info, text: L10n.showTransactionDetails)
+                            .onTap { [weak self] in
+                                // TODO: - Show transaction details
+                                
+                            }
+                        WLStepButton.sub(text: L10n.makeAnotherTransaction)
+                            .onTap { [weak self] in
+                                // TODO: - Make another transaction
+                                
+                            }
+                    }
+                        .padding(.init(x: 18, y: 0))
+                }
+                    .padding(.init(x: 0, y: 18))
+            }
         }
         
         override func bind() {
