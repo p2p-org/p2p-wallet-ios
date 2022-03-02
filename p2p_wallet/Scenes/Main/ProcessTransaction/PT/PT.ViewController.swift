@@ -59,12 +59,15 @@ extension PT {
                         BEZStackPosition {
                             UIProgressView(height: 2)
                                 .setup {view in
-                                    view.progressTintColor = .h5887ff
-                                    view.progress = 0.4
-                                    
                                     viewModel.transactionInfoDriver
                                         .map {$0.status.progress}
                                         .drive(view.rx.progress)
+                                        .disposed(by: disposeBag)
+                                    
+                                    viewModel.transactionInfoDriver
+                                        .map {$0.status.error == nil}
+                                        .map { $0 ? UIColor.h5887ff: UIColor.alert }
+                                        .drive(view.rx.progressTintColor)
                                         .disposed(by: disposeBag)
                                 }
                                 .centered(.vertical)
