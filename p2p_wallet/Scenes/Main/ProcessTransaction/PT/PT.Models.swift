@@ -60,6 +60,11 @@ extension PT {
         let isSimulation: Bool
         
         func createRequest() -> Single<String> {
+//            .just("")
+//                .delay(.seconds(2), scheduler: MainScheduler.instance)
+//                .flatMap { _ in
+//                    return .error(PT.Error.notEnoughNumberOfConfirmations)
+//                }
             sendService.send(
                 from: sender,
                 receiver: receiver.address,
