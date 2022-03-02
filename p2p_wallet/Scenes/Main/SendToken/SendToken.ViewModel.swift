@@ -127,6 +127,11 @@ extension SendToken {
             
             let network = networkSubject.value
             
+            var payingWallet = payingWalletSubject.value
+            if feeInfoSubject.value?.feeAmountInSOL.total == 0 {
+                payingWallet = nil
+            }
+            
             analyticsManager.log(
                 event: .sendSendClick(
                     tokenTicker: wallet.token.symbol,
@@ -142,7 +147,7 @@ extension SendToken {
                         sender: wallet,
                         receiver: receiver,
                         amount: amount.toLamport(decimals: wallet.token.decimals),
-                        payingFeeWallet: payingWalletSubject.value,
+                        payingFeeWallet: payingWallet,
                         isSimulation: false
                     )
                 )
