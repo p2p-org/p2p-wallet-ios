@@ -19,6 +19,7 @@ protocol PTViewModelType {
     func getTransactionDescription(withAmount: Bool) -> String
     
     func sendAndObserveTransaction()
+    func makeAnotherTransactionOrRetry()
     func navigate(to scene: PT.NavigatableScene)
 }
 
@@ -89,6 +90,14 @@ extension PT.ViewModel: PTViewModelType {
                 self.transactionInfoSubject.accept(self.updateTransactionInfo(status: .error(error)))
             })
             .disposed(by: disposeBag)
+    }
+    
+    func makeAnotherTransactionOrRetry() {
+        if transactionInfoSubject.value.status.error == nil {
+            // TODO: - Make another transaction
+        } else {
+            sendAndObserveTransaction()
+        }
     }
     
     func navigate(to scene: PT.NavigatableScene) {

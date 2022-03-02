@@ -151,9 +151,15 @@ extension PT {
                                 self?.viewModel.navigate(to: .detail)
                             }
                         WLStepButton.sub(text: L10n.makeAnotherTransaction)
+                            .setup { button in
+                                viewModel.transactionInfoDriver
+                                    .map {$0.status.error == nil}
+                                    .map {$0 ? L10n.makeAnotherTransaction: L10n.retry}
+                                    .drive(button.rx.text)
+                                    .disposed(by: disposeBag)
+                            }
                             .onTap { [weak self] in
-                                // TODO: - Make another transaction
-                                
+                                self?.viewModel.makeAnotherTransactionOrRetry()
                             }
                     }
                         .padding(.init(x: 18, y: 0))
