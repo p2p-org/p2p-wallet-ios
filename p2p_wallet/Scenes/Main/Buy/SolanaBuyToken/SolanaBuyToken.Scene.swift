@@ -30,7 +30,7 @@ extension SolanaBuyToken {
                 BEZStackPosition(mode: .fill) {
                     content()
                 }
-                BEZStackPosition(mode: .pinEdges(top: false, left: true, bottom: true, right: true, avoidKeyboard: true)) {
+                BEZStackPosition(mode: .pinEdges([.left, .bottom, .right], avoidKeyboard: true)) {
                     // Bottom Button
                     WLStepButton.main(text: L10n.continue)
                         .setup { view in
