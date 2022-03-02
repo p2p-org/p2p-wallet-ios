@@ -11,6 +11,13 @@ import BEPureLayout
 
 extension PT {
     final class DetailViewController: BEScene {
+        private let viewModel: PTViewModelType
+        
+        init(viewModel: PTViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
         override func build() -> UIView {
             BEVStack {
                 WLNavigationBar()

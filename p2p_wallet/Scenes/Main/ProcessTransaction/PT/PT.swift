@@ -10,6 +10,6 @@ import Foundation
 enum PT {
     enum NavigatableScene {
         case detail
-        case explorer(transactionID: String)
+        case explorer
     }
 }

@@ -55,12 +55,30 @@ extension PT {
 extension PT {
     struct TransactionInfo {
         enum TransactionStatus {
+            static let maxConfirmed = 20
+            
             case sending
             case confirmed(_ numberOfConfirmed: Int)
             case finalized
+            
+            var progress: Float {
+                switch self {
+                case .sending:
+                    return 0
+                case .confirmed(var numberOfConfirmed):
+                    // treat all number of confirmed as unfinalized
+                    if numberOfConfirmed >= 20 {
+                        numberOfConfirmed = 19
+                    }
+                    // return
+                    return Float(numberOfConfirmed) / Float(Self.maxConfirmed)
+                case .finalized:
+                    return 1
+                }
+            }
         }
         
-        let transactionId: String?
-        let status: TransactionStatus
+        var transactionId: String?
+        var status: TransactionStatus
     }
 }

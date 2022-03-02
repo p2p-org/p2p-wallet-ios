@@ -56,6 +56,11 @@ extension PT {
                                 .setup {view in
                                     view.progressTintColor = .h5887ff
                                     view.progress = 0.4
+                                    
+                                    viewModel.transactionInfoDriver
+                                        .map {$0.status.progress}
+                                        .drive(view.rx.progress)
+                                        .disposed(by: disposeBag)
                                 }
                                 .centered(.vertical)
                         }
@@ -63,6 +68,20 @@ extension PT {
                         // Icon
                         BEZStackPosition {
                             UIImageView(width: 44, height: 44, image: .squircleTransactionProcessing)
+                                .setup { imageView in
+                                    viewModel.transactionInfoDriver
+                                        .map {$0.status}
+                                        .map {status -> UIImage in
+                                            switch status {
+                                            case .sending, .confirmed:
+                                                return .squircleTransactionProcessing
+                                            case .finalized:
+                                                return .squircleTransactionCompleted
+                                            }
+                                        }
+                                        .drive(imageView.rx.image)
+                                        .disposed(by: disposeBag)
+                                }
                                 .centered(.horizontal)
                         }
                     }
@@ -75,23 +94,35 @@ extension PT {
                         BEVStack(spacing: 4, alignment: .fill, distribution: .fill) {
                             BEHStack(spacing: 4, alignment: .center, distribution: .fill) {
                                 UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
+                                    .setup { label in
+                                        viewModel.transactionInfoDriver
+                                            .map {$0.transactionId}
+                                            .drive(label.rx.text)
+                                            .disposed(by: disposeBag)
+                                    }
                                 UIImageView(width: 16, height: 16, image: .transactionShowInExplorer, tintColor: .textSecondary)
                             }
                             UILabel(text: L10n.tapToViewInExplorer, textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .right)
                         }
                             .onTap { [weak self] in
-                                // TODO: - Tap to view in explorer
-                                
+                                self?.navigate(to: .explorer)
                             }
                     }
                         .padding(.init(top: 0, left: 18, bottom: 36, right: 18))
                         .setup { view in
-                            view.isHidden = true
+                            viewModel.transactionInfoDriver
+                                .map {$0.transactionId == nil}
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
                             
-                            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) { [weak view, weak self] in
-                                view?.isHidden = false
-                                self?.updatePresentationLayout()
-                            }
+                            viewModel.transactionInfoDriver
+                                .map {$0.transactionId == nil}
+                                .drive(onNext: { [weak self] _ in
+                                    UIView.animate(withDuration: 0.3) {
+                                        self?.updatePresentationLayout()
+                                    }
+                                })
+                                .disposed(by: disposeBag)
                         }
                     
                     // Buttons
@@ -124,10 +155,10 @@ extension PT {
             guard let scene = scene else {return}
             switch scene {
             case .detail:
-                let vc = DetailViewController()
+                let vc = DetailViewController(viewModel: viewModel)
                 present(vc, animated: true, completion: nil)
-            case .explorer(transactionID: let transactionID):
-                break
+            case .explorer:
+                showWebsite(url: "https://explorer.solana.com/tx/" + (viewModel.transactionID ?? ""))
             }
         }
     }
