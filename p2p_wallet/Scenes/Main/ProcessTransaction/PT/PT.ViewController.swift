@@ -32,12 +32,21 @@ extension PT {
                 BEVStack(spacing: 4) {
                     // The transaction is being processed
                     UILabel(
-                        text: viewModel.isSwapping ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed,
+                        text: nil,
                         textSize: 20,
-                        weight: .bold,
+                        weight: .semibold,
                         numberOfLines: 0,
                         textAlignment: .center
                     )
+                        .setup { label in
+                            let originalText = viewModel.isSwapping ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed
+                            
+                            viewModel.transactionInfoDriver
+                                .map {$0.status.error == nil}
+                                .map {$0 ? originalText: L10n.theTransactionHasBeenRejected}
+                                .drive(label.rx.text)
+                                .disposed(by: disposeBag)
+                        }
                         .padding(.init(x: 18, y: 0))
                     
                     // Detail
@@ -106,7 +115,7 @@ extension PT {
                                 UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
                                     .setup { label in
                                         viewModel.transactionInfoDriver
-                                            .map {$0.transactionId}
+                                            .map {$0.transactionId?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)}
                                             .drive(label.rx.text)
                                             .disposed(by: disposeBag)
                                     }
