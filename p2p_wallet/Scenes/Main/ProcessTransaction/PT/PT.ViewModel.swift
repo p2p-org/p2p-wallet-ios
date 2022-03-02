@@ -18,9 +18,15 @@ extension PT {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var authenticationHandler: AuthenticationHandler
-        var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType!
+        @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
+        private let transaction: ProcessTransactionTransactionType
+        
+        // MARK: - Properties
+        init(transaction: ProcessTransactionTransactionType) {
+            self.transaction = transaction
+        }
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)

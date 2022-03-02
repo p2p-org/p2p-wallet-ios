@@ -94,8 +94,8 @@ extension SendToken {
             case .confirmation:
                 let vc = ConfirmViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
-            case .processTransaction(let request, let transactionType):
-                let vm = PT.ViewModel()
+            case .processTransaction(let transaction):
+                let vm = PT.ViewModel(transaction: transaction)
                 let vc = PT.ViewController(viewModel: vm)
 //                vc.delegate = self
                 present(vc, interactiveDismissalType: .none, completion: nil)
