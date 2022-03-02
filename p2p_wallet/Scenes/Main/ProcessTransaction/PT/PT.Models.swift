@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 
+// MARK: - APIClient
 protocol ProcessTransactionAPIClient {
     func getReimbursedAmountForClosingToken() -> Single<Double>
 }
@@ -17,6 +18,7 @@ extension SolanaSDK: ProcessTransactionAPIClient {
     }
 }
 
+// MARK: - Transaction type
 protocol ProcessTransactionTransactionType {}
 
 extension ProcessTransactionTransactionType {
@@ -46,5 +48,19 @@ extension PT {
         let amount: SolanaSDK.Lamports
         let payingFeeWallet: Wallet?
         let isSimulation: Bool
+    }
+}
+
+// MARK: - Transaction status
+extension PT {
+    struct TransactionInfo {
+        enum TransactionStatus {
+            case sending
+            case confirmed(_ numberOfConfirmed: Int)
+            case finalized
+        }
+        
+        let transactionId: String?
+        let status: TransactionStatus
     }
 }
