@@ -11,7 +11,10 @@ import RxCocoa
 
 protocol PTViewModelType {
     var navigationDriver: Driver<PT.NavigatableScene?> {get}
+    var transactionInfoDriver: Driver<PT.TransactionInfo> {get}
     var isSwapping: Bool {get}
+    var transactionID: String? {get}
+    
     func getTransactionDescription(withAmount: Bool) -> String
     
     func navigate(to scene: PT.NavigatableScene)
@@ -26,7 +29,10 @@ extension PT {
         // MARK: - Properties
         private let processingTransaction: ProcessingTransactionType
         
-        // MARK: - Properties
+        // MARK: - Subjects
+        private let transactionInfoSubject = BehaviorRelay<TransactionInfo>(value: .init(transactionId: nil, status: .sending))
+        
+        // MARK: - Initializer
         init(processingTransaction: ProcessingTransactionType) {
             self.processingTransaction = processingTransaction
         }
@@ -41,8 +47,16 @@ extension PT.ViewModel: PTViewModelType {
         navigationSubject.asDriver()
     }
     
+    var transactionInfoDriver: Driver<PT.TransactionInfo> {
+        transactionInfoSubject.asDriver()
+    }
+    
     var isSwapping: Bool {
         processingTransaction.isSwap
+    }
+    
+    var transactionID: String? {
+        transactionInfoSubject.value.transactionId
     }
     
     func getTransactionDescription(withAmount: Bool) -> String {
