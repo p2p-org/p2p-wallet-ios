@@ -15,6 +15,7 @@ protocol PTViewModelType {
     var transactionInfoDriver: Driver<PT.TransactionInfo> {get}
     var isSwapping: Bool {get}
     var transactionID: String? {get}
+    var processingTransaction: ProcessingTransactionType {get}
     
     func getTransactionDescription(withAmount: Bool) -> String
     
@@ -31,7 +32,7 @@ extension PT {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        private let processingTransaction: ProcessingTransactionType
+        let processingTransaction: ProcessingTransactionType
         
         // MARK: - Subjects
         private let transactionInfoSubject = BehaviorRelay<TransactionInfo>(value: .init(transactionId: nil, status: .sending))

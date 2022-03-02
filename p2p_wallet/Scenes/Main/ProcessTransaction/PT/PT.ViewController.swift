@@ -42,8 +42,21 @@ extension PT {
                             let originalText = viewModel.isSwapping ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed
                             
                             viewModel.transactionInfoDriver
-                                .map {$0.status.error == nil}
-                                .map {$0 ? originalText: L10n.theTransactionHasBeenRejected}
+                                .map { [weak self] info -> String in
+                                    switch info.status {
+                                    case .sending, .confirmed:
+                                        return originalText
+                                    case .error:
+                                        return L10n.theTransactionHasBeenRejected
+                                    case .finalized:
+                                        switch self?.viewModel.processingTransaction {
+                                        case let transaction as SendTransaction:
+                                            return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
+                                        default:
+                                            return ""
+                                        }
+                                    }
+                                }
                                 .drive(label.rx.text)
                                 .disposed(by: disposeBag)
                         }
