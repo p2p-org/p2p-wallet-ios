@@ -280,7 +280,8 @@ extension SolanaBuyTokenSceneModel {
                 if error != nil {
                     return NextStatus.init(text: error ?? L10n.error, isEnable: false)
                 }
-                return NextStatus.init(text: L10n.continue, isEnable: true)
+                
+                return NextStatus.init(text: L10n.continue, isEnable: output.amount > 0.0)
             }
     }
 }
