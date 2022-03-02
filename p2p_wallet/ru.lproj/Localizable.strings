@@ -754,3 +754,4 @@
 "Pay the %@ fee with" = "Оплатите комиссию %@ с помощью";
 "The transaction has been rejected" = "Транзакция была отклонена";
 "%@ was sent successfully" = "%@ успешно отправлен";
+"The price slippage was set at %@" = "Проскальзывание цены установлено на %@";

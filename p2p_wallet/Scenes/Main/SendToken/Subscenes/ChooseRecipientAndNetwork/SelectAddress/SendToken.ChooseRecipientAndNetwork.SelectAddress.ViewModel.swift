@@ -142,13 +142,15 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
                                 return false
                             }
                             
-                            if value.feeAmount.total == 0 {
+                            let feeAmountInSOL = value.feeAmountInSOL
+                            let feeAmountInToken = value.feeAmount
+                            if feeAmountInSOL.total == 0 {
                                 return true
                             } else {
                                 guard let payingWallet = payingWallet else {
                                     return false
                                 }
-                                return (payingWallet.lamports ?? 0) >= (feeInfo.value?.feeAmount.total ?? 0)
+                                return (payingWallet.lamports ?? 0) >= feeAmountInToken.total
                             }
                         case .reward:
                             return true
