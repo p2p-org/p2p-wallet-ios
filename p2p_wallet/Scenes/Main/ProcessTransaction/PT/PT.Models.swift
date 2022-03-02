@@ -43,6 +43,7 @@ extension PT {
         let sender: Wallet
         let receiver: SendToken.Recipient
         let amount: SolanaSDK.Lamports
+        let payingFeeWallet: Wallet?
         let isSimulation: Bool
     }
 }

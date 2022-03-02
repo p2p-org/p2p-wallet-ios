@@ -122,19 +122,10 @@ extension SendToken {
         private func send() {
             guard let wallet = walletSubject.value,
                   let amount = amountSubject.value,
-                  let receiver = recipientSubject.value?.address
+                  let receiver = recipientSubject.value
             else {return}
             
             let network = networkSubject.value
-            
-            // form request
-            let request = sendService.send(
-                from: wallet,
-                receiver: receiver,
-                amount: amount,
-                network: network,
-                payingFeeWallet: payingWalletSubject.value
-            )
             
             analyticsManager.log(
                 event: .sendSendClick(
@@ -145,12 +136,13 @@ extension SendToken {
             
             navigationSubject.accept(
                 .processTransaction(
-                    request: request.map {$0 as ProcessTransactionResponseType},
-                    transactionType: .send(
-                        from: wallet,
-                        to: recipientSubject.value!,
-                        lamport: amount.toLamport(decimals: wallet.token.decimals),
-                        feeInLamports: feeInfoSubject.value?.feeAmount.total ?? .zero
+                    PT.SendTransaction(
+                        network: network,
+                        sender: wallet,
+                        receiver: receiver,
+                        amount: amount.toLamport(decimals: wallet.token.decimals),
+                        payingFeeWallet: payingWalletSubject.value,
+                        isSimulation: false
                     )
                 )
             )
