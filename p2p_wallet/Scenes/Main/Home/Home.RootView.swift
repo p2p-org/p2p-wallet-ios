@@ -124,7 +124,7 @@ extension Home {
                 }
 
                 // Action bar
-                BEZStackPosition(mode: .pinEdges(top: true, left: true, bottom: false, right: true)) {
+                BEZStackPosition(mode: .pinEdges([.top, .left, .right])) {
                     FloatingHeaderView(viewModel: viewModel)
                         .setupWithType(FloatingHeaderView.self) { view in headerViewScrollDelegate.headerView = view }
                         .padding(.init(x: 18, y: 0))
