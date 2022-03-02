@@ -80,6 +80,7 @@ extension PT.ViewModel: PTViewModelType {
     
     // MARK: - Actions
     func sendAndObserveTransaction() {
+        transactionInfoSubject.accept(updateTransactionInfo(status: .sending))
         // create request
         processingTransaction.createRequest()
             .subscribe(onSuccess: { [weak self] transactionID in
