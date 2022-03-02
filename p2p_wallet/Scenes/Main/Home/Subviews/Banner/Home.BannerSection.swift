@@ -4,9 +4,11 @@
 
 import BECollectionView
 import Foundation
+import RxSwift
 
 extension Home {
     class BannerSection: BEStaticSectionsCollectionView.Section {
+        private let disposeBag = DisposeBag()
         let onActionHandler: BECallback<Banners.Action>?
 
         init(index: Int, viewModel: BannerViewModel, onActionHandler: BECallback<Banners.Action>? = nil) {
@@ -29,6 +31,11 @@ extension Home {
                 ),
                 viewModel: viewModel
             )
+            
+            viewModel
+                .dataDidChange
+                .subscribe(onNext: { [weak self] in self?.collectionView?.reloadData(completion: {}) })
+                .disposed(by: disposeBag)
         }
 
         override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
