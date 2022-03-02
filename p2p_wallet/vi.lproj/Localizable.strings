@@ -757,3 +757,4 @@
 "Turn on notifications" = "Bật thông báo";
 "Pay the %@ fee with" = "Thanh toán phí %@ bằng";
 "The transaction has been rejected" = "Giao dịch đã bị từ chối";
+"%@ was sent successfully" = "%@ đã được gửi thành công";
