@@ -189,7 +189,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     if isSearching || network != .solana {
                         return true
                     }
-                    if let fee = fee.value?.feeAmount {
+                    if let fee = fee.value?.feeAmountInSOL {
                         return fee.total == 0
                     } else {
                         return true
@@ -365,7 +365,7 @@ private class _FeeView: UIStackView {
         }
         
         feeInfoDriver
-            .map {$0.value?.feeAmount}
+            .map {$0.value?.feeAmountInSOL}
             .map {$0?.accountBalances ?? 0 == 0}
             .drive(attentionLabel.superview!.rx.isHidden)
             .disposed(by: disposeBag)
