@@ -85,6 +85,7 @@ extension PT.ViewModel: PTViewModelType {
         processingTransaction.createRequest()
             .subscribe(onSuccess: { [weak self] transactionID in
                 guard let self = self else {return}
+                self.transactionInfoSubject.accept(.init(transactionId: transactionID, status: .confirmed(0)))
                 self.observe(transactionId: transactionID)
             }, onFailure: { [weak self] error in
                 guard let self = self else {return}
@@ -130,7 +131,7 @@ extension PT.ViewModel: PTViewModelType {
                 throw PT.Error.notEnoughNumberOfConfirmations
             }
             .retry(maxAttempts: .max, delayInSeconds: 1)
-            .timeout(.seconds(60), scheduler: MainScheduler.instance)
+            .timeout(.seconds(60), scheduler: scheduler)
             .subscribe()
             .disposed(by: disposeBag)
             
