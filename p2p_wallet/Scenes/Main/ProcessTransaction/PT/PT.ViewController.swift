@@ -154,7 +154,7 @@ extension PT {
                             .setup { button in
                                 viewModel.transactionInfoDriver
                                     .map {$0.status.error == nil}
-                                    .map {$0 ? L10n.makeAnotherTransaction: L10n.retry}
+                                    .map {$0 ? L10n.makeAnotherTransaction: L10n.tryAgain}
                                     .drive(button.rx.text)
                                     .disposed(by: disposeBag)
                             }
