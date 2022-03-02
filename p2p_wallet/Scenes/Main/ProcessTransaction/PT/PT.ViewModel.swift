@@ -24,11 +24,11 @@ extension PT {
         @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         
         // MARK: - Properties
-        private let transaction: ProcessTransactionTransactionType
+        private let processingTransaction: ProcessingTransactionType
         
         // MARK: - Properties
-        init(transaction: ProcessTransactionTransactionType) {
-            self.transaction = transaction
+        init(processingTransaction: ProcessingTransactionType) {
+            self.processingTransaction = processingTransaction
         }
         
         // MARK: - Subject
@@ -42,11 +42,11 @@ extension PT.ViewModel: PTViewModelType {
     }
     
     var isSwapping: Bool {
-        transaction.isSwap
+        processingTransaction.isSwap
     }
     
     func getTransactionDescription(withAmount: Bool) -> String {
-        switch transaction {
+        switch processingTransaction {
         case let transaction as PT.SendTransaction:
             var desc = transaction.sender.token.symbol + " → " + (transaction.receiver.name ?? transaction.receiver.address.truncatingMiddle(numOfSymbolsRevealed: 4))
             if withAmount {

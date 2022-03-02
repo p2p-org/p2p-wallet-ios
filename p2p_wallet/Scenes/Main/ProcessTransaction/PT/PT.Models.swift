@@ -19,28 +19,28 @@ extension SolanaSDK: ProcessTransactionAPIClient {
 }
 
 // MARK: - Transaction type
-protocol ProcessTransactionTransactionType {}
+protocol ProcessingTransactionType {}
 
-extension ProcessTransactionTransactionType {
+extension ProcessingTransactionType {
     var isSwap: Bool {
         self is PT.OrcaSwapTransaction || self is PT.SwapTransaction
     }
 }
 
 extension PT {
-    struct SwapTransaction: ProcessTransactionTransactionType {
+    struct SwapTransaction: ProcessingTransactionType {
         
     }
     
-    struct OrcaSwapTransaction: ProcessTransactionTransactionType {
+    struct OrcaSwapTransaction: ProcessingTransactionType {
         
     }
     
-    struct CloseTransaction: ProcessTransactionTransactionType {
+    struct CloseTransaction: ProcessingTransactionType {
         
     }
     
-    struct SendTransaction: ProcessTransactionTransactionType {
+    struct SendTransaction: ProcessingTransactionType {
         let sendService: SendServiceType
         let network: SendToken.Network
         let sender: Wallet
