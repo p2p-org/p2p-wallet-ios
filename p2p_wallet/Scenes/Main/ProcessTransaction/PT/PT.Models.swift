@@ -7,10 +7,12 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 // MARK: - APIClient
 protocol ProcessTransactionAPIClient {
     func getReimbursedAmountForClosingToken() -> Single<Double>
+    func getSignatureStatus(signature: String, configs: SolanaSDK.RequestConfiguration?) -> Single<SolanaSDK.SignatureStatus>
 }
 extension SolanaSDK: ProcessTransactionAPIClient {
     func getReimbursedAmountForClosingToken() -> Single<Double> {
@@ -19,7 +21,9 @@ extension SolanaSDK: ProcessTransactionAPIClient {
 }
 
 // MARK: - Transaction type
-protocol ProcessingTransactionType {}
+protocol ProcessingTransactionType {
+    func createRequest() -> Single<String>
+}
 
 extension ProcessingTransactionType {
     var isSwap: Bool {
@@ -29,15 +33,21 @@ extension ProcessingTransactionType {
 
 extension PT {
     struct SwapTransaction: ProcessingTransactionType {
-        
+        func createRequest() -> Single<String> {
+            fatalError()
+        }
     }
     
     struct OrcaSwapTransaction: ProcessingTransactionType {
-        
+        func createRequest() -> Single<String> {
+            fatalError()
+        }
     }
     
     struct CloseTransaction: ProcessingTransactionType {
-        
+        func createRequest() -> Single<String> {
+            fatalError()
+        }
     }
     
     struct SendTransaction: ProcessingTransactionType {
@@ -48,6 +58,16 @@ extension PT {
         let amount: SolanaSDK.Lamports
         let payingFeeWallet: Wallet?
         let isSimulation: Bool
+        
+        func createRequest() -> Single<String> {
+            sendService.send(
+                from: sender,
+                receiver: receiver.address,
+                amount: amount.convertToBalance(decimals: sender.token.decimals),
+                network: network,
+                payingFeeWallet: payingFeeWallet
+            )
+        }
     }
 }
 
@@ -60,6 +80,7 @@ extension PT {
             case sending
             case confirmed(_ numberOfConfirmed: Int)
             case finalized
+            case error(_ error: Error)
             
             var progress: Float {
                 switch self {
@@ -72,7 +93,7 @@ extension PT {
                     }
                     // return
                     return Float(numberOfConfirmed) / Float(Self.maxConfirmed)
-                case .finalized:
+                case .finalized, .error:
                     return 1
                 }
             }
@@ -80,5 +101,9 @@ extension PT {
         
         var transactionId: String?
         var status: TransactionStatus
+    }
+    
+    enum Error: Swift.Error {
+        case notEnoughNumberOfConfirmations
     }
 }
