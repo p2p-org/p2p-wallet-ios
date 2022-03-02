@@ -8,29 +8,34 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol PTViewModelType {
     var navigationDriver: Driver<PT.NavigatableScene?> {get}
     var transactionInfoDriver: Driver<PT.TransactionInfo> {get}
+    var errorDriver: Driver<Error?> {get}
     var isSwapping: Bool {get}
     var transactionID: String? {get}
     
     func getTransactionDescription(withAmount: Bool) -> String
     
+    func sendAndObserveTransaction()
     func navigate(to scene: PT.NavigatableScene)
 }
 
 extension PT {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var authenticationHandler: AuthenticationHandler
         @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+        @Injected private var apiClient: ProcessTransactionAPIClient
         
         // MARK: - Properties
+        private let disposeBag = DisposeBag()
         private let processingTransaction: ProcessingTransactionType
         
         // MARK: - Subjects
         private let transactionInfoSubject = BehaviorRelay<TransactionInfo>(value: .init(transactionId: nil, status: .sending))
+        private let errorSubject = BehaviorRelay<Swift.Error?>(value: nil)
         
         // MARK: - Initializer
         init(processingTransaction: ProcessingTransactionType) {
@@ -49,6 +54,10 @@ extension PT.ViewModel: PTViewModelType {
     
     var transactionInfoDriver: Driver<PT.TransactionInfo> {
         transactionInfoSubject.asDriver()
+    }
+    
+    var errorDriver: Driver<Error?> {
+        errorSubject.asDriver()
     }
     
     var isSwapping: Bool {
@@ -75,7 +84,57 @@ extension PT.ViewModel: PTViewModelType {
     }
     
     // MARK: - Actions
+    func sendAndObserveTransaction() {
+        // create request
+        processingTransaction.createRequest()
+            .subscribe(onSuccess: { [weak self] transactionID in
+                guard let self = self else {return}
+                self.observe(transactionId: transactionID)
+            }, onFailure: { [weak self] error in
+                guard let self = self else {return}
+                self.errorSubject.accept(error)
+            })
+            .disposed(by: disposeBag)
+    }
+    
     func navigate(to scene: PT.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    // MARK: - Helpers
+    private func observe(transactionId: String) {
+        let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
+        
+        apiClient.getSignatureStatus(signature: transactionId, configs: nil)
+            .subscribe(on: scheduler)
+            .observe(on: MainScheduler.instance)
+            .do(onSuccess: { [weak self] status in
+                guard let self = self else { throw SolanaSDK.Error.unknown }
+                let transactionInfo: PT.TransactionInfo
+                if status.confirmations == nil || status.confirmationStatus == "finalized" {
+                    transactionInfo = self.updateTransactionInfo(status: .finalized)
+                } else {
+                    transactionInfo = self.updateTransactionInfo(status: .confirmed(Int(status.confirmations ?? 0)))
+                }
+                
+                self.transactionInfoSubject.accept(transactionInfo)
+            })
+            .observe(on: scheduler)
+            .map {$0.confirmations == nil || $0.confirmationStatus == "finalized"}
+            .flatMapCompletable { confirmed in
+                if confirmed {return .empty()}
+                throw PT.Error.notEnoughNumberOfConfirmations
+            }
+            .retry(maxAttempts: .max, delayInSeconds: 1)
+            .timeout(.seconds(60), scheduler: MainScheduler.instance)
+            .subscribe()
+            .disposed(by: disposeBag)
+            
+    }
+    
+    private func updateTransactionInfo(status: PT.TransactionInfo.TransactionStatus) -> PT.TransactionInfo {
+        var info = transactionInfoSubject.value
+        info.status = status
+        return info
     }
 }

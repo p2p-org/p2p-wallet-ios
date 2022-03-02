@@ -22,6 +22,11 @@ extension PT {
         }
         
         // MARK: - Methods
+        override func setUp() {
+            super.setUp()
+            viewModel.sendAndObserveTransaction()
+        }
+        
         override func build() -> UIView {
             BEContainer {
                 BEVStack(spacing: 4) {
@@ -77,6 +82,8 @@ extension PT {
                                                 return .squircleTransactionProcessing
                                             case .finalized:
                                                 return .squircleTransactionCompleted
+                                            case .error:
+                                                return .squircleTransactionError
                                             }
                                         }
                                         .drive(imageView.rx.image)
