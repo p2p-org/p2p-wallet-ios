@@ -6,3 +6,22 @@
 //
 
 import Foundation
+import UIKit
+import BEPureLayout
+
+extension PT {
+    final class DetailViewController: BEScene {
+        override func build() -> UIView {
+            BEVStack {
+                WLNavigationBar()
+                    .setup { navigationBar in
+                        navigationBar.backButton
+                            .onTap { [weak self] in
+                                self?.back()
+                            }
+                    }
+                UIView()
+            }
+        }
+    }
+}
