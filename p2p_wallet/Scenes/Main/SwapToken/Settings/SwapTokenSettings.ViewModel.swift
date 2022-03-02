@@ -31,6 +31,7 @@ extension SwapTokenSettings {
         private let nativeWallet: Wallet?
         private let swapViewModel: OrcaSwapV2ViewModelType
         @Injected private var walletRepository: WalletsRepository
+        @Injected private var notificationService: NotificationsService
 
         // MARK: - Subject
         var customSlippageIsOpenedDriver: Driver<Bool> { customSlippageIsOpenedSubject.asDriver() }
@@ -91,6 +92,7 @@ extension SwapTokenSettings {
             guard let doubleSlippage = selected.doubleValue else { return }
 
             swapViewModel.slippageSubject.accept(doubleSlippage)
+            notificationService.showInAppNotification(.done(L10n.thePriceSlippageWasSetAt(selected.description)))
         }
 
         func customSlippageChanged(_ value: Double?) {

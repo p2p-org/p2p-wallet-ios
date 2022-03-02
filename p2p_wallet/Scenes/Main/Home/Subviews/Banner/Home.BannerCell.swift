@@ -42,7 +42,7 @@ extension Home {
                         .box(cornerRadius: 16)
                 }.mediumShadow()
 
-                BEZStackPosition(mode: .pinEdges(top: false, left: false, bottom: true, right: true)) {
+                BEZStackPosition(mode: .pinEdges([.bottom, .right])) {
                     UIImageView()
                         .bind(icon)
                         .padding(.init(top: 0, left: 0, bottom: 50, right: 0))

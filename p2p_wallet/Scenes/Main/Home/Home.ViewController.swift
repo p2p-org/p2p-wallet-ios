@@ -197,6 +197,7 @@ extension Home {
             case .feedback:
                 tabBar()?.moveToPage(10)
             case .backup:
+                show(Settings.BackupViewController(viewModel: Settings.ViewModel(canGoBack: true), dismissAfterBackup: true), sender: nil)
                 return
             }
         }

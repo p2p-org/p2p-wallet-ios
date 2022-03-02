@@ -27,8 +27,8 @@ extension SendToken {
             stackView.addArrangedSubviews {
                 coinLogoImageView
                     .setup { imageView in
-                        feeInfoDriver
-                            .map {$0.value == nil}
+                        payingWalletDriver
+                            .map {$0 == nil}
                             .drive(imageView.rx.isHidden)
                             .disposed(by: disposeBag)
                         
@@ -41,6 +41,11 @@ extension SendToken {
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                     UILabel(text: "Account creation fee", textSize: 13, numberOfLines: 0)
                         .setup { label in
+                            payingWalletDriver
+                                .map {$0 == nil}
+                                .drive(label.rx.isHidden)
+                                .disposed(by: disposeBag)
+                            
                             feeInfoDriver
                                 .map {$0.value?.feeAmount}
                                 .map {feeAmountToAttributedString(feeAmount: $0, solPrice: solPrice)}
@@ -105,18 +110,20 @@ private func payingWalletToString(
     value: SendToken.FeeInfo?,
     payingWallet: Wallet?
 ) -> String? {
-    
+    guard let payingWallet = payingWallet else {
+        return L10n.chooseTheTokenToPayFees
+    }
     switch state {
     case .notRequested:
         return L10n.chooseTheTokenToPayFees
     case .loading:
         return L10n.calculatingFees
     case .loaded:
-        guard let value = value, let wallet = payingWallet else {
+        guard let value = value else {
             return L10n.couldNotCalculatingFees
         }
-        return value.feeAmount.total.convertToBalance(decimals: wallet.token.decimals)
-            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(wallet.token.symbol)"
+        return value.feeAmount.total.convertToBalance(decimals: payingWallet.token.decimals)
+            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(payingWallet.token.symbol)"
     case .error(let optional):
         #if DEBUG
         return optional
