@@ -12,6 +12,7 @@ import RxCocoa
 protocol PTViewModelType {
     var navigationDriver: Driver<PT.NavigatableScene?> {get}
     var isSwapping: Bool {get}
+    func getTransactionDescription(withAmount: Bool) -> String
     
     func navigate(to scene: PT.NavigatableScene)
 }
@@ -42,6 +43,21 @@ extension PT.ViewModel: PTViewModelType {
     
     var isSwapping: Bool {
         transaction.isSwap
+    }
+    
+    func getTransactionDescription(withAmount: Bool) -> String {
+        switch transaction {
+        case let transaction as PT.SendTransaction:
+            var desc = transaction.sender.token.symbol + " → " + (transaction.receiver.name ?? transaction.receiver.address.truncatingMiddle(numOfSymbolsRevealed: 4))
+            if withAmount {
+                let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
+                    .toString(maximumFractionDigits: 9)
+                desc = amount + " " + desc
+            }
+            return desc
+        default:
+            return ""
+        }
     }
     
     // MARK: - Actions

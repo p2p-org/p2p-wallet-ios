@@ -43,6 +43,9 @@ extension PT {
                         numberOfLines: 0,
                         textAlignment: .center
                     )
+                        .setup { label in
+                            label.text = viewModel.getTransactionDescription(withAmount: true)
+                        }
                         .padding(.init(all: 18, excludingEdge: .top))
                     
                     // Loader
