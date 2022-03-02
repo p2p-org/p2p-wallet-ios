@@ -39,6 +39,7 @@ extension PT {
     }
     
     struct SendTransaction: ProcessTransactionTransactionType {
+        let sendService: SendServiceType
         let network: SendToken.Network
         let sender: Wallet
         let receiver: SendToken.Recipient
