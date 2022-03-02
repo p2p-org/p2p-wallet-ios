@@ -22,6 +22,10 @@ extension EnterSeedInfo {
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 

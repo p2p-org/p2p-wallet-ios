@@ -8,8 +8,9 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
-struct SendToken {
+enum SendToken {
     enum NavigatableScene {
         case back
         case chooseTokenAndAmount(showAfterConfirmation: Bool)
@@ -45,42 +46,14 @@ struct SendToken {
                 return .squircleBitcoinIcon
             }
         }
-        var defaultFees: [Fee] {
-            switch self {
-            case .solana:
-                return [.init(amount: 0, unit: Defaults.fiat.symbol)]
-            case .bitcoin:
-                return [.init(amount: 0.0002, unit: "renBTC"), .init(amount: 0.0002, unit: "SOL")]
-            }
-        }
     }
     
-    struct Fee {
-        var amount: Double
-        let unit: String
-    }
-}
-
-extension Array where Element == SendToken.Fee {
-    func attributedString(
-        prices: [String: Double],
-        textSize: CGFloat = 15,
-        tokenColor: UIColor = .textBlack,
-        fiatColor: UIColor = .textSecondary,
-        attributedSeparator: NSAttributedString = NSAttributedString(string: "\n")
-    ) -> NSMutableAttributedString {
-        let attributedText = NSMutableAttributedString()
+    struct FeeInfo {
+        let feeAmount: SolanaSDK.FeeAmount
+        let feeAmountInSOL: SolanaSDK.FeeAmount
         
-        for (index, fee) in self.enumerated() {
-            let amountInUSD = fee.amount * prices[fee.unit]
-            attributedText
-                .text("\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)", size: textSize, color: tokenColor)
-                .text(" (~\(Defaults.fiat.symbol)\(amountInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
-            if index < count - 1 {
-                attributedText
-                    .append(attributedSeparator)
-            }
+        static var zero: Self {
+            .init(feeAmount: .zero, feeAmountInSOL: .zero)
         }
-        return attributedText
     }
 }

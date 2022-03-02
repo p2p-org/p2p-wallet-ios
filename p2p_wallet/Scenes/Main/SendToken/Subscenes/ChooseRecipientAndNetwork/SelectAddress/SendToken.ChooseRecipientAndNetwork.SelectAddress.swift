@@ -9,9 +9,10 @@ import Foundation
 import RxCocoa
 
 extension SendToken.ChooseRecipientAndNetwork {
-    struct SelectAddress {
+    enum SelectAddress {
         enum NavigatableScene {
             case scanQrCode
+            case selectPayingWallet
         }
         
         enum InputState: Equatable {

@@ -30,7 +30,7 @@ extension DerivableAccounts {
         typealias Path = SolanaSDK.DerivablePath
         
         // MARK: - Dependencies
-        @Injected private var handler: AccountRestorationHandler
+        private let handler: AccountRestorationHandler
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -42,9 +42,14 @@ extension DerivableAccounts {
         private let selectedDerivablePathSubject = BehaviorRelay<SolanaSDK.DerivablePath>(value: .default)
         
         // MARK: - Initializer
-        init(phrases: [String]) {
+        init(phrases: [String], handler: AccountRestorationHandler) {
             self.phrases = phrases
+            self.handler = handler
             self.accountsListViewModel = ListViewModel(phrases: phrases)
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
     }
 }

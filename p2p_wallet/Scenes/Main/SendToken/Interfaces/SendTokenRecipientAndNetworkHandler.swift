@@ -6,14 +6,21 @@
 //
 
 import Foundation
+import RxSwift
 import RxCocoa
+import SolanaSwift
+import FeeRelayerSwift
 
-protocol SendTokenRecipientAndNetworkHandler {
+protocol SendTokenRecipientAndNetworkHandler: AnyObject {
+    var disposeBag: DisposeBag {get}
+    var sendService: SendServiceType {get}
     var recipientSubject: BehaviorRelay<SendToken.Recipient?> {get}
     var networkSubject: BehaviorRelay<SendToken.Network> {get}
+    var payingWalletSubject: BehaviorRelay<Wallet?> {get}
+    var feeInfoSubject: LoadableRelay<SendToken.FeeInfo> {get}
     
     func getSelectedWallet() -> Wallet?
-    func getAPIClient() -> SendTokenAPIClient
+    func getSendService() -> SendServiceType
 }
 
 extension SendTokenRecipientAndNetworkHandler {
@@ -23,6 +30,14 @@ extension SendTokenRecipientAndNetworkHandler {
     
     var networkDriver: Driver<SendToken.Network> {
         networkSubject.asDriver()
+    }
+    
+    var payingWalletDriver: Driver<Wallet?> {
+        payingWalletSubject.asDriver()
+    }
+    
+    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {
+        feeInfoSubject.asDriver()
     }
     
     func getSelectedRecipient() -> SendToken.Recipient? {
@@ -54,10 +69,19 @@ extension SendTokenRecipientAndNetworkHandler {
     }
     
     func selectNetwork(_ network: SendToken.Network) {
-        if getSelectedWallet()?.token.isRenBTC == false {
-            networkSubject.accept(.solana)
-        }
         networkSubject.accept(network)
+        
+        switch network {
+        case .solana:
+            if isRecipientBTCAddress() {recipientSubject.accept(nil)}
+        case .bitcoin:
+            if !isRecipientBTCAddress() {recipientSubject.accept(nil)}
+        }
+    }
+    
+    func selectPayingWallet(_ payingWallet: Wallet) {
+        Defaults.payingTokenMint = payingWallet.mintAddress
+        payingWalletSubject.accept(payingWallet)
     }
     
     // MARK: - Helpers
@@ -65,6 +89,66 @@ extension SendTokenRecipientAndNetworkHandler {
         guard let recipient = recipientSubject.value else {return false}
         return recipient.name == nil &&
             recipient.address
-                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getAPIClient().isTestNet()))
+                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
     }
+    
+    func bindFees(walletSubject: BehaviorRelay<Wallet?>? = nil) {
+        var observables = [
+            payingWalletSubject.distinctUntilChanged().map {$0 as Any},
+            recipientSubject.distinctUntilChanged().map {$0 as Any},
+            networkSubject.distinctUntilChanged().map {$0 as Any}
+        ]
+        
+        if let walletSubject = walletSubject {
+            observables.append(walletSubject.distinctUntilChanged().map {$0 as Any})
+        }
+        
+        Observable.combineLatest(observables)
+            .subscribe(onNext: { [weak self] params in
+                let payingWallet = params[0] as? Wallet
+                let recipient = params[1] as? SendToken.Recipient
+                let network = params[2] as! SendToken.Network
+                
+                guard let self = self else { return }
+                if let wallet = self.getSelectedWallet() {
+                    self.feeInfoSubject.request = self.sendService
+                        .getFees(
+                            from: wallet,
+                            receiver: recipient?.address,
+                            network: network,
+                            isPayingWithSOL: payingWallet?.isNativeSOL == true
+                        )
+                        .flatMap { [weak self] feeAmountInSOL -> Single<(SolanaSDK.FeeAmount, SolanaSDK.FeeAmount)> in
+                            guard let sendService = self?.sendService else {
+                                throw SolanaSDK.Error.unknown
+                            }
+                            guard let feeAmountInSOL = feeAmountInSOL else {
+                                return .just((.zero, .zero))
+                            }
+                            guard let payingWallet = payingWallet else {
+                                return .just((feeAmountInSOL, .zero))
+                            }
+
+                            return sendService.getFeesInPayingToken(
+                                feeInSOL: feeAmountInSOL,
+                                payingFeeWallet: payingWallet
+                            )
+                                .map { (feeAmountInSOL, ($0 ?? .zero)) }
+                        }
+                        .map { .init(feeAmount: $0.1, feeAmountInSOL: $0.0)}
+                } else {
+                    self.feeInfoSubject.request = .just(.init(feeAmount: .zero, feeAmountInSOL: .zero))
+                }
+                self.feeInfoSubject.reload()
+            })
+            .disposed(by: disposeBag)
+    }
+}
+
+private func getPayingToken(payingWallet wallet: Wallet?) -> FeeRelayer.Relay.TokenInfo? {
+    guard let wallet = wallet, let address = wallet.pubkey
+    else {
+        return nil
+    }
+    return .init(address: address, mint: wallet.mintAddress)
 }

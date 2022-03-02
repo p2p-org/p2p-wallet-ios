@@ -21,7 +21,7 @@ extension Authentication {
         #endif
         
         // MARK: - Dependencies
-        @Injected private var viewModel: AuthenticationViewModelType
+        private let viewModel: AuthenticationViewModelType
         
         // MARK: - Properties
         override var title: String? { didSet { navigationBar.titleLabel.text = title } }
@@ -36,7 +36,7 @@ extension Authentication {
         // MARK: - Subviews
         fileprivate let navigationBar = WLNavigationBar(forAutoLayout: ())
         private lazy var pincodeView = WLPinCodeView(
-            correctPincode: viewModel.getCurrentPincode() == nil ? nil: UInt(viewModel.getCurrentPincode()!),
+            correctPincode: viewModel.getCurrentPincode(),
             maxAttemptsCount: 3,
             bottomLeftButton: biometryButton
         )
@@ -59,6 +59,12 @@ extension Authentication {
             button.isHidden = true
             return button
         }()
+        
+        // MARK: - Initializer
+        init(viewModel: AuthenticationViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func viewDidLoad() {
@@ -156,7 +162,7 @@ extension Authentication {
             
             pincodeView.stackViewSpacing = 108
             
-            let lockingTimeInSeconds = self.lockingTimeInSeconds
+            let lockingTimeInSeconds = lockingTimeInSeconds
             
             // Count down to next
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in

@@ -10,6 +10,7 @@ import RxSwift
 import RxCocoa
 import GT3Captcha
 import UIKit
+import Resolver
 
 protocol ReserveNameViewModelType: AnyObject {
     var navigationDriver: Driver<ReserveName.NavigatableScene?> { get }
@@ -31,9 +32,10 @@ extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
         @Injected private var notificationsService: NotificationsServiceType
-        private let nameService: NameServiceType
+        @Injected private var analyticsManager: AnalyticsManagerType
+        private let nameService: NameServiceType = Resolver.resolve()
         private let owner: String
-        private let reserveNameHandler: ReserveNameHandler
+        private let reserveNameHandler: ReserveNameHandler?
         private lazy var manager: GT3CaptchaManager = {
             let manager = GT3CaptchaManager(
                 api1: nameService.captchaAPI1Url,
@@ -62,11 +64,9 @@ extension ReserveName {
         init(
             kind: ReserveNameKind,
             owner: String,
-            nameService: NameServiceType,
-            reserveNameHandler: ReserveNameHandler
+            reserveNameHandler: ReserveNameHandler?
         ) {
             self.kind = kind
-            self.nameService = nameService
             self.owner = owner
             self.reserveNameHandler = reserveNameHandler
             
@@ -74,6 +74,10 @@ extension ReserveName {
 
             bind()
             manager.registerCaptcha(nil)
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
 
         private func bind() {
@@ -115,6 +119,7 @@ extension ReserveName {
             geetest_validate: String
         ) {
             guard let name = textFieldTextSubject.value else { return }
+            analyticsManager.log(event: .usernameSaved(lastScreen: "Onboarding"))
 
             startLoading()
             nameService
@@ -132,6 +137,10 @@ extension ReserveName {
                 .subscribe(onSuccess: { [weak self] _ in
                     self?.stopLoading()
                     self?.nameDidReserve(name)
+                    self?.analyticsManager.log(event: .usernameReserved)
+                    self?.notificationsService.showInAppNotification(
+                        .message(L10n.usernameWasReserved(name))
+                    )
                 }, onFailure: { [weak self] error in
                     self?.stopLoading()
                     self?.notificationsService.showInAppNotification(.error(error))
@@ -140,7 +149,7 @@ extension ReserveName {
         }
 
         private func nameDidReserve(_ name: String) {
-            reserveNameHandler.handleName(name)
+            reserveNameHandler?.handleName(name)
         }
 
         private func startLoading() {
@@ -158,7 +167,7 @@ extension ReserveName {
         }
 
         private func skip() {
-            reserveNameHandler.handleName(nil)
+            reserveNameHandler?.handleName(nil)
         }
     }
 }
@@ -171,6 +180,8 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     func skipButtonPressed() {
         navigationSubject.accept(
             .skipAlert({ [weak self] in
+                let isFilled = self?.textFieldStateSubject.value == ReserveName.TextFieldState.empty ? "Not_Filled" : "Filled"
+                self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
                 self?.handleSkipAlertAction(isProceed: $0)
             })
         )

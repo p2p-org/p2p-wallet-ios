@@ -13,7 +13,17 @@ extension Root {
         private var statusBarStyle: UIStatusBarStyle = .default
         
         // MARK: - Dependencies
-        @Injected private var viewModel: RootViewModelType
+        private let viewModel: RootViewModelType
+        
+        // MARK: - Initializer
+        init(viewModel: RootViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
+        override func loadView() {
+            view = LockView()
+        }
         
         // MARK: - Methods
         override func setUp() {
@@ -23,15 +33,20 @@ extension Root {
         
         override func bind() {
             super.bind()
+            // remove all childs
+            viewModel.resetSignal
+                .emit(onNext: { [weak self] in self?.removeAllChilds() })
+                .disposed(by: disposeBag)
+            
             // navigation scene
             viewModel.navigationSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
             
             // loadingView
             viewModel.isLoadingDriver
                 .drive(onNext: { [weak self] isLoading in
-                    isLoading ? self?.showIndetermineHud(): self?.hideHud()
+                    isLoading ? self?.showIndetermineHud() : self?.hideHud()
                 })
                 .disposed(by: disposeBag)
         }
@@ -40,19 +55,22 @@ extension Root {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createOrRestoreWallet:
-                let vc = CreateOrRestoreWallet.ViewController()
+                let vm = CreateOrRestoreWallet.ViewModel()
+                let vc = CreateOrRestoreWallet.ViewController(viewModel: vm)
                 let nc = UINavigationController(rootViewController: vc)
                 transition(to: nc)
             case .onboarding:
-                let vc = Onboarding.ViewController()
+                let vm = Onboarding.ViewModel()
+                let vc = Onboarding.ViewController(viewModel: vm)
                 transition(to: vc)
             case .onboardingDone(let isRestoration, let name):
-                let vc = WelcomeViewController(isReturned: isRestoration, name: name)
+                let vc = WelcomeViewController(isReturned: isRestoration, name: name, viewModel: viewModel)
                 transition(to: vc)
             case .main(let showAuthenticationWhenAppears):
                 // MainViewController
-                let container = MainContainer()
-                let vc = container.makeMainViewController(authenticateWhenAppears: showAuthenticationWhenAppears)
+                let vm = MainViewModel()
+                let vc = MainViewController(viewModel: vm)
+                vc.authenticateWhenAppears = showAuthenticationWhenAppears
                 transition(to: vc)
             default:
                 break

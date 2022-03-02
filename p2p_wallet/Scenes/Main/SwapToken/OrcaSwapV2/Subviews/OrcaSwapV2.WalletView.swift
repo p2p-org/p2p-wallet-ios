@@ -38,9 +38,9 @@ extension OrcaSwapV2 {
             autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
         )
 
-        init(viewModel: OrcaSwapV2ViewModelType, type: WalletType) {
-            self.viewModel = viewModel
+        init(type: WalletType, viewModel: OrcaSwapV2ViewModelType) {
             self.type = type
+            self.viewModel = viewModel
             super.init(frame: .zero)
             configureForAutoLayout()
             
@@ -99,6 +99,7 @@ extension OrcaSwapV2 {
             chooseWalletView.autoPinEdge(.bottom, to: .bottom, of: iconImageView, withOffset: 10)
         }
 
+        @discardableResult
         override func becomeFirstResponder() -> Bool {
             amountTextField.becomeFirstResponder()
         }

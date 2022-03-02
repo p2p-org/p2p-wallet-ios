@@ -6,6 +6,9 @@
 //
 
 import SolanaSwift
+import FeeRelayerSwift
+import OrcaSwapSwift
+import RenVMSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -22,13 +25,19 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
-        register {AnalyticsManager()}
+        register { AnalyticsManager() }
             .implements(AnalyticsManagerType.self)
             .scope(.application)
+        register { IntercomMessengerLauncher() }
+            .implements(HelpCenterLauncher.self)
+            .scope(.session)
+        register { ImageSaver() }
+            .implements(ImageSaverType.self)
+            .scope(.unique)
         register {CryptoComparePricesFetcher()}
             .implements(PricesFetcher.self)
             .scope(.application)
-        register {NameService()}
+        register { NameService() }
             .implements(NameServiceType.self)
             .scope(.application)
         register { AddressFormatter() }
@@ -50,111 +59,169 @@ extension Resolver: ResolverRegistering {
             .implements(ClipboardManagerType.self)
             .scope(.application)
         
-        // MARK: - Others
-        register { SessionBannersAvailabilityState() }
+        // MARK: - SolanaSDK
+        register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
+            .implements(TokensRepository.self)
+            .implements(TransactionsRepository.self)
+            .implements(AssociatedTokenAccountHandler.self)
+            .implements(RenVMSolanaAPIClientType.self)
+            .implements(FeeAPIClient.self)
+            .implements(OrcaSwapSolanaClient.self)
+            .implements(OrcaSwapAccountProvider.self)
+            .implements(OrcaSwapSignatureConfirmationHandler.self)
+            .implements(ProcessTransactionAPIClient.self)
+            .implements(FeeRelayerRelaySolanaClient.self)
             .scope(.session)
         
-        register { PersistentBannersAvailabilityState() }
+        // MARK: - Send service
+        register { _, args in
+            SendService(relayMethod: args())
+        }
+            .implements(SendServiceType.self)
+            .scope(.session)
+        
+        // MARK: - Fee service
+        register { FeeService() }
+            .implements(FeeServiceType.self)
+            .scope(.session)
+        
+        // MARK: - Socket
+        register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
+            .implements(AccountNotificationsRepository.self)
+            .implements(TransactionHandler.self)
+            .scope(.session)
+        
+        // MARK: - FeeRelayer
+        register { FeeRelayer.APIClient(version: 1) }
+            .implements(FeeRelayerAPIClientType.self)
+            .scope(.session)
+        
+        register { try! FeeRelayer.Relay(
+            apiClient: resolve(),
+            solanaClient: resolve(),
+            accountStorage: resolve(SolanaSDK.self).accountStorage,
+            orcaSwapClient: resolve()
+        ) }
+            .implements(FeeRelayerRelayType.self)
+            .scope(.session)
+        
+        // MARK: - PricesService
+        register { PricesService() }
+            .implements(PricesServiceType.self)
+            .scope(.session)
+        
+        // MARK: - WalletsViewModel
+        register { WalletsViewModel() }
+            .implements(WalletsRepository.self)
+            .implements(WLNotificationsRepository.self)
+            .scope(.session)
+        
+        // MARK: - Swap
         register {
-            ReserveUsernameBannerAvailabilityRepository(
-                sessionBannersAvailabilityState: resolve(SessionBannersAvailabilityState.self),
-                persistentBannersAvailabilityState: resolve(PersistentBannersAvailabilityState.self),
-                nameStorage: resolve()
+            SwapServiceWithRelayImpl(
+                solanaClient: Resolver.resolve(),
+                accountStorage: Resolver.resolve(),
+                feeRelay: Resolver.resolve(),
+                orcaSwap: Resolver.resolve()
             )
         }
-            .implements(ReserveUsernameBannerAvailabilityRepositoryType.self)
-            .scope(.unique)
-        register { BannersManager(usernameBannerRepository: resolve()) }
-            .implements(BannersManagerType.self)
-            .scope(.unique)
-        register { BannerKindTransformer() }
-            .implements(BannerKindTransformerType.self)
-            .scope(.unique)
+            .implements(Swap.Service.self)
+            .scope(.session)
         
+        register {
+            OrcaSwap(
+                apiClient: OrcaSwap.APIClient(
+                    network: Defaults.apiEndPoint.network.cluster
+                ),
+                solanaClient: resolve(),
+                accountProvider: resolve(),
+                notificationHandler: resolve())
+        }
+            .implements(OrcaSwapType.self)
+            .scope(.session)
+        
+        // MARK: - RenVM
+        register { RenVM.RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
+            .implements(RenVMRpcClientType.self)
+            .scope(.session)
+        
+        register {
+            RenVM.LockAndMint.Service(
+                rpcClient: resolve(),
+                solanaClient: resolve(),
+                account: resolve(SolanaSDK.self).accountStorage.account!,
+                sessionStorage: RenVM.LockAndMint.SessionStorage(),
+                transactionHandler: resolve()
+            )
+        }
+            .implements(RenVMLockAndMintServiceType.self)
+            .scope(.session)
+        
+        register {
+            RenVM.BurnAndRelease.Service(
+                rpcClient: resolve(),
+                solanaClient: resolve(),
+                account: resolve(SolanaSDK.self).accountStorage.account!,
+                transactionStorage: RenVM.BurnAndRelease.TransactionStorage(),
+                transactionHandler: resolve()
+            )
+        }
+            .implements(RenVMBurnAndReleaseServiceType.self)
+            .scope(.session)
+        
+        // MARK: - ProcessingTransactionsManager
+        register { ProcessingTransactionsManager() }
+            .implements(ProcessingTransactionsRepository.self)
+            .scope(.session)
+        
+        // MARK: - Others
         register { DAppChannel() }
             .implements(DAppChannelType.self)
         
-        // MARK: - Root
-        register {Root.ViewModel()}
-            .implements(RootViewModelType.self)
-            .implements(ChangeNetworkResponder.self)
-            .implements(ChangeLanguageResponder.self)
-            .implements(CreateOrRestoreWalletHandler.self)
-            .implements(OnboardingHandler.self)
-            .scope(.shared)
-        
-        // MARK: - CreateOrRestoreWallet
-        register {CreateOrRestoreWallet.ViewModel()}
-            .implements(CreateOrRestoreWalletViewModelType.self)
-            .scope(.shared)
-        
-        // CreateWallet
-        register {CreateWallet.ViewModel()}
-            .implements(CreateWalletViewModelType.self)
-            .scope(.shared)
-        
-        // CreateSecurityKeys
-        register {CreateSecurityKeys.ViewModel()}
-            .implements(CreateSecurityKeysViewModelType.self)
-            .scope(.shared)
-        
-        // RestoreWallet
-        register {RestoreWallet.ViewModel()}
-            .implements(RestoreWalletViewModelType.self)
-            .implements(AccountRestorationHandler.self)
-            .scope(.shared)
-        
-        // DerivableAccounts
-        register { _, args in
-            DerivableAccounts.ViewModel(phrases: args())
-        }
-            .implements(DerivableAccountsListViewModelType.self)
-            .scope(.shared)
-        
-        // MARK: - Onboarding
-        register {Onboarding.ViewModel()}
-            .implements(OnboardingViewModelType.self)
-            .scope(.shared)
-        
-        // MARK: - Authentication
-        register {Authentication.ViewModel()}
-            .implements(AuthenticationViewModelType.self)
-            .scope(.shared)
-        
-        // MARK: - ResetPinCodeWithSeedPhrases
-        register {ResetPinCodeWithSeedPhrases.ViewModel()}
-            .implements(ResetPinCodeWithSeedPhrasesViewModelType.self)
-            .scope(.shared)
-        
-        // MARK: - Main
-        register {MainViewModel()}
-            .implements(MainViewModelType.self)
-            .implements(AuthenticationHandler.self)
-            .scope(.shared)
-
-        // MARK: - EnterSeedPhrase
-        register { EnterSeed.ViewModel() }
-            .implements(EnterSeedViewModelType.self)
-            .scope(.unique)
-        register { EnterSeedInfo.ViewModel() }
-            .implements(EnterSeedInfoViewModelType.self)
-            .scope(.unique)
-    
-        // MARK: - DAppContainer
-        register {DAppContainer.ViewModel()}
-            .implements(DAppContainerViewModelType.self)
-            .scope(.shared)
-        
         // MARK: - Moonpay
-        register{Moonpay.MoonpayServiceImpl(api: Moonpay.API.fromEnvironment())}
-            .implements(MoonpayService.self)
+        register{Moonpay.Provider(api: Moonpay.API.fromEnvironment())}
             .scope(.shared)
-    
+        
         // MARK: - BuyProvider
-        register{BuyProviders.MoonpayFactory()}
-            .implements(BuyProviderFactory.self)
+        register{Buy.MoonpayBuyProcessingFactory()}
+            .implements(BuyProcessingFactory.self)
             .scope(.application)
         
+        register{Buy.MoonpayExchange(provider: resolve())}
+            .implements(Buy.ExchangeService.self)
+            .scope(.session)
+        
+        // MARK: - AppEventHandler
+        register { AppEventHandler() }
+            .implements(AppEventHandlerType.self)
+            .implements(DeviceOwnerAuthenticationHandler.self)
+            .implements(ChangeNetworkResponder.self)
+            .implements(ChangeLanguageResponder.self)
+            .implements(LogoutResponder.self)
+            .implements(CreateOrRestoreWalletHandler.self)
+            .implements(OnboardingHandler.self)
+            .scope(.application)
+        
+        // MARK: - AuthenticationHandler
+        register { AuthenticationHandler() }
+            .implements(AuthenticationHandlerType.self)
+            .scope(.session)
+        
+        register { ReceiveToken.QrCodeImageRenderImpl() }
+            .implements(QrCodeImageRender.self)
+            .scope(.application)
+        
+        // MARK: - Banner
+        register {
+            BannerServiceImpl(handlers: [
+                ReserveNameBannerHandler(nameStorage: resolve()),
+                BackupBannerHandler(backupStorage: resolve()),
+                FeedbackBannerHandler()
+                // NotificationBannerHandler()
+            ])
+        }
+            .implements(Banners.Service.self)
+            .scope(.shared)
     }
 }
 

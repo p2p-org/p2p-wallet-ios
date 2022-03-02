@@ -10,17 +10,6 @@ import UIKit
 import BEPureLayout
 import RxSwift
 
-protocol SendTokenScenesFactory {
-    func makeChooseWalletViewController(
-        title: String?,
-        customFilter: ((Wallet) -> Bool)?,
-        showOtherWallets: Bool,         
-        selectedWallet: Wallet?,
-        handler: WalletDidSelectHandler
-    ) -> ChooseWallet.ViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-}
-
 extension SendToken {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -29,29 +18,34 @@ extension SendToken {
         
         // MARK: - Dependencies
         private let viewModel: SendTokenViewModelType
-        private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
         private var childNavigationController: UINavigationController!
         
         // MARK: - Initializer
-        init(viewModel: SendTokenViewModelType, scenesFactory: SendTokenScenesFactory) {
+        init(viewModel: SendTokenViewModelType) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
-            
             super.init()
         }
         
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            
+            view.onTap { [weak self] in
+                self?.view.endEditing(true)
+            }
         }
         
         override func bind() {
             super.bind()
             viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .disposed(by: disposeBag)
+            
+            viewModel.loadingStateDriver
+                .drive(view.rx.loadableState {[weak self] in
+                    self?.viewModel.reload()
+                })
                 .disposed(by: disposeBag)
         }
         
@@ -63,24 +57,37 @@ extension SendToken {
                 back()
             case .chooseTokenAndAmount(let showAfterConfirmation):
                 let vm = ChooseTokenAndAmount.ViewModel(
-                    sendTokenViewModel: viewModel,
                     initialAmount: viewModel.getSelectedAmount(),
                     showAfterConfirmation: showAfterConfirmation,
-                    selectedNetwork: viewModel.getSelectedNetwork()
+                    selectedNetwork: viewModel.getSelectedNetwork(),
+                    sendTokenViewModel: viewModel
                 )
-                let vc = ChooseTokenAndAmount.ViewController(viewModel: vm, scenesFactory: scenesFactory)
+                let vc = ChooseTokenAndAmount.ViewController(viewModel: vm)
                 
                 if showAfterConfirmation {
                     childNavigationController.pushViewController(vc, animated: true)
                 } else {
                     childNavigationController = .init(rootViewController: vc)
+                    #if DEBUG
+                    let label = UILabel(text: "Relay method: \(viewModel.relayMethod.rawValue)", textColor: .red, numberOfLines: 0, textAlignment: .center)
+                    view.addSubview(label)
+                    label.autoPinEdge(toSuperviewSafeArea: .top)
+                    label.autoAlignAxis(toSuperviewAxis: .vertical)
+                    let containerView = UIView(forAutoLayout: ())
+                    view.addSubview(containerView)
+                    containerView.autoPinEdge(.top, to: .bottom, of: label)
+                    containerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+                    add(child: childNavigationController, to: containerView)
+                    #else
                     add(child: childNavigationController)
+                    #endif
                 }
             case .chooseRecipientAndNetwork(let showAfterConfirmation, let preSelectedNetwork):
                 let vm = ChooseRecipientAndNetwork.ViewModel(
-                    sendTokenViewModel: viewModel,
                     showAfterConfirmation: showAfterConfirmation,
-                    preSelectedNetwork: preSelectedNetwork
+                    preSelectedNetwork: preSelectedNetwork,
+                    sendTokenViewModel: viewModel,
+                    relayMethod: viewModel.relayMethod
                 )
                 let vc = ChooseRecipientAndNetwork.ViewController(viewModel: vm)
                 childNavigationController.pushViewController(vc, animated: true)
@@ -88,7 +95,8 @@ extension SendToken {
                 let vc = ConfirmViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
             case .processTransaction(let request, let transactionType):
-                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
+                let vc = ProcessTransaction.ViewController(viewModel: vm)
                 vc.delegate = self
                 present(vc, interactiveDismissalType: .none, completion: nil)
             case .chooseNetwork:
@@ -102,7 +110,12 @@ extension SendToken {
 extension SendToken.ViewController: ProcessTransactionViewControllerDelegate {
     func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
         vc.dismiss(animated: true) { [weak self] in
-            self?.back()
+            guard let self = self else {return}
+            if self.viewModel.canGoBack {
+                self.back()
+            } else {
+                self.childNavigationController.popToRootViewController(animated: true)
+            }
         }
     }
 }

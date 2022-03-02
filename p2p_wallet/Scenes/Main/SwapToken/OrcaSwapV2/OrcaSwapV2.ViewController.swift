@@ -9,17 +9,6 @@ import Foundation
 import UIKit
 import RxSwift
 
-protocol OrcaSwapV2ScenesFactory {
-    func makeChooseWalletViewController(
-        title: String?,
-        customFilter: ((Wallet) -> Bool)?,
-        showOtherWallets: Bool,
-        selectedWallet: Wallet?,
-        handler: WalletDidSelectHandler
-    ) -> ChooseWallet.ViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-}
-
 extension OrcaSwapV2 {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
@@ -28,7 +17,6 @@ extension OrcaSwapV2 {
 
         // MARK: - Dependencies
         private let viewModel: OrcaSwapV2ViewModelType
-        private let scenesFactory: OrcaSwapV2ScenesFactory
 
         // MARK: - Properties
         
@@ -38,23 +26,20 @@ extension OrcaSwapV2 {
                 viewModel?.navigate(to: .back)
             },
             settingsHandler: { [weak viewModel] in
-                viewModel?.navigate(to: .settings)
+                viewModel?.openSettings()
             }
         )
         private lazy var rootView = RootView(viewModel: viewModel)
             .onTap(self, action: #selector(hideKeyboard))
         
         // MARK: - Methods
-        init(
-            viewModel: OrcaSwapV2ViewModelType,
-            scenesFactory: OrcaSwapV2ScenesFactory
-        ) {
-            self.scenesFactory = scenesFactory
+        init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
+            super.init()
         }
 
-        override func viewWillAppear(_ animated: Bool) {
-            super.viewWillAppear(animated)
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
 
             rootView.makeFromFirstResponder()
         }
@@ -80,17 +65,20 @@ extension OrcaSwapV2 {
         private func navigate(to scene: OrcaSwapV2.NavigatableScene?) {
             switch scene {
             case .settings:
-                let vc = OrcaSwapV2.SettingsViewController(viewModel: viewModel)
-                let nc = OrcaSwapV2.SettingsNavigationController(rootViewController: vc)
-                nc.modalPresentationStyle = .custom
-                present(nc, interactiveDismissalType: .standard)
+                let walletsViewModel: WalletsRepository = Resolver.resolve()
+                let vm = SwapTokenSettings.ViewModel(
+                    nativeWallet: walletsViewModel.nativeWallet,
+                    swapViewModel: viewModel
+                )
+
+                let viewController = SwapTokenSettings.ViewController(viewModel: vm)
+                show(viewController, sender: nil)
             case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
-                let vc = scenesFactory.makeChooseWalletViewController(
+                let vm = ChooseWallet.ViewModel(selectedWallet: currentlySelectedWallet, handler: viewModel, showOtherWallets: false)
+                vm.customFilter = { $0.amount > 0 }
+                let vc = ChooseWallet.ViewController(
                     title: L10n.selectTheFirstToken,
-                    customFilter: { $0.amount > 0 },
-                    showOtherWallets: false,
-                    selectedWallet: currentlySelectedWallet,
-                    handler: viewModel
+                    viewModel: vm
                 )
                 present(vc, animated: true, completion: nil)
             case let .chooseDestinationWallet(
@@ -98,31 +86,16 @@ extension OrcaSwapV2 {
                 validMints: validMints,
                 excludedSourceWalletPubkey: excludedSourceWalletPubkey
             ):
-                let vc = scenesFactory.makeChooseWalletViewController(
+                let vm = ChooseWallet.ViewModel(selectedWallet: currentlySelectedWallet, handler: viewModel, showOtherWallets: true)
+                vm.customFilter = {
+                    $0.pubkey != excludedSourceWalletPubkey &&
+                        validMints.contains($0.mintAddress)
+                }
+                let vc = ChooseWallet.ViewController(
                     title: L10n.selectTheSecondToken,
-                    customFilter: {
-                        $0.pubkey != excludedSourceWalletPubkey &&
-                            validMints.contains($0.mintAddress)
-                    },
-                    showOtherWallets: true,
-                    selectedWallet: currentlySelectedWallet,
-                    handler: viewModel
+                    viewModel: vm
                 )
                 present(vc, animated: true, completion: nil)
-            case .chooseSlippage:
-                let vc = OrcaSwapV2.SlippageSettingsViewController()
-                vc.completion = {[weak self] slippage in
-                    self?.viewModel.changeSlippage(to: slippage / 100)
-                }
-                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
-            case let .choosePayFeeToken(tokenName):
-                let vc = OrcaSwapV2.NetworkFeePayerSettingsViewController(transactionTokenName: tokenName ?? "")
-                vc.completion = { [weak self] method in
-                    Defaults.payingToken = method
-                    self?.viewModel.changePayingToken(to: method)
-                }
-
-                present(OrcaSwapV2.SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
             case .confirmation:
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
@@ -131,11 +104,14 @@ extension OrcaSwapV2 {
                 request: request,
                 transactionType: transactionType
             ):
-                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+                let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
+                let vc = ProcessTransaction.ViewController(viewModel: vm)
                 vc.delegate = self
                 present(vc, interactiveDismissalType: .none, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
+            case let .info(title, description):
+                showAlert(title: title, message: description)
             case .none:
                 break
             }

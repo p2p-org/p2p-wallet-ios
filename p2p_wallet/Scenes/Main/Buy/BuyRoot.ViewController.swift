@@ -14,18 +14,22 @@ import WebKit
 extension BuyRoot {
     class ViewController: BaseVC {
         // MARK: - Dependencies
-        private var viewModel: BuyViewModelType
-        let navigation: UINavigationController
+        private let viewModel: BuyViewModelType
+        lazy var navigation = UINavigationController(
+            rootViewController: SolanaBuyToken.Scene(
+                viewModel: SolanaBuyToken.SceneModel(buyViewModel: viewModel, exchangeService: Resolver.resolve())
+            )
+        )
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
-        init(crypto: Set<BuyProviders.Crypto>, walletRepository: WalletsRepository) {
-            viewModel = ViewModel(walletRepository: walletRepository)
-            navigation = UINavigationController(rootViewController: SolanaBuyToken.Scene(buyViewModel: viewModel))
+        // MARK: - Properties
+        
+        // MARK: - Initializer
+        init(viewModel: BuyViewModelType) {
+            self.viewModel = viewModel
             super.init()
         }
-        
-        // MARK: - Properties
         
         // MARK: - Methods
         override func setUp() {
@@ -46,9 +50,9 @@ extension BuyRoot {
             do {
                 switch scene {
                 case .buyToken(let crypto, let amount):
-                    let factory: BuyProviderFactory = Resolver.resolve()
+                    let factory: BuyProcessingFactory = Resolver.resolve()
                     let provider = try factory.create(
-                        walletRepository: viewModel.walletRepository,
+                        walletRepository: viewModel.walletsRepository,
                         crypto: crypto,
                         initialAmount: amount,
                         currency: .usd

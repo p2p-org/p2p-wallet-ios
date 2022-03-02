@@ -17,13 +17,16 @@ extension EnterSeed {
 
         // MARK: - Dependencies
         private let viewModel: EnterSeedViewModelType
+        private let accountRestorationHandler: AccountRestorationHandler
         
         // MARK: - Properties
         private lazy var rootView = RootView(viewModel: viewModel)
         
         // MARK: - Methods
-        init(viewModel: EnterSeedViewModelType) {
+        init(viewModel: EnterSeedViewModelType, accountRestorationHandler: AccountRestorationHandler) {
             self.viewModel = viewModel
+            self.accountRestorationHandler = accountRestorationHandler
+            super.init()
         }
 
         override func loadView() {
@@ -53,12 +56,13 @@ extension EnterSeed {
             case .none:
                 break
             case .info:
-                let vc = EnterSeedInfo.ViewController(viewModel: Resolver.resolve())
+                let vm = EnterSeedInfo.ViewModel()
+                let vc = EnterSeedInfo.ViewController(viewModel: vm)
                 present(vc, animated: true)
             case .back:
                 navigationController?.popViewController(animated: true)
             case let .success(words):
-                let viewModel = DerivableAccounts.ViewModel(phrases: words)
+                let viewModel = DerivableAccounts.ViewModel(phrases: words, handler: accountRestorationHandler)
                 let vc = DerivableAccounts.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .termsAndConditions:

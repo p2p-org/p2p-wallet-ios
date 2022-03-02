@@ -6,139 +6,113 @@
 //
 
 import Foundation
+import RxCocoa
 
 extension SendToken.SelectNetwork {
-    final class ViewController: SendToken.BaseViewController {
-        // MARK: - Properties
+    final class ViewController: BEScene {
+        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+        
         private let viewModel: SendTokenSelectNetworkViewModelType
-        private var selectedNetwork: SendToken.Network {
-            didSet {
-                reloadData()
-            }
-        }
         
-        // MARK: - Subviews
-        private lazy var networkViews: [_NetworkView] = {
-            let prices = viewModel.getSOLAndRenBTCPrices()
-            var networkViews = viewModel.getSelectableNetworks()
-                .map {network -> _NetworkView in
-                    let view = _NetworkView()
-                    view.network = network
-                    view.setUp(network: network, prices: prices)
-                    if network == .solana {
-                        view.insertArrangedSubview(
-                            UILabel(text: L10n.paidByP2p, textSize: 13, textColor: .h34c759)
-                                .withContentHuggingPriority(.required, for: .horizontal)
-                                .padding(.init(x: 12, y: 8), backgroundColor: .f5fcf7, cornerRadius: 12)
-                                .border(width: 1, color: .h34c759)
-                                .withContentHuggingPriority(.required, for: .horizontal),
-                            at: 2
-                        )
-                    }
-                    return view.onTap(self, action: #selector(networkViewDidTouch(_:)))
-                }
-            
-            return networkViews
-        }()
+        // Internal state
+        private let selectedNetwork: BehaviorRelay<SendToken.Network>
         
-        // MARK: - Initializers
         init(viewModel: SendTokenSelectNetworkViewModelType) {
             self.viewModel = viewModel
-            self.selectedNetwork = viewModel.getSelectedNetwork()
+            self.selectedNetwork = BehaviorRelay(value: viewModel.getSelectedNetwork())
             super.init()
         }
         
-        // MARK: - Methods
-        override func setUp() {
-            super.setUp()
-            // navigation bar
-            navigationBar.titleLabel.text = L10n.chooseTheNetwork
-            
-            // container
-            let rootView = ScrollableVStackRootView()
-            view.addSubview(rootView)
-            rootView.autoPinEdge(.top, to: .bottom, of: navigationBar)
-            rootView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            rootView.stackView.spacing = 0
-            rootView.stackView.addArrangedSubviews {
-                UIView.greyBannerView {
-                    UILabel(text: L10n.P2PWaletWillAutomaticallyMatchYourWithdrawalTargetAddressToTheCorrectNetworkForMostWithdrawals.howeverBeforeSendingYourFundsMakeSureToDoubleCheckTheSelectedNetwork, textSize: 15, numberOfLines: 0)
-                }
+        override func build() -> UIView {
+            UIStackView(axis: .vertical, alignment: .fill) {
+                NewWLNavigationBar(initialTitle: L10n.chooseTheNetwork, separatorEnable: false)
+                    .onBack { [unowned self] in self.back() }
                 
-                BEStackViewSpacing(10)
-            }
-            
-            // networks
-            for (index, view) in networkViews.enumerated() {
-                rootView.stackView.addArrangedSubview(view.padding(.init(x: 0, y: 26)))
-                if index < networkViews.count - 1 {
-                    rootView.stackView.addArrangedSubview(.separator(height: 1, color: .separator))
-                }
-            }
-            
-            reloadData()
-        }
-        
-        private func reloadData() {
-            for view in self.networkViews {
-                view.tickView.alpha = view.network == selectedNetwork ? 1: 0
-            }
-        }
-        
-        // MARK: - Actions
-        @objc private func networkViewDidTouch(_ gesture: UITapGestureRecognizer) {
-            guard let view = gesture.view as? _NetworkView, let network = view.network else {
-                return
-            }
-            // save previous state and assign new one
-            let originalSelectedNetwork = selectedNetwork
-            selectedNetwork = network
-            
-            // alert if needed
-            if !isAddressValidForNetwork() {
-                let networkName = viewModel.getSelectedNetwork().rawValue.uppercaseFirst
-                showAlert(
-                    title: L10n.changeTheNetwork,
-                    message: L10n.ifTheNetworkIsChangedToTheAddressFieldMustBeFilledInWithA(networkName, L10n.compatibleAddress(networkName)),
-                    buttonTitles: [L10n.discard, L10n.change],
-                    highlightedButtonIndex: 1,
-                    destroingIndex: 0
-                ) { [weak self] index in
-                    if index == 0 {
-                        self?.selectedNetwork = originalSelectedNetwork
-                        self?._back()
-                    } else {
-                        self?.save()
-                        self?.viewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
+                BEScrollView(contentInsets: .init(x: 18, y: 4)) {
+                    // Description
+                    UIView.greyBannerView {
+                        UILabel(
+                            text: L10n
+                                .P2PWalletWillAutomaticallyMatchYourWithdrawalTargetAddressToTheCorrectNetworkForMostWithdrawals
+                                .howeverBeforeSendingYourFundsMakeSureToDoubleCheckTheSelectedNetwork,
+                            textSize: 15,
+                            numberOfLines: 0)
+                    }.padding(.init(only: .bottom, inset: 35))
+                    
+                    // Solana cell
+                    if viewModel.getSelectableNetworks().contains(.solana) {
+                        createNetworkView(network: .solana)
+                        UIView.greenBannerView(contentInset: .init(x: 12, y: 8)) {
+                            UILabel(
+                                text: nil,
+                                textColor: .h34c759,
+                                numberOfLines: 5
+                            )
+                                .setup { label in
+                                    viewModel.getFreeTransactionFeeLimit()
+                                        .map {$0.maxUsage}
+                                        .subscribe(onSuccess: {[weak label] maxUsage in
+                                            label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage)
+                                        })
+                                        .disposed(by: disposeBag)
+                                }
+                        }.padding(.init(only: .top, inset: 18))
+                    }
+                    
+                    // Bitcoin cell
+                    if viewModel.getSelectableNetworks().contains(.bitcoin) {
+                        UIView.defaultSeparator().padding(.init(top: 16, left: 0, bottom: 25, right: 0))
+                        createNetworkView(network: .bitcoin)
                     }
                 }
             }
         }
         
-        // MARK: - Helpers
-        override func _back() {
-            save()
-            super._back()
+        private func createNetworkView(network: SendToken.Network) -> _NetworkView {
+            _NetworkView()
+                .setup {view in
+                    Driver.combineLatest(
+                        viewModel.feeInfoDriver,
+                        viewModel.payingWalletDriver
+                    )
+                        .drive(onNext: {[weak view, weak self] feeInfo, payingWallet in
+                            view?.setUp(network: network, payingWallet: payingWallet, feeInfo: feeInfo.value, prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:])
+                        })
+                        .disposed(by: disposeBag)
+                    
+                    selectedNetwork.asDriver()
+                        .map { $0 != network }
+                        .drive(view.tickView.rx.isHidden)
+                        .disposed(by: disposeBag)
+                }
+                .onTap { [unowned self] in self.switchNetwork(to: network) }
         }
         
-        private func isAddressValidForNetwork() -> Bool {
-            guard let address = viewModel.getSelectedRecipient()?.address else {return true}
-            switch selectedNetwork {
-            case .bitcoin:
-                return address.matches(allOfRegexes: .bitcoinAddress(isTestnet: viewModel.getAPIClient().isTestNet()))
-            case .solana:
-                return address.matches(oneOfRegexes: .publicKey)
+        private func switchNetwork(to network: SendToken.Network) {
+            let networkName = viewModel.getSelectedNetwork().rawValue.uppercaseFirst
+            
+            showAlert(
+                title: L10n.changeTheNetwork,
+                message: L10n.ifTheNetworkIsChangedToTheAddressFieldMustBeFilledInWithA(networkName, L10n.compatibleAddress(networkName)),
+                buttonTitles: [L10n.discard, L10n.change],
+                highlightedButtonIndex: 1,
+                destroingIndex: 0
+            ) { [weak self] index in
+                if index == 0 {
+                    self?.back()
+                } else {
+                    self?.selectedNetwork.accept(network)
+                    self?.viewModel.selectNetwork(network)
+                    self?.viewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
+                }
             }
-        }
-        
-        private func save() {
-            viewModel.selectNetwork(selectedNetwork)
         }
     }
     
     private class _NetworkView: SendToken.NetworkView {
         fileprivate var network: SendToken.Network?
         fileprivate lazy var tickView = UIImageView(width: 14.3, height: 14.19, image: .tick, tintColor: .h5887ff)
+        
         override init() {
             super.init()
             addArrangedSubview(tickView)

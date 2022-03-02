@@ -12,39 +12,17 @@ import RxSwift
 
 class WalletsCollectionView: BEStaticSectionsCollectionView {
     let walletsRepository: WalletsRepository
-    let activeWalletsSection: WalletsSection
-    let hiddenWalletsSection: HiddenWalletsSection
-    
-    var showHideHiddenWalletsAction: CocoaAction? {
-        didSet {
-            hiddenWalletsSection.showHideHiddenWalletsAction = showHideHiddenWalletsAction
-        }
-    }
-    
-    var walletCellEditAction: Action<Wallet, Void>? {
-        didSet {
-            activeWalletsSection.walletCellEditAction = walletCellEditAction
-            hiddenWalletsSection.walletCellEditAction = walletCellEditAction
-        }
-    }
     
     init(
         header: BECollectionViewHeaderFooterViewLayout? = nil,
         walletsRepository: WalletsRepository,
-        activeWalletsSection: WalletsSection,
-        hiddenWalletsSection: HiddenWalletsSection,
-        additionalSections: [Section] = [],
+        sections: [BEStaticSectionsCollectionView.Section],
         footer: BECollectionViewHeaderFooterViewLayout? = nil
     ) {
         self.walletsRepository = walletsRepository
-        self.activeWalletsSection = activeWalletsSection
-        self.hiddenWalletsSection = hiddenWalletsSection
         super.init(
             header: header,
-            sections: [
-                activeWalletsSection,
-                hiddenWalletsSection
-            ] + additionalSections,
+            sections: sections,
             footer: footer
         )
     }

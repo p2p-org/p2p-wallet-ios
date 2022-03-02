@@ -10,13 +10,14 @@ import RxSwift
 import RxCocoa
 import BECollectionView
 import RxAppState
+import Resolver
 
 class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Dependencies
-    private let solanaSDK: SolanaSDK
-    let accountNotificationsRepository: AccountNotificationsRepository
-    weak var processingTransactionRepository: ProcessingTransactionsRepository?
-    private let pricesService: PricesServiceType
+    @Injected private var solanaSDK: SolanaSDK
+    @Injected private var pricesService: PricesServiceType
+    @Injected private var accountNotificationsRepository: AccountNotificationsRepository
+    @WeakLazyInjected private var processingTransactionRepository: ProcessingTransactionsRepository?
     
     // MARK: - Properties
     private var defaultsDisposables = [DefaultsDisposable]()
@@ -32,14 +33,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
     
     // MARK: - Initializer
-    init(
-        solanaSDK: SolanaSDK,
-        accountNotificationsRepository: AccountNotificationsRepository,
-        pricesService: PricesServiceType
-    ) {
-        self.solanaSDK = solanaSDK
-        self.accountNotificationsRepository = accountNotificationsRepository
-        self.pricesService = pricesService
+    init() {
         super.init()
         bind()
         startObserving()
@@ -100,7 +94,9 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     // MARK: - Observing
     func startObserving() {
-        timer = Timer.scheduledTimer(timeInterval: 10, target: self, selector: #selector(getNewWallet), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: {[weak self] _ in
+            self?.getNewWallet()
+        })
     }
     
     func stopObserving() {
@@ -137,6 +133,13 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 return wallets
             }
             .observe(on: MainScheduler.instance)
+            .do(onSuccess: { [weak self] wallets in
+                guard let self = self else {return}
+                let newTokens = wallets.map {$0.token.symbol}
+                    .filter {!self.pricesService.getWatchList().contains($0)}
+                self.pricesService.addToWatchList(newTokens)
+                self.pricesService.fetchPrices(tokens: newTokens)
+            })
     }
     
     override func reload() {

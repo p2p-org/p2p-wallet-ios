@@ -14,16 +14,11 @@ import RxSwift
     @objc optional func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController)
 }
 
-protocol TokenSettingsScenesFactory {
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
-}
-
 class TokenSettingsViewController: WLIndicatorModalVC {
     
     // MARK: - Properties
-    let viewModel: TokenSettingsViewModel
-    @Injected private var authenticationHandler: AuthenticationHandler
-    let scenesFactory: TokenSettingsScenesFactory
+    private let viewModel: TokenSettingsViewModel
+    @Injected private var authenticationHandler: AuthenticationHandlerType
     weak var delegate: TokenSettingsViewControllerDelegate?
     
     // MARK: - Subviews
@@ -36,12 +31,8 @@ class TokenSettingsViewController: WLIndicatorModalVC {
     }()
     
     // MARK: - Initializer
-    init(
-        viewModel: TokenSettingsViewModel,
-        scenesFactory: TokenSettingsScenesFactory
-    ) {
+    init(viewModel: TokenSettingsViewModel) {
         self.viewModel = viewModel
-        self.scenesFactory = scenesFactory
         super.init()
     }
     
@@ -79,9 +70,9 @@ class TokenSettingsViewController: WLIndicatorModalVC {
         case .closeConfirmation:
             guard let symbol = viewModel.wallet?.token.symbol else {return}
             let vc = TokenSettingsCloseAccountConfirmationVC(symbol: symbol)
-            vc.completion = {
-                vc.dismiss(animated: true) { [unowned self] in
-                    self.authenticationHandler.authenticate(
+            vc.completion = { [weak vc] in
+                vc?.dismiss(animated: true) { [weak self] in
+                    self?.authenticationHandler.authenticate(
                         presentationStyle: .init(
                             isRequired: false,
                             isFullScreen: false,
@@ -94,9 +85,10 @@ class TokenSettingsViewController: WLIndicatorModalVC {
                     )
                 }
             }
-            self.present(vc, animated: true, completion: nil)
+            present(vc, animated: true, completion: nil)
         case .processTransaction(let request, let transactionType):
-            let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
+            let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
+            let vc = ProcessTransaction.ViewController(viewModel: vm)
             vc.delegate = self
             present(vc, interactiveDismissalType: .none, completion: nil)
         }

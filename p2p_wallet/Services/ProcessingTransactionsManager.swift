@@ -12,20 +12,13 @@ import RxCocoa
 class ProcessingTransactionsManager: ProcessingTransactionsRepository {
     // MARK: - Dependencies
     @Injected private var notificationsService: NotificationsServiceType
-    private let handler: TransactionHandler
-    private let walletsRepository: WalletsRepository
-    private let pricesService: PricesServiceType
+    @Injected private var handler: TransactionHandler
+    @Injected private var walletsRepository: WalletsRepository
+    @Injected private var pricesService: PricesServiceType
     
     // MARK: - Properties
     private let disposeBag = DisposeBag()
     private let transactionsSubject = BehaviorRelay<[SolanaSDK.ParsedTransaction]>(value: [])
-    
-    // MARK: - Initializer
-    init(handler: TransactionHandler, walletsRepository: WalletsRepository, pricesService: PricesServiceType) {
-        self.handler = handler
-        self.walletsRepository = walletsRepository
-        self.pricesService = pricesService
-    }
     
     // MARK: - Methods
     func getProcessingTransactions() -> [SolanaSDK.ParsedTransaction] {
@@ -80,8 +73,9 @@ class ProcessingTransactionsManager: ProcessingTransactionsRepository {
                 })
             })
             // signature subscribe
-            .flatMapCompletable{ signature in
-                self.handler.observeTransactionCompletion(signature: signature)
+            .flatMapCompletable{ [weak self] signature in
+                guard let self = self else {throw SolanaSDK.Error.unknown}
+                return self.handler.observeTransactionCompletion(signature: signature)
                     .timeout(.seconds(60), scheduler: MainScheduler.instance)
                     .catch {_ in .empty()}
             }

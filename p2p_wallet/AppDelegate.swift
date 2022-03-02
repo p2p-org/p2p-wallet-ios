@@ -17,6 +17,7 @@ import BECollectionView
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    private var lockViewController: LockScreenWrapperViewController?
     
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -28,11 +29,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.overrideUserInterfaceStyle = style
         }
     }
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         Bundle.swizzleLocalization()
-        
+        IntercomStartingConfigurator().configure()
+
         // BEPureLayoutConfiguration
         BEPureLayoutConfigs.defaultBackgroundColor = .background
         BEPureLayoutConfigs.defaultTextColor = .textBlack
@@ -44,10 +46,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultCheckBoxActiveColor = .h5887ff
         
         // Use Firebase library to configure APIs
-        #if DEBUG
-        #else
+//        #if DEBUG
+//        #else
         FirebaseApp.configure()
-        #endif
+//        #endif
         
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -56,19 +58,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         // set rootVC
-        let vc = Root.ViewController()
-        window?.rootViewController = vc
+        let vm = Root.ViewModel()
+        let vc = Root.ViewController(viewModel: vm)
+        lockViewController = LockScreenWrapperViewController(vc)
+        window?.rootViewController = lockViewController
         
         window?.makeKeyAndVisible()
         return true
     }
     
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        
+    func applicationWillResignActive(_ application: UIApplication) {
+        print("Lock")
+        lockViewController?.isLocked = true
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        
+        print("Unlock")
+        lockViewController?.isLocked = false
     }
     
     func application(

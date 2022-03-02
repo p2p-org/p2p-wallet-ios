@@ -14,7 +14,7 @@ import Action
 extension CreateSecurityKeys {
     class RootView: ScrollableVStackRootView {
         // MARK: - Dependencies
-        @Injected private var viewModel: CreateSecurityKeysViewModelType
+        private let viewModel: CreateSecurityKeysViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
 
         // MARK: - Properties
@@ -36,6 +36,11 @@ extension CreateSecurityKeys {
         private let agreeTermsAndConditions = AgreeTermsAndConditionsView()
         
         // MARK: - Initializers
+        init(viewModel: CreateSecurityKeysViewModelType) {
+            self.viewModel = viewModel
+            super.init(frame: .zero)
+        }
+        
         override func commonInit() {
             super.commonInit()
 
@@ -109,16 +114,8 @@ extension CreateSecurityKeys {
         }
         
         func saveToPhoto() {
-            analyticsManager.log(event: .createWalletSaveSeedToPhotosClick)
-            UIImageWriteToSavedPhotosAlbum(keysView.asImage(), self, #selector(saveImageCallback), nil)
-        }
-        
-        @objc private func saveImageCallback(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
-            if let error = error {
-                showErrorView(error: error)
-            } else {
-                viewModel.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
-            }
+            analyticsManager.log(event: .backingUpSaving)
+            viewModel.saveKeysImage(keysView.asImage())
         }
     }
 }

@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import RxSwift
+import SolanaSwift
 
 extension SendToken {
     class NetworkView: UIStackView {
@@ -36,23 +37,20 @@ extension SendToken {
             fatalError("init(coder:) has not been implemented")
         }
         
-        func setUp(network: SendToken.Network, prices: [String: Double]) {
+        @discardableResult
+        func setUp(network: SendToken.Network, payingWallet: Wallet?, feeInfo: SendToken.FeeInfo?, prices: [String: Double]) -> Self {
             coinImageView.image = network.icon
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
             
             let attributedText = NSMutableAttributedString()
                 .text(L10n.transferFee + ": ", size: 13, color: .textSecondary)
             
-            let fees = network.defaultFees
-            
-            if fees.map(\.amount).reduce(0.0, +) == 0 {
-                attributedText
-                    .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
-            } else {
+            if let feeInfo = feeInfo {
                 attributedText
                     .append(
-                        network.defaultFees
+                        feeInfo
                             .attributedString(
+                                payingWallet: payingWallet,
                                 prices: prices,
                                 textSize: 13,
                                 tokenColor: .textSecondary,
@@ -62,7 +60,53 @@ extension SendToken {
                             )
                     )
             }
+            
             feeLabel.attributedText = attributedText
+            
+            return self
         }
+    }
+}
+
+private extension SendToken.FeeInfo {
+    func attributedString(
+        payingWallet wallet: Wallet?,
+        prices: [String: Double],
+        textSize: CGFloat = 15,
+        tokenColor: UIColor = .textBlack,
+        fiatColor: UIColor = .textSecondary,
+        attributedSeparator: NSAttributedString = NSAttributedString(string: "\n")
+    ) -> NSMutableAttributedString {
+        let attributedText = NSMutableAttributedString()
+        
+        // if empty
+        if feeAmount.transaction == 0 && (feeAmount.others == nil || feeAmount.others?.isEmpty == true) {
+            attributedText
+                .text("\(Defaults.fiat.symbol)0", size: 13, weight: .semibold, color: .attentionGreen)
+            return attributedText
+        }
+        
+        // total (in SOL)
+        let totalFeeInSOL = feeAmount.transaction.convertToBalance(decimals: 9)
+        let totalFeeInUSD = totalFeeInSOL * prices[wallet?.token.symbol ?? ""]
+        attributedText
+            .text("\(totalFeeInSOL.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "")", size: textSize, color: tokenColor)
+            .text(" (~\(Defaults.fiat.symbol)\(totalFeeInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
+        
+        // other fees
+        if let others = feeAmount.others {
+            attributedText.append(attributedSeparator)
+            for (index, fee) in others.enumerated() {
+                let amountInUSD = fee.amount * prices[fee.unit]
+                attributedText
+                    .text("\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)", size: textSize, color: tokenColor)
+                    .text(" (~\(Defaults.fiat.symbol)\(amountInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
+                if index < others.count - 1 {
+                    attributedText
+                        .append(attributedSeparator)
+                }
+            }
+        }
+        return attributedText
     }
 }

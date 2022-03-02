@@ -17,7 +17,7 @@ extension RestoreWallet {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: RestoreWalletViewModelType
+        private let viewModel: RestoreWalletViewModelType
 
         // MARK: - Subviews
         private lazy var iCloudRestoreButton = WLStepButton.main(
@@ -31,6 +31,12 @@ extension RestoreWallet {
             )
             .onTap(self, action: #selector(restoreManually))
         
+        // MARK: - Initializer
+        init(viewModel: RestoreWalletViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
         // MARK: - Methods
         override func setUp() {
             super.setUp()
@@ -42,7 +48,7 @@ extension RestoreWallet {
             // navigation bar
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
-            navigationBar.titleLabel.text = L10n.iVeAlreadyHadAWallet.uppercaseFirst
+            navigationBar.titleLabel.text = L10n.iAlreadyHaveAWallet.uppercaseFirst
             
             // content
             let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
@@ -92,20 +98,20 @@ extension RestoreWallet {
             
             switch scene {
             case .enterPhrases:
-                let vc = EnterSeed.ViewController(viewModel: Resolver.resolve())
+                let vm = EnterSeed.ViewModel()
+                let vc = EnterSeed.ViewController(viewModel: vm, accountRestorationHandler: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .restoreFromICloud:
-                let vc = RestoreICloud.ViewController()
+                let vc = RestoreICloud.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .derivableAccounts(let phrases):
-                let viewModel = DerivableAccounts.ViewModel(phrases: phrases)
+                let viewModel = DerivableAccounts.ViewModel(phrases: phrases, handler: viewModel)
                 let vc = DerivableAccounts.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .reserveName(let owner):
                 let viewModel = ReserveName.ViewModel(
                     kind: .reserveCreateWalletPart,
                     owner: owner,
-                    nameService: Resolver.resolve(),
                     reserveNameHandler: viewModel
                 )
                 let viewController = ReserveName.ViewController(viewModel: viewModel)

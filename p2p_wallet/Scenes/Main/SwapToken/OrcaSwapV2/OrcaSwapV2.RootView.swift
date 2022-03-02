@@ -21,20 +21,17 @@ extension OrcaSwapV2 {
         private lazy var nextButton = WLStepButton.main(image: .buttonCheckSmall, text: L10n.reviewAndConfirm)
             .onTap(self, action: #selector(buttonNextDidTouch))
 
-        private let mainView: OrcaSwapV2.MainSwapView
-        private let showDetailsButton = OrcaSwapV2.ShowDetailsButton()
-        private let detailsView: OrcaSwapV2.DetailsView
+        private lazy var mainView = OrcaSwapV2.MainSwapView(viewModel: viewModel)
+        private let showDetailsButton = ShowHideButton(closedText: L10n.showDetails, openedText: L10n.hideDetails)
+        private lazy var detailsView = OrcaSwapV2.DetailsView(viewModel: viewModel)
         
-        // MARK: - Methods
+        // MARK: - Initializer
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
-
-            detailsView = .init(viewModel: viewModel)
-            mainView = .init(viewModel: viewModel)
-
             super.init(frame: .zero)
         }
-
+        
+        // MARK: - Methods
         override func commonInit() {
             super.commonInit()
             scrollView.showsVerticalScrollIndicator = false
@@ -57,7 +54,7 @@ extension OrcaSwapV2 {
             addSubview(nextButton)
             nextButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
             nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
-            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
             
             scrollViewBottomConstraint.isActive = false
             scrollView.autoPinEdge(.bottom, to: .top, of: nextButton, withOffset: 8)
@@ -71,7 +68,7 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver
-                .drive(showDetailsButton.rx.isShown)
+                .drive(showDetailsButton.rx.isOpened)
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver
@@ -157,6 +154,9 @@ extension OrcaSwapV2 {
             case .none:
                 text = L10n.reviewAndConfirm
                 image = .buttonCheckSmall
+            case .some(.payingFeeWalletNotFound):
+                // TODO: fix
+                text =  "payingFeeWalletNotFound"
             }
 
             nextButton.setTitle(text: text)

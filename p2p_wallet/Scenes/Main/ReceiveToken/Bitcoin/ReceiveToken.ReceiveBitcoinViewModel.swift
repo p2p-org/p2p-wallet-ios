@@ -5,21 +5,23 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
-import Foundation
 import RxSwift
 import RxCocoa
+import Resolver
+import RenVMSwift
 
-protocol ReceiveTokenBitcoinViewModelType {
-    var notificationsService: NotificationsServiceType {get}
-    var isReceivingRenBTCDriver: Driver<Bool> {get}
-    var isLoadingDriver: Driver<Bool> {get}
-    var errorDriver: Driver<String?> {get}
-    var renBTCWalletCreatingDriver: Driver<Loadable<String>> {get}
-    var conditionAcceptedDriver: Driver<Bool> {get}
-    var addressDriver: Driver<String?> {get}
-    var timerSignal: Signal<Void> {get}
-    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {get}
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {get}
+protocol ReceiveTokenBitcoinViewModelType: AnyObject {
+    var notificationsService: NotificationsServiceType { get }
+    var isReceivingRenBTCDriver: Driver<Bool> { get }
+    var isLoadingDriver: Driver<Bool> { get }
+    var errorDriver: Driver<String?> { get }
+    var renBTCWalletCreatingDriver: Driver<Loadable<String>> { get }
+    var conditionAcceptedDriver: Driver<Bool> { get }
+    var addressDriver: Driver<String?> { get }
+    var timerSignal: Signal<Void> { get }
+    var minimumTransactionAmountDriver: Driver<Loadable<Double>> { get }
+    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
+    var hasExplorerButton: Bool { get }
     
     func reload()
     func reloadMinimumTransactionAmount()
@@ -27,10 +29,10 @@ protocol ReceiveTokenBitcoinViewModelType {
     func createRenBTCWallet()
     func acceptConditionAndLoadAddress()
     func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
-    func showBTCTypeOptions()
     func showReceivingStatuses()
-    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
-    func share()
+    func copyToClipboard()
+    func share(image: UIImage)
+    func saveAction(image: UIImage)
     func showBTCAddressInExplorer()
 }
 
@@ -38,47 +40,49 @@ extension ReceiveToken {
     class ReceiveBitcoinViewModel {
         // MARK: - Constants
         private let disposeBag = DisposeBag()
-        
+        let hasExplorerButton: Bool
+
         // MARK: - Dependencies
-        private let renVMService: RenVMLockAndMintServiceType
+        @Injected private var renVMService: RenVMLockAndMintServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
+        @Injected private var imageSaver: ImageSaverType
         @Injected var notificationsService: NotificationsServiceType
         private let navigationSubject: PublishRelay<NavigatableScene?>
-        private let associatedTokenAccountHandler: AssociatedTokenAccountHandler
+        @Injected private var associatedTokenAccountHandler: AssociatedTokenAccountHandler
         
         // MARK: - Subjects
         private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: true)
-        private let createRenBTCSubject: LoadableRelay<String>
+        private lazy var createRenBTCSubject: LoadableRelay<String> = .init(
+            request: associatedTokenAccountHandler
+                .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
+                .catch {error in
+                    if error.isAlreadyInUseSolanaError {
+                        return .just("")
+                    }
+                    throw error
+                }
+        )
         private let timerSubject = PublishRelay<Void>()
         
         // MARK: - Initializers
         init(
-            renVMService: RenVMLockAndMintServiceType,
             navigationSubject: PublishRelay<NavigatableScene?>,
             isRenBTCWalletCreated: Bool,
-            associatedTokenAccountHandler: AssociatedTokenAccountHandler
+            hasExplorerButton: Bool
         ) {
-            self.renVMService = renVMService
             self.navigationSubject = navigationSubject
-            self.associatedTokenAccountHandler = associatedTokenAccountHandler
-            
-            self.createRenBTCSubject = .init(
-                request: associatedTokenAccountHandler
-                    .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
-                    .catch {error in
-                        if error.isAlreadyInUseSolanaError {
-                            return .just("")
-                        }
-                        throw error
-                    }
-            )
+            self.hasExplorerButton = hasExplorerButton
             
             if isRenBTCWalletCreated {
                 createRenBTCSubject.accept(nil, state: .loaded)
             }
             
             bind()
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
         
         func reload() {
@@ -100,7 +104,7 @@ extension ReceiveToken {
             
             timerSubject
                 .subscribe(onNext: { [weak self] in
-                    guard let endAt = self?.getSessionEndDate() else {return}
+                    guard let endAt = self?.getSessionEndDate() else { return }
                     if Date() >= endAt {
                         self?.renVMService.expireCurrentSession()
                     }
@@ -110,10 +114,6 @@ extension ReceiveToken {
         
         func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool) {
             isReceivingRenBTCSubject.accept(isReceivingRenBTC)
-        }
-        
-        func showBTCTypeOptions() {
-            navigationSubject.accept(.chooseBTCOption(selectedOption: isReceivingRenBTCSubject.value ? .renBTC: .splBTC))
         }
     }
 }
@@ -159,20 +159,42 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         renVMService.getSessionEndDate()
     }
     
-    func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
+    func copyToClipboard() {
+        guard let address = renVMService.getCurrentAddress() else { return }
         clipboardManager.copyToClipboard(address)
-        analyticsManager.log(event: logEvent)
+        notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
+        analyticsManager.log(event: .receiveAddressCopied)
     }
     
-    func share() {
-        guard let address = renVMService.getCurrentAddress() else {return}
+    func share(image: UIImage) {
         analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.accept(.share(address: address))
+        navigationSubject.accept(
+            .share(address: renVMService.getCurrentAddress() ?? "", qrCode: image)
+        )
     }
     
+    func saveAction(image: UIImage) {
+        analyticsManager.log(event: .receiveQRSaved)
+        imageSaver.save(image: image) { [weak self] result in
+            switch result {
+            case .success:
+                self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+            case let .failure(error):
+                switch error {
+                case .noAccess:
+                    self?.navigationSubject.accept(.showPhotoLibraryUnavailable)
+                case .restrictedRightNow:
+                    break
+                case let .unknown(error):
+                    self?.notificationsService.showInAppNotification(.error(error))
+                }
+            }
+        }
+    }
+
     func showBTCAddressInExplorer() {
-        guard let address = renVMService.getCurrentAddress() else {return}
-        analyticsManager.log(event: .receiveViewExplorerOpen)
+        guard let address = renVMService.getCurrentAddress() else { return }
+        analyticsManager.log(event: .receiveViewingExplorer)
         navigationSubject.accept(.showBTCExplorer(address: address))
     }
     

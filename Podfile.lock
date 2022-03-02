@@ -2,8 +2,8 @@ PODS:
   - Action (5.0.0):
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
-  - Alamofire (5.4.3)
-  - Amplitude (8.3.0)
+  - Alamofire (5.5.0)
+  - Amplitude (8.3.1)
   - BECollectionView (0.1.0):
     - PureLayout
     - RxCocoa
@@ -14,103 +14,109 @@ PODS:
   - Charts (3.6.0):
     - Charts/Core (= 3.6.0)
   - Charts/Core (3.6.0)
-  - CocoaLumberjack (3.7.2):
-    - CocoaLumberjack/Core (= 3.7.2)
-  - CocoaLumberjack/Core (3.7.2)
-  - CryptoSwift (1.4.1)
+  - CryptoSwift (1.4.2)
   - Down (0.11.0)
-  - FeeRelayerSwift (1.0.0):
-    - RxAlamofire
-    - RxSwift
-  - Firebase/Analytics (8.5.0):
+  - FeeRelayerSwift (2.2.7):
+    - OrcaSwapSwift (~> 1.0.20)
+    - RxAlamofire (~> 6.1.1)
+    - SolanaSwift (~> 1.3.8)
+  - Firebase/Analytics (8.10.0):
     - Firebase/Core
-  - Firebase/Core (8.5.0):
+  - Firebase/Core (8.10.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (~> 8.5.0)
-  - Firebase/CoreOnly (8.5.0):
-    - FirebaseCore (= 8.5.0)
-  - Firebase/Crashlytics (8.5.0):
+    - FirebaseAnalytics (~> 8.10.0)
+  - Firebase/CoreOnly (8.10.0):
+    - FirebaseCore (= 8.10.0)
+  - Firebase/Crashlytics (8.10.0):
     - Firebase/CoreOnly
-    - FirebaseCrashlytics (~> 8.5.0)
-  - FirebaseAnalytics (8.5.0):
-    - FirebaseAnalytics/AdIdSupport (= 8.5.0)
+    - FirebaseCrashlytics (~> 8.10.0)
+  - FirebaseAnalytics (8.10.0):
+    - FirebaseAnalytics/AdIdSupport (= 8.10.0)
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
-    - GoogleUtilities/MethodSwizzler (~> 7.4)
-    - GoogleUtilities/Network (~> 7.4)
-    - "GoogleUtilities/NSData+zlib (~> 7.4)"
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
+    - GoogleUtilities/MethodSwizzler (~> 7.6)
+    - GoogleUtilities/Network (~> 7.6)
+    - "GoogleUtilities/NSData+zlib (~> 7.6)"
     - nanopb (~> 2.30908.0)
-  - FirebaseAnalytics/AdIdSupport (8.5.0):
+  - FirebaseAnalytics/AdIdSupport (8.10.0):
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
-    - GoogleAppMeasurement (= 8.5.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
-    - GoogleUtilities/MethodSwizzler (~> 7.4)
-    - GoogleUtilities/Network (~> 7.4)
-    - "GoogleUtilities/NSData+zlib (~> 7.4)"
+    - GoogleAppMeasurement (= 8.10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
+    - GoogleUtilities/MethodSwizzler (~> 7.6)
+    - GoogleUtilities/Network (~> 7.6)
+    - "GoogleUtilities/NSData+zlib (~> 7.6)"
     - nanopb (~> 2.30908.0)
-  - FirebaseCore (8.5.0):
+  - FirebaseCore (8.10.0):
     - FirebaseCoreDiagnostics (~> 8.0)
-    - GoogleUtilities/Environment (~> 7.4)
-    - GoogleUtilities/Logger (~> 7.4)
-  - FirebaseCoreDiagnostics (8.5.0):
-    - GoogleDataTransport (~> 9.0)
-    - GoogleUtilities/Environment (~> 7.4)
-    - GoogleUtilities/Logger (~> 7.4)
+    - GoogleUtilities/Environment (~> 7.6)
+    - GoogleUtilities/Logger (~> 7.6)
+  - FirebaseCoreDiagnostics (8.10.0):
+    - GoogleDataTransport (~> 9.1)
+    - GoogleUtilities/Environment (~> 7.6)
+    - GoogleUtilities/Logger (~> 7.6)
     - nanopb (~> 2.30908.0)
-  - FirebaseCrashlytics (8.5.0):
+  - FirebaseCrashlytics (8.10.0):
     - FirebaseCore (~> 8.0)
     - FirebaseInstallations (~> 8.0)
-    - GoogleDataTransport (~> 9.0)
-    - GoogleUtilities/Environment (~> 7.4)
+    - GoogleDataTransport (~> 9.1)
+    - GoogleUtilities/Environment (~> 7.6)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - FirebaseInstallations (8.5.0):
+  - FirebaseInstallations (8.10.0):
     - FirebaseCore (~> 8.0)
-    - GoogleUtilities/Environment (~> 7.4)
-    - GoogleUtilities/UserDefaults (~> 7.4)
+    - GoogleUtilities/Environment (~> 7.6)
+    - GoogleUtilities/UserDefaults (~> 7.6)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleAppMeasurement (8.5.0):
-    - GoogleAppMeasurement/AdIdSupport (= 8.5.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
-    - GoogleUtilities/MethodSwizzler (~> 7.4)
-    - GoogleUtilities/Network (~> 7.4)
-    - "GoogleUtilities/NSData+zlib (~> 7.4)"
+  - GoogleAppMeasurement (8.10.0):
+    - GoogleAppMeasurement/AdIdSupport (= 8.10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
+    - GoogleUtilities/MethodSwizzler (~> 7.6)
+    - GoogleUtilities/Network (~> 7.6)
+    - "GoogleUtilities/NSData+zlib (~> 7.6)"
     - nanopb (~> 2.30908.0)
-  - GoogleAppMeasurement/AdIdSupport (8.5.0):
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.4)
-    - GoogleUtilities/MethodSwizzler (~> 7.4)
-    - GoogleUtilities/Network (~> 7.4)
-    - "GoogleUtilities/NSData+zlib (~> 7.4)"
+  - GoogleAppMeasurement/AdIdSupport (8.10.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 8.10.0)
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
+    - GoogleUtilities/MethodSwizzler (~> 7.6)
+    - GoogleUtilities/Network (~> 7.6)
+    - "GoogleUtilities/NSData+zlib (~> 7.6)"
     - nanopb (~> 2.30908.0)
-  - GoogleDataTransport (9.1.0):
+  - GoogleAppMeasurement/WithoutAdIdSupport (8.10.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 7.6)
+    - GoogleUtilities/MethodSwizzler (~> 7.6)
+    - GoogleUtilities/Network (~> 7.6)
+    - "GoogleUtilities/NSData+zlib (~> 7.6)"
+    - nanopb (~> 2.30908.0)
+  - GoogleDataTransport (9.1.2):
     - GoogleUtilities/Environment (~> 7.2)
     - nanopb (~> 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/AppDelegateSwizzler (7.5.0):
+  - GoogleUtilities/AppDelegateSwizzler (7.7.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.5.0):
+  - GoogleUtilities/Environment (7.7.0):
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleUtilities/Logger (7.5.0):
+  - GoogleUtilities/Logger (7.7.0):
     - GoogleUtilities/Environment
-  - GoogleUtilities/MethodSwizzler (7.5.0):
+  - GoogleUtilities/MethodSwizzler (7.7.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/Network (7.5.0):
+  - GoogleUtilities/Network (7.7.0):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.5.0)"
-  - GoogleUtilities/Reachability (7.5.0):
+  - "GoogleUtilities/NSData+zlib (7.7.0)"
+  - GoogleUtilities/Reachability (7.7.0):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (7.5.0):
+  - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
-  - GT3Captcha-iOS (0.14.9)
+  - GT3Captcha-iOS (0.14.12)
+  - Intercom (11.1.1)
   - JazziconSwift (1.0.0)
   - KeychainSwift (19.0.0)
-  - Kingfisher (6.3.1)
+  - Kingfisher (7.1.2)
   - LazySubject (0.1.0):
     - RxCocoa
     - RxSwift
@@ -120,9 +126,15 @@ PODS:
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
+  - OrcaSwapSwift (1.0.20):
+    - RxAlamofire (~> 6.1.1)
+    - SolanaSwift (~> 1.3.8)
   - PromisesObjC (2.0.0)
-  - PureLayout (3.1.8)
-  - Resolver (1.4.4)
+  - PureLayout (3.1.9)
+  - RenVMSwift (1.0.1):
+    - RxAlamofire (~> 6.1.1)
+    - SolanaSwift (~> 1.3.5)
+  - Resolver (1.5.0)
   - Runtime (2.2.2)
   - RxAlamofire (6.1.1):
     - RxAlamofire/Core (= 6.1.1)
@@ -139,7 +151,7 @@ PODS:
     - RxSwift (= 6.2.0)
   - RxSwift (6.2.0)
   - secp256k1.swift (0.1.4)
-  - SolanaSwift (1.0.0):
+  - SolanaSwift (1.3.8):
     - BufferLayoutSwift (~> 0.9.0)
     - CryptoSwift (~> 1.4.1)
     - RxAlamofire (~> 6.1.1)
@@ -149,10 +161,8 @@ PODS:
     - TweetNacl (~> 1.0.2)
   - Starscream (4.0.4)
   - SubviewAttachingTextView (1.5.0)
-  - SVGKit (3.1.0):
-    - CocoaLumberjack (~> 3.0)
-  - SwiftGen (6.4.0)
-  - SwiftLint (0.43.1)
+  - SwiftGen (6.5.1)
+  - SwiftLint (0.45.1)
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
   - TweetNacl (1.0.2)
@@ -169,17 +179,19 @@ DEPENDENCIES:
   - Firebase/Analytics
   - Firebase/Crashlytics
   - GT3Captcha-iOS
+  - Intercom
   - JazziconSwift
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - LazySubject (from `LazySubject`)
   - "ListPlaceholder (from `git@github.com:p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)"
+  - OrcaSwapSwift (from `OrcaSwapSwift`)
+  - RenVMSwift (from `RenVMSwift`)
   - Resolver
   - RxAppState
   - RxCocoa
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
-  - SVGKit (from `https://github.com/SVGKit/SVGKit.git`, branch `3.x`)
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
@@ -193,7 +205,6 @@ SPEC REPOS:
     - Amplitude
     - BufferLayoutSwift
     - Charts
-    - CocoaLumberjack
     - CryptoSwift
     - Firebase
     - FirebaseAnalytics
@@ -205,6 +216,7 @@ SPEC REPOS:
     - GoogleDataTransport
     - GoogleUtilities
     - GT3Captcha-iOS
+    - Intercom
     - JazziconSwift
     - KeychainSwift
     - Kingfisher
@@ -242,11 +254,12 @@ EXTERNAL SOURCES:
   ListPlaceholder:
     :branch: custom_gradient_color
     :git: "git@github.com:p2p-org/ListPlaceholder.git"
+  OrcaSwapSwift:
+    :path: OrcaSwapSwift
+  RenVMSwift:
+    :path: RenVMSwift
   SolanaSwift:
     :path: SolanaSwift
-  SVGKit:
-    :branch: 3.x
-    :git: https://github.com/SVGKit/SVGKit.git
 
 CHECKOUT OPTIONS:
   Down:
@@ -255,41 +268,40 @@ CHECKOUT OPTIONS:
   ListPlaceholder:
     :commit: a729fd45aa22b9d087477d1ccedb9f4292762a58
     :git: "git@github.com:p2p-org/ListPlaceholder.git"
-  SVGKit:
-    :commit: e9bc636845fb4d6d5d8e25a9bd08e75c5cf92de9
-    :git: https://github.com/SVGKit/SVGKit.git
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
-  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
-  Amplitude: 5627b4574e36d789a75c1656ba39b3278edf1ade
+  Alamofire: 1c4fb5369c3fe93d2857c780d8bbe09f06f97e7c
+  Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   BECollectionView: 9120725dd693271cef287447e3d1aa844f77535f
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   BufferLayoutSwift: 94e01c016df92afb017b2f7d4bc434f9915a275a
   Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
-  CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
-  CryptoSwift: 0bc800a7e6a24c4fc9ebeab97d44b0d5f73a78bd
+  CryptoSwift: a532e74ed010f8c95f611d00b8bbae42e9fe7c17
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
-  FeeRelayerSwift: 0c3d322a5d914c43bc6ab3fd9d15b04bc2c3080b
-  Firebase: ff8c73105b90e33e1dc6c8e5445d7adc2ccdc7c1
-  FirebaseAnalytics: 96325c1e0acbd2bb805c6a613028b1fe599d6a37
-  FirebaseCore: 1c1ca72483b59b17050f5b4cec4fb748425a3901
-  FirebaseCoreDiagnostics: 7bf55d386f9fc690d971b70a582142321a390eb8
-  FirebaseCrashlytics: 8e7cf678cb149d421198388c6fc3d3acfd266539
-  FirebaseInstallations: f2bc590b291d25fb40a9a05b8281c02a881b5117
-  GoogleAppMeasurement: 8d10c1c470fcb0e5143ed74fddd164f0a0384800
-  GoogleDataTransport: 85fd18ff3019bb85d3f2c551d04c481dedf71fc9
-  GoogleUtilities: eea970f4a389963963bffe8d8fabe43540678b9c
-  GT3Captcha-iOS: b6d458bdbd936ece760b6c76e12f8a160570f523
+  FeeRelayerSwift: 82735496fb274d698cd3eadd75c44e18be8c5b39
+  Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
+  FirebaseAnalytics: 319c9b3b1bdd400d60e2f415dff0c5f6959e6760
+  FirebaseCore: 04186597c095da37d90ff9fd3e53bc61a1ff2440
+  FirebaseCoreDiagnostics: 56fb7216d87e0e6ec2feddefa9d8a392fe8b2c18
+  FirebaseCrashlytics: 3b7f17cdf5bf1ae6ad5956696a6c26edeb39cca7
+  FirebaseInstallations: 830327b45345ffc859eaa9c17bcd5ae893fd5425
+  GoogleAppMeasurement: a3311dbcf3ea651e5a070fe8559b57c174ada081
+  GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
+  GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
+  GT3Captcha-iOS: 6638e1da8eed760cb57c9cc592dd1f892d9161c0
+  Intercom: 6909dc0c5cffc3d89fde9fe16f94b9dec8f587d3
   JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
-  Kingfisher: 016c8b653a35add51dd34a3aba36b580041acc74
+  Kingfisher: 44ed6a8504763f27bab46163adfac83f5deb240c
   LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
+  OrcaSwapSwift: 788b0eace6298d9a6985bb74c7d26b03297341e7
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
-  PureLayout: a4afb3d79dd958564ce33d22c89f407280d8e6a8
-  Resolver: ec76daf652ac898b1e8a449cd9df3b45b5ce8196
+  PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
+  RenVMSwift: b524a3c37ef3516dea085da557e23b2a1bf0746f
+  Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
   Runtime: 67741bd196fb4ad821c4d259ccc527bf734d8806
   RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
@@ -297,17 +309,16 @@ SPEC CHECKSUMS:
   RxRelay: e72dbfd157807478401ef1982e1c61c945c94b2f
   RxSwift: d356ab7bee873611322f134c5f9ef379fa183d8f
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaSwift: cee21155c8aafe91d9e533fe485a69e998fa803d
+  SolanaSwift: 6dd68583b6330a0ac4f66c23fcb220d1fd6a3358
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
-  SVGKit: 3c8468aab0026048532a3b27a0c81cdd939f0649
-  SwiftGen: 67860cc7c3cfc2ed25b9b74cfd55495fc89f9108
-  SwiftLint: 99f82d07b837b942dd563c668de129a03fc3fb52
+  SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
+  SwiftLint: 06ac37e4d38c7068e0935bb30cda95f093bec761
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c3fca6056cc1e9c74891f147c42ef3a8401d1fdd
+PODFILE CHECKSUM: c9afbffabd8958eb2bce220d76dc1a92993b6c34
 
 COCOAPODS: 1.11.2

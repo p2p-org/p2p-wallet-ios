@@ -15,6 +15,8 @@ target 'p2p_wallet' do
   pod 'LazySubject', :path => 'LazySubject'
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
+  pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
+  pod 'RenVMSwift', :path => 'RenVMSwift' 
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
@@ -28,8 +30,9 @@ target 'p2p_wallet' do
   pod 'JazziconSwift'
   pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
-  pod 'SVGKit', :git => 'https://github.com/SVGKit/SVGKit.git', :branch => '3.x'
   pod 'ListPlaceholder', :git => 'git@github.com:p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
+  pod 'Intercom'
+
   
   # Firebase
   pod 'Firebase/Analytics'
@@ -55,6 +58,7 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+      config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
     end
   end
 end

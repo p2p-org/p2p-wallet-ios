@@ -51,6 +51,10 @@ extension Onboarding {
         init() {
             navigateNext()
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 
@@ -93,7 +97,11 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     private func setEnableBiometry(_ on: Bool) {
         Defaults.isBiometryEnabled = on
         Defaults.didSetEnableBiometry = true
-        analyticsManager.log(event: .setupFaceidClick(faceID: on))
+        if on {
+            analyticsManager.log(event: .bioApproved(lastScreen: "Onboarding"))
+        } else {
+            analyticsManager.log(event: .bioRejected)
+        }
         
         navigateNext()
     }

@@ -8,8 +8,10 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import SolanaSwift
 
-protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDidSelectHandler {
+    var relayMethod: SendTokenRelayMethod {get}
     var showAfterConfirmation: Bool {get}
     var preSelectedNetwork: SendToken.Network? {get}
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel {get}
@@ -19,12 +21,15 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
     var walletDriver: Driver<Wallet?> {get}
     var recipientDriver: Driver<SendToken.Recipient?> {get}
     var networkDriver: Driver<SendToken.Network> {get}
+    var payingWalletDriver: Driver<Wallet?> {get}
+    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {get}
     var isValidDriver: Driver<Bool> {get}
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
     func getCurrentSearchKey() -> String?
     func getPrice(for symbol: String) -> Double
-    func getSOLAndRenBTCPrices() -> [String: Double]
+    func getPrices(for symbols: [String]) -> [String: Double]
+    func getFeeInCurrentFiat() -> String
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene)
     func navigateToChoosingNetworkScene()
     
@@ -48,8 +53,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
         private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
         @Injected private var clipboardManager: ClipboardManagerType
+        @Injected private var analyticsManager: AnalyticsManagerType
         
         // MARK: - Properties
+        let relayMethod: SendTokenRelayMethod
         private let disposeBag = DisposeBag()
         let recipientsListViewModel = RecipientsListViewModel()
         let showAfterConfirmation: Bool
@@ -59,10 +66,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
         
-        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool) {
+        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool, relayMethod: SendTokenRelayMethod) {
+            self.relayMethod = relayMethod
             self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
             self.showAfterConfirmation = showAfterConfirmation
-            recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getAPIClient()
+            recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getSendService()
             recipientsListViewModel.preSelectedNetwork = preSelectedNetwork
             
             if chooseRecipientAndNetworkViewModel.getSelectedRecipient() != nil {
@@ -105,8 +113,54 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         chooseRecipientAndNetworkViewModel.networkDriver
     }
     
+    var payingWalletDriver: Driver<Wallet?> {
+        chooseRecipientAndNetworkViewModel.payingWalletDriver
+    }
+    
+    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {
+        chooseRecipientAndNetworkViewModel.feeInfoDriver
+    }
+    
     var isValidDriver: Driver<Bool> {
-        chooseRecipientAndNetworkViewModel.recipientDriver.map {$0 != nil}
+        var conditionDrivers: [Driver<Bool>] = [
+            recipientDriver.map {$0 != nil}
+        ]
+        
+        conditionDrivers.append(
+            Driver.combineLatest(
+                networkDriver,
+                payingWalletDriver,
+                feeInfoDriver
+            )
+                .map {[weak self] network, payingWallet, feeInfo -> Bool in
+                    guard let self = self else {return false}
+                    switch network {
+                    case .solana:
+                        switch self.relayMethod {
+                        case .relay:
+                            guard let value = feeInfo.value else {
+                                return false
+                            }
+                            
+                            if value.feeAmount.total == 0 {
+                                return true
+                            } else {
+                                guard let payingWallet = payingWallet else {
+                                    return false
+                                }
+                                return (payingWallet.lamports ?? 0) >= (feeInfo.value?.feeAmount.total ?? 0)
+                            }
+                        case .reward:
+                            return true
+                        }
+                    case .bitcoin:
+                        return true
+                    }
+                }
+        )
+        
+        return Driver.combineLatest(conditionDrivers)
+            .map {$0.allSatisfy {$0}}
     }
     
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
@@ -121,12 +175,25 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
         chooseRecipientAndNetworkViewModel.getPrice(for: symbol)
     }
     
-    func getSOLAndRenBTCPrices() -> [String: Double] {
-        chooseRecipientAndNetworkViewModel.getSOLAndRenBTCPrices()
+    func getPrices(for symbols: [String]) -> [String: Double] {
+        chooseRecipientAndNetworkViewModel.getPrices(for: symbols)
+    }
+    
+    func getFeeInCurrentFiat() -> String {
+        var fee: Double = 0
+        if let feeInfo = chooseRecipientAndNetworkViewModel.feeInfoSubject.value
+        {
+            let feeInSOL = feeInfo.feeAmountInSOL.total.convertToBalance(decimals: 9)
+            fee = feeInSOL * getPrice(for: "SOL")
+        }
+        return "~\(Defaults.fiat.symbol)\(fee.toString(maximumFractionDigits: 2))"
     }
     
     // MARK: - Actions
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
+        if scene == .selectPayingWallet {
+            analyticsManager.log(event: .tokenListViewed(lastScreen: "Send", tokenListLocation: "Fee"))
+        }
         navigationSubject.accept(scene)
     }
     
@@ -137,6 +204,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendToken
     
     func userDidTapPaste() {
         search(clipboardManager.stringFromClipboard())
+    }
+    
+    func walletDidSelect(_ wallet: Wallet) {
+        chooseRecipientAndNetworkViewModel.selectPayingWallet(wallet)
     }
     
     func search(_ address: String?) {

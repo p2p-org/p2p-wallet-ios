@@ -18,10 +18,9 @@ enum OrcaSwapV2 {
             excludedSourceWalletPubkey: String?
         )
         case settings
-        case chooseSlippage
-        case choosePayFeeToken(tokenName: String?)
         case confirmation
         case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
+        case info(title: String, description: String)
         case back
     }
     
@@ -41,6 +40,7 @@ enum OrcaSwapV2 {
         case bestPoolsPairsIsEmpty
         case slippageIsNotValid
         case nativeWalletNotFound
+        case payingFeeWalletNotFound
         case notEnoughSOLToCoverFees
         case notEnoughBalanceToCoverFees
         case unknown

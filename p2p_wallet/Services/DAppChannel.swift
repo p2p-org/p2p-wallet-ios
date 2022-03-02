@@ -27,7 +27,7 @@ class DAppChannel: NSObject {
         let args: Any
         
         func toBase64() throws -> String {
-            let message = [
+            let message: [String: Any?] = [
                 "id": id,
                 "method": method,
                 "args": args
