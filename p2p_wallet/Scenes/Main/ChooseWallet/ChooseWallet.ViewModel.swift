@@ -14,31 +14,36 @@ extension ChooseWallet {
     class ViewModel: BEListViewModel<Wallet> {
         // MARK: - Dependencies
         let selectedWallet: Wallet?
-        private let myWallets: [Wallet]
-        private let handler: WalletDidSelectHandler
-        private let tokensRepository: TokensRepository
-        private let showOtherWallets: Bool
+        private var myWallets: [Wallet]!
+        let handler: WalletDidSelectHandler!
+        @Injected private var walletsRepository: WalletsRepository
+        @Injected private var tokensRepository: TokensRepository
+        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var pricesService: PricesServiceType
+        let showOtherWallets: Bool!
         private var keyword: String?
-        
+    
         init(
-            myWallets: [Wallet],
             selectedWallet: Wallet?,
             handler: WalletDidSelectHandler,
-            tokensRepository: TokensRepository,
             showOtherWallets: Bool
         ) {
-            self.myWallets = myWallets
             self.selectedWallet = selectedWallet
             self.handler = handler
-            self.tokensRepository = tokensRepository
             self.showOtherWallets = showOtherWallets
             super.init()
+            self.myWallets = walletsRepository.getWallets()
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
         
         // MARK: - Request
         override func createRequest() -> Single<[Wallet]> {
             if showOtherWallets {
                 return tokensRepository.getTokensList()
+                    .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
                     .map {$0.excludingSpecialTokens()}
                     .map {
                         $0
@@ -49,9 +54,11 @@ extension ChooseWallet {
                                 Wallet(pubkey: nil, lamports: nil, token: $0)
                             }
                     }
-                    .map {
-                        self.myWallets + $0.filter {otherWallet in !self.myWallets.contains(where: {$0.token.symbol == otherWallet.token.symbol})}
+                    .map { [weak self] in
+                        guard let self = self else {return []}
+                        return self.myWallets + $0.filter {otherWallet in !self.myWallets.contains(where: {$0.token.symbol == otherWallet.token.symbol})}
                     }
+                    .observe(on: MainScheduler.instance)
             }
             return .just(myWallets)
         }
@@ -68,11 +75,15 @@ extension ChooseWallet {
         func search(keyword: String) {
             guard self.keyword != keyword else {return}
             self.keyword = keyword
+            analyticsManager.log(event: .tokenListSearching(searchString: keyword))
             reload()
         }
         
         func selectWallet(_ wallet: Wallet) {
+            analyticsManager.log(event: .tokenChosen(tokenName: wallet.token.symbol))
             handler.walletDidSelect(wallet)
+            pricesService.addToWatchList([wallet.token.symbol])
+            pricesService.fetchPrices(tokens: [wallet.token.symbol])
         }
     }
 }

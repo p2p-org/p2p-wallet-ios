@@ -15,10 +15,16 @@ extension DAppContainer {
         private let disposeBag = DisposeBag()
         
         // MARK: - Properties
-        @Injected private var viewModel: DAppContainerViewModelType
+        private let viewModel: DAppContainerViewModelType
         
         // MARK: - Subviews
         private lazy var webView = WKWebView(frame: .zero, configuration: viewModel.getWebviewConfiguration())
+        
+        // MARK: - Initializer
+        init(viewModel: DAppContainerViewModelType) {
+            self.viewModel = viewModel
+            super.init(frame: .zero)
+        }
         
         // MARK: - Methods
         override func commonInit() {
@@ -51,18 +57,15 @@ extension DAppContainer {
         
         // MARK: - Actions
         @objc private func reload() {
-            print("reload")
             load()
         }
         
         private func load() {
             HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
-            print("[WebCacheCleaner] All cookies deleted")
-    
+            
             WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
                 records.forEach { record in
                     WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
-                    print("[WebCacheCleaner] Record \(record) deleted")
                 }
             }
             

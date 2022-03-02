@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct SolanaBuyToken {
+enum SolanaBuyToken {
     enum NavigatableScene {
         case back
         case buy

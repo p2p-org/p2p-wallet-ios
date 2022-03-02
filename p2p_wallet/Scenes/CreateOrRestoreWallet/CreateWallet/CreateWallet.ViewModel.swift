@@ -37,6 +37,10 @@ extension CreateWallet {
         
         // MARK: - Subjects
         private let navigationSubject = BehaviorRelay<CreateWallet.NavigatableScene?>(value: nil)
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
     }
 }
 
@@ -105,7 +109,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
     
     func navigateToCreatePhrases() {
-        analyticsManager.log(event: .createWalletOpen)
+        analyticsManager.log(event: .createSeedInvoked)
         navigationSubject.accept(.createPhrases)
     }
     

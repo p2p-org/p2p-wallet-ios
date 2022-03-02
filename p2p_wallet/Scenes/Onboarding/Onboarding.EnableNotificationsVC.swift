@@ -11,12 +11,20 @@ import BEPureLayout
 
 extension Onboarding {
     class EnableNotificationsVC: BaseVC {
+        @Injected private var analyticsManager: AnalyticsManagerType
+        
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: OnboardingViewModelType
+        private let viewModel: OnboardingViewModelType
+        
+        // MARK: - Initializer
+        init(viewModel: OnboardingViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {
@@ -75,10 +83,12 @@ extension Onboarding {
         }
         
         @objc private func buttonAllowDidTouch() {
+            analyticsManager.log(event: .pushApproved(lastScreen: "Onboarding"))
             viewModel.requestRemoteNotifications()
         }
         
         @objc private func buttonSkipDidTouch() {
+            analyticsManager.log(event: .pushRejected)
             viewModel.markNotificationsAsSet()
         }
         

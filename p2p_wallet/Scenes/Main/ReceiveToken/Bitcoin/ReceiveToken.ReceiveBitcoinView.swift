@@ -11,18 +11,10 @@ import RxCocoa
 import UIKit
 
 extension ReceiveToken {
-    class ReceiveBitcoinView: BEView {
-        // MARK: - Constants
+    class ReceiveBitcoinView: BECompositionView {
         private let disposeBag = DisposeBag()
-        
-        // MARK: - Properties
         private let viewModel: ReceiveTokenBitcoinViewModelType
         private let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        
-        // MARK: - Subviews
-        private lazy var btcTypeLabel = UILabel(textSize: 15, weight: .medium)
-        private lazy var receiveNormalBTCView = ReceiveSolanaView(viewModel: receiveSolanaViewModel)
-        private lazy var receiveRenBTCView = ReceiveRenBTCView(viewModel: viewModel)
         
         // MARK: - Initializers
         init(
@@ -34,59 +26,114 @@ extension ReceiveToken {
             super.init(frame: .zero)
         }
         
-        // MARK: - Methods
-        override func commonInit() {
-            super.commonInit()
-            layout()
-            bind()
-        }
-        
-        private func layout() {
-            let stackView = UIStackView(
-                axis: .vertical,
-                spacing: 20,
-                alignment: .fill,
-                distribution: .fill
-            ) {
-//                UIView.createSectionView(
-//                    title: L10n.iWantToReceive,
-//                    contentView: btcTypeLabel,
-//                    addSeparatorOnTop: false
-//                )
-//                    .padding(.init(x: 20, y: 0))
-//                    .onTap(self, action: #selector(buttonSelectBTCTypeDidTouch))
-//                    .padding(.init(only: .left, inset: 20))
-                receiveNormalBTCView
-                receiveRenBTCView
+        override func build() -> UIView {
+            UIStackView(axis: .vertical, spacing: 18, alignment: .fill) {
+                
+                // Qr code
+                QrCodeCard(token: .renBTC)
+                    .onCopy { [unowned self] _ in
+                        self.viewModel.copyToClipboard()
+                    }.onShare { [unowned self] image in
+                        self.viewModel.share(image: image)
+                    }.onSave { [unowned self] image in
+                        self.viewModel.saveAction(image: image)
+                    }.setupWithType(QrCodeCard.self) { card in
+                        viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
+                    }
+                
+                // Status
+                statusButton()
+                
+                // Description
+                UIView.greyBannerView(spacing: 12) {
+                    ReceiveToken.textBuilder(text: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin).asMarkdown())
+                    ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
+                    ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
+                        .setup { view in
+                            guard let textLabel = view.viewWithTag(1) as? UILabel else { return }
+                            viewModel.timeRemainsDriver().drive(textLabel.rx.attributedText).disposed(by: disposeBag)
+                        }
+                }
+                if viewModel.hasExplorerButton {
+                    ExplorerButton(title: L10n.viewInExplorer(L10n.bitcoin))
+                        .onTap { [weak self] in self?.viewModel.showBTCAddressInExplorer() }
+                }
             }
-            
-            // add stackView
-            addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewEdges()
-            
-            // set min height to 200
-            autoSetDimension(.height, toSize: 200, relation: .greaterThanOrEqual)
         }
         
-        private func bind() {
-            viewModel.isReceivingRenBTCDriver
-                .map {isRenBTC -> BTCTypeOption in  isRenBTC ? .renBTC: .splBTC}
-                .map {$0.stringValue}
-                .drive(btcTypeLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            viewModel.isReceivingRenBTCDriver
-                .drive(receiveNormalBTCView.rx.isHidden)
-                .disposed(by: disposeBag)
-            
-            viewModel.isReceivingRenBTCDriver
-                .map {!$0}
-                .drive(receiveRenBTCView.rx.isHidden)
-                .disposed(by: disposeBag)
+        func statusButton() -> UIView {
+            WLCard {
+                UIStackView(axis: .horizontal) {
+                    UIImageView(image: .receiveSquircle)
+                        .frame(width: 44, height: 44)
+                        .padding(.init(only: .right, inset: 12))
+                    UIStackView(axis: .vertical, alignment: .fill) {
+                        // Title
+                        UILabel(text: L10n.statusesReceived, textSize: 17)
+                        // Last time
+                        UILabel(text: "\(L10n.theLastOne) 0m ago", textSize: 13, textColor: .secondaryLabel)
+                            .setupWithType(UILabel.self) { view in viewModel.lastTrxDate().drive(view.rx.text).disposed(by: disposeBag) }
+                    }
+                    UIView.spacer
+                    UILabel(text: "0")
+                        .setupWithType(UILabel.self) { view in viewModel.txsCountDriver().drive(view.rx.text).disposed(by: disposeBag) }
+                        .padding(.init(only: .right, inset: 8))
+                    // Arrow
+                    UIView.defaultNextArrow()
+                        .setup { view in
+                            viewModel.processingTxsDriver
+                                .map { $0.count == 0 }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
+                }.padding(.init(x: 18, y: 14))
+            }
+                .setup { view in viewModel.showReceivingStatusesEnableDriver().drive(view.rx.isUserInteractionEnabled).disposed(by: disposeBag) }
+                .onTap { [unowned self] in viewModel.showReceivingStatuses() }
         }
-        
-        @objc private func buttonSelectBTCTypeDidTouch() {
-            viewModel.showBTCTypeOptions()
-        }
+    }
+}
+
+private extension ReceiveTokenBitcoinViewModelType {
+    func showReceivingStatusesEnableDriver() -> Driver<Bool> {
+        processingTxsDriver
+            .map { $0.count > 0 }
+            .asDriver()
+    }
+    
+    func txsCountDriver() -> Driver<String?> {
+        processingTxsDriver
+            .map { trx in "\(trx.count)" }
+            .asDriver()
+    }
+    
+    func lastTrxDate() -> Driver<String?> {
+        processingTxsDriver
+            .map { trx in
+                guard let lastTrx = trx.first,
+                      let receiveAt = lastTrx.submittedAt else { return L10n.none }
+                
+                // Time formatter
+                let formatter = RelativeDateTimeFormatter()
+                formatter.unitsStyle = .short
+                let time = formatter.localizedString(for: receiveAt, relativeTo: Date())
+                
+                return "\(L10n.theLastOne) \(time)"
+            }.asDriver()
+    }
+    
+    func timeRemainsDriver() -> Driver<NSAttributedString?> {
+        timerSignal.map { [weak self] in
+            guard let self = self else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
+            guard let endAt = self.getSessionEndDate()
+                else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
+            let currentDate = Date()
+            let calendar = Calendar.current
+            
+            let d = calendar.dateComponents([.hour, .minute, .second], from: currentDate, to: endAt)
+            let countdown = String(format: "%02d:%02d:%02d", d.hour ?? 0, d.minute ?? 0, d.second ?? 0)
+            
+            return L10n.isTheRemainingTimeToSafelySendTheAssets(countdown).asMarkdown()
+        }.asDriver(onErrorJustReturn: NSAttributedString(string: "00:00:00"))
     }
 }

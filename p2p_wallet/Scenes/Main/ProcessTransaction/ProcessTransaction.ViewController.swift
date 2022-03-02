@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 @objc protocol ProcessTransactionViewControllerDelegate: AnyObject {
     func processTransactionViewControllerDidComplete(_ vc: UIViewController)
@@ -16,11 +17,12 @@ extension ProcessTransaction {
     class ViewController: WLModalViewController {
         // MARK: - Properties
         private let viewModel: ProcessTransactionViewModelType
+        
+        // MARK: - Properties
         weak var delegate: ProcessTransactionViewControllerDelegate?
         
         // MARK: - Initializer
-        init(viewModel: ProcessTransactionViewModelType)
-        {
+        init(viewModel: ProcessTransactionViewModelType) {
             self.viewModel = viewModel
             super.init()
         }

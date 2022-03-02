@@ -12,17 +12,21 @@ extension SendToken.ChooseTokenAndAmount {
     class ViewController: SendToken.BaseViewController {
         // MARK: - Dependencies
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
-        private let scenesFactory: SendTokenScenesFactory
         
         // MARK: - Properties
+        private lazy var nextButton: UIButton = {
+            let nextButton = UIButton(label: L10n.next.uppercaseFirst, labelFont: .systemFont(ofSize: 17), textColor: .h5887ff)
+                .onTap(self, action: #selector(buttonNextDidTouch))
+            nextButton.setTitleColor(.h5887ff, for: .normal)
+            nextButton.setTitleColor(.textSecondary, for: .disabled)
+            return nextButton
+        }()
         
         // MARK: - Initializer
         init(
-            viewModel: SendTokenChooseTokenAndAmountViewModelType,
-            scenesFactory: SendTokenScenesFactory
+            viewModel: SendTokenChooseTokenAndAmountViewModelType
         ) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
         }
         
@@ -30,11 +34,9 @@ extension SendToken.ChooseTokenAndAmount {
         override func setUp() {
             super.setUp()
             navigationBar.titleLabel.text = L10n.send
+            navigationBar.backButton.isHidden = !viewModel.canGoBack
             navigationBar.backButton.onTap(self, action: #selector(_back))
-            navigationBar.rightItems.addArrangedSubview(
-                UILabel(text: L10n.next.uppercaseFirst, textSize: 17, textColor: .h5887ff)
-                    .onTap(self, action: #selector(buttonNextDidTouch))
-            )
+            navigationBar.rightItems.addArrangedSubview(nextButton)
             
             let rootView = RootView(viewModel: viewModel)
             view.addSubview(rootView)
@@ -47,6 +49,11 @@ extension SendToken.ChooseTokenAndAmount {
             viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
+            
+            viewModel.errorDriver
+                .map {$0 == nil}
+                .drive(nextButton.rx.isEnabled)
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
@@ -54,12 +61,11 @@ extension SendToken.ChooseTokenAndAmount {
             guard let scene = scene else {return}
             switch scene {
             case .chooseWallet:
-                let vc = scenesFactory.makeChooseWalletViewController(
+                let vm = ChooseWallet.ViewModel(selectedWallet: nil, handler: viewModel, showOtherWallets: false)
+                vm.customFilter = { $0.amount > 0}
+                let vc = ChooseWallet.ViewController(
                     title: nil,
-                    customFilter: { $0.amount > 0},
-                    showOtherWallets: false,
-                    selectedWallet: nil,
-                    handler: viewModel
+                    viewModel: vm
                 )
                 present(vc, animated: true, completion: nil)
             case .backToConfirmation:

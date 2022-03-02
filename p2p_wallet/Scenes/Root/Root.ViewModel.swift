@@ -9,43 +9,63 @@ import Foundation
 import RxSwift
 import RxCocoa
 import Resolver
+import LocalAuthentication
 
 protocol RootViewModelType {
     var navigationSceneDriver: Driver<Root.NavigatableScene?> {get}
     var isLoadingDriver: Driver<Bool> {get}
+    var resetSignal: Signal<Void> {get}
     
     func reload()
-    func logout()
     func finishSetup()
-}
-
-protocol CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?)
-    func restoringWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?)
-    func creatingOrRestoringWalletDidCancel()
 }
 
 extension Root {
     class ViewModel {
         // MARK: - Dependencies
-        @Injected private var storage: AccountStorageType & PincodeStorageType & NameStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var notificationsService: NotificationsServiceType
+        private var appEventHandler: AppEventHandlerType = Resolver.resolve()
+        private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
+        private let analyticsManager: AnalyticsManagerType = Resolver.resolve()
+        private let notificationsService: NotificationsServiceType = Resolver.resolve()
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         private var isRestoration = false
         private var showAuthenticationOnMainOnAppear = true
-        private var resolvedName: String?
+        
+        // MARK: - Initializer
+        init() {
+            bind()
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
+        private let resetSubject = PublishRelay<Void>()
         
         // MARK: - Actions
+        private func bind() {
+            appEventHandler.delegate = self
+            appEventHandler.isLoadingDriver
+                .drive(isLoadingSubject)
+                .disposed(by: disposeBag)
+        }
+        
         func reload() {
+            // signal VC to prepare for reseting
+            resetSubject.accept(())
+            
+            // reload session
+            ResolverScope.session.reset()
+            
+            // mark as loading
             isLoadingSubject.accept(true)
             
+            // try to retrieve account from seed
             DispatchQueue.global(qos: .userInteractive).async { [weak self] in
                 let account = self?.storage.account
                 DispatchQueue.main.async { [weak self] in
@@ -65,21 +85,6 @@ extension Root {
             }
         }
         
-        func logout() {
-            ResolverScope.session.reset()
-            storage.clearAccount()
-            Defaults.walletName = [:]
-            Defaults.didSetEnableBiometry = false
-            Defaults.didSetEnableNotifications = false
-            Defaults.didBackupOffline = false
-            Defaults.renVMSession = nil
-            Defaults.renVMProcessingTxs = []
-            Defaults.forceCloseNameServiceBanner = false
-            Defaults.shouldShowConfirmAlertOnSend = true
-            Defaults.shouldShowConfirmAlertOnSwap = true
-            reload()
-        }
-        
         @objc func finishSetup() {
             analyticsManager.log(event: .setupFinishClick)
             reload()
@@ -95,12 +100,32 @@ extension Root.ViewModel: RootViewModelType {
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
     }
+    
+    var resetSignal: Signal<Void> {
+        resetSubject.asSignal()
+    }
 }
 
-extension Root.ViewModel: ChangeNetworkResponder {
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
-        Defaults.apiEndPoint = endpoint
-        
+extension Root.ViewModel: AppEventHandlerDelegate {
+    func createWalletDidComplete() {
+        isRestoration = false
+        navigationSubject.accept(.onboarding)
+        analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
+    }
+    
+    func restoreWalletDidComplete() {
+        isRestoration = true
+        navigationSubject.accept(.onboarding)
+        analyticsManager.log(event: .setupOpen(fromPage: "recovery"))
+    }
+    
+    func onboardingDidFinish(resolvedName: String?) {
+        let event: AnalyticsEvent = isRestoration ? .setupWelcomeBackOpen: .setupFinishOpen
+        analyticsManager.log(event: event)
+        navigationSubject.accept(.onboardingDone(isRestoration: isRestoration, name: resolvedName))
+    }
+    
+    func userDidChangeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
         showAuthenticationOnMainOnAppear = false
         reload()
         
@@ -108,13 +133,8 @@ extension Root.ViewModel: ChangeNetworkResponder {
             self?.notificationsService.showInAppNotification(.done(L10n.networkChanged))
         }
     }
-}
-
-extension Root.ViewModel: ChangeLanguageResponder {
-    func languageDidChange(to language: LocalizedLanguage) {
-        UIApplication.languageChanged()
-        analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
-        
+    
+    func userDidChangeLanguage(to language: LocalizedLanguage) {
         showAuthenticationOnMainOnAppear = false
         reload()
         
@@ -123,68 +143,8 @@ extension Root.ViewModel: ChangeLanguageResponder {
             self?.notificationsService.showInAppNotification(.done(languageChangedText))
         }
     }
-}
-
-extension Root.ViewModel: CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
-        isRestoration = false
-        resolvedName = name
-        navigationSubject.accept(.onboarding)
-        analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
-        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
-    }
     
-    func restoringWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
-        isRestoration = true
-        resolvedName = name
-        navigationSubject.accept(.onboarding)
-        analyticsManager.log(event: .setupOpen(fromPage: "recovery"))
-        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
-    }
-    
-    func creatingOrRestoringWalletDidCancel() {
-        logout()
-    }
-    
-    private func saveAccountToStorage(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
-        guard let phrases = phrases, let derivablePath = derivablePath else {
-            creatingOrRestoringWalletDidCancel()
-            return
-        }
-        
-        isLoadingSubject.accept(true)
-        DispatchQueue.global().async { [weak self] in
-            do {
-                try self?.storage.save(phrases: phrases)
-                try self?.storage.save(derivableType: derivablePath.type)
-                try self?.storage.save(walletIndex: derivablePath.walletIndex)
-                
-                if let name = name {
-                    self?.storage.save(name: name)
-                }
-                
-                DispatchQueue.main.async { [weak self] in
-                    self?.isLoadingSubject.accept(false)
-                }
-            } catch {
-                self?.isLoadingSubject.accept(false)
-                DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.error(error))
-                    self?.creatingOrRestoringWalletDidCancel()
-                }
-            }
-        }
-    }
-}
-
-extension Root.ViewModel: OnboardingHandler {
-    func onboardingDidCancel() {
-        logout()
-    }
-    
-    @objc func onboardingDidComplete() {
-        let event: AnalyticsEvent = isRestoration ? .setupWelcomeBackOpen: .setupFinishOpen
-        analyticsManager.log(event: event)
-        navigationSubject.accept(.onboardingDone(isRestoration: isRestoration, name: resolvedName))
+    func userDidLogout() {
+        reload()
     }
 }

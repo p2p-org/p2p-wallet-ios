@@ -8,10 +8,10 @@
 import Foundation
 import RxCocoa
 
-struct Settings {
+enum Settings {
     enum NavigatableScene {
         case username
-        case reserveUsername(owner: String, handler: ReserveNameHandler)
+        case reserveUsername(owner: String, handler: ReserveNameHandler?)
         case backup
         case backupManually
         case backupShowPhrases
@@ -22,5 +22,12 @@ struct Settings {
         case language
         case appearance
         case share(item: Any)
+        case accessToPhoto
+    }
+    
+    enum BiometryType {
+        case none
+        case touch
+        case face
     }
 }

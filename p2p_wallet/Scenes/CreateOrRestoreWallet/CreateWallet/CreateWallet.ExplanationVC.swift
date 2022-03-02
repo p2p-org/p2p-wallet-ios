@@ -22,7 +22,13 @@ extension CreateWallet {
         private let createWalletButton: WLStepButton = WLStepButton.main(image: .key, imageSize: CGSize(width: 16, height: 15), text: L10n.showYourSecurityKey)
         
         // MARK: - Dependencies
-        @Injected private var viewModel: CreateWalletViewModelType
+        private let viewModel: CreateWalletViewModelType
+        
+        // MARK: - Initializer
+        init(viewModel: CreateWalletViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         // MARK: - Methods
         override func setUp() {
@@ -45,7 +51,7 @@ extension CreateWallet {
             let illustration = UIView.ilustrationView(
                 image: .explanationPicture,
                 title: L10n.secureYourWallet,
-                description: L10n.TheFollowingWordsAreSecurityKeyThatYouMustKeepInASafePlaceWrittenInTheCorrectSequence.IfLostNoOneCanRestoreIt.keepItPrivateEvenFromUs)
+                description: L10n.TheFollowingWordsAreTheSecurityKeyThatYouMustKeepInASafePlaceWrittenInTheCorrectSequence.IfLostNoOneCanRestoreIt.keepItPrivateEvenFromUs)
             
             view.addSubview(illustration)
             illustration.autoPinEdge(.top, to: .bottom, of: navigationBar)

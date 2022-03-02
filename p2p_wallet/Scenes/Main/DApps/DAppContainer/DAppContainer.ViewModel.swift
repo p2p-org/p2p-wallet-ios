@@ -15,7 +15,6 @@ protocol DAppContainerViewModelType {
     var navigationDriver: Driver<DAppContainer.NavigatableScene?> { get }
     func navigate(to scene: DAppContainer.NavigatableScene)
     
-    func inject(walletsRepository: WalletsRepository, dapp: DApp)
     func getWebviewConfiguration() -> WKWebViewConfiguration
     func getDAppURL() -> String
 }
@@ -25,17 +24,22 @@ extension DAppContainer {
         // MARK: - Dependencies
         @Injected private var dAppChannel: DAppChannel
         @Injected private var accountStorage: SolanaSDKAccountStorage
+        @Injected private var walletsRepository: WalletsRepository
         
         // MARK: - Properties
-        private var walletsRepository: WalletsRepository!
-        private var dapp: DApp!
+        private let dapp: DApp
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         
-        override init() {
+        init(dapp: DApp) {
+            self.dapp = dapp
             super.init()
             dAppChannel.setDelegate(self)
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
     }
 }
@@ -50,11 +54,6 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
         navigationSubject.accept(scene)
     }
     
-    func inject(walletsRepository: WalletsRepository, dapp: DApp) {
-        self.walletsRepository = walletsRepository
-        self.dapp = dapp
-    }
-    
     func getWebviewConfiguration() -> WKWebViewConfiguration {
         dAppChannel.getWebviewConfiguration()
     }
@@ -66,11 +65,7 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
 
 extension DAppContainer.ViewModel: DAppChannelDelegate {
     func connect() -> Single<String> {
-        guard let repository = walletsRepository else {
-            return .error(DAppChannelError.platformIsNotReady)
-        }
-        
-        guard let pubKey = repository.getWallets().first(where: { $0.isNativeSOL })?.pubkey else {
+        guard let pubKey = walletsRepository.getWallets().first(where: { $0.isNativeSOL })?.pubkey else {
             return .error(DAppChannelError.canNotFindWalletAddress)
         }
         
@@ -98,7 +93,6 @@ extension DAppContainer.ViewModel: DAppChannelDelegate {
                     else { throw DAppChannelError.unauthorized }
                 
                 try transaction.sign(signers: [signer])
-                try transaction.serialize(verifySignatures: true)
                 return transaction
             })
         } catch let e {

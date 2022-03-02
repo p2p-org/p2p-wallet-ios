@@ -8,41 +8,42 @@
 import Foundation
 import UIKit
 import RxSwift
-
-protocol TabBarScenesFactory {
-    func makeHomeViewController() -> Home.ViewController
-    func makeInvestmentsViewController() -> InvestmentsViewController
-    func makeDAppContainerViewController(dapp: DApp) -> DAppContainer.ViewController // TODO: - Replace by DAppsCollection.ViewController later
-}
+import Intercom
+import Resolver
 
 protocol TabBarNeededViewController: UIViewController {}
 
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
+    @Injected private var helpCenterLauncher: HelpCenterLauncher
     private let disposeBag = DisposeBag()
     private var tabBarTopConstraint: NSLayoutConstraint!
     
-    let scenesFactory: TabBarScenesFactory
-    init(scenesFactory: TabBarScenesFactory) {
-        self.scenesFactory = scenesFactory
-        super.init()
+    deinit {
+        debugPrint("\(String(describing: self)) deinited")
     }
     
     override func setUp() {
         super.setUp()
         view.backgroundColor = .background
-        
-        // pages
-        let mainVC = scenesFactory.makeHomeViewController()
-        let investmentsVC = scenesFactory.makeInvestmentsViewController()
-        let dAppContainerVC = scenesFactory.makeDAppContainerViewController(dapp: .fake)
-        
+
+        let homeViewModel = Home.ViewModel()
+        let homeVC = Home.ViewController(viewModel: homeViewModel)
         viewControllers = [
-            createNavigationController(rootVC: mainVC),
-            createNavigationController(rootVC: investmentsVC),
-            createNavigationController(rootVC: _PlaceholderVC()),
-            createNavigationController(rootVC: dAppContainerVC),
-            createNavigationController(rootVC: _PlaceholderVC())
+            createNavigationController(rootVC: homeVC),
+            createNavigationController(
+                rootVC: SendToken.ViewController(
+                    viewModel: SendToken.ViewModel(
+                        walletPubkey: nil,
+                        destinationAddress: nil,
+                        relayMethod: .default,
+                        canGoBack: false
+                    )
+                )
+            ),
+            createNavigationController(
+                rootVC: Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
+            )
         ]
         
         // disable scrolling
@@ -95,10 +96,9 @@ class TabBarVC: BEPagesVC {
         tabBar.stackView.addArrangedSubviews([
             .spacer,
             buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
-            buttonTabBarItem(image: .tabbarTransaction, title: L10n.earn, tag: 1),
-            buttonTabBarItem(image: .tabbarPlus, title: L10n.buy, tag: 2),
-            buttonTabBarItem(image: .tabbarPlanet, title: L10n.dApps, tag: 3),
-            buttonTabBarItem(image: .tabbarInfo, title: L10n.profile, tag: 4),
+            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 1),
+            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
+            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 2),
             .spacer
         ])
     }
@@ -125,6 +125,11 @@ class TabBarVC: BEPagesVC {
         if currentPage == index {
             return
         }
+
+        guard index != 10 else {
+            return helpCenterLauncher.launch()
+        }
+
         super.moveToPage(index)
         
         let items = tabBar.stackView.arrangedSubviews[1..<tabBar.stackView.arrangedSubviews.count - 1]
@@ -192,3 +197,10 @@ private final class NavigationController: UINavigationController {
 }
 
 private class _PlaceholderVC: BaseVC, TabBarNeededViewController {}
+
+extension UIViewController {
+    func tabBar() -> TabBarVC? {
+        guard let vc = self as? TabBarVC else { return parent?.tabBar() }
+        return vc
+    }
+}

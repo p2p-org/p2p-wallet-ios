@@ -7,33 +7,30 @@
 
 import Foundation
 import BECollectionView
+import RenVMSwift
 
 extension RenBTCReceivingStatuses {
-    class TxCell: BaseCollectionViewCell, BECollectionViewCell {
-        override var padding: UIEdgeInsets {.init(x: 20, y: 12)}
+    class TxCell: BECollectionCell, BECollectionViewCell {
+        fileprivate var titleLabel: UILabel!
+        fileprivate var descriptionLabel: UILabel!
         
-        // MARK: - Subviews
-        fileprivate lazy var titleLabel = UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium)
-        fileprivate lazy var descriptionLabel = UILabel(text: "<Minting>", textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
-        
-        // MARK: - Methods
-        override func commonInit() {
-            super.commonInit()
-            stackView.spacing = 8
-            stackView.axis = .horizontal
-            stackView.alignment = .center
-            
-            stackView.addArrangedSubviews {
-                UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
-                    titleLabel
-                    descriptionLabel
+        override func build() -> UIView {
+            UIStackView(axis: .vertical, alignment: .fill) {
+                UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
+                    UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
+                        UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 2)
+                            .setupWithType(UILabel.self) { view in titleLabel = view }
+                        UILabel(text: "<Minting>", textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
+                            .setupWithType(UILabel.self) { view in descriptionLabel = view }
+                    }
+                    UIView.defaultNextArrow()
                 }
-                UIView.defaultNextArrow()
-            }
+                UIView.defaultSeparator().padding(.init(only: .top, inset: 14))
+            }.padding(.init(x: 20, y: 12))
         }
         
         func setUp(with item: AnyHashable?) {
-            guard let tx = item as? RenVM.LockAndMint.ProcessingTx else {return}
+            guard let tx = item as? RenVM.LockAndMint.ProcessingTx else { return }
             titleLabel.text = "\(tx.value.toString(maximumFractionDigits: 9)) renBTC"
             descriptionLabel.text = tx.statusString
             
@@ -42,21 +39,39 @@ extension RenBTCReceivingStatuses {
                 descriptionLabel.textColor = .attentionGreen
             }
         }
+        
+        func hideLoading() { contentView.hideLoader() }
+        
+        func showLoading() { contentView.showLoader() }
     }
     
-    class RecordCell: TxCell {
-        private lazy var resultLabel = UILabel(textSize: 15, weight: .semibold)
-        override func commonInit() {
-            super.commonInit()
-            stackView.arrangedSubviews.last?.removeFromSuperview()
-            stackView.addArrangedSubview(resultLabel.withContentHuggingPriority(.required, for: .horizontal))
+    class RecordCell: BECollectionCell, BECollectionViewCell {
+        fileprivate var titleLabel: UILabel!
+        fileprivate var descriptionLabel: UILabel!
+        fileprivate var resultLabel: UILabel!
+        
+        override func build() -> UIView {
+            UIStackView(axis: .vertical, alignment: .fill) {
+                UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
+                    UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
+                        UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 8)
+                            .setupWithType(UILabel.self) { view in titleLabel = view }
+                        UILabel(text: "<Minting>", textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
+                            .setupWithType(UILabel.self) { view in descriptionLabel = view }
+                    }
+                    UIView.spacer
+                    UILabel(textSize: 15, weight: .semibold)
+                        .setupWithType(UILabel.self) { view in resultLabel = view }
+                }
+                UIView.defaultSeparator().padding(.init(only: .top, inset: 14))
+            }.padding(.init(x: 20, y: 12))
         }
         
-        override func setUp(with item: AnyHashable?) {
-            guard let tx = item as? Record else {return}
+        func setUp(with item: AnyHashable?) {
+            guard let tx = item as? Record else { return }
             titleLabel.text = tx.stringValue
             resultLabel.isHidden = true
-            descriptionLabel.text = tx.time.string(withFormat: "MMMM dd, YYYY HH:mm a")
+            descriptionLabel.text = tx.time.string(withFormat: "HH:mm a")
             switch tx.status {
             case .waitingForConfirmation:
                 resultLabel.isHidden = false
@@ -78,5 +93,9 @@ extension RenBTCReceivingStatuses {
                 break
             }
         }
+        
+        func hideLoading() { contentView.hideLoader() }
+        
+        func showLoading() { contentView.showLoader() }
     }
 }

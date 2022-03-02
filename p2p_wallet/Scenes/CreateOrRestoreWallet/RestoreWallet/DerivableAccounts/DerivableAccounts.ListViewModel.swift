@@ -36,14 +36,20 @@ extension DerivableAccounts {
             self.phrases = phrases
             super.init(initialData: [])
         }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         override func createRequest() -> Single<[DerivableAccount]> {
             Single.zip(Array(0..<5)
                 .map { index in
                     createAccountSingle(index: index)
-                        .map {
-                            DerivableAccount(
-                                info: $0,
-                                amount: self.balanceCache[$0.publicKey.base58EncodedString],
+                        .map { [weak self] account in
+                            guard let self = self else { throw SolanaSDK.Error.unknown }
+                            return DerivableAccount(
+                                info: account,
+                                amount: self.balanceCache[account.publicKey.base58EncodedString],
                                 price: self.priceCache,
                                 isBlured: index > 2
                             )

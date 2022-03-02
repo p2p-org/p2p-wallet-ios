@@ -10,24 +10,14 @@ import BEPureLayout
 import RxSwift
 import UIKit
 
-protocol WalletDetailScenesFactory {
-    func makeBuyTokenViewController(token: Set<BuyProviders.Crypto>) throws -> UIViewController
-    func makeReceiveTokenViewController(tokenWalletPubkey: String?) -> ReceiveToken.ViewController?
-    func makeSendTokenViewController(walletPubkey: String?, destinationAddress: String?) -> SendToken.ViewController
-    func makeSwapTokenViewController(provider: SwapProvider, fromWallet wallet: Wallet?) -> UIViewController
-    func makeTokenSettingsViewController(pubkey: String) -> TokenSettingsViewController
-    func makeTransactionInfoViewController(transaction: SolanaSDK.ParsedTransaction) -> TransactionInfoViewController
-}
-
 extension WalletDetail {
     class ViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
+    
         // MARK: - Dependencies
         private let viewModel: WalletDetailViewModelType
-        private let scenesFactory: WalletDetailScenesFactory
         
         // MARK: - Properties
         
@@ -35,30 +25,25 @@ extension WalletDetail {
         private lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
-            let editButton = UIImageView(width: 24, height: 24, image: .navigationBarEdit)
-                .onTap(self, action: #selector(showWalletSettings))
-            navigationBar.rightItems.addArrangedSubview(editButton)
+            #if DEBUG
+            navigationBar.rightItems.addArrangedSubview(
+                UIButton(label: "Settings", textColor: .red)
+                    .onTap {[weak self] in
+                        self?.viewModel.showWalletSettings()
+                    }
+            )
+            #endif
             return navigationBar
         }()
+        private lazy var balanceView = BalanceView(viewModel: viewModel)
+        private let actionsView = ColorfulHorizontalView()
         
         // MARK: - Subscene
-        private lazy var infoVC: InfoViewController = {
-            let vc = InfoViewController(viewModel: viewModel)
-            return vc
-        }()
-        
-        private lazy var historyVC: HistoryViewController = {
-            let vc = HistoryViewController(viewModel: viewModel)
-            return vc
-        }()
+        private lazy var historyVC = HistoryViewController(viewModel: viewModel)
         
         // MARK: - Initializer
-        init(
-            viewModel: WalletDetailViewModelType,
-            scenesFactory: WalletDetailScenesFactory
-        ) {
+        init(viewModel: WalletDetailViewModelType) {
             self.viewModel = viewModel
-            self.scenesFactory = scenesFactory
             super.init()
         }
         
@@ -67,59 +52,100 @@ extension WalletDetail {
             super.setUp()
             view.addSubview(navigationBar)
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-            
+
             let containerView = UIView(forAutoLayout: ())
-            view.addSubview(containerView)
-            containerView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
-            containerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
-            
-            let pagesVC = WLSegmentedPagesVC(items: [
-                .init(label: L10n.info, viewController: infoVC),
-                .init(label: L10n.history, viewController: historyVC)
-            ])
-            add(child: pagesVC, to: containerView)
+
+            actionsView.autoSetDimension(.height, toSize: 80)
+
+            let stackView = UIStackView(
+                axis: .vertical,
+                spacing: 18,
+                alignment: .fill
+            ) {
+                balanceView.padding(.init(x: 18, y: 16))
+                actionsView.padding(.init(x: 18, y: 0))
+                containerView.padding(.init(top: 16, left: 8, bottom: 0, right: 8))
+            }
+
+            view.addSubview(stackView)
+            stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+            stackView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+
+            add(child: historyVC, to: containerView)
         }
         
         override func bind() {
             super.bind()
-            viewModel.walletDriver.map { $0?.name }
+            viewModel.walletDriver.map { $0?.token.name }
                 .drive(navigationBar.titleLabel.rx.text)
                 .disposed(by: disposeBag)
             
             viewModel.navigatableSceneDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
+
+            viewModel.walletActionsDriver
+                .drive(
+                    onNext: { [weak self] in
+                        guard let self = self else  { return }
+
+                        self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
+                    }
+                )
+                .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            case .buy(let tokens):
-                do {
-                    let vc = try scenesFactory.makeBuyTokenViewController(token: [tokens])
-                    present(vc, animated: true, completion: nil)
-                } catch {
-                    showAlert(title: L10n.error, message: error.readableDescription)
-                }
+            case .buy:
+                let vm = BuyRoot.ViewModel()
+                let vc = BuyRoot.ViewController(viewModel: vm)
+                present(vc, animated: true, completion: nil)
             case .settings(let pubkey):
-                let vc = scenesFactory.makeTokenSettingsViewController(pubkey: pubkey)
+                let vm = TokenSettingsViewModel(pubkey: pubkey)
+                let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
-                self.present(vc, animated: true, completion: nil)
+                present(vc, animated: true, completion: nil)
             case .send(let wallet):
-                let vc = scenesFactory.makeSendTokenViewController(walletPubkey: wallet.pubkey, destinationAddress: nil)
+                let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil, relayMethod: .default)
+                let vc = SendToken.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .receive(let pubkey):
-                if let vc = scenesFactory.makeReceiveTokenViewController(tokenWalletPubkey: pubkey) {
-                    show(vc, sender: true)
+                if let solanaPubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
+                    let tokenWallet = viewModel.walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})
+                    
+                    let isDevnet = Defaults.apiEndPoint.network == .devnet
+                    let renBTCMint: SolanaSDK.PublicKey = isDevnet ? .renBTCMintDevnet : .renBTCMint
+                    
+                    let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
+                        $0.token.address == renBTCMint.base58EncodedString
+                    })
+                    let vm = ReceiveToken.SceneModel(
+                        solanaPubkey: solanaPubkey,
+                        solanaTokenWallet: tokenWallet,
+                        isRenBTCWalletCreated: isRenBTCWalletCreated,
+                        isOpeningFromToken: true
+                    )
+                    let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
+                    present(vc, animated: true)
                 }
             case .swap(let wallet):
-                let vc = scenesFactory.makeSwapTokenViewController(provider: .orca, fromWallet: wallet)
+                let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
+                let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .transactionInfo(let transaction):
-                let vc = scenesFactory.makeTransactionInfoViewController(transaction: transaction)
+                let vm = TransactionInfoViewModel(transaction: transaction)
+                let vc = TransactionInfoViewController(viewModel: vm)
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             default:
                 break
+            }
+        }
+
+        private func createWalletActionView(actionType: WalletActionType) -> UIView {
+            return WalletActionButton(actionType: actionType) { [weak self] in
+                self?.viewModel.start(action: actionType)
             }
         }
         

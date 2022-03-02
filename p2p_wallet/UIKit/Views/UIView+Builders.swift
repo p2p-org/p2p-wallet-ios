@@ -73,6 +73,18 @@ extension UIView {
             .padding(contentInset, backgroundColor: .a3a5ba.withAlphaComponent(0.05), cornerRadius: 12)
     }
     
+    static func greenBannerView(
+        contentInset: UIEdgeInsets = .init(all: 18),
+        axis: NSLayoutConstraint.Axis = .vertical,
+        spacing: CGFloat = 8,
+        alignment: UIStackView.Alignment = .fill,
+        distribution: UIStackView.Distribution = .fill,
+        @BEStackViewBuilder builder: () -> [BEStackViewElement]
+    ) -> UIView {
+        UIStackView(axis: axis, spacing: spacing, alignment: alignment, distribution: distribution, builder: builder)
+            .padding(contentInset, backgroundColor: .f5fcf7, cornerRadius: 12, borderColor: .h34c759)
+    }
+    
     /// Floating panel
     static func floatingPanel(
         contentInset: UIEdgeInsets = .init(all: 18),
@@ -83,8 +95,7 @@ extension UIView {
         distribution: UIStackView.Distribution = .fill,
         @BEStackViewBuilder builder: () -> [BEStackViewElement]
     ) -> UIView {
-        let panel = WLFloatingPanelView(contentInset: contentInset)
-        panel.layer.cornerRadius = cornerRadius
+        let panel = WLFloatingPanelView(cornerRadius: cornerRadius, contentInset: contentInset)
         panel.stackView.axis = axis
         panel.stackView.spacing = spacing
         panel.stackView.alignment = alignment

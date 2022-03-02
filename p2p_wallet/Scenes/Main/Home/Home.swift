@@ -8,18 +8,20 @@
 import Foundation
 import RxCocoa
 
-struct Home {
+enum Home {
     enum NavigatableScene {
         case buyToken
         case receiveToken
         case scanQr
         case scanQrWithSwiper(progress: CGFloat, state: UIGestureRecognizer.State)
-        case sendToken(address: String? = nil)
+        case sendToken(fromAddress: String? = nil, toAddress: String? = nil)
         case closeReserveNameAlert((ClosingBannerType) -> Void)
         case swapToken
         case settings
         case reserveName(owner: String)
         case walletDetail(wallet: Wallet)
         case walletSettings(wallet: Wallet)
+        case feedback
+        case backup
     }
 }

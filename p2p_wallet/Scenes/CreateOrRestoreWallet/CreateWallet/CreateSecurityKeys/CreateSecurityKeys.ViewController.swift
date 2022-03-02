@@ -15,15 +15,21 @@ extension CreateSecurityKeys {
         }
         
         // MARK: - Dependencies
-        @Injected private var viewModel: CreateSecurityKeysViewModelType
+        private let viewModel: CreateSecurityKeysViewModelType
         
         // MARK: - Subviews
         lazy var backButton = UIImageView(width: 36, height: 36, image: .backSquare)
             .onTap(self, action: #selector(back))
         
+        // MARK: - Initializer
+        init(viewModel: CreateSecurityKeysViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
         // MARK: - Methods
         override func loadView() {
-            view = RootView()
+            view = RootView(viewModel: viewModel)
         }
         
         override func bind() {
@@ -32,6 +38,13 @@ extension CreateSecurityKeys {
                 .emit(onNext: {[weak self] in
                     let vc = WLMarkdownVC(title: L10n.termsOfUse.uppercaseFirst, bundledMarkdownTxtFileName: "Terms_of_service")
                     self?.present(vc, interactiveDismissalType: .standard, completion: nil)
+                })
+                .disposed(by: disposeBag)
+
+            viewModel.showPhotoLibraryUnavailableSignal
+                .emit(onNext: { [weak self] in
+                    guard let self = self else { return }
+                    PhotoLibraryAlertPresenter().present(on: self)
                 })
                 .disposed(by: disposeBag)
             

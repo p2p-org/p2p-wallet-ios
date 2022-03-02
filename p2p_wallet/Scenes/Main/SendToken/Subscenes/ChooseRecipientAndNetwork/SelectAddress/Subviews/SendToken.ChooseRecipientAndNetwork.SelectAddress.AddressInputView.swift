@@ -46,7 +46,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                             if $0?.token.isRenBTC == true {
                                 self?.viewModel.search("tb1ql7w62elx9ucw4pj5lgw4l028hmuw80sndtntxt")
                             } else {
-                                self?.viewModel.search("chu")
+                                self?.viewModel.search("bigears")
                             }
                         })
                         .disposed(by: self.disposeBag)

@@ -28,13 +28,13 @@ extension ProcessTransaction {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let transactionHandler: ProcessingTransactionsRepository
-        private let walletsRepository: WalletsRepository
-        private let apiClient: ProcessTransactionAPIClient
+        @Injected private var transactionHandler: ProcessingTransactionsRepository
+        @Injected private var walletsRepository: WalletsRepository
+        @Injected private var apiClient: ProcessTransactionAPIClient
+        @Injected var pricesService: PricesServiceType
         
         // MARK: - Properties
         let transactionType: TransactionType
-        let pricesService: PricesServiceType
         
         private let disposeBag = DisposeBag()
         private(set) var reimbursedAmount: Double?
@@ -47,20 +47,15 @@ extension ProcessTransaction {
         // MARK: - Initializer
         init(
             transactionType: TransactionType,
-            request: Single<ProcessTransactionResponseType>,
-            transactionHandler: ProcessingTransactionsRepository,
-            walletsRepository: WalletsRepository,
-            pricesService: PricesServiceType,
-            apiClient: ProcessTransactionAPIClient
+            request: Single<ProcessTransactionResponseType>
         ) {
             self.transactionType = transactionType
             self.request = request
-            self.transactionHandler = transactionHandler
-            self.walletsRepository = walletsRepository
-            self.apiClient = apiClient
-            self.pricesService = pricesService
-            
             execute()
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
         
         @objc func execute() {

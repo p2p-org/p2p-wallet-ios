@@ -7,14 +7,13 @@
 
 import Foundation
 import SwiftyUserDefaults
+import RenVMSwift
 
 extension UIUserInterfaceStyle: DefaultsSerializable {}
 
 extension Fiat: DefaultsSerializable {}
 
 extension SolanaSDK.APIEndPoint: DefaultsSerializable {}
-
-extension PayingToken: DefaultsSerializable {}
 
 extension RenVM.Session: DefaultsSerializable {}
 
@@ -43,7 +42,7 @@ extension DefaultsKeys {
     var walletName: DefaultsKey<[String: String]> {.init(#function, defaultValue: [:])}
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {.init(#function, defaultValue: LocalizedLanguage(code: String(Locale.preferredLanguages[0].prefix(2))))}
     var appearance: DefaultsKey<UIUserInterfaceStyle> {.init(#function, defaultValue: .unspecified)}
-    var slippage: DefaultsKey<Double> {.init(#function, defaultValue: 0.005)}
+    var slippage: DefaultsKey<Double> {.init(#function, defaultValue: 0.01)}
     var fiat: DefaultsKey<Fiat> {.init(#function, defaultValue: .usd)}
     var hiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
     var unhiddenWalletPubkey: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
@@ -51,7 +50,7 @@ extension DefaultsKeys {
     var useFreeTransaction: DefaultsKey<Bool> {.init(#function, defaultValue: true)}
     var p2pFeePayerPubkeys: DefaultsKey<[String]> {.init(#function, defaultValue: [])}
     var prices: DefaultsKey<Data> {.init(#function, defaultValue: Data())}
-    var payingToken: DefaultsKey<PayingToken> {.init(#function, defaultValue: .transactionToken)}
+    var payingTokenMint: DefaultsKey<String> {.init(#function, defaultValue: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString)}
     var renVMSession: DefaultsKey<RenVM.Session?> {.init(#function, defaultValue: nil)}
     var renVMProcessingTxs: DefaultsKey<[RenVM.LockAndMint.ProcessingTx]> {.init(#function, defaultValue: [])}
     var renVMSubmitedBurnTxDetails: DefaultsKey<[RenVM.BurnAndRelease.BurnDetails]> {.init(#function, defaultValue: [])}

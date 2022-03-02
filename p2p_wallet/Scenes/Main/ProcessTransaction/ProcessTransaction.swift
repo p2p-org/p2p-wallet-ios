@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-struct ProcessTransaction {
+enum ProcessTransaction {
     enum NavigatableScene {
         case showExplorer(transactionID: String)
         case done

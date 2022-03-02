@@ -5,10 +5,10 @@
 //  Created by Andrew Vasiliev on 03.12.2021.
 //
 
-import UIKit
-import RxSwift
-import RxCocoa
 import BEPureLayout
+import RxCocoa
+import RxSwift
+import UIKit
 
 extension OrcaSwapV2 {
     final class DetailsView: UIStackView {
@@ -26,7 +26,6 @@ extension OrcaSwapV2 {
 
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
-
             super.init(frame: .zero)
 
             layout()
@@ -65,18 +64,23 @@ extension OrcaSwapV2 {
                 }
                 .disposed(by: disposeBag)
 
-            viewModel.feePayingTokenDriver
+            viewModel.feePayingTokenStringDriver
                 .drive { [weak payFeesWithView] in
                     payFeesWithView?.setValue(text: $0)
                 }
                 .disposed(by: disposeBag)
 
             slippageView.clickHandler = { [weak viewModel] in
-                viewModel?.navigate(to: .chooseSlippage)
+                viewModel?.navigate(to: .settings)
             }
 
             payFeesWithView.clickHandler = { [weak viewModel] in
                 viewModel?.choosePayFee()
+            }
+
+            feesView.clickHandler = { [weak viewModel] fee in
+                guard let info = fee.info else { return }
+                viewModel?.navigate(to: .info(title: info.alertTitle, description: info.alertDescription))
             }
         }
     }

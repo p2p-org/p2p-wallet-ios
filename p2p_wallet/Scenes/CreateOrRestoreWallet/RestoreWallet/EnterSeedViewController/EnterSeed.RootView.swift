@@ -53,8 +53,7 @@ extension EnterSeed {
             
             #if DEBUG
             if let testAccount = String.secretConfig("TEST_ACCOUNT_SEED_PHRASE")?
-                .replacingOccurrences(of: "-", with: " ")
-            {
+                .replacingOccurrences(of: "-", with: " ") {
                 textView.set(text: testAccount)
                 viewModel.seedTextSubject.accept(testAccount)
             }
@@ -121,8 +120,12 @@ extension EnterSeed {
                 BEStackViewSpacing(8)
                 errorLabel
                 BEStackViewSpacing(18)
-                UIView.greyBannerView {
+                UIView.greyBannerView(alignment: .leading) {
                     descriptionLabel
+                    UIButton(label: L10n.whatIsASecurityKey, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .h5887ff)
+                        .setupWithType(UIButton.self) { button in
+                            button.addTarget(self, action: #selector(securityExplanation), for: .touchUpInside)
+                        }
                 }
                 BEStackViewSpacing(18)
                 agreeTermsAndConditionsView
@@ -134,7 +137,7 @@ extension EnterSeed {
 
             nextButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
+            nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
         }
         
         private func bind() {
@@ -208,6 +211,10 @@ extension EnterSeed {
             nextButton.isEnabled = isEnabled
             nextButton.setTitle(text: title)
             nextButton.setImage(image: image, imageSize: .init(width: 24, height: 24))
+        }
+        
+        @objc private func securityExplanation() {
+            self.viewModel.showInfo()
         }
     }
 }

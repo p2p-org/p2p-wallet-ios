@@ -8,10 +8,12 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Resolver
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
     var notificationsService: NotificationsServiceType { get }
     var showTermsAndConditionsSignal: Signal<Void> { get }
+    var showPhotoLibraryUnavailableSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
     var errorSignal: Signal<String> { get }
 
@@ -23,6 +25,7 @@ protocol CreateSecurityKeysViewModelType: AnyObject {
     func back()
     func verifyPhrase()
     func termsAndConditions()
+    func saveKeysImage(_: UIImage)
 }
 
 extension CreateSecurityKeys {
@@ -30,22 +33,29 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var createWalletViewModel: CreateWalletViewModelType
-        @Injected private var authenticationHandler: AuthenticationHandler
+        private let createWalletViewModel: CreateWalletViewModelType
+        @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
+        @Injected var imageSaver: ImageSaverType
 
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         
         // MARK: - Subjects
         private let showTermsAndConditionsSubject = PublishRelay<Void>()
+        private let showPhotoLibraryUnavailableSubject = PublishRelay<Void>()
         private let phrasesSubject = BehaviorRelay<[String]>(value: [])
         private let errorSubject = PublishRelay<String>()
         
         // MARK: - Initializer
-        init() {
+        init(createWalletViewModel: CreateWalletViewModelType) {
+            self.createWalletViewModel = createWalletViewModel
             createPhrases()
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
 
         private func createPhrases() {
@@ -56,6 +66,10 @@ extension CreateSecurityKeys {
 }
 
 extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
+    var showPhotoLibraryUnavailableSignal: Signal<Void> {
+        showPhotoLibraryUnavailableSubject.asSignal()
+    }
+
     var showTermsAndConditionsSignal: Signal<Void> {
         showTermsAndConditionsSubject.asSignal()
     }
@@ -75,27 +89,44 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
     
     func renewPhrases() {
-        analyticsManager.log(event: .createWalletRenewSeedClick)
+        analyticsManager.log(event: .backingUpRenewing)
         createPhrases()
     }
     
     func copyToClipboard() {
-        analyticsManager.log(event: .createWalletCopySeedClick)
+        analyticsManager.log(event: .backingUpCopying)
         clipboardManager.copyToClipboard(phrasesSubject.value.joined(separator: " "))
         notificationsService.showInAppNotification(.message(L10n.seedPhraseCopiedToClipboard))
     }
+
+    func saveKeysImage(_ image: UIImage) {
+        imageSaver.save(image: image) { [weak self] result in
+            switch result {
+            case .success:
+                self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+            case let .failure(error):
+                switch error {
+                case .noAccess:
+                    self?.showPhotoLibraryUnavailableSubject.accept(())
+                case .restrictedRightNow:
+                    break
+                case let .unknown(error):
+                    self?.notificationsService.showInAppNotification(.error(error))
+                }
+            }
+        }
+    }
     
     @objc func saveToICloud() {
-        authenticationHandler.requiredOwner { [weak self] in
-            self?._saveToIcloud()
-        } onFailure: { [weak self] error in
+        deviceOwnerAuthenticationHandler.requiredOwner {
+            self._saveToIcloud()
+        } onFailure: { error in
             guard let error = error else {return}
-            self?.errorSubject.accept(error)
+            self.errorSubject.accept(error)
         }
     }
 
     private func _saveToIcloud() {
-        analyticsManager.log(event: .createWalletBackupToIcloudClick)
         let result = iCloudStorage.saveToICloud(
             account: .init(
                 name: nil,
@@ -105,9 +136,11 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         )
         
         if result {
+            analyticsManager.log(event: .backingUpIcloud)
             notificationsService.showInAppNotification(.done(L10n.savedToICloud))
             createWalletViewModel.handlePhrases(phrasesSubject.value)
         } else {
+            analyticsManager.log(event: .backingUpError)
             errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
         }
     }
@@ -117,7 +150,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
 
     func verifyPhrase() {
-        analyticsManager.log(event: .createWalletVerifyManuallyClick)
+        analyticsManager.log(event: .backingUpManually)
         createWalletViewModel.verifyPhrase(phrasesSubject.value)
     }
 

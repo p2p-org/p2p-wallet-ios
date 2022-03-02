@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import RxCocoa
+import RenVMSwift
 
 protocol RenVMBurnAndReleaseServiceType {
     func isTestNet() -> Bool
@@ -26,7 +27,7 @@ extension RenVM.BurnAndRelease {
         private let rpcClient: RenVMRpcClientType
         private let solanaClient: RenVMSolanaAPIClientType
         private let account: SolanaSDK.Account
-        private let transactionStorage: RenVMBurnAndReleaseTransactionStorageType
+        private var transactionStorage: RenVMBurnAndReleaseTransactionStorageType
         private let transactionHandler: TransactionHandler
         
         // MARK: - Properties
@@ -74,15 +75,12 @@ extension RenVM.BurnAndRelease {
                     )
                 }
             
-            transactionStorage.burnTransactionObservable()
-                .observe(on: scheduler)
-                .map {$0.filter {[weak self] in self?.releasingTxs.contains($0) == false}}
-                .subscribe(onNext: {[weak self] burnDetails in
-                    for detail in burnDetails {
-                        self?.release(detail)
-                    }
-                })
-                .disposed(by: disposeBag)
+            transactionStorage.newSubmittedBurnTxDetailsHandler = {[weak self] burnDetails in
+                let burnDetails = burnDetails.filter {self?.releasingTxs.contains($0) == false}
+                for detail in burnDetails {
+                    self?.release(detail)
+                }
+            }
         }
         
         func reload() {
@@ -139,9 +137,10 @@ extension RenVM.BurnAndRelease {
                     let state = try burnAndRelease.getBurnState(burnDetails: detail)
                     return burnAndRelease.release(state: state, details: detail)
                 }
-                .catch {_ in
+                .catch { [weak self] _ in
+                    guard let self = self else { throw RenVM.Error.unknown }
                     // retry after 3 sec
-                    Single<Void>.just(())
+                    return Single<Void>.just(())
                         .delay(.seconds(3), scheduler: self.scheduler)
                         .flatMap {[weak self] in
                             guard let self = self else {throw RenVM.Error.unknown}

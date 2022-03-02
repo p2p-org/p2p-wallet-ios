@@ -24,8 +24,6 @@
 	<string>$(CRYPTO_COMPARE_API_KEY)</string>
 	<key>FEE_RELAYER_ENDPOINT</key>
 	<string>$(FEE_RELAYER_ENDPOINT)</string>
-	<key>TEST_ACCOUNT_SEED_PHRASE</key>
-	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
@@ -38,8 +36,12 @@
 	<string>This is required for the app to authenticate user with TouchID or FaceID.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This is required for the app to save generated QR codes or back up of your seed phrases to your photo library.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This is required for the app to send photos</string>
 	<key>RPCPOOL_API_KEY</key>
 	<string>$(RPCPOOL_API_KEY)</string>
+	<key>TEST_ACCOUNT_SEED_PHRASE</key>
+	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
 	<key>TRANSAK_HOST_URL</key>
 	<string>$(TRANSAK_HOST_URL)</string>
 	<key>TRANSAK_PRODUCTION_API_KEY</key>

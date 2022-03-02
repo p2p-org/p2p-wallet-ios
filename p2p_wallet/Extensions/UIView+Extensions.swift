@@ -72,10 +72,22 @@ extension UIView {
             layer.render(in: rendererContext.cgContext)
         }
     }
+    
+    func asImageInBackground() -> UIImage {
+        layoutIfNeeded()
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
+    }
 }
 
 extension UIView {
     func lightShadow() -> Self {
         shadow(color: .black, alpha: 0.05, x: 0, y: 1, blur: 8, spread: 0)
+    }
+    
+    func mediumShadow() -> Self {
+        shadow(color: .black, alpha: 0.07, x: 0, y: 2, blur: 8, spread: 0)
     }
 }

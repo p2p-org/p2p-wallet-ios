@@ -8,6 +8,7 @@
 import Foundation
 import JazziconSwift
 import RxSwift
+import UIKit
 
 class CoinLogoImageView: BEView {
     // MARK: - Properties
@@ -34,7 +35,7 @@ class CoinLogoImageView: BEView {
     }()
     
     // MARK: - Initializer
-    init(size: CGFloat, cornerRadius: CGFloat = 12) {
+    init(size: CGFloat, cornerRadius: CGFloat = 12, backgroundColor: UIColor? = nil) {
         self.size = size
         super.init(frame: .zero)
         configureForAutoLayout()
@@ -42,11 +43,12 @@ class CoinLogoImageView: BEView {
         
         tokenIcon.layer.cornerRadius = cornerRadius
         tokenIcon.layer.masksToBounds = true
+
+        self.backgroundColor = backgroundColor ?? .gray
     }
     
     override func commonInit() {
         super.commonInit()
-        backgroundColor = .gray
         
         addSubview(tokenIcon)
         tokenIcon.autoPinEdgesToSuperviewEdges()
@@ -68,7 +70,6 @@ class CoinLogoImageView: BEView {
         tokenIcon.isHidden = false
         
         // with token
-        let jazzicon: Jazzicon
         if let token = token {
             let key = token.symbol.isEmpty ? token.address : token.symbol
             var seed = Self.cachedJazziconSeeds[key]
@@ -77,14 +78,13 @@ class CoinLogoImageView: BEView {
                 Self.cachedJazziconSeeds[key] = seed
             }
             
-            jazzicon = Jazzicon(seed: seed!)
+            let jazzicon = Jazzicon(seed: seed!)
+            let jazziconImage = jazzicon.generateImage(size: size)
+            
+            tokenIcon.setImage(urlString: token.logoURI, placeholder: jazziconImage)
         } else {
-            jazzicon = Jazzicon()
+            tokenIcon.image = placeholder
         }
-        
-        let jazziconImage = jazzicon.generateImage(size: size)
-        
-        tokenIcon.setImage(urlString: token?.logoURI, placeholder: placeholder ?? jazziconImage)
         
         // wrapped by
         if let wrappedBy = token?.wrappedBy {

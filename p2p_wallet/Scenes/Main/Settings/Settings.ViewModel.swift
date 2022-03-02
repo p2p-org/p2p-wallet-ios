@@ -18,8 +18,8 @@ protocol ChangeNetworkResponder {
     func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
 }
 
-protocol ChangeFiatResponder {
-    func changeFiat(to fiat: Fiat)
+protocol LogoutResponder {
+    func logout()
 }
 
 protocol SettingsViewModelType {
@@ -35,8 +35,13 @@ protocol SettingsViewModelType {
     var themeDriver: Driver<UIUserInterfaceStyle?> { get }
     var hideZeroBalancesDriver: Driver<Bool> { get }
     var logoutAlertSignal: Signal<Void> { get }
+    var biometryTypeDriver: Driver<Settings.BiometryType> { get }
+    var isBiometryEnabledDriver: Driver<Bool> { get }
+    var isBiometryAvailableDriver: Driver<Bool> { get }
+    var canGoBack: Bool { get }
     
     func getUserAddress() -> String?
+    func getUsername() -> String?
     
     func navigate(to scene: Settings.NavigatableScene)
     func showOrReserveUsername()
@@ -55,7 +60,8 @@ protocol SettingsViewModelType {
     
     func showLogoutAlert()
     func copyUsernameToClipboard()
-    func shareUsername()
+    func share(image: UIImage)
+    func saveImage(image: UIImage)
     func logout()
 }
 
@@ -64,19 +70,21 @@ extension Settings {
         // MARK: - Dependencies
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var rootViewModel: RootViewModelType
-        private var reserveNameHandler: ReserveNameHandler
-        @Injected private var authenticationHandler: AuthenticationHandler
+        @Injected private var logoutResponder: LogoutResponder
+        @Injected private var authenticationHandler: AuthenticationHandlerType
+        @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
         @Injected private var localizationManager: LocalizationManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationsServiceType
-        let changeFiatResponder: ChangeFiatResponder
-        let renVMService: RenVMLockAndMintServiceType
+        @Injected private var pricesService: PricesServiceType
+        @Injected private var renVMService: RenVMLockAndMintServiceType
+        @Injected private var imageSaver: ImageSaverType
         
         // MARK: - Properties
         private var disposables = [DefaultsDisposable]()
+        let canGoBack: Bool
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -88,24 +96,39 @@ extension Settings {
         private let currentLanguageSubject = BehaviorRelay<String?>(value: Locale.current.uiLanguageLocalizedString?.uppercaseFirst)
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?.overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
+        private let biometryTypeSubject = BehaviorRelay<BiometryType>(value: .face)
+        private let isBiometryEnabledSubject = BehaviorRelay<Bool>(value: Defaults.isBiometryEnabled)
+        private let isBiometryAvailableSubject = BehaviorRelay<Bool>(value: false)
         private let logoutAlertSubject = PublishRelay<Void>()
         
         // MARK: - Initializer
-        init(
-            reserveNameHandler: ReserveNameHandler,
-            changeFiatResponder: ChangeFiatResponder,
-            renVMService: RenVMLockAndMintServiceType
-        ) {
-            self.reserveNameHandler = reserveNameHandler
-            self.changeFiatResponder = changeFiatResponder
-            self.renVMService = renVMService
+        init(canGoBack: Bool = true) {
+            self.canGoBack = canGoBack
             bind()
+        }
+        
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
         }
         
         func bind() {
             disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
                 self?.usernameSubject.accept(self?.storage.getName()?.withNameServiceDomain())
             })
+            
+            let context = LAContext()
+            if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
+                isBiometryAvailableSubject.accept(true)
+            }
+    
+            switch context.biometryType {
+            case .faceID:
+                biometryTypeSubject.accept(.face)
+            case .touchID:
+                biometryTypeSubject.accept(.touch)
+            default:
+                biometryTypeSubject.accept(.none)
+            }
         }
         
         // MARK: - Methods
@@ -169,6 +192,10 @@ extension Settings.ViewModel: SettingsViewModelType {
         storage.account?.publicKey.base58EncodedString
     }
     
+    func getUsername() -> String? {
+        storage.getName()
+    }
+    
     // MARK: - Actions
     func navigate(to scene: Settings.NavigatableScene) {
         navigationSubject.accept(scene)
@@ -178,44 +205,51 @@ extension Settings.ViewModel: SettingsViewModelType {
         if storage.getName() != nil {
             navigate(to: .username)
         } else if let owner = storage.account?.publicKey.base58EncodedString {
-            navigate(to: .reserveUsername(owner: owner, handler: reserveNameHandler))
+            navigate(to: .reserveUsername(owner: owner, handler: nil))
         }
     }
     
     func backupUsingICloud() {
         guard let account = storage.account?.phrase else { return }
-        authenticationHandler.authenticate(
-            presentationStyle: .init(
-                isRequired: false,
-                isFullScreen: false,
-                completion: { [weak self] in
-                    guard let self = self else { return }
-                    _ = self.storage.saveToICloud(
-                        account: .init(
-                            name: self.storage.getName(),
-                            phrase: account.joined(separator: " "),
-                            derivablePath: self.storage.getDerivablePath() ?? .default
-                        )
-                    )
-                    self.setDidBackup(true)
-                }
+        authenticationHandler.pauseAuthentication(true)
+        
+        deviceOwnerAuthenticationHandler.requiredOwner(onSuccess: {
+            _ = self.storage.saveToICloud(
+                account: .init(
+                    name: self.storage.getName(),
+                    phrase: account.joined(separator: " "),
+                    derivablePath: self.storage.getDerivablePath() ?? .default
+                )
             )
-        )
+            self.setDidBackup(true)
+            self.notificationsService.showInAppNotification(.done(L10n.savedToICloud))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.authenticationHandler.pauseAuthentication(false)
+            }
+        }, onFailure: { error in
+            guard let error = error else { return }
+            self.notificationsService.showInAppNotification(.error(error))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.authenticationHandler.pauseAuthentication(false)
+            }
+        })
     }
     
     func backupManually() {
         if didBackupSubject.value {
-            authenticationHandler.authenticate(
-                presentationStyle: .init(
-                    isRequired: false,
-                    isFullScreen: false,
-                    completion: { [weak self] in
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                            self?.navigate(to: .backupShowPhrases)
-                        }
-                    }
-                )
-            )
+            authenticationHandler.pauseAuthentication(true)
+            deviceOwnerAuthenticationHandler.requiredOwner(onSuccess: {
+                self.navigate(to: .backupShowPhrases)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.authenticationHandler.pauseAuthentication(false)
+                }
+            }, onFailure: { error in
+                guard let error = error else { return }
+                self.notificationsService.showInAppNotification(.error(error))
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    self.authenticationHandler.pauseAuthentication(false)
+                }
+            })
         } else {
             navigate(to: .backupManually)
         }
@@ -232,7 +266,12 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func setFiat(_ fiat: Fiat) {
         analyticsManager.log(event: .settingsСurrencySelected(сurrency: fiat.code))
-        changeFiatResponder.changeFiat(to: fiat)
+        // set default fiat
+        Defaults.fiat = fiat
+        pricesService.clearCurrentPrices()
+        pricesService.fetchAllTokensPriceInWatchList()
+        
+        // accept new value
         fiatSubject.accept(fiat)
         notificationsService.showInAppNotification(.done(L10n.currencyChanged))
     }
@@ -240,13 +279,19 @@ extension Settings.ViewModel: SettingsViewModelType {
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {
         endpointSubject.accept(endpoint)
         
-        analyticsManager.log(event: .settingsNetworkSelected(network: endpoint.address))
+        analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
         if Defaults.apiEndPoint.network != endpoint.network {
             renVMService.expireCurrentSession()
         }
         
         changeNetworkResponder.changeAPIEndpoint(to: endpoint)
     }
+    
+    var isBiometryEnabledDriver: Driver<Bool> { isBiometryEnabledSubject.asDriver() }
+    
+    var isBiometryAvailableDriver: Driver<Bool> { isBiometryAvailableSubject.asDriver() }
+    
+    var biometryTypeDriver: Driver<Settings.BiometryType> { biometryTypeSubject.asDriver() }
     
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void) {
         // pause authentication
@@ -261,6 +306,7 @@ extension Settings.ViewModel: SettingsViewModelType {
             DispatchQueue.main.async { [weak self] in
                 if success {
                     Defaults.isBiometryEnabled.toggle()
+                    self?.isBiometryEnabledSubject.accept(Defaults.isBiometryEnabled)
                     self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                     self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
                 } else {
@@ -295,6 +341,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     
     func setLanguage(_ language: LocalizedLanguage) {
         localizationManager.changeCurrentLanguage(language)
+        analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
         changeLanguageResponder.languageDidChange(to: language)
     }
     
@@ -311,6 +358,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
     
     func showLogoutAlert() {
+        analyticsManager.log(event: .signOut(lastScreen: "Settings"))
         logoutAlertSubject.accept(())
     }
     
@@ -320,13 +368,30 @@ extension Settings.ViewModel: SettingsViewModelType {
         notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
     
-    func shareUsername() {
-        guard let username = storage.getName()?.withNameServiceDomain() else { return }
-        navigate(to: .share(item: username))
+    func share(image: UIImage) {
+        navigate(to: .share(item: image))
+    }
+    
+    func saveImage(image: UIImage) {
+        imageSaver.save(image: image) { [weak self] result in
+            switch result {
+            case .success:
+                self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+            case let .failure(error):
+                switch error {
+                case .noAccess:
+                    self?.navigate(to: .accessToPhoto)
+                case .restrictedRightNow:
+                    break
+                case let .unknown(error):
+                    self?.notificationsService.showInAppNotification(.error(error))
+                }
+            }
+        }
     }
     
     func logout() {
-        analyticsManager.log(event: .settingsLogoutClick)
-        rootViewModel.logout()
+        analyticsManager.log(event: .signedOut)
+        logoutResponder.logout()
     }
 }
