@@ -13,7 +13,6 @@ import Resolver
 protocol PTViewModelType {
     var navigationDriver: Driver<PT.NavigatableScene?> {get}
     var transactionInfoDriver: Driver<PT.TransactionInfo> {get}
-    var errorDriver: Driver<Error?> {get}
     var isSwapping: Bool {get}
     var transactionID: String? {get}
     
@@ -35,7 +34,6 @@ extension PT {
         
         // MARK: - Subjects
         private let transactionInfoSubject = BehaviorRelay<TransactionInfo>(value: .init(transactionId: nil, status: .sending))
-        private let errorSubject = BehaviorRelay<Swift.Error?>(value: nil)
         
         // MARK: - Initializer
         init(processingTransaction: ProcessingTransactionType) {
@@ -54,10 +52,6 @@ extension PT.ViewModel: PTViewModelType {
     
     var transactionInfoDriver: Driver<PT.TransactionInfo> {
         transactionInfoSubject.asDriver()
-    }
-    
-    var errorDriver: Driver<Error?> {
-        errorSubject.asDriver()
     }
     
     var isSwapping: Bool {
@@ -92,7 +86,7 @@ extension PT.ViewModel: PTViewModelType {
                 self.observe(transactionId: transactionID)
             }, onFailure: { [weak self] error in
                 guard let self = self else {return}
-                self.errorSubject.accept(error)
+                self.transactionInfoSubject.accept(self.updateTransactionInfo(status: .error(error)))
             })
             .disposed(by: disposeBag)
     }

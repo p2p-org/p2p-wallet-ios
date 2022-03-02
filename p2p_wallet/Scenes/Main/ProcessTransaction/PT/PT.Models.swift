@@ -80,7 +80,7 @@ extension PT {
             case sending
             case confirmed(_ numberOfConfirmed: Int)
             case finalized
-            case error(_ error: Error)
+            case error(_ error: Swift.Error)
             
             var progress: Float {
                 switch self {
@@ -95,6 +95,15 @@ extension PT {
                     return Float(numberOfConfirmed) / Float(Self.maxConfirmed)
                 case .finalized, .error:
                     return 1
+                }
+            }
+            
+            var error: Swift.Error? {
+                switch self {
+                case .error(let error):
+                    return error
+                default:
+                    return nil
                 }
             }
         }
