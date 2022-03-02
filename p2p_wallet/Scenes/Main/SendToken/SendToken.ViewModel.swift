@@ -149,7 +149,7 @@ extension SendToken {
                     transactionType: .send(
                         from: wallet,
                         to: recipientSubject.value!,
-                        lamport: amount,
+                        lamport: amount.toLamport(decimals: wallet.token.decimals),
                         feeInLamports: feeInfoSubject.value?.feeAmount.total ?? .zero
                     )
                 )
