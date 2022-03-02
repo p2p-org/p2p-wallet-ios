@@ -49,7 +49,11 @@ extension PT {
                     BEZStack {
                         // Process indicator
                         BEZStackPosition {
-                            UIView(height: 2, backgroundColor: .h5887ff)
+                            UIProgressView(height: 2)
+                                .setup {view in
+                                    view.progressTintColor = .h5887ff
+                                    view.progress = 0.4
+                                }
                                 .centered(.vertical)
                         }
                         
@@ -78,13 +82,20 @@ extension PT {
                             }
                     }
                         .padding(.init(top: 0, left: 18, bottom: 36, right: 18))
+                        .setup { view in
+                            view.isHidden = true
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) { [weak view, weak self] in
+                                view?.isHidden = false
+                                self?.updatePresentationLayout()
+                            }
+                        }
                     
                     // Buttons
                     BEVStack(spacing: 10) {
                         WLStepButton.main(image: .info, text: L10n.showTransactionDetails)
                             .onTap { [weak self] in
-                                // TODO: - Show transaction details
-                                
+                                self?.viewModel.navigate(to: .detail)
                             }
                         WLStepButton.sub(text: L10n.makeAnotherTransaction)
                             .onTap { [weak self] in
@@ -110,9 +121,8 @@ extension PT {
             guard let scene = scene else {return}
             switch scene {
             case .detail:
-//                let vc = Detail.ViewController()
-//                present(vc, completion: nil)
-                break
+                let vc = DetailViewController()
+                present(vc, animated: true, completion: nil)
             case .explorer(transactionID: let transactionID):
                 break
             }
