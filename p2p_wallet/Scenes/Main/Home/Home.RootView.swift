@@ -11,6 +11,7 @@ import BEPureLayout
 import RxCocoa
 import RxSwift
 import UIKit
+import Resolver
 
 extension Home {
     class RootView: BECompositionView {
@@ -149,7 +150,6 @@ extension HomeViewModelType {
                 .map { $0?.reduce(0) { (partialResult, wallet) in partialResult + wallet.amount } ?? 0 }
         )
         .map { (state, amount) in
-            print(state, amount)
             if state != .loaded { return true }
             return amount > 0
         }

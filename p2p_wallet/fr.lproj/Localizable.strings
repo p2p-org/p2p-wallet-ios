@@ -754,3 +754,4 @@
 "Pay the %@ fee with" = "Payez les frais %@ avec";
 "The transaction has been rejected" = "La transaction a été rejetée";
 "%@ was sent successfully" = "%@ a été envoyé avec succès";
+"The price slippage was set at %@" = "Le glissement de prix a été fixé à %@";
