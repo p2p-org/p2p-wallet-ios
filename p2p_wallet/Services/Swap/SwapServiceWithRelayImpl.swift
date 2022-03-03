@@ -46,12 +46,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
 
     func getSwapInfo(from sourceToken: SolanaSDK.Token, to destinationToken: SolanaSDK.Token) -> Swap.SwapInfo {
-        // Determine a mode for paying fee
-        var payingTokenMode: Swap.PayingTokenMode = .any
-        if sourceToken.isNativeSOL {
-            payingTokenMode = .onlySol
-        }
-        return .init(payingTokenMode: payingTokenMode)
+        .init(payingTokenMode: .any)
     }
 
     func getPoolPair(
@@ -80,25 +75,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let bestPoolsPair = bestPoolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
         // Network fees
         let networkFeesRequest: Single<[PayingFee]>
-        if isUsingNativeSwap(sourceAddress: sourceAddress, payingTokenMint: payingWallet?.mintAddress) {
-            // Network fee for swapping natively
-            do {
-                networkFeesRequest = try getNetworkFeesForSwappingNatively(
-                    availableSourceMintAddresses: availableSourceMintAddresses,
-                    sourceAddress: sourceAddress,
-                    destinationAddress: destinationAddress,
-                    destinationToken: destinationToken,
-                    poolsPair: bestPoolsPair.orcaPoolPair,
-                    inputAmount: inputAmount,
-                    slippage: slippage,
-                    lamportsPerSignature: lamportsPerSignature,
-                    minRentExempt: minRentExempt
-                )
-            } catch {
-                networkFeesRequest = .error(error)
-            }
-            
-        } else if let payingWallet = payingWallet {
+        
+        if let payingWallet = payingWallet {
             // Network fee for swapping via relay program
             networkFeesRequest = getNetworkFeesForSwappingViaRelayProgram(
                 sourceMint: sourceMint,
@@ -154,31 +132,17 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     ) -> Single<[String]> {
         guard let poolsPair = poolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
         
-        // SWAP NATIVELY
-        if isUsingNativeSwap(sourceAddress: sourceAddress, payingTokenMint: payingTokenMint) {
-            return swapNatively(
-                poolsPair: poolsPair.orcaPoolPair,
-                sourceAddress: sourceAddress,
-                destinationAddress: destinationAddress,
-                amount: amount,
-                slippage: slippage
-            )
-        }
-        
-        // SWAP VIA RELAY PROGRAM
-        else {
-            return swapViaRelayProgram(
-                sourceAddress: sourceAddress,
-                sourceTokenMint: sourceTokenMint,
-                destinationAddress: destinationAddress,
-                destinationTokenMint: destinationTokenMint,
-                payingTokenAddress: payingTokenAddress,
-                payingTokenMint: payingTokenMint,
-                poolsPair: poolsPair.orcaPoolPair,
-                amount: amount,
-                slippage: slippage
-            )
-        }
+        return swapViaRelayProgram(
+            sourceAddress: sourceAddress,
+            sourceTokenMint: sourceTokenMint,
+            destinationAddress: destinationAddress,
+            destinationTokenMint: destinationTokenMint,
+            payingTokenAddress: payingTokenAddress,
+            payingTokenMint: payingTokenMint,
+            poolsPair: poolsPair.orcaPoolPair,
+            amount: amount,
+            slippage: slippage
+        )
     }
 
     struct PoolsPair: Swap.PoolsPair {
@@ -198,14 +162,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
     
     // MARK: - Helpers
-    private func isUsingNativeSwap(
-        sourceAddress: String,
-        payingTokenMint: String?
-    ) -> Bool {
-        sourceAddress == accountStorage.account?.publicKey.base58EncodedString ||
-            payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-    }
-    
     private func getLiquidityProviderFees(
         poolsPair: OrcaSwap.PoolsPair,
         destinationAddress: String?,
@@ -253,62 +209,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         }
         
         return allFees
-    }
-    
-    private func getNetworkFeesForSwappingNatively(
-        availableSourceMintAddresses: [String],
-        sourceAddress: String,
-        destinationAddress: String?,
-        destinationToken: SolanaSDK.Token?,
-        poolsPair: OrcaSwap.PoolsPair,
-        inputAmount: Double?,
-        slippage: Double,
-        lamportsPerSignature: UInt64,
-        minRentExempt: UInt64
-    ) throws -> Single<[PayingFee]> {
-        try orcaSwap.getNetworkFees(
-            myWalletsMints: availableSourceMintAddresses,
-            fromWalletPubkey: sourceAddress,
-            toWalletPubkey: destinationAddress,
-            bestPoolsPair: poolsPair,
-            inputAmount: inputAmount,
-            slippage: slippage,
-            lamportsPerSignature: lamportsPerSignature,
-            minRentExempt: minRentExempt
-        )
-            .map { networkFees in
-                var allFees = [PayingFee]()
-                
-                if networkFees.deposit > 0 {
-                    allFees.append(
-                        .init(
-                            type: .depositWillBeReturned,
-                            lamports: networkFees.deposit,
-                            token: .nativeSolana
-                        )
-                    )
-                }
-                
-                allFees.append(
-                    .init(
-                        type: .transactionFee,
-                        lamports: networkFees.transaction,
-                        token: .nativeSolana
-                    )
-                )
-                
-                if networkFees.accountBalances > 0 {
-                    allFees.append(
-                        .init(
-                            type: .accountCreationFee(token: destinationToken?.symbol),
-                            lamports: networkFees.accountBalances,
-                            token: .nativeSolana
-                        )
-                    )
-                }
-                
-                return allFees
-            }
     }
     
     private func getNetworkFeesForSwappingViaRelayProgram(
@@ -391,27 +291,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 
                 return allFees
             }
-    }
-    
-    private func swapNatively(
-        poolsPair: OrcaSwap.PoolsPair,
-        sourceAddress: String,
-        destinationAddress: String?,
-        amount: UInt64,
-        slippage: Double
-    ) -> Single<[String]> {
-        guard let decimals = poolsPair[0].getTokenADecimals() else {
-            return .error(OrcaSwapError.invalidPool)
-        }
-        
-        return orcaSwap.swap(
-            fromWalletPubkey: sourceAddress,
-            toWalletPubkey: destinationAddress,
-            bestPoolsPair: poolsPair,
-            amount: amount.convertToBalance(decimals: decimals),
-            slippage: slippage,
-            isSimulation: false
-        ).map { response in [response.transactionId] }
     }
     
     private func swapViaRelayProgram(
