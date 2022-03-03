@@ -21,7 +21,7 @@ protocol SendServiceType {
         from wallet: Wallet,
         receiver: String?,
         network: SendToken.Network,
-        isPayingWithSOL: Bool
+        payingTokenMint: String?
     ) -> Single<SolanaSDK.FeeAmount?>
     func getFeesInPayingToken(
         feeInSOL: SolanaSDK.FeeAmount,
@@ -78,7 +78,7 @@ class SendService: SendServiceType {
         from wallet: Wallet,
         receiver: String?,
         network: SendToken.Network,
-        isPayingWithSOL: Bool
+        payingTokenMint: String?
     ) -> Single<SolanaSDK.FeeAmount?> {
         switch network {
         case .bitcoin:
@@ -109,9 +109,7 @@ class SendService: SendServiceType {
                 transactionFee += lamportsPerSignature
                 
                 // feePayer's signature
-                if !isPayingWithSOL {
-                    transactionFee += lamportsPerSignature
-                }
+                transactionFee += lamportsPerSignature
                 
                 let isUnregisteredAsocciatedTokenRequest: Single<Bool>
                 if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
@@ -133,7 +131,7 @@ class SendService: SendServiceType {
                     }
                     .flatMap { [weak self] expectedFee in
                         guard let self = self else {throw SolanaSDK.Error.unknown}
-                        return self.relayService.calculateNeededTopUpAmount(expectedFee: expectedFee)
+                        return self.relayService.calculateNeededTopUpAmount(expectedFee: expectedFee, payingTokenMint: payingTokenMint)
                             .map(Optional.init)
                     }
             case .reward:
@@ -147,7 +145,7 @@ class SendService: SendServiceType {
         payingFeeWallet: Wallet
     ) -> Single<SolanaSDK.FeeAmount?> {
         guard relayMethod == .relay else {return .just(nil)}
-        if payingFeeWallet.isNativeSOL {return .just(feeInSOL)}
+        if payingFeeWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {return .just(feeInSOL)}
         return relayService.calculateFeeInPayingToken(
             feeInSOL: feeInSOL,
             payingFeeTokenMint: payingFeeWallet.mintAddress
@@ -220,20 +218,11 @@ class SendService: SendServiceType {
             .flatMap { [weak self] preparedTransaction in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
                 
-                if payingFeeToken?.mint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-                    // send normally, paid by SOL
-                    return self.solanaSDK.serializeAndSend(
-                        preparedTransaction: preparedTransaction,
-                        isSimulation: false
-                    )
-                } else {
-                    // use fee relayer
-                    return self.relayService.topUpAndRelayTransaction(
-                        preparedTransaction: preparedTransaction,
-                        payingFeeToken: payingFeeToken
-                    )
-                        .map {$0.first ?? ""}
-                }
+                return self.relayService.topUpAndRelayTransaction(
+                    preparedTransaction: preparedTransaction,
+                    payingFeeToken: payingFeeToken
+                )
+                    .map {$0.first ?? ""}
             }
             .do(onSuccess: {
                 Logger.log(message: "\($0)", event: .response)
@@ -261,20 +250,13 @@ class SendService: SendServiceType {
         
         // prepare fee payer
         let feePayerRequest: Single<String?>
-        let useFeeRelayer: Bool
         
-        if payingFeeToken?.mint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-            feePayerRequest = .just(nil)
-            useFeeRelayer = false
+        if usingCachedFeePayerPubkey, let pubkey = cachedFeePayerPubkey {
+            feePayerRequest = .just(pubkey)
         } else {
-            if usingCachedFeePayerPubkey, let pubkey = cachedFeePayerPubkey {
-                feePayerRequest = .just(pubkey)
-            } else {
-                feePayerRequest = feeRelayerAPIClient.getFeePayerPubkey()
-                    .map(Optional.init)
-                    .do(onSuccess: {[weak self] in self?.cachedFeePayerPubkey = $0})
-            }
-            useFeeRelayer = true
+            feePayerRequest = feeRelayerAPIClient.getFeePayerPubkey()
+                .map(Optional.init)
+                .do(onSuccess: {[weak self] in self?.cachedFeePayerPubkey = $0})
         }
         
         return feePayerRequest
@@ -301,7 +283,7 @@ class SendService: SendServiceType {
                         to: receiver,
                         amount: amount,
                         feePayer: feePayer,
-                        transferChecked: useFeeRelayer, // create transferChecked instruction when using fee relayer
+                        transferChecked: true, // create transferChecked instruction when using fee relayer
                         recentBlockhash: recentBlockhash,
                         lamportsPerSignature: lamportsPerSignature,
                         minRentExemption: minRentExemption

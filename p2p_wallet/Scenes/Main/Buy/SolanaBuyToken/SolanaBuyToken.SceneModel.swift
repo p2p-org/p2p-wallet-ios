@@ -18,6 +18,8 @@ protocol SolanaBuyTokenSceneModel: BESceneModel {
     
     var inputDriver: Driver<Buy.ExchangeInput> { get }
     var outputDriver: Driver<Buy.ExchangeOutput> { get }
+    var minUSDAmount: Driver<Double> { get }
+    var minSOLAmount: Driver<Double> { get }
     var exchangeRateDriver: Driver<Buy.ExchangeRate?> { get }
     var errorDriver: Driver<String?> { get }
     var input: Buy.ExchangeInput { get }
@@ -37,6 +39,17 @@ extension SolanaBuyToken {
                 .getExchangeRate(from: .usd, to: .sol)
                 .asObservable()
                 .bind(to: exchangeRateRelay)
+                .disposed(by: disposeBag)
+            
+            exchangeService
+                .getMinAmounts(
+                    Buy.FiatCurrency.usd,
+                    Buy.CryptoCurrency.sol
+                )
+                .subscribe(onSuccess: { [weak self] usd, sol in
+                    self?.minUSDAmountsRelay.accept(usd)
+                    self?.minSolAmountsRelay.accept(sol)
+                })
                 .disposed(by: disposeBag)
             
             inputRelay
@@ -72,6 +85,8 @@ extension SolanaBuyToken {
         private let errorRelay = BehaviorRelay<String?>(value: nil)
         private let inputRelay = BehaviorRelay<Buy.ExchangeInput>(value: .init(amount: 0, currency: Buy.FiatCurrency.usd))
         private let outputRelay = BehaviorRelay<Buy.ExchangeOutput>(value: .init(amount: 0, currency: Buy.CryptoCurrency.sol, processingFee: 0, networkFee: 0, total: 0))
+        private let minSolAmountsRelay = BehaviorRelay<Double>(value: 0)
+        private let minUSDAmountsRelay = BehaviorRelay<Double>(value: 0)
         private let exchangeRateRelay = BehaviorRelay<Buy.ExchangeRate?>(value: nil)
         
         func setAmount(value: Double?) {
@@ -104,5 +119,9 @@ extension SolanaBuyToken {
         func next() { buyViewModel.navigate(to: .buyToken(crypto: .sol, amount: outputRelay.value.total)) }
         
         func back() { buyViewModel.navigate(to: .back) }
+        
+        var minUSDAmount: Driver<Double> { minUSDAmountsRelay.asDriver() }
+        
+        var minSOLAmount: Driver<Double> { minSolAmountsRelay.asDriver() }
     }
 }
