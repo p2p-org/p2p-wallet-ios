@@ -228,6 +228,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             }
             .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
+                if payingWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                    return .just(feeAmount)
+                }
                 return self.relayService!.calculateFeeInPayingToken(feeInSOL: feeAmount, payingFeeTokenMint: payingWallet.mintAddress)
                     .map {$0 ?? .zero}
             }
@@ -305,8 +308,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         slippage: Double
     ) -> Single<[String]> {
         guard let feeRelay = relayService else { return .error(SolanaSDK.Error.other("Fee relay is not ready")) }
-
-        // if it's spl -> spl or sol -> spl, then use relay
         var payingFeeToken: FeeRelayer.Relay.TokenInfo?
         if let payingTokenAddress = payingTokenAddress, let payingTokenMint = payingTokenMint {
             payingFeeToken = FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
