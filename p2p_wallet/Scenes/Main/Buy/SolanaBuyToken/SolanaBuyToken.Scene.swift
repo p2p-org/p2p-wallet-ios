@@ -169,7 +169,7 @@ extension SolanaBuyToken {
                             textColor: .textBlack,
                             textAlignment: .right,
                             keyboardType: .decimalPad,
-                            placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
+                            placeholder: "0",
                             autocorrectionType: .no
                         ).setup { [weak self] view in
                             view.becomeFirstResponder()
@@ -275,13 +275,24 @@ extension SolanaBuyTokenSceneModel {
     
     fileprivate var nextStatus: Driver<NextStatus> {
         Driver
-            .zip(outputDriver, errorDriver)
-            .map { output, error in
-                if error != nil {
-                    return NextStatus.init(text: error ?? L10n.error, isEnable: false)
+            .combineLatest(inputDriver, minUSDAmount, minSOLAmount)
+            .map { (input, minUSD, minSol) in
+                if minUSD == 0 || minSol == 0 {
+                    return NextStatus.init(text: L10n.loading, isEnable: false)
                 }
                 
-                return NextStatus.init(text: L10n.continue, isEnable: output.amount > 0.0)
+                if input.currency is Buy.FiatCurrency {
+                    if input.amount < minUSD {
+                        return NextStatus.init(text: L10n.minimumPurchaseOfRequired("$\(minUSD)"), isEnable: false)
+                    }
+                    return NextStatus.init(text: L10n.continue, isEnable: true)
+                } else {
+                    if input.amount < minSol {
+                        return NextStatus.init(text: L10n.minimumPurchaseOfRequired("\(minSol) SOL"), isEnable: false)
+                    }
+                    return NextStatus.init(text: L10n.continue, isEnable: true)
+                }
             }
     }
+    
 }

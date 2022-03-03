@@ -58,5 +58,21 @@ extension Moonpay {
                     return json[currency] ?? 0
                 }
         }
+        
+        func getAllSupportedCurrencies() -> Single<Currencies> {
+            request(.get, api.endpoint + "/currencies", parameters: ["apiKey": api.apiKey])
+                .responseData()
+                .map { response, data in
+                    switch response.statusCode {
+                    case 200...299:
+                        return try JSONDecoder().decode(Currencies.self, from: data)
+                    default:
+                        let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
+                        throw Error.message(message: data.message)
+                    }
+                }
+                .take(1)
+                .asSingle()
+        }
     }
 }

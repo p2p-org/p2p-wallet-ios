@@ -30,6 +30,7 @@ class HiddenWalletsSectionHeaderView: BECollectionCell {
     func setUp(isHiddenWalletsShown: Bool, hiddenWalletList: [Wallet]) -> Bool {
         guard let imageView = imageRef.view else { return false }
         
+        contentView.isHidden = hiddenWalletList.isEmpty
         let image = isHiddenWalletsShown ? UIImage.chevronUp : UIImage.chevronDown
         UIView.transition(with: imageView,
             duration: 0.3,
