@@ -2,16 +2,8 @@ warning_threshold: 1000
 
 excluded:
  - Pods
- - SolanaSwift
- - BEPureLayout
- - LazySubject
- - BECollectionView
- - THPinViewController
- - FeeRelayerSwift
- - OrcaSwapSwift
- - RenVMSwift
- - TransakSwift
  - Templates
+ - "*/.build"
 
 disabled_rules:
   - identifier_name
@@ -29,6 +21,7 @@ disabled_rules:
   - opening_brace
   - shorthand_operator
   - todo
+  - trailing_comma
 
 line_length:
   warning: 250
