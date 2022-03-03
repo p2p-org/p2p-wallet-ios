@@ -21,7 +21,7 @@ protocol SendServiceType {
         from wallet: Wallet,
         receiver: String?,
         network: SendToken.Network,
-        isPayingWithSOL: Bool
+        payingTokenMint: String?
     ) -> Single<SolanaSDK.FeeAmount?>
     func getFeesInPayingToken(
         feeInSOL: SolanaSDK.FeeAmount,
@@ -78,7 +78,7 @@ class SendService: SendServiceType {
         from wallet: Wallet,
         receiver: String?,
         network: SendToken.Network,
-        isPayingWithSOL: Bool
+        payingTokenMint: String?
     ) -> Single<SolanaSDK.FeeAmount?> {
         switch network {
         case .bitcoin:
@@ -109,9 +109,7 @@ class SendService: SendServiceType {
                 transactionFee += lamportsPerSignature
                 
                 // feePayer's signature
-                if !isPayingWithSOL {
-                    transactionFee += lamportsPerSignature
-                }
+                transactionFee += lamportsPerSignature
                 
                 let isUnregisteredAsocciatedTokenRequest: Single<Bool>
                 if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
@@ -133,7 +131,7 @@ class SendService: SendServiceType {
                     }
                     .flatMap { [weak self] expectedFee in
                         guard let self = self else {throw SolanaSDK.Error.unknown}
-                        return self.relayService.calculateNeededTopUpAmount(expectedFee: expectedFee)
+                        return self.relayService.calculateNeededTopUpAmount(expectedFee: expectedFee, payingTokenMint: payingTokenMint)
                             .map(Optional.init)
                     }
             case .reward:
