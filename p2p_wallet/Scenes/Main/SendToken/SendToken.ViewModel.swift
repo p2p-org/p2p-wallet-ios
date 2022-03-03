@@ -127,18 +127,13 @@ extension SendToken {
             
             let network = networkSubject.value
             
-            var payingWallet = payingWalletSubject.value
-            if feeInfoSubject.value?.feeAmountInSOL.total == 0 {
-                payingWallet = nil
-            }
-            
             // form request
             let request = sendService.send(
                 from: wallet,
                 receiver: receiver,
                 amount: amount,
                 network: network,
-                payingFeeWallet: payingWallet
+                payingFeeWallet: payingWalletSubject.value
             )
             
             analyticsManager.log(

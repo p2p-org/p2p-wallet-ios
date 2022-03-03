@@ -324,7 +324,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         )
             .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
-                return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee)
+                return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee, payingTokenMint: payingWallet.mintAddress)
             }
             .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
