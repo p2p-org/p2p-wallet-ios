@@ -258,11 +258,11 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                     )
                 }
                 
-                if neededTopUpAmount.deposit > 0 {
+                if sourceMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
                     allFees.append(
                         .init(
                             type: .depositWillBeReturned,
-                            lamports: neededTopUpAmount.deposit,
+                            lamports: self.relayService?.cache.minimumTokenAccountBalance ?? 2039280,
                             token: .nativeSolana
                         )
                     )
