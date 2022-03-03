@@ -79,6 +79,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         if let payingWallet = payingWallet {
             // Network fee for swapping via relay program
             networkFeesRequest = getNetworkFeesForSwappingViaRelayProgram(
+                swapPools: bestPoolsPair.orcaPoolPair,
                 sourceMint: sourceMint,
                 destinationAddress: destinationAddress,
                 destinationToken: destinationToken,
@@ -212,12 +213,14 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
     
     private func getNetworkFeesForSwappingViaRelayProgram(
+        swapPools: OrcaSwap.PoolsPair,
         sourceMint: String,
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token,
         payingWallet: Wallet
     ) -> Single<[PayingFee]> {
         relayService!.calculateSwappingNetworkFees(
+            swapPools: swapPools,
             sourceTokenMint: sourceMint,
             destinationTokenMint: destinationToken.address,
             destinationAddress: destinationAddress
@@ -320,9 +323,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             swapPools: poolsPair,
             inputAmount: amount,
             slippage: slippage
-        ).flatMap { [weak self] transaction in
+        ).flatMap { [weak self] transactions in
             guard let feeRelay = self?.relayService else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
-            return feeRelay.topUpAndRelayTransaction(preparedTransaction: transaction, payingFeeToken: payingFeeToken)
+            return feeRelay.topUpAndRelayTransactions(preparedTransactions: transactions, payingFeeToken: payingFeeToken)
         }
     }
 }
