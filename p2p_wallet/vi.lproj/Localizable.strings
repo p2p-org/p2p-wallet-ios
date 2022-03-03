@@ -759,3 +759,4 @@
 "The transaction has been rejected" = "Giao dịch đã bị từ chối";
 "%@ was sent successfully" = "%@ đã được gửi thành công";
 "The price slippage was set at %@" = "Mức trượt giá được đặt ở %@";
+"Minimum purchase of %@ required." = "Yêu cầu mua tối thiểu %@.";
