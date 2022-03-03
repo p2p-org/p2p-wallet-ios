@@ -4,6 +4,15 @@ excluded:
  - Pods
  - Templates
  - "*/.build"
+ - SolanaSwift
+ - BEPureLayout
+ - LazySubject
+ - BECollectionView
+ - THPinViewController
+ - FeeRelayerSwift
+ - OrcaSwapSwift
+ - RenVMSwift
+ - TransakSwift
 
 disabled_rules:
   - identifier_name
@@ -22,10 +31,7 @@ disabled_rules:
   - shorthand_operator
   - todo
   - trailing_comma
-
-line_length:
-  warning: 250
-  error: 500
+  - line_length
 
 function_parameter_count:
   warning: 15
