@@ -19,7 +19,7 @@
 --hexgrouping 4,8
 --hexliteralcase uppercase
 --ifdef indent
---indent 4
+--indent 2
 --indentcase false
 --importgrouping testable-bottom
 --linebreaks lf
