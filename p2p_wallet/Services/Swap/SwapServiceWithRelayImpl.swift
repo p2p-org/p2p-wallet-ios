@@ -131,7 +131,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         amount: UInt64,
         slippage: Double
     ) -> Single<[String]> {
-        guard let poolsPair = poolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
+        guard let poolsPair = (poolsPair as? PoolsPair)?.orcaPoolPair,
+              let decimals = poolsPair.first?.getTokenADecimals()
+        else { return .error(Swap.Error.incompatiblePoolsPair) }
         
         return swapViaRelayProgram(
             sourceAddress: sourceAddress,
@@ -140,8 +142,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             destinationTokenMint: destinationTokenMint,
             payingTokenAddress: payingTokenAddress,
             payingTokenMint: payingTokenMint,
-            poolsPair: poolsPair.orcaPoolPair,
+            poolsPair: poolsPair,
             amount: amount,
+            decimals: decimals,
             slippage: slippage
         )
     }
@@ -227,6 +230,16 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         )
             .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
+                
+                // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+                if self.isFreeTransactionNotAvailableAndUserIsPayingWithSOL(expectedTransactionFee: networkFee.transaction, payingTokenMint: payingWallet.mintAddress)
+                {
+                    var networkFee = networkFee
+                    networkFee.transaction -= (self.relayService?.cache.lamportsPerSignature ?? 5000)
+                    return .just(networkFee)
+                }
+                
+                // send via fee relayer
                 return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee, payingTokenMint: payingWallet.mintAddress)
             }
             .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
@@ -308,12 +321,24 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         payingTokenMint: String?,
         poolsPair: OrcaSwap.PoolsPair,
         amount: UInt64,
+        decimals: UInt8,
         slippage: Double
     ) -> Single<[String]> {
         guard let feeRelay = relayService else { return .error(SolanaSDK.Error.other("Fee relay is not ready")) }
         var payingFeeToken: FeeRelayer.Relay.TokenInfo?
         if let payingTokenAddress = payingTokenAddress, let payingTokenMint = payingTokenMint {
             payingFeeToken = FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
+        }
+        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(payingTokenMint: payingTokenMint) {
+            return orcaSwap.swap(
+                fromWalletPubkey: sourceAddress,
+                toWalletPubkey: destinationAddress,
+                bestPoolsPair: poolsPair,
+                amount: amount.convertToBalance(decimals: decimals),
+                slippage: slippage,
+                isSimulation: false
+            ).map { response in [response.transactionId] }
         }
         return feeRelay.prepareSwapTransaction(
             sourceToken: FeeRelayer.Relay.TokenInfo(address: sourceAddress, mint: sourceTokenMint),
@@ -327,6 +352,15 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             guard let feeRelay = self?.relayService else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
             return feeRelay.topUpAndRelayTransactions(preparedTransactions: transactions, payingFeeToken: payingFeeToken)
         }
+    }
+    
+    private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
+        expectedTransactionFee: UInt64? = nil,
+        payingTokenMint: String?
+    ) -> Bool {
+        let expectedTransactionFee = expectedTransactionFee ?? (relayService?.cache.lamportsPerSignature ?? 5000) * 2
+        return payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString &&
+        relayService?.cache.freeTransactionFeeLimit?.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
 }
 
