@@ -16,8 +16,8 @@ extension BuyRoot {
         // MARK: - Dependencies
         private let viewModel: BuyViewModelType
         lazy var navigation = UINavigationController(
-            rootViewController: SolanaBuyToken.Scene(
-                viewModel: SolanaBuyToken.SceneModel(buyViewModel: viewModel, exchangeService: Resolver.resolve())
+            rootViewController: BuyPreparing.Scene(
+                viewModel: BuyPreparing.SceneModel(buyViewModel: viewModel, exchangeService: Resolver.resolve())
             )
         )
         

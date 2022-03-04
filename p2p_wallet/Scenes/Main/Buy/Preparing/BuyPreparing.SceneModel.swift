@@ -25,7 +25,7 @@ protocol SolanaBuyTokenSceneModel: BESceneModel {
     var input: Buy.ExchangeInput { get }
 }
 
-extension SolanaBuyToken {
+extension BuyPreparing {
     class SceneModel: SolanaBuyTokenSceneModel {
         private let exchangeService: Buy.ExchangeService
         private let buyViewModel: BuyViewModelType
