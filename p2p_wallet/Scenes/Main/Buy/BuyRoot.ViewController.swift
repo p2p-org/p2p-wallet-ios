@@ -29,6 +29,7 @@ extension BuyRoot {
         init(viewModel: BuyViewModelType) {
             self.viewModel = viewModel
             super.init()
+            
         }
         
         // MARK: - Methods
