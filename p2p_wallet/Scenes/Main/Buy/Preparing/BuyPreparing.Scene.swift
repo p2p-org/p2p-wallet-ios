@@ -53,13 +53,12 @@ extension SolanaBuyToken {
                 
                 BEScrollView(contentInsets: .init(top: 18, left: 18, bottom: 90, right: 18), spacing: 18) {
                     // Exchange
-                    BEBuilder(driver: viewModel.onInputMode) { [weak self] input in
-                        guard let self = self else { return UIView() }
+                    BEBuilder(driver: viewModel.onInputMode) { [unowned self] input in
                         switch input {
                         case .fiat:
-                            return self.fiatInput()
+                            return InputFiatView(viewModel: viewModel)
                         case .crypto:
-                            return self.cryptoCurrencyInput()
+                            return InputCryptoView(viewModel: viewModel)
                         }
                     }.frame(height: 148)
                         .padding(.init(all: 18))
@@ -89,140 +88,6 @@ extension SolanaBuyToken {
                     trailingDriver?.drive(view.rx.text).disposed(by: disposeBag)
                 }
             }
-        }
-        
-        private func cryptoCurrencyInput() -> UIView {
-            UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fillProportionally) {
-                // Input
-                UIStackView(axis: .vertical, alignment: .fill) {
-                    UIStackView(axis: .horizontal, alignment: .center) {
-                        // Label
-                        UILabel(text: L10n.youGet, textSize: 17)
-                        UIView.spacer
-                        // Amount
-                        UIImageView(width: 24, height: 24, image: .squircleSolanaIcon)
-                        UIView(width: 8)
-                        
-                        TokenAmountTextField(
-                            font: .systemFont(ofSize: 27, weight: .semibold),
-                            textColor: .textBlack,
-                            textAlignment: .right,
-                            keyboardType: .decimalPad,
-                            placeholder: "0",
-                            autocorrectionType: .no
-                        ).setup { [weak self] view in
-                            view.becomeFirstResponder()
-                            view.delegate = self
-                            view.text = viewModel.input.amount.toString()
-                            view.rx.text
-                                .map { $0?.double }
-                                .distinctUntilChanged()
-                                .subscribe(onNext: { [weak self] amount in
-                                    guard let amount = amount else { return }
-                                    self?.viewModel.setAmount(value: amount)
-                                })
-                                .disposed(by: disposeBag)
-                        }
-                    }
-                }
-                
-                UIView.defaultSeparator()
-                
-                // Output
-                UIStackView(axis: .horizontal, alignment: .center) {
-                    // Label
-                    UILabel(text: L10n.youPay, textSize: 17)
-                    UIView.spacer
-                    // Output amount
-                    UIStackView(axis: .horizontal) {
-                        UILabel(text: "0.00 SOL").setup { view in
-                            viewModel.outputDriver.map { output in "$ \(output.amount)" }
-                                .drive(view.rx.text).disposed(by: disposeBag)
-                        }
-                        UIImageView(image: .arrowUpDown)
-                            .padding(.init(only: .left, inset: 6))
-                    }.onTap { [unowned self] in viewModel.swap() }
-                        .padding(.init(x: 18, y: 8))
-                        .border(width: 1, color: .c7c7cc)
-                        .box(cornerRadius: 12)
-                }
-            }
-        }
-        
-        private func fiatInput() -> UIView {
-            UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fillProportionally) {
-                // Input
-                UIStackView(axis: .vertical, alignment: .fill) {
-                    UIStackView(axis: .horizontal, alignment: .center) {
-                        // Label
-                        UILabel(text: L10n.youPay, textSize: 17)
-                        UIView.spacer
-                        // Amount
-                        UILabel(
-                            text: "$",
-                            font: .systemFont(ofSize: 27, weight: .semibold),
-                            textColor: .textBlack
-                        ).padding(.init(x: 4, y: 0))
-                        
-                        TokenAmountTextField(
-                            font: .systemFont(ofSize: 27, weight: .semibold),
-                            textColor: .textBlack,
-                            textAlignment: .right,
-                            keyboardType: .decimalPad,
-                            placeholder: "0",
-                            autocorrectionType: .no
-                        ).setup { [weak self] view in
-                            view.becomeFirstResponder()
-                            view.delegate = self
-                            view.text = viewModel.input.amount.toString()
-                            view.rx.text
-                                .map { $0?.double }
-                                .distinctUntilChanged()
-                                .subscribe(onNext: { [weak self] amount in
-                                    guard let amount = amount else { return }
-                                    self?.viewModel.setAmount(value: amount)
-                                })
-                                .disposed(by: disposeBag)
-                        }
-                    }
-                }
-                
-                UIView.defaultSeparator()
-                
-                // Output
-                UIStackView(axis: .horizontal, alignment: .center) {
-                    // Label
-                    UILabel(text: L10n.youGet, textSize: 17)
-                    UIView.spacer
-                    // Output amount
-                    UIStackView(axis: .horizontal) {
-                        UILabel(text: "0.00 SOL").setup { view in
-                            viewModel.outputDriver.map { output in "\(output.amount) SOL" }
-                                .drive(view.rx.text).disposed(by: disposeBag)
-                        }
-                        UIImageView(image: .arrowUpDown)
-                            .padding(.init(only: .left, inset: 6))
-                    }.onTap { [unowned self] in viewModel.swap() }
-                        .padding(.init(x: 18, y: 8))
-                        .border(width: 1, color: .c7c7cc)
-                        .box(cornerRadius: 12)
-                }
-            }
-        }
-    }
-}
-
-extension SolanaBuyToken.Scene: UITextFieldDelegate {
-    func textField(
-        _ textField: UITextField,
-        shouldChangeCharactersIn range: NSRange,
-        replacementString string: String
-    ) -> Bool {
-        switch textField {
-        case let amountTextField as TokenAmountTextField:
-            return amountTextField.shouldChangeCharactersInRange(range, replacementString: string)
-        default:
-            return true
         }
     }
 }
