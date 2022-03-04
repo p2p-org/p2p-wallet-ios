@@ -71,7 +71,7 @@ extension SendToken.ChooseTokenAndAmount {
         
         private func bind() {
             #if DEBUG
-            amountSubject.subscribe(onNext: {print($0 ?? 0)}).disposed(by: disposeBag)
+            amountSubject.subscribe(onNext: {debugPrint($0 ?? 0)}).disposed(by: disposeBag)
             #endif
             
             sendTokenViewModel.walletDriver
@@ -143,7 +143,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         }
         
         #if DEBUG
-        print("availableAmount \(availableAmount)")
+        debugPrint("availableAmount \(availableAmount)")
         #endif
         
         // return

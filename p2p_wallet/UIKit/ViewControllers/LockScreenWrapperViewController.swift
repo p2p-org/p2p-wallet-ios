@@ -10,7 +10,7 @@ class LockScreenWrapperViewController: UIViewController {
     
     var isLocked: Bool = false {
         didSet {
-            print(isLocked)
+            debugPrint(isLocked)
             lockView.isHidden = !isLocked
         }
     }
