@@ -1,5 +1,5 @@
 //
-//  SolanaBuyToken.SceneModel.swift
+//  Preparing.SceneModel.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 15.12.21.
@@ -54,7 +54,7 @@ extension SolanaBuyToken {
             
             inputRelay
                 .flatMap { [weak self] input -> Single<Buy.ExchangeOutput> in
-                    guard let self = self else { return .error(NSError(domain: "SolanaBuyToken", code: -1)) }
+                    guard let self = self else { return .error(NSError(domain: "Preparing", code: -1)) }
                     if input.amount == 0 {
                         return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
                     }
