@@ -58,7 +58,7 @@ class DAppChannel: NSObject {
             let message = try Message(id: id, method: "error", args: error).toBase64()
             webView.evaluateJavaScript(sendingChannel(base64EncodedMessage: message))
         } catch let e {
-            print(e)
+            debugPrint(e)
         }
     }
     

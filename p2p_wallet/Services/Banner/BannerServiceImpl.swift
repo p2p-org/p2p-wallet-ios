@@ -33,7 +33,7 @@ class BannerServiceImpl: Banners.Service {
     }
 
     func update(banner: Banners.Banner) {
-        print(banner)
+        debugPrint(banner)
         _banners.insert(banner)
         bannersSubject.accept(_banners)
     }

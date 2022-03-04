@@ -79,7 +79,7 @@ extension DerivableAccounts {
                         network: Defaults.apiEndPoint.network,
                         derivablePath: .init(type: path.type, walletIndex: index)
                     )
-                    print("successfully created account #\(index)")
+                    debugPrint("successfully created account #\(index)")
                     observer(.success(account))
                 } catch {
                     observer(.failure(error))
