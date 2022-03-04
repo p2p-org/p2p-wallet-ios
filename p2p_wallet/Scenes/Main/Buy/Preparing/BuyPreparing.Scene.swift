@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-extension SolanaBuyToken {
+extension BuyPreparing {
     class Scene: BEScene {
         private let viewModel: SolanaBuyTokenSceneModel
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }

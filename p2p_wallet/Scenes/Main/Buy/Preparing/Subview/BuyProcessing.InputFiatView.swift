@@ -5,7 +5,7 @@
 import Foundation
 import RxSwift
 
-extension SolanaBuyToken {
+extension BuyPreparing {
     class InputFiatView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: SolanaBuyTokenSceneModel
@@ -78,7 +78,7 @@ extension SolanaBuyToken {
     }
 }
 
-extension SolanaBuyToken.InputFiatView: UITextFieldDelegate {
+extension BuyPreparing.InputFiatView: UITextFieldDelegate {
     func textField(
         _ textField: UITextField,
         shouldChangeCharactersIn range: NSRange,
