@@ -15,6 +15,7 @@ P2P Wallet on Solana blockchain
 
 - iOS 13.0+
 - Xcode 12
+- SwiftFormat
 
 ## Installation
 
@@ -54,6 +55,9 @@ chmod -R +x .githooks
 ```zsh
 Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
 ```
+
+### Code style
+Run code formatting `swiftformat .p2p_wallet`
 
 ## Contribute
 
