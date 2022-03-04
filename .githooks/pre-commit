@@ -1,2 +1,2 @@
 #!/bin/bash
-git-format-staged --formatter "swiftformat stdin --stdinpath '{}'" "*.swift"
+swiftformat --lint ./p2p_wallet
