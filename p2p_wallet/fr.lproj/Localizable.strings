@@ -757,3 +757,4 @@
 "The price slippage was set at %@" = "Le glissement de prix a été fixé à %@";
 "Minimum purchase of %@ required." = "Achat minimum de %@ requis.";
 "Transaction has been finalized" = "La transaction a été finalisée";
+"Transaction has been sent" = "La transaction a été envoyée";

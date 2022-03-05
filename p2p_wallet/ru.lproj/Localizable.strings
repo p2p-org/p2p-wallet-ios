@@ -757,3 +757,4 @@
 "The price slippage was set at %@" = "Проскальзывание цены установлено на %@";
 "Minimum purchase of %@ required." = "Минимальная покупка %@ требуется.";
 "Transaction has been finalized" = "Транзакция завершена";
+"Transaction has been sent" = "Транзакция отправлена";

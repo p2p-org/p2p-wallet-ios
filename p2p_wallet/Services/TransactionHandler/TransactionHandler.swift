@@ -149,7 +149,7 @@ class TransactionHandler: TransactionHandlerType {
         processingTransaction.createRequest()
             .do(onSuccess: { [weak self] _ in
                 DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
                 }
             }, onError: { [weak self] error in
                 DispatchQueue.main.async { [weak self] in
@@ -213,7 +213,7 @@ class TransactionHandler: TransactionHandlerType {
             .timeout(.seconds(60), scheduler: scheduler)
             .subscribe(onCompleted: { [weak self] in
                 DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenFinalized))
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
                 }
             })
             .disposed(by: disposeBag)
