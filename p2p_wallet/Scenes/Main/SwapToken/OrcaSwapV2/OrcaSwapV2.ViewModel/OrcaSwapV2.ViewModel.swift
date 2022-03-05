@@ -205,6 +205,7 @@ extension OrcaSwapV2 {
                         sourceWallet: sourceWallet,
                         destinationWallet: destinationWallet,
                         payingWallet: payingWallet,
+                        authority: walletsRepository.nativeWallet?.pubkey,
                         poolsPair: bestPoolsPair,
                         amount: inputAmount,
                         estimatedAmount: estimatedAmount,

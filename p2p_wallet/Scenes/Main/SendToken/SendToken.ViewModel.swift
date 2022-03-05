@@ -141,8 +141,10 @@ extension SendToken {
                         network: network,
                         sender: wallet,
                         receiver: receiver,
+                        authority: walletsRepository.nativeWallet?.pubkey,
                         amount: amount.toLamport(decimals: wallet.token.decimals),
                         payingFeeWallet: payingWalletSubject.value,
+                        feeInSOL: feeInfoSubject.value?.feeAmountInSOL.total ?? 0,
                         isSimulation: false
                     )
                 )

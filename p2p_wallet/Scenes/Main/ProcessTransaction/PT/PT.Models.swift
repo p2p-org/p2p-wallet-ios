@@ -43,6 +43,7 @@ extension PT {
         let sourceWallet: Wallet
         let destinationWallet: Wallet
         let payingWallet: Wallet?
+        let authority: String?
         let poolsPair: Swap.PoolsPair
         let amount: Double
         let estimatedAmount: Double
@@ -123,8 +124,10 @@ extension PT {
         let network: SendToken.Network
         let sender: Wallet
         let receiver: SendToken.Recipient
+        let authority: String?
         let amount: SolanaSDK.Lamports
         let payingFeeWallet: Wallet?
+        let feeInSOL: UInt64
         let isSimulation: Bool
         
         var mainDescription: String {
@@ -206,6 +209,7 @@ extension PT {
         }
         
         var transactionId: String?
+        let sentAt: Date
         let rawTransaction: ProcessingTransactionType
         var status: TransactionStatus
     }

@@ -41,7 +41,7 @@ extension PT {
         // MARK: - Initializer
         init(processingTransaction: ProcessingTransactionType) {
             self.processingTransaction = processingTransaction
-            self.transactionInfoSubject = BehaviorRelay<TransactionInfo>(value: .init(transactionId: nil, rawTransaction: processingTransaction, status: .sending))
+            self.transactionInfoSubject = BehaviorRelay<TransactionInfo>(value: .init(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .sending))
         }
         
         // MARK: - Subject
@@ -74,7 +74,7 @@ extension PT.ViewModel: PTViewModelType {
     func sendAndObserveTransaction() {
         let index = transactionHandler.sendTransaction(processingTransaction)
         
-        let unknownErrorInfo = PT.TransactionInfo(transactionId: nil, rawTransaction: processingTransaction, status: .error(SolanaSDK.Error.unknown))
+        let unknownErrorInfo = PT.TransactionInfo(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .error(SolanaSDK.Error.unknown))
         
         transactionHandler.observeTransaction(transactionIndex: index)
             .map {$0 ?? unknownErrorInfo}
