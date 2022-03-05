@@ -147,6 +147,16 @@ class TransactionHandler: TransactionHandlerType {
         processingTransaction: ProcessingTransactionType
     ) {
         processingTransaction.createRequest()
+            .do(onSuccess: { [weak self] _ in
+                DispatchQueue.main.async { [weak self] in
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                }
+            }, onError: { [weak self] error in
+                DispatchQueue.main.async { [weak self] in
+                    self?.notificationsService.showInAppNotification(.error(error))
+                }
+            })
+        
             .subscribe(onSuccess: { [weak self] transactionID in
                 guard let self = self else {return}
                 
@@ -162,7 +172,6 @@ class TransactionHandler: TransactionHandlerType {
                 self.observe(index: index, transactionId: transactionID)
             }, onFailure: { [weak self] error in
                 guard let self = self else {return}
-                
                 self.updateTransactionAtIndex(index) { currentValue in
                     var info = currentValue
                     info.status = .error(error)
@@ -202,7 +211,11 @@ class TransactionHandler: TransactionHandlerType {
             }
             .retry(maxAttempts: .max, delayInSeconds: 1)
             .timeout(.seconds(60), scheduler: scheduler)
-            .subscribe()
+            .subscribe(onCompleted: { [weak self] in
+                DispatchQueue.main.async { [weak self] in
+                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenFinalized))
+                }
+            })
             .disposed(by: disposeBag)
             
     }

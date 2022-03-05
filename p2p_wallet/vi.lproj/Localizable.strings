@@ -760,3 +760,4 @@
 "%@ was sent successfully" = "%@ đã được gửi thành công";
 "The price slippage was set at %@" = "Mức trượt giá được đặt ở %@";
 "Minimum purchase of %@ required." = "Yêu cầu mua tối thiểu %@.";
+"Transaction has been finalized" = "Giao dịch đã được hoàn tất";
