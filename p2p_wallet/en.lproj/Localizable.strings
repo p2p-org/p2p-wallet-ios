@@ -756,3 +756,4 @@
 "%@ was sent successfully" = "%@ was sent successfully";
 "The price slippage was set at %@" = "The price slippage was set at %@";
 "Minimum purchase of %@ required." = "Minimum purchase of %@ required.";
+"Transaction has been finalized" = "Transaction has been finalized";
