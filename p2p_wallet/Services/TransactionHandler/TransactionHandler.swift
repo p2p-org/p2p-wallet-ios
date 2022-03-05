@@ -64,7 +64,6 @@ class TransactionHandler: TransactionHandlerType {
     
     func getProccessingTransactions(of account: String) -> [SolanaSDK.ParsedTransaction] {
         let pendingTransactions = transactionsSubject.value
-            .filter {$0.status.isProcessing}
             .filter { pt in
                 switch pt.rawTransaction {
                 case let transaction as PT.SendTransaction:
