@@ -210,9 +210,15 @@ class TransactionHandler: TransactionHandlerType {
             }
             .retry(maxAttempts: .max, delayInSeconds: 1)
             .timeout(.seconds(60), scheduler: scheduler)
+            .observe(on: MainScheduler.instance)
             .subscribe(onCompleted: { [weak self] in
-                DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+                self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+            }, onError: { [weak self] error in
+                debugPrint(error)
+                self?.updateTransactionAtIndex(index) { currentValue in
+                    var value = currentValue
+                    value.status = .finalized
+                    return value
                 }
             })
             .disposed(by: disposeBag)
