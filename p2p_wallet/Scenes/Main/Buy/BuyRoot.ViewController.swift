@@ -76,7 +76,7 @@ extension BuyRoot {
                     return
                 }
             } catch let e {
-                print(e)
+                debugPrint(e)
             }
         }
     }

@@ -41,7 +41,7 @@ class BackupBannerHandler: Banners.Handler {
         backupStorage
             .onValueChange
             .emit(onNext: { [weak self] event in
-                print("Backup Banner", event)
+                debugPrint("Backup Banner", event)
                 if event.key == "didBackupUsingIcloud" && event.value != nil {
                     self?.delegate?.remove(bannerId: BackupNameBanner.id)
                 }
@@ -55,6 +55,6 @@ class BackupBannerHandler: Banners.Handler {
     }
     
     deinit {
-        print("deuinit")
+        debugPrint("deuinit")
     }
 }
