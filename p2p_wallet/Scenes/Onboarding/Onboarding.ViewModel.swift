@@ -110,7 +110,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     func requestRemoteNotifications() {
         UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound, .badge]) {[weak self] granted, _ in
-                print("Permission granted: \(granted)")
+                debugPrint("Permission granted: \(granted)")
                 DispatchQueue.main.async { [weak self] in
                     guard granted else {
                         UIApplication.shared.openAppSettings()

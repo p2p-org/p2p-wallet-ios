@@ -26,10 +26,10 @@ class AnalyticsManager: AnalyticsManagerType {
         guard let eventName = event.eventName else {return}
         // Amplitude
         if let params = event.params {
-            print([eventName, params])
+            debugPrint([eventName, params])
             Amplitude.instance().logEvent(eventName, withEventProperties: params)
         } else {
-            print([eventName])
+            debugPrint([eventName])
             Amplitude.instance().logEvent(eventName)
         }
         

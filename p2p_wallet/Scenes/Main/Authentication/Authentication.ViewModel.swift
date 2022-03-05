@@ -63,7 +63,7 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
         var authError: NSError?
         if myContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &authError) {
             if let error = authError {
-                print(error)
+                debugPrint(error)
                 return
             }
             myContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: L10n.confirmItSYou) { (success, _) in
