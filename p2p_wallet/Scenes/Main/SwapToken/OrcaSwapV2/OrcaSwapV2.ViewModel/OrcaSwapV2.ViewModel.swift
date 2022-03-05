@@ -196,57 +196,19 @@ extension OrcaSwapV2 {
                     sumB: estimatedAmount
                 )
             )
-            
-            // check if payingWallet has enough balance to cover fee
-            let checkRequest: Completable
-            if let fees = feesSubject.value?.networkFees,
-               let payingWallet = payingWallet
-            {
-                checkRequest = swapService.calculateNetworkFeeInPayingToken(networkFee: fees, payingTokenMint: payingWallet.mintAddress)
-                    .map { amount -> Bool in
-                        if let amount = amount?.total,
-                            let currentAmount = payingWallet.lamports,
-                            amount > currentAmount
-                        {
-                            throw SolanaSDK.Error.other(
-                                L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
-                                + ". "
-                                + L10n.needsAtLeast("\(amount.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)")
-                                + ". "
-                                + L10n.pleaseChooseAnotherTokenAndTryAgain
-                            )
-                        }
-                        return true
-                    }
-                    .asCompletable()
-            } else {
-                checkRequest = .empty()
-            }
-            
-            let request = checkRequest
-                .andThen(
-                    swapService.swap(
-                        sourceAddress: sourceWallet.pubkey!,
-                        sourceTokenMint: sourceWallet.mintAddress,
-                        destinationAddress: destinationWallet.pubkey,
-                        destinationTokenMint: destinationWallet.mintAddress,
-                        payingTokenAddress: payingWallet?.pubkey,
-                        payingTokenMint: payingWallet?.mintAddress,
-                        poolsPair: bestPoolsPair,
-                        amount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
-                        slippage: slippageSubject.value
-                    ).map { $0.first ?? "" as ProcessTransactionResponseType }
-                )
 
             // show processing scene
             navigationSubject.accept(
                 .processTransaction(
-                    request: request,
-                    transactionType: .orcaSwap(
-                        from: sourceWallet,
-                        to: destinationWallet,
-                        inputAmount: inputAmount.toLamport(decimals: sourceWallet.token.decimals),
-                        estimatedAmount: estimatedAmount.toLamport(decimals: destinationWallet.token.decimals),
+                    PT.OrcaSwapTransaction(
+                        swapService: swapService,
+                        sourceWallet: sourceWallet,
+                        destinationWallet: destinationWallet,
+                        payingWallet: payingWallet,
+                        poolsPair: bestPoolsPair,
+                        amount: inputAmount,
+                        estimatedAmount: estimatedAmount,
+                        slippage: slippageSubject.value,
                         fees: feesSubject.value?.filter { $0.type != .liquidityProviderFee } ?? []
                     )
                 )

@@ -74,8 +74,12 @@ extension PT.ViewModel: PTViewModelType {
                 desc = amount + " " + desc
             }
             return desc
+        case let transaction as PT.OrcaSwapTransaction:
+            return transaction.amount.toString(maximumFractionDigits: 9) + " " + transaction.sourceWallet.token.symbol +
+                " → " +
+                transaction.estimatedAmount.toString(maximumFractionDigits: 9) + " " + transaction.destinationWallet.token.symbol
         default:
-            return ""
+            fatalError()
         }
     }
     

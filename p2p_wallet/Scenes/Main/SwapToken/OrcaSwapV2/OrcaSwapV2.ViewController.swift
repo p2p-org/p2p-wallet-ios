@@ -100,13 +100,10 @@ extension OrcaSwapV2 {
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-            case let .processTransaction(
-                request: request,
-                transactionType: transactionType
-            ):
-                let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
-                let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.delegate = self
+            case .processTransaction(let transaction):
+                let vm = PT.ViewModel(processingTransaction: transaction)
+                let vc = PT.ViewController(viewModel: vm)
+//                vc.delegate = self
                 present(vc, interactiveDismissalType: .none, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)

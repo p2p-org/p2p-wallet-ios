@@ -39,8 +39,59 @@ extension PT {
     }
     
     struct OrcaSwapTransaction: ProcessingTransactionType {
+        let swapService: SwapServiceType
+        let sourceWallet: Wallet
+        let destinationWallet: Wallet
+        let payingWallet: Wallet?
+        let poolsPair: Swap.PoolsPair
+        let amount: Double
+        let estimatedAmount: Double
+        let slippage: Double
+        let fees: [PayingFee]
+        
         func createRequest() -> Single<String> {
-            fatalError()
+            // check if payingWallet has enough balance to cover fee
+            let checkRequest: Completable
+            if let fees = fees.networkFees,
+               let payingWallet = payingWallet
+            {
+                checkRequest = swapService.calculateNetworkFeeInPayingToken(networkFee: fees, payingTokenMint: payingWallet.mintAddress)
+                    .map { amount -> Bool in
+                        if let amount = amount?.total,
+                            let currentAmount = payingWallet.lamports,
+                            amount > currentAmount
+                        {
+                            throw SolanaSDK.Error.other(
+                                L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                                + ". "
+                                + L10n.needsAtLeast("\(amount.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)")
+                                + ". "
+                                + L10n.pleaseChooseAnotherTokenAndTryAgain
+                            )
+                        }
+                        return true
+                    }
+                    .asCompletable()
+            } else {
+                checkRequest = .empty()
+            }
+            
+            let request = checkRequest
+                .andThen(
+                    swapService.swap(
+                        sourceAddress: sourceWallet.pubkey!,
+                        sourceTokenMint: sourceWallet.mintAddress,
+                        destinationAddress: destinationWallet.pubkey,
+                        destinationTokenMint: destinationWallet.mintAddress,
+                        payingTokenAddress: payingWallet?.pubkey,
+                        payingTokenMint: payingWallet?.mintAddress,
+                        poolsPair: poolsPair,
+                        amount: amount.toLamport(decimals: sourceWallet.token.decimals),
+                        slippage: slippage
+                    ).map { $0.first ?? ""}
+                )
+            
+            return request
         }
     }
     
