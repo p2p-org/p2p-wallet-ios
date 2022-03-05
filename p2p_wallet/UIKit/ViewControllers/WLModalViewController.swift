@@ -67,9 +67,7 @@ class WLModalViewController: BaseVC, CustomPresentableViewController {
             newPosition!.y += translation.y
             view.center = newPosition!
         case .ended:
-            let velocity = panGesture.velocity(in: view)
-            
-            if velocity.y >= 1500 {
+            if translation.y >= 100 {
                 UIView.animate(withDuration: 0.2) {
                     self.view.frame.origin = CGPoint(
                         x: self.view.frame.origin.x,
