@@ -52,8 +52,10 @@ extension PT {
                                         switch self?.viewModel.processingTransaction {
                                         case let transaction as SendTransaction:
                                             return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
+                                        case let transaction as OrcaSwapTransaction:
+                                            return L10n.swappedSuccessfully(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
                                         default:
-                                            return ""
+                                            fatalError()
                                         }
                                     }
                                 }
