@@ -91,6 +91,11 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionHandler.self)
             .scope(.session)
         
+        // MARK: - TransactionHandler (new)
+        register { TransactionHandler2() }
+            .implements(TransactionHandlerType.self)
+            .scope(.session)
+        
         // MARK: - FeeRelayer
         register { FeeRelayer.APIClient(version: 1) }
             .implements(FeeRelayerAPIClientType.self)
