@@ -88,11 +88,10 @@ extension Resolver: ResolverRegistering {
         // MARK: - Socket
         register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
             .implements(AccountNotificationsRepository.self)
-            .implements(TransactionHandler.self)
             .scope(.session)
         
         // MARK: - TransactionHandler (new)
-        register { TransactionHandler2() }
+        register { TransactionHandler() }
             .implements(TransactionHandlerType.self)
             .scope(.session)
         
@@ -155,8 +154,7 @@ extension Resolver: ResolverRegistering {
                 rpcClient: resolve(),
                 solanaClient: resolve(),
                 account: resolve(SolanaSDK.self).accountStorage.account!,
-                sessionStorage: RenVM.LockAndMint.SessionStorage(),
-                transactionHandler: resolve()
+                sessionStorage: RenVM.LockAndMint.SessionStorage()
             )
         }
             .implements(RenVMLockAndMintServiceType.self)
@@ -167,8 +165,7 @@ extension Resolver: ResolverRegistering {
                 rpcClient: resolve(),
                 solanaClient: resolve(),
                 account: resolve(SolanaSDK.self).accountStorage.account!,
-                transactionStorage: RenVM.BurnAndRelease.TransactionStorage(),
-                transactionHandler: resolve()
+                transactionStorage: RenVM.BurnAndRelease.TransactionStorage()
             )
         }
             .implements(RenVMBurnAndReleaseServiceType.self)

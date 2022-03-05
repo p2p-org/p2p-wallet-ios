@@ -44,7 +44,7 @@
 		3BAC28B927670178007900E2 /* UIView+Rx+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */; };
 		3BCD00A52795A3F600576190 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BCD00A42795A3F600576190 /* GoogleService-Info.plist */; };
 		3BCEED5627D30A1D00BA9110 /* PT.ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5527D30A1D00BA9110 /* PT.ProgressView.swift */; };
-		3BCEED5927D32C2600BA9110 /* TransactionHandler2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5827D32C2600BA9110 /* TransactionHandler2.swift */; };
+		3BCEED5927D32C2600BA9110 /* TransactionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */; };
 		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
 		410DCFB4276C8251004EA4D6 /* ReserveNameKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */; };
 		4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1662746272400352CDF /* EnterSeedInfo.swift */; };
@@ -273,8 +273,6 @@
 		BC28A9B126B3B0440031BE42 /* WLSpinnerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */; };
 		BC290A05256BA36F002A727C /* TokenAmountTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC290A04256BA36F002A727C /* TokenAmountTextField.swift */; };
 		BC2DA294260B079100B50738 /* WLAddTokenButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA293260B079100B50738 /* WLAddTokenButton.swift */; };
-		BC2DA29A260B0AD700B50738 /* CreateTokenHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA299260B0AD700B50738 /* CreateTokenHandler.swift */; };
-		BC2DA2A2260B245400B50738 /* TransactionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2DA2A1260B245400B50738 /* TransactionHandler.swift */; };
 		BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EB61E26032BD8006CE170 /* WLLoadingIndicatorView.swift */; };
 		BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */; };
 		BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */; };
@@ -588,7 +586,7 @@
 		3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Rx+Builders.swift"; sourceTree = "<group>"; };
 		3BCD00A42795A3F600576190 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BCEED5527D30A1D00BA9110 /* PT.ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.ProgressView.swift; sourceTree = "<group>"; };
-		3BCEED5827D32C2600BA9110 /* TransactionHandler2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHandler2.swift; sourceTree = "<group>"; };
+		3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHandler.swift; sourceTree = "<group>"; };
 		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
 		3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveNameKind.swift; sourceTree = "<group>"; };
@@ -833,8 +831,6 @@
 		BC28A9B026B3B0440031BE42 /* WLSpinnerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLSpinnerView.swift; sourceTree = "<group>"; };
 		BC290A04256BA36F002A727C /* TokenAmountTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAmountTextField.swift; sourceTree = "<group>"; };
 		BC2DA293260B079100B50738 /* WLAddTokenButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLAddTokenButton.swift; sourceTree = "<group>"; };
-		BC2DA299260B0AD700B50738 /* CreateTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateTokenHandler.swift; sourceTree = "<group>"; };
-		BC2DA2A1260B245400B50738 /* TransactionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHandler.swift; sourceTree = "<group>"; };
 		BC2EB61E26032BD8006CE170 /* WLLoadingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLLoadingIndicatorView.swift; sourceTree = "<group>"; };
 		BC2EC17F2553B1F7006EEDA5 /* SectionFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionFooterView.swift; sourceTree = "<group>"; };
 		BC2EC1842553B326006EEDA5 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
@@ -1261,7 +1257,7 @@
 		3BCEED5727D32C1300BA9110 /* TransactionHandler */ = {
 			isa = PBXGroup;
 			children = (
-				3BCEED5827D32C2600BA9110 /* TransactionHandler2.swift */,
+				3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */,
 			);
 			path = TransactionHandler;
 			sourceTree = "<group>";
@@ -1692,8 +1688,6 @@
 		BC2DA298260B0AC600B50738 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
-				BC2DA299260B0AD700B50738 /* CreateTokenHandler.swift */,
-				BC2DA2A1260B245400B50738 /* TransactionHandler.swift */,
 				BC53E23D26578224005624CC /* DeviceOwnerAuthenticationHandler.swift */,
 				BC7D078426F87344005F777F /* AssociatedTokenAccountHandler.swift */,
 			);
@@ -3011,7 +3005,6 @@
 				BCB286DC2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.swift in Sources */,
 				BC6FED91270BF47E002B6255 /* RenBTCReceivingStatuses.ViewController.swift in Sources */,
 				BC1BEBFF26CE12170049A44C /* SwapToken.ViewModel.swift in Sources */,
-				BC2DA2A2260B245400B50738 /* TransactionHandler.swift in Sources */,
 				BCB286DE2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.ViewModel.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BCB286BA274CC2590074E1D5 /* SendToken.ViewController.swift in Sources */,
@@ -3098,7 +3091,7 @@
 				41DE53D02797BCDD00F24B0B /* WalletActionButton.swift in Sources */,
 				BCC0663C269891E00017B34E /* TransactionsCollectionView.SectionHeaderView.swift in Sources */,
 				BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */,
-				3BCEED5927D32C2600BA9110 /* TransactionHandler2.swift in Sources */,
+				3BCEED5927D32C2600BA9110 /* TransactionHandler.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BCB286D327508A7E0074E1D5 /* DApp.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
@@ -3308,7 +3301,6 @@
 				3B7DE7ED2775B01D00A92429 /* PT.ViewModel.swift in Sources */,
 				BCEE0201273CE50B00205982 /* WLPinCodeView.swift in Sources */,
 				BC46075C266F325500A12E07 /* WalletDetail.ViewModel.swift in Sources */,
-				BC2DA29A260B0AD700B50738 /* CreateTokenHandler.swift in Sources */,
 				BC63110B26D78AE600516C38 /* SwapProviderType.swift in Sources */,
 				BC09B9A2273ECB03009CAF4E /* Authentication.swift in Sources */,
 				BCC1F212269ED30A003DD648 /* PrimitiveSequence+Extensions.swift in Sources */,

@@ -17,7 +17,7 @@ protocol TransactionHandlerType {
     func processingTransactionsObservable() -> Observable<[PT.TransactionInfo]>
 }
 
-class TransactionHandler2: TransactionHandlerType {
+class TransactionHandler: TransactionHandlerType {
     @Injected private var notificationsService: NotificationsServiceType
     @Injected private var apiClient: ProcessTransactionAPIClient
     @Injected private var walletsRepository: WalletsRepository
