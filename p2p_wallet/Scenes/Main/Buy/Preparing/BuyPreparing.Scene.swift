@@ -13,6 +13,7 @@ import RxCocoa
 extension BuyPreparing {
     class Scene: BEScene {
         private let viewModel: BuyPreparingSceneModel
+        private let infoToggle = BehaviorRelay<Bool>(value: false)
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
         init(viewModel: BuyPreparingSceneModel) {
@@ -28,7 +29,11 @@ extension BuyPreparing {
             BEZStack {
                 // Content
                 BEZStackPosition(mode: .fill) {
-                    content()
+                    BEVStack {
+                        NewWLNavigationBar(initialTitle: L10n.buying(viewModel.crypto.fullname))
+                            .onBack { [unowned self] in self.viewModel.back() }
+                        content()
+                    }
                 }
                 BEZStackPosition(mode: .pinEdges([.left, .bottom, .right], avoidKeyboard: true)) {
                     // Bottom Button
@@ -47,36 +52,76 @@ extension BuyPreparing {
         }
         
         private func content() -> UIView {
-            UIStackView(axis: .vertical, alignment: .fill) {
-                NewWLNavigationBar(initialTitle: viewModel.crypto.fullname)
-                    .onBack { [unowned self] in self.viewModel.back() }
-                
-                BEScrollView(contentInsets: .init(top: 18, left: 18, bottom: 90, right: 18), spacing: 18) {
-                    // Exchange
-                    BEBuilder(driver: viewModel.onInputMode) { [unowned self] input in
-                        switch input {
-                        case .fiat:
-                            return InputFiatView(viewModel: viewModel)
-                        case .crypto:
-                            return InputCryptoView(viewModel: viewModel)
-                        }
-                    }.frame(height: 148)
-                        .padding(.init(all: 18))
-                        .border(width: 1, color: .f2f2f7)
-                        .box(cornerRadius: 12)
-                        .lightShadow()
-                    
-                    // Description
-                    UIStackView(axis: .vertical, spacing: 8, alignment: .fill) {
-                        UILabel(text: "Moonpay", weight: .bold)
+            BEScrollView(contentInsets: .init(top: 18, left: 18, bottom: 90, right: 18), spacing: 18) {
+                // Exchange
+                WLCard {
+                    BEVStack {
+                        BEBuilder(driver: viewModel.onInputMode) { [unowned self] input in
+                            switch input {
+                            case .fiat:
+                                return InputFiatView(viewModel: viewModel)
+                            case .crypto:
+                                return InputCryptoView(viewModel: viewModel)
+                            }
+                        }.padding(.init(x: 18, y: 18))
+                        
                         UIView.defaultSeparator()
                         
-                        descriptionRow(label: "\(viewModel.crypto.rawValue.uppercased()) Price", initial: "$ 0.0", viewModel.exchangeRateStringDriver)
-                        descriptionRow(label: L10n.processingFee, initial: "$ 0.00", viewModel.feeAmount.map { "$ \($0)" })
-                        descriptionRow(label: L10n.networkFee, initial: "$ 0.00", viewModel.networkFee.map { "$ \($0)" })
-                        descriptionRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
-                    }.padding(.init(all: 18))
+                        BEVStack {
+                            descriptionRow(label: "\(viewModel.crypto.rawValue.uppercased()) \(L10n.price)", initial: "$ 0.0", viewModel.exchangeRateStringDriver)
+                            
+                            BEHStack(alignment: .center) {
+                                UILabel(text: L10n.hideFees)
+                                    .setupWithType(UILabel.self) { view in
+                                        self
+                                            .infoToggle
+                                            .asDriver()
+                                            .drive(onNext: { [weak view] value in
+                                                view?.text = value ? L10n.showFees : L10n.hideFees
+                                            })
+                                            .disposed(by: disposeBag)
+                                    }
+                                UIImageView(image: .chevronDown, tintColor: .black)
+                                    .setupWithType(UIImageView.self) { view in
+                                        self
+                                            .infoToggle
+                                            .asDriver()
+                                            .drive(onNext: { [weak view] value in
+                                                view?.image = value ? .chevronUp : .chevronDown
+                                            })
+                                            .disposed(by: disposeBag)
+                                    }
+                            }
+                                .centered(.horizontal)
+                                .padding(.init(only: .top, inset: 18))
+                                .onTap { [unowned self] in infoToggle.accept(!infoToggle.value) }
+                            
+                            BEBuilder(driver: infoToggle.asDriver()) { [weak self] value in
+                                guard let self = self else { return UIView() }
+                                return value ? self.feeInfo() : UIView()
+                            }
+                            
+                            
+                        }.padding(.init(x: 18, y: 18))
+                    }
                 }
+            }
+            
+        }
+        
+        private func feeInfo() -> UIView {
+            BEVStack {
+                UIView(height: 18)
+                descriptionRow(label: L10n.purchaseCost("\(viewModel.crypto.rawValue.uppercased())"), initial: "$ 0.00", viewModel.purchaseCost.map { "$ \($0)" })
+                UIView(height: 8)
+                descriptionRow(label: L10n.processingFee, initial: "$ 0.00", viewModel.feeAmount.map { "$ \($0)" })
+                UIView(height: 8)
+                descriptionRow(label: L10n.networkFee, initial: "$ 0.00", viewModel.networkFee.map { "$ \($0)" })
+                UIView(height: 8)
+                
+                UIView.defaultSeparator()
+                UIView(height: 8)
+                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
             }
         }
         
@@ -85,6 +130,16 @@ extension BuyPreparing {
                 UILabel(text: label, textColor: .secondaryLabel)
                 UIView.spacer
                 UILabel(text: initial).setup { view in
+                    trailingDriver?.drive(view.rx.text).disposed(by: disposeBag)
+                }
+            }
+        }
+        
+        private func totalRow(label: String, initial: String, _ trailingDriver: Driver<String>? = nil) -> UIView {
+            UIStackView(axis: .horizontal, alignment: .fill) {
+                UILabel(text: label)
+                UIView.spacer
+                UILabel(text: initial, weight: .bold).setup { view in
                     trailingDriver?.drive(view.rx.text).disposed(by: disposeBag)
                 }
             }
@@ -136,6 +191,10 @@ extension BuyPreparingSceneModel {
     
     fileprivate var total: Driver<Double> {
         outputDriver.map { $0.total }
+    }
+    
+    fileprivate var purchaseCost: Driver<Double> {
+        outputDriver.map { $0.purchaseCost }
     }
     
     fileprivate var nextStatus: Driver<NextStatus> {

@@ -34,6 +34,7 @@ extension Buy {
                         currency: currency,
                         processingFee: quote.extraFeeAmount,
                         networkFee: quote.networkFeeAmount,
+                        purchaseCost: quote.baseCurrencyAmount,
                         total: quote.totalAmount
                     )
                 }.catch { error in

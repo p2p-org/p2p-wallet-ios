@@ -62,6 +62,22 @@ extension BuyPreparing {
                     UIView.spacer
                     // Output amount
                     UIStackView(axis: .horizontal) {
+                        CoinLogoImageView(size: 20, cornerRadius: 9)
+                            .setupWithType(CoinLogoImageView.self) { view in
+                                Resolver
+                                    .resolve(TokensRepository.self)
+                                    .getTokensList()
+                                    .asDriver(onErrorJustReturn: [])
+                                    .drive(onNext: { [weak self, weak view] tokens in
+                                        if let token = tokens.first { token in
+                                            self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token.symbol == self?.viewModel.crypto.rawValue
+                                        } {
+                                            view?.setUp(token: token)
+                                        }
+                                    })
+                                    .disposed(by: disposeBag)
+                            }
+                        UIView(width: 4)
                         UILabel(text: "0.00 \(viewModel.crypto)").setup { view in
                             viewModel.outputDriver.map { [weak self] output in "\(output.amount) \(self?.viewModel.crypto.rawValue.uppercased() ?? "?")" }
                                 .drive(view.rx.text).disposed(by: disposeBag)

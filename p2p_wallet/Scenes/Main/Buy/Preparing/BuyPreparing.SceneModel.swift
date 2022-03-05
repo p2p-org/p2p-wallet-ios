@@ -51,6 +51,7 @@ extension BuyPreparing {
                     currency: crypto,
                     processingFee: 0,
                     networkFee: 0,
+                    purchaseCost: 0,
                     total: 0
                 )
             )
@@ -76,7 +77,7 @@ extension BuyPreparing {
                 .flatMap { [weak self] input -> Single<Buy.ExchangeOutput> in
                     guard let self = self else { return .error(NSError(domain: "Preparing", code: -1)) }
                     if input.amount == 0 {
-                        return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
+                        return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, purchaseCost: 0, total: 0))
                     }
                     return self.exchangeService
                         .convert(input: input, to: input.currency is Buy.FiatCurrency ? Buy.CryptoCurrency.sol : Buy.FiatCurrency.usd)
@@ -95,7 +96,7 @@ extension BuyPreparing {
                             } else {
                                 self.errorRelay.accept(error.localizedDescription)
                             }
-                            return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
+                            return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, purchaseCost: 0, total: 0))
                         }
                 }
                 .bind(to: outputRelay)
