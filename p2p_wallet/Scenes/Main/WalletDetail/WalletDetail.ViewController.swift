@@ -100,7 +100,7 @@ extension WalletDetail {
             switch scene {
             case .buy:
                 let vm = BuyRoot.ViewModel()
-                let vc = BuyRoot.ViewController(viewModel: vm)
+                let vc = BuyRoot.ViewController(crypto: .sol, viewModel: vm)
                 present(vc, animated: true, completion: nil)
             case .settings(let pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)

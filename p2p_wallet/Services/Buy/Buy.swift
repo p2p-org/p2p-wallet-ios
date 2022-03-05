@@ -18,11 +18,33 @@ struct Buy {
     enum CryptoCurrency: String, BuyCurrencyType {
         case eth = "eth"
         case sol = "sol"
-        case usdt = "usdt"
+        case usdc = "usdc"
         
         func toString() -> String { rawValue }
+    
+        var fullname: String {
+            switch self {
+            case .eth:
+                return "Ethereum"
+            case .sol:
+               return "Solana"
+            case .usdc:
+                return "Usd coin"
+            }
+        }
         
-        static let all: Set<CryptoCurrency> = [.eth, .sol, .usdt]
+        var code: String {
+            switch self {
+            case .eth:
+                return "eth"
+            case .sol:
+                return "sol"
+            case .usdc:
+                return "usdc_sol"
+            }
+        }
+        
+        static let all: Set<CryptoCurrency> = [.eth, .sol, .usdc]
     }
     
     struct ExchangeInput {

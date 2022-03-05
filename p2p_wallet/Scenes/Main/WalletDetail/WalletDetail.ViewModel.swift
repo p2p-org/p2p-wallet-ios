@@ -109,7 +109,7 @@ extension WalletDetail {
                 tokens = .sol
             }
             if symbol == "USDT" {
-                tokens = .usdt
+                tokens = .usdc
             }
             analyticsManager.log(event: .tokenDetailsBuyClick)
             navigatableSceneSubject.accept(.buy(tokens: tokens))

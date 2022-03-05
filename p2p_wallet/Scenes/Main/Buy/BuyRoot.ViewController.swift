@@ -15,19 +15,19 @@ extension BuyRoot {
     class ViewController: BaseVC {
         // MARK: - Dependencies
         private let viewModel: BuyViewModelType
-        lazy var navigation = UINavigationController(
-            rootViewController: BuyPreparing.Scene(
-                viewModel: BuyPreparing.SceneModel(buyViewModel: viewModel, exchangeService: Resolver.resolve())
-            )
-        )
+        private let navigation: UINavigationController
         
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
-        // MARK: - Properties
-        
         // MARK: - Initializer
-        init(viewModel: BuyViewModelType) {
+        init(crypto: Buy.CryptoCurrency = .sol, viewModel: BuyViewModelType) {
             self.viewModel = viewModel
+            navigation = UINavigationController(
+                rootViewController: BuyPreparing.Scene(
+                    viewModel: BuyPreparing.SceneModel(crypto: crypto, buyViewModel: viewModel, exchangeService: Resolver.resolve())
+                )
+            )
+            
             super.init()
         }
         
