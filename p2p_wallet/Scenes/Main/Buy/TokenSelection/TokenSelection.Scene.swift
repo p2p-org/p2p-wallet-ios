@@ -70,7 +70,7 @@ extension BuyTokenSelection {
             override func build() -> UIView {
                 BEHStack {
                     // Icon
-                    CoinLogoImageView(size: 44)
+                    CoinLogoImageView(size: 44, cornerRadius: 12)
                         .bind(iconRef)
                         .centered(.vertical)
                     

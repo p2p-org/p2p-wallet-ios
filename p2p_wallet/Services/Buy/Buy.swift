@@ -21,13 +21,13 @@ struct Buy {
         case usdc = "usdc"
         
         func toString() -> String { rawValue }
-    
+        
         var fullname: String {
             switch self {
             case .eth:
                 return "Ethereum"
             case .sol:
-               return "Solana"
+                return "Solana"
             case .usdc:
                 return "Usd coin"
             }
@@ -54,7 +54,14 @@ struct Buy {
         func swap(with output: ExchangeOutput) -> (ExchangeInput, ExchangeOutput) {
             (
                 .init(amount: output.amount, currency: output.currency),
-                .init(amount: amount, currency: currency, processingFee: output.processingFee, networkFee: output.networkFee, total: output.total)
+                .init(
+                    amount: amount,
+                    currency: currency,
+                    processingFee: output.processingFee,
+                    networkFee: output.networkFee,
+                    purchaseCost: output.purchaseCost,
+                    total: output.total
+                )
             )
         }
     }
@@ -65,6 +72,8 @@ struct Buy {
         
         let processingFee: Double
         let networkFee: Double
+        let purchaseCost: Double
+        
         let total: Double
     }
     

@@ -24,7 +24,7 @@ extension BuyPreparing {
                         UILabel(text: L10n.youGet, textSize: 17)
                         UIView.spacer
                         // Amount
-                        CoinLogoImageView(size: 24)
+                        CoinLogoImageView(size: 24, cornerRadius: 8)
                             .setupWithType(CoinLogoImageView.self) { view in
                                 Resolver
                                     .resolve(TokensRepository.self)
