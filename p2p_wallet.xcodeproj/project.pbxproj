@@ -43,6 +43,7 @@
 		3B9C3DDD27A7BDAA0032548A /* SendToken.FeeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DDC27A7BDAA0032548A /* SendToken.FeeView.swift */; };
 		3BAC28B927670178007900E2 /* UIView+Rx+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */; };
 		3BCD00A52795A3F600576190 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BCD00A42795A3F600576190 /* GoogleService-Info.plist */; };
+		3BCEED5627D30A1D00BA9110 /* PT.ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5527D30A1D00BA9110 /* PT.ProgressView.swift */; };
 		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
 		410DCFB4276C8251004EA4D6 /* ReserveNameKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */; };
 		4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1662746272400352CDF /* EnterSeedInfo.swift */; };
@@ -591,6 +592,7 @@
 		3B9C3DDC27A7BDAA0032548A /* SendToken.FeeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.FeeView.swift; sourceTree = "<group>"; };
 		3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Rx+Builders.swift"; sourceTree = "<group>"; };
 		3BCD00A42795A3F600576190 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		3BCEED5527D30A1D00BA9110 /* PT.ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.ProgressView.swift; sourceTree = "<group>"; };
 		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
 		3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveNameKind.swift; sourceTree = "<group>"; };
@@ -1253,8 +1255,17 @@
 				3B7DE7E92775B01D00A92429 /* PT.ViewModel.swift */,
 				3B7DE7E82775B01D00A92429 /* PT.ViewController.swift */,
 				3B7DE7EF2775B07500A92429 /* PT.DetailViewController.swift */,
+				3BCEED5427D30A0F00BA9110 /* Subviews */,
 			);
 			path = PT;
+			sourceTree = "<group>";
+		};
+		3BCEED5427D30A0F00BA9110 /* Subviews */ = {
+			isa = PBXGroup;
+			children = (
+				3BCEED5527D30A1D00BA9110 /* PT.ProgressView.swift */,
+			);
+			path = Subviews;
 			sourceTree = "<group>";
 		};
 		4114D15D274626B400352CDF /* EnterSeedInfo */ = {
@@ -3493,6 +3504,7 @@
 				8469922B1734B0B5200C4641 /* MoonpayBuyProcessing.swift in Sources */,
 				846999379F9F0FA61EA1FC1F /* BuyProcessingServiceType.swift in Sources */,
 				846991E94E5B357F70EACC4C /* Buy.swift in Sources */,
+				3BCEED5627D30A1D00BA9110 /* PT.ProgressView.swift in Sources */,
 				84699FE9610FE1FD6BCE2F65 /* BuyExchangeServiceType.swift in Sources */,
 				8469917D8E71B0E435F7EA48 /* Moonpay.swift in Sources */,
 				8469996EF705D60C94EB79FC /* Moonpay.API.swift in Sources */,
