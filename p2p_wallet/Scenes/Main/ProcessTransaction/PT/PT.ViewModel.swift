@@ -28,7 +28,7 @@ extension PT {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
-        @Injected private var apiClient: ProcessTransactionAPIClient
+        @Injected private var transactionHandler: TransactionHandlerType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -81,17 +81,14 @@ extension PT.ViewModel: PTViewModelType {
     
     // MARK: - Actions
     func sendAndObserveTransaction() {
-        transactionInfoSubject.accept(updateTransactionInfo(status: .sending))
-        // create request
-        processingTransaction.createRequest()
-            .subscribe(onSuccess: { [weak self] transactionID in
-                guard let self = self else {return}
-                self.transactionInfoSubject.accept(.init(transactionId: transactionID, status: .confirmed(0)))
-                self.observe(transactionId: transactionID)
-            }, onFailure: { [weak self] error in
-                guard let self = self else {return}
-                self.transactionInfoSubject.accept(self.updateTransactionInfo(status: .error(error)))
-            })
+        let index = transactionHandler.sendTransaction(processingTransaction)
+        
+        let unknownErrorInfo = PT.TransactionInfo(transactionId: nil, status: .error(SolanaSDK.Error.unknown))
+        
+        transactionHandler.observeTransaction(transactionIndex: index)
+            .map {$0 ?? unknownErrorInfo}
+            .catchAndReturn(unknownErrorInfo)
+            .bind(to: transactionInfoSubject)
             .disposed(by: disposeBag)
     }
     
@@ -105,42 +102,5 @@ extension PT.ViewModel: PTViewModelType {
     
     func navigate(to scene: PT.NavigatableScene) {
         navigationSubject.accept(scene)
-    }
-    
-    // MARK: - Helpers
-    private func observe(transactionId: String) {
-        let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
-        
-        apiClient.getSignatureStatus(signature: transactionId, configs: nil)
-            .subscribe(on: scheduler)
-            .observe(on: MainScheduler.instance)
-            .do(onSuccess: { [weak self] status in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
-                let transactionInfo: PT.TransactionInfo
-                if status.confirmations == nil || status.confirmationStatus == "finalized" {
-                    transactionInfo = self.updateTransactionInfo(status: .finalized)
-                } else {
-                    transactionInfo = self.updateTransactionInfo(status: .confirmed(Int(status.confirmations ?? 0)))
-                }
-                
-                self.transactionInfoSubject.accept(transactionInfo)
-            })
-            .observe(on: scheduler)
-            .map {$0.confirmations == nil || $0.confirmationStatus == "finalized"}
-            .flatMapCompletable { confirmed in
-                if confirmed {return .empty()}
-                throw PT.Error.notEnoughNumberOfConfirmations
-            }
-            .retry(maxAttempts: .max, delayInSeconds: 1)
-            .timeout(.seconds(60), scheduler: scheduler)
-            .subscribe()
-            .disposed(by: disposeBag)
-            
-    }
-    
-    private func updateTransactionInfo(status: PT.TransactionInfo.TransactionStatus) -> PT.TransactionInfo {
-        var info = transactionInfoSubject.value
-        info.status = status
-        return info
     }
 }

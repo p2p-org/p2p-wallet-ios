@@ -44,6 +44,7 @@
 		3BAC28B927670178007900E2 /* UIView+Rx+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */; };
 		3BCD00A52795A3F600576190 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BCD00A42795A3F600576190 /* GoogleService-Info.plist */; };
 		3BCEED5627D30A1D00BA9110 /* PT.ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5527D30A1D00BA9110 /* PT.ProgressView.swift */; };
+		3BCEED5927D32C2600BA9110 /* TransactionHandler2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5827D32C2600BA9110 /* TransactionHandler2.swift */; };
 		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
 		410DCFB4276C8251004EA4D6 /* ReserveNameKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */; };
 		4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1662746272400352CDF /* EnterSeedInfo.swift */; };
@@ -593,6 +594,7 @@
 		3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Rx+Builders.swift"; sourceTree = "<group>"; };
 		3BCD00A42795A3F600576190 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BCEED5527D30A1D00BA9110 /* PT.ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PT.ProgressView.swift; sourceTree = "<group>"; };
+		3BCEED5827D32C2600BA9110 /* TransactionHandler2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHandler2.swift; sourceTree = "<group>"; };
 		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
 		3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveNameKind.swift; sourceTree = "<group>"; };
@@ -1266,6 +1268,14 @@
 				3BCEED5527D30A1D00BA9110 /* PT.ProgressView.swift */,
 			);
 			path = Subviews;
+			sourceTree = "<group>";
+		};
+		3BCEED5727D32C1300BA9110 /* TransactionHandler */ = {
+			isa = PBXGroup;
+			children = (
+				3BCEED5827D32C2600BA9110 /* TransactionHandler2.swift */,
+			);
+			path = TransactionHandler;
 			sourceTree = "<group>";
 		};
 		4114D15D274626B400352CDF /* EnterSeedInfo */ = {
@@ -2313,6 +2323,7 @@
 				BCB28692274B62920074E1D5 /* FeeService.swift */,
 				BCB286CD275084A10074E1D5 /* DAppChannel.swift */,
 				3B78CB562773147F00FB3C4C /* ClipboardManager.swift */,
+				3BCEED5727D32C1300BA9110 /* TransactionHandler */,
 				3B78CB502773067100FB3C4C /* NotificationsService.swift */,
 				3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */,
 				41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */,
@@ -3106,6 +3117,7 @@
 				41DE53D02797BCDD00F24B0B /* WalletActionButton.swift in Sources */,
 				BCC0663C269891E00017B34E /* TransactionsCollectionView.SectionHeaderView.swift in Sources */,
 				BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */,
+				3BCEED5927D32C2600BA9110 /* TransactionHandler2.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BCB286D327508A7E0074E1D5 /* DApp.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
