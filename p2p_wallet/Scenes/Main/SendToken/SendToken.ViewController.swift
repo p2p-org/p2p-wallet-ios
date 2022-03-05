@@ -97,24 +97,18 @@ extension SendToken {
             case .processTransaction(let transaction):
                 let vm = PT.ViewModel(processingTransaction: transaction)
                 let vc = PT.ViewController(viewModel: vm)
-//                vc.delegate = self
+                vc.dismissCompletion = { [weak self] in
+                    guard let self = self else {return}
+                    if self.viewModel.canGoBack {
+                        self.back()
+                    } else {
+                        self.childNavigationController.popToRootViewController(animated: true)
+                    }
+                }
                 present(vc, interactiveDismissalType: .none, completion: nil)
             case .chooseNetwork:
                 let vc = SelectNetwork.ViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
-            }
-        }
-    }
-}
-
-extension SendToken.ViewController: ProcessTransactionViewControllerDelegate {
-    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
-        vc.dismiss(animated: true) { [weak self] in
-            guard let self = self else {return}
-            if self.viewModel.canGoBack {
-                self.back()
-            } else {
-                self.childNavigationController.popToRootViewController(animated: true)
             }
         }
     }

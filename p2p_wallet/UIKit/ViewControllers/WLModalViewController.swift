@@ -11,12 +11,21 @@ import UIKit
 class WLModalViewController: BaseVC, CustomPresentableViewController {
     var transitionManager: UIViewControllerTransitioningDelegate?
     
+    // MARK: - Properties
     private var panGestureRecognizer: UIPanGestureRecognizer!
-    var originalPosition: CGPoint!
-    var currentPositionTouched: CGPoint!
+    private var originalPosition: CGPoint!
+    private var currentPositionTouched: CGPoint!
+    var canSwipeToDismiss: Bool = true {
+        didSet {
+            panGestureRecognizer.isEnabled = canSwipeToDismiss
+        }
+    }
+    var dismissCompletion: (() -> Void)?
     
+    // MARK: - Subviews
     private var child: UIView!
     
+    // MARK: - Methods
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         view.roundCorners([.topLeft, .topRight], radius: 18)
@@ -75,7 +84,7 @@ class WLModalViewController: BaseVC, CustomPresentableViewController {
                     )
                 } completion: { isCompleted in
                     if isCompleted {
-                        self.dismiss(animated: false, completion: nil)
+                        self.dismiss(animated: false, completion: self.dismissCompletion)
                     }
                 }
             } else {

@@ -174,11 +174,6 @@ extension Resolver: ResolverRegistering {
             .implements(RenVMBurnAndReleaseServiceType.self)
             .scope(.session)
         
-        // MARK: - ProcessingTransactionsManager
-        register { ProcessingTransactionsManager() }
-            .implements(ProcessingTransactionsRepository.self)
-            .scope(.session)
-        
         // MARK: - Others
         register { DAppChannel() }
             .implements(DAppChannelType.self)

@@ -18,7 +18,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private var before: String?
     @Injected private var repository: TransactionsRepository
     @Injected private var pricesService: PricesServiceType
-    @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
+    @Injected private var transactionHandler: TransactionHandlerType
     @Injected private var feeRelayer: FeeRelayerAPIClientType
     @Injected private var notificationsRepository: WLNotificationsRepository
     
@@ -48,11 +48,12 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             })
             .disposed(by: disposeBag)
         
-        processingTransactionRepository.processingTransactionsObservable()
-            .subscribe(onNext: {[weak self] _ in
-                self?.refreshUI()
-            })
-            .disposed(by: disposeBag)
+//        transactionHandler.
+//        processingTransactionRepository.processingTransactionsObservable()
+//            .subscribe(onNext: {[weak self] _ in
+//                self?.refreshUI()
+//            })
+//            .disposed(by: disposeBag)
         
         notificationsRepository.observeChange(account: account)
             .distinctUntilChanged()
@@ -107,8 +108,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     }
     
     override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
-        var transactions = insertProcessingTransaction(intoCurrentData: newData)
-        transactions = updatedTransactionsWithPrices(transactions: transactions)
+//        var transactions = insertProcessingTransaction(intoCurrentData: newData)
+        var transactions = updatedTransactionsWithPrices(transactions: newData)
         return transactions
     }
     
@@ -177,58 +178,58 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         return transaction
     }
     
-    private func insertProcessingTransaction(
-        intoCurrentData currentData: [SolanaSDK.ParsedTransaction]
-    ) -> [SolanaSDK.ParsedTransaction] {
-        let processingTransactions = processingTransactionRepository.getProcessingTransactions()
-        var transactions = [SolanaSDK.ParsedTransaction]()
-        for var pt in processingTransactions {
-            switch pt.value {
-            case let transaction as SolanaSDK.TransferTransaction:
-                if transaction.source?.pubkey == self.account ||
-                    transaction.destination?.pubkey == self.account ||
-                    transaction.authority == self.account
-                {
-                    transactions.append(pt)
-                }
-            case _ as SolanaSDK.CloseAccountTransaction:
-                // FIXME: - Close account
-                break
-            case var transaction as SolanaSDK.SwapTransaction:
-                if transaction.source?.pubkey == self.account ||
-                    transaction.destination?.pubkey == self.account
-                {
-                    transaction.myAccountSymbol = accountSymbol
-                    pt.value = transaction
-                    transactions.append(pt)
-                }
-            default:
-                break
-            }
-        }
-        
-        transactions = transactions.filter {!$0.isFailure}
-            .sorted(by: {$0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970})
-        
-        var data = currentData
-        for transaction in transactions.reversed()
-        {
-            // update if exists and is being processed
-            if let index = data.firstIndex(where: {$0.signature == transaction.signature})
-            {
-                if data[index].status != .confirmed {
-                    data[index] = transaction
-                }
-            }
-            // append if not
-            else {
-                if transaction.signature != nil {
-                    data.removeAll(where: {$0.signature == nil})
-                }
-                data.insert(transaction, at: 0)
-            }
-            
-        }
-        return data
-    }
+//    private func insertProcessingTransaction(
+//        intoCurrentData currentData: [SolanaSDK.ParsedTransaction]
+//    ) -> [SolanaSDK.ParsedTransaction] {
+//        let processingTransactions = processingTransactionRepository.getProcessingTransactions()
+//        var transactions = [SolanaSDK.ParsedTransaction]()
+//        for var pt in processingTransactions {
+//            switch pt.value {
+//            case let transaction as SolanaSDK.TransferTransaction:
+//                if transaction.source?.pubkey == self.account ||
+//                    transaction.destination?.pubkey == self.account ||
+//                    transaction.authority == self.account
+//                {
+//                    transactions.append(pt)
+//                }
+//            case _ as SolanaSDK.CloseAccountTransaction:
+//                // FIXME: - Close account
+//                break
+//            case var transaction as SolanaSDK.SwapTransaction:
+//                if transaction.source?.pubkey == self.account ||
+//                    transaction.destination?.pubkey == self.account
+//                {
+//                    transaction.myAccountSymbol = accountSymbol
+//                    pt.value = transaction
+//                    transactions.append(pt)
+//                }
+//            default:
+//                break
+//            }
+//        }
+//        
+//        transactions = transactions.filter {!$0.isFailure}
+//            .sorted(by: {$0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970})
+//        
+//        var data = currentData
+//        for transaction in transactions.reversed()
+//        {
+//            // update if exists and is being processed
+//            if let index = data.firstIndex(where: {$0.signature == transaction.signature})
+//            {
+//                if data[index].status != .confirmed {
+//                    data[index] = transaction
+//                }
+//            }
+//            // append if not
+//            else {
+//                if transaction.signature != nil {
+//                    data.removeAll(where: {$0.signature == nil})
+//                }
+//                data.insert(transaction, at: 0)
+//            }
+//            
+//        }
+//        return data
+//    }
 }

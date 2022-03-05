@@ -17,7 +17,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     @Injected private var solanaSDK: SolanaSDK
     @Injected private var pricesService: PricesServiceType
     @Injected private var accountNotificationsRepository: AccountNotificationsRepository
-    @WeakLazyInjected private var processingTransactionRepository: ProcessingTransactionsRepository?
+    @WeakLazyInjected private var transactionHandler: TransactionHandlerType?
     
     // MARK: - Properties
     private var defaultsDisposables = [DefaultsDisposable]()
@@ -144,7 +144,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     override func reload() {
         // disable refreshing when there is a transaction in progress
-        if processingTransactionRepository?.areSomeTransactionsInProgress() == true
+        if transactionHandler?.areSomeTransactionsInProgress() == true
         {
             return
         }
