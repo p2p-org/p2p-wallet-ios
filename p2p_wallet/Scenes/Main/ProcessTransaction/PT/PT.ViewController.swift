@@ -16,7 +16,6 @@ extension PT {
         
         // MARK: - Properties
         
-        
         // MARK: - Initializer
         init(viewModel: PTViewModelType) {
             self.viewModel = viewModel

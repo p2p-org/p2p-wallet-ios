@@ -28,7 +28,6 @@ extension PT {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
         @Injected private var transactionHandler: TransactionHandlerType
         
         // MARK: - Properties
