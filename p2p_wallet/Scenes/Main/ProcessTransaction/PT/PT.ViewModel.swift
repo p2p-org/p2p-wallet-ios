@@ -17,7 +17,7 @@ protocol PTViewModelType {
     var transactionID: String? {get}
     var processingTransaction: ProcessingTransactionType {get}
     
-    func getTransactionDescription(withAmount: Bool) -> String
+    func getMainDescription() -> String
     
     func sendAndObserveTransaction()
     func makeAnotherTransactionOrRetry()
@@ -64,23 +64,8 @@ extension PT.ViewModel: PTViewModelType {
         transactionInfoSubject.value.transactionId
     }
     
-    func getTransactionDescription(withAmount: Bool) -> String {
-        switch processingTransaction {
-        case let transaction as PT.SendTransaction:
-            var desc = transaction.sender.token.symbol + " → " + (transaction.receiver.name ?? transaction.receiver.address.truncatingMiddle(numOfSymbolsRevealed: 4))
-            if withAmount {
-                let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
-                    .toString(maximumFractionDigits: 9)
-                desc = amount + " " + desc
-            }
-            return desc
-        case let transaction as PT.OrcaSwapTransaction:
-            return transaction.amount.toString(maximumFractionDigits: 9) + " " + transaction.sourceWallet.token.symbol +
-                " → " +
-                transaction.estimatedAmount.toString(maximumFractionDigits: 9) + " " + transaction.destinationWallet.token.symbol
-        default:
-            fatalError()
-        }
+    func getMainDescription() -> String {
+        processingTransaction.mainDescription
     }
     
     // MARK: - Actions

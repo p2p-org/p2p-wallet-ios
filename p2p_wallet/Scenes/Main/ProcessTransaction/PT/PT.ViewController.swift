@@ -73,7 +73,7 @@ extension PT {
                         textAlignment: .center
                     )
                         .setup { label in
-                            label.text = viewModel.getTransactionDescription(withAmount: true)
+                            label.text = viewModel.getMainDescription()
                         }
                         .padding(.init(all: 18, excludingEdge: .top))
                     
