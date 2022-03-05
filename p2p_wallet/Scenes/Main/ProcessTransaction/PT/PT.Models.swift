@@ -23,6 +23,7 @@ extension SolanaSDK: ProcessTransactionAPIClient {
 // MARK: - Transaction type
 protocol ProcessingTransactionType {
     func createRequest() -> Single<String>
+    var mainDescription: String {get}
 }
 
 extension ProcessingTransactionType {
@@ -33,6 +34,10 @@ extension ProcessingTransactionType {
 
 extension PT {
     struct SwapTransaction: ProcessingTransactionType {
+        var mainDescription: String {
+            fatalError()
+        }
+        
         func createRequest() -> Single<String> {
             fatalError()
         }
@@ -48,6 +53,12 @@ extension PT {
         let estimatedAmount: Double
         let slippage: Double
         let fees: [PayingFee]
+        
+        var mainDescription: String {
+            amount.toString(maximumFractionDigits: 9) + " " + sourceWallet.token.symbol +
+                " → " +
+                estimatedAmount.toString(maximumFractionDigits: 9) + " " + destinationWallet.token.symbol
+        }
         
         func createRequest() -> Single<String> {
             // check if payingWallet has enough balance to cover fee
@@ -96,8 +107,19 @@ extension PT {
     }
     
     struct CloseTransaction: ProcessingTransactionType {
+        let solanaSDK: SolanaSDK
+        let closingWallet: Wallet
+        let reimbursedAmount: UInt64
+        
+        var mainDescription: String {
+            L10n.closeAccount(closingWallet.token.symbol)
+        }
+        
         func createRequest() -> Single<String> {
-            fatalError()
+            guard let pubkey = closingWallet.pubkey else {
+                return .error(SolanaSDK.Error.unknown)
+            }
+            return solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
         }
     }
     
@@ -110,12 +132,14 @@ extension PT {
         let payingFeeWallet: Wallet?
         let isSimulation: Bool
         
+        var mainDescription: String {
+            amount.convertToBalance(decimals: sender.token.decimals)
+                .toString(maximumFractionDigits: 9) +
+            " " +
+            sender.token.symbol + " → " + (receiver.name ?? receiver.address.truncatingMiddle(numOfSymbolsRevealed: 4))
+        }
+        
         func createRequest() -> Single<String> {
-//            .just("")
-//                .delay(.seconds(2), scheduler: MainScheduler.instance)
-//                .flatMap { _ in
-//                    return .error(PT.Error.notEnoughNumberOfConfirmations)
-//                }
             sendService.send(
                 from: sender,
                 receiver: receiver.address,
