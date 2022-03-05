@@ -11,14 +11,9 @@ import SolanaSwift
 
 // MARK: - APIClient
 protocol ProcessTransactionAPIClient {
-    func getReimbursedAmountForClosingToken() -> Single<Double>
     func getSignatureStatus(signature: String, configs: SolanaSDK.RequestConfiguration?) -> Single<SolanaSDK.SignatureStatus>
 }
-extension SolanaSDK: ProcessTransactionAPIClient {
-    func getReimbursedAmountForClosingToken() -> Single<Double> {
-        getCreatingTokenAccountFee().map {$0.convertToBalance(decimals: 9)}
-    }
-}
+extension SolanaSDK: ProcessTransactionAPIClient {}
 
 // MARK: - Transaction type
 protocol ProcessingTransactionType {
@@ -162,6 +157,15 @@ extension PT {
             case finalized
             case error(_ error: Swift.Error)
             
+            var isProcessing: Bool {
+                switch self {
+                case .sending, .confirmed:
+                    return true
+                default:
+                    return false
+                }
+            }
+            
             var progress: Float {
                 switch self {
                 case .sending:
@@ -186,9 +190,23 @@ extension PT {
                     return nil
                 }
             }
+            
+            public var rawValue: String {
+                switch self {
+                case .sending:
+                    return "sending"
+                case .confirmed:
+                    return "processing"
+                case .finalized:
+                    return "finalized"
+                case .error:
+                    return "error"
+                }
+            }
         }
         
         var transactionId: String?
+        let rawTransaction: ProcessingTransactionType
         var status: TransactionStatus
     }
     

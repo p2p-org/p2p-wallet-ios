@@ -130,9 +130,8 @@ extension SerumSwapV1 {
                 assertionFailure("not implemented")
 //                let vc = SwapFeesViewController(viewModel: viewModel)
 //                present(SettingsNavigationController(rootViewController: vc), interactiveDismissalType: .standard)
-            case .processTransaction(let request, let transactionType):
-                let vc = scenesFactory.makeProcessTransactionViewController(transactionType: transactionType, request: request)
-                present(vc, interactiveDismissalType: .none, completion: nil)
+            case .processTransaction:
+                assertionFailure("not implemented")
             default:
                 break
             }

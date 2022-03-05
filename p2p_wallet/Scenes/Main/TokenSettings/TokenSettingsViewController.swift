@@ -89,19 +89,14 @@ class TokenSettingsViewController: WLIndicatorModalVC {
         case .processTransaction(let transaction):
             let vm = PT.ViewModel(processingTransaction: transaction)
             let vc = PT.ViewController(viewModel: vm)
+            vc.dismissCompletion = { [weak self] in
+                self?.dismiss(animated: true, completion: { [weak self] in
+                    guard let self = self else {return}
+                    self.delegate?.tokenSettingsViewControllerDidCloseToken?(self)
+                })
+            }
 //            vc.delegate = self
             present(vc, interactiveDismissalType: .none, completion: nil)
-        }
-    }
-}
-
-extension TokenSettingsViewController: ProcessTransactionViewControllerDelegate {
-    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
-        vc.dismiss(animated: true) { [weak self] in
-            self?.dismiss(animated: true, completion: { [weak self] in
-                guard let strongSelf = self else {return}
-                strongSelf.delegate?.tokenSettingsViewControllerDidCloseToken?(strongSelf)
-            })
         }
     }
 }

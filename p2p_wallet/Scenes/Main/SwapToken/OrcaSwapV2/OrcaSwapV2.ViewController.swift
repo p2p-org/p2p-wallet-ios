@@ -103,7 +103,9 @@ extension OrcaSwapV2 {
             case .processTransaction(let transaction):
                 let vm = PT.ViewModel(processingTransaction: transaction)
                 let vc = PT.ViewController(viewModel: vm)
-//                vc.delegate = self
+                vc.dismissCompletion = { [weak self] in
+                    self?.navigationController?.popViewController(animated: true)
+                }
                 present(vc, interactiveDismissalType: .none, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
@@ -112,14 +114,6 @@ extension OrcaSwapV2 {
             case .none:
                 break
             }
-        }
-    }
-}
-
-extension OrcaSwapV2.ViewController: ProcessTransactionViewControllerDelegate {
-    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
-        vc.dismiss(animated: true) { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
         }
     }
 }
