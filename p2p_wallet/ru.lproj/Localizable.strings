@@ -747,3 +747,4 @@
 "Pay the %@ fee with" = "Оплатите комиссию %@ с помощью";
 "The price slippage was set at %@" = "Проскальзывание цены установлено на %@";
 "Minimum purchase of %@ required." = "Минимальная покупка %@ требуется.";
+"Choose a token for buying" = "Выберите токен для покупки";

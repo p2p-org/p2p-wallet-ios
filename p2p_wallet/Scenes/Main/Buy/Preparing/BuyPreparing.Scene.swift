@@ -12,10 +12,10 @@ import RxCocoa
 
 extension BuyPreparing {
     class Scene: BEScene {
-        private let viewModel: SolanaBuyTokenSceneModel
+        private let viewModel: BuyPreparingSceneModel
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         
-        init(viewModel: SolanaBuyTokenSceneModel) {
+        init(viewModel: BuyPreparingSceneModel) {
             self.viewModel = viewModel
             super.init()
         }
@@ -48,7 +48,7 @@ extension BuyPreparing {
         
         private func content() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                NewWLNavigationBar(initialTitle: L10n.buyOnMoonpay("Solana"))
+                NewWLNavigationBar(initialTitle: viewModel.crypto.fullname)
                     .onBack { [unowned self] in self.viewModel.back() }
                 
                 BEScrollView(contentInsets: .init(top: 18, left: 18, bottom: 90, right: 18), spacing: 18) {
@@ -71,7 +71,7 @@ extension BuyPreparing {
                         UILabel(text: "Moonpay", weight: .bold)
                         UIView.defaultSeparator()
                         
-                        descriptionRow(label: "SOL Price", initial: "$ 0.0", viewModel.exchangeRateStringDriver)
+                        descriptionRow(label: "\(viewModel.crypto.rawValue.uppercased()) Price", initial: "$ 0.0", viewModel.exchangeRateStringDriver)
                         descriptionRow(label: L10n.processingFee, initial: "$ 0.00", viewModel.feeAmount.map { "$ \($0)" })
                         descriptionRow(label: L10n.networkFee, initial: "$ 0.00", viewModel.networkFee.map { "$ \($0)" })
                         descriptionRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
@@ -102,7 +102,7 @@ private enum InputMode {
     case crypto
 }
 
-extension SolanaBuyTokenSceneModel {
+extension BuyPreparingSceneModel {
     fileprivate var onInputMode: Driver<InputMode> {
         inputDriver
             .map { input in
@@ -140,8 +140,8 @@ extension SolanaBuyTokenSceneModel {
     
     fileprivate var nextStatus: Driver<NextStatus> {
         Driver
-            .combineLatest(inputDriver, minUSDAmount, minSOLAmount)
-            .map { (input, minUSD, minSol) in
+            .combineLatest(inputDriver, minFiatAmount, minCryptoAmount)
+            .map { [weak self] (input, minUSD, minSol) in
                 if minUSD == 0 || minSol == 0 {
                     return NextStatus.init(text: L10n.loading, isEnable: false)
                 }
@@ -153,7 +153,7 @@ extension SolanaBuyTokenSceneModel {
                     return NextStatus.init(text: L10n.continue, isEnable: true)
                 } else {
                     if input.amount < minSol {
-                        return NextStatus.init(text: L10n.minimumPurchaseOfRequired("\(minSol) SOL"), isEnable: false)
+                        return NextStatus.init(text: L10n.minimumPurchaseOfRequired("\(minSol) \(self?.crypto.rawValue.uppercased() ?? "?")"), isEnable: false)
                     }
                     return NextStatus.init(text: L10n.continue, isEnable: true)
                 }

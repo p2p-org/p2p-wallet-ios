@@ -8,9 +8,9 @@ import RxSwift
 extension BuyPreparing {
     class InputFiatView: BECompositionView {
         private let disposeBag = DisposeBag()
-        private let viewModel: SolanaBuyTokenSceneModel
+        private let viewModel: BuyPreparingSceneModel
         
-        init(viewModel: SolanaBuyTokenSceneModel) {
+        init(viewModel: BuyPreparingSceneModel) {
             self.viewModel = viewModel
             super.init()
         }
@@ -62,8 +62,8 @@ extension BuyPreparing {
                     UIView.spacer
                     // Output amount
                     UIStackView(axis: .horizontal) {
-                        UILabel(text: "0.00 SOL").setup { view in
-                            viewModel.outputDriver.map { output in "\(output.amount) SOL" }
+                        UILabel(text: "0.00 \(viewModel.crypto)").setup { view in
+                            viewModel.outputDriver.map { [weak self] output in "\(output.amount) \(self?.viewModel.crypto.rawValue.uppercased() ?? "?")" }
                                 .drive(view.rx.text).disposed(by: disposeBag)
                         }
                         UIImageView(image: .arrowUpDown)

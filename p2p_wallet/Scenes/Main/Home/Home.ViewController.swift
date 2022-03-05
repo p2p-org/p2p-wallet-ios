@@ -91,9 +91,14 @@ extension Home {
             guard let scene = scene else {return}
             switch scene {
             case .buyToken:
-                let vm = BuyRoot.ViewModel()
-                let vc = BuyRoot.ViewController(viewModel: vm)
-                show(vc, sender: nil)
+                present(
+                    BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
+                        let vm = BuyRoot.ViewModel()
+                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
+                        show(vc, sender: nil)
+                    }),
+                    animated: true
+                )
             case .receiveToken:
                 if let pubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let isDevnet = Defaults.apiEndPoint.network == .devnet
