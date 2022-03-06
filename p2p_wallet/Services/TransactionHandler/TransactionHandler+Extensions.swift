@@ -199,8 +199,12 @@ extension TransactionHandler {
                 }
                 
                 // add destination wallet if not exists, event when socket is connected, because socket doesn't handle new wallet
-                else {
+                else if let publicKey = try? SolanaSDK.PublicKey.associatedTokenAddress(
+                    walletAddress: try SolanaSDK.PublicKey(string: transaction.authority),
+                    tokenMintAddress: try SolanaSDK.PublicKey(string: transaction.destinationWallet.mintAddress)
+                ) {
                     var destinationWallet = transaction.destinationWallet
+                    destinationWallet.pubkey = publicKey.base58EncodedString
                     destinationWallet.lamports = transaction.estimatedAmount.toLamport(decimals: destinationWallet.token.decimals)
                     wallets.append(destinationWallet)
                 }
