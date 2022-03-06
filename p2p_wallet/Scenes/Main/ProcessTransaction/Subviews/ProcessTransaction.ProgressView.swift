@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import UIKit
 
-extension PT {
+extension ProcessTransaction {
     final class ProgressView: UIView {
         fileprivate let determinedProgressView = UIProgressView(height: 2)
         private let indeterminedProgressView = IndetermineView(height: 2)
@@ -83,8 +83,8 @@ extension PT {
     }
 }
 
-extension Reactive where Base == PT.ProgressView {
-    var transactionInfo: Binder<PT.TransactionInfo> {
+extension Reactive where Base == ProcessTransaction.ProgressView {
+    var transactionInfo: Binder<PendingTransaction> {
         Binder(base) { view, transactionInfo in
             guard transactionInfo.transactionId != nil else {
                 // indetermine

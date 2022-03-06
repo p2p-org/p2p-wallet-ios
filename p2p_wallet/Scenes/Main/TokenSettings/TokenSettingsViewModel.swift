@@ -79,6 +79,6 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     
     @objc func closeAccount() {
         guard let wallet = wallet else {return}
-        navigationSubject.onNext(.processTransaction(PT.CloseTransaction(solanaSDK: solanaSDK, closingWallet: wallet, reimbursedAmount: 2039280)))
+        navigationSubject.onNext(.processTransaction(ProcessTransaction.CloseTransaction(solanaSDK: solanaSDK, closingWallet: wallet, reimbursedAmount: 2039280)))
     }
 }

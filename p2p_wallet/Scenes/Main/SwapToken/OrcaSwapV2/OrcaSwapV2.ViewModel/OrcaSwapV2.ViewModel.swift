@@ -200,7 +200,7 @@ extension OrcaSwapV2 {
             // show processing scene
             navigationSubject.accept(
                 .processTransaction(
-                    PT.OrcaSwapTransaction(
+                    ProcessTransaction.OrcaSwapTransaction(
                         swapService: swapService,
                         sourceWallet: sourceWallet,
                         destinationWallet: destinationWallet,

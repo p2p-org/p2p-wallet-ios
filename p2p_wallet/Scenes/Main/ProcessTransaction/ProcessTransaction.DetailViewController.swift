@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import BEPureLayout
 
-extension PT {
+extension ProcessTransaction {
     final class DetailViewController: BEScene {
         private let viewModel: PTViewModelType
         

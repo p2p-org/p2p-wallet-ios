@@ -101,8 +101,8 @@ extension OrcaSwapV2 {
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .processTransaction(let transaction):
-                let vm = PT.ViewModel(processingTransaction: transaction)
-                let vc = PT.ViewController(viewModel: vm)
+                let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
+                let vc = ProcessTransaction.ViewController(viewModel: vm)
                 vc.dismissCompletion = { [weak self] in
                     self?.navigationController?.popViewController(animated: true)
                 }
