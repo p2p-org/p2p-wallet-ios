@@ -1,85 +1,199 @@
 //
-//  ProcessTransaction.ViewController.swift
+//  PT.ViewController.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 02/06/2021.
+//  Created by Chung Tran on 24/12/2021.
 //
 
 import Foundation
 import UIKit
-import RxSwift
-
-@objc protocol ProcessTransactionViewControllerDelegate: AnyObject {
-    func processTransactionViewControllerDidComplete(_ vc: UIViewController)
-}
+import BEPureLayout
 
 extension ProcessTransaction {
-    class ViewController: WLIndicatorModalVC {
-        
+    class ViewController: WLModalViewController {
         // MARK: - Dependencies
-        private let viewModel: ProcessTransactionViewModelType
+        private let viewModel: PTViewModelType
         
         // MARK: - Properties
-        weak var delegate: ProcessTransactionViewControllerDelegate?
         
         // MARK: - Initializer
-        init(viewModel: ProcessTransactionViewModelType) {
+        init(viewModel: PTViewModelType) {
             self.viewModel = viewModel
             super.init()
-            modalPresentationStyle = .custom
-            transitioningDelegate = self
         }
         
         // MARK: - Methods
         override func setUp() {
             super.setUp()
-            let rootView = RootView(viewModel: viewModel)
-            rootView.transactionStatusDidChange = { [weak self] in
-                self?.forceResizeModal()
-            }
-            containerView.addSubview(rootView)
-            rootView.autoPinEdgesToSuperviewEdges()
-            
-            if let gesture = swipeGesture {
-                view.removeGestureRecognizer(gesture)
+            viewModel.sendAndObserveTransaction()
+        }
+        
+        override func build() -> UIView {
+            BEContainer {
+                BEVStack(spacing: 4) {
+                    // The transaction is being processed
+                    UILabel(
+                        text: nil,
+                        textSize: 20,
+                        weight: .semibold,
+                        numberOfLines: 0,
+                        textAlignment: .center
+                    )
+                        .setup { label in
+                            let originalText = viewModel.isSwapping ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed
+                            
+                            viewModel.transactionInfoDriver
+                                .map { [weak self] info -> String in
+                                    switch info.status {
+                                    case .sending, .confirmed:
+                                        return originalText
+                                    case .error:
+                                        return L10n.theTransactionHasBeenRejected
+                                    case .finalized:
+                                        switch self?.viewModel.processingTransaction {
+                                        case let transaction as SendTransaction:
+                                            return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
+                                        case let transaction as OrcaSwapTransaction:
+                                            return L10n.swappedSuccessfully(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
+                                        default:
+                                            fatalError()
+                                        }
+                                    }
+                                }
+                                .drive(label.rx.text)
+                                .disposed(by: disposeBag)
+                        }
+                        .padding(.init(x: 18, y: 0))
+                    
+                    // Detail
+                    UILabel(
+                        text: "0.00227631 renBTC → DkmT...JnBw",
+                        textSize: 15,
+                        textColor: .textSecondary,
+                        numberOfLines: 0,
+                        textAlignment: .center
+                    )
+                        .setup { label in
+                            label.text = viewModel.getMainDescription()
+                        }
+                        .padding(.init(all: 18, excludingEdge: .top))
+                    
+                    // Loader
+                    BEZStack {
+                        // Process indicator
+                        BEZStackPosition {
+                            ProgressView()
+                                .setup {view in
+                                    viewModel.transactionInfoDriver
+                                        .drive(view.rx.transactionInfo)
+                                        .disposed(by: disposeBag)
+                                }
+                                .centered(.vertical)
+                        }
+                        
+                        // Icon
+                        BEZStackPosition {
+                            UIImageView(width: 44, height: 44, image: .squircleTransactionProcessing)
+                                .setup { imageView in
+                                    viewModel.transactionInfoDriver
+                                        .map {$0.status}
+                                        .map {status -> UIImage in
+                                            switch status {
+                                            case .sending, .confirmed:
+                                                return .squircleTransactionProcessing
+                                            case .finalized:
+                                                return .squircleTransactionCompleted
+                                            case .error:
+                                                return .squircleTransactionError
+                                            }
+                                        }
+                                        .drive(imageView.rx.image)
+                                        .disposed(by: disposeBag)
+                                }
+                                .centered(.horizontal)
+                        }
+                    }
+                        .padding(.init(only: .bottom, inset: 18))
+                    
+                    // Transaction ID
+                    BEHStack(spacing: 4, alignment: .top, distribution: .fill) {
+                        UILabel(text: L10n.transactionID, textSize: 15, textColor: .textSecondary)
+                        
+                        BEVStack(spacing: 4, alignment: .fill, distribution: .fill) {
+                            BEHStack(spacing: 4, alignment: .center, distribution: .fill) {
+                                UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
+                                    .setup { label in
+                                        viewModel.transactionInfoDriver
+                                            .map {$0.transactionId?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)}
+                                            .drive(label.rx.text)
+                                            .disposed(by: disposeBag)
+                                    }
+                                UIImageView(width: 16, height: 16, image: .transactionShowInExplorer, tintColor: .textSecondary)
+                            }
+                            UILabel(text: L10n.tapToViewInExplorer, textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .right)
+                        }
+                            .onTap { [weak self] in
+                                self?.navigate(to: .explorer)
+                            }
+                    }
+                        .padding(.init(top: 0, left: 18, bottom: 36, right: 18))
+                        .setup { view in
+                            viewModel.transactionInfoDriver
+                                .map {$0.transactionId == nil}
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                            
+                            viewModel.transactionInfoDriver
+                                .map {$0.transactionId == nil}
+                                .drive(onNext: { [weak self] _ in
+                                    UIView.animate(withDuration: 0.3) {
+                                        self?.updatePresentationLayout()
+                                    }
+                                })
+                                .disposed(by: disposeBag)
+                        }
+                    
+                    // Buttons
+                    BEVStack(spacing: 10) {
+                        WLStepButton.main(image: .info, text: L10n.showTransactionDetails)
+                            .onTap { [weak self] in
+                                self?.viewModel.navigate(to: .detail)
+                            }
+                        WLStepButton.sub(text: L10n.makeAnotherTransaction)
+                            .setup { button in
+                                viewModel.transactionInfoDriver
+                                    .map {$0.status.error == nil}
+                                    .map {$0 ? L10n.makeAnotherTransaction: L10n.tryAgain}
+                                    .drive(button.rx.text)
+                                    .disposed(by: disposeBag)
+                            }
+                            .onTap { [weak self] in
+                                self?.viewModel.makeAnotherTransactionOrRetry()
+                            }
+                    }
+                        .padding(.init(x: 18, y: 0))
+                }
+                    .padding(.init(x: 0, y: 18))
             }
         }
         
         override func bind() {
             super.bind()
-            viewModel.navigatableSceneDriver
+            viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
         }
         
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
+            guard let scene = scene else {return}
             switch scene {
-            case .showExplorer(let transactionID):
-                self.showWebsite(url: "https://explorer.solana.com/tx/" + transactionID)
-            case .done:
-                if let delegate = delegate {
-                    delegate.processTransactionViewControllerDidComplete(self)
-                } else {
-                    let pc = presentingViewController
-                    self.dismiss(animated: true) {
-                        pc?.dismiss(animated: true, completion: nil)
-                    }
-                }
-            case .cancel:
-                self.dismiss(animated: true, completion: nil)
-            case .none:
-                break
+            case .detail:
+                let vc = DetailViewController(viewModel: viewModel)
+                present(vc, animated: true, completion: nil)
+            case .explorer:
+                showWebsite(url: "https://explorer.solana.com/tx/" + (viewModel.transactionID ?? ""))
             }
         }
-    }
-}
-
-extension ProcessTransaction.ViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        let pc = FlexibleHeightPresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
-        // disable dismissing on dimmingView
-        pc.dimmingView.gestureRecognizers?.forEach {pc.dimmingView.removeGestureRecognizer($0)}
-        return pc
     }
 }
