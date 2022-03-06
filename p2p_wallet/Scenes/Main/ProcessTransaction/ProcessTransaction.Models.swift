@@ -128,6 +128,7 @@ extension ProcessTransaction {
         let amount: SolanaSDK.Lamports
         let payingFeeWallet: Wallet?
         let feeInSOL: UInt64
+        let feeInToken: UInt64?
         let isSimulation: Bool
         
         var mainDescription: String {
@@ -151,8 +152,6 @@ extension ProcessTransaction {
 
 // MARK: - Transaction status
 extension ProcessTransaction {
-    
-    
     enum Error: Swift.Error {
         case notEnoughNumberOfConfirmations
     }
