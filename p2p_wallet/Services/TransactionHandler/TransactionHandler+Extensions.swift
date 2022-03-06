@@ -15,19 +15,14 @@ extension TransactionHandler {
         processingTransaction: ProcessingTransactionType
     ) {
         processingTransaction.createRequest()
-            .do(onSuccess: { [weak self] _ in
-                DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
-                }
-            }, onError: { [weak self] error in
-                DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.error(error))
-                }
-            })
-        
+            .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] transactionID in
                 guard let self = self else {return}
                 
+                // show notification
+                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
+                
+                // update status
                 self.updateTransactionAtIndex(index) { _ in
                     .init(
                         transactionId: transactionID,
@@ -37,9 +32,15 @@ extension TransactionHandler {
                     )
                 }
                 
+                // observe confirmations
                 self.observe(index: index, transactionId: transactionID)
             }, onFailure: { [weak self] error in
                 guard let self = self else {return}
+                
+                // update status
+                self.notificationsService.showInAppNotification(.error(error))
+                
+                // mark transaction as failured
                 self.updateTransactionAtIndex(index) { currentValue in
                     var info = currentValue
                     info.status = .error(error)
@@ -49,27 +50,8 @@ extension TransactionHandler {
             .disposed(by: disposeBag)
     }
     
-    /// Update transaction
-    @discardableResult
-    func updateTransactionAtIndex(
-        _ index: TransactionIndex,
-        update: (PendingTransaction) -> PendingTransaction
-    ) -> Bool {
-        var value = transactionsSubject.value
-        
-        if let currentValue = value[safe: index] {
-            let newValue = update(currentValue)
-            value[index] = newValue
-            locker.lock()
-            transactionsSubject.accept(value)
-            locker.unlock()
-            return true
-        }
-        
-        return false
-    }
-    
     // MARK: - Helpers
+    /// Observe confirmation statuses of given transaction
     private func observe(index: TransactionIndex, transactionId: String) {
         let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
         
@@ -112,5 +94,25 @@ extension TransactionHandler {
                 }
             })
             .disposed(by: disposeBag)
+    }
+    
+    /// Update transaction
+    @discardableResult
+    private func updateTransactionAtIndex(
+        _ index: TransactionIndex,
+        update: (PendingTransaction) -> PendingTransaction
+    ) -> Bool {
+        var value = transactionsSubject.value
+        
+        if let currentValue = value[safe: index] {
+            let newValue = update(currentValue)
+            value[index] = newValue
+            locker.lock()
+            transactionsSubject.accept(value)
+            locker.unlock()
+            return true
+        }
+        
+        return false
     }
 }
