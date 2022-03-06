@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-enum BuyToken {}
+struct BuyProcessing {}
 
 extension WLSpinnerView: BuyTokenWidgetLoadingView {
     public func startLoading() {

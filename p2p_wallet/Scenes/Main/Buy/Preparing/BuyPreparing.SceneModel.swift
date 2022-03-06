@@ -1,5 +1,5 @@
 //
-//  SolanaBuyToken.SceneModel.swift
+//  Preparing.SceneModel.swift
 //  p2p_wallet
 //
 //  Created by Giang Long Tran on 15.12.21.
@@ -10,7 +10,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-protocol SolanaBuyTokenSceneModel: BESceneModel {
+protocol BuyPreparingSceneModel: BESceneModel {
     func setAmount(value: Double?)
     func swap()
     func back()
@@ -18,25 +18,46 @@ protocol SolanaBuyTokenSceneModel: BESceneModel {
     
     var inputDriver: Driver<Buy.ExchangeInput> { get }
     var outputDriver: Driver<Buy.ExchangeOutput> { get }
-    var minUSDAmount: Driver<Double> { get }
-    var minSOLAmount: Driver<Double> { get }
+    var minFiatAmount: Driver<Double> { get }
+    var minCryptoAmount: Driver<Double> { get }
     var exchangeRateDriver: Driver<Buy.ExchangeRate?> { get }
     var errorDriver: Driver<String?> { get }
     var input: Buy.ExchangeInput { get }
+    var crypto: Buy.CryptoCurrency { get }
 }
 
-extension SolanaBuyToken {
-    class SceneModel: SolanaBuyTokenSceneModel {
+extension BuyPreparing {
+    class SceneModel: BuyPreparingSceneModel {
         private let exchangeService: Buy.ExchangeService
         private let buyViewModel: BuyViewModelType
         let disposeBag = DisposeBag()
+    
+        let crypto: Buy.CryptoCurrency
+        private let errorRelay = BehaviorRelay<String?>(value: nil)
+        private let inputRelay = BehaviorRelay<Buy.ExchangeInput>(value: .init(amount: 0, currency: Buy.FiatCurrency.usd))
+        private let outputRelay: BehaviorRelay<Buy.ExchangeOutput>
+        private let minFiatAmountsRelay = BehaviorRelay<Double>(value: 0)
+        private let minCryptoAmountsRelay = BehaviorRelay<Double>(value: 0)
+        private let exchangeRateRelay = BehaviorRelay<Buy.ExchangeRate?>(value: nil)
         
-        init(buyViewModel: BuyViewModelType, exchangeService: Buy.ExchangeService) {
+        init(crypto: Buy.CryptoCurrency, buyViewModel: BuyViewModelType, exchangeService: Buy.ExchangeService) {
+            self.crypto = crypto
             self.buyViewModel = buyViewModel
             self.exchangeService = exchangeService
             
+            outputRelay = BehaviorRelay<Buy.ExchangeOutput>(
+                value: .init(
+                    amount: 0,
+                    currency: crypto,
+                    processingFee: 0,
+                    networkFee: 0,
+                    purchaseCost: 0,
+                    total: 0
+                )
+            )
+            
             exchangeService
-                .getExchangeRate(from: .usd, to: .sol)
+                .getExchangeRate(from: .usd, to: crypto)
                 .asObservable()
                 .bind(to: exchangeRateRelay)
                 .disposed(by: disposeBag)
@@ -44,19 +65,19 @@ extension SolanaBuyToken {
             exchangeService
                 .getMinAmounts(
                     Buy.FiatCurrency.usd,
-                    Buy.CryptoCurrency.sol
+                    crypto
                 )
-                .subscribe(onSuccess: { [weak self] usd, sol in
-                    self?.minUSDAmountsRelay.accept(usd)
-                    self?.minSolAmountsRelay.accept(sol)
+                .subscribe(onSuccess: { [weak self] fiatMinAmount, cryptoMinAmount in
+                    self?.minCryptoAmountsRelay.accept(fiatMinAmount)
+                    self?.minFiatAmountsRelay.accept(cryptoMinAmount)
                 })
                 .disposed(by: disposeBag)
             
             inputRelay
                 .flatMap { [weak self] input -> Single<Buy.ExchangeOutput> in
-                    guard let self = self else { return .error(NSError(domain: "SolanaBuyToken", code: -1)) }
+                    guard let self = self else { return .error(NSError(domain: "Preparing", code: -1)) }
                     if input.amount == 0 {
-                        return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
+                        return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, purchaseCost: 0, total: 0))
                     }
                     return self.exchangeService
                         .convert(input: input, to: input.currency is Buy.FiatCurrency ? Buy.CryptoCurrency.sol : Buy.FiatCurrency.usd)
@@ -75,19 +96,12 @@ extension SolanaBuyToken {
                             } else {
                                 self.errorRelay.accept(error.localizedDescription)
                             }
-                            return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, total: 0))
+                            return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, purchaseCost: 0, total: 0))
                         }
                 }
                 .bind(to: outputRelay)
                 .disposed(by: disposeBag)
         }
-        
-        private let errorRelay = BehaviorRelay<String?>(value: nil)
-        private let inputRelay = BehaviorRelay<Buy.ExchangeInput>(value: .init(amount: 0, currency: Buy.FiatCurrency.usd))
-        private let outputRelay = BehaviorRelay<Buy.ExchangeOutput>(value: .init(amount: 0, currency: Buy.CryptoCurrency.sol, processingFee: 0, networkFee: 0, total: 0))
-        private let minSolAmountsRelay = BehaviorRelay<Double>(value: 0)
-        private let minUSDAmountsRelay = BehaviorRelay<Double>(value: 0)
-        private let exchangeRateRelay = BehaviorRelay<Buy.ExchangeRate?>(value: nil)
         
         func setAmount(value: Double?) {
             if value == input.amount { return }
@@ -116,12 +130,14 @@ extension SolanaBuyToken {
         
         var errorDriver: Driver<String?> { errorRelay.asDriver() }
         
-        func next() { buyViewModel.navigate(to: .buyToken(crypto: .sol, amount: outputRelay.value.total)) }
+        func next() { buyViewModel.navigate(to: .buyToken(crypto: crypto, amount: outputRelay.value.total)) }
         
         func back() { buyViewModel.navigate(to: .back) }
         
-        var minUSDAmount: Driver<Double> { minUSDAmountsRelay.asDriver() }
+        var minFiatAmount: Driver<Double> { minCryptoAmountsRelay.asDriver() }
         
-        var minSOLAmount: Driver<Double> { minSolAmountsRelay.asDriver() }
+        var minCryptoAmount: Driver<Double> { minFiatAmountsRelay.asDriver() }
+        
+        
     }
 }
