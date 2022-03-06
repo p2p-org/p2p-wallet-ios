@@ -113,9 +113,7 @@ extension TransactionHandler {
                numberOfConfirmations > 0
             {
                 // manually update balances if socket is not connected
-                if !socket.isConnected {
-                    updateRepository(with: newValue.rawTransaction)
-                }
+                updateRepository(with: newValue.rawTransaction)
                 
                 // mark as written
                 newValue.writtenToRepository = true
@@ -133,6 +131,8 @@ extension TransactionHandler {
     private func updateRepository(with rawTransaction: ProcessingTransactionType) {
         switch rawTransaction {
         case let transaction as ProcessTransaction.SendTransaction:
+            guard !socket.isConnected else {return}
+            
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
                 
@@ -156,6 +156,8 @@ extension TransactionHandler {
                 return wallets
             }
         case let transaction as ProcessTransaction.CloseTransaction:
+            guard !socket.isConnected else {return}
+            
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
                 var reimbursedAmount = transaction.reimbursedAmount
@@ -181,17 +183,22 @@ extension TransactionHandler {
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
                 
-                // update source wallet
-                if let index = wallets.firstIndex(where: {$0.pubkey == transaction.sourceWallet.pubkey}) {
+                // update source wallet if socket is not connected
+                if !socket.isConnected,
+                    let index = wallets.firstIndex(where: {$0.pubkey == transaction.sourceWallet.pubkey})
+                {
                     wallets[index].decreaseBalance(diffInLamports: transaction.amount.toLamport(decimals: transaction.sourceWallet.token.decimals))
                 }
                 
                 // update destination wallet if exists
                 if let index = wallets.firstIndex(where: {$0.pubkey == transaction.destinationWallet.pubkey}) {
-                    wallets[index].increaseBalance(diffInLamports: transaction.estimatedAmount.toLamport(decimals: transaction.destinationWallet.token.decimals))
+                    // update only if socket is not connected
+                    if !socket.isConnected {
+                        wallets[index].increaseBalance(diffInLamports: transaction.estimatedAmount.toLamport(decimals: transaction.destinationWallet.token.decimals))
+                    }
                 }
                 
-                // add destination wallet if not exists
+                // add destination wallet if not exists, event when socket is connected, because socket doesn't handle new wallet
                 else {
                     var destinationWallet = transaction.destinationWallet
                     destinationWallet.lamports = transaction.estimatedAmount.toLamport(decimals: destinationWallet.token.decimals)
@@ -199,22 +206,24 @@ extension TransactionHandler {
                 }
                 
                 // update paying wallet
-                for fee in transaction.fees {
-                    switch fee.type {
-                    case .liquidityProviderFee:
-                        break
-                    case .accountCreationFee:
-                        if let index = wallets.firstIndex(where: {$0.mintAddress == fee.token.address}) {
-                            wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                if !socket.isConnected {
+                    for fee in transaction.fees {
+                        switch fee.type {
+                        case .liquidityProviderFee:
+                            break
+                        case .accountCreationFee:
+                            if let index = wallets.firstIndex(where: {$0.mintAddress == fee.token.address}) {
+                                wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                            }
+                        case .orderCreationFee:
+                            break
+                        case .transactionFee:
+                            if let index = wallets.firstIndex(where: {$0.mintAddress == fee.token.address}) {
+                                wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                            }
+                        case .depositWillBeReturned:
+                            break
                         }
-                    case .orderCreationFee:
-                        break
-                    case .transactionFee:
-                        if let index = wallets.firstIndex(where: {$0.mintAddress == fee.token.address}) {
-                            wallets[index].decreaseBalance(diffInLamports: fee.lamports)
-                        }
-                    case .depositWillBeReturned:
-                        break
                     }
                 }
                 
