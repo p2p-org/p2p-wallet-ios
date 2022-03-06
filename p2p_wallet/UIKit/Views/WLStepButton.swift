@@ -192,7 +192,7 @@ extension Reactive where Base: WLStepButton {
 
 //    var tapGesture: Any {
 //        base.rx.event.bind(onNext: { recognizer in
-//            print("touches: \(recognizer.numberOfTouches)") //or whatever you like
+//            debugPrint("touches: \(recognizer.numberOfTouches)") //or whatever you like
 //        })
 //    }
 }

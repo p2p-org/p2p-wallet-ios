@@ -28,7 +28,6 @@ extension RenVM.BurnAndRelease {
         private let solanaClient: RenVMSolanaAPIClientType
         private let account: SolanaSDK.Account
         private var transactionStorage: RenVMBurnAndReleaseTransactionStorageType
-        private let transactionHandler: TransactionHandler
         
         // MARK: - Properties
         private var releasingTxs = [BurnDetails]()
@@ -42,14 +41,12 @@ extension RenVM.BurnAndRelease {
             rpcClient: RenVMRpcClientType,
             solanaClient: RenVMSolanaAPIClientType,
             account: SolanaSDK.Account,
-            transactionStorage: RenVMBurnAndReleaseTransactionStorageType,
-            transactionHandler: TransactionHandler
+            transactionStorage: RenVMBurnAndReleaseTransactionStorageType
         ) {
             self.rpcClient = rpcClient
             self.solanaClient = solanaClient
             self.account = account
             self.transactionStorage = transactionStorage
-            self.transactionHandler = transactionHandler
             self.burnAndReleaseSubject = .init(
                 request: .error(RenVM.Error.unknown)
             )

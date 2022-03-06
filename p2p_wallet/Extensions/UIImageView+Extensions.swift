@@ -46,7 +46,7 @@ private struct ImgProcessor: ImageProcessor {
         
         switch item {
         case .image(let image):
-            print("already an image")
+            debugPrint("already an image")
             return image
         case .data(let data):
             return nil

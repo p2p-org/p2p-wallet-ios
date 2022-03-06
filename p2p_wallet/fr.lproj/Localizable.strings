@@ -688,6 +688,13 @@
 "higher volatility" = "volatilité plus élevée";
 "This address accepts only %@. You may lose assets by sending another coin." = "Cette adresse accepte uniquement %@.  Vous pouvez perdre des actifs en envoyant une autre pièce.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Code d'accès non défini. Nous ne pouvons donc pas vérifier que vous êtes le propriétaire de l'appareil.";
+"The transaction is being processed" = "La transaction est en cours de traitement";
+"Make another transaction" = "Faire une autre opération";
+"Show swap details" = "Afficher les détails de l'échange";
+"Tap to view in explorer" = "Appuyez pour afficher dans l'explorateur";
+"%@ is successfully sent" = "%@ est envoyé avec succès";
+"The swap is being processed" = "L'échange est en cours de traitement";
+"%@ is successfully swapped to %@" = "%@ est remplacé avec succès par %@";
 "Statuses received" = "Statuts reçus";
 "Statuses received (%@)" = "Statuts reçus (%@)";
 "The last one: " = "Le dernier:";
@@ -743,5 +750,9 @@
 "Don't miss out on important updates" = "Ne manquez pas les mises à jour importantes";
 "Turn on notifications" = "Activer les notifications";
 "Pay the %@ fee with" = "Payez les frais %@ avec";
+"The transaction has been rejected" = "La transaction a été rejetée";
+"%@ was sent successfully" = "%@ a été envoyé avec succès";
 "The price slippage was set at %@" = "Le glissement de prix a été fixé à %@";
 "Minimum purchase of %@ required." = "Achat minimum de %@ requis.";
+"Transaction has been finalized" = "La transaction a été finalisée";
+"Transaction has been sent" = "La transaction a été envoyée";
