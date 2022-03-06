@@ -690,6 +690,13 @@
 "higher volatility" = "более высокая волатильность";
 "This address accepts only %@. You may lose assets by sending another coin." = "Этот адрес принимает только %@.  Вы можете потерять активы, отправив еще одну монету.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Пароль не установлен. Поэтому мы не можем подтвердить, что вы являетесь владельцем устройства.";
+"The transaction is being processed" = "Транзакция обрабатывается";
+"Make another transaction" = "Сделайте еще одну транзакцию";
+"Show swap details" = "Показать сведения о свопе";
+"Tap to view in explorer" = "Нажмите, чтобы просмотреть в explorer";
+"%@ is successfully sent" = "%@ успешно отправлено";
+"The swap is being processed" = "Своп обрабатывается";
+"%@ is successfully swapped to %@" = "%@ успешно заменен на %@";
 "Statuses received" = "Статусы получены";
 "Statuses received (%@)" = "Полученные статусы (%@)";
 "The last one: " = "Последний:";
@@ -745,5 +752,9 @@
 "Don't miss out on important updates" = "Не пропустите важные обновления";
 "Turn on notifications" = "Включить уведомления";
 "Pay the %@ fee with" = "Оплатите комиссию %@ с помощью";
+"The transaction has been rejected" = "Транзакция была отклонена";
+"%@ was sent successfully" = "%@ успешно отправлен";
 "The price slippage was set at %@" = "Проскальзывание цены установлено на %@";
 "Minimum purchase of %@ required." = "Минимальная покупка %@ требуется.";
+"Transaction has been finalized" = "Транзакция завершена";
+"Transaction has been sent" = "Транзакция отправлена";

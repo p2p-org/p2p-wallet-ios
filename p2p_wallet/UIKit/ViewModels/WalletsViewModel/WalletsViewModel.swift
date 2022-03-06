@@ -16,8 +16,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Dependencies
     @Injected private var solanaSDK: SolanaSDK
     @Injected private var pricesService: PricesServiceType
-    @Injected private var accountNotificationsRepository: AccountNotificationsRepository
-    @WeakLazyInjected private var processingTransactionRepository: ProcessingTransactionsRepository?
+    @Injected private var socket: SocketType
+    @WeakLazyInjected private var transactionHandler: TransactionHandlerType?
     
     // MARK: - Properties
     private var defaultsDisposables = [DefaultsDisposable]()
@@ -55,7 +55,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .disposed(by: disposeBag)
         
         // observe tokens' balance
-        accountNotificationsRepository.observeAllAccountsNotifications()
+        socket.observeAllAccountsNotifications()
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: {[weak self] notification in
                 self?.handleAccountNotification(notification)
             })
@@ -71,7 +72,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .map {[weak self] _ in self?.getWallets() ?? []}
             .subscribe(onNext: {[weak self] wallets in
                 for wallet in wallets where wallet.pubkey != nil {
-                    self?.accountNotificationsRepository.subscribeAccountNotification(account: wallet.pubkey!, isNative: wallet.isNativeSOL)
+                    self?.socket.subscribeAccountNotification(account: wallet.pubkey!, isNative: wallet.isNativeSOL)
                 }
             })
             .disposed(by: disposeBag)
@@ -144,7 +145,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     
     override func reload() {
         // disable refreshing when there is a transaction in progress
-        if processingTransactionRepository?.areSomeTransactionsInProgress() == true
+        if transactionHandler?.areSomeTransactionsInProgress() == true
         {
             return
         }

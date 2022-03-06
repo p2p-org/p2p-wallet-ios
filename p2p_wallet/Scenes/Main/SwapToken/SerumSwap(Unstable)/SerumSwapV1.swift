@@ -16,7 +16,7 @@ struct SerumSwapV1 {
         case settings
         case chooseSlippage
         case swapFees
-        case processTransaction(request: Single<ProcessTransactionResponseType>, transactionType: ProcessTransaction.TransactionType)
+        case processTransaction
     }
 }
 
@@ -28,5 +28,4 @@ protocol SwapTokenScenesFactory {
         selectedWallet: Wallet?,
         handler: WalletDidSelectHandler
     ) -> ChooseWallet.ViewController
-    func makeProcessTransactionViewController(transactionType: ProcessTransaction.TransactionType, request: Single<ProcessTransactionResponseType>) -> ProcessTransaction.ViewController
 }
