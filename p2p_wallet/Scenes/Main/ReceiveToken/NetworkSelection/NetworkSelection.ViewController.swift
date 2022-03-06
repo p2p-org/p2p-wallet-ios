@@ -78,7 +78,7 @@ extension ReceiveToken {
                                             }, onError: { [weak self] error in
                                                 guard let self = self else {return}
                                                 #if DEBUG
-                                                print("Create renBTC error: \(error)")
+                                                debugPrint("Create renBTC error: \(error)")
                                                 #endif
                                                 self.hideHud()
                                                 self.showAlert(title: L10n.error.uppercaseFirst, message: L10n.couldNotCreateRenBTCTokenPleaseTryAgainLater)

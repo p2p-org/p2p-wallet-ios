@@ -69,12 +69,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func applicationWillResignActive(_ application: UIApplication) {
-        print("Lock")
+        debugPrint("Lock")
         lockViewController?.isLocked = true
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
-        print("Unlock")
+        debugPrint("Unlock")
         lockViewController?.isLocked = false
     }
     
@@ -84,13 +84,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
-        print("Device Token: \(token)")
+        debugPrint("Device Token: \(token)")
     }
     
     func application(
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
-        print("Failed to register: \(error)")
+        debugPrint("Failed to register: \(error)")
     }
 }

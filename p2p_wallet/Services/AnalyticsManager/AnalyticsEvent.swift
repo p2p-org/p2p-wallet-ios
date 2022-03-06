@@ -88,7 +88,7 @@ enum AnalyticsEvent: MirrorableEnum {
     case sendAddressKeydown
     case sendQrScanning
     case sendSendClick(tokenTicker: String, sum: Double)
-    case sendDoneClick(txStatus: String)
+    case sendMakeAnotherTransactionClick(txStatus: String)
     case sendExplorerClick(txStatus: String)
     case sendTryAgainClick(error: String)
     case sendCancelClick(error: String)
@@ -106,7 +106,7 @@ enum AnalyticsEvent: MirrorableEnum {
     case swapSwapFeesClick
     case swapSlippageKeydown(slippage: Double)
     case swapSwapClick(tokenA: String, tokenB: String, sumA: Double, sumB: Double)
-    case swapDoneClick(txStatus: String)
+    case swapMakeAnotherTransactionClick(txStatus: String)
     case swapExplorerClick(txStatus: String)
     case swapTryAgainClick(error: String)
     case swapCancelClick(error: String)

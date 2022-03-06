@@ -42,7 +42,6 @@ extension RenVM.LockAndMint {
         private let solanaClient: RenVMSolanaAPIClientType
         private let account: SolanaSDK.Account
         private let sessionStorage: RenVMLockAndMintSessionStorageType
-        private let transactionHandler: TransactionHandler
         @Injected private var notificationsService: NotificationsServiceType
         
         // MARK: - Properties
@@ -65,14 +64,12 @@ extension RenVM.LockAndMint {
             rpcClient: RenVMRpcClientType,
             solanaClient: RenVMSolanaAPIClientType,
             account: SolanaSDK.Account,
-            sessionStorage: RenVMLockAndMintSessionStorageType,
-            transactionHandler: TransactionHandler
+            sessionStorage: RenVMLockAndMintSessionStorageType
         ) {
             self.rpcClient = rpcClient
             self.solanaClient = solanaClient
             self.account = account
             self.sessionStorage = sessionStorage
-            self.transactionHandler = transactionHandler
             self.minimumTransactionAmountSubject = .init(
                 request: rpcClient.getTransactionFee(mintTokenSymbol: mintTokenSymbol)
                     .map {$0.convertToBalance(decimals: 8)}
@@ -249,7 +246,7 @@ extension RenVM.LockAndMint {
                 .flatMap {[weak self] response -> Single<(amountOut: String?, signature: String)> in
                     guard let self = self else {throw RenVM.Error.unknown}
                     Logger.log(message: "renBTC event mint response: \(response)", event: .info)
-                    return self.transactionHandler.observeTransactionCompletion(signature: response.signature)
+                    return self.solanaClient.waitForConfirmation(signature: response.signature)
                         .andThen(.just(response))
                 }
                 .observe(on: MainScheduler.instance)

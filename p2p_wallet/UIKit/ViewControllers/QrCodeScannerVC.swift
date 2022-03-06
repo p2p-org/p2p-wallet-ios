@@ -74,7 +74,7 @@ class QrCodeScannerVC: BaseVC {
             back()
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
-        print(code)
+        debugPrint(code)
     }
 
     override var prefersStatusBarHidden: Bool {
@@ -218,7 +218,7 @@ extension QrCodeScannerVC {
 
                     if UIApplication.shared.canOpenURL(settingsUrl) {
                         UIApplication.shared.open(settingsUrl, completionHandler: { (success) in
-                            print("Settings opened: \(success)") // Prints true
+                            debugPrint("Settings opened: \(success)") // Prints true
                         })
                     }
                 } else {
