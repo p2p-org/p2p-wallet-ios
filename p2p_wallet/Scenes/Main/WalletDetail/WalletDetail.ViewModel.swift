@@ -31,7 +31,6 @@ extension WalletDetail {
         // MARK: - Dependencies
         @Injected var walletsRepository: WalletsRepository
         @Injected private var pricesService: PricesServiceType
-        @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
         @Injected private var transactionsRepository: TransactionsRepository
         @Injected private var notificationsRepository: WLNotificationsRepository
         private let pubkey: String
