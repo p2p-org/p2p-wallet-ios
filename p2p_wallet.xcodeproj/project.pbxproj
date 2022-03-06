@@ -46,6 +46,7 @@
 		3BCEED5627D30A1D00BA9110 /* ProcessTransaction.ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5527D30A1D00BA9110 /* ProcessTransaction.ProgressView.swift */; };
 		3BCEED5927D32C2600BA9110 /* TransactionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */; };
 		3BCEED5D27D4737600BA9110 /* PendingTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */; };
+		3BCEED5F27D475BC00BA9110 /* TransactionHandler+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */; };
 		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
 		410DCFB4276C8251004EA4D6 /* ReserveNameKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */; };
 		4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1662746272400352CDF /* EnterSeedInfo.swift */; };
@@ -589,6 +590,7 @@
 		3BCEED5527D30A1D00BA9110 /* ProcessTransaction.ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ProgressView.swift; sourceTree = "<group>"; };
 		3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHandler.swift; sourceTree = "<group>"; };
 		3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingTransaction.swift; sourceTree = "<group>"; };
+		3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionHandler+Extensions.swift"; sourceTree = "<group>"; };
 		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
 		3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveNameKind.swift; sourceTree = "<group>"; };
@@ -1247,6 +1249,7 @@
 			isa = PBXGroup;
 			children = (
 				3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */,
+				3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */,
 			);
 			path = TransactionHandler;
 			sourceTree = "<group>";
@@ -3154,6 +3157,7 @@
 				BC5140C2272ABC0800DB84BD /* Home.ViewModel.swift in Sources */,
 				4114D16C2746272400352CDF /* EnterSeedInfo.ViewModel.swift in Sources */,
 				3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */,
+				3BCEED5F27D475BC00BA9110 /* TransactionHandler+Extensions.swift in Sources */,
 				BC65E170261E9FB600E436C7 /* Defi.swift in Sources */,
 				41CA05752754725200953322 /* ReserveName.swift in Sources */,
 				BCD5E770255130DD00F51299 /* News.swift in Sources */,

@@ -20,17 +20,18 @@ protocol TransactionHandlerType {
 }
 
 class TransactionHandler: TransactionHandlerType {
-    @Injected private var notificationsService: NotificationsServiceType
-    @Injected private var apiClient: ProcessTransactionAPIClient
-    @Injected private var walletsRepository: WalletsRepository
-    @Injected private var pricesService: PricesServiceType
+    @Injected var notificationsService: NotificationsServiceType
+    @Injected var apiClient: ProcessTransactionAPIClient
+    @Injected var walletsRepository: WalletsRepository
+    @Injected var pricesService: PricesServiceType
     
-    private let locker = NSLock()
-    private let disposeBag = DisposeBag()
-    private let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
+    let locker = NSLock()
+    let disposeBag = DisposeBag()
+    let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
     
-    func sendTransaction(_ processingTransaction: ProcessingTransactionType) -> TransactionIndex
-    {
+    func sendTransaction(
+        _ processingTransaction: ProcessingTransactionType
+    ) -> TransactionIndex {
         // get index to return
         let txIndex = transactionsSubject.value.count
         
@@ -47,8 +48,9 @@ class TransactionHandler: TransactionHandlerType {
         return txIndex
     }
     
-    func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PendingTransaction?>
-    {
+    func observeTransaction(
+        transactionIndex: TransactionIndex
+    ) -> Observable<PendingTransaction?> {
         transactionsSubject.map {$0[safe: transactionIndex]}
     }
     
@@ -56,38 +58,19 @@ class TransactionHandler: TransactionHandlerType {
         transactionsSubject.value.contains(where: {$0.status.isProcessing})
     }
     
-    func observeProcessingTransactions(forAccount account: String) -> Observable<[SolanaSDK.ParsedTransaction]> {
+    func observeProcessingTransactions(
+        forAccount account: String
+    ) -> Observable<[SolanaSDK.ParsedTransaction]> {
         transactionsSubject
             .map {[weak self] _ in self?.getProccessingTransactions(of: account) ?? []}
             .asObservable()
     }
     
-    func getProccessingTransactions(of account: String) -> [SolanaSDK.ParsedTransaction] {
-        let pendingTransactions = transactionsSubject.value
-            .filter { pt in
-                switch pt.rawTransaction {
-                case let transaction as ProcessTransaction.SendTransaction:
-                    if transaction.sender.pubkey == account ||
-                        transaction.receiver.address == account ||
-                        transaction.authority == account
-                    {
-                        return true
-                    }
-                case let transaction as ProcessTransaction.OrcaSwapTransaction:
-                    if transaction.sourceWallet.pubkey == account ||
-                        transaction.destinationWallet.pubkey == account ||
-                        transaction.authority == account
-                    {
-                        return true
-                    }
-                default:
-                    break
-                }
-                return false
-            }
-        
-        return pendingTransactions
-            .map { pt in
+    func getProccessingTransactions(
+        of account: String
+    ) -> [SolanaSDK.ParsedTransaction] {
+        transactionsSubject.value
+            .compactMap { pt -> SolanaSDK.ParsedTransaction? in
                 // status
                 let status: SolanaSDK.ParsedTransaction.Status
                 
@@ -101,7 +84,7 @@ class TransactionHandler: TransactionHandlerType {
                 case .error(let error):
                     status = .error(error.readableDescription)
                 }
-            
+                
                 let signature = pt.transactionId
                 
                 var value: AnyHashable?
@@ -110,30 +93,43 @@ class TransactionHandler: TransactionHandlerType {
                 
                 switch pt.rawTransaction {
                 case let transaction as ProcessTransaction.SendTransaction:
-                    let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
-                    value = SolanaSDK.TransferTransaction(
-                        source: transaction.sender,
-                        destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
-                        authority: walletsRepository.nativeWallet?.pubkey,
-                        destinationAuthority: nil,
-                        amount: amount,
-                        myAccount: transaction.sender.pubkey
-                    )
-                    amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
-                    fee = transaction.feeInSOL
+                    if transaction.sender.pubkey == account ||
+                        transaction.receiver.address == account ||
+                        transaction.authority == account
+                    {
+                        let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
+                        value = SolanaSDK.TransferTransaction(
+                            source: transaction.sender,
+                            destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
+                            authority: walletsRepository.nativeWallet?.pubkey,
+                            destinationAuthority: nil,
+                            amount: amount,
+                            myAccount: transaction.sender.pubkey
+                        )
+                        amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
+                        fee = transaction.feeInSOL
+                    } else {
+                        return nil
+                    }
                 case let transaction as ProcessTransaction.OrcaSwapTransaction:
-                    value = SolanaSDK.SwapTransaction(
-                        source: transaction.sourceWallet,
-                        sourceAmount: transaction.amount,
-                        destination: transaction.destinationWallet,
-                        destinationAmount: transaction.estimatedAmount,
-                        myAccountSymbol: nil
-                    )
-                    amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?.value
-                    fee = transaction.fees.networkFees?.total
+                    if transaction.sourceWallet.pubkey == account ||
+                        transaction.destinationWallet.pubkey == account ||
+                        transaction.authority == account
+                    {
+                        value = SolanaSDK.SwapTransaction(
+                            source: transaction.sourceWallet,
+                            sourceAmount: transaction.amount,
+                            destination: transaction.destinationWallet,
+                            destinationAmount: transaction.estimatedAmount,
+                            myAccountSymbol: nil
+                        )
+                        amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?.value
+                        fee = transaction.fees.networkFees?.total
+                    } else {
+                        return nil
+                    }
                 default:
-                    amountInFiat = nil
-                    fee = 0
+                    return nil
                 }
                 
                 return .init(status: status, signature: signature, value: value, amountInFiat: amountInFiat, slot: 0, blockTime: pt.sentAt, fee: fee, blockhash: nil)
@@ -141,108 +137,8 @@ class TransactionHandler: TransactionHandlerType {
     }
     
     // MARK: - Helpers
-    private func sendAndObserve(
-        index: TransactionIndex,
-        processingTransaction: ProcessingTransactionType
-    ) {
-        processingTransaction.createRequest()
-            .do(onSuccess: { [weak self] _ in
-                DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
-                }
-            }, onError: { [weak self] error in
-                DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.error(error))
-                }
-            })
-        
-            .subscribe(onSuccess: { [weak self] transactionID in
-                guard let self = self else {return}
-                
-                self.updateTransactionAtIndex(index) { _ in
-                    .init(
-                        transactionId: transactionID,
-                        sentAt: Date(),
-                        rawTransaction: processingTransaction,
-                        status: .confirmed(0)
-                    )
-                }
-                
-                self.observe(index: index, transactionId: transactionID)
-            }, onFailure: { [weak self] error in
-                guard let self = self else {return}
-                self.updateTransactionAtIndex(index) { currentValue in
-                    var info = currentValue
-                    info.status = .error(error)
-                    return info
-                }
-            })
-            .disposed(by: disposeBag)
-    }
     
-    private func observe(index: TransactionIndex, transactionId: String) {
-        let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
-        
-        apiClient.getSignatureStatus(signature: transactionId, configs: nil)
-            .subscribe(on: scheduler)
-            .observe(on: MainScheduler.instance)
-            .do(onSuccess: { [weak self] status in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
-                let txStatus: PendingTransaction.TransactionStatus
-                
-                if status.confirmations == nil || status.confirmationStatus == "finalized" {
-                    txStatus = .finalized
-                } else {
-                    txStatus = .confirmed(Int(status.confirmations ?? 0))
-                }
-                
-                self.updateTransactionAtIndex(index) { currentValue in
-                    var value = currentValue
-                    value.status = txStatus
-                    return value
-                }
-            })
-            .observe(on: scheduler)
-            .map {$0.confirmations == nil || $0.confirmationStatus == "finalized"}
-            .flatMapCompletable { confirmed in
-                if confirmed {return .empty()}
-                throw ProcessTransaction.Error.notEnoughNumberOfConfirmations
-            }
-            .retry(maxAttempts: .max, delayInSeconds: 1)
-            .timeout(.seconds(60), scheduler: scheduler)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: { [weak self] in
-                self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
-            }, onError: { [weak self] error in
-                debugPrint(error)
-                self?.updateTransactionAtIndex(index) { currentValue in
-                    var value = currentValue
-                    value.status = .finalized
-                    return value
-                }
-            })
-            .disposed(by: disposeBag)
-            
-    }
     
-    @discardableResult
-    private func updateTransactionAtIndex(
-        _ index: TransactionIndex,
-        update: (PendingTransaction) -> PendingTransaction
-    ) -> Bool {
-        var value = transactionsSubject.value
-        
-        if let currentValue = value[safe: index] {
-            let newValue = update(currentValue)
-            value[index] = newValue
-            locker.lock()
-            transactionsSubject.accept(value)
-            locker.unlock()
-            return true
-        }
-        
-        return false
-    }
     
 //    private func updateRepository(transactionIndex: Int, fees: [PayingFee], isReversed: Bool) {
 //        guard let tx = transactionsSubject.value[safe: transactionIndex]
