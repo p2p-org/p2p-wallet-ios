@@ -87,8 +87,8 @@ class TokenSettingsViewController: WLIndicatorModalVC {
             }
             present(vc, animated: true, completion: nil)
         case .processTransaction(let transaction):
-            let vm = PT.ViewModel(processingTransaction: transaction)
-            let vc = PT.ViewController(viewModel: vm)
+            let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
+            let vc = ProcessTransaction.ViewController(viewModel: vm)
             vc.dismissCompletion = { [weak self] in
                 self?.dismiss(animated: true, completion: { [weak self] in
                     guard let self = self else {return}

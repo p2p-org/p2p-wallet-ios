@@ -12,7 +12,7 @@ import RxCocoa
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
     func sendTransaction(_ processingTransaction: ProcessingTransactionType) -> TransactionIndex
-    func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PT.TransactionInfo?>
+    func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PendingTransaction?>
     func areSomeTransactionsInProgress() -> Bool
     
     func observeProcessingTransactions(forAccount account: String) -> Observable<[SolanaSDK.ParsedTransaction]>
@@ -27,7 +27,7 @@ class TransactionHandler: TransactionHandlerType {
     
     private let locker = NSLock()
     private let disposeBag = DisposeBag()
-    private let transactionsSubject = BehaviorRelay<[PT.TransactionInfo]>(value: [])
+    private let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
     
     func sendTransaction(_ processingTransaction: ProcessingTransactionType) -> TransactionIndex
     {
@@ -47,7 +47,7 @@ class TransactionHandler: TransactionHandlerType {
         return txIndex
     }
     
-    func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PT.TransactionInfo?>
+    func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PendingTransaction?>
     {
         transactionsSubject.map {$0[safe: transactionIndex]}
     }
@@ -66,14 +66,14 @@ class TransactionHandler: TransactionHandlerType {
         let pendingTransactions = transactionsSubject.value
             .filter { pt in
                 switch pt.rawTransaction {
-                case let transaction as PT.SendTransaction:
+                case let transaction as ProcessTransaction.SendTransaction:
                     if transaction.sender.pubkey == account ||
                         transaction.receiver.address == account ||
                         transaction.authority == account
                     {
                         return true
                     }
-                case let transaction as PT.OrcaSwapTransaction:
+                case let transaction as ProcessTransaction.OrcaSwapTransaction:
                     if transaction.sourceWallet.pubkey == account ||
                         transaction.destinationWallet.pubkey == account ||
                         transaction.authority == account
@@ -109,7 +109,7 @@ class TransactionHandler: TransactionHandlerType {
                 let fee: UInt64?
                 
                 switch pt.rawTransaction {
-                case let transaction as PT.SendTransaction:
+                case let transaction as ProcessTransaction.SendTransaction:
                     let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
                     value = SolanaSDK.TransferTransaction(
                         source: transaction.sender,
@@ -121,7 +121,7 @@ class TransactionHandler: TransactionHandlerType {
                     )
                     amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
                     fee = transaction.feeInSOL
-                case let transaction as PT.OrcaSwapTransaction:
+                case let transaction as ProcessTransaction.OrcaSwapTransaction:
                     value = SolanaSDK.SwapTransaction(
                         source: transaction.sourceWallet,
                         sourceAmount: transaction.amount,
@@ -188,7 +188,7 @@ class TransactionHandler: TransactionHandlerType {
             .observe(on: MainScheduler.instance)
             .do(onSuccess: { [weak self] status in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
-                let txStatus: PT.TransactionInfo.TransactionStatus
+                let txStatus: PendingTransaction.TransactionStatus
                 
                 if status.confirmations == nil || status.confirmationStatus == "finalized" {
                     txStatus = .finalized
@@ -206,7 +206,7 @@ class TransactionHandler: TransactionHandlerType {
             .map {$0.confirmations == nil || $0.confirmationStatus == "finalized"}
             .flatMapCompletable { confirmed in
                 if confirmed {return .empty()}
-                throw PT.Error.notEnoughNumberOfConfirmations
+                throw ProcessTransaction.Error.notEnoughNumberOfConfirmations
             }
             .retry(maxAttempts: .max, delayInSeconds: 1)
             .timeout(.seconds(60), scheduler: scheduler)
@@ -228,7 +228,7 @@ class TransactionHandler: TransactionHandlerType {
     @discardableResult
     private func updateTransactionAtIndex(
         _ index: TransactionIndex,
-        update: (PT.TransactionInfo) -> PT.TransactionInfo
+        update: (PendingTransaction) -> PendingTransaction
     ) -> Bool {
         var value = transactionsSubject.value
         

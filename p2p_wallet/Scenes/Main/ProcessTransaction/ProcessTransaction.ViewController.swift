@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import BEPureLayout
 
-extension PT {
+extension ProcessTransaction {
     class ViewController: WLModalViewController {
         // MARK: - Dependencies
         private let viewModel: PTViewModelType

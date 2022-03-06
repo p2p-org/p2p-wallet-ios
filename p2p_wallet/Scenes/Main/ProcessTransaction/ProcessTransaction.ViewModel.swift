@@ -11,8 +11,8 @@ import RxCocoa
 import Resolver
 
 protocol PTViewModelType {
-    var navigationDriver: Driver<PT.NavigatableScene?> {get}
-    var transactionInfoDriver: Driver<PT.TransactionInfo> {get}
+    var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> {get}
+    var transactionInfoDriver: Driver<PendingTransaction> {get}
     var isSwapping: Bool {get}
     var transactionID: String? {get}
     var processingTransaction: ProcessingTransactionType {get}
@@ -21,10 +21,10 @@ protocol PTViewModelType {
     
     func sendAndObserveTransaction()
     func makeAnotherTransactionOrRetry()
-    func navigate(to scene: PT.NavigatableScene)
+    func navigate(to scene: ProcessTransaction.NavigatableScene)
 }
 
-extension PT {
+extension ProcessTransaction {
     class ViewModel {
         // MARK: - Dependencies
         @Injected private var analyticsManager: AnalyticsManagerType
@@ -35,12 +35,12 @@ extension PT {
         let processingTransaction: ProcessingTransactionType
         
         // MARK: - Subjects
-        private let transactionInfoSubject: BehaviorRelay<TransactionInfo>
+        private let transactionInfoSubject: BehaviorRelay<PendingTransaction>
         
         // MARK: - Initializer
         init(processingTransaction: ProcessingTransactionType) {
             self.processingTransaction = processingTransaction
-            self.transactionInfoSubject = BehaviorRelay<TransactionInfo>(value: .init(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .sending))
+            self.transactionInfoSubject = BehaviorRelay<PendingTransaction>(value: .init(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .sending))
         }
         
         // MARK: - Subject
@@ -48,12 +48,12 @@ extension PT {
     }
 }
 
-extension PT.ViewModel: PTViewModelType {
-    var navigationDriver: Driver<PT.NavigatableScene?> {
+extension ProcessTransaction.ViewModel: PTViewModelType {
+    var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> {
         navigationSubject.asDriver()
     }
     
-    var transactionInfoDriver: Driver<PT.TransactionInfo> {
+    var transactionInfoDriver: Driver<PendingTransaction> {
         transactionInfoSubject.asDriver()
     }
     
@@ -73,7 +73,7 @@ extension PT.ViewModel: PTViewModelType {
     func sendAndObserveTransaction() {
         let index = transactionHandler.sendTransaction(processingTransaction)
         
-        let unknownErrorInfo = PT.TransactionInfo(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .error(SolanaSDK.Error.unknown))
+        let unknownErrorInfo = PendingTransaction(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .error(SolanaSDK.Error.unknown))
         
         transactionHandler.observeTransaction(transactionIndex: index)
             .map {$0 ?? unknownErrorInfo}
@@ -87,9 +87,9 @@ extension PT.ViewModel: PTViewModelType {
             // log
             let status = transactionInfoSubject.value.status.rawValue
             switch processingTransaction {
-            case is PT.SendTransaction:
+            case is ProcessTransaction.SendTransaction:
                 analyticsManager.log(event: .sendMakeAnotherTransactionClick(txStatus: status))
-            case is PT.SwapTransaction:
+            case is ProcessTransaction.SwapTransaction:
                 analyticsManager.log(event: .swapMakeAnotherTransactionClick(txStatus: status))
             default:
                 break
@@ -101,9 +101,9 @@ extension PT.ViewModel: PTViewModelType {
             // log
             if let error = transactionInfoSubject.value.status.error?.readableDescription {
                 switch processingTransaction {
-                case is PT.SendTransaction:
+                case is ProcessTransaction.SendTransaction:
                     analyticsManager.log(event: .sendTryAgainClick(error: error))
-                case is PT.SwapTransaction:
+                case is ProcessTransaction.SwapTransaction:
                     analyticsManager.log(event: .swapTryAgainClick(error: error))
                 default:
                     break
@@ -114,7 +114,7 @@ extension PT.ViewModel: PTViewModelType {
         }
     }
     
-    func navigate(to scene: PT.NavigatableScene) {
+    func navigate(to scene: ProcessTransaction.NavigatableScene) {
         // log
         let status = transactionInfoSubject.value.status.rawValue
         switch scene {
@@ -122,9 +122,9 @@ extension PT.ViewModel: PTViewModelType {
             break
         case .explorer:
             switch processingTransaction {
-            case is PT.SendTransaction:
+            case is ProcessTransaction.SendTransaction:
                 analyticsManager.log(event: .sendExplorerClick(txStatus: status))
-            case is PT.SwapTransaction:
+            case is ProcessTransaction.SwapTransaction:
                 analyticsManager.log(event: .swapExplorerClick(txStatus: status))
             default:
                 break

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PT {
+enum ProcessTransaction {
     enum NavigatableScene {
         case detail
         case explorer
