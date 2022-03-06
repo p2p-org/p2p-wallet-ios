@@ -25,7 +25,6 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var walletsRepository: WalletsRepository
     @Injected var pricesService: PricesServiceType
     
-    let locker = NSLock()
     let disposeBag = DisposeBag()
     let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
     
