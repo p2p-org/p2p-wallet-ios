@@ -105,14 +105,118 @@ extension TransactionHandler {
         var value = transactionsSubject.value
         
         if let currentValue = value[safe: index] {
-            let newValue = update(currentValue)
+            var newValue = update(currentValue)
+            
+            // write to repository if the transaction is not yet written and there is at least 1 confirmation
+            if !newValue.writtenToRepository,
+               let numberOfConfirmations = newValue.status.numberOfConfirmations,
+               numberOfConfirmations > 0
+            {
+                updateRepository(with: newValue.rawTransaction)
+                newValue.writtenToRepository = true
+            }
+               
+            // update
             value[index] = newValue
-            locker.lock()
             transactionsSubject.accept(value)
-            locker.unlock()
             return true
         }
         
         return false
+    }
+    
+    private func updateRepository(with rawTransaction: ProcessingTransactionType) {
+        switch rawTransaction {
+        case let transaction as ProcessTransaction.SendTransaction:
+            walletsRepository.batchUpdate { currentValue in
+                var wallets = currentValue
+                
+                // update sender
+                if let index = wallets.firstIndex(where: {$0.pubkey == transaction.sender.pubkey}) {
+                    wallets[index].increaseBalance(diffInLamports: transaction.amount)
+                }
+                
+                // update receiver if user send to different wallet of THIS account
+                if let index = wallets.firstIndex(where: {$0.pubkey == transaction.receiver.address}) {
+                    wallets[index].decreaseBalance(diffInLamports: transaction.amount)
+                }
+                
+                // update paying wallet
+                if let index = wallets.firstIndex(where: {$0.pubkey == transaction.payingFeeWallet?.pubkey}),
+                   let feeInToken = transaction.feeInToken
+                {
+                    wallets[index].decreaseBalance(diffInLamports: feeInToken)
+                }
+                
+                return wallets
+            }
+        case let transaction as ProcessTransaction.CloseTransaction:
+            walletsRepository.batchUpdate { currentValue in
+                var wallets = currentValue
+                var reimbursedAmount = transaction.reimbursedAmount
+                
+                // remove closed wallet
+                let wallet = transaction.closingWallet
+                wallets.removeAll(where: {$0.pubkey == wallet.pubkey})
+                
+                // if closing non-native Solana wallet, then convert its balances and send it to native Solana wallet
+                if wallet.token.symbol == "SOL" && !wallet.token.isNative {
+                    reimbursedAmount += (wallet.lamports ?? 0)
+                }
+                
+                // update native wallet
+                if let index = wallets.firstIndex(where: {$0.isNativeSOL}) {
+                    wallets[index].increaseBalance(diffInLamports: reimbursedAmount)
+                }
+                
+                return wallets
+            }
+            
+        case let transaction as ProcessTransaction.OrcaSwapTransaction:
+            walletsRepository.batchUpdate { currentValue in
+                var wallets = currentValue
+                
+                // update source wallet
+                if let index = wallets.firstIndex(where: {$0.pubkey == transaction.sourceWallet.pubkey}) {
+                    wallets[index].decreaseBalance(diffInLamports: transaction.amount.toLamport(decimals: transaction.sourceWallet.token.decimals))
+                }
+                
+                // update destination wallet if exists
+                if let index = wallets.firstIndex(where: {$0.pubkey == transaction.destinationWallet.pubkey}) {
+                    wallets[index].increaseBalance(diffInLamports: transaction.estimatedAmount.toLamport(decimals: transaction.destinationWallet.token.decimals))
+                }
+                
+                // add destination wallet if not exists
+                else {
+                    var destinationWallet = transaction.destinationWallet
+                    destinationWallet.lamports = transaction.estimatedAmount.toLamport(decimals: destinationWallet.token.decimals)
+                    wallets.append(destinationWallet)
+                }
+                
+                // update paying wallet
+                for fee in transaction.fees {
+                    switch fee.type {
+                    case .liquidityProviderFee:
+                        break
+                    case .accountCreationFee:
+                        if let index = wallets.firstIndex(where: {$0.mintAddress == fee.token.address}) {
+                            wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                        }
+                    case .orderCreationFee:
+                        break
+                    case .transactionFee:
+                        if let index = wallets.firstIndex(where: {$0.mintAddress == fee.token.address}) {
+                            wallets[index].decreaseBalance(diffInLamports: fee.lamports)
+                        }
+                    case .depositWillBeReturned:
+                        break
+                    }
+                }
+                
+                return wallets
+            }
+        default:
+            break
+        }
     }
 }

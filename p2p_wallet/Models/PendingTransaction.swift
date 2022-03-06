@@ -17,6 +17,15 @@ struct PendingTransaction {
         case finalized
         case error(_ error: Swift.Error)
         
+        var numberOfConfirmations: Int? {
+            switch self {
+            case .confirmed(let numberOfConfirmations):
+                return numberOfConfirmations
+            default:
+                return nil
+            }
+        }
+        
         var isProcessing: Bool {
             switch self {
             case .sending, .confirmed:
@@ -67,6 +76,7 @@ struct PendingTransaction {
     
     var transactionId: String?
     let sentAt: Date
+    var writtenToRepository: Bool = false
     let rawTransaction: ProcessingTransactionType
     var status: TransactionStatus
 }

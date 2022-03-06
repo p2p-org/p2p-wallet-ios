@@ -145,6 +145,7 @@ extension SendToken {
                         amount: amount.toLamport(decimals: wallet.token.decimals),
                         payingFeeWallet: payingWalletSubject.value,
                         feeInSOL: feeInfoSubject.value?.feeAmountInSOL.total ?? 0,
+                        feeInToken: feeInfoSubject.value?.feeAmount.total,
                         isSimulation: false
                     )
                 )
