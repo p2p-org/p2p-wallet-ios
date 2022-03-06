@@ -18,7 +18,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private var before: String?
     @Injected private var repository: TransactionsRepository
     @Injected private var pricesService: PricesServiceType
-    @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
+    @Injected private var transactionHandler: TransactionHandlerType
     @Injected private var feeRelayer: FeeRelayerAPIClientType
     @Injected private var notificationsRepository: WLNotificationsRepository
     
@@ -48,7 +48,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             })
             .disposed(by: disposeBag)
         
-        processingTransactionRepository.processingTransactionsObservable()
+        transactionHandler.observeProcessingTransactions(forAccount: account)
             .subscribe(onNext: {[weak self] _ in
                 self?.refreshUI()
             })
@@ -180,34 +180,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     private func insertProcessingTransaction(
         intoCurrentData currentData: [SolanaSDK.ParsedTransaction]
     ) -> [SolanaSDK.ParsedTransaction] {
-        let processingTransactions = processingTransactionRepository.getProcessingTransactions()
-        var transactions = [SolanaSDK.ParsedTransaction]()
-        for var pt in processingTransactions {
-            switch pt.value {
-            case let transaction as SolanaSDK.TransferTransaction:
-                if transaction.source?.pubkey == self.account ||
-                    transaction.destination?.pubkey == self.account ||
-                    transaction.authority == self.account
-                {
-                    transactions.append(pt)
-                }
-            case _ as SolanaSDK.CloseAccountTransaction:
-                // FIXME: - Close account
-                break
-            case var transaction as SolanaSDK.SwapTransaction:
-                if transaction.source?.pubkey == self.account ||
-                    transaction.destination?.pubkey == self.account
-                {
-                    transaction.myAccountSymbol = accountSymbol
-                    pt.value = transaction
-                    transactions.append(pt)
-                }
-            default:
-                break
-            }
-        }
-        
-        transactions = transactions.filter {!$0.isFailure}
+        let transactions = transactionHandler.getProccessingTransactions(of: account)
+            .filter {!$0.isFailure}
             .sorted(by: {$0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970})
         
         var data = currentData

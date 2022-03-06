@@ -100,14 +100,13 @@ extension OrcaSwapV2 {
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-            case let .processTransaction(
-                request: request,
-                transactionType: transactionType
-            ):
-                let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
+            case .processTransaction(let transaction):
+                let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.delegate = self
-                present(vc, animated: true, completion: nil)
+                vc.dismissCompletion = { [weak self] in
+                    self?.navigationController?.popViewController(animated: true)
+                }
+                present(vc, interactiveDismissalType: .none, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
             case let .info(title, description):
@@ -115,14 +114,6 @@ extension OrcaSwapV2 {
             case .none:
                 break
             }
-        }
-    }
-}
-
-extension OrcaSwapV2.ViewController: ProcessTransactionViewControllerDelegate {
-    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
-        vc.dismiss(animated: true) { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
         }
     }
 }

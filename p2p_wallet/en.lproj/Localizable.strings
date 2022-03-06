@@ -690,6 +690,13 @@
 "higher volatility" = "higher volatility";
 "This address accepts only %@. You may lose assets by sending another coin." = "This address accepts **only %@**. You may lose assets by sending another coin.";
 "Passcode not set. So we can’t verify you as the device’s owner." = "Passcode not set. So we can’t verify you as the device’s owner.";
+"The transaction is being processed" = "The transaction is being processed";
+"Make another transaction" = "Make another transaction";
+"Show swap details" = "Show swap details";
+"Tap to view in explorer" = "Tap to view in explorer";
+"%@ is successfully sent" = "%@ is successfully sent";
+"The swap is being processed" = "The swap is being processed";
+"%@ is successfully swapped to %@" = "%@ is successfully swapped to %@";
 "Statuses received" = "Statuses received";
 "Statuses received (%@)" = "Statuses received (%@)";
 "The last one: " = "The last one:";
@@ -745,5 +752,9 @@
 "Don't miss out on important updates" = "Don't miss out on important updates";
 "Turn on notifications" = "Turn on notifications";
 "Pay the %@ fee with" = "Pay the %@ fee with";
+"The transaction has been rejected" = "The transaction has been rejected";
+"%@ was sent successfully" = "%@ was sent successfully";
 "The price slippage was set at %@" = "The price slippage was set at %@";
 "Minimum purchase of %@ required." = "Minimum purchase of %@ required.";
+"Transaction has been finalized" = "Transaction has been finalized";
+"Transaction has been sent" = "Transaction has been sent";
