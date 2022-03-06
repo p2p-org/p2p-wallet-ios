@@ -758,5 +758,10 @@
 "%@ was sent successfully" = "%@ đã được gửi thành công";
 "The price slippage was set at %@" = "Mức trượt giá được đặt ở %@";
 "Minimum purchase of %@ required." = "Yêu cầu mua tối thiểu %@.";
+"Choose a token for buying" = "Chọn một mã thông báo để mua";
+"Buying %@" = "Mua %@";
+"Hide fees" = "Ẩn phí";
+"%@ purchase cost" = "%@ chi phí mua";
+"Show fees" = "Phí hiển thị";
 "Transaction has been finalized" = "Giao dịch đã được hoàn tất";
 "Transaction has been sent" = "Giao dịch đã được gửi";

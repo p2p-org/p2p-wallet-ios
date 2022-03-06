@@ -754,5 +754,10 @@
 "%@ was sent successfully" = "%@ was sent successfully";
 "The price slippage was set at %@" = "The price slippage was set at %@";
 "Minimum purchase of %@ required." = "Minimum purchase of %@ required.";
+"Choose a token for buying" = "Choose a token for buying";
+"Buying %@" = "Buying %@";
+"Hide fees" = "Hide fees";
+"%@ purchase cost" = "%@ purchase cost";
+"Show fees" = "Show fees";
 "Transaction has been finalized" = "Transaction has been finalized";
 "Transaction has been sent" = "Transaction has been sent";

@@ -1,5 +1,5 @@
 //
-//  BuyToken.ViewController.swift
+//  Processing.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 29/09/2021.
@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-extension BuyToken {
+extension BuyProcessing {
     class ViewController: WLIndicatorModalVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
         

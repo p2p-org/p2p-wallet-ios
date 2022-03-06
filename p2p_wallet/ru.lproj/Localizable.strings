@@ -754,5 +754,10 @@
 "%@ was sent successfully" = "%@ успешно отправлен";
 "The price slippage was set at %@" = "Проскальзывание цены установлено на %@";
 "Minimum purchase of %@ required." = "Минимальная покупка %@ требуется.";
+"Choose a token for buying" = "Выберите токен для покупки";
+"Buying %@" = "Покупка %@";
+"Hide fees" = "Скрыть комиссии";
+"%@ purchase cost" = "%@ стоимость покупки";
+"Show fees" = "Показать сборы";
 "Transaction has been finalized" = "Транзакция завершена";
 "Transaction has been sent" = "Транзакция отправлена";

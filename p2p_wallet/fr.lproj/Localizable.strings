@@ -754,5 +754,10 @@
 "%@ was sent successfully" = "%@ a été envoyé avec succès";
 "The price slippage was set at %@" = "Le glissement de prix a été fixé à %@";
 "Minimum purchase of %@ required." = "Achat minimum de %@ requis.";
+"Choose a token for buying" = "Choisissez un jeton pour acheter";
+"Buying %@" = "Acheter %@";
+"Hide fees" = "Masquer les frais";
+"%@ purchase cost" = "%@ coût d'achat";
+"Show fees" = "Afficher les frais";
 "Transaction has been finalized" = "La transaction a été finalisée";
 "Transaction has been sent" = "La transaction a été envoyée";
