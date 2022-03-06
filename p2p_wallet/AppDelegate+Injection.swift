@@ -87,7 +87,7 @@ extension Resolver: ResolverRegistering {
         
         // MARK: - Socket
         register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
-            .implements(AccountNotificationsRepository.self)
+            .implements(SocketType.self)
             .scope(.session)
         
         // MARK: - TransactionHandler (new)

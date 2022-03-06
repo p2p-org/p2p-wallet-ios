@@ -112,7 +112,12 @@ extension TransactionHandler {
                let numberOfConfirmations = newValue.status.numberOfConfirmations,
                numberOfConfirmations > 0
             {
-                updateRepository(with: newValue.rawTransaction)
+                // manually update balances if socket is not connected
+                if !socket.isConnected {
+                    updateRepository(with: newValue.rawTransaction)
+                }
+                
+                // mark as written
                 newValue.writtenToRepository = true
             }
                
@@ -133,12 +138,12 @@ extension TransactionHandler {
                 
                 // update sender
                 if let index = wallets.firstIndex(where: {$0.pubkey == transaction.sender.pubkey}) {
-                    wallets[index].increaseBalance(diffInLamports: transaction.amount)
+                    wallets[index].decreaseBalance(diffInLamports: transaction.amount)
                 }
                 
                 // update receiver if user send to different wallet of THIS account
                 if let index = wallets.firstIndex(where: {$0.pubkey == transaction.receiver.address}) {
-                    wallets[index].decreaseBalance(diffInLamports: transaction.amount)
+                    wallets[index].increaseBalance(diffInLamports: transaction.amount)
                 }
                 
                 // update paying wallet

@@ -24,6 +24,7 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var apiClient: ProcessTransactionAPIClient
     @Injected var walletsRepository: WalletsRepository
     @Injected var pricesService: PricesServiceType
+    @Injected var socket: SocketType
     
     let disposeBag = DisposeBag()
     let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
