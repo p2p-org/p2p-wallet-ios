@@ -11,7 +11,7 @@ import RxCocoa
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
-    func sendTransaction(_ processingTransaction: ProcessingTransactionType) -> TransactionIndex
+    func sendTransaction(_ processingTransaction: RawTransactionType) -> TransactionIndex
     func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PendingTransaction?>
     func areSomeTransactionsInProgress() -> Bool
     
@@ -30,7 +30,7 @@ class TransactionHandler: TransactionHandlerType {
     let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
     
     func sendTransaction(
-        _ processingTransaction: ProcessingTransactionType
+        _ processingTransaction: RawTransactionType
     ) -> TransactionIndex {
         // get index to return
         let txIndex = transactionsSubject.value.count
