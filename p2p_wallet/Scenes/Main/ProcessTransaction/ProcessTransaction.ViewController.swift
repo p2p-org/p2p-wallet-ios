@@ -32,37 +32,14 @@ extension ProcessTransaction {
             BEContainer {
                 BEVStack(spacing: 4) {
                     // The transaction is being processed
-                    UILabel(
+                    HeaderLabel(
                         text: nil,
                         textSize: 20,
                         weight: .semibold,
                         numberOfLines: 0,
                         textAlignment: .center
                     )
-                        .setup { label in
-                            let originalText = viewModel.isSwapping ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed
-                            
-                            viewModel.transactionInfoDriver
-                                .map { [weak self] info -> String in
-                                    switch info.status {
-                                    case .sending, .confirmed:
-                                        return originalText
-                                    case .error:
-                                        return L10n.theTransactionHasBeenRejected
-                                    case .finalized:
-                                        switch self?.viewModel.processingTransaction {
-                                        case let transaction as SendTransaction:
-                                            return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
-                                        case let transaction as OrcaSwapTransaction:
-                                            return L10n.swappedSuccessfully(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
-                                        default:
-                                            fatalError()
-                                        }
-                                    }
-                                }
-                                .drive(label.rx.text)
-                                .disposed(by: disposeBag)
-                        }
+                        .driven(with: viewModel.transactionInfoDriver)
                         .padding(.init(x: 18, y: 0))
                     
                     // Detail
@@ -83,11 +60,7 @@ extension ProcessTransaction {
                         // Process indicator
                         BEZStackPosition {
                             ProgressView()
-                                .setup {view in
-                                    viewModel.transactionInfoDriver
-                                        .drive(view.rx.transactionInfo)
-                                        .disposed(by: disposeBag)
-                                }
+                                .driven(with: viewModel.transactionInfoDriver)
                                 .centered(.vertical)
                         }
                         
