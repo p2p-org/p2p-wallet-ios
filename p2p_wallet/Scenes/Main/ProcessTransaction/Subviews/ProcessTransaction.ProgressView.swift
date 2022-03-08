@@ -7,10 +7,12 @@
 
 import Foundation
 import RxSwift
+import RxCocoa
 import UIKit
 
 extension ProcessTransaction {
     final class ProgressView: UIView {
+        private let disposeBag = DisposeBag()
         fileprivate let determinedProgressView = UIProgressView(height: 2)
         private let indeterminedProgressView = IndetermineView(height: 2)
         
@@ -38,6 +40,13 @@ extension ProcessTransaction {
         
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
+        }
+        
+        func driven(with driver: Driver<PendingTransaction>) -> ProcessTransaction.ProgressView {
+            driver
+                .drive(rx.transactionInfo)
+                .disposed(by: disposeBag)
+            return self
         }
     }
     
