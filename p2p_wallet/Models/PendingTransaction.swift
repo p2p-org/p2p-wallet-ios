@@ -77,6 +77,6 @@ struct PendingTransaction {
     var transactionId: String?
     let sentAt: Date
     var writtenToRepository: Bool = false
-    let rawTransaction: ProcessingTransactionType
+    let rawTransaction: RawTransactionType
     var status: TransactionStatus
 }

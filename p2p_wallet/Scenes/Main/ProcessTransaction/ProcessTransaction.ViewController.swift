@@ -39,7 +39,7 @@ extension ProcessTransaction {
                         numberOfLines: 0,
                         textAlignment: .center
                     )
-                        .driven(with: viewModel.transactionInfoDriver)
+                        .driven(with: viewModel.pendingTransactionDriver)
                         .padding(.init(x: 18, y: 0))
                     
                     // Detail
@@ -60,7 +60,10 @@ extension ProcessTransaction {
                         // Process indicator
                         BEZStackPosition {
                             ProgressView()
-                                .driven(with: viewModel.transactionInfoDriver)
+                                .driven(
+                                    with: viewModel.pendingTransactionDriver
+                                        .map {$0.status}
+                                )
                                 .centered(.vertical)
                         }
                         
@@ -68,7 +71,7 @@ extension ProcessTransaction {
                         BEZStackPosition {
                             UIImageView(width: 44, height: 44, image: .squircleTransactionProcessing)
                                 .setup { imageView in
-                                    viewModel.transactionInfoDriver
+                                    viewModel.pendingTransactionDriver
                                         .map {$0.status}
                                         .map {status -> UIImage in
                                             switch status {
@@ -96,7 +99,7 @@ extension ProcessTransaction {
                             BEHStack(spacing: 4, alignment: .center, distribution: .fill) {
                                 UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
                                     .setup { label in
-                                        viewModel.transactionInfoDriver
+                                        viewModel.pendingTransactionDriver
                                             .map {$0.transactionId?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)}
                                             .drive(label.rx.text)
                                             .disposed(by: disposeBag)
@@ -111,12 +114,12 @@ extension ProcessTransaction {
                     }
                         .padding(.init(top: 0, left: 18, bottom: 36, right: 18))
                         .setup { view in
-                            viewModel.transactionInfoDriver
+                            viewModel.pendingTransactionDriver
                                 .map {$0.transactionId == nil}
                                 .drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
                             
-                            viewModel.transactionInfoDriver
+                            viewModel.pendingTransactionDriver
                                 .map {$0.transactionId == nil}
                                 .drive(onNext: { [weak self] _ in
                                     UIView.animate(withDuration: 0.3) {
@@ -134,7 +137,7 @@ extension ProcessTransaction {
                             }
                         WLStepButton.sub(text: L10n.makeAnotherTransaction)
                             .setup { button in
-                                viewModel.transactionInfoDriver
+                                viewModel.pendingTransactionDriver
                                     .map {$0.status.error == nil}
                                     .map {$0 ? L10n.makeAnotherTransaction: L10n.tryAgain}
                                     .drive(button.rx.text)
