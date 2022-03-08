@@ -69,7 +69,7 @@ extension ProcessTransaction {
                         
                         // Icon
                         BEZStackPosition {
-                            UIImageView(width: 44, height: 44, image: .squircleTransactionProcessing)
+                            UIImageView(width: 44, height: 44)
                                 .setup { imageView in
                                     viewModel.pendingTransactionDriver
                                         .map {$0.status}
@@ -97,7 +97,11 @@ extension ProcessTransaction {
                         
                         BEVStack(spacing: 4, alignment: .fill, distribution: .fill) {
                             BEHStack(spacing: 4, alignment: .center, distribution: .fill) {
-                                UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
+                                UILabel(
+                                    text: "4gj7UK2mG...NjweNS39N",
+                                    textSize: 15,
+                                    textAlignment: .right
+                                )
                                     .setup { label in
                                         viewModel.pendingTransactionDriver
                                             .map {$0.transactionId?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)}
