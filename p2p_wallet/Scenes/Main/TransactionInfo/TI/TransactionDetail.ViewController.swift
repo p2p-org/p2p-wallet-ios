@@ -44,7 +44,7 @@ extension TransactionDetail {
                     StatusView()
                         .driven(with: viewModel.parsedTransactionDriver)
                     
-                    // Panel
+                    // Summary View
                     UIView.floatingPanel(contentInset: .init(x: 8, y: 16)) {
                         SummaryView()
                             .driven(with: viewModel.parsedTransactionDriver)
@@ -75,14 +75,20 @@ extension TransactionDetail {
                         BEVStack(spacing: 4) {
                             // Transaction id
                             BEHStack(spacing: 4, alignment: .center) {
-                                addressLabel()
+                                UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
+                                    .setup { label in
+                                        viewModel.parsedTransactionDriver
+                                            .map {$0?.signature?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)}
+                                            .drive(label.rx.text)
+                                            .disposed(by: disposeBag)
+                                    }
                                 UIImageView(width: 16, height: 16, image: .transactionShowInExplorer, tintColor: .textSecondary)
                             }
                             
                             UILabel(text: L10n.tapToViewInExplorer, textSize: 15, textColor: .textSecondary, textAlignment: .right)
                         }
                             .onTap { [unowned self] in
-                                // Show in explorer
+                                self.viewModel.navigate(to: .explorer)
                             }
                     }
                     
@@ -144,6 +150,12 @@ extension TransactionDetail {
                         titleLabel(text: L10n.blockNumber)
                         
                         UILabel(text: "#5387498763", textSize: 15, textAlignment: .right)
+                            .setup { label in
+                                viewModel.parsedTransactionDriver
+                                    .map {"#\($0?.slot ?? 0)"}
+                                    .drive(label.rx.text)
+                                    .disposed(by: disposeBag)
+                            }
                     }
                 }
             }
@@ -160,10 +172,8 @@ extension TransactionDetail {
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else {return}
             switch scene {
-            case .explorer(let url):
-//                let vc = Detail.ViewController()
-//                present(vc, completion: nil)
-                break
+            case .explorer:
+                showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.getTransactionId() ?? "")")
             }
         }
         
