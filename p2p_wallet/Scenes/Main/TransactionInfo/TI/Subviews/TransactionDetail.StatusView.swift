@@ -13,14 +13,19 @@ import SolanaSwift
 
 extension TransactionDetail {
     final class StatusView: UIStackView {
-        private let statusLabel = UILabel(text: L10n.pending, textSize: 12, weight: .medium, textColor: .textSecondary)
+        private let dotView = UIView(width: 8, height: 8, backgroundColor: .alertOrange, cornerRadius: 2)
+        private let statusLabel = UILabel(text: L10n.pending.uppercaseFirst, textSize: 12, weight: .medium, textColor: .textSecondary)
         private let dateLabel = UILabel(text: "August 30, 2021 @ 12:51 PM", textSize: 15, textColor: .textSecondary, numberOfLines: 0)
         
         init() {
             super.init(frame: .zero)
-            set(axis: .horizontal, spacing: 8, alignment: .top, distribution: .fill)
+            set(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill)
             addArrangedSubviews {
-                statusLabel
+                BEHStack(spacing: 5, alignment: .center, distribution: .fill) {
+                    dotView
+                    statusLabel
+                }
+                    .padding(.init(x: 9, y: 3.5), backgroundColor: .f6f6f8, cornerRadius: 4)
                 dateLabel
             }
         }
