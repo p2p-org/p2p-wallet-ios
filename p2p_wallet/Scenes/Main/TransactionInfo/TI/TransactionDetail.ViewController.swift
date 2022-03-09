@@ -51,14 +51,16 @@ extension TransactionDetail {
                     }
                     
                     // Tap and hold to copy
-                    TapAndHoldView()
-                        .setup { view in
-                            view.closeHandler = { [unowned view] in
-                                UIView.animate(withDuration: 0.3) {
-                                    view.isHidden = true
+                    UIView.greyBannerView {
+                        TapAndHoldView()
+                            .setup { view in
+                                view.closeHandler = { [unowned view] in
+                                    UIView.animate(withDuration: 0.3) {
+                                        view.superview?.superview?.isHidden = true
+                                    }
                                 }
                             }
-                        }
+                    }
                         
                     // Transaction id
                     BEHStack(spacing: 4, alignment: .top) {

@@ -18,7 +18,7 @@ final class TapAndHoldView: UIStackView {
         addArrangedSubviews {
             UIImageView(width: 24, height: 24, image: .emptyAlert)
             UILabel(text: L10n.tapAndHoldToCopy, textSize: 15)
-            UIImageView(width: 24, height: 24, image: .closeBanner)
+            UIView.closeBannerButton()
                 .onTap(self, action: #selector(closeButtonDidTouch))
         }
     }
