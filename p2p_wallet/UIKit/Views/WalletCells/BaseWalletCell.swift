@@ -33,7 +33,8 @@ class BaseWalletCell: BECompositionView {
                 .withTag(1)
                 .padding(.init(x: 0, y: 12))
                 .backgroundColor(color: .background)
-                .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner], radius: 4),
+                .lightShadow()
+                .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMinYCorner, .layerMinXMaxYCorner], radius: 4),
             trailingActions: trailingActions
         )
             .bind(swipeableCellRef)
