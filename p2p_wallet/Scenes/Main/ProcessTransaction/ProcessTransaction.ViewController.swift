@@ -169,7 +169,8 @@ extension ProcessTransaction {
             guard let scene = scene else {return}
             switch scene {
             case .detail:
-                let vc = DetailViewController(viewModel: viewModel)
+                let vm = TransactionDetail.ViewModel(observingTransactionIndex: viewModel.getObservingTransactionIndex())
+                let vc = TransactionDetail.ViewController(viewModel: vm)
                 present(vc, animated: true, completion: nil)
             case .explorer:
                 showWebsite(url: "https://explorer.solana.com/tx/" + (viewModel.transactionID ?? ""))

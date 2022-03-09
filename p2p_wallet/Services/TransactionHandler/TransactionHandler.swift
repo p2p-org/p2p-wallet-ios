@@ -70,69 +70,29 @@ class TransactionHandler: TransactionHandlerType {
         of account: String
     ) -> [SolanaSDK.ParsedTransaction] {
         transactionsSubject.value
-            .compactMap { pt -> SolanaSDK.ParsedTransaction? in
-                // status
-                let status: SolanaSDK.ParsedTransaction.Status
-                
-                switch pt.status {
-                case .sending:
-                    status = .requesting
-                case .confirmed:
-                    status = .processing(percent: 0)
-                case .finalized:
-                    status = .confirmed
-                case .error(let error):
-                    status = .error(error.readableDescription)
-                }
-                
-                let signature = pt.transactionId
-                
-                var value: AnyHashable?
-                let amountInFiat: Double?
-                let fee: UInt64?
-                
+            .filter { pt in
                 switch pt.rawTransaction {
                 case let transaction as ProcessTransaction.SendTransaction:
                     if transaction.sender.pubkey == account ||
                         transaction.receiver.address == account ||
                         transaction.authority == account
                     {
-                        let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
-                        value = SolanaSDK.TransferTransaction(
-                            source: transaction.sender,
-                            destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
-                            authority: walletsRepository.nativeWallet?.pubkey,
-                            destinationAuthority: nil,
-                            amount: amount,
-                            myAccount: transaction.sender.pubkey
-                        )
-                        amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
-                        fee = transaction.feeInSOL
-                    } else {
-                        return nil
+                        return true
                     }
                 case let transaction as ProcessTransaction.OrcaSwapTransaction:
                     if transaction.sourceWallet.pubkey == account ||
                         transaction.destinationWallet.pubkey == account ||
                         transaction.authority == account
                     {
-                        value = SolanaSDK.SwapTransaction(
-                            source: transaction.sourceWallet,
-                            sourceAmount: transaction.amount,
-                            destination: transaction.destinationWallet,
-                            destinationAmount: transaction.estimatedAmount,
-                            myAccountSymbol: nil
-                        )
-                        amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?.value
-                        fee = transaction.fees.networkFees?.total
-                    } else {
-                        return nil
+                        return true
                     }
                 default:
-                    return nil
+                    break
                 }
-                
-                return .init(status: status, signature: signature, value: value, amountInFiat: amountInFiat, slot: 0, blockTime: pt.sentAt, fee: fee, blockhash: nil)
+                return false
+            }
+            .compactMap { pt -> SolanaSDK.ParsedTransaction? in
+                pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
             }
     }
 }
