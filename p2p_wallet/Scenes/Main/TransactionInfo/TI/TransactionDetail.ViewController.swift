@@ -11,6 +11,10 @@ import BEPureLayout
 
 extension TransactionDetail {
     class ViewController: BEScene {
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            .hidden
+        }
+        
         // MARK: - Dependencies
         private let viewModel: TransactionDetailViewModelType
         
@@ -31,7 +35,7 @@ extension TransactionDetail {
                     .driven(with: viewModel.parsedTransactionDriver)
                 
                 // Scrollable View
-                ContentHuggingScrollView(
+                BEScrollView(
                     axis: .vertical,
                     contentInsets: .init(x: 18, y: 12),
                     spacing: 18
@@ -159,9 +163,6 @@ extension TransactionDetail {
         
         private func addressLabel() -> UILabel {
             UILabel(text: "FfRBgsYFtBW7Vo5hRetqEbdxrwU8KNRn1ma6sBTBeJEr", textSize: 15, numberOfLines: 2, textAlignment: .right)
-                .setup { label in
-                    label.lineBreakMode = .byCharWrapping
-                }
         }
         
         private func nameLabel() -> UILabel {
