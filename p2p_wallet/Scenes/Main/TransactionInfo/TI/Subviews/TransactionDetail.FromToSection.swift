@@ -58,7 +58,11 @@ extension TransactionDetail {
             fatalError("init(coder:) has not been implemented")
         }
         
-        func driven(with driver: Driver<SolanaSDK.ParsedTransaction?>) -> TransactionDetail.FromToSection {
+        func driven(
+            with driver: Driver<SolanaSDK.ParsedTransaction?>,
+            senderNameDriver: Driver<String?>,
+            receiverNameDriver: Driver<String?>
+        ) -> TransactionDetail.FromToSection {
             let isSwapDriver = driver.map {$0?.value is SolanaSDK.SwapTransaction}
             
             isSwapDriver
@@ -95,36 +99,6 @@ extension TransactionDetail {
                 .map { transaction -> String? in
                     switch transaction {
                     case let transaction as SolanaSDK.SwapTransaction:
-                        return transaction.source?.userInfo as? String
-                    case let transaction as SolanaSDK.TransferTransaction:
-                        return transaction.source?.userInfo as? String
-                    default:
-                        return nil
-                    }
-                }
-                .drive(fromNameLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            driver
-                .map {$0?.value}
-                .map { transaction -> String? in
-                    switch transaction {
-                    case let transaction as SolanaSDK.SwapTransaction:
-                        return transaction.destination?.userInfo as? String
-                    case let transaction as SolanaSDK.TransferTransaction:
-                        return transaction.destination?.userInfo as? String
-                    default:
-                        return nil
-                    }
-                }
-                .drive(toNameLabel.rx.text)
-                .disposed(by: disposeBag)
-            
-            driver
-                .map {$0?.value}
-                .map { transaction -> String? in
-                    switch transaction {
-                    case let transaction as SolanaSDK.SwapTransaction:
                         return transaction.destination?.pubkey
                     case let transaction as SolanaSDK.TransferTransaction:
                         return transaction.destination?.pubkey
@@ -133,6 +107,14 @@ extension TransactionDetail {
                     }
                 }
                 .drive(toAddressLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            senderNameDriver
+                .drive(fromNameLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            receiverNameDriver
+                .drive(toNameLabel.rx.text)
                 .disposed(by: disposeBag)
             
             return self

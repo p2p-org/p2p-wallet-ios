@@ -100,7 +100,11 @@ extension TransactionDetail {
                                 .drive(section.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
-                        .driven(with: viewModel.parsedTransactionDriver)
+                        .driven(
+                            with: viewModel.parsedTransactionDriver,
+                            senderNameDriver: viewModel.senderNameDriver,
+                            receiverNameDriver: viewModel.receiverNameDriver
+                        )
                     
                     // Separator
                     UIView.defaultSeparator()
