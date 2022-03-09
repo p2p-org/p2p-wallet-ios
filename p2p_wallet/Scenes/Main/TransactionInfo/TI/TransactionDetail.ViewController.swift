@@ -49,6 +49,12 @@ extension TransactionDetail {
                         SummaryView()
                             .driven(with: viewModel.parsedTransactionDriver)
                     }
+                        .setup { view in
+                            viewModel.isSummaryAvailableDriver
+                                .map {!$0}
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
                     
                     // Tap and hold to copy
                     UIView.greyBannerView {
