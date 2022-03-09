@@ -106,29 +106,8 @@ extension TransactionDetail {
                             receiverNameDriver: viewModel.receiverNameDriver
                         )
                     
-                    // Separator
-                    UIView.defaultSeparator()
-                    
-                    // Amounts
-                    BEVStack(spacing: 8) {
-                        BEHStack(spacing: 4) {
-                            titleLabel(text: L10n.received)
-                            
-                            UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
-                        }
-                        
-                        BEHStack(spacing: 4) {
-                            titleLabel(text: L10n.transferFee)
-                            
-                            UILabel(text: "Free (Paid by P2P.org)", textSize: 15, textAlignment: .right)
-                        }
-                        
-                        BEHStack(spacing: 4) {
-                            titleLabel(text: L10n.total)
-                            
-                            UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
-                        }
-                    }
+                    // Fees section
+                    FeesSection(viewModel: viewModel)
                     
                     // Separator
                     UIView.defaultSeparator()
