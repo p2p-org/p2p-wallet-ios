@@ -767,3 +767,5 @@
 "Show fees" = "Phí hiển thị";
 "Transaction has been finalized" = "Giao dịch đã được hoàn tất";
 "Transaction has been sent" = "Giao dịch đã được gửi";
+"Sender’s address" = "Địa chỉ\nngười gửi";
+"Received" = "Nhận";
