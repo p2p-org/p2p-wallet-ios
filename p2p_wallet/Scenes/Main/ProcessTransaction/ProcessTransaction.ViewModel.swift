@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import Resolver
 
-protocol PTViewModelType {
+protocol ProcessTransactionViewModelType {
     var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> {get}
     var pendingTransactionDriver: Driver<PendingTransaction> {get}
     var isSwapping: Bool {get}
@@ -50,7 +50,7 @@ extension ProcessTransaction {
     }
 }
 
-extension ProcessTransaction.ViewModel: PTViewModelType {
+extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
     var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> {
         navigationSubject.asDriver()
     }

@@ -12,12 +12,12 @@ import BEPureLayout
 extension ProcessTransaction {
     class ViewController: WLModalViewController {
         // MARK: - Dependencies
-        private let viewModel: PTViewModelType
+        private let viewModel: ProcessTransactionViewModelType
         
         // MARK: - Properties
         
         // MARK: - Initializer
-        init(viewModel: PTViewModelType) {
+        init(viewModel: ProcessTransactionViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
