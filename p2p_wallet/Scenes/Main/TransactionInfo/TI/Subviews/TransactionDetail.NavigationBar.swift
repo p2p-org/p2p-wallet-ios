@@ -33,7 +33,7 @@ extension TransactionDetail {
                         if let symbol = transferTransaction.source?.token.symbol,
                            let receiverPubkey = transferTransaction.destination?.pubkey
                         {
-                            text = symbol + " → " + receiverPubkey
+                            text = symbol + " → " + receiverPubkey.truncatingMiddle(numOfSymbolsRevealed: 4, numOfSymbolsRevealedInSuffix: 4)
                         }
                         
                     case let swapTransaction as SolanaSDK.SwapTransaction:
