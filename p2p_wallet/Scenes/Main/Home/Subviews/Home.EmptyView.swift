@@ -20,7 +20,22 @@ extension Home {
             BEScrollView(alwaysBounceVertical: true, refreshControl: refreshControl) {
                 BEVStack {
                     // Logo
-                    UIImageView(width: 263, height: 263, image: .rocketFront, contentMode: .scaleAspectFit)
+                    BEZStack {
+                        BEZStackPosition(mode: .center) {
+                            CircleGradientView()
+                                .frame(width: 443, height: 433)
+                        }
+                        BEZStackPosition(mode: .center) {
+                            UIView(
+                                width: 140,
+                                height: 140,
+                                backgroundColor: UIColor(red: 0.783, green: 0.883, blue: 1, alpha: 1)
+                            ).box(cornerRadius: 40)
+                        }
+                        BEZStackPosition(mode: .fill) {
+                            UIImageView(width: 263, height: 263, image: .rocketFront, contentMode: .scaleAspectFit)
+                        }
+                    }.padding(.init(only: .top, inset: 30))
                     UILabel(text: L10n.topUpYourAccountToGetStarted, textSize: 28, weight: .bold, numberOfLines: 3, textAlignment: .center)
                     UIView(height: 10)
                     UILabel(text: L10n.makeYourFirstDepositOrBuyWithYourCreditCardOrApplePay, textColor: .secondaryLabel, numberOfLines: 3, textAlignment: .center)
@@ -43,4 +58,30 @@ extension Home {
             viewModel.walletsRepository.reload()
         }
     }
+    
+    class CircleGradientView: UIView {
+        let effectLayer: CAGradientLayer = {
+            let l = CAGradientLayer()
+            l.type = .radial
+            l.colors = [
+                UIColor(red: 0.35, green: 0.53, blue: 1.00, alpha: 1.0).cgColor,
+                UIColor(red: 0.35, green: 0.53, blue: 1.00, alpha: 0.0).cgColor,
+            ]
+            l.locations = [0, 0.8]
+            l.startPoint = .init(x: 0.5, y: 0.5)
+            l.endPoint = CGPoint(x: 1, y: 1)
+            
+            return l
+        }()
+        
+        override func layoutSubviews() {
+            super.layoutSubviews()
+            if effectLayer.superlayer == nil {
+                layer.addSublayer(effectLayer)
+            }
+            effectLayer.frame = bounds
+            alpha = 0.2
+        }
+    }
 }
+
