@@ -53,7 +53,7 @@ extension WalletDetail {
             .map { wallet -> [WalletActionType] in
                 guard let wallet = wallet else { return [] }
 
-                if wallet.isNativeSOL {
+                if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
                     return [.buy, .receive, .send, .swap]
                 } else {
                     return [.receive, .send, .swap]
@@ -103,11 +103,12 @@ extension WalletDetail {
         }
 
         private func buyTokens() {
-            var tokens = Buy.CryptoCurrency.eth
+            var tokens = Buy.CryptoCurrency.sol
             if symbol == "SOL" {
                 tokens = .sol
             }
-            if symbol == "USDT" {
+            print(symbol)
+            if symbol == "USDC" {
                 tokens = .usdc
             }
             analyticsManager.log(event: .tokenDetailsBuyClick)

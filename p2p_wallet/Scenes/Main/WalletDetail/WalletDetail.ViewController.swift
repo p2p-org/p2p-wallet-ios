@@ -98,9 +98,9 @@ extension WalletDetail {
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            case .buy:
+            case .buy(let crypto):
                 let vm = BuyRoot.ViewModel()
-                let vc = BuyRoot.ViewController(crypto: .sol, viewModel: vm)
+                let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
                 present(vc, animated: true, completion: nil)
             case .settings(let pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
