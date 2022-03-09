@@ -79,7 +79,7 @@ extension TransactionDetail {
         func mapNames(parsedTransaction: SolanaSDK.ParsedTransaction?) {
             var fromAddress: String?
             var toAddress: String?
-            switch parsedTransaction {
+            switch parsedTransaction?.value {
             case let transaction as SolanaSDK.TransferTransaction:
                 fromAddress = transaction.source?.pubkey
                 toAddress = transaction.destination?.pubkey
@@ -108,8 +108,8 @@ extension TransactionDetail {
             Single.zip(fromNameRequest, toNameRequest)
                 .observe(on: MainScheduler.instance)
                 .subscribe(onSuccess: { [weak self] fromName, toName in
-                    self?.senderNameSubject.accept(fromName)
-                    self?.receiverNameSubject.accept(toName)
+                    self?.senderNameSubject.accept(fromName?.withNameServiceDomain())
+                    self?.receiverNameSubject.accept(toName?.withNameServiceDomain())
                 })
                 .disposed(by: disposeBag)
         }

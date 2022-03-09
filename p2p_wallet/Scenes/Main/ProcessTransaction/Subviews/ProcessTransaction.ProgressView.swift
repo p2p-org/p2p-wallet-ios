@@ -41,13 +41,6 @@ extension ProcessTransaction {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
-        func driven(with driver: Driver<PendingTransaction.TransactionStatus>) -> ProcessTransaction.ProgressView {
-            driver
-                .drive(rx.transactionStatus)
-                .disposed(by: disposeBag)
-            return self
-        }
     }
     
     private final class IndetermineView: BEView {
