@@ -34,7 +34,7 @@ extension TransactionDetail {
                 ContentHuggingScrollView(
                     axis: .vertical,
                     contentInsets: .init(x: 18, y: 12),
-                    spacing: 8
+                    spacing: 18
                 ) {
                     // Status View
                     StatusView()
@@ -50,14 +50,88 @@ extension TransactionDetail {
                     TapAndHoldView()
                         .setup { view in
                             view.closeHandler = { [unowned self] in
-                                
+                                // Close tap and hold view
                             }
                         }
                         
+                    // Transaction id
+                    BEHStack(spacing: 4, alignment: .top) {
+                        titleLabel(text: L10n.transactionID)
+                        
+                        BEVStack(spacing: 4) {
+                            // Transaction id
+                            BEHStack(spacing: 4, alignment: .center) {
+                                addressLabel()
+                                UIImageView(width: 16, height: 16, image: .transactionShowInExplorer, tintColor: .textSecondary)
+                            }
+                            
+                            UILabel(text: L10n.tapToViewInExplorer, textSize: 15, textColor: .textSecondary, textAlignment: .right)
+                        }
+                            .onTap { [unowned self] in
+                                // Show in explorer
+                            }
+                    }
                     
+                    // Separator
+                    UIView.defaultSeparator()
+                    
+                    // Sender
+                    BEHStack(spacing: 4, alignment: .top) {
+                        titleLabel(text: L10n.senderSAddress)
+                        
+                        BEVStack(spacing: 8) {
+                            addressLabel()
+                            nameLabel()
+                        }
+                    }
+                    
+                    // Separator
+                    UIView.defaultSeparator()
+                    
+                    // Recipient
+                    BEHStack(spacing: 4, alignment: .top) {
+                        titleLabel(text: L10n.recipientSAddress)
+                        
+                        BEVStack(spacing: 8) {
+                            addressLabel()
+                            nameLabel()
+                        }
+                    }
+                    
+                    // Separator
+                    UIView.defaultSeparator()
+                    
+                    // Amounts
+                    BEVStack(spacing: 8) {
+                        BEHStack(spacing: 4) {
+                            titleLabel(text: L10n.received)
+                            
+                            UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
+                        }
+                        
+                        BEHStack(spacing: 4) {
+                            titleLabel(text: L10n.transferFee)
+                            
+                            UILabel(text: "Free (Paid by P2P.org)", textSize: 15, textAlignment: .right)
+                        }
+                        
+                        BEHStack(spacing: 4) {
+                            titleLabel(text: L10n.total)
+                            
+                            UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
+                        }
+                    }
+                    
+                    // Separator
+                    UIView.defaultSeparator()
+                    
+                    // Block number
+                    BEHStack(spacing: 4) {
+                        titleLabel(text: L10n.blockNumber)
+                        
+                        UILabel(text: "#5387498763", textSize: 15, textAlignment: .right)
+                    }
                 }
-                
-                UIView()
             }
         }
         
@@ -77,6 +151,21 @@ extension TransactionDetail {
 //                present(vc, completion: nil)
                 break
             }
+        }
+        
+        private func titleLabel(text: String) -> UILabel {
+            UILabel(text: text, textSize: 15, textColor: .textSecondary, numberOfLines: 2)
+        }
+        
+        private func addressLabel() -> UILabel {
+            UILabel(text: "FfRBgsYFtBW7Vo5hRetqEbdxrwU8KNRn1ma6sBTBeJEr", textSize: 15, numberOfLines: 2, textAlignment: .right)
+                .setup { label in
+                    label.lineBreakMode = .byCharWrapping
+                }
+        }
+        
+        private func nameLabel() -> UILabel {
+            UILabel(text: "name.p2p.sol", textSize: 15, textColor: .textSecondary, textAlignment: .right)
         }
     }
 }

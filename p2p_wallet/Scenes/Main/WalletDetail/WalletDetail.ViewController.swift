@@ -135,9 +135,9 @@ extension WalletDetail {
                 let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .transactionInfo(let transaction):
-                let vm = TransactionInfoViewModel(transaction: transaction)
-                let vc = TransactionInfoViewController(viewModel: vm)
-                present(vc, interactiveDismissalType: .standard, completion: nil)
+                let vm = TransactionDetail.ViewModel(parsedTransaction: transaction)
+                let vc = TransactionDetail.ViewController(viewModel: vm)
+                show(vc, sender: nil)
             default:
                 break
             }
