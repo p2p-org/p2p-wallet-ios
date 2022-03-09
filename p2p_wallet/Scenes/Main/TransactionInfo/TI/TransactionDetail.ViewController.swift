@@ -53,8 +53,10 @@ extension TransactionDetail {
                     // Tap and hold to copy
                     TapAndHoldView()
                         .setup { view in
-                            view.closeHandler = { [unowned self] in
-                                // Close tap and hold view
+                            view.closeHandler = { [unowned view] in
+                                UIView.animate(withDuration: 0.3) {
+                                    view.isHidden = true
+                                }
                             }
                         }
                         
