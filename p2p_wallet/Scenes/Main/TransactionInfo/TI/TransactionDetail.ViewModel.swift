@@ -13,6 +13,7 @@ import SolanaSwift
 protocol TransactionDetailViewModelType {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> {get}
     var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {get}
+    var isSummaryAvailableDriver: Driver<Bool> {get}
     
     func navigate(to scene: TransactionDetail.NavigatableScene)
 }
@@ -70,6 +71,27 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     
     var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {
         parsedTransationSubject.asDriver()
+    }
+    
+    var isSummaryAvailableDriver: Driver<Bool> {
+        parsedTransationSubject
+            .asDriver()
+            .map { parsedTransaction in
+                switch parsedTransaction?.value {
+                case _ as SolanaSDK.CreateAccountTransaction:
+                    return false
+                case _ as SolanaSDK.CloseAccountTransaction:
+                    return false
+                
+                case _ as SolanaSDK.TransferTransaction:
+                    return true
+                    
+                case _ as SolanaSDK.SwapTransaction:
+                    return true
+                default:
+                    return false
+                }
+            }
     }
     
     // MARK: - Actions
