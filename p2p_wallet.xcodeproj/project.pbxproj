@@ -32,7 +32,7 @@
 		3B3A8EEE27D7A8290026E0FE /* TransactionDetail.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EEA27D7A8290026E0FE /* TransactionDetail.ViewModel.swift */; };
 		3B3A8EF227D7AECB0026E0FE /* TransactionDetail.NavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EF127D7AECB0026E0FE /* TransactionDetail.NavigationBar.swift */; };
 		3B3A8EF427D7AF540026E0FE /* TransactionDetail.StatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EF327D7AF540026E0FE /* TransactionDetail.StatusView.swift */; };
-		3B3A8EF627D7B4680026E0FE /* TransactionDetail.WalletsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EF527D7B4680026E0FE /* TransactionDetail.WalletsView.swift */; };
+		3B3A8EF627D7B4680026E0FE /* TransactionDetail.SummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EF527D7B4680026E0FE /* TransactionDetail.SummaryView.swift */; };
 		3B3A8EF827D7B58E0026E0FE /* TapAndHoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EF727D7B58E0026E0FE /* TapAndHoldView.swift */; };
 		3B46C27D27B0A6830036C278 /* SendTokenRelayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B46C27C27B0A6830036C278 /* SendTokenRelayMethod.swift */; };
 		3B78CB512773067100FB3C4C /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB502773067100FB3C4C /* NotificationsService.swift */; };
@@ -586,7 +586,7 @@
 		3B3A8EEA27D7A8290026E0FE /* TransactionDetail.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.ViewModel.swift; sourceTree = "<group>"; };
 		3B3A8EF127D7AECB0026E0FE /* TransactionDetail.NavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.NavigationBar.swift; sourceTree = "<group>"; };
 		3B3A8EF327D7AF540026E0FE /* TransactionDetail.StatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.StatusView.swift; sourceTree = "<group>"; };
-		3B3A8EF527D7B4680026E0FE /* TransactionDetail.WalletsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.WalletsView.swift; sourceTree = "<group>"; };
+		3B3A8EF527D7B4680026E0FE /* TransactionDetail.SummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.SummaryView.swift; sourceTree = "<group>"; };
 		3B3A8EF727D7B58E0026E0FE /* TapAndHoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapAndHoldView.swift; sourceTree = "<group>"; };
 		3B46C27C27B0A6830036C278 /* SendTokenRelayMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRelayMethod.swift; sourceTree = "<group>"; };
 		3B78CB502773067100FB3C4C /* NotificationsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
@@ -1238,7 +1238,7 @@
 			children = (
 				3B3A8EF127D7AECB0026E0FE /* TransactionDetail.NavigationBar.swift */,
 				3B3A8EF327D7AF540026E0FE /* TransactionDetail.StatusView.swift */,
-				3B3A8EF527D7B4680026E0FE /* TransactionDetail.WalletsView.swift */,
+				3B3A8EF527D7B4680026E0FE /* TransactionDetail.SummaryView.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -3058,7 +3058,7 @@
 				BC7B2C7225E384F700833656 /* CreateSecurityKeys.ViewController.swift in Sources */,
 				BC11CA252592FEA300E399A9 /* WLOverviewView.swift in Sources */,
 				BC6EE772254AEEB300FE1025 /* Error+Extensions.swift in Sources */,
-				3B3A8EF627D7B4680026E0FE /* TransactionDetail.WalletsView.swift in Sources */,
+				3B3A8EF627D7B4680026E0FE /* TransactionDetail.SummaryView.swift in Sources */,
 				BCE42DF725DF9C7A0021540E /* Onboarding.ViewController.swift in Sources */,
 				41CA057A2754800D00953322 /* ReserveName.NavigationBar.swift in Sources */,
 				41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */,
