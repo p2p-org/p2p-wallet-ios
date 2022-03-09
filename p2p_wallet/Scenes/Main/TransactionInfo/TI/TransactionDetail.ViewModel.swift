@@ -14,6 +14,7 @@ protocol TransactionDetailViewModelType {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> {get}
     var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {get}
     var isSummaryAvailableDriver: Driver<Bool> {get}
+    var isFromToSectionAvailableDriver: Driver<Bool> {get}
     
     func getTransactionId() -> String?
     
@@ -94,6 +95,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
                     return false
                 }
             }
+    }
+    
+    var isFromToSectionAvailableDriver: Driver<Bool> {
+        isSummaryAvailableDriver
     }
     
     func getTransactionId() -> String? {
