@@ -18,6 +18,7 @@ protocol PTViewModelType {
     var rawTransaction: RawTransactionType {get}
     
     func getMainDescription() -> String
+    func getObservingTransactionIndex() -> TransactionHandlerType.TransactionIndex
     
     func sendAndObserveTransaction()
     func makeAnotherTransactionOrRetry()
@@ -33,6 +34,7 @@ extension ProcessTransaction {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         let rawTransaction: RawTransactionType
+        private var observingTransactionIndex: Int!
         
         // MARK: - Subjects
         private let transactionInfoSubject: BehaviorRelay<PendingTransaction>
@@ -69,12 +71,20 @@ extension ProcessTransaction.ViewModel: PTViewModelType {
         rawTransaction.mainDescription
     }
     
+    func getObservingTransactionIndex() -> Int {
+        observingTransactionIndex
+    }
+    
     // MARK: - Actions
     func sendAndObserveTransaction() {
+        // send transaction and get observation index
         let index = transactionHandler.sendTransaction(rawTransaction)
+        observingTransactionIndex = index
         
+        // send and catch error
         let unknownErrorInfo = PendingTransaction(transactionId: nil, sentAt: Date(), rawTransaction: rawTransaction, status: .error(SolanaSDK.Error.unknown))
         
+        // observe transaction based on transaction index
         transactionHandler.observeTransaction(transactionIndex: index)
             .map {$0 ?? unknownErrorInfo}
             .catchAndReturn(unknownErrorInfo)

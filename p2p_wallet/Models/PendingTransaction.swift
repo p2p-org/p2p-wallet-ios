@@ -80,3 +80,56 @@ struct PendingTransaction {
     let rawTransaction: RawTransactionType
     var status: TransactionStatus
 }
+
+extension PendingTransaction {
+    func parse(pricesService: PricesServiceType, authority: String? = nil) -> SolanaSDK.ParsedTransaction? {
+        // status
+        let status: SolanaSDK.ParsedTransaction.Status
+        
+        switch self.status {
+        case .sending:
+            status = .requesting
+        case .confirmed:
+            status = .processing(percent: 0)
+        case .finalized:
+            status = .confirmed
+        case .error(let error):
+            status = .error(error.readableDescription)
+        }
+        
+        let signature = transactionId
+        
+        var value: AnyHashable?
+        let amountInFiat: Double?
+        let fee: UInt64?
+        
+        switch rawTransaction {
+        case let transaction as ProcessTransaction.SendTransaction:
+            let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
+            value = SolanaSDK.TransferTransaction(
+                source: transaction.sender,
+                destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
+                authority: authority,
+                destinationAuthority: nil,
+                amount: amount,
+                myAccount: transaction.sender.pubkey
+            )
+            amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
+            fee = transaction.feeInSOL
+        case let transaction as ProcessTransaction.OrcaSwapTransaction:
+            value = SolanaSDK.SwapTransaction(
+                source: transaction.sourceWallet,
+                sourceAmount: transaction.amount,
+                destination: transaction.destinationWallet,
+                destinationAmount: transaction.estimatedAmount,
+                myAccountSymbol: nil
+            )
+            amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?.value
+            fee = transaction.fees.networkFees?.total
+        default:
+            return nil
+        }
+        
+        return .init(status: status, signature: signature, value: value, amountInFiat: amountInFiat, slot: 0, blockTime: sentAt, fee: fee, blockhash: nil)
+    }
+}
