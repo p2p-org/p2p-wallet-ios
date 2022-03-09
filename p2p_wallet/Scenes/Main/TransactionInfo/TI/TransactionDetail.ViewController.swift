@@ -92,31 +92,14 @@ extension TransactionDetail {
                             }
                     }
                     
-                    // Separator
-                    UIView.defaultSeparator()
-                    
-                    // Sender
-                    BEHStack(spacing: 4, alignment: .top) {
-                        titleLabel(text: L10n.senderSAddress)
-                        
-                        BEVStack(spacing: 8) {
-                            addressLabel()
-                            nameLabel()
+                    // From to section
+                    FromToSection()
+                        .setup { section in
+                            viewModel.isFromToSectionAvailableDriver
+                                .map {!$0}
+                                .drive(section.rx.isHidden)
+                                .disposed(by: disposeBag)
                         }
-                    }
-                    
-                    // Separator
-                    UIView.defaultSeparator()
-                    
-                    // Recipient
-                    BEHStack(spacing: 4, alignment: .top) {
-                        titleLabel(text: L10n.recipientSAddress)
-                        
-                        BEVStack(spacing: 8) {
-                            addressLabel()
-                            nameLabel()
-                        }
-                    }
                     
                     // Separator
                     UIView.defaultSeparator()
@@ -179,14 +162,6 @@ extension TransactionDetail {
         
         private func titleLabel(text: String) -> UILabel {
             UILabel(text: text, textSize: 15, textColor: .textSecondary, numberOfLines: 2)
-        }
-        
-        private func addressLabel() -> UILabel {
-            UILabel(text: "FfRBgsYFtBW7Vo5hRetqEbdxrwU8KNRn1ma6sBTBeJEr", textSize: 15, numberOfLines: 2, textAlignment: .right)
-        }
-        
-        private func nameLabel() -> UILabel {
-            UILabel(text: "name.p2p.sol", textSize: 15, textColor: .textSecondary, textAlignment: .right)
         }
     }
 }
