@@ -7,12 +7,15 @@
 
 import Foundation
 import UIKit
+import RxSwift
 import RxCocoa
 import SolanaSwift
 import BEPureLayout
 
 extension TransactionDetail {
     final class SummaryView: UIStackView {
+        private let disposeBag = DisposeBag()
+        
         init() {
             super.init(frame: .zero)
             set(axis: .horizontal, spacing: 8, alignment: .center, distribution: .equalCentering)
@@ -31,6 +34,12 @@ extension TransactionDetail {
         }
         
         func driven(with driver: Driver<SolanaSDK.ParsedTransaction?>) -> TransactionDetail.SummaryView {
+            
+            driver
+                .drive(onNext: { parsedTransaction in
+                    
+                })
+                .disposed(by: disposeBag)
             
             return self
         }
