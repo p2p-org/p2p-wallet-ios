@@ -15,6 +15,8 @@ protocol TransactionDetailViewModelType {
     var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {get}
     var isSummaryAvailableDriver: Driver<Bool> {get}
     
+    func getTransactionId() -> String?
+    
     func navigate(to scene: TransactionDetail.NavigatableScene)
 }
 
@@ -92,6 +94,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
                     return false
                 }
             }
+    }
+    
+    func getTransactionId() -> String? {
+        parsedTransationSubject.value?.signature
     }
     
     // MARK: - Actions

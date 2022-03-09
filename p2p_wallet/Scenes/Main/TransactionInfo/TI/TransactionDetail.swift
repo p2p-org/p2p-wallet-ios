@@ -10,6 +10,6 @@ import RxCocoa
 
 enum TransactionDetail {
     enum NavigatableScene {
-        case explorer(url: String)
+        case explorer
     }
 }
