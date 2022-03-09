@@ -46,7 +46,7 @@ extension TransactionDetail {
                     
                     // Panel
                     UIView.floatingPanel(contentInset: .init(x: 8, y: 16)) {
-                        WalletsView()
+                        SummaryView()
                             .driven(with: viewModel.parsedTransactionDriver)
                     }
                     
