@@ -8,11 +8,13 @@
 import Foundation
 import BEPureLayout
 import UIKit
+import RxSwift
 import RxCocoa
 import SolanaSwift
 
 extension TransactionDetail {
     final class StatusView: UIStackView {
+        private let disposeBag = DisposeBag()
         private let dotView = UIView(width: 8, height: 8, backgroundColor: .alertOrange, cornerRadius: 2)
         private let statusLabel = UILabel(text: L10n.pending.uppercaseFirst, textSize: 12, weight: .medium, textColor: .textSecondary)
         private let dateLabel = UILabel(text: "August 30, 2021 @ 12:51 PM", textSize: 15, textColor: .textSecondary, numberOfLines: 0)
@@ -31,6 +33,20 @@ extension TransactionDetail {
         }
         
         func driven(with driver: Driver<SolanaSDK.ParsedTransaction?>) -> TransactionDetail.StatusView {
+            driver
+                .map {$0?.status.label}
+                .drive(statusLabel.rx.text)
+                .disposed(by: disposeBag)
+            
+            driver
+                .map {$0?.status.indicatorColor}
+                .drive(dotView.rx.backgroundColor)
+                .disposed(by: disposeBag)
+            
+            driver
+                .map {$0?.blockTime?.string(withFormat: "MMMM dd, yyyy @ HH:mm a")}
+                .drive(dateLabel.rx.text)
+                .disposed(by: disposeBag)
             
             return self
         }
