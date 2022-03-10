@@ -58,6 +58,8 @@
 		3BFA644B27D888BE001CA631 /* TransactionDetail.FromToSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */; };
 		3BFA644D27D89A2A001CA631 /* TransactionDetail.FeesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644C27D89A2A001CA631 /* TransactionDetail.FeesSection.swift */; };
 		3BFA645027D99FBC001CA631 /* NameServiceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644F27D99FBC001CA631 /* NameServiceCache.swift */; };
+		3BFA645827D9AEF6001CA631 /* Settings.Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA645727D9AEF6001CA631 /* Settings.Backup.swift */; };
+		3BFA645A27D9AF17001CA631 /* Settings.Backup.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA645927D9AF17001CA631 /* Settings.Backup.ViewModel.swift */; };
 		410DCFB4276C8251004EA4D6 /* ReserveNameKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */; };
 		4114D16A2746272400352CDF /* EnterSeedInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1662746272400352CDF /* EnterSeedInfo.swift */; };
 		4114D16B2746272400352CDF /* EnterSeedInfo.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4114D1672746272400352CDF /* EnterSeedInfo.ViewController.swift */; };
@@ -332,7 +334,7 @@
 		BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */; };
 		BC4B9E8A27142AF5005B9ECA /* Settings.Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */; };
 		BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */; };
-		BC4B9E9527153EBB005B9ECA /* Settings.BackupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */; };
+		BC4B9E9527153EBB005B9ECA /* Settings.Backup.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9127153EBB005B9ECA /* Settings.Backup.ViewController.swift */; };
 		BC4B9E9927153F49005B9ECA /* Settings.SelectFiatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9827153F49005B9ECA /* Settings.SelectFiatViewController.swift */; };
 		BC4B9E9B27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9A27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift */; };
 		BC4B9E9D27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */; };
@@ -611,6 +613,8 @@
 		3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.FromToSection.swift; sourceTree = "<group>"; };
 		3BFA644C27D89A2A001CA631 /* TransactionDetail.FeesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.FeesSection.swift; sourceTree = "<group>"; };
 		3BFA644F27D99FBC001CA631 /* NameServiceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameServiceCache.swift; sourceTree = "<group>"; };
+		3BFA645727D9AEF6001CA631 /* Settings.Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Backup.swift; sourceTree = "<group>"; };
+		3BFA645927D9AF17001CA631 /* Settings.Backup.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Backup.ViewModel.swift; sourceTree = "<group>"; };
 		3F4012EDABF9EA99EA5E792B /* Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet-p2p_walletUITests/Pods-p2p_wallet-p2p_walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		410DCFB3276C8251004EA4D6 /* ReserveNameKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveNameKind.swift; sourceTree = "<group>"; };
 		4114D1662746272400352CDF /* EnterSeedInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.swift; sourceTree = "<group>"; };
@@ -902,7 +906,7 @@
 		BC4B9E83271425B9005B9ECA /* Settings.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ViewModel.swift; sourceTree = "<group>"; };
 		BC4B9E8927142AF5005B9ECA /* Settings.Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Helpers.swift; sourceTree = "<group>"; };
 		BC4B9E8B27153430005B9ECA /* Settings.UsernameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.UsernameViewController.swift; sourceTree = "<group>"; };
-		BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.BackupViewController.swift; sourceTree = "<group>"; };
+		BC4B9E9127153EBB005B9ECA /* Settings.Backup.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Backup.ViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9827153F49005B9ECA /* Settings.SelectFiatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectFiatViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9A27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.SelectNetworkViewController.swift; sourceTree = "<group>"; };
 		BC4B9E9C27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.ConfigureSecurityViewController.swift; sourceTree = "<group>"; };
@@ -1810,7 +1814,9 @@
 		BC4B9E8F27153E99005B9ECA /* Backup */ = {
 			isa = PBXGroup;
 			children = (
-				BC4B9E9127153EBB005B9ECA /* Settings.BackupViewController.swift */,
+				3BFA645727D9AEF6001CA631 /* Settings.Backup.swift */,
+				3BFA645927D9AF17001CA631 /* Settings.Backup.ViewModel.swift */,
+				BC4B9E9127153EBB005B9ECA /* Settings.Backup.ViewController.swift */,
 				BCE04C34268C631300CE131A /* BackupManually */,
 			);
 			path = Backup;
@@ -3078,6 +3084,7 @@
 				BCA93FA425ECD16E0081DDF6 /* TokenSettingsSection.swift in Sources */,
 				BC134FAF26FDA6F600DB15BF /* Onboarding.swift in Sources */,
 				3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */,
+				3BFA645A27D9AF17001CA631 /* Settings.Backup.ViewModel.swift in Sources */,
 				3B3A8EED27D7A8290026E0FE /* TransactionDetail.ViewController.swift in Sources */,
 				BC2EC1852553B326006EEDA5 /* UIColor+Extensions.swift in Sources */,
 				BC44532B268985C80019F37E /* ResetPinCodeWithSeedPhrases.EnterPhrasesVC.swift in Sources */,
@@ -3160,7 +3167,7 @@
 				412DBFDC273D7B81000F514E /* EnterSeed.swift in Sources */,
 				3B87A1532762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift in Sources */,
 				BC1BEBF926CDF6520049A44C /* SerumSwapV1.swift in Sources */,
-				BC4B9E9527153EBB005B9ECA /* Settings.BackupViewController.swift in Sources */,
+				BC4B9E9527153EBB005B9ECA /* Settings.Backup.ViewController.swift in Sources */,
 				BCB28695274B81FD0074E1D5 /* WalletDetail.ViewController.swift in Sources */,
 				BCE77E6626537067000B68BB /* DerivableAccounts.ViewModel.swift in Sources */,
 				BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */,
@@ -3496,6 +3503,7 @@
 				8469991B25D5A9AF775E714B /* CALayer+Extensions.swift in Sources */,
 				846994C5A78A76EC59DD3F5B /* NewTabBar.swift in Sources */,
 				84699E4EC4356224948E529A /* DAppContainer.swift in Sources */,
+				3BFA645827D9AEF6001CA631 /* Settings.Backup.swift in Sources */,
 				3B16154F2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift in Sources */,
 				8469928B2607C3CDDA2B1A4C /* DAppContainer.ViewController.swift in Sources */,
 				8469926908C12A54B0D0850E /* DAppContainer.ViewModel.swift in Sources */,

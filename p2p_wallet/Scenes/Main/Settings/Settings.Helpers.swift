@@ -13,15 +13,6 @@ extension Settings {
             .hidden
         }
         
-        // MARK: - Dependencies
-        let viewModel: SettingsViewModelType
-        
-        // MARK: - Initializers
-        init(viewModel: SettingsViewModelType) {
-            self.viewModel = viewModel
-            super.init()
-        }
-        
         // MARK: - Subviews
         lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
             navigationBar
@@ -52,6 +43,15 @@ extension Settings {
         // MARK: - Subviews
         private lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .zero)
         private lazy var innerStackView = UIStackView(axis: .vertical, spacing: 1, alignment: .fill, distribution: .fill)
+        
+        // MARK: - Dependencies
+        let viewModel: SettingsViewModelType
+        
+        // MARK: - Initializers
+        init(viewModel: SettingsViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
         
         override func setUp() {
             super.setUp()

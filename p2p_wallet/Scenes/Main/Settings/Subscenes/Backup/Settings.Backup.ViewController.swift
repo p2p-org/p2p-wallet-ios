@@ -7,9 +7,10 @@
 
 import Foundation
 import UIKit
+import RxCocoa
 
-extension Settings {
-    class BackupViewController: BaseViewController {
+extension Settings.Backup {
+    class ViewController: Settings.BaseViewController {
         // MARK: - Properties
         lazy var shieldImageView = UIImageView(width: 80, height: 100, image: .backupShield)
         lazy var titleLabel = UILabel(textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
@@ -17,10 +18,15 @@ extension Settings {
         lazy var backupUsingIcloudButton = WLButton.stepButton(enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b), textColor: .white, label: " " + L10n.backupUsingICloud)
         lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8.onDarkMode(.h2b2b2b), textColor: .textBlack, label: L10n.backupManually)
         private let dismissAfterBackup: Bool
-    
-        init(viewModel: SettingsViewModelType, dismissAfterBackup: Bool = false) {
+        
+        // MARK: - Dependencies
+        let viewModel: SettingsBackupViewModelType
+        
+        // MARK: - Initializers
+        init(viewModel: SettingsBackupViewModelType, dismissAfterBackup: Bool = false) {
+            self.viewModel = viewModel
             self.dismissAfterBackup = dismissAfterBackup
-            super.init(viewModel: viewModel)
+            super.init()
         }
     
         // MARK: - Methods
@@ -65,6 +71,12 @@ extension Settings {
                     self?.handleDidBackup(didBackup)
                 })
                 .disposed(by: disposeBag)
+            
+            viewModel.navigationDriver
+                .drive(onNext: {[weak self] scene in
+                    self?.navigate(to: scene)
+                })
+                .disposed(by: disposeBag)
         }
         
         @objc func buttonBackupUsingICloudDidTouch() {
@@ -73,6 +85,26 @@ extension Settings {
         
         @objc func buttonBackupManuallyDidTouch() {
             viewModel.backupManually()
+        }
+        
+        // MARK: - Navigation
+        private func navigate(to scene: NavigatableScene?) {
+            switch scene {
+            case .backupManually:
+                let vc = BackupManuallyVC()
+                vc.delegate = self
+                let nc = UINavigationController(rootViewController: vc)
+                
+                let modalVC = WLIndicatorModalVC()
+                modalVC.add(child: nc, to: modalVC.containerView)
+                
+                present(modalVC, animated: true, completion: nil)
+            case .showPhrases:
+                let vc = BackupShowPhrasesVC()
+                present(vc, interactiveDismissalType: .standard, completion: nil)
+            default:
+                break
+            }
         }
         
         // MARK: - Helpers
@@ -105,5 +137,11 @@ extension Settings {
             self.backupMannuallyButton.setTitle(backupMannuallyButtonTitle, for: .normal)
             self.backupMannuallyButton.setTitleColor(backupMannuallyButtonTextColor, for: .normal)
         }
+    }
+}
+
+extension Settings.Backup.ViewController: BackupManuallyVCDelegate {
+    func backupManuallyVCDidBackup(_ vc: BackupManuallyVC) {
+        viewModel.setDidBackupOffline()
     }
 }
