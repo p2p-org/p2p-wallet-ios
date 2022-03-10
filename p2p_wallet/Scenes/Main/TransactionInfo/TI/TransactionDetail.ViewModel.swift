@@ -19,6 +19,7 @@ protocol TransactionDetailViewModelType {
     var isFromToSectionAvailableDriver: Driver<Bool> {get}
     
     func getTransactionId() -> String?
+    func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double?
     
     func navigate(to scene: TransactionDetail.NavigatableScene)
 }
@@ -160,6 +161,17 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     
     func getTransactionId() -> String? {
         parsedTransationSubject.value?.signature
+    }
+    
+    func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double? {
+        guard let amountInToken = amountInToken,
+              let symbol = symbol,
+              let price = pricesService.currentPrice(for: symbol)?.value
+        else {
+            return nil
+        }
+        
+        return amountInToken * price
     }
     
     // MARK: - Actions
