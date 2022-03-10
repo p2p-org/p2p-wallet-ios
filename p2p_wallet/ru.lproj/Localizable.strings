@@ -763,3 +763,5 @@
 "Show fees" = "Показать сборы";
 "Transaction has been finalized" = "Транзакция завершена";
 "Transaction has been sent" = "Транзакция отправлена";
+"Sender’s address" = "Адрес\nотправителя";
+"Received" = "Получено";

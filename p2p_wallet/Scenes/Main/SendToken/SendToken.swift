@@ -19,7 +19,7 @@ enum SendToken {
         case chooseNetwork
         
         case confirmation
-        case processTransaction(_ transaction: ProcessingTransactionType)
+        case processTransaction(_ transaction: RawTransactionType)
     }
     
     struct Recipient: Hashable {

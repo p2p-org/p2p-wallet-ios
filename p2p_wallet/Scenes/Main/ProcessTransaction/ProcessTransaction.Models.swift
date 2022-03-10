@@ -16,19 +16,19 @@ protocol ProcessTransactionAPIClient {
 extension SolanaSDK: ProcessTransactionAPIClient {}
 
 // MARK: - Transaction type
-protocol ProcessingTransactionType {
+protocol RawTransactionType {
     func createRequest() -> Single<String>
     var mainDescription: String {get}
 }
 
-extension ProcessingTransactionType {
+extension RawTransactionType {
     var isSwap: Bool {
         self is ProcessTransaction.OrcaSwapTransaction || self is ProcessTransaction.SwapTransaction
     }
 }
 
 extension ProcessTransaction {
-    struct SwapTransaction: ProcessingTransactionType {
+    struct SwapTransaction: RawTransactionType {
         var mainDescription: String {
             fatalError()
         }
@@ -38,7 +38,7 @@ extension ProcessTransaction {
         }
     }
     
-    struct OrcaSwapTransaction: ProcessingTransactionType {
+    struct OrcaSwapTransaction: RawTransactionType {
         let swapService: SwapServiceType
         let sourceWallet: Wallet
         let destinationWallet: Wallet
@@ -102,7 +102,7 @@ extension ProcessTransaction {
         }
     }
     
-    struct CloseTransaction: ProcessingTransactionType {
+    struct CloseTransaction: RawTransactionType {
         let solanaSDK: SolanaSDK
         let closingWallet: Wallet
         let reimbursedAmount: UInt64
@@ -119,7 +119,7 @@ extension ProcessTransaction {
         }
     }
     
-    struct SendTransaction: ProcessingTransactionType {
+    struct SendTransaction: RawTransactionType {
         let sendService: SendServiceType
         let network: SendToken.Network
         let sender: Wallet

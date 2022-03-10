@@ -19,7 +19,7 @@ enum OrcaSwapV2 {
         )
         case settings
         case confirmation
-        case processTransaction(_ transaction: ProcessingTransactionType)
+        case processTransaction(_ transaction: RawTransactionType)
         case info(title: String, description: String)
         case back
     }

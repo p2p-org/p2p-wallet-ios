@@ -41,13 +41,6 @@ extension ProcessTransaction {
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
-        func driven(with driver: Driver<PendingTransaction>) -> ProcessTransaction.ProgressView {
-            driver
-                .drive(rx.transactionInfo)
-                .disposed(by: disposeBag)
-            return self
-        }
     }
     
     private final class IndetermineView: BEView {
@@ -93,26 +86,24 @@ extension ProcessTransaction {
 }
 
 extension Reactive where Base == ProcessTransaction.ProgressView {
-    var transactionInfo: Binder<PendingTransaction> {
-        Binder(base) { view, transactionInfo in
-            guard transactionInfo.transactionId != nil else {
-                // indetermine
-                view.isIndetermine = true
-                return
-            }
+    var transactionStatus: Binder<PendingTransaction.TransactionStatus> {
+        Binder(base) { view, status in
+            var isIndetermine = false
             
-            // determine
-            view.isIndetermine = false
-            
-            // color
             var progressTintColor = UIColor.h5887ff
-            if transactionInfo.status.error != nil {
-                progressTintColor = UIColor.alert
-            }
-            view.determinedProgressView.progressTintColor = progressTintColor
             
-            // progress
-            view.determinedProgressView.progress = transactionInfo.status.progress
+            switch status {
+            case .sending:
+                isIndetermine = true
+            case .error:
+                progressTintColor = .alert
+            default:
+                break
+            }
+            
+            view.isIndetermine = isIndetermine
+            view.determinedProgressView.progressTintColor = progressTintColor
+            view.determinedProgressView.progress = status.progress
         }
     }
 }
