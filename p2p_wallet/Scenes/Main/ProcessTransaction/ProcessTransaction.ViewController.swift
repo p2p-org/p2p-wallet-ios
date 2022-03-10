@@ -12,12 +12,12 @@ import BEPureLayout
 extension ProcessTransaction {
     class ViewController: WLModalViewController {
         // MARK: - Dependencies
-        private let viewModel: PTViewModelType
+        private let viewModel: ProcessTransactionViewModelType
         
         // MARK: - Properties
         
         // MARK: - Initializer
-        init(viewModel: PTViewModelType) {
+        init(viewModel: ProcessTransactionViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
@@ -32,14 +32,37 @@ extension ProcessTransaction {
             BEContainer {
                 BEVStack(spacing: 4) {
                     // The transaction is being processed
-                    HeaderLabel(
+                    UILabel(
                         text: nil,
                         textSize: 20,
                         weight: .semibold,
                         numberOfLines: 0,
                         textAlignment: .center
                     )
-                        .driven(with: viewModel.transactionInfoDriver)
+                        .setup {label in
+                            viewModel.pendingTransactionDriver
+                                .map { info -> String in
+                                    let originalText = info.rawTransaction.isSwap ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed
+                                    
+                                    switch info.status {
+                                    case .sending, .confirmed:
+                                        return originalText
+                                    case .error:
+                                        return L10n.theTransactionHasBeenRejected
+                                    case .finalized:
+                                        switch info.rawTransaction {
+                                        case let transaction as SendTransaction:
+                                            return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
+                                        case let transaction as OrcaSwapTransaction:
+                                            return L10n.swappedSuccessfully(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
+                                        default:
+                                            fatalError()
+                                        }
+                                    }
+                                }
+                                .drive(label.rx.text)
+                                .disposed(by: disposeBag)
+                        }
                         .padding(.init(x: 18, y: 0))
                     
                     // Detail
@@ -60,15 +83,20 @@ extension ProcessTransaction {
                         // Process indicator
                         BEZStackPosition {
                             ProgressView()
-                                .driven(with: viewModel.transactionInfoDriver)
+                                .setup {progressView in
+                                    viewModel.pendingTransactionDriver
+                                        .map {$0.status}
+                                        .drive(progressView.rx.transactionStatus)
+                                        .disposed(by: disposeBag)
+                                }
                                 .centered(.vertical)
                         }
                         
                         // Icon
                         BEZStackPosition {
-                            UIImageView(width: 44, height: 44, image: .squircleTransactionProcessing)
+                            UIImageView(width: 44, height: 44)
                                 .setup { imageView in
-                                    viewModel.transactionInfoDriver
+                                    viewModel.pendingTransactionDriver
                                         .map {$0.status}
                                         .map {status -> UIImage in
                                             switch status {
@@ -94,9 +122,13 @@ extension ProcessTransaction {
                         
                         BEVStack(spacing: 4, alignment: .fill, distribution: .fill) {
                             BEHStack(spacing: 4, alignment: .center, distribution: .fill) {
-                                UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
+                                UILabel(
+                                    text: "4gj7UK2mG...NjweNS39N",
+                                    textSize: 15,
+                                    textAlignment: .right
+                                )
                                     .setup { label in
-                                        viewModel.transactionInfoDriver
+                                        viewModel.pendingTransactionDriver
                                             .map {$0.transactionId?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)}
                                             .drive(label.rx.text)
                                             .disposed(by: disposeBag)
@@ -111,12 +143,12 @@ extension ProcessTransaction {
                     }
                         .padding(.init(top: 0, left: 18, bottom: 36, right: 18))
                         .setup { view in
-                            viewModel.transactionInfoDriver
+                            viewModel.pendingTransactionDriver
                                 .map {$0.transactionId == nil}
                                 .drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
                             
-                            viewModel.transactionInfoDriver
+                            viewModel.pendingTransactionDriver
                                 .map {$0.transactionId == nil}
                                 .drive(onNext: { [weak self] _ in
                                     UIView.animate(withDuration: 0.3) {
@@ -134,7 +166,7 @@ extension ProcessTransaction {
                             }
                         WLStepButton.sub(text: L10n.makeAnotherTransaction)
                             .setup { button in
-                                viewModel.transactionInfoDriver
+                                viewModel.pendingTransactionDriver
                                     .map {$0.status.error == nil}
                                     .map {$0 ? L10n.makeAnotherTransaction: L10n.tryAgain}
                                     .drive(button.rx.text)
@@ -162,7 +194,9 @@ extension ProcessTransaction {
             guard let scene = scene else {return}
             switch scene {
             case .detail:
-                let vc = DetailViewController(viewModel: viewModel)
+                let vm = TransactionDetail.ViewModel(observingTransactionIndex: viewModel.getObservingTransactionIndex())
+                let vc = TransactionDetail.ViewController(viewModel: vm)
+                vc.modalPresentationStyle = .fullScreen
                 present(vc, animated: true, completion: nil)
             case .explorer:
                 showWebsite(url: "https://explorer.solana.com/tx/" + (viewModel.transactionID ?? ""))

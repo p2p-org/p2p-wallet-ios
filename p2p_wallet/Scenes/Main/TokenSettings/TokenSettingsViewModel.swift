@@ -15,7 +15,7 @@ import Resolver
 enum TokenSettingsNavigatableScene {
     case alert(title: String?, description: String)
     case closeConfirmation
-    case processTransaction(_ processingTransaction: ProcessingTransactionType)
+    case processTransaction(_ processingTransaction: RawTransactionType)
 }
 
 class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
