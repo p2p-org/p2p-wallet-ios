@@ -11,5 +11,6 @@ enum ProcessTransaction {
     enum NavigatableScene {
         case detail
         case explorer
+        case makeAnotherTransaction
     }
 }

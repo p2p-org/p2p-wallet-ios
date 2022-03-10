@@ -41,8 +41,7 @@ extension BuyTokenSelection {
             Cell()
                 .setupWithType(Cell.self) { cell in
                     if let wallet = walletRepository.getWallets().first(where: {
-                        if cryptoCurrency == .sol { return $0.isNativeSOL }
-                        return $0.name == cryptoCurrency.rawValue
+                        $0.token.symbol == cryptoCurrency.tokenName
                     }) {
                         cell.setup(wallet: wallet)
                     } else {
@@ -50,7 +49,7 @@ extension BuyTokenSelection {
                             .getTokensList()
                             .asDriver(onErrorJustReturn: [])
                             .drive(onNext: { [weak cell] tokens in
-                                guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.rawValue }) else {
+                                guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.tokenName }) else {
                                     cell?.isHidden = true
                                     return
                                 }
@@ -108,8 +107,9 @@ extension BuyTokenSelection {
             
             @discardableResult
             func setUp(token: SolanaSDK.Token, amount: Double?, amountInFiat: Double?) -> Self {
+                print(token)
                 iconRef.view?.setUp(token: token)
-                coinNameRef.view?.text = token.name.uppercaseFirst
+                coinNameRef.view?.text = token.name
                 amountRef.view?.text = "\(amount.toString(maximumFractionDigits: 9)) \(token.symbol)"
                 amountInFiatRef.view?.text = "\(Defaults.fiat.symbol) \(amountInFiat.toString(maximumFractionDigits: 2))"
                 return self

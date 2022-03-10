@@ -12,7 +12,7 @@ extension TransactionHandler {
     /// Send and observe transaction
     func sendAndObserve(
         index: TransactionIndex,
-        processingTransaction: ProcessingTransactionType
+        processingTransaction: RawTransactionType
     ) {
         processingTransaction.createRequest()
             .observe(on: MainScheduler.instance)
@@ -71,6 +71,7 @@ extension TransactionHandler {
                 self.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
                     value.status = txStatus
+                    value.slot = status.slot
                     return value
                 }
             })
@@ -128,7 +129,7 @@ extension TransactionHandler {
         return false
     }
     
-    private func updateRepository(with rawTransaction: ProcessingTransactionType) {
+    private func updateRepository(with rawTransaction: RawTransactionType) {
         switch rawTransaction {
         case let transaction as ProcessTransaction.SendTransaction:
             guard !socket.isConnected else {return}
