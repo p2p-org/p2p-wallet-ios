@@ -46,8 +46,7 @@ extension TransactionDetail {
                     
                     // Summary View
                     UIView.floatingPanel(contentInset: .init(x: 8, y: 16)) {
-                        SummaryView()
-                            .driven(with: viewModel.parsedTransactionDriver)
+                        SummaryView(viewModel: viewModel)
                     }
                         .setup { view in
                             viewModel.isSummaryAvailableDriver
