@@ -263,20 +263,12 @@ extension Settings {
                 let vc = ReserveName.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .backup:
-                let vc = BackupViewController(viewModel: viewModel)
+                let viewModel = Backup.ViewModel()
+                viewModel.didBackupHandler = {[weak self] in
+                    self?.viewModel.setDidBackup(true)
+                }
+                let vc = Backup.ViewController(viewModel: viewModel)
                 show(vc, sender: nil)
-            case .backupManually:
-                let vc = BackupManuallyVC()
-                vc.delegate = self
-                let nc = UINavigationController(rootViewController: vc)
-                
-                let modalVC = WLIndicatorModalVC()
-                modalVC.add(child: nc, to: modalVC.containerView)
-                
-                present(modalVC, animated: true, completion: nil)
-            case .backupShowPhrases:
-                let vc = BackupShowPhrasesVC()
-                present(vc, interactiveDismissalType: .standard, completion: nil)
             case .currency:
                 let vc = SelectFiatViewController(viewModel: viewModel)
                 show(vc, sender: nil)
@@ -320,12 +312,6 @@ extension Settings {
                 PhotoLibraryAlertPresenter().present(on: self)
             }
         }
-    }
-}
-
-extension Settings.ViewController: BackupManuallyVCDelegate {
-    func backupManuallyVCDidBackup(_ vc: BackupManuallyVC) {
-        viewModel.setDidBackupOffline()
     }
 }
 

@@ -18,6 +18,15 @@ extension Settings {
             return switcher
         }()
         
+        // MARK: - Dependencies
+        let viewModel: SettingsViewModelType
+        
+        // MARK: - Initializers
+        init(viewModel: SettingsViewModelType) {
+            self.viewModel = viewModel
+            super.init()
+        }
+        
         override func setUp() {
             super.setUp()
             navigationBar.titleLabel.text = L10n.security

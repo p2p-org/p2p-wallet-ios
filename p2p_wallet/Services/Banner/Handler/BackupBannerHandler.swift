@@ -4,13 +4,14 @@
 
 import Foundation
 import RxSwift
+import SwiftyUserDefaults
 
-class BackupNameBanner: Banners.Banner {
+class BackupBanner: Banners.Banner {
     static fileprivate let id = "backup-banner"
 
     init() {
         super.init(
-            id: BackupNameBanner.id,
+            id: BackupBanner.id,
             priority: .hight,
             onTapAction: Banners.Actions.OpenScreen(screen: "backup")
         )
@@ -31,6 +32,7 @@ class BackupBannerHandler: Banners.Handler {
     weak var delegate: Banners.Service?
     let backupStorage: ICloudStorageType
     let disposeBag = DisposeBag()
+    var defaultsDisposable: DefaultsDisposable!
 
     init(backupStorage: ICloudStorageType) { self.backupStorage = backupStorage }
 
@@ -43,14 +45,23 @@ class BackupBannerHandler: Banners.Handler {
             .emit(onNext: { [weak self] event in
                 debugPrint("Backup Banner", event)
                 if event.key == "didBackupUsingIcloud" && event.value != nil {
-                    self?.delegate?.remove(bannerId: BackupNameBanner.id)
+                    self?.delegate?.remove(bannerId: BackupBanner.id)
                 }
             })
             .disposed(by: disposeBag)
+        
+        if Defaults.didBackupOffline {
+            delegate?.remove(bannerId: BackupBanner.id)
+        }
+        
+        defaultsDisposable = Defaults.observe(\.didBackupOffline) { [weak self] update in
+            guard update.newValue == true else {return}
+            self?.delegate?.remove(bannerId: BackupBanner.id)
+        }
 
         // Check
         if backupStorage.didBackupUsingIcloud == false {
-            delegate?.update(banner: BackupNameBanner())
+            delegate?.update(banner: BackupBanner())
         }
     }
     
