@@ -71,6 +71,7 @@ extension TransactionHandler {
                 self.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
                     value.status = txStatus
+                    value.slot = status.slot
                     return value
                 }
             })
