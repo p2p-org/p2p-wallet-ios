@@ -45,9 +45,6 @@ protocol SettingsViewModelType {
     
     func navigate(to scene: Settings.NavigatableScene)
     func showOrReserveUsername()
-    func backupUsingICloud()
-    func backupManually()
-    func setDidBackupOffline()
     func setDidBackup(_ didBackup: Bool)
     func setFiat(_ fiat: Fiat)
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
@@ -207,57 +204,6 @@ extension Settings.ViewModel: SettingsViewModelType {
         } else if let owner = storage.account?.publicKey.base58EncodedString {
             navigate(to: .reserveUsername(owner: owner, handler: nil))
         }
-    }
-    
-    func backupUsingICloud() {
-        guard let account = storage.account?.phrase else { return }
-        authenticationHandler.pauseAuthentication(true)
-        
-        deviceOwnerAuthenticationHandler.requiredOwner(onSuccess: {
-            _ = self.storage.saveToICloud(
-                account: .init(
-                    name: self.storage.getName(),
-                    phrase: account.joined(separator: " "),
-                    derivablePath: self.storage.getDerivablePath() ?? .default
-                )
-            )
-            self.setDidBackup(true)
-            self.notificationsService.showInAppNotification(.done(L10n.savedToICloud))
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.authenticationHandler.pauseAuthentication(false)
-            }
-        }, onFailure: { error in
-            guard let error = error else { return }
-            self.notificationsService.showInAppNotification(.error(error))
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.authenticationHandler.pauseAuthentication(false)
-            }
-        })
-    }
-    
-    func backupManually() {
-        if didBackupSubject.value {
-            authenticationHandler.pauseAuthentication(true)
-            deviceOwnerAuthenticationHandler.requiredOwner(onSuccess: {
-                self.navigate(to: .backupShowPhrases)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.authenticationHandler.pauseAuthentication(false)
-                }
-            }, onFailure: { error in
-                guard let error = error else { return }
-                self.notificationsService.showInAppNotification(.error(error))
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.authenticationHandler.pauseAuthentication(false)
-                }
-            })
-        } else {
-            navigate(to: .backupManually)
-        }
-    }
-    
-    func setDidBackupOffline() {
-        Defaults.didBackupOffline = true
-        setDidBackup(true)
     }
     
     func setDidBackup(_ didBackup: Bool) {

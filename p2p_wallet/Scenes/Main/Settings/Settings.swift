@@ -13,8 +13,6 @@ enum Settings {
         case username
         case reserveUsername(owner: String, handler: ReserveNameHandler?)
         case backup
-        case backupManually
-        case backupShowPhrases
         case currency
         case network
         case security
