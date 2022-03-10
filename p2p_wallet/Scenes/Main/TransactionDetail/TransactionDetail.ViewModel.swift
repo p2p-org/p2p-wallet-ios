@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 import SolanaSwift
+import Resolver
 
 protocol TransactionDetailViewModelType {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> {get}
@@ -22,6 +23,12 @@ protocol TransactionDetailViewModelType {
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double?
     
     func navigate(to scene: TransactionDetail.NavigatableScene)
+    
+    func copyTransactionIdToClipboard()
+    func copySourceAddressToClipboard()
+    func copySourceNameToClipboard()
+    func copyDestinationAddressToClipboard()
+    func copyDestinationNameToClipboard()
 }
 
 extension TransactionDetail {
@@ -31,6 +38,8 @@ extension TransactionDetail {
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var nameService: NameServiceType
+        @Injected private var clipboardManager: ClipboardManagerType
+        @Injected private var notificationService: NotificationsServiceType
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
@@ -183,5 +192,57 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     // MARK: - Actions
     func navigate(to scene: TransactionDetail.NavigatableScene) {
         navigationSubject.accept(scene)
+    }
+    
+    func copyTransactionIdToClipboard() {
+        guard let transactionId = parsedTransationSubject.value?.signature else {return}
+        clipboardManager.copyToClipboard(transactionId)
+        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
+    }
+    
+    func copySourceAddressToClipboard() {
+        let sourceAddress: String?
+        switch parsedTransationSubject.value?.value {
+        case let transaction as SolanaSDK.TransferTransaction:
+            sourceAddress = transaction.source?.pubkey
+        case let transaction as SolanaSDK.SwapTransaction:
+            sourceAddress = transaction.source?.pubkey
+        default:
+            return
+        }
+        guard let sourceAddress = sourceAddress else {
+            return
+        }
+        clipboardManager.copyToClipboard(sourceAddress)
+        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
+    }
+    
+    func copySourceNameToClipboard() {
+        guard let name = senderNameSubject.value else {return}
+        clipboardManager.copyToClipboard(name)
+        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
+    }
+    
+    func copyDestinationAddressToClipboard() {
+        let destinationAddress: String?
+        switch parsedTransationSubject.value?.value {
+        case let transaction as SolanaSDK.TransferTransaction:
+            destinationAddress = transaction.destination?.pubkey
+        case let transaction as SolanaSDK.SwapTransaction:
+            destinationAddress = transaction.destination?.pubkey
+        default:
+            return
+        }
+        guard let destinationAddress = destinationAddress else {
+            return
+        }
+        clipboardManager.copyToClipboard(destinationAddress)
+        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
+    }
+    
+    func copyDestinationNameToClipboard() {
+        guard let name = receiverNameSubject.value else {return}
+        clipboardManager.copyToClipboard(name)
+        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
 }
