@@ -89,21 +89,20 @@ extension TransactionDetail {
                             .onTap { [unowned self] in
                                 self.viewModel.navigate(to: .explorer)
                             }
+                            .onLongTap { [unowned self] gesture in
+                                guard gesture.state == .ended else {return}
+                                self.viewModel.copyTransactionIdToClipboard()
+                            }
                     }
                     
                     // From to section
-                    FromToSection()
+                    FromToSection(viewModel: viewModel)
                         .setup { section in
                             viewModel.isFromToSectionAvailableDriver
                                 .map {!$0}
                                 .drive(section.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
-                        .driven(
-                            with: viewModel.parsedTransactionDriver,
-                            senderNameDriver: viewModel.senderNameDriver,
-                            receiverNameDriver: viewModel.receiverNameDriver
-                        )
                     
                     // Fees section
                     FeesSection(viewModel: viewModel)
