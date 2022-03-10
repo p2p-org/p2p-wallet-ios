@@ -15,6 +15,7 @@ extension ProcessTransaction {
         private let viewModel: ProcessTransactionViewModelType
         
         // MARK: - Properties
+        var makeAnotherTransactionHandler: (() -> Void)?
         
         // MARK: - Initializer
         init(viewModel: ProcessTransactionViewModelType) {
@@ -200,6 +201,10 @@ extension ProcessTransaction {
                 present(vc, animated: true, completion: nil)
             case .explorer:
                 showWebsite(url: "https://explorer.solana.com/tx/" + (viewModel.transactionID ?? ""))
+            case .makeAnotherTransaction:
+                dismiss(animated: true) {
+                    self.makeAnotherTransactionHandler?()
+                }
             }
         }
     }

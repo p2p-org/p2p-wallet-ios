@@ -105,8 +105,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
                 break
             }
             
-            // TODO: - Make another transaction
-            
+            navigate(to: .makeAnotherTransaction)
         } else {
             // log
             if let error = transactionInfoSubject.value.status.error?.readableDescription {
@@ -139,6 +138,8 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             default:
                 break
             }
+        case .makeAnotherTransaction:
+            break
         }
         
         // navigate
