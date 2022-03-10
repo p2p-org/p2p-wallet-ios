@@ -10,14 +10,15 @@ import RxSwift
 import RxCocoa
 import Resolver
 
-protocol PTViewModelType {
+protocol ProcessTransactionViewModelType {
     var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> {get}
-    var transactionInfoDriver: Driver<PendingTransaction> {get}
+    var pendingTransactionDriver: Driver<PendingTransaction> {get}
     var isSwapping: Bool {get}
     var transactionID: String? {get}
-    var processingTransaction: ProcessingTransactionType {get}
+    var rawTransaction: RawTransactionType {get}
     
     func getMainDescription() -> String
+    func getObservingTransactionIndex() -> TransactionHandlerType.TransactionIndex
     
     func sendAndObserveTransaction()
     func makeAnotherTransactionOrRetry()
@@ -32,14 +33,15 @@ extension ProcessTransaction {
         
         // MARK: - Properties
         private let disposeBag = DisposeBag()
-        let processingTransaction: ProcessingTransactionType
+        let rawTransaction: RawTransactionType
+        private var observingTransactionIndex: Int!
         
         // MARK: - Subjects
         private let transactionInfoSubject: BehaviorRelay<PendingTransaction>
         
         // MARK: - Initializer
-        init(processingTransaction: ProcessingTransactionType) {
-            self.processingTransaction = processingTransaction
+        init(processingTransaction: RawTransactionType) {
+            self.rawTransaction = processingTransaction
             self.transactionInfoSubject = BehaviorRelay<PendingTransaction>(value: .init(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .sending))
         }
         
@@ -48,17 +50,17 @@ extension ProcessTransaction {
     }
 }
 
-extension ProcessTransaction.ViewModel: PTViewModelType {
+extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
     var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> {
         navigationSubject.asDriver()
     }
     
-    var transactionInfoDriver: Driver<PendingTransaction> {
+    var pendingTransactionDriver: Driver<PendingTransaction> {
         transactionInfoSubject.asDriver()
     }
     
     var isSwapping: Bool {
-        processingTransaction.isSwap
+        rawTransaction.isSwap
     }
     
     var transactionID: String? {
@@ -66,15 +68,23 @@ extension ProcessTransaction.ViewModel: PTViewModelType {
     }
     
     func getMainDescription() -> String {
-        processingTransaction.mainDescription
+        rawTransaction.mainDescription
+    }
+    
+    func getObservingTransactionIndex() -> Int {
+        observingTransactionIndex
     }
     
     // MARK: - Actions
     func sendAndObserveTransaction() {
-        let index = transactionHandler.sendTransaction(processingTransaction)
+        // send transaction and get observation index
+        let index = transactionHandler.sendTransaction(rawTransaction)
+        observingTransactionIndex = index
         
-        let unknownErrorInfo = PendingTransaction(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .error(SolanaSDK.Error.unknown))
+        // send and catch error
+        let unknownErrorInfo = PendingTransaction(transactionId: nil, sentAt: Date(), rawTransaction: rawTransaction, status: .error(SolanaSDK.Error.unknown))
         
+        // observe transaction based on transaction index
         transactionHandler.observeTransaction(transactionIndex: index)
             .map {$0 ?? unknownErrorInfo}
             .catchAndReturn(unknownErrorInfo)
@@ -86,7 +96,7 @@ extension ProcessTransaction.ViewModel: PTViewModelType {
         if transactionInfoSubject.value.status.error == nil {
             // log
             let status = transactionInfoSubject.value.status.rawValue
-            switch processingTransaction {
+            switch rawTransaction {
             case is ProcessTransaction.SendTransaction:
                 analyticsManager.log(event: .sendMakeAnotherTransactionClick(txStatus: status))
             case is ProcessTransaction.SwapTransaction:
@@ -95,12 +105,11 @@ extension ProcessTransaction.ViewModel: PTViewModelType {
                 break
             }
             
-            // TODO: - Make another transaction
-            
+            navigate(to: .makeAnotherTransaction)
         } else {
             // log
             if let error = transactionInfoSubject.value.status.error?.readableDescription {
-                switch processingTransaction {
+                switch rawTransaction {
                 case is ProcessTransaction.SendTransaction:
                     analyticsManager.log(event: .sendTryAgainClick(error: error))
                 case is ProcessTransaction.SwapTransaction:
@@ -121,7 +130,7 @@ extension ProcessTransaction.ViewModel: PTViewModelType {
         case .detail:
             break
         case .explorer:
-            switch processingTransaction {
+            switch rawTransaction {
             case is ProcessTransaction.SendTransaction:
                 analyticsManager.log(event: .sendExplorerClick(txStatus: status))
             case is ProcessTransaction.SwapTransaction:
@@ -129,6 +138,8 @@ extension ProcessTransaction.ViewModel: PTViewModelType {
             default:
                 break
             }
+        case .makeAnotherTransaction:
+            break
         }
         
         // navigate

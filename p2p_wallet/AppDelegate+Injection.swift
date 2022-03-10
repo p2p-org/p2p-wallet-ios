@@ -37,7 +37,7 @@ extension Resolver: ResolverRegistering {
         register {CryptoComparePricesFetcher()}
             .implements(PricesFetcher.self)
             .scope(.application)
-        register { NameService() }
+        register { NameService(cache: NameServiceUserDefaultCache()) }
             .implements(NameServiceType.self)
             .scope(.application)
         register { AddressFormatter() }

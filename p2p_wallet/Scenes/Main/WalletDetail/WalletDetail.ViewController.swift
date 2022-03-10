@@ -98,9 +98,9 @@ extension WalletDetail {
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            case .buy:
+            case .buy(let crypto):
                 let vm = BuyRoot.ViewModel()
-                let vc = BuyRoot.ViewController(crypto: .sol, viewModel: vm)
+                let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
                 present(vc, animated: true, completion: nil)
             case .settings(let pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
@@ -135,9 +135,9 @@ extension WalletDetail {
                 let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .transactionInfo(let transaction):
-                let vm = TransactionInfoViewModel(transaction: transaction)
-                let vc = TransactionInfoViewController(viewModel: vm)
-                present(vc, interactiveDismissalType: .standard, completion: nil)
+                let vm = TransactionDetail.ViewModel(parsedTransaction: transaction)
+                let vc = TransactionDetail.ViewController(viewModel: vm)
+                show(vc, sender: nil)
             default:
                 break
             }

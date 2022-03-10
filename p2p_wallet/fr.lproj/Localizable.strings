@@ -761,3 +761,5 @@
 "Show fees" = "Afficher les frais";
 "Transaction has been finalized" = "La transaction a été finalisée";
 "Transaction has been sent" = "La transaction a été envoyée";
+"Sender’s address" = "L'adresse de\nl'expéditeur";
+"Received" = "A reçu";

@@ -106,6 +106,9 @@ extension OrcaSwapV2 {
                 vc.dismissCompletion = { [weak self] in
                     self?.navigationController?.popViewController(animated: true)
                 }
+                vc.makeAnotherTransactionHandler = { [weak self] in
+                    self?.navigationController?.popViewController(animated: true)
+                }
                 present(vc, interactiveDismissalType: .none, completion: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
