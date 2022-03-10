@@ -33,6 +33,7 @@ struct Buy {
             }
         }
         
+        // TODO: move code to moonpay domain
         var code: String {
             switch self {
             case .eth:
@@ -41,6 +42,17 @@ struct Buy {
                 return "sol"
             case .usdc:
                 return "usdc_sol"
+            }
+        }
+        
+        var tokenName: String {
+            switch self {
+            case .eth:
+                return "ETH"
+            case .sol:
+                return "SOL"
+            case .usdc:
+                return "USDC"
             }
         }
         
