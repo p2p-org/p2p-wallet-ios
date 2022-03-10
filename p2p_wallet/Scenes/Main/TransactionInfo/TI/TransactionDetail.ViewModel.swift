@@ -85,7 +85,7 @@ extension TransactionDetail {
                 fromAddress = transaction.source?.pubkey
                 toAddress = transaction.destination?.pubkey
             default:
-                break
+                return
             }
             
             guard fromAddress != nil || toAddress != nil else {
@@ -99,6 +99,13 @@ extension TransactionDetail {
                 fromNameRequest = .just(nil)
             }
             
+            fromNameRequest
+                .observe(on: MainScheduler.instance)
+                .subscribe(onSuccess: { [weak self] fromName in
+                    self?.senderNameSubject.accept(fromName?.withNameServiceDomain())
+                })
+                .disposed(by: disposeBag)
+            
             let toNameRequest: Single<String?>
             if let toAddress = toAddress {
                 toNameRequest = nameService.getName(toAddress)
@@ -106,10 +113,9 @@ extension TransactionDetail {
                 toNameRequest = .just(nil)
             }
             
-            Single.zip(fromNameRequest, toNameRequest)
+            toNameRequest
                 .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { [weak self] fromName, toName in
-                    self?.senderNameSubject.accept(fromName?.withNameServiceDomain())
+                .subscribe(onSuccess: { [weak self] toName in
                     self?.receiverNameSubject.accept(toName?.withNameServiceDomain())
                 })
                 .disposed(by: disposeBag)

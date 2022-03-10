@@ -27,12 +27,23 @@ extension NameServiceType {
 
 class NameService: NameServiceType {
     private let endpoint = "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)/name_register"
+    private let cache: NameServiceCacheType
     
     var captchaAPI1Url: String {endpoint + "/auth/gt/register"}
     
+    init(cache: NameServiceCacheType) {
+        self.cache = cache
+    }
+    
     func getName(_ owner: String) -> Single<String?> {
-        getNames(owner)
+        if let result = cache.getName(for: owner) {
+            return .just(result.name)
+        }
+        return getNames(owner)
             .map {$0.last(where: {$0.name != nil})?.name}
+            .do(onSuccess: { [weak self] name in
+                self?.cache.save(name, for: owner)
+            })
     }
 
     func getOwners(_ name: String) -> Single<[Owner]> {
@@ -40,6 +51,13 @@ class NameService: NameServiceType {
             observable: request(url: endpoint + "/resolve/\(name)"),
             defaultValue: []
         )
+            .do(onSuccess: {[weak self] result in
+                for record in result {
+                    if let name = record.name {
+                        self?.cache.save(name, for: record.owner)
+                    }
+                }
+            })
     }
 
     func getOwnerAddress(_ name: String) -> Single<String?> {

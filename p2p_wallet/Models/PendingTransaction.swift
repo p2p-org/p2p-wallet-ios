@@ -79,6 +79,7 @@ struct PendingTransaction {
     var writtenToRepository: Bool = false
     let rawTransaction: RawTransactionType
     var status: TransactionStatus
+    var slot: UInt64 = 0
 }
 
 extension PendingTransaction {
@@ -130,6 +131,6 @@ extension PendingTransaction {
             return nil
         }
         
-        return .init(status: status, signature: signature, value: value, amountInFiat: amountInFiat, slot: 0, blockTime: sentAt, fee: fee, blockhash: nil)
+        return .init(status: status, signature: signature, value: value, amountInFiat: amountInFiat, slot: self.slot, blockTime: sentAt, fee: fee, blockhash: nil)
     }
 }
