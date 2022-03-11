@@ -19,6 +19,7 @@ extension TransactionDetail {
         private let viewModel: TransactionDetailViewModelType
         
         // MARK: - Properties
+        var backCompletion: (() -> Void)?
         
         // MARK: - Initializer
         init(viewModel: TransactionDetailViewModelType) {
@@ -31,7 +32,13 @@ extension TransactionDetail {
             BEVStack {
                 // Navigation Bar
                 NavigationBar()
-                    .onBack { [unowned self] in self.back() }
+                    .onBack { [unowned self] in
+                        if let backCompletion = backCompletion {
+                            backCompletion()
+                        } else {
+                            self.back()
+                        }
+                    }
                     .driven(with: viewModel.parsedTransactionDriver)
                 
                 // Scrollable View

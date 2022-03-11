@@ -103,13 +103,23 @@ extension OrcaSwapV2 {
             case .processTransaction(let transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.dismissCompletion = { [weak self] in
-                    self?.navigationController?.popViewController(animated: true)
+                vc.backCompletion = { [weak self] in
+                    self?.viewModel.cleanAllFields()
+                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                 }
                 vc.makeAnotherTransactionHandler = { [weak self] in
-                    self?.navigationController?.popViewController(animated: true)
+                    self?.viewModel.cleanAllFields()
+                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                 }
-                present(vc, interactiveDismissalType: .none, completion: nil)
+                vc.specificErrorHandler = { [weak self] error in
+                    guard let self = self else {return}
+                    if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                        self.backCompletion { [weak self] in
+                            self?.viewModel.navigate(to: .settings)
+                        }
+                    }
+                }
+                show(vc, sender: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
             case let .info(title, description):

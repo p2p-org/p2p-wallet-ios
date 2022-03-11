@@ -763,3 +763,5 @@
 "Transaction has been sent" = "Транзакция отправлена";
 "Sender’s address" = "Адрес\nотправителя";
 "Received" = "Получено";
+"Low slippage caused the swap to fail" = "Низкое проскальзывание привело к сбою свопа";
+"Increase maximum price slippage" = "Увеличить максимальное проскальзывание цены";
