@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import BEPureLayout
 
 extension ProcessTransaction {
     final class ViewController: BaseVC {
@@ -40,10 +41,10 @@ extension ProcessTransaction {
                 .distinctUntilChanged()
                 .drive(onNext: {[weak self] index in
                     guard let self = self else {return}
-                    self.detailViewController.removeFromParent()
+                    self.detailViewController?.removeFromParent()
                     let vm = TransactionDetail.ViewModel(observingTransactionIndex: index)
                     self.detailViewController = TransactionDetail.ViewController(viewModel: vm)
-                    self.detailViewController.backCompletion = self.backCompletion
+                    self.detailViewController.backCompletion = self.makeAnotherTransactionHandler
                     self.add(child: self.detailViewController)
                 })
                 .disposed(by: disposeBag)
@@ -67,12 +68,12 @@ extension ProcessTransaction {
             guard let scene = scene else {return}
             switch scene {
             case .explorer:
+                self.back()
                 showWebsite(url: "https://explorer.solana.com/tx/" + (viewModel.transactionID ?? ""))
             case .makeAnotherTransaction:
-                CATransaction.begin()
-                CATransaction.setCompletionBlock(makeAnotherTransactionHandler)
-                navigationController?.popViewController(animated: true)
-                CATransaction.commit()
+                statusViewController.dismiss(animated: true) {
+                    self.makeAnotherTransactionHandler?()
+                }
             }
         }
     }

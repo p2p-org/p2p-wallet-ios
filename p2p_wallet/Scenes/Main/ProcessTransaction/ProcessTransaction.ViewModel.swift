@@ -46,6 +46,10 @@ extension ProcessTransaction {
             self.pendingTransactionSubject = BehaviorRelay<PendingTransaction>(value: .init(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .sending))
         }
         
+        deinit {
+            debugPrint("\(String(describing: self)) deinited")
+        }
+        
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
     }
