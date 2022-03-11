@@ -97,8 +97,9 @@ extension SendToken {
             case .processTransaction(let transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.dismissCompletion = { [weak self] in
+                vc.backCompletion = { [weak self] in
                     guard let self = self else {return}
+                    self.viewModel.cleanAllFields()
                     if self.viewModel.canGoBack {
                         self.back()
                     } else {
@@ -107,9 +108,10 @@ extension SendToken {
                 }
                 vc.makeAnotherTransactionHandler = { [weak self] in
                     guard let self = self else {return}
+                    self.viewModel.cleanAllFields()
                     self.childNavigationController.popToRootViewController(animated: true)
                 }
-                present(vc, interactiveDismissalType: .none, completion: nil)
+                childNavigationController.pushViewController(vc, animated: true)
             case .chooseNetwork:
                 let vc = SelectNetwork.ViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
