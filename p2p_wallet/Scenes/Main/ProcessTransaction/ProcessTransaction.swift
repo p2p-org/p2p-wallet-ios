@@ -11,5 +11,6 @@ enum ProcessTransaction {
     enum NavigatableScene {
         case explorer
         case makeAnotherTransaction
+        case specificErrorHandler(Swift.Error)
     }
 }

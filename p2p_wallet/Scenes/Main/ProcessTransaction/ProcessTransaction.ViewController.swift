@@ -20,6 +20,7 @@ extension ProcessTransaction {
         // MARK: - Handlers
         var makeAnotherTransactionHandler: (() -> Void)?
         var backCompletion: (() -> Void)?
+        var specificErrorHandler: ((Swift.Error) -> Void)?
         
         // MARK: - Initializer
         init(viewModel: ProcessTransactionViewModelType) {
@@ -67,12 +68,16 @@ extension ProcessTransaction {
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else {return}
             switch scene {
-            case .explorer:
-                break
             case .makeAnotherTransaction:
                 statusViewController.dismiss(animated: true) {
                     self.makeAnotherTransactionHandler?()
                 }
+            case .specificErrorHandler(let error):
+                statusViewController.dismiss(animated: true) {
+                    self.specificErrorHandler?(error)
+                }
+            default:
+                break
             }
         }
     }

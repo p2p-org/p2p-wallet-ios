@@ -22,7 +22,7 @@ protocol ProcessTransactionViewModelType {
     func getMainDescription() -> String
     
     func sendAndObserveTransaction()
-    func makeAnotherTransactionOrRetry()
+    func handleErrorRetryOrMakeAnotherTransaction()
     func navigate(to scene: ProcessTransaction.NavigatableScene)
 }
 
@@ -97,7 +97,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             .disposed(by: disposeBag)
     }
     
-    func makeAnotherTransactionOrRetry() {
+    func handleErrorRetryOrMakeAnotherTransaction() {
         if pendingTransactionSubject.value.status.error == nil {
             // log
             let status = pendingTransactionSubject.value.status.rawValue
@@ -113,14 +113,19 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             navigate(to: .makeAnotherTransaction)
         } else {
             // log
-            if let error = pendingTransactionSubject.value.status.error?.readableDescription {
+            if let error = pendingTransactionSubject.value.status.error {
                 switch rawTransaction {
                 case is ProcessTransaction.SendTransaction:
-                    analyticsManager.log(event: .sendTryAgainClick(error: error))
+                    analyticsManager.log(event: .sendTryAgainClick(error: error.readableDescription))
                 case is ProcessTransaction.SwapTransaction:
-                    analyticsManager.log(event: .swapTryAgainClick(error: error))
+                    analyticsManager.log(event: .swapTryAgainClick(error: error.readableDescription))
                 default:
                     break
+                }
+                
+                if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                    navigate(to: .specificErrorHandler(error))
+                    return
                 }
             }
             
@@ -141,7 +146,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             default:
                 break
             }
-        case .makeAnotherTransaction:
+        default:
             break
         }
         

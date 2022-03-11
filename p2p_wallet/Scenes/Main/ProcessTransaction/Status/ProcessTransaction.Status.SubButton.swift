@@ -21,13 +21,26 @@ extension ProcessTransaction.Status {
                 disabledTintColor: .textSecondary,
                 text: nil
             )
+            
+            onTap { [weak self] in
+                self?.viewModel.handleErrorRetryOrMakeAnotherTransaction()
+            }
+            
             bind()
         }
         
         private func bind() {
             viewModel.pendingTransactionDriver
-                .map {$0.status.error == nil}
-                .map {$0 ? L10n.makeAnotherTransaction: L10n.tryAgain}
+                .map {$0.status.error}
+                .map { error -> String in
+                    guard let error = error else {
+                        return L10n.makeAnotherTransaction
+                    }
+                    if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                        return L10n.increaseMaximumPriceSlippage
+                    }
+                    return L10n.tryAgain
+                }
                 .drive(self.rx.text)
                 .disposed(by: disposeBag)
         }

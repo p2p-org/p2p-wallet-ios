@@ -766,3 +766,4 @@
 "Sender’s address" = "Sender’s\naddress";
 "Received" = "Received";
 "Low slippage caused the swap to fail" = "Low slippage caused the swap to fail";
+"Increase maximum price slippage" = "Increase maximum price slippage";

@@ -39,7 +39,10 @@ extension ProcessTransaction.Status {
                     switch info.status {
                     case .sending, .confirmed:
                         return originalText
-                    case .error:
+                    case .error(let error):
+                        if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                            return L10n.lowSlippageCausedTheSwapToFail
+                        }
                         return L10n.theTransactionHasBeenRejected
                     case .finalized:
                         switch info.rawTransaction {

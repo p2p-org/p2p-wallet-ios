@@ -128,9 +128,6 @@ extension ProcessTransaction.Status {
                                 self?.dismiss(animated: true, completion: nil)
                             }
                         SubButton(viewModel: viewModel)
-                            .onTap { [weak self] in
-                                self?.viewModel.makeAnotherTransactionOrRetry()
-                            }
                     }
                         .padding(.init(x: 18, y: 0))
                 }

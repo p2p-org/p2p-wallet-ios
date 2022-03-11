@@ -111,6 +111,14 @@ extension OrcaSwapV2 {
                     self?.viewModel.cleanAllFields()
                     self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                 }
+                vc.specificErrorHandler = { [weak self] error in
+                    guard let self = self else {return}
+                    if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                        self.backCompletion { [weak self] in
+                            self?.viewModel.navigate(to: .settings)
+                        }
+                    }
+                }
                 show(vc, sender: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
