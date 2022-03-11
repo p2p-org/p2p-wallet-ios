@@ -35,8 +35,6 @@ extension Home {
                             .setupWithType(UILabel.self) { label in
                                 let p2pWallet = NSMutableAttributedString()
                                     .text(L10n.p2PWallet, size: 17, weight: .semibold)
-                                    .text(" ")
-                                    .text(L10n.beta, size: 17, weight: .semibold, color: .secondaryLabel)
                                 label.attributedText = p2pWallet
                             }
                     }.padding(.init(x: 0, y: 12))
