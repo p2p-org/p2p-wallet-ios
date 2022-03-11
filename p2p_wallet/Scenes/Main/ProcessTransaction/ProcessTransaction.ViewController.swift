@@ -14,7 +14,7 @@ extension ProcessTransaction {
         // MARK: - Properties
         private let viewModel: ProcessTransactionViewModelType
         private var detailViewController: TransactionDetail.ViewController!
-        private var statusViewController: StatusViewController!
+        private var statusViewController: Status.ViewController!
         private var statusViewControllerShown = false
         
         // MARK: - Handlers
