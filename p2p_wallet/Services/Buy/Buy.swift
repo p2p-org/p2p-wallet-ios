@@ -29,7 +29,7 @@ struct Buy {
             case .sol:
                 return "Solana"
             case .usdc:
-                return "Usd coin"
+                return "USD Coin"
             }
         }
         
