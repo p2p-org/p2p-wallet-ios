@@ -45,6 +45,8 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     func choosePayFee()
     func openSettings()
     
+    func cleanAllFields()
+    
     func authenticateAndSwap()
 }
 
