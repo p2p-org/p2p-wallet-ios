@@ -770,3 +770,4 @@
 "Sender’s address" = "Địa chỉ\nngười gửi";
 "Received" = "Nhận";
 "Low slippage caused the swap to fail" = "Độ trượt thấp khiến giao dịch hoán đổi không thành công";
+"Increase maximum price slippage" = "Tăng mức trượt giá tối đa";
