@@ -27,6 +27,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func reload()
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
+    func cleanAllFields()
     
     func shouldShowConfirmAlert() -> Bool
     func closeConfirmAlert()
@@ -205,6 +206,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         if !wallet.token.isRenBTC && networkSubject.value == .bitcoin {
             selectNetwork(.solana)
         }
+    }
+    
+    func cleanAllFields() {
+        amountSubject.accept(nil)
+        recipientSubject.accept(nil)
     }
     
     func shouldShowConfirmAlert() -> Bool {

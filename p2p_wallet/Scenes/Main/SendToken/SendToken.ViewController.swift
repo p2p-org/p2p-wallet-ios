@@ -99,6 +99,7 @@ extension SendToken {
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
                 vc.backCompletion = { [weak self] in
                     guard let self = self else {return}
+                    self.viewModel.cleanAllFields()
                     if self.viewModel.canGoBack {
                         self.back()
                     } else {
@@ -107,6 +108,7 @@ extension SendToken {
                 }
                 vc.makeAnotherTransactionHandler = { [weak self] in
                     guard let self = self else {return}
+                    self.viewModel.cleanAllFields()
                     self.childNavigationController.popToRootViewController(animated: true)
                 }
                 childNavigationController.pushViewController(vc, animated: true)
