@@ -77,7 +77,7 @@ extension BuyPreparing {
                                             .infoToggle
                                             .asDriver()
                                             .drive(onNext: { [weak view] value in
-                                                view?.text = value ? L10n.showFees : L10n.hideFees
+                                                view?.text = value ? L10n.hideFees : L10n.showFees
                                             })
                                             .disposed(by: disposeBag)
                                     }
