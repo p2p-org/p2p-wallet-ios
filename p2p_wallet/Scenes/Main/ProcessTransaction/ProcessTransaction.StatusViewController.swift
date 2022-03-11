@@ -24,38 +24,8 @@ extension ProcessTransaction {
         override func build() -> UIView {
             BEContainer {
                 BEVStack(spacing: 4) {
-                    // The transaction is being processed
-                    UILabel(
-                        text: nil,
-                        textSize: 20,
-                        weight: .semibold,
-                        numberOfLines: 0,
-                        textAlignment: .center
-                    )
-                        .setup {label in
-                            viewModel.pendingTransactionDriver
-                                .map { info -> String in
-                                    let originalText = info.rawTransaction.isSwap ? L10n.theSwapIsBeingProcessed: L10n.theTransactionIsBeingProcessed
-                                    
-                                    switch info.status {
-                                    case .sending, .confirmed:
-                                        return originalText
-                                    case .error:
-                                        return L10n.theTransactionHasBeenRejected
-                                    case .finalized:
-                                        switch info.rawTransaction {
-                                        case let transaction as SendTransaction:
-                                            return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
-                                        case let transaction as OrcaSwapTransaction:
-                                            return L10n.swappedSuccessfully(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
-                                        default:
-                                            fatalError()
-                                        }
-                                    }
-                                }
-                                .drive(label.rx.text)
-                                .disposed(by: disposeBag)
-                        }
+                    // Header label
+                    HeaderLabel(viewModel: viewModel)
                         .padding(.init(x: 18, y: 0))
                     
                     // Detail

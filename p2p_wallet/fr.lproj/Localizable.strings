@@ -765,3 +765,4 @@
 "Transaction has been sent" = "La transaction a été envoyée";
 "Sender’s address" = "L'adresse de\nl'expéditeur";
 "Received" = "A reçu";
+"Low slippage caused the swap to fail" = "Un faible glissement a provoqué l'échec de l'échange";
