@@ -109,7 +109,7 @@ extension SendToken {
                     guard let self = self else {return}
                     self.childNavigationController.popToRootViewController(animated: true)
                 }
-                show(vc, sender: nil)
+                childNavigationController.pushViewController(vc, animated: true)
             case .chooseNetwork:
                 let vc = SelectNetwork.ViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
