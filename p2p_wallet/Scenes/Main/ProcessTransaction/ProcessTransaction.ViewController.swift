@@ -68,8 +68,7 @@ extension ProcessTransaction {
             guard let scene = scene else {return}
             switch scene {
             case .explorer:
-                self.back()
-                showWebsite(url: "https://explorer.solana.com/tx/" + (viewModel.transactionID ?? ""))
+                break
             case .makeAnotherTransaction:
                 statusViewController.dismiss(animated: true) {
                     self.makeAnotherTransactionHandler?()
