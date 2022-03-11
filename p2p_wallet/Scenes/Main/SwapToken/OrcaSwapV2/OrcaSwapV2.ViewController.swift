@@ -103,13 +103,13 @@ extension OrcaSwapV2 {
             case .processTransaction(let transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.dismissCompletion = { [weak self] in
+                vc.backCompletion = { [weak self] in
                     self?.navigationController?.popViewController(animated: true)
                 }
                 vc.makeAnotherTransactionHandler = { [weak self] in
                     self?.navigationController?.popViewController(animated: true)
                 }
-                present(vc, interactiveDismissalType: .none, completion: nil)
+                show(vc, sender: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
             case let .info(title, description):
