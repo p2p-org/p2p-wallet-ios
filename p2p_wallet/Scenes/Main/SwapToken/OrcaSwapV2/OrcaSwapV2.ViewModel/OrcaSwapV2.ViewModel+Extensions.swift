@@ -254,4 +254,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func changeFeePayingToken(to payingToken: Wallet) {
         payingWalletSubject.accept(payingToken)
     }
+    
+    func cleanAllFields() {
+        sourceWalletSubject.accept(nil)
+        destinationWalletSubject.accept(nil)
+        enterInputAmount(nil)
+    }
 }

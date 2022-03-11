@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-extension ProcessTransaction {
+extension ProcessTransaction.Status {
     final class ProgressView: UIView {
         private let disposeBag = DisposeBag()
         fileprivate let determinedProgressView = UIProgressView(height: 2)
@@ -85,7 +85,7 @@ extension ProcessTransaction {
     }
 }
 
-extension Reactive where Base == ProcessTransaction.ProgressView {
+extension Reactive where Base == ProcessTransaction.Status.ProgressView {
     var transactionStatus: Binder<PendingTransaction.TransactionStatus> {
         Binder(base) { view, status in
             var isIndetermine = false

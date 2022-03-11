@@ -9,8 +9,8 @@ import Foundation
 
 enum ProcessTransaction {
     enum NavigatableScene {
-        case detail
         case explorer
         case makeAnotherTransaction
+        case specificErrorHandler(Swift.Error)
     }
 }
