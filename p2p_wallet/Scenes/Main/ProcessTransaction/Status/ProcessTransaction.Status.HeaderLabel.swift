@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-extension ProcessTransaction {
+extension ProcessTransaction.Status {
     final class HeaderLabel: UILabel {
         private let disposeBag = DisposeBag()
         private let viewModel: ProcessTransactionViewModelType
@@ -43,9 +43,9 @@ extension ProcessTransaction {
                         return L10n.theTransactionHasBeenRejected
                     case .finalized:
                         switch info.rawTransaction {
-                        case let transaction as SendTransaction:
+                        case let transaction as ProcessTransaction.SendTransaction:
                             return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
-                        case let transaction as OrcaSwapTransaction:
+                        case let transaction as ProcessTransaction.OrcaSwapTransaction:
                             return L10n.swappedSuccessfully(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
                         default:
                             fatalError()

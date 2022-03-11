@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */; };
+		3B01DFBC27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBB27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift */; };
+		3B01DFBE27DB19AB003E19BD /* ProcessTransaction.Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */; };
 		3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */; };
 		3B16154D2769A6840080DE42 /* OrcaSwapV2.ConfirmSwapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B16154C2769A6840080DE42 /* OrcaSwapV2.ConfirmSwapping.swift */; };
 		3B16154F2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B16154E2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift */; };
@@ -27,7 +29,7 @@
 		3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */; };
 		3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */; };
 		3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */; };
-		3B3A8EDC27D4D6E40026E0FE /* ProcessTransaction.HeaderLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.HeaderLabel.swift */; };
+		3B3A8EDC27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift */; };
 		3B3A8EEC27D7A8290026E0FE /* TransactionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EE827D7A8290026E0FE /* TransactionDetail.swift */; };
 		3B3A8EED27D7A8290026E0FE /* TransactionDetail.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EE927D7A8290026E0FE /* TransactionDetail.ViewController.swift */; };
 		3B3A8EEE27D7A8290026E0FE /* TransactionDetail.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EEA27D7A8290026E0FE /* TransactionDetail.ViewModel.swift */; };
@@ -40,7 +42,7 @@
 		3B78CB53277306BA00FB3C4C /* InAppNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB52277306BA00FB3C4C /* InAppNotification.swift */; };
 		3B78CB572773147F00FB3C4C /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB562773147F00FB3C4C /* ClipboardManager.swift */; };
 		3B7DE7EB2775B01D00A92429 /* ProcessTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7E72775B01D00A92429 /* ProcessTransaction.swift */; };
-		3B7DE7EC2775B01D00A92429 /* ProcessTransaction.StatusViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7E82775B01D00A92429 /* ProcessTransaction.StatusViewController.swift */; };
+		3B7DE7EC2775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7E82775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift */; };
 		3B7DE7ED2775B01D00A92429 /* ProcessTransaction.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7E92775B01D00A92429 /* ProcessTransaction.ViewModel.swift */; };
 		3B7DE7F22775B13E00A92429 /* ProcessTransaction.Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7F12775B13E00A92429 /* ProcessTransaction.Models.swift */; };
 		3B856FC827B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B856FC727B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift */; };
@@ -51,7 +53,7 @@
 		3B9C3DDD27A7BDAA0032548A /* SendToken.FeeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DDC27A7BDAA0032548A /* SendToken.FeeView.swift */; };
 		3BAC28B927670178007900E2 /* UIView+Rx+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */; };
 		3BCD00A52795A3F600576190 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BCD00A42795A3F600576190 /* GoogleService-Info.plist */; };
-		3BCEED5627D30A1D00BA9110 /* ProcessTransaction.ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5527D30A1D00BA9110 /* ProcessTransaction.ProgressView.swift */; };
+		3BCEED5627D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5527D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift */; };
 		3BCEED5927D32C2600BA9110 /* TransactionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */; };
 		3BCEED5D27D4737600BA9110 /* PendingTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */; };
 		3BCEED5F27D475BC00BA9110 /* TransactionHandler+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */; };
@@ -565,6 +567,8 @@
 		1B5A5C216DC945B1D5206FAB /* Pods-p2p walletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.debug.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		2AFD2F1D2405B9F7006F36C3 /* Pods-p2p walletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p walletTests.release.xcconfig"; path = "Target Support Files/Pods-p2p walletTests/Pods-p2p walletTests.release.xcconfig"; sourceTree = "<group>"; };
 		3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
+		3B01DFBB27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.SubButton.swift; sourceTree = "<group>"; };
+		3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.swift; sourceTree = "<group>"; };
 		3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmSwapping.ViewController.swift; sourceTree = "<group>"; };
 		3B16154C2769A6840080DE42 /* OrcaSwapV2.ConfirmSwapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmSwapping.swift; sourceTree = "<group>"; };
 		3B16154E2769A6B40080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmSwapping.ViewModel.swift; sourceTree = "<group>"; };
@@ -583,7 +587,7 @@
 		3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRecipientAndNetworkHandler.swift; sourceTree = "<group>"; };
 		3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
 		3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ConfirmSwappingViewModelType.swift; sourceTree = "<group>"; };
-		3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.HeaderLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.HeaderLabel.swift; sourceTree = "<group>"; };
+		3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.HeaderLabel.swift; sourceTree = "<group>"; };
 		3B3A8EE827D7A8290026E0FE /* TransactionDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.swift; sourceTree = "<group>"; };
 		3B3A8EE927D7A8290026E0FE /* TransactionDetail.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.ViewController.swift; sourceTree = "<group>"; };
 		3B3A8EEA27D7A8290026E0FE /* TransactionDetail.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.ViewModel.swift; sourceTree = "<group>"; };
@@ -596,7 +600,7 @@
 		3B78CB52277306BA00FB3C4C /* InAppNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotification.swift; sourceTree = "<group>"; };
 		3B78CB562773147F00FB3C4C /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
 		3B7DE7E72775B01D00A92429 /* ProcessTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.swift; sourceTree = "<group>"; };
-		3B7DE7E82775B01D00A92429 /* ProcessTransaction.StatusViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.StatusViewController.swift; sourceTree = "<group>"; };
+		3B7DE7E82775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.ViewController.swift; sourceTree = "<group>"; };
 		3B7DE7E92775B01D00A92429 /* ProcessTransaction.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewModel.swift; sourceTree = "<group>"; };
 		3B7DE7F12775B13E00A92429 /* ProcessTransaction.Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Models.swift; sourceTree = "<group>"; };
 		3B856FC727B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SendToken.ConfirmViewController+Subviews.swift"; sourceTree = "<group>"; };
@@ -607,7 +611,7 @@
 		3B9C3DDC27A7BDAA0032548A /* SendToken.FeeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.FeeView.swift; sourceTree = "<group>"; };
 		3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Rx+Builders.swift"; sourceTree = "<group>"; };
 		3BCD00A42795A3F600576190 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		3BCEED5527D30A1D00BA9110 /* ProcessTransaction.ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ProgressView.swift; sourceTree = "<group>"; };
+		3BCEED5527D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.ProgressView.swift; sourceTree = "<group>"; };
 		3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHandler.swift; sourceTree = "<group>"; };
 		3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingTransaction.swift; sourceTree = "<group>"; };
 		3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionHandler+Extensions.swift"; sourceTree = "<group>"; };
@@ -1284,13 +1288,16 @@
 			path = SelectNetwork;
 			sourceTree = "<group>";
 		};
-		3BCEED5427D30A0F00BA9110 /* Subviews */ = {
+		3BCEED5427D30A0F00BA9110 /* Status */ = {
 			isa = PBXGroup;
 			children = (
-				3BCEED5527D30A1D00BA9110 /* ProcessTransaction.ProgressView.swift */,
-				3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.HeaderLabel.swift */,
+				3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */,
+				3B7DE7E82775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift */,
+				3BCEED5527D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift */,
+				3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift */,
+				3B01DFBB27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift */,
 			);
-			path = Subviews;
+			path = Status;
 			sourceTree = "<group>";
 		};
 		3BCEED5727D32C1300BA9110 /* TransactionHandler */ = {
@@ -1956,8 +1963,7 @@
 				3B7DE7F12775B13E00A92429 /* ProcessTransaction.Models.swift */,
 				3B7DE7E92775B01D00A92429 /* ProcessTransaction.ViewModel.swift */,
 				3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */,
-				3B7DE7E82775B01D00A92429 /* ProcessTransaction.StatusViewController.swift */,
-				3BCEED5427D30A0F00BA9110 /* Subviews */,
+				3BCEED5427D30A0F00BA9110 /* Status */,
 			);
 			path = ProcessTransaction;
 			sourceTree = "<group>";
@@ -3102,6 +3108,7 @@
 				BC80203E26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift in Sources */,
 				BC65E19E261EA75600E436C7 /* InvestmentsRootView.swift in Sources */,
 				41F447702779B7FE00BFC46D /* SwapTokenSettings.SeparatorView.swift in Sources */,
+				3B01DFBC27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift in Sources */,
 				BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */,
 				BC65E004261D711900E436C7 /* TransactionsViewModel.swift in Sources */,
 				BC65E19D261EA75600E436C7 /* InvestmentsViewModel.swift in Sources */,
@@ -3156,6 +3163,7 @@
 				41D59FE127AD1CA400829B90 /* CachedTokensRepository.swift in Sources */,
 				BCB4237925C7BE7900F8A7A9 /* PercentSuffixTextField.swift in Sources */,
 				4183007E2758B9ED007BBEBF /* OrcaSwapV2.RatesStackView.swift in Sources */,
+				3B01DFBE27DB19AB003E19BD /* ProcessTransaction.Status.swift in Sources */,
 				BC54DCEE25837CD600A65566 /* ChartMarker.swift in Sources */,
 				BC22ABD22552A2FC0071C69F /* MenuInteractor.swift in Sources */,
 				41EB2E6527B23D44007D5F7F /* IntercomStartingConfigurator.swift in Sources */,
@@ -3205,7 +3213,7 @@
 				BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */,
 				86A90D18273D306400D180EF /* VerifySecurityKeys.ViewController.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWallet.ViewController.swift in Sources */,
-				3B7DE7EC2775B01D00A92429 /* ProcessTransaction.StatusViewController.swift in Sources */,
+				3B7DE7EC2775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift in Sources */,
 				BC1BEBFC26CDF6520049A44C /* SwapToken.RootView.swift in Sources */,
 				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WelcomeViewController.swift in Sources */,
@@ -3220,7 +3228,7 @@
 				BCA9941F25AE93D5005BD8FB /* Fonts+Generated.swift in Sources */,
 				41C460282771CF5A009C12D9 /* SwapTokenSettings.NavigationBar.swift in Sources */,
 				BC6FEDA3270D57D1002B6255 /* NameService.swift in Sources */,
-				3B3A8EDC27D4D6E40026E0FE /* ProcessTransaction.HeaderLabel.swift in Sources */,
+				3B3A8EDC27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift in Sources */,
 				BCEE508526244B6300271AB9 /* WLEmptyCell.swift in Sources */,
 				3B29B69B27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */,
 				BCB286C6274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.ViewController.swift in Sources */,
@@ -3560,7 +3568,7 @@
 				8469922B1734B0B5200C4641 /* MoonpayBuyProcessing.swift in Sources */,
 				846999379F9F0FA61EA1FC1F /* BuyProcessingServiceType.swift in Sources */,
 				846991E94E5B357F70EACC4C /* Buy.swift in Sources */,
-				3BCEED5627D30A1D00BA9110 /* ProcessTransaction.ProgressView.swift in Sources */,
+				3BCEED5627D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift in Sources */,
 				84699FE9610FE1FD6BCE2F65 /* BuyExchangeServiceType.swift in Sources */,
 				8469917D8E71B0E435F7EA48 /* Moonpay.swift in Sources */,
 				8469996EF705D60C94EB79FC /* Moonpay.API.swift in Sources */,

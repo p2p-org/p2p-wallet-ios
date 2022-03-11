@@ -1,5 +1,5 @@
 //
-//  PT.ViewController.swift
+//  ProcessTransaction.Status.ViewController.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 24/12/2021.
@@ -9,8 +9,8 @@ import Foundation
 import UIKit
 import BEPureLayout
 
-extension ProcessTransaction {
-    class StatusViewController: WLModalViewController {
+extension ProcessTransaction.Status {
+    class ViewController: WLModalViewController {
         // MARK: - Dependencies
         private let viewModel: ProcessTransactionViewModelType
         
@@ -127,14 +127,7 @@ extension ProcessTransaction {
                             .onTap { [weak self] in
                                 self?.dismiss(animated: true, completion: nil)
                             }
-                        WLStepButton.sub(text: L10n.makeAnotherTransaction)
-                            .setup { button in
-                                viewModel.pendingTransactionDriver
-                                    .map {$0.status.error == nil}
-                                    .map {$0 ? L10n.makeAnotherTransaction: L10n.tryAgain}
-                                    .drive(button.rx.text)
-                                    .disposed(by: disposeBag)
-                            }
+                        SubButton(viewModel: viewModel)
                             .onTap { [weak self] in
                                 self?.viewModel.makeAnotherTransactionOrRetry()
                             }
