@@ -153,7 +153,7 @@ extension ProcessTransaction {
                     
                     // Buttons
                     BEVStack(spacing: 10) {
-                        WLStepButton.main(image: .info, text: L10n.showTransactionDetails)
+                        WLStepButton.main(image: .info, text: viewModel.isSwapping ? L10n.showSwapDetails : L10n.showTransactionDetails)
                             .onTap { [weak self] in
                                 self?.dismiss(animated: true, completion: nil)
                             }
