@@ -137,5 +137,21 @@ extension ProcessTransaction.Status {
                     .padding(.init(x: 0, y: 18))
             }
         }
+        
+        override func bind() {
+            super.bind()
+            viewModel.navigationDriver
+                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .disposed(by: disposeBag)
+        }
+        
+        private func navigate(to scene: ProcessTransaction.NavigatableScene?) {
+            switch scene {
+            case .explorer:
+                showWebsite(url: "https://explorer.solana.com/tx/" + (self.viewModel.transactionID ?? ""))
+            default:
+                break
+            }
+        }
     }
 }
