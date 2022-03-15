@@ -111,8 +111,8 @@ extension TransactionDetail {
                                 .disposed(by: disposeBag)
                         }
                     
-                    // Fees section
-                    FeesSection(viewModel: viewModel)
+                    // Amount section
+                    AmountSection(viewModel: viewModel)
                     
                     // Separator
                     UIView.defaultSeparator()

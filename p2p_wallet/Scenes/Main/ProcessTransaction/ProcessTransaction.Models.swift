@@ -25,6 +25,17 @@ extension RawTransactionType {
     var isSwap: Bool {
         self is ProcessTransaction.OrcaSwapTransaction || self is ProcessTransaction.SwapTransaction
     }
+    
+    var payingWallet: Wallet? {
+        switch self {
+        case let transaction as ProcessTransaction.OrcaSwapTransaction:
+            return transaction.payingWallet
+        case let transaction as ProcessTransaction.SendTransaction:
+            return transaction.payingFeeWallet
+        default:
+            return nil
+        }
+    }
 }
 
 extension ProcessTransaction {
