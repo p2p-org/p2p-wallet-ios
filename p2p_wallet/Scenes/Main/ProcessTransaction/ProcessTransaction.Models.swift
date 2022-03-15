@@ -128,7 +128,7 @@ extension ProcessTransaction {
         let amount: SolanaSDK.Lamports
         let payingFeeWallet: Wallet?
         let feeInSOL: UInt64
-        let feeInToken: UInt64?
+        let feeInToken: SolanaSDK.FeeAmount?
         let isSimulation: Bool
         
         var mainDescription: String {
