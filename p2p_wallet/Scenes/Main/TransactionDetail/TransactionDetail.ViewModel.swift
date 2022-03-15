@@ -11,7 +11,7 @@ import RxCocoa
 import SolanaSwift
 import Resolver
 
-protocol TransactionDetailViewModelType {
+protocol TransactionDetailViewModelType: AnyObject {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> {get}
     var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {get}
     var senderNameDriver: Driver<String?> {get}
