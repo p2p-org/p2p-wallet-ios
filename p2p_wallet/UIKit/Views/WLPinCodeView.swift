@@ -16,7 +16,7 @@ final class WLPinCodeView: BEView {
     /// Correct pincode for comparision, if not defined, the validation will always returns true
     private let correctPincode: String?
     
-    /// Max attempts for retrying, default is nil (infinite)
+    /// Max attempts for retrying, default is nil (infinity)
     private let maxAttemptsCount: Int?
     
     private var currentPincode: String? {
@@ -35,6 +35,8 @@ final class WLPinCodeView: BEView {
             stackView.spacing = stackViewSpacing
         }
     }
+    
+    private var isPresentingError = false
     
     // MARK: - Callbacks
     /// onSuccess, return newPincode if needed
@@ -104,6 +106,9 @@ final class WLPinCodeView: BEView {
     // MARK: - Private methods
     private func add(digit: Int) {
         guard digit >= 0 && digit < 10 else { return }
+        
+        isPresentingError = false
+        
         // calculate value
         let newValue = (currentPincode ?? "") + String(digit) // (currentPincode ?? 0) * 10 + UInt(digit)
         let numberOfDigits = newValue.count
@@ -172,6 +177,13 @@ final class WLPinCodeView: BEView {
                     pincodeFailed(exceededMaxAttempts: true)
                 } else {
                     pincodeFailed(exceededMaxAttempts: false)
+                    
+                    // clear pincode after 3 seconds
+                    isPresentingError = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
+                        guard let self = self, self.isPresentingError else {return}
+                        self.currentPincode = nil
+                    }
                 }
             }
             
