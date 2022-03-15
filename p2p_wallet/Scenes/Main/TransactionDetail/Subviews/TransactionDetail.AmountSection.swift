@@ -103,7 +103,7 @@ extension TransactionDetail {
                     .setup { label in
                         viewModel.parsedTransactionDriver
                             .map { [weak self] in
-                                self?.getAttributedString(amount: $0?.amount, symbol: $0?.symbol)
+                                self?.getAttributedString(amount: abs($0?.amount ?? 0), symbol: $0?.symbol)
                             }
                             .drive(label.rx.attributedText)
                             .disposed(by: disposeBag)
@@ -115,7 +115,7 @@ extension TransactionDetail {
             let feesDriver = viewModel.parsedTransactionDriver
                 .map {$0?.fee}
             
-            return BEHStack(spacing: 4) {
+            return BEHStack(spacing: 4, alignment: .top) {
                 titleLabel(text: L10n.transferFee)
                     .setup { label in
                         viewModel.parsedTransactionDriver
@@ -127,32 +127,32 @@ extension TransactionDetail {
                 
                 BEVStack(spacing: 8) {
                     // deposit
-                    UILabel(text: "0.02 SOL (Deposit)", textSize: 15, textAlignment: .right)
-                        .setup { depositLabel in
-                            feesDriver
-                                .map { [weak self] feeAmount -> NSAttributedString? in
-                                    guard let self = self else {return nil}
-                                    let payingWallet = self.getPayingFeeWallet()
-                                    let amount = feeAmount?.deposit
-                                        .convertToBalance(decimals: payingWallet.token.decimals)
-                                        .toString(maximumFractionDigits: 9)
-                                    
-                                    return NSMutableAttributedString()
-                                        .text(amount + " " + payingWallet.token.symbol + " ", size: 15, color: .textBlack)
-                                        .text("(\(L10n.depositWillBeReturned))", size: 15, color: .textSecondary)
-                                }
-                                .drive(depositLabel.rx.attributedText)
-                                .disposed(by: disposeBag)
-                            
-                            feesDriver
-                                .map {$0?.deposit ?? 0}
-                                .map {$0 == 0}
-                                .drive(depositLabel.rx.isHidden)
-                                .disposed(by: disposeBag)
-                        }
+//                    UILabel(text: "0.02 SOL (Deposit)", textSize: 15, textAlignment: .right)
+//                        .setup { depositLabel in
+//                            feesDriver
+//                                .map { [weak self] feeAmount -> NSAttributedString? in
+//                                    guard let self = self else {return nil}
+//                                    let payingWallet = self.getPayingFeeWallet()
+//                                    let amount = feeAmount?.deposit
+//                                        .convertToBalance(decimals: payingWallet.token.decimals)
+//                                        .toString(maximumFractionDigits: 9)
+//                                    
+//                                    return NSMutableAttributedString()
+//                                        .text(amount + " " + payingWallet.token.symbol + " ", size: 15, color: .textBlack)
+//                                        .text("(\(L10n.deposit))", size: 15, color: .textSecondary)
+//                                }
+//                                .drive(depositLabel.rx.attributedText)
+//                                .disposed(by: disposeBag)
+//                            
+//                            feesDriver
+//                                .map {$0?.deposit ?? 0}
+//                                .map {$0 == 0}
+//                                .drive(depositLabel.rx.isHidden)
+//                                .disposed(by: disposeBag)
+//                        }
                     
                     // account creation fee
-                    UILabel(text: "0.02 SOL (Deposit)", textSize: 15, textAlignment: .right)
+                    UILabel(text: "0.02 SOL (BTC Account Creation)", textSize: 15, textAlignment: .right)
                         .setup { accountCreationLabel in
                             feesDriver
                                 .map { [weak self] feeAmount -> NSAttributedString? in
@@ -185,11 +185,16 @@ extension TransactionDetail {
                                     let payingWallet = self.getPayingFeeWallet()
                                     let amount = feeAmount?.deposit
                                         .convertToBalance(decimals: payingWallet.token.decimals)
-                                        .toString(maximumFractionDigits: 9)
-                                    
-                                    return NSMutableAttributedString()
-                                        .text(amount + " " + payingWallet.token.symbol + " ", size: 15, color: .textBlack)
-                                        .text("(\(L10n.transferFee)", size: 15, color: .textSecondary)
+                                        
+                                    if amount > 0 {
+                                        return NSMutableAttributedString()
+                                            .text(amount.toString(maximumFractionDigits: 9) + " " + payingWallet.token.symbol + " ", size: 15, color: .textBlack)
+                                            .text("(\(L10n.transferFee))", size: 15, color: .textSecondary)
+                                    } else {
+                                        return NSMutableAttributedString()
+                                            .text(L10n.free + " ", size: 15, weight: .semibold)
+                                            .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                                    }
                                 }
                                 .drive(accountCreationLabel.rx.attributedText)
                                 .disposed(by: disposeBag)
@@ -202,7 +207,7 @@ extension TransactionDetail {
             NSMutableAttributedString()
                 .text(amount.toString(maximumFractionDigits: 9) + " " + symbol, size: 15, color: .textBlack)
                 .text(" ")
-                .text("(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol) ?? 0))", size: 15, color: .textSecondary)
+                .text("(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol)?.toString(maximumFractionDigits: 9) ?? "0"))", size: 15, color: .textSecondary)
         }
         
         private func getPayingFeeWallet() -> Wallet {
