@@ -47,24 +47,7 @@ extension TransactionDetail {
                         }
                     
                     // Fee
-                    BEHStack(spacing: 4) {
-                        titleLabel(text: L10n.transferFee)
-                        
-                        UILabel(text: "Free (Paid by P2P.org)", textSize: 15, textAlignment: .right)
-                            .setup { label in
-                                viewModel.parsedTransactionDriver
-                                    .map {$0?.fee ?? 0}
-                                    .map {"\($0) lamports"}
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
-                            }
-                    }
-                    
-//                    BEHStack(spacing: 4) {
-//                        titleLabel(text: L10n.total)
-//
-//                        UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
-//                    }
+                    feesSection()
                 }
             }
         }
@@ -121,6 +104,40 @@ extension TransactionDetail {
                         viewModel.parsedTransactionDriver
                             .map { [weak self] in
                                 self?.getString(amount: $0?.amount, symbol: $0?.symbol)
+                            }
+                            .drive(label.rx.text)
+                            .disposed(by: disposeBag)
+                    }
+            }
+        }
+        
+        private func feesSection() -> BEHStack {
+            let feesAndPayingFeeWalletDriver = viewModel.parsedTransactionDriver
+                .map {($0?.fee, ($0?.value as? SolanaSDK.SwapTransaction))}
+            
+            return BEHStack(spacing: 4) {
+                titleLabel(text: L10n.transferFee)
+                    .setup { label in
+                        viewModel.parsedTransactionDriver
+                            .map {$0?.value is SolanaSDK.SwapTransaction}
+                            .map {$0 ? L10n.swapFees: L10n.transferFee}
+                            .drive(label.rx.text)
+                            .disposed(by: disposeBag)
+                    }
+                
+                BEVStack(spacing: 8) {
+                    // deposit
+                    UILabel(text: "0.02 SOL (Deposit)", textSize: 15, textAlignment: .right)
+                        .setup { depositLabel in
+                            feesDriver.map {$0?.deposit}
+                        }
+                }
+                
+                UILabel(text: "Free (Paid by P2P.org)", textSize: 15, textAlignment: .right)
+                    .setup { label in
+                        feesDriver
+                            .map {feeAmount in
+                                
                             }
                             .drive(label.rx.text)
                             .disposed(by: disposeBag)
