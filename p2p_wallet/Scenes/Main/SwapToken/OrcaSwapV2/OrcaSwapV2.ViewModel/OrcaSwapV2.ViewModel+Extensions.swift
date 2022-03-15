@@ -177,13 +177,6 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func useAllBalance() {
         let availableAmount = calculateAvailableAmount()
         enterInputAmount(availableAmount)
-
-        // fees depends on input amount, so after entering availableAmount, fees has changed, so needed to calculate availableAmount again with 300 milliseconds of debouncing
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
-            guard let self = self else { return }
-            let availableAmountUpdated = self.calculateAvailableAmount()
-            self.enterInputAmount(availableAmountUpdated)
-        }
     }
 
     func enterInputAmount(_ amount: Double?) {

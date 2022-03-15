@@ -75,7 +75,7 @@ extension OrcaSwapV2.ViewModel {
             return .feesIsBeingCalculated
         }
         
-        guard let payingFeeWallet = payingWalletSubject.value else {
+        guard payingWalletSubject.value != nil else {
             return .payingFeeWalletNotFound
         }
 
@@ -113,24 +113,24 @@ extension OrcaSwapV2.ViewModel {
     }
 
     func calculateAvailableAmount() -> Double? {
-        guard
-            let sourceWallet = sourceWalletSubject.value,
-            let payingFeeWallet = payingWalletSubject.value,
-            let fees = feesSubject.value?.transactionFees(of: sourceWallet.token.symbol)
-        else {
-            return sourceWalletSubject.value?.amount
+        guard let sourceWallet = sourceWalletSubject.value else {
+            return nil
         }
-
-        // paying with native wallet
-        if payingFeeWallet.isNativeSOL && !sourceWallet.isNativeSOL {
-            return sourceWallet.amount
+        
+        let payingFeeWallet = payingWalletSubject.value
+        
+        // subtract the fee when source wallet is the paying wallet
+        if payingFeeWallet?.mintAddress == sourceWallet.mintAddress {
+            let fees = (feesSubject.value?.all(ofToken: sourceWallet.token.symbol) ?? 0)
+                .convertToBalance(decimals: sourceWallet.token.decimals)
+            if let amount = sourceWallet.amount,
+               amount > fees
+            {
+                return amount - fees
+            }
         }
-        // paying with wallet itself
-        else {
-            let availableAmount =
-                (sourceWallet.amount ?? 0) - fees.convertToBalance(decimals: sourceWallet.token.decimals)
-            return availableAmount > 0 ? availableAmount : 0
-        }
+        
+        return sourceWallet.amount
     }
 
     private func isSlippageValid() -> Bool {

@@ -32,9 +32,9 @@ extension ProcessTransaction.Status {
         private func bind() {
             viewModel.pendingTransactionDriver
                 .map {$0.status.error}
-                .map { error -> String in
+                .map { [weak self] error -> String in
                     guard let error = error else {
-                        return L10n.makeAnotherTransaction
+                        return self?.viewModel.isSwapping == true ? L10n.makeAnotherSwap : L10n.makeAnotherTransaction
                     }
                     if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
                         return L10n.increaseMaximumPriceSlippage
