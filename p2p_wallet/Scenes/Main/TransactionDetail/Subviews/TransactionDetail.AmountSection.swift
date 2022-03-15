@@ -136,14 +136,14 @@ extension TransactionDetail {
 //                                    let amount = feeAmount?.deposit
 //                                        .convertToBalance(decimals: payingWallet.token.decimals)
 //                                        .toString(maximumFractionDigits: 9)
-//                                    
+//
 //                                    return NSMutableAttributedString()
 //                                        .text(amount + " " + payingWallet.token.symbol + " ", size: 15, color: .textBlack)
 //                                        .text("(\(L10n.deposit))", size: 15, color: .textSecondary)
 //                                }
 //                                .drive(depositLabel.rx.attributedText)
 //                                .disposed(by: disposeBag)
-//                            
+//
 //                            feesDriver
 //                                .map {$0?.deposit ?? 0}
 //                                .map {$0 == 0}
@@ -183,7 +183,7 @@ extension TransactionDetail {
                                 .map { [weak self] feeAmount -> NSAttributedString? in
                                     guard let self = self else {return nil}
                                     let payingWallet = self.getPayingFeeWallet()
-                                    let amount = feeAmount?.deposit
+                                    let amount = feeAmount?.transaction
                                         .convertToBalance(decimals: payingWallet.token.decimals)
                                         
                                     if amount > 0 {
