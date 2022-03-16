@@ -75,7 +75,7 @@ extension TransactionDetail {
                     }
                         
                     // Transaction id
-                    BEHStack(spacing: 4, alignment: .top) {
+                    BEHStack(spacing: 12, alignment: .top) {
                         titleLabel(text: L10n.transactionID)
                         
                         BEVStack(spacing: 4) {
@@ -111,14 +111,14 @@ extension TransactionDetail {
                                 .disposed(by: disposeBag)
                         }
                     
-                    // Fees section
-                    FeesSection(viewModel: viewModel)
+                    // Amount section
+                    AmountSection(viewModel: viewModel)
                     
                     // Separator
                     UIView.defaultSeparator()
                     
                     // Block number
-                    BEHStack(spacing: 4) {
+                    BEHStack(spacing: 12) {
                         titleLabel(text: L10n.blockNumber)
                         
                         UILabel(text: "#5387498763", textSize: 15, textAlignment: .right)
@@ -146,6 +146,8 @@ extension TransactionDetail {
             switch scene {
             case .explorer:
                 showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.getTransactionId() ?? "")")
+            case .freeFeeInfo:
+                showAlert(title: L10n.paidByP2p, message: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(100))
             }
         }
         

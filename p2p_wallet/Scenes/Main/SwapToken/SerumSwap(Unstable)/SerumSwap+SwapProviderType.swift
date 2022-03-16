@@ -3,7 +3,7 @@
 //  p2p_wallet
 //
 //  Created by Chung Tran on 26/08/2021.
-//
+//  TO USE THIS, ADD TO TARGET MEMBERSHIP
 
 import Foundation
 import RxSwift

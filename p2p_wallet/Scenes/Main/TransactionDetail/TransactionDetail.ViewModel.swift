@@ -11,7 +11,7 @@ import RxCocoa
 import SolanaSwift
 import Resolver
 
-protocol TransactionDetailViewModelType {
+protocol TransactionDetailViewModelType: AnyObject {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> {get}
     var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {get}
     var senderNameDriver: Driver<String?> {get}
@@ -20,6 +20,7 @@ protocol TransactionDetailViewModelType {
     var isFromToSectionAvailableDriver: Driver<Bool> {get}
     
     func getTransactionId() -> String?
+    func getPayingFeeWallet() -> Wallet?
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double?
     
     func navigate(to scene: TransactionDetail.NavigatableScene)
@@ -44,6 +45,7 @@ extension TransactionDetail {
         // MARK: - Properties
         private let disposeBag = DisposeBag()
         private let observingTransactionIndex: TransactionHandlerType.TransactionIndex?
+        private var payingFeeWallet: Wallet?
         
         // MARK: - Subject
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -73,12 +75,16 @@ extension TransactionDetail {
         func bind() {
             transactionHandler
                 .observeTransaction(transactionIndex: observingTransactionIndex!)
+                .observe(on: MainScheduler.instance)
+                .do(onNext: { [weak self] pendingTransaction in
+                    guard let self = self else {return}
+                    self.payingFeeWallet = pendingTransaction?.rawTransaction.payingWallet
+                })
                 .map { [weak self] pendingTransaction -> SolanaSDK.ParsedTransaction? in
                     guard let self = self else {return nil}
                     return pendingTransaction?.parse(pricesService: self.pricesService, authority: self.walletsRepository.nativeWallet?.pubkey)
                 }
                 .catchAndReturn(nil)
-                .observe(on: MainScheduler.instance)
                 .do(onNext: { [weak self] parsedTransaction in
                     self?.mapNames(parsedTransaction: parsedTransaction)
                 })
@@ -176,6 +182,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     
     func getTransactionId() -> String? {
         parsedTransationSubject.value?.signature
+    }
+    
+    func getPayingFeeWallet() -> Wallet? {
+        payingFeeWallet
     }
     
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double? {

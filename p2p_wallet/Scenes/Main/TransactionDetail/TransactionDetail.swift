@@ -11,5 +11,6 @@ import RxCocoa
 enum TransactionDetail {
     enum NavigatableScene {
         case explorer
+        case freeFeeInfo
     }
 }
