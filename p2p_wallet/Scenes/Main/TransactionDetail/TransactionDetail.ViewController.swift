@@ -75,7 +75,7 @@ extension TransactionDetail {
                     }
                         
                     // Transaction id
-                    BEHStack(spacing: 4, alignment: .top) {
+                    BEHStack(spacing: 12, alignment: .top) {
                         titleLabel(text: L10n.transactionID)
                         
                         BEVStack(spacing: 4) {
@@ -118,7 +118,7 @@ extension TransactionDetail {
                     UIView.defaultSeparator()
                     
                     // Block number
-                    BEHStack(spacing: 4) {
+                    BEHStack(spacing: 12) {
                         titleLabel(text: L10n.blockNumber)
                         
                         UILabel(text: "#5387498763", textSize: 15, textAlignment: .right)
