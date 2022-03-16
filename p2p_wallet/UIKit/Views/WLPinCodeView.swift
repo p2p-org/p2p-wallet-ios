@@ -177,19 +177,14 @@ final class WLPinCodeView: BEView {
                     pincodeFailed(exceededMaxAttempts: true)
                 } else {
                     pincodeFailed(exceededMaxAttempts: false)
-                    
-                    // clear pincode after 3 seconds
-                    isPresentingError = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
-                        guard let self = self, self.isPresentingError else {return}
-                        self.currentPincode = nil
-                    }
+                    clearErrorAfter3Seconds()
                 }
             }
             
             // incorrect pincode without max attempts
             else {
                 pincodeFailed(exceededMaxAttempts: false)
+                clearErrorAfter3Seconds()
             }
         }
     }
@@ -217,6 +212,15 @@ final class WLPinCodeView: BEView {
             onFailedAndExceededMaxAttemps?()
         } else {
             onFailed?()
+        }
+    }
+    
+    private func clearErrorAfter3Seconds() {
+        // clear pincode after 3 seconds
+        isPresentingError = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) { [weak self] in
+            guard let self = self, self.isPresentingError else {return}
+            self.currentPincode = nil
         }
     }
 }
