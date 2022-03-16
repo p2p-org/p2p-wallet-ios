@@ -177,28 +177,37 @@ extension TransactionDetail {
                         }
                     
                     // transfer fee
-                    UILabel(text: "0.02 SOL (Transfer fee)", textSize: 15, textAlignment: .right)
-                        .setup { accountCreationLabel in
-                            feesDriver
-                                .map { [weak self] feeAmount -> NSAttributedString? in
-                                    guard let self = self else {return nil}
-                                    let payingWallet = self.getPayingFeeWallet()
-                                    let amount = feeAmount?.transaction
-                                        .convertToBalance(decimals: payingWallet.token.decimals)
-                                        
-                                    if amount > 0 {
-                                        return NSMutableAttributedString()
-                                            .text(amount.toString(maximumFractionDigits: 9) + " " + payingWallet.token.symbol + " ", size: 15, color: .textBlack)
-                                            .text("(\(L10n.transferFee))", size: 15, color: .textSecondary)
-                                    } else {
-                                        return NSMutableAttributedString()
-                                            .text(L10n.free + " ", size: 15, weight: .semibold)
-                                            .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                    BEHStack(spacing: 4) {
+                        UILabel(text: "0.02 SOL (Transfer fee)", textSize: 15, textAlignment: .right)
+                            .setup { accountCreationLabel in
+                                feesDriver
+                                    .map { [weak self] feeAmount -> NSAttributedString? in
+                                        guard let self = self else {return nil}
+                                        let payingWallet = self.getPayingFeeWallet()
+                                        let amount = feeAmount?.transaction
+                                            .convertToBalance(decimals: payingWallet.token.decimals)
+                                            
+                                        if amount > 0 {
+                                            return NSMutableAttributedString()
+                                                .text(amount.toString(maximumFractionDigits: 9) + " " + payingWallet.token.symbol + " ", size: 15, color: .textBlack)
+                                                .text("(\(L10n.transferFee))", size: 15, color: .textSecondary)
+                                        } else {
+                                            return NSMutableAttributedString()
+                                                .text(L10n.free + " ", size: 15, weight: .semibold)
+                                                .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                                        }
                                     }
-                                }
-                                .drive(accountCreationLabel.rx.attributedText)
-                                .disposed(by: disposeBag)
-                        }
+                                    .drive(accountCreationLabel.rx.attributedText)
+                                    .disposed(by: disposeBag)
+                            }
+                        UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
+                            .setup { infoButton in
+                                feesDriver
+                                    .map {$0?.transaction != 0}
+                                    .drive(infoButton.rx.isHidden)
+                                    .disposed(by: disposeBag)
+                            }
+                    }
                 }
             }
         }
