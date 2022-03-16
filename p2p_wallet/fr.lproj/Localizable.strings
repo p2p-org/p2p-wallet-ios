@@ -768,3 +768,7 @@
 "Low slippage caused the swap to fail" = "Un faible glissement a provoqué l'échec de l'échange";
 "Increase maximum price slippage" = "Augmenter le glissement de prix maximal";
 "Make another swap" = "Faire un autre échange";
+"Sent" = "Envoyé";
+"Spent" = "Dépensé";
+"%@ Account Creation" = "%@ Création de compte";
+"Deposit" = "Verser";

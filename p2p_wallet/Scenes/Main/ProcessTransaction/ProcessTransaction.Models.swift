@@ -25,6 +25,17 @@ extension RawTransactionType {
     var isSwap: Bool {
         self is ProcessTransaction.OrcaSwapTransaction || self is ProcessTransaction.SwapTransaction
     }
+    
+    var payingWallet: Wallet? {
+        switch self {
+        case let transaction as ProcessTransaction.OrcaSwapTransaction:
+            return transaction.payingWallet
+        case let transaction as ProcessTransaction.SendTransaction:
+            return transaction.payingFeeWallet
+        default:
+            return nil
+        }
+    }
 }
 
 extension ProcessTransaction {
@@ -128,7 +139,7 @@ extension ProcessTransaction {
         let amount: SolanaSDK.Lamports
         let payingFeeWallet: Wallet?
         let feeInSOL: UInt64
-        let feeInToken: UInt64?
+        let feeInToken: SolanaSDK.FeeAmount?
         let isSimulation: Bool
         
         var mainDescription: String {

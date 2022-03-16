@@ -772,3 +772,7 @@
 "Low slippage caused the swap to fail" = "Độ trượt thấp khiến giao dịch hoán đổi không thành công";
 "Increase maximum price slippage" = "Tăng mức trượt giá tối đa";
 "Make another swap" = "Thực hiện hoán đổi khác";
+"Sent" = "Gởi";
+"Spent" = "Dành ra";
+"%@ Account Creation" = "Tạo tài khoản %@";
+"Deposit" = "Đặt cọc";

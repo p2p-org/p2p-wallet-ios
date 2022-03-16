@@ -59,7 +59,7 @@
 		3BCEED5F27D475BC00BA9110 /* TransactionHandler+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */; };
 		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
 		3BFA644B27D888BE001CA631 /* TransactionDetail.FromToSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */; };
-		3BFA644D27D89A2A001CA631 /* TransactionDetail.FeesSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644C27D89A2A001CA631 /* TransactionDetail.FeesSection.swift */; };
+		3BFA644D27D89A2A001CA631 /* TransactionDetail.AmountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */; };
 		3BFA645027D99FBC001CA631 /* NameServiceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644F27D99FBC001CA631 /* NameServiceCache.swift */; };
 		3BFA645827D9AEF6001CA631 /* Settings.Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA645727D9AEF6001CA631 /* Settings.Backup.swift */; };
 		3BFA645A27D9AF17001CA631 /* Settings.Backup.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA645927D9AF17001CA631 /* Settings.Backup.ViewModel.swift */; };
@@ -615,7 +615,7 @@
 		3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionHandler+Extensions.swift"; sourceTree = "<group>"; };
 		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
 		3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.FromToSection.swift; sourceTree = "<group>"; };
-		3BFA644C27D89A2A001CA631 /* TransactionDetail.FeesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.FeesSection.swift; sourceTree = "<group>"; };
+		3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.AmountSection.swift; sourceTree = "<group>"; };
 		3BFA644F27D99FBC001CA631 /* NameServiceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameServiceCache.swift; sourceTree = "<group>"; };
 		3BFA645727D9AEF6001CA631 /* Settings.Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Backup.swift; sourceTree = "<group>"; };
 		3BFA645927D9AF17001CA631 /* Settings.Backup.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Backup.ViewModel.swift; sourceTree = "<group>"; };
@@ -1245,7 +1245,7 @@
 				3B3A8EF327D7AF540026E0FE /* TransactionDetail.StatusView.swift */,
 				3B3A8EF527D7B4680026E0FE /* TransactionDetail.SummaryView.swift */,
 				3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */,
-				3BFA644C27D89A2A001CA631 /* TransactionDetail.FeesSection.swift */,
+				3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */,
 			);
 			path = Subviews;
 			sourceTree = "<group>";
@@ -3182,7 +3182,7 @@
 				41DE53D22797C0A000F24B0B /* WalletActionType.swift in Sources */,
 				BCCF23C526FAED6800D08724 /* RenVM.BurnAndRelease.TransactionStorage.swift in Sources */,
 				BC6FED97270C30D6002B6255 /* RenBTCReceivingStatuses.TxDetailViewController.swift in Sources */,
-				3BFA644D27D89A2A001CA631 /* TransactionDetail.FeesSection.swift in Sources */,
+				3BFA644D27D89A2A001CA631 /* TransactionDetail.AmountSection.swift in Sources */,
 				BCA93F5A25E77DE80081DDF6 /* TokenSettings.swift in Sources */,
 				BC11C9D82590987D00E399A9 /* SectionBackgroundView.swift in Sources */,
 				BC4B9EA127154050005B9ECA /* Settings.SelectAppearanceViewController.swift in Sources */,

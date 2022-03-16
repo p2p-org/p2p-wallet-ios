@@ -102,7 +102,7 @@ extension PendingTransaction {
         
         var value: AnyHashable?
         let amountInFiat: Double?
-        let fee: UInt64?
+        let fee: SolanaSDK.FeeAmount?
         
         switch rawTransaction {
         case let transaction as ProcessTransaction.SendTransaction:
@@ -116,7 +116,7 @@ extension PendingTransaction {
                 myAccount: transaction.sender.pubkey
             )
             amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
-            fee = transaction.feeInSOL
+            fee = transaction.feeInToken
         case let transaction as ProcessTransaction.OrcaSwapTransaction:
             value = SolanaSDK.SwapTransaction(
                 source: transaction.sourceWallet,
@@ -126,7 +126,7 @@ extension PendingTransaction {
                 myAccountSymbol: nil
             )
             amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?.value
-            fee = transaction.fees.networkFees?.total
+            fee = transaction.fees.networkFees
         default:
             return nil
         }
