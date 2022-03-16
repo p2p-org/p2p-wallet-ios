@@ -111,8 +111,8 @@ extension TransactionDetail {
                                 .disposed(by: disposeBag)
                         }
                     
-                    // Fees section
-                    FeesSection(viewModel: viewModel)
+                    // Amount section
+                    AmountSection(viewModel: viewModel)
                     
                     // Separator
                     UIView.defaultSeparator()
@@ -146,6 +146,8 @@ extension TransactionDetail {
             switch scene {
             case .explorer:
                 showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.getTransactionId() ?? "")")
+            case .freeFeeInfo:
+                showAlert(title: L10n.paidByP2p, message: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(100))
             }
         }
         

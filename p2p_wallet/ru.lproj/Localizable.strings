@@ -768,3 +768,7 @@
 "Low slippage caused the swap to fail" = "Низкое проскальзывание привело к сбою свопа";
 "Increase maximum price slippage" = "Увеличить максимальное проскальзывание цены";
 "Make another swap" = "Сделайте еще один обмен";
+"Sent" = "Отправил";
+"Spent" = "Потраченный";
+"%@ Account Creation" = "Создание учетной записи %@";
+"Deposit" = "Депозит";
