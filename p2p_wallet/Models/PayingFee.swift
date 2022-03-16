@@ -109,19 +109,22 @@ extension Array where Element == PayingFee {
     var networkFees: SolanaSDK.FeeAmount? {
         var transactionFee: UInt64?
         var accountCreationFee: UInt64?
+        var depositFee: UInt64?
         for fee in self {
             switch fee.type {
             case .transactionFee:
                 transactionFee = fee.lamports
             case .accountCreationFee:
                 accountCreationFee = fee.lamports
+            case .depositWillBeReturned:
+                depositFee = fee.lamports
             default:
                 break
             }
         }
         
         if let transactionFee = transactionFee, let accountCreationFee = accountCreationFee {
-            return .init(transaction: transactionFee, accountBalances: accountCreationFee)
+            return .init(transaction: transactionFee, accountBalances: accountCreationFee, deposit: depositFee ?? 0)
         }
         return nil
     }
