@@ -207,6 +207,9 @@ extension TransactionDetail {
                                     .drive(infoButton.rx.isHidden)
                                     .disposed(by: disposeBag)
                             }
+                            .onTap { [weak self] in
+                                self?.viewModel.navigate(to: .freeFeeInfo)
+                            }
                     }
                 }
             }
