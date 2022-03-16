@@ -61,7 +61,7 @@ extension TransactionDetail {
                 .map {$0?.value as? SolanaSDK.SwapTransaction}
             
             return BEVStack(spacing: 8) {
-                BEHStack(spacing: 4) {
+                BEHStack(spacing: 12) {
                     titleLabel(text: L10n.spent)
                     UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
                         .setup { label in
@@ -74,7 +74,7 @@ extension TransactionDetail {
                         }
                 }
                 
-                BEHStack(spacing: 4) {
+                BEHStack(spacing: 12) {
                     titleLabel(text: L10n.received)
                     UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
                         .setup { label in
@@ -90,7 +90,7 @@ extension TransactionDetail {
         }
         
         private func transferSection() -> BEHStack {
-            BEHStack(spacing: 4) {
+            BEHStack(spacing: 12) {
                 titleLabel(text: L10n.spent)
                     .setup { label in
                         viewModel.parsedTransactionDriver

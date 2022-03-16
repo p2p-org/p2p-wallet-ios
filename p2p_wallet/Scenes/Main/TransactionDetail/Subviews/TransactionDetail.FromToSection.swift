@@ -28,7 +28,7 @@ extension TransactionDetail {
                 UIView.defaultSeparator()
                 
                 // Sender
-                BEHStack(spacing: 4, alignment: .top) {
+                BEHStack(spacing: 12, alignment: .top) {
                     titleLabel()
                         .setup { fromTitleLabel in
                             isSwapDriver
@@ -77,7 +77,7 @@ extension TransactionDetail {
                 UIView.defaultSeparator()
                 
                 // Recipient
-                BEHStack(spacing: 4, alignment: .top) {
+                BEHStack(spacing: 12, alignment: .top) {
                     titleLabel()
                         .setup { toTitleLabel in
                             isSwapDriver
@@ -131,6 +131,7 @@ extension TransactionDetail {
 
 private func titleLabel() -> UILabel {
     UILabel(text: "Sender’s address", textSize: 15, textColor: .textSecondary, numberOfLines: 2)
+        .withContentHuggingPriority(.required, for: .horizontal)
 }
 
 private func addressLabel() -> UILabel {
