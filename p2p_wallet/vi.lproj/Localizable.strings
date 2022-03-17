@@ -774,3 +774,5 @@
 "Spent" = "Dành ra";
 "%@ Account Creation" = "Tạo tài khoản %@";
 "Deposit" = "Đặt cọc";
+"This value is calculated by subtracting the transaction fee from your balance." = "Giá trị này được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
+"The maximum value is calculated by subtracting the transaction fee from your balance." = "Giá trị tối đa được tính bằng cách trừ phí giao dịch vào số dư của bạn.";

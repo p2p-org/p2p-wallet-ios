@@ -770,3 +770,5 @@
 "Spent" = "Spent";
 "%@ Account Creation" = "%@ Account Creation";
 "Deposit" = "Deposit";
+"This value is calculated by subtracting the transaction fee from your balance." = "This value is calculated by subtracting the transaction fee from your balance.";
+"The maximum value is calculated by subtracting the transaction fee from your balance." = "The maximum value is calculated by subtracting the transaction fee from your balance.";

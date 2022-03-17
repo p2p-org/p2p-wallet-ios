@@ -17,6 +17,7 @@ extension OrcaSwapV2 {
         @Injected var feeService: FeeServiceType
         @Injected var swapService: Swap.Service
         @Injected var walletsRepository: WalletsRepository
+        @Injected var notificationsService: NotificationsServiceType
 
         // MARK: - Properties
         let disposeBag = DisposeBag()
@@ -29,6 +30,7 @@ extension OrcaSwapV2 {
         let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         let tradablePoolsPairsSubject = LoadableRelay<[Swap.PoolsPair]>(request: .just([]))
         let bestPoolsPairSubject = BehaviorRelay<Swap.PoolsPair?>(value: nil)
+        let availableAmountSubject = BehaviorRelay<Double?>(value: nil)
         let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
         let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
         let feesSubject = LoadableRelay<[PayingFee]>(request: .just([]))
@@ -81,13 +83,28 @@ extension OrcaSwapV2 {
                     }
                 })
                 .disposed(by: disposeBag)
+            
+            // available amount
+            Observable.combineLatest(
+                sourceWalletSubject,
+                payingWalletSubject,
+                feesSubject.valueObservable
+            )
+                .map { sourceWallet, payingWallet, fees in
+                    calculateAvailableAmount(
+                        sourceWallet: sourceWallet,
+                        payingFeeWallet: payingWallet,
+                        fees: fees
+                    )
+                }
+                .bind(to: availableAmountSubject)
+                .disposed(by: disposeBag)
 
             // get tradable pools pair for each token pair
             Observable.combineLatest(
                 sourceWalletSubject.distinctUntilChanged(),
                 destinationWalletSubject.distinctUntilChanged()
             )
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] sourceWallet, destinationWallet in
                 guard let self = self,
                     let sourceWallet = sourceWallet,
@@ -132,7 +149,6 @@ extension OrcaSwapV2 {
                 sourceWalletSubject,
                 payingWalletSubject
             )
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
                 self.feesSubject.request = self.feesRequest()
@@ -216,4 +232,32 @@ extension OrcaSwapV2 {
             )
         }
     }
+}
+
+private func calculateAvailableAmount(
+    sourceWallet: Wallet?,
+    payingFeeWallet: Wallet?,
+    fees: [PayingFee]?
+) -> Double? {
+    guard let sourceWallet = sourceWallet else {
+        return nil
+    }
+    
+    // subtract the fee when source wallet is the paying wallet
+    if payingFeeWallet?.mintAddress == sourceWallet.mintAddress {
+        let networkFees = fees?.networkFees(of: sourceWallet.token.symbol)?.total
+            .convertToBalance(decimals: sourceWallet.token.decimals)
+        
+        if let networkFees = networkFees,
+            let amount = sourceWallet.amount
+        {
+            if amount > networkFees {
+                return amount - networkFees
+            } else {
+                return 0
+            }
+        }
+    }
+    
+    return sourceWallet.amount
 }

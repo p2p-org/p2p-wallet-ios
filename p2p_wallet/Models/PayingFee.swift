@@ -129,6 +129,28 @@ extension Array where Element == PayingFee {
         return nil
     }
     
+    func networkFees(of token: String) -> SolanaSDK.FeeAmount? {
+        let fees = self.filter {$0.token.symbol == token}
+        
+        var transactionFee: UInt64?
+        var accountCreationFee: UInt64?
+        var depositFee: UInt64?
+        for fee in fees {
+            switch fee.type {
+            case .transactionFee:
+                transactionFee = fee.lamports
+            case .accountCreationFee:
+                accountCreationFee = fee.lamports
+            case .depositWillBeReturned:
+                depositFee = fee.lamports
+            default:
+                break
+            }
+        }
+        
+        return .init(transaction: transactionFee ?? 0, accountBalances: accountCreationFee ?? 0, deposit: depositFee ?? 0)
+    }
+    
     func transactionFees(of token: String) -> SolanaSDK.Lamports {
         filter {$0.type == .transactionFee && $0.token.symbol == token}
             .reduce(SolanaSDK.Lamports(0), {$0 + $1.lamports})
