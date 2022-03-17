@@ -772,3 +772,5 @@
 "Spent" = "Потраченный";
 "%@ Account Creation" = "Создание учетной записи %@";
 "Deposit" = "Депозит";
+"This value is calculated by subtracting the transaction fee from your balance." = "Это значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
+"The maximum value is calculated by subtracting the transaction fee from your balance." = "Максимальное значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";

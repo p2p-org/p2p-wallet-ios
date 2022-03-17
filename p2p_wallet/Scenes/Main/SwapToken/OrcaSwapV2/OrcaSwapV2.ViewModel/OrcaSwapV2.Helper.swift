@@ -48,7 +48,7 @@ extension OrcaSwapV2.ViewModel {
             return .inputAmountIsNotValid
         }
 
-        if inputAmount > calculateAvailableAmount() {
+        if inputAmount > availableAmountSubject.value {
             return .insufficientFunds
         }
 
@@ -110,27 +110,6 @@ extension OrcaSwapV2.ViewModel {
         }
 
         return nil
-    }
-
-    func calculateAvailableAmount() -> Double? {
-        guard let sourceWallet = sourceWalletSubject.value else {
-            return nil
-        }
-        
-        let payingFeeWallet = payingWalletSubject.value
-        
-        // subtract the fee when source wallet is the paying wallet
-        if payingFeeWallet?.mintAddress == sourceWallet.mintAddress {
-            let fees = (feesSubject.value?.all(ofToken: sourceWallet.token.symbol) ?? 0)
-                .convertToBalance(decimals: sourceWallet.token.decimals)
-            if let amount = sourceWallet.amount,
-               amount > fees
-            {
-                return amount - fees
-            }
-        }
-        
-        return sourceWallet.amount
     }
 
     private func isSlippageValid() -> Bool {

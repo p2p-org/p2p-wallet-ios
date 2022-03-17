@@ -772,3 +772,5 @@
 "Spent" = "Dépensé";
 "%@ Account Creation" = "%@ Création de compte";
 "Deposit" = "Verser";
+"This value is calculated by subtracting the transaction fee from your balance." = "Cette valeur est calculée en soustrayant les frais de transaction de votre solde.";
+"The maximum value is calculated by subtracting the transaction fee from your balance." = "La valeur maximale est calculée en soustrayant les frais de transaction de votre solde.";
