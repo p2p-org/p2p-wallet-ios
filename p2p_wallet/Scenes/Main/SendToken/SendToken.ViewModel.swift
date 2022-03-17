@@ -85,12 +85,29 @@ extension SendToken {
                 walletSubject.accept(selectableWallet)
             }
             
-            bindFees(walletSubject: walletSubject)
+            bind()
             reload()
         }
         
         deinit {
             debugPrint("\(String(describing: self)) deinited")
+        }
+        
+        func bind() {
+            bindFees(walletSubject: walletSubject)
+            
+            // update wallet after swapping
+            walletsRepository.dataObservable
+                .skip(1)
+                .subscribe(onNext: { [weak self] wallets in
+                    guard let self = self else {return}
+                    if self.walletSubject.value?.pubkey != nil,
+                        let wallet = wallets?.first(where: { $0.pubkey == self.walletSubject.value?.pubkey })
+                    {
+                        self.walletSubject.accept(wallet)
+                    }
+                })
+                .disposed(by: disposeBag)
         }
         
         func reload() {
