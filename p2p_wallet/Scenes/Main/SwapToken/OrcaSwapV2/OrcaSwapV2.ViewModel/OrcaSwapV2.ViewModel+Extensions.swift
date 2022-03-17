@@ -39,12 +39,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     var availableAmountDriver: Driver<Double?> {
-        Driver.combineLatest(
-            sourceWalletDriver,
-            destinationWalletDriver,
-            feesDriver
-        )
-        .map { [weak self] _ in self?.calculateAvailableAmount() }
+        availableAmountSubject.asDriver()
     }
 
     var slippageDriver: Driver<Double> {
@@ -175,8 +170,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func useAllBalance() {
-        let availableAmount = calculateAvailableAmount()
-        enterInputAmount(availableAmount)
+        enterInputAmount(availableAmountSubject.value)
+        
+        notificationsService.showInAppNotification(.message(L10n.thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
     }
 
     func enterInputAmount(_ amount: Double?) {
@@ -252,5 +248,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         sourceWalletSubject.accept(nil)
         destinationWalletSubject.accept(nil)
         enterInputAmount(nil)
+    }
+    
+    func showNotifications(_ message: String) {
+        notificationsService.showInAppNotification(.message(message))
     }
 }

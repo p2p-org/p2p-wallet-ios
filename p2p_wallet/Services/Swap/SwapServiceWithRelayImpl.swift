@@ -72,14 +72,14 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         lamportsPerSignature: UInt64,
         minRentExempt: UInt64
     ) -> Single<Swap.FeeInfo> {
-        guard let bestPoolsPair = bestPoolsPair as? PoolsPair else { return .error(Swap.Error.incompatiblePoolsPair) }
+        let bestPoolsPair = bestPoolsPair as? PoolsPair
         // Network fees
         let networkFeesRequest: Single<[PayingFee]>
         
         if let payingWallet = payingWallet {
             // Network fee for swapping via relay program
             networkFeesRequest = getNetworkFeesForSwappingViaRelayProgram(
-                swapPools: bestPoolsPair.orcaPoolPair,
+                swapPools: bestPoolsPair?.orcaPoolPair,
                 sourceMint: sourceMint,
                 destinationAddress: destinationAddress,
                 destinationToken: destinationToken,
@@ -95,7 +95,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 
                 // Liquidity provider fee
                 let liquidityProviderFees = try self.getLiquidityProviderFees(
-                    poolsPair: bestPoolsPair.orcaPoolPair,
+                    poolsPair: bestPoolsPair?.orcaPoolPair,
                     destinationAddress: destinationAddress,
                     destinationToken: destinationToken,
                     inputAmount: inputAmount,
@@ -167,7 +167,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     
     // MARK: - Helpers
     private func getLiquidityProviderFees(
-        poolsPair: OrcaSwap.PoolsPair,
+        poolsPair: OrcaSwap.PoolsPair?,
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token?,
         inputAmount: Double?,
@@ -181,7 +181,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             slippage: slippage
         )
         
-        if destinationAddress != nil, let destinationToken = destinationToken {
+        if let poolsPair = poolsPair, destinationAddress != nil, let destinationToken = destinationToken {
             if liquidityProviderFees.count == 1 {
                 allFees.append(
                     .init(
@@ -216,7 +216,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
     
     private func getNetworkFeesForSwappingViaRelayProgram(
-        swapPools: OrcaSwap.PoolsPair,
+        swapPools: OrcaSwap.PoolsPair?,
         sourceMint: String,
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token,
