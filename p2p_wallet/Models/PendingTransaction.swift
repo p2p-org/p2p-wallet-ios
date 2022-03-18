@@ -118,10 +118,17 @@ extension PendingTransaction {
             amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
             fee = transaction.feeInToken
         case let transaction as ProcessTransaction.OrcaSwapTransaction:
+            var destinationWallet = transaction.destinationWallet
+            if let authority = try? SolanaSDK.PublicKey(string: authority),
+               let mintAddress = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress)
+            {
+                destinationWallet.pubkey = try? SolanaSDK.PublicKey.associatedTokenAddress(walletAddress: authority, tokenMintAddress: mintAddress).base58EncodedString
+            }
+            
             value = SolanaSDK.SwapTransaction(
                 source: transaction.sourceWallet,
                 sourceAmount: transaction.amount,
-                destination: transaction.destinationWallet,
+                destination: destinationWallet,
                 destinationAmount: transaction.estimatedAmount,
                 myAccountSymbol: nil
             )
