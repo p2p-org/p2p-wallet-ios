@@ -48,6 +48,7 @@ extension ReserveName {
 
         // MARK: - Properties
         let kind: ReserveNameKind
+        private let goBackOnCompletion: Bool
 
         private let disposeBag = DisposeBag()
 
@@ -64,11 +65,13 @@ extension ReserveName {
         init(
             kind: ReserveNameKind,
             owner: String,
-            reserveNameHandler: ReserveNameHandler?
+            reserveNameHandler: ReserveNameHandler?,
+            goBackOnCompletion: Bool = false
         ) {
             self.kind = kind
             self.owner = owner
             self.reserveNameHandler = reserveNameHandler
+            self.goBackOnCompletion = goBackOnCompletion
             
             super.init()
 
@@ -141,6 +144,10 @@ extension ReserveName {
                     self?.notificationsService.showInAppNotification(
                         .message(L10n.usernameWasReserved(name))
                     )
+                    
+                    if self?.goBackOnCompletion == true {
+                        self?.goBack()
+                    }
                 }, onFailure: { [weak self] error in
                     self?.stopLoading()
                     self?.notificationsService.showInAppNotification(.error(error))
