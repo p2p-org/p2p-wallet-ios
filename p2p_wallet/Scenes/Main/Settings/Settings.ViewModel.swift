@@ -201,8 +201,8 @@ extension Settings.ViewModel: SettingsViewModelType {
     func showOrReserveUsername() {
         if storage.getName() != nil {
             navigate(to: .username)
-        } else if let owner = storage.account?.publicKey.base58EncodedString {
-            navigate(to: .reserveUsername(owner: owner, handler: self))
+        } else {
+            navigate(to: .reserveUsername)
         }
     }
     
