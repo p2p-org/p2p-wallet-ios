@@ -254,11 +254,13 @@ extension Settings {
             case .username:
                 let vc = NewUsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
-            case .reserveUsername(owner: let owner, handler: let handler):
+            case .reserveUsername:
+                guard let owner = viewModel.getUserAddress() else {return}
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
-                    reserveNameHandler: handler
+                    reserveNameHandler: viewModel,
+                    goBackOnCompletion: true
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
                 show(vc, sender: nil)

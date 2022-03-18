@@ -101,7 +101,6 @@ extension BuyPreparing {
                                 return value ? self.feeInfo() : UIView()
                             }
                             
-                            
                         }.padding(.init(x: 18, y: 18))
                     }
                 }

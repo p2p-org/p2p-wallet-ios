@@ -74,17 +74,18 @@ extension BuyPreparing {
                 .disposed(by: disposeBag)
             
             inputRelay
-                .flatMap { [weak self] input -> Single<Buy.ExchangeOutput> in
+                .flatMapLatest { [weak self] input -> Single<Buy.ExchangeOutput> in
                     guard let self = self else { return .error(NSError(domain: "Preparing", code: -1)) }
                     if input.amount == 0 {
                         return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, purchaseCost: 0, total: 0))
                     }
                     return self.exchangeService
-                        .convert(input: input, to: input.currency is Buy.FiatCurrency ? Buy.CryptoCurrency.sol : Buy.FiatCurrency.usd)
-                        .do { output in
-                            self.errorRelay.accept(nil)
+                        .convert(input: input, to: input.currency is Buy.FiatCurrency ? crypto : Buy.FiatCurrency.usd)
+                        .do { [weak self] _ in
+                            self?.errorRelay.accept(nil)
                         }
-                        .catch { error in
+                        .catch { [weak self] error in
+                            guard let self = self else {throw error}
                             if let error = error as? Buy.Exception {
                                 switch error {
                                 case .invalidInput:
@@ -137,7 +138,5 @@ extension BuyPreparing {
         var minFiatAmount: Driver<Double> { minCryptoAmountsRelay.asDriver() }
         
         var minCryptoAmount: Driver<Double> { minFiatAmountsRelay.asDriver() }
-        
-        
     }
 }

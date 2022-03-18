@@ -1491,7 +1491,6 @@
 			children = (
 				84699EDD189457834A1EEC31 /* BuyProccessing */,
 				846993A9B7C558B1E379CF0C /* Buy.swift */,
-				84699A9996E8123EC4543F0B /* Provider */,
 				84699B0DA213443B14965D55 /* Exchange */,
 			);
 			path = Buy;
@@ -1601,13 +1600,6 @@
 				8469976D7253DCF151D9101E /* Banner */,
 			);
 			path = Subviews;
-			sourceTree = "<group>";
-		};
-		84699A9996E8123EC4543F0B /* Provider */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Provider;
 			sourceTree = "<group>";
 		};
 		84699B0DA213443B14965D55 /* Exchange */ = {

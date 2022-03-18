@@ -22,7 +22,7 @@ protocol LogoutResponder {
     func logout()
 }
 
-protocol SettingsViewModelType {
+protocol SettingsViewModelType: ReserveNameHandler {
     var notificationsService: NotificationsServiceType { get }
     var selectableLanguages: [LocalizedLanguage: Bool] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
@@ -201,8 +201,8 @@ extension Settings.ViewModel: SettingsViewModelType {
     func showOrReserveUsername() {
         if storage.getName() != nil {
             navigate(to: .username)
-        } else if let owner = storage.account?.publicKey.base58EncodedString {
-            navigate(to: .reserveUsername(owner: owner, handler: nil))
+        } else {
+            navigate(to: .reserveUsername)
         }
     }
     
@@ -238,6 +238,12 @@ extension Settings.ViewModel: SettingsViewModelType {
     var isBiometryAvailableDriver: Driver<Bool> { isBiometryAvailableSubject.asDriver() }
     
     var biometryTypeDriver: Driver<Settings.BiometryType> { biometryTypeSubject.asDriver() }
+    
+    func handleName(_ name: String?) {
+        guard let name = name else {return}
+        storage.save(name: name)
+        usernameSubject.accept(name)
+    }
     
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void) {
         // pause authentication
