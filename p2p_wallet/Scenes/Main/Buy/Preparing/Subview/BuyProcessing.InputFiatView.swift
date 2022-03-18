@@ -69,9 +69,9 @@ extension BuyPreparing {
                                     .getTokensList()
                                     .asDriver(onErrorJustReturn: [])
                                     .drive(onNext: { [weak self, weak view] tokens in
-                                        if let token = tokens.first { token in
+                                        if let token = tokens.first(where: { token in
                                             self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token.symbol == self?.viewModel.crypto.rawValue
-                                        } {
+                                        }) {
                                             view?.setUp(token: token)
                                         }
                                     })
