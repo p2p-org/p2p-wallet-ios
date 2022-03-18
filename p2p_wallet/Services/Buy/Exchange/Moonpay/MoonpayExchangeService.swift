@@ -77,5 +77,4 @@ extension Buy {
                 .map { _getMinAmount(currencies: $0, for: currency) }
         }
     }
-    
 }

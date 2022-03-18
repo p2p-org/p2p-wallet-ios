@@ -27,7 +27,7 @@ extension Moonpay {
             var params = [
                 "apiKey": api.apiKey,
                 "baseCurrencyCode": baseCurrencyCode,
-                "areFeesIncluded": "true",
+                "areFeesIncluded": "true"
             ] as [String: Any]
             
             if let baseCurrencyAmount = baseCurrencyAmount { params["baseCurrencyAmount"] = baseCurrencyAmount }
