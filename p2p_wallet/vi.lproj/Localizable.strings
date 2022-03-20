@@ -778,3 +778,4 @@
 "Deposit" = "Đặt cọc";
 "This value is calculated by subtracting the transaction fee from your balance." = "Giá trị này được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "Giá trị tối đa được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
+"Incorrect PIN, try again (%@ attempt left)" = "Mã PIN không chính xác, hãy thử lại (còn lại %@ lần thử)";

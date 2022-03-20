@@ -25,8 +25,8 @@ extension Authentication {
         var onCancel: (() -> Void)?
         
         // MARK: - Subscenes
-        private lazy var pincodeVC: PincodeViewController = {
-            let pincodeVC = PincodeViewController(viewModel: viewModel)
+        private lazy var pincodeVC: PinCodeViewController = {
+            let pincodeVC = PinCodeViewController(viewModel: viewModel)
             pincodeVC.onSuccess = {[weak self] in
                 self?.authenticationDidComplete()
             }

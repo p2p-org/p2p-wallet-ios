@@ -213,6 +213,7 @@
 		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */; };
 		84699DA6AF178F0B0837C438 /* HidedWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699CAA56E35B94E120FA70 /* HidedWalletCell.swift */; };
 		84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995D0006E36B802E2110E /* ReceiveToken.QrCodeImageRender.swift */; };
+		84699E4D8F94698F85066761 /* Authentication.BiometricButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699278391D27DF0EB6406C /* Authentication.BiometricButton.swift */; };
 		84699E4EC4356224948E529A /* DAppContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991A1202889DFF6E4671A /* DAppContainer.swift */; };
 		84699E6257F040107D97BA94 /* BuyPreparing.SceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699696974A7AE7835EE4CE /* BuyPreparing.SceneModel.swift */; };
 		84699EB808181B89DFF647E9 /* BESceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699CFE43666FACF9062699 /* BESceneModel.swift */; };
@@ -721,6 +722,7 @@
 		846991D31FA9B8B77AD4DAD1 /* LockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockView.swift; sourceTree = "<group>"; };
 		846991D5BC06C25591CFA36D /* WLWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLWebView.swift; sourceTree = "<group>"; };
 		8469921CB588561D32F0BA43 /* BEBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEBuilder.swift; sourceTree = "<group>"; };
+		84699278391D27DF0EB6406C /* Authentication.BiometricButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authentication.BiometricButton.swift; sourceTree = "<group>"; };
 		846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.ViewModel.swift; sourceTree = "<group>"; };
 		846992CDA843C0A10ABB2B6C /* NewTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewTabBar.swift; sourceTree = "<group>"; };
 		8469932EA412472FEEE08702 /* Home.BannerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BannerViewModel.swift; sourceTree = "<group>"; };
@@ -1461,6 +1463,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		846990A571B89EB7593B08E3 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				84699278391D27DF0EB6406C /* Authentication.BiometricButton.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		84699196C1FE0742412455B1 /* TokenSelection */ = {
 			isa = PBXGroup;
 			children = (
@@ -1689,6 +1699,7 @@
 				BC09B99F273ECB03009CAF4E /* Authentication.ViewController.swift */,
 				BC35082E273FFC08009D4441 /* Authentication.PincodeViewController.swift */,
 				BC1FFECD2629748F0014F027 /* ResetPinCodeWithSeedPhrases */,
+				846990A571B89EB7593B08E3 /* View */,
 			);
 			path = Authentication;
 			sourceTree = "<group>";
@@ -3578,6 +3589,7 @@
 				84699437F451E8074D200B9A /* BuyProcessing.InputCryptoView.swift in Sources */,
 				846993455464139EC88B91F8 /* TokenSelection.Scene.swift in Sources */,
 				84699F1F56756CE9EBB99B98 /* TokenSelection.swift in Sources */,
+				84699E4D8F94698F85066761 /* Authentication.BiometricButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

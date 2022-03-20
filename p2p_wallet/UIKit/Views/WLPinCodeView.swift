@@ -139,7 +139,6 @@ final class WLPinCodeView: BEView {
         guard let currentPincode = currentPincode,
               currentPincode.count <= pincodeLength
         else {
-            numpadView.setDeleteButtonHidden(true)
             dotsView.pincodeEntered(numberOfDigits: 0)
             return
         }
@@ -149,13 +148,9 @@ final class WLPinCodeView: BEView {
         dotsView.pincodeEntered(numberOfDigits: numberOfDigits)
         
         // delete button
-        numpadView.setDeleteButtonHidden(numberOfDigits == 0)
         
         // verify
         if numberOfDigits == pincodeLength {
-            // hide delete button
-            numpadView.setDeleteButtonHidden(true)
-            
             // if no correct pincode, mark as success
             guard let correctPincode = correctPincode else {
                 pincodeSuccess()
@@ -177,14 +172,12 @@ final class WLPinCodeView: BEView {
                     pincodeFailed(exceededMaxAttempts: true)
                 } else {
                     pincodeFailed(exceededMaxAttempts: false)
-                    clearErrorAfter3Seconds()
                 }
             }
             
             // incorrect pincode without max attempts
             else {
                 pincodeFailed(exceededMaxAttempts: false)
-                clearErrorAfter3Seconds()
             }
         }
     }
@@ -202,7 +195,7 @@ final class WLPinCodeView: BEView {
         dotsView.pincodeFailed()
         errorLabel.isHidden = false
         if let maxAttemptsCount = maxAttemptsCount {
-            errorLabel.text = L10n.wrongPinCodeDAttemptSLeft(maxAttemptsCount - attemptsCount)
+            errorLabel.text = L10n.incorrectPINTryAgainAttemptLeft(maxAttemptsCount - attemptsCount)
         } else {
             errorLabel.text = L10n.PINDoesnTMatch.tryAgain
         }
