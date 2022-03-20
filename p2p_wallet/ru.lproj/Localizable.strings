@@ -774,3 +774,4 @@
 "Deposit" = "Депозит";
 "This value is calculated by subtracting the transaction fee from your balance." = "Это значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "Максимальное значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
+"Incorrect PIN, try again (%@ attempt left)" = "Неверный PIN-код, повторите попытку (осталось %@ попыток)";

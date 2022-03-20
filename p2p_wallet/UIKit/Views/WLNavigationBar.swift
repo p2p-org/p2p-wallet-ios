@@ -43,8 +43,16 @@ class WLNavigationBar: BEView {
         backgroundColor = .background
     }
     
-    func setTitle(_ title: String?) {
+    @discardableResult
+    func setTitle(_ title: String?) -> Self {
         titleLabel.text = title
+        return self
+    }
+    
+    @discardableResult
+    func setBackButtonHidden(_ value: Bool) -> Self {
+        backButton.isHidden = value
+        return self
     }
 }
 
