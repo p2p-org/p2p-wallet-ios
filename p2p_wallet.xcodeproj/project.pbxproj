@@ -2962,7 +2962,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nSDKROOT=(xcrun --sdk macosx --show-sdk-path)\n\"${PODS_ROOT}/SwiftFormat/CommandLineTool/swiftformat\" \"$SRCROOT/p2p_wallet\"\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nSDKROOT=(xcrun --sdk macosx --show-sdk-path)\n# Run for unstaged, staged, new files, excluded for deleted files\ngit diff --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    \"${PODS_ROOT}/SwiftFormat/CommandLineTool/swiftformat\" \"$filename\"\ndone\n";
 		};
 		3F0DFDEF46907C0993E62949 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
