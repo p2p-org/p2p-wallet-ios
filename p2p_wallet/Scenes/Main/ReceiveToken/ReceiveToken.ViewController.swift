@@ -199,6 +199,10 @@ extension ReceiveToken.ViewController {
             let vc = RenBTCReceivingStatuses.NewViewController(viewModel: vm)
             show(vc, sender: nil)
         case .share(let address, let qrCode):
+            guard let qrCode = qrCode, let address = address else {
+                return
+            }
+
             let vc = UIActivityViewController(activityItems: [qrCode, address], applicationActivities: nil)
             present(vc, animated: true)
         case .help:

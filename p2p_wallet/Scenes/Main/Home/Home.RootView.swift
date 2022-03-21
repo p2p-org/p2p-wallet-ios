@@ -17,7 +17,9 @@ extension Home {
     class RootView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: HomeViewModelType
+        // swiftlint:disable weak_delegate
         private var headerViewScrollDelegate = HeaderScrollDelegate()
+        // swiftlint:enable weak_delegate
         
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
@@ -150,11 +152,8 @@ extension HomeViewModelType {
             )
             .map { (state, change) in
                 if let previous = change.0 {
-                    if (state == .loading || state == .initializing) {
-                        let amount = previous?.reduce(0) { (
-                            partialResult,
-                            wallet
-                        ) in partialResult + wallet.amount } ?? 0
+                    if state == .loading || state == .initializing {
+                        let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
                         return amount > 0
                     } else {
                         let amount = change.1?.reduce(0) { (partialResult, wallet) in partialResult + wallet.amount } ?? 0

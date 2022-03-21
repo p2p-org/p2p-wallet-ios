@@ -53,6 +53,7 @@ class SwipeableCell: BECompositionView {
         scrollViewRef.view?.scrollView.removeObserver(self, forKeyPath: "contentSize")
     }
     
+    // swiftlint:disable block_based_kvo
     override func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
@@ -63,6 +64,7 @@ class SwipeableCell: BECompositionView {
             contentSizeDidUpdate()
         }
     }
+    // swiftlint:enable block_based_kvo
     
     private var isFirstRun = true
     
