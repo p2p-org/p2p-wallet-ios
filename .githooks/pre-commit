@@ -1,3 +1,3 @@
 #!/bin/bash
 export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
-swiftformat --lint ./p2p_wallet
+swiftformat ./p2p_wallet
