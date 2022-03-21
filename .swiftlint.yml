@@ -13,6 +13,7 @@ excluded:
  - OrcaSwapSwift
  - RenVMSwift
  - TransakSwift
+ - "p2p_wallet/Scenes/Main/SwapToken/SerumSwap(Unstable)"
 
 disabled_rules:
   - identifier_name
