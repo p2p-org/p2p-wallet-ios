@@ -9,12 +9,12 @@ extension BuyPreparing {
     class InputCryptoView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: BuyPreparingSceneModel
-        
+
         init(viewModel: BuyPreparingSceneModel) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func build() -> UIView {
             UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fillProportionally) {
                 // Input
@@ -31,17 +31,18 @@ extension BuyPreparing {
                                     .getTokensList()
                                     .asDriver(onErrorJustReturn: [])
                                     .drive(onNext: { [weak self, weak view] tokens in
-                                     if let token = tokens.first(where: { token in
-                                         self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token.symbol == self?.viewModel.crypto.rawValue
-                                     }) {
+                                        if let token = tokens.first(where: { token in
+                                            self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
+                                                .symbol == self?
+                                                .viewModel.crypto.rawValue
+                                        }) {
                                             view?.setUp(token: token)
                                         }
                                     })
                                     .disposed(by: disposeBag)
-                                
                             }
                         UIView(width: 8)
-                        
+
                         TokenAmountTextField(
                             font: .systemFont(ofSize: 27, weight: .semibold),
                             textColor: .textBlack,
@@ -64,9 +65,9 @@ extension BuyPreparing {
                         }
                     }
                 }
-                
+
                 UIView.defaultSeparator()
-                
+
                 // Output
                 UIStackView(axis: .horizontal, alignment: .center) {
                     // Label

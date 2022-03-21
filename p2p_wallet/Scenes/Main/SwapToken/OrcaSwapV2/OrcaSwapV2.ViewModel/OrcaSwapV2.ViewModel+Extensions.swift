@@ -58,11 +58,12 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             ) { ($0, $1.0, $1.1, $1.2, $1.3) }
             .map { poolsPair, inputAmount, slippage, sourceWallet, destinationWallet in
                 guard let poolsPair = poolsPair,
-                    let sourceDecimals = sourceWallet?.token.decimals,
-                    let inputAmount = inputAmount?.toLamport(decimals: sourceDecimals),
-                    let destinationDecimals = destinationWallet?.token.decimals
+                      let sourceDecimals = sourceWallet?.token.decimals,
+                      let inputAmount = inputAmount?.toLamport(decimals: sourceDecimals),
+                      let destinationDecimals = destinationWallet?.token.decimals
                 else { return nil }
-                return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?.convertToBalance(decimals: destinationDecimals)
+                return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?
+                    .convertToBalance(decimals: destinationDecimals)
             }
             .asDriver(onErrorJustReturn: nil)
     }
@@ -74,9 +75,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         )
         .map { inputAmount, estimatedAmount in
             guard let inputAmount = inputAmount,
-                let estimatedAmount = estimatedAmount,
-                inputAmount > 0,
-                estimatedAmount > 0
+                  let estimatedAmount = estimatedAmount,
+                  inputAmount > 0,
+                  estimatedAmount > 0
             else { return nil }
             return estimatedAmount / inputAmount
         }
@@ -115,6 +116,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     // MARK: - Actions
+
     func reload() {
         loadingStateSubject.accept(.loading)
 
@@ -150,13 +152,17 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func chooseDestinationWallet() {
         var destinationMints = [String]()
         if let sourceWallet = sourceWalletSubject.value,
-            let validMints = try? swapService.findPosibleDestinationMints(fromMint: sourceWallet.token.address)
+           let validMints = try? swapService.findPosibleDestinationMints(fromMint: sourceWallet.token.address)
         {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
         analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
-        navigationSubject.accept(.chooseDestinationWallet(currentlySelectedWallet: destinationWalletSubject.value, validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
+        navigationSubject.accept(.chooseDestinationWallet(
+            currentlySelectedWallet: destinationWalletSubject.value,
+            validMints: Set(destinationMints),
+            excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey
+        ))
     }
 
     func retryLoadingRoutes() {
@@ -171,8 +177,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     func useAllBalance() {
         enterInputAmount(availableAmountSubject.value)
-        
-        notificationsService.showInAppNotification(.message(L10n.thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
+
+        notificationsService
+            .showInAppNotification(.message(L10n.thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
     }
 
     func enterInputAmount(_ amount: Double?) {
@@ -180,11 +187,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
         // calculate estimated amount
         if let sourceDecimals = sourceWalletSubject.value?.token.decimals,
-            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
-            let inputAmount = amount?.toLamport(decimals: sourceDecimals),
-            let poolsPairs = tradablePoolsPairsSubject.value,
-            let bestPoolsPair = poolsPairs.findBestPoolsPairForInputAmount(inputAmount),
-            let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)
+           let destinationDecimals = destinationWalletSubject.value?.token.decimals,
+           let inputAmount = amount?.toLamport(decimals: sourceDecimals),
+           let poolsPairs = tradablePoolsPairsSubject.value,
+           let bestPoolsPair = poolsPairs.findBestPoolsPairForInputAmount(inputAmount),
+           let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)
         {
             estimatedAmountSubject.accept(bestEstimatedAmount.convertToBalance(decimals: destinationDecimals))
             bestPoolsPairSubject.accept(bestPoolsPair)
@@ -199,11 +206,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
         // calculate input amount
         if let sourceDecimals = sourceWalletSubject.value?.token.decimals,
-            let destinationDecimals = destinationWalletSubject.value?.token.decimals,
-            let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
-            let poolsPairs = tradablePoolsPairsSubject.value,
-            let bestPoolsPair = poolsPairs.findBestPoolsPairForEstimatedAmount(estimatedAmount),
-            let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
+           let destinationDecimals = destinationWalletSubject.value?.token.decimals,
+           let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
+           let poolsPairs = tradablePoolsPairsSubject.value,
+           let bestPoolsPair = poolsPairs.findBestPoolsPairForEstimatedAmount(estimatedAmount),
+           let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
         {
             inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
             bestPoolsPairSubject.accept(bestPoolsPair)
@@ -243,13 +250,13 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func changeFeePayingToken(to payingToken: Wallet) {
         payingWalletSubject.accept(payingToken)
     }
-    
+
     func cleanAllFields() {
         sourceWalletSubject.accept(nil)
         destinationWalletSubject.accept(nil)
         enterInputAmount(nil)
     }
-    
+
     func showNotifications(_ message: String) {
         notificationsService.showInAppNotification(.message(message))
     }

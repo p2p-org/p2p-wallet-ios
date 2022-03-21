@@ -14,6 +14,7 @@ extension WLSpinnerView: BuyTokenWidgetLoadingView {
     public func startLoading() {
         animate()
     }
+
     public func stopLoading() {
         stopAnimating()
     }

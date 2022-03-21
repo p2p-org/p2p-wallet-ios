@@ -30,8 +30,10 @@ extension OrcaSwapV2 {
                     let value = snapshot.value ?? []
                     let group = Dictionary(grouping: value, by: { $0.type.headerString })
                         .sorted { el1, el2 in
-                            let id1 = value.firstIndex(where: {$0.type.headerString == el1.value.first?.type.headerString}) ?? 0
-                            let id2 = value.firstIndex(where: {$0.type.headerString == el2.value.first?.type.headerString}) ?? 0
+                            let id1 = value
+                                .firstIndex(where: { $0.type.headerString == el1.value.first?.type.headerString }) ?? 0
+                            let id2 = value
+                                .firstIndex(where: { $0.type.headerString == el2.value.first?.type.headerString }) ?? 0
                             return id1 < id2
                         }
 
@@ -55,7 +57,7 @@ extension OrcaSwapV2 {
                             }
                         }
                         // Separator
-                        if value.count > 0 { UIView.defaultSeparator().padding(.init(only: .bottom, inset: 12)) }
+                        if !value.isEmpty { UIView.defaultSeparator().padding(.init(only: .bottom, inset: 12)) }
                         // Total
                         BEHStack {
                             UILabel(text: L10n.totalFee, weight: .semibold)
@@ -79,9 +81,9 @@ extension OrcaSwapV2 {
                 let decimals = totalFees.first?.token.decimals ?? 0
                 let amount =
                     totalFees
-                    .reduce(UInt64(0)) { $0 + $1.lamports }
-                    .convertToBalance(decimals: decimals)
-                    .toString(maximumFractionDigits: Int(decimals)) + " \(totalFeesSymbol)"
+                        .reduce(UInt64(0)) { $0 + $1.lamports }
+                        .convertToBalance(decimals: decimals)
+                        .toString(maximumFractionDigits: Int(decimals)) + " \(totalFeesSymbol)"
                 return amount
             }
             return ""
@@ -109,7 +111,6 @@ extension OrcaSwapV2 {
                         .padding(.init(only: .left, inset: 4))
                 }
             }
-
         }
 
         func row(title: String, descriptions: [String]) -> UIView {

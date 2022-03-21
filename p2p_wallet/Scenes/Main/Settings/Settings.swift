@@ -22,7 +22,7 @@ enum Settings {
         case share(item: Any)
         case accessToPhoto
     }
-    
+
     enum BiometryType {
         case none
         case touch

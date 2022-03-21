@@ -24,7 +24,8 @@ final class ReserveTextViewChangesFilter: TextChangesFilter {
         let doNotContains2HyphensNextToEachOther = !string.contains("--")
         let hasNotMoreSymbols = string.count <= maxSymbols
 
-        return containsOnlyAllowedCharacters && hyphenDoesNotStandInTheBeginingOfTheText && doNotContains2HyphensNextToEachOther &&
+        return containsOnlyAllowedCharacters && hyphenDoesNotStandInTheBeginingOfTheText &&
+            doNotContains2HyphensNextToEachOther &&
             hasNotMoreSymbols
     }
 }

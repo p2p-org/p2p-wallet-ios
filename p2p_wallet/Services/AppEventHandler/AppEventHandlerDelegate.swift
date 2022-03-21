@@ -10,9 +10,9 @@ import Foundation
 protocol AppEventHandlerDelegate: AnyObject {
     func createWalletDidComplete()
     func restoreWalletDidComplete()
-    
+
     func onboardingDidFinish(resolvedName: String?)
-    
+
     func userDidChangeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
     func userDidChangeLanguage(to language: LocalizedLanguage)
     func userDidLogout()

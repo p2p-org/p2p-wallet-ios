@@ -3,8 +3,8 @@
 //
 
 import Foundation
-import UIKit
 import RxSwift
+import UIKit
 
 extension VerifySecurityKeys {
     class NextButton: BEView {
@@ -12,25 +12,26 @@ extension VerifySecurityKeys {
             case choose
             case save
         }
-        
+
         var style: Style = .choose {
             didSet {
                 update()
             }
         }
+
         var button: WLStepButton = WLStepButton.main(text: "")
-        
+
         override func commonInit() {
             super.commonInit()
             layout()
             update()
         }
-        
+
         private func layout() {
             addSubview(button)
             button.autoPinEdgesToSuperviewEdges()
         }
-        
+
         func update() {
             switch style {
             case .choose:
@@ -50,11 +51,11 @@ extension Reactive where Base: VerifySecurityKeys.NextButton {
             view.style = ready ? .save : .choose
         }
     }
-    
+
     var text: Binder<String?> {
         base.button.rx.text
     }
-    
+
     var image: Binder<UIImage?> {
         base.button.rx.image
     }

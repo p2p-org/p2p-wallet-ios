@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 protocol EnterSeedInfoViewModelType {
     var navigationDriver: Driver<EnterSeedInfo.NavigatableScene?> { get }
@@ -17,12 +17,13 @@ protocol EnterSeedInfoViewModelType {
 extension EnterSeedInfo {
     class ViewModel {
         // MARK: - Dependencies
-        
+
         // MARK: - Properties
-        
+
         // MARK: - Subject
+
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
@@ -33,8 +34,9 @@ extension EnterSeedInfo.ViewModel: EnterSeedInfoViewModelType {
     var navigationDriver: Driver<EnterSeedInfo.NavigatableScene?> {
         navigationSubject.asDriver()
     }
-    
+
     // MARK: - Actions
+
     func done() {
         navigationSubject.accept(.done)
     }

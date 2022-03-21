@@ -11,7 +11,7 @@ struct DerivableAccount: Hashable {
     let info: SolanaSDK.Account
     var amount: Double?
     var price: Double?
-    
+
     // additional
     var isBlured: Bool?
 }

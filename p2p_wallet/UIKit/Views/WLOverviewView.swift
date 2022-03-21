@@ -22,21 +22,21 @@ class WLOverviewView: WLFloatingPanelView {
 
         buttonsView.autoMatch(.height, to: .height, of: self, withMultiplier: 1.0, relation: .lessThanOrEqual)
     }
-    
+
     func createTopView() -> UIView {
         fatalError("Must override")
     }
-    
+
     func createButtonsView() -> UIView {
         fatalError("Must override")
     }
-    
+
     func showLoading() {
-        stackView.arrangedSubviews.forEach {$0.hideLoader()}
-        stackView.arrangedSubviews.forEach {$0.showLoader(customGradientColor: .defaultLoaderGradientColors)}
+        stackView.arrangedSubviews.forEach { $0.hideLoader() }
+        stackView.arrangedSubviews.forEach { $0.showLoader(customGradientColor: .defaultLoaderGradientColors) }
     }
 
     func hideLoading() {
-        stackView.arrangedSubviews.forEach {$0.hideLoader()}
+        stackView.arrangedSubviews.forEach { $0.hideLoader() }
     }
 }

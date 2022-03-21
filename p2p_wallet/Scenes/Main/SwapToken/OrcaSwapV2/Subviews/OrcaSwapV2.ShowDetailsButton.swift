@@ -5,9 +5,9 @@
 //  Created by Andrew Vasiliev on 03.12.2021.
 //
 
-import UIKit
 import PureLayout
 import RxSwift
+import UIKit
 
 extension OrcaSwapV2 {
     final class ShowDetailsButton: UIButton {
@@ -21,7 +21,7 @@ extension OrcaSwapV2 {
         }
 
         @available(*, unavailable)
-        required init?(coder: NSCoder) {
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 

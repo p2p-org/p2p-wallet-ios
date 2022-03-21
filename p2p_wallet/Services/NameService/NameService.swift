@@ -5,14 +5,14 @@
 //  Created by Chung Tran on 06/10/2021.
 //
 
-import Foundation
-import RxSwift
 import Alamofire
+import Foundation
 import RxAlamofire
+import RxSwift
 
 protocol NameServiceType {
-    var captchaAPI1Url: String {get}
-    
+    var captchaAPI1Url: String { get }
+
     func getName(_ owner: String) -> Single<String?>
     func getOwnerAddress(_ name: String) -> Single<String?>
     func getOwners(_ name: String) -> Single<[NameService.Owner]>
@@ -21,26 +21,26 @@ protocol NameServiceType {
 
 extension NameServiceType {
     func isNameAvailable(_ name: String) -> Single<Bool> {
-        getOwnerAddress(name).map {$0 == nil}
+        getOwnerAddress(name).map { $0 == nil }
     }
 }
 
 class NameService: NameServiceType {
     private let endpoint = "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)/name_register"
     private let cache: NameServiceCacheType
-    
-    var captchaAPI1Url: String {endpoint + "/auth/gt/register"}
-    
+
+    var captchaAPI1Url: String { endpoint + "/auth/gt/register" }
+
     init(cache: NameServiceCacheType) {
         self.cache = cache
     }
-    
+
     func getName(_ owner: String) -> Single<String?> {
         if let result = cache.getName(for: owner) {
             return .just(result.name)
         }
         return getNames(owner)
-            .map {$0.last(where: {$0.name != nil})?.name}
+            .map { $0.last(where: { $0.name != nil })?.name }
             .do(onSuccess: { [weak self] name in
                 self?.cache.save(name, for: owner)
             })
@@ -51,25 +51,25 @@ class NameService: NameServiceType {
             observable: request(url: endpoint + "/resolve/\(name)"),
             defaultValue: []
         )
-            .do(onSuccess: {[weak self] result in
-                for record in result {
-                    if let name = record.name {
-                        self?.cache.save(name, for: record.owner)
-                    }
+        .do(onSuccess: { [weak self] result in
+            for record in result {
+                if let name = record.name {
+                    self?.cache.save(name, for: record.owner)
                 }
-            })
+            }
+        })
     }
 
     func getOwnerAddress(_ name: String) -> Single<String?> {
         let getAddress = getOwner(name)
-            .map {$0?.owner}
+            .map { $0?.owner }
 
         return catchNotFound(
             observable: getAddress,
             defaultValue: nil
         )
     }
-    
+
     func post(name: String, params: PostParams) -> Single<PostResponse> {
         let urlString = "\(endpoint)/\(name)"
         guard let url = URL(string: urlString) else {
@@ -111,7 +111,7 @@ class NameService: NameServiceType {
                 return .just(defaultValue)
             }
     }
-    
+
     private func request<T: Decodable>(url: String) -> Single<T> {
         RxAlamofire.request(.get, url)
             .validate(statusCode: 200 ..< 300)
@@ -136,7 +136,7 @@ extension NameService {
         let parentName, owner, ownerClass: String
         let name: String?
 //        let data: [JSONAny]
-        
+
         enum CodingKeys: String, CodingKey {
             case parentName = "parent_name"
             case owner
@@ -145,18 +145,18 @@ extension NameService {
 //            case data
         }
     }
-    
+
     struct PostParams: Encodable {
         let owner: String
         let credentials: Credentials
-        
+
         struct Credentials: Encodable {
             let geetest_validate: String
             let geetest_seccode: String
             let geetest_challenge: String
         }
     }
-    
+
     struct PostResponse: Decodable {
         let signature: String
     }

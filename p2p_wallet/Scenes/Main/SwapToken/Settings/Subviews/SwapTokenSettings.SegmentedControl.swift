@@ -19,14 +19,14 @@ extension SwapTokenSettings {
             super.init(items: items.map(\.description))
 
             if let index = items.firstIndex(of: selectedItem) {
-                self.selectedSegmentIndex = index
+                selectedSegmentIndex = index
             }
 
             addTarget(self, action: #selector(valueChanged), for: .valueChanged)
         }
 
         @available(*, unavailable)
-        required init?(coder: NSCoder) {
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 

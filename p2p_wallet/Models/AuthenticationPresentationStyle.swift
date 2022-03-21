@@ -13,7 +13,7 @@ struct AuthenticationPresentationStyle {
     let isFullScreen: Bool
     var useBiometry: Bool = true
     var completion: (() -> Void)?
-    
+
     static func login() -> Self {
         .init(
             isRequired: true,

@@ -2,17 +2,17 @@
 // Created by Giang Long Tran on 16.02.2022.
 //
 
-import BEPureLayout
 import BECollectionView
-import RxSwift
+import BEPureLayout
 import RxCocoa
+import RxSwift
 
 class HidedWalletCell: BECollectionCell, BECollectionViewCell {
     public var onSend: BEVoidCallback?
     public var onShow: BEVoidCallback?
-    
+
     private let baseWalletRef = BERef<BaseWalletCell>()
-    
+
     override func build() -> UIView {
         BaseWalletCell(
             leadingActions: BECenter { UIImageView(image: .buttonSendSmall, tintColor: .h5887ff) }
@@ -30,22 +30,22 @@ class HidedWalletCell: BECollectionCell, BECollectionViewCell {
                 }
         ).bind(baseWalletRef)
     }
-    
+
     override func prepareForReuse() {
         super.prepareForReuse()
         baseWalletRef.view?.prepareForReuse()
         onSend = nil
         onShow = nil
     }
-    
+
     func setUp(with item: AnyHashable?) {
         baseWalletRef.view?.setUp(with: item)
     }
-    
+
     func showLoading() {
         baseWalletRef.view?.showLoading()
     }
-    
+
     func hideLoading() {
         baseWalletRef.view?.hideLoading()
     }

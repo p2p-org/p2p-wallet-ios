@@ -12,16 +12,18 @@ extension SendToken.ChooseRecipientAndNetwork {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
+
         // MARK: - Dependencies
+
         private let viewModel: SendTokenChooseRecipientAndNetworkViewModelType
-        
+
         // MARK: - Initializer
+
         init(viewModel: SendTokenChooseRecipientAndNetworkViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func setUp() {
             super.setUp()
             let label = UILabel(text: "contact")

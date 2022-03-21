@@ -36,8 +36,8 @@ extension Home {
     }
 }
 
-extension HomeViewModelType {
-    fileprivate var isLoading: Driver<Bool> {
+private extension HomeViewModelType {
+    var isLoading: Driver<Bool> {
         walletsRepository
             .stateObservable
             .map { state in state != .loaded }
@@ -45,14 +45,14 @@ extension HomeViewModelType {
             .asDriver(onErrorJustReturn: false)
     }
 
-    fileprivate var balance: Driver<String> {
+    var balance: Driver<String> {
         Observable
             .zip(
                 walletsRepository.dataObservable,
                 walletsRepository.stateObservable
             )
             .asDriver(onErrorJustReturn: ([], .loaded))
-            .map { (data, state) in
+            .map { data, state in
                 let data = data ?? []
 
                 switch state {

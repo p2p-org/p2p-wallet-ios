@@ -11,6 +11,6 @@ protocol AddressFormatterType: AnyObject {
 
 final class AddressFormatter: AddressFormatterType {
     func shortAddress(of address: String) -> String {
-        return address.prefix(4) + "..." + address.suffix(4)
+        address.prefix(4) + "..." + address.suffix(4)
     }
 }
