@@ -179,6 +179,7 @@
 		846995027222B9BE2C4B0698 /* WLCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994BA772A5F92F29C172E /* WLCard.swift */; };
 		84699508FB9DD0ECAD1BA062 /* NotificationBannerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469902AC70FC9230511E124 /* NotificationBannerHandler.swift */; };
 		846995192F640AE9B9541C87 /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469907019755990A0585C61 /* KeyView.swift */; };
+		8469953818C371B311A366C6 /* Defaults+WorkAround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699749F4080DAC34D69470 /* Defaults+WorkAround.swift */; };
 		84699577969579C1429B4D04 /* CreateSecurityKeys.KeysView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994C1EE7DDD16BD91B4FD /* CreateSecurityKeys.KeysView.swift */; };
 		846995A6F31CA183C1D3A133 /* BEScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C86FA5FC79DB0199B0B /* BEScene.swift */; };
 		846995ACEC50F650033C707E /* DAppContainer.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */; };
@@ -752,6 +753,7 @@
 		846996B110978DCB7A6D4A74 /* Swap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
 		8469973F517781E128015A0E /* Moonpay.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
+		84699749F4080DAC34D69470 /* Defaults+WorkAround.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Defaults+WorkAround.swift"; sourceTree = "<group>"; };
 		846998347726DB596CBF222F /* TransakBuyProccessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakBuyProccessing.swift; sourceTree = "<group>"; };
 		84699843D0D43ABFAA0417BA /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		84699858C3DF47632C790981 /* Home.EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.EmptyView.swift; sourceTree = "<group>"; };
@@ -2380,6 +2382,7 @@
 				4185ABFC27B6956D00BA9A83 /* ImageSaver.swift */,
 				846995C83F49475E5FA6674B /* Banner */,
 				846993CD4CD0FE97413DF87A /* Buy */,
+				84699749F4080DAC34D69470 /* Defaults+WorkAround.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -3590,6 +3593,7 @@
 				846993455464139EC88B91F8 /* TokenSelection.Scene.swift in Sources */,
 				84699F1F56756CE9EBB99B98 /* TokenSelection.swift in Sources */,
 				84699E4D8F94698F85066761 /* Authentication.BiometricButton.swift in Sources */,
+				8469953818C371B311A366C6 /* Defaults+WorkAround.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

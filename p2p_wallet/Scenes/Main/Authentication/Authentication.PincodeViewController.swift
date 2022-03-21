@@ -86,6 +86,14 @@ extension Authentication {
                     }
                 }
                 .centered(.vertical)
+                
+//                UILabel()
+//                    .setupWithType(UILabel.self) { label in
+//                        let text = NSMutableAttributedString()
+//                            .text(L10n.forgotYourPIN, size: 17, weight: .medium)
+//                            .text(L10n.resetIt, size: 17, weight: .medium, color: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1))
+//                        label.attributedText = text
+//                    }
             }
         }
 
