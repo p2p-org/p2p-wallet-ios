@@ -5,9 +5,9 @@
 //  Created by Andrew Vasiliev on 12.11.2021.
 //
 
-import UIKit
 import PureLayout
 import RxSwift
+import UIKit
 
 final class ExpandableTextView: UIView {
     private let placeholderLabel = UILabel()
@@ -38,7 +38,7 @@ final class ExpandableTextView: UIView {
 
     var placeholder: String? {
         get {
-            return placeholderLabel.text
+            placeholderLabel.text
         }
         set {
             changePlaceholderText(to: newValue)
@@ -64,7 +64,7 @@ final class ExpandableTextView: UIView {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -103,12 +103,12 @@ final class ExpandableTextView: UIView {
 
 private extension ExpandableTextView {
     var allSubviews: [UIView] {
-        return [horizontalStackView, placeholderLabel]
+        [horizontalStackView, placeholderLabel]
     }
 
     func configureSelf() {
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTouch))
-        self.addGestureRecognizer(gestureRecognizer)
+        addGestureRecognizer(gestureRecognizer)
     }
 
     func configureSubviews(limitOfLines: Int?) {
@@ -165,7 +165,7 @@ private extension ExpandableTextView {
             [
                 textView.padding(.init(only: .top, inset: yMargin)),
                 postfixLabel,
-                clearButton
+                clearButton,
             ]
         )
     }
@@ -179,7 +179,7 @@ private extension ExpandableTextView {
         postfixLabel.autoSetDimension(.height, toSize: clearButtonHeight)
         clearButton.autoSetDimensions(to: .init(width: clearButtonWidth, height: clearButtonHeight))
         topDynamicPlaceholderConstraint = placeholderLabel.autoPinEdge(toSuperviewEdge: .top, withInset: yMargin)
-        leftDynamicPlaceholderConstraint =  placeholderLabel.autoPinEdge(toSuperviewEdge: .leading)
+        leftDynamicPlaceholderConstraint = placeholderLabel.autoPinEdge(toSuperviewEdge: .leading)
     }
 
     func animatePlaceholder(reversed: Bool, force: Bool = false) {

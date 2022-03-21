@@ -25,7 +25,7 @@ enum WalletActionType {
             return L10n.swap
         }
     }
-    
+
     var icon: UIImage {
         switch self {
         case .receive:

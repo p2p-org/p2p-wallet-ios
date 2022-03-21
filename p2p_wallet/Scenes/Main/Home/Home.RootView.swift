@@ -8,10 +8,10 @@
 import Action
 import BECollectionView
 import BEPureLayout
+import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
-import Resolver
 
 extension Home {
     class RootView: BECompositionView {
@@ -20,14 +20,14 @@ extension Home {
         // swiftlint:disable weak_delegate
         private var headerViewScrollDelegate = HeaderScrollDelegate()
         // swiftlint:enable weak_delegate
-        
+
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
-            
+
             viewModel.walletsRepository.reload()
         }
-        
+
         override func build() -> UIView {
             BESafeArea {
                 BEVStack {
@@ -40,11 +40,11 @@ extension Home {
                                 label.attributedText = p2pWallet
                             }
                     }.padding(.init(x: 0, y: 12))
-                    
+
                     // Indicator
                     WLStatusIndicatorView(forAutoLayout: ()).setupWithType(WLStatusIndicatorView.self) { view in
                         viewModel.currentPricesDriver
-                            .map { $0.state }
+                            .map(\.state)
                             .drive(onNext: { [weak view] state in
                                 switch state {
                                 case .notRequested:
@@ -59,7 +59,7 @@ extension Home {
                             })
                             .disposed(by: disposeBag)
                     }
-                    
+
                     BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
                         guard let self = self else { return UIView() }
                         return state ? self.content() : self.emptyScreen()
@@ -67,11 +67,11 @@ extension Home {
                 }
             }
         }
-        
+
         func emptyScreen() -> UIView {
             EmptyView(viewModel: viewModel)
         }
-        
+
         func content() -> UIView {
             BEZStack {
                 // Tokens
@@ -79,12 +79,14 @@ extension Home {
                     WalletsCollectionView(
                         walletsRepository: viewModel.walletsRepository,
                         sections: [
-                            WalletsSection.init(
+                            WalletsSection(
                                 index: 0,
                                 viewModel: viewModel.walletsRepository,
                                 header: .init(viewClass: WalletsSection.Header.self),
                                 cellType: VisibleWalletCell.self,
-                                onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(fromAddress: wallet.pubkey)) }
+                                onSend: { [weak self] wallet in
+                                    self?.viewModel.navigate(to: .sendToken(fromAddress: wallet.pubkey))
+                                }
                             ),
                             BannerSection(index: 1, viewModel: viewModel.bannerViewModel) { [unowned self] action in
                                 if let action = action as? Banners.Actions.OpenScreen {
@@ -96,26 +98,28 @@ extension Home {
                                         return
                                     }
                                 }
-                                
+
                             },
                             HiddenWalletsSection(
                                 index: 2,
                                 viewModel: viewModel.walletsRepository,
                                 header: .init(viewClass: HiddenWalletsSectionHeaderView.self),
-                                onSend: { [weak self] wallet in self?.viewModel.navigate(to: .sendToken(fromAddress: wallet.pubkey)) },
+                                onSend: { [weak self] wallet in
+                                    self?.viewModel.navigate(to: .sendToken(fromAddress: wallet.pubkey))
+                                },
                                 showHideHiddenWalletsAction: CocoaAction { [weak self] in
                                     self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
                                     return .just(())
                                 }
-                            )
+                            ),
                         ]
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
-                        
+
                         collectionView.contentInset.modify(dTop: 190, dBottom: 90)
                         collectionView.clipsToBounds = true
-                        
+
                         viewModel
                             .isWalletReadyDriver
                             .map { !$0 }
@@ -123,7 +127,7 @@ extension Home {
                             .disposed(by: disposeBag)
                     }.padding(.init(only: .top, inset: 12))
                 }
-                
+
                 // Action bar
                 BEZStackPosition(mode: .pinEdges([.top, .left, .right])) {
                     FloatingHeaderView(viewModel: viewModel)
@@ -136,35 +140,35 @@ extension Home {
 }
 
 extension Home.RootView: BECollectionViewDelegate {
-    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let wallet = item as? Wallet else { return }
         viewModel.navigate(to: .walletDetail(wallet: wallet))
     }
 }
 
-extension HomeViewModelType {
-    fileprivate var isWalletReadyDriver: Driver<Bool> {
+private extension HomeViewModelType {
+    var isWalletReadyDriver: Driver<Bool> {
         Observable.zip(
-                walletsRepository.stateObservable,
-                walletsRepository.dataObservable
-                    .filter { $0 != nil }
-                    .withPrevious()
-            )
-            .map { (state, change) in
-                if let previous = change.0 {
-                    if state == .loading || state == .initializing {
-                        let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
-                        return amount > 0
-                    } else {
-                        let amount = change.1?.reduce(0) { (partialResult, wallet) in partialResult + wallet.amount } ?? 0
-                        return amount > 0
-                    }
+            walletsRepository.stateObservable,
+            walletsRepository.dataObservable
+                .filter { $0 != nil }
+                .withPrevious()
+        )
+        .map { state, change in
+            if let previous = change.0 {
+                if state == .loading || state == .initializing {
+                    let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
+                    return amount > 0
+                } else {
+                    let amount = change.1?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
+                    return amount > 0
                 }
-                
-                // First initialize
-                return true
             }
-            .distinctUntilChanged { $0 }
-            .asDriver(onErrorJustReturn: true)
+
+            // First initialize
+            return true
+        }
+        .distinctUntilChanged { $0 }
+        .asDriver(onErrorJustReturn: true)
     }
 }

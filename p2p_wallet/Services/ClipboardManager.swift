@@ -19,7 +19,7 @@ class ClipboardManager: ClipboardManagerType {
         UIPasteboard.general.string = string
         // swiftlint:enable clipboard_direct_api
     }
-    
+
     func stringFromClipboard() -> String? {
         // swiftlint:disable clipboard_direct_api
         UIPasteboard.general.string

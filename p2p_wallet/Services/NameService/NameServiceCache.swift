@@ -15,12 +15,12 @@ protocol NameServiceCacheType {
 enum NameServiceSearchResult {
     case notRegisteredYet
     case registered(String)
-    
+
     var name: String? {
         switch self {
         case .notRegisteredYet:
             return nil
-        case .registered(let string):
+        case let .registered(string):
             return string
         }
     }
@@ -29,7 +29,7 @@ enum NameServiceSearchResult {
 class NameServiceUserDefaultCache: NameServiceCacheType {
     private var addressToNameCache = [String: NameServiceSearchResult]() // Address: Name
     private let locker = NSLock()
-    
+
     func save(_ name: String?, for owner: String) {
         guard let name = name else {
             addressToNameCache[owner] = .notRegisteredYet
@@ -37,7 +37,7 @@ class NameServiceUserDefaultCache: NameServiceCacheType {
         }
         addressToNameCache[owner] = .registered(name)
     }
-    
+
     func getName(for owner: String) -> NameServiceSearchResult? {
         addressToNameCache[owner]
     }

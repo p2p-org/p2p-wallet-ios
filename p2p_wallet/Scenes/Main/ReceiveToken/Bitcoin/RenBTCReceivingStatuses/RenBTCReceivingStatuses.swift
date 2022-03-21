@@ -12,18 +12,18 @@ enum RenBTCReceivingStatuses {
     enum NavigatableScene {
         case detail(txid: String)
     }
-    
+
     struct Record: Hashable {
         enum Status: String, Equatable {
             case waitingForConfirmation, confirmed, submitted, minted
         }
-        
+
         let txid: String
         let status: Status
         let time: Date
         var vout: UInt64?
         var amount: UInt64?
-        
+
         var stringValue: String {
             switch status {
             case .waitingForConfirmation:

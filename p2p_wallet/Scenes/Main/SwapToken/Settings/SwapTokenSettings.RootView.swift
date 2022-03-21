@@ -5,15 +5,17 @@
 //  Created by Andrew Vasiliev on 21.12.2021.
 //
 
-import UIKit
 import RxSwift
+import UIKit
 
 extension SwapTokenSettings {
     final class RootView: BEView {
         // MARK: - Properties
+
         private let viewModel: NewSwapTokenSettingsViewModelType
 
         // MARK: - Subviews
+
         private let navigationBar: NavigationBar
         private let significantView: SignificantView
 
@@ -29,7 +31,9 @@ extension SwapTokenSettings {
 
             super.init(frame: .zero)
         }
+
         // MARK: - Methods
+
         override func commonInit() {
             super.commonInit()
 
@@ -37,6 +41,7 @@ extension SwapTokenSettings {
         }
 
         // MARK: - Layout
+
         private func layout() {
             addSubview(navigationBar)
             addSubview(significantView)

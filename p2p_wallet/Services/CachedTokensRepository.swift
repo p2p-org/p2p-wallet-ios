@@ -6,8 +6,8 @@
 //
 
 import Resolver
-import SolanaSwift
 import RxSwift
+import SolanaSwift
 
 final class CachedTokensRepository: TokensRepository {
     @Injected private var tokensRepository: TokensRepository
@@ -17,7 +17,7 @@ final class CachedTokensRepository: TokensRepository {
     func getTokensList() -> Single<[SolanaSDK.Token]> {
         guard let cache = cache else {
             return tokensRepository.getTokensList()
-                .do(onSuccess: {[weak self] in
+                .do(onSuccess: { [weak self] in
                     self?.cache = $0
                 })
         }

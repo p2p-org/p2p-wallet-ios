@@ -20,7 +20,7 @@ extension SolanaSDK.ParsedTransaction.Status {
             return L10n.error.uppercaseFirst
         }
     }
-    
+
     var indicatorColor: UIColor {
         switch self {
         case .requesting, .processing:

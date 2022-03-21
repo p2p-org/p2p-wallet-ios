@@ -13,8 +13,18 @@ extension NSObject {
 
         guard let myMethod = class_getInstanceMethod(self, newSelector) else { return }
 
-        if class_addMethod(self, originalSelector, method_getImplementation(myMethod), method_getTypeEncoding(myMethod)) {
-            class_replaceMethod(self, newSelector, method_getImplementation(orginalMethod), method_getTypeEncoding(orginalMethod))
+        if class_addMethod(
+            self,
+            originalSelector,
+            method_getImplementation(myMethod),
+            method_getTypeEncoding(myMethod)
+        ) {
+            class_replaceMethod(
+                self,
+                newSelector,
+                method_getImplementation(orginalMethod),
+                method_getTypeEncoding(orginalMethod)
+            )
         } else {
             method_exchangeImplementations(orginalMethod, myMethod)
         }

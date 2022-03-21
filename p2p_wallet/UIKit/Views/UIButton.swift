@@ -7,13 +7,13 @@ import UIKit
 extension UIButton {
     static func text(text: String, image: UIImage? = nil, tintColor: UIColor = .black) -> UIButton {
         let button = UIButton()
-        
+
         button.setInsets(forContentPadding: UIEdgeInsets(all: 10), imageTitlePadding: 8)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
         button.setTitleColor(tintColor, for: .normal)
         button.setTitle(text, for: .normal)
         button.setImage(image, for: .normal)
-        
+
         return button
     }
 }

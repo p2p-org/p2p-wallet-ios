@@ -125,7 +125,7 @@ enum AnalyticsEvent: MirrorableEnum {
     case settingsСurrencySelected(сurrency: String)
     case signedOut
     case signOut(lastScreen: String)
-    
+
     // choose token
     case tokenListViewed(lastScreen: String, tokenListLocation: String)
     case tokenListSearching(searchString: String)
@@ -137,18 +137,19 @@ extension AnalyticsEvent {
     var eventName: String? {
         mirror.label.snakeCased()
     }
-    
+
     var params: [AnyHashable: Any]? {
-        mirror.params.isEmpty ? nil: mirror.params
+        mirror.params.isEmpty ? nil : mirror.params
     }
 }
 
 private extension String {
     func snakeCased() -> String? {
         let pattern = "([a-z0-9])([A-Z])"
-        
+
         let regex = try? NSRegularExpression(pattern: pattern, options: [])
         let range = NSRange(location: 0, length: count)
-        return regex?.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "$1_$2").uppercaseFirst
+        return regex?.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "$1_$2")
+            .uppercaseFirst
     }
 }

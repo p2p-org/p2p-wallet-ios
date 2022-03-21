@@ -5,11 +5,11 @@
 //  Created by Andrew Vasiliev on 30.01.2022.
 //
 
-import Foundation
-import RxSwift
-import RxCocoa
-import SolanaSwift
 import BECollectionView
+import Foundation
+import RxCocoa
+import RxSwift
+import SolanaSwift
 
 protocol SupportedTokensViewModelType: BEListViewModelType {
     var navigationDriver: Driver<SupportedTokens.NavigatableScene?> { get }
@@ -20,12 +20,15 @@ protocol SupportedTokensViewModelType: BEListViewModelType {
 extension SupportedTokens {
     final class ViewModel: BEListViewModel<SolanaSDK.Token> {
         // MARK: - Dependencies
+
         private let tokensRepository: TokensRepository
 
         // MARK: - Properties
+
         private let disposeBag = DisposeBag()
-        
+
         // MARK: - Subject
+
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private var keywordSubject = BehaviorRelay<String?>(value: nil)
 
@@ -97,6 +100,7 @@ extension SupportedTokens.ViewModel: SupportedTokensViewModelType {
     }
 
     // MARK: - Actions
+
     func search(keyword: String) {
         keywordSubject.accept(keyword)
     }

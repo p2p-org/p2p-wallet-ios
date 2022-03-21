@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import UIKit
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension TransactionDetail {
     final class FromToSection: UIStackView {
@@ -16,9 +16,9 @@ extension TransactionDetail {
         private let viewModel: TransactionDetailViewModelType
         var isSwapDriver: Driver<Bool> {
             viewModel.parsedTransactionDriver
-                .map {$0?.value is SolanaSDK.SwapTransaction}
+                .map { $0?.value is SolanaSDK.SwapTransaction }
         }
-        
+
         init(viewModel: TransactionDetailViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
@@ -26,22 +26,22 @@ extension TransactionDetail {
             addArrangedSubviews {
                 // Separator
                 UIView.defaultSeparator()
-                
+
                 // Sender
                 BEHStack(spacing: 12, alignment: .top) {
                     titleLabel()
                         .setup { fromTitleLabel in
                             isSwapDriver
-                                .map {$0 ? L10n.from: L10n.senderSAddress}
+                                .map { $0 ? L10n.from : L10n.senderSAddress }
                                 .drive(fromTitleLabel.rx.text)
                                 .disposed(by: disposeBag)
                         }
-                    
+
                     BEVStack(spacing: 8) {
                         addressLabel()
                             .setup { fromAddressLabel in
                                 viewModel.parsedTransactionDriver
-                                    .map {$0?.value}
+                                    .map { $0?.value }
                                     .map { transaction -> String? in
                                         switch transaction {
                                         case let transaction as SolanaSDK.SwapTransaction:
@@ -60,37 +60,36 @@ extension TransactionDetail {
                                 isSwapDriver
                                     .drive(fromNameLabel.rx.isHidden)
                                     .disposed(by: disposeBag)
-                                
+
                                 viewModel.senderNameDriver
                                     .drive(fromNameLabel.rx.text)
                                     .disposed(by: disposeBag)
                             }
-                            
                     }
-                        .onLongTap { [unowned self] gesture in
-                            guard gesture.state == .ended else {return}
-                            self.viewModel.copySourceAddressToClipboard()
-                        }
+                    .onLongTap { [unowned self] gesture in
+                        guard gesture.state == .ended else { return }
+                        self.viewModel.copySourceAddressToClipboard()
+                    }
                 }
-                
+
                 // Separator
                 UIView.defaultSeparator()
-                
+
                 // Recipient
                 BEHStack(spacing: 12, alignment: .top) {
                     titleLabel()
                         .setup { toTitleLabel in
                             isSwapDriver
-                                .map {$0 ? L10n.to: L10n.recipientSAddress}
+                                .map { $0 ? L10n.to : L10n.recipientSAddress }
                                 .drive(toTitleLabel.rx.text)
                                 .disposed(by: disposeBag)
                         }
-                    
+
                     BEVStack(spacing: 8) {
                         addressLabel()
-                            .setup {toAddressLabel in
+                            .setup { toAddressLabel in
                                 viewModel.parsedTransactionDriver
-                                    .map {$0?.value}
+                                    .map { $0?.value }
                                     .map { transaction -> String? in
                                         switch transaction {
                                         case let transaction as SolanaSDK.SwapTransaction:
@@ -109,21 +108,22 @@ extension TransactionDetail {
                                 isSwapDriver
                                     .drive(toNameLabel.rx.isHidden)
                                     .disposed(by: disposeBag)
-                                
+
                                 viewModel.receiverNameDriver
                                     .drive(toNameLabel.rx.text)
                                     .disposed(by: disposeBag)
                             }
                     }
-                        .onLongTap { [unowned self] gesture in
-                            guard gesture.state == .ended else {return}
-                            self.viewModel.copyDestinationAddressToClipboard()
-                        }
+                    .onLongTap { [unowned self] gesture in
+                        guard gesture.state == .ended else { return }
+                        self.viewModel.copyDestinationAddressToClipboard()
+                    }
                 }
             }
         }
-        
-        required init(coder: NSCoder) {
+
+        @available(*, unavailable)
+        required init(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

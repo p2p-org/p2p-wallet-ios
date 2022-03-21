@@ -6,22 +6,21 @@
 //
 
 import Foundation
-import RxSwift
 import LazySubject
+import RxSwift
 
 class LazyLabel<T: Hashable & CustomStringConvertible>: UILabel {
     weak var subject: LazySubject<T>?
-    
-    func subscribed(to subject: LazySubject<T>, stringBuilder: ((T) -> String)? = nil) -> Disposable
-    {
+
+    func subscribed(to subject: LazySubject<T>, stringBuilder: ((T) -> String)? = nil) -> Disposable {
         let currentTextColor = textColor
         self.subject = subject
-        self.isUserInteractionEnabled = true
-        self.onTap(self, action: #selector(retry))
+        isUserInteractionEnabled = true
+        onTap(self, action: #selector(retry))
         return subject.observable
-            .subscribe(onNext: {[weak self] state in
+            .subscribe(onNext: { [weak self] state in
                 self?.textColor = currentTextColor
-                
+
                 switch state {
                 case .loading, .initializing:
                     self?.text = L10n.loading + "..."
@@ -31,11 +30,11 @@ class LazyLabel<T: Hashable & CustomStringConvertible>: UILabel {
                     }
                 case .error:
                     self?.textColor = .red
-                    self?.text = L10n.error.uppercaseFirst + ". " +  L10n.retry + "?"
+                    self?.text = L10n.error.uppercaseFirst + ". " + L10n.retry + "?"
                 }
             })
     }
-    
+
     @objc func retry() {
         subject?.reload()
     }

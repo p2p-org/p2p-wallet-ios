@@ -33,19 +33,23 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         @available(*, unavailable)
-        required init(coder: NSCoder) {
+        required init(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
         func setRecipient(_ recipient: SendToken.Recipient) {
-            titleLabel.text = recipient.name ?? recipient.address.truncatingMiddle(numOfSymbolsRevealed: 13, numOfSymbolsRevealedInSuffix: 4)
+            titleLabel.text = recipient.name ?? recipient.address.truncatingMiddle(
+                numOfSymbolsRevealed: 13,
+                numOfSymbolsRevealedInSuffix: 4
+            )
             recipientIcon.image = .emptyUserAvatar
             descriptionLabel.textColor = .textSecondary
             if recipient.name == nil {
                 let shouldShowDescriptionLabel = recipient.hasNoFunds || recipient.hasNoInfo
                 descriptionLabel.isHidden = !shouldShowDescriptionLabel
                 if shouldShowDescriptionLabel {
-                    descriptionLabel.text = recipient.hasNoFunds ? L10n.cautionThisAddressHasNoFunds: L10n.couldNotRetrieveAccountInfo
+                    descriptionLabel.text = recipient.hasNoFunds ? L10n.cautionThisAddressHasNoFunds : L10n
+                        .couldNotRetrieveAccountInfo
                     recipientIcon.image = .warningUserAvatar
                     descriptionLabel.textColor = .ff9500
                 }
@@ -54,7 +58,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 descriptionLabel.text = recipient.address
             }
         }
-        
+
         func setHighlighted() {
             recipientIcon.image = .emptyUserAvatarHighlighted
         }

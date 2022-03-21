@@ -6,37 +6,54 @@
 //
 
 import Foundation
-import UIKit
 import RxCocoa
+import UIKit
 
 extension Settings.Backup {
     class ViewController: Settings.BaseViewController {
         // MARK: - Properties
+
         lazy var shieldImageView = UIImageView(width: 80, height: 100, image: .backupShield)
         lazy var titleLabel = UILabel(textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
-        lazy var descriptionLabel = UILabel(textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
-        lazy var backupUsingIcloudButton = WLButton.stepButton(enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b), textColor: .white, label: " " + L10n.backupUsingICloud)
-        lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8.onDarkMode(.h2b2b2b), textColor: .textBlack, label: L10n.backupManually)
+        lazy var descriptionLabel = UILabel(
+            textSize: 15,
+            textColor: .textSecondary,
+            numberOfLines: 0,
+            textAlignment: .center
+        )
+        lazy var backupUsingIcloudButton = WLButton.stepButton(
+            enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b),
+            textColor: .white,
+            label: " " + L10n.backupUsingICloud
+        )
+        lazy var backupMannuallyButton = WLButton.stepButton(
+            enabledColor: .f6f6f8.onDarkMode(.h2b2b2b),
+            textColor: .textBlack,
+            label: L10n.backupManually
+        )
         private let dismissAfterBackup: Bool
-        
+
         // MARK: - Dependencies
+
         let viewModel: SettingsBackupViewModelType
-        
+
         // MARK: - Initializers
+
         init(viewModel: SettingsBackupViewModelType, dismissAfterBackup: Bool = false) {
             self.viewModel = viewModel
             self.dismissAfterBackup = dismissAfterBackup
             super.init()
         }
-    
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             navigationBar.titleLabel.text = L10n.backup
             view.backgroundColor = .white.onDarkMode(.h1b1b1b)
-            
+
             stackView.spacing = 0
-            
+
             let spacer1 = UIView.spacer
             let spacer2 = UIView.spacer
             stackView.addArrangedSubviews([
@@ -57,47 +74,48 @@ extension Settings.Backup {
                 BEStackViewSpacing(10),
                 backupMannuallyButton
                     .onTap(self, action: #selector(buttonBackupManuallyDidTouch))
-                    .padding(UIEdgeInsets.init(x: 20, y: 0).modifying(dBottom: 44))
+                    .padding(UIEdgeInsets(x: 20, y: 0).modifying(dBottom: 44)),
             ])
-            
+
             spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor)
                 .isActive = true
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.didBackupDriver
-                .drive(onNext: {[weak self] didBackup in
+                .drive(onNext: { [weak self] didBackup in
                     self?.handleDidBackup(didBackup)
                 })
                 .disposed(by: disposeBag)
-            
+
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] scene in
+                .drive(onNext: { [weak self] scene in
                     self?.navigate(to: scene)
                 })
                 .disposed(by: disposeBag)
         }
-        
+
         @objc func buttonBackupUsingICloudDidTouch() {
             viewModel.backupUsingICloud()
         }
-        
+
         @objc func buttonBackupManuallyDidTouch() {
             viewModel.backupManually()
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .backupManually:
                 let vc = BackupManuallyVC()
                 vc.delegate = self
                 let nc = UINavigationController(rootViewController: vc)
-                
+
                 let modalVC = WLIndicatorModalVC()
                 modalVC.add(child: nc, to: modalVC.containerView)
-                
+
                 present(modalVC, animated: true, completion: nil)
             case .showPhrases:
                 let vc = BackupShowPhrasesVC()
@@ -106,17 +124,19 @@ extension Settings.Backup {
                 break
             }
         }
-        
+
         // MARK: - Helpers
+
         private func handleDidBackup(_ didBackup: Bool) {
-            if didBackup && dismissAfterBackup {
+            if didBackup, dismissAfterBackup {
                 back()
                 return
             }
-            
+
             var shieldColor = UIColor.alertOrange
             var title = L10n.yourWalletNeedsBackup
-            var subtitle = L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases
+            var subtitle = L10n
+                .ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases
             var isIcloudButtonHidden = false
             var backupMannuallyButtonTitle = L10n.backupManually
             var backupMannuallyButtonTextColor = UIColor.textBlack
@@ -126,22 +146,22 @@ extension Settings.Backup {
                 subtitle = L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletBackupFromICloud
                 backupMannuallyButtonTitle = L10n.viewRecoveryKey
                 backupMannuallyButtonTextColor = .h5887ff
-                
+
                 isIcloudButtonHidden = true
             }
-            
-            self.shieldImageView.tintColor = shieldColor
-            self.titleLabel.text = title
-            self.descriptionLabel.text = subtitle
-            self.backupUsingIcloudButton.isHidden = isIcloudButtonHidden
-            self.backupMannuallyButton.setTitle(backupMannuallyButtonTitle, for: .normal)
-            self.backupMannuallyButton.setTitleColor(backupMannuallyButtonTextColor, for: .normal)
+
+            shieldImageView.tintColor = shieldColor
+            titleLabel.text = title
+            descriptionLabel.text = subtitle
+            backupUsingIcloudButton.isHidden = isIcloudButtonHidden
+            backupMannuallyButton.setTitle(backupMannuallyButtonTitle, for: .normal)
+            backupMannuallyButton.setTitleColor(backupMannuallyButtonTextColor, for: .normal)
         }
     }
 }
 
 extension Settings.Backup.ViewController: BackupManuallyVCDelegate {
-    func backupManuallyVCDidBackup(_ vc: BackupManuallyVC) {
+    func backupManuallyVCDidBackup(_: BackupManuallyVC) {
         viewModel.setDidBackupOffline()
     }
 }

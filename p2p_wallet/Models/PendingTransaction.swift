@@ -11,21 +11,21 @@ import RxSwift
 struct PendingTransaction {
     enum TransactionStatus {
         static let maxConfirmed = 31
-        
+
         case sending
         case confirmed(_ numberOfConfirmed: Int)
         case finalized
         case error(_ error: Swift.Error)
-        
+
         var numberOfConfirmations: Int? {
             switch self {
-            case .confirmed(let numberOfConfirmations):
+            case let .confirmed(numberOfConfirmations):
                 return numberOfConfirmations
             default:
                 return nil
             }
         }
-        
+
         var isProcessing: Bool {
             switch self {
             case .sending, .confirmed:
@@ -34,12 +34,12 @@ struct PendingTransaction {
                 return false
             }
         }
-        
+
         var progress: Float {
             switch self {
             case .sending:
                 return 0
-            case .confirmed(var numberOfConfirmed):
+            case var .confirmed(numberOfConfirmed):
                 // treat all number of confirmed as unfinalized
                 if numberOfConfirmed >= Self.maxConfirmed {
                     numberOfConfirmed = Self.maxConfirmed - 1
@@ -50,16 +50,16 @@ struct PendingTransaction {
                 return 1
             }
         }
-        
+
         var error: Swift.Error? {
             switch self {
-            case .error(let error):
+            case let .error(error):
                 return error
             default:
                 return nil
             }
         }
-        
+
         public var rawValue: String {
             switch self {
             case .sending:
@@ -73,7 +73,7 @@ struct PendingTransaction {
             }
         }
     }
-    
+
     var transactionId: String?
     let sentAt: Date
     var writtenToRepository: Bool = false
@@ -86,7 +86,7 @@ extension PendingTransaction {
     func parse(pricesService: PricesServiceType, authority: String? = nil) -> SolanaSDK.ParsedTransaction? {
         // status
         let status: SolanaSDK.ParsedTransaction.Status
-        
+
         switch self.status {
         case .sending:
             status = .requesting
@@ -94,16 +94,16 @@ extension PendingTransaction {
             status = .processing(percent: 0)
         case .finalized:
             status = .confirmed
-        case .error(let error):
+        case let .error(error):
             status = .error(error.readableDescription)
         }
-        
+
         let signature = transactionId
-        
+
         var value: AnyHashable?
         let amountInFiat: Double?
         let fee: SolanaSDK.FeeAmount?
-        
+
         switch rawTransaction {
         case let transaction as ProcessTransaction.SendTransaction:
             let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
@@ -122,9 +122,12 @@ extension PendingTransaction {
             if let authority = try? SolanaSDK.PublicKey(string: authority),
                let mintAddress = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress)
             {
-                destinationWallet.pubkey = try? SolanaSDK.PublicKey.associatedTokenAddress(walletAddress: authority, tokenMintAddress: mintAddress).base58EncodedString
+                destinationWallet.pubkey = try? SolanaSDK.PublicKey.associatedTokenAddress(
+                    walletAddress: authority,
+                    tokenMintAddress: mintAddress
+                ).base58EncodedString
             }
-            
+
             value = SolanaSDK.SwapTransaction(
                 source: transaction.sourceWallet,
                 sourceAmount: transaction.amount,
@@ -132,12 +135,22 @@ extension PendingTransaction {
                 destinationAmount: transaction.estimatedAmount,
                 myAccountSymbol: nil
             )
-            amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?.value
+            amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?
+                .value
             fee = transaction.fees.networkFees
         default:
             return nil
         }
-        
-        return .init(status: status, signature: signature, value: value, amountInFiat: amountInFiat, slot: self.slot, blockTime: sentAt, fee: fee, blockhash: nil)
+
+        return .init(
+            status: status,
+            signature: signature,
+            value: value,
+            amountInFiat: amountInFiat,
+            slot: slot,
+            blockTime: sentAt,
+            fee: fee,
+            blockhash: nil
+        )
     }
 }
