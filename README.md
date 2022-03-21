@@ -65,7 +65,7 @@ swiftformat .p2p_wallet
 ```
 
 ### Code style
-- Space indent: 2
+- Space indent: 4
 
 ## Contribute
 
