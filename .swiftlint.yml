@@ -2,6 +2,8 @@ warning_threshold: 1000
 
 excluded:
  - Pods
+ - Templates
+ - "*/.build"
  - SolanaSwift
  - BEPureLayout
  - LazySubject
@@ -11,7 +13,7 @@ excluded:
  - OrcaSwapSwift
  - RenVMSwift
  - TransakSwift
- - Templates
+ - "p2p_wallet/Scenes/Main/SwapToken/SerumSwap(Unstable)"
 
 disabled_rules:
   - identifier_name
@@ -29,10 +31,8 @@ disabled_rules:
   - opening_brace
   - shorthand_operator
   - todo
-
-line_length:
-  warning: 250
-  error: 500
+  - trailing_comma
+  - line_length
 
 function_parameter_count:
   warning: 15
