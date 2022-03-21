@@ -19,7 +19,7 @@
 --hexgrouping 4,8
 --hexliteralcase uppercase
 --ifdef indent
---indent 2
+--indent 4
 --indentcase false
 --importgrouping testable-bottom
 --linebreaks lf
@@ -30,7 +30,7 @@
 --self remove
 --semicolons inline
 --stripunusedargs always
---swiftversion 4.2
+--swiftversion 5.2
 --trimwhitespace always
 --wraparguments preserve
 --wrapcollections preserve
