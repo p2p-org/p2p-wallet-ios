@@ -24,7 +24,7 @@ extension Authentication {
 
         // MARK: - Callbacks
 
-        var onSuccess: (() -> Void)?
+        var onSuccess: ((_ resetPassword: Bool) -> Void)?
         var onCancel: (() -> Void)?
 
         // MARK: - Subscenes
@@ -32,7 +32,7 @@ extension Authentication {
         private lazy var pincodeVC: PinCodeViewController = {
             let pincodeVC = PinCodeViewController(viewModel: viewModel)
             pincodeVC.onSuccess = { [weak self] in
-                self?.authenticationDidComplete()
+                self?.authenticationDidComplete(resetPassword: false)
             }
             pincodeVC.onCancel = { [weak self] in
                 self?.cancel()
@@ -74,7 +74,7 @@ extension Authentication {
                 let vc = ResetPinCodeWithSeedPhrases.ViewController(viewModel: vm)
                 vc.completion = { [weak self] in
                     self?.viewModel.setBlockedTime(nil)
-                    self?.authenticationDidComplete()
+                    self?.authenticationDidComplete(resetPassword: true)
                 }
                 present(vc, animated: true, completion: nil)
             }
@@ -87,8 +87,8 @@ extension Authentication {
             dismiss(animated: true, completion: nil)
         }
 
-        private func authenticationDidComplete() {
-            onSuccess?()
+        private func authenticationDidComplete(resetPassword: Bool) {
+            onSuccess?(resetPassword)
             dismiss(animated: true, completion: nil)
         }
     }

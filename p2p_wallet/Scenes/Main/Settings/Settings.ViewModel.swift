@@ -289,9 +289,13 @@ extension Settings.ViewModel: SettingsViewModelType {
             presentationStyle: .init(
                 title: L10n.enterCurrentPINCode,
                 isRequired: false,
-                isFullScreen: false,
+                isFullScreen: true,
                 useBiometry: false,
-                completion: { [weak self] in
+                completion: { [weak self] passwordReset in
+                    guard !passwordReset else {
+                        self?.notificationsService.showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
+                        return
+                    }
                     // pin code vc
                     self?.navigate(to: .changePincode)
                 }

@@ -84,10 +84,10 @@ class MainViewController: BaseVC {
         }
 
         // completion
-        localAuthVC?.onSuccess = { [weak self] in
+        localAuthVC?.onSuccess = { [weak self] resetPassword in
             self?.viewModel.authenticate(presentationStyle: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                authStyle.completion?()
+                authStyle.completion?(resetPassword)
             }
         }
 

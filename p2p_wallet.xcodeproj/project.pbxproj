@@ -154,7 +154,6 @@
 		846991795DC72E1D4E1078B7 /* BuyPreparing.Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993C80C502EDC0FBF1067 /* BuyPreparing.Scene.swift */; };
 		8469917D8E71B0E435F7EA48 /* Moonpay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994818F78BED22E8A733C /* Moonpay.swift */; };
 		84699180BD00AC7A82B3DC28 /* SortByDataStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C3549A12D49D22AA2EE /* SortByDataStrategy.swift */; };
-		846991A8EB23DEEB4EBB0AC1 /* .swift-format in Resources */ = {isa = PBXBuildFile; fileRef = 84699C82F9F4C9432A461EB1 /* .swift-format */; };
 		846991CD8786E160F2D18E67 /* NetworkSelection.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */; };
 		846991E94E5B357F70EACC4C /* Buy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993A9B7C558B1E379CF0C /* Buy.swift */; };
 		84699203BA88E73988650B2B /* Home.ClosingBannerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699E22DF6711217BFBB3BF /* Home.ClosingBannerType.swift */; };
@@ -778,7 +777,6 @@
 		84699C3549A12D49D22AA2EE /* SortByDataStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByDataStrategy.swift; sourceTree = "<group>"; };
 		84699C4D3EF36C61A55A9482 /* SwapServiceWithRelayImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwapServiceWithRelayImpl.swift; sourceTree = "<group>"; };
 		84699C532C9A1D3FFDBC8F3E /* TokenSelection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TokenSelection.swift; path = TokenSelection/TokenSelection.swift; sourceTree = "<group>"; };
-		84699C82F9F4C9432A461EB1 /* .swift-format */ = {isa = PBXFileReference; lastKnownFileType = "file.swift-format"; path = ".swift-format"; sourceTree = "<group>"; };
 		84699C86FA5FC79DB0199B0B /* BEScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEScene.swift; sourceTree = "<group>"; };
 		84699C929DA7046907362DFE /* ColumnFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColumnFlowLayout.swift; sourceTree = "<group>"; };
 		84699CAA56E35B94E120FA70 /* HidedWalletCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HidedWalletCell.swift; sourceTree = "<group>"; };
@@ -1259,7 +1257,6 @@
 		3B79E0A227D0DA9D00BCB884 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				84699C82F9F4C9432A461EB1 /* .swift-format */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -2945,7 +2942,6 @@
 				BCA9947025AE94D7005BD8FB /* Montserrat-ExtraLightItalic.ttf in Resources */,
 				BCA9946F25AE94D7005BD8FB /* Montserrat-SemiBold.ttf in Resources */,
 				BCB2232225412AF8002D997F /* Assets.xcassets in Resources */,
-				846991A8EB23DEEB4EBB0AC1 /* .swift-format in Resources */,
 				3B29B69627C788D100D39E7B /* onboarding_02_b.mp4 in Resources */,
 				3BA4A0D527E31251006AFC01 /* Tokens.xcassets in Resources */,
 			);

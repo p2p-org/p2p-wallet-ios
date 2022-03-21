@@ -407,7 +407,7 @@ extension SerumSwapV1.ViewModel {
             .init(
                 isRequired: false,
                 isFullScreen: false,
-                completion: { [weak self] in
+                completion: { [weak self] _ in
                     self?.swap()
                 }
             )

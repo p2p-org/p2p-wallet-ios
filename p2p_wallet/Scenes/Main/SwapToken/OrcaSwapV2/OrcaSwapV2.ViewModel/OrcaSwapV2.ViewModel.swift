@@ -190,7 +190,7 @@ extension OrcaSwapV2 {
                 .init(
                     isRequired: false,
                     isFullScreen: false,
-                    completion: { [weak self] in
+                    completion: { [weak self] _ in
                         self?.swap()
                     }
                 )

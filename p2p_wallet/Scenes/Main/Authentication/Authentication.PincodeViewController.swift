@@ -20,13 +20,13 @@ extension Authentication {
         #endif
 
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
-        private var navigationBar = BERef<WLNavigationBar>()
+        private var navigationBar = BERef<NewWLNavigationBar>()
         private var biometryButton = BERef<UIButton>()
         private var pincodeView = BERef<WLPinCodeView>()
 
         override var title: String? { didSet { navigationBar.view?.titleLabel.text = title } }
-        var isIgnorable: Bool = false { didSet { navigationBar.view?.backButton.isHidden = !isIgnorable } }
-        var useBiometry: Bool = true { didSet { biometryButton.alpha = isBiometryAvailable() ? 1 : 0 } }
+        var isIgnorable: Bool = false { didSet { navigationBar.view?.backIsHidden(!isIgnorable) } }
+        var useBiometry: Bool = true { didSet { biometryButton.view?.alpha = isBiometryAvailable() ? 1 : 0 } }
 
         // MARK: - Callbacks
 
@@ -46,9 +46,9 @@ extension Authentication {
         override func build() -> UIView {
             BEVStack {
                 // Navigation
-                WLNavigationBar()
-                    .setTitle(title)
-                    .setBackButtonHidden(!isIgnorable)
+                NewWLNavigationBar(initialTitle: title, separatorEnable: false)
+                    .backIsHidden(!isIgnorable)
+                    .onBack { [unowned self] in cancel() }
                     .bind(navigationBar)
 
                 // Pincode
@@ -86,14 +86,20 @@ extension Authentication {
                     }
                 }
                 .centered(.vertical)
-                
-//                UILabel()
-//                    .setupWithType(UILabel.self) { label in
-//                        let text = NSMutableAttributedString()
-//                            .text(L10n.forgotYourPIN, size: 17, weight: .medium)
-//                            .text(L10n.resetIt, size: 17, weight: .medium, color: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1))
-//                        label.attributedText = text
-//                    }
+
+                BEHStack {
+                    UILabel(text: L10n.forgotYourPIN + " ", textSize: 17, weight: .medium)
+                    UILabel(
+                        text: L10n.resetIt,
+                        textSize: 17,
+                        weight: .medium,
+                        textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
+                    )
+                    .setUserInteractionEnabled(true)
+                    .onTap { [weak self] in self?.viewModel.showResetPincodeWithASeedPhrase() }
+                }
+                .centered(.horizontal)
+                .padding(.init(only: .bottom, inset: 50))
             }
         }
 
@@ -154,8 +160,11 @@ extension Authentication {
                 let seconds = minutesAndSeconds.1
 
                 self?.pincodeView.view?.errorLabel.text = L10n
-                    .weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " +
-                    L10n.orResetItWithASeedPhrase
+                    .YouHaveAttemptsLeftToTypeTheCorrectPIN
+                    .resetThePINOrWaitFor(
+                        "0",
+                        "\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)"
+                    )
 
                 if secondsPassed >= lockingTimeInSeconds {
                     self?.viewModel.setBlockedTime(nil)
