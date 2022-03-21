@@ -130,7 +130,7 @@ extension OrcaSwapV2.ViewModel {
 
         let bestPoolsPair = bestPoolsPairSubject.value
         let inputAmount = inputAmountSubject.value
-        let myWalletsMints = walletsRepository.getWallets().compactMap(\.token.address)
+        let myWalletsMints = walletsRepository.getWallets().compactMap { $0.token.address }
         let slippage = slippageSubject.value
 
         return swapService.getFees(
