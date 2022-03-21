@@ -777,3 +777,7 @@
 "Incorrect PIN, try again (%@ attempt left)" = "Неверный PIN-код, повторите попытку (осталось %@ попыток)";
 "Forgot your PIN?" = "Забыли PIN-код?";
 "Reset it" = "Сбросить это";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "У вас осталось %@ попыток для ввода правильного PIN-кода.
+ Сбросьте PIN-код или дождитесь %@.";
+"You have successfully set your PIN" = "Вы успешно установили свой PIN-код";

@@ -777,3 +777,7 @@
 "Incorrect PIN, try again (%@ attempt left)" = "Code PIN incorrect, réessayez (%@ tentative restante)";
 "Forgot your PIN?" = "Vous avez oublié votre NIP ?";
 "Reset it" = "Réinitialisez-le";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le code PIN correct.
+ Réinitialisez le code PIN ou attendez %@.";
+"You have successfully set your PIN" = "Vous avez réussi à définir votre code PIN";

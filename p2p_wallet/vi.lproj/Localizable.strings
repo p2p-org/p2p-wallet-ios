@@ -781,3 +781,7 @@
 "Incorrect PIN, try again (%@ attempt left)" = "Mã PIN không chính xác, hãy thử lại (còn lại %@ lần thử)";
 "Forgot your PIN?" = "Quên mã PIN của bạn?";
 "Reset it" = "Đặt lại nó";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN chính xác.
+ Đặt lại mã PIN hoặc đợi %@.";
+"You have successfully set your PIN" = "Bạn đã đặt thành công mã PIN của mình";

@@ -65,7 +65,7 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
             presentationStyle: .init(
                 isRequired: false,
                 isFullScreen: false,
-                completion: { [weak self] in
+                completion: { [weak self] _ in
                     _ = self?.storage.saveToICloud(
                         account: .init(
                             name: self?.storage.getName(),

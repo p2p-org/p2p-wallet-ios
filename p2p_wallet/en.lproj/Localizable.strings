@@ -777,3 +777,7 @@
 "Incorrect PIN, try again (%@ attempt left)" = "Incorrect PIN, try again (%@ attempt left)";
 "Forgot your PIN?" = "Forgot your PIN?";
 "Reset it" = "Reset it";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@.";
+"You have successfully set your PIN" = "You have successfully set your PIN";
