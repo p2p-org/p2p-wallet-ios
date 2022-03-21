@@ -51,9 +51,12 @@ extension SendToken.SelectNetwork {
                             )
                             .setup { label in
                                 viewModel.getFreeTransactionFeeLimit()
-                                    .map { $0.maxUsage }
+                                    .map(\.maxUsage)
                                     .subscribe(onSuccess: { [weak label] maxUsage in
-                                        label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage)
+                                        label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                                            .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(
+                                                maxUsage
+                                            )
                                     })
                                     .disposed(by: disposeBag)
                             }
@@ -77,7 +80,12 @@ extension SendToken.SelectNetwork {
                         viewModel.payingWalletDriver
                     )
                     .drive(onNext: { [weak view, weak self] feeInfo, payingWallet in
-                        view?.setUp(network: network, payingWallet: payingWallet, feeInfo: feeInfo.value, prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:])
+                        view?.setUp(
+                            network: network,
+                            payingWallet: payingWallet,
+                            feeInfo: feeInfo.value,
+                            prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
+                        )
                     })
                     .disposed(by: disposeBag)
 
@@ -94,7 +102,10 @@ extension SendToken.SelectNetwork {
 
             showAlert(
                 title: L10n.changeTheNetwork,
-                message: L10n.ifTheNetworkIsChangedToTheAddressFieldMustBeFilledInWithA(networkName, L10n.compatibleAddress(networkName)),
+                message: L10n.ifTheNetworkIsChangedToTheAddressFieldMustBeFilledInWithA(
+                    networkName,
+                    L10n.compatibleAddress(networkName)
+                ),
                 buttonTitles: [L10n.discard, L10n.change],
                 highlightedButtonIndex: 1,
                 destroingIndex: 0

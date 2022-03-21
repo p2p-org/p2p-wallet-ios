@@ -21,21 +21,24 @@ class BonfidaPricesFetcher: PricesFetcher {
                     if ["USDT", "USDC", "WUSDC"].contains(coin) {
                         return .just((coin, CurrentPrice(value: 1)))
                     }
-                    return send("/candles/\(coin)USDT?limit=1&resolution=86400", decodedTo: Response<[ResponsePriceRecord]>.self)
-                        .map {
-                            let open: Double = $0.data?.first?.open ?? 0
-                            let close: Double = $0.data?.first?.close ?? 0
-                            let change24h = close - open
-                            let change24hInPercentages = change24h / (open == 0 ? 1 : open)
-                            return (coin, CurrentPrice(
-                                value: close,
-                                change24h: CurrentPrice.Change24h(
-                                    value: change24h,
-                                    percentage: change24hInPercentages
-                                )
-                            ))
-                        }
-                        .catchAndReturn((coin, nil))
+                    return send(
+                        "/candles/\(coin)USDT?limit=1&resolution=86400",
+                        decodedTo: Response<[ResponsePriceRecord]>.self
+                    )
+                    .map {
+                        let open: Double = $0.data?.first?.open ?? 0
+                        let close: Double = $0.data?.first?.close ?? 0
+                        let change24h = close - open
+                        let change24hInPercentages = change24h / (open == 0 ? 1 : open)
+                        return (coin, CurrentPrice(
+                            value: close,
+                            change24h: CurrentPrice.Change24h(
+                                value: change24h,
+                                percentage: change24hInPercentages
+                            )
+                        ))
+                    }
+                    .catchAndReturn((coin, nil))
                 }
         )
         .map { prices in
@@ -50,8 +53,20 @@ class BonfidaPricesFetcher: PricesFetcher {
     func getHistoricalPrice(of coinName: String, fiat _: String, period: Period) -> Single<[PriceRecord]> {
         if ["USDT", "USDC", "WUSDC"].contains(coinName) {
             return .just([
-                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Calendar.current.date(byAdding: .day, value: -2, to: Date())!),
-                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
+                PriceRecord(
+                    close: 1,
+                    open: 1,
+                    low: 1,
+                    high: 1,
+                    startTime: Calendar.current.date(byAdding: .day, value: -2, to: Date())!
+                ),
+                PriceRecord(
+                    close: 1,
+                    open: 1,
+                    low: 1,
+                    high: 1,
+                    startTime: Calendar.current.date(byAdding: .day, value: -1, to: Date())!
+                ),
                 PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Date()),
             ])
         }
@@ -71,17 +86,25 @@ class BonfidaPricesFetcher: PricesFetcher {
             .map { $0.data ?? [ResponsePriceRecord]() }
             .map { records -> [PriceRecord] in
                 records.compactMap { record in
-                    guard let close = record.close, let open = record.open, let low = record.low, let high = record.high, let startTime = record.startTime
+                    guard let close = record.close, let open = record.open, let low = record.low,
+                          let high = record.high,
+                          let startTime = record.startTime
                     else { return nil }
 
-                    return PriceRecord(close: close, open: open, low: low, high: high, startTime: Date(timeIntervalSince1970: startTime / 1000.0))
+                    return PriceRecord(
+                        close: close,
+                        open: open,
+                        low: low,
+                        high: high,
+                        startTime: Date(timeIntervalSince1970: startTime / 1000.0)
+                    )
                 }
             }
             .map { $0.reversed() }
     }
 
     func getValueInUSD(fiat _: String) -> Single<Double?> {
-        return .just(nil)
+        .just(nil)
     }
 }
 

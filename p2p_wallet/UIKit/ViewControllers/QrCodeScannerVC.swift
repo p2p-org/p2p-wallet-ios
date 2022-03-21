@@ -28,7 +28,12 @@ class QrCodeScannerVC: BaseVC {
     lazy var cameraContainerView = UIView(cornerRadius: 20)
     private lazy var rangeImageView = UIImageView(width: scanSize.width, height: scanSize.height, image: .qrCodeRange)
     private lazy var overlayLayer = UIView(backgroundColor: UIColor.black.withAlphaComponent(0.35), cornerRadius: 16)
-    private lazy var rangeLabel = UILabel(text: L10n.scanQRCode, weight: .medium, textColor: .white, textAlignment: .center)
+    private lazy var rangeLabel = UILabel(
+        text: L10n.scanQRCode,
+        weight: .medium,
+        textColor: .white,
+        textAlignment: .center
+    )
     private lazy var closeButton = UIButton.closeFill()
         .onTap(self, action: #selector(closeButtonDidTouch))
 
@@ -81,11 +86,11 @@ class QrCodeScannerVC: BaseVC {
     }
 
     override var prefersStatusBarHidden: Bool {
-        return true
+        true
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
 
     @objc func closeButtonDidTouch() {
@@ -100,7 +105,11 @@ class QrCodeScannerVC: BaseVC {
 }
 
 extension QrCodeScannerVC: AVCaptureMetadataOutputObjectsDelegate {
-    func metadataOutput(_: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from _: AVCaptureConnection) {
+    func metadataOutput(
+        _: AVCaptureMetadataOutput,
+        didOutput metadataObjects: [AVMetadataObject],
+        from _: AVCaptureConnection
+    ) {
         if let metadataObject = metadataObjects.first {
             guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
             guard let stringValue = readableObject.stringValue else { return }
@@ -153,9 +162,19 @@ extension QrCodeScannerVC {
 
         let metadataOutput = AVCaptureMetadataOutput()
         let screenSize = UIScreen.main.bounds.size
-        var scanRect = CGRect(x: (screenSize.width - scanSize.width) / 2.0, y: (screenSize.height - scanSize.height) / 2.0, width: scanSize.width, height: scanSize.height)
+        var scanRect = CGRect(
+            x: (screenSize.width - scanSize.width) / 2.0,
+            y: (screenSize.height - scanSize.height) / 2.0,
+            width: scanSize.width,
+            height: scanSize.height
+        )
 
-        scanRect = CGRect(x: scanRect.origin.y / screenSize.height, y: scanRect.origin.x / screenSize.width, width: scanRect.size.height / screenSize.height, height: scanRect.size.width / screenSize.width)
+        scanRect = CGRect(
+            x: scanRect.origin.y / screenSize.height,
+            y: scanRect.origin.x / screenSize.width,
+            width: scanRect.size.height / screenSize.height,
+            height: scanRect.size.width / screenSize.width
+        )
 
         metadataOutput.rectOfInterest = scanRect
 
@@ -188,7 +207,11 @@ extension QrCodeScannerVC {
     private func handleCameraUnavailable() {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
             self?.captureSession = nil
-            self?.showAlert(title: L10n.scanningQrCodeNotSupported, message: L10n.YourDeviceDoesNotSupportScanningACodeFromAnItem.pleaseUseADeviceWithACamera, buttonTitles: [L10n.ok]) { [weak self] _ in
+            self?.showAlert(
+                title: L10n.scanningQrCodeNotSupported,
+                message: L10n.YourDeviceDoesNotSupportScanningACodeFromAnItem.pleaseUseADeviceWithACamera,
+                buttonTitles: [L10n.ok]
+            ) { [weak self] _ in
                 self?.back()
             }
         }
@@ -197,7 +220,11 @@ extension QrCodeScannerVC {
     private func handleCaptureSessionFailed() {
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
             self?.captureSession = nil
-            self?.showAlert(title: L10n.couldNotCreateCaptureSession, message: L10n.thereIsSomethingWrongWithYourCameraPleaseTryAgainLater, buttonTitles: [L10n.ok]) { [weak self] _ in
+            self?.showAlert(
+                title: L10n.couldNotCreateCaptureSession,
+                message: L10n.thereIsSomethingWrongWithYourCameraPleaseTryAgainLater,
+                buttonTitles: [L10n.ok]
+            ) { [weak self] _ in
                 self?.back()
             }
         }

@@ -30,7 +30,9 @@ extension UIApplication {
     }
 
     func openAppSettings() {
-        if let bundleIdentifier = Bundle.main.bundleIdentifier, let appSettings = URL(string: UIApplication.openSettingsURLString + bundleIdentifier) {
+        if let bundleIdentifier = Bundle.main.bundleIdentifier,
+           let appSettings = URL(string: UIApplication.openSettingsURLString + bundleIdentifier)
+        {
             if canOpenURL(appSettings) {
                 open(appSettings)
             }

@@ -17,8 +17,12 @@ extension SendToken.ChooseTokenAndAmount {
         // MARK: - Properties
 
         private lazy var nextButton: UIButton = {
-            let nextButton = UIButton(label: L10n.next.uppercaseFirst, labelFont: .systemFont(ofSize: 17), textColor: .h5887ff)
-                .onTap(self, action: #selector(buttonNextDidTouch))
+            let nextButton = UIButton(
+                label: L10n.next.uppercaseFirst,
+                labelFont: .systemFont(ofSize: 17),
+                textColor: .h5887ff
+            )
+            .onTap(self, action: #selector(buttonNextDidTouch))
             nextButton.setTitleColor(.h5887ff, for: .normal)
             nextButton.setTitleColor(.textSecondary, for: .disabled)
             return nextButton

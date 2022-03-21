@@ -77,7 +77,11 @@ open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavig
         }
     }
 
-    public func webView(_: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    public func webView(
+        _: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
         if let serverTrust = challenge.protectionSpace.serverTrust {
             completionHandler(.useCredential, URLCredential(trust: serverTrust))
         }
@@ -106,7 +110,11 @@ open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavig
 
         // load url
         guard let myURL = URL(string: urlString) else {
-            let alert = UIAlertController(title: "Invalid URL", message: "The url isn't valid \(urlString)", preferredStyle: .alert)
+            let alert = UIAlertController(
+                title: "Invalid URL",
+                message: "The url isn't valid \(urlString)",
+                preferredStyle: .alert
+            )
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
             return

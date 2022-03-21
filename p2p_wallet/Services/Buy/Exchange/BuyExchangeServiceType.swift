@@ -10,5 +10,6 @@ protocol BuyExchangeServiceType {
     func getMinAmounts(_ currency1: Buy.Currency, _ currency2: Buy.Currency) -> Single<(Double, Double)>
 
     func convert(input: Buy.ExchangeInput, to currency: Buy.Currency) -> Single<Buy.ExchangeOutput>
-    func getExchangeRate(from fiatCurrency: Buy.FiatCurrency, to cryptoCurrency: Buy.CryptoCurrency) -> Single<Buy.ExchangeRate>
+    func getExchangeRate(from fiatCurrency: Buy.FiatCurrency, to cryptoCurrency: Buy.CryptoCurrency)
+        -> Single<Buy.ExchangeRate>
 }

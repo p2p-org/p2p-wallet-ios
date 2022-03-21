@@ -69,7 +69,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
         private let searchTextSubject = BehaviorRelay<String?>(value: nil)
 
-        init(chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType, showAfterConfirmation: Bool, relayMethod: SendTokenRelayMethod) {
+        init(
+            chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType,
+            showAfterConfirmation: Bool,
+            relayMethod: SendTokenRelayMethod
+        ) {
             self.relayMethod = relayMethod
             self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
             self.showAfterConfirmation = showAfterConfirmation
@@ -87,7 +91,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     }
 }
 
-extension SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+extension SendToken.ChooseRecipientAndNetwork.SelectAddress
+    .ViewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
+{
     var preSelectedNetwork: SendToken.Network? {
         chooseRecipientAndNetworkViewModel.preSelectedNetwork
     }

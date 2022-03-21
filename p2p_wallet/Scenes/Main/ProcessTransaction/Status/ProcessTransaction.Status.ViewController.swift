@@ -51,7 +51,7 @@ extension ProcessTransaction.Status {
                             ProgressView()
                                 .setup { progressView in
                                     viewModel.pendingTransactionDriver
-                                        .map { $0.status }
+                                        .map(\.status)
                                         .drive(progressView.rx.transactionStatus)
                                         .disposed(by: disposeBag)
                                 }
@@ -63,7 +63,7 @@ extension ProcessTransaction.Status {
                             UIImageView(width: 44, height: 44)
                                 .setup { imageView in
                                     viewModel.pendingTransactionDriver
-                                        .map { $0.status }
+                                        .map(\.status)
                                         .map { status -> UIImage in
                                             switch status {
                                             case .sending, .confirmed:
@@ -95,13 +95,30 @@ extension ProcessTransaction.Status {
                                 )
                                 .setup { label in
                                     viewModel.pendingTransactionDriver
-                                        .map { $0.transactionId?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9) }
+                                        .map {
+                                            $0.transactionId?
+                                                .truncatingMiddle(
+                                                    numOfSymbolsRevealed: 9,
+                                                    numOfSymbolsRevealedInSuffix: 9
+                                                )
+                                        }
                                         .drive(label.rx.text)
                                         .disposed(by: disposeBag)
                                 }
-                                UIImageView(width: 16, height: 16, image: .transactionShowInExplorer, tintColor: .textSecondary)
+                                UIImageView(
+                                    width: 16,
+                                    height: 16,
+                                    image: .transactionShowInExplorer,
+                                    tintColor: .textSecondary
+                                )
                             }
-                            UILabel(text: L10n.tapToViewInExplorer, textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .right)
+                            UILabel(
+                                text: L10n.tapToViewInExplorer,
+                                textSize: 15,
+                                textColor: .textSecondary,
+                                numberOfLines: 0,
+                                textAlignment: .right
+                            )
                         }
                         .onTap { [weak self] in
                             self?.viewModel.navigate(to: .explorer)
@@ -126,10 +143,13 @@ extension ProcessTransaction.Status {
 
                     // Buttons
                     BEVStack(spacing: 10) {
-                        WLStepButton.main(image: .info, text: viewModel.isSwapping ? L10n.showSwapDetails : L10n.showTransactionDetails)
-                            .onTap { [weak self] in
-                                self?.dismiss(animated: true, completion: nil)
-                            }
+                        WLStepButton.main(
+                            image: .info,
+                            text: viewModel.isSwapping ? L10n.showSwapDetails : L10n.showTransactionDetails
+                        )
+                        .onTap { [weak self] in
+                            self?.dismiss(animated: true, completion: nil)
+                        }
                         SubButton(viewModel: viewModel)
                     }
                     .padding(.init(x: 18, y: 0))

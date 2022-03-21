@@ -9,7 +9,9 @@ import Foundation
 
 extension Settings {
     class SelectAppearanceViewController: SingleSelectionViewController<UIUserInterfaceStyle> {
-        var interfaceStyle: UIUserInterfaceStyle { AppDelegate.shared.window?.overrideUserInterfaceStyle ?? .unspecified }
+        var interfaceStyle: UIUserInterfaceStyle {
+            AppDelegate.shared.window?.overrideUserInterfaceStyle ?? .unspecified
+        }
 
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)

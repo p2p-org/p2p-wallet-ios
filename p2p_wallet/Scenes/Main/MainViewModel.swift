@@ -10,7 +10,8 @@ import RxCocoa
 import RxSwift
 
 protocol MainViewModelType {
-    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get } // nil if non authentication process is processing
+    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get
+    } // nil if non authentication process is processing
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
 }
 

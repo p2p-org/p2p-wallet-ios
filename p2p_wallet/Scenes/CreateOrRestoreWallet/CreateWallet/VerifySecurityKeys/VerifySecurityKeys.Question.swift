@@ -98,7 +98,12 @@ extension VerifySecurityKeys {
         }
 
         private let title: UILabel = .init(textColor: .h8e8e93)
-        private let questionsRow: UIStackView = .init(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fillEqually)
+        private let questionsRow: UIStackView = .init(
+            axis: .horizontal,
+            spacing: 8,
+            alignment: .fill,
+            distribution: .fillEqually
+        )
         weak var delegate: QuestionsDelegate?
 
         override init(style: CellStyle, reuseIdentifier: String?) {

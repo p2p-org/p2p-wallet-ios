@@ -33,7 +33,10 @@ class NewsSection: BEStaticSectionsCollectionView.Section {
 
     override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
         let header = super.configureHeader(indexPath: indexPath) as? SectionHeaderView
-        header?.setUp(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold))
+        header?.setUp(
+            headerTitle: L10n.makeYourCryptoWorkingOnYou,
+            headerFont: .systemFont(ofSize: 28, weight: .semibold)
+        )
         return header
     }
 }

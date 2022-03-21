@@ -23,7 +23,11 @@ class FlexibleHeightPresentationController: DimmingPresentationController, Resiz
 
     // MARK: - Initializer
 
-    init(position: Position, presentedViewController: UIViewController, presenting presentingViewController: UIViewController?) {
+    init(
+        position: Position,
+        presentedViewController: UIViewController,
+        presenting presentingViewController: UIViewController?
+    ) {
         self.position = position
         super.init(presentedViewController: presentedViewController, presenting: presentingViewController)
     }

@@ -111,7 +111,11 @@ extension Home {
                     let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
                         $0.token.address == renBTCMint.base58EncodedString
                     })
-                    let vm = ReceiveToken.SceneModel(solanaPubkey: pubkey, solanaTokenWallet: nil, isRenBTCWalletCreated: isRenBTCWalletCreated)
+                    let vm = ReceiveToken.SceneModel(
+                        solanaPubkey: pubkey,
+                        solanaTokenWallet: nil,
+                        isRenBTCWalletCreated: isRenBTCWalletCreated
+                    )
                     let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: false)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
@@ -140,7 +144,11 @@ extension Home {
                     self.present(vc, animated: true, completion: nil)
                 }
             case let .sendToken(fromAddress, toAddress):
-                let vm = SendToken.ViewModel(walletPubkey: fromAddress, destinationAddress: toAddress, relayMethod: .default)
+                let vm = SendToken.ViewModel(
+                    walletPubkey: fromAddress,
+                    destinationAddress: toAddress,
+                    relayMethod: .default
+                )
                 let vc = SendToken.ViewController(viewModel: vm)
                 show(vc, sender: nil)
 
@@ -227,7 +235,11 @@ extension Home {
 }
 
 extension Home.ViewController: UIViewControllerTransitioningDelegate {
-    func animationController(forPresented _: UIViewController, presenting _: UIViewController, source _: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(
+        forPresented _: UIViewController,
+        presenting _: UIViewController,
+        source _: UIViewController
+    ) -> UIViewControllerAnimatedTransitioning? {
         PresentMenuAnimator()
     }
 
@@ -235,7 +247,9 @@ extension Home.ViewController: UIViewControllerTransitioningDelegate {
 //        DismissMenuAnimator()
 //    }
 
-    func interactionControllerForPresentation(using _: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        return interactor.hasStarted ? interactor : nil
+    func interactionControllerForPresentation(using _: UIViewControllerAnimatedTransitioning)
+        -> UIViewControllerInteractiveTransitioning?
+    {
+        interactor.hasStarted ? interactor : nil
     }
 }

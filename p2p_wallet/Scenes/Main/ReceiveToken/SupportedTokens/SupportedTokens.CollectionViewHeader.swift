@@ -40,7 +40,8 @@ extension SupportedTokens.CollectionView {
                 ]
             )
 
-            let highlightedRange = (attributedText.string as NSString).range(of: highlightedText, options: .caseInsensitive)
+            let highlightedRange = (attributedText.string as NSString)
+                .range(of: highlightedText, options: .caseInsensitive)
             attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
 
             hintLabel.attributedText = attributedText

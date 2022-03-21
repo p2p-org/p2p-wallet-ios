@@ -54,9 +54,12 @@ extension ReceiveToken {
 
                 // Description
                 UIStackView(axis: .vertical, spacing: 12, alignment: .fill) {
-                    ReceiveToken.textBuilder(text: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin).asMarkdown())
+                    ReceiveToken
+                        .textBuilder(text: L10n.ThisAddressAcceptsOnly
+                            .youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin).asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
-                    ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
+                    ReceiveToken
+                        .textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                 }.padding(.init(x: 18, y: 0))
 
                 // 2nd description
@@ -64,7 +67,12 @@ extension ReceiveToken {
                     BEStackViewSpacing(18)
 
                     UIView.greyBannerView {
-                        UILabel(text: L10n.SolanaAssociatedTokenAccountRequired.thisWillRequireYouToSignATransactionAndSpendSomeSOL, textSize: 15, numberOfLines: 0)
+                        UILabel(
+                            text: L10n.SolanaAssociatedTokenAccountRequired
+                                .thisWillRequireYouToSignATransactionAndSpendSomeSOL,
+                            textSize: 15,
+                            numberOfLines: 0
+                        )
                     }.padding(.init(x: 18, y: 0))
                 }
 

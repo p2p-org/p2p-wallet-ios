@@ -40,7 +40,11 @@ extension DerivableAccounts {
             }.onTap(self, action: #selector(chooseDerivationPath))
 
             UIView.greyBannerView {
-                UILabel(text: L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase.byDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet, numberOfLines: 0)
+                UILabel(
+                    text: L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase
+                        .byDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet,
+                    numberOfLines: 0
+                )
             }
         }
 
@@ -110,7 +114,7 @@ extension DerivableAccounts {
                 .disposed(by: disposeBag)
 
             viewModel.selectedDerivablePathDriver
-                .map { $0.title }
+                .map(\.title)
                 .drive(derivationPathLabel.rx.text)
                 .disposed(by: disposeBag)
 
@@ -127,9 +131,10 @@ extension DerivableAccounts {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .selectDerivationPath:
-                let vc = DerivablePaths.ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath()) { [weak self] path in
-                    self?.derivablePathsVC(didSelectPath: path)
-                }
+                let vc = DerivablePaths
+                    .ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath()) { [weak self] path in
+                        self?.derivablePathsVC(didSelectPath: path)
+                    }
                 present(vc, animated: true, completion: nil)
             default:
                 break

@@ -36,9 +36,9 @@ class WLSegmentedPagesVC: BEPagesVC {
     // MARK: - Initializers
 
     init(items: [Item]) {
-        segmentedItems = items.map { $0.label }
+        segmentedItems = items.map(\.label)
         super.init()
-        viewControllers = items.map { $0.viewController }
+        viewControllers = items.map(\.viewController)
     }
 
     // MARK: - Methods
@@ -67,8 +67,18 @@ class WLSegmentedPagesVC: BEPagesVC {
         // do nothing
     }
 
-    override func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
-        super.pageViewController(pageViewController, didFinishAnimating: finished, previousViewControllers: previousViewControllers, transitionCompleted: completed)
+    override func pageViewController(
+        _ pageViewController: UIPageViewController,
+        didFinishAnimating finished: Bool,
+        previousViewControllers: [UIViewController],
+        transitionCompleted completed: Bool
+    ) {
+        super.pageViewController(
+            pageViewController,
+            didFinishAnimating: finished,
+            previousViewControllers: previousViewControllers,
+            transitionCompleted: completed
+        )
         if let vc = pageVC.viewControllers?.first,
            let index = viewControllers.firstIndex(of: vc),
            segmentedControl.selectedSegmentIndex != index

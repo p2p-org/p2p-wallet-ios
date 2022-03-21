@@ -24,8 +24,12 @@ class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
         return navigationBar
     }()
 
-    lazy var rightBarButton = UIButton(label: L10n.done, labelFont: .systemFont(ofSize: 17, weight: .medium), textColor: .h5887ff)
-        .onTap(self, action: #selector(buttonNextDidTouch))
+    lazy var rightBarButton = UIButton(
+        label: L10n.done,
+        labelFont: .systemFont(ofSize: 17, weight: .medium),
+        textColor: .h5887ff
+    )
+    .onTap(self, action: #selector(buttonNextDidTouch))
 
     override func setUp() {
         super.setUp()

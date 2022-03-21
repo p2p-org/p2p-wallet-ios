@@ -35,7 +35,8 @@ extension ProcessTransaction.Status {
         private func bind() {
             viewModel.pendingTransactionDriver
                 .map { info -> String in
-                    let originalText = info.rawTransaction.isSwap ? L10n.theSwapIsBeingProcessed : L10n.theTransactionIsBeingProcessed
+                    let originalText = info.rawTransaction.isSwap ? L10n.theSwapIsBeingProcessed : L10n
+                        .theTransactionIsBeingProcessed
 
                     switch info.status {
                     case .sending, .confirmed:
@@ -50,7 +51,10 @@ extension ProcessTransaction.Status {
                         case let transaction as ProcessTransaction.SendTransaction:
                             return L10n.wasSentSuccessfully(transaction.sender.token.symbol)
                         case let transaction as ProcessTransaction.OrcaSwapTransaction:
-                            return L10n.swappedSuccessfully(transaction.sourceWallet.token.symbol, transaction.destinationWallet.token.symbol)
+                            return L10n.swappedSuccessfully(
+                                transaction.sourceWallet.token.symbol,
+                                transaction.destinationWallet.token.symbol
+                            )
                         default:
                             fatalError()
                         }

@@ -54,7 +54,12 @@ extension SendToken.ConfirmViewController {
         // MARK: - Subviews
 
         private lazy var nameLabel = UILabel(text: "<Recipient: a.p2p.sol>")
-        private lazy var addressLabel = UILabel(text: "<DkmTQHutnUn9xWmismkm2zSvLQfiEkPQCq6rAXZKJnBw>", textSize: 17, weight: .semibold, numberOfLines: 0)
+        private lazy var addressLabel = UILabel(
+            text: "<DkmTQHutnUn9xWmismkm2zSvLQfiEkPQCq6rAXZKJnBw>",
+            textSize: 17,
+            weight: .semibold,
+            numberOfLines: 0
+        )
 
         init() {
             super.init(frame: .zero)
@@ -98,8 +103,13 @@ extension SendToken.ConfirmViewController {
         // MARK: - Subviews
 
         lazy var leftLabel = UILabel(text: "<Receive>", textSize: 15, textColor: .textSecondary)
-        lazy var rightLabel = UILabel(text: "<0.00227631 renBTC (~$150)>", textSize: 15, numberOfLines: 0, textAlignment: .right)
-            .withContentHuggingPriority(.required, for: .vertical)
+        lazy var rightLabel = UILabel(
+            text: "<0.00227631 renBTC (~$150)>",
+            textSize: 15,
+            numberOfLines: 0,
+            textAlignment: .right
+        )
+        .withContentHuggingPriority(.required, for: .vertical)
 
         init(title: String) {
             super.init(frame: .zero)
@@ -151,7 +161,11 @@ extension SendToken.ConfirmViewController {
                                 guard let self = self else { return NSAttributedString() }
                                 guard let feeAmount = feeAmount else { return NSAttributedString() }
                                 let prices = self.viewModel.getPrices(for: [payingWallet?.token.symbol ?? ""])
-                                return feeAmount.attributedStringForTransactionFee(prices: prices, symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
+                                return feeAmount.attributedStringForTransactionFee(
+                                    prices: prices,
+                                    symbol: payingWallet?.token.symbol ?? "",
+                                    decimals: payingWallet?.token.decimals
+                                )
                             }
                             .drive(view.rightLabel.rx.attributedText)
                             .disposed(by: disposeBag)
@@ -198,7 +212,11 @@ extension SendToken.ConfirmViewController {
                             guard let feeAmount = feeAmount else {
                                 return nil
                             }
-                            return feeAmount.attributedStringForAccountCreationFee(price: self?.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""), symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
+                            return feeAmount.attributedStringForAccountCreationFee(
+                                price: self?.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""),
+                                symbol: payingWallet?.token.symbol ?? "",
+                                decimals: payingWallet?.token.decimals
+                            )
                         }
                         .drive(view.rightLabel.rx.attributedText)
                         .disposed(by: disposeBag)
@@ -248,7 +266,11 @@ extension SendToken.ConfirmViewController {
                         )
                         .map { [weak self] feeAmount, payingWallet -> NSAttributedString in
                             guard let self = self, let feeAmount = feeAmount else { return NSAttributedString() }
-                            return feeAmount.attributedStringForTotalFee(price: self.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""), symbol: payingWallet?.token.symbol ?? "", decimals: payingWallet?.token.decimals)
+                            return feeAmount.attributedStringForTotalFee(
+                                price: self.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""),
+                                symbol: payingWallet?.token.symbol ?? "",
+                                decimals: payingWallet?.token.decimals
+                            )
                         }
                         .drive(view.rightLabel.rx.attributedText)
                         .disposed(by: disposeBag)
@@ -269,7 +291,8 @@ extension SendToken.ConfirmViewController {
                         self?.hideHud()
                         guard let self = self else { return }
                         let title = L10n.thereAreFreeTransactionsLeftForToday(limit.maxUsage - limit.currentUsage)
-                        let message = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(limit.maxUsage)
+                        let message = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                            .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(limit.maxUsage)
                         self.feeInfoDidTouch(title, message)
                     }, onFailure: { [weak self] _ in
                         self?.hideHud()
@@ -281,7 +304,9 @@ extension SendToken.ConfirmViewController {
 }
 
 private extension SolanaSDK.FeeAmount {
-    func attributedStringForTransactionFee(prices: [String: Double], symbol: String, decimals: UInt8?) -> NSMutableAttributedString {
+    func attributedStringForTransactionFee(prices: [String: Double], symbol: String,
+                                           decimals: UInt8?) -> NSMutableAttributedString
+    {
         if transaction == 0 {
             return NSMutableAttributedString()
                 .text(L10n.free + " ", size: 15, weight: .semibold)
@@ -292,7 +317,9 @@ private extension SolanaSDK.FeeAmount {
         }
     }
 
-    func attributedStringForAccountCreationFee(price: Double?, symbol: String, decimals: UInt8?) -> NSMutableAttributedString? {
+    func attributedStringForAccountCreationFee(price: Double?, symbol: String,
+                                               decimals: UInt8?) -> NSMutableAttributedString?
+    {
         guard accountBalances > 0 else { return nil }
         let fee = accountBalances.convertToBalance(decimals: decimals ?? 0)
         return feeAttributedString(fee: fee, unit: symbol, price: price)
@@ -330,5 +357,9 @@ private func feeAttributedString(fee: Double, unit: String, price: Double?) -> N
     let feeInFiat = fee * price
     return NSMutableAttributedString()
         .text("\(fee.toString(maximumFractionDigits: 9)) \(unit)", size: 15, color: .textBlack)
-        .text(" (~\(Defaults.fiat.symbol)\(feeInFiat.toString(maximumFractionDigits: 2)))", size: 15, color: .textSecondary)
+        .text(
+            " (~\(Defaults.fiat.symbol)\(feeInFiat.toString(maximumFractionDigits: 2)))",
+            size: 15,
+            color: .textSecondary
+        )
 }

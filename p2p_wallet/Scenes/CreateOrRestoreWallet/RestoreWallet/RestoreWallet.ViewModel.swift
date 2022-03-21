@@ -88,7 +88,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     }
 
     private func _restoreFromIcloud() {
-        guard let accounts = iCloudStorage.accountFromICloud(), accounts.count > 0
+        guard let accounts = iCloudStorage.accountFromICloud(), !accounts.isEmpty
         else {
             isRestorableUsingIcloudSubject.accept(false)
             notificationsService.showInAppNotification(.message(L10n.thereIsNoP2PWalletSavedInYourICloud))
@@ -132,7 +132,11 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
             DispatchQueue(label: "Create account", qos: .userInteractive).async { [unowned self] in
                 guard let phrases = self.phrases else { return }
                 do {
-                    let account = try SolanaSDK.Account(phrase: phrases, network: Defaults.apiEndPoint.network, derivablePath: derivablePath)
+                    let account = try SolanaSDK.Account(
+                        phrase: phrases,
+                        network: Defaults.apiEndPoint.network,
+                        derivablePath: derivablePath
+                    )
                     DispatchQueue.main.async { [weak self] in
                         // reserve name
                         self?.isLoadingSubject.accept(false)
@@ -159,7 +163,11 @@ extension RestoreWallet.ViewModel {
         DispatchQueue(label: "Create account", qos: .userInteractive).async { [unowned self] in
             guard let phrases = self.phrases else { return }
             do {
-                let account = try SolanaSDK.Account(phrase: phrases, network: Defaults.apiEndPoint.network, derivablePath: derivablePath)
+                let account = try SolanaSDK.Account(
+                    phrase: phrases,
+                    network: Defaults.apiEndPoint.network,
+                    derivablePath: derivablePath
+                )
                 DispatchQueue.main.async { [weak self] in
                     self?.checkIfNameIsReservedAndReserveNameIfNeeded(owner: account.publicKey.base58EncodedString)
                 }

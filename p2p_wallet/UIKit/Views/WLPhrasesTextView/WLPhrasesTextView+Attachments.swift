@@ -12,8 +12,18 @@ extension WLPhrasesTextView {
     // MARK: - Attachment types
 
     class Attachment: SubviewTextAttachment {
-        override func attachmentBounds(for textContainer: NSTextContainer?, proposedLineFragment lineFrag: CGRect, glyphPosition position: CGPoint, characterIndex charIndex: Int) -> CGRect {
-            var bounds = super.attachmentBounds(for: textContainer, proposedLineFragment: lineFrag, glyphPosition: position, characterIndex: charIndex)
+        override func attachmentBounds(
+            for textContainer: NSTextContainer?,
+            proposedLineFragment lineFrag: CGRect,
+            glyphPosition position: CGPoint,
+            characterIndex charIndex: Int
+        ) -> CGRect {
+            var bounds = super.attachmentBounds(
+                for: textContainer,
+                proposedLineFragment: lineFrag,
+                glyphPosition: position,
+                characterIndex: charIndex
+            )
             bounds.origin.y -= 15
             return bounds
         }
@@ -31,7 +41,8 @@ extension WLPhrasesTextView {
         // ignore invalid characters
         let invalidCharactersSet = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyz").inverted
 
-        let phrase = phrase.lowercased().components(separatedBy: invalidCharactersSet).joined(separator: " ").trimmingCharacters(in: .whitespaces)
+        let phrase = phrase.lowercased().components(separatedBy: invalidCharactersSet).joined(separator: " ")
+            .trimmingCharacters(in: .whitespaces)
 
         if phrase.isEmpty {
             return nil
@@ -79,25 +90,27 @@ extension WLPhrasesTextView {
 
     func phraseIndex(at location: Int) -> Int {
         var count = 0
-        attributedText.enumerateAttribute(.attachment, in: NSRange(location: 0, length: attributedText.length)) { att, range, _ in
-            if range.location > location { return }
-            if att is PhraseAttachment {
-                count += 1
+        attributedText
+            .enumerateAttribute(.attachment, in: NSRange(location: 0, length: attributedText.length)) { att, range, _ in
+                if range.location > location { return }
+                if att is PhraseAttachment {
+                    count += 1
+                }
             }
-        }
         return count
     }
 
     func removeAllPlaceholderAttachment() {
         var lengthDiff = 0
-        textStorage.enumerateAttribute(.attachment, in: NSRange(location: 0, length: attributedText.length)) { att, range, _ in
-            if att is PlaceholderAttachment {
-                var range = range
-                range.location += lengthDiff
-                textStorage.replaceCharacters(in: range, with: "")
-                lengthDiff -= 1
+        textStorage
+            .enumerateAttribute(.attachment, in: NSRange(location: 0, length: attributedText.length)) { att, range, _ in
+                if att is PlaceholderAttachment {
+                    var range = range
+                    range.location += lengthDiff
+                    textStorage.replaceCharacters(in: range, with: "")
+                    lengthDiff -= 1
+                }
             }
-        }
     }
 }
 

@@ -83,17 +83,20 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     func authenticateAndEnableBiometry(errorHandler: ((Error) -> Void)? = nil) {
         let reason = L10n.identifyYourself
 
-        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
+        context
+            .evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                            localizedReason: reason)
+            { success, authenticationError in
 
-            DispatchQueue.main.async { [weak self] in
-                if success {
-                    self?.setEnableBiometry(true)
-                } else {
-                    errorHandler?(authenticationError ?? SolanaSDK.Error.unknown)
-                    self?.enableBiometryLater()
+                DispatchQueue.main.async { [weak self] in
+                    if success {
+                        self?.setEnableBiometry(true)
+                    } else {
+                        errorHandler?(authenticationError ?? SolanaSDK.Error.unknown)
+                        self?.enableBiometryLater()
+                    }
                 }
             }
-        }
     }
 
     func enableBiometryLater() {

@@ -20,7 +20,9 @@ class WLSectionHeaderView: UICollectionReusableView {
     @available(*, unavailable,
                message: "Loading this view from a nib is unsupported in favor of initializer dependency injection.")
     public required init?(coder _: NSCoder) {
-        fatalError("Loading this view controller from a nib is unsupported in favor of initializer dependency injection.")
+        fatalError(
+            "Loading this view controller from a nib is unsupported in favor of initializer dependency injection."
+        )
     }
 
     func commonInit() {
@@ -48,7 +50,11 @@ class WLSectionHeaderView: UICollectionReusableView {
         }
     }
 
-    func setUp(headerTitle: String, headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold), headerColor: UIColor? = nil) {
+    func setUp(
+        headerTitle: String,
+        headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold),
+        headerColor: UIColor? = nil
+    ) {
         headerLabel.text = headerTitle
         headerLabel.font = headerFont
         if let color = headerColor {

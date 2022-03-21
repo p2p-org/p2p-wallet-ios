@@ -46,10 +46,18 @@ extension ReceiveToken {
                                 UIStackView(axis: .horizontal) {
                                     // Wallet Icon
                                     UIImageView(width: 44, height: 44)
-                                        .with(.image, drivenBy: viewModel.tokenTypeDriver.map { type in type.icon }, disposedBy: disposeBag)
+                                        .with(
+                                            .image,
+                                            drivenBy: viewModel.tokenTypeDriver.map { type in type.icon },
+                                            disposedBy: disposeBag
+                                        )
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
-                                        UILabel(text: L10n.showingMyAddressFor, textSize: 13, textColor: .secondaryLabel)
+                                        UILabel(
+                                            text: L10n.showingMyAddressFor,
+                                            textSize: 13,
+                                            textColor: .secondaryLabel
+                                        )
                                         UILabel(text: L10n.network("Solana"), textSize: 17, weight: .semibold)
                                             .setup { view in
                                                 viewModel.tokenTypeDriver
@@ -98,12 +106,17 @@ extension ReceiveToken {
 
                     ReceiveSolanaView(viewModel: viewModel.receiveSolanaViewModel)
                         .setup { view in
-                            viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden).disposed(by: disposeBag)
+                            viewModel.tokenTypeDriver.map { token in token != .solana }.drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
                         }
-                    ReceiveBitcoinView(viewModel: viewModel.receiveBitcoinViewModel, receiveSolanaViewModel: viewModel.receiveSolanaViewModel)
-                        .setup { view in
-                            viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden).disposed(by: disposeBag)
-                        }
+                    ReceiveBitcoinView(
+                        viewModel: viewModel.receiveBitcoinViewModel,
+                        receiveSolanaViewModel: viewModel.receiveSolanaViewModel
+                    )
+                    .setup { view in
+                        viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
 
                     UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
                         ShowHideButton(
@@ -173,7 +186,8 @@ extension ReceiveToken {
                 ]
             )
 
-            let highlightedRange = (attributedText.string as NSString).range(of: highlightedText, options: .caseInsensitive)
+            let highlightedRange = (attributedText.string as NSString)
+                .range(of: highlightedText, options: .caseInsensitive)
             attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
 
             qrCodeHint.attributedText = attributedText

@@ -18,7 +18,7 @@ protocol SocketType {
 extension SolanaSDK.Socket: SocketType {
     func observeAccountNotifications(account: String) -> Observable<SolanaSDK.Lamports> {
         observeAccountNotifications().filter { $0.pubkey == account }
-            .map { $0.lamports }.distinctUntilChanged()
+            .map(\.lamports).distinctUntilChanged()
     }
 
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)> {

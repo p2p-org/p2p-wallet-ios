@@ -89,12 +89,15 @@ extension Settings {
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private lazy var usernameSubject = BehaviorRelay<String?>(value: storage.getName()?.withNameServiceDomain())
-        private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults.didBackupOffline)
+        private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
+            .didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
         private let endpointSubject = BehaviorRelay<SolanaSDK.APIEndPoint>(value: Defaults.apiEndPoint)
         private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
-        private let currentLanguageSubject = BehaviorRelay<String?>(value: Locale.current.uiLanguageLocalizedString?.uppercaseFirst)
-        private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?.overrideUserInterfaceStyle)
+        private let currentLanguageSubject = BehaviorRelay<String?>(value: Locale.current.uiLanguageLocalizedString?
+            .uppercaseFirst)
+        private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?
+            .overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
         private let biometryTypeSubject = BehaviorRelay<BiometryType>(value: .face)
         private let isBiometryEnabledSubject = BehaviorRelay<Bool>(value: Defaults.isBiometryEnabled)
@@ -260,22 +263,25 @@ extension Settings.ViewModel: SettingsViewModelType {
         let reason = L10n.identifyYourself
 
         // evaluate Policy
-        context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: reason) { success, authenticationError in
-            DispatchQueue.main.async { [weak self] in
-                if success {
-                    Defaults.isBiometryEnabled.toggle()
-                    self?.isBiometryEnabledSubject.accept(Defaults.isBiometryEnabled)
-                    self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
-                    self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
-                } else {
-                    onError(authenticationError)
+        context
+            .evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                            localizedReason: reason)
+            { success, authenticationError in
+                DispatchQueue.main.async { [weak self] in
+                    if success {
+                        Defaults.isBiometryEnabled.toggle()
+                        self?.isBiometryEnabledSubject.accept(Defaults.isBiometryEnabled)
+                        self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
+                        self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
+                    } else {
+                        onError(authenticationError)
+                    }
+                }
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                    self?.authenticationHandler.pauseAuthentication(false)
                 }
             }
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                self?.authenticationHandler.pauseAuthentication(false)
-            }
-        }
     }
 
     func changePincode() {

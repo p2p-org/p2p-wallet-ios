@@ -47,14 +47,19 @@ class FlexibleHeightVC: BaseVStackVC, UIViewControllerTransitioningDelegate {
     }
 
     func fittingHeightInContainer(frame: CGRect) -> CGFloat {
-        scrollView.contentView.fittingHeight(targetWidth: frame.width - margin.left - margin.right - padding.left - padding.right) +
+        scrollView.contentView
+            .fittingHeight(targetWidth: frame.width - margin.left - margin.right - padding.left - padding.right) +
             scrollView.contentInset.top +
             scrollView.contentInset.bottom +
             margin.top +
             margin.bottom
     }
 
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source _: UIViewController) -> UIPresentationController? {
-        return PresentationController(position: position, presentedViewController: presented, presenting: presenting)
+    func presentationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController?,
+        source _: UIViewController
+    ) -> UIPresentationController? {
+        PresentationController(position: position, presentedViewController: presented, presenting: presenting)
     }
 }

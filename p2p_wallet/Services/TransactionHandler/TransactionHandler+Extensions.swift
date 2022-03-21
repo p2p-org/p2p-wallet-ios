@@ -189,14 +189,18 @@ extension TransactionHandler {
                 if !socket.isConnected,
                    let index = wallets.firstIndex(where: { $0.pubkey == transaction.sourceWallet.pubkey })
                 {
-                    wallets[index].decreaseBalance(diffInLamports: transaction.amount.toLamport(decimals: transaction.sourceWallet.token.decimals))
+                    wallets[index]
+                        .decreaseBalance(diffInLamports: transaction.amount
+                            .toLamport(decimals: transaction.sourceWallet.token.decimals))
                 }
 
                 // update destination wallet if exists
                 if let index = wallets.firstIndex(where: { $0.pubkey == transaction.destinationWallet.pubkey }) {
                     // update only if socket is not connected
                     if !socket.isConnected {
-                        wallets[index].increaseBalance(diffInLamports: transaction.estimatedAmount.toLamport(decimals: transaction.destinationWallet.token.decimals))
+                        wallets[index]
+                            .increaseBalance(diffInLamports: transaction.estimatedAmount
+                                .toLamport(decimals: transaction.destinationWallet.token.decimals))
                     }
                 }
 
@@ -207,7 +211,8 @@ extension TransactionHandler {
                 ) {
                     var destinationWallet = transaction.destinationWallet
                     destinationWallet.pubkey = publicKey.base58EncodedString
-                    destinationWallet.lamports = transaction.estimatedAmount.toLamport(decimals: destinationWallet.token.decimals)
+                    destinationWallet.lamports = transaction.estimatedAmount
+                        .toLamport(decimals: destinationWallet.token.decimals)
                     wallets.append(destinationWallet)
                 }
 

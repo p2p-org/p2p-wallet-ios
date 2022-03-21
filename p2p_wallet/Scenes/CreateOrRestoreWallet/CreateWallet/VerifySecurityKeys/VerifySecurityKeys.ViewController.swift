@@ -49,10 +49,15 @@ extension VerifySecurityKeys {
             case .onMistake:
                 showAlert(
                     title: L10n.theseWordsDonTMatch,
-                    message: L10n.TheWordsInYourSecurityKeyNeedToBeSelectedInTheRightOrder.alternativelyYouCanMakeAnICloudBackup,
+                    message: L10n.TheWordsInYourSecurityKeyNeedToBeSelectedInTheRightOrder
+                        .alternativelyYouCanMakeAnICloudBackup,
                     actions: [
-                        UIAlertAction(title: L10n.goBack, style: .destructive) { [weak self] _ in self?.viewModel.back() },
-                        UIAlertAction(title: L10n.tryAgain, style: .default) { [weak self] _ in self?.viewModel.generate() },
+                        UIAlertAction(title: L10n.goBack, style: .destructive) { [weak self] _ in
+                            self?.viewModel.back()
+                        },
+                        UIAlertAction(title: L10n.tryAgain, style: .default) { [weak self] _ in
+                            self?.viewModel.generate()
+                        },
                     ]
                 )
             default:

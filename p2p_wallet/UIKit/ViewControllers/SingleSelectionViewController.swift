@@ -49,9 +49,18 @@ class SingleSelectionViewController<Option: Equatable>: WLIndicatorModalVC, Cust
 
     // MARK: - Initializer
 
-    init(title: String, options: [Option], selectedOption: Option, cellBuilder: @escaping ((Option, Bool) -> OptionViewType)) {
+    init(
+        title: String,
+        options: [Option],
+        selectedOption: Option,
+        cellBuilder: @escaping ((Option, Bool) -> OptionViewType)
+    ) {
         self.options = options
-        selectView = .init(options: options, selectedIndex: options.firstIndex(of: selectedOption)!, cellBuilder: cellBuilder)
+        selectView = .init(
+            options: options,
+            selectedIndex: options.firstIndex(of: selectedOption)!,
+            cellBuilder: cellBuilder
+        )
         super.init()
         self.title = title
     }

@@ -62,8 +62,14 @@ extension DerivablePaths {
                 // Actions
                 UIStackView(axis: .vertical, alignment: .fill, distribution: .fill) {
                     // Header
-                    UILabel(text: L10n.derivationPath, textSize: 13, weight: .semibold, textColor: .textSecondary, textAlignment: .center)
-                        .padding(.init(x: 0, y: 15))
+                    UILabel(
+                        text: L10n.derivationPath,
+                        textSize: 13,
+                        weight: .semibold,
+                        textColor: .textSecondary,
+                        textAlignment: .center
+                    )
+                    .padding(.init(x: 0, y: 15))
                     UIView.defaultSeparator()
 
                     // Derivable paths

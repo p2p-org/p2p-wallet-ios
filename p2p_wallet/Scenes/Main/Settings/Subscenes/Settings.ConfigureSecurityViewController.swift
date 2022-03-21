@@ -38,7 +38,12 @@ extension Settings {
                     UIView.squareRoundedCornerIcon(image: .settingsPincode)
                     UIStackView(axis: .vertical, spacing: 5, alignment: .fill, distribution: .fill) {
                         UILabel(text: L10n.pinCode, weight: .medium)
-                        UILabel(text: L10n.defaultSecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
+                        UILabel(
+                            text: L10n.defaultSecureCheck,
+                            textSize: 12,
+                            textColor: .textSecondary,
+                            numberOfLines: 0
+                        )
                     }
                     UIView.defaultNextArrow()
                 }
@@ -56,7 +61,12 @@ extension Settings {
                         UIView.squareRoundedCornerIcon(image: biometryMethod.icon),
                         UIView.col([
                             UILabel(text: LABiometryType.current.stringValue, weight: .medium),
-                            UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0),
+                            UILabel(
+                                text: L10n.willBeAsAPrimarySecureCheck,
+                                textSize: 12,
+                                textColor: .textSecondary,
+                                numberOfLines: 0
+                            ),
                         ]).with(spacing: 5),
                         biometrySwitcher,
                     ])

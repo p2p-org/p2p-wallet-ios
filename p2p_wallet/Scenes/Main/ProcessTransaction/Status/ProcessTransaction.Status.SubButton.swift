@@ -31,7 +31,7 @@ extension ProcessTransaction.Status {
 
         private func bind() {
             viewModel.pendingTransactionDriver
-                .map { $0.status.error }
+                .map(\.status.error)
                 .map { [weak self] error -> String in
                     guard let error = error else {
                         return self?.viewModel.isSwapping == true ? L10n.makeAnotherSwap : L10n.makeAnotherTransaction

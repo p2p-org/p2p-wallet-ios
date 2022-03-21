@@ -18,9 +18,15 @@ class WLDefaultOptionView: BEView, OptionViewType {
 
     override func commonInit() {
         super.commonInit()
-        let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-            radioButton, label,
-        ])
+        let stackView = UIStackView(
+            axis: .horizontal,
+            spacing: 16,
+            alignment: .center,
+            distribution: .fill,
+            arrangedSubviews: [
+                radioButton, label,
+            ]
+        )
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 20))
     }

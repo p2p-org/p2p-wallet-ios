@@ -115,11 +115,17 @@ extension WalletDetail {
                 vc.delegate = self
                 present(vc, animated: true, completion: nil)
             case let .send(wallet):
-                let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil, relayMethod: .default)
+                let vm = SendToken.ViewModel(
+                    walletPubkey: wallet.pubkey,
+                    destinationAddress: nil,
+                    relayMethod: .default
+                )
                 let vc = SendToken.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case let .receive(pubkey):
-                if let solanaPubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
+                if let solanaPubkey = try? SolanaSDK
+                    .PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey)
+                {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })
 
                     let isDevnet = Defaults.apiEndPoint.network == .devnet
@@ -151,7 +157,7 @@ extension WalletDetail {
         }
 
         private func createWalletActionView(actionType: WalletActionType) -> UIView {
-            return WalletActionButton(actionType: actionType) { [weak self] in
+            WalletActionButton(actionType: actionType) { [weak self] in
                 self?.viewModel.start(action: actionType)
             }
         }

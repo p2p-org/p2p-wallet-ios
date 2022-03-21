@@ -20,7 +20,10 @@ extension EnterSeedInfo {
 
         // MARK: - Subviews
 
-        lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
+        lazy var scrollView = ContentHuggingScrollView(
+            scrollableAxis: .vertical,
+            contentInset: .init(only: .bottom, inset: 40)
+        )
         lazy var stackView = UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
         private let firstTitle = UILabel(
             text: L10n.theDefinition,

@@ -127,19 +127,24 @@ extension RenBTCReceivingStatuses {
                     }
 
                     if let threeVoteAt = tx.threeVoteAt {
-                        records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: threeVoteAt, vout: 3))
+                        records
+                            .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: threeVoteAt,
+                                          vout: 3))
                     }
 
                     if let twoVoteAt = tx.twoVoteAt {
-                        records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: twoVoteAt, vout: 2))
+                        records
+                            .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: twoVoteAt, vout: 2))
                     }
 
                     if let oneVoteAt = tx.oneVoteAt {
-                        records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: oneVoteAt, vout: 1))
+                        records
+                            .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: oneVoteAt, vout: 1))
                     }
 
                     if let receiveAt = tx.receivedAt {
-                        records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: receiveAt, vout: 0))
+                        records
+                            .append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: receiveAt, vout: 0))
                     }
 
                     records.sort { rc1, rc2 in

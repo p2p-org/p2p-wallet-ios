@@ -6,7 +6,9 @@ import BECollectionView
 import Foundation
 
 struct CollectionViewMappingStrategy {
-    static func byData<T: Hashable>(viewModel: BEListViewModelType, forType: T.Type, where datePath: KeyPath<T, Date>) -> [BEDynamicSectionsCollectionView.SectionInfo] {
+    static func byData<T: Hashable>(viewModel: BEListViewModelType, forType: T.Type,
+                                    where datePath: KeyPath<T, Date>) -> [BEDynamicSectionsCollectionView.SectionInfo]
+    {
         let transactions = viewModel.getData(type: forType)
 
         let dictionary = Dictionary(grouping: transactions) { item -> Date in
@@ -17,7 +19,9 @@ struct CollectionViewMappingStrategy {
         return dateFormatter(dictionary: dictionary)
     }
 
-    static func byData<T: Hashable>(viewModel: BEListViewModelType, forType: T.Type, where datePath: KeyPath<T, Date?>) -> [BEDynamicSectionsCollectionView.SectionInfo] {
+    static func byData<T: Hashable>(viewModel: BEListViewModelType, forType: T.Type,
+                                    where datePath: KeyPath<T, Date?>) -> [BEDynamicSectionsCollectionView.SectionInfo]
+    {
         let transactions = viewModel.getData(type: forType)
 
         let dictionary = Dictionary(grouping: transactions) { item -> Date in
@@ -28,7 +32,9 @@ struct CollectionViewMappingStrategy {
         return dateFormatter(dictionary: dictionary)
     }
 
-    private static func dateFormatter<T: Hashable>(dictionary: [Date: [T]]) -> [BEDynamicSectionsCollectionView.SectionInfo] {
+    private static func dateFormatter<T: Hashable>(dictionary: [Date: [T]])
+        -> [BEDynamicSectionsCollectionView.SectionInfo]
+    {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .none

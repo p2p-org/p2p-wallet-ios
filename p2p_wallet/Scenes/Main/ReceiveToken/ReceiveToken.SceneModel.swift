@@ -192,11 +192,11 @@ extension ReceiveToken {
         }
 
         func isRenBtcCreated() -> Bool {
-            walletsRepository.getWallets().contains(where: { $0.token.isRenBTC })
+            walletsRepository.getWallets().contains(where: \.token.isRenBTC)
         }
 
         func acceptReceivingRenBTC() -> Completable {
-            return handler.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
+            handler.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
                 .catch { error in
                     if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
                         return .just(false)

@@ -88,14 +88,28 @@ extension TransactionDetail {
                                 UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
                                     .setup { label in
                                         viewModel.parsedTransactionDriver
-                                            .map { $0?.signature?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9) }
+                                            .map {
+                                                $0?.signature?
+                                                    .truncatingMiddle(numOfSymbolsRevealed: 9,
+                                                                      numOfSymbolsRevealedInSuffix: 9)
+                                            }
                                             .drive(label.rx.text)
                                             .disposed(by: disposeBag)
                                     }
-                                UIImageView(width: 16, height: 16, image: .transactionShowInExplorer, tintColor: .textSecondary)
+                                UIImageView(
+                                    width: 16,
+                                    height: 16,
+                                    image: .transactionShowInExplorer,
+                                    tintColor: .textSecondary
+                                )
                             }
 
-                            UILabel(text: L10n.tapToViewInExplorer, textSize: 15, textColor: .textSecondary, textAlignment: .right)
+                            UILabel(
+                                text: L10n.tapToViewInExplorer,
+                                textSize: 15,
+                                textColor: .textSecondary,
+                                textAlignment: .right
+                            )
                         }
                         .onTap { [unowned self] in
                             self.viewModel.navigate(to: .explorer)
@@ -152,7 +166,11 @@ extension TransactionDetail {
             case .explorer:
                 showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.getTransactionId() ?? "")")
             case .freeFeeInfo:
-                showAlert(title: L10n.paidByP2p, message: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(100))
+                showAlert(
+                    title: L10n.paidByP2p,
+                    message: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                        .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(100)
+                )
             }
         }
 

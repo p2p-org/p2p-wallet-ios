@@ -15,11 +15,17 @@ extension BuyProcessing {
         // MARK: - Properties
 
         private let widgetVC: BuyTokenWidgetViewController
-        private lazy var headerView = UIStackView(axis: .horizontal, spacing: 14, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
-                .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
-            UILabel(text: L10n.buy, textSize: 17, weight: .semibold),
-        ])
+        private lazy var headerView = UIStackView(
+            axis: .horizontal,
+            spacing: 14,
+            alignment: .center,
+            distribution: .fill,
+            arrangedSubviews: [
+                UIImageView(width: 24, height: 24, image: .walletAdd, tintColor: .white)
+                    .padding(.init(all: 6), backgroundColor: .h5887ff, cornerRadius: 12),
+                UILabel(text: L10n.buy, textSize: 17, weight: .semibold),
+            ]
+        )
         .padding(.init(all: 20))
 
         // MARK: - Methods

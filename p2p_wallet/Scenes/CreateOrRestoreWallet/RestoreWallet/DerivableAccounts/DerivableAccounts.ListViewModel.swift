@@ -55,16 +55,15 @@ extension DerivableAccounts {
                                 isBlured: index > 2
                             )
                         }
-                }
-            )
-            .observe(on: MainScheduler.instance)
-            .do(onSuccess: { [weak self] accounts in
-                self?.fetchSOLPrice()
-                for account in accounts {
-                    self?.fetchBalances(account: account.info.publicKey.base58EncodedString)
-                }
-            })
-            .observe(on: MainScheduler.instance)
+                })
+                .observe(on: MainScheduler.instance)
+                .do(onSuccess: { [weak self] accounts in
+                    self?.fetchSOLPrice()
+                    for account in accounts {
+                        self?.fetchBalances(account: account.info.publicKey.base58EncodedString)
+                    }
+                })
+                .observe(on: MainScheduler.instance)
         }
 
         private func createAccountSingle(index: Int) -> Single<SolanaSDK.Account> {
@@ -122,7 +121,11 @@ extension DerivableAccounts {
             let requestAPI = SolanaSDK.RequestAPI(method: bcMethod, params: [account])
 
             do {
-                var urlRequest = try URLRequest(url: SolanaSDK.APIEndPoint.definedEndpoints.first!.getURL(), method: .post, headers: [.contentType("application/json")])
+                var urlRequest = try URLRequest(
+                    url: SolanaSDK.APIEndPoint.definedEndpoints.first!.getURL(),
+                    method: .post,
+                    headers: [.contentType("application/json")]
+                )
                 urlRequest.httpBody = try JSONEncoder().encode(requestAPI)
 
                 RxAlamofire.request(urlRequest)
@@ -130,10 +133,15 @@ extension DerivableAccounts {
                     .responseData()
                     .map { _, data -> SolanaSDK.Rpc<UInt64> in
                         // Print
-                        Logger.log(message: String(data: data, encoding: .utf8) ?? "", event: .response, apiMethod: bcMethod)
+                        Logger.log(
+                            message: String(data: data, encoding: .utf8) ?? "",
+                            event: .response,
+                            apiMethod: bcMethod
+                        )
 
                         // Print
-                        let response = try JSONDecoder().decode(SolanaSDK.Response<SolanaSDK.Rpc<UInt64>>.self, from: data)
+                        let response = try JSONDecoder()
+                            .decode(SolanaSDK.Response<SolanaSDK.Rpc<UInt64>>.self, from: data)
                         if let result = response.result {
                             return result
                         }
@@ -147,11 +155,14 @@ extension DerivableAccounts {
                     .asSingle()
                     .do(onSuccess: { [weak self] in self?.balanceCache[account] = $0 })
                     .subscribe(onSuccess: { [weak self] amount in
-                        self?.updateItem(where: { $0.info.publicKey.base58EncodedString == account }, transform: { account in
-                            var account = account
-                            account.amount = amount
-                            return account
-                        })
+                        self?.updateItem(
+                            where: { $0.info.publicKey.base58EncodedString == account },
+                            transform: { account in
+                                var account = account
+                                account.amount = amount
+                                return account
+                            }
+                        )
                     })
                     .disposed(by: disposeBag)
             } catch {

@@ -74,7 +74,12 @@ extension SendToken {
                 } else {
                     childNavigationController = .init(rootViewController: vc)
                     #if DEBUG
-                        let label = UILabel(text: "Relay method: \(viewModel.relayMethod.rawValue)", textColor: .red, numberOfLines: 0, textAlignment: .center)
+                        let label = UILabel(
+                            text: "Relay method: \(viewModel.relayMethod.rawValue)",
+                            textColor: .red,
+                            numberOfLines: 0,
+                            textAlignment: .center
+                        )
                         view.addSubview(label)
                         label.autoPinEdge(toSuperviewSafeArea: .top)
                         label.autoAlignAxis(toSuperviewAxis: .vertical)

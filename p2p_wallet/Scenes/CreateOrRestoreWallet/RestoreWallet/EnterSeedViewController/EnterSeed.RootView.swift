@@ -20,7 +20,10 @@ extension EnterSeed {
 
         // MARK: - Subviews
 
-        private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
+        private let scrollView = ContentHuggingScrollView(
+            scrollableAxis: .vertical,
+            contentInset: .init(only: .bottom, inset: 40)
+        )
         private let stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill)
         private let textView = ExpandableTextView()
         private let agreeTermsAndConditionsView = AgreeTermsAndConditionsView()
@@ -128,10 +131,14 @@ extension EnterSeed {
                 BEStackViewSpacing(18)
                 UIView.greyBannerView(alignment: .leading) {
                     descriptionLabel
-                    UIButton(label: L10n.whatIsASecurityKey, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .h5887ff)
-                        .setupWithType(UIButton.self) { button in
-                            button.addTarget(self, action: #selector(securityExplanation), for: .touchUpInside)
-                        }
+                    UIButton(
+                        label: L10n.whatIsASecurityKey,
+                        labelFont: .systemFont(ofSize: 15, weight: .semibold),
+                        textColor: .h5887ff
+                    )
+                    .setupWithType(UIButton.self) { button in
+                        button.addTarget(self, action: #selector(securityExplanation), for: .touchUpInside)
+                    }
                 }
                 BEStackViewSpacing(18)
                 agreeTermsAndConditionsView
@@ -186,7 +193,8 @@ extension EnterSeed {
             paragraphStyle.lineHeightMultiple = 1.17
 
             descriptionLabel.attributedText = NSMutableAttributedString(
-                string: L10n.toRecoverYourWalletEnterYourSecurityKeyS12Or24WordsSeparatedBySingleSpacesInTheCorrectOrder,
+                string: L10n
+                    .toRecoverYourWalletEnterYourSecurityKeyS12Or24WordsSeparatedBySingleSpacesInTheCorrectOrder,
                 attributes: [
                     NSAttributedString.Key.kern: -0.24,
                     NSAttributedString.Key.paragraphStyle: paragraphStyle,

@@ -14,7 +14,8 @@ class WLAddTokenButton: WLLoadingView {
     lazy var titleLabel = UILabel(text: L10n.addToken, weight: .semibold, textColor: .white, textAlignment: .center)
 
     lazy var feeLabel: LazyLabel<Double> = {
-        let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5), textAlignment: .center)
+        let label = LazyLabel<Double>(textSize: 13, textColor: UIColor.white.withAlphaComponent(0.5),
+                                      textAlignment: .center)
         label.isUserInteractionEnabled = false
         return label
     }()
@@ -37,10 +38,16 @@ class WLAddTokenButton: WLLoadingView {
 
     override func commonInit() {
         super.commonInit()
-        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .center, distribution: .fill, arrangedSubviews: [
-            titleLabel,
-            feeLabel,
-        ])
+        let stackView = UIStackView(
+            axis: .vertical,
+            spacing: 0,
+            alignment: .center,
+            distribution: .fill,
+            arrangedSubviews: [
+                titleLabel,
+                feeLabel,
+            ]
+        )
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 16, y: 10))
     }

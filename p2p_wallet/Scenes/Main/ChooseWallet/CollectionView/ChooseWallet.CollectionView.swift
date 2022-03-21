@@ -22,13 +22,13 @@ extension ChooseWallet {
                     let myWallets = wallets.filter { $0.pubkey != nil }
                     let otherWallets = wallets.filter { $0.pubkey == nil }
                     var sections = [SectionInfo]()
-                    if myWallets.count > 0 {
+                    if !myWallets.isEmpty {
                         sections.append(.init(
                             userInfo: 0,
                             items: myWallets
                         ))
                     }
-                    if otherWallets.count > 0 {
+                    if !otherWallets.isEmpty {
                         sections.append(.init(
                             userInfo: 1,
                             items: otherWallets,

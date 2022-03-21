@@ -65,7 +65,10 @@ extension VerifySecurityKeys {
             questionsView.autoPinEdge(.top, to: .bottom, of: navigationBar)
 
             addSubview(nextButton)
-            nextButton.autoPinEdgesToSuperviewSafeArea(with: .init(top: 0, left: 18, bottom: 20, right: 18), excludingEdge: .top)
+            nextButton.autoPinEdgesToSuperviewSafeArea(
+                with: .init(top: 0, left: 18, bottom: 20, right: 18),
+                excludingEdge: .top
+            )
         }
 
         private func bind() {

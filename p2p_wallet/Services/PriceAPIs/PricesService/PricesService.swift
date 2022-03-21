@@ -171,7 +171,7 @@ extension PricesService: PricesServiceType {
         fetcher.getHistoricalPrice(of: coinName, fiat: Defaults.fiat.code, period: period)
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .map { prices in
-                if prices.count == 0 { throw Error.notFound }
+                if prices.isEmpty { throw Error.notFound }
                 return prices
             }
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))

@@ -39,8 +39,8 @@ extension BuyPreparing {
                     // Bottom Button
                     WLStepButton.main(text: L10n.continue)
                         .setup { view in
-                            viewModel.nextStatus.map { $0.text }.drive(view.rx.text).disposed(by: disposeBag)
-                            viewModel.nextStatus.map { $0.isEnable }.drive(view.rx.isEnabled).disposed(by: disposeBag)
+                            viewModel.nextStatus.map(\.text).drive(view.rx.text).disposed(by: disposeBag)
+                            viewModel.nextStatus.map(\.isEnable).drive(view.rx.isEnabled).disposed(by: disposeBag)
                         }
                         .onTap { [unowned self] in self.viewModel.next() }
                         .padding(.init(all: 18))
@@ -68,7 +68,11 @@ extension BuyPreparing {
                         UIView.defaultSeparator()
 
                         BEVStack {
-                            descriptionRow(label: "\(viewModel.crypto.rawValue.uppercased()) \(L10n.price)", initial: "$ 0.0", viewModel.exchangeRateStringDriver)
+                            descriptionRow(
+                                label: "\(viewModel.crypto.rawValue.uppercased()) \(L10n.price)",
+                                initial: "$ 0.0",
+                                viewModel.exchangeRateStringDriver
+                            )
 
                             BEHStack(alignment: .center) {
                                 UILabel(text: L10n.hideFees)
@@ -110,7 +114,11 @@ extension BuyPreparing {
         private func feeInfo() -> UIView {
             BEVStack {
                 UIView(height: 18)
-                descriptionRow(label: L10n.purchaseCost("\(viewModel.crypto.rawValue.uppercased())"), initial: "$ 0.00", viewModel.purchaseCost.map { "$ \($0)" })
+                descriptionRow(
+                    label: L10n.purchaseCost("\(viewModel.crypto.rawValue.uppercased())"),
+                    initial: "$ 0.00",
+                    viewModel.purchaseCost.map { "$ \($0)" }
+                )
                 UIView(height: 8)
                 descriptionRow(label: L10n.processingFee, initial: "$ 0.00", viewModel.feeAmount.map { "$ \($0)" })
                 UIView(height: 8)
@@ -180,19 +188,19 @@ private extension BuyPreparingSceneModel {
     }
 
     var feeAmount: Driver<Double> {
-        outputDriver.map { $0.processingFee }
+        outputDriver.map(\.processingFee)
     }
 
     var networkFee: Driver<Double> {
-        outputDriver.map { $0.networkFee }
+        outputDriver.map(\.networkFee)
     }
 
     var total: Driver<Double> {
-        outputDriver.map { $0.total }
+        outputDriver.map(\.total)
     }
 
     var purchaseCost: Driver<Double> {
-        outputDriver.map { $0.purchaseCost }
+        outputDriver.map(\.purchaseCost)
     }
 
     var nextStatus: Driver<NextStatus> {
@@ -210,7 +218,11 @@ private extension BuyPreparingSceneModel {
                     return NextStatus(text: L10n.continue, isEnable: true)
                 } else {
                     if input.amount < minSol {
-                        return NextStatus(text: L10n.minimumPurchaseOfRequired("\(minSol) \(self?.crypto.rawValue.uppercased() ?? "?")"), isEnable: false)
+                        return NextStatus(
+                            text: L10n
+                                .minimumPurchaseOfRequired("\(minSol) \(self?.crypto.rawValue.uppercased() ?? "?")"),
+                            isEnable: false
+                        )
                     }
                     return NextStatus(text: L10n.continue, isEnable: true)
                 }

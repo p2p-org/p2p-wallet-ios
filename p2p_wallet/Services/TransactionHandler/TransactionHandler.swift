@@ -55,7 +55,7 @@ class TransactionHandler: TransactionHandlerType {
     }
 
     func areSomeTransactionsInProgress() -> Bool {
-        transactionsSubject.value.contains(where: { $0.status.isProcessing })
+        transactionsSubject.value.contains(where: \.status.isProcessing)
     }
 
     func observeProcessingTransactions(

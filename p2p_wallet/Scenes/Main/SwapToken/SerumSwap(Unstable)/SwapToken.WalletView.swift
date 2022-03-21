@@ -47,7 +47,13 @@ extension SerumSwapV1 {
             autocorrectionType: .no /* , rightView: useAllBalanceButton, rightViewMode: .always */
         )
 
-        private lazy var equityValueLabel = UILabel(text: "≈ 0.00 \(Defaults.fiat.symbol)", textSize: 13, weight: .medium, textColor: .textSecondary.onDarkMode(.white), textAlignment: .right)
+        private lazy var equityValueLabel = UILabel(
+            text: "≈ 0.00 \(Defaults.fiat.symbol)",
+            textSize: 13,
+            weight: .medium,
+            textColor: .textSecondary.onDarkMode(.white),
+            textAlignment: .right
+        )
 
         init(viewModel: SwapTokenViewModelType, type: WalletType) {
             self.viewModel = viewModel
@@ -282,7 +288,9 @@ extension SerumSwapV1 {
 // MARK: - TextField delegate
 
 extension SerumSwapV1.WalletView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool
+    {
         if let textField = textField as? TokenAmountTextField {
             return textField.shouldChangeCharactersInRange(range, replacementString: string)
         }

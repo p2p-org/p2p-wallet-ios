@@ -14,7 +14,14 @@ class WLStatusIndicatorView: BEView {
     }
 
     private let autoHide: Bool = true
-    private let label = UILabel(text: "loading...", textSize: 12, weight: .semibold, textColor: .white, numberOfLines: 0, textAlignment: .center)
+    private let label = UILabel(
+        text: "loading...",
+        textSize: 12,
+        weight: .semibold,
+        textColor: .white,
+        numberOfLines: 0,
+        textAlignment: .center
+    )
 
     override func commonInit() {
         super.commonInit()

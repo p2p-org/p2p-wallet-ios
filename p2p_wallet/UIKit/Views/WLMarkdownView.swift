@@ -15,7 +15,10 @@ class WLMarkdownView: BEView {
 
     private let fileName: String
 
-    let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(top: 20, left: 20, bottom: 0, right: 20))
+    let scrollView = ContentHuggingScrollView(
+        scrollableAxis: .vertical,
+        contentInset: .init(top: 20, left: 20, bottom: 0, right: 20)
+    )
     private let label = UILabel(text: nil, textSize: 15, numberOfLines: 0)
 
     init(bundledMarkdownTxtFileName: String) {
@@ -44,7 +47,10 @@ class WLMarkdownView: BEView {
             let contents = try! String(contentsOfFile: filepath)
 
             let down = Down(markdownString: contents)
-            let attributedString = try! down.toAttributedString(.default, stylesheet: "* {font-family: Helvetica; font-size: 15px; color: \(color); } code, pre { font-family: Menlo; font-size: 15px }")
+            let attributedString = try! down.toAttributedString(
+                .default,
+                stylesheet: "* {font-family: Helvetica; font-size: 15px; color: \(color); } code, pre { font-family: Menlo; font-size: 15px }"
+            )
 
             DispatchQueue.main.async { [weak self] in
                 self?.hideHud()

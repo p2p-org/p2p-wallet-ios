@@ -34,7 +34,7 @@ class BackupManuallyVC: BackupManuallyBaseVC {
         vc.completion = { [weak self] phrases in
             if phrases == self?.phrases {
                 self?.dismiss(animated: true) { [weak self] in
-                    guard let `self` = self else { return }
+                    guard let self = self else { return }
                     self.delegate?.backupManuallyVCDidBackup(self)
                 }
             } else {

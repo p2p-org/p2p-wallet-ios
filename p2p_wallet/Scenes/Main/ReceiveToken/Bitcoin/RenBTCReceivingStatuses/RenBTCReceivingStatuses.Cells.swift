@@ -20,8 +20,14 @@ extension RenBTCReceivingStatuses {
                     UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                         UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 2)
                             .setupWithType(UILabel.self) { view in titleLabel = view }
-                        UILabel(text: "<Minting>", textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
-                            .setupWithType(UILabel.self) { view in descriptionLabel = view }
+                        UILabel(
+                            text: "<Minting>",
+                            textSize: 13,
+                            weight: .medium,
+                            textColor: .textSecondary,
+                            numberOfLines: 0
+                        )
+                        .setupWithType(UILabel.self) { view in descriptionLabel = view }
                     }
                     UIView.defaultNextArrow()
                 }
@@ -56,8 +62,14 @@ extension RenBTCReceivingStatuses {
                     UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                         UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 8)
                             .setupWithType(UILabel.self) { view in titleLabel = view }
-                        UILabel(text: "<Minting>", textSize: 13, weight: .medium, textColor: .textSecondary, numberOfLines: 0)
-                            .setupWithType(UILabel.self) { view in descriptionLabel = view }
+                        UILabel(
+                            text: "<Minting>",
+                            textSize: 13,
+                            weight: .medium,
+                            textColor: .textSecondary,
+                            numberOfLines: 0
+                        )
+                        .setupWithType(UILabel.self) { view in descriptionLabel = view }
                     }
                     UIView.spacer
                     UILabel(textSize: 15, weight: .semibold)
@@ -87,7 +99,9 @@ extension RenBTCReceivingStatuses {
                 }
             case .minted:
                 resultLabel.isHidden = false
-                resultLabel.text = "+ \((tx.amount ?? 0).convertToBalance(decimals: 8).toString(maximumFractionDigits: 9)) renBTC"
+                resultLabel
+                    .text =
+                    "+ \((tx.amount ?? 0).convertToBalance(decimals: 8).toString(maximumFractionDigits: 9)) renBTC"
                 resultLabel.textColor = .textGreen
             default:
                 break

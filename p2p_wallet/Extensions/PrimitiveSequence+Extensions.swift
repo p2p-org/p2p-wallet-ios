@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 extension PrimitiveSequence {
     func retry(maxAttempts: Int, delayInSeconds seconds: Int) -> PrimitiveSequence<Trait, Element> {
-        return retry(when: { errors in
+        retry(when: { errors in
             errors.enumerated().flatMap { index, error -> Observable<Int64> in
                 if index <= maxAttempts {
                     return Observable<Int64>.timer(.seconds(seconds), scheduler: MainScheduler.instance)

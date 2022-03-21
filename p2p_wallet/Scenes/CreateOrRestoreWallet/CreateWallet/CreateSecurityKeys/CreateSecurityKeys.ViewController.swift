@@ -40,7 +40,10 @@ extension CreateSecurityKeys {
             super.bind()
             viewModel.showTermsAndConditionsSignal
                 .emit(onNext: { [weak self] in
-                    let vc = WLMarkdownVC(title: L10n.termsOfUse.uppercaseFirst, bundledMarkdownTxtFileName: "Terms_of_service")
+                    let vc = WLMarkdownVC(
+                        title: L10n.termsOfUse.uppercaseFirst,
+                        bundledMarkdownTxtFileName: "Terms_of_service"
+                    )
                     self?.present(vc, interactiveDismissalType: .standard, completion: nil)
                 })
                 .disposed(by: disposeBag)

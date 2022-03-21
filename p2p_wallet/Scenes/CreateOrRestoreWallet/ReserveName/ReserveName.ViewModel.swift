@@ -190,7 +190,8 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     func skipButtonPressed() {
         navigationSubject.accept(
             .skipAlert { [weak self] in
-                let isFilled = self?.textFieldStateSubject.value == ReserveName.TextFieldState.empty ? "Not_Filled" : "Filled"
+                let isFilled = self?.textFieldStateSubject.value == ReserveName.TextFieldState
+                    .empty ? "Not_Filled" : "Filled"
                 self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
                 self?.handleSkipAlertAction(isProceed: $0)
             }
@@ -235,7 +236,12 @@ extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
         notificationsService.showInAppNotification(.error(error))
     }
 
-    func gtCaptcha(_: GT3CaptchaManager, didReceiveCaptchaCode code: String, result: [AnyHashable: Any]?, message _: String?) {
+    func gtCaptcha(
+        _: GT3CaptchaManager,
+        didReceiveCaptchaCode code: String,
+        result: [AnyHashable: Any]?,
+        message _: String?
+    ) {
         guard code == "1",
               let geetest_seccode = result?["geetest_seccode"] as? String,
               let geetest_challenge = result?["geetest_challenge"] as? String,
@@ -255,5 +261,11 @@ extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
         false
     }
 
-    func gtCaptcha(_: GT3CaptchaManager, didReceiveSecondaryCaptchaData _: Data?, response _: URLResponse?, error _: GT3Error?, decisionHandler _: @escaping (GT3SecondaryCaptchaPolicy) -> Void) {}
+    func gtCaptcha(
+        _: GT3CaptchaManager,
+        didReceiveSecondaryCaptchaData _: Data?,
+        response _: URLResponse?,
+        error _: GT3Error?,
+        decisionHandler _: @escaping (GT3SecondaryCaptchaPolicy) -> Void
+    ) {}
 }

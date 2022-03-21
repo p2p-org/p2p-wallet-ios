@@ -41,7 +41,8 @@ extension Settings {
                     UIView.greyBannerView {
                         UILabel(
                             text:
-                            L10n.yourP2PUsernameAllowsYouToReceiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletList,
+                            L10n
+                                .yourP2PUsernameAllowsYouToReceiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletList,
                             textSize: 15,
                             numberOfLines: 0
                         )

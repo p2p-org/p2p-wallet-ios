@@ -70,12 +70,15 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
                 debugPrint(error)
                 return
             }
-            myContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: L10n.confirmItSYou) { success, _ in
-                guard success else { return }
-                DispatchQueue.main.sync {
-                    onSuccess?()
+            myContext
+                .evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                                localizedReason: L10n.confirmItSYou)
+                { success, _ in
+                    guard success else { return }
+                    DispatchQueue.main.sync {
+                        onSuccess?()
+                    }
                 }
-            }
         } else {
             onFailure?()
         }

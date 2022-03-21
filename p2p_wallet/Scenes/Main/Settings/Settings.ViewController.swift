@@ -108,7 +108,8 @@ extension Settings {
                                     .disposed(by: disposeBag)
                             },
                             trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
-                                viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled).disposed(by: disposeBag)
+                                viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled)
+                                    .disposed(by: disposeBag)
                                 viewModel.isBiometryEnabledDriver.drive(switcher.rx.value).disposed(by: disposeBag)
                                 switcher.rx
                                     .controlEvent(.valueChanged)
@@ -165,12 +166,13 @@ extension Settings {
                         CellView(
                             icon: .currency,
                             title: UILabel(text: L10n.currency.onlyUppercaseFirst()),
-                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel).setupWithType(UILabel.self) { label in
-                                viewModel.fiatDriver
-                                    .map { fiat in fiat.name }
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
-                            }
+                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
+                                .setupWithType(UILabel.self) { label in
+                                    viewModel.fiatDriver
+                                        .map { fiat in fiat.name }
+                                        .drive(label.rx.text)
+                                        .disposed(by: disposeBag)
+                                }
                         )
                         .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
 
@@ -235,7 +237,12 @@ extension Settings {
 
             viewModel.logoutAlertSignal
                 .emit(onNext: { [weak self] in
-                    self?.showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { [weak self] index in
+                    self?.showAlert(
+                        title: L10n.logout,
+                        message: L10n.doYouReallyWantToLogout,
+                        buttonTitles: ["OK", L10n.cancel],
+                        highlightedButtonIndex: 1
+                    ) { [weak self] index in
                         guard index == 0 else { return }
                         self?.dismiss(animated: true, completion: { [weak self] in
                             self?.viewModel.logout()
@@ -337,8 +344,16 @@ private class PinCodeChangedVC: FlexibleHeightVC {
         ])
     }
 
-    override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        let pc = super.presentationController(forPresented: presented, presenting: presenting, source: source) as! PresentationController
+    override func presentationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController?,
+        source: UIViewController
+    ) -> UIPresentationController? {
+        let pc = super.presentationController(
+            forPresented: presented,
+            presenting: presenting,
+            source: source
+        ) as! PresentationController
         pc.roundedCorner = .allCorners
         pc.cornerRadius = 24
         return pc

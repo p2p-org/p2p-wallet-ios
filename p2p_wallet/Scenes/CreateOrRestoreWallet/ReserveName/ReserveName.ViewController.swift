@@ -56,10 +56,16 @@ extension ReserveName {
             case .back:
                 navigationController?.popViewController(animated: true)
             case .termsOfUse:
-                let vc = WLMarkdownVC(title: L10n.termsOfUse.uppercaseFirst, bundledMarkdownTxtFileName: "Terms_of_service")
+                let vc = WLMarkdownVC(
+                    title: L10n.termsOfUse.uppercaseFirst,
+                    bundledMarkdownTxtFileName: "Terms_of_service"
+                )
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             case .privacyPolicy:
-                let vc = WLMarkdownVC(title: L10n.privacyPolicy.uppercaseFirst, bundledMarkdownTxtFileName: "Privacy_policy")
+                let vc = WLMarkdownVC(
+                    title: L10n.privacyPolicy.uppercaseFirst,
+                    bundledMarkdownTxtFileName: "Privacy_policy"
+                )
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             case let .skipAlert(completion):
                 showSkipAlert(completion: completion)

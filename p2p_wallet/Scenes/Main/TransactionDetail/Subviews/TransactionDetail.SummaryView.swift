@@ -29,12 +29,22 @@ extension TransactionDetail {
                             switch parsedTransaction?.value {
                             case let transaction as SolanaSDK.TransferTransaction:
                                 view?.logoImageView.setUp(wallet: transaction.source)
-                                view?.titleLabel.text = transaction.amount?.toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
-                                view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol + viewModel.getAmountInCurrentFiat(amountInToken: transaction.amount, symbol: transaction.source?.token.symbol).toString(maximumFractionDigits: 2)
+                                view?.titleLabel.text = transaction.amount?
+                                    .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
+                                view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol + viewModel
+                                    .getAmountInCurrentFiat(
+                                        amountInToken: transaction.amount,
+                                        symbol: transaction.source?.token.symbol
+                                    ).toString(maximumFractionDigits: 2)
                             case let transaction as SolanaSDK.SwapTransaction:
                                 view?.logoImageView.setUp(wallet: transaction.source)
-                                view?.titleLabel.text = transaction.sourceAmount?.toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
-                                view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol + viewModel.getAmountInCurrentFiat(amountInToken: transaction.sourceAmount, symbol: transaction.source?.token.symbol).toString(maximumFractionDigits: 2)
+                                view?.titleLabel.text = transaction.sourceAmount?
+                                    .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
+                                view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol + viewModel
+                                    .getAmountInCurrentFiat(
+                                        amountInToken: transaction.sourceAmount,
+                                        symbol: transaction.source?.token.symbol
+                                    ).toString(maximumFractionDigits: 2)
                             default:
                                 break
                             }
@@ -55,9 +65,13 @@ extension TransactionDetail {
                             view?.subtitleLabel.text = receiverName ?? " "
                         case let transaction as SolanaSDK.SwapTransaction:
                             view?.logoImageView.setUp(wallet: transaction.destination)
-                            view?.titleLabel.text = transaction.destinationAmount?.toString(maximumFractionDigits: 9) + " " + transaction.destination?.token.symbol
+                            view?.titleLabel.text = transaction.destinationAmount?
+                                .toString(maximumFractionDigits: 9) + " " + transaction.destination?.token.symbol
                             view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol +
-                                viewModel.getAmountInCurrentFiat(amountInToken: transaction.destinationAmount, symbol: transaction.destination?.token.symbol)
+                                viewModel.getAmountInCurrentFiat(
+                                    amountInToken: transaction.destinationAmount,
+                                    symbol: transaction.destination?.token.symbol
+                                )
                                 .toString(maximumFractionDigits: 2)
                         default:
                             break
@@ -85,8 +99,19 @@ extension TransactionDetail {
 private extension TransactionDetail.SummaryView {
     final class SubView: UIStackView {
         fileprivate let logoImageView = CoinLogoImageView(size: 44)
-        fileprivate let titleLabel = UILabel(text: "0.00227631 renBTC", textSize: 15, numberOfLines: 0, textAlignment: .center)
-        fileprivate let subtitleLabel = UILabel(text: "~ $150", textSize: 13, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+        fileprivate let titleLabel = UILabel(
+            text: "0.00227631 renBTC",
+            textSize: 15,
+            numberOfLines: 0,
+            textAlignment: .center
+        )
+        fileprivate let subtitleLabel = UILabel(
+            text: "~ $150",
+            textSize: 13,
+            textColor: .textSecondary,
+            numberOfLines: 0,
+            textAlignment: .center
+        )
 
         init() {
             super.init(frame: .zero)

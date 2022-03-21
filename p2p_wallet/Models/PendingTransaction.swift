@@ -122,7 +122,10 @@ extension PendingTransaction {
             if let authority = try? SolanaSDK.PublicKey(string: authority),
                let mintAddress = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress)
             {
-                destinationWallet.pubkey = try? SolanaSDK.PublicKey.associatedTokenAddress(walletAddress: authority, tokenMintAddress: mintAddress).base58EncodedString
+                destinationWallet.pubkey = try? SolanaSDK.PublicKey.associatedTokenAddress(
+                    walletAddress: authority,
+                    tokenMintAddress: mintAddress
+                ).base58EncodedString
             }
 
             value = SolanaSDK.SwapTransaction(
@@ -132,12 +135,22 @@ extension PendingTransaction {
                 destinationAmount: transaction.estimatedAmount,
                 myAccountSymbol: nil
             )
-            amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?.value
+            amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?
+                .value
             fee = transaction.fees.networkFees
         default:
             return nil
         }
 
-        return .init(status: status, signature: signature, value: value, amountInFiat: amountInFiat, slot: slot, blockTime: sentAt, fee: fee, blockhash: nil)
+        return .init(
+            status: status,
+            signature: signature,
+            value: value,
+            amountInFiat: amountInFiat,
+            slot: slot,
+            blockTime: sentAt,
+            fee: fee,
+            blockhash: nil
+        )
     }
 }

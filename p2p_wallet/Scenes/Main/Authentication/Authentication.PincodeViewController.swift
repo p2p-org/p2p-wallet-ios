@@ -102,7 +102,13 @@ extension Authentication {
                 self?.authenticationDidComplete()
             } onFailure: { [weak self] in
                 guard let self = self else { return }
-                self.showAlert(title: L10n.warning, message: self.viewModel.getCurrentBiometryType().stringValue + " " + L10n.WasTurnedOff.doYouWantToTurnItOn, buttonTitles: [L10n.turnOn, L10n.cancel], highlightedButtonIndex: 0) {
+                self.showAlert(
+                    title: L10n.warning,
+                    message: self.viewModel.getCurrentBiometryType().stringValue + " " + L10n.WasTurnedOff
+                        .doYouWantToTurnItOn,
+                    buttonTitles: [L10n.turnOn, L10n.cancel],
+                    highlightedButtonIndex: 0
+                ) {
                     index
                     in
 
@@ -139,7 +145,9 @@ extension Authentication {
                 let minutes = minutesAndSeconds.0
                 let seconds = minutesAndSeconds.1
 
-                self?.pincodeView.view?.errorLabel.text = L10n.weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " + L10n.orResetItWithASeedPhrase
+                self?.pincodeView.view?.errorLabel.text = L10n
+                    .weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " +
+                    L10n.orResetItWithASeedPhrase
 
                 if secondsPassed >= lockingTimeInSeconds {
                     self?.viewModel.setBlockedTime(nil)

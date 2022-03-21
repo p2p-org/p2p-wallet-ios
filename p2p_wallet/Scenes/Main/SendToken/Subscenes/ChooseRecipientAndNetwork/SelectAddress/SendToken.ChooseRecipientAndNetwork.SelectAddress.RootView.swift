@@ -43,12 +43,22 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private lazy var networkView = _NetworkView(viewModel: viewModel)
             .onTap(self, action: #selector(networkViewDidTouch))
-        private lazy var errorView = UIStackView(axis: .horizontal, spacing: 12, alignment: .center, distribution: .fill) {
+        private lazy var errorView = UIStackView(
+            axis: .horizontal,
+            spacing: 12,
+            alignment: .center,
+            distribution: .fill
+        ) {
             UIImageView(width: 44, height: 44, image: .errorUserAvatar)
             errorLabel
         }
         .padding(.init(x: 20, y: 0))
-        private lazy var errorLabel = UILabel(text: L10n.thereSNoAddressLikeThis, textSize: 17, textColor: .ff3b30, numberOfLines: 0)
+        private lazy var errorLabel = UILabel(
+            text: L10n.thereSNoAddressLikeThis,
+            textSize: 17,
+            textColor: .ff3b30,
+            numberOfLines: 0
+        )
         private lazy var feeView = _FeeView( // for relayMethod == .relay only
             walletDriver: viewModel.walletDriver,
             solPrice: viewModel.getPrice(for: "SOL"),
@@ -107,9 +117,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                 .map { $0.value?.feeAmountInSOL ?? .zero }
                                 .drive(onNext: { [weak label] feeAmount in
                                     label?.attributedText = NSMutableAttributedString()
-                                        .text("Transaction fee: \(feeAmount.transaction) lamports", size: 13, color: .red)
+                                        .text(
+                                            "Transaction fee: \(feeAmount.transaction) lamports",
+                                            size: 13,
+                                            color: .red
+                                        )
                                         .text(", ")
-                                        .text("Account creation fee: \(feeAmount.accountBalances) lamports", size: 13, color: .red)
+                                        .text(
+                                            "Account creation fee: \(feeAmount.accountBalances) lamports",
+                                            size: 13,
+                                            color: .red
+                                        )
                                 })
                                 .disposed(by: disposeBag)
                         }
@@ -174,7 +192,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     case .initializing, .loading:
                         break
                     case .loaded:
-                        if self?.viewModel.recipientsListViewModel.getData(type: SendToken.Recipient.self).count == 0, self?.addressInputView.textField.text?.isEmpty == false
+                        if self?.viewModel.recipientsListViewModel.getData(type: SendToken.Recipient.self)
+                            .isEmpty == true, self?.addressInputView.textField.text?.isEmpty == false
                         {
                             shouldHideErrorView = false
                             errorText = L10n.thereSNoAddressLikeThis
@@ -369,7 +388,12 @@ private class _FeeView: UIStackView {
         set(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
         addArrangedSubviews {
             attentionLabel
-                .padding(.init(all: 18), backgroundColor: .fffaf2.onDarkMode(.a3a5ba.withAlphaComponent(0.05)), cornerRadius: 12, borderColor: .ff9500)
+                .padding(
+                    .init(all: 18),
+                    backgroundColor: .fffaf2.onDarkMode(.a3a5ba.withAlphaComponent(0.05)),
+                    cornerRadius: 12,
+                    borderColor: .ff9500
+                )
             feeView
         }
 
@@ -380,7 +404,13 @@ private class _FeeView: UIStackView {
             .disposed(by: disposeBag)
 
         walletDriver.map { $0?.token.symbol ?? "" }
-            .map { L10n.ThisAddressDoesNotAppearToHaveAAccount.YouHaveToPayAOneTimeFeeToCreateAAccountForThisAddress.youCanChooseWhichCurrencyToPayInBelow($0, $0) }
+            .map {
+                L10n.ThisAddressDoesNotAppearToHaveAAccount.YouHaveToPayAOneTimeFeeToCreateAAccountForThisAddress
+                    .youCanChooseWhichCurrencyToPayInBelow(
+                        $0,
+                        $0
+                    )
+            }
             .drive(attentionLabel.rx.text)
             .disposed(by: disposeBag)
     }

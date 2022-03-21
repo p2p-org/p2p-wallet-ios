@@ -28,7 +28,12 @@ extension OrcaSwapV2 {
         private lazy var iconImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private lazy var downArrow = UIImageView(width: 10, height: 8, image: .downArrow, tintColor: .a3a5ba)
 
-        private lazy var tokenSymbolLabel = UILabel(text: "TOK", textSize: 20, weight: .semibold, textAlignment: .center)
+        private lazy var tokenSymbolLabel = UILabel(
+            text: "TOK",
+            textSize: 20,
+            weight: .semibold,
+            textAlignment: .center
+        )
 
         private lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .bold),
@@ -260,7 +265,9 @@ extension OrcaSwapV2 {
 // MARK: - TextField delegate
 
 extension OrcaSwapV2.WalletView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool
+    {
         if let textField = textField as? TokenAmountTextField {
             return textField.shouldChangeCharactersInRange(range, replacementString: string)
         }

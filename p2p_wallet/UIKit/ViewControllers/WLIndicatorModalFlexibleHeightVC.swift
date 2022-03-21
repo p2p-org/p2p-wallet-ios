@@ -85,9 +85,17 @@ class WLIndicatorModalFlexibleHeightVC: WLIndicatorModalVC, CustomPresentableVie
         // if not
         presentationController?.containerView?.setNeedsLayout()
         if animated {
-            UIView.animate(withDuration: 0.3, delay: 0.0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0.0, options: .allowUserInteraction, animations: {
-                self.presentationController?.containerView?.layoutIfNeeded()
-            }, completion: nil)
+            UIView.animate(
+                withDuration: 0.3,
+                delay: 0.0,
+                usingSpringWithDamping: 1.0,
+                initialSpringVelocity: 0.0,
+                options: .allowUserInteraction,
+                animations: {
+                    self.presentationController?.containerView?.layoutIfNeeded()
+                },
+                completion: nil
+            )
         } else {
             presentationController?.containerView?.layoutIfNeeded()
         }

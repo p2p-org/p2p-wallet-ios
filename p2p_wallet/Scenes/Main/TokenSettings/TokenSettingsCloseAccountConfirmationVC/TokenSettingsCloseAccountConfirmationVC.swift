@@ -28,7 +28,8 @@ class TokenSettingsCloseAccountConfirmationVC: WLIndicatorModalVC {
                 .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(5),
             UILabel(
-                text: L10n.areYouSureYouWantToDeleteThisTokenAccountThisWillPermanentlyDisableTokenTransfersToThisAddressAndRemoveItFromYourWallet,
+                text: L10n
+                    .areYouSureYouWantToDeleteThisTokenAccountThisWillPermanentlyDisableTokenTransfersToThisAddressAndRemoveItFromYourWallet,
                 weight: .medium,
                 textColor: .textSecondary,
                 numberOfLines: 0
@@ -37,15 +38,27 @@ class TokenSettingsCloseAccountConfirmationVC: WLIndicatorModalVC {
             BEStackViewSpacing(20),
             UIView.defaultSeparator(),
             BEStackViewSpacing(20),
-            UILabel(text: L10n.closeTokenAccount, textSize: 17, weight: .medium, textColor: .alert, textAlignment: .center)
-                .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
-                .onTap(self, action: #selector(buttonCloseDidTouch))
-                .padding(.init(x: 20, y: 0)),
+            UILabel(
+                text: L10n.closeTokenAccount,
+                textSize: 17,
+                weight: .medium,
+                textColor: .alert,
+                textAlignment: .center
+            )
+            .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
+            .onTap(self, action: #selector(buttonCloseDidTouch))
+            .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(10),
-            UILabel(text: L10n.cancel, textSize: 17, weight: .medium, textColor: .h5887ff.onDarkMode(.white), textAlignment: .center)
-                .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
-                .onTap(self, action: #selector(back))
-                .padding(.init(x: 20, y: 0)),
+            UILabel(
+                text: L10n.cancel,
+                textSize: 17,
+                weight: .medium,
+                textColor: .h5887ff.onDarkMode(.white),
+                textAlignment: .center
+            )
+            .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
+            .onTap(self, action: #selector(back))
+            .padding(.init(x: 20, y: 0)),
         ])
     }
 
@@ -55,7 +68,15 @@ class TokenSettingsCloseAccountConfirmationVC: WLIndicatorModalVC {
 }
 
 extension TokenSettingsCloseAccountConfirmationVC: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source _: UIViewController) -> UIPresentationController? {
-        return FlexibleHeightPresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
+    func presentationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController?,
+        source _: UIViewController
+    ) -> UIPresentationController? {
+        FlexibleHeightPresentationController(
+            position: .bottom,
+            presentedViewController: presented,
+            presenting: presenting
+        )
     }
 }

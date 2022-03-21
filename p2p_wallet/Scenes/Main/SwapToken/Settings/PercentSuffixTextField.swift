@@ -15,7 +15,10 @@ class PercentSuffixTextField: BEDecimalTextField {
         super.commonInit()
         addSubview(percentLabel)
         percentLabel.autoAlignAxis(toSuperviewAxis: .horizontal)
-        percentLabelLeftConstraint = percentLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: leftView?.frame.size.width ?? 0)
+        percentLabelLeftConstraint = percentLabel.autoPinEdge(
+            toSuperviewEdge: .leading,
+            withInset: leftView?.frame.size.width ?? 0
+        )
     }
 
     override func layoutSubviews() {

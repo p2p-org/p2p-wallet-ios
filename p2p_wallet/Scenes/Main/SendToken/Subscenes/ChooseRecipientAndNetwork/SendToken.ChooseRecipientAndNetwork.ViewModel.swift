@@ -10,7 +10,9 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenSelectNetworkViewModelType {
+protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler,
+    SendTokenSelectNetworkViewModelType
+{
     var showAfterConfirmation: Bool { get }
     var preSelectedNetwork: SendToken.Network? { get }
     var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> { get }

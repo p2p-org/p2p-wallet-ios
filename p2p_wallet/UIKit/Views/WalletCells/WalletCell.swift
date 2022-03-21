@@ -52,16 +52,20 @@ class WalletCell: BaseCollectionViewCell {
         } else {
             coinSymbolLabel.text = item.name /* + (item.isProcessing == true ? " (\(L10n.creating))" : "") */
         }
-        tokenCountLabel.text = "\(item.amount.toString(maximumFractionDigits: Int(item.token.decimals))) \(item.token.symbol)"
+        tokenCountLabel
+            .text = "\(item.amount.toString(maximumFractionDigits: Int(item.token.decimals))) \(item.token.symbol)"
 
         if let price = item.price {
             equityValueLabel.isHidden = false
             coinPriceLabel.isHidden = false
             coinChangeLabel.isHidden = false
 
-            equityValueLabel.text = "\(item.amountInCurrentFiat.toString(maximumFractionDigits: 2)) \(Defaults.fiat.symbol)"
+            equityValueLabel
+                .text = "\(item.amountInCurrentFiat.toString(maximumFractionDigits: 2)) \(Defaults.fiat.symbol)"
             coinPriceLabel.text = "\(price.value.toString()) \(Defaults.fiat.symbol)"
-            coinChangeLabel.text = "\((price.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
+            coinChangeLabel
+                .text =
+                "\((price.change24h?.percentage * 100).toString(maximumFractionDigits: 2, showPlus: true))% 24 hrs"
         } else {
             equityValueLabel.isHidden = true
             coinPriceLabel.isHidden = true

@@ -22,7 +22,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         var searchString: String?
 
         var isSearchingByAddress: Bool {
-            searchString?.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()), .publicKey) == true
+            searchString?
+                .matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()), .publicKey) == true
         }
 
         // MARK: - Methods
@@ -58,8 +59,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             case .solana:
                 return findAddressInSolanaNetwork(address: address)
             case .none:
-                if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()))
-                {
+                if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())) {
                     return findAddressInBitcoinNetwork(address: address)
                 } else {
                     return findAddressInSolanaNetwork(address: address)

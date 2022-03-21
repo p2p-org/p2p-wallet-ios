@@ -16,8 +16,18 @@ extension TransactionDetail {
     final class StatusView: UIStackView {
         private let disposeBag = DisposeBag()
         private let dotView = UIView(width: 8, height: 8, backgroundColor: .alertOrange, cornerRadius: 2)
-        private let statusLabel = UILabel(text: L10n.pending.uppercaseFirst, textSize: 12, weight: .medium, textColor: .textSecondary)
-        private let dateLabel = UILabel(text: "August 30, 2021 @ 12:51 PM", textSize: 15, textColor: .textSecondary, numberOfLines: 0)
+        private let statusLabel = UILabel(
+            text: L10n.pending.uppercaseFirst,
+            textSize: 12,
+            weight: .medium,
+            textColor: .textSecondary
+        )
+        private let dateLabel = UILabel(
+            text: "August 30, 2021 @ 12:51 PM",
+            textSize: 15,
+            textColor: .textSecondary,
+            numberOfLines: 0
+        )
 
         init() {
             super.init(frame: .zero)

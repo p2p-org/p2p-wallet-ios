@@ -14,9 +14,24 @@ class NewsViewModel: BEListViewModel<News> {
         super.createRequest()
             .map { _ in
                 [
-                    News(id: "1", title: "How it works", subtitle: "The most important info you should know before investing", imageUrl: nil),
-                    News(id: "2", title: "How it works2", subtitle: "The most important info you should know before investing2", imageUrl: nil),
-                    News(id: "3", title: "How it works2", subtitle: "The most important info you should know before investing2", imageUrl: nil),
+                    News(
+                        id: "1",
+                        title: "How it works",
+                        subtitle: "The most important info you should know before investing",
+                        imageUrl: nil
+                    ),
+                    News(
+                        id: "2",
+                        title: "How it works2",
+                        subtitle: "The most important info you should know before investing2",
+                        imageUrl: nil
+                    ),
+                    News(
+                        id: "3",
+                        title: "How it works2",
+                        subtitle: "The most important info you should know before investing2",
+                        imageUrl: nil
+                    ),
                 ]
             }
     }

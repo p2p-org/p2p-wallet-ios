@@ -45,7 +45,12 @@ extension Settings {
         // MARK: - Subviews
 
         private lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .zero)
-        private lazy var innerStackView = UIStackView(axis: .vertical, spacing: 1, alignment: .fill, distribution: .fill)
+        private lazy var innerStackView = UIStackView(
+            axis: .vertical,
+            spacing: 1,
+            alignment: .fill,
+            distribution: .fill
+        )
 
         // MARK: - Dependencies
 
@@ -68,7 +73,9 @@ extension Settings {
             innerStackView.autoPinEdgesToSuperviewEdges()
 
             // views
-            innerStackView.addArrangedSubviews(data.keys.sorted(by: { data[$0] ?? data[$1] ?? false }).map { self.createCell(item: $0) })
+            innerStackView
+                .addArrangedSubviews(data.keys.sorted(by: { data[$0] ?? data[$1] ?? false })
+                    .map { self.createCell(item: $0) })
 
             // reload
             reloadData()
@@ -123,9 +130,15 @@ extension Settings.SingleSelectionViewController {
         override func commonInit() {
             super.commonInit()
             backgroundColor = .contentBackground
-            let stackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill, arrangedSubviews: [
-                radioButton, label,
-            ])
+            let stackView = UIStackView(
+                axis: .horizontal,
+                spacing: 16,
+                alignment: .center,
+                distribution: .fill,
+                arrangedSubviews: [
+                    radioButton, label,
+                ]
+            )
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .init(all: 20))
         }

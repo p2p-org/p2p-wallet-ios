@@ -30,7 +30,8 @@ class WLBannerView: BEView {
         let image1 = UIImage.bannerBackground.cgImage
         let layer = CALayer()
         layer.contents = image1
-        layer.transform = CATransform3DMakeAffineTransform(CGAffineTransform(a: 1, b: 0, c: 0, d: 3.19, tx: 0, ty: -1.1))
+        layer
+            .transform = CATransform3DMakeAffineTransform(CGAffineTransform(a: 1, b: 0, c: 0, d: 3.19, tx: 0, ty: -1.1))
         return layer
     }()
 
@@ -42,12 +43,25 @@ class WLBannerView: BEView {
         ]
 
         layer.locations = [0, 1]
-        layer.transform = CATransform3DMakeAffineTransform(CGAffineTransform(a: -0.5, b: 1, c: -1, d: -5.09, tx: 1.5, ty: 2.54))
+        layer
+            .transform =
+            CATransform3DMakeAffineTransform(CGAffineTransform(a: -0.5, b: 1, c: -1, d: -5.09, tx: 1.5, ty: 2.54))
         return layer
     }()
 
-    private lazy var titleLabel = UILabel(text: L10n.reserveYourP2PUsernameNow, textSize: 15, weight: .medium, textColor: .black, numberOfLines: 0)
-    private lazy var descriptionLabel = UILabel(text: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletSList, textSize: 13, textColor: .black, numberOfLines: 0)
+    private lazy var titleLabel = UILabel(
+        text: L10n.reserveYourP2PUsernameNow,
+        textSize: 15,
+        weight: .medium,
+        textColor: .black,
+        numberOfLines: 0
+    )
+    private lazy var descriptionLabel = UILabel(
+        text: L10n.anyTokenCanBeReceivedUsingUsernameRegardlessOfWhetherItIsInYourWalletSList,
+        textSize: 13,
+        textColor: .black,
+        numberOfLines: 0
+    )
 
     // MARK: - Initializers
 
@@ -96,8 +110,8 @@ class WLBannerView: BEView {
 }
 
 // handy radians
-private func radian(degree: Double) -> Double { return degree * Double.pi / 180 }
-private func radian(degree: CGFloat) -> CGFloat { return degree * CGFloat(Double.pi / 180) }
+private func radian(degree: Double) -> Double { degree * Double.pi / 180 }
+private func radian(degree: CGFloat) -> CGFloat { degree * CGFloat(Double.pi / 180) }
 
 private func gradientPoints(size: CGSize, cssAngle: CGFloat) -> (start: CGPoint, end: CGPoint) {
     // default value of gradients from CAGradientLayer
@@ -105,23 +119,28 @@ private func gradientPoints(size: CGSize, cssAngle: CGFloat) -> (start: CGPoint,
     var end = CGPoint(x: 0.0, y: 0.0)
 
     // we must to make normolization the angle (if angle over 360deg)
-    let normalizedAngle = cssAngle.truncatingRemainder(dividingBy: 360) // if value lower than 360, truncating return the same
+    let normalizedAngle = cssAngle
+        .truncatingRemainder(dividingBy: 360) // if value lower than 360, truncating return the same
     // special tuple for computation angle and flag, indicating top side angle or not (see picture)
     var directionAngle: (angle: CGFloat, topSide: Bool) = (normalizedAngle, true)
 
     let angleDiff: CGFloat = abs(normalizedAngle) > 270.0 ? 360.0 : 180.0 // shorthand for diff for equathion
     // next we should computate the angle and their side (top side or not) by considering the sign of incoming angle
     if (90.0 ... 270.0).contains(normalizedAngle) { // these angles - bottom side of half
-        directionAngle = (normalizedAngle - angleDiff, false) // differ used for additional normalization angle for this range (90...270)
+        directionAngle = (normalizedAngle - angleDiff,
+                          false) // differ used for additional normalization angle for this range (90...270)
     }
     // the angles, which is more then of pi, we make it as top angle (diff = 360), so we get nagative angle value
     else if normalizedAngle > 270 { directionAngle = (normalizedAngle - angleDiff, true) }
     // and we make the same for negative anlges
     else if normalizedAngle < -90, normalizedAngle > -270 {
-        directionAngle = (abs(abs(normalizedAngle) - angleDiff), false) // note: here,we use ABS to cast the valid angle to bottom side, unlike 90..270 positive angles (see above)
-    } else if normalizedAngle <= -270 { directionAngle = (abs(abs(normalizedAngle) - angleDiff), true) } // in fact the same rules
+        directionAngle = (abs(abs(normalizedAngle) - angleDiff),
+                          false) // note: here,we use ABS to cast the valid angle to bottom side, unlike 90..270 positive angles (see above)
+    } else if normalizedAngle <=
+        -270 { directionAngle = (abs(abs(normalizedAngle) - angleDiff), true) } // in fact the same rules
     else {
-        directionAngle = normalizedAngle > 0 ? (normalizedAngle, true) : (normalizedAngle, true) // other angles between -90 and 90
+        directionAngle = normalizedAngle > 0 ? (normalizedAngle, true) :
+            (normalizedAngle, true) // other angles between -90 and 90
     }
 
     // for that point we get angle betwwen -90 and 90 and the side (top or bottoms)

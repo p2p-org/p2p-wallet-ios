@@ -28,14 +28,25 @@ extension SerumSwapV1 {
         private lazy var destinationWalletView = WalletView(viewModel: viewModel, type: .destination)
 
         private lazy var exchangeRateLabel = UILabel(textSize: 15, weight: .medium)
-        private lazy var exchangeRateReverseButton = UIImageView(width: 18, height: 18, image: .walletSwap, tintColor: .h8b94a9)
-            .padding(.init(all: 3))
-            .onTap(self, action: #selector(reverseExchangeRate))
+        private lazy var exchangeRateReverseButton = UIImageView(
+            width: 18,
+            height: 18,
+            image: .walletSwap,
+            tintColor: .h8b94a9
+        )
+        .padding(.init(all: 3))
+        .onTap(self, action: #selector(reverseExchangeRate))
 
         private lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
 
         private lazy var swapFeeLabel = UILabel(text: L10n.swapFees, textSize: 15, weight: .medium)
-        private lazy var errorLabel = UILabel(textSize: 15, weight: .medium, textColor: .alert, numberOfLines: 0, textAlignment: .center)
+        private lazy var errorLabel = UILabel(
+            textSize: 15,
+            weight: .medium,
+            textColor: .alert,
+            numberOfLines: 0,
+            textAlignment: .center
+        )
 
         private lazy var swapButton = WLButton.stepButton(type: .blue, label: L10n.swapNow)
             .onTap(self, action: #selector(authenticateAndSwap))
@@ -168,8 +179,8 @@ extension SerumSwapV1 {
             let presentableErrorDriver = Driver.combineLatest(
                 viewModel.inputAmountDriver,
                 viewModel.minOrderSizeDriver,
-                viewModel.exchangeRateDriver.map { $0.state },
-                viewModel.feesDriver.map { $0.state },
+                viewModel.exchangeRateDriver.map(\.state),
+                viewModel.feesDriver.map(\.state),
                 viewModel.errorDriver
             )
             .map(generateErrorText)

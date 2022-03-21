@@ -20,7 +20,12 @@ extension CreateSecurityKeys {
         private let runSpacing: CGFloat = 8
         private let keyHeight: CGFloat = 37
 
-        private lazy var content = UIStackView(axis: .vertical, spacing: runSpacing, alignment: .fill, distribution: .fillEqually)
+        private lazy var content = UIStackView(
+            axis: .vertical,
+            spacing: runSpacing,
+            alignment: .fill,
+            distribution: .fillEqually
+        )
 
         override func commonInit() {
             super.commonInit()
@@ -52,7 +57,11 @@ extension CreateSecurityKeys {
 
         fileprivate let copyButton: UIButton = UIButton.text(text: L10n.copy, image: .copyIcon, tintColor: .h5887ff)
         fileprivate let saveButton: UIButton = UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
-        fileprivate let refreshButton: UIButton = UIButton.text(text: L10n.renew, image: .refreshIcon, tintColor: .h5887ff)
+        fileprivate let refreshButton: UIButton = UIButton.text(
+            text: L10n.renew,
+            image: .refreshIcon,
+            tintColor: .h5887ff
+        )
 
         override func commonInit() {
             super.commonInit()

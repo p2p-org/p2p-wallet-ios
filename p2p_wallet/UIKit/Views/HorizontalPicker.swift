@@ -16,7 +16,12 @@ class HorizontalPicker: BEView {
         var index: Int?
     }
 
-    private lazy var stackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing)
+    private lazy var stackView = UIStackView(
+        axis: .horizontal,
+        spacing: 0,
+        alignment: .fill,
+        distribution: .equalSpacing
+    )
     weak var delegate: HorizontalPickerDelegate?
 
     var labels: [String] = [] {

@@ -27,7 +27,8 @@ extension Settings.Backup {
         var didBackupHandler: (() -> Void)?
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults.didBackupOffline)
+        private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
+            .didBackupOffline)
     }
 }
 

@@ -11,12 +11,19 @@ import SafariServices
 
 extension UIViewController {
     @discardableResult
-    func showAlert(title: String?, message: String?, buttonTitles: [String]? = nil, highlightedButtonIndex: Int? = nil, destroingIndex: Int? = nil, completion: ((Int) -> Void)? = nil) -> UIAlertController {
+    func showAlert(
+        title: String?,
+        message: String?,
+        buttonTitles: [String]? = nil,
+        highlightedButtonIndex: Int? = nil,
+        destroingIndex: Int? = nil,
+        completion: ((Int) -> Void)? = nil
+    ) -> UIAlertController {
         view.layer.removeAllAnimations()
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         var allButtons = buttonTitles ?? [String]()
-        if allButtons.count == 0 {
+        if allButtons.isEmpty {
             allButtons.append("OK")
         }
 
@@ -41,7 +48,7 @@ extension UIViewController {
 
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        if actions.count == 0 {
+        if actions.isEmpty {
             alertController.addAction(UIAlertAction(title: "OK", style: .default))
         }
 
@@ -53,11 +60,21 @@ extension UIViewController {
         return alertController
     }
 
-    func showError(_ error: Error, showPleaseTryAgain: Bool = false, additionalMessage: String? = nil, completion: (() -> Void)? = nil) {
+    func showError(
+        _ error: Error,
+        showPleaseTryAgain: Bool = false,
+        additionalMessage: String? = nil,
+        completion: (() -> Void)? = nil
+    ) {
         let description = error.readableDescription
         let vc = tabBarController ?? navigationController ?? parent ?? self
 
-        vc.showAlert(title: L10n.error.uppercaseFirst, message: description + (additionalMessage != nil ? "\n" + additionalMessage! : "") + (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""), buttonTitles: [L10n.ok]) { _ in
+        vc.showAlert(
+            title: L10n.error.uppercaseFirst,
+            message: description + (additionalMessage != nil ? "\n" + additionalMessage! : "") +
+                (showPleaseTryAgain ? "\n" + L10n.pleaseTryAgainLater : ""),
+            buttonTitles: [L10n.ok]
+        ) { _ in
             completion?()
         }
     }
@@ -143,7 +160,12 @@ extension UIViewController {
         }
     }
 
-    func transition(from oldVC: UIViewController? = nil, to newVC: UIViewController, in containerView: UIView? = nil, completion: (() -> Void)? = nil) {
+    func transition(
+        from oldVC: UIViewController? = nil,
+        to newVC: UIViewController,
+        in containerView: UIView? = nil,
+        completion: (() -> Void)? = nil
+    ) {
         let oldVC = oldVC ?? children.last
         let containerView = containerView ?? view
 

@@ -20,7 +20,11 @@ extension SendToken {
         // MARK: - Subviews
 
         private lazy var alertBannerView = UIView.greyBannerView(axis: .horizontal, spacing: 18, alignment: .top) {
-            UILabel(text: L10n.BeSureAllDetailsAreCorrectBeforeConfirmingTheTransaction.onceConfirmedItCannotBeReversed, textSize: 15, numberOfLines: 0)
+            UILabel(
+                text: L10n.BeSureAllDetailsAreCorrectBeforeConfirmingTheTransaction.onceConfirmedItCannotBeReversed,
+                textSize: 15,
+                numberOfLines: 0
+            )
             UIView.closeBannerButton()
                 .onTap(self, action: #selector(closeBannerButtonDidTouch))
         }
@@ -74,7 +78,8 @@ extension SendToken {
                         }
                 }
                 .onTap { [weak self] in
-                    self?.viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
+                    self?.viewModel
+                        .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
                 }
 
                 // Network
@@ -127,7 +132,9 @@ extension SendToken {
                         .disposed(by: disposeBag)
                     }
                     .onTap { [weak self] in
-                        self?.viewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
+                        self?.viewModel
+                            .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true,
+                                                                     preSelectedNetwork: nil))
                     }
                 }
 
@@ -151,7 +158,11 @@ extension SendToken {
                                         "\(amount.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "") ",
                                         size: 15
                                     )
-                                    .text("(~\(Defaults.fiat.symbol)\(amountInFiat.toString(maximumFractionDigits: 2)))", size: 15, color: .textSecondary)
+                                    .text(
+                                        "(~\(Defaults.fiat.symbol)\(amountInFiat.toString(maximumFractionDigits: 2)))",
+                                        size: 15,
+                                        color: .textSecondary
+                                    )
                             }
                             .drive(view.rightLabel.rx.attributedText)
                             .disposed(by: disposeBag)
@@ -213,7 +224,10 @@ extension SendToken {
                 }
             }
 
-            let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(top: 8, left: 18, bottom: 18, right: 18))
+            let scrollView = ContentHuggingScrollView(
+                scrollableAxis: .vertical,
+                contentInset: .init(top: 8, left: 18, bottom: 18, right: 18)
+            )
             scrollView.contentView.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()
 

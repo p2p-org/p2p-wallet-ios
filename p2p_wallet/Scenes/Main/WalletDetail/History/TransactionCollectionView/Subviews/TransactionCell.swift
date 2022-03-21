@@ -16,9 +16,18 @@ class TransactionCell: BaseCollectionViewCell {
     private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
     private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
     private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
-    private lazy var transactionStatusIndicator = UIImageView(width: 20, height: 20, image: .transactionIndicatorPending)
+    private lazy var transactionStatusIndicator = UIImageView(
+        width: 20,
+        height: 20,
+        image: .transactionIndicatorPending
+    )
     private lazy var descriptionLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
-    private lazy var amountInTokenLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary, textAlignment: .right)
+    private lazy var amountInTokenLabel = UILabel(
+        textSize: 15,
+        weight: .medium,
+        textColor: .textSecondary,
+        textAlignment: .right
+    )
     private lazy var swapTransactionImageView = SwapTransactionImageView(height: 18)
 
     override func commonInit() {
@@ -105,7 +114,8 @@ extension TransactionCell: BECollectionViewCell {
         amountInFiatLabel.text = nil
         amountInFiatLabel.textColor = .textBlack
         if let amountInFiat = transaction.amountInFiat {
-            var amountText = "\(Defaults.fiat.symbol)\(abs(amountInFiat).toString(showMinus: false, autoSetMaximumFractionDigits: true))"
+            var amountText =
+                "\(Defaults.fiat.symbol)\(abs(amountInFiat).toString(showMinus: false, autoSetMaximumFractionDigits: true))"
             var textColor = UIColor.textBlack
             if transaction.amount < 0 {
                 amountText = "- " + amountText
@@ -123,7 +133,9 @@ extension TransactionCell: BECollectionViewCell {
         amountInTokenLabel.text = nil
         if !isUndefinedTransaction {
             if transaction.amount != 0 {
-                amountInTokenLabel.text = "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
+                amountInTokenLabel
+                    .text =
+                    "\(transaction.amount.toString(maximumFractionDigits: 9, showPlus: true)) \(transaction.symbol)"
             }
         } else if let blockhash = transaction.blockhash {
             amountInTokenLabel.text = "#" + blockhash.prefix(4) + "..." + blockhash.suffix(4)

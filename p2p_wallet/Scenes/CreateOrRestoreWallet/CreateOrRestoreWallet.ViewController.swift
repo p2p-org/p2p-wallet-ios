@@ -76,10 +76,17 @@ extension CreateOrRestoreWallet {
             videoPlayerView.autoAdjustWidthHeightRatio(1080 / 1130)
             videoPlayerView.autoSetDimension(.height, toSize: 349.adaptiveHeight)
 
-            let ilustrationView: UIView = .ilustrationView(title: L10n.p2PWallet, description: L10n.theFutureOfNonCustodialBankingTheEasyWayToBuySellAndHoldCryptos, replacingImageWithCustomView: videoPlayerView)
+            let ilustrationView: UIView = .ilustrationView(
+                title: L10n.p2PWallet,
+                description: L10n.theFutureOfNonCustodialBankingTheEasyWayToBuySellAndHoldCryptos,
+                replacingImageWithCustomView: videoPlayerView
+            )
 
             containerView.addSubview(ilustrationView)
-            ilustrationView.autoPinEdgesToSuperviewSafeArea(with: .init(all: 20, excludingEdge: .bottom), excludingEdge: .bottom)
+            ilustrationView.autoPinEdgesToSuperviewSafeArea(
+                with: .init(all: 20, excludingEdge: .bottom),
+                excludingEdge: .bottom
+            )
             ilustrationView.autoPinEdge(.bottom, to: .top, of: buttonStackView, withOffset: -55)
         }
 

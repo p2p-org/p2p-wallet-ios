@@ -62,7 +62,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                       let inputAmount = inputAmount?.toLamport(decimals: sourceDecimals),
                       let destinationDecimals = destinationWallet?.token.decimals
                 else { return nil }
-                return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?.convertToBalance(decimals: destinationDecimals)
+                return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?
+                    .convertToBalance(decimals: destinationDecimals)
             }
             .asDriver(onErrorJustReturn: nil)
     }
@@ -157,7 +158,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         }
         isSelectingSourceWallet = false
         analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
-        navigationSubject.accept(.chooseDestinationWallet(currentlySelectedWallet: destinationWalletSubject.value, validMints: Set(destinationMints), excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey))
+        navigationSubject.accept(.chooseDestinationWallet(
+            currentlySelectedWallet: destinationWalletSubject.value,
+            validMints: Set(destinationMints),
+            excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey
+        ))
     }
 
     func retryLoadingRoutes() {
@@ -173,7 +178,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func useAllBalance() {
         enterInputAmount(availableAmountSubject.value)
 
-        notificationsService.showInAppNotification(.message(L10n.thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
+        notificationsService
+            .showInAppNotification(.message(L10n.thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
     }
 
     func enterInputAmount(_ amount: Double?) {

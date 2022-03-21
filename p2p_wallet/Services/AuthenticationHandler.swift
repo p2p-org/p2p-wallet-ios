@@ -49,7 +49,8 @@ final class AuthenticationHandler: AuthenticationHandlerType {
         UIApplication.shared.rx.applicationDidBecomeActive
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                guard Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self.timeRequiredForAuthentication
+                guard Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self
+                    .timeRequiredForAuthentication
                 else { return }
                 self.authenticate(presentationStyle: .login())
             })

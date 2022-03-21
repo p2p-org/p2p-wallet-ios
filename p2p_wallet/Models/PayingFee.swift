@@ -148,7 +148,11 @@ extension Array where Element == PayingFee {
             }
         }
 
-        return .init(transaction: transactionFee ?? 0, accountBalances: accountCreationFee ?? 0, deposit: depositFee ?? 0)
+        return .init(
+            transaction: transactionFee ?? 0,
+            accountBalances: accountCreationFee ?? 0,
+            deposit: depositFee ?? 0
+        )
     }
 
     func transactionFees(of token: String) -> SolanaSDK.Lamports {

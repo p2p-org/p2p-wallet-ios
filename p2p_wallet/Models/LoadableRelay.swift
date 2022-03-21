@@ -38,10 +38,14 @@ extension UIView {
         case .error:
             hideHud()
 
-            showErrorView(title: L10n.error, description: L10n.somethingWentWrong + ". " + L10n.pleaseTryAgainLater.uppercaseFirst, retryAction: .init(workFactory: { _ in
-                reloadAction()
-                return .just(())
-            }))
+            showErrorView(
+                title: L10n.error,
+                description: L10n.somethingWentWrong + ". " + L10n.pleaseTryAgainLater.uppercaseFirst,
+                retryAction: .init(workFactory: { _ in
+                    reloadAction()
+                    return .just(())
+                })
+            )
         }
     }
 
@@ -72,7 +76,7 @@ extension Reactive where Base: UIView {
 extension Collection where Element == LoadableState {
     var combined: Element {
         // if there is some error, return error
-        if contains(where: { $0.isError }) { return .error(nil) }
+        if contains(where: \.isError) { return .error(nil) }
         // if all loaded, return loaded
         if allSatisfy({ $0 == .loaded }) { return .loaded }
         // if there is 1 loading, return loading

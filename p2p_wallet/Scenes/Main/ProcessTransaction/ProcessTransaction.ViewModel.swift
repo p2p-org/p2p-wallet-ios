@@ -47,7 +47,9 @@ extension ProcessTransaction {
 
         init(processingTransaction: RawTransactionType) {
             rawTransaction = processingTransaction
-            pendingTransactionSubject = BehaviorRelay<PendingTransaction>(value: .init(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .sending))
+            pendingTransactionSubject =
+                BehaviorRelay<PendingTransaction>(value: .init(transactionId: nil, sentAt: Date(),
+                                                               rawTransaction: processingTransaction, status: .sending))
         }
 
         deinit {
@@ -93,7 +95,12 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         observingTransactionIndexSubject.accept(index)
 
         // send and catch error
-        let unknownErrorInfo = PendingTransaction(transactionId: nil, sentAt: Date(), rawTransaction: rawTransaction, status: .error(SolanaSDK.Error.unknown))
+        let unknownErrorInfo = PendingTransaction(
+            transactionId: nil,
+            sentAt: Date(),
+            rawTransaction: rawTransaction,
+            status: .error(SolanaSDK.Error.unknown)
+        )
 
         // observe transaction based on transaction index
         transactionHandler.observeTransaction(transactionIndex: index)
