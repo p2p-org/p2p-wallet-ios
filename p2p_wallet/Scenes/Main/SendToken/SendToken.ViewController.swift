@@ -94,27 +94,27 @@ extension SendToken {
             case .confirmation:
                 let vc = ConfirmViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
-            case .processTransaction(let request, let transactionType):
-                let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
+            case .processTransaction(let transaction):
+                let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.delegate = self
-                present(vc, animated: true, completion: nil)
+                vc.backCompletion = { [weak self] in
+                    guard let self = self else {return}
+                    self.viewModel.cleanAllFields()
+                    if self.viewModel.canGoBack {
+                        self.back()
+                    } else {
+                        self.childNavigationController.popToRootViewController(animated: true)
+                    }
+                }
+                vc.makeAnotherTransactionHandler = { [weak self] in
+                    guard let self = self else {return}
+                    self.viewModel.cleanAllFields()
+                    self.childNavigationController.popToRootViewController(animated: true)
+                }
+                childNavigationController.pushViewController(vc, animated: true)
             case .chooseNetwork:
                 let vc = SelectNetwork.ViewController(viewModel: viewModel)
                 childNavigationController.pushViewController(vc, animated: true)
-            }
-        }
-    }
-}
-
-extension SendToken.ViewController: ProcessTransactionViewControllerDelegate {
-    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
-        vc.dismiss(animated: true) { [weak self] in
-            guard let self = self else {return}
-            if self.viewModel.canGoBack {
-                self.back()
-            } else {
-                self.childNavigationController.popToRootViewController(animated: true)
             }
         }
     }

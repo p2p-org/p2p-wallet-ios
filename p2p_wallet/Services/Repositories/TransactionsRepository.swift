@@ -69,7 +69,7 @@ extension SolanaSDK: TransactionsRepository {
                             value: nil,
                             slot: nil,
                             blockTime: time,
-                            fee: info.meta?.fee,
+                            fee: .init(transaction: info.meta?.fee ?? 0, accountBalances: 0),
                             blockhash: info.transaction.message.recentBlockhash
                         )
                     )

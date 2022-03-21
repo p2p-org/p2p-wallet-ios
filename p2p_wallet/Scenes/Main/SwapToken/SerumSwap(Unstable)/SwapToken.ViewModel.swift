@@ -205,21 +205,21 @@ extension SerumSwapV1 {
             log(.swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
             
             // show processing scene
-            navigate(
-                to: .processTransaction(
-                    request: .just(""),
-                    transactionType: .swap(
-                        provider: provider,
-                        from: sourceWallet,
-                        to: destinationWallet,
-                        inputAmount: inputAmount,
-                        estimatedAmount: estimatedAmount,
-                        fees: fees,
-                        slippage: slippage,
-                        isSimulation: false
-                    )
-                )
-            )
+//            navigate(
+//                to: .processTransaction(
+//                    request: .just(""),
+//                    transactionType: .swap(
+//                        provider: provider,
+//                        from: sourceWallet,
+//                        to: destinationWallet,
+//                        inputAmount: inputAmount,
+//                        estimatedAmount: estimatedAmount,
+//                        fees: fees,
+//                        slippage: slippage,
+//                        isSimulation: false
+//                    )
+//                )
+//            )
         }
     }
 }

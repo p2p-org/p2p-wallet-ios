@@ -237,7 +237,13 @@ extension Settings {
             
             viewModel.logoutAlertSignal
                 .emit(onNext: { [weak self] in
-                    self?.showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { [weak self] (index) in
+                    self?.showAlert(
+                        title: L10n.areYouSureYouWantToSignOut,
+                        message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
+                        buttonTitles: [L10n.signOut, L10n.stay],
+                        highlightedButtonIndex: 1,
+                        destroingIndex: 0
+                    ) { [weak self] (index) in
                         guard index == 0 else { return }
                         self?.dismiss(animated: true, completion: { [weak self] in
                             self?.viewModel.logout()
@@ -254,29 +260,23 @@ extension Settings {
             case .username:
                 let vc = NewUsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
-            case .reserveUsername(owner: let owner, handler: let handler):
+            case .reserveUsername:
+                guard let owner = viewModel.getUserAddress() else {return}
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
-                    reserveNameHandler: handler
+                    reserveNameHandler: viewModel,
+                    goBackOnCompletion: true
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .backup:
-                let vc = BackupViewController(viewModel: viewModel)
+                let viewModel = Backup.ViewModel()
+                viewModel.didBackupHandler = {[weak self] in
+                    self?.viewModel.setDidBackup(true)
+                }
+                let vc = Backup.ViewController(viewModel: viewModel)
                 show(vc, sender: nil)
-            case .backupManually:
-                let vc = BackupManuallyVC()
-                vc.delegate = self
-                let nc = UINavigationController(rootViewController: vc)
-                
-                let modalVC = WLIndicatorModalVC()
-                modalVC.add(child: nc, to: modalVC.containerView)
-                
-                present(modalVC, animated: true, completion: nil)
-            case .backupShowPhrases:
-                let vc = BackupShowPhrasesVC()
-                present(vc, interactiveDismissalType: .standard, completion: nil)
             case .currency:
                 let vc = SelectFiatViewController(viewModel: viewModel)
                 show(vc, sender: nil)
@@ -320,12 +320,6 @@ extension Settings {
                 PhotoLibraryAlertPresenter().present(on: self)
             }
         }
-    }
-}
-
-extension Settings.ViewController: BackupManuallyVCDelegate {
-    func backupManuallyVCDidBackup(_ vc: BackupManuallyVC) {
-        viewModel.setDidBackupOffline()
     }
 }
 

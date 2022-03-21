@@ -13,13 +13,12 @@ class BaseWalletCell: BECompositionView {
     
     private var iconRef = BERef<CoinLogoImageView>()
     private var coinNameRef = BERef<UILabel>()
-    private var exchangePriceRef = BERef<UILabel>()
     private var amountRef = BERef<UILabel>()
     private var amountInFiatRef = BERef<UILabel>()
     private var contentRef = BERef<UIView>()
     public var swipeableCellRef = BERef<SwipeableCell>()
     
-    init(leadingActions: UIView, trailingActions: UIView) {
+    init(leadingActions: UIView? = nil, trailingActions: UIView? = nil) {
         self.leadingActions = leadingActions
         self.trailingActions = trailingActions
         super.init()
@@ -34,7 +33,8 @@ class BaseWalletCell: BECompositionView {
                 .withTag(1)
                 .padding(.init(x: 0, y: 12))
                 .backgroundColor(color: .background)
-                .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner], radius: 4),
+                .lightShadow()
+                .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMinYCorner, .layerMinXMaxYCorner], radius: 4),
             trailingActions: trailingActions
         )
             .bind(swipeableCellRef)
@@ -84,14 +84,6 @@ class BaseWalletCell: BECompositionView {
             coinNameRef.view?.text = item.token.name
         }
         amountRef.view?.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
-        
-        if let exchange = item.price?.value?.toString(maximumFractionDigits: 2) {
-            exchangePriceRef.view?.isHidden = false
-            exchangePriceRef.view?.text = "\(Defaults.fiat.symbol) \(exchange)"
-        } else {
-            exchangePriceRef.view?.isHidden = true
-        }
-        
         amountInFiatRef.view?.text = "\(Defaults.fiat.symbol) \(item.amountInCurrentFiat.toString(maximumFractionDigits: 2))"
     }
     

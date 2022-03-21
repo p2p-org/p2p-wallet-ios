@@ -39,12 +39,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     var availableAmountDriver: Driver<Double?> {
-        Driver.combineLatest(
-            sourceWalletDriver,
-            destinationWalletDriver,
-            feesDriver
-        )
-        .map { [weak self] _ in self?.calculateAvailableAmount() }
+        availableAmountSubject.asDriver()
     }
 
     var slippageDriver: Driver<Double> {
@@ -175,15 +170,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func useAllBalance() {
-        let availableAmount = calculateAvailableAmount()
-        enterInputAmount(availableAmount)
-
-        // fees depends on input amount, so after entering availableAmount, fees has changed, so needed to calculate availableAmount again with 300 milliseconds of debouncing
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [weak self] in
-            guard let self = self else { return }
-            let availableAmountUpdated = self.calculateAvailableAmount()
-            self.enterInputAmount(availableAmountUpdated)
-        }
+        enterInputAmount(availableAmountSubject.value)
+        
+        notificationsService.showInAppNotification(.message(L10n.thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
     }
 
     func enterInputAmount(_ amount: Double?) {
@@ -253,5 +242,15 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     func changeFeePayingToken(to payingToken: Wallet) {
         payingWalletSubject.accept(payingToken)
+    }
+    
+    func cleanAllFields() {
+        sourceWalletSubject.accept(nil)
+        destinationWalletSubject.accept(nil)
+        enterInputAmount(nil)
+    }
+    
+    func showNotifications(_ message: String) {
+        notificationsService.showInAppNotification(.message(message))
     }
 }

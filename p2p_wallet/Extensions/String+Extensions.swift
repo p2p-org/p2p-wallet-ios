@@ -60,7 +60,10 @@ extension String {
     }
     
     func withNameServiceDomain() -> String {
-        self + Self.nameServiceDomain
+        guard !self.hasSuffix(Self.nameServiceDomain) else {
+            return self
+        }
+        return self + Self.nameServiceDomain
     }
     
     static var nameServiceDomain: String {

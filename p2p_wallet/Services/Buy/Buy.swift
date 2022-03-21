@@ -18,11 +18,45 @@ struct Buy {
     enum CryptoCurrency: String, BuyCurrencyType {
         case eth = "eth"
         case sol = "sol"
-        case usdt = "usdt"
+        case usdc = "usdc"
         
         func toString() -> String { rawValue }
         
-        static let all: Set<CryptoCurrency> = [.eth, .sol, .usdt]
+        var fullname: String {
+            switch self {
+            case .eth:
+                return "Ethereum"
+            case .sol:
+                return "Solana"
+            case .usdc:
+                return "USD Coin"
+            }
+        }
+        
+        // TODO: move code to moonpay domain
+        var code: String {
+            switch self {
+            case .eth:
+                return "eth"
+            case .sol:
+                return "sol"
+            case .usdc:
+                return "usdc_sol"
+            }
+        }
+        
+        var tokenName: String {
+            switch self {
+            case .eth:
+                return "ETH"
+            case .sol:
+                return "SOL"
+            case .usdc:
+                return "USDC"
+            }
+        }
+        
+        static let all: Set<CryptoCurrency> = [.eth, .sol, .usdc]
     }
     
     struct ExchangeInput {
@@ -32,7 +66,14 @@ struct Buy {
         func swap(with output: ExchangeOutput) -> (ExchangeInput, ExchangeOutput) {
             (
                 .init(amount: output.amount, currency: output.currency),
-                .init(amount: amount, currency: currency, processingFee: output.processingFee, networkFee: output.networkFee, total: output.total)
+                .init(
+                    amount: amount,
+                    currency: currency,
+                    processingFee: output.processingFee,
+                    networkFee: output.networkFee,
+                    purchaseCost: output.purchaseCost,
+                    total: output.total
+                )
             )
         }
     }
@@ -43,6 +84,8 @@ struct Buy {
         
         let processingFee: Double
         let networkFee: Double
+        let purchaseCost: Double
+        
         let total: Double
     }
     

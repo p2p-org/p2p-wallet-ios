@@ -34,10 +34,10 @@ extension Buy {
                         currency: currency,
                         processingFee: quote.extraFeeAmount,
                         networkFee: quote.networkFeeAmount,
+                        purchaseCost: quote.baseCurrencyAmount,
                         total: quote.totalAmount
                     )
                 }.catch { error in
-                    print(error)
                     if let error = error as? Moonpay.Error {
                         switch error {
                         case .message(message: let message):
@@ -56,6 +56,25 @@ extension Buy {
                 .getPrice(for: cryptoCurrency.rawValue, as: fiatCurrency.rawValue.uppercased())
                 .map { exchangeRate in .init(amount: exchangeRate, cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency) }
         }
+        
+        private func _getMinAmount(currencies: Moonpay.Currencies, for currency: Currency) -> Double {
+            currencies.first { e in e.code == currency.toString() }?.minBuyAmount ?? 0.0
+        }
+        
+        func getMinAmounts(_ currency1: Currency, _ currency2: Currency) -> Single<(Double, Double)> {
+            provider.getAllSupportedCurrencies()
+                .map { currencies in
+                    (
+                        _getMinAmount(currencies: currencies, for: currency1),
+                        _getMinAmount(currencies: currencies, for: currency2)
+                    )
+                }
+        }
+        
+        func getMinAmount(currency: Currency) -> Single<Double> {
+            provider
+                .getAllSupportedCurrencies()
+                .map { _getMinAmount(currencies: $0, for: currency) }
+        }
     }
-    
 }

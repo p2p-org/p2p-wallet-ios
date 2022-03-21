@@ -18,14 +18,14 @@ extension Home {
         private let disposeBag = DisposeBag()
         private let viewModel: HomeViewModelType
         private var headerViewScrollDelegate = HeaderScrollDelegate()
-
+        
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
-
+            
             viewModel.walletsRepository.reload()
         }
-
+        
         override func build() -> UIView {
             BESafeArea {
                 BEVStack {
@@ -35,12 +35,10 @@ extension Home {
                             .setupWithType(UILabel.self) { label in
                                 let p2pWallet = NSMutableAttributedString()
                                     .text(L10n.p2PWallet, size: 17, weight: .semibold)
-                                    .text(" ")
-                                    .text(L10n.beta, size: 17, weight: .semibold, color: .secondaryLabel)
                                 label.attributedText = p2pWallet
                             }
                     }.padding(.init(x: 0, y: 12))
-
+                    
                     // Indicator
                     WLStatusIndicatorView(forAutoLayout: ()).setupWithType(WLStatusIndicatorView.self) { view in
                         viewModel.currentPricesDriver
@@ -59,7 +57,7 @@ extension Home {
                             })
                             .disposed(by: disposeBag)
                     }
-
+                    
                     BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
                         guard let self = self else { return UIView() }
                         return state ? self.content() : self.emptyScreen()
@@ -67,11 +65,11 @@ extension Home {
                 }
             }
         }
-
+        
         func emptyScreen() -> UIView {
             EmptyView(viewModel: viewModel)
         }
-
+        
         func content() -> UIView {
             BEZStack {
                 // Tokens
@@ -96,7 +94,7 @@ extension Home {
                                         return
                                     }
                                 }
-
+                                
                             },
                             HiddenWalletsSection(
                                 index: 2,
@@ -112,10 +110,10 @@ extension Home {
                     ).setupWithType(WalletsCollectionView.self) { collectionView in
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
-
+                        
                         collectionView.contentInset.modify(dTop: 190, dBottom: 90)
                         collectionView.clipsToBounds = true
-
+                        
                         viewModel
                             .isWalletReadyDriver
                             .map { !$0 }
@@ -123,7 +121,7 @@ extension Home {
                             .disposed(by: disposeBag)
                     }.padding(.init(only: .top, inset: 12))
                 }
-
+                
                 // Action bar
                 BEZStackPosition(mode: .pinEdges([.top, .left, .right])) {
                     FloatingHeaderView(viewModel: viewModel)
@@ -145,15 +143,29 @@ extension Home.RootView: BECollectionViewDelegate {
 extension HomeViewModelType {
     fileprivate var isWalletReadyDriver: Driver<Bool> {
         Observable.zip(
-            walletsRepository.stateObservable,
-            walletsRepository.dataObservable
-                .map { $0?.reduce(0) { (partialResult, wallet) in partialResult + wallet.amount } ?? 0 }
-        )
-        .map { (state, amount) in
-            if state != .loaded { return true }
-            return amount > 0
-        }
-        .distinctUntilChanged { $0 }
-        .asDriver(onErrorJustReturn: true)
+                walletsRepository.stateObservable,
+                walletsRepository.dataObservable
+                    .filter { $0 != nil }
+                    .withPrevious()
+            )
+            .map { (state, change) in
+                if let previous = change.0 {
+                    if (state == .loading || state == .initializing) {
+                        let amount = previous?.reduce(0) { (
+                            partialResult,
+                            wallet
+                        ) in partialResult + wallet.amount } ?? 0
+                        return amount > 0
+                    } else {
+                        let amount = change.1?.reduce(0) { (partialResult, wallet) in partialResult + wallet.amount } ?? 0
+                        return amount > 0
+                    }
+                }
+                
+                // First initialize
+                return true
+            }
+            .distinctUntilChanged { $0 }
+            .asDriver(onErrorJustReturn: true)
     }
 }

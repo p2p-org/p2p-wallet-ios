@@ -23,27 +23,13 @@ extension Home {
 
         override func build() -> UIView {
             BEVStack(alignment: .center) {
-                UILabel(text: L10n.balance)
+                UILabel(text: L10n.balance, textSize: 13, textColor: .secondaryLabel)
                 UIView(height: 4)
                 UILabel(text: "", textSize: 28, weight: .bold).setupWithType(UILabel.self) { view in
                     viewModel
                         .balance
                         .drive(view.rx.text)
                         .disposed(by: disposeBag)
-
-                    /*
-                    viewModel
-                        .isLoading
-                        .drive(onNext: { [weak view] state in
-                            if state {
-                                view?.hideLoader()
-                                view?.showLoader(customGradientColor: .defaultLoaderGradientColors)
-                            } else {
-                                view?.hideLoader()
-                            }
-                        })
-                        .disposed(by: disposeBag)
-                     */
                 }
             }
         }
