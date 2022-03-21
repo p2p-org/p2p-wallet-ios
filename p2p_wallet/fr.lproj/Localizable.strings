@@ -774,3 +774,6 @@
 "Deposit" = "Verser";
 "This value is calculated by subtracting the transaction fee from your balance." = "Cette valeur est calculée en soustrayant les frais de transaction de votre solde.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "La valeur maximale est calculée en soustrayant les frais de transaction de votre solde.";
+"Are you sure you want to sign out?" = "Êtes-vous certain de vouloir vous déconnecter?";
+"Without the backup, you may never be able to access this account." = "Sans la sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";
+"Sign Out" = "Se déconnecter";
