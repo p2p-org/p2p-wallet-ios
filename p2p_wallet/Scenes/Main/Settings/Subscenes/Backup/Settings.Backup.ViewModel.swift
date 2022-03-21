@@ -9,12 +9,12 @@ import Foundation
 import RxCocoa
 
 protocol SettingsBackupViewModelType {
-    var navigationDriver: Driver<Settings.Backup.NavigatableScene?> {get}
+    var navigationDriver: Driver<Settings.Backup.NavigatableScene?> { get }
     var didBackupDriver: Driver<Bool> { get }
     func backupUsingICloud()
     func backupManually()
     func setDidBackupOffline()
-    
+
     func navigate(to scene: Settings.Backup.NavigatableScene)
 }
 
@@ -25,7 +25,7 @@ extension Settings.Backup {
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var notificationsService: NotificationsServiceType
         var didBackupHandler: (() -> Void)?
-        
+
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults.didBackupOffline)
     }
@@ -35,11 +35,11 @@ extension Settings.Backup.ViewModel: SettingsBackupViewModelType {
     var navigationDriver: Driver<Settings.Backup.NavigatableScene?> {
         navigationSubject.asDriver()
     }
-    
+
     var didBackupDriver: Driver<Bool> {
         didBackupSubject.asDriver()
     }
-    
+
     func backupManually() {
         if didBackupSubject.value {
             authenticationHandler.pauseAuthentication(true)
@@ -59,11 +59,11 @@ extension Settings.Backup.ViewModel: SettingsBackupViewModelType {
             navigate(to: .backupManually)
         }
     }
-    
+
     func backupUsingICloud() {
         guard let account = storage.account?.phrase else { return }
         authenticationHandler.pauseAuthentication(true)
-        
+
         deviceOwnerAuthenticationHandler.requiredOwner(onSuccess: {
             _ = self.storage.saveToICloud(
                 account: .init(
@@ -85,16 +85,16 @@ extension Settings.Backup.ViewModel: SettingsBackupViewModelType {
             }
         })
     }
-    
+
     func navigate(to scene: Settings.Backup.NavigatableScene) {
         navigationSubject.accept(scene)
     }
-    
+
     func setDidBackupOffline() {
         Defaults.didBackupOffline = true
         setDidBackup(true)
     }
-    
+
     func setDidBackup(_ didBackup: Bool) {
         didBackupSubject.accept(didBackup)
         didBackupHandler?()

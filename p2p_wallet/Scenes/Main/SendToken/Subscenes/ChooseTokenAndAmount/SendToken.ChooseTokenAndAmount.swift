@@ -15,17 +15,17 @@ extension SendToken {
             case backToConfirmation // available only when viewModel.showAfterConfirmation = true
             case invalidTokenForSelectedNetworkAlert
         }
-        
+
         enum CurrencyMode {
             case token, fiat
         }
-        
+
         enum Error: String {
             case loadingIsNotCompleted
             case destinationWalletIsMissing
             case invalidAmount
             case insufficientFunds
-            
+
             var buttonSuggestion: String? {
                 switch self {
                 case .loadingIsNotCompleted:

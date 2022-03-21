@@ -5,25 +5,25 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
-import Foundation
 import BECollectionView
-import RxSwift
-import RxCocoa
+import Foundation
 import RenVMSwift
+import RxCocoa
+import RxSwift
 
 extension RenBTCReceivingStatuses {
     class TxDetailViewController: BEScene {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
+
         private var viewModel: TxDetailViewModel
-        
+
         init(viewModel: TxDetailViewModel) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
@@ -57,19 +57,19 @@ extension RenBTCReceivingStatuses {
                             interGroupSpacing: 1,
                             itemHeight: .estimated(85)
                         ),
-                        headerBuilder: { (view, section) in
+                        headerBuilder: { view, section in
                             guard let view = view as? SectionHeaderView else { return }
                             guard let section = section else {
                                 view.setUp(headerTitle: "")
                                 return
                             }
-                            
+
                             let date = section.userInfo as? Date ?? Date()
                             let dateFormatter = DateFormatter()
                             dateFormatter.dateStyle = .medium
                             dateFormatter.timeStyle = .none
                             dateFormatter.locale = Locale.shared
-                            
+
                             view.setUp(
                                 headerTitle: dateFormatter.string(from: date),
                                 headerFont: UIFont.systemFont(ofSize: 12),
@@ -81,27 +81,30 @@ extension RenBTCReceivingStatuses {
             }
         }
     }
-    
+
     class TxDetailViewModel: BEListViewModelType {
         // MARK: - Dependencies
+
         let processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]>
         let txid: String
-        
+
         // MARK: - Properties
+
         let disposeBag = DisposeBag()
         var data = [Record]()
-        
+
         // MARK: - Initializer
+
         init(processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]>, txid: String) {
             self.processingTxsDriver = processingTxsDriver
             self.txid = txid
             bind()
         }
-        
+
         var currentTx: Driver<RenVM.LockAndMint.ProcessingTx?> {
             processingTxsDriver.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
         }
-        
+
         func bind() {
             processingTxsDriver
                 .drive(onNext: { [weak self] in
@@ -109,36 +112,36 @@ extension RenBTCReceivingStatuses {
                     // transform processingTxs to records
                     let processingTxs = new
                     var records = [Record]()
-                    
+
                     guard let tx = processingTxs.first(where: { $0.tx.txid == self?.txid }) else { return }
                     if let mintedAt = tx.mintedAt {
                         records.append(.init(txid: tx.tx.txid, status: .minted, time: mintedAt, amount: tx.tx.value))
                     }
-                    
+
                     if let submittedAt = tx.submittedAt {
                         records.append(.init(txid: tx.tx.txid, status: .submitted, time: submittedAt))
                     }
-                    
+
                     if let confirmedAt = tx.confirmedAt {
                         records.append(.init(txid: tx.tx.txid, status: .confirmed, time: confirmedAt))
                     }
-                    
+
                     if let threeVoteAt = tx.threeVoteAt {
                         records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: threeVoteAt, vout: 3))
                     }
-                    
+
                     if let twoVoteAt = tx.twoVoteAt {
                         records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: twoVoteAt, vout: 2))
                     }
-                    
+
                     if let oneVoteAt = tx.oneVoteAt {
                         records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: oneVoteAt, vout: 1))
                     }
-                    
+
                     if let receiveAt = tx.receivedAt {
                         records.append(.init(txid: tx.tx.txid, status: .waitingForConfirmation, time: receiveAt, vout: 0))
                     }
-                    
+
                     records.sort { rc1, rc2 in
                         if rc1.time == rc2.time {
                             return (rc1.vout ?? 0) > (rc2.vout ?? 0)
@@ -146,44 +149,44 @@ extension RenBTCReceivingStatuses {
                             return rc1.time > rc2.time
                         }
                     }
-                    
+
                     self?.data = records
                 })
                 .disposed(by: disposeBag)
         }
-        
+
         var dataDidChange: Observable<Void> {
             processingTxsDriver.map { _ in () }.asObservable()
         }
-        
+
         var currentState: BEFetcherState {
             .loaded
         }
-        
+
         var isPaginationEnabled: Bool {
             false
         }
-        
+
         func reload() {
             // do nothing
         }
-        
+
         func convertDataToAnyHashable() -> [AnyHashable] {
             data as [AnyHashable]
         }
-        
+
         func fetchNext() {
             // do nothing
         }
-        
-        func setState(_ state: BEFetcherState, withData data: [AnyHashable]?) {
+
+        func setState(_: BEFetcherState, withData _: [AnyHashable]?) {
             // do nothing
         }
-        
+
         func refreshUI() {
             // do nothing
         }
-        
+
         func getCurrentPage() -> Int? {
             0
         }

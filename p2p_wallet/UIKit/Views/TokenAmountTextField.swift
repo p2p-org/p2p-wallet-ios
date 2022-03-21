@@ -10,23 +10,23 @@ import Foundation
 class TokenAmountTextField: BEDecimalTextField {
     private var decimals: SolanaSDK.Decimals?
     var value: Double {
-        text.map {$0.double ?? 0} ?? 0
+        text.map { $0.double ?? 0 } ?? 0
     }
-    
+
     func setUp(decimals: SolanaSDK.Decimals?) {
         self.decimals = decimals
-        if let currentValue = self.text?.double?.toLamport(decimals: decimals ?? 9),
+        if let currentValue = text?.double?.toLamport(decimals: decimals ?? 9),
            currentValue == 0
         {
-            self.text = nil
-            self.sendActions(for: .editingChanged)
+            text = nil
+            sendActions(for: .editingChanged)
         }
     }
-    
+
     override func shouldChangeCharactersInRange(_ range: NSRange, replacementString string: String) -> Bool {
         // get the current text, or use an empty string if that failed
         let currentText = text ?? ""
-        
+
         guard super.shouldChangeCharactersInRange(range, replacementString: string),
               let stringRange = Range(range, in: currentText)
         else {
@@ -39,12 +39,12 @@ class TokenAmountTextField: BEDecimalTextField {
             let decimals = Int(decimals ?? 9)
             if offset > decimals {
                 let endIndex = updatedText.index(dotIndex, offsetBy: decimals)
-                updatedText = String(updatedText[updatedText.startIndex...endIndex])
+                updatedText = String(updatedText[updatedText.startIndex ... endIndex])
                 text = updatedText
                 return false
             }
         }
-        
+
         return true
     }
 }

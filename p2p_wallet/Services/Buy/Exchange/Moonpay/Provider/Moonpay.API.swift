@@ -10,10 +10,10 @@ extension Moonpay {
             let message: String
             let type: String
         }
-        
+
         let endpoint: String
         let apiKey: String
-        
+
         static func fromEnvironment() -> API {
             let endpoint = "https://api.moonpay.com/v3"
             if Defaults.apiEndPoint.network == .mainnetBeta {

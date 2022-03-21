@@ -38,7 +38,7 @@ extension Home {
                 }
             }.setup { view in
                 guard let v1 = view.viewWithTag(1),
-                    let v2 = view.viewWithTag(2)
+                      let v2 = view.viewWithTag(2)
                 else { return }
 
                 v2.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)

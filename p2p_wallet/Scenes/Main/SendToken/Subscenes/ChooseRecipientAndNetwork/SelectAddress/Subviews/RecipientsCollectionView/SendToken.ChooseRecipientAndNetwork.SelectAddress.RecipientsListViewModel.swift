@@ -5,18 +5,20 @@
 //  Created by Chung Tran on 27/10/2021.
 //
 
+import BECollectionView
 import Foundation
 import RxSwift
-import BECollectionView
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RecipientsListViewModel: BEListViewModel<SendToken.Recipient> {
         // MARK: - Dependencies
+
         @Injected private var nameService: NameServiceType
         var solanaAPIClient: SendServiceType!
         var preSelectedNetwork: SendToken.Network!
-        
+
         // MARK: - Properties
+
         var searchString: String?
 
         var isSearchingByAddress: Bool {
@@ -24,6 +26,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         // MARK: - Methods
+
         /// The only methods that MUST be inheritted
         override func createRequest() -> Single<[SendToken.Recipient]> {
             guard let searchString = searchString, !searchString.isEmpty else { return .just([]) }
@@ -63,7 +66,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
             }
         }
-        
+
         private func findAddressInBitcoinNetwork(address: String) -> Single<[SendToken.Recipient]> {
             if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())) {
                 return .just([.init(address: address, name: nil, hasNoFunds: false)])
@@ -71,16 +74,16 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 return .just([])
             }
         }
-        
+
         private func findAddressInSolanaNetwork(address: String) -> Single<[SendToken.Recipient]> {
             nameService
                 .getName(address)
-                .flatMap {[weak self] name -> Single<(String?, Bool)> in
-                    guard let self = self, name == nil else {return .just((name, false))}
+                .flatMap { [weak self] name -> Single<(String?, Bool)> in
+                    guard let self = self, name == nil else { return .just((name, false)) }
                     // check funds
                     return self.solanaAPIClient.checkAccountValidation(account: address)
                         .catchAndReturn(false)
-                        .map {(name, !$0)}
+                        .map { (name, !$0) }
                 }
                 .map {
                     [
@@ -88,7 +91,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                             address: address,
                             name: $0.0?.withNameServiceDomain(),
                             hasNoFunds: $0.1
-                        )
+                        ),
                     ]
                 }
                 .catchAndReturn([
@@ -97,7 +100,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                         name: nil,
                         hasNoFunds: false,
                         hasNoInfo: true
-                    )
+                    ),
                 ])
         }
     }

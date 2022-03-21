@@ -5,23 +5,25 @@
 //  Created by Andrew Vasiliev on 03.12.2021.
 //
 
-import UIKit
 import BEPureLayout
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension OrcaSwapV2 {
     final class RatesStackView: UIStackView {
         // MARK: - Properties
+
         private let disposeBag = DisposeBag()
         private let exchangeRateDriver: Driver<Double?>
         private let sourceWalletDriver: Driver<Wallet?>
         private let destinationWalletDriver: Driver<Wallet?>
-        
+
         // MARK: - Subviews
+
         private let fromRatesView = DetailRatesView()
         private let toRatesView = DetailRatesView()
-        
+
         init(
             exchangeRateDriver: Driver<Double?>,
             sourceWalletDriver: Driver<Wallet?>,
@@ -35,18 +37,19 @@ extension OrcaSwapV2 {
             layout()
             bind()
         }
-        
-        required init(coder: NSCoder) {
+
+        @available(*, unavailable)
+        required init(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+
         private func layout() {
             addArrangedSubviews {
                 fromRatesView.padding(.init(x: 0, y: 3))
                 toRatesView.padding(.init(x: 0, y: 3))
             }
         }
-        
+
         private func bind() {
             exchangeRateDriver
                 .withLatestFrom(
@@ -54,12 +57,12 @@ extension OrcaSwapV2 {
                         sourceWalletDriver,
                         destinationWalletDriver
                     ),
-                    resultSelector: {($0, $1.0, $1.1)}
+                    resultSelector: { ($0, $1.0, $1.1) }
                 )
                 .map { rate, source, destination -> RateRowContent? in
                     guard let rate = rate,
-                        let source = source,
-                        let destination = destination
+                          let source = source,
+                          let destination = destination
                     else {
                         return nil
                     }
@@ -76,7 +79,6 @@ extension OrcaSwapV2 {
                         price: "\(rate.toString(maximumFractionDigits: 9)) \(destinationSymbol)",
                         fiatPrice: formattedFiatPrice
                     )
-
                 }
                 .drive { [weak fromRatesView] in
                     fromRatesView?.isHidden = $0 == nil
@@ -86,20 +88,20 @@ extension OrcaSwapV2 {
                     }
                 }
                 .disposed(by: disposeBag)
-            
+
             exchangeRateDriver
-                .map {$0.isNilOrZero ? nil: 1 / $0}
+                .map { $0.isNilOrZero ? nil : 1 / $0 }
                 .withLatestFrom(
                     Driver.combineLatest(
                         sourceWalletDriver,
                         destinationWalletDriver
                     ),
-                    resultSelector: {($0, $1.0, $1.1)}
+                    resultSelector: { ($0, $1.0, $1.1) }
                 )
                 .map { rate, source, destination -> RateRowContent? in
                     guard let rate = rate,
-                        let source = source,
-                        let destination = destination
+                          let source = source,
+                          let destination = destination
                     else {
                         return nil
                     }
@@ -116,7 +118,6 @@ extension OrcaSwapV2 {
                         price: "\(rate.toString(maximumFractionDigits: 9)) \(sourceSymbol)",
                         fiatPrice: formattedFiatPrice
                     )
-
                 }
                 .drive { [weak toRatesView] in
                     toRatesView?.isHidden = $0 == nil
@@ -128,7 +129,7 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
         }
     }
-    
+
     private final class DetailRatesView: BEView {
         private let horizontalLabelsWithSpacer = HorizontalLabelsWithSpacer()
 

@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 import UIKit
 
 extension ReceiveToken {
@@ -15,8 +15,9 @@ extension ReceiveToken {
         private let disposeBag = DisposeBag()
         private let viewModel: ReceiveTokenBitcoinViewModelType
         private let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
-        
+
         // MARK: - Initializers
+
         init(
             viewModel: ReceiveTokenBitcoinViewModelType,
             receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
@@ -25,10 +26,9 @@ extension ReceiveToken {
             self.receiveSolanaViewModel = receiveSolanaViewModel
             super.init(frame: .zero)
         }
-        
+
         override func build() -> UIView {
             UIStackView(axis: .vertical, spacing: 18, alignment: .fill) {
-                
                 // Qr code
                 QrCodeCard(token: .renBTC)
                     .onCopy { [unowned self] _ in
@@ -40,10 +40,10 @@ extension ReceiveToken {
                     }.setupWithType(QrCodeCard.self) { card in
                         viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
                     }
-                
+
                 // Status
                 statusButton()
-                
+
                 // Description
                 UIView.greyBannerView(spacing: 12) {
                     ReceiveToken.textBuilder(text: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin).asMarkdown())
@@ -60,7 +60,7 @@ extension ReceiveToken {
                 }
             }
         }
-        
+
         func statusButton() -> UIView {
             WLCard {
                 UIStackView(axis: .horizontal) {
@@ -88,8 +88,8 @@ extension ReceiveToken {
                         }
                 }.padding(.init(x: 18, y: 14))
             }
-                .setup { view in viewModel.showReceivingStatusesEnableDriver().drive(view.rx.isUserInteractionEnabled).disposed(by: disposeBag) }
-                .onTap { [unowned self] in viewModel.showReceivingStatuses() }
+            .setup { view in viewModel.showReceivingStatusesEnableDriver().drive(view.rx.isUserInteractionEnabled).disposed(by: disposeBag) }
+            .onTap { [unowned self] in viewModel.showReceivingStatuses() }
         }
     }
 }
@@ -100,39 +100,39 @@ private extension ReceiveTokenBitcoinViewModelType {
             .map { $0.count > 0 }
             .asDriver()
     }
-    
+
     func txsCountDriver() -> Driver<String?> {
         processingTxsDriver
             .map { trx in "\(trx.count)" }
             .asDriver()
     }
-    
+
     func lastTrxDate() -> Driver<String?> {
         processingTxsDriver
             .map { trx in
                 guard let lastTrx = trx.first,
                       let receiveAt = lastTrx.submittedAt else { return L10n.none }
-                
+
                 // Time formatter
                 let formatter = RelativeDateTimeFormatter()
                 formatter.unitsStyle = .short
                 let time = formatter.localizedString(for: receiveAt, relativeTo: Date())
-                
+
                 return "\(L10n.theLastOne) \(time)"
             }.asDriver()
     }
-    
+
     func timeRemainsDriver() -> Driver<NSAttributedString?> {
         timerSignal.map { [weak self] in
             guard let self = self else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
             guard let endAt = self.getSessionEndDate()
-                else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
+            else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
             let currentDate = Date()
             let calendar = Calendar.current
-            
+
             let d = calendar.dateComponents([.hour, .minute, .second], from: currentDate, to: endAt)
             let countdown = String(format: "%02d:%02d:%02d", d.hour ?? 0, d.minute ?? 0, d.second ?? 0)
-            
+
             return L10n.isTheRemainingTimeToSafelySendTheAssets(countdown).asMarkdown()
         }.asDriver(onErrorJustReturn: NSAttributedString(string: "00:00:00"))
     }

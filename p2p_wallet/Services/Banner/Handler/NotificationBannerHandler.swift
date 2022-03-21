@@ -6,7 +6,7 @@ import Foundation
 import RxSwift
 
 class NotificationBanner: Banners.Banner {
-    static fileprivate let id = "notification-banner"
+    fileprivate static let id = "notification-banner"
 
     init() {
         super.init(
@@ -21,7 +21,7 @@ class NotificationBanner: Banners.Banner {
             .title: L10n.donTMissOutOnImportantUpdates,
             .action: L10n.turnOnNotifications,
             .background: UIColor(red: 0.957, green: 0.831, blue: 0.898, alpha: 1),
-            .icon: UIImage.bannerNotification
+            .icon: UIImage.bannerNotification,
         ]
     }
 }

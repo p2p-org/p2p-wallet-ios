@@ -17,13 +17,13 @@ extension SolanaSDK: TransactionsRepository {
     func getTransactionsHistory(account: String, accountSymbol: String?, before: String?, limit: Int, p2pFeePayerPubkeys: [String]) -> Single<[SolanaSDK.ParsedTransaction]> {
         getSignaturesForAddress(address: account, configs: RequestConfiguration(limit: limit, before: before))
             .flatMap { [weak self] activities in
-                guard let self = self else {throw Error.unknown}
+                guard let self = self else { throw Error.unknown }
                 // construct parser
                 let parser = SolanaSDK.TransactionParser(solanaSDK: self)
-                
+
                 // parse
                 return Single.zip(try activities.map { [weak self] activity in
-                    guard let self = self else {throw Error.unknown}
+                    guard let self = self else { throw Error.unknown }
                     return self.getTransaction(account: account, accountSymbol: accountSymbol, signature: activity.signature, parser: parser, p2pFeePayerPubkeys: p2pFeePayerPubkeys)
                         .map {
                             SolanaSDK.ParsedTransaction(
@@ -38,18 +38,18 @@ extension SolanaSDK: TransactionsRepository {
                         }
                 })
             }
-            .do(onSuccess: {transactions in
+            .do(onSuccess: { transactions in
                 Logger.log(message: "Fetched \(transactions.count) transactions", event: .debug)
             }, onError: {
                 Logger.log(message: $0.readableDescription, event: .debug)
             })
     }
-    
+
     func getTransaction(account: String, accountSymbol: String?, signature: String, parser: SolanaSDKTransactionParserType, p2pFeePayerPubkeys: [String]) -> Single<SolanaSDK.ParsedTransaction> {
         getTransaction(transactionSignature: signature)
             .flatMap { info in
-                let time = info.blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(info.blockTime!)): nil
-                
+                let time = info.blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(info.blockTime!)) : nil
+
                 return parser.parse(transactionInfo: info, myAccount: account, myAccountSymbol: accountSymbol, p2pFeePayerPubkeys: p2pFeePayerPubkeys)
                     .map {
                         SolanaSDK.ParsedTransaction(

@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 extension UIView {
     enum DrivableProperty: String {
@@ -18,20 +18,20 @@ extension UIView {
         case textColor
         case image
     }
-    
+
     func with<T>(
         _ drivableProperty: DrivableProperty,
         drivenBy driver: Driver<T>,
         disposedBy disposeBag: DisposeBag
     ) -> Self {
         driver
-            .drive(onNext: {[weak self] value in
+            .drive(onNext: { [weak self] value in
                 self?.setValue(value, forKey: drivableProperty.rawValue)
             })
             .disposed(by: disposeBag)
         return self
     }
-    
+
 //    func withDrivenProperty<T, V>(
 //        _ keyPath: KeyPath<Reactive<V>, Binder<T>>,
 //        by driver: Driver<T>,

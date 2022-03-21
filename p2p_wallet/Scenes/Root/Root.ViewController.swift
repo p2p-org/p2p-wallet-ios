@@ -11,38 +11,41 @@ import UIKit
 extension Root {
     class ViewController: BaseVC {
         private var statusBarStyle: UIStatusBarStyle = .default
-        
+
         // MARK: - Dependencies
+
         private let viewModel: RootViewModelType
-        
+
         // MARK: - Initializer
+
         init(viewModel: RootViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func loadView() {
             view = LockView()
         }
-        
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             viewModel.reload()
         }
-        
+
         override func bind() {
             super.bind()
             // remove all childs
             viewModel.resetSignal
                 .emit(onNext: { [weak self] in self?.removeAllChilds() })
                 .disposed(by: disposeBag)
-            
+
             // navigation scene
             viewModel.navigationSceneDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
-            
+
             // loadingView
             viewModel.isLoadingDriver
                 .drive(onNext: { [weak self] isLoading in
@@ -50,8 +53,9 @@ extension Root {
                 })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createOrRestoreWallet:
@@ -63,10 +67,10 @@ extension Root {
                 let vm = Onboarding.ViewModel()
                 let vc = Onboarding.ViewController(viewModel: vm)
                 transition(to: vc)
-            case .onboardingDone(let isRestoration, let name):
+            case let .onboardingDone(isRestoration, name):
                 let vc = WelcomeViewController(isReturned: isRestoration, name: name, viewModel: viewModel)
                 transition(to: vc)
-            case .main(let showAuthenticationWhenAppears):
+            case let .main(showAuthenticationWhenAppears):
                 // MainViewController
                 let vm = MainViewModel()
                 let vc = MainViewController(viewModel: vm)

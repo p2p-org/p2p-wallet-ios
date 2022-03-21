@@ -5,17 +5,17 @@
 //  Created by Chung Tran on 09/03/2022.
 //
 
-import Foundation
-import UIKit
-import RxSwift
 import BEPureLayout
+import Foundation
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension TransactionDetail {
     final class AmountSection: UIStackView {
         private let disposeBag = DisposeBag()
         private let viewModel: TransactionDetailViewModelType
-        
+
         init(viewModel: TransactionDetailViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
@@ -23,7 +23,7 @@ extension TransactionDetail {
             addArrangedSubviews {
                 // Separator
                 UIView.defaultSeparator()
-                
+
                 // Amounts
                 BEVStack(spacing: 8) {
                     // Swap
@@ -31,16 +31,16 @@ extension TransactionDetail {
                         .setup { view in
                             showView(view, onlyWhenTransactionIs: SolanaSDK.SwapTransaction.self)
                         }
-                    
+
                     // Transfer
                     transferSection()
                         .setup { view in
                             showView(view, onlyWhenTransactionIs: SolanaSDK.TransferTransaction.self)
                         }
-                    
+
                     // Fee
                     feesSection()
-                    
+
                     // Total
                     totalSectionForTransfer()
                         .setup { view in
@@ -49,15 +49,16 @@ extension TransactionDetail {
                 }
             }
         }
-        
-        required init(coder: NSCoder) {
+
+        @available(*, unavailable)
+        required init(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-        
+
         private func swapSection() -> BEVStack {
             let swapTransactionDriver = viewModel.parsedTransactionDriver
-                .map {$0?.value as? SolanaSDK.SwapTransaction}
-            
+                .map { $0?.value as? SolanaSDK.SwapTransaction }
+
             return BEVStack(spacing: 8) {
                 BEHStack(spacing: 12) {
                     titleLabel(text: L10n.spent)
@@ -71,7 +72,7 @@ extension TransactionDetail {
                                 .disposed(by: disposeBag)
                         }
                 }
-                
+
                 BEHStack(spacing: 12) {
                     titleLabel(text: L10n.received)
                     UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
@@ -86,14 +87,14 @@ extension TransactionDetail {
                 }
             }
         }
-        
+
         private func transferSection() -> BEHStack {
             BEHStack(spacing: 12) {
                 titleLabel(text: L10n.spent)
                     .setup { label in
                         viewModel.parsedTransactionDriver
-                            .map {$0?.amount ?? 0}
-                            .map {$0 > 0 ? L10n.received: L10n.spent}
+                            .map { $0?.amount ?? 0 }
+                            .map { $0 > 0 ? L10n.received : L10n.spent }
                             .drive(label.rx.text)
                             .disposed(by: disposeBag)
                     }
@@ -108,21 +109,21 @@ extension TransactionDetail {
                     }
             }
         }
-        
+
         private func feesSection() -> BEHStack {
             let feesDriver = viewModel.parsedTransactionDriver
-                .map {$0?.fee}
-            
+                .map { $0?.fee }
+
             return BEHStack(spacing: 4, alignment: .top) {
                 titleLabel(text: L10n.transferFee)
                     .setup { label in
                         viewModel.parsedTransactionDriver
-                            .map {$0?.value is SolanaSDK.SwapTransaction}
-                            .map {$0 ? L10n.swapFees: L10n.transferFee}
+                            .map { $0?.value is SolanaSDK.SwapTransaction }
+                            .map { $0 ? L10n.swapFees : L10n.transferFee }
                             .drive(label.rx.text)
                             .disposed(by: disposeBag)
                     }
-                
+
                 BEVStack(spacing: 8) {
                     // deposit
 //                    UILabel(text: "0.02 SOL (Deposit)", textSize: 15, textAlignment: .right)
@@ -148,52 +149,52 @@ extension TransactionDetail {
 //                                .drive(depositLabel.rx.isHidden)
 //                                .disposed(by: disposeBag)
 //                        }
-                    
+
                     // account creation fee
                     UILabel(text: "0.02 SOL (BTC Account Creation)", textSize: 15, textAlignment: .right)
                         .setup { accountCreationLabel in
                             feesDriver
                                 .map { [weak self] feeAmount -> NSAttributedString? in
-                                    guard let self = self else {return nil}
+                                    guard let self = self else { return nil }
                                     let payingWallet = self.getPayingFeeWallet()
                                     let amount = feeAmount?.accountBalances
                                         .convertToBalance(decimals: payingWallet.token.decimals)
-                                    
+
                                     return self.getAttributedString(
                                         amount: amount,
                                         symbol: payingWallet.token.symbol,
                                         withFiatValue: false
                                     )
-                                        .text(" (\(L10n.accountCreation("")))", size: 15, color: .textSecondary)
+                                    .text(" (\(L10n.accountCreation("")))", size: 15, color: .textSecondary)
                                 }
                                 .drive(accountCreationLabel.rx.attributedText)
                                 .disposed(by: disposeBag)
-                            
+
                             feesDriver
-                                .map {$0?.accountBalances ?? 0}
-                                .map {$0 == 0}
+                                .map { $0?.accountBalances ?? 0 }
+                                .map { $0 == 0 }
                                 .drive(accountCreationLabel.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
-                    
+
                     // transfer fee
                     BEHStack(spacing: 4) {
                         UILabel(text: "0.02 SOL (Transfer fee)", textSize: 15, textAlignment: .right)
                             .setup { accountCreationLabel in
                                 feesDriver
                                     .map { [weak self] feeAmount -> NSAttributedString? in
-                                        guard let self = self else {return nil}
+                                        guard let self = self else { return nil }
                                         let payingWallet = self.getPayingFeeWallet()
                                         let amount = feeAmount?.transaction
                                             .convertToBalance(decimals: payingWallet.token.decimals)
-                                            
+
                                         if amount > 0 {
                                             return self.getAttributedString(
                                                 amount: amount,
                                                 symbol: payingWallet.token.symbol,
                                                 withFiatValue: false
                                             )
-                                                .text(" (\(L10n.transferFee))", size: 15, color: .textSecondary)
+                                            .text(" (\(L10n.transferFee))", size: 15, color: .textSecondary)
                                         } else {
                                             return NSMutableAttributedString()
                                                 .text(L10n.free, size: 15, weight: .semibold)
@@ -206,47 +207,47 @@ extension TransactionDetail {
                         UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
                             .setup { infoButton in
                                 feesDriver
-                                    .map {$0?.transaction != 0}
+                                    .map { $0?.transaction != 0 }
                                     .drive(infoButton.rx.isHidden)
                                     .disposed(by: disposeBag)
                             }
                     }
-                        .onTap { [weak self] in
-                            self?.viewModel.navigate(to: .freeFeeInfo)
-                        }
-                    
+                    .onTap { [weak self] in
+                        self?.viewModel.navigate(to: .freeFeeInfo)
+                    }
+
                     // total (for swap only)
                     BEVStack(spacing: 8, alignment: .trailing) {
                         UIView.defaultSeparator()
                             .frame(width: 266)
-                        
+
                         UILabel(text: "0.02 SOL (Transfer fee)", textSize: 15, textAlignment: .right)
                             .setup { totalFeeLabel in
                                 feesDriver
                                     .map { [weak self] feeAmount -> NSAttributedString? in
-                                        guard let self = self else {return nil}
+                                        guard let self = self else { return nil }
                                         let payingWallet = self.getPayingFeeWallet()
                                         let totalFee = ((feeAmount?.transaction ?? 0) + (feeAmount?.accountBalances ?? 0))
                                             .convertToBalance(decimals: payingWallet.token.decimals)
-                                        
+
                                         return self.getAttributedString(
                                             amount: totalFee,
                                             symbol: payingWallet.token.symbol,
                                             withFiatValue: false
                                         )
-                                            .text(" (\(L10n.totalFee))", size: 15, color: .textSecondary)
+                                        .text(" (\(L10n.totalFee))", size: 15, color: .textSecondary)
                                     }
                                     .drive(totalFeeLabel.rx.attributedText)
                                     .disposed(by: disposeBag)
                             }
                     }
-                        .setup { view in
-                            showView(view, onlyWhenTransactionIs: SolanaSDK.SwapTransaction.self)
-                        }
+                    .setup { view in
+                        showView(view, onlyWhenTransactionIs: SolanaSDK.SwapTransaction.self)
+                    }
                 }
             }
         }
-        
+
         private func totalSectionForTransfer() -> BEHStack {
             BEHStack(spacing: 4, alignment: .top) {
                 titleLabel(text: L10n.total)
@@ -254,13 +255,13 @@ extension TransactionDetail {
                     .setup { label in
                         viewModel.parsedTransactionDriver
                             .map { [weak self] transaction -> NSAttributedString? in
-                                guard let self = self else {return nil}
-                                
+                                guard let self = self else { return nil }
+
                                 let payingWallet = self.getPayingFeeWallet()
                                 let fees = ((transaction?.fee?.transaction ?? 0) + (transaction?.fee?.accountBalances ?? 0))
                                     .convertToBalance(decimals: payingWallet.token.decimals)
                                 var amount = transaction?.amount ?? 0
-                                
+
                                 // received
                                 if amount > 0 {
                                     return self.getAttributedString(
@@ -268,7 +269,7 @@ extension TransactionDetail {
                                         symbol: payingWallet.token.symbol
                                     )
                                 }
-                                
+
                                 // sent
                                 else {
                                     amount = abs(amount)
@@ -286,7 +287,7 @@ extension TransactionDetail {
                                         )
                                         if fees > 0 {
                                             attrStr.text(" + ", size: 15, color: .textBlack)
-                                            
+
                                             attrStr.append(
                                                 self.getAttributedString(
                                                     amount: fees,
@@ -295,12 +296,12 @@ extension TransactionDetail {
                                                 )
                                             )
                                         }
-                                        
+
                                         let totalAmountInFiat = self.viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: transaction?.symbol) + self.viewModel.getAmountInCurrentFiat(amountInToken: fees, symbol: payingWallet.token.symbol)
-                                        
+
                                         attrStr
                                             .text(" (~\(Defaults.fiat.symbol)\(totalAmountInFiat.toString(maximumFractionDigits: 9)))", size: 15, color: .textSecondary)
-                                        
+
                                         return attrStr
                                     }
                                 }
@@ -310,7 +311,7 @@ extension TransactionDetail {
                     }
             }
         }
-        
+
         private func getAttributedString(amount: Double?, symbol: String?, withFiatValue: Bool = true) -> NSMutableAttributedString {
             let attStr = NSMutableAttributedString()
                 .text(amount.toString(maximumFractionDigits: 9) + " " + symbol, size: 15, color: .textBlack)
@@ -320,15 +321,15 @@ extension TransactionDetail {
             }
             return attStr
         }
-        
+
         private func getPayingFeeWallet() -> Wallet {
             viewModel.getPayingFeeWallet() ?? .nativeSolana(pubkey: nil, lamport: 0)
         }
-        
-        private func showView<T: Hashable>(_ view: UIView, onlyWhenTransactionIs type: T.Type) {
+
+        private func showView<T: Hashable>(_ view: UIView, onlyWhenTransactionIs _: T.Type) {
             viewModel.parsedTransactionDriver
-                .map {$0?.value is T}
-                .map {!$0}
+                .map { $0?.value is T }
+                .map { !$0 }
                 .drive(view.rx.isHidden)
                 .disposed(by: disposeBag)
         }

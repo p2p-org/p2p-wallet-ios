@@ -6,14 +6,14 @@
 //
 
 import Foundation
-import RxCocoa
 import RxAlamofire
+import RxCocoa
 import RxSwift
 
 class BonfidaPricesFetcher: PricesFetcher {
     let endpoint = "https://serum-api.bonfida.com"
-    
-    func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]> {
+
+    func getCurrentPrices(coins: [String], toFiat _: String) -> Single<[String: CurrentPrice?]> {
         // WARNING: - ignored fiat, use USDT as fiat
         Single<(String, CurrentPrice?)>.zip(
             coins
@@ -26,7 +26,7 @@ class BonfidaPricesFetcher: PricesFetcher {
                             let open: Double = $0.data?.first?.open ?? 0
                             let close: Double = $0.data?.first?.close ?? 0
                             let change24h = close - open
-                            let change24hInPercentages = change24h / (open == 0 ? 1: open)
+                            let change24hInPercentages = change24h / (open == 0 ? 1 : open)
                             return (coin, CurrentPrice(
                                 value: close,
                                 change24h: CurrentPrice.Change24h(
@@ -38,7 +38,7 @@ class BonfidaPricesFetcher: PricesFetcher {
                         .catchAndReturn((coin, nil))
                 }
         )
-        .map {prices in
+        .map { prices in
             var result = [String: CurrentPrice]()
             for (coin, price) in prices {
                 result[coin] = price
@@ -46,43 +46,41 @@ class BonfidaPricesFetcher: PricesFetcher {
             return result
         }
     }
-    
-    func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]> {
-        
+
+    func getHistoricalPrice(of coinName: String, fiat _: String, period: Period) -> Single<[PriceRecord]> {
         if ["USDT", "USDC", "WUSDC"].contains(coinName) {
             return .just([
                 PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Calendar.current.date(byAdding: .day, value: -2, to: Date())!),
                 PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Calendar.current.date(byAdding: .day, value: -1, to: Date())!),
-                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Date())
+                PriceRecord(close: 1, open: 1, low: 1, high: 1, startTime: Date()),
             ])
         }
-        
+
         // WARNING: - ignored fiat, use USDT as fiat
         var path = "/candles/\(coinName)USDT"
-        
+
         if let limit = period.limit {
             path += "?limit=\(limit)&"
         } else {
             path += "?"
         }
-        
+
         path += "resolution=\(period.resolution)"
-        
+
         return send(path, decodedTo: Response<[ResponsePriceRecord]>.self)
-            .map {$0.data ?? [ResponsePriceRecord]()}
-            .map({ (records) -> [PriceRecord] in
+            .map { $0.data ?? [ResponsePriceRecord]() }
+            .map { records -> [PriceRecord] in
                 records.compactMap { record in
                     guard let close = record.close, let open = record.open, let low = record.low, let high = record.high, let startTime = record.startTime
-                    else {return nil}
-                    
-                    return PriceRecord(close: close, open: open, low: low, high: high, startTime: Date(timeIntervalSince1970: startTime / 1000.0)
-                    )
+                    else { return nil }
+
+                    return PriceRecord(close: close, open: open, low: low, high: high, startTime: Date(timeIntervalSince1970: startTime / 1000.0))
                 }
-            })
-            .map {$0.reversed()}
+            }
+            .map { $0.reversed() }
     }
-    
-    func getValueInUSD(fiat: String) -> Single<Double?> {
+
+    func getValueInUSD(fiat _: String) -> Single<Double?> {
         return .just(nil)
     }
 }
@@ -95,22 +93,22 @@ private extension Period {
         case .last4h:
             return 60
         case .day:
-            return 60*60
+            return 60 * 60
         case .week, .month:
-            return 60*60*24
+            return 60 * 60 * 24
 //        case .year:
 //            return 86400 // maximum resolution is 86400
 //        case .all:
 //            return 86400 // maximum resolution is 86400
         }
     }
-    
+
     var limit: UInt? {
         switch self {
         case .last1h:
             return 60
         case .last4h:
-            return 60*4
+            return 60 * 4
         case .day:
             return 24
         case .week:

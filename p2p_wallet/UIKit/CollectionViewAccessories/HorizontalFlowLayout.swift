@@ -36,7 +36,7 @@ final class HorizontalFlowLayout: UICollectionViewFlowLayout {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError()
     }
 

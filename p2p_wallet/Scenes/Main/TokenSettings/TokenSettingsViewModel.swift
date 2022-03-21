@@ -5,12 +5,12 @@
 //  Created by Chung Tran on 25/02/2021.
 //
 
-import UIKit
-import RxSwift
-import RxCocoa
 import Action
 import BECollectionView
 import Resolver
+import RxCocoa
+import RxSwift
+import UIKit
 
 enum TokenSettingsNavigatableScene {
     case alert(title: String?, description: String)
@@ -20,65 +20,70 @@ enum TokenSettingsNavigatableScene {
 
 class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     // MARK: - Dependencies
+
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var solanaSDK: SolanaSDK
     @Injected private var pricesService: PricesServiceType
-    
+
     // MARK: - Properties
+
     let disposeBag = DisposeBag()
     let pubkey: String
-    var wallet: Wallet? {walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})}
-    
+    var wallet: Wallet? { walletsRepository.getWallets().first(where: { $0.pubkey == pubkey }) }
+
     // MARK: - Subject
+
     let navigationSubject = PublishSubject<TokenSettingsNavigatableScene>()
 //    private let wallet = BehaviorRelay<Wallet?>(value: nil)
-    
+
     // MARK: - Input
+
 //    let textFieldInput = BehaviorRelay<String?>(value: nil)
     init(pubkey: String) {
         self.pubkey = pubkey
         super.init()
     }
-    
+
     deinit {
         debugPrint("\(String(describing: self)) deinited")
     }
-    
+
     override func bind() {
         super.bind()
         walletsRepository.dataObservable
-            .map {[weak self] in $0?.first(where: {$0.pubkey == self?.pubkey})}
-            .map {wallet -> [TokenSettings] in
+            .map { [weak self] in $0?.first(where: { $0.pubkey == self?.pubkey }) }
+            .map { wallet -> [TokenSettings] in
                 let isWalletVisible = !(wallet?.isHidden ?? true)
                 let isAmountEmpty = wallet?.amount == 0
                 let isNonNativeSOL = (wallet?.token.isNative == false && wallet?.token.symbol == "SOL")
-                
+
                 var options: [TokenSettings] = [
-                    .visibility(isWalletVisible)
+                    .visibility(isWalletVisible),
                 ]
-                
+
                 #if DEBUG
-                options.append(.close(enabled: isAmountEmpty || isNonNativeSOL))
+                    options.append(.close(enabled: isAmountEmpty || isNonNativeSOL))
                 #endif
                 return options
             }
             .asDriver(onErrorJustReturn: [])
-            .drive(onNext: { [weak self] (settings) in
+            .drive(onNext: { [weak self] settings in
                 self?.overrideData(by: settings)
             })
             .disposed(by: disposeBag)
     }
-    
+
     override func reload() {}
-    
+
     // MARK: - Actions
+
     @objc func toggleHideWallet() {
-        guard let wallet = wallet else {return}
+        guard let wallet = wallet else { return }
         walletsRepository.toggleWalletVisibility(wallet)
     }
-    
+
     @objc func closeAccount() {
-        guard let wallet = wallet else {return}
-        navigationSubject.onNext(.processTransaction(ProcessTransaction.CloseTransaction(solanaSDK: solanaSDK, closingWallet: wallet, reimbursedAmount: 2039280)))
+        guard let wallet = wallet else { return }
+        navigationSubject.onNext(.processTransaction(ProcessTransaction.CloseTransaction(solanaSDK: solanaSDK, closingWallet: wallet, reimbursedAmount: 2_039_280)))
     }
 }

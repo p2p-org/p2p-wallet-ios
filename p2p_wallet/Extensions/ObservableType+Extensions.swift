@@ -10,12 +10,12 @@ import RxSwift
 
 extension ObservableType {
     func withPrevious() -> Observable<(Element?, Element)> {
-        return scan([], accumulator: { (previous, current) in
+        return scan([], accumulator: { previous, current in
             Array(previous + [current]).suffix(2)
         })
-        .map({ (arr) -> (previous: Element?, current: Element) in
+        .map { arr -> (previous: Element?, current: Element) in
             (arr.count > 1 ? arr.first : nil, arr.last!)
-        })
+        }
     }
 }
 
@@ -25,6 +25,6 @@ extension Timer {
         scheduler: SchedulerType = MainScheduler.instance
     ) -> Observable<Void> {
         Observable<Int>.timer(.seconds(0), period: .seconds(seconds), scheduler: scheduler)
-            .map {_ in ()}
+            .map { _ in () }
     }
 }

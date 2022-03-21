@@ -15,24 +15,25 @@ class DashedButton: WLButton {
         layer.fillColor = nil
         return layer
     }()
-    
+
     init(title: String) {
         super.init(frame: .zero)
         configureForAutoLayout()
         autoSetDimension(.height, toSize: 36)
-        
+
         setTitle(title, for: .normal)
         titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
         setTitleColor(.textSecondary, for: .normal)
         contentEdgeInsets = UIEdgeInsets(x: 28, y: 0)
-        
+
         layer.addSublayer(borderLayer)
     }
-    
-    required init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         borderLayer.frame = bounds

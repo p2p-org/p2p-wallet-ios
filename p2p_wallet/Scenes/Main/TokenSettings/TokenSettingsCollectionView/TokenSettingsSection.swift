@@ -5,9 +5,9 @@
 //  Created by Chung Tran on 01/03/2021.
 //
 
-import Foundation
 import Action
 import BECollectionView
+import Foundation
 
 class TokenSettingsSection: BEStaticSectionsCollectionView.Section {
     override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
@@ -18,7 +18,7 @@ class TokenSettingsSection: BEStaticSectionsCollectionView.Section {
 }
 
 extension TokenSettingsSection: TokenSettingsCellDelegate {
-    func tokenSettingsCellDidToggleVisibility(_ cell: TokenSettingsCell) {
-        (self.viewModel as? TokenSettingsViewModel)?.toggleHideWallet()
+    func tokenSettingsCellDidToggleVisibility(_: TokenSettingsCell) {
+        (viewModel as? TokenSettingsViewModel)?.toggleHideWallet()
     }
 }

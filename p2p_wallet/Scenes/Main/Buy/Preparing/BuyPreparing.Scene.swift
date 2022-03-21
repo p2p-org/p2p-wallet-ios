@@ -7,24 +7,24 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 extension BuyPreparing {
     class Scene: BEScene {
         private let viewModel: BuyPreparingSceneModel
         private let infoToggle = BehaviorRelay<Bool>(value: false)
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-        
+
         init(viewModel: BuyPreparingSceneModel) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
         }
-        
+
         override func build() -> UIView {
             BEZStack {
                 // Content
@@ -50,7 +50,7 @@ extension BuyPreparing {
                 view.endEditing(true)
             }
         }
-        
+
         private func content() -> UIView {
             BEScrollView(contentInsets: .init(top: 18, left: 18, bottom: 90, right: 18), spacing: 18) {
                 // Exchange
@@ -64,12 +64,12 @@ extension BuyPreparing {
                                 return InputCryptoView(viewModel: viewModel)
                             }
                         }.padding(.init(x: 18, y: 18))
-                        
+
                         UIView.defaultSeparator()
-                        
+
                         BEVStack {
                             descriptionRow(label: "\(viewModel.crypto.rawValue.uppercased()) \(L10n.price)", initial: "$ 0.0", viewModel.exchangeRateStringDriver)
-                            
+
                             BEHStack(alignment: .center) {
                                 UILabel(text: L10n.hideFees)
                                     .setupWithType(UILabel.self) { view in
@@ -92,22 +92,21 @@ extension BuyPreparing {
                                             .disposed(by: disposeBag)
                                     }
                             }
-                                .centered(.horizontal)
-                                .padding(.init(only: .top, inset: 18))
-                                .onTap { [unowned self] in infoToggle.accept(!infoToggle.value) }
-                            
+                            .centered(.horizontal)
+                            .padding(.init(only: .top, inset: 18))
+                            .onTap { [unowned self] in infoToggle.accept(!infoToggle.value) }
+
                             BEBuilder(driver: infoToggle.asDriver()) { [weak self] value in
                                 guard let self = self else { return UIView() }
                                 return value ? self.feeInfo() : UIView()
                             }
-                            
+
                         }.padding(.init(x: 18, y: 18))
                     }
                 }
             }
-            
         }
-        
+
         private func feeInfo() -> UIView {
             BEVStack {
                 UIView(height: 18)
@@ -117,13 +116,13 @@ extension BuyPreparing {
                 UIView(height: 8)
                 descriptionRow(label: L10n.networkFee, initial: "$ 0.00", viewModel.networkFee.map { "$ \($0)" })
                 UIView(height: 8)
-                
+
                 UIView.defaultSeparator()
                 UIView(height: 8)
                 totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
             }
         }
-        
+
         private func descriptionRow(label: String, initial: String, _ trailingDriver: Driver<String>? = nil) -> UIView {
             UIStackView(axis: .horizontal, alignment: .fill) {
                 UILabel(text: label, textColor: .secondaryLabel)
@@ -133,7 +132,7 @@ extension BuyPreparing {
                 }
             }
         }
-        
+
         private func totalRow(label: String, initial: String, _ trailingDriver: Driver<String>? = nil) -> UIView {
             UIStackView(axis: .horizontal, alignment: .fill) {
                 UILabel(text: label)
@@ -156,8 +155,8 @@ private enum InputMode {
     case crypto
 }
 
-extension BuyPreparingSceneModel {
-    fileprivate var onInputMode: Driver<InputMode> {
+private extension BuyPreparingSceneModel {
+    var onInputMode: Driver<InputMode> {
         inputDriver
             .map { input in
                 if input.currency is Buy.CryptoCurrency {
@@ -168,8 +167,8 @@ extension BuyPreparingSceneModel {
             }
             .distinctUntilChanged { $0 }
     }
-    
-    fileprivate var exchangeRateStringDriver: Driver<String> {
+
+    var exchangeRateStringDriver: Driver<String> {
         exchangeRateDriver
             .map { rate in
                 if rate != nil {
@@ -179,43 +178,42 @@ extension BuyPreparingSceneModel {
                 }
             }
     }
-    
-    fileprivate var feeAmount: Driver<Double> {
+
+    var feeAmount: Driver<Double> {
         outputDriver.map { $0.processingFee }
     }
-    
-    fileprivate var networkFee: Driver<Double> {
+
+    var networkFee: Driver<Double> {
         outputDriver.map { $0.networkFee }
     }
-    
-    fileprivate var total: Driver<Double> {
+
+    var total: Driver<Double> {
         outputDriver.map { $0.total }
     }
-    
-    fileprivate var purchaseCost: Driver<Double> {
+
+    var purchaseCost: Driver<Double> {
         outputDriver.map { $0.purchaseCost }
     }
-    
-    fileprivate var nextStatus: Driver<NextStatus> {
+
+    var nextStatus: Driver<NextStatus> {
         Driver
             .combineLatest(inputDriver, minFiatAmount, minCryptoAmount)
-            .map { [weak self] (input, minUSD, minSol) in
+            .map { [weak self] input, minUSD, minSol in
                 if minUSD == 0 || minSol == 0 {
-                    return NextStatus.init(text: L10n.loading, isEnable: false)
+                    return NextStatus(text: L10n.loading, isEnable: false)
                 }
-                
+
                 if input.currency is Buy.FiatCurrency {
                     if input.amount < minUSD {
-                        return NextStatus.init(text: L10n.minimumPurchaseOfRequired("$\(minUSD)"), isEnable: false)
+                        return NextStatus(text: L10n.minimumPurchaseOfRequired("$\(minUSD)"), isEnable: false)
                     }
-                    return NextStatus.init(text: L10n.continue, isEnable: true)
+                    return NextStatus(text: L10n.continue, isEnable: true)
                 } else {
                     if input.amount < minSol {
-                        return NextStatus.init(text: L10n.minimumPurchaseOfRequired("\(minSol) \(self?.crypto.rawValue.uppercased() ?? "?")"), isEnable: false)
+                        return NextStatus(text: L10n.minimumPurchaseOfRequired("\(minSol) \(self?.crypto.rawValue.uppercased() ?? "?")"), isEnable: false)
                     }
-                    return NextStatus.init(text: L10n.continue, isEnable: true)
+                    return NextStatus(text: L10n.continue, isEnable: true)
                 }
             }
     }
-    
 }

@@ -11,7 +11,7 @@ extension Locale {
     static var shared: Locale {
         Locale(identifier: Defaults.localizedLanguage.code)
     }
-    
+
     var uiLanguageLocalizedString: String? {
         Locale.shared.localizedString(forLanguageCode: Defaults.localizedLanguage.code)
     }

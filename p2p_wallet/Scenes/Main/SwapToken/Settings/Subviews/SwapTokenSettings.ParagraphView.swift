@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 22.12.2021.
 //
 
-import UIKit
 import BEPureLayout
+import UIKit
 
 extension SwapTokenSettings {
     final class ParagraphView: BEView {

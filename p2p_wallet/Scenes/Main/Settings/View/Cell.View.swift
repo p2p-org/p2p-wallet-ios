@@ -5,9 +5,9 @@
 //
 //
 
-import UIKit
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension Settings {
     class CellView: BECompositionView {
@@ -16,7 +16,7 @@ extension Settings {
         let trailing: UIView?
         let dividerEnable: Bool
         let nextArrowEnable: Bool
-        
+
         init(icon: UIImage, title: UIView, trailing: UIView? = nil, dividerEnable: Bool = true, nextArrowEnable: Bool = true) {
             self.icon = icon
             self.title = title
@@ -25,7 +25,7 @@ extension Settings {
             self.nextArrowEnable = nextArrowEnable
             super.init()
         }
-        
+
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
                 UIStackView(axis: .horizontal, alignment: .center) {

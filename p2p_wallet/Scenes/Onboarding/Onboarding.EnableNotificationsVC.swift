@@ -5,42 +5,45 @@
 //  Created by Chung Tran on 10/30/20.
 //
 
+import BEPureLayout
 import Foundation
 import UIKit
-import BEPureLayout
 
 extension Onboarding {
     class EnableNotificationsVC: BaseVC {
         @Injected private var analyticsManager: AnalyticsManagerType
-        
+
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
+
         // MARK: - Dependencies
+
         private let viewModel: OnboardingViewModelType
-        
+
         // MARK: - Initializer
+
         init(viewModel: OnboardingViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             // navigation bar
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.isHidden = true
             navigationBar.titleLabel.text = L10n.letSStayInTouch
-            
+
             let skipButton = UIButton(label: L10n.skip.uppercaseFirst, textColor: .h5887ff)
                 .onTap(self, action: #selector(buttonSkipDidTouch))
             navigationBar.rightItems.addArrangedSubview(skipButton)
-            
+
             view.addSubview(navigationBar)
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-            
+
             // explanation view
             let explanationView = UILabel(
                 text: L10n.allowPushNotificationsSoYouDonTMissAnyImportantUpdatesOnYourAccount,
@@ -48,29 +51,29 @@ extension Onboarding {
                 textColor: .black,
                 numberOfLines: 0
             )
-                .padding(.init(all: 18), backgroundColor: .fafafc, cornerRadius: 12)
+            .padding(.init(all: 18), backgroundColor: .fafafc, cornerRadius: 12)
             view.addSubview(explanationView)
             explanationView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 18)
             explanationView.autoPinEdge(toSuperviewSafeArea: .leading, withInset: 18)
             explanationView.autoPinEdge(toSuperviewSafeArea: .trailing, withInset: 18)
-            
+
             // collection
             let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(x: 0, y: 20))
             view.addSubview(scrollView)
             scrollView.autoPinEdge(.top, to: .bottom, of: explanationView)
             scrollView.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
-            
+
             // button
             let allowButton = WLStepButton.main(
                 image: .notificationsButtonSmall,
                 text: L10n.allowNotifications
             )
-                .onTap(self, action: #selector(buttonAllowDidTouch))
+            .onTap(self, action: #selector(buttonAllowDidTouch))
             view.addSubview(allowButton)
             allowButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
             allowButton.autoPinEdge(.top, to: .bottom, of: scrollView)
-            
+
             // items
             let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
                 createCell(image: .appIconSmall, title: L10n.newStakingOptionAvailable, subtitle: L10n.getUpTo8APYOnStakingUSDC, timeLabelText: L10n.justNow)
@@ -81,17 +84,17 @@ extension Onboarding {
             scrollView.contentView.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()
         }
-        
+
         @objc private func buttonAllowDidTouch() {
             analyticsManager.log(event: .pushApproved(lastScreen: "Onboarding"))
             viewModel.requestRemoteNotifications()
         }
-        
+
         @objc private func buttonSkipDidTouch() {
             analyticsManager.log(event: .pushRejected)
             viewModel.markNotificationsAsSet()
         }
-        
+
         private func createCell(image: UIImage, subimage: UIImage? = nil, title: String, subtitle: String, timeLabelText: String?) -> UIView {
             let view = BERoundedCornerShadowView(shadowColor: .textBlack.withAlphaComponent(0.05), radius: 8, offset: .init(width: 0, height: 1), opacity: 1, cornerRadius: 16, contentInset: .init(all: 10))
             view.stackView.axis = .horizontal
@@ -105,7 +108,7 @@ extension Onboarding {
                         UILabel(text: title, textSize: 13, weight: .semibold, numberOfLines: 0)
                         UILabel(text: timeLabelText, textSize: 13, textColor: .textSecondary, textAlignment: .right)
                     }
-                    
+
                     UILabel(text: subtitle, textSize: 13, numberOfLines: 0)
                 }
             }

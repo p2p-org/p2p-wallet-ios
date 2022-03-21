@@ -6,10 +6,11 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 // MARK: - FeeAPIClient
+
 protocol FeeAPIClient {
     func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
     func getCreatingTokenAccountFee() -> Single<UInt64>
@@ -17,15 +18,16 @@ protocol FeeAPIClient {
 
 extension SolanaSDK: FeeAPIClient {
     func getLamportsPerSignature() -> Single<Lamports> {
-        getFees().map {$0.feeCalculator?.lamportsPerSignature}.map {$0 ?? 0}
+        getFees().map { $0.feeCalculator?.lamportsPerSignature }.map { $0 ?? 0 }
     }
 }
 
 // MARK: - FeeService
+
 protocol FeeServiceType: AnyObject {
-    var apiClient: FeeAPIClient {get}
-    var lamportsPerSignature: SolanaSDK.Lamports? {get set}
-    var minimumBalanceForRenExemption: SolanaSDK.Lamports? {get set}
+    var apiClient: FeeAPIClient { get }
+    var lamportsPerSignature: SolanaSDK.Lamports? { get set }
+    var minimumBalanceForRenExemption: SolanaSDK.Lamports? { get set }
 }
 
 extension FeeServiceType {
@@ -34,13 +36,13 @@ extension FeeServiceType {
             apiClient.getLamportsPerSignature(),
             apiClient.getCreatingTokenAccountFee()
         )
-            .do(onSuccess: { [weak self] lps, mbr in
-                self?.lamportsPerSignature = lps
-                self?.minimumBalanceForRenExemption = mbr
-            })
-            .flatMapCompletable { _ in
-                .empty()
-            }
+        .do(onSuccess: { [weak self] lps, mbr in
+            self?.lamportsPerSignature = lps
+            self?.minimumBalanceForRenExemption = mbr
+        })
+        .flatMapCompletable { _ in
+            .empty()
+        }
     }
 }
 

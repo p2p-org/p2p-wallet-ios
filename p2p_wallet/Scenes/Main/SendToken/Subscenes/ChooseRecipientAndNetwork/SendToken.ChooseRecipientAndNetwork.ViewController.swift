@@ -6,39 +6,43 @@
 //
 
 import Foundation
-import UIKit
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork {
     class ViewController: SendToken.BaseViewController {
         // MARK: - Dependencies
+
         private let viewModel: SendTokenChooseRecipientAndNetworkViewModelType
-        
+
         // MARK: - Properties
-        
+
         // MARK: - Subviews
+
         private lazy var pagesVC = WLSegmentedPagesVC(items: [
             .init(label: L10n.address, viewController: addressVC),
-            .init(label: L10n.contact, viewController: contactVC)
+            .init(label: L10n.contact, viewController: contactVC),
         ])
-        
+
         private lazy var addressVC = SelectAddress.ViewController(
             viewModel: viewModel.createSelectAddressViewModel()
         )
-        
+
         private lazy var contactVC: ContactViewController = {
             let vc = ContactViewController(viewModel: viewModel)
             return vc
         }()
-        
+
         // MARK: - Initializer
+
         init(viewModel: SendTokenChooseRecipientAndNetworkViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             // container
@@ -46,14 +50,14 @@ extension SendToken.ChooseRecipientAndNetwork {
             view.addSubview(containerView)
             containerView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
             containerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
-            
+
             add(child: pagesVC, to: containerView)
-            
+
             // FIXME: - Remove later (contact is not ready)
             pagesVC.hideSegmentedControl()
             pagesVC.disableScrolling()
         }
-        
+
         override func bind() {
             super.bind()
             // navigation bar title
@@ -61,21 +65,21 @@ extension SendToken.ChooseRecipientAndNetwork {
                 viewModel.walletDriver,
                 viewModel.amountDriver
             )
-                .map { wallet, amount -> String in
-                    let amount = amount ?? 0
-                    let symbol = wallet?.token.symbol ?? ""
-                    return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
-                }
-                .drive(navigationBar.titleLabel.rx.text)
-                .disposed(by: disposeBag)
-            
+            .map { wallet, amount -> String in
+                let amount = amount ?? 0
+                let symbol = wallet?.token.symbol ?? ""
+                return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+            }
+            .drive(navigationBar.titleLabel.rx.text)
+            .disposed(by: disposeBag)
+
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
-        
+
         private func navigate(to scene: NavigatableScene?) {
-            guard let scene = scene else {return}
+            guard let scene = scene else { return }
             switch scene {
             case .chooseNetwork:
                 let vc = SendToken.SelectNetwork.ViewController(viewModel: viewModel)

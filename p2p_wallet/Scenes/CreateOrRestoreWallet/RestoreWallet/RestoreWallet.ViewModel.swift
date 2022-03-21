@@ -5,10 +5,10 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
-import UIKit
-import RxSwift
-import RxCocoa
 import Resolver
+import RxCocoa
+import RxSwift
+import UIKit
 
 protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandler {
     var navigatableSceneDriver: Driver<RestoreWallet.NavigatableScene?> { get }
@@ -16,7 +16,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandl
     var isRestorableUsingIcloud: Driver<Bool> { get }
     var errorSignal: Signal<String> { get }
     var finishedSignal: Signal<Void> { get }
-    
+
     func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?)
     func handleICloudAccount(_ account: Account)
     func restoreFromICloud()
@@ -26,26 +26,29 @@ protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandl
 extension RestoreWallet {
     class ViewModel {
         // MARK: - Dependencies
+
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var nameService: NameServiceType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var notificationsService: NotificationsServiceType
-        
+
         // MARK: - Properties
+
         private let disposeBag = DisposeBag()
         private var phrases: [String]?
         private var derivablePath: SolanaSDK.DerivablePath?
         private var name: String?
-        
+
         // MARK: - Subjects
+
         private let navigationSubject = BehaviorRelay<RestoreWallet.NavigatableScene?>(value: nil)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let isRestorableUsingIcloudSubject = BehaviorRelay<Bool>(value: true)
         private let errorSubject = PublishRelay<String>()
         private let finishedSubject = PublishRelay<Void>()
-        
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
@@ -56,33 +59,34 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     var isRestorableUsingIcloud: Driver<Bool> {
         isRestorableUsingIcloudSubject.asDriver()
     }
-    
+
     var navigatableSceneDriver: Driver<RestoreWallet.NavigatableScene?> {
         navigationSubject.asDriver()
     }
-    
+
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
     }
-    
+
     var errorSignal: Signal<String> {
         errorSubject.asSignal()
     }
-    
+
     var finishedSignal: Signal<Void> {
         finishedSubject.asSignal()
     }
-    
+
     // MARK: - Actions
+
     func restoreFromICloud() {
         deviceOwnerAuthenticationHandler.requiredOwner {
             self._restoreFromIcloud()
         } onFailure: { error in
-            guard let error = error else {return}
+            guard let error = error else { return }
             self.errorSubject.accept(error)
         }
     }
-    
+
     private func _restoreFromIcloud() {
         guard let accounts = iCloudStorage.accountFromICloud(), accounts.count > 0
         else {
@@ -91,22 +95,22 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
             return
         }
         analyticsManager.log(event: .restoreAppleInvoked)
-        
+
         // if there is only 1 account saved in iCloud
         if accounts.count == 1 {
             handlePhrases(accounts[0].phrase.components(separatedBy: " "), derivablePath: accounts[0].derivablePath)
             return
         }
-        
+
         // if there are more than 1 account saved in iCloud
         navigationSubject.accept(.restoreFromICloud)
     }
-    
+
     func restoreManually() {
         analyticsManager.log(event: .restoreManualInvoked)
         navigationSubject.accept(.enterPhrases)
     }
-    
+
     func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?) {
         self.phrases = phrases
         if let derivablePath = derivablePath {
@@ -115,7 +119,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
             navigationSubject.accept(.derivableAccounts(phrases: phrases))
         }
     }
-    
+
     func handleICloudAccount(_ account: Account) {
         phrases = account.phrase.components(separatedBy: " ")
         derivablePath = account.derivablePath
@@ -143,12 +147,13 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
 }
 
 // MARK: - AccountRestorationHandler
+
 extension RestoreWallet.ViewModel {
     func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath, phrases: [String]) {
         analyticsManager.log(event: .recoveryRestoreClick)
         self.derivablePath = derivablePath
         self.phrases = phrases
-        
+
         // create account
         isLoadingSubject.accept(true)
         DispatchQueue(label: "Create account", qos: .userInteractive).async { [unowned self] in
@@ -163,7 +168,7 @@ extension RestoreWallet.ViewModel {
             }
         }
     }
-    
+
     private func checkIfNameIsReservedAndReserveNameIfNeeded(owner: String) {
         nameService.getName(owner)
             .subscribe(onSuccess: { [weak self] name in

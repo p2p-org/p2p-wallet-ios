@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 struct SerumSwapV1 {
     enum NavigatableScene {
@@ -23,7 +23,7 @@ struct SerumSwapV1 {
 protocol SwapTokenScenesFactory {
     func makeChooseWalletViewController(
         title: String?,
-        customFilter: ((Wallet) -> Bool)?, 
+        customFilter: ((Wallet) -> Bool)?,
         showOtherWallets: Bool,
         selectedWallet: Wallet?,
         handler: WalletDidSelectHandler

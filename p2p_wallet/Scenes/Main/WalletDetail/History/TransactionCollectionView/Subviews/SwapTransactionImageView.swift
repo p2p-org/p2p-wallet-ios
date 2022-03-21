@@ -8,7 +8,5 @@
 import Foundation
 
 class SwapTransactionImageView: BEView {
-    override func commonInit() {
-        
-    }
+    override func commonInit() {}
 }

@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 import SolanaSwift
 
 protocol ReceiveSceneModel: BESceneModel {
@@ -44,11 +44,13 @@ extension ReceiveToken {
         @Injected private var walletsRepository: WalletsRepository
 
         // MARK: - Properties
+
         private let disposeBag = DisposeBag()
         let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
         let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
         // MARK: - Subjects
+
         let showHideAddressesInfoButtonTapSubject = PublishRelay<Void>()
         let addressesHintIsHiddenSubject = BehaviorRelay<Bool>(value: false)
         let hideAddressesHintSubject = PublishRelay<Void>()
@@ -71,47 +73,47 @@ extension ReceiveToken {
         ) {
             let isRenBTC = solanaTokenWallet?.token.isRenBTC ?? false
             let hasExplorerButton = !isOpeningFromToken
-            self.tokenWallet = solanaTokenWallet
-            self.hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
-            self.hasHintViewOnTop = isOpeningFromToken
-            self.canOpenTokensList = !isOpeningFromToken
-            self.screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
-            self.screenCanHaveHint = isOpeningFromToken
-            self.shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
+            tokenWallet = solanaTokenWallet
+            hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            hasHintViewOnTop = isOpeningFromToken
+            canOpenTokensList = !isOpeningFromToken
+            screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
+            screenCanHaveHint = isOpeningFromToken
+            shouldShowChainsSwitcher = isOpeningFromToken ? isRenBTC : solanaTokenWallet?.isNativeSOL ?? true
             receiveSolanaViewModel = ReceiveToken.SolanaViewModel(
                 solanaPubkey: solanaPubkey.base58EncodedString,
                 solanaTokenWallet: solanaTokenWallet,
                 navigationSubject: navigationSubject,
                 hasExplorerButton: hasExplorerButton
             )
-            
+
             receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
                 navigationSubject: navigationSubject,
                 isRenBTCWalletCreated: isRenBTCWalletCreated,
                 hasExplorerButton: hasExplorerButton
             )
-            
+
             super.init()
 
             bind()
         }
-        
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
-        
+
         var tokenTypeDriver: Driver<ReceiveToken.TokenType> { tokenTypeSubject.asDriver() }
-        
+
         var updateLayoutDriver: Driver<Void> {
             Driver.combineLatest(
-                    tokenTypeDriver,
-                    receiveBitcoinViewModel.isReceivingRenBTCDriver,
-                    receiveBitcoinViewModel.renBTCWalletCreatingDriver,
-                    receiveBitcoinViewModel.conditionAcceptedDriver,
-                    receiveBitcoinViewModel.addressDriver,
-                    receiveBitcoinViewModel.processingTxsDriver
-                )
-                .map { _ in () }.asDriver()
+                tokenTypeDriver,
+                receiveBitcoinViewModel.isReceivingRenBTCDriver,
+                receiveBitcoinViewModel.renBTCWalletCreatingDriver,
+                receiveBitcoinViewModel.conditionAcceptedDriver,
+                receiveBitcoinViewModel.addressDriver,
+                receiveBitcoinViewModel.processingTxsDriver
+            )
+            .map { _ in () }.asDriver()
         }
 
         var hasAddressesInfoDriver: Driver<Bool> {
@@ -147,6 +149,7 @@ extension ReceiveToken {
                     }
                 }
         }
+
         var hasHintViewOnTopDriver: Driver<Bool> {
             tokenTypeDriver
                 .map { [weak self] tokenType in
@@ -164,7 +167,7 @@ extension ReceiveToken {
         func switchToken(_ tokenType: ReceiveToken.TokenType) {
             tokenTypeSubject.accept(tokenType)
         }
-        
+
         func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
             clipboardManager.copyToClipboard(address)
             analyticsManager.log(event: logEvent)
@@ -187,21 +190,21 @@ extension ReceiveToken {
             clipboardManager.copyToClipboard(address)
             showCopied()
         }
-        
+
         func isRenBtcCreated() -> Bool {
-            walletsRepository.getWallets().contains(where: {$0.token.isRenBTC})
+            walletsRepository.getWallets().contains(where: { $0.token.isRenBTC })
         }
-        
+
         func acceptReceivingRenBTC() -> Completable {
             return handler.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
-                .catch {error in
+                .catch { error in
                     if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
                         return .just(false)
                     }
                     throw error
                 }
                 .flatMapCompletable { [weak self] isRenBtcCreated in
-                    guard let self = self else {return .error(SolanaSDK.Error.unknown)}
+                    guard let self = self else { return .error(SolanaSDK.Error.unknown) }
                     if isRenBtcCreated {
                         self.receiveBitcoinViewModel.acceptConditionAndLoadAddress()
                         self.switchToken(.btc)
@@ -211,7 +214,7 @@ extension ReceiveToken {
                         .asCompletable()
                 }
         }
-        
+
         var navigation: Driver<NavigatableScene?> { navigationSubject.asDriver(onErrorDriveWith: Driver.empty()) }
 
         private func bind() {

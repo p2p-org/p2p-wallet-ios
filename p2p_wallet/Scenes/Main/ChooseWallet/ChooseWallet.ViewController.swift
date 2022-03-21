@@ -5,15 +5,15 @@
 //  Created by Chung Tran on 26/07/2021.
 //
 
-import Foundation
-import UIKit
 import BECollectionView
 import BEPureLayout
+import Foundation
+import UIKit
 
 extension ChooseWallet {
     final class ViewController: BaseVC {
-        
         // MARK: - Properties
+
         private let viewModel: ViewModel
 
         private lazy var rootView: RootView = {
@@ -23,12 +23,15 @@ extension ChooseWallet {
         }()
 
         // MARK: - Initializer
+
         init(title: String?, viewModel: ViewModel) {
             self.viewModel = viewModel
             super.init()
             self.title = title ?? L10n.selectToken
         }
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
 
@@ -45,7 +48,7 @@ extension ChooseWallet {
                             self?.dismiss(animated: true)
                         }
                     ),
-                    rootView
+                    rootView,
                 ]
             )
 
@@ -56,7 +59,7 @@ extension ChooseWallet {
 }
 
 extension ChooseWallet.ViewController: BECollectionViewDelegate {
-    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let item = item as? Wallet else { return }
         viewModel.selectWallet(item)
         dismiss(animated: true, completion: nil)
