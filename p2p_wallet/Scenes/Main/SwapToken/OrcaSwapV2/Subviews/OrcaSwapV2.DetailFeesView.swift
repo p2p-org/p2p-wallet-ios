@@ -104,7 +104,7 @@ extension OrcaSwapV2 {
                     UILabel(text: "(\(payBy))", textColor: .h34c759)
                         .padding(.init(only: .left, inset: 4))
                 }
-                if let info = fee.info {
+                if fee.info != nil {
                     UIImageView(width: 16, height: 16, image: .info, tintColor: .h34c759)
                         .padding(.init(only: .left, inset: 4))
                 }

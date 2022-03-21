@@ -48,7 +48,7 @@ private struct ImgProcessor: ImageProcessor {
         case .image(let image):
             debugPrint("already an image")
             return image
-        case .data(let data):
+        case .data:
             return nil
 //            let imsvg = SVGKImage(data: data)
 //            return imsvg?.uiImage ?? DefaultImageProcessor.default.process(item: item, options: options)

@@ -40,10 +40,10 @@ extension DAppContainer {
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else { return }
             switch scene {
-//            case .detail:
+            case .detail:
 //                let vc = Detail.ViewController()
 //                present(vc, completion: nil)
-//                break
+                break
             }
         }
     }
