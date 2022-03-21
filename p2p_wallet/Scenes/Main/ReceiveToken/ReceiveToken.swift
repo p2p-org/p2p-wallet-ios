@@ -18,10 +18,10 @@ enum ReceiveToken {
         case showSupportedTokens
         case help
     }
-    
+
     enum TokenType: CaseIterable {
         case solana, btc
-        
+
         var icon: UIImage {
             switch self {
             case .btc:
@@ -30,7 +30,7 @@ enum ReceiveToken {
                 return .squircleSolanaIcon
             }
         }
-        
+
         var localizedName: String {
             switch self {
             case .solana:

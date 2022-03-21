@@ -2,15 +2,15 @@
 // Created by Giang Long Tran on 21.10.21.
 //
 
-import Foundation
 import CryptoKit
+import Foundation
 
 public struct MoonpayBuyProcessing: BuyProcessingServiceType {
     public enum Environment {
         case staging
         case production
     }
-    
+
     // Properties
     let environment: Environment
     let apiKey: String
@@ -18,12 +18,12 @@ public struct MoonpayBuyProcessing: BuyProcessingServiceType {
     let currencyCode: String?
     let defaultCurrencyCode: String?
     let walletAddress: String?
-    
+
     let walletAddresses: String?
     let baseCurrencyCode: String?
     let baseCurrencyAmount: Double?
     let quoteCurrencyAmount: Double?
-    
+
     public init(
         environment: Environment,
         apiKey: String,
@@ -34,7 +34,8 @@ public struct MoonpayBuyProcessing: BuyProcessingServiceType {
         walletAddresses: String? = nil,
         baseCurrencyCode: String? = nil,
         baseCurrencyAmount: Double? = nil,
-        quoteCurrencyAmount: Double? = nil) {
+        quoteCurrencyAmount: Double? = nil
+    ) {
         self.environment = environment
         self.apiKey = apiKey
         self.showOnlyCurrencies = showOnlyCurrencies
@@ -46,7 +47,7 @@ public struct MoonpayBuyProcessing: BuyProcessingServiceType {
         self.baseCurrencyAmount = baseCurrencyAmount
         self.quoteCurrencyAmount = quoteCurrencyAmount
     }
-    
+
     public func getUrl() -> String {
         let params: BuyProviderUtils.Params = [
             "apiKey": apiKey,
@@ -57,12 +58,12 @@ public struct MoonpayBuyProcessing: BuyProcessingServiceType {
             "walletAddresses": walletAddresses,
             "baseCurrencyCode": baseCurrencyCode,
             "baseCurrencyAmount": baseCurrencyAmount != nil ? "\(baseCurrencyAmount!)" : nil,
-            "quoteCurrencyAmount": quoteCurrencyAmount != nil ? "\(quoteCurrencyAmount!)" : nil
+            "quoteCurrencyAmount": quoteCurrencyAmount != nil ? "\(quoteCurrencyAmount!)" : nil,
         ]
-    
+
         let path = environment.endpoint + "?" + params.query
         debugPrint(path)
-        
+
         return path
     }
 }

@@ -17,11 +17,11 @@ class NotificationsService: NotificationsServiceType {
     func showInAppNotification(_ notification: InAppNotification) {
         UIApplication.shared.showToast(message: createTextFromNotification(notification))
     }
-    
+
     func showInAppNotification(_ notification: InAppNotification, completion: (() -> Void)?) {
         UIApplication.shared.showToast(message: createTextFromNotification(notification), completion: completion)
     }
-    
+
     private func createTextFromNotification(_ notification: InAppNotification) -> String {
         var array = [String]()
         if let emoji = notification.emoji {
@@ -32,16 +32,16 @@ class NotificationsService: NotificationsServiceType {
     }
 }
 
-extension UIApplication {
-    fileprivate func showToast(
+private extension UIApplication {
+    func showToast(
         message: String?,
         backgroundColor: UIColor = .h2c2c2e,
         alpha: CGFloat = 0.8,
         shadowColor: UIColor = .h6d6d6d.onDarkMode(.black),
         completion: (() -> Void)? = nil
     ) {
-        guard let message = message else {return}
-        
+        guard let message = message else { return }
+
         let toast = BERoundedCornerShadowView(
             shadowColor: shadowColor,
             radius: 16,
@@ -52,29 +52,29 @@ extension UIApplication {
         )
         toast.backgroundColor = backgroundColor
         toast.mainView.alpha = alpha
-        
+
         let label = UILabel(text: message, textSize: 15, textColor: .white, numberOfLines: 0, textAlignment: .center)
         label.tag = 1
-        
+
         toast.stackView.addArrangedSubview(label)
         toast.autoSetDimension(.width, toSize: 335, relation: .lessThanOrEqual)
-        
+
         kWindow?.addSubview(toast)
         toast.autoAlignAxis(toSuperviewAxis: .vertical)
         toast.autoPinEdge(toSuperviewSafeArea: .top, withInset: -100)
-        
+
         kWindow?.bringSubviewToFront(toast)
         kWindow?.layoutIfNeeded()
         toast.constraintToSuperviewWithAttribute(.top)?.constant = 25
-        
-        UIView.animate(withDuration: 0.3) {[weak self] in
+
+        UIView.animate(withDuration: 0.3) { [weak self] in
             self?.kWindow?.layoutIfNeeded()
         } completion: { _ in
             completion?()
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self, weak toast] in
                 toast?.constraintToSuperviewWithAttribute(.top)?.constant = -100
-                
+
                 UIView.animate(withDuration: 0.3) { [weak self] in
                     self?.kWindow?.layoutIfNeeded()
                 } completion: { [weak toast] _ in

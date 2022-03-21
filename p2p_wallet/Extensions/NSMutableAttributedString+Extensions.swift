@@ -10,10 +10,16 @@ import UIKit
 
 extension NSMutableAttributedString {
     @discardableResult
-    func text(_ text: String, size: CGFloat = 15, weight: UIFont.Weight = .regular, color: UIColor = .textBlack, baselineOffset: CGFloat? = nil) -> NSMutableAttributedString {
+    func text(
+        _ text: String,
+        size: CGFloat = 15,
+        weight: UIFont.Weight = .regular,
+        color: UIColor = .textBlack,
+        baselineOffset: CGFloat? = nil
+    ) -> NSMutableAttributedString {
         var attrs: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: size, weight: weight),
-            .foregroundColor: color
+            .foregroundColor: color,
         ]
         if let baselineOffset = baselineOffset {
             attrs[.baselineOffset] = baselineOffset
@@ -22,7 +28,7 @@ extension NSMutableAttributedString {
         append(normal)
         return self
     }
-    
+
     @discardableResult
     func withParagraphStyle(
         minimumLineHeight: CGFloat? = nil,
@@ -53,7 +59,7 @@ extension NSAttributedString {
                 .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
                 .text(" ", weight: .medium)
                 .text(L10n.slippageExceedsMaximum, weight: .medium, color: .red)
-        } else if slippage > .frontrunSlippage && slippage <= .maxSlippage {
+        } else if slippage > .frontrunSlippage, slippage <= .maxSlippage {
             return NSMutableAttributedString()
                 .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
                 .text(" ", weight: .medium)

@@ -11,7 +11,7 @@ class WLRadioButton: BEView {
     init() {
         super.init(frame: .zero)
     }
-    
+
     override func commonInit() {
         super.commonInit()
         autoSetDimensions(to: .init(width: 20, height: 20))
@@ -19,19 +19,19 @@ class WLRadioButton: BEView {
         layer.masksToBounds = true
         isSelected = false
     }
-    
+
     var isSelected: Bool = false {
         didSet {
             resetBorder()
         }
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
         resetBorder()
     }
-    
+
     private func resetBorder() {
-        border(width: isSelected ? 6: 2, color: isSelected ? .h5887ff: .a3a5ba)
+        border(width: isSelected ? 6 : 2, color: isSelected ? .h5887ff : .a3a5ba)
     }
 }

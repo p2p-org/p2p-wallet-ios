@@ -2,10 +2,10 @@
 // Created by Giang Long Tran on 02.02.2022.
 //
 
+import BEPureLayout
 import Foundation
 import RxCocoa
 import RxSwift
-import BEPureLayout
 
 class BEBuilder<T>: UIView {
     typealias Build<T> = (T) -> UIView
@@ -24,19 +24,20 @@ class BEBuilder<T>: UIView {
                 self.child?.alpha = 0.0
                 let view = self.build(value)
                 self.addSubview(view)
-                
+
                 self.child?.removeFromSuperview()
                 self.child = view
             }
             .disposed(by: disposeBag)
     }
-    
+
     override func addSubview(_ view: UIView) {
         super.addSubview(view)
         view.autoPinEdgesToSuperviewEdges()
     }
-    
-    public required init?(coder aDecoder: NSCoder) {
+
+    @available(*, unavailable)
+    public required init?(coder _: NSCoder) {
         fatalError("Loading this view from a nib is unsupported in favor of initializer dependency injection.")
     }
 }

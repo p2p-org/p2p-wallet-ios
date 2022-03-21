@@ -9,7 +9,7 @@ import Foundation
 
 extension SolanaSDK.Token {
     private static var cachedIndicatorColors = [String: UIColor]()
-    
+
     var indicatorColor: UIColor {
         // swiftlint:disable swiftgen_assets
         var color = UIColor(named: symbol + "-BGCOLOR") ?? SolanaSDK.Token.cachedIndicatorColors[symbol]
@@ -18,7 +18,7 @@ extension SolanaSDK.Token {
             color = .random
             // get unique colors
             while SolanaSDK.Token.cachedIndicatorColors.values
-                    .contains(where: {$0 == color})
+                .contains(where: { $0 == color })
             {
                 color = .random
             }
@@ -27,17 +27,17 @@ extension SolanaSDK.Token {
         }
         return color!
     }
-    
+
     var image: UIImage? {
         // swiftlint:disable swiftgen_assets
         var imageName = symbol
             .replacingOccurrences(of: "/", with: "-")
             .replacingOccurrences(of: "Ü", with: "U")
-        
+
         // parse liquidity tokens
         let liquidityTokensPrefixes = ["Raydium", "Orca", "Mercurial"]
         for prefix in liquidityTokensPrefixes {
-            if name.contains("\(prefix) ") && imageName.contains("-") {
+            if name.contains("\(prefix) "), imageName.contains("-") {
                 imageName = "\(prefix)-" + imageName
             }
         }

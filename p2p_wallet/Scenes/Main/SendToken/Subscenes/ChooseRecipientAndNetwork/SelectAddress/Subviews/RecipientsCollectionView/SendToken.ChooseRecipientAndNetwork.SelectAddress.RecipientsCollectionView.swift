@@ -5,18 +5,20 @@
 //  Created by Chung Tran on 27/10/2021.
 //
 
-import Foundation
 import BECollectionView
+import Foundation
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     final class RecipientsCollectionView: BEStaticSectionsCollectionView {
         // MARK: - Dependencies
+
         private let recipientsListViewModel: RecipientsListViewModel
-        
+
         // MARK: - Initializer
+
         init(recipientsListViewModel: RecipientsListViewModel) {
             self.recipientsListViewModel = recipientsListViewModel
-            
+
             let section = BEStaticSectionsCollectionView.Section(
                 index: 0,
                 layout: .init(
@@ -25,7 +27,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 ),
                 viewModel: recipientsListViewModel
             )
-            
+
             super.init(sections: [section])
         }
     }

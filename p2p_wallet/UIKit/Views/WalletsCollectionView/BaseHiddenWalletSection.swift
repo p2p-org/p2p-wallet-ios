@@ -5,15 +5,15 @@
 //  Created by Chung Tran on 26/03/2021.
 //
 
-import Foundation
-import BECollectionView
 import Action
+import BECollectionView
+import Foundation
 
 class HiddenWalletsSectionHeaderView: BECollectionCell {
     var showHideHiddenWalletsAction: CocoaAction?
-    
+
     private let imageRef = BERef<UIImageView>()
-    
+
     override func build() -> UIView {
         BEHStack {
             UILabel(text: L10n.hiddenTokens, textSize: 13, weight: .medium, textColor: .secondaryLabel)
@@ -21,26 +21,26 @@ class HiddenWalletsSectionHeaderView: BECollectionCell {
                 .bind(imageRef)
             UIView.spacer
         }
-            .frame(height: 18)
-            .padding(.init(top: 18, left: 18, bottom: 18, right: 0))
-            .onTap { [unowned self] in showHideHiddenWalletsAction?.execute() }
+        .frame(height: 18)
+        .padding(.init(top: 18, left: 18, bottom: 18, right: 0))
+        .onTap { [unowned self] in showHideHiddenWalletsAction?.execute() }
     }
-    
+
     @discardableResult
     func setUp(isHiddenWalletsShown: Bool, hiddenWalletList: [Wallet]) -> Bool {
         guard let imageView = imageRef.view else { return false }
-        
+
         contentView.isHidden = hiddenWalletList.isEmpty
         let image = isHiddenWalletsShown ? UIImage.chevronUp : UIImage.chevronDown
         UIView.transition(with: imageView,
-            duration: 0.3,
-            options: .transitionCrossDissolve,
-            animations: { self.imageRef.view?.image = image },
-            completion: nil)
-        
+                          duration: 0.3,
+                          options: .transitionCrossDissolve,
+                          animations: { self.imageRef.view?.image = image },
+                          completion: nil)
+
         return false
     }
-    
+
     @objc func stackViewDidTouch() {
         showHideHiddenWalletsAction?.execute()
     }
@@ -48,7 +48,7 @@ class HiddenWalletsSectionHeaderView: BECollectionCell {
 
 class HiddenWalletsSection: WalletsSection {
     var showHideHiddenWalletsAction: CocoaAction?
-    
+
     init(
         index: Int,
         viewModel: WalletsRepository,
@@ -76,7 +76,7 @@ class HiddenWalletsSection: WalletsSection {
             onSend: onSend
         )
     }
-    
+
     override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
         let view = super.configureHeader(indexPath: indexPath)
         if let view = view as? HiddenWalletsSectionHeaderView {
@@ -85,7 +85,7 @@ class HiddenWalletsSection: WalletsSection {
         }
         return view
     }
-    
+
     override func mapDataToCollectionViewItems() -> [BECollectionViewItem] {
         let viewModel = self.viewModel as? WalletsRepository
         if viewModel?.isHiddenWalletsShown.value == true {
@@ -94,24 +94,27 @@ class HiddenWalletsSection: WalletsSection {
             return []
         }
     }
-    
+
     override func dataDidLoad() {
         super.dataDidLoad()
-        if let headerView = self.headerView() as? HiddenWalletsSectionHeaderView {
+        if let headerView = headerView() as? HiddenWalletsSectionHeaderView {
             updateHeader(headerView: headerView)
         }
     }
-    
+
     private func updateHeader(headerView: HiddenWalletsSectionHeaderView) {
         let viewModel = self.viewModel as! WalletsRepository
         let shouldUpdateHeight = headerView.setUp(
             isHiddenWalletsShown: viewModel.isHiddenWalletsShown.value,
             hiddenWalletList: viewModel.hiddenWallets()
         )
-        
+
         if shouldUpdateHeight {
             let context = UICollectionViewLayoutInvalidationContext()
-            context.invalidateSupplementaryElements(ofKind: UICollectionView.elementKindSectionHeader, at: [.init(row: 0, section: 1)])
+            context.invalidateSupplementaryElements(
+                ofKind: UICollectionView.elementKindSectionHeader,
+                at: [.init(row: 0, section: 1)]
+            )
             collectionView?.relayout(context)
         }
     }

@@ -11,6 +11,4 @@ protocol WalletDidSelectHandler {
     func walletDidSelect(_ wallet: Wallet)
 }
 
-enum ChooseWallet {
-    
-}
+enum ChooseWallet {}

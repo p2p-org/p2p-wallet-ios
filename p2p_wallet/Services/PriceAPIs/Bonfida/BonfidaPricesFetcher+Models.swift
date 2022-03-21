@@ -12,7 +12,7 @@ extension BonfidaPricesFetcher {
         let success: Bool?
         let data: T?
     }
-    
+
     struct ResponsePriceRecord: Decodable {
         let close: Double?
         let open: Double?

@@ -10,9 +10,11 @@ import UIKit
 extension SwapTokenSettings {
     final class SignificantView: ScrollableVStackRootView {
         // MARK: - Properties
+
         private let viewModel: NewSwapTokenSettingsViewModelType
 
         // MARK: - Subviews
+
         private let slippageView: SlippageView
         private let feesView: FeesView
 
@@ -27,7 +29,9 @@ extension SwapTokenSettings {
             stackView.spacing = 36
             scrollView.showsVerticalScrollIndicator = false
         }
+
         // MARK: - Methods
+
         override func commonInit() {
             super.commonInit()
 
@@ -35,6 +39,7 @@ extension SwapTokenSettings {
         }
 
         // MARK: - Layout
+
         private func layout() {
             stackView.addArrangedSubviews {
                 slippageView

@@ -8,20 +8,20 @@ struct Buy {
     public typealias ProcessingService = BuyProcessingServiceType
     public typealias ExchangeService = BuyExchangeServiceType
     public typealias Currency = BuyCurrencyType
-    
+
     enum FiatCurrency: String, BuyCurrencyType {
-        case usd = "usd"
-        
+        case usd
+
         func toString() -> String { rawValue }
     }
-    
+
     enum CryptoCurrency: String, BuyCurrencyType {
-        case eth = "eth"
-        case sol = "sol"
-        case usdc = "usdc"
-        
+        case eth
+        case sol
+        case usdc
+
         func toString() -> String { rawValue }
-        
+
         var fullname: String {
             switch self {
             case .eth:
@@ -32,7 +32,7 @@ struct Buy {
                 return "USD Coin"
             }
         }
-        
+
         // TODO: move code to moonpay domain
         var code: String {
             switch self {
@@ -44,7 +44,7 @@ struct Buy {
                 return "usdc_sol"
             }
         }
-        
+
         var tokenName: String {
             switch self {
             case .eth:
@@ -55,14 +55,14 @@ struct Buy {
                 return "USDC"
             }
         }
-        
+
         static let all: Set<CryptoCurrency> = [.eth, .sol, .usdc]
     }
-    
+
     struct ExchangeInput {
         let amount: Double
         let currency: Currency
-        
+
         func swap(with output: ExchangeOutput) -> (ExchangeInput, ExchangeOutput) {
             (
                 .init(amount: output.amount, currency: output.currency),
@@ -77,24 +77,24 @@ struct Buy {
             )
         }
     }
-    
+
     struct ExchangeOutput {
         let amount: Double
         let currency: Currency
-        
+
         let processingFee: Double
         let networkFee: Double
         let purchaseCost: Double
-        
+
         let total: Double
     }
-    
+
     struct ExchangeRate {
         let amount: Double
         let cryptoCurrency: CryptoCurrency
         let fiatCurrency: FiatCurrency
     }
-    
+
     enum Exception: Error {
         case invalidInput
         case message(String)

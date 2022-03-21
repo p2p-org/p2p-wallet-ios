@@ -5,57 +5,63 @@
 //  Created by Chung Tran on 22/02/2021.
 //
 
+import Action
 import Foundation
 import UIKit
-import Action
 
 class MainViewController: BaseVC {
     // MARK: - Dependencies
+
     private let viewModel: MainViewModelType
-    
+
     // MARK: - Properties
+
     var authenticateWhenAppears: Bool!
-    
+
     // MARK: - Subviews
+
     private lazy var blurEffectView: UIView = LockView()
     private var localAuthVC: Authentication.ViewController?
-    
+
     // MARK: - Initializer
+
     init(viewModel: MainViewModelType) {
         self.viewModel = viewModel
         super.init()
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         if authenticateWhenAppears {
             viewModel.authenticate(presentationStyle: .login())
         }
     }
-    
+
     // MARK: - Methods
+
     override func setUp() {
         super.setUp()
         add(child: TabBarVC())
         view.addSubview(blurEffectView)
         blurEffectView.autoPinEdgesToSuperviewEdges()
     }
-    
+
     override func bind() {
         super.bind()
         // authentication status
         viewModel.authenticationStatusDriver
-            .drive(onNext: {[weak self] in self?.handleAuthenticationStatus($0)})
+            .drive(onNext: { [weak self] in self?.handleAuthenticationStatus($0) })
             .disposed(by: disposeBag)
-        
+
         // blurEffectView
         viewModel.authenticationStatusDriver
-            .map {$0 == nil}
+            .map { $0 == nil }
             .drive(blurEffectView.rx.isHidden)
             .disposed(by: disposeBag)
     }
-    
+
     // MARK: - Helpers
+
     private func handleAuthenticationStatus(_ status: AuthenticationPresentationStyle?) {
         // dismiss
         guard let authStyle = status else {
@@ -64,7 +70,7 @@ class MainViewController: BaseVC {
             }
             return
         }
-        
+
         // clean
         localAuthVC?.dismiss(animated: false, completion: nil)
         let vm = Authentication.ViewModel()
@@ -72,30 +78,30 @@ class MainViewController: BaseVC {
         localAuthVC?.title = authStyle.title
         localAuthVC?.isIgnorable = !authStyle.isRequired
         localAuthVC?.useBiometry = authStyle.useBiometry
-        
+
         if authStyle.isFullScreen {
             localAuthVC?.modalPresentationStyle = .fullScreen
         }
-        
+
         // completion
-        localAuthVC?.onSuccess = {[weak self] in
+        localAuthVC?.onSuccess = { [weak self] in
             self?.viewModel.authenticate(presentationStyle: nil)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 authStyle.completion?()
             }
         }
-        
+
         // cancelledCompletion
         if !authStyle.isRequired {
             // disable swipe down
             localAuthVC?.isModalInPresentation = true
-            
+
             // handle cancelled by tapping <x>
-            localAuthVC?.onCancel = {[weak self] in
+            localAuthVC?.onCancel = { [weak self] in
                 self?.viewModel.authenticate(presentationStyle: nil)
             }
         }
-        
+
         presentLocalAuth()
     }
 
@@ -104,7 +110,7 @@ class MainViewController: BaseVC {
             return assertionFailure("There is no local auth controller")
         }
 
-        let keyWindow = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
         let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
 
         if topController is UIAlertController {
@@ -125,7 +131,7 @@ private extension UIViewController {
     /// Recursively find last presentedViewController
     /// - Returns: the last presented view controller
     func findLastPresentedViewController() -> UIViewController {
-        if let presentedViewController = self.presentedViewController {
+        if let presentedViewController = presentedViewController {
             return presentedViewController.findLastPresentedViewController()
         }
         return self

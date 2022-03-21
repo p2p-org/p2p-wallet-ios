@@ -8,7 +8,5 @@
 import Foundation
 
 extension ProcessTransaction {
-    enum Status {
-        
-    }
+    enum Status {}
 }

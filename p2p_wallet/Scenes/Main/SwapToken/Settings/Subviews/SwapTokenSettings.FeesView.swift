@@ -16,7 +16,7 @@ extension SwapTokenSettings {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
-    
+
         override func build() -> UIView {
             BEVStack(spacing: 8) {
                 // Title
@@ -25,7 +25,7 @@ extension SwapTokenSettings {
                     textSize: 12,
                     textColor: .h8e8e93
                 ).padding(.init(only: .left, inset: 18))
-                
+
                 // Fee table
                 FeesTable(cellsContentDriver: viewModel.feesContentDriver)
             }

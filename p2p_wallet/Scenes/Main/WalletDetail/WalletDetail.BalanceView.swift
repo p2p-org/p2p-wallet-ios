@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 18.01.2022.
 //
 
-import UIKit
 import RxSwift
+import UIKit
 
 extension WalletDetail {
     final class BalanceView: UIStackView {
@@ -33,7 +33,7 @@ extension WalletDetail {
         }
 
         @available(*, unavailable)
-        required init(coder: NSCoder) {
+        required init(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
@@ -41,17 +41,17 @@ extension WalletDetail {
             viewModel.walletDriver.map {
                 "\($0?.amount.toString(maximumFractionDigits: 9) ?? "") \($0?.token.symbol ?? "")"
             }
-                .drive(tokenBalanceTitle.rx.text)
-                .disposed(by: disposeBag)
+            .drive(tokenBalanceTitle.rx.text)
+            .disposed(by: disposeBag)
 
             // equityValue label
             viewModel.walletDriver.map {
                 $0?.amountInCurrentFiat
                     .toString(maximumFractionDigits: 2)
             }
-                .map { Defaults.fiat.symbol + " " + ($0 ?? "0") }
-                .drive(fiatBalanceTitle.rx.text)
-                .disposed(by: disposeBag)
+            .map { Defaults.fiat.symbol + " " + ($0 ?? "0") }
+            .drive(fiatBalanceTitle.rx.text)
+            .disposed(by: disposeBag)
         }
     }
 }

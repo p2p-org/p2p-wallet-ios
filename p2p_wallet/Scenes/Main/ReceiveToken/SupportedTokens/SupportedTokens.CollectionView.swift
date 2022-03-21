@@ -13,7 +13,7 @@ extension SupportedTokens {
         private let specificViewModel: SupportedTokensViewModelType
 
         init(viewModel: SupportedTokensViewModelType) {
-            self.specificViewModel = viewModel
+            specificViewModel = viewModel
 
             super.init(
                 header: .init(
@@ -24,7 +24,7 @@ extension SupportedTokens {
                 mapDataToSections: { viewModel in
                     let tokens = viewModel.getData(type: SolanaSDK.Token.self)
                     let sections: [SectionInfo] = [
-                        .init(userInfo: 0, items: tokens)
+                        .init(userInfo: 0, items: tokens),
                     ]
 
                     return sections
@@ -44,7 +44,7 @@ extension SupportedTokens {
                 cell.titleLabel.text = L10n.nothingFound
                 cell.subtitleLabel.text = L10n.changeYourSearchPhrase
             }
-            
+
             return cell
         }
     }

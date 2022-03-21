@@ -23,9 +23,9 @@ class UserDefaultsPricesStorage: PricesStorage {
         }
         return prices
     }
-    
+
     func savePrices(_ prices: [String: CurrentPrice]) {
-        guard let data = try? PropertyListEncoder().encode(prices) else {return}
+        guard let data = try? PropertyListEncoder().encode(prices) else { return }
         Defaults.prices = data
     }
 }

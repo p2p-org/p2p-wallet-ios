@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 19.11.2021.
 //
 
-import UIKit
 import BEPureLayout
+import UIKit
 
 final class AgreeTermsAndConditionsView: BEView, UITextViewDelegate {
     private lazy var termsAndConditionsLabel: UIView = createAgreeLabel()
@@ -47,7 +47,7 @@ final class AgreeTermsAndConditionsView: BEView, UITextViewDelegate {
                 .font: normalFont,
                 .kern: -0.24,
                 .paragraphStyle: paragraphStyle,
-                .foregroundColor: UIColor.textBlack
+                .foregroundColor: UIColor.textBlack,
             ]
         )
         let linkRange = (attributedText.string as NSString).range(of: L10n.capitalizedTermsAndConditions)
@@ -62,10 +62,10 @@ final class AgreeTermsAndConditionsView: BEView, UITextViewDelegate {
     // MARK: Delegate
 
     func textView(
-        _ textView: UITextView,
-        shouldInteractWith URL: URL,
-        in characterRange: NSRange,
-        interaction: UITextItemInteraction
+        _: UITextView,
+        shouldInteractWith _: URL,
+        in _: NSRange,
+        interaction _: UITextItemInteraction
     ) -> Bool {
         didTouchHyperLink?()
         return false

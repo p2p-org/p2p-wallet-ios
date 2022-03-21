@@ -10,20 +10,19 @@ import Foundation
 import UIKit
 
 struct MenuHelper {
-    
     enum Direction {
         case up
         case down
         case left
         case right
     }
-    
+
     static let menuWidth: CGFloat = 1
-    
+
     static let percentThreshold: CGFloat = 0.3
-    
+
     static let snapshotNumber = 12345
-    
+
     static func calculateProgress(translationInView: CGPoint, viewBounds: CGRect, direction: Direction) -> CGFloat {
         let pointOnAxis: CGFloat
         let axisLength: CGFloat
@@ -49,8 +48,13 @@ struct MenuHelper {
             return CGFloat(-positiveMovementOnAxisPercent)
         }
     }
-    
-    static func mapGestureStateToInteractor(gestureState: UIGestureRecognizer.State, progress: CGFloat, interactor: MenuInteractor?, triggerSegue: () -> Void){
+
+    static func mapGestureStateToInteractor(
+        gestureState: UIGestureRecognizer.State,
+        progress: CGFloat,
+        interactor: MenuInteractor?,
+        triggerSegue: () -> Void
+    ) {
         guard let interactor = interactor else { return }
         switch gestureState {
         case .began:
@@ -71,5 +75,4 @@ struct MenuHelper {
             break
         }
     }
-    
 }

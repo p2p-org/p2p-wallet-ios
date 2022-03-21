@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 19.01.2022.
 //
 
-import UIKit
 import BEPureLayout
+import UIKit
 
 final class WalletActionButton: BEView {
     init(actionType: WalletActionType, onTapHandler: @escaping () -> Void) {
@@ -17,15 +17,14 @@ final class WalletActionButton: BEView {
         content.autoAlignAxis(toSuperviewAxis: .horizontal)
         content.autoAlignAxis(toSuperviewAxis: .vertical)
 
-        self.onTap(onTapHandler)
+        onTap(onTapHandler)
     }
 
     private func createContent(image: UIImage, title: String) -> UIView {
-        let stackView = UIStackView(axis: .vertical, spacing: 6, alignment: .center, distribution: .fill)
-            {
-                UIImageView(width: 20, height: 20, image: image.withRenderingMode(.alwaysTemplate), tintColor: .white)
-                UILabel(text: title, textSize: 13, weight: .medium, textColor: .white)
-            }
+        let stackView = UIStackView(axis: .vertical, spacing: 6, alignment: .center, distribution: .fill) {
+            UIImageView(width: 20, height: 20, image: image.withRenderingMode(.alwaysTemplate), tintColor: .white)
+            UILabel(text: title, textSize: 13, weight: .medium, textColor: .white)
+        }
 
         return stackView
     }

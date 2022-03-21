@@ -16,6 +16,7 @@ extension UIActivityIndicatorView: BuyTokenWidgetLoadingView {
     public func startLoading() {
         startAnimating()
     }
+
     public func stopLoading() {
         stopAnimating()
     }
@@ -23,21 +24,25 @@ extension UIActivityIndicatorView: BuyTokenWidgetLoadingView {
 
 open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavigationDelegate {
     // MARK: - Properties
+
     var loadsCount = 0
     let provider: Buy.ProcessingService
 
     // MARK: - Initializers
+
     init(provider: Buy.ProcessingService, loadingView: BuyTokenWidgetLoadingView = UIActivityIndicatorView()) {
         self.provider = provider
         self.loadingView = loadingView
         super.init(nibName: nil, bundle: nil)
     }
-    
-    required public init?(coder: NSCoder) {
+
+    @available(*, unavailable)
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Subviews
+
     let loadingView: BuyTokenWidgetLoadingView
     lazy var webView: WKWebView = {
         let webConfiguration = WKWebViewConfiguration()
@@ -47,52 +52,57 @@ open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavig
         webView.translatesAutoresizingMaskIntoConstraints = false
         return webView
     }()
-    
-    open override func viewDidLoad() {
+
+    override open func viewDidLoad() {
         super.viewDidLoad()
         view.addSubview(webView)
-        
+
         NSLayoutConstraint.activate([
             webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             webView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             webView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            webView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor)
+            webView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
         ])
-        
+
         // add loader
         loadingView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loadingView)
         NSLayoutConstraint.activate([
             loadingView.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
-            loadingView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor)
+            loadingView.centerYAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerYAnchor),
         ])
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
             self?.loadTransak()
         }
     }
-    
-    public func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+
+    public func webView(
+        _: WKWebView,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
         if let serverTrust = challenge.protectionSpace.serverTrust {
             completionHandler(.useCredential, URLCredential(trust: serverTrust))
         }
     }
-    
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+
+    public func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
         loadsCount += 1
     }
-    
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+
+    public func webView(_: WKWebView, didFinish _: WKNavigation!) {
         loadsCount -= 1
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             if self?.loadsCount == 0 {
                 self?.stopLoading()
             }
         }
     }
-    
+
     // MARK: - Actions
+
     private func loadTransak() {
         // modify params
         let urlString = provider.getUrl()
@@ -100,25 +110,30 @@ open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavig
 
         // load url
         guard let myURL = URL(string: urlString) else {
-            let alert = UIAlertController(title: "Invalid URL", message: "The url isn't valid \(urlString)", preferredStyle: .alert)
+            let alert = UIAlertController(
+                title: "Invalid URL",
+                message: "The url isn't valid \(urlString)",
+                preferredStyle: .alert
+            )
             alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
             present(alert, animated: true, completion: nil)
             return
         }
-        
+
         startLoading()
-        
+
         // load url
         let myRequest = URLRequest(url: myURL)
         webView.load(myRequest)
     }
-    
+
     // MARK: - Loading view
+
     private func startLoading() {
         loadingView.isHidden = false
         loadingView.startLoading()
     }
-    
+
     private func stopLoading() {
         loadingView.isHidden = true
         loadingView.stopLoading()

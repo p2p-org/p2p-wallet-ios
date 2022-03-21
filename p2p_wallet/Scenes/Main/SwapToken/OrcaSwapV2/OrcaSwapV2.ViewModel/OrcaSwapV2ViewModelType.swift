@@ -9,21 +9,21 @@ import Foundation
 import RxCocoa
 
 protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
-    var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {get}
-    var loadingStateDriver: Driver<LoadableState> {get}
-    
-    var sourceWalletDriver: Driver<Wallet?> {get}
-    var destinationWalletDriver: Driver<Wallet?> {get}
-    var inputAmountDriver: Driver<Double?> {get}
-    var estimatedAmountDriver: Driver<Double?> {get}
-    var availableAmountDriver: Driver<Double?> {get}
-    var minimumReceiveAmountDriver: Driver<Double?> {get}
-    var slippageDriver: Driver<Double> {get}
-    var exchangeRateDriver: Driver<Double?> {get}
-    
-    var feesDriver: Driver<Loadable<[PayingFee]>> {get}
-    var feePayingTokenDriver: Driver<Wallet?> {get}
-    var errorDriver: Driver<OrcaSwapV2.VerificationError?> {get}
+    var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> { get }
+    var loadingStateDriver: Driver<LoadableState> { get }
+
+    var sourceWalletDriver: Driver<Wallet?> { get }
+    var destinationWalletDriver: Driver<Wallet?> { get }
+    var inputAmountDriver: Driver<Double?> { get }
+    var estimatedAmountDriver: Driver<Double?> { get }
+    var availableAmountDriver: Driver<Double?> { get }
+    var minimumReceiveAmountDriver: Driver<Double?> { get }
+    var slippageDriver: Driver<Double> { get }
+    var exchangeRateDriver: Driver<Double?> { get }
+
+    var feesDriver: Driver<Loadable<[PayingFee]>> { get }
+    var feePayingTokenDriver: Driver<Wallet?> { get }
+    var errorDriver: Driver<OrcaSwapV2.VerificationError?> { get }
     var isSendingMaxAmountDriver: Driver<Bool> { get }
     var isShowingDetailsDriver: Driver<Bool> { get }
     var isShowingShowDetailsButtonDriver: Driver<Bool> { get }
@@ -44,10 +44,10 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     func changeFeePayingToken(to payingToken: Wallet)
     func choosePayFee()
     func openSettings()
-    
+
     func cleanAllFields()
     func showNotifications(_ message: String)
-    
+
     func authenticateAndSwap()
 }
 

@@ -3,21 +3,21 @@
 //
 
 import Foundation
-import RxSwift
 import RxAlamofire
+import RxSwift
 
 extension Moonpay {
     class Provider {
         private let api: API
-        
+
         init(api: API) { self.api = api }
-        
+
         struct BuyQuoteRequest: Encodable {
             let apiKey: String
             let baseCurrencyCode: String
             let baseCurrencyAmount: Int
         }
-        
+
         func getBuyQuote(
             baseCurrencyCode: String,
             quoteCurrencyCode: String,
@@ -27,17 +27,17 @@ extension Moonpay {
             var params = [
                 "apiKey": api.apiKey,
                 "baseCurrencyCode": baseCurrencyCode,
-                "areFeesIncluded": "true"
+                "areFeesIncluded": "true",
             ] as [String: Any]
-            
+
             if let baseCurrencyAmount = baseCurrencyAmount { params["baseCurrencyAmount"] = baseCurrencyAmount }
             if let quoteCurrencyAmount = quoteCurrencyAmount { params["quoteCurrencyAmount"] = quoteCurrencyAmount }
-            
+
             return request(.get, api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote", parameters: params)
                 .responseData()
                 .map { response, data in
                     switch response.statusCode {
-                    case 200...299:
+                    case 200 ... 299:
                         return try JSONDecoder().decode(BuyQuote.self, from: data)
                     default:
                         let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
@@ -47,7 +47,7 @@ extension Moonpay {
                 .take(1)
                 .asSingle()
         }
-        
+
         func getPrice(for crypto: String, as currency: String) -> Single<Double> {
             request(.get, api.endpoint + "/currencies/\(crypto)/ask_price", parameters: ["apiKey": api.apiKey])
                 .responseJSON()
@@ -58,13 +58,13 @@ extension Moonpay {
                     return json[currency] ?? 0
                 }
         }
-        
+
         func getAllSupportedCurrencies() -> Single<Currencies> {
             request(.get, api.endpoint + "/currencies", parameters: ["apiKey": api.apiKey])
                 .responseData()
                 .map { response, data in
                     switch response.statusCode {
-                    case 200...299:
+                    case 200 ... 299:
                         return try JSONDecoder().decode(Currencies.self, from: data)
                     default:
                         let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)

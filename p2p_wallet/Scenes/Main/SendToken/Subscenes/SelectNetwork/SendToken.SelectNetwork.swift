@@ -8,7 +8,5 @@
 import Foundation
 
 extension SendToken {
-    enum SelectNetwork {
-        
-    }
+    enum SelectNetwork {}
 }

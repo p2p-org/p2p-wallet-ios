@@ -5,14 +5,16 @@
 //  Created by Chung Tran on 25/02/2021.
 //
 
-import UIKit
 import BECollectionView
+import UIKit
 
 class TokenSettingsRootView: BEView {
     // MARK: - Dependencies
+
     private let viewModel: TokenSettingsViewModel
-    
+
     // MARK: - Subviews
+
     lazy var collectionView: BEStaticSectionsCollectionView = {
         let collectionView = BEStaticSectionsCollectionView(sections: [
             TokenSettingsSection(
@@ -25,49 +27,49 @@ class TokenSettingsRootView: BEView {
                     horizontalInterItemSpacing: .fixed(0)
                 ),
                 viewModel: viewModel
-            )
+            ),
         ])
         collectionView.contentInset.modify(dTop: 10)
         collectionView.delegate = self
         return collectionView
     }()
-    
+
     // MARK: - Initializer
+
     init(viewModel: TokenSettingsViewModel) {
         self.viewModel = viewModel
         super.init(frame: .zero)
     }
-    
+
     // MARK: - Methods
+
     override func commonInit() {
         super.commonInit()
         layout()
         bind()
     }
-    
+
     override func didMoveToWindow() {
         super.didMoveToWindow()
-        
     }
-    
+
     // MARK: - Layout
+
     private func layout() {
         addSubview(collectionView)
         collectionView.autoPinEdgesToSuperviewSafeArea()
     }
-    
-    private func bind() {
-        
-    }
+
+    private func bind() {}
 }
 
 extension TokenSettingsRootView: BECollectionViewDelegate {
-    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let item = item as? TokenSettings else {
             return
         }
         switch item {
-        case .close(let isEnabled):
+        case let .close(isEnabled):
             if isEnabled {
                 viewModel.navigationSubject.onNext(.closeConfirmation)
             }

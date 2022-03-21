@@ -5,8 +5,8 @@
 //  Created by Chung Tran on 08/04/2021.
 //
 
-import Foundation
 import BECollectionView
+import Foundation
 
 class DefisSection: BEStaticSectionsCollectionView.Section {
     init(index: Int, viewModel: DefisViewModel) {
@@ -22,7 +22,7 @@ class DefisSection: BEStaticSectionsCollectionView.Section {
             viewModel: viewModel
         )
     }
-    
+
     override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
         let header = super.configureHeader(indexPath: indexPath) as? SectionHeaderView
         header?.setUp(headerTitle: L10n.exploreDeFi)

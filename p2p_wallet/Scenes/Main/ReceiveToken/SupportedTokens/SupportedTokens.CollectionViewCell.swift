@@ -64,7 +64,7 @@ extension SupportedTokens.CollectionView {
         lazy var addressLabel = UILabel(textSize: 13, textColor: .textSecondary)
 
         func setUp(with item: AnyHashable?) {
-            guard let item = item as? SolanaSDK.Token else {return}
+            guard let item = item as? SolanaSDK.Token else { return }
             setUp(with: item)
         }
     }

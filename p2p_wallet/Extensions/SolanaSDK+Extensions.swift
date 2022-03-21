@@ -10,7 +10,11 @@ import Foundation
 extension SolanaSDK.APIEndPoint {
     static var definedEndpoints: [Self] {
         var endpoints = defaultEndpoints
-        endpoints.insert(.init(address: "https://p2p.rpcpool.com", network: .mainnetBeta, additionalQuery: .secretConfig("RPCPOOL_API_KEY")), at: 0)
+        endpoints.insert(
+            .init(address: "https://p2p.rpcpool.com", network: .mainnetBeta,
+                  additionalQuery: .secretConfig("RPCPOOL_API_KEY")),
+            at: 0
+        )
         return endpoints
     }
 }

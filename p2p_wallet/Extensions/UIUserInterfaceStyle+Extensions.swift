@@ -18,6 +18,7 @@ extension UIUserInterfaceStyle {
             return "system"
         }
     }
+
     var localizedString: String {
         var appearance = ""
         switch self {
