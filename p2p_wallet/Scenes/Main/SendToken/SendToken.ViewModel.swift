@@ -27,6 +27,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func reload()
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
+    func cleanAllFields()
     
     func shouldShowConfirmAlert() -> Bool
     func closeConfirmAlert()
@@ -84,12 +85,32 @@ extension SendToken {
                 walletSubject.accept(selectableWallet)
             }
             
-            bindFees(walletSubject: walletSubject)
+            bind()
             reload()
         }
         
         deinit {
             debugPrint("\(String(describing: self)) deinited")
+        }
+        
+        func bind() {
+            bindFees(walletSubject: walletSubject)
+            
+            // update wallet after swapping
+            Observable.combineLatest(
+                walletsRepository.dataObservable
+                    .skip(1),
+                walletSubject.asObservable()
+            )
+                .subscribe(onNext: { [weak self] wallets, myWallet in
+                    guard let self = self else {return}
+                    if let wallet = wallets?.first(where: { $0.pubkey == myWallet?.pubkey }),
+                       wallet.lamports != myWallet?.lamports
+                    {
+                        self.walletSubject.accept(wallet)
+                    }
+                })
+                .disposed(by: disposeBag)
         }
         
         func reload() {
@@ -122,24 +143,10 @@ extension SendToken {
         private func send() {
             guard let wallet = walletSubject.value,
                   let amount = amountSubject.value,
-                  let receiver = recipientSubject.value?.address
+                  let receiver = recipientSubject.value
             else {return}
             
             let network = networkSubject.value
-            
-            var payingWallet = payingWalletSubject.value
-            if feeInfoSubject.value?.feeAmountInSOL.total == 0 {
-                payingWallet = nil
-            }
-            
-            // form request
-            let request = sendService.send(
-                from: wallet,
-                receiver: receiver,
-                amount: amount,
-                network: network,
-                payingFeeWallet: payingWallet
-            )
             
             analyticsManager.log(
                 event: .sendSendClick(
@@ -150,12 +157,17 @@ extension SendToken {
             
             navigationSubject.accept(
                 .processTransaction(
-                    request: request.map {$0 as ProcessTransactionResponseType},
-                    transactionType: .send(
-                        from: wallet,
-                        to: receiver,
-                        lamport: amount.toLamport(decimals: wallet.token.decimals),
-                        feeInLamports: feeInfoSubject.value?.feeAmount.total ?? .zero
+                    ProcessTransaction.SendTransaction(
+                        sendService: sendService,
+                        network: network,
+                        sender: wallet,
+                        receiver: receiver,
+                        authority: walletsRepository.nativeWallet?.pubkey,
+                        amount: amount.toLamport(decimals: wallet.token.decimals),
+                        payingFeeWallet: payingWalletSubject.value,
+                        feeInSOL: feeInfoSubject.value?.feeAmountInSOL.total ?? 0,
+                        feeInToken: feeInfoSubject.value?.feeAmount,
+                        isSimulation: false
                     )
                 )
             )
@@ -214,6 +226,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         if !wallet.token.isRenBTC && networkSubject.value == .bitcoin {
             selectNetwork(.solana)
         }
+    }
+    
+    func cleanAllFields() {
+        amountSubject.accept(nil)
+        recipientSubject.accept(nil)
     }
     
     func shouldShowConfirmAlert() -> Bool {

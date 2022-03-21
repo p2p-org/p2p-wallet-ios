@@ -11,10 +11,8 @@ import RxCocoa
 enum Settings {
     enum NavigatableScene {
         case username
-        case reserveUsername(owner: String, handler: ReserveNameHandler?)
+        case reserveUsername
         case backup
-        case backupManually
-        case backupShowPhrases
         case currency
         case network
         case security

@@ -198,8 +198,6 @@ extension UIView {
     }
     
     static func closeBannerButton() -> UIImageView {
-        // swiftlint:disable close_banner_button
-        UIImageView(width: 24, height: 24, image: .closeBannerButton)
-        // swiftlint:enable close_banner_button
+        UIImageView(width: 24, height: 24, image: .closeBanner)
     }
 }

@@ -100,14 +100,26 @@ extension OrcaSwapV2 {
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-            case let .processTransaction(
-                request: request,
-                transactionType: transactionType
-            ):
-                let vm = ProcessTransaction.ViewModel(transactionType: transactionType, request: request)
+            case .processTransaction(let transaction):
+                let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.delegate = self
-                present(vc, animated: true, completion: nil)
+                vc.backCompletion = { [weak self] in
+                    self?.viewModel.cleanAllFields()
+                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+                }
+                vc.makeAnotherTransactionHandler = { [weak self] in
+                    self?.viewModel.cleanAllFields()
+                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+                }
+                vc.specificErrorHandler = { [weak self] error in
+                    guard let self = self else {return}
+                    if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                        self.backCompletion { [weak self] in
+                            self?.viewModel.navigate(to: .settings)
+                        }
+                    }
+                }
+                show(vc, sender: nil)
             case .back:
                 navigationController?.popViewController(animated: true)
             case let .info(title, description):
@@ -115,14 +127,6 @@ extension OrcaSwapV2 {
             case .none:
                 break
             }
-        }
-    }
-}
-
-extension OrcaSwapV2.ViewController: ProcessTransactionViewControllerDelegate {
-    func processTransactionViewControllerDidComplete(_ vc: UIViewController) {
-        vc.dismiss(animated: true) { [weak self] in
-            self?.navigationController?.popViewController(animated: true)
         }
     }
 }

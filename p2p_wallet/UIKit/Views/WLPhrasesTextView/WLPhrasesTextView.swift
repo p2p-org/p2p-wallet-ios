@@ -25,6 +25,10 @@ class WLPhrasesTextView: SubviewAttachingTextView {
     
     override weak var delegate: UITextViewDelegate? {
         didSet {
+            guard let delegate = delegate else {
+                return
+            }
+
             if !(delegate is Self) {
                 fatalError("Use phrases text view delegate instead")
             }

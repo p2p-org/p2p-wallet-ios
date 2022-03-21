@@ -31,7 +31,6 @@ extension WalletDetail {
         // MARK: - Dependencies
         @Injected var walletsRepository: WalletsRepository
         @Injected private var pricesService: PricesServiceType
-        @Injected private var processingTransactionRepository: ProcessingTransactionsRepository
         @Injected private var transactionsRepository: TransactionsRepository
         @Injected private var notificationsRepository: WLNotificationsRepository
         private let pubkey: String
@@ -54,7 +53,7 @@ extension WalletDetail {
             .map { wallet -> [WalletActionType] in
                 guard let wallet = wallet else { return [] }
 
-                if wallet.isNativeSOL {
+                if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
                     return [.buy, .receive, .send, .swap]
                 } else {
                     return [.receive, .send, .swap]
@@ -104,12 +103,13 @@ extension WalletDetail {
         }
 
         private func buyTokens() {
-            var tokens = Buy.CryptoCurrency.eth
+            var tokens = Buy.CryptoCurrency.sol
             if symbol == "SOL" {
                 tokens = .sol
             }
-            if symbol == "USDT" {
-                tokens = .usdt
+            print(symbol)
+            if symbol == "USDC" {
+                tokens = .usdc
             }
             analyticsManager.log(event: .tokenDetailsBuyClick)
             navigatableSceneSubject.accept(.buy(tokens: tokens))

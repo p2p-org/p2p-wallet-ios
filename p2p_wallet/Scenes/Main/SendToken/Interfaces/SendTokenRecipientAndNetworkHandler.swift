@@ -116,7 +116,7 @@ extension SendTokenRecipientAndNetworkHandler {
                             from: wallet,
                             receiver: recipient?.address,
                             network: network,
-                            isPayingWithSOL: payingWallet?.isNativeSOL == true
+                            payingTokenMint: payingWallet?.mintAddress
                         )
                         .flatMap { [weak self] feeAmountInSOL -> Single<(SolanaSDK.FeeAmount, SolanaSDK.FeeAmount)> in
                             guard let sendService = self?.sendService else {

@@ -1,10 +1,21 @@
 import UIKit
 
 class ModalPresentationController: UIPresentationController {
+    private let tapFadeViewToDismiss: Bool
+    
+    init(presentedViewController: UIViewController, presenting: UIViewController?, tapFadeViewToDismiss: Bool) {
+        self.tapFadeViewToDismiss = tapFadeViewToDismiss
+        super.init(presentedViewController: presentedViewController, presenting: presenting)
+    }
 
     lazy var fadeView: UIView = {
         let view = UIView(backgroundColor: .black.withAlphaComponent(0.3))
         view.alpha = 0
+        if tapFadeViewToDismiss {
+            view.onTap { [unowned self] in
+                self.presentedViewController.dismiss(animated: true)
+            }
+        }
         return view
     }()
 

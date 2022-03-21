@@ -71,17 +71,21 @@ class CoinLogoImageView: BEView {
         
         // with token
         if let token = token {
-            let key = token.symbol.isEmpty ? token.address : token.symbol
-            var seed = Self.cachedJazziconSeeds[key]
-            if seed == nil {
-                seed = UInt64.random(in: 0..<10000000)
-                Self.cachedJazziconSeeds[key] = seed
+            if let image = token.image {
+                tokenIcon.image = image
+            } else {
+                let key = token.symbol.isEmpty ? token.address : token.symbol
+                var seed = Self.cachedJazziconSeeds[key]
+                if seed == nil {
+                    seed = UInt64.random(in: 0..<10000000)
+                    Self.cachedJazziconSeeds[key] = seed
+                }
+                
+                let jazzicon = Jazzicon(seed: seed!)
+                let jazziconImage = jazzicon.generateImage(size: size)
+                
+                tokenIcon.setImage(urlString: token.logoURI, placeholder: jazziconImage)
             }
-            
-            let jazzicon = Jazzicon(seed: seed!)
-            let jazziconImage = jazzicon.generateImage(size: size)
-            
-            tokenIcon.setImage(urlString: token.logoURI, placeholder: jazziconImage)
         } else {
             tokenIcon.image = placeholder
         }

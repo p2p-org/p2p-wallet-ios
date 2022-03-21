@@ -10,6 +10,7 @@ import Action
 import RxSwift
 import RxCocoa
 import UIKit
+import BEPureLayout
 
 extension OrcaSwapV2 {
     final class WalletView: BEView {
@@ -37,7 +38,10 @@ extension OrcaSwapV2 {
             placeholder: "0\(Locale.current.decimalSeparator ?? ".")0",
             autocorrectionType: .no/*, rightView: useAllBalanceButton, rightViewMode: .always*/
         )
-
+        
+        private lazy var questionMarkView = UIImageView(width: 20, height: 20, image: .questionMarkCircleOutlined)
+            .onTap(self, action: #selector(questionMarkDidTouch))
+        
         init(type: WalletType, viewModel: OrcaSwapV2ViewModelType) {
             self.type = type
             self.viewModel = viewModel
@@ -83,6 +87,11 @@ extension OrcaSwapV2 {
                     BEStackViewSpacing(12)
 
                     amountTextField
+                    
+                    BEStackViewSpacing(4)
+                    
+                    questionMarkView
+                        
                 }
             }
 
@@ -123,11 +132,8 @@ extension OrcaSwapV2 {
                 outputDriver = viewModel.inputAmountDriver
                 
                 // available amount
-                balanceTextDriver = viewModel.availableAmountDriver
-                    .map { amount -> String? in
-                        amount.map { $0.toString(maximumFractionDigits: 9)
-                        }
-                    }
+                balanceTextDriver = walletDriver
+                    .map {$0?.amount?.toString(maximumFractionDigits: 9) ?? "0"}
 
                 Driver.combineLatest(
                     viewModel.errorDriver
@@ -148,6 +154,12 @@ extension OrcaSwapV2 {
                 viewModel.isSendingMaxAmountDriver
                     .drive(balanceView.maxButton.rx.isHidden)
                     .disposed(by: disposeBag)
+                
+                questionMarkView.isHidden = false
+                viewModel.isSendingMaxAmountDriver
+                    .map {!$0}
+                    .drive(questionMarkView.rx.isHidden)
+                    .disposed(by: disposeBag)
 
             case .destination:
                 walletDriver = viewModel.destinationWalletDriver
@@ -162,6 +174,8 @@ extension OrcaSwapV2 {
                     .map { wallet -> String? in
                         wallet?.amount?.toString(maximumFractionDigits: 9)
                     }
+                
+                questionMarkView.isHidden = true
             }
             
             // wallet
@@ -236,6 +250,10 @@ extension OrcaSwapV2 {
         
         @objc private func chooseDestinationWallet() {
             viewModel.chooseDestinationWallet()
+        }
+        
+        @objc private func questionMarkDidTouch() {
+            viewModel.showNotifications(L10n.theMaximumValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance)
         }
     }
 }

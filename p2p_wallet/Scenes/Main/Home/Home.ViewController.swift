@@ -48,17 +48,6 @@ extension Home {
                 .asDriver(onErrorJustReturn: .initializing)
             
             stateDriver
-                .map {$0 == .loading}
-                .drive(onNext: {[weak self] isLoading in
-                    if isLoading {
-                        self?.view.showLoadingIndicatorView()
-                    } else {
-                        self?.view.hideLoadingIndicatorView()
-                    }
-                })
-                .disposed(by: disposeBag)
-            
-            stateDriver
                 .map {$0 == .error}
                 .drive(onNext: {[weak self] hasError in
                     if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil
@@ -91,9 +80,14 @@ extension Home {
             guard let scene = scene else {return}
             switch scene {
             case .buyToken:
-                let vm = BuyRoot.ViewModel()
-                let vc = BuyRoot.ViewController(viewModel: vm)
-                show(vc, sender: nil)
+                present(
+                    BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
+                        let vm = BuyRoot.ViewModel()
+                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
+                        show(vc, sender: nil)
+                    }),
+                    animated: true
+                )
             case .receiveToken:
                 if let pubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let isDevnet = Defaults.apiEndPoint.network == .devnet
@@ -197,7 +191,10 @@ extension Home {
             case .feedback:
                 tabBar()?.moveToPage(10)
             case .backup:
-                show(Settings.BackupViewController(viewModel: Settings.ViewModel(canGoBack: true), dismissAfterBackup: true), sender: nil)
+                let vm = Settings.Backup.ViewModel()
+                let vc = Settings.Backup.ViewController(viewModel: vm, dismissAfterBackup: true)
+                
+                show(vc, sender: nil)
                 return
             }
         }

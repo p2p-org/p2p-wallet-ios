@@ -22,7 +22,7 @@ protocol LogoutResponder {
     func logout()
 }
 
-protocol SettingsViewModelType {
+protocol SettingsViewModelType: ReserveNameHandler {
     var notificationsService: NotificationsServiceType { get }
     var selectableLanguages: [LocalizedLanguage: Bool] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
@@ -45,9 +45,6 @@ protocol SettingsViewModelType {
     
     func navigate(to scene: Settings.NavigatableScene)
     func showOrReserveUsername()
-    func backupUsingICloud()
-    func backupManually()
-    func setDidBackupOffline()
     func setDidBackup(_ didBackup: Bool)
     func setFiat(_ fiat: Fiat)
     func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
@@ -204,60 +201,9 @@ extension Settings.ViewModel: SettingsViewModelType {
     func showOrReserveUsername() {
         if storage.getName() != nil {
             navigate(to: .username)
-        } else if let owner = storage.account?.publicKey.base58EncodedString {
-            navigate(to: .reserveUsername(owner: owner, handler: nil))
-        }
-    }
-    
-    func backupUsingICloud() {
-        guard let account = storage.account?.phrase else { return }
-        authenticationHandler.pauseAuthentication(true)
-        
-        deviceOwnerAuthenticationHandler.requiredOwner(onSuccess: {
-            _ = self.storage.saveToICloud(
-                account: .init(
-                    name: self.storage.getName(),
-                    phrase: account.joined(separator: " "),
-                    derivablePath: self.storage.getDerivablePath() ?? .default
-                )
-            )
-            self.setDidBackup(true)
-            self.notificationsService.showInAppNotification(.done(L10n.savedToICloud))
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.authenticationHandler.pauseAuthentication(false)
-            }
-        }, onFailure: { error in
-            guard let error = error else { return }
-            self.notificationsService.showInAppNotification(.error(error))
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                self.authenticationHandler.pauseAuthentication(false)
-            }
-        })
-    }
-    
-    func backupManually() {
-        if didBackupSubject.value {
-            authenticationHandler.pauseAuthentication(true)
-            deviceOwnerAuthenticationHandler.requiredOwner(onSuccess: {
-                self.navigate(to: .backupShowPhrases)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.authenticationHandler.pauseAuthentication(false)
-                }
-            }, onFailure: { error in
-                guard let error = error else { return }
-                self.notificationsService.showInAppNotification(.error(error))
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    self.authenticationHandler.pauseAuthentication(false)
-                }
-            })
         } else {
-            navigate(to: .backupManually)
+            navigate(to: .reserveUsername)
         }
-    }
-    
-    func setDidBackupOffline() {
-        Defaults.didBackupOffline = true
-        setDidBackup(true)
     }
     
     func setDidBackup(_ didBackup: Bool) {
@@ -292,6 +238,12 @@ extension Settings.ViewModel: SettingsViewModelType {
     var isBiometryAvailableDriver: Driver<Bool> { isBiometryAvailableSubject.asDriver() }
     
     var biometryTypeDriver: Driver<Settings.BiometryType> { biometryTypeSubject.asDriver() }
+    
+    func handleName(_ name: String?) {
+        guard let name = name else {return}
+        storage.save(name: name)
+        usernameSubject.accept(name)
+    }
     
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void) {
         // pause authentication

@@ -47,7 +47,7 @@ extension SendToken {
                                 .disposed(by: disposeBag)
                             
                             feeInfoDriver
-                                .map {$0.value?.feeAmount}
+                                .map {$0.value?.feeAmountInSOL}
                                 .map {feeAmountToAttributedString(feeAmount: $0, solPrice: solPrice)}
                                 .drive(label.rx.attributedText)
                                 .disposed(by: disposeBag)

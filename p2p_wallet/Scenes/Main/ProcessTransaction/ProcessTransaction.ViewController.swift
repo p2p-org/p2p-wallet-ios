@@ -2,84 +2,83 @@
 //  ProcessTransaction.ViewController.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 02/06/2021.
+//  Created by Chung Tran on 11/03/2022.
 //
 
 import Foundation
 import UIKit
-import RxSwift
-
-@objc protocol ProcessTransactionViewControllerDelegate: AnyObject {
-    func processTransactionViewControllerDidComplete(_ vc: UIViewController)
-}
+import BEPureLayout
 
 extension ProcessTransaction {
-    class ViewController: WLIndicatorModalVC {
-        
-        // MARK: - Dependencies
-        private let viewModel: ProcessTransactionViewModelType
-        
+    final class ViewController: BaseVC {
         // MARK: - Properties
-        weak var delegate: ProcessTransactionViewControllerDelegate?
+        private let viewModel: ProcessTransactionViewModelType
+        private var detailViewController: TransactionDetail.ViewController!
+        private var statusViewController: Status.ViewController!
+        private var statusViewControllerShown = false
+        
+        // MARK: - Handlers
+        var makeAnotherTransactionHandler: (() -> Void)?
+        var backCompletion: (() -> Void)?
+        var specificErrorHandler: ((Swift.Error) -> Void)?
         
         // MARK: - Initializer
         init(viewModel: ProcessTransactionViewModelType) {
             self.viewModel = viewModel
             super.init()
-            modalPresentationStyle = .custom
-            transitioningDelegate = self
         }
         
-        // MARK: - Methods
         override func setUp() {
             super.setUp()
-            let rootView = RootView(viewModel: viewModel)
-            rootView.transactionStatusDidChange = { [weak self] in
-                self?.forceResizeModal()
-            }
-            containerView.addSubview(rootView)
-            rootView.autoPinEdgesToSuperviewEdges()
-            
-            if let gesture = swipeGesture {
-                view.removeGestureRecognizer(gesture)
-            }
+            viewModel.sendAndObserveTransaction()
         }
         
         override func bind() {
             super.bind()
-            viewModel.navigatableSceneDriver
+            
+            viewModel.observingTransactionIndexDriver
+                .filter {$0 != nil}
+                .map {$0!}
+                .distinctUntilChanged()
+                .drive(onNext: {[weak self] index in
+                    guard let self = self else {return}
+                    self.detailViewController?.removeFromParent()
+                    let vm = TransactionDetail.ViewModel(observingTransactionIndex: index)
+                    self.detailViewController = TransactionDetail.ViewController(viewModel: vm)
+                    self.detailViewController.backCompletion = self.makeAnotherTransactionHandler
+                    self.add(child: self.detailViewController)
+                })
+                .disposed(by: disposeBag)
+            
+            viewModel.navigationDriver
                 .drive(onNext: {[weak self] in self?.navigate(to: $0)})
                 .disposed(by: disposeBag)
         }
         
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            if !statusViewControllerShown {
+                statusViewController = .init(viewModel: viewModel)
+                present(statusViewController, interactiveDismissalType: .none, completion: nil)
+                statusViewControllerShown = true
+            }
+        }
+        
         // MARK: - Navigation
         private func navigate(to scene: NavigatableScene?) {
+            guard let scene = scene else {return}
             switch scene {
-            case .showExplorer(let transactionID):
-                self.showWebsite(url: "https://explorer.solana.com/tx/" + transactionID)
-            case .done:
-                if let delegate = delegate {
-                    delegate.processTransactionViewControllerDidComplete(self)
-                } else {
-                    let pc = presentingViewController
-                    self.dismiss(animated: true) {
-                        pc?.dismiss(animated: true, completion: nil)
-                    }
+            case .makeAnotherTransaction:
+                statusViewController.dismiss(animated: true) {
+                    self.makeAnotherTransactionHandler?()
                 }
-            case .cancel:
-                self.dismiss(animated: true, completion: nil)
-            case .none:
+            case .specificErrorHandler(let error):
+                statusViewController.dismiss(animated: true) {
+                    self.specificErrorHandler?(error)
+                }
+            default:
                 break
             }
         }
-    }
-}
-
-extension ProcessTransaction.ViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        let pc = FlexibleHeightPresentationController(position: .bottom, presentedViewController: presented, presenting: presenting)
-        // disable dismissing on dimmingView
-        pc.dimmingView.gestureRecognizers?.forEach {pc.dimmingView.removeGestureRecognizer($0)}
-        return pc
     }
 }

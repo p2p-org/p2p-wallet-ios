@@ -86,7 +86,12 @@ custom_rules:
     message: "Use ClipboardManager instead"
     severity: warning
   timer_memory_leak:
-    name: "Timer with target causes memory leak, you block instead"
+    name: "Timer with target causes memory leak, use block instead"
     regex: 'Timer.scheduledTimer\(.+selector'
     message: "Use block instead"
+    serverity: error
+  print:
+    name: "print"
+    regex: 'print\('
+    message: "Use debugPrint instead"
     serverity: error

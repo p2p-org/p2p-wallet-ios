@@ -44,7 +44,7 @@ extension SendToken.ConfirmViewController {
                 .text(L10n.amount.uppercaseFirst + ": ", size: 13, color: .textSecondary)
                 .text(Defaults.fiat.symbol + amountInFiat.toString(maximumFractionDigits: 2), size: 13, weight: .medium)
             
-            amountLabel.text = amount.toString(maximumFractionDigits: 9)
+            amountLabel.text = amount.toString(maximumFractionDigits: 9) + " " + (wallet?.token.symbol ?? "")
         }
     }
     

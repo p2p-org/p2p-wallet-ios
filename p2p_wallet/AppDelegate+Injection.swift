@@ -37,7 +37,7 @@ extension Resolver: ResolverRegistering {
         register {CryptoComparePricesFetcher()}
             .implements(PricesFetcher.self)
             .scope(.application)
-        register { NameService() }
+        register { NameService(cache: NameServiceUserDefaultCache()) }
             .implements(NameServiceType.self)
             .scope(.application)
         register { AddressFormatter() }
@@ -87,8 +87,12 @@ extension Resolver: ResolverRegistering {
         
         // MARK: - Socket
         register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
-            .implements(AccountNotificationsRepository.self)
-            .implements(TransactionHandler.self)
+            .implements(SocketType.self)
+            .scope(.session)
+        
+        // MARK: - TransactionHandler (new)
+        register { TransactionHandler() }
+            .implements(TransactionHandlerType.self)
             .scope(.session)
         
         // MARK: - FeeRelayer
@@ -150,8 +154,7 @@ extension Resolver: ResolverRegistering {
                 rpcClient: resolve(),
                 solanaClient: resolve(),
                 account: resolve(SolanaSDK.self).accountStorage.account!,
-                sessionStorage: RenVM.LockAndMint.SessionStorage(),
-                transactionHandler: resolve()
+                sessionStorage: RenVM.LockAndMint.SessionStorage()
             )
         }
             .implements(RenVMLockAndMintServiceType.self)
@@ -162,16 +165,10 @@ extension Resolver: ResolverRegistering {
                 rpcClient: resolve(),
                 solanaClient: resolve(),
                 account: resolve(SolanaSDK.self).accountStorage.account!,
-                transactionStorage: RenVM.BurnAndRelease.TransactionStorage(),
-                transactionHandler: resolve()
+                transactionStorage: RenVM.BurnAndRelease.TransactionStorage()
             )
         }
             .implements(RenVMBurnAndReleaseServiceType.self)
-            .scope(.session)
-        
-        // MARK: - ProcessingTransactionsManager
-        register { ProcessingTransactionsManager() }
-            .implements(ProcessingTransactionsRepository.self)
             .scope(.session)
         
         // MARK: - Others
