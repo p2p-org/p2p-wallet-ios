@@ -11,6 +11,7 @@ class StandardInteractionController: NSObject, InteractionControlling {
     private var cancellationAnimator: UIViewPropertyAnimator?
 
     // MARK: - Setup
+
     init(viewController: CustomPresentableViewController) {
         self.viewController = viewController
         super.init()
@@ -34,6 +35,7 @@ class StandardInteractionController: NSObject, InteractionControlling {
     }
 
     // MARK: - Gesture handling
+
     @objc func handleGesture(_ gestureRecognizer: OneWayPanGestureRecognizer) {
         guard let superview = gestureRecognizer.view?.superview else { return }
         let translation = gestureRecognizer.translation(in: superview).y
@@ -62,7 +64,7 @@ class StandardInteractionController: NSObject, InteractionControlling {
         }
     }
 
-    private func gestureChanged(translation: CGFloat, velocity: CGFloat) {
+    private func gestureChanged(translation: CGFloat, velocity _: CGFloat) {
         var progress = interactionDistance == 0 ? 0 : (translation / interactionDistance)
         if progress < 0 { progress /= (1.0 + abs(progress * 20)) }
         update(progress: progress)
@@ -81,6 +83,7 @@ class StandardInteractionController: NSObject, InteractionControlling {
     }
 
     // MARK: - Transition controlling
+
     func startInteractiveTransition(_ transitionContext: UIViewControllerContextTransitioning) {
         let presentedViewController = transitionContext.viewController(forKey: .from)!
         presentedFrame = transitionContext.finalFrame(for: presentedViewController)
@@ -148,6 +151,7 @@ class StandardInteractionController: NSObject, InteractionControlling {
     }
 
     // MARK: - Helpers
+
     private func springVelocity(distanceToTravel: CGFloat, gestureVelocity: CGFloat) -> CGFloat {
         distanceToTravel == 0 ? 0 : gestureVelocity / distanceToTravel
     }
@@ -166,8 +170,9 @@ class StandardInteractionController: NSObject, InteractionControlling {
 }
 
 // MARK: - UIGestureRecognizerDelegate
+
 extension StandardInteractionController: UIGestureRecognizerDelegate {
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizerShouldBegin(_: UIGestureRecognizer) -> Bool {
         if let scrollView = viewController.dismissalHandlingScrollView {
             return scrollView.contentOffset.y <= 0
         }

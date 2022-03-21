@@ -7,12 +7,12 @@
 
 class TopAlignLabel: UILabel {
     override func drawText(in rect: CGRect) {
-        guard let labelText = text else {  return super.drawText(in: rect) }
+        guard let labelText = text else { return super.drawText(in: rect) }
 
         let attributedText = NSAttributedString(
             string: labelText,
             attributes: [
-                NSAttributedString.Key.font: font ?? .preferredFont(forTextStyle: .body)
+                NSAttributedString.Key.font: font ?? .preferredFont(forTextStyle: .body),
             ]
         )
         var newRect = rect

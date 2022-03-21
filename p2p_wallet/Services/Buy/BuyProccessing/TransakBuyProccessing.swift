@@ -34,8 +34,8 @@ public struct TransakBuyProccessing: Buy.ProcessingService {
                 walletAddress: String?,
                 walletAddressesData: String?,
                 disableWalletAddressForm: String = "true",
-                hideMenu: String = "true"
-    ) {
+                hideMenu: String = "true")
+    {
         self.environment = environment
         self.networks = networks
         self.cryptoCurrencies = cryptoCurrencies
@@ -60,7 +60,7 @@ public struct TransakBuyProccessing: Buy.ProcessingService {
             "walletAddress": walletAddress,
             "walletAddressesData": walletAddressesData,
             "disableWalletAddressForm": disableWalletAddressForm,
-            "hideMenu": hideMenu
+            "hideMenu": hideMenu,
         ]
 
         let paramStr = params.merging(extraParams, uniquingKeysWith: { $1 }).query

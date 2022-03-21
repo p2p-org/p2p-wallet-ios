@@ -16,14 +16,14 @@ extension CryptoComparePricesFetcher {
 //        "RateLimit": {},
         let Data: ResponseData
     }
-    
+
     struct ResponseData: Decodable {
 //        "Aggregated": false,
 //        "TimeFrom": 1611532800,
 //        "TimeTo": 1612396800,
         let Data: [ResponseDataData]
     }
-    
+
     struct ResponseDataData: Decodable {
 //        "high": 34881.18,
 //        "low": 31937.09,

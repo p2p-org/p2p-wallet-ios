@@ -6,11 +6,11 @@
 //
 
 import Foundation
-import RxSwift
-import RxCocoa
 import GT3Captcha
-import UIKit
 import Resolver
+import RxCocoa
+import RxSwift
+import UIKit
 
 protocol ReserveNameViewModelType: AnyObject {
     var navigationDriver: Driver<ReserveName.NavigatableScene?> { get }
@@ -20,7 +20,7 @@ protocol ReserveNameViewModelType: AnyObject {
     var usernameValidationLoadingDriver: Driver<Bool> { get }
     var isLoadingDriver: Driver<Bool> { get }
     var kind: ReserveNameKind { get }
-    
+
     func showTermsOfUse()
     func showPrivacyPolicy()
     func skipButtonPressed()
@@ -31,6 +31,7 @@ protocol ReserveNameViewModelType: AnyObject {
 extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
+
         @Injected private var notificationsService: NotificationsServiceType
         @Injected private var analyticsManager: AnalyticsManagerType
         private let nameService: NameServiceType = Resolver.resolve()
@@ -47,14 +48,16 @@ extension ReserveName {
         }()
 
         // MARK: - Properties
+
         let kind: ReserveNameKind
         private let goBackOnCompletion: Bool
 
         private let disposeBag = DisposeBag()
 
         private var nameAvailabilityDisposable: Disposable?
-        
+
         // MARK: - Subject
+
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let textFieldStateSubject = BehaviorRelay<TextFieldState>(value: .empty)
         private let mainButtonStateSubject = BehaviorRelay<ReserveName.MainButtonState>(value: .empty)
@@ -72,13 +75,13 @@ extension ReserveName {
             self.owner = owner
             self.reserveNameHandler = reserveNameHandler
             self.goBackOnCompletion = goBackOnCompletion
-            
+
             super.init()
 
             bind()
             manager.registerCaptcha(nil)
         }
-        
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
@@ -144,7 +147,7 @@ extension ReserveName {
                     self?.notificationsService.showInAppNotification(
                         .message(L10n.usernameWasReserved(name))
                     )
-                    
+
                     if self?.goBackOnCompletion == true {
                         self?.goBack()
                     }
@@ -186,11 +189,11 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
 
     func skipButtonPressed() {
         navigationSubject.accept(
-            .skipAlert({ [weak self] in
+            .skipAlert { [weak self] in
                 let isFilled = self?.textFieldStateSubject.value == ReserveName.TextFieldState.empty ? "Not_Filled" : "Filled"
                 self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
                 self?.handleSkipAlertAction(isProceed: $0)
-            })
+            }
         )
     }
 
@@ -228,11 +231,11 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
 }
 
 extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
-    func gtCaptcha(_ manager: GT3CaptchaManager, errorHandler error: GT3Error) {
+    func gtCaptcha(_: GT3CaptchaManager, errorHandler error: GT3Error) {
         notificationsService.showInAppNotification(.error(error))
     }
 
-    func gtCaptcha(_ manager: GT3CaptchaManager, didReceiveCaptchaCode code: String, result: [AnyHashable: Any]?, message: String?) {
+    func gtCaptcha(_: GT3CaptchaManager, didReceiveCaptchaCode code: String, result: [AnyHashable: Any]?, message _: String?) {
         guard code == "1",
               let geetest_seccode = result?["geetest_seccode"] as? String,
               let geetest_challenge = result?["geetest_challenge"] as? String,
@@ -248,11 +251,9 @@ extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
         )
     }
 
-    func shouldUseDefaultSecondaryValidate(_ manager: GT3CaptchaManager) -> Bool {
+    func shouldUseDefaultSecondaryValidate(_: GT3CaptchaManager) -> Bool {
         false
     }
 
-    func gtCaptcha(_ manager: GT3CaptchaManager, didReceiveSecondaryCaptchaData data: Data?, response: URLResponse?, error: GT3Error?, decisionHandler: @escaping (GT3SecondaryCaptchaPolicy) -> Void) {
-
-    }
+    func gtCaptcha(_: GT3CaptchaManager, didReceiveSecondaryCaptchaData _: Data?, response _: URLResponse?, error _: GT3Error?, decisionHandler _: @escaping (GT3SecondaryCaptchaPolicy) -> Void) {}
 }

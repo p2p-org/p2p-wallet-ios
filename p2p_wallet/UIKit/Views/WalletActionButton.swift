@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 19.01.2022.
 //
 
-import UIKit
 import BEPureLayout
+import UIKit
 
 final class WalletActionButton: BEView {
     init(actionType: WalletActionType, onTapHandler: @escaping () -> Void) {
@@ -17,7 +17,7 @@ final class WalletActionButton: BEView {
         content.autoAlignAxis(toSuperviewAxis: .horizontal)
         content.autoAlignAxis(toSuperviewAxis: .vertical)
 
-        self.onTap(onTapHandler)
+        onTap(onTapHandler)
     }
 
     private func createContent(image: UIImage, title: String) -> UIView {

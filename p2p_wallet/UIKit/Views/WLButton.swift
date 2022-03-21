@@ -25,7 +25,7 @@ class WLButton: UIButton {
                 return .white
             }
         }
-        
+
         var disabledColor: UIColor? {
             switch self {
             case .blue:
@@ -34,7 +34,7 @@ class WLButton: UIButton {
                 return nil
             }
         }
-        
+
         var textColor: UIColor {
             switch self {
             case .gray:
@@ -48,7 +48,7 @@ class WLButton: UIButton {
     }
 
     static func stepButton(type: StepButtonType, label: String?, labelFont: UIFont = UIFont.systemFont(ofSize: 17, weight: .semibold), labelColor: UIColor? = nil) -> WLButton {
-        let button = WLButton(backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: labelColor != nil ? labelColor!: type.textColor)
+        let button = WLButton(backgroundColor: type.backgroundColor, cornerRadius: 15, label: label, labelFont: labelFont, textColor: labelColor != nil ? labelColor! : type.textColor)
         button.enabledColor = type.backgroundColor
         button.disabledColor = type.disabledColor
         button.titleLabel?.lineBreakMode = .byWordWrapping
@@ -56,7 +56,7 @@ class WLButton: UIButton {
         button.contentEdgeInsets = .init(x: 15, y: 20)
         return button
     }
-    
+
     static func stepButton(enabledColor: UIColor, disabledColor: UIColor? = nil, textColor: UIColor, label: String?) -> WLButton {
         let button = WLButton(backgroundColor: enabledColor, cornerRadius: 15, label: label, labelFont: .systemFont(ofSize: 17, weight: .semibold), textColor: textColor)
         button.enabledColor = enabledColor
@@ -67,13 +67,14 @@ class WLButton: UIButton {
         button.contentEdgeInsets = .init(x: 15, y: 20)
         return button
     }
+
     var enabledColor: UIColor?
     var disabledColor: UIColor?
-    
+
     override var isEnabled: Bool {
         didSet {
             if let enabledColor = enabledColor, let disabledColor = disabledColor {
-                backgroundColor = isEnabled ? enabledColor: disabledColor
+                backgroundColor = isEnabled ? enabledColor : disabledColor
             } else {
                 isEnabled ? (alpha = 1) : (alpha = 0.5)
             }

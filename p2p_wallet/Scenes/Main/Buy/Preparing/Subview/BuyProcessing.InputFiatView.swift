@@ -9,12 +9,12 @@ extension BuyPreparing {
     class InputFiatView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: BuyPreparingSceneModel
-        
+
         init(viewModel: BuyPreparingSceneModel) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func build() -> UIView {
             UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fillProportionally) {
                 // Input
@@ -29,7 +29,7 @@ extension BuyPreparing {
                             font: .systemFont(ofSize: 27, weight: .semibold),
                             textColor: .textBlack
                         ).padding(.init(x: 4, y: 0))
-                        
+
                         TokenAmountTextField(
                             font: .systemFont(ofSize: 27, weight: .semibold),
                             textColor: .textBlack,
@@ -52,9 +52,9 @@ extension BuyPreparing {
                         }
                     }
                 }
-                
+
                 UIView.defaultSeparator()
-                
+
                 // Output
                 UIStackView(axis: .horizontal, alignment: .center) {
                     // Label

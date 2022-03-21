@@ -14,15 +14,15 @@ extension UIColor {
             rendererContext.fill(CGRect(origin: .zero, size: size))
         }
     }
-    
+
     static var random: UIColor {
         UIColor(hue: CGFloat(drand48()), saturation: 1, brightness: 1, alpha: 1)
     }
-    
+
     func onDarkMode(_ color: UIColor) -> UIColor {
         let lightColor = self
         return UIColor { trait in
-            trait.userInterfaceStyle == .dark ? color: lightColor
+            trait.userInterfaceStyle == .dark ? color : lightColor
         }
     }
 }

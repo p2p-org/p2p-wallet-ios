@@ -12,7 +12,7 @@ extension ProcessTransaction.Status {
     final class SubButton: WLStepButton {
         private let disposeBag = DisposeBag()
         private let viewModel: ProcessTransactionViewModelType
-        
+
         init(viewModel: ProcessTransactionViewModelType) {
             self.viewModel = viewModel
             super.init(
@@ -21,17 +21,17 @@ extension ProcessTransaction.Status {
                 disabledTintColor: .textSecondary,
                 text: nil
             )
-            
+
             onTap { [weak self] in
                 self?.viewModel.handleErrorRetryOrMakeAnotherTransaction()
             }
-            
+
             bind()
         }
-        
+
         private func bind() {
             viewModel.pendingTransactionDriver
-                .map {$0.status.error}
+                .map { $0.status.error }
                 .map { [weak self] error -> String in
                     guard let error = error else {
                         return self?.viewModel.isSwapping == true ? L10n.makeAnotherSwap : L10n.makeAnotherTransaction
@@ -41,7 +41,7 @@ extension ProcessTransaction.Status {
                     }
                     return L10n.tryAgain
                 }
-                .drive(self.rx.text)
+                .drive(rx.text)
                 .disposed(by: disposeBag)
         }
     }

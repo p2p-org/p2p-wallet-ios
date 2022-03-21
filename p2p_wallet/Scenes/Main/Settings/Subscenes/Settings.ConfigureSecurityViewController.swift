@@ -13,20 +13,22 @@ extension Settings {
         lazy var biometrySwitcher: UISwitch = {
             let switcher = UISwitch()
             switcher.tintColor = .textWhite
-    //        switcher.onTintColor = .h5887ff
+            //        switcher.onTintColor = .h5887ff
             switcher.addTarget(self, action: #selector(switcherDidChange(_:)), for: .valueChanged)
             return switcher
         }()
-        
+
         // MARK: - Dependencies
+
         let viewModel: SettingsViewModelType
-        
+
         // MARK: - Initializers
+
         init(viewModel: SettingsViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func setUp() {
             super.setUp()
             navigationBar.titleLabel.text = L10n.security
@@ -40,12 +42,12 @@ extension Settings {
                     }
                     UIView.defaultNextArrow()
                 }
-                    .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
-                    .onTap(self, action: #selector(buttonChangePinCodeDidTouch))
-                
+                .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
+                .onTap(self, action: #selector(buttonChangePinCodeDidTouch))
+
                 UIView.spacer
             }
-            
+
             let biometryMethod = LABiometryType.current
             if !biometryMethod.stringValue.isEmpty {
                 var index = 2
@@ -54,27 +56,27 @@ extension Settings {
                         UIView.squareRoundedCornerIcon(image: biometryMethod.icon),
                         UIView.col([
                             UILabel(text: LABiometryType.current.stringValue, weight: .medium),
-                            UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0)
+                            UILabel(text: L10n.willBeAsAPrimarySecureCheck, textSize: 12, textColor: .textSecondary, numberOfLines: 0),
                         ]).with(spacing: 5),
-                        biometrySwitcher
+                        biometrySwitcher,
                     ])
-                        .with(spacing: 16, alignment: .center, distribution: .fill)
-                        .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
-                    
+                    .with(spacing: 16, alignment: .center, distribution: .fill)
+                    .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
+
                     BEStackViewSpacing(1)
                 }
             }
-            
+
             biometrySwitcher.isOn = Defaults.isBiometryEnabled
         }
-        
+
         @objc func switcherDidChange(_ switcher: UISwitch) {
             viewModel.setEnabledBiometry(switcher.isOn) { [weak self] error in
                 self?.showError(error ?? SolanaSDK.Error.unknown)
                 self?.biometrySwitcher.isOn.toggle()
             }
         }
-        
+
         @objc func buttonChangePinCodeDidTouch() {
             viewModel.changePincode()
         }

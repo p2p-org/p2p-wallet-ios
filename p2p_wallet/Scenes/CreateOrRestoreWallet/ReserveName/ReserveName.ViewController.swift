@@ -15,9 +15,11 @@ extension ReserveName {
         }
 
         // MARK: - Dependencies
+
         private let viewModel: ReserveNameViewModelType
-        
+
         // MARK: - Properties
+
         private lazy var rootView = RootView(viewModel: viewModel)
 
         // MARK: - Methods
@@ -31,23 +33,24 @@ extension ReserveName {
         override func loadView() {
             view = rootView
         }
-        
+
         override func setUp() {
             super.setUp()
         }
 
-        override func viewDidAppear(_ animated: Bool) {
+        override func viewDidAppear(_: Bool) {
             rootView.startTyping()
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .back:
@@ -69,7 +72,7 @@ extension ReserveName {
             showAlert(
                 title: L10n.proceedWithoutAUsername,
                 message:
-                    L10n.anytimeYouWantYouCanEasilyReserveAUsernameByGoingToTheSettings,
+                L10n.anytimeYouWantYouCanEasilyReserveAUsernameByGoingToTheSettings,
                 buttonTitles: [L10n.cancel.uppercaseFirst, L10n.proceed.uppercaseFirst],
                 highlightedButtonIndex: 1,
                 destroingIndex: 0,

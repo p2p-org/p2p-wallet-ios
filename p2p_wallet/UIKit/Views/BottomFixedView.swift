@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 08.12.2021.
 //
 
-import UIKit
 import BEPureLayout
+import UIKit
 
 final class BottomFixedView: BEView {
     init(content: UIView) {

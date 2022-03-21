@@ -12,8 +12,8 @@ extension WalletsViewModel: WLNotificationsRepository {
     func getAllNotifications() -> [WLNotification] {
         notifications
     }
-    
+
     func observeAllNotifications() -> Observable<WLNotification> {
-        notificationsSubject.filter {$0 != nil}.map {$0!}.asObservable()
+        notificationsSubject.filter { $0 != nil }.map { $0! }.asObservable()
     }
 }

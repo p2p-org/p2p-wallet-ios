@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 28.11.2021.
 //
 
-import UIKit
 import BEPureLayout
+import UIKit
 
 final class AgreeTermsAndPolicyView: BEView, UITextViewDelegate {
     private lazy var label = UITextView()
@@ -48,7 +48,7 @@ final class AgreeTermsAndPolicyView: BEView, UITextViewDelegate {
                 .font: normalFont,
                 .kern: -0.24,
                 .paragraphStyle: paragraphStyle,
-                .foregroundColor: UIColor.textBlack
+                .foregroundColor: UIColor.textBlack,
             ]
         )
 
@@ -67,10 +67,10 @@ final class AgreeTermsAndPolicyView: BEView, UITextViewDelegate {
     // MARK: Delegate
 
     func textView(
-        _ textView: UITextView,
+        _: UITextView,
         shouldInteractWith URL: URL,
-        in characterRange: NSRange,
-        interaction: UITextItemInteraction
+        in _: NSRange,
+        interaction _: UITextItemInteraction
     ) -> Bool {
         switch URL.absoluteString {
         case "termsOfUse":

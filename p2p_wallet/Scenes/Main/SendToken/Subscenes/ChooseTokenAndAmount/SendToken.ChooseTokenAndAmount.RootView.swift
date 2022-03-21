@@ -5,20 +5,23 @@
 //  Created by Chung Tran on 23/11/2021.
 //
 
-import UIKit
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension SendToken.ChooseTokenAndAmount {
     class RootView: BEView {
         // MARK: - Constants
+
         let disposeBag = DisposeBag()
-        
+
         // MARK: - Properties
+
         @Injected private var analyticsManager: AnalyticsManagerType
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
-        
+
         // MARK: - Subviews
+
         private let walletImageView = UIImageView(width: 20, height: 20, image: .tabbarWallet, tintColor: .textSecondary)
         private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium, textColor: .textSecondary)
         private let coinLogoImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
@@ -35,51 +38,54 @@ extension SendToken.ChooseTokenAndAmount {
             tf.delegate = self
             return tf
         }()
+
         private lazy var equityValueLabel = UILabel(text: "\(Defaults.fiat.symbol) 0", textSize: 13)
         private lazy var actionButton = WLStepButton.main(
-            image: viewModel.showAfterConfirmation ? .buttonCheckSmall: nil,
-            text: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm: L10n.chooseDestinationWallet
+            image: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil,
+            text: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm : L10n.chooseDestinationWallet
         )
-            .onTap(self, action: #selector(actionButtonDidTouch))
-        
+        .onTap(self, action: #selector(actionButtonDidTouch))
+
         #if DEBUG
-        private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
+            private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
         #endif
-        
+
         // MARK: - Initializer
+
         init(viewModel: SendTokenChooseTokenAndAmountViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
-        
+
         // MARK: - Methods
+
         override func commonInit() {
             super.commonInit()
             layout()
             bind()
-            
+
             if let initalAmount = viewModel.initialAmount {
                 amountTextField.text = initalAmount.toString(maximumFractionDigits: 9, groupingSeparator: "")
                 amountTextField.sendActions(for: .valueChanged)
             }
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
                 self?.amountTextField.becomeFirstResponder()
                 #if DEBUG
-                if self?.viewModel.showAfterConfirmation == false {
-                    self?.amountTextField.text = 0.0001.toString(maximumFractionDigits: 9, groupingSeparator: "")
-                    self?.amountTextField.sendActions(for: .valueChanged)
-                }
+                    if self?.viewModel.showAfterConfirmation == false {
+                        self?.amountTextField.text = 0.0001.toString(maximumFractionDigits: 9, groupingSeparator: "")
+                        self?.amountTextField.sendActions(for: .valueChanged)
+                    }
                 #endif
             }
         }
-        
+
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            
         }
-        
+
         // MARK: - Layout
+
         private func layout() {
             let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
                 UIView.floatingPanel {
@@ -102,7 +108,7 @@ extension SendToken.ChooseTokenAndAmount {
                             UIImageView(width: 11, height: 8, image: .downArrow, tintColor: .a3a5ba)
                                 .withContentHuggingPriority(.required, for: .horizontal)
                         }
-                            .onTap(self, action: #selector(chooseWallet))
+                        .onTap(self, action: #selector(chooseWallet))
                         amountTextField
                     }
                     UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill) {
@@ -111,9 +117,9 @@ extension SendToken.ChooseTokenAndAmount {
                             equityValueLabel
                             UIImageView(width: 20, height: 20, image: .arrowUpDown)
                         }
-                            .padding(.init(x: 18, y: 8), cornerRadius: 12)
-                            .border(width: 1, color: .defaultBorder)
-                            .onTap(self, action: #selector(toggleCurrencyMode))
+                        .padding(.init(x: 18, y: 8), cornerRadius: 12)
+                        .border(width: 1, color: .defaultBorder)
+                        .onTap(self, action: #selector(toggleCurrencyMode))
                     }
                 }
                 UIView.spacer
@@ -122,169 +128,169 @@ extension SendToken.ChooseTokenAndAmount {
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewSafeArea(with: .init(top: 8, left: 18, bottom: 18, right: 18), excludingEdge: .bottom)
             stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
-            
+
             #if DEBUG
-            stackView.addArrangedSubview(errorLabel)
+                stackView.addArrangedSubview(errorLabel)
             #endif
         }
-        
+
         private func bind() {
             viewModel.walletDriver
-                .drive(onNext: {[weak self] wallet in
+                .drive(onNext: { [weak self] wallet in
                     self?.coinLogoImageView.setUp(wallet: wallet)
                     self?.coinSymbolLabel.text = wallet?.token.symbol
                     self?.amountTextField.setUp(decimals: wallet?.token.decimals)
                 })
                 .disposed(by: disposeBag)
-            
+
             // equity label
             viewModel.walletDriver
-                .map {$0?.priceInCurrentFiat == nil}
+                .map { $0?.priceInCurrentFiat == nil }
                 .drive(equityValueLabel.rx.isHidden)
                 .disposed(by: disposeBag)
-            
+
             Driver.combineLatest(
                 viewModel.amountDriver,
                 viewModel.walletDriver,
                 viewModel.currencyModeDriver
             )
-                .map { (amount, wallet, currencyMode) -> String in
-                    guard let wallet = wallet else {return ""}
-                    var equityValue = amount * wallet.priceInCurrentFiat
-                    var equityValueSymbol = Defaults.fiat.code
-                    if currencyMode == .fiat {
-                        if wallet.priceInCurrentFiat > 0 {
-                            equityValue = amount / wallet.priceInCurrentFiat
-                        } else {
-                            equityValue = 0
-                        }
-                        equityValueSymbol = wallet.token.symbol
+            .map { amount, wallet, currencyMode -> String in
+                guard let wallet = wallet else { return "" }
+                var equityValue = amount * wallet.priceInCurrentFiat
+                var equityValueSymbol = Defaults.fiat.code
+                if currencyMode == .fiat {
+                    if wallet.priceInCurrentFiat > 0 {
+                        equityValue = amount / wallet.priceInCurrentFiat
+                    } else {
+                        equityValue = 0
                     }
-                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
+                    equityValueSymbol = wallet.token.symbol
                 }
-                .asDriver(onErrorJustReturn: nil)
-                .drive(equityValueLabel.rx.text)
-                .disposed(by: disposeBag)
-            
+                return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
+            }
+            .asDriver(onErrorJustReturn: nil)
+            .drive(equityValueLabel.rx.text)
+            .disposed(by: disposeBag)
+
             // amount
             amountTextField.rx.text
-                .map {$0?.double}
+                .map { $0?.double }
                 .distinctUntilChanged()
-                .subscribe(onNext: {[weak self] amount in
+                .subscribe(onNext: { [weak self] amount in
                     self?.viewModel.enterAmount(amount)
                 })
                 .disposed(by: disposeBag)
-            
+
             amountTextField.rx.controlEvent([.editingDidEnd])
                 .asObservable()
                 .withLatestFrom(amountTextField.rx.text)
-                .subscribe(onNext: {[weak self] amount in
-                    guard let amount = amount?.double else {return}
+                .subscribe(onNext: { [weak self] amount in
+                    guard let amount = amount?.double else { return }
                     self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
                 })
                 .disposed(by: disposeBag)
-            
+
             viewModel.amountDriver
                 .distinctUntilChanged()
-                .withLatestFrom(viewModel.walletDriver, resultSelector: {($0, $1)})
-                .map {$0.0?.toString(maximumFractionDigits: Int($0.1?.token.decimals ?? 0), groupingSeparator: "")}
+                .withLatestFrom(viewModel.walletDriver, resultSelector: { ($0, $1) })
+                .map { $0.0?.toString(maximumFractionDigits: Int($0.1?.token.decimals ?? 0), groupingSeparator: "") }
                 .drive(amountTextField.rx.text)
                 .disposed(by: disposeBag)
-            
+
             // available amount
             let balanceTextDriver = Driver.combineLatest(
                 viewModel.walletDriver,
                 viewModel.currencyModeDriver
             )
-                .map {[weak self] (wallet, mode) -> String? in
-                    guard let wallet = wallet, let amount = self?.viewModel.calculateAvailableAmount() else {return nil}
-                    var string = amount.toString(maximumFractionDigits: 9)
-                    string += " "
-                    if mode == .fiat {
-                        string += Defaults.fiat.code
-                    } else {
-                        string += wallet.token.symbol
-                    }
-                    return string
+            .map { [weak self] wallet, mode -> String? in
+                guard let wallet = wallet, let amount = self?.viewModel.calculateAvailableAmount() else { return nil }
+                var string = amount.toString(maximumFractionDigits: 9)
+                string += " "
+                if mode == .fiat {
+                    string += Defaults.fiat.code
+                } else {
+                    string += wallet.token.symbol
                 }
-                
+                return string
+            }
+
             balanceTextDriver
                 .drive(balanceLabel.rx.text)
                 .disposed(by: disposeBag)
-            
+
             // error
             let balanceTintColorDriver = viewModel.errorDriver
-                .withLatestFrom(viewModel.amountDriver.map {$0.isNilOrZero}) {($0, $1)}
-                .map {error, amountIsNilOrZero -> UIColor in
+                .withLatestFrom(viewModel.amountDriver.map { $0.isNilOrZero }) { ($0, $1) }
+                .map { error, amountIsNilOrZero -> UIColor in
                     var color = UIColor.textSecondary
-                    if error != nil && !amountIsNilOrZero {
+                    if error != nil, !amountIsNilOrZero {
                         color = .alert
                     }
                     return color
                 }
-            
+
             balanceTintColorDriver
                 .drive(walletImageView.rx.tintColor)
                 .disposed(by: disposeBag)
-            
+
             balanceTintColorDriver
                 .drive(balanceLabel.rx.textColor)
                 .disposed(by: disposeBag)
-            
+
             // action button
             viewModel.errorDriver
-                .map {[weak self] in
+                .map { [weak self] in
                     $0?.buttonSuggestion ??
                         (
                             self?.viewModel.showAfterConfirmation == true ?
-                                L10n.reviewAndConfirm:
+                                L10n.reviewAndConfirm :
                                 L10n.chooseTheRecipient
                         )
                 }
                 .drive(actionButton.rx.text)
                 .disposed(by: disposeBag)
-            
+
             viewModel.errorDriver
-                .map {[weak self] in
-                    $0 != nil ? nil: (
+                .map { [weak self] in
+                    $0 != nil ? nil : (
                         self?.viewModel.showAfterConfirmation == true ?
-                            .buttonCheckSmall:
+                            .buttonCheckSmall :
                             .buttonChooseTheRecipient
                     )
                 }
                 .drive(actionButton.rx.image)
                 .disposed(by: disposeBag)
-            
+
             viewModel.errorDriver
-                .map {$0 == nil}
+                .map { $0 == nil }
                 .drive(actionButton.rx.isEnabled)
                 .disposed(by: disposeBag)
-            
+
             #if DEBUG
-            viewModel.errorDriver
-                .map {String(describing: $0?.rawValue)}
-                .drive(errorLabel.rx.text)
-                .disposed(by: disposeBag)
+                viewModel.errorDriver
+                    .map { String(describing: $0?.rawValue) }
+                    .drive(errorLabel.rx.text)
+                    .disposed(by: disposeBag)
             #endif
-            
         }
-        
+
         // MARK: - Actions
+
         @objc private func useAllBalance() {
             let availableAmount = viewModel.calculateAvailableAmount()
             let string = availableAmount.toString(maximumFractionDigits: 9, groupingSeparator: "")
             amountTextField.text = string
             amountTextField.sendActions(for: .editingChanged)
         }
-        
+
         @objc private func chooseWallet() {
             viewModel.navigate(to: .chooseWallet)
         }
-        
+
         @objc private func toggleCurrencyMode() {
             viewModel.toggleCurrencyMode()
         }
-        
+
         @objc private func actionButtonDidTouch() {
             if viewModel.isTokenValidForSelectedNetwork() {
                 viewModel.save()

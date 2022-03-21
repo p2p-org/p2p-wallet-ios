@@ -10,17 +10,18 @@ import Foundation
 protocol HorizontalPickerDelegate: AnyObject {
     func picker(_ picker: HorizontalPicker, didSelectOptionAtIndex index: Int)
 }
+
 class HorizontalPicker: BEView {
     private class GestureRegconizer: UITapGestureRecognizer {
         var index: Int?
     }
-    
+
     private lazy var stackView = UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .equalSpacing)
     weak var delegate: HorizontalPickerDelegate?
-    
+
     var labels: [String] = [] {
         didSet {
-            stackView.arrangedSubviews.forEach {$0.removeFromSuperview()}
+            stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
             stackView.addArrangedSubviews(labels.enumerated().map {
                 let label = UILabel(text: $1)
                 label.tag = 1
@@ -33,10 +34,10 @@ class HorizontalPicker: BEView {
             })
         }
     }
-    
+
     var selectedIndex: Int = -1 {
         didSet {
-            guard selectedIndex >= 0 && selectedIndex < labels.count else {return}
+            guard selectedIndex >= 0, selectedIndex < labels.count else { return }
             for (index, view) in stackView.arrangedSubviews.enumerated() {
                 if index != selectedIndex {
                     view.backgroundColor = .clear.onDarkMode(.grayPanel)
@@ -48,21 +49,21 @@ class HorizontalPicker: BEView {
             }
         }
     }
-    
+
     override func commonInit() {
         super.commonInit()
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
     }
-    
+
     @objc private func buttonOptionDidTouch(_ gesture: UIGestureRecognizer) {
         let index = (gesture as! GestureRegconizer).index!
         selectedIndex = index
         delegate?.picker(self, didSelectOptionAtIndex: index)
     }
-    
+
     private func getLabelAtIndex(index: Int) -> UILabel? {
-        guard index < stackView.arrangedSubviews.count else {return nil}
+        guard index < stackView.arrangedSubviews.count else { return nil }
         return stackView.arrangedSubviews[index].viewWithTag(1) as? UILabel
     }
 }

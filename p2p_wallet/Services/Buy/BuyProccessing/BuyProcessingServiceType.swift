@@ -27,7 +27,7 @@ extension Buy {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
 //                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }
-            
+
             return MoonpayBuyProcessing(
                 environment: Defaults.apiEndPoint.network == .mainnetBeta ?
                     .production :

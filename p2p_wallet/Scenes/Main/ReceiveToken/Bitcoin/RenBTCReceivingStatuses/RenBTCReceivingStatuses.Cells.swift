@@ -5,15 +5,15 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
-import Foundation
 import BECollectionView
+import Foundation
 import RenVMSwift
 
 extension RenBTCReceivingStatuses {
     class TxCell: BECollectionCell, BECollectionViewCell {
         fileprivate var titleLabel: UILabel!
         fileprivate var descriptionLabel: UILabel!
-        
+
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
                 UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
@@ -28,28 +28,28 @@ extension RenBTCReceivingStatuses {
                 UIView.defaultSeparator().padding(.init(only: .top, inset: 14))
             }.padding(.init(x: 20, y: 12))
         }
-        
+
         func setUp(with item: AnyHashable?) {
             guard let tx = item as? RenVM.LockAndMint.ProcessingTx else { return }
             titleLabel.text = "\(tx.value.toString(maximumFractionDigits: 9)) renBTC"
             descriptionLabel.text = tx.statusString
-            
+
             descriptionLabel.textColor = .textSecondary
             if tx.mintedAt != nil {
                 descriptionLabel.textColor = .attentionGreen
             }
         }
-        
+
         func hideLoading() { contentView.hideLoader() }
-        
+
         func showLoading() { contentView.showLoader() }
     }
-    
+
     class RecordCell: BECollectionCell, BECollectionViewCell {
         fileprivate var titleLabel: UILabel!
         fileprivate var descriptionLabel: UILabel!
         fileprivate var resultLabel: UILabel!
-        
+
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
                 UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
@@ -66,7 +66,7 @@ extension RenBTCReceivingStatuses {
                 UIView.defaultSeparator().padding(.init(only: .top, inset: 14))
             }.padding(.init(x: 20, y: 12))
         }
-        
+
         func setUp(with item: AnyHashable?) {
             guard let tx = item as? Record else { return }
             titleLabel.text = tx.stringValue
@@ -93,9 +93,9 @@ extension RenBTCReceivingStatuses {
                 break
             }
         }
-        
+
         func hideLoading() { contentView.hideLoader() }
-        
+
         func showLoading() { contentView.showLoader() }
     }
 }

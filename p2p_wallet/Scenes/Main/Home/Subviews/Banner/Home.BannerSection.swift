@@ -31,7 +31,7 @@ extension Home {
                 ),
                 viewModel: viewModel
             )
-            
+
             viewModel
                 .dataDidChange
                 .subscribe(onNext: { [weak self] in self?.collectionView?.reloadData(completion: {}) })

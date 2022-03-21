@@ -12,6 +12,7 @@ import RxSwift
 extension OrcaSwapV2 {
     class ViewModel {
         // MARK: - Dependencies
+
         @Injected var authenticationHandler: AuthenticationHandlerType
         @Injected var analyticsManager: AnalyticsManagerType
         @Injected var feeService: FeeServiceType
@@ -20,10 +21,12 @@ extension OrcaSwapV2 {
         @Injected var notificationsService: NotificationsServiceType
 
         // MARK: - Properties
+
         let disposeBag = DisposeBag()
-        var isSelectingSourceWallet = false  // indicate if selecting source wallet or destination wallet
+        var isSelectingSourceWallet = false // indicate if selecting source wallet or destination wallet
 
         // MARK: - Subject
+
         let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
@@ -42,6 +45,7 @@ extension OrcaSwapV2 {
         let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
 
         // MARK: - setter
+
         init(
             initialWallet: Wallet?
         ) {
@@ -71,34 +75,34 @@ extension OrcaSwapV2 {
                 .skip(1)
                 .subscribe(onNext: { [weak self] wallets in
                     if self?.sourceWalletSubject.value?.pubkey != nil,
-                        let wallet = wallets?.first(where: { $0.pubkey == self?.sourceWalletSubject.value?.pubkey })
+                       let wallet = wallets?.first(where: { $0.pubkey == self?.sourceWalletSubject.value?.pubkey })
                     {
                         self?.sourceWalletSubject.accept(wallet)
                     }
 
                     if self?.destinationWalletSubject.value?.pubkey != nil,
-                        let wallet = wallets?.first(where: { $0.pubkey == self?.destinationWalletSubject.value?.pubkey })
+                       let wallet = wallets?.first(where: { $0.pubkey == self?.destinationWalletSubject.value?.pubkey })
                     {
                         self?.destinationWalletSubject.accept(wallet)
                     }
                 })
                 .disposed(by: disposeBag)
-            
+
             // available amount
             Observable.combineLatest(
                 sourceWalletSubject,
                 payingWalletSubject,
                 feesSubject.valueObservable
             )
-                .map { sourceWallet, payingWallet, fees in
-                    calculateAvailableAmount(
-                        sourceWallet: sourceWallet,
-                        payingFeeWallet: payingWallet,
-                        fees: fees
-                    )
-                }
-                .bind(to: availableAmountSubject)
-                .disposed(by: disposeBag)
+            .map { sourceWallet, payingWallet, fees in
+                calculateAvailableAmount(
+                    sourceWallet: sourceWallet,
+                    payingFeeWallet: payingWallet,
+                    fees: fees
+                )
+            }
+            .bind(to: availableAmountSubject)
+            .disposed(by: disposeBag)
 
             // get tradable pools pair for each token pair
             Observable.combineLatest(
@@ -107,8 +111,8 @@ extension OrcaSwapV2 {
             )
             .subscribe(onNext: { [weak self] sourceWallet, destinationWallet in
                 guard let self = self,
-                    let sourceWallet = sourceWallet,
-                    let destinationWallet = destinationWallet
+                      let sourceWallet = sourceWallet,
+                      let destinationWallet = destinationWallet
                 else {
                     self?.tradablePoolsPairsSubject.request = .just([])
                     self?.tradablePoolsPairsSubject.reload()
@@ -118,7 +122,7 @@ extension OrcaSwapV2 {
                 self.tradablePoolsPairsSubject.request = self.swapService.getPoolPair(
                     from: sourceWallet.token.address,
                     to: destinationWallet.token.address,
-                    amount: 1000,  // TODO: fix me
+                    amount: 1000, // TODO: fix me
                     as: .source
                 )
 
@@ -183,13 +187,13 @@ extension OrcaSwapV2 {
         func authenticateAndSwap() {
             authenticationHandler.authenticate(
                 presentationStyle:
-                    .init(
-                        isRequired: false,
-                        isFullScreen: false,
-                        completion: { [weak self] in
-                            self?.swap()
-                        }
-                    )
+                .init(
+                    isRequired: false,
+                    isFullScreen: false,
+                    completion: { [weak self] in
+                        self?.swap()
+                    }
+                )
             )
         }
 
@@ -242,14 +246,14 @@ private func calculateAvailableAmount(
     guard let sourceWallet = sourceWallet else {
         return nil
     }
-    
+
     // subtract the fee when source wallet is the paying wallet
     if payingFeeWallet?.mintAddress == sourceWallet.mintAddress {
         let networkFees = fees?.networkFees(of: sourceWallet.token.symbol)?.total
             .convertToBalance(decimals: sourceWallet.token.decimals)
-        
+
         if let networkFees = networkFees,
-            let amount = sourceWallet.amount
+           let amount = sourceWallet.amount
         {
             if amount > networkFees {
                 return amount - networkFees
@@ -258,6 +262,6 @@ private func calculateAvailableAmount(
             }
         }
     }
-    
+
     return sourceWallet.amount
 }

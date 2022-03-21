@@ -6,8 +6,8 @@
 //
 
 import Resolver
-import UIKit
 import RxSwift
+import UIKit
 
 extension EnterSeed {
     class ViewController: BaseVC {
@@ -16,13 +16,16 @@ extension EnterSeed {
         }
 
         // MARK: - Dependencies
+
         private let viewModel: EnterSeedViewModelType
         private let accountRestorationHandler: AccountRestorationHandler
-        
+
         // MARK: - Properties
+
         private lazy var rootView = RootView(viewModel: viewModel)
-        
+
         // MARK: - Methods
+
         init(viewModel: EnterSeedViewModelType, accountRestorationHandler: AccountRestorationHandler) {
             self.viewModel = viewModel
             self.accountRestorationHandler = accountRestorationHandler
@@ -32,7 +35,7 @@ extension EnterSeed {
         override func loadView() {
             view = rootView
         }
-        
+
         override func setUp() {
             super.setUp()
         }
@@ -46,11 +49,12 @@ extension EnterSeed {
                 .disposed(by: disposeBag)
         }
 
-        override func viewDidAppear(_ animated: Bool) {
+        override func viewDidAppear(_: Bool) {
             rootView.startTyping()
         }
 
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .none:

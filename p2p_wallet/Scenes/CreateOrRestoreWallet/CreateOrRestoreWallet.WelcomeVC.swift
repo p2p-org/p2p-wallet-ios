@@ -5,16 +5,16 @@
 //  Created by Chung Tran on 10/29/20.
 //
 
+import BEPureLayout
 import Foundation
 import UIKit
-import BEPureLayout
 
 extension CreateOrRestoreWallet {
     class WelcomeVC: BEPagesVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .embeded
         }
-        
+
         override func setUp() {
             super.setUp()
             view.backgroundColor = .clear
@@ -38,33 +38,33 @@ extension CreateOrRestoreWallet {
                     image: .introSlide4,
                     title: L10n.noHiddenCosts,
                     description: L10n.SendBTCETHUSDCWithNoFees.swapBTCWithOnly1
-                )
+                ),
             ]
             currentPageIndicatorTintColor = .h5887ff
             pageIndicatorTintColor = .d1d1d6
         }
-        
+
         override func setUpPageControl() {
             view.addSubview(pageControl)
             pageControl.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 30.adaptiveHeight)
             pageControl.autoAlignAxis(toSuperviewAxis: .vertical)
         }
-        
+
         private func create3dAppIconView() -> UIView {
             let imageView = UIImageView(image: .walletsIcon3d)
-            imageView.autoAdjustWidthHeightRatio(375/349.35)
+            imageView.autoAdjustWidthHeightRatio(375 / 349.35)
             let iconView = imageView.centered(.horizontal)
-            
+
             let backView = BERoundedCornerShadowView(shadowColor: .textBlack.withAlphaComponent(0.05), radius: 32, offset: .init(width: 0, height: 9), opacity: 1, cornerRadius: 12.5)
             backView.backgroundColor = .background
-            backView.autoAdjustWidthHeightRatio(241.16/306.53)
+            backView.autoAdjustWidthHeightRatio(241.16 / 306.53)
             iconView.addSubview(backView)
             backView.autoPinEdge(toSuperviewEdge: .top, withInset: 24.53)
             backView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 18.3)
             backView.autoAlignAxis(toSuperviewAxis: .vertical)
-            
+
             iconView.bringSubviewToFront(imageView)
-            
+
             return iconView
         }
     }
@@ -74,7 +74,7 @@ private class SlideVC: BaseVC {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .embeded
     }
-    
+
     private let contentView: UIView
     init(
         image: UIImage? = nil,
@@ -82,14 +82,14 @@ private class SlideVC: BaseVC {
         description: String? = nil,
         replacingImageWithCustomView customView: UIView? = nil
     ) {
-        self.contentView = .ilustrationView(image: image, title: title, description: description, replacingImageWithCustomView: customView)
+        contentView = .ilustrationView(image: image, title: title, description: description, replacingImageWithCustomView: customView)
         super.init()
     }
-    
+
     override func setUp() {
         super.setUp()
         view.backgroundColor = .clear
-        
+
         view.addSubview(contentView)
         contentView.autoPinEdge(toSuperviewSafeArea: .top)
         contentView.autoPinEdge(toSuperviewSafeArea: .leading, withInset: 20)

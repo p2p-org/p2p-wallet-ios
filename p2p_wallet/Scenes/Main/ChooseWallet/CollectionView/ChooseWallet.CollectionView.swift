@@ -5,22 +5,22 @@
 //  Created by Chung Tran on 26/07/2021.
 //
 
-import Foundation
 import BECollectionView
+import Foundation
 
 extension ChooseWallet {
     class CollectionView: BEDynamicSectionsCollectionView {
         private let specificViewModel: ViewModel
 
         init(viewModel: ViewModel) {
-            self.specificViewModel = viewModel
+            specificViewModel = viewModel
 
             super.init(
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
                     let wallets = viewModel.getData(type: Wallet.self)
-                    let myWallets = wallets.filter {$0.pubkey != nil}
-                    let otherWallets = wallets.filter {$0.pubkey == nil}
+                    let myWallets = wallets.filter { $0.pubkey != nil }
+                    let otherWallets = wallets.filter { $0.pubkey == nil }
                     var sections = [SectionInfo]()
                     if myWallets.count > 0 {
                         sections.append(.init(
@@ -47,7 +47,7 @@ extension ChooseWallet {
                 )
             )
         }
-        
+
         override func configureCell(indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell? {
             let cell = super.configureCell(indexPath: indexPath, item: item)
 

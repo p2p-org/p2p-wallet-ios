@@ -2,19 +2,19 @@
 // Created by Giang Long Tran on 15.02.2022.
 //
 
-import UIKit
 import RxSwift
+import UIKit
 
 extension Home {
     class EmptyView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: HomeViewModelType
         let refreshControl = UIRefreshControl()
-        
+
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
             super.init()
-            
+
             refreshControl.addTarget(self, action: #selector(reload), for: .valueChanged)
             viewModel
                 .walletsRepository
@@ -24,7 +24,7 @@ extension Home {
                 })
                 .disposed(by: disposeBag)
         }
-        
+
         override func build() -> UIView {
             BEScrollView(alwaysBounceVertical: true, refreshControl: refreshControl) {
                 BEVStack {
@@ -49,7 +49,7 @@ extension Home {
                     UIView(height: 10)
                     UILabel(text: L10n.makeYourFirstDepositOrBuyWithYourCreditCardOrApplePay, textColor: .secondaryLabel, numberOfLines: 3, textAlignment: .center)
                     UIView(height: 25)
-                    
+
                     // Buttons
                     ColorfulHorizontalView {
                         WalletActionButton(actionType: .buy) { [unowned self] in viewModel.navigate(to: .buyToken) }
@@ -57,17 +57,17 @@ extension Home {
                         WalletActionButton(actionType: .send) { [unowned self] in viewModel.navigate(to: .sendToken()) }
                         WalletActionButton(actionType: .swap) { [unowned self] in viewModel.navigate(to: .swapToken) }
                     }.frame(height: 80)
-                    
+
                     UIView.spacer
                 }.padding(.init(x: 18, y: 0))
             }
         }
-        
+
         @objc func reload() {
             viewModel.walletsRepository.reload()
         }
     }
-    
+
     class CircleGradientView: UIView {
         let effectLayer: CAGradientLayer = {
             let l = CAGradientLayer()
@@ -79,10 +79,10 @@ extension Home {
             l.locations = [0, 0.8]
             l.startPoint = .init(x: 0.5, y: 0.5)
             l.endPoint = CGPoint(x: 1, y: 1)
-            
+
             return l
         }()
-        
+
         override func layoutSubviews() {
             super.layoutSubviews()
             if effectLayer.superlayer == nil {
@@ -93,4 +93,3 @@ extension Home {
         }
     }
 }
-

@@ -6,25 +6,25 @@
 //
 
 import Foundation
-import RxSwift
-import RxCocoa
-import SolanaSwift
 import Resolver
+import RxCocoa
+import RxSwift
+import SolanaSwift
 
 protocol TransactionDetailViewModelType: AnyObject {
-    var navigationDriver: Driver<TransactionDetail.NavigatableScene?> {get}
-    var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {get}
-    var senderNameDriver: Driver<String?> {get}
-    var receiverNameDriver: Driver<String?> {get}
-    var isSummaryAvailableDriver: Driver<Bool> {get}
-    var isFromToSectionAvailableDriver: Driver<Bool> {get}
-    
+    var navigationDriver: Driver<TransactionDetail.NavigatableScene?> { get }
+    var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> { get }
+    var senderNameDriver: Driver<String?> { get }
+    var receiverNameDriver: Driver<String?> { get }
+    var isSummaryAvailableDriver: Driver<Bool> { get }
+    var isFromToSectionAvailableDriver: Driver<Bool> { get }
+
     func getTransactionId() -> String?
     func getPayingFeeWallet() -> Wallet?
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double?
-    
+
     func navigate(to scene: TransactionDetail.NavigatableScene)
-    
+
     func copyTransactionIdToClipboard()
     func copySourceAddressToClipboard()
     func copySourceNameToClipboard()
@@ -35,53 +35,57 @@ protocol TransactionDetailViewModelType: AnyObject {
 extension TransactionDetail {
     class ViewModel {
         // MARK: - Dependencies
+
         @Injected private var transactionHandler: TransactionHandlerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var nameService: NameServiceType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationService: NotificationsServiceType
-        
+
         // MARK: - Properties
+
         private let disposeBag = DisposeBag()
         private let observingTransactionIndex: TransactionHandlerType.TransactionIndex?
         private var payingFeeWallet: Wallet?
-        
+
         // MARK: - Subject
+
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let parsedTransationSubject: BehaviorRelay<SolanaSDK.ParsedTransaction?>
         private let senderNameSubject = BehaviorRelay<String?>(value: nil)
         private let receiverNameSubject = BehaviorRelay<String?>(value: nil)
-        
+
         // MARK: - Initializers
+
         init(parsedTransaction: SolanaSDK.ParsedTransaction) {
             observingTransactionIndex = nil
             parsedTransationSubject = .init(value: parsedTransaction)
-            
+
             mapNames(parsedTransaction: parsedTransaction)
         }
-        
+
         init(observingTransactionIndex: TransactionHandlerType.TransactionIndex) {
             self.observingTransactionIndex = observingTransactionIndex
-            self.parsedTransationSubject = .init(value: nil)
-            
+            parsedTransationSubject = .init(value: nil)
+
             bind()
         }
-        
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
-        
+
         func bind() {
             transactionHandler
                 .observeTransaction(transactionIndex: observingTransactionIndex!)
                 .observe(on: MainScheduler.instance)
                 .do(onNext: { [weak self] pendingTransaction in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.payingFeeWallet = pendingTransaction?.rawTransaction.payingWallet
                 })
                 .map { [weak self] pendingTransaction -> SolanaSDK.ParsedTransaction? in
-                    guard let self = self else {return nil}
+                    guard let self = self else { return nil }
                     return pendingTransaction?.parse(pricesService: self.pricesService, authority: self.walletsRepository.nativeWallet?.pubkey)
                 }
                 .catchAndReturn(nil)
@@ -91,7 +95,7 @@ extension TransactionDetail {
                 .bind(to: parsedTransationSubject)
                 .disposed(by: disposeBag)
         }
-        
+
         func mapNames(parsedTransaction: SolanaSDK.ParsedTransaction?) {
             var fromAddress: String?
             var toAddress: String?
@@ -102,32 +106,32 @@ extension TransactionDetail {
             default:
                 return
             }
-            
+
             guard fromAddress != nil || toAddress != nil else {
                 return
             }
-            
+
             let fromNameRequest: Single<String?>
             if let fromAddress = fromAddress {
                 fromNameRequest = nameService.getName(fromAddress)
             } else {
                 fromNameRequest = .just(nil)
             }
-            
+
             fromNameRequest
                 .observe(on: MainScheduler.instance)
                 .subscribe(onSuccess: { [weak self] fromName in
                     self?.senderNameSubject.accept(fromName?.withNameServiceDomain())
                 })
                 .disposed(by: disposeBag)
-            
+
             let toNameRequest: Single<String?>
             if let toAddress = toAddress {
                 toNameRequest = nameService.getName(toAddress)
             } else {
                 toNameRequest = .just(nil)
             }
-            
+
             toNameRequest
                 .observe(on: MainScheduler.instance)
                 .subscribe(onSuccess: { [weak self] toName in
@@ -142,19 +146,19 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> {
         navigationSubject.asDriver()
     }
-    
+
     var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {
         parsedTransationSubject.asDriver()
     }
-    
+
     var senderNameDriver: Driver<String?> {
         senderNameSubject.asDriver()
     }
-    
+
     var receiverNameDriver: Driver<String?> {
         receiverNameSubject.asDriver()
     }
-    
+
     var isSummaryAvailableDriver: Driver<Bool> {
         parsedTransationSubject
             .asDriver()
@@ -164,10 +168,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
                     return false
                 case _ as SolanaSDK.CloseAccountTransaction:
                     return false
-                
+
                 case _ as SolanaSDK.TransferTransaction:
                     return true
-                    
+
                 case _ as SolanaSDK.SwapTransaction:
                     return true
                 default:
@@ -175,19 +179,19 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
                 }
             }
     }
-    
+
     var isFromToSectionAvailableDriver: Driver<Bool> {
         isSummaryAvailableDriver
     }
-    
+
     func getTransactionId() -> String? {
         parsedTransationSubject.value?.signature
     }
-    
+
     func getPayingFeeWallet() -> Wallet? {
         payingFeeWallet
     }
-    
+
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double? {
         guard let amountInToken = amountInToken,
               let symbol = symbol,
@@ -195,21 +199,22 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         else {
             return nil
         }
-        
+
         return amountInToken * price
     }
-    
+
     // MARK: - Actions
+
     func navigate(to scene: TransactionDetail.NavigatableScene) {
         navigationSubject.accept(scene)
     }
-    
+
     func copyTransactionIdToClipboard() {
-        guard let transactionId = parsedTransationSubject.value?.signature else {return}
+        guard let transactionId = parsedTransationSubject.value?.signature else { return }
         clipboardManager.copyToClipboard(transactionId)
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
-    
+
     func copySourceAddressToClipboard() {
         let sourceAddress: String?
         switch parsedTransationSubject.value?.value {
@@ -226,13 +231,13 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         clipboardManager.copyToClipboard(sourceAddress)
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
-    
+
     func copySourceNameToClipboard() {
-        guard let name = senderNameSubject.value else {return}
+        guard let name = senderNameSubject.value else { return }
         clipboardManager.copyToClipboard(name)
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
-    
+
     func copyDestinationAddressToClipboard() {
         let destinationAddress: String?
         switch parsedTransationSubject.value?.value {
@@ -249,9 +254,9 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         clipboardManager.copyToClipboard(destinationAddress)
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
-    
+
     func copyDestinationNameToClipboard() {
-        guard let name = receiverNameSubject.value else {return}
+        guard let name = receiverNameSubject.value else { return }
         clipboardManager.copyToClipboard(name)
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }

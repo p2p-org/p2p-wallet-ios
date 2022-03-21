@@ -6,20 +6,22 @@
 //
 
 import Foundation
-import UIKit
 import Resolver
 import SafariServices
+import UIKit
 import WebKit
 
 extension BuyRoot {
     class ViewController: BaseVC {
         // MARK: - Dependencies
+
         private let viewModel: BuyViewModelType
         private let navigation: UINavigationController
-        
+
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-        
+
         // MARK: - Initializer
+
         init(crypto: Buy.CryptoCurrency = .sol, viewModel: BuyViewModelType) {
             self.viewModel = viewModel
             navigation = UINavigationController(
@@ -27,29 +29,31 @@ extension BuyRoot {
                     viewModel: BuyPreparing.SceneModel(crypto: crypto, buyViewModel: viewModel, exchangeService: Resolver.resolve())
                 )
             )
-            
+
             super.init()
         }
-        
+
         // MARK: - Methods
+
         override func setUp() {
             add(child: navigation)
             super.setUp()
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else { return }
             do {
                 switch scene {
-                case .buyToken(let crypto, let amount):
+                case let .buyToken(crypto, amount):
                     let factory: BuyProcessingFactory = Resolver.resolve()
                     let provider = try factory.create(
                         walletRepository: viewModel.walletsRepository,

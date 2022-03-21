@@ -13,33 +13,37 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
+
         // MARK: - Dependencies
+
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
-        
+
         // MARK: - Properties
-        
+
         // MARK: - Inititalizer
+
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         // MARK: - Methods
+
         override func loadView() {
             view = RootView(viewModel: viewModel)
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
-            guard let scene = scene else {return}
+            guard let scene = scene else { return }
             switch scene {
             case .scanQrCode:
                 let vc = QrCodeScannerVC()
@@ -54,7 +58,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 present(vc, animated: true, completion: nil)
             case .selectPayingWallet:
                 let vm = ChooseWallet.ViewModel(selectedWallet: nil, handler: viewModel, showOtherWallets: false)
-                vm.customFilter = { $0.amount > 0}
+                vm.customFilter = { $0.amount > 0 }
                 let vc = ChooseWallet.ViewController(
                     title: L10n.payTheFeeWith(viewModel.getFeeInCurrentFiat()),
                     viewModel: vm

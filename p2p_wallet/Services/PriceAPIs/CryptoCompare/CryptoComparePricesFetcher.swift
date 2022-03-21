@@ -11,22 +11,22 @@ import RxSwift
 class CryptoComparePricesFetcher: PricesFetcher {
     let endpoint = "https://min-api.cryptocompare.com/data"
     let apikey = String.secretConfig("CRYPTO_COMPARE_API_KEY")
-    
+
     func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]> {
         var path = "/pricemulti?"
         if let apikey = apikey {
             path += "api_key=\(apikey)&"
         }
-        
+
         let requests = coins
             .chunked(into: 30)
             .map { coins -> Single<[String: CurrentPrice?]> in
                 let coinListQuery = coins
                     .joined(separator: ",")
                     .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-                
+
                 return self.send("\(path)fsyms=\(coinListQuery)&tsyms=\(fiat)", decodedTo: [String: [String: Double]].self)
-                    .map {dict in
+                    .map { dict in
                         var result = [String: CurrentPrice?]()
                         for key in dict.keys {
                             var price: CurrentPrice?
@@ -39,15 +39,15 @@ class CryptoComparePricesFetcher: PricesFetcher {
                     }
                     .catchAndReturn([:])
             }
-        
+
         return Single.zip(requests)
             .map { dictArray -> [String: CurrentPrice?] in
                 let tupleArray: [(String, CurrentPrice?)] = dictArray.flatMap { $0 }
-                let dictonary = Dictionary(tupleArray, uniquingKeysWith: { (first, _) in first })
+                let dictonary = Dictionary(tupleArray, uniquingKeysWith: { first, _ in first })
                 return dictonary
             }
     }
-    
+
     func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]> {
         var path = "/v2"
         switch period {
@@ -67,7 +67,7 @@ class CryptoComparePricesFetcher: PricesFetcher {
             path += "api_key=\(apikey)&"
         }
         return send("\(path)fsym=\(coinName)&tsym=\(fiat)", decodedTo: Response.self)
-            .map {$0.Data.Data}
+            .map { $0.Data.Data }
             .map {
                 $0.map {
                     PriceRecord(
@@ -80,9 +80,9 @@ class CryptoComparePricesFetcher: PricesFetcher {
                 }
             }
     }
-    
+
     func getValueInUSD(fiat: String) -> Single<Double?> {
         return send("/price?fsym=USD&tsyms=\(fiat)", decodedTo: [String: Double].self)
-            .map {$0[fiat]}
+            .map { $0[fiat] }
     }
 }

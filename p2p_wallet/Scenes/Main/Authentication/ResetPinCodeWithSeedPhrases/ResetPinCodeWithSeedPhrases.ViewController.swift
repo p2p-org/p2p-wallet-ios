@@ -11,47 +11,53 @@ import UIKit
 extension ResetPinCodeWithSeedPhrases {
     class ViewController: WLIndicatorModalVC {
         // MARK: - Dependencies
+
         private let viewModel: ResetPinCodeWithSeedPhrasesViewModelType
-        
+
         // MARK: - Properties
+
         var childNavigationController: UINavigationController!
         var completion: (() -> Void)?
-        
+
         // MARK: - ChildVC
+
         lazy var enterPhrasesVC: EnterPhrasesVC = {
             let vc = EnterPhrasesVC()
-            vc.completion = {[weak self] phrases in
+            vc.completion = { [weak self] phrases in
                 self?.viewModel.handlePhrases(phrases)
             }
             vc.dismissAfterCompletion = false
             return vc
         }()
-        
+
         // MARK: - Initializer
+
         init(viewModel: ResetPinCodeWithSeedPhrasesViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             childNavigationController = .init()
             add(child: childNavigationController, to: containerView)
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
-            
+
             viewModel.errorDriver
                 .drive(enterPhrasesVC.error)
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: ResetPinCodeWithSeedPhrases.NavigatableScene) {
             switch scene {
             case .enterSeedPhrases:
@@ -61,18 +67,17 @@ extension ResetPinCodeWithSeedPhrases {
                     createPincodeTitle: L10n.newPINCode,
                     confirmPincodeTitle: L10n.confirmPINCode
                 )
-                createPincodeVC.onSuccess = {[weak self] pincode in
+                createPincodeVC.onSuccess = { [weak self] pincode in
                     self?.viewModel.savePincode(String(pincode))
                     self?.dismiss(animated: true) { [weak self] in
                         self?.completion?()
                     }
                 }
-                createPincodeVC.onCancel = {[weak createPincodeVC] in
+                createPincodeVC.onCancel = { [weak createPincodeVC] in
                     createPincodeVC?.dismiss(animated: true, completion: nil)
                 }
                 childNavigationController.pushViewController(createPincodeVC, animated: true)
             }
         }
     }
-
 }

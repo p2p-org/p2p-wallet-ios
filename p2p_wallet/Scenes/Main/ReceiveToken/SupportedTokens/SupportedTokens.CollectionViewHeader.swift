@@ -36,7 +36,7 @@ extension SupportedTokens.CollectionView {
                     .font: normalFont,
                     .kern: -0.24,
                     .paragraphStyle: paragraphStyle,
-                    .foregroundColor: UIColor.textBlack
+                    .foregroundColor: UIColor.textBlack,
                 ]
             )
 

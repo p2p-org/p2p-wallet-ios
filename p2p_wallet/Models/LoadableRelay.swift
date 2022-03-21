@@ -6,15 +6,15 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 
 public enum LoadableState: Equatable {
     case notRequested
     case loading
     case loaded
     case error(String?)
-    
+
     var isError: Bool {
         switch self {
         case .error: return true
@@ -37,14 +37,14 @@ extension UIView {
             hideHud()
         case .error:
             hideHud()
-            
+
             showErrorView(title: L10n.error, description: L10n.somethingWentWrong + ". " + L10n.pleaseTryAgainLater.uppercaseFirst, retryAction: .init(workFactory: { _ in
                 reloadAction()
                 return .just(())
             }))
         }
     }
-    
+
     func setUp(
         _ loadableState: LoadableState,
         overridingErrorAction: @escaping (() -> Void)
@@ -63,7 +63,7 @@ extension UIView {
 
 extension Reactive where Base: UIView {
     func loadableState(reloadAction: @escaping (() -> Void)) -> Binder<LoadableState> {
-        Binder(base) {view, loadableState in
+        Binder(base) { view, loadableState in
             view.setUp(loadableState, reloadAction: reloadAction)
         }
     }
@@ -72,11 +72,11 @@ extension Reactive where Base: UIView {
 extension Collection where Element == LoadableState {
     var combined: Element {
         // if there is some error, return error
-        if contains(where: {$0.isError}) {return .error(nil)}
+        if contains(where: { $0.isError }) { return .error(nil) }
         // if all loaded, return loaded
-        if allSatisfy({$0 == .loaded}) {return .loaded}
+        if allSatisfy({ $0 == .loaded }) { return .loaded }
         // if there is 1 loading, return loading
-        if contains(where: {$0 == .loading}) {return .loading}
+        if contains(where: { $0 == .loading }) { return .loading }
         // default
         return .notRequested
     }
@@ -84,70 +84,74 @@ extension Collection where Element == LoadableState {
 
 public class LoadableRelay<T> {
     // MARK: - Subject
+
     private let stateRelay = BehaviorRelay<LoadableState>(value: .notRequested)
-    
+
     // MARK: - Properties
+
     public var request: Single<T>
     public private(set) var value: T?
-    public var state: LoadableState {stateRelay.value}
-    
+    public var state: LoadableState { stateRelay.value }
+
     private var disposable: Disposable?
-    
-    public var stateObservable: Observable<LoadableState> {stateRelay.asObservable()}
+
+    public var stateObservable: Observable<LoadableState> { stateRelay.asObservable() }
     public var valueObservable: Observable<T?> {
         stateRelay
-            .map {[weak self] _ in self?.value}
+            .map { [weak self] _ in self?.value }
             .asObservable()
     }
+
     // MARK: - Initializer
+
     public init(request: Single<T>) {
         self.request = request
     }
-    
+
     // MARK: - Actions
-    
+
     /// Flush result
     public func flush() {
         cancelRequest()
         value = nil
         stateRelay.accept(.notRequested)
     }
-    
+
     /// Flush result and refresh
     public func reload() {
         flush()
         refresh()
     }
-    
+
     /// Reload request
     public func refresh() {
         // Cancel previous request
         cancelRequest()
-        
+
         // Mark as loading
         stateRelay.accept(.loading)
-        
+
         // Load request
         disposable = request
-            .subscribe(onSuccess: {[weak self] data in
-                guard let self = self else {return}
+            .subscribe(onSuccess: { [weak self] data in
+                guard let self = self else { return }
                 self.value = self.map(oldData: self.value, newData: data)
                 self.stateRelay.accept(.loaded)
-            }, onFailure: {[weak self] error in
+            }, onFailure: { [weak self] error in
                 self?.stateRelay.accept(.error(error.readableDescription))
             })
     }
-    
+
     /// Mapping
-    public func map(oldData: T?, newData: T) -> T {
+    public func map(oldData _: T?, newData: T) -> T {
         newData
     }
-    
+
     /// Cancel current request
     public func cancelRequest() {
         disposable?.dispose()
     }
-    
+
     /// Override value by a given value and set state to loaded
     /// - Parameter value: value for overriding
     public func accept(_ value: T?, state: LoadableState) {
@@ -159,27 +163,27 @@ public class LoadableRelay<T> {
 
 public typealias Loadable<T> = (value: T?, state: LoadableState, reloadAction: (() -> Void)?)
 
-extension LoadableRelay {
+public extension LoadableRelay {
     /// Convert to driver to drive UI
-    public func asDriver() -> Driver<Loadable<T>> {
+    func asDriver() -> Driver<Loadable<T>> {
         stateObservable.asDriver(onErrorJustReturn: .notRequested)
-            .map {[weak self] in (value: self?.value, state: $0, reloadAction: {[weak self] in self?.reload()})}
+            .map { [weak self] in (value: self?.value, state: $0, reloadAction: { [weak self] in self?.reload() }) }
     }
 }
 
-extension Reactive where Base: UILabel {
+public extension Reactive where Base: UILabel {
     /// Bindable sink for `loadbleText` property.
-    public func loadableText<T>(
+    func loadableText<T>(
         onLoaded: @escaping ((T?) -> String?)
     ) -> Binder<Loadable<T>> {
-        Binder(self.base) {label, loadableValue in
+        Binder(base) { label, loadableValue in
             label.set(loadableValue, onLoaded: onLoaded)
         }
     }
 }
 
-extension UILabel {
-    public func set<T>(_ loadableValue: Loadable<T>, onLoaded: @escaping ((T?) -> String?)) {
+public extension UILabel {
+    func set<T>(_ loadableValue: Loadable<T>, onLoaded: @escaping ((T?) -> String?)) {
         isUserInteractionEnabled = false
         switch loadableValue.state {
         case .notRequested:
@@ -191,15 +195,15 @@ extension UILabel {
         case .error:
             isUserInteractionEnabled = true
             text = L10n.error.uppercaseFirst + ". " + L10n.tapToTryAgain
-            
+
             let gesture = LoadableTapGesture(target: self, action: #selector(loadableTextDidTap(gesture:)))
             gesture.reloadAction = loadableValue.reloadAction
             addGestureRecognizer(gesture)
         }
     }
-    
-    @objc public func loadableTextDidTap(gesture: UIGestureRecognizer) {
-        guard let gesture = gesture as? LoadableTapGesture else {return}
+
+    @objc func loadableTextDidTap(gesture: UIGestureRecognizer) {
+        guard let gesture = gesture as? LoadableTapGesture else { return }
         gesture.reloadAction?()
     }
 }

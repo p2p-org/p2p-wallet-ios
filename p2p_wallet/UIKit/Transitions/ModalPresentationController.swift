@@ -2,7 +2,7 @@ import UIKit
 
 class ModalPresentationController: UIPresentationController {
     private let tapFadeViewToDismiss: Bool
-    
+
     init(presentedViewController: UIViewController, presenting: UIViewController?, tapFadeViewToDismiss: Bool) {
         self.tapFadeViewToDismiss = tapFadeViewToDismiss
         super.init(presentedViewController: presentedViewController, presenting: presenting)
@@ -58,7 +58,7 @@ class ModalPresentationController: UIPresentationController {
         let safeAreaFrame = containerView.bounds.inset(by: containerView.safeAreaInsets)
 
         let targetWidth = safeAreaFrame.width - 2 * inset
-        
+
         var targetHeight: CGFloat = 0
         if let presentedViewController = presentedViewController as? CustomPresentableViewController
         {
@@ -66,7 +66,7 @@ class ModalPresentationController: UIPresentationController {
         } else {
             targetHeight = presentedView.fittingHeight(targetWidth: targetWidth)
         }
-        
+
         if targetHeight > safeAreaFrame.size.height {
             var frame = safeAreaFrame
             frame.size.height += containerView.safeAreaInsets.bottom

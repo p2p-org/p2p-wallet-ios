@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 import SolanaSwift
 
 protocol EnterSeedViewModelType: AnyObject {
@@ -26,11 +26,13 @@ protocol EnterSeedViewModelType: AnyObject {
 extension EnterSeed {
     final class ViewModel {
         // MARK: - Dependencies
-        
+
         // MARK: - Properties
+
         private let disposeBag = DisposeBag()
 
         // MARK: - Subject
+
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let mainButtonContentSubject = BehaviorRelay<EnterSeed.MainButtonContent>(value: .invalid(.empty))
@@ -41,7 +43,7 @@ extension EnterSeed {
         init() {
             bind()
         }
-        
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
@@ -66,7 +68,7 @@ extension EnterSeed {
         }
 
         private func phraseError(in words: [String]) -> String? {
-            guard words.count >= 12 else  {
+            guard words.count >= 12 else {
                 return L10n.seedPhraseMustHaveAtLeast12Words
             }
 
@@ -82,8 +84,8 @@ extension EnterSeed {
         private func getSeedWords() -> [String] {
             seedTextSubject.value?
                 .components(separatedBy: .whitespacesAndNewlines)
-                .filter({ !$0.isEmpty })
-            ?? []
+                .filter { !$0.isEmpty }
+                ?? []
         }
     }
 }
@@ -106,6 +108,7 @@ extension EnterSeed.ViewModel: EnterSeedViewModelType {
     }
 
     // MARK: - Actions
+
     func goBack() {
         navigationSubject.accept(.back)
     }

@@ -5,18 +5,21 @@
 //  Created by Andrew Vasiliev on 11.11.2021.
 //
 
-import UIKit
 import RxSwift
+import UIKit
 
 extension EnterSeed {
     class RootView: BEView {
         // MARK: - Constants
+
         let disposeBag = DisposeBag()
-        
+
         // MARK: - Properties
+
         private let viewModel: EnterSeedViewModelType
 
         // MARK: - Subviews
+
         private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
         private let stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill)
         private let textView = ExpandableTextView()
@@ -34,6 +37,7 @@ extension EnterSeed {
         private let descriptionLabel = UILabel()
 
         // MARK: - Methods
+
         init(viewModel: EnterSeedViewModelType) {
             self.viewModel = viewModel
 
@@ -50,13 +54,14 @@ extension EnterSeed {
             textView.placeholder = L10n.yourSecurityKey
             layout()
             bind()
-            
+
             #if DEBUG
-            if let testAccount = String.secretConfig("TEST_ACCOUNT_SEED_PHRASE")?
-                .replacingOccurrences(of: "-", with: " ") {
-                textView.set(text: testAccount)
-                viewModel.seedTextSubject.accept(testAccount)
-            }
+                if let testAccount = String.secretConfig("TEST_ACCOUNT_SEED_PHRASE")?
+                    .replacingOccurrences(of: "-", with: " ")
+                {
+                    textView.set(text: testAccount)
+                    viewModel.seedTextSubject.accept(testAccount)
+                }
             #endif
         }
 
@@ -80,6 +85,7 @@ extension EnterSeed {
         }
 
         // MARK: - Layout
+
         private func layout() {
             let separatorView = UIView()
             separatorView.backgroundColor = .c7c7cc
@@ -139,7 +145,7 @@ extension EnterSeed {
             nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
             nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
         }
-        
+
         private func bind() {
             viewModel.errorDriver
                 .drive(onNext: { [weak self] in
@@ -183,7 +189,7 @@ extension EnterSeed {
                 string: L10n.toRecoverYourWalletEnterYourSecurityKeyS12Or24WordsSeparatedBySingleSpacesInTheCorrectOrder,
                 attributes: [
                     NSAttributedString.Key.kern: -0.24,
-                    NSAttributedString.Key.paragraphStyle: paragraphStyle
+                    NSAttributedString.Key.paragraphStyle: paragraphStyle,
                 ]
             )
         }
@@ -197,7 +203,7 @@ extension EnterSeed {
                 title = L10n.saveContinue
                 image = .check
                 isEnabled = true
-            case .invalid(let enterSeedInvalidationReason):
+            case let .invalid(enterSeedInvalidationReason):
                 image = nil
                 isEnabled = false
                 switch enterSeedInvalidationReason {
@@ -212,9 +218,9 @@ extension EnterSeed {
             nextButton.setTitle(text: title)
             nextButton.setImage(image: image, imageSize: .init(width: 24, height: 24))
         }
-        
+
         @objc private func securityExplanation() {
-            self.viewModel.showInfo()
+            viewModel.showInfo()
         }
     }
 }

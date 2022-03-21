@@ -11,9 +11,11 @@ import UIKit
 extension SendToken.ChooseTokenAndAmount {
     class ViewController: SendToken.BaseViewController {
         // MARK: - Dependencies
+
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
-        
+
         // MARK: - Properties
+
         private lazy var nextButton: UIButton = {
             let nextButton = UIButton(label: L10n.next.uppercaseFirst, labelFont: .systemFont(ofSize: 17), textColor: .h5887ff)
                 .onTap(self, action: #selector(buttonNextDidTouch))
@@ -21,48 +23,51 @@ extension SendToken.ChooseTokenAndAmount {
             nextButton.setTitleColor(.textSecondary, for: .disabled)
             return nextButton
         }()
-        
+
         // MARK: - Initializer
+
         init(
             viewModel: SendTokenChooseTokenAndAmountViewModelType
         ) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             navigationBar.titleLabel.text = L10n.send
             navigationBar.backButton.isHidden = !viewModel.canGoBack
             navigationBar.backButton.onTap(self, action: #selector(_back))
             navigationBar.rightItems.addArrangedSubview(nextButton)
-            
+
             let rootView = RootView(viewModel: viewModel)
             view.addSubview(rootView)
             rootView.autoPinEdge(.top, to: .bottom, of: navigationBar)
             rootView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
-            
+
             viewModel.errorDriver
-                .map {$0 == nil}
+                .map { $0 == nil }
                 .drive(nextButton.rx.isEnabled)
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
-            guard let scene = scene else {return}
+            guard let scene = scene else { return }
             switch scene {
             case .chooseWallet:
                 let vm = ChooseWallet.ViewModel(selectedWallet: nil, handler: viewModel, showOtherWallets: false)
-                vm.customFilter = { $0.amount > 0}
+                vm.customFilter = { $0.amount > 0 }
                 let vc = ChooseWallet.ViewController(
                     title: nil,
                     viewModel: vm
@@ -80,14 +85,14 @@ extension SendToken.ChooseTokenAndAmount {
                     buttonTitles: [L10n.discard, L10n.change],
                     highlightedButtonIndex: 1,
                     destroingIndex: 0
-                ) {[weak self] selectedIndex in
-                    guard selectedIndex == 1 else {return}
+                ) { [weak self] selectedIndex in
+                    guard selectedIndex == 1 else { return }
                     self?.viewModel.save()
                     self?.viewModel.navigateNext()
                 }
             }
         }
-        
+
         @objc override func _back() {
             if viewModel.showAfterConfirmation {
                 back()
@@ -95,7 +100,7 @@ extension SendToken.ChooseTokenAndAmount {
                 viewModel.cancelSending()
             }
         }
-        
+
         @objc private func buttonNextDidTouch() {
             if viewModel.isTokenValidForSelectedNetwork() {
                 viewModel.save()
