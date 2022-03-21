@@ -27,6 +27,7 @@ extension Authentication {
         override var title: String? { didSet { navigationBar.view?.titleLabel.text = title } }
         var isIgnorable: Bool = false { didSet { navigationBar.view?.backIsHidden(!isIgnorable) } }
         var useBiometry: Bool = true { didSet { biometryButton.view?.alpha = isBiometryAvailable() ? 1 : 0 } }
+        let extraAction: ExtraAction
 
         // MARK: - Callbacks
 
@@ -38,8 +39,9 @@ extension Authentication {
             useBiometry && viewModel.isBiometryEnabled()
         }
 
-        init(viewModel: AuthenticationViewModelType) {
+        init(viewModel: AuthenticationViewModelType, extraAction: ExtraAction = .none) {
             self.viewModel = viewModel
+            self.extraAction = extraAction
             super.init()
         }
 
@@ -87,19 +89,39 @@ extension Authentication {
                 }
                 .centered(.vertical)
 
-                BEHStack {
-                    UILabel(text: L10n.forgotYourPIN + " ", textSize: 17, weight: .medium)
-                    UILabel(
-                        text: L10n.resetIt,
-                        textSize: 17,
-                        weight: .medium,
-                        textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
-                    )
-                    .setUserInteractionEnabled(true)
-                    .onTap { [weak self] in self?.viewModel.showResetPincodeWithASeedPhrase() }
+                // Extra actions
+                switch extraAction {
+                case .reset:
+                    BEHStack {
+                        UILabel(text: L10n.forgotYourPIN + " ", textSize: 17, weight: .medium)
+                        UILabel(
+                            text: L10n.resetIt,
+                            textSize: 17,
+                            weight: .medium,
+                            textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
+                        )
+                        .setUserInteractionEnabled(true)
+                        .onTap { [weak self] in self?.viewModel.showResetPincodeWithASeedPhrase() }
+                    }
+                    .centered(.horizontal)
+                    .padding(.init(only: .bottom, inset: 50))
+                case .signOut:
+                    BEHStack {
+                        UILabel(text: L10n.forgotYourPIN + " ", textSize: 17, weight: .medium)
+                        UILabel(
+                            text: L10n.signOut,
+                            textSize: 17,
+                            weight: .medium,
+                            textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
+                        )
+                        .setUserInteractionEnabled(true)
+                        .onTap { [weak self] in self?.viewModel.signOut() }
+                    }
+                    .centered(.horizontal)
+                    .padding(.init(only: .bottom, inset: 50))
+                case .none:
+                    BEContainer()
                 }
-                .centered(.horizontal)
-                .padding(.init(only: .bottom, inset: 50))
             }
         }
 

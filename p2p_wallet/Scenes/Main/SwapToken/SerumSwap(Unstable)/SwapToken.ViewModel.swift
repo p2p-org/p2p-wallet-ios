@@ -405,8 +405,6 @@ extension SerumSwapV1.ViewModel {
         authenticationHandler.authenticate(
             presentationStyle:
             .init(
-                isRequired: false,
-                isFullScreen: false,
                 completion: { [weak self] _ in
                     self?.swap()
                 }

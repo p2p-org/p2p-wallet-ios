@@ -288,9 +288,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         authenticationHandler.authenticate(
             presentationStyle: .init(
                 title: L10n.enterCurrentPINCode,
-                isRequired: false,
-                isFullScreen: true,
-                useBiometry: false,
+                options: [.fullscreen, .disableBiometric],
                 completion: { [weak self] passwordReset in
                     guard !passwordReset else {
                         self?.notificationsService.showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))

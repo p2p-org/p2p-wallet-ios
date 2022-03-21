@@ -63,8 +63,6 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
         guard let account = storage.account?.phrase else { return }
         authenticationHandler.authenticate(
             presentationStyle: .init(
-                isRequired: false,
-                isFullScreen: false,
                 completion: { [weak self] _ in
                     _ = self?.storage.saveToICloud(
                         account: .init(

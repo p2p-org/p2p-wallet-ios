@@ -19,6 +19,7 @@ protocol AuthenticationViewModelType {
     func authWithBiometry(onSuccess: (() -> Void)?, onFailure: (() -> Void)?)
     func getBlockedTime() -> Date?
     func setBlockedTime(_ time: Date?)
+    func signOut()
 }
 
 extension Authentication {
@@ -26,6 +27,7 @@ extension Authentication {
         // MARK: - Dependencies
 
         @Injected private var pincodeStorage: PincodeStorageType
+        @Injected private var logoutResponder: LogoutResponder
 
         // MARK: - Initializers
 
@@ -90,5 +92,9 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
 
     func setBlockedTime(_ time: Date?) {
         Defaults.authenticationBlockingTime = time
+    }
+
+    func signOut() {
+        navigationSubject.accept(.signOutAlert { [weak self] in self?.logoutResponder.logout() })
     }
 }

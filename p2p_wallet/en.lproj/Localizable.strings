@@ -781,3 +781,6 @@
 Reset the PIN or wait for %@." = "You have %@ attempts left to type the correct PIN.
 Reset the PIN or wait for %@.";
 "You have successfully set your PIN" = "You have successfully set your PIN";
+"Sign out" = "Sign out";
+"Are you sure you want to sign out?" = "Are you sure you want to sign out?";
+"If you have no backup, you may never be able to access this account." = "If you have no backup, you may never be able to access this account.";
