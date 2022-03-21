@@ -101,7 +101,8 @@ extension BuyTokenSelection {
                     coinNameRef.view?.text = wallet.token.name.uppercaseFirst
                 }
                 amountRef.view?.text = "\(wallet.amount.toString(maximumFractionDigits: 9)) \(wallet.token.symbol)"
-                amountInFiatRef.view?.text = "\(Defaults.fiat.symbol) \(wallet.amountInCurrentFiat.toString(maximumFractionDigits: 2))"
+                amountInFiatRef.view?
+                    .text = "\(Defaults.fiat.symbol) \(wallet.amountInCurrentFiat.toString(maximumFractionDigits: 2))"
                 return self
             }
 
@@ -111,7 +112,8 @@ extension BuyTokenSelection {
                 iconRef.view?.setUp(token: token)
                 coinNameRef.view?.text = token.name
                 amountRef.view?.text = "\(amount.toString(maximumFractionDigits: 9)) \(token.symbol)"
-                amountInFiatRef.view?.text = "\(Defaults.fiat.symbol) \(amountInFiat.toString(maximumFractionDigits: 2))"
+                amountInFiatRef.view?
+                    .text = "\(Defaults.fiat.symbol) \(amountInFiat.toString(maximumFractionDigits: 2))"
                 return self
             }
         }

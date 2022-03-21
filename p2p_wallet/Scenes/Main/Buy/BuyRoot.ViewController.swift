@@ -26,7 +26,11 @@ extension BuyRoot {
             self.viewModel = viewModel
             navigation = UINavigationController(
                 rootViewController: BuyPreparing.Scene(
-                    viewModel: BuyPreparing.SceneModel(crypto: crypto, buyViewModel: viewModel, exchangeService: Resolver.resolve())
+                    viewModel: BuyPreparing.SceneModel(
+                        crypto: crypto,
+                        buyViewModel: viewModel,
+                        exchangeService: Resolver.resolve()
+                    )
                 )
             )
 
@@ -65,11 +69,12 @@ extension BuyRoot {
                     let dataTypes = Set([WKWebsiteDataTypeCookies,
                                          WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeSessionStorage,
                                          WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeIndexedDBDatabases])
-                    WKWebsiteDataStore.default().removeData(ofTypes: dataTypes, modifiedSince: Date.distantPast) { [weak self] in
-                        let vc = SFSafariViewController(url: URL(string: provider.getUrl())!)
-                        vc.modalPresentationStyle = .automatic
-                        self?.present(vc, animated: true)
-                    }
+                    WKWebsiteDataStore.default()
+                        .removeData(ofTypes: dataTypes, modifiedSince: Date.distantPast) { [weak self] in
+                            let vc = SFSafariViewController(url: URL(string: provider.getUrl())!)
+                            vc.modalPresentationStyle = .automatic
+                            self?.present(vc, animated: true)
+                        }
                 case .back:
                     if navigation.children.count > 1 {
                         navigation.popViewController(animated: true)

@@ -30,13 +30,23 @@ extension RestoreICloud {
             return accountsRequest
                 .flatMap { [weak self] accounts in
                     guard let self = self else { throw SolanaSDK.Error.unknown }
-                    return Single.zip(accounts.map { createAccountSingle(account: $0, nameService: self.nameService, storage: self.iCloudStorage) })
+                    return Single
+                        .zip(accounts
+                            .map {
+                                createAccountSingle(
+                                    account: $0,
+                                    nameService: self.nameService,
+                                    storage: self.iCloudStorage
+                                )
+                            })
                 }
         }
     }
 }
 
-private func createAccountSingle(account: Account, nameService: NameServiceType, storage: ICloudStorageType) -> Single<RestoreICloud.ParsedAccount> {
+private func createAccountSingle(account: Account, nameService: NameServiceType,
+                                 storage: ICloudStorageType) -> Single<RestoreICloud.ParsedAccount>
+{
     createSolanaAccountSingle(account: account)
         .flatMap { solanaAccount -> Single<RestoreICloud.ParsedAccount> in
             let accountRequest: Single<Account>

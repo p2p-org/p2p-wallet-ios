@@ -20,7 +20,11 @@ extension CreateWallet {
             return navigationBar
         }()
 
-        private let createWalletButton: WLStepButton = WLStepButton.main(image: .key, imageSize: CGSize(width: 16, height: 15), text: L10n.showYourSecurityKey)
+        private let createWalletButton: WLStepButton = WLStepButton.main(
+            image: .key,
+            imageSize: CGSize(width: 16, height: 15),
+            text: L10n.showYourSecurityKey
+        )
 
         // MARK: - Dependencies
 
@@ -55,7 +59,9 @@ extension CreateWallet {
             let illustration = UIView.ilustrationView(
                 image: .explanationPicture,
                 title: L10n.secureYourWallet,
-                description: L10n.TheFollowingWordsAreTheSecurityKeyThatYouMustKeepInASafePlaceWrittenInTheCorrectSequence.IfLostNoOneCanRestoreIt.keepItPrivateEvenFromUs
+                description: L10n
+                    .TheFollowingWordsAreTheSecurityKeyThatYouMustKeepInASafePlaceWrittenInTheCorrectSequence
+                    .IfLostNoOneCanRestoreIt.keepItPrivateEvenFromUs
             )
 
             view.addSubview(illustration)

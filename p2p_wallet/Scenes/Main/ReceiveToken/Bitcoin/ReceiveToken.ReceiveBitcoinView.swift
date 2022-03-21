@@ -46,9 +46,12 @@ extension ReceiveToken {
 
                 // Description
                 UIView.greyBannerView(spacing: 12) {
-                    ReceiveToken.textBuilder(text: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin).asMarkdown())
+                    ReceiveToken
+                        .textBuilder(text: L10n.ThisAddressAcceptsOnly
+                            .youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin).asMarkdown())
                     ReceiveToken.textBuilder(text: L10n.minimumTransactionAmountOf("0.000112 BTC").asMarkdown())
-                    ReceiveToken.textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
+                    ReceiveToken
+                        .textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                         .setup { view in
                             guard let textLabel = view.viewWithTag(1) as? UILabel else { return }
                             viewModel.timeRemainsDriver().drive(textLabel.rx.attributedText).disposed(by: disposeBag)
@@ -72,23 +75,30 @@ extension ReceiveToken {
                         UILabel(text: L10n.statusesReceived, textSize: 17)
                         // Last time
                         UILabel(text: "\(L10n.theLastOne) 0m ago", textSize: 13, textColor: .secondaryLabel)
-                            .setupWithType(UILabel.self) { view in viewModel.lastTrxDate().drive(view.rx.text).disposed(by: disposeBag) }
+                            .setupWithType(UILabel.self) { view in
+                                viewModel.lastTrxDate().drive(view.rx.text).disposed(by: disposeBag)
+                            }
                     }
                     UIView.spacer
                     UILabel(text: "0")
-                        .setupWithType(UILabel.self) { view in viewModel.txsCountDriver().drive(view.rx.text).disposed(by: disposeBag) }
+                        .setupWithType(UILabel.self) { view in
+                            viewModel.txsCountDriver().drive(view.rx.text).disposed(by: disposeBag)
+                        }
                         .padding(.init(only: .right, inset: 8))
                     // Arrow
                     UIView.defaultNextArrow()
                         .setup { view in
                             viewModel.processingTxsDriver
-                                .map { $0.count == 0 }
+                                .map(\.isEmpty)
                                 .drive(view.rx.isHidden)
                                 .disposed(by: disposeBag)
                         }
                 }.padding(.init(x: 18, y: 14))
             }
-            .setup { view in viewModel.showReceivingStatusesEnableDriver().drive(view.rx.isUserInteractionEnabled).disposed(by: disposeBag) }
+            .setup { view in
+                viewModel.showReceivingStatusesEnableDriver().drive(view.rx.isUserInteractionEnabled)
+                    .disposed(by: disposeBag)
+            }
             .onTap { [unowned self] in viewModel.showReceivingStatuses() }
         }
     }
@@ -97,7 +107,7 @@ extension ReceiveToken {
 private extension ReceiveTokenBitcoinViewModelType {
     func showReceivingStatusesEnableDriver() -> Driver<Bool> {
         processingTxsDriver
-            .map { $0.count > 0 }
+            .map { !$0.isEmpty }
             .asDriver()
     }
 

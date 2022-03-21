@@ -45,8 +45,14 @@ extension UIView {
 
         if let description = description {
             stackView.addArrangedSubview(
-                UILabel(text: description, textSize: 17.adaptiveHeight, weight: .medium, numberOfLines: 0, textAlignment: .center)
-                    .withContentHuggingPriority(.required, for: .vertical)
+                UILabel(
+                    text: description,
+                    textSize: 17.adaptiveHeight,
+                    weight: .medium,
+                    numberOfLines: 0,
+                    textAlignment: .center
+                )
+                .withContentHuggingPriority(.required, for: .vertical)
             )
         }
 

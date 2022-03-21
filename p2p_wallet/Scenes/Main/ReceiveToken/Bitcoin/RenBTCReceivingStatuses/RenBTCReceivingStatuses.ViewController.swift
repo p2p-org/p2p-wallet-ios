@@ -142,7 +142,9 @@ extension RenBTCReceivingStatuses {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .detail(txid):
-                let vc = TxDetailViewController(viewModel: .init(processingTxsDriver: viewModel.processingTxsDriver, txid: txid))
+                let vc =
+                    TxDetailViewController(viewModel: .init(processingTxsDriver: viewModel.processingTxsDriver,
+                                                            txid: txid))
                 show(vc, sender: nil)
             case .none:
                 break
@@ -165,7 +167,9 @@ extension RenBTCReceivingStatuses.NewViewController: BECollectionViewDelegate {
     private func navigate(to scene: RenBTCReceivingStatuses.NavigatableScene?) {
         switch scene {
         case let .detail(txid):
-            let vc = RenBTCReceivingStatuses.TxDetailViewController(viewModel: .init(processingTxsDriver: viewModel.processingTxsDriver, txid: txid))
+            let vc = RenBTCReceivingStatuses
+                .TxDetailViewController(viewModel: .init(processingTxsDriver: viewModel.processingTxsDriver,
+                                                         txid: txid))
             show(vc, sender: nil)
         case .none:
             break

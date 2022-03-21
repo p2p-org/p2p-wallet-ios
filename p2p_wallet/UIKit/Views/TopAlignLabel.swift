@@ -16,7 +16,11 @@ class TopAlignLabel: UILabel {
             ]
         )
         var newRect = rect
-        newRect.size.height = attributedText.boundingRect(with: rect.size, options: .usesLineFragmentOrigin, context: nil).size.height
+        newRect.size.height = attributedText.boundingRect(
+            with: rect.size,
+            options: .usesLineFragmentOrigin,
+            context: nil
+        ).size.height
 
         if numberOfLines != 0 {
             newRect.size.height = min(newRect.size.height, CGFloat(numberOfLines) * font.lineHeight)

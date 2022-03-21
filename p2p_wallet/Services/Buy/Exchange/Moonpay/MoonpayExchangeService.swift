@@ -55,7 +55,9 @@ extension Buy {
         ) -> Single<ExchangeRate> {
             provider
                 .getPrice(for: cryptoCurrency.rawValue, as: fiatCurrency.rawValue.uppercased())
-                .map { exchangeRate in .init(amount: exchangeRate, cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency) }
+                .map { exchangeRate in
+                    .init(amount: exchangeRate, cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency)
+                }
         }
 
         private func _getMinAmount(currencies: Moonpay.Currencies, for currency: Currency) -> Double {

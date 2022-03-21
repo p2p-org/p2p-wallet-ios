@@ -58,7 +58,13 @@ extension OrcaSwapV2.ConfirmSwapping {
         private func setUp() {
             stackView.spacing = 12
             stackView.addArrangedSubviews {
-                UIView.floatingPanel(contentInset: .init(x: 8, y: 16), axis: .horizontal, spacing: 8, alignment: .center, distribution: .equalCentering) {
+                UIView.floatingPanel(
+                    contentInset: .init(x: 8, y: 16),
+                    axis: .horizontal,
+                    spacing: 8,
+                    alignment: .center,
+                    distribution: .equalCentering
+                ) {
                     WalletView(viewModel: viewModel, type: .source)
                         .centered(.horizontal)
 
@@ -100,13 +106,19 @@ extension OrcaSwapV2.ConfirmSwapping {
         }
 
         private func bind() {
-            combinedAmountDriver(amountDriver: viewModel.inputAmountStringDriver, amountInFiatDriver: viewModel.inputAmountInFiatStringDriver)
-                .drive(inputAmountLabel.rx.attributedText)
-                .disposed(by: disposeBag)
+            combinedAmountDriver(
+                amountDriver: viewModel.inputAmountStringDriver,
+                amountInFiatDriver: viewModel.inputAmountInFiatStringDriver
+            )
+            .drive(inputAmountLabel.rx.attributedText)
+            .disposed(by: disposeBag)
 
-            combinedAmountDriver(amountDriver: viewModel.receiveAtLeastStringDriver, amountInFiatDriver: viewModel.receiveAtLeastInFiatStringDriver)
-                .drive(minimumAmountLabel.rx.attributedText)
-                .disposed(by: disposeBag)
+            combinedAmountDriver(
+                amountDriver: viewModel.receiveAtLeastStringDriver,
+                amountInFiatDriver: viewModel.receiveAtLeastInFiatStringDriver
+            )
+            .drive(minimumAmountLabel.rx.attributedText)
+            .disposed(by: disposeBag)
 
             viewModel.slippageDriver
                 .map { ($0 * 100).toString(maximumFractionDigits: 2) + "%" }
@@ -144,7 +156,9 @@ extension OrcaSwapV2.ConfirmSwapping {
             }
         }
 
-        private func combinedAmountDriver(amountDriver: Driver<String?>, amountInFiatDriver: Driver<String?>) -> Driver<NSAttributedString> {
+        private func combinedAmountDriver(amountDriver: Driver<String?>,
+                                          amountInFiatDriver: Driver<String?>) -> Driver<NSAttributedString>
+        {
             Driver.combineLatest(
                 amountDriver,
                 amountInFiatDriver
@@ -174,7 +188,12 @@ extension OrcaSwapV2.ConfirmSwapping {
 
         private lazy var coinLogoImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private lazy var amountLabel = UILabel(text: nil, textSize: 15, textAlignment: .center)
-        private lazy var equityAmountLabel = UILabel(text: nil, textSize: 13, textColor: .textSecondary, textAlignment: .center)
+        private lazy var equityAmountLabel = UILabel(
+            text: nil,
+            textSize: 13,
+            textColor: .textSecondary,
+            textAlignment: .center
+        )
 
         // MARK: - Initializers
 

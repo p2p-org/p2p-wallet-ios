@@ -27,7 +27,12 @@ extension Settings {
         override func itemDidSelect(_ item: LocalizedLanguage) {
             let originalSelectedItem = selectedItem
             super.itemDidSelect(item)
-            showAlert(title: L10n.switchLanguage, message: L10n.doYouReallyWantToSwitchTo + " " + selectedItem?.localizedName?.uppercaseFirst + "?", buttonTitles: [L10n.ok, L10n.cancel], highlightedButtonIndex: 0) { [weak self] index in
+            showAlert(
+                title: L10n.switchLanguage,
+                message: L10n.doYouReallyWantToSwitchTo + " " + selectedItem?.localizedName?.uppercaseFirst + "?",
+                buttonTitles: [L10n.ok, L10n.cancel],
+                highlightedButtonIndex: 0
+            ) { [weak self] index in
                 guard index == 0, let language = self?.selectedItem
                 else {
                     self?.reverseSelectedItem(originalSelectedItem: originalSelectedItem)

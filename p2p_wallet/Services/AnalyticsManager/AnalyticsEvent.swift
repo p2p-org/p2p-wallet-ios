@@ -149,6 +149,7 @@ private extension String {
 
         let regex = try? NSRegularExpression(pattern: pattern, options: [])
         let range = NSRange(location: 0, length: count)
-        return regex?.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "$1_$2").uppercaseFirst
+        return regex?.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: "$1_$2")
+            .uppercaseFirst
     }
 }

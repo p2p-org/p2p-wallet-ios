@@ -58,7 +58,11 @@ extension UIView {
     }
 
     func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
-        showErrorView(title: L10n.error, description: error?.readableDescription ?? L10n.somethingWentWrongPleaseTryAgainLater, retryAction: retryAction)
+        showErrorView(
+            title: L10n.error,
+            description: error?.readableDescription ?? L10n.somethingWentWrongPleaseTryAgainLater,
+            retryAction: retryAction
+        )
     }
 }
 

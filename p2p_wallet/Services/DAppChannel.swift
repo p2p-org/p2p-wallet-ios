@@ -32,7 +32,8 @@ class DAppChannel: NSObject {
                 "method": method,
                 "args": args,
             ]
-            return (try JSONSerialization.data(withJSONObject: message)).base64EncodedString(options: .endLineWithLineFeed)
+            return (try JSONSerialization.data(withJSONObject: message))
+                .base64EncodedString(options: .endLineWithLineFeed)
         }
     }
 
@@ -71,7 +72,11 @@ class DAppChannel: NSObject {
 extension DAppChannel: DAppChannelType {
     func getWebviewConfiguration() -> WKWebViewConfiguration {
         // configure target
-        let targetInjection = WKUserScript(source: "window.p2pTarget = \"ios\"", injectionTime: .atDocumentStart, forMainFrameOnly: true)
+        let targetInjection = WKUserScript(
+            source: "window.p2pTarget = \"ios\"",
+            injectionTime: .atDocumentStart,
+            forMainFrameOnly: true
+        )
 
         // set config
         let config = WKWebViewConfiguration()

@@ -34,7 +34,8 @@ extension BuyPreparing {
 
         let crypto: Buy.CryptoCurrency
         private let errorRelay = BehaviorRelay<String?>(value: nil)
-        private let inputRelay = BehaviorRelay<Buy.ExchangeInput>(value: .init(amount: 0, currency: Buy.FiatCurrency.usd))
+        private let inputRelay =
+            BehaviorRelay<Buy.ExchangeInput>(value: .init(amount: 0, currency: Buy.FiatCurrency.usd))
         private let outputRelay: BehaviorRelay<Buy.ExchangeOutput>
         private let minFiatAmountsRelay = BehaviorRelay<Double>(value: 0)
         private let minCryptoAmountsRelay = BehaviorRelay<Double>(value: 0)
@@ -77,7 +78,14 @@ extension BuyPreparing {
                 .flatMapLatest { [weak self] input -> Single<Buy.ExchangeOutput> in
                     guard let self = self else { return .error(NSError(domain: "Preparing", code: -1)) }
                     if input.amount == 0 {
-                        return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, purchaseCost: 0, total: 0))
+                        return .just(.init(
+                            amount: 0,
+                            currency: self.outputRelay.value.currency,
+                            processingFee: 0,
+                            networkFee: 0,
+                            purchaseCost: 0,
+                            total: 0
+                        ))
                     }
                     return self.exchangeService
                         .convert(input: input, to: input.currency is Buy.FiatCurrency ? crypto : Buy.FiatCurrency.usd)
@@ -97,7 +105,14 @@ extension BuyPreparing {
                             } else {
                                 self.errorRelay.accept(error.localizedDescription)
                             }
-                            return .just(.init(amount: 0, currency: self.outputRelay.value.currency, processingFee: 0, networkFee: 0, purchaseCost: 0, total: 0))
+                            return .just(.init(
+                                amount: 0,
+                                currency: self.outputRelay.value.currency,
+                                processingFee: 0,
+                                networkFee: 0,
+                                purchaseCost: 0,
+                                total: 0
+                            ))
                         }
                 }
                 .bind(to: outputRelay)

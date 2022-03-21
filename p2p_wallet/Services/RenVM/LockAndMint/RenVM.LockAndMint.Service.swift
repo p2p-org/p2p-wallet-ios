@@ -51,7 +51,10 @@ extension RenVM.LockAndMint {
         private var loadingDisposable: Disposable?
         private var lockAndMint: RenVM.LockAndMint?
         private let mintQueue = DispatchQueue(label: "mintQueue", qos: .background)
-        private lazy var scheduler = SerialDispatchQueueScheduler(queue: mintQueue, internalSerialQueueName: "mintQueue")
+        private lazy var scheduler = SerialDispatchQueueScheduler(
+            queue: mintQueue,
+            internalSerialQueueName: "mintQueue"
+        )
         private var observingTxStreamDisposable: Disposable?
 
         // MARK: - Subjects
@@ -242,7 +245,10 @@ extension RenVM.LockAndMint {
                 .disposed(by: disposeBag)
         }
 
-        private func processConfirmedAndSubmitedTransaction(_ tx: ProcessingTx, response: RenVM.LockAndMint.GatewayAddressResponse) {
+        private func processConfirmedAndSubmitedTransaction(
+            _ tx: ProcessingTx,
+            response: RenVM.LockAndMint.GatewayAddressResponse
+        ) {
             // Mark as processing
             guard !processingTxs.contains(tx.tx.txid) else { return }
             processingTxs.append(tx.tx.txid)
@@ -268,12 +274,16 @@ extension RenVM.LockAndMint {
                     }
                 }, onFailure: { [weak self] error in
                     // other error
-                    Logger.log(message: "renBTC event mint error: \(error), tx: \(String(describing: self?.sessionStorage.getProcessingTx(txid: tx.tx.txid)))", event: .error)
+                    Logger.log(
+                        message: "renBTC event mint error: \(error), tx: \(String(describing: self?.sessionStorage.getProcessingTx(txid: tx.tx.txid)))",
+                        event: .error
+                    )
                 })
                 .disposed(by: disposeBag)
         }
 
-        private func prepareRequest(response: GatewayAddressResponse, tx: ProcessingTx) -> Single<(amountOut: String?, signature: String)>
+        private func prepareRequest(response: GatewayAddressResponse,
+                                    tx: ProcessingTx) -> Single<(amountOut: String?, signature: String)>
         {
             guard let lockAndMint = lockAndMint else {
                 return .error(RenVM.Error.unknown)

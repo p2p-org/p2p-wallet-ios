@@ -92,7 +92,11 @@ extension RestoreWallet {
                 .disposed(by: disposeBag)
         }
 
-        override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+        override func present(
+            _ viewControllerToPresent: UIViewController,
+            animated flag: Bool,
+            completion: (() -> Void)? = nil
+        ) {
             super.present(viewControllerToPresent, animated: flag, completion: completion)
         }
 

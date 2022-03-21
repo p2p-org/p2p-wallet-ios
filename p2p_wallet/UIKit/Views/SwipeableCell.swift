@@ -115,7 +115,10 @@ extension SwipeableCell: UIScrollViewDelegate {
         targetContentOffset: UnsafeMutablePointer<CGPoint>
     ) {
         let decelerationRate = UIScrollView.DecelerationRate.normal.rawValue
-        let offsetProjection = scrollView.contentOffset.project(initialVelocity: velocity, decelerationRate: decelerationRate)
+        let offsetProjection = scrollView.contentOffset.project(
+            initialVelocity: velocity,
+            decelerationRate: decelerationRate
+        )
         let targetAnchor = nearestAnchor(forContentOffset: offsetProjection)
 
         targetContentOffset.pointee = targetAnchor

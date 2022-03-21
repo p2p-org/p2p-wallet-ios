@@ -28,7 +28,11 @@ extension UIView {
 class ConnectionErrorView: BEView {
     // MARK: - Subviews
 
-    private lazy var refreshButton = WLButton.stepButton(enabledColor: .eff3ff, textColor: .h5887ff, label: L10n.refresh)
+    private lazy var refreshButton = WLButton.stepButton(
+        enabledColor: .eff3ff,
+        textColor: .h5887ff,
+        label: L10n.refresh
+    )
 
     private lazy var contentView: UIView = {
         let view = UIView(backgroundColor: .white)
@@ -42,7 +46,14 @@ class ConnectionErrorView: BEView {
 
             BEStackViewSpacing(5)
 
-            UILabel(text: L10n.yourConnectionToTheInternetHasBeenInterrupted, textSize: 17, weight: .medium, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
+            UILabel(
+                text: L10n.yourConnectionToTheInternetHasBeenInterrupted,
+                textSize: 17,
+                weight: .medium,
+                textColor: .textSecondary,
+                numberOfLines: 0,
+                textAlignment: .center
+            )
 
             BEStackViewSpacing(66)
 

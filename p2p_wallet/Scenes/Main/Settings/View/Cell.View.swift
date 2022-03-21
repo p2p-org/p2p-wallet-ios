@@ -17,7 +17,13 @@ extension Settings {
         let dividerEnable: Bool
         let nextArrowEnable: Bool
 
-        init(icon: UIImage, title: UIView, trailing: UIView? = nil, dividerEnable: Bool = true, nextArrowEnable: Bool = true) {
+        init(
+            icon: UIImage,
+            title: UIView,
+            trailing: UIView? = nil,
+            dividerEnable: Bool = true,
+            nextArrowEnable: Bool = true
+        ) {
             self.icon = icon
             self.title = title
             self.trailing = trailing

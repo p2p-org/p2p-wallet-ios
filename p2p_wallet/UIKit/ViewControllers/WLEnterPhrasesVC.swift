@@ -23,7 +23,10 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
 
     // MARK: - Subviews
 
-    lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
+    lazy var scrollView = ContentHuggingScrollView(
+        scrollableAxis: .vertical,
+        contentInset: .init(only: .bottom, inset: 40)
+    )
     lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill)
 
     lazy var textView = WLPhrasesTextView()
@@ -41,14 +44,34 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         return tabBar
     }()
 
-    lazy var nextButton = WLButton(backgroundColor: .h5887ff, cornerRadius: 12, label: L10n.done, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
-        .onTap(self, action: #selector(buttonNextDidTouch))
-    lazy var pasteButton = WLButton(backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1), cornerRadius: 12, label: L10n.paste, labelFont: .systemFont(ofSize: 15, weight: .semibold), textColor: .white, contentInsets: .init(x: 16, y: 10))
-        .onTap(self, action: #selector(buttonPasteDidTouch))
+    lazy var nextButton = WLButton(
+        backgroundColor: .h5887ff,
+        cornerRadius: 12,
+        label: L10n.done,
+        labelFont: .systemFont(ofSize: 15, weight: .semibold),
+        textColor: .white,
+        contentInsets: .init(x: 16, y: 10)
+    )
+    .onTap(self, action: #selector(buttonNextDidTouch))
+    lazy var pasteButton = WLButton(
+        backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1),
+        cornerRadius: 12,
+        label: L10n.paste,
+        labelFont: .systemFont(ofSize: 15, weight: .semibold),
+        textColor: .white,
+        contentInsets: .init(x: 16, y: 10)
+    )
+    .onTap(self, action: #selector(buttonPasteDidTouch))
     lazy var retryButton = WLButton.stepButton(type: .gray, label: L10n.resetAndTryAgain)
         .onTap(self, action: #selector(resetAndTryAgainButtonDidTouch))
 
-    lazy var descriptionLabel = UILabel(text: L10n.enterASeedPhraseFromYourAccount, textSize: 17, textColor: .textSecondary.onDarkMode(.h5887ff), numberOfLines: 0, textAlignment: .center)
+    lazy var descriptionLabel = UILabel(
+        text: L10n.enterASeedPhraseFromYourAccount,
+        textSize: 17,
+        textColor: .textSecondary.onDarkMode(.h5887ff),
+        numberOfLines: 0,
+        textAlignment: .center
+    )
 
     // MARK: - Initializers
 

@@ -38,9 +38,15 @@ extension TabBarVC {
 
         override func commonInit() {
             super.commonInit()
-            let stackView = UIStackView(axis: .vertical, spacing: 3, alignment: .center, distribution: .fill, arrangedSubviews: [
-                imageView, titleLabel,
-            ])
+            let stackView = UIStackView(
+                axis: .vertical,
+                spacing: 3,
+                alignment: .center,
+                distribution: .fill,
+                arrangedSubviews: [
+                    imageView, titleLabel,
+                ]
+            )
 
             addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()

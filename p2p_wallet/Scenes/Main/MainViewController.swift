@@ -110,7 +110,7 @@ class MainViewController: BaseVC {
             return assertionFailure("There is no local auth controller")
         }
 
-        let keyWindow = UIApplication.shared.windows.filter { $0.isKeyWindow }.first
+        let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
         let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
 
         if topController is UIAlertController {

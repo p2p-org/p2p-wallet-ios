@@ -55,7 +55,13 @@ extension CreateOrRestoreWallet {
             imageView.autoAdjustWidthHeightRatio(375 / 349.35)
             let iconView = imageView.centered(.horizontal)
 
-            let backView = BERoundedCornerShadowView(shadowColor: .textBlack.withAlphaComponent(0.05), radius: 32, offset: .init(width: 0, height: 9), opacity: 1, cornerRadius: 12.5)
+            let backView = BERoundedCornerShadowView(
+                shadowColor: .textBlack.withAlphaComponent(0.05),
+                radius: 32,
+                offset: .init(width: 0, height: 9),
+                opacity: 1,
+                cornerRadius: 12.5
+            )
             backView.backgroundColor = .background
             backView.autoAdjustWidthHeightRatio(241.16 / 306.53)
             iconView.addSubview(backView)
@@ -82,7 +88,12 @@ private class SlideVC: BaseVC {
         description: String? = nil,
         replacingImageWithCustomView customView: UIView? = nil
     ) {
-        contentView = .ilustrationView(image: image, title: title, description: description, replacingImageWithCustomView: customView)
+        contentView = .ilustrationView(
+            image: image,
+            title: title,
+            description: description,
+            replacingImageWithCustomView: customView
+        )
         super.init()
     }
 

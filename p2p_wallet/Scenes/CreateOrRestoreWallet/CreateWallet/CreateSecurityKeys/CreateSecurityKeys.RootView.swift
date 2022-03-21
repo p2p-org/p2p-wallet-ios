@@ -83,7 +83,10 @@ extension CreateSecurityKeys {
             }
             bottomStack.backgroundColor = .background
             addSubview(bottomStack)
-            bottomStack.autoPinEdgesToSuperviewSafeArea(with: .init(top: 0, left: 18, bottom: 20, right: 18), excludingEdge: .top)
+            bottomStack.autoPinEdgesToSuperviewSafeArea(
+                with: .init(top: 0, left: 18, bottom: 20, right: 18),
+                excludingEdge: .top
+            )
         }
 
         func bind() {

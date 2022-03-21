@@ -48,7 +48,12 @@ final class WLPinCodeView: BEView {
 
     // MARK: - Subviews
 
-    private lazy var stackView = UIStackView(axis: .vertical, spacing: stackViewSpacing, alignment: .center, distribution: .fill) {
+    private lazy var stackView = UIStackView(
+        axis: .vertical,
+        spacing: stackViewSpacing,
+        alignment: .center,
+        distribution: .fill
+    ) {
         #if DEBUG
             UILabel(text: correctPincode, textColor: .red, textAlignment: .center)
             BEStackViewSpacing(10)
@@ -60,7 +65,13 @@ final class WLPinCodeView: BEView {
     }
 
     private let dotsView = _PinCodeDotsView()
-    let errorLabel = UILabel(textSize: 13, weight: .semibold, textColor: .ff3b30, numberOfLines: 0, textAlignment: .center)
+    let errorLabel = UILabel(
+        textSize: 13,
+        weight: .semibold,
+        textColor: .ff3b30,
+        numberOfLines: 0,
+        textAlignment: .center
+    )
     private lazy var numpadView = _NumpadView(bottomLeftButton: bottomLeftButton)
     private let bottomLeftButton: UIView?
 
@@ -323,8 +334,13 @@ private class _NumpadView: BEView {
         return views
     }()
 
-    private lazy var deleteButton = UIImageView(width: buttonSize, height: buttonSize, image: .pincodeDelete, tintColor: deleteButtonColor.normal)
-        .onTap(self, action: #selector(deleteButtonDidTap))
+    private lazy var deleteButton = UIImageView(
+        width: buttonSize,
+        height: buttonSize,
+        image: .pincodeDelete,
+        tintColor: deleteButtonColor.normal
+    )
+    .onTap(self, action: #selector(deleteButtonDidTap))
 
     fileprivate init(bottomLeftButton: UIView? = nil) {
         self.bottomLeftButton = bottomLeftButton

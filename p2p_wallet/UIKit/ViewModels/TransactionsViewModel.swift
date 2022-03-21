@@ -92,7 +92,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
 
         return fetchPubkeys
             .flatMap { [weak self] pubkeys -> Single<[SolanaSDK.ParsedTransaction]> in
-                guard let `self` = self else { return .error(SolanaSDK.Error.unknown) }
+                guard let self = self else { return .error(SolanaSDK.Error.unknown) }
                 return self.repository.getTransactionsHistory(
                     account: self.account,
                     accountSymbol: self.accountSymbol,
@@ -130,10 +130,12 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         )
         .map { [weak self] transactions -> [SolanaSDK.ParsedTransaction] in
             // find receipt
-            let newTransactions = transactions.filter { newTx in self?.data.contains(where: { $0.signature == newTx.signature }) == false }
+            let newTransactions = transactions
+                .filter { newTx in self?.data.contains(where: { $0.signature == newTx.signature }) == false }
 
             // receive
-            if newTransactions.contains(where: { ($0.value as? SolanaSDK.TransferTransaction)?.transferType == .receive })
+            if newTransactions
+                .contains(where: { ($0.value as? SolanaSDK.TransferTransaction)?.transferType == .receive })
             {
                 return newTransactions
             }
@@ -145,7 +147,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         .subscribe(onSuccess: { [weak self] newTransactions in
             guard let self = self else { return }
             self.isFetchingReceiptSubject.accept(false)
-            let newTransactions = newTransactions.filter { newTx in !self.data.contains(where: { $0.signature == newTx.signature }) }
+            let newTransactions = newTransactions
+                .filter { newTx in !self.data.contains(where: { $0.signature == newTx.signature }) }
             var data = self.data
             data = newTransactions + data
             self.overrideData(by: data)
@@ -158,7 +161,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
 
     // MARK: - Helpers
 
-    private func updatedTransactionsWithPrices(transactions: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction]
+    private func updatedTransactionsWithPrices(transactions: [SolanaSDK.ParsedTransaction])
+        -> [SolanaSDK.ParsedTransaction]
     {
         var transactions = transactions
         for index in 0 ..< transactions.count {

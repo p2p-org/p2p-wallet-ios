@@ -5,7 +5,14 @@
 import UIKit
 
 public extension CALayer {
-    func applyShadow(color: UIColor = .black, alpha: Float = 0, x: CGFloat = 0, y: CGFloat = 0, blur: CGFloat = 0, spread: CGFloat = 0) {
+    func applyShadow(
+        color: UIColor = .black,
+        alpha: Float = 0,
+        x: CGFloat = 0,
+        y: CGFloat = 0,
+        blur: CGFloat = 0,
+        spread: CGFloat = 0
+    ) {
         shadowColor = color.cgColor
         shadowOpacity = alpha
         shadowOffset = CGSize(width: x, height: y)

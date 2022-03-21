@@ -41,7 +41,12 @@ extension SendToken {
         }
 
         @discardableResult
-        func setUp(network: SendToken.Network, payingWallet: Wallet?, feeInfo: SendToken.FeeInfo?, prices: [String: Double]) -> Self {
+        func setUp(
+            network: SendToken.Network,
+            payingWallet: Wallet?,
+            feeInfo: SendToken.FeeInfo?,
+            prices: [String: Double]
+        ) -> Self {
             coinImageView.image = network.icon
             networkNameLabel.text = L10n.network(network.rawValue.uppercaseFirst)
 
@@ -93,8 +98,16 @@ private extension SendToken.FeeInfo {
         let totalFeeInSOL = feeAmount.transaction.convertToBalance(decimals: 9)
         let totalFeeInUSD = totalFeeInSOL * prices[wallet?.token.symbol ?? ""]
         attributedText
-            .text("\(totalFeeInSOL.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "")", size: textSize, color: tokenColor)
-            .text(" (~\(Defaults.fiat.symbol)\(totalFeeInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
+            .text(
+                "\(totalFeeInSOL.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "")",
+                size: textSize,
+                color: tokenColor
+            )
+            .text(
+                " (~\(Defaults.fiat.symbol)\(totalFeeInUSD.toString(maximumFractionDigits: 2)))",
+                size: textSize,
+                color: fiatColor
+            )
 
         // other fees
         if let others = feeAmount.others {
@@ -102,8 +115,16 @@ private extension SendToken.FeeInfo {
             for (index, fee) in others.enumerated() {
                 let amountInUSD = fee.amount * prices[fee.unit]
                 attributedText
-                    .text("\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)", size: textSize, color: tokenColor)
-                    .text(" (~\(Defaults.fiat.symbol)\(amountInUSD.toString(maximumFractionDigits: 2)))", size: textSize, color: fiatColor)
+                    .text(
+                        "\(fee.amount.toString(maximumFractionDigits: 9)) \(fee.unit)",
+                        size: textSize,
+                        color: tokenColor
+                    )
+                    .text(
+                        " (~\(Defaults.fiat.symbol)\(amountInUSD.toString(maximumFractionDigits: 2)))",
+                        size: textSize,
+                        color: fiatColor
+                    )
                 if index < others.count - 1 {
                     attributedText
                         .append(attributedSeparator)

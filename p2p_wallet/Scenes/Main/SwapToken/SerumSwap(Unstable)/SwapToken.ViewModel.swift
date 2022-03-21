@@ -207,7 +207,12 @@ extension SerumSwapV1 {
             let slippage = slippageRelay.value
 
             // log
-            log(.swapSwapClick(tokenA: sourceWallet.token.symbol, tokenB: destinationWallet.token.symbol, sumA: inputAmount, sumB: estimatedAmount))
+            log(.swapSwapClick(
+                tokenA: sourceWallet.token.symbol,
+                tokenB: destinationWallet.token.symbol,
+                sumA: inputAmount,
+                sumB: estimatedAmount
+            ))
 
             // show processing scene
 //            navigate(
@@ -241,7 +246,7 @@ extension SerumSwapV1.ViewModel: SwapTokenViewModelType {
             lamportsPerSignatureRelay.stateObservable,
             creatingAccountFeeRelay.stateObservable,
         ])
-        .map { $0.combined }
+        .map(\.combined)
         .asDriver(onErrorJustReturn: .notRequested)
     }
 
@@ -272,7 +277,9 @@ extension SerumSwapV1.ViewModel: SwapTokenViewModelType {
             ),
             slippageDriver
         )
-        .map { [weak self] initialState, sourceWallet, inputAmount, destinationWallet, estimatedAmount, providerInfo, slippage -> String? in
+        .map { [
+            weak self
+        ] initialState, sourceWallet, inputAmount, destinationWallet, estimatedAmount, providerInfo, slippage -> String? in
             guard let self = self else { return nil }
             return validate(
                 provider: self.provider,
@@ -373,7 +380,10 @@ extension SerumSwapV1.ViewModel {
     }
 
     func useAllBalance() {
-        guard let amount = provider.calculateAvailableAmount(sourceWallet: sourceWalletRelay.value, fees: feesRelay.value)
+        guard let amount = provider.calculateAvailableAmount(
+            sourceWallet: sourceWalletRelay.value,
+            fees: feesRelay.value
+        )
         else { return }
         analyticsManager.log(event: .swapAvailableClick(sum: amount))
         useAllBalanceSubject.accept(amount)

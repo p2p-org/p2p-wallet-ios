@@ -12,7 +12,8 @@ import SolanaSwift
 // MARK: - APIClient
 
 protocol ProcessTransactionAPIClient {
-    func getSignatureStatus(signature: String, configs: SolanaSDK.RequestConfiguration?) -> Single<SolanaSDK.SignatureStatus>
+    func getSignatureStatus(signature: String, configs: SolanaSDK.RequestConfiguration?)
+        -> Single<SolanaSDK.SignatureStatus>
 }
 
 extension SolanaSDK: ProcessTransactionAPIClient {}
@@ -76,23 +77,29 @@ extension ProcessTransaction {
             if let fees = fees.networkFees,
                let payingWallet = payingWallet
             {
-                checkRequest = swapService.calculateNetworkFeeInPayingToken(networkFee: fees, payingTokenMint: payingWallet.mintAddress)
-                    .map { amount -> Bool in
-                        if let amount = amount?.total,
-                           let currentAmount = payingWallet.lamports,
-                           amount > currentAmount
-                        {
-                            throw SolanaSDK.Error.other(
-                                L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
-                                    + ". "
-                                    + L10n.needsAtLeast("\(amount.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)")
-                                    + ". "
-                                    + L10n.pleaseChooseAnotherTokenAndTryAgain
-                            )
-                        }
-                        return true
+                checkRequest = swapService.calculateNetworkFeeInPayingToken(
+                    networkFee: fees,
+                    payingTokenMint: payingWallet.mintAddress
+                )
+                .map { amount -> Bool in
+                    if let amount = amount?.total,
+                       let currentAmount = payingWallet.lamports,
+                       amount > currentAmount
+                    {
+                        throw SolanaSDK.Error.other(
+                            L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                                + ". "
+                                + L10n
+                                .needsAtLeast(
+                                    "\(amount.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)"
+                                )
+                                + ". "
+                                + L10n.pleaseChooseAnotherTokenAndTryAgain
+                        )
                     }
-                    .asCompletable()
+                    return true
+                }
+                .asCompletable()
             } else {
                 checkRequest = .empty()
             }
@@ -149,7 +156,8 @@ extension ProcessTransaction {
             amount.convertToBalance(decimals: sender.token.decimals)
                 .toString(maximumFractionDigits: 9) +
                 " " +
-                sender.token.symbol + " → " + (receiver.name ?? receiver.address.truncatingMiddle(numOfSymbolsRevealed: 4))
+                sender.token
+                .symbol + " → " + (receiver.name ?? receiver.address.truncatingMiddle(numOfSymbolsRevealed: 4))
         }
 
         func createRequest() -> Single<String> {

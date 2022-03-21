@@ -84,7 +84,9 @@ extension Root {
                         self?.showAuthenticationOnMainOnAppear = false
                         self?.navigationSubject.accept(.onboarding)
                     } else {
-                        self?.navigationSubject.accept(.main(showAuthenticationWhenAppears: self?.showAuthenticationOnMainOnAppear ?? false))
+                        self?.navigationSubject
+                            .accept(.main(showAuthenticationWhenAppears: self?
+                                    .showAuthenticationOnMainOnAppear ?? false))
                     }
                 }
             }

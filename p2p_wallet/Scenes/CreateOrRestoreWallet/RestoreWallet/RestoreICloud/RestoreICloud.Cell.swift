@@ -45,7 +45,10 @@ extension RestoreICloud {
 
         func setUp(with item: AnyHashable?) {
             guard let account = item as? ParsedAccount else { return }
-            let pubkey = account.parsedAccount.publicKey.base58EncodedString.truncatingMiddle(numOfSymbolsRevealed: 12, numOfSymbolsRevealedInSuffix: 4)
+            let pubkey = account.parsedAccount.publicKey.base58EncodedString.truncatingMiddle(
+                numOfSymbolsRevealed: 12,
+                numOfSymbolsRevealedInSuffix: 4
+            )
 
             username.isHidden = false
 

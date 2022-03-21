@@ -111,7 +111,10 @@ class HiddenWalletsSection: WalletsSection {
 
         if shouldUpdateHeight {
             let context = UICollectionViewLayoutInvalidationContext()
-            context.invalidateSupplementaryElements(ofKind: UICollectionView.elementKindSectionHeader, at: [.init(row: 0, section: 1)])
+            context.invalidateSupplementaryElements(
+                ofKind: UICollectionView.elementKindSectionHeader,
+                at: [.init(row: 0, section: 1)]
+            )
             collectionView?.relayout(context)
         }
     }

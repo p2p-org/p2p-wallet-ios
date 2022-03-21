@@ -32,7 +32,8 @@ extension ReceiveToken {
                         // Solana network
                         NetworkCell(
                             networkName: "Solana",
-                            networkDescription: L10n.receiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletList,
+                            networkDescription: L10n
+                                .receiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletList,
                             icon: .squircleSolanaIcon
                         ).setup { [unowned self] view in
                             self.viewModel.tokenTypeDriver
@@ -50,7 +51,8 @@ extension ReceiveToken {
                         // Bitcoin network
                         NetworkCell(
                             networkName: "Bitcoin",
-                            networkDescription: L10n.ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin("Bitcoin"),
+                            networkDescription: L10n.ThisAddressAcceptsOnly
+                                .youMayLoseAssetsBySendingAnotherCoin("Bitcoin"),
                             icon: .squircleBitcoinIcon
                         ).setup { [unowned self] view in
                             self.viewModel.tokenTypeDriver
@@ -67,24 +69,28 @@ extension ReceiveToken {
                                     self?.viewModel.switchToken(.btc)
                                     self?.back()
                                 } else {
-                                    let vc = BitcoinConfirmScene(isRenBTCCreated: viewModel.isRenBtcCreated()) { [weak self] in
-                                        guard let self = self else { return }
-                                        self.showIndetermineHud()
-                                        self.viewModel.acceptReceivingRenBTC()
-                                            .subscribe(onCompleted: { [weak self] in
-                                                guard let self = self else { return }
-                                                self.hideHud()
-                                                self.back()
-                                            }, onError: { [weak self] error in
-                                                guard let self = self else { return }
-                                                #if DEBUG
-                                                    debugPrint("Create renBTC error: \(error)")
-                                                #endif
-                                                self.hideHud()
-                                                self.showAlert(title: L10n.error.uppercaseFirst, message: L10n.couldNotCreateRenBTCTokenPleaseTryAgainLater)
-                                            })
-                                            .disposed(by: self.disposeBag)
-                                    }
+                                    let vc = BitcoinConfirmScene(isRenBTCCreated: viewModel
+                                        .isRenBtcCreated()) { [weak self] in
+                                            guard let self = self else { return }
+                                            self.showIndetermineHud()
+                                            self.viewModel.acceptReceivingRenBTC()
+                                                .subscribe(onCompleted: { [weak self] in
+                                                    guard let self = self else { return }
+                                                    self.hideHud()
+                                                    self.back()
+                                                }, onError: { [weak self] error in
+                                                    guard let self = self else { return }
+                                                    #if DEBUG
+                                                        debugPrint("Create renBTC error: \(error)")
+                                                    #endif
+                                                    self.hideHud()
+                                                    self.showAlert(
+                                                        title: L10n.error.uppercaseFirst,
+                                                        message: L10n.couldNotCreateRenBTCTokenPleaseTryAgainLater
+                                                    )
+                                                })
+                                                .disposed(by: self.disposeBag)
+                                        }
                                     self?.present(vc, animated: true)
                                 }
                             }.disposed(by: disposeBag)

@@ -21,7 +21,10 @@ extension ReserveName {
 
         // MARK: - Subviews
 
-        private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
+        private let scrollView = ContentHuggingScrollView(
+            scrollableAxis: .vertical,
+            contentInset: .init(only: .bottom, inset: 40)
+        )
         private let stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill)
 
         private let textView = ExpandableTextView(

@@ -15,9 +15,22 @@ extension Settings.Backup {
 
         lazy var shieldImageView = UIImageView(width: 80, height: 100, image: .backupShield)
         lazy var titleLabel = UILabel(textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
-        lazy var descriptionLabel = UILabel(textSize: 15, textColor: .textSecondary, numberOfLines: 0, textAlignment: .center)
-        lazy var backupUsingIcloudButton = WLButton.stepButton(enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b), textColor: .white, label: " " + L10n.backupUsingICloud)
-        lazy var backupMannuallyButton = WLButton.stepButton(enabledColor: .f6f6f8.onDarkMode(.h2b2b2b), textColor: .textBlack, label: L10n.backupManually)
+        lazy var descriptionLabel = UILabel(
+            textSize: 15,
+            textColor: .textSecondary,
+            numberOfLines: 0,
+            textAlignment: .center
+        )
+        lazy var backupUsingIcloudButton = WLButton.stepButton(
+            enabledColor: .blackButtonBackground.onDarkMode(.h2b2b2b),
+            textColor: .white,
+            label: " " + L10n.backupUsingICloud
+        )
+        lazy var backupMannuallyButton = WLButton.stepButton(
+            enabledColor: .f6f6f8.onDarkMode(.h2b2b2b),
+            textColor: .textBlack,
+            label: L10n.backupManually
+        )
         private let dismissAfterBackup: Bool
 
         // MARK: - Dependencies
@@ -122,7 +135,8 @@ extension Settings.Backup {
 
             var shieldColor = UIColor.alertOrange
             var title = L10n.yourWalletNeedsBackup
-            var subtitle = L10n.ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases
+            var subtitle = L10n
+                .ifYouLoseThisDeviceYouCanRecoverYourEncryptedWalletByUsingICloudOrMannuallyInputingYourSecretPhrases
             var isIcloudButtonHidden = false
             var backupMannuallyButtonTitle = L10n.backupManually
             var backupMannuallyButtonTextColor = UIColor.textBlack

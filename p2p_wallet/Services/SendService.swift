@@ -121,7 +121,7 @@ class SendService: SendServiceType {
                         mintAddress: wallet.mintAddress,
                         destinationAddress: receiver
                     )
-                    .map { $0.isUnregisteredAsocciatedToken }
+                    .map(\.isUnregisteredAsocciatedToken)
                 }
 
                 // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
@@ -145,8 +145,11 @@ class SendService: SendServiceType {
                             return .just(expectedFee)
                         }
 
-                        return self.relayService.calculateNeededTopUpAmount(expectedFee: expectedFee, payingTokenMint: payingTokenMint)
-                            .map(Optional.init)
+                        return self.relayService.calculateNeededTopUpAmount(
+                            expectedFee: expectedFee,
+                            payingTokenMint: payingTokenMint
+                        )
+                        .map(Optional.init)
                     }
             case .reward:
                 return .just(.zero)
@@ -159,7 +162,8 @@ class SendService: SendServiceType {
         payingFeeWallet: Wallet
     ) -> Single<SolanaSDK.FeeAmount?> {
         guard relayMethod == .relay else { return .just(nil) }
-        if payingFeeWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString { return .just(feeInSOL) }
+        if payingFeeWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint
+            .base58EncodedString { return .just(feeInSOL) }
         return relayService.calculateFeeInPayingToken(
             feeInSOL: feeInSOL,
             payingFeeTokenMint: payingFeeWallet.mintAddress
@@ -278,8 +282,7 @@ class SendService: SendServiceType {
         let useFeeRelayer: Bool
 
         // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
-        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(payingTokenMint: payingFeeToken?.mint)
-        {
+        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(payingTokenMint: payingFeeToken?.mint) {
             feePayerRequest = .just(nil)
             useFeeRelayer = false
         }
@@ -325,7 +328,7 @@ class SendService: SendServiceType {
                         recentBlockhash: recentBlockhash,
                         lamportsPerSignature: lamportsPerSignature,
                         minRentExemption: minRentExemption
-                    ).map { $0.preparedTransaction }
+                    ).map(\.preparedTransaction)
                 }
 
                 return request.map { (preparedTransaction: $0, useFeeRelayer: useFeeRelayer) }
@@ -475,6 +478,7 @@ class SendService: SendServiceType {
     ) -> Bool {
         let expectedTransactionFee = (relayService.cache.lamportsPerSignature ?? 5000) * 2
         return payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString &&
-            relayService.cache.freeTransactionFeeLimit?.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
+            relayService.cache.freeTransactionFeeLimit?
+            .isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
 }

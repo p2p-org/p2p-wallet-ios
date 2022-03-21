@@ -45,15 +45,28 @@ extension Home {
                             UIImageView(width: 263, height: 263, image: .rocketFront, contentMode: .scaleAspectFit)
                         }
                     }.padding(.init(only: .top, inset: 30))
-                    UILabel(text: L10n.topUpYourAccountToGetStarted, textSize: 28, weight: .bold, numberOfLines: 3, textAlignment: .center)
+                    UILabel(
+                        text: L10n.topUpYourAccountToGetStarted,
+                        textSize: 28,
+                        weight: .bold,
+                        numberOfLines: 3,
+                        textAlignment: .center
+                    )
                     UIView(height: 10)
-                    UILabel(text: L10n.makeYourFirstDepositOrBuyWithYourCreditCardOrApplePay, textColor: .secondaryLabel, numberOfLines: 3, textAlignment: .center)
+                    UILabel(
+                        text: L10n.makeYourFirstDepositOrBuyWithYourCreditCardOrApplePay,
+                        textColor: .secondaryLabel,
+                        numberOfLines: 3,
+                        textAlignment: .center
+                    )
                     UIView(height: 25)
 
                     // Buttons
                     ColorfulHorizontalView {
                         WalletActionButton(actionType: .buy) { [unowned self] in viewModel.navigate(to: .buyToken) }
-                        WalletActionButton(actionType: .receive) { [unowned self] in viewModel.navigate(to: .receiveToken) }
+                        WalletActionButton(actionType: .receive) { [unowned self] in
+                            viewModel.navigate(to: .receiveToken)
+                        }
                         WalletActionButton(actionType: .send) { [unowned self] in viewModel.navigate(to: .sendToken()) }
                         WalletActionButton(actionType: .swap) { [unowned self] in viewModel.navigate(to: .swapToken) }
                     }.frame(height: 80)

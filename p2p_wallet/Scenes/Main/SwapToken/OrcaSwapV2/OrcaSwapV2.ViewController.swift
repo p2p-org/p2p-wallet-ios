@@ -78,7 +78,11 @@ extension OrcaSwapV2 {
                 let viewController = SwapTokenSettings.ViewController(viewModel: vm)
                 show(viewController, sender: nil)
             case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
-                let vm = ChooseWallet.ViewModel(selectedWallet: currentlySelectedWallet, handler: viewModel, showOtherWallets: false)
+                let vm = ChooseWallet.ViewModel(
+                    selectedWallet: currentlySelectedWallet,
+                    handler: viewModel,
+                    showOtherWallets: false
+                )
                 vm.customFilter = { $0.amount > 0 }
                 let vc = ChooseWallet.ViewController(
                     title: L10n.selectTheFirstToken,
@@ -90,7 +94,11 @@ extension OrcaSwapV2 {
                 validMints: validMints,
                 excludedSourceWalletPubkey: excludedSourceWalletPubkey
             ):
-                let vm = ChooseWallet.ViewModel(selectedWallet: currentlySelectedWallet, handler: viewModel, showOtherWallets: true)
+                let vm = ChooseWallet.ViewModel(
+                    selectedWallet: currentlySelectedWallet,
+                    handler: viewModel,
+                    showOtherWallets: true
+                )
                 vm.customFilter = {
                     $0.pubkey != excludedSourceWalletPubkey &&
                         validMints.contains($0.mintAddress)

@@ -45,7 +45,8 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
 
     override func setUp() {
         super.setUp()
-        phrasesListView.setUp(description: L10n.SaveThatSeedPhraseAndKeepItInTheSafePlace.willBeUsedForRecoveryAndBackup)
+        phrasesListView
+            .setUp(description: L10n.SaveThatSeedPhraseAndKeepItInTheSafePlace.willBeUsedForRecoveryAndBackup)
 
         rootView.stackView.addArrangedSubviews {
             UIView(height: 31)

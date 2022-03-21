@@ -71,11 +71,16 @@ extension ReceiveToken {
             let qrCodeView = QrCodeView(size: 190, coinLogoSize: 32)
                 .with(string: string, token: token)
 
-            let view = UIImageView(width: 207, height: 207, image: .receiveQrCodeFrame, tintColor: .f6f6f8.onDarkMode(.h8d8d8d))
-                .withCenteredChild(
-                    qrCodeView
-                )
-                .centeredHorizontallyView
+            let view = UIImageView(
+                width: 207,
+                height: 207,
+                image: .receiveQrCodeFrame,
+                tintColor: .f6f6f8.onDarkMode(.h8d8d8d)
+            )
+            .withCenteredChild(
+                qrCodeView
+            )
+            .centeredHorizontallyView
             return (view, qrCodeView)
         }
     }

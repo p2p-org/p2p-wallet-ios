@@ -69,7 +69,11 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
         DispatchQueue.global().async { [weak self] in
             do {
                 // create wallet
-                let account = try SolanaSDK.Account(phrase: phrases, network: Defaults.apiEndPoint.network, derivablePath: .default)
+                let account = try SolanaSDK.Account(
+                    phrase: phrases,
+                    network: Defaults.apiEndPoint.network,
+                    derivablePath: .default
+                )
 
                 DispatchQueue.main.async { [weak self] in
                     UIApplication.shared.hideHud()

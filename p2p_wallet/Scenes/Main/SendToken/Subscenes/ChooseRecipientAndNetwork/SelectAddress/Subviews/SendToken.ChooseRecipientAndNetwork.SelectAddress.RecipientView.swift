@@ -38,14 +38,18 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         func setRecipient(_ recipient: SendToken.Recipient) {
-            titleLabel.text = recipient.name ?? recipient.address.truncatingMiddle(numOfSymbolsRevealed: 13, numOfSymbolsRevealedInSuffix: 4)
+            titleLabel.text = recipient.name ?? recipient.address.truncatingMiddle(
+                numOfSymbolsRevealed: 13,
+                numOfSymbolsRevealedInSuffix: 4
+            )
             recipientIcon.image = .emptyUserAvatar
             descriptionLabel.textColor = .textSecondary
             if recipient.name == nil {
                 let shouldShowDescriptionLabel = recipient.hasNoFunds || recipient.hasNoInfo
                 descriptionLabel.isHidden = !shouldShowDescriptionLabel
                 if shouldShowDescriptionLabel {
-                    descriptionLabel.text = recipient.hasNoFunds ? L10n.cautionThisAddressHasNoFunds : L10n.couldNotRetrieveAccountInfo
+                    descriptionLabel.text = recipient.hasNoFunds ? L10n.cautionThisAddressHasNoFunds : L10n
+                        .couldNotRetrieveAccountInfo
                     recipientIcon.image = .warningUserAvatar
                     descriptionLabel.textColor = .ff9500
                 }

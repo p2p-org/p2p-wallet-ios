@@ -48,7 +48,8 @@ class WLIndicatorModalVC: BaseVC {
     }
 
     @objc func viewDidSwipe(_ gestureRecognizer: UIPanGestureRecognizer) {
-        (presentationController as? ResizablePresentationController)?.presentedViewDidSwipe(gestureRecognizer: gestureRecognizer)
+        (presentationController as? ResizablePresentationController)?
+            .presentedViewDidSwipe(gestureRecognizer: gestureRecognizer)
     }
 
     func calculateFittingHeightForPresentedView(targetWidth _: CGFloat) -> CGFloat {

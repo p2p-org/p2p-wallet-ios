@@ -76,10 +76,33 @@ extension Onboarding {
 
             // items
             let stackView = UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill) {
-                createCell(image: .appIconSmall, title: L10n.newStakingOptionAvailable, subtitle: L10n.getUpTo8APYOnStakingUSDC, timeLabelText: L10n.justNow)
-                createCell(image: .renbtcPlaceholder, subimage: .appIconSmall, title: L10n.receivedRenBTC(0.01), subtitle: L10n.from + " bc1qa5wkgaew2dk...9hz6", timeLabelText: L10n.mAgo(2))
-                createCell(image: .ethPlaceholder, subimage: .appIconSmall, title: L10n.successfullySent("1.2 ETH"), subtitle: L10n.to + " 0xc377814e01DB2ed4...f1cB", timeLabelText: L10n.mAgo(6))
-                createCell(image: .swapPlaceholder, subimage: .appIconSmall, title: L10n.received("1.23 SOL"), subtitle: L10n.swappedSuccessfully("USDC", "SOL"), timeLabelText: L10n.hAgo(1))
+                createCell(
+                    image: .appIconSmall,
+                    title: L10n.newStakingOptionAvailable,
+                    subtitle: L10n.getUpTo8APYOnStakingUSDC,
+                    timeLabelText: L10n.justNow
+                )
+                createCell(
+                    image: .renbtcPlaceholder,
+                    subimage: .appIconSmall,
+                    title: L10n.receivedRenBTC(0.01),
+                    subtitle: L10n.from + " bc1qa5wkgaew2dk...9hz6",
+                    timeLabelText: L10n.mAgo(2)
+                )
+                createCell(
+                    image: .ethPlaceholder,
+                    subimage: .appIconSmall,
+                    title: L10n.successfullySent("1.2 ETH"),
+                    subtitle: L10n.to + " 0xc377814e01DB2ed4...f1cB",
+                    timeLabelText: L10n.mAgo(6)
+                )
+                createCell(
+                    image: .swapPlaceholder,
+                    subimage: .appIconSmall,
+                    title: L10n.received("1.23 SOL"),
+                    subtitle: L10n.swappedSuccessfully("USDC", "SOL"),
+                    timeLabelText: L10n.hAgo(1)
+                )
             }
             scrollView.contentView.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges()
@@ -95,8 +118,21 @@ extension Onboarding {
             viewModel.markNotificationsAsSet()
         }
 
-        private func createCell(image: UIImage, subimage: UIImage? = nil, title: String, subtitle: String, timeLabelText: String?) -> UIView {
-            let view = BERoundedCornerShadowView(shadowColor: .textBlack.withAlphaComponent(0.05), radius: 8, offset: .init(width: 0, height: 1), opacity: 1, cornerRadius: 16, contentInset: .init(all: 10))
+        private func createCell(
+            image: UIImage,
+            subimage: UIImage? = nil,
+            title: String,
+            subtitle: String,
+            timeLabelText: String?
+        ) -> UIView {
+            let view = BERoundedCornerShadowView(
+                shadowColor: .textBlack.withAlphaComponent(0.05),
+                radius: 8,
+                offset: .init(width: 0, height: 1),
+                opacity: 1,
+                cornerRadius: 16,
+                contentInset: .init(all: 10)
+            )
             view.stackView.axis = .horizontal
             view.stackView.spacing = 10
             view.stackView.alignment = .center

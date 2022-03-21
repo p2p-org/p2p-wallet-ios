@@ -86,7 +86,10 @@ extension TransactionDetail {
                 })
                 .map { [weak self] pendingTransaction -> SolanaSDK.ParsedTransaction? in
                     guard let self = self else { return nil }
-                    return pendingTransaction?.parse(pricesService: self.pricesService, authority: self.walletsRepository.nativeWallet?.pubkey)
+                    return pendingTransaction?.parse(
+                        pricesService: self.pricesService,
+                        authority: self.walletsRepository.nativeWallet?.pubkey
+                    )
                 }
                 .catchAndReturn(nil)
                 .do(onNext: { [weak self] parsedTransaction in

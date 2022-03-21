@@ -9,27 +9,55 @@ import Foundation
 import UIKit
 
 class WLNavigationBar: BEView {
-    lazy var stackView = UIStackView(axis: .horizontal, alignment: .center, distribution: .equalCentering, arrangedSubviews: [
-        leftItems,
-        centerItems,
-        rightItemsWrapper,
-    ])
+    lazy var stackView = UIStackView(
+        axis: .horizontal,
+        alignment: .center,
+        distribution: .equalCentering,
+        arrangedSubviews: [
+            leftItems,
+            centerItems,
+            rightItemsWrapper,
+        ]
+    )
 
-    lazy var leftItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-        backButton,
-        UIView.spacer,
-    ])
-    lazy var centerItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-        titleLabel,
-    ])
+    lazy var leftItems = UIStackView(
+        axis: .horizontal,
+        spacing: 10,
+        alignment: .fill,
+        distribution: .fill,
+        arrangedSubviews: [
+            backButton,
+            UIView.spacer,
+        ]
+    )
+    lazy var centerItems = UIStackView(
+        axis: .horizontal,
+        spacing: 10,
+        alignment: .fill,
+        distribution: .fill,
+        arrangedSubviews: [
+            titleLabel,
+        ]
+    )
 
     private lazy var rightItemsWrapper = rightItems.padding(.zero.modifying(dRight: 6))
-    lazy var rightItems = UIStackView(axis: .horizontal, spacing: 10, alignment: .fill, distribution: .fill, arrangedSubviews: [
-        UIView.spacer,
-    ])
+    lazy var rightItems = UIStackView(
+        axis: .horizontal,
+        spacing: 10,
+        alignment: .fill,
+        distribution: .fill,
+        arrangedSubviews: [
+            UIView.spacer,
+        ]
+    )
 
-    lazy var backButton = UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
-        .padding(.init(x: 6, y: 4))
+    lazy var backButton = UIImageView(
+        width: 14,
+        height: 24,
+        image: UIImage(systemName: "chevron.left"),
+        tintColor: .h5887ff
+    )
+    .padding(.init(x: 6, y: 4))
     lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
 
     override func commonInit() {
@@ -97,17 +125,28 @@ class NewWLNavigationBar: BECompositionView {
                 UIStackView(axis: .horizontal, alignment: .fill, distribution: .equalCentering) {
                     // Back button
                     UIStackView(axis: .horizontal) {
-                        UIImageView(width: 14, height: 24, image: UIImage(systemName: "chevron.left"), tintColor: .h5887ff)
-                            .padding(.init(x: 6, y: 4))
-                            .setup { view in
-                                self.backButton = view
-                                self.backButton.isUserInteractionEnabled = true
-                            }
+                        UIImageView(
+                            width: 14,
+                            height: 24,
+                            image: UIImage(systemName: "chevron.left"),
+                            tintColor: .h5887ff
+                        )
+                        .padding(.init(x: 6, y: 4))
+                        .setup { view in
+                            self.backButton = view
+                            self.backButton.isUserInteractionEnabled = true
+                        }
                     }
 
                     // Title
-                    UILabel(text: initialTitle, textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
-                        .setupWithType(UILabel.self) { view in titleLabel = view }
+                    UILabel(
+                        text: initialTitle,
+                        textSize: 17,
+                        weight: .semibold,
+                        numberOfLines: 1,
+                        textAlignment: .center
+                    )
+                    .setupWithType(UILabel.self) { view in titleLabel = view }
 
                     // Actions
                     actions

@@ -12,8 +12,7 @@ import RxSwift
 class LazyLabel<T: Hashable & CustomStringConvertible>: UILabel {
     weak var subject: LazySubject<T>?
 
-    func subscribed(to subject: LazySubject<T>, stringBuilder: ((T) -> String)? = nil) -> Disposable
-    {
+    func subscribed(to subject: LazySubject<T>, stringBuilder: ((T) -> String)? = nil) -> Disposable {
         let currentTextColor = textColor
         self.subject = subject
         isUserInteractionEnabled = true

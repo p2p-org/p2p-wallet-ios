@@ -16,7 +16,10 @@ class InvestmentsRootView: BEView {
 
     // MARK: - Subviews
 
-    lazy var collectionView = InvestmentsCollectionView(newsViewModel: viewModel.newsViewModel, defisViewModel: viewModel.defisViewModel)
+    lazy var collectionView = InvestmentsCollectionView(
+        newsViewModel: viewModel.newsViewModel,
+        defisViewModel: viewModel.defisViewModel
+    )
 
     // MARK: - Initializers
 

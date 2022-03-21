@@ -27,7 +27,11 @@ extension PricesFetcher {
             .take(1)
             .asSingle()
             .do(onSuccess: { response in
-                Logger.log(message: String(data: response.1, encoding: .utf8) ?? "", event: .response, apiMethod: "getPrices")
+                Logger.log(
+                    message: String(data: response.1, encoding: .utf8) ?? "",
+                    event: .response,
+                    apiMethod: "getPrices"
+                )
             }, onSubscribe: {
                 Logger.log(message: "\(endpoint)\(path)", event: .request, apiMethod: "getPrices")
             })
@@ -53,7 +57,13 @@ struct PriceRecord: Hashable {
     let startTime: Date
 
     func converting(exchangeRate: Double) -> PriceRecord {
-        PriceRecord(close: close * exchangeRate, open: open * exchangeRate, low: low * exchangeRate, high: high * exchangeRate, startTime: startTime)
+        PriceRecord(
+            close: close * exchangeRate,
+            open: open * exchangeRate,
+            low: low * exchangeRate,
+            high: high * exchangeRate,
+            startTime: startTime
+        )
     }
 }
 

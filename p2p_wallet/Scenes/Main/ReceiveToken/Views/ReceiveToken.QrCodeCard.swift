@@ -89,14 +89,24 @@ extension ReceiveToken {
                         .onTap { [unowned self] in self.onCopy?(pubKey) }
                     UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
                         .onTap { [unowned self] in
-                            qrImageRender.render(username: username, address: pubKey, token: token, showTokenIcon: showCoinLogo).subscribe(onSuccess: { [weak self] image in
+                            qrImageRender.render(
+                                username: username,
+                                address: pubKey,
+                                token: token,
+                                showTokenIcon: showCoinLogo
+                            ).subscribe(onSuccess: { [weak self] image in
                                 self?.onShare?(image)
                             })
                             .disposed(by: disposeBag)
                         }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in
-                            qrImageRender.render(username: username, address: pubKey, token: token, showTokenIcon: showCoinLogo).subscribe(onSuccess: { [weak self] image in
+                            qrImageRender.render(
+                                username: username,
+                                address: pubKey,
+                                token: token,
+                                showTokenIcon: showCoinLogo
+                            ).subscribe(onSuccess: { [weak self] image in
                                 self?.onSave?(image)
                             })
                             .disposed(by: disposeBag)
@@ -110,7 +120,11 @@ extension ReceiveToken {
 
         private func updateUsername(_ username: String) {
             let text = NSMutableAttributedString(string: username.withNameServiceDomain())
-            text.addAttribute(.foregroundColor, value: UIColor.gray, range: NSRange(location: username.count, length: text.length - username.count))
+            text.addAttribute(
+                .foregroundColor,
+                value: UIColor.gray,
+                range: NSRange(location: username.count, length: text.length - username.count)
+            )
             usernameLabel.attributedText = text
             usernameLabel.isHidden = username.isEmpty
         }
@@ -123,7 +137,11 @@ extension ReceiveToken {
 
             let address = NSMutableAttributedString(string: pubKey)
             address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: 0, length: 4))
-            address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: address.length - 4, length: 4))
+            address.addAttribute(
+                .foregroundColor,
+                value: UIColor.h5887ff,
+                range: NSRange(location: address.length - 4, length: 4)
+            )
             pubKeyView?.attributedText = address
         }
 

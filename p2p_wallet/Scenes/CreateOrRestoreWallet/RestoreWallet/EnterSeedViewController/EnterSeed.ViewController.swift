@@ -70,7 +70,10 @@ extension EnterSeed {
                 let vc = DerivableAccounts.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case .termsAndConditions:
-                let vc = WLMarkdownVC(title: L10n.termsOfUse.uppercaseFirst, bundledMarkdownTxtFileName: "Terms_of_service")
+                let vc = WLMarkdownVC(
+                    title: L10n.termsOfUse.uppercaseFirst,
+                    bundledMarkdownTxtFileName: "Terms_of_service"
+                )
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             }
         }

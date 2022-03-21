@@ -33,12 +33,21 @@ extension TransactionDetail {
                         if let symbol = transferTransaction.source?.token.symbol,
                            let receiverPubkey = transferTransaction.destination?.pubkey
                         {
-                            text = symbol + " → " + receiverPubkey.truncatingMiddle(numOfSymbolsRevealed: 4, numOfSymbolsRevealedInSuffix: 4)
+                            text = symbol + " → " + receiverPubkey
+                                .truncatingMiddle(numOfSymbolsRevealed: 4, numOfSymbolsRevealedInSuffix: 4)
                         }
 
                     case let swapTransaction as SolanaSDK.SwapTransaction:
-                        if let sourceSymbol = swapTransaction.source?.token.symbol ?? swapTransaction.source?.mintAddress.truncatingMiddle(numOfSymbolsRevealed: 4, numOfSymbolsRevealedInSuffix: 4),
-                           let destinationSymbol = swapTransaction.destination?.token.symbol ?? swapTransaction.destination?.mintAddress.truncatingMiddle(numOfSymbolsRevealed: 4, numOfSymbolsRevealedInSuffix: 4)
+                        if let sourceSymbol = swapTransaction.source?.token.symbol ?? swapTransaction.source?
+                            .mintAddress.truncatingMiddle(
+                                numOfSymbolsRevealed: 4,
+                                numOfSymbolsRevealedInSuffix: 4
+                            ),
+                            let destinationSymbol = swapTransaction.destination?.token.symbol ?? swapTransaction
+                            .destination?.mintAddress.truncatingMiddle(
+                                numOfSymbolsRevealed: 4,
+                                numOfSymbolsRevealedInSuffix: 4
+                            )
                         {
                             text = sourceSymbol + " → " + destinationSymbol
                         }

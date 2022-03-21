@@ -25,19 +25,22 @@ class CryptoComparePricesFetcher: PricesFetcher {
                     .joined(separator: ",")
                     .addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
 
-                return self.send("\(path)fsyms=\(coinListQuery)&tsyms=\(fiat)", decodedTo: [String: [String: Double]].self)
-                    .map { dict in
-                        var result = [String: CurrentPrice?]()
-                        for key in dict.keys {
-                            var price: CurrentPrice?
-                            if let value = dict[key]?[fiat] {
-                                price = CurrentPrice(value: value)
-                            }
-                            result[key] = price
+                return self.send(
+                    "\(path)fsyms=\(coinListQuery)&tsyms=\(fiat)",
+                    decodedTo: [String: [String: Double]].self
+                )
+                .map { dict in
+                    var result = [String: CurrentPrice?]()
+                    for key in dict.keys {
+                        var price: CurrentPrice?
+                        if let value = dict[key]?[fiat] {
+                            price = CurrentPrice(value: value)
                         }
-                        return result
+                        result[key] = price
                     }
-                    .catchAndReturn([:])
+                    return result
+                }
+                .catchAndReturn([:])
             }
 
         return Single.zip(requests)
@@ -67,7 +70,7 @@ class CryptoComparePricesFetcher: PricesFetcher {
             path += "api_key=\(apikey)&"
         }
         return send("\(path)fsym=\(coinName)&tsym=\(fiat)", decodedTo: Response.self)
-            .map { $0.Data.Data }
+            .map(\.Data.Data)
             .map {
                 $0.map {
                     PriceRecord(
@@ -82,7 +85,7 @@ class CryptoComparePricesFetcher: PricesFetcher {
     }
 
     func getValueInUSD(fiat: String) -> Single<Double?> {
-        return send("/price?fsym=USD&tsyms=\(fiat)", decodedTo: [String: Double].self)
+        send("/price?fsym=USD&tsyms=\(fiat)", decodedTo: [String: Double].self)
             .map { $0[fiat] }
     }
 }

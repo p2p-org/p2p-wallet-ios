@@ -38,7 +38,7 @@ final class ExpandableTextView: UIView {
 
     var placeholder: String? {
         get {
-            return placeholderLabel.text
+            placeholderLabel.text
         }
         set {
             changePlaceholderText(to: newValue)
@@ -103,7 +103,7 @@ final class ExpandableTextView: UIView {
 
 private extension ExpandableTextView {
     var allSubviews: [UIView] {
-        return [horizontalStackView, placeholderLabel]
+        [horizontalStackView, placeholderLabel]
     }
 
     func configureSelf() {

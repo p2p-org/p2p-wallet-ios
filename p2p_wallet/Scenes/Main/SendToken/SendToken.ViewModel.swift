@@ -10,7 +10,9 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler, SendTokenSelectNetworkViewModelType {
+protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler,
+    SendTokenSelectNetworkViewModelType
+{
     var relayMethod: SendTokenRelayMethod { get }
     var canGoBack: Bool { get }
     var navigationDriver: Driver<SendToken.NavigatableScene> { get }
@@ -59,7 +61,8 @@ extension SendToken {
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(showAfterConfirmation: false))
+        private let navigationSubject =
+            BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(showAfterConfirmation: false))
         let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         let amountSubject = BehaviorRelay<Double?>(value: nil)
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
@@ -84,7 +87,8 @@ extension SendToken {
 
             // accept initial values
             if let pubkey = walletPubkey,
-               let selectableWallet = walletsRepository.getWallets().first(where: { $0.pubkey == pubkey }) ?? walletsRepository.nativeWallet
+               let selectableWallet = walletsRepository.getWallets()
+               .first(where: { $0.pubkey == pubkey }) ?? walletsRepository.nativeWallet
             {
                 walletSubject.accept(selectableWallet)
             }
@@ -134,7 +138,8 @@ extension SendToken {
                 if self.walletSubject.value == nil {
                     self.walletSubject.accept(self.walletsRepository.getWallets().first(where: { $0.isNativeSOL }))
                 }
-                if let payingWallet = self.walletsRepository.getWallets().first(where: { $0.mintAddress == Defaults.payingTokenMint })
+                if let payingWallet = self.walletsRepository.getWallets()
+                    .first(where: { $0.mintAddress == Defaults.payingTokenMint })
                 {
                     self.payingWalletSubject.accept(payingWallet)
                 }

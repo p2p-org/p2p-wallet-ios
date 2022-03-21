@@ -70,11 +70,16 @@ extension ReceiveToken {
             return UIStackView(axis: .vertical, alignment: .fill) {
                 // Username
                 if username != nil {
-                    UILabel(textSize: 20, weight: .semibold, numberOfLines: 2, textAlignment: .center).setupWithType(UILabel.self) { view in
-                        let text = NSMutableAttributedString(string: username!.withNameServiceDomain())
-                        text.addAttribute(.foregroundColor, value: UIColor.gray, range: NSRange(location: username!.count, length: text.length - username!.count))
-                        view.attributedText = text
-                    }.padding(.init(only: .top, inset: 26))
+                    UILabel(textSize: 20, weight: .semibold, numberOfLines: 2, textAlignment: .center)
+                        .setupWithType(UILabel.self) { view in
+                            let text = NSMutableAttributedString(string: username!.withNameServiceDomain())
+                            text.addAttribute(
+                                .foregroundColor,
+                                value: UIColor.gray,
+                                range: NSRange(location: username!.count, length: text.length - username!.count)
+                            )
+                            view.attributedText = text
+                        }.padding(.init(only: .top, inset: 26))
                 }
 
                 // Qr code
@@ -102,8 +107,16 @@ extension ReceiveToken {
                 UILabel(textSize: 15, weight: .semibold, numberOfLines: 5, textAlignment: .center)
                     .setupWithType(UILabel.self) { label in
                         let address = NSMutableAttributedString(string: address)
-                        address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: 0, length: 4))
-                        address.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: NSRange(location: address.length - 4, length: 4))
+                        address.addAttribute(
+                            .foregroundColor,
+                            value: UIColor.h5887ff,
+                            range: NSRange(location: 0, length: 4)
+                        )
+                        address.addAttribute(
+                            .foregroundColor,
+                            value: UIColor.h5887ff,
+                            range: NSRange(location: address.length - 4, length: 4)
+                        )
                         label.attributedText = address
                     }.padding(.init(top: 18, left: 48, bottom: 32, right: 48))
 
@@ -117,7 +130,9 @@ extension ReceiveToken {
                 .backgroundColor(color: theme.backgroundColor)
         }
 
-        func render(username: String?, address: String?, token: SolanaSDK.Token?, showTokenIcon: Bool) -> Single<UIImage> {
+        func render(username: String?, address: String?, token: SolanaSDK.Token?,
+                    showTokenIcon: Bool) -> Single<UIImage>
+        {
             guard let address = address else {
                 return .just(UIImage())
             }
@@ -126,9 +141,10 @@ extension ReceiveToken {
                 return .just(renderAsView(username: username, address: address, tokenImage: nil).asImageInBackground())
             }
 
-            return tokenIcon(urlString: token?.logoURI ?? SolanaSDK.Token.nativeSolana.logoURI).map { [unowned self] image in
-                renderAsView(username: username, address: address, tokenImage: image).asImageInBackground()
-            }
+            return tokenIcon(urlString: token?.logoURI ?? SolanaSDK.Token.nativeSolana.logoURI)
+                .map { [unowned self] image in
+                    renderAsView(username: username, address: address, tokenImage: image).asImageInBackground()
+                }
         }
     }
 }

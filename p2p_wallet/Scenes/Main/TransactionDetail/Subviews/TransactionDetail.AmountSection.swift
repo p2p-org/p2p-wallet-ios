@@ -66,7 +66,10 @@ extension TransactionDetail {
                         .setup { label in
                             swapTransactionDriver
                                 .map { [weak self] swapTransaction -> NSAttributedString? in
-                                    self?.getAttributedString(amount: swapTransaction?.sourceAmount, symbol: swapTransaction?.source?.token.symbol)
+                                    self?.getAttributedString(
+                                        amount: swapTransaction?.sourceAmount,
+                                        symbol: swapTransaction?.source?.token.symbol
+                                    )
                                 }
                                 .drive(label.rx.attributedText)
                                 .disposed(by: disposeBag)
@@ -79,7 +82,10 @@ extension TransactionDetail {
                         .setup { label in
                             swapTransactionDriver
                                 .map { [weak self] swapTransaction -> NSAttributedString? in
-                                    self?.getAttributedString(amount: swapTransaction?.destinationAmount, symbol: swapTransaction?.destination?.token.symbol)
+                                    self?.getAttributedString(
+                                        amount: swapTransaction?.destinationAmount,
+                                        symbol: swapTransaction?.destination?.token.symbol
+                                    )
                                 }
                                 .drive(label.rx.attributedText)
                                 .disposed(by: disposeBag)
@@ -227,8 +233,9 @@ extension TransactionDetail {
                                     .map { [weak self] feeAmount -> NSAttributedString? in
                                         guard let self = self else { return nil }
                                         let payingWallet = self.getPayingFeeWallet()
-                                        let totalFee = ((feeAmount?.transaction ?? 0) + (feeAmount?.accountBalances ?? 0))
-                                            .convertToBalance(decimals: payingWallet.token.decimals)
+                                        let totalFee =
+                                            ((feeAmount?.transaction ?? 0) + (feeAmount?.accountBalances ?? 0))
+                                                .convertToBalance(decimals: payingWallet.token.decimals)
 
                                         return self.getAttributedString(
                                             amount: totalFee,
@@ -258,8 +265,9 @@ extension TransactionDetail {
                                 guard let self = self else { return nil }
 
                                 let payingWallet = self.getPayingFeeWallet()
-                                let fees = ((transaction?.fee?.transaction ?? 0) + (transaction?.fee?.accountBalances ?? 0))
-                                    .convertToBalance(decimals: payingWallet.token.decimals)
+                                let fees =
+                                    ((transaction?.fee?.transaction ?? 0) + (transaction?.fee?.accountBalances ?? 0))
+                                        .convertToBalance(decimals: payingWallet.token.decimals)
                                 var amount = transaction?.amount ?? 0
 
                                 // received
@@ -297,10 +305,20 @@ extension TransactionDetail {
                                             )
                                         }
 
-                                        let totalAmountInFiat = self.viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: transaction?.symbol) + self.viewModel.getAmountInCurrentFiat(amountInToken: fees, symbol: payingWallet.token.symbol)
+                                        let totalAmountInFiat = self.viewModel.getAmountInCurrentFiat(
+                                            amountInToken: amount,
+                                            symbol: transaction?.symbol
+                                        ) + self.viewModel.getAmountInCurrentFiat(
+                                            amountInToken: fees,
+                                            symbol: payingWallet.token.symbol
+                                        )
 
                                         attrStr
-                                            .text(" (~\(Defaults.fiat.symbol)\(totalAmountInFiat.toString(maximumFractionDigits: 9)))", size: 15, color: .textSecondary)
+                                            .text(
+                                                " (~\(Defaults.fiat.symbol)\(totalAmountInFiat.toString(maximumFractionDigits: 9)))",
+                                                size: 15,
+                                                color: .textSecondary
+                                            )
 
                                         return attrStr
                                     }
@@ -312,12 +330,18 @@ extension TransactionDetail {
             }
         }
 
-        private func getAttributedString(amount: Double?, symbol: String?, withFiatValue: Bool = true) -> NSMutableAttributedString {
+        private func getAttributedString(amount: Double?, symbol: String?,
+                                         withFiatValue: Bool = true) -> NSMutableAttributedString
+        {
             let attStr = NSMutableAttributedString()
                 .text(amount.toString(maximumFractionDigits: 9) + " " + symbol, size: 15, color: .textBlack)
             if withFiatValue {
                 attStr.text(" ")
-                    .text("(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol)?.toString(maximumFractionDigits: 9) ?? "0"))", size: 15, color: .textSecondary)
+                    .text(
+                        "(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol)?.toString(maximumFractionDigits: 9) ?? "0"))",
+                        size: 15,
+                        color: .textSecondary
+                    )
             }
             return attStr
         }

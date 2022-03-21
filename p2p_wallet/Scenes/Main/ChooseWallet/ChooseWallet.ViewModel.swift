@@ -58,7 +58,10 @@ extension ChooseWallet {
                     }
                     .map { [weak self] in
                         guard let self = self else { return [] }
-                        return self.myWallets + $0.filter { otherWallet in !self.myWallets.contains(where: { $0.token.symbol == otherWallet.token.symbol }) }
+                        return self.myWallets + $0
+                            .filter { otherWallet in
+                                !self.myWallets.contains(where: { $0.token.symbol == otherWallet.token.symbol })
+                            }
                     }
                     .observe(on: MainScheduler.instance)
             }

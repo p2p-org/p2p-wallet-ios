@@ -213,7 +213,8 @@ extension KeychainStorage: AccountStorageType {
 
         let defaultDerivablePath = SolanaSDK.DerivablePath.default
 
-        let derivableType = SolanaSDK.DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath.type
+        let derivableType = SolanaSDK.DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath
+            .type
         let walletIndex = Int(walletIndexRaw) ?? defaultDerivablePath.walletIndex
 
         _account = try? SolanaSDK.Account(

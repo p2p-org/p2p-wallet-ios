@@ -110,7 +110,7 @@ extension String {
                 fonts: fonts,
                 colors: colors,
                 paragraphStyles: paragraph
-            ))
-        )) ?? NSAttributedString()
+            )
+        ))) ?? NSAttributedString()
     }
 }

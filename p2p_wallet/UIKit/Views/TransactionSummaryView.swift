@@ -85,11 +85,16 @@ class SwapTransactionSummaryView: TransactionSummaryView {
         sourceSymbolLabel.autoPinEdge(toSuperviewEdge: .bottom)
     }
 
-    func setUp(from: SolanaSDK.Token?, to: SolanaSDK.Token?, inputAmount: SolanaSDK.Lamports?, estimatedAmount: SolanaSDK.Lamports?)
-    {
+    func setUp(
+        from: SolanaSDK.Token?,
+        to: SolanaSDK.Token?,
+        inputAmount: SolanaSDK.Lamports?,
+        estimatedAmount: SolanaSDK.Lamports?
+    ) {
         sourceIconImageView.setUp(token: from)
         if let inputAmount = inputAmount {
-            sourceAmountLabel.text = (-(inputAmount.convertToBalance(decimals: from?.decimals))).toString(maximumFractionDigits: 9)
+            sourceAmountLabel.text = (-(inputAmount.convertToBalance(decimals: from?.decimals)))
+                .toString(maximumFractionDigits: 9)
         } else {
             sourceAmountLabel.text = nil
         }
@@ -98,7 +103,8 @@ class SwapTransactionSummaryView: TransactionSummaryView {
 
         destinationIconImageView.setUp(token: to)
         if let estimatedAmount = estimatedAmount {
-            destinationAmountLabel.text = estimatedAmount.convertToBalance(decimals: to?.decimals).toString(maximumFractionDigits: 9, showPlus: true)
+            destinationAmountLabel.text = estimatedAmount.convertToBalance(decimals: to?.decimals)
+                .toString(maximumFractionDigits: 9, showPlus: true)
         } else {
             destinationAmountLabel.text = nil
         }

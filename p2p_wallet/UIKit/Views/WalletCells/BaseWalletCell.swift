@@ -34,7 +34,10 @@ class BaseWalletCell: BECompositionView {
                 .padding(.init(x: 0, y: 12))
                 .backgroundColor(color: .background)
                 .lightShadow()
-                .roundCorners([.layerMaxXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMinYCorner, .layerMinXMaxYCorner], radius: 4),
+                .roundCorners(
+                    [.layerMaxXMinYCorner, .layerMaxXMaxYCorner, .layerMinXMinYCorner, .layerMinXMaxYCorner],
+                    radius: 4
+                ),
             trailingActions: trailingActions
         )
         .bind(swipeableCellRef)
@@ -84,7 +87,8 @@ class BaseWalletCell: BECompositionView {
             coinNameRef.view?.text = item.token.name
         }
         amountRef.view?.text = "\(item.amount.toString(maximumFractionDigits: 9)) \(item.token.symbol)"
-        amountInFiatRef.view?.text = "\(Defaults.fiat.symbol) \(item.amountInCurrentFiat.toString(maximumFractionDigits: 2))"
+        amountInFiatRef.view?
+            .text = "\(Defaults.fiat.symbol) \(item.amountInCurrentFiat.toString(maximumFractionDigits: 2))"
     }
 
     func showLoading() {

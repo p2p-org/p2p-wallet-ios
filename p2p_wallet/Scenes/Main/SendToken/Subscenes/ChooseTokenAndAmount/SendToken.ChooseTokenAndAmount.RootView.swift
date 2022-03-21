@@ -22,7 +22,12 @@ extension SendToken.ChooseTokenAndAmount {
 
         // MARK: - Subviews
 
-        private let walletImageView = UIImageView(width: 20, height: 20, image: .tabbarWallet, tintColor: .textSecondary)
+        private let walletImageView = UIImageView(
+            width: 20,
+            height: 20,
+            image: .tabbarWallet,
+            tintColor: .textSecondary
+        )
         private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium, textColor: .textSecondary)
         private let coinLogoImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private let coinSymbolLabel = UILabel(text: "SOL", textSize: 20, weight: .semibold)
@@ -126,7 +131,10 @@ extension SendToken.ChooseTokenAndAmount {
                 actionButton
             }
             addSubview(stackView)
-            stackView.autoPinEdgesToSuperviewSafeArea(with: .init(top: 8, left: 18, bottom: 18, right: 18), excludingEdge: .bottom)
+            stackView.autoPinEdgesToSuperviewSafeArea(
+                with: .init(top: 8, left: 18, bottom: 18, right: 18),
+                excludingEdge: .bottom
+            )
             stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
 
             #if DEBUG
@@ -220,7 +228,7 @@ extension SendToken.ChooseTokenAndAmount {
 
             // error
             let balanceTintColorDriver = viewModel.errorDriver
-                .withLatestFrom(viewModel.amountDriver.map { $0.isNilOrZero }) { ($0, $1) }
+                .withLatestFrom(viewModel.amountDriver.map(\.isNilOrZero)) { ($0, $1) }
                 .map { error, amountIsNilOrZero -> UIColor in
                     var color = UIColor.textSecondary
                     if error != nil, !amountIsNilOrZero {
@@ -305,7 +313,9 @@ extension SendToken.ChooseTokenAndAmount {
 }
 
 extension SendToken.ChooseTokenAndAmount.RootView: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool
+    {
         switch textField {
         case let amountTextField as TokenAmountTextField:
             return amountTextField.shouldChangeCharactersInRange(range, replacementString: string)

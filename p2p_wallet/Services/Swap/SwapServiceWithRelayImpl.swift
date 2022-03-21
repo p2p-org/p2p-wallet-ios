@@ -233,23 +233,31 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             guard let self = self else { throw SolanaSDK.Error.unknown }
 
             // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
-            if self.isFreeTransactionNotAvailableAndUserIsPayingWithSOL(expectedTransactionFee: networkFee.transaction, payingTokenMint: payingWallet.mintAddress)
-            {
+            if self.isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
+                expectedTransactionFee: networkFee.transaction,
+                payingTokenMint: payingWallet.mintAddress
+            ) {
                 var networkFee = networkFee
                 networkFee.transaction -= (self.relayService?.cache.lamportsPerSignature ?? 5000)
                 return .just(networkFee)
             }
 
             // send via fee relayer
-            return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee, payingTokenMint: payingWallet.mintAddress)
+            return self.relayService!.calculateNeededTopUpAmount(
+                expectedFee: networkFee,
+                payingTokenMint: payingWallet.mintAddress
+            )
         }
         .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
             guard let self = self else { throw SolanaSDK.Error.unknown }
             if payingWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
                 return .just(feeAmount)
             }
-            return self.relayService!.calculateFeeInPayingToken(feeInSOL: feeAmount, payingFeeTokenMint: payingWallet.mintAddress)
-                .map { $0 ?? .zero }
+            return self.relayService!.calculateFeeInPayingToken(
+                feeInSOL: feeAmount,
+                payingFeeTokenMint: payingWallet.mintAddress
+            )
+            .map { $0 ?? .zero }
         }
         .map { [weak self] neededTopUpAmount in
             guard let self = self else { throw FeeRelayer.Error.unknown }
@@ -267,13 +275,15 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 var maxUsage = 100
 
                 if let freeTransactionFeeLimit = freeTransactionFeeLimit {
-                    numberOfFreeTransactionsLeft = freeTransactionFeeLimit.maxUsage - freeTransactionFeeLimit.currentUsage
+                    numberOfFreeTransactionsLeft = freeTransactionFeeLimit.maxUsage - freeTransactionFeeLimit
+                        .currentUsage
                     maxUsage = freeTransactionFeeLimit.maxUsage
                 }
 
                 info = .init(
                     alertTitle: L10n.thereAreFreeTransactionsLeftForToday(numberOfFreeTransactionsLeft),
-                    alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
+                    alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                        .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
                     payBy: L10n.PaidByP2p.org
                 )
             }
@@ -351,7 +361,10 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             slippage: slippage
         ).flatMap { [weak self] transactions in
             guard let feeRelay = self?.relayService else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
-            return feeRelay.topUpAndRelayTransactions(preparedTransactions: transactions, payingFeeToken: payingFeeToken)
+            return feeRelay.topUpAndRelayTransactions(
+                preparedTransactions: transactions,
+                payingFeeToken: payingFeeToken
+            )
         }
     }
 
@@ -361,7 +374,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     ) -> Bool {
         let expectedTransactionFee = expectedTransactionFee ?? (relayService?.cache.lamportsPerSignature ?? 5000) * 2
         return payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString &&
-            relayService?.cache.freeTransactionFeeLimit?.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
+            relayService?.cache.freeTransactionFeeLimit?
+            .isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
 }
 

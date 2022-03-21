@@ -60,8 +60,7 @@ class ModalPresentationController: UIPresentationController {
         let targetWidth = safeAreaFrame.width - 2 * inset
 
         var targetHeight: CGFloat = 0
-        if let presentedViewController = presentedViewController as? CustomPresentableViewController
-        {
+        if let presentedViewController = presentedViewController as? CustomPresentableViewController {
             targetHeight = presentedViewController.calculateFittingHeightForPresentedView(targetWidth: targetWidth)
         } else {
             targetHeight = presentedView.fittingHeight(targetWidth: targetWidth)

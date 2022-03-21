@@ -12,7 +12,7 @@ class DismissMenuAnimator: NSObject {}
 
 extension DismissMenuAnimator: UIViewControllerAnimatedTransitioning {
     func transitionDuration(using _: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.6
+        0.6
     }
 
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {

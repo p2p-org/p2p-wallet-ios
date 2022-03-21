@@ -76,7 +76,8 @@ class StandardInteractionController: NSObject, InteractionControlling {
 
     private func gestureEnded(translation: CGFloat, velocity: CGFloat) {
         if velocity > 300 || (translation > interactionDistance / 2.0 && velocity > -300) {
-            finish(initialSpringVelocity: springVelocity(distanceToTravel: interactionDistance - translation, gestureVelocity: velocity))
+            finish(initialSpringVelocity: springVelocity(distanceToTravel: interactionDistance - translation,
+                                                         gestureVelocity: velocity))
         } else {
             cancel(initialSpringVelocity: springVelocity(distanceToTravel: -translation, gestureVelocity: velocity))
         }
@@ -95,9 +96,16 @@ class StandardInteractionController: NSObject, InteractionControlling {
         guard let transitionContext = transitionContext, let presentedFrame = presentedFrame else { return }
         transitionContext.updateInteractiveTransition(progress)
         let presentedViewController = transitionContext.viewController(forKey: .from)!
-        presentedViewController.view.frame = CGRect(x: presentedFrame.minX, y: presentedFrame.minY + interactionDistance * progress, width: presentedFrame.width, height: presentedFrame.height)
+        presentedViewController.view.frame = CGRect(
+            x: presentedFrame.minX,
+            y: presentedFrame.minY + interactionDistance * progress,
+            width: presentedFrame.width,
+            height: presentedFrame.height
+        )
 
-        if let modalPresentationController = presentedViewController.presentationController as? ModalPresentationController {
+        if let modalPresentationController = presentedViewController
+            .presentationController as? ModalPresentationController
+        {
             modalPresentationController.fadeView.alpha = 1.0 - progress
         }
     }
@@ -106,12 +114,17 @@ class StandardInteractionController: NSObject, InteractionControlling {
         guard let transitionContext = transitionContext, let presentedFrame = presentedFrame else { return }
         let presentedViewController = transitionContext.viewController(forKey: .from)!
 
-        let timingParameters = UISpringTimingParameters(dampingRatio: 0.8, initialVelocity: CGVector(dx: 0, dy: initialSpringVelocity))
+        let timingParameters = UISpringTimingParameters(
+            dampingRatio: 0.8,
+            initialVelocity: CGVector(dx: 0, dy: initialSpringVelocity)
+        )
         cancellationAnimator = UIViewPropertyAnimator(duration: 0.5, timingParameters: timingParameters)
 
         cancellationAnimator?.addAnimations {
             presentedViewController.view.frame = presentedFrame
-            if let modalPresentationController = presentedViewController.presentationController as? ModalPresentationController {
+            if let modalPresentationController = presentedViewController
+                .presentationController as? ModalPresentationController
+            {
                 modalPresentationController.fadeView.alpha = 1.0
             }
         }
@@ -128,15 +141,26 @@ class StandardInteractionController: NSObject, InteractionControlling {
 
     func finish(initialSpringVelocity: CGFloat) {
         guard let transitionContext = transitionContext, let presentedFrame = presentedFrame else { return }
-        let presentedViewController = transitionContext.viewController(forKey: .from) as! CustomPresentableViewController
-        let dismissedFrame = CGRect(x: presentedFrame.minX, y: transitionContext.containerView.bounds.height, width: presentedFrame.width, height: presentedFrame.height)
+        let presentedViewController = transitionContext
+            .viewController(forKey: .from) as! CustomPresentableViewController
+        let dismissedFrame = CGRect(
+            x: presentedFrame.minX,
+            y: transitionContext.containerView.bounds.height,
+            width: presentedFrame.width,
+            height: presentedFrame.height
+        )
 
-        let timingParameters = UISpringTimingParameters(dampingRatio: 0.8, initialVelocity: CGVector(dx: 0, dy: initialSpringVelocity))
+        let timingParameters = UISpringTimingParameters(
+            dampingRatio: 0.8,
+            initialVelocity: CGVector(dx: 0, dy: initialSpringVelocity)
+        )
         let finishAnimator = UIViewPropertyAnimator(duration: 0.5, timingParameters: timingParameters)
 
         finishAnimator.addAnimations {
             presentedViewController.view.frame = dismissedFrame
-            if let modalPresentationController = presentedViewController.presentationController as? ModalPresentationController {
+            if let modalPresentationController = presentedViewController
+                .presentationController as? ModalPresentationController
+            {
                 modalPresentationController.fadeView.alpha = 0.0
             }
         }

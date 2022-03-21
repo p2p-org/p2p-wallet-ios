@@ -8,8 +8,20 @@
 import Foundation
 
 extension Optional where Wrapped == Double {
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, showMinus: Bool = true, groupingSeparator: String? = " ", autoSetMaximumFractionDigits: Bool = false) -> String {
-        orZero.toString(maximumFractionDigits: maximumFractionDigits, showPlus: showPlus, showMinus: showMinus, groupingSeparator: groupingSeparator, autoSetMaximumFractionDigits: autoSetMaximumFractionDigits)
+    public func toString(
+        maximumFractionDigits: Int = 3,
+        showPlus: Bool = false,
+        showMinus: Bool = true,
+        groupingSeparator: String? = " ",
+        autoSetMaximumFractionDigits: Bool = false
+    ) -> String {
+        orZero.toString(
+            maximumFractionDigits: maximumFractionDigits,
+            showPlus: showPlus,
+            showMinus: showMinus,
+            groupingSeparator: groupingSeparator,
+            autoSetMaximumFractionDigits: autoSetMaximumFractionDigits
+        )
     }
 
     public var orZero: Double {
@@ -59,7 +71,13 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? "0"
     }
 
-    public func toString(maximumFractionDigits: Int = 3, showPlus: Bool = false, showMinus: Bool = true, groupingSeparator: String? = " ", autoSetMaximumFractionDigits: Bool = false) -> String {
+    public func toString(
+        maximumFractionDigits: Int = 3,
+        showPlus: Bool = false,
+        showMinus: Bool = true,
+        groupingSeparator: String? = " ",
+        autoSetMaximumFractionDigits: Bool = false
+    ) -> String {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal

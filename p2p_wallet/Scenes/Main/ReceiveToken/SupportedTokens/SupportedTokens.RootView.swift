@@ -64,7 +64,10 @@ extension SupportedTokens {
             addSubview(searchBar)
             addSubview(collectionView)
 
-            searchBar.autoPinEdgesToSuperviewEdges(with: .init(top: .defaultPadding, left: 16, bottom: 0, right: 16), excludingEdge: .bottom)
+            searchBar.autoPinEdgesToSuperviewEdges(
+                with: .init(top: .defaultPadding, left: 16, bottom: 0, right: 16),
+                excludingEdge: .bottom
+            )
 
             collectionView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             collectionView.autoPinEdge(.top, to: .bottom, of: searchBar, withOffset: 18)

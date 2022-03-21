@@ -23,12 +23,17 @@ protocol BuyProcessingFactory {
 
 extension Buy {
     class MoonpayBuyProcessingFactory: BuyProcessingFactory {
-        func create(walletRepository: WalletsRepository, crypto: CryptoCurrency, initialAmount: Double, currency: FiatCurrency) throws -> BuyProcessingServiceType {
+        func create(
+            walletRepository: WalletsRepository,
+            crypto: CryptoCurrency,
+            initialAmount: Double,
+            currency: FiatCurrency
+        ) throws -> BuyProcessingServiceType {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
 //                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }
 
-            return MoonpayBuyProcessing(
+            MoonpayBuyProcessing(
                 environment: Defaults.apiEndPoint.network == .mainnetBeta ?
                     .production :
                     .staging,

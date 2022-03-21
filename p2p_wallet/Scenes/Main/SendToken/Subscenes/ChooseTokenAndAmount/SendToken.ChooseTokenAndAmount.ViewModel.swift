@@ -185,6 +185,8 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
 
     func navigateNext() {
-        sendTokenViewModel.navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: showAfterConfirmation, preSelectedNetwork: nil))
+        sendTokenViewModel
+            .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: showAfterConfirmation,
+                                                     preSelectedNetwork: nil))
     }
 }

@@ -14,11 +14,11 @@ extension CreateOrRestoreWallet {
         // MARK: - Override default layer
 
         override class var layerClass: AnyClass {
-            return AVPlayerLayer.self
+            AVPlayerLayer.self
         }
 
         private var playerLayer: AVPlayerLayer {
-            return layer as! AVPlayerLayer
+            layer as! AVPlayerLayer
         }
 
         private var player: AVPlayer! {
@@ -62,45 +62,56 @@ extension CreateOrRestoreWallet {
         // MARK: - Methods
 
         private func bind() {
-            NotificationCenter.default.addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
-                guard let self = self else { return }
-                switch self.step {
-                case 1:
-                    if !self.movingToNextStep {
-                        self.player.seek(to: .zero)
-                        self.player.play()
-                    } else {
-                        self.step += 1
-
-                        // show placeholder to fix slashing problem when changing video file
-                        self.placeholderImageView.isHidden = false
-                        self.setNeedsDisplay()
-
-                        DispatchQueue.main.async { [weak self] in
-                            guard let self = self else { return }
-
-                            // replace video file
-                            self.player.replaceCurrentItem(with: self.currentItem)
-                            self.player.rate = 1
-                            self.movingToNextStep = false
+            NotificationCenter.default
+                .addObserver(forName: .AVPlayerItemDidPlayToEndTime, object: nil, queue: .main) { [weak self] _ in
+                    guard let self = self else { return }
+                    switch self.step {
+                    case 1:
+                        if !self.movingToNextStep {
+                            self.player.seek(to: .zero)
                             self.player.play()
+                        } else {
+                            self.step += 1
 
-                            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) { [weak self] in
-                                self?.placeholderImageView.isHidden = true
+                            // show placeholder to fix slashing problem when changing video file
+                            self.placeholderImageView.isHidden = false
+                            self.setNeedsDisplay()
+
+                            DispatchQueue.main.async { [weak self] in
+                                guard let self = self else { return }
+
+                                // replace video file
+                                self.player.replaceCurrentItem(with: self.currentItem)
+                                self.player.rate = 1
+                                self.movingToNextStep = false
+                                self.player.play()
+
+                                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(200)) { [weak self] in
+                                    self?.placeholderImageView.isHidden = true
+                                }
                             }
                         }
+                    case 2:
+                        self.completion?()
+                        self.isFinished = true
+                        self.isAnimating = false
+                    default:
+                        return
                     }
-                case 2:
-                    self.completion?()
-                    self.isFinished = true
-                    self.isAnimating = false
-                default:
-                    return
                 }
-            }
 
-            NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive), name: UIApplication.willResignActiveNotification, object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(appWillResignActive),
+                name: UIApplication.willResignActiveNotification,
+                object: nil
+            )
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(appDidBecomeActive),
+                name: UIApplication.didBecomeActiveNotification,
+                object: nil
+            )
         }
 
         func resume() {
@@ -136,6 +147,6 @@ extension CreateOrRestoreWallet {
 
 private extension AVPlayer {
     var isPlaying: Bool {
-        return rate != 0 && error == nil
+        rate != 0 && error == nil
     }
 }
