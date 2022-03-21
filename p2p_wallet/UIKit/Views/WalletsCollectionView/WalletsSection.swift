@@ -5,13 +5,12 @@
 //  Created by Chung Tran on 26/03/2021.
 //
 
-import Foundation
-import BECollectionView
 import Action
+import BECollectionView
+import Foundation
 import RxSwift
 
 class WalletsSection: BEStaticSectionsCollectionView.Section {
-    
     class Header: BECollectionCell {
         override func build() -> UIView {
             UILabel(text: L10n.tokens, textSize: 13, weight: .medium, textColor: .secondaryLabel)
@@ -20,10 +19,10 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
                 .padding(.init(only: .bottom, inset: 18))
         }
     }
-    
+
     var walletCellEditAction: Action<Wallet, Void>?
     var onSend: BECallback<Wallet>?
-    
+
     init(
         index: Int,
         viewModel: WalletsRepository,
@@ -40,7 +39,7 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
         limit: Int? = nil
     ) {
         self.onSend = onSend
-        
+
         super.init(
             index: index,
             layout: .init(
@@ -64,36 +63,36 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
             }
         )
     }
-    
+
     override func configureCell(
         collectionView: UICollectionView,
         indexPath: IndexPath,
         item: BECollectionViewItem
     ) -> UICollectionViewCell {
         let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
-        
+
         if let cell = cell as? VisibleWalletCell {
             cell.onSend = { [weak self] in
-                self?.onSend?((item.value as! Wallet))
+                self?.onSend?(item.value as! Wallet)
             }
-            
+
             cell.onHide = { [weak self] in
                 let viewModel = self?.viewModel as? WalletsRepository
                 viewModel?.toggleWalletVisibility(item.value as! Wallet)
             }
         }
-        
+
         if let cell = cell as? HidedWalletCell {
             cell.onSend = { [weak self] in
-                self?.onSend?((item.value as! Wallet))
+                self?.onSend?(item.value as! Wallet)
             }
-            
+
             cell.onShow = { [weak self] in
                 let viewModel = self?.viewModel as? WalletsRepository
                 viewModel?.toggleWalletVisibility(item.value as! Wallet)
             }
         }
-        
+
         return cell
     }
 }

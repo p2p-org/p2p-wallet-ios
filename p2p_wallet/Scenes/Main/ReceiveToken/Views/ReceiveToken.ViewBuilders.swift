@@ -20,7 +20,7 @@ extension ReceiveToken {
                 )
         }
     }
-    
+
     static func textBuilder(text: NSAttributedString) -> UIStackView {
         UIStackView(axis: .horizontal, spacing: 10, alignment: .top, distribution: .fill) {
             UIView(width: 3, height: 3, backgroundColor: .textBlack, cornerRadius: 1.5)
@@ -32,7 +32,7 @@ extension ReceiveToken {
                 ).withTag(1)
         }
     }
-    
+
     static func copyAndShareableField(
         label: UILabel,
         copyTarget: Any?,
@@ -44,14 +44,14 @@ extension ReceiveToken {
             label
                 .padding(.init(all: 20), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
                 .onTap(copyTarget, action: copySelector)
-            
+
             UIImageView(width: 32, height: 32, image: .share, tintColor: .a3a5ba)
                 .onTap(shareTarget, action: shareSelector)
                 .padding(.init(all: 12), backgroundColor: .a3a5ba.withAlphaComponent(0.1), cornerRadius: 4)
         }
-            .padding(.zero, cornerRadius: 12)
+        .padding(.zero, cornerRadius: 12)
     }
-    
+
     static func viewInExplorerButton(
         title: String,
         target: Any?,

@@ -7,6 +7,4 @@
 
 import Foundation
 
-enum DerivablePaths {
-    
-}
+enum DerivablePaths {}

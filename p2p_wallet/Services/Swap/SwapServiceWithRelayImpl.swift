@@ -23,7 +23,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     ) {
         self.solanaClient = solanaClient
         self.accountStorage = accountStorage
-        self.feeRelayApi = feeRelay
+        feeRelayApi = feeRelay
         self.orcaSwap = orcaSwap
     }
 
@@ -45,37 +45,37 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         }
     }
 
-    func getSwapInfo(from sourceToken: SolanaSDK.Token, to destinationToken: SolanaSDK.Token) -> Swap.SwapInfo {
+    func getSwapInfo(from _: SolanaSDK.Token, to _: SolanaSDK.Token) -> Swap.SwapInfo {
         .init(payingTokenMode: .any)
     }
 
     func getPoolPair(
         from sourceMint: String,
         to destinationMint: String,
-        amount: UInt64,
-        as inputMode: Swap.InputMode
+        amount _: UInt64,
+        as _: Swap.InputMode
     ) -> Single<[Swap.PoolsPair]> {
         orcaSwap.getTradablePoolsPairs(fromMint: sourceMint, toMint: destinationMint)
             .map { result in result.map { $0.toPoolsPair() } }
     }
 
     func getFees(
-        sourceAddress: String,
+        sourceAddress _: String,
         sourceMint: String,
-        availableSourceMintAddresses: [String],
+        availableSourceMintAddresses _: [String],
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token,
         bestPoolsPair: Swap.PoolsPair?,
         payingWallet: Wallet?,
         inputAmount: Double?,
         slippage: Double,
-        lamportsPerSignature: UInt64,
-        minRentExempt: UInt64
+        lamportsPerSignature _: UInt64,
+        minRentExempt _: UInt64
     ) -> Single<Swap.FeeInfo> {
         let bestPoolsPair = bestPoolsPair as? PoolsPair
         // Network fees
         let networkFeesRequest: Single<[PayingFee]>
-        
+
         if let payingWallet = payingWallet {
             // Network fee for swapping via relay program
             networkFeesRequest = getNetworkFeesForSwappingViaRelayProgram(
@@ -88,11 +88,11 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         } else {
             networkFeesRequest = .just([])
         }
-        
+
         return networkFeesRequest
-            .map {[weak self] networkFees in
-                guard let self = self else {throw SolanaSDK.Error.unknown}
-                
+            .map { [weak self] networkFees in
+                guard let self = self else { throw SolanaSDK.Error.unknown }
+
                 // Liquidity provider fee
                 let liquidityProviderFees = try self.getLiquidityProviderFees(
                     poolsPair: bestPoolsPair?.orcaPoolPair,
@@ -101,7 +101,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                     inputAmount: inputAmount,
                     slippage: slippage
                 )
-                
+
                 return Swap.FeeInfo(fees: networkFees + liquidityProviderFees)
             }
     }
@@ -109,7 +109,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     public func findPosibleDestinationMints(fromMint: String) throws -> [String] {
         try orcaSwap.findPosibleDestinationMints(fromMint: fromMint)
     }
-    
+
     func calculateNetworkFeeInPayingToken(
         networkFee: SolanaSDK.FeeAmount,
         payingTokenMint: String
@@ -134,7 +134,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         guard let poolsPair = (poolsPair as? PoolsPair)?.orcaPoolPair,
               let decimals = poolsPair.first?.getTokenADecimals()
         else { return .error(Swap.Error.incompatiblePoolsPair) }
-        
+
         return swapViaRelayProgram(
             sourceAddress: sourceAddress,
             sourceTokenMint: sourceTokenMint,
@@ -164,8 +164,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             orcaPoolPair.getOutputAmount(fromInputAmount: inputAmount)
         }
     }
-    
+
     // MARK: - Helpers
+
     private func getLiquidityProviderFees(
         poolsPair: OrcaSwap.PoolsPair?,
         destinationAddress: String?,
@@ -174,13 +175,13 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         slippage: Double
     ) throws -> [PayingFee] {
         var allFees = [PayingFee]()
-        
+
         let liquidityProviderFees = try orcaSwap.getLiquidityProviderFee(
             bestPoolsPair: poolsPair,
             inputAmount: inputAmount,
             slippage: slippage
         )
-        
+
         if let poolsPair = poolsPair, destinationAddress != nil, let destinationToken = destinationToken {
             if liquidityProviderFees.count == 1 {
                 allFees.append(
@@ -211,10 +212,10 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 )
             }
         }
-        
+
         return allFees
     }
-    
+
     private func getNetworkFeesForSwappingViaRelayProgram(
         swapPools: OrcaSwap.PoolsPair?,
         sourceMint: String,
@@ -228,90 +229,100 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             destinationTokenMint: destinationToken.address,
             destinationAddress: destinationAddress
         )
-            .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
-                
-                // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
-                if self.isFreeTransactionNotAvailableAndUserIsPayingWithSOL(expectedTransactionFee: networkFee.transaction, payingTokenMint: payingWallet.mintAddress)
-                {
-                    var networkFee = networkFee
-                    networkFee.transaction -= (self.relayService?.cache.lamportsPerSignature ?? 5000)
-                    return .just(networkFee)
-                }
-                
-                // send via fee relayer
-                return self.relayService!.calculateNeededTopUpAmount(expectedFee: networkFee, payingTokenMint: payingWallet.mintAddress)
+        .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
+            guard let self = self else { throw SolanaSDK.Error.unknown }
+
+            // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+            if self.isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
+                expectedTransactionFee: networkFee.transaction,
+                payingTokenMint: payingWallet.mintAddress
+            ) {
+                var networkFee = networkFee
+                networkFee.transaction -= (self.relayService?.cache.lamportsPerSignature ?? 5000)
+                return .just(networkFee)
             }
-            .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
-                if payingWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-                    return .just(feeAmount)
-                }
-                return self.relayService!.calculateFeeInPayingToken(feeInSOL: feeAmount, payingFeeTokenMint: payingWallet.mintAddress)
-                    .map {$0 ?? .zero}
+
+            // send via fee relayer
+            return self.relayService!.calculateNeededTopUpAmount(
+                expectedFee: networkFee,
+                payingTokenMint: payingWallet.mintAddress
+            )
+        }
+        .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
+            guard let self = self else { throw SolanaSDK.Error.unknown }
+            if payingWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                return .just(feeAmount)
             }
-            .map { [weak self] neededTopUpAmount in
-                guard let self = self else {throw FeeRelayer.Error.unknown}
-                
-                let freeTransactionFeeLimit = self.relayService?.cache.freeTransactionFeeLimit
-                
-                var allFees = [PayingFee]()
-                var isFree = false
-                var info: PayingFee.Info?
-                
-                if neededTopUpAmount.transaction == 0 {
-                    isFree = true
-                    
-                    var numberOfFreeTransactionsLeft = 100
-                    var maxUsage = 100
-            
-                    if let freeTransactionFeeLimit = freeTransactionFeeLimit {
-                        numberOfFreeTransactionsLeft = freeTransactionFeeLimit.maxUsage - freeTransactionFeeLimit.currentUsage
-                        maxUsage = freeTransactionFeeLimit.maxUsage
-                    }
-                    
-                    info = .init(
-                        alertTitle: L10n.thereAreFreeTransactionsLeftForToday(numberOfFreeTransactionsLeft),
-                        alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org.subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
-                        payBy: L10n.PaidByP2p.org
-                    )
+            return self.relayService!.calculateFeeInPayingToken(
+                feeInSOL: feeAmount,
+                payingFeeTokenMint: payingWallet.mintAddress
+            )
+            .map { $0 ?? .zero }
+        }
+        .map { [weak self] neededTopUpAmount in
+            guard let self = self else { throw FeeRelayer.Error.unknown }
+
+            let freeTransactionFeeLimit = self.relayService?.cache.freeTransactionFeeLimit
+
+            var allFees = [PayingFee]()
+            var isFree = false
+            var info: PayingFee.Info?
+
+            if neededTopUpAmount.transaction == 0 {
+                isFree = true
+
+                var numberOfFreeTransactionsLeft = 100
+                var maxUsage = 100
+
+                if let freeTransactionFeeLimit = freeTransactionFeeLimit {
+                    numberOfFreeTransactionsLeft = freeTransactionFeeLimit.maxUsage - freeTransactionFeeLimit
+                        .currentUsage
+                    maxUsage = freeTransactionFeeLimit.maxUsage
                 }
-                
-                if sourceMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-                    allFees.append(
-                        .init(
-                            type: .depositWillBeReturned,
-                            lamports: self.relayService?.cache.minimumTokenAccountBalance ?? 2039280,
-                            token: .nativeSolana
-                        )
-                    )
-                }
-                
-                if neededTopUpAmount.accountBalances > 0 {
-                    allFees.append(
-                        .init(
-                            type: .accountCreationFee(token: destinationToken.symbol),
-                            lamports: neededTopUpAmount.accountBalances,
-                            token: payingWallet.token
-                        )
-                    )
-                }
-                
+
+                info = .init(
+                    alertTitle: L10n.thereAreFreeTransactionsLeftForToday(numberOfFreeTransactionsLeft),
+                    alertDescription: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                        .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(maxUsage),
+                    payBy: L10n.PaidByP2p.org
+                )
+            }
+
+            if sourceMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
                 allFees.append(
                     .init(
-                        type: .transactionFee,
-                        lamports: neededTopUpAmount.transaction,
-                        token: payingWallet.token,
-                        toString: nil,
-                        isFree: isFree,
-                        info: info
+                        type: .depositWillBeReturned,
+                        lamports: self.relayService?.cache.minimumTokenAccountBalance ?? 2_039_280,
+                        token: .nativeSolana
                     )
                 )
-                
-                return allFees
             }
+
+            if neededTopUpAmount.accountBalances > 0 {
+                allFees.append(
+                    .init(
+                        type: .accountCreationFee(token: destinationToken.symbol),
+                        lamports: neededTopUpAmount.accountBalances,
+                        token: payingWallet.token
+                    )
+                )
+            }
+
+            allFees.append(
+                .init(
+                    type: .transactionFee,
+                    lamports: neededTopUpAmount.transaction,
+                    token: payingWallet.token,
+                    toString: nil,
+                    isFree: isFree,
+                    info: info
+                )
+            )
+
+            return allFees
+        }
     }
-    
+
     private func swapViaRelayProgram(
         sourceAddress: String,
         sourceTokenMint: String,
@@ -350,20 +361,24 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             slippage: slippage
         ).flatMap { [weak self] transactions in
             guard let feeRelay = self?.relayService else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
-            return feeRelay.topUpAndRelayTransactions(preparedTransactions: transactions, payingFeeToken: payingFeeToken)
+            return feeRelay.topUpAndRelayTransactions(
+                preparedTransactions: transactions,
+                payingFeeToken: payingFeeToken
+            )
         }
     }
-    
+
     private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
         expectedTransactionFee: UInt64? = nil,
         payingTokenMint: String?
     ) -> Bool {
         let expectedTransactionFee = expectedTransactionFee ?? (relayService?.cache.lamportsPerSignature ?? 5000) * 2
         return payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString &&
-        relayService?.cache.freeTransactionFeeLimit?.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
+            relayService?.cache.freeTransactionFeeLimit?
+            .isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
 }
 
-extension OrcaSwap.PoolsPair {
-    fileprivate func toPoolsPair() -> SwapServiceWithRelayImpl.PoolsPair { .init(orcaPoolPair: self) }
+private extension OrcaSwap.PoolsPair {
+    func toPoolsPair() -> SwapServiceWithRelayImpl.PoolsPair { .init(orcaPoolPair: self) }
 }

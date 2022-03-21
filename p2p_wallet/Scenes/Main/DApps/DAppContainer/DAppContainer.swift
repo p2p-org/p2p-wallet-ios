@@ -10,6 +10,6 @@ import RxCocoa
 
 enum DAppContainer {
     enum NavigatableScene {
-//        case detail
+        case detail
     }
 }

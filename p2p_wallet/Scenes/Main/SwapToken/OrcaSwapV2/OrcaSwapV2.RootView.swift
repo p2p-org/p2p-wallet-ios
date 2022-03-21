@@ -5,33 +5,38 @@
 //  Created by Chung Tran on 15/10/2021.
 //
 
-import UIKit
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension OrcaSwapV2 {
     final class RootView: ScrollableVStackRootView {
         // MARK: - Constants
+
         let disposeBag = DisposeBag()
-        
+
         // MARK: - Properties
+
         private let viewModel: OrcaSwapV2ViewModelType
 
         // MARK: - Subviews
+
         private lazy var nextButton = WLStepButton.main(image: .buttonCheckSmall, text: L10n.reviewAndConfirm)
             .onTap(self, action: #selector(buttonNextDidTouch))
 
         private lazy var mainView = OrcaSwapV2.MainSwapView(viewModel: viewModel)
         private let showDetailsButton = ShowHideButton(closedText: L10n.showDetails, openedText: L10n.hideDetails)
         private lazy var detailsView = OrcaSwapV2.DetailsView(viewModel: viewModel)
-        
+
         // MARK: - Initializer
+
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
-        
+
         // MARK: - Methods
+
         override func commonInit() {
             super.commonInit()
             scrollView.showsVerticalScrollIndicator = false
@@ -44,25 +49,26 @@ extension OrcaSwapV2 {
         }
 
         // MARK: - Layout
+
         private func layout() {
             stackView.addArrangedSubviews {
                 mainView
                 showDetailsButton
                 detailsView
             }
-            
+
             addSubview(nextButton)
             nextButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
             nextButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
             nextButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
-            
+
             scrollViewBottomConstraint.isActive = false
             scrollView.autoPinEdge(.bottom, to: .top, of: nextButton, withOffset: 8)
         }
-        
+
         private func bind() {
             viewModel.loadingStateDriver
-                .drive(rx.loadableState {[weak self] in
+                .drive(rx.loadableState { [weak self] in
                     self?.viewModel.reload()
                 })
                 .disposed(by: disposeBag)
@@ -73,7 +79,7 @@ extension OrcaSwapV2 {
 
             viewModel.isShowingDetailsDriver
                 .drive { [weak self] isShowing in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     self.stackView.setIsHidden(!isShowing, on: self.detailsView, animated: true)
                 }
                 .disposed(by: disposeBag)
@@ -96,7 +102,7 @@ extension OrcaSwapV2 {
                 .bind(to: viewModel.showHideDetailsButtonTapSubject)
                 .disposed(by: disposeBag)
 
-            viewModel.errorDriver.map {$0 == nil}
+            viewModel.errorDriver.map { $0 == nil }
                 .drive(nextButton.rx.isEnabled)
                 .disposed(by: disposeBag)
 
@@ -104,10 +110,10 @@ extension OrcaSwapV2 {
                 viewModel.errorDriver,
                 viewModel.sourceWalletDriver.map { $0?.token.symbol }
             )
-                .drive { [weak self] in
-                    self?.setError(error: $0, sourceSymbol: $1)
-                }
-                .disposed(by: disposeBag)
+            .drive { [weak self] in
+                self?.setError(error: $0, sourceSymbol: $1)
+            }
+            .disposed(by: disposeBag)
         }
 
         private func setError(error: OrcaSwapV2.VerificationError?, sourceSymbol: String?) {
@@ -156,12 +162,13 @@ extension OrcaSwapV2 {
                 image = .buttonCheckSmall
             case .some(.payingFeeWalletNotFound):
                 // TODO: fix
-                text =  "payingFeeWalletNotFound"
+                text = "payingFeeWalletNotFound"
             }
 
             nextButton.setTitle(text: text)
             nextButton.setImage(image: image)
         }
+
         @objc
         private func buttonNextDidTouch() {
             viewModel.navigate(to: .confirmation)

@@ -9,12 +9,12 @@ import Foundation
 
 extension Bundle {
     fileprivate static var current: Bundle = valueForCurrentBundle()
-    
+
     static func swizzleLocalization() {
         swizzle(
             originalSelector: #selector(localizedString(forKey:value:table:)),
             newSelector:
-                #selector(myLocalizedString(forKey:value:table:))
+            #selector(myLocalizedString(forKey:value:table:))
         )
     }
 

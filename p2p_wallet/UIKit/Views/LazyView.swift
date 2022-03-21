@@ -5,9 +5,9 @@
 //  Created by Chung Tran on 14/12/2020.
 //
 
+import BECollectionView
 import Foundation
 import RxSwift
-import BECollectionView
 
 private var key: UInt8 = 0
 protocol LazyView: UIView {
@@ -20,13 +20,13 @@ private class Indicator: UIActivityIndicatorView {}
 extension LazyView {
     func subscribed(
         to viewModel: BEViewModel<T>,
-        onError: ((Error) -> Void)? = nil
+        onError _: ((Error) -> Void)? = nil
     ) -> Disposable {
-        self.isUserInteractionEnabled = true
+        isUserInteractionEnabled = true
 //        self.onTap(self, action: #selector(retry))
         return viewModel.stateObservable
-            .subscribe(onNext: {[weak self] state in
-                guard let self = self else {return}
+            .subscribe(onNext: { [weak self] state in
+                guard let self = self else { return }
                 switch state {
                 case .loading, .initializing:
                     let spinner = Indicator(style: .medium)
@@ -36,10 +36,10 @@ extension LazyView {
                     spinner.autoCenterInSuperview()
                     spinner.startAnimating()
                 case .loaded:
-                    self.subviews.filter {$0 is Indicator}.forEach {$0.removeFromSuperview()}
+                    self.subviews.filter { $0 is Indicator }.forEach { $0.removeFromSuperview() }
                     self.handleDataLoaded(viewModel.data)
                 case .error:
-                    self.subviews.filter {$0 is Indicator}.forEach {$0.removeFromSuperview()}
+                    self.subviews.filter { $0 is Indicator }.forEach { $0.removeFromSuperview() }
                     if let error = viewModel.error {
                         self.handleError(error)
                     }

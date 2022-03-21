@@ -2,17 +2,17 @@
 // Created by Giang Long Tran on 09.12.21.
 //
 
-import Foundation
 import BEPureLayout
+import Foundation
 
 class WLCard: BECompositionView {
     let child: UIView
-    
+
     required init(@BEViewBuilder builder: Builder) {
         child = builder().build()
         super.init(frame: .zero)
     }
-    
+
     override func build() -> UIView {
         BEContainer {
             child

@@ -14,11 +14,11 @@ enum Fiat: String, CaseIterable {
     case vnd
     case rub
     case gbp
-    
+
     var code: String {
         rawValue.uppercased()
     }
-    
+
     var symbol: String {
         switch self {
         case .usd:
@@ -35,7 +35,7 @@ enum Fiat: String, CaseIterable {
             return "£"
         }
     }
-    
+
     var name: String {
         switch self {
         case .usd:

@@ -10,12 +10,12 @@ extension Moonpay {
     enum Error: _Error {
         case message(message: String)
     }
-    
+
     struct BuyQuote: Codable {
         let baseCurrencyCode: String
         let quoteCurrencyCode: String
         let paymentMethod: String?
-        
+
         let feeAmount: Double
         let extraFeeAmount: Double
         let networkFeeAmount: Double
@@ -23,7 +23,7 @@ extension Moonpay {
         let baseCurrencyAmount: Double
         let quoteCurrencyAmount: Double
     }
-    
+
     typealias Currencies = [Currency]
     struct Currency: Codable {
         let id, createdAt, updatedAt, type: String
@@ -37,5 +37,4 @@ extension Moonpay {
         let supportsTestMode, isSuspended, isSupportedInUS, isSellSupported: Bool?
         let notAllowedUSStates: [String]?
     }
-    
 }

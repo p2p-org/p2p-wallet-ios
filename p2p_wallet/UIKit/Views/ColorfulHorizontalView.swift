@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 19.01.2022.
 //
 
-import UIKit
 import BEPureLayout
+import UIKit
 
 final class ColorfulHorizontalView: BEView {
     private let colorfulImageView = ColorfulRadialGradientView()
@@ -27,7 +27,7 @@ final class ColorfulHorizontalView: BEView {
         layer.cornerRadius = 16
         layer.masksToBounds = true
     }
-    
+
     convenience init(@BEViewBuilder builder: Builder) {
         self.init()
         setArrangedSubviews(builder())

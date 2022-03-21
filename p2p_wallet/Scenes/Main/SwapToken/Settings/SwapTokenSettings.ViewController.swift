@@ -15,11 +15,13 @@ extension SwapTokenSettings {
         }
 
         // MARK: - Dependencies
+
         private let viewModel: NewSwapTokenSettingsViewModelType
 
         // MARK: - Properties
 
         // MARK: - Methods
+
         init(viewModel: NewSwapTokenSettingsViewModelType) {
             self.viewModel = viewModel
         }
@@ -40,6 +42,7 @@ extension SwapTokenSettings {
         }
 
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .back:

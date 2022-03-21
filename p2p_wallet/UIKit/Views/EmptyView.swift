@@ -12,7 +12,7 @@ class EmptyView: MessageView {
         super.commonInit()
         let imageView = UIImageView(width: 98, height: 98, image: .emptyPlaceholder)
         stackView.insertArrangedSubview(imageView, at: 0)
-        
+
         titleLabel.textColor = .textSecondary
         titleLabel.text = L10n.thereIsNothingInHere
         descriptionLabel.isHidden = true

@@ -5,8 +5,8 @@
 //  Created by Chung Tran on 11/06/2021.
 //
 
-import Foundation
 import Amplitude
+import Foundation
 
 protocol AnalyticsManagerType {
     func log(event: AnalyticsEvent)
@@ -21,9 +21,9 @@ class AnalyticsManager: AnalyticsManagerType {
         // FIXME: Set userId later
 //        Amplitude.instance().setUserId("userId")
     }
-    
+
     func log(event: AnalyticsEvent) {
-        guard let eventName = event.eventName else {return}
+        guard let eventName = event.eventName else { return }
         // Amplitude
         if let params = event.params {
             debugPrint([eventName, params])
@@ -32,6 +32,5 @@ class AnalyticsManager: AnalyticsManagerType {
             debugPrint([eventName])
             Amplitude.instance().logEvent(eventName)
         }
-        
     }
 }

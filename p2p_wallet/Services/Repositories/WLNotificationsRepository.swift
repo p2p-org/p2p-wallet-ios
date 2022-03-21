@@ -23,9 +23,9 @@ extension WLNotificationsRepository {
         observeAllNotifications()
             .filter {
                 switch $0 {
-                case .received(let receivedAccount, _):
+                case let .received(receivedAccount, _):
                     return receivedAccount == account
-                case .sent(let sentAccount, _):
+                case let .sent(sentAccount, _):
                     return sentAccount == account
                 }
             }

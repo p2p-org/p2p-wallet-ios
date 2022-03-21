@@ -5,9 +5,9 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
-import RxSwift
-import RxCocoa
 import Resolver
+import RxCocoa
+import RxSwift
 
 protocol ReceiveTokenSolanaViewModelType: BESceneModel {
     var pubkey: String { get }
@@ -30,41 +30,41 @@ extension ReceiveToken {
         @Injected private var tokensRepository: TokensRepository
         @Injected private var imageSaver: ImageSaverType
         private let navigationSubject: PublishRelay<NavigatableScene?>
-        
+
         let pubkey: String
         let tokenWallet: Wallet?
         let hasExplorerButton: Bool
         private let disposeBag = DisposeBag()
-        
+
         init(
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
             navigationSubject: PublishRelay<NavigatableScene?>,
             hasExplorerButton: Bool
         ) {
-            self.pubkey = solanaPubkey
-            self.tokenWallet = solanaTokenWallet?.pubkey == solanaPubkey ? nil : solanaTokenWallet
+            pubkey = solanaPubkey
+            tokenWallet = solanaTokenWallet?.pubkey == solanaPubkey ? nil : solanaTokenWallet
             self.navigationSubject = navigationSubject
             self.hasExplorerButton = hasExplorerButton
         }
-        
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
-        
+
         var username: String? { nameStorage.getName() }
-        
+
         func copyAction() {
             analyticsManager.log(event: .receiveWalletAddressCopy)
             clipboardManger.copyToClipboard(pubkey)
             notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         }
-        
+
         func shareAction(image: UIImage) {
             analyticsManager.log(event: .receiveUsercardShared)
             navigationSubject.accept(.share(address: pubkey, qrCode: image))
         }
-        
+
         func saveAction(image: UIImage) {
             analyticsManager.log(event: .receiveQRSaved)
             imageSaver.save(image: image) { [weak self] result in

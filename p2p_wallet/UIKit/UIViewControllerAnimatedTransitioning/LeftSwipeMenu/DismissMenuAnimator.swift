@@ -8,26 +8,24 @@
 
 import UIKit
 
-class DismissMenuAnimator: NSObject {
-}
+class DismissMenuAnimator: NSObject {}
 
 extension DismissMenuAnimator: UIViewControllerAnimatedTransitioning {
-    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
-        return 0.6
+    func transitionDuration(using _: UIViewControllerContextTransitioning?) -> TimeInterval {
+        0.6
     }
-    
+
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         guard
             let fromVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from),
             let toVC = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)
-            else
-        {
-                return
+        else {
+            return
         }
-        
+
         let containerView = transitionContext.containerView
         let snapshot = containerView.viewWithTag(MenuHelper.snapshotNumber)
-        
+
         UIView.animate(
             withDuration: transitionDuration(using: transitionContext),
             animations: {

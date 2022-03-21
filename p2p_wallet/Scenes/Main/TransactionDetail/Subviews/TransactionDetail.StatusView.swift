@@ -5,20 +5,30 @@
 //  Created by Chung Tran on 08/03/2022.
 //
 
-import Foundation
 import BEPureLayout
-import UIKit
-import RxSwift
+import Foundation
 import RxCocoa
+import RxSwift
 import SolanaSwift
+import UIKit
 
 extension TransactionDetail {
     final class StatusView: UIStackView {
         private let disposeBag = DisposeBag()
         private let dotView = UIView(width: 8, height: 8, backgroundColor: .alertOrange, cornerRadius: 2)
-        private let statusLabel = UILabel(text: L10n.pending.uppercaseFirst, textSize: 12, weight: .medium, textColor: .textSecondary)
-        private let dateLabel = UILabel(text: "August 30, 2021 @ 12:51 PM", textSize: 15, textColor: .textSecondary, numberOfLines: 0)
-        
+        private let statusLabel = UILabel(
+            text: L10n.pending.uppercaseFirst,
+            textSize: 12,
+            weight: .medium,
+            textColor: .textSecondary
+        )
+        private let dateLabel = UILabel(
+            text: "August 30, 2021 @ 12:51 PM",
+            textSize: 15,
+            textColor: .textSecondary,
+            numberOfLines: 0
+        )
+
         init() {
             super.init(frame: .zero)
             set(axis: .horizontal, spacing: 8, alignment: .center, distribution: .fill)
@@ -27,31 +37,32 @@ extension TransactionDetail {
                     dotView
                     statusLabel
                 }
-                    .padding(.init(x: 9, y: 3.5), backgroundColor: .f6f6f8, cornerRadius: 4)
+                .padding(.init(x: 9, y: 3.5), backgroundColor: .f6f6f8, cornerRadius: 4)
                 dateLabel
             }
         }
-        
+
         func driven(with driver: Driver<SolanaSDK.ParsedTransaction?>) -> TransactionDetail.StatusView {
             driver
-                .map {$0?.status.label}
+                .map { $0?.status.label }
                 .drive(statusLabel.rx.text)
                 .disposed(by: disposeBag)
-            
+
             driver
-                .map {$0?.status.indicatorColor}
+                .map { $0?.status.indicatorColor }
                 .drive(dotView.rx.backgroundColor)
                 .disposed(by: disposeBag)
-            
+
             driver
-                .map {$0?.blockTime?.string(withFormat: "MMMM dd, yyyy @ HH:mm a")}
+                .map { $0?.blockTime?.string(withFormat: "MMMM dd, yyyy @ HH:mm a") }
                 .drive(dateLabel.rx.text)
                 .disposed(by: disposeBag)
-            
+
             return self
         }
-        
-        required init(coder: NSCoder) {
+
+        @available(*, unavailable)
+        required init(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

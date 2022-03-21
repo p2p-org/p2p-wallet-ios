@@ -5,19 +5,25 @@
 //  Created by Andrew Vasiliev on 18.11.2021.
 //
 
-import UIKit
 import RxSwift
+import UIKit
 
 extension EnterSeedInfo {
     class RootView: BEView {
         // MARK: - Constants
+
         let disposeBag = DisposeBag()
-        
+
         // MARK: - Properties
+
         private let viewModel: EnterSeedInfoViewModelType
-        
+
         // MARK: - Subviews
-        lazy var scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
+
+        lazy var scrollView = ContentHuggingScrollView(
+            scrollableAxis: .vertical,
+            contentInset: .init(only: .bottom, inset: 40)
+        )
         lazy var stackView = UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
         private let firstTitle = UILabel(
             text: L10n.theDefinition,
@@ -36,6 +42,7 @@ extension EnterSeedInfo {
                 numberOfLines: 0
             )
         }
+
         private let secondTitle = UILabel(
             text: L10n.whereCanIFindOne,
             textSize: 28,
@@ -46,8 +53,9 @@ extension EnterSeedInfo {
             textSize: 17,
             numberOfLines: 0
         )
-        
+
         // MARK: - Methods
+
         init(viewModel: EnterSeedInfoViewModelType) {
             self.viewModel = viewModel
 
@@ -58,13 +66,13 @@ extension EnterSeedInfo {
             super.commonInit()
             layout()
         }
-        
+
         override func didMoveToWindow() {
             super.didMoveToWindow()
-            
         }
-        
+
         // MARK: - Layout
+
         private func layout() {
             let navigationBar = NavigationBar(doneHandler: { [weak self] in
                 self?.viewModel.done()

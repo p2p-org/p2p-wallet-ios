@@ -6,32 +6,36 @@
 //
 
 import Foundation
-import RxSwift
-import RxCocoa
 import RxAlamofire
+import RxCocoa
+import RxSwift
 
 protocol PricesFetcher {
-    var endpoint: String {get}
+    var endpoint: String { get }
     func getCurrentPrices(coins: [String], toFiat fiat: String) -> Single<[String: CurrentPrice?]>
     func getHistoricalPrice(of coinName: String, fiat: String, period: Period) -> Single<[PriceRecord]>
     func getValueInUSD(fiat: String) -> Single<Double?>
 }
 
 extension PricesFetcher {
-    func send<T: Decodable>(_ path: String, decodedTo: T.Type) -> Single<T> {
+    func send<T: Decodable>(_ path: String, decodedTo _: T.Type) -> Single<T> {
         request(.get, "\(endpoint)\(path)")
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-            .validate(statusCode: 200..<300)
+            .validate(statusCode: 200 ..< 300)
             .validate(contentType: ["application/json"])
             .responseData()
             .take(1)
             .asSingle()
-            .do(onSuccess: {response in
-                Logger.log(message: String(data: response.1, encoding: .utf8) ?? "", event: .response, apiMethod: "getPrices")
+            .do(onSuccess: { response in
+                Logger.log(
+                    message: String(data: response.1, encoding: .utf8) ?? "",
+                    event: .response,
+                    apiMethod: "getPrices"
+                )
             }, onSubscribe: {
                 Logger.log(message: "\(endpoint)\(path)", event: .request, apiMethod: "getPrices")
             })
-            .map {try JSONDecoder().decode(T.self, from: $0.1)}
+            .map { try JSONDecoder().decode(T.self, from: $0.1) }
     }
 }
 
@@ -40,7 +44,7 @@ struct CurrentPrice: Codable, Hashable {
         var value: Double?
         var percentage: Double?
     }
-    
+
     var value: Double?
     var change24h: Change24h?
 }
@@ -51,9 +55,15 @@ struct PriceRecord: Hashable {
     let low: Double
     let high: Double
     let startTime: Date
-    
+
     func converting(exchangeRate: Double) -> PriceRecord {
-        PriceRecord(close: close * exchangeRate, open: open * exchangeRate, low: low * exchangeRate, high: high * exchangeRate, startTime: startTime)
+        PriceRecord(
+            close: close * exchangeRate,
+            open: open * exchangeRate,
+            low: low * exchangeRate,
+            high: high * exchangeRate,
+            startTime: startTime
+        )
     }
 }
 

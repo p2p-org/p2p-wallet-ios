@@ -8,5 +8,5 @@
 import Foundation
 
 extension CGFloat {
-    static var defaultPadding: CGFloat {20}
+    static var defaultPadding: CGFloat { 20 }
 }

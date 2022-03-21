@@ -10,21 +10,20 @@ import Foundation
 import UIKit
 
 class BaseCollectionReusableView: UICollectionReusableView {
-    open var padding: UIEdgeInsets {.zero}
+    open var padding: UIEdgeInsets { .zero }
     public lazy var stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill)
-    
-    public override init(frame: CGRect) {
+
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
     }
-    
+
     @available(*, unavailable,
-    message: "Loading this view from a nib is unsupported in favor of initializer dependency injection."
-    )
-    public required init?(coder: NSCoder) {
+               message: "Loading this view from a nib is unsupported in favor of initializer dependency injection.")
+    public required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     open func commonInit() {
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: padding)
