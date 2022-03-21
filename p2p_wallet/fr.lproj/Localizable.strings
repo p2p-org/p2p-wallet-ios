@@ -781,3 +781,6 @@
 Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le code PIN correct.
  Réinitialisez le code PIN ou attendez %@.";
 "You have successfully set your PIN" = "Vous avez réussi à définir votre code PIN";
+"Sign out" = "Déconnexion";
+"Are you sure you want to sign out?" = "Êtes-vous certain de vouloir vous déconnecter?";
+"If you have no backup, you may never be able to access this account." = "Si vous n'avez pas de sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";

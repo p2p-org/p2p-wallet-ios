@@ -781,3 +781,6 @@
 Reset the PIN or wait for %@." = "У вас осталось %@ попыток для ввода правильного PIN-кода.
  Сбросьте PIN-код или дождитесь %@.";
 "You have successfully set your PIN" = "Вы успешно установили свой PIN-код";
+"Sign out" = "выход";
+"Are you sure you want to sign out?" = "Вы уверены, что хотите выйти?";
+"If you have no backup, you may never be able to access this account." = "Если у вас нет резервной копии, вы никогда не сможете получить доступ к этой учетной записи.";

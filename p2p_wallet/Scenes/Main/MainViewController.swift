@@ -72,14 +72,18 @@ class MainViewController: BaseVC {
         }
 
         // clean
+        var extraAction: Authentication.ExtraAction = .none
+        if authStyle.options.contains(.withResetPassword) { extraAction = .reset }
+        if authStyle.options.contains(.withSignOut) { extraAction = .signOut }
+
         localAuthVC?.dismiss(animated: false, completion: nil)
         let vm = Authentication.ViewModel()
-        localAuthVC = Authentication.ViewController(viewModel: vm)
+        localAuthVC = Authentication.ViewController(viewModel: vm, extraAction: extraAction)
         localAuthVC?.title = authStyle.title
-        localAuthVC?.isIgnorable = !authStyle.isRequired
-        localAuthVC?.useBiometry = authStyle.useBiometry
+        localAuthVC?.isIgnorable = !authStyle.options.contains(.required)
+        localAuthVC?.useBiometry = !authStyle.options.contains(.disableBiometric)
 
-        if authStyle.isFullScreen {
+        if authStyle.options.contains(.fullscreen) {
             localAuthVC?.modalPresentationStyle = .fullScreen
         }
 
@@ -92,7 +96,7 @@ class MainViewController: BaseVC {
         }
 
         // cancelledCompletion
-        if !authStyle.isRequired {
+        if !authStyle.options.contains(.required) {
             // disable swipe down
             localAuthVC?.isModalInPresentation = true
 
