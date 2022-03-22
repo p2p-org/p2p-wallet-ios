@@ -18,8 +18,23 @@ P2P Wallet on Solana blockchain
 - SwiftFormat
 
 ## Installation
-
-#### Add Config.xconfig (ask team manager or use fake key below)
+- Clone project and retrieve all submodules
+```zsh
+git clone git@github.com:p2p-org/p2p-wallet-ios.git
+cd p2p-wallet-ios
+git submodule update --init --recursive
+```
+- Override `githook` directory:
+```zsh
+git config core.hooksPath .githooks
+chmod -R +x .githooks
+```
+- Run `pod install`
+- Run `swiftgen` for the first time
+```zsh
+Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
+```
+- Add `Config.xconfig` to `Resources` contains following content
 ```
 // MARK: - Transak
 TRANSAK_STAGING_API_KEY = fake_api_key
@@ -37,29 +52,6 @@ AMPLITUDE_API_KEY = fake_api_key
 FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 ```
-
-#### Install dependencies (cocoapods)
-- Clone project and retrieve all submodules
-```zsh
-git clone git@github.com:p2p-org/p2p-wallet-ios.git
-cd p2p-wallet-ios
-git submodule update --init --recursive
-```
-- Override `githook` directory:
-```zsh
-git config core.hooksPath .githooks
-chmod -R +x .githooks
-```
-- Run `pod install`
-- Run `swiftgen` for the first time
-```zsh
-Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
-```
-- Run code formatting 
-```zsh
-swiftformat .p2p_wallet
-```
-
 ### Code style
 - Space indent: 4
 
