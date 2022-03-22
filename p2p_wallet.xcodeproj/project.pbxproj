@@ -11,6 +11,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 3BFD4E4027E9A5E900C0388F /* Build configuration list for PBXAggregateTarget "Detect Unused Code" */;
 			buildPhases = (
+				3BFD4E4227E9A94B00C0388F /* ShellScript */,
 				3BFD4E4127E9A60400C0388F /* ShellScript */,
 			);
 			dependencies = (
@@ -336,7 +337,6 @@
 		BC460763266F40F400A12E07 /* Root.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC46075F266F40F400A12E07 /* Root.ViewController.swift */; };
 		BC460764266F40F400A12E07 /* Root.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460760266F40F400A12E07 /* Root.ViewModel.swift */; };
 		BC460768266F4B3200A12E07 /* ObservableType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */; };
-		BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */; };
 		BC490CBE256CB796006E7AC9 /* WalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC490CBD256CB796006E7AC9 /* WalletCell.swift */; };
 		BC4B9E7B2713FB99005B9ECA /* CryptoComparePricesFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E7A2713FB99005B9ECA /* CryptoComparePricesFetcher.swift */; };
 		BC4B9E7D2713FCFB005B9ECA /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4B9E7C2713FCFB005B9ECA /* AnalyticsManager.swift */; };
@@ -908,7 +908,6 @@
 		BC46075F266F40F400A12E07 /* Root.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.ViewController.swift; sourceTree = "<group>"; };
 		BC460760266F40F400A12E07 /* Root.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Root.ViewModel.swift; sourceTree = "<group>"; };
 		BC460767266F4B3200A12E07 /* ObservableType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObservableType+Extensions.swift"; sourceTree = "<group>"; };
-		BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BehaviorRelay+Extensions.swift"; sourceTree = "<group>"; };
 		BC490CBD256CB796006E7AC9 /* WalletCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletCell.swift; sourceTree = "<group>"; };
 		BC4B9E732713EE57005B9ECA /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		BC4B9E7A2713FB99005B9ECA /* CryptoComparePricesFetcher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoComparePricesFetcher.swift; sourceTree = "<group>"; };
@@ -1876,7 +1875,6 @@
 				BCA0CFD1255E4E4000CD0F8D /* UIImageView+Extensions.swift */,
 				BC7BCB7A2562807E0018DECA /* Double+Extensions.swift */,
 				BC03EC92256F59CF00A68D18 /* LABiometryType+Extensions.swift */,
-				BC460AC3257A46940035F6AA /* BehaviorRelay+Extensions.swift */,
 				BC75339B257F2953007A00D9 /* Date+Extensions.swift */,
 				BC11C9C125908F3700E399A9 /* CGFloat+Extensions.swift */,
 				BC11CA112591DE8800E399A9 /* NSMutableAttributedString+Extensions.swift */,
@@ -2998,6 +2996,23 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PWD}/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace --schemes p2p_wallet --targets p2p_wallet --format xcode\n";
 		};
+		3BFD4E4227E9A94B00C0388F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml\n";
+		};
 		3F0DFDEF46907C0993E62949 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3088,7 +3103,6 @@
 				BCB286DC2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.swift in Sources */,
 				BC6FED91270BF47E002B6255 /* RenBTCReceivingStatuses.ViewController.swift in Sources */,
 				BCB286DE2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.ViewModel.swift in Sources */,
-				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BCB286BA274CC2590074E1D5 /* SendToken.ViewController.swift in Sources */,
 				BC699ACA25FB114D00F57209 /* UINavigationController+Extensions.swift in Sources */,
 				BC8F684D2609D866002FDCCD /* WalletsRepository.swift in Sources */,
