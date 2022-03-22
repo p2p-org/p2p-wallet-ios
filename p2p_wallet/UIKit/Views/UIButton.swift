@@ -8,7 +8,7 @@ extension UIButton {
     static func text(
         text: String,
         image: UIImage? = nil,
-        fontSize _: Double = 15,
+        fontSize: CGFloat = 15,
         weight: UIFont.Weight = .regular,
         tintColor: UIColor = .black,
         padding: UIEdgeInsets = UIEdgeInsets(all: 10),
@@ -17,7 +17,7 @@ extension UIButton {
         let button = UIButton()
 
         button.setInsets(forContentPadding: padding, imageTitlePadding: image == nil ? 0 : iconPadding)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 15, weight: weight)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: fontSize, weight: weight)
         button.setTitleColor(tintColor, for: .normal)
         button.setTitle(text, for: .normal)
         button.setImage(image, for: .normal)
