@@ -45,10 +45,6 @@ git clone git@github.com:p2p-org/p2p-wallet-ios.git
 cd p2p-wallet-ios
 git submodule update --init --recursive
 ```
-- Install [swiftformat](https://github.com/nicklockwood/SwiftFormat)
-```zsh
-brew install swiftformat
-```
 - Override `githook` directory:
 ```zsh
 git config core.hooksPath .githooks
