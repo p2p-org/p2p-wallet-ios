@@ -36,11 +36,12 @@ extension SupportedTokens.CollectionView {
                     .font: normalFont,
                     .kern: -0.24,
                     .paragraphStyle: paragraphStyle,
-                    .foregroundColor: UIColor.textBlack
+                    .foregroundColor: UIColor.textBlack,
                 ]
             )
 
-            let highlightedRange = (attributedText.string as NSString).range(of: highlightedText, options: .caseInsensitive)
+            let highlightedRange = (attributedText.string as NSString)
+                .range(of: highlightedText, options: .caseInsensitive)
             attributedText.addAttribute(.font, value: highlightedFont, range: highlightedRange)
 
             hintLabel.attributedText = attributedText

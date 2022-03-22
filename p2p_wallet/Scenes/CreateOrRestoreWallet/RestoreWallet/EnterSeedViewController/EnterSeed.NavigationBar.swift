@@ -11,19 +11,19 @@ extension EnterSeed {
     final class NavigationBar: WLNavigationBar {
         private let backHandler: () -> Void
         private let infoHandler: () -> Void
-        
+
         init(
             backHandler: @escaping () -> Void,
             infoHandler: @escaping () -> Void
         ) {
             self.backHandler = backHandler
             self.infoHandler = infoHandler
-            
+
             super.init(frame: .zero)
-            
+
             configureSelf()
         }
-        
+
         private func configureSelf() {
             backButton.onTap(self, action: #selector(back))
             titleLabel.text = L10n.enterYourSecurityKey
@@ -32,12 +32,12 @@ extension EnterSeed {
             infoButton.addTarget(self, action: #selector(info), for: .touchUpInside)
             rightItems.addArrangedSubview(infoButton)
         }
-        
+
         @objc
         func back() {
             backHandler()
         }
-        
+
         @objc
         func info() {
             infoHandler()

@@ -23,7 +23,7 @@ enum OrcaSwapV2 {
         case info(title: String, description: String)
         case back
     }
-    
+
     enum VerificationError: String {
         case swappingIsNotAvailable
         case sourceWalletIsEmpty

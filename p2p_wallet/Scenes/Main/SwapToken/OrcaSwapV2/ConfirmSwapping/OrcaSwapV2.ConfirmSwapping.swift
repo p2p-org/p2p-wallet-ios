@@ -8,7 +8,5 @@
 import Foundation
 
 extension OrcaSwapV2 {
-    enum ConfirmSwapping {
-        
-    }
+    enum ConfirmSwapping {}
 }

@@ -5,14 +5,14 @@
 //  Created by Chung Tran on 10/12/2021.
 //
 
-import Foundation
-import RxSwift
-import RxCocoa
 import FeeRelayerSwift
+import Foundation
+import RxCocoa
+import RxSwift
 
 protocol SendTokenSelectNetworkViewModelType {
-    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {get}
-    var payingWalletDriver: Driver<Wallet?> {get}
+    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> { get }
+    var payingWalletDriver: Driver<Wallet?> { get }
     func getSelectableNetworks() -> [SendToken.Network]
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSendService() -> SendServiceType

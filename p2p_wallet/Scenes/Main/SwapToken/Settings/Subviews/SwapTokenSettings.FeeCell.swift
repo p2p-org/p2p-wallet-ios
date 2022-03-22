@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 24.12.2021.
 //
 
-import UIKit
 import BEPureLayout
+import UIKit
 
 extension SwapTokenSettings {
     final class FeeCell: UIStackView {
@@ -25,9 +25,9 @@ extension SwapTokenSettings {
             layout()
             onTap(self, action: #selector(handleTap))
         }
-        
+
         @available(*, unavailable)
-        required init(coder: NSCoder) {
+        required init(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 
@@ -50,7 +50,7 @@ extension SwapTokenSettings {
             tokenLabel.text = content.tokenLabelText
             setIsSelected(content.isSelected)
             onTapHandler = content.onTapHandler
-            
+
             return self
         }
 

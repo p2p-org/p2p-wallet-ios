@@ -12,16 +12,23 @@ class WLStatusIndicatorView: BEView {
     enum State {
         case loading, error, success
     }
-    
+
     private let autoHide: Bool = true
-    private let label = UILabel(text: "loading...", textSize: 12, weight: .semibold, textColor: .white, numberOfLines: 0, textAlignment: .center)
-    
+    private let label = UILabel(
+        text: "loading...",
+        textSize: 12,
+        weight: .semibold,
+        textColor: .white,
+        numberOfLines: 0,
+        textAlignment: .center
+    )
+
     override func commonInit() {
         super.commonInit()
         addSubview(label)
         label.autoPinEdgesToSuperviewEdges(with: .init(x: 18, y: 8))
     }
-    
+
     func setUp(state: State, text: String?) {
         switch state {
         case .loading:
@@ -44,7 +51,7 @@ class WLStatusIndicatorView: BEView {
                 }
             }
         }
-        
+
         label.text = text
     }
 }

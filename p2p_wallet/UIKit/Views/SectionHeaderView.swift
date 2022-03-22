@@ -9,26 +9,27 @@ import Foundation
 
 class SectionHeaderView: UICollectionReusableView {
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
-    
+
     lazy var headerLabel = UILabel(text: "Wallets", textSize: 17, weight: .bold, numberOfLines: 0)
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
     }
-    
+
     @available(*, unavailable,
-        message: "Loading this view from a nib is unsupported in favor of initializer dependency injection."
-    )
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("Loading this view controller from a nib is unsupported in favor of initializer dependency injection.")
+               message: "Loading this view from a nib is unsupported in favor of initializer dependency injection.")
+    public required init?(coder _: NSCoder) {
+        fatalError(
+            "Loading this view controller from a nib is unsupported in favor of initializer dependency injection."
+        )
     }
-    
+
     func commonInit() {
         addStackView()
         stackView.addArrangedSubview(headerLabel.padding(.init(x: .defaultPadding, y: 0)))
     }
-    
+
     func addStackView(completion: (() -> Void)? = nil) {
         if stackView.superview == nil {
             addSubview(stackView)
@@ -40,7 +41,7 @@ class SectionHeaderView: UICollectionReusableView {
             completion?()
         }
     }
-    
+
     func removeStackView(completion: (() -> Void)? = nil) {
         if stackView.superview != nil {
             stackView.removeFromSuperview()
@@ -48,8 +49,12 @@ class SectionHeaderView: UICollectionReusableView {
             completion?()
         }
     }
-    
-    func setUp(headerTitle: String, headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold), textColor: UIColor = .black) {
+
+    func setUp(
+        headerTitle: String,
+        headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold),
+        textColor: UIColor = .black
+    ) {
         headerLabel.text = headerTitle
         headerLabel.font = headerFont
         headerLabel.textColor = textColor

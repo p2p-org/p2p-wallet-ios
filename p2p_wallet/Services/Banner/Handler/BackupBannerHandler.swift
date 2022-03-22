@@ -7,7 +7,7 @@ import RxSwift
 import SwiftyUserDefaults
 
 class BackupBanner: Banners.Banner {
-    static fileprivate let id = "backup-banner"
+    fileprivate static let id = "backup-banner"
 
     init() {
         super.init(
@@ -22,13 +22,12 @@ class BackupBanner: Banners.Banner {
             .title: L10n.yourWalletIsAtRiskIfYouDoNotBackItUp,
             .action: L10n.backUpYourWallet,
             .background: UIColor(red: 0.953, green: 0.929, blue: 0.847, alpha: 1),
-            .icon: UIImage.bannerBackup
+            .icon: UIImage.bannerBackup,
         ]
     }
 }
 
 class BackupBannerHandler: Banners.Handler {
-
     weak var delegate: Banners.Service?
     let backupStorage: ICloudStorageType
     let disposeBag = DisposeBag()
@@ -44,18 +43,18 @@ class BackupBannerHandler: Banners.Handler {
             .onValueChange
             .emit(onNext: { [weak self] event in
                 debugPrint("Backup Banner", event)
-                if event.key == "didBackupUsingIcloud" && event.value != nil {
+                if event.key == "didBackupUsingIcloud", event.value != nil {
                     self?.delegate?.remove(bannerId: BackupBanner.id)
                 }
             })
             .disposed(by: disposeBag)
-        
+
         if Defaults.didBackupOffline {
             delegate?.remove(bannerId: BackupBanner.id)
         }
-        
+
         defaultsDisposable = Defaults.observe(\.didBackupOffline) { [weak self] update in
-            guard update.newValue == true else {return}
+            guard update.newValue == true else { return }
             self?.delegate?.remove(bannerId: BackupBanner.id)
         }
 
@@ -64,7 +63,7 @@ class BackupBannerHandler: Banners.Handler {
             delegate?.update(banner: BackupBanner())
         }
     }
-    
+
     deinit {
         debugPrint("deuinit")
     }

@@ -34,9 +34,9 @@ final class ImageSaver: NSObject, ImageSaverType {
 
     @objc
     func saveImageCallback(
-        _ image: UIImage,
+        _: UIImage,
         didFinishSavingWithError error: Swift.Error?,
-        contextInfo: UnsafeRawPointer
+        contextInfo _: UnsafeRawPointer
     ) {
         if let error = error {
             handlePhotoLibrary(error: error)

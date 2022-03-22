@@ -5,10 +5,10 @@
 //  Created by Chung Tran on 22/02/2021.
 //
 
-import UIKit
-import RxSwift
-import RxCocoa
 import Resolver
+import RxCocoa
+import RxSwift
+import UIKit
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
     var notificationsService: NotificationsServiceType { get }
@@ -31,6 +31,7 @@ protocol CreateSecurityKeysViewModelType: AnyObject {
 extension CreateSecurityKeys {
     class ViewModel {
         // MARK: - Dependencies
+
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         private let createWalletViewModel: CreateWalletViewModelType
@@ -40,20 +41,23 @@ extension CreateSecurityKeys {
         @Injected var imageSaver: ImageSaverType
 
         // MARK: - Properties
+
         private let disposeBag = DisposeBag()
-        
+
         // MARK: - Subjects
+
         private let showTermsAndConditionsSubject = PublishRelay<Void>()
         private let showPhotoLibraryUnavailableSubject = PublishRelay<Void>()
         private let phrasesSubject = BehaviorRelay<[String]>(value: [])
         private let errorSubject = PublishRelay<String>()
-        
+
         // MARK: - Initializer
+
         init(createWalletViewModel: CreateWalletViewModelType) {
             self.createWalletViewModel = createWalletViewModel
             createPhrases()
         }
-        
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
@@ -77,22 +81,23 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     var phrasesDriver: Driver<[String]> {
         phrasesSubject.asDriver()
     }
-    
+
     var errorSignal: Signal<String> {
         errorSubject.asSignal()
     }
 
     // MARK: - Actions
+
     func showTermsAndConditions() {
         analyticsManager.log(event: .createWalletTermsAndConditionsClick)
         showTermsAndConditionsSubject.accept(())
     }
-    
+
     func renewPhrases() {
         analyticsManager.log(event: .backingUpRenewing)
         createPhrases()
     }
-    
+
     func copyToClipboard() {
         analyticsManager.log(event: .backingUpCopying)
         clipboardManager.copyToClipboard(phrasesSubject.value.joined(separator: " "))
@@ -116,12 +121,12 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
             }
         }
     }
-    
+
     @objc func saveToICloud() {
         deviceOwnerAuthenticationHandler.requiredOwner {
             self._saveToIcloud()
         } onFailure: { error in
-            guard let error = error else {return}
+            guard let error = error else { return }
             self.errorSubject.accept(error)
         }
     }
@@ -134,7 +139,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
                 derivablePath: .default
             )
         )
-        
+
         if result {
             analyticsManager.log(event: .backingUpIcloud)
             notificationsService.showInAppNotification(.done(L10n.savedToICloud))

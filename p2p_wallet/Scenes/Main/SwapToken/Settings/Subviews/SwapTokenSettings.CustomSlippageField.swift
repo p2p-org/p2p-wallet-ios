@@ -5,9 +5,9 @@
 //  Created by Andrew Vasiliev on 22.12.2021.
 //
 
-import UIKit
 import BEPureLayout
 import RxSwift
+import UIKit
 
 extension SwapTokenSettings {
     final class CustomSlippageField: WLFloatingPanelView {
@@ -35,7 +35,7 @@ extension SwapTokenSettings {
         override func commonInit() {
             super.commonInit()
             stackView.axis = .horizontal
-            
+
             let allSubviews = [title, textField, percentLabel]
             allSubviews.forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
             title.setContentHuggingPriority(.required, for: .horizontal)

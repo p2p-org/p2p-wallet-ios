@@ -6,22 +6,22 @@
 //
 
 import Foundation
-import RxSwift
 import RxCocoa
+import RxSwift
 import SolanaSwift
 
 enum SendToken {
     enum NavigatableScene {
         case back
         case chooseTokenAndAmount(showAfterConfirmation: Bool)
-        
+
         case chooseRecipientAndNetwork(showAfterConfirmation: Bool, preSelectedNetwork: Network?)
         case chooseNetwork
-        
+
         case confirmation
         case processTransaction(_ transaction: RawTransactionType)
     }
-    
+
     struct Recipient: Hashable {
         init(address: String, name: String?, hasNoFunds: Bool, hasNoInfo: Bool = false) {
             self.address = address
@@ -29,13 +29,13 @@ enum SendToken {
             self.hasNoFunds = hasNoFunds
             self.hasNoInfo = hasNoInfo
         }
-        
+
         let address: String
         let name: String?
         let hasNoFunds: Bool
         let hasNoInfo: Bool
     }
-    
+
     enum Network: String {
         case solana, bitcoin
         var icon: UIImage {
@@ -47,11 +47,11 @@ enum SendToken {
             }
         }
     }
-    
+
     struct FeeInfo {
         let feeAmount: SolanaSDK.FeeAmount
         let feeAmountInSOL: SolanaSDK.FeeAmount
-        
+
         static var zero: Self {
             .init(feeAmount: .zero, feeAmountInSOL: .zero)
         }

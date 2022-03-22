@@ -5,20 +5,26 @@
 //  Created by Andrew Vasiliev on 26.11.2021.
 //
 
-import UIKit
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension ReserveName {
     class RootView: BEView {
         // MARK: - Constants
+
         private let disposeBag = DisposeBag()
-        
+
         // MARK: - Properties
+
         private let viewModel: ReserveNameViewModelType
 
         // MARK: - Subviews
-        private let scrollView = ContentHuggingScrollView(scrollableAxis: .vertical, contentInset: .init(only: .bottom, inset: 40))
+
+        private let scrollView = ContentHuggingScrollView(
+            scrollableAxis: .vertical,
+            contentInset: .init(only: .bottom, inset: 40)
+        )
         private let stackView = UIStackView(axis: .vertical, alignment: .fill, distribution: .fill)
 
         private let textView = ExpandableTextView(
@@ -33,6 +39,7 @@ extension ReserveName {
         private let agreeTermsAndPolicyView = AgreeTermsAndPolicyView()
 
         // MARK: - Methods
+
         init(viewModel: ReserveNameViewModelType) {
             self.viewModel = viewModel
 
@@ -91,7 +98,7 @@ extension ReserveName {
                     .itIsVitalYouSelectTheExactUsernameYouWantAsOnceSetYouCannotChangeIt,
                 attributes: [
                     NSAttributedString.Key.kern: -0.24,
-                    NSAttributedString.Key.paragraphStyle: paragraphStyle
+                    NSAttributedString.Key.paragraphStyle: paragraphStyle,
                 ]
             )
         }
@@ -158,14 +165,14 @@ extension ReserveName {
 
             stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 20, y: 0))
         }
-        
+
         private func bind() {
             viewModel.textFieldStateDriver
                 .drive { [weak self] in
                     self?.setHintContent(for: $0)
                 }
                 .disposed(by: disposeBag)
-            
+
             textView.rxText
                 .throttle(.milliseconds(200), scheduler: MainScheduler.instance)
                 .distinctUntilChanged()
@@ -181,7 +188,7 @@ extension ReserveName {
             viewModel.isLoadingDriver
                 .skip(1)
                 .drive { [weak self] isPosting in
-                    isPosting ? self?.showIndetermineHud(): self?.hideHud()
+                    isPosting ? self?.showIndetermineHud() : self?.hideHud()
                 }
                 .disposed(by: disposeBag)
 

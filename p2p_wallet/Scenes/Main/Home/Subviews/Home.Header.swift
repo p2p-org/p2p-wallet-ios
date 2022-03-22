@@ -30,7 +30,9 @@ extension Home {
 
                     ColorfulHorizontalView {
                         WalletActionButton(actionType: .buy) { [unowned self] in viewModel.navigate(to: .buyToken) }
-                        WalletActionButton(actionType: .receive) { [unowned self] in viewModel.navigate(to: .receiveToken) }
+                        WalletActionButton(actionType: .receive) { [unowned self] in
+                            viewModel.navigate(to: .receiveToken)
+                        }
                         WalletActionButton(actionType: .send) { [unowned self] in viewModel.navigate(to: .sendToken()) }
                         WalletActionButton(actionType: .swap) { [unowned self] in viewModel.navigate(to: .swapToken) }
                     }
@@ -38,7 +40,7 @@ extension Home {
                 }
             }.setup { view in
                 guard let v1 = view.viewWithTag(1),
-                    let v2 = view.viewWithTag(2)
+                      let v2 = view.viewWithTag(2)
                 else { return }
 
                 v2.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)

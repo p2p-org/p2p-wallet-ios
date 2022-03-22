@@ -6,6 +6,7 @@ import Foundation
 import RxSwift
 
 // MARK: - Helpers
+
 extension OrcaSwapV2.ViewModel {
     /// Verify error in current context IN ORDER
     /// - Returns: String or nil if no error
@@ -74,7 +75,7 @@ extension OrcaSwapV2.ViewModel {
         guard feesSubject.state == .loaded else {
             return .feesIsBeingCalculated
         }
-        
+
         guard payingWalletSubject.value != nil else {
             return .payingFeeWalletNotFound
         }
@@ -129,7 +130,7 @@ extension OrcaSwapV2.ViewModel {
 
         let bestPoolsPair = bestPoolsPairSubject.value
         let inputAmount = inputAmountSubject.value
-        let myWalletsMints = walletsRepository.getWallets().compactMap { $0.token.address }
+        let myWalletsMints = walletsRepository.getWallets().map(\.token.address)
         let slippage = slippageSubject.value
 
         return swapService.getFees(

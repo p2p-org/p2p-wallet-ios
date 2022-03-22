@@ -29,10 +29,13 @@ final class PageableHorizontalLayoutScrollHandler {
 
         let dataSourceCount = collectionView.numberOfItems(inSection: 0)
         let swipeVelocityThreshold: CGFloat = 0.5
-        let hasEnoughVelocityToSlideToTheNextCell = indexOfCellBeforeDragging + 1 < dataSourceCount && velocity.x > swipeVelocityThreshold
-        let hasEnoughVelocityToSlideToThePreviousCell = indexOfCellBeforeDragging - 1 >= 0 && velocity.x < -swipeVelocityThreshold
+        let hasEnoughVelocityToSlideToTheNextCell = indexOfCellBeforeDragging + 1 < dataSourceCount && velocity
+            .x > swipeVelocityThreshold
+        let hasEnoughVelocityToSlideToThePreviousCell = indexOfCellBeforeDragging - 1 >= 0 && velocity
+            .x < -swipeVelocityThreshold
         let leftCellIsTheCellBeforeDragging = indexOfLeftCell == indexOfCellBeforeDragging
-        let didUseSwipeToChangeCell = leftCellIsTheCellBeforeDragging && (hasEnoughVelocityToSlideToTheNextCell || hasEnoughVelocityToSlideToThePreviousCell)
+        let didUseSwipeToChangeCell = leftCellIsTheCellBeforeDragging &&
+            (hasEnoughVelocityToSlideToTheNextCell || hasEnoughVelocityToSlideToThePreviousCell)
 
         if didUseSwipeToChangeCell {
             changeCellBySwipe(

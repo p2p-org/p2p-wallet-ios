@@ -6,10 +6,11 @@
 //
 
 import Foundation
-import UIKit
 import RxSwift
+import UIKit
 
 // MARK: - Builders
+
 extension WLStepButton {
     /// Main button for recommended action
     static func main(
@@ -27,11 +28,11 @@ extension WLStepButton {
             imageSize: imageSize
         )
     }
-    
+
     /// Sub button for not-recommended action
     static func sub(
-        image: UIImage? = nil,
-        imageSize: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight),
+        image _: UIImage? = nil,
+        imageSize _: CGSize = .init(width: 24.adaptiveHeight, height: 24.adaptiveHeight),
         text: String?
     ) -> WLStepButton {
         .init(
@@ -44,38 +45,44 @@ extension WLStepButton {
 }
 
 // MARK: - Main class
+
 class WLStepButton: BEView {
     // MARK: - Properties
+
     fileprivate let imageSize: CGSize
-    
+
     var enabledBgColor: UIColor {
         didSet {
             setUp()
         }
     }
+
     var enabledTintColor: UIColor {
         didSet {
             setUp()
         }
     }
+
     var disabledBgColor: UIColor? {
         didSet {
             setUp()
         }
     }
+
     var disabledTintColor: UIColor? {
         didSet {
             setUp()
         }
     }
-    
+
     var isEnabled: Bool = true {
         didSet {
             setUp()
         }
     }
-    
+
     // MARK: - Subviews
+
     private lazy var stackView = UIStackView(
         axis: .horizontal,
         spacing: 12.adaptiveHeight,
@@ -85,6 +92,7 @@ class WLStepButton: BEView {
         imageView
         label
     }
+
     fileprivate lazy var imageView = UIImageView()
     fileprivate lazy var label = UILabel(
         textSize: 17.adaptiveHeight,
@@ -93,9 +101,10 @@ class WLStepButton: BEView {
         numberOfLines: 2,
         textAlignment: .center
     )
-        .withContentCompressionResistancePriority(.required, for: .horizontal)
-    
+    .withContentCompressionResistancePriority(.required, for: .horizontal)
+
     // MARK: - Initializer
+
     init(
         enabledBgColor: UIColor,
         enabledTintColor: UIColor,
@@ -111,16 +120,16 @@ class WLStepButton: BEView {
         super.init(frame: .zero)
         self.disabledBgColor = disabledBgColor
         self.disabledTintColor = disabledTintColor
-        
+
         configureForAutoLayout()
-        
+
         // min height is relative 56
         autoSetDimension(.height, toSize: 56.adaptiveHeight)
-        
+
         // round corner
         layer.cornerRadius = 12
         layer.masksToBounds = true
-        
+
         // stackView
         addSubview(stackView)
         stackView.autoCenterInSuperview()
@@ -128,16 +137,16 @@ class WLStepButton: BEView {
         stackView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 0, relation: .greaterThanOrEqual)
         stackView.autoPinEdge(toSuperviewEdge: .leading, withInset: 16, relation: .greaterThanOrEqual)
         stackView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 16, relation: .greaterThanOrEqual)
-        
+
         // image
         setImage(image: image, imageSize: imageSize)
-        
+
         // text
         label.text = text
-        
+
         setUp()
     }
-    
+
     // MARK: - Methods
 
     func setImage(image: UIImage?, imageSize: CGSize? = nil) {
@@ -159,13 +168,13 @@ class WLStepButton: BEView {
     private func setUp() {
         // user interaction
         isUserInteractionEnabled = isEnabled
-        
+
         // background
         backgroundColor = isEnabled ? enabledBgColor : disabledBgColor
-        
+
         // text color
         label.textColor = isEnabled ? enabledTintColor : (disabledTintColor ?? enabledTintColor)
-        
+
         // imageView tintColor
         imageView.tintColor = isEnabled ? enabledTintColor : (disabledTintColor ?? enabledTintColor)
     }
@@ -177,13 +186,13 @@ extension Reactive where Base: WLStepButton {
             view.isEnabled = isEnabled
         }
     }
-    
+
     var text: Binder<String?> {
         Binder(base) { view, text in
             view.label.text = text
         }
     }
-    
+
     var image: Binder<UIImage?> {
         Binder(base) { view, image in
             view.setImage(image: image, imageSize: view.imageSize)

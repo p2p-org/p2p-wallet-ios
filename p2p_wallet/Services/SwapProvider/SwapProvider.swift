@@ -10,6 +10,6 @@ import Foundation
 enum SwapProvider {
     case serum
     case orca
-    
-    var active: Self {.orca}
+
+    var active: Self { .orca }
 }

@@ -12,21 +12,23 @@ extension SendToken {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-        
+
         // MARK: - Subviews
+
         lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(_back))
             return navigationBar
         }()
-        
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             view.addSubview(navigationBar)
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
         }
-        
+
         @objc func _back() {
             back()
         }

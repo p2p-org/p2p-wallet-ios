@@ -5,8 +5,8 @@
 //  Created by Andrew Vasiliev on 01.02.2022.
 //
 
-import UIKit
 import PureLayout
+import UIKit
 
 extension ReceiveToken {
     final class ExplorerButton: UIButton {
@@ -19,6 +19,7 @@ extension ReceiveToken {
             label
             realImageView
         }
+
         private let realImageView = UIImageView(
             width: 16,
             height: 16,
@@ -30,7 +31,7 @@ extension ReceiveToken {
             textColor: .textBlack,
             textAlignment: .center
         )
-            .withContentCompressionResistancePriority(.required, for: .horizontal)
+        .withContentCompressionResistancePriority(.required, for: .horizontal)
 
         init(title: String) {
             super.init(frame: .zero)
@@ -48,7 +49,7 @@ extension ReceiveToken {
         }
 
         @available(*, unavailable)
-        required init?(coder: NSCoder) {
+        required init?(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
     }

@@ -6,12 +6,12 @@
 //
 
 import Foundation
-import RxSwift
-import RxCocoa
 import LocalAuthentication
+import RxCocoa
+import RxSwift
 
 protocol AuthenticationViewModelType {
-    var navigationDriver: Driver<Authentication.NavigatableScene?> {get}
+    var navigationDriver: Driver<Authentication.NavigatableScene?> { get }
     func showResetPincodeWithASeedPhrase()
     func getCurrentPincode() -> String?
     func getCurrentBiometryType() -> LABiometryType
@@ -24,14 +24,17 @@ protocol AuthenticationViewModelType {
 extension Authentication {
     class ViewModel {
         // MARK: - Dependencies
+
         @Injected private var pincodeStorage: PincodeStorageType
-        
+
         // MARK: - Initializers
+
         deinit {
             debugPrint("\(String(describing: self)) deinited")
         }
-        
+
         // MARK: - Subject
+
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
     }
 }
@@ -40,24 +43,25 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
     var navigationDriver: Driver<Authentication.NavigatableScene?> {
         navigationSubject.asDriver()
     }
-    
+
     // MARK: - Actions
+
     func showResetPincodeWithASeedPhrase() {
         navigationSubject.accept(.resetPincodeWithASeedPhrase)
     }
-    
+
     func getCurrentPincode() -> String? {
         pincodeStorage.pinCode
     }
-    
+
     func getCurrentBiometryType() -> LABiometryType {
         LABiometryType.current
     }
-    
+
     func isBiometryEnabled() -> Bool {
         Defaults.isBiometryEnabled
     }
-    
+
     func authWithBiometry(onSuccess: (() -> Void)?, onFailure: (() -> Void)?) {
         let myContext = LAContext()
         var authError: NSError?
@@ -66,21 +70,24 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
                 debugPrint(error)
                 return
             }
-            myContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: L10n.confirmItSYou) { (success, _) in
-                guard success else {return}
-                DispatchQueue.main.sync {
-                    onSuccess?()
+            myContext
+                .evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                                localizedReason: L10n.confirmItSYou)
+                { success, _ in
+                    guard success else { return }
+                    DispatchQueue.main.sync {
+                        onSuccess?()
+                    }
                 }
-            }
         } else {
             onFailure?()
         }
     }
-    
+
     func getBlockedTime() -> Date? {
         Defaults.authenticationBlockingTime
     }
-    
+
     func setBlockedTime(_ time: Date?) {
         Defaults.authenticationBlockingTime = time
     }

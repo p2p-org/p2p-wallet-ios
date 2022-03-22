@@ -31,14 +31,16 @@ extension Home {
                 ),
                 viewModel: viewModel
             )
-            
+
             viewModel
                 .dataDidChange
                 .subscribe(onNext: { [weak self] in self?.collectionView?.reloadData(completion: {}) })
                 .disposed(by: disposeBag)
         }
 
-        override func configureCell(collectionView: UICollectionView, indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell {
+        override func configureCell(collectionView: UICollectionView, indexPath: IndexPath,
+                                    item: BECollectionViewItem) -> UICollectionViewCell
+        {
             let cell = super.configureCell(collectionView: collectionView, indexPath: indexPath, item: item)
             if let cell = cell as? BannerCell {
                 cell.setUp(with: item.value)

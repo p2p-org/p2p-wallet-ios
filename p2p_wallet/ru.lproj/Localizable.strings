@@ -772,3 +772,6 @@
 "Deposit" = "Депозит";
 "This value is calculated by subtracting the transaction fee from your balance." = "Это значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "Максимальное значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
+"Are you sure you want to sign out?" = "Вы уверены, что хотите выйти?";
+"Without the backup, you may never be able to access this account." = "Без резервной копии вы никогда не сможете получить доступ к этой учетной записи.";
+"Sign Out" = "Выход";

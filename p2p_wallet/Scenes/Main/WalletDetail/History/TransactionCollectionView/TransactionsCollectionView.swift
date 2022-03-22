@@ -5,11 +5,11 @@
 //  Created by Chung Tran on 07/04/2021.
 //
 
-import Foundation
-import BECollectionView
 import Action
-import RxSwift
+import BECollectionView
+import Foundation
 import RxCocoa
+import RxSwift
 
 class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let graphViewModel: WalletGraphViewModel
@@ -17,7 +17,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let wallet: Driver<Wallet?>
     let nativePubkey: Driver<String?>
     let disposeBag = DisposeBag()
-    
+
     init(
         transactionViewModel: TransactionsViewModel,
         graphViewModel: WalletGraphViewModel,
@@ -27,27 +27,27 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
         self.graphViewModel = graphViewModel
         self.wallet = wallet
         self.nativePubkey = nativePubkey
-        
+
         super.init(
             viewModel: transactionViewModel,
             mapDataToSections: { viewModel in
                 let transactions = viewModel.getData(type: SolanaSDK.ParsedTransaction.self)
-                
+
                 let calendar = Calendar.current
                 let today = calendar.startOfDay(for: Date())
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateStyle = .medium
                 dateFormatter.timeStyle = .none
                 dateFormatter.locale = Locale.shared
-                
+
                 let dictionary = Dictionary(grouping: transactions) { item -> Int in
-                    guard let date = item.blockTime else {return .max}
+                    guard let date = item.blockTime else { return .max }
                     let createdDate = calendar.startOfDay(for: date)
                     return calendar.dateComponents([.day], from: createdDate, to: today).day ?? 0
                 }
-                
+
                 return dictionary.keys.sorted()
-                    .map {key -> SectionInfo in
+                    .map { key -> SectionInfo in
                         var sectionInfo: String
                         switch key {
                         case 0:
@@ -83,10 +83,10 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
                 itemHeight: .estimated(85)
             )
         )
-        
+
         contentInset.modify(dBottom: 120)
     }
-    
+
 //    override func bind() {
 //        super.bind()
 //        (viewModel as! TransactionsViewModel).isFetchingReceiptDriver
@@ -99,13 +99,13 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
 //            })
 //            .disposed(by: disposeBag)
 //    }
-    
+
     override func configureSectionHeaderView(view: UICollectionReusableView?, sectionIndex: Int) {
         let view = view as? SectionHeaderView
         let text = sections[safe: sectionIndex]?.userInfo as? String
         view?.setUp(header: text?.uppercaseFirst)
     }
-    
+
     override func configureCell(indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell? {
         let cell = super.configureCell(indexPath: indexPath, item: item)
         if let cell = cell as? WLEmptyCell {
@@ -115,7 +115,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
         }
         return cell
     }
-    
+
     override func refresh() {
         super.refresh()
         graphViewModel.reload()

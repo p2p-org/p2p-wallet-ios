@@ -11,33 +11,38 @@ import UIKit
 extension Onboarding {
     class ViewController: BaseVC {
         // MARK: - Dependencies
+
         private let viewModel: OnboardingViewModelType
         @Injected private var analyticsManager: AnalyticsManagerType
-        
+
         // MARK: - Properties
+
         private lazy var childNavigationController = UINavigationController()
-        
+
         // MARK: - Initializer
+
         init(viewModel: OnboardingViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             add(child: childNavigationController, to: view)
             viewModel.navigateNext()
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .createPincode:
@@ -45,10 +50,10 @@ extension Onboarding {
                     createPincodeTitle: L10n.setUpAWalletPIN,
                     confirmPincodeTitle: L10n.confirmYourWalletPIN
                 )
-                createPincodeVC.onSuccess = {[weak self] pincode in
+                createPincodeVC.onSuccess = { [weak self] pincode in
                     self?.viewModel.savePincode(String(pincode))
                 }
-                createPincodeVC.onCancel = {[weak self] in
+                createPincodeVC.onCancel = { [weak self] in
                     self?.viewModel.cancelOnboarding()
                 }
                 childNavigationController.viewControllers = [createPincodeVC]
@@ -63,19 +68,20 @@ extension Onboarding {
                 break
             }
         }
-        
+
         // MARK: - Actions
+
         private func askForEnablingBiometry() {
             // form actions
-            let allowAction = UIAlertAction(title: L10n.allow, style: .default) {[weak self] _ in
+            let allowAction = UIAlertAction(title: L10n.allow, style: .default) { [weak self] _ in
                 self?.viewModel.authenticateAndEnableBiometry(errorHandler: nil)
             }
             allowAction.setValue(UIColor.h5887ff, forKey: "titleTextColor")
-            
+
             let cancelAction = UIAlertAction(title: L10n.donTAllow, style: .destructive) { [weak self] _ in
                 self?.viewModel.enableBiometryLater()
             }
-            
+
             // show alert
             let biometryType = viewModel.getBiometryType().stringValue
             showAlert(
@@ -83,7 +89,7 @@ extension Onboarding {
                 message: L10n.p2PWalletUsesToRestrictUnauthorizedUsersFromAccessingTheApp(biometryType),
                 actions: [
                     cancelAction,
-                    allowAction
+                    allowAction,
                 ]
             )
         }

@@ -6,8 +6,8 @@
 //
 
 import Intercom
-import SolanaSwift
 import Resolver
+import SolanaSwift
 
 final class IntercomUserAttributesService {
     @Injected private var nameStorage: NameStorageType

@@ -17,8 +17,8 @@ class Banners {
         case hight = 3
         case veryHigh = 4
     }
-    
-    struct Actions {
+
+    enum Actions {
         struct OpenScreen: Action {
             let screen: String
         }

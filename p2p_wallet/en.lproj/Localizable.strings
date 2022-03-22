@@ -772,3 +772,6 @@
 "Deposit" = "Deposit";
 "This value is calculated by subtracting the transaction fee from your balance." = "This value is calculated by subtracting the transaction fee from your balance.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "The maximum value is calculated by subtracting the transaction fee from your balance.";
+"Are you sure you want to sign out?" = "Are you sure you want to sign out?";
+"Without the backup, you may never be able to access this account." = "Without the backup, you may never be able to access this account.";
+"Sign Out" = "Sign Out";

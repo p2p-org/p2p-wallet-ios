@@ -12,18 +12,17 @@ class BaseCollectionView: UICollectionView {
         super.init(frame: frame, collectionViewLayout: layout)
         commonInit()
     }
-    
+
     @available(*, unavailable,
-    message: "Loading this view from a nib is unsupported in favor of initializer dependency injection."
-    )
-    required init?(coder: NSCoder) {
+               message: "Loading this view from a nib is unsupported in favor of initializer dependency injection.")
+    required init?(coder _: NSCoder) {
         fatalError("Loading this view from a nib is unsupported in favor of initializer dependency injection.")
     }
-    
+
     func commonInit() {
         backgroundColor = .clear
     }
-    
+
     func registerCells(_ cellTypes: [UICollectionViewCell.Type]) {
         for type in cellTypes {
             register(type, forCellWithReuseIdentifier: String(describing: type))
