@@ -129,8 +129,4 @@ extension Array where Element == PayingFee {
         filter { $0.type == .transactionFee && $0.token.symbol == token }
             .reduce(SolanaSDK.Lamports(0)) { $0 + $1.lamports }
     }
-
-    func all(ofToken tokenSymbol: String) -> SolanaSDK.Lamports? {
-        filter { $0.token.symbol == tokenSymbol }.reduce(UInt64(0)) { $0 + $1.lamports }
-    }
 }

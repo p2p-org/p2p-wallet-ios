@@ -10,5 +10,4 @@ import Foundation
 protocol CreateOrRestoreWalletHandler {
     func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?)
     func restoringWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?)
-    func creatingOrRestoringWalletDidCancel()
 }
