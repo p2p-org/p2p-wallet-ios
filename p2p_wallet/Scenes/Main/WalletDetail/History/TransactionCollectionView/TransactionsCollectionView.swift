@@ -13,20 +13,12 @@ import RxSwift
 
 class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let graphViewModel: WalletGraphViewModel
-    @Injected private var analyticsManager: AnalyticsManagerType
-    let wallet: Driver<Wallet?>
-    let nativePubkey: Driver<String?>
-    let disposeBag = DisposeBag()
 
     init(
         transactionViewModel: TransactionsViewModel,
-        graphViewModel: WalletGraphViewModel,
-        wallet: Driver<Wallet?>,
-        nativePubkey: Driver<String?>
+        graphViewModel: WalletGraphViewModel
     ) {
         self.graphViewModel = graphViewModel
-        self.wallet = wallet
-        self.nativePubkey = nativePubkey
 
         super.init(
             viewModel: transactionViewModel,

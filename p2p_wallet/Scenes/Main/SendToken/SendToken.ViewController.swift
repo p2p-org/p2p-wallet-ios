@@ -107,15 +107,15 @@ extension SendToken {
             case let .processTransaction(transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.backCompletion = { [weak self] in
-                    guard let self = self else { return }
-                    self.viewModel.cleanAllFields()
-                    if self.viewModel.canGoBack {
-                        self.back()
-                    } else {
-                        self.childNavigationController.popToRootViewController(animated: true)
-                    }
-                }
+//                vc.backCompletion = { [weak self] in
+//                    guard let self = self else { return }
+//                    self.viewModel.cleanAllFields()
+//                    if self.viewModel.canGoBack {
+//                        self.back()
+//                    } else {
+//                        self.childNavigationController.popToRootViewController(animated: true)
+//                    }
+//                }
                 vc.makeAnotherTransactionHandler = { [weak self] in
                     guard let self = self else { return }
                     self.viewModel.cleanAllFields()

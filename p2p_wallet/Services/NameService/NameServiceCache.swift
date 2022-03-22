@@ -28,7 +28,6 @@ enum NameServiceSearchResult {
 
 class NameServiceUserDefaultCache: NameServiceCacheType {
     private var addressToNameCache = [String: NameServiceSearchResult]() // Address: Name
-    private let locker = NSLock()
 
     func save(_ name: String?, for owner: String) {
         guard let name = name else {

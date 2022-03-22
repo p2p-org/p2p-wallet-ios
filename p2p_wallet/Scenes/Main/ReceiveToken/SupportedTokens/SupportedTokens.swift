@@ -8,8 +8,4 @@
 import Foundation
 import RxCocoa
 
-struct SupportedTokens {
-    enum NavigatableScene {
-        case detail
-    }
-}
+struct SupportedTokens {}

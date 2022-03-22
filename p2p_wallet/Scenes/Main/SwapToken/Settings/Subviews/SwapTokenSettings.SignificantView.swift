@@ -9,18 +9,12 @@ import UIKit
 
 extension SwapTokenSettings {
     final class SignificantView: ScrollableVStackRootView {
-        // MARK: - Properties
-
-        private let viewModel: NewSwapTokenSettingsViewModelType
-
         // MARK: - Subviews
 
         private let slippageView: SlippageView
         private let feesView: FeesView
 
         init(viewModel: NewSwapTokenSettingsViewModelType) {
-            self.viewModel = viewModel
-
             slippageView = SlippageView(viewModel: viewModel)
             feesView = FeesView(viewModel: viewModel)
 
