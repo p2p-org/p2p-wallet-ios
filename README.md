@@ -9,7 +9,7 @@ P2P Wallet on Solana blockchain
 - [x] Send SOL, SPL tokens and renBTC via name or address
 - [x] Receive SOL, SPL tokens and renBTC
 - [x] Swap SOL and SPL tokens (powered by Orca)
-- [ ] Buy tokens (moonpay)
+- [x] Buy tokens (moonpay)
 
 ## Requirements
 
