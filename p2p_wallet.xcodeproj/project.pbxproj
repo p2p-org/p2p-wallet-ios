@@ -199,6 +199,7 @@
 		84699A514766BA921F1CEBBB /* VisibleWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699A6A04BAA3E42E18DB52 /* VisibleWalletCell.swift */; };
 		84699AF5B3069ECD1CBDE3B5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990F92D4739D72B04E397 /* Utils.swift */; };
 		84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D5BC06C25591CFA36D /* WLWebView.swift */; };
+		84699AFF5091E0304EC6CA9C /* Keyphrase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992F9B16CDB1281124049 /* Keyphrase.swift */; };
 		84699B13FA126D0F569A19A8 /* Banner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699F6B05B92BB60E73037B /* Banner.swift */; };
 		84699B60E46C2AE4B6243CC2 /* Moonpay.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699B6A026CF93F30D6510E /* Moonpay.Model.swift */; };
 		84699B7B4EDF7C7538DBE0A1 /* Home.BalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998DE3DDA2311FDCDC27F /* Home.BalanceView.swift */; };
@@ -725,6 +726,7 @@
 		84699278391D27DF0EB6406C /* Authentication.BiometricButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authentication.BiometricButton.swift; sourceTree = "<group>"; };
 		846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.ViewModel.swift; sourceTree = "<group>"; };
 		846992CDA843C0A10ABB2B6C /* NewTabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NewTabBar.swift; sourceTree = "<group>"; };
+		846992F9B16CDB1281124049 /* Keyphrase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keyphrase.swift; sourceTree = "<group>"; };
 		8469932EA412472FEEE08702 /* Home.BannerViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BannerViewModel.swift; sourceTree = "<group>"; };
 		846993534B18B8841213679D /* BuyRoot.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.ViewController.swift; sourceTree = "<group>"; };
 		8469935E58251A19EB02F459 /* MoonpayExchangeService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonpayExchangeService.swift; sourceTree = "<group>"; };
@@ -2380,6 +2382,7 @@
 				846995C83F49475E5FA6674B /* Banner */,
 				846993CD4CD0FE97413DF87A /* Buy */,
 				84699749F4080DAC34D69470 /* Defaults+WorkAround.swift */,
+				846992F9B16CDB1281124049 /* Keyphrase.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -3590,6 +3593,7 @@
 				84699F1F56756CE9EBB99B98 /* TokenSelection.swift in Sources */,
 				84699E4D8F94698F85066761 /* Authentication.BiometricButton.swift in Sources */,
 				8469953818C371B311A366C6 /* Defaults+WorkAround.swift in Sources */,
+				84699AFF5091E0304EC6CA9C /* Keyphrase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
