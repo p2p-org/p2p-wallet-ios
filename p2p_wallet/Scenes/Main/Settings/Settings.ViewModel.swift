@@ -161,6 +161,18 @@ extension Settings.ViewModel: SettingsViewModelType {
         fiatSubject.asDriver()
     }
 
+    var endpointDriver: Driver<SolanaSDK.APIEndPoint> {
+        endpointSubject.asDriver()
+    }
+
+    var securityMethodsDriver: Driver<[String]> {
+        securityMethodsSubject.asDriver()
+    }
+
+    var themeDriver: Driver<UIUserInterfaceStyle?> {
+        themeSubject.asDriver()
+    }
+
     var hideZeroBalancesDriver: Driver<Bool> {
         hideZeroBalancesSubject.asDriver()
     }
