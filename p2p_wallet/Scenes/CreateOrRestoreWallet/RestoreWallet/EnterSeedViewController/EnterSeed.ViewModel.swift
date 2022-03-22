@@ -36,7 +36,6 @@ extension EnterSeed {
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let mainButtonContentSubject = BehaviorRelay<EnterSeed.MainButtonContent>(value: .invalid(.empty))
-        private let mainButtonIsEnabledSubject = BehaviorRelay<Bool>(value: false)
 
         let seedTextSubject = BehaviorRelay<String?>(value: nil)
 
@@ -101,10 +100,6 @@ extension EnterSeed.ViewModel: EnterSeedViewModelType {
 
     var mainButtonContentDriver: Driver<EnterSeed.MainButtonContent> {
         mainButtonContentSubject.asDriver()
-    }
-
-    var mainButtonIsActive: Driver<Bool> {
-        mainButtonIsEnabledSubject.asDriver()
     }
 
     // MARK: - Actions
