@@ -6,6 +6,20 @@
 	objectVersion = 51;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		3BFD4E3D27E9A5E900C0388F /* Detect Unused Code */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3BFD4E4027E9A5E900C0388F /* Build configuration list for PBXAggregateTarget "Detect Unused Code" */;
+			buildPhases = (
+				3BFD4E4127E9A60400C0388F /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Detect Unused Code";
+			productName = "Detect Unused Code";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */; };
@@ -2855,6 +2869,9 @@
 				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
+					3BFD4E3D27E9A5E900C0388F = {
+						CreatedOnToolsVersion = 13.0;
+					};
 					BCB2231425412AF8002D997F = {
 						CreatedOnToolsVersion = 12.0.1;
 					};
@@ -2877,6 +2894,7 @@
 			projectRoot = "";
 			targets = (
 				BCB2231425412AF8002D997F /* p2p_wallet */,
+				3BFD4E3D27E9A5E900C0388F /* Detect Unused Code */,
 			);
 		};
 /* End PBXProject section */
@@ -2962,6 +2980,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#!/bin/bash\n#\n# Run SwiftLint\n\nSTART_DATE=$(date +\"%s\")\n\nSWIFT_LINT=/usr/local/bin/swiftlint\nSWIFT_FORMAT=/usr/local/bin/swiftformat\n\nif [[ -e \"${SWIFT_LINT}\" ]]; then\n    echo \"[I] Found SwiftLint at ${SWIFT_LINT}\"\nelse\n    echo \"[!] Local SwiftLint not found at ${SWIFT_LINT}\"\n    export SWIFT_LINT=${PWD}/Pods/SwiftLint/swiftlint\n    echo \"[I] Try to using SwiftLint from cocoapods at ${SWIFT_LINT}\"\nfi\n\nif [[ -e \"${SWIFT_FORMAT}\" ]]; then\n    echo \"[I] Found SwiftFormat at ${SWIFT_FORMAT}\"\nelse\n    echo \"[!] Local SwiftFormat not found at ${SWIFT_FORMAT}\"\n    export SWIFT_FORMAT=${PWD}/Pods/SwiftFormat/CommandLineTool/swiftformat\n    echo \"[I] Try to using SwiftFormat from cocoapods at ${SWIFT_FORMAT}\"\nfi\n\nif [[ ! -e \"${SWIFT_LINT}\" ]]; then\n    echo \"[!] SwifLint is not installed.\"\n    echo \"[!] Expected location is '${SWIFT_LINT}'\"\n    echo \"[!] Please install it. eg. 'brew install swiftlint'\"\n    echo \"[!] Or using via Cocoapods by 'pod 'SwiftLint'' in your Podfile\"\n    exit 1\nfi\n\necho \"[I] SwiftLint version: $(${SWIFT_LINT} version)\"\n\nif [[ ! -e \"${SWIFT_FORMAT}\" ]]; then\n    echo \"[!] SwiftFormat is not installed.\"\n    echo \"[!] Expected location is '${SWIFT_LINT}'\"\n    echo \"[!] Please install it. eg. 'brew install swiftformat'\"\n    echo \"[!] Or using via Cocoapods by 'pod 'SwiftFormat/CLI'' in your Podfile\"\n    exit 1\nfi\n\necho \"[I] SwiftFormat version: $(${SWIFT_FORMAT} --version)\"\n\n# Run for unstaged, staged, new files, excluded for deleted files\ngit diff --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\ngit diff --cached --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\ngit ls-files --others --exclude-standard -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\nEND_DATE=$(date +\"%s\")\n\nDIFF=$(($END_DATE - $START_DATE))\necho \"SwiftLint took $(($DIFF / 60)) minutes and $(($DIFF % 60)) seconds to complete.\"\n";
+		};
+		3BFD4E4127E9A60400C0388F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PWD}/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace --schemes p2p_wallet --targets p2p_wallet --format xcode\n";
 		};
 		3F0DFDEF46907C0993E62949 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3598,6 +3633,22 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		3BFD4E3E27E9A5E900C0388F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		3BFD4E3F27E9A5E900C0388F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		BCB2233D25412AF9002D997F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BC4B9E732713EE57005B9ECA /* Config.xcconfig */;
@@ -3819,6 +3870,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3BFD4E4027E9A5E900C0388F /* Build configuration list for PBXAggregateTarget "Detect Unused Code" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3BFD4E3E27E9A5E900C0388F /* Debug */,
+				3BFD4E3F27E9A5E900C0388F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		BCB2231025412AF8002D997F /* Build configuration list for PBXProject "p2p_wallet" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
