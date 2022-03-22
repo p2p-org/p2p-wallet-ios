@@ -163,15 +163,7 @@ extension ReceiveToken {
 }
 
 extension Reactive where Base: ReceiveToken.QrCodeCard {
-    var username: Binder<String?> {
-        Binder(base) { view, username in view.username = username }
-    }
-
     var pubKey: Binder<String?> {
         Binder(base) { view, pubKey in view.pubKey = pubKey }
-    }
-
-    var token: Binder<SolanaSDK.Token?> {
-        Binder(base) { view, token in view.token = token }
     }
 }
