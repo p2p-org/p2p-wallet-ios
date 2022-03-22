@@ -110,8 +110,7 @@ extension ReceiveToken {
                                 .disposed(by: disposeBag)
                         }
                     ReceiveBitcoinView(
-                        viewModel: viewModel.receiveBitcoinViewModel,
-                        receiveSolanaViewModel: viewModel.receiveSolanaViewModel
+                        viewModel: viewModel.receiveBitcoinViewModel
                     )
                     .setup { view in
                         viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden)
@@ -210,7 +209,7 @@ extension ReceiveToken.ViewController {
             present(vc, animated: true)
         case .showRenBTCReceivingStatus:
             let vm = RenBTCReceivingStatuses.ViewModel(receiveBitcoinViewModel: viewModel.receiveBitcoinViewModel)
-            let vc = RenBTCReceivingStatuses.NewViewController(viewModel: vm)
+            let vc = RenBTCReceivingStatuses.ViewController(viewModel: vm)
             show(vc, sender: nil)
         case let .share(address, qrCode):
             guard let qrCode = qrCode, let address = address else {

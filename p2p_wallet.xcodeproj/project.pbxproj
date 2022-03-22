@@ -387,15 +387,6 @@
 		BC65E004261D711900E436C7 /* TransactionsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E003261D711900E436C7 /* TransactionsViewModel.swift */; };
 		BC65E037261D72B200E436C7 /* TransactionsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E036261D72B200E436C7 /* TransactionsRepository.swift */; };
 		BC65E03E261DA5ED00E436C7 /* TransactionsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E03D261DA5ED00E436C7 /* TransactionsCollectionView.swift */; };
-		BC65E170261E9FB600E436C7 /* Defi.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E16F261E9FB600E436C7 /* Defi.swift */; };
-		BC65E17A261EA0A300E436C7 /* NewsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E179261EA0A300E436C7 /* NewsViewModel.swift */; };
-		BC65E17F261EA0AC00E436C7 /* DefisViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E17E261EA0AC00E436C7 /* DefisViewModel.swift */; };
-		BC65E18B261EA24C00E436C7 /* InvestmentsCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E18A261EA24C00E436C7 /* InvestmentsCollectionView.swift */; };
-		BC65E191261EA4B100E436C7 /* NewsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E190261EA4B100E436C7 /* NewsSection.swift */; };
-		BC65E196261EA58F00E436C7 /* DefisSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E195261EA58F00E436C7 /* DefisSection.swift */; };
-		BC65E19D261EA75600E436C7 /* InvestmentsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E19A261EA75600E436C7 /* InvestmentsViewModel.swift */; };
-		BC65E19E261EA75600E436C7 /* InvestmentsRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E19B261EA75600E436C7 /* InvestmentsRootView.swift */; };
-		BC65E19F261EA75600E436C7 /* InvestmentsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E19C261EA75600E436C7 /* InvestmentsViewController.swift */; };
 		BC65E27F2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E27E2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift */; };
 		BC65E9B92542B98D005F50CE /* BaseVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9B82542B98D005F50CE /* BaseVC.swift */; };
 		BC65E9C12542BA1D005F50CE /* BaseVStackVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */; };
@@ -519,9 +510,6 @@
 		BCCF23C826FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCCF23C726FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift */; };
 		BCD3CB5A27586C31002F3C06 /* SendToken.ConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */; };
 		BCD5E74925512D2500F51299 /* SectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E74825512D2500F51299 /* SectionHeaderView.swift */; };
-		BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E76425512EDC00F51299 /* NewsCell.swift */; };
-		BCD5E770255130DD00F51299 /* News.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E76F255130DD00F51299 /* News.swift */; };
-		BCD5E7962551332200F51299 /* DefiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E7952551332200F51299 /* DefiCell.swift */; };
 		BCD5E82425525C6E00F51299 /* WalletsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD5E82325525C6E00F51299 /* WalletsViewModel.swift */; };
 		BCDABE7826FC6E2400E083B8 /* WLIndicatorModalFlexibleHeightVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDABE7726FC6E2400E083B8 /* WLIndicatorModalFlexibleHeightVC.swift */; };
 		BCDABE7C26FC7E1C00E083B8 /* WLOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCDABE7B26FC7E1C00E083B8 /* WLOptionsView.swift */; };
@@ -958,15 +946,6 @@
 		BC65E003261D711900E436C7 /* TransactionsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsViewModel.swift; sourceTree = "<group>"; };
 		BC65E036261D72B200E436C7 /* TransactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsRepository.swift; sourceTree = "<group>"; };
 		BC65E03D261DA5ED00E436C7 /* TransactionsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsCollectionView.swift; sourceTree = "<group>"; };
-		BC65E16F261E9FB600E436C7 /* Defi.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defi.swift; sourceTree = "<group>"; };
-		BC65E179261EA0A300E436C7 /* NewsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsViewModel.swift; sourceTree = "<group>"; };
-		BC65E17E261EA0AC00E436C7 /* DefisViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefisViewModel.swift; sourceTree = "<group>"; };
-		BC65E18A261EA24C00E436C7 /* InvestmentsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsCollectionView.swift; sourceTree = "<group>"; };
-		BC65E190261EA4B100E436C7 /* NewsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsSection.swift; sourceTree = "<group>"; };
-		BC65E195261EA58F00E436C7 /* DefisSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefisSection.swift; sourceTree = "<group>"; };
-		BC65E19A261EA75600E436C7 /* InvestmentsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsViewModel.swift; sourceTree = "<group>"; };
-		BC65E19B261EA75600E436C7 /* InvestmentsRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsRootView.swift; sourceTree = "<group>"; };
-		BC65E19C261EA75600E436C7 /* InvestmentsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvestmentsViewController.swift; sourceTree = "<group>"; };
 		BC65E27E2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.ParsedTransaction+Extensions.swift"; sourceTree = "<group>"; };
 		BC65E9B82542B98D005F50CE /* BaseVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVC.swift; sourceTree = "<group>"; };
 		BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVStackVC.swift; sourceTree = "<group>"; };
@@ -1094,9 +1073,6 @@
 		BCCF23C726FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.BurnAndRelease.Service.swift; sourceTree = "<group>"; };
 		BCD3CB5927586C31002F3C06 /* SendToken.ConfirmViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ConfirmViewController.swift; sourceTree = "<group>"; };
 		BCD5E74825512D2500F51299 /* SectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeaderView.swift; sourceTree = "<group>"; };
-		BCD5E76425512EDC00F51299 /* NewsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCell.swift; sourceTree = "<group>"; };
-		BCD5E76F255130DD00F51299 /* News.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = News.swift; sourceTree = "<group>"; };
-		BCD5E7952551332200F51299 /* DefiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefiCell.swift; sourceTree = "<group>"; };
 		BCD5E82325525C6E00F51299 /* WalletsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletsViewModel.swift; sourceTree = "<group>"; };
 		BCDABE7726FC6E2400E083B8 /* WLIndicatorModalFlexibleHeightVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIndicatorModalFlexibleHeightVC.swift; sourceTree = "<group>"; };
 		BCDABE7B26FC7E1C00E083B8 /* WLOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLOptionsView.swift; sourceTree = "<group>"; };
@@ -1983,43 +1959,6 @@
 			path = WalletCells;
 			sourceTree = "<group>";
 		};
-		BC65E174261EA07E00E436C7 /* Cells */ = {
-			isa = PBXGroup;
-			children = (
-				BCD5E76425512EDC00F51299 /* NewsCell.swift */,
-				BCD5E7952551332200F51299 /* DefiCell.swift */,
-			);
-			path = Cells;
-			sourceTree = "<group>";
-		};
-		BC65E178261EA08F00E436C7 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				BC65E179261EA0A300E436C7 /* NewsViewModel.swift */,
-				BC65E17E261EA0AC00E436C7 /* DefisViewModel.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		BC65E183261EA0BB00E436C7 /* InvestmentsCollectionView */ = {
-			isa = PBXGroup;
-			children = (
-				BC65E174261EA07E00E436C7 /* Cells */,
-				BC65E18F261EA4A200E436C7 /* Sections */,
-				BC65E18A261EA24C00E436C7 /* InvestmentsCollectionView.swift */,
-			);
-			path = InvestmentsCollectionView;
-			sourceTree = "<group>";
-		};
-		BC65E18F261EA4A200E436C7 /* Sections */ = {
-			isa = PBXGroup;
-			children = (
-				BC65E190261EA4B100E436C7 /* NewsSection.swift */,
-				BC65E195261EA58F00E436C7 /* DefisSection.swift */,
-			);
-			path = Sections;
-			sourceTree = "<group>";
-		};
 		BC65E9D52542BD1F005F50CE /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
@@ -2555,28 +2494,6 @@
 			path = BurnAndRelease;
 			sourceTree = "<group>";
 		};
-		BCD5E75225512DA800F51299 /* InvestmentsVC */ = {
-			isa = PBXGroup;
-			children = (
-				BCD5E774255130E300F51299 /* Models */,
-				BC65E178261EA08F00E436C7 /* ViewModels */,
-				BC65E183261EA0BB00E436C7 /* InvestmentsCollectionView */,
-				BC65E19A261EA75600E436C7 /* InvestmentsViewModel.swift */,
-				BC65E19B261EA75600E436C7 /* InvestmentsRootView.swift */,
-				BC65E19C261EA75600E436C7 /* InvestmentsViewController.swift */,
-			);
-			path = InvestmentsVC;
-			sourceTree = "<group>";
-		};
-		BCD5E774255130E300F51299 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				BCD5E76F255130DD00F51299 /* News.swift */,
-				BC65E16F261E9FB600E436C7 /* Defi.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
 		BCD83E7D25677673006DD29F /* UIViewControllerAnimatedTransitioning */ = {
 			isa = PBXGroup;
 			children = (
@@ -2708,7 +2625,6 @@
 				BCEB206925E1561200B54FEF /* TabBarVC */,
 				BCBE148B25EF3D100014BCE5 /* Home */,
 				BC4B9E8027142591005B9ECA /* Settings */,
-				BCD5E75225512DA800F51299 /* InvestmentsVC */,
 				846995CF506696ABD99A7488 /* DApps */,
 				BCE3D55725F2127B0092F91B /* WalletDetail */,
 				BCAD1092270411BA0098C697 /* Buy */,
@@ -3113,12 +3029,10 @@
 				BCB28699274B89670074E1D5 /* WalletDetail.HistoryViewController.swift in Sources */,
 				BCEB206C25E1561200B54FEF /* TabBarVC.swift in Sources */,
 				BC80203E26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift in Sources */,
-				BC65E19E261EA75600E436C7 /* InvestmentsRootView.swift in Sources */,
 				41F447702779B7FE00BFC46D /* SwapTokenSettings.SeparatorView.swift in Sources */,
 				3B01DFBC27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift in Sources */,
 				BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */,
 				BC65E004261D711900E436C7 /* TransactionsViewModel.swift in Sources */,
-				BC65E19D261EA75600E436C7 /* InvestmentsViewModel.swift in Sources */,
 				BCB286E72754C2B40074E1D5 /* WLSegmentedPagesVC.swift in Sources */,
 				BC65E27F2620341B00E436C7 /* SolanaSDK.ParsedTransaction+Extensions.swift in Sources */,
 				41DE53CC2797A5CC00F24B0B /* ColorfulRadialGradientView.swift in Sources */,
@@ -3143,7 +3057,6 @@
 				3BFA644B27D888BE001CA631 /* TransactionDetail.FromToSection.swift in Sources */,
 				BC46075A266F325500A12E07 /* WalletDetail.swift in Sources */,
 				BC8F676B26083B18002FDCCD /* WLPhrasesTextView.swift in Sources */,
-				BC65E191261EA4B100E436C7 /* NewsSection.swift in Sources */,
 				BCB286A3274C99870074E1D5 /* WLFloatingPanelView.swift in Sources */,
 				BC4B9E9B27153F8D005B9ECA /* Settings.SelectNetworkViewController.swift in Sources */,
 				BC123E8425B181D80043178E /* Locale+Extensions.swift in Sources */,
@@ -3162,7 +3075,6 @@
 				410DCFB4276C8251004EA4D6 /* ReserveNameKind.swift in Sources */,
 				BC1FFED3262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewController.swift in Sources */,
 				BC65E03E261DA5ED00E436C7 /* TransactionsCollectionView.swift in Sources */,
-				BC65E196261EA58F00E436C7 /* DefisSection.swift in Sources */,
 				41CA057C27548C9900953322 /* AgreeTermsAndPolicyView.swift in Sources */,
 				41BDBD6027A8E15300000EF7 /* ReceiveToken.ExplorerButton.swift in Sources */,
 				BC18CAA3263272D70054E624 /* SolanaSDK.WrappingToken+Extensions.swift in Sources */,
@@ -3246,9 +3158,7 @@
 				4114D16C2746272400352CDF /* EnterSeedInfo.ViewModel.swift in Sources */,
 				3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */,
 				3BCEED5F27D475BC00BA9110 /* TransactionHandler+Extensions.swift in Sources */,
-				BC65E170261E9FB600E436C7 /* Defi.swift in Sources */,
 				41CA05752754725200953322 /* ReserveName.swift in Sources */,
-				BCD5E770255130DD00F51299 /* News.swift in Sources */,
 				BCE42DE525DF9BDA0021540E /* CreateOrRestoreWallet.ViewModel.swift in Sources */,
 				41461B832772275A004C12D9 /* SwapTokenSettings.SegmentedControl.swift in Sources */,
 				4183007C2758A489007BBEBF /* OrcaSwapV2.ShowDetailsButton.swift in Sources */,
@@ -3280,7 +3190,6 @@
 				3B3A8EF827D7B58E0026E0FE /* TapAndHoldView.swift in Sources */,
 				412DBFDF273D7B81000F514E /* EnterSeed.RootView.swift in Sources */,
 				BC699AB425F9DE3400F57209 /* WLRadioButton.swift in Sources */,
-				BC65E17A261EA0A300E436C7 /* NewsViewModel.swift in Sources */,
 				BCE77E6326536817000B68BB /* DerivableAccounts.ViewController.swift in Sources */,
 				BCB2231925412AF8002D997F /* AppDelegate.swift in Sources */,
 				414C365D277502C1007B2194 /* SwapTokenSettings.DescriptionView.swift in Sources */,
@@ -3371,7 +3280,6 @@
 				BCFEDC032727F860008AE4AD /* OrcaSwapV2ViewModelType.swift in Sources */,
 				BCDABE7C26FC7E1C00E083B8 /* WLOptionsView.swift in Sources */,
 				BC3B3DAA258C653000C6117E /* WLIndicatorModalVC (Old design).swift in Sources */,
-				BC65E18B261EA24C00E436C7 /* InvestmentsCollectionView.swift in Sources */,
 				4114D16D2746272400352CDF /* EnterSeedInfo.RootView.swift in Sources */,
 				3B87A157276357AC00F09883 /* OrcaSwapV2.WalletView.swift in Sources */,
 				BC4B9EBD27191843005B9ECA /* OrcaSwapV2.ViewController.swift in Sources */,
@@ -3390,7 +3298,6 @@
 				BCC1F212269ED30A003DD648 /* PrimitiveSequence+Extensions.swift in Sources */,
 				BC15EEF026FDD04600F30605 /* DerivableAccounts.swift in Sources */,
 				BC6EE7C5254BBEC000FE1025 /* Onboarding.EnableNotificationsVC.swift in Sources */,
-				BCD5E7962551332200F51299 /* DefiCell.swift in Sources */,
 				BC2297982700A578003F7118 /* RestoreICloud.Cell.swift in Sources */,
 				BC7B2C7025E384F700833656 /* CreateSecurityKeys.ViewModel.swift in Sources */,
 				4114D16F274633DE00352CDF /* EnterSeedInfo.NavigationBar.swift in Sources */,
@@ -3398,7 +3305,6 @@
 				BCEA06C3254301A70006E4C3 /* Strings+Generated.swift in Sources */,
 				BCE04C33268C5D8A00CE131A /* BackupShowPhrasesVC.swift in Sources */,
 				BC460762266F40F400A12E07 /* Root.swift in Sources */,
-				BC65E19F261EA75600E436C7 /* InvestmentsViewController.swift in Sources */,
 				BC0978E825AEDEE200DB02E9 /* ResizablePresentationController.swift in Sources */,
 				BC22A5E825D2726700F7026D /* ScrollableVStackRootView.swift in Sources */,
 				BCB286F82754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel.swift in Sources */,
@@ -3427,7 +3333,6 @@
 				BC2EC1BA2553EC7D006EEDA5 /* UIView+Extensions.swift in Sources */,
 				BCE42DE725DF9BDA0021540E /* CreateOrRestoreWallet.ViewController.swift in Sources */,
 				BCAF1A7026F44CE8001851F6 /* RenVM.LockAndMint.Service.swift in Sources */,
-				BC65E17F261EA0AC00E436C7 /* DefisViewModel.swift in Sources */,
 				BCE04C69268D901400CE131A /* ModalPresentationController.swift in Sources */,
 				41CA05782754725200953322 /* ReserveName.RootView.swift in Sources */,
 				BCB287042755DD940074E1D5 /* SendToken.NetworkView.swift in Sources */,
@@ -3467,7 +3372,6 @@
 				BC460763266F40F400A12E07 /* Root.ViewController.swift in Sources */,
 				BCB7C7E22669E50B00FEC68E /* TransactionSummaryView.swift in Sources */,
 				41DD026F2760B57C00545A73 /* BottomFixedView.swift in Sources */,
-				BCD5E76525512EDC00F51299 /* NewsCell.swift in Sources */,
 				BC5A97E2260DC977009674C4 /* WalletsCollectionView.swift in Sources */,
 				BC22979A2700AB07003F7118 /* Account.swift in Sources */,
 				BC19DF532701A24E00A3A8D8 /* WLBalanceView.swift in Sources */,
