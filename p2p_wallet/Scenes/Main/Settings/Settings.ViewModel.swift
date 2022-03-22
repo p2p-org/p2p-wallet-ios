@@ -28,9 +28,6 @@ protocol SettingsViewModelType: ReserveNameHandler {
     var usernameDriver: Driver<String?> { get }
     var didBackupDriver: Driver<Bool> { get }
     var fiatDriver: Driver<Fiat> { get }
-    var endpointDriver: Driver<SolanaSDK.APIEndPoint> { get }
-    var securityMethodsDriver: Driver<[String]> { get }
-    var themeDriver: Driver<UIUserInterfaceStyle?> { get }
     var hideZeroBalancesDriver: Driver<Bool> { get }
     var logoutAlertSignal: Signal<Void> { get }
     var biometryTypeDriver: Driver<Settings.BiometryType> { get }
