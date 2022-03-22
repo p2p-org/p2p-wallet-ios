@@ -13,7 +13,6 @@ import UIKit
 extension OrcaSwapV2 {
     final class DetailFeesView: BECompositionView {
         private let feesDriver: Driver<Loadable<[PayingFee]>>
-        private let disposeBag = DisposeBag()
         var clickHandler: ((PayingFee) -> Void)?
 
         init(feesDriver: Driver<Loadable<[PayingFee]>>) {
