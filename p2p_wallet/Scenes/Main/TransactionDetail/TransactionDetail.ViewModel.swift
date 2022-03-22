@@ -27,9 +27,7 @@ protocol TransactionDetailViewModelType: AnyObject {
 
     func copyTransactionIdToClipboard()
     func copySourceAddressToClipboard()
-    func copySourceNameToClipboard()
     func copyDestinationAddressToClipboard()
-    func copyDestinationNameToClipboard()
 }
 
 extension TransactionDetail {
@@ -235,12 +233,6 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
 
-    func copySourceNameToClipboard() {
-        guard let name = senderNameSubject.value else { return }
-        clipboardManager.copyToClipboard(name)
-        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
-    }
-
     func copyDestinationAddressToClipboard() {
         let destinationAddress: String?
         switch parsedTransationSubject.value?.value {
@@ -255,12 +247,6 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
             return
         }
         clipboardManager.copyToClipboard(destinationAddress)
-        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
-    }
-
-    func copyDestinationNameToClipboard() {
-        guard let name = receiverNameSubject.value else { return }
-        clipboardManager.copyToClipboard(name)
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
 }

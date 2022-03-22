@@ -99,16 +99,6 @@ class CoinLogoImageView: BEView {
             wrappingTokenIcon.image = wrappedBy.image
         }
     }
-
-    func with(wallet: Wallet) -> Self {
-        setUp(wallet: wallet)
-        return self
-    }
-
-    func with(token: SolanaSDK.Token?) -> Self {
-        setUp(token: token)
-        return self
-    }
 }
 
 extension Reactive where Base: CoinLogoImageView {

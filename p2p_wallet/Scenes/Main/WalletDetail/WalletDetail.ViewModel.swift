@@ -14,16 +14,12 @@ protocol WalletDetailViewModelType {
     var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> { get }
     var walletDriver: Driver<Wallet?> { get }
     var walletActionsDriver: Driver<[WalletActionType]> { get }
-    var nativePubkey: Driver<String?> { get }
     var graphViewModel: WalletGraphViewModel { get }
     var transactionsViewModel: TransactionsViewModel { get }
-    var canBuyToken: Bool { get }
 
-    func renameWallet(to newName: String)
     func showWalletSettings()
     func start(action: WalletActionType)
     func showTransaction(_ transaction: SolanaSDK.ParsedTransaction)
-    func tokenDetailsActivityDidScroll(to pageNum: Int)
 }
 
 extension WalletDetail {
@@ -31,9 +27,6 @@ extension WalletDetail {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
-        @Injected private var pricesService: PricesServiceType
-        @Injected private var transactionsRepository: TransactionsRepository
-        @Injected private var notificationsRepository: WLNotificationsRepository
         private let pubkey: String
         private let symbol: String
         @Injected var analyticsManager: AnalyticsManagerType
@@ -150,32 +143,11 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
         walletSubject.asDriver()
     }
 
-    var nativePubkey: Driver<String?> {
-        walletsRepository.dataObservable
-            .map { $0?.first(where: { $0.isNativeSOL }) }
-            .map { $0?.pubkey }
-            .asDriver(onErrorJustReturn: nil)
-    }
-
-    var canBuyToken: Bool { BuyProviderType.default.isSupported(symbol: symbol) }
-
     // MARK: - Actions
 
     func showWalletSettings() {
         guard let pubkey = walletSubject.value?.pubkey else { return }
         navigatableSceneSubject.accept(.settings(walletPubkey: pubkey))
-    }
-
-    func renameWallet(to newName: String) {
-        guard let wallet = walletSubject.value else { return }
-
-        var newName = newName
-        if newName.isEmpty {
-            // fall back to wallet name
-            newName = wallet.name
-        }
-
-        walletsRepository.updateWallet(wallet, withName: newName)
     }
 
     func start(action: WalletActionType) {
@@ -194,9 +166,5 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
     func showTransaction(_ transaction: SolanaSDK.ParsedTransaction) {
         analyticsManager.log(event: .tokenDetailsDetailsOpen)
         navigatableSceneSubject.accept(.transactionInfo(transaction))
-    }
-
-    func tokenDetailsActivityDidScroll(to pageNum: Int) {
-        analyticsManager.log(event: .tokenDetailsActivityScroll(pageNum: pageNum))
     }
 }

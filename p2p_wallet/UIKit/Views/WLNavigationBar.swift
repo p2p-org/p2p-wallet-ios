@@ -70,10 +70,6 @@ class WLNavigationBar: BEView {
 
         backgroundColor = .background
     }
-
-    func setTitle(_ title: String?) {
-        titleLabel.text = title
-    }
 }
 
 class NewWLNavigationBar: BECompositionView {

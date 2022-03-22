@@ -13,7 +13,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     private let feeRelayApi: FeeRelayerAPIClientType
     private let orcaSwap: OrcaSwapType
     private var relayService: FeeRelayerRelayType?
-    @Injected var notification: NotificationsServiceType
 
     init(
         solanaClient: SolanaSDK,
@@ -43,10 +42,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         } catch {
             return .error(error)
         }
-    }
-
-    func getSwapInfo(from _: SolanaSDK.Token, to _: SolanaSDK.Token) -> Swap.SwapInfo {
-        .init(payingTokenMode: .any)
     }
 
     func getPoolPair(
@@ -106,7 +101,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             }
     }
 
-    public func findPosibleDestinationMints(fromMint: String) throws -> [String] {
+    func findPosibleDestinationMints(fromMint: String) throws -> [String] {
         try orcaSwap.findPosibleDestinationMints(fromMint: fromMint)
     }
 
