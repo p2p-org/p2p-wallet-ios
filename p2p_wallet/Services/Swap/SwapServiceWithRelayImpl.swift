@@ -313,7 +313,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                     type: .transactionFee,
                     lamports: neededTopUpAmount.transaction,
                     token: payingWallet.token,
-                    toString: nil,
                     isFree: isFree,
                     info: info
                 )

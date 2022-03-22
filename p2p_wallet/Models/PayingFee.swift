@@ -33,21 +33,11 @@ struct PayingFee {
                 return L10n.depositWillBeReturned
             }
         }
-
-        var isNetworkFee: Bool {
-            switch self {
-            case .transactionFee, .accountCreationFee:
-                return true
-            default:
-                return false
-            }
-        }
     }
 
     let type: FeeType
     let lamports: SolanaSDK.Lamports
     let token: SolanaSDK.Token
-    var toString: (() -> String?)?
 
     let isFree: Bool
     let info: Info?
@@ -55,14 +45,12 @@ struct PayingFee {
     init(
         type: FeeType,
         lamports: SolanaSDK.Lamports,
-        token: SolanaSDK.Token,
-        toString: (() -> String?)? = nil
+        token: SolanaSDK.Token
     ) {
         self.type = type
         self.lamports = lamports
         self.token = token
         isFree = false
-        self.toString = toString
         info = nil
     }
 
@@ -70,14 +58,12 @@ struct PayingFee {
         type: FeeType,
         lamports: SolanaSDK.Lamports,
         token: SolanaSDK.Token,
-        toString: (() -> String?)?,
         isFree: Bool,
         info: Info?
     ) {
         self.type = type
         self.lamports = lamports
         self.token = token
-        self.toString = toString
         self.isFree = isFree
         self.info = info
     }
@@ -90,22 +76,6 @@ struct PayingFee {
 }
 
 extension Array where Element == PayingFee {
-    @available(*, deprecated, message: "Don't use this methods any more")
-    var totalFee: (lamports: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
-        // exclude liquidityProviderFee
-        let array = filter { $0.type != .liquidityProviderFee }
-
-        guard !array.isEmpty,
-              let token = array.first?.token
-        else {
-            return nil
-        }
-
-        let lamports = array.reduce(SolanaSDK.Lamports(0)) { $0 + $1.lamports }
-
-        return (lamports: lamports, token: token)
-    }
-
     var networkFees: SolanaSDK.FeeAmount? {
         var transactionFee: UInt64?
         var accountCreationFee: UInt64?
