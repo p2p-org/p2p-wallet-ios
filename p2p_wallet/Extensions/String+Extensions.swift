@@ -16,11 +16,6 @@ extension Optional where Wrapped == String {
     static func + (left: String?, right: String?) -> String {
         left.orEmpty + right.orEmpty
     }
-
-    var double: Double? {
-        guard let string = self else { return nil }
-        return string.double
-    }
 }
 
 extension String {
@@ -34,18 +29,6 @@ extension String {
 
     public func onlyUppercaseFirst() -> String {
         lowercased().uppercaseFirst
-    }
-
-    subscript(bounds: CountableClosedRange<Int>) -> String {
-        let start = index(startIndex, offsetBy: bounds.lowerBound)
-        let end = index(startIndex, offsetBy: bounds.upperBound)
-        return String(self[start ... end])
-    }
-
-    subscript(bounds: CountableRange<Int>) -> String {
-        let start = index(startIndex, offsetBy: bounds.lowerBound)
-        let end = index(startIndex, offsetBy: bounds.upperBound)
-        return String(self[start ..< end])
     }
 
     // swiftlint:disable swiftgen_strings

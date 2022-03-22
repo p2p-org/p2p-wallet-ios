@@ -49,16 +49,4 @@ class WLSectionHeaderView: UICollectionReusableView {
             completion?()
         }
     }
-
-    func setUp(
-        headerTitle: String,
-        headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold),
-        headerColor: UIColor? = nil
-    ) {
-        headerLabel.text = headerTitle
-        headerLabel.font = headerFont
-        if let color = headerColor {
-            headerLabel.textColor = color
-        }
-    }
 }
