@@ -25,11 +25,6 @@ extension OrcaSwapV2 {
             fatalError("init(coder:) has not been implemented")
         }
 
-        fileprivate func setState(isShown: Bool) {
-            textLabel.text = isShown ? L10n.hideDetails : L10n.showDetails
-            arrowView.image = isShown ? .chevronUp : .chevronDown
-        }
-
         private func layout() {
             let stackView = UIStackView(axis: .horizontal, spacing: 4) {
                 textLabel
@@ -42,14 +37,6 @@ extension OrcaSwapV2 {
 
             stackView.autoAlignAxis(toSuperviewAxis: .vertical)
             stackView.autoAlignAxis(toSuperviewAxis: .horizontal)
-        }
-    }
-}
-
-extension Reactive where Base == OrcaSwapV2.ShowDetailsButton {
-    var isShown: Binder<Bool> {
-        Binder(base) { view, isShown in
-            view.setState(isShown: isShown)
         }
     }
 }
