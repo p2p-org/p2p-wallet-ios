@@ -21,14 +21,6 @@ extension UIApplication {
         kWindow?.hideHud()
     }
 
-    func showLoadingIndicatorView(isBlocking: Bool = true) {
-        kWindow?.showLoadingIndicatorView(isBlocking: isBlocking)
-    }
-
-    func hideLoadingIndicatorView() {
-        kWindow?.hideLoadingIndicatorView()
-    }
-
     func openAppSettings() {
         if let bundleIdentifier = Bundle.main.bundleIdentifier,
            let appSettings = URL(string: UIApplication.openSettingsURLString + bundleIdentifier)
