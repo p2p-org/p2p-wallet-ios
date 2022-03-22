@@ -19,15 +19,12 @@ protocol HomeViewModelType {
     var bannerViewModel: Home.BannerViewModel { get }
 
     func navigate(to scene: Home.NavigatableScene?)
-    func navigateToScanQrCodeWithSwiper(progress: CGFloat, swiperState: UIGestureRecognizer.State)
 }
 
 extension Home {
     class ViewModel {
         // MARK: - Dependencies
 
-        @Injected var storage: AccountStorageType & NameStorageType
-        @Injected var notificationsService: NotificationsServiceType
         @Injected var walletsRepository: WalletsRepository
         @Injected var pricesService: PricesServiceType
         let bannerViewModel = BannerViewModel(service: Resolver.resolve())
@@ -60,9 +57,5 @@ extension Home.ViewModel: HomeViewModelType {
 
     func navigate(to scene: Home.NavigatableScene?) {
         navigationSubject.accept(scene)
-    }
-
-    func navigateToScanQrCodeWithSwiper(progress: CGFloat, swiperState: UIGestureRecognizer.State) {
-        navigationSubject.accept(.scanQrWithSwiper(progress: progress, state: swiperState))
     }
 }
