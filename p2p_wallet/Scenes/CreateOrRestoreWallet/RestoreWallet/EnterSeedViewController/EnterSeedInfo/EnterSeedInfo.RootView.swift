@@ -10,11 +10,7 @@ import UIKit
 
 extension EnterSeedInfo {
     class RootView: BEView {
-        // MARK: - Constants
-
-        let disposeBag = DisposeBag()
-
-        // MARK: - Properties
+        // MARK: - Dependencies
 
         private let viewModel: EnterSeedInfoViewModelType
 

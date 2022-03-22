@@ -364,7 +364,6 @@
 		BC5257E725CBACEA0076317E /* Fiat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257E625CBACEA0076317E /* Fiat.swift */; };
 		BC5257FE25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */; };
 		BC534D6C2738C9B500BF1750 /* WLStepButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC534D6B2738C9B500BF1750 /* WLStepButton.swift */; };
-		BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */; };
 		BC53E2202654BFAA005624CC /* DerivablePaths.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */; };
 		BC53E2222654C018005624CC /* DerivableAccounts.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E2212654C018005624CC /* DerivableAccounts.Cell.swift */; };
 		BC53E2242654ECCD005624CC /* DerivableAccounts.ListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC53E2232654ECCD005624CC /* DerivableAccounts.ListViewModel.swift */; };
@@ -933,7 +932,6 @@
 		BC5257E625CBACEA0076317E /* Fiat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fiat.swift; sourceTree = "<group>"; };
 		BC5257FD25CBBFD40076317E /* CryptoComparePricesFetcher+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CryptoComparePricesFetcher+Models.swift"; sourceTree = "<group>"; };
 		BC534D6B2738C9B500BF1750 /* WLStepButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLStepButton.swift; sourceTree = "<group>"; };
-		BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.Cell.swift; sourceTree = "<group>"; };
 		BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.ViewModel.swift; sourceTree = "<group>"; };
 		BC53E2212654C018005624CC /* DerivableAccounts.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.Cell.swift; sourceTree = "<group>"; };
 		BC53E2232654ECCD005624CC /* DerivableAccounts.ListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivableAccounts.ListViewModel.swift; sourceTree = "<group>"; };
@@ -1922,7 +1920,6 @@
 				BC15EEF126FDE10A00F30605 /* DerivablePaths.swift */,
 				BC53E21F2654BFAA005624CC /* DerivablePaths.ViewModel.swift */,
 				BC1255082653A2E400695A2B /* DerivablePaths.ViewController.swift */,
-				BC53E21D2654BF88005624CC /* DerivablePaths.Cell.swift */,
 			);
 			path = DerivablePaths;
 			sourceTree = "<group>";
@@ -3181,7 +3178,6 @@
 				41EB2E6527B23D44007D5F7F /* IntercomStartingConfigurator.swift in Sources */,
 				41DE53D02797BCDD00F24B0B /* WalletActionButton.swift in Sources */,
 				BCC0663C269891E00017B34E /* TransactionsCollectionView.SectionHeaderView.swift in Sources */,
-				BC53E21E2654BF88005624CC /* DerivablePaths.Cell.swift in Sources */,
 				3BCEED5927D32C2600BA9110 /* TransactionHandler.swift in Sources */,
 				BC65E9E32542BE43005F50CE /* String+Extensions.swift in Sources */,
 				BCB286D327508A7E0074E1D5 /* DApp.swift in Sources */,
