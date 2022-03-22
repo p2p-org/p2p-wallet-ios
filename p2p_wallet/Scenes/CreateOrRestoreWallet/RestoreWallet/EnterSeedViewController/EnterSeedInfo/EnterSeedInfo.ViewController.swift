@@ -11,11 +11,13 @@ import UIKit
 extension EnterSeedInfo {
     class ViewController: BaseVC {
         // MARK: - Dependencies
+
         private let viewModel: EnterSeedInfoViewModelType
-        
+
         // MARK: - Properties
-        
+
         // MARK: - Methods
+
         init(viewModel: EnterSeedInfoViewModelType) {
             self.viewModel = viewModel
         }
@@ -23,20 +25,20 @@ extension EnterSeedInfo {
         override func loadView() {
             view = RootView(viewModel: viewModel)
         }
-        
+
         override func setUp() {
             super.setUp()
-            
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .done:

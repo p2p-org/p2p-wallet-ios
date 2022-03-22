@@ -5,8 +5,8 @@
 //  Created by Chung Tran on 08/06/2021.
 //
 
-import Foundation
 import BEPureLayout
+import Foundation
 import RxSwift
 import UIKit
 
@@ -15,39 +15,45 @@ extension WalletDetail {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
-    
+
         // MARK: - Dependencies
+
         private let viewModel: WalletDetailViewModelType
-        
+
         // MARK: - Properties
-        
+
         // MARK: - Subviews
+
         private lazy var navigationBar: WLNavigationBar = {
             let navigationBar = WLNavigationBar(forAutoLayout: ())
             navigationBar.backButton.onTap(self, action: #selector(back))
             #if DEBUG
-            navigationBar.rightItems.addArrangedSubview(
-                UIButton(label: "Settings", textColor: .red)
-                    .onTap {[weak self] in
-                        self?.viewModel.showWalletSettings()
-                    }
-            )
+                navigationBar.rightItems.addArrangedSubview(
+                    UIButton(label: "Settings", textColor: .red)
+                        .onTap { [weak self] in
+                            self?.viewModel.showWalletSettings()
+                        }
+                )
             #endif
             return navigationBar
         }()
+
         private lazy var balanceView = BalanceView(viewModel: viewModel)
         private let actionsView = ColorfulHorizontalView()
-        
+
         // MARK: - Subscene
+
         private lazy var historyVC = HistoryViewController(viewModel: viewModel)
-        
+
         // MARK: - Initializer
+
         init(viewModel: WalletDetailViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
             view.addSubview(navigationBar)
@@ -73,13 +79,13 @@ extension WalletDetail {
 
             add(child: historyVC, to: containerView)
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.walletDriver.map { $0?.token.name }
                 .drive(navigationBar.titleLabel.rx.text)
                 .disposed(by: disposeBag)
-            
+
             viewModel.navigatableSceneDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
@@ -87,37 +93,44 @@ extension WalletDetail {
             viewModel.walletActionsDriver
                 .drive(
                     onNext: { [weak self] in
-                        guard let self = self else  { return }
+                        guard let self = self else { return }
 
                         self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
                     }
                 )
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
-            case .buy(let crypto):
+            case let .buy(crypto):
                 let vm = BuyRoot.ViewModel()
                 let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
                 present(vc, animated: true, completion: nil)
-            case .settings(let pubkey):
+            case let .settings(pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
                 present(vc, animated: true, completion: nil)
-            case .send(let wallet):
-                let vm = SendToken.ViewModel(walletPubkey: wallet.pubkey, destinationAddress: nil, relayMethod: .default)
+            case let .send(wallet):
+                let vm = SendToken.ViewModel(
+                    walletPubkey: wallet.pubkey,
+                    destinationAddress: nil,
+                    relayMethod: .default
+                )
                 let vc = SendToken.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-            case .receive(let pubkey):
-                if let solanaPubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
-                    let tokenWallet = viewModel.walletsRepository.getWallets().first(where: {$0.pubkey == pubkey})
-                    
+            case let .receive(pubkey):
+                if let solanaPubkey = try? SolanaSDK
+                    .PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey)
+                {
+                    let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })
+
                     let isDevnet = Defaults.apiEndPoint.network == .devnet
                     let renBTCMint: SolanaSDK.PublicKey = isDevnet ? .renBTCMintDevnet : .renBTCMint
-                    
+
                     let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
                         $0.token.address == renBTCMint.base58EncodedString
                     })
@@ -130,11 +143,11 @@ extension WalletDetail {
                     let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
                     present(vc, animated: true)
                 }
-            case .swap(let wallet):
+            case let .swap(wallet):
                 let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
                 let vc = OrcaSwapV2.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-            case .transactionInfo(let transaction):
+            case let .transactionInfo(transaction):
                 let vm = TransactionDetail.ViewModel(parsedTransaction: transaction)
                 let vc = TransactionDetail.ViewController(viewModel: vm)
                 show(vc, sender: nil)
@@ -144,12 +157,13 @@ extension WalletDetail {
         }
 
         private func createWalletActionView(actionType: WalletActionType) -> UIView {
-            return WalletActionButton(actionType: actionType) { [weak self] in
+            WalletActionButton(actionType: actionType) { [weak self] in
                 self?.viewModel.start(action: actionType)
             }
         }
-        
+
         // MARK: - Actions
+
         @objc func showWalletSettings() {
             viewModel.showWalletSettings()
         }
@@ -157,7 +171,7 @@ extension WalletDetail {
 }
 
 extension WalletDetail.ViewController: TokenSettingsViewControllerDelegate {
-    func tokenSettingsViewControllerDidCloseToken(_ vc: TokenSettingsViewController) {
+    func tokenSettingsViewControllerDidCloseToken(_: TokenSettingsViewController) {
         dismiss(animated: true, completion: nil)
     }
 }

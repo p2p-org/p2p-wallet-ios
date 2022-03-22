@@ -13,24 +13,24 @@ struct Swap {
     typealias Service = SwapServiceType
     typealias PoolsPair = SwapServicePoolsPair
     typealias Error = SwapError
-    
+
     enum InputMode {
         case source
         case target
     }
-    
+
     enum PayingTokenMode {
         /// Allow to use any token to pay a fee
         case any
         /// Only allow to use native sol to pay a fee
         case onlySol
     }
-    
+
     struct SwapInfo {
         /// This property defines a mode for paying fee.
         let payingTokenMode: PayingTokenMode
     }
-    
+
     struct FeeInfo {
         let fees: [PayingFee]
     }
@@ -131,7 +131,7 @@ protocol SwapServiceType {
         lamportsPerSignature: UInt64,
         minRentExempt: UInt64
     ) -> Single<Swap.FeeInfo>
-    
+
     /**
      Find all possible destination mint addresses.
      - Parameter fromMint:
@@ -141,7 +141,7 @@ protocol SwapServiceType {
     func findPosibleDestinationMints(
         fromMint: String
     ) throws -> [String]
-    
+
     /**
      Calculate amount needed for paying fee in paying token
      */

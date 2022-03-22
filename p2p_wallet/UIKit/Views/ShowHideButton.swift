@@ -5,9 +5,9 @@
 //  Created by Andrew Vasiliev on 20.01.2022.
 //
 
-import UIKit
 import PureLayout
 import RxSwift
+import UIKit
 
 final class ShowHideButton: UIButton {
     private let textLabel = UILabel(textSize: 15, weight: .regular)
@@ -26,7 +26,7 @@ final class ShowHideButton: UIButton {
     }
 
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

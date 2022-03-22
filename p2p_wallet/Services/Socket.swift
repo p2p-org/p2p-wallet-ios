@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 protocol SocketType {
-    var isConnected: Bool {get}
+    var isConnected: Bool { get }
     func subscribeAccountNotification(account: String, isNative: Bool)
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)>
     func observeAccountNotifications(account: String) -> Observable<SolanaSDK.Lamports>
@@ -17,10 +17,10 @@ protocol SocketType {
 
 extension SolanaSDK.Socket: SocketType {
     func observeAccountNotifications(account: String) -> Observable<SolanaSDK.Lamports> {
-        observeAccountNotifications().filter {$0.pubkey == account}
-            .map {$0.lamports}.distinctUntilChanged()
+        observeAccountNotifications().filter { $0.pubkey == account }
+            .map(\.lamports).distinctUntilChanged()
     }
-    
+
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)> {
         observeAccountNotifications()
     }

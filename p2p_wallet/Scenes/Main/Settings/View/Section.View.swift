@@ -5,21 +5,21 @@
 //
 //
 
-import UIKit
-import RxSwift
 import RxCocoa
+import RxSwift
+import UIKit
 
 extension Settings {
     class SectionView: BECompositionView {
         let title: String?
         let children: [UIView]
-        
+
         init(title: String? = nil, @BEViewBuilder builder: Builder) {
             self.title = title
-            self.children = builder()
+            children = builder()
             super.init()
         }
-        
+
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
                 if title != nil {

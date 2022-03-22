@@ -20,17 +20,17 @@ struct SolanaWalletUserInfo: Hashable {
 
 extension SolanaSDK.Wallet {
     var name: String {
-        guard let pubkey = pubkey else {return token.symbol}
+        guard let pubkey = pubkey else { return token.symbol }
         return Defaults.walletName[pubkey] ?? token.symbol
     }
-    
+
     var mintAddress: String {
         token.address
     }
-    
+
     var isHidden: Bool {
-        if token.isNativeSOL {return false}
-        guard let pubkey = self.pubkey else {return false}
+        if token.isNativeSOL { return false }
+        guard let pubkey = pubkey else { return false }
         if Defaults.hiddenWalletPubkey.contains(pubkey) {
             return true
         } else if Defaults.unhiddenWalletPubkey.contains(pubkey) {
@@ -40,7 +40,7 @@ extension SolanaSDK.Wallet {
         }
         return false
     }
-    
+
     var isBeingCreated: Bool? {
         get {
             getParsedUserInfo().isBeingCreated
@@ -51,7 +51,7 @@ extension SolanaSDK.Wallet {
             self.userInfo = userInfo
         }
     }
-    
+
     var creatingError: String? {
         get {
             getParsedUserInfo().creatingError
@@ -62,7 +62,7 @@ extension SolanaSDK.Wallet {
             self.userInfo = userInfo
         }
     }
-    
+
     var isProcessing: Bool? {
         get {
             getParsedUserInfo().isProcessing
@@ -73,7 +73,7 @@ extension SolanaSDK.Wallet {
             self.userInfo = userInfo
         }
     }
-    
+
     var price: CurrentPrice? {
         get {
             getParsedUserInfo().price
@@ -84,37 +84,37 @@ extension SolanaSDK.Wallet {
             self.userInfo = userInfo
         }
     }
-    
+
     var priceInCurrentFiat: Double? {
         price?.value
     }
-    
+
     var amountInCurrentFiat: Double {
         amount * priceInCurrentFiat
     }
-    
+
     mutating func updateVisibility() {
         var userInfo = getParsedUserInfo()
         userInfo._isHidden = isHidden
         self.userInfo = userInfo
     }
-    
+
     mutating func setName(_ name: String) {
         var userInfo = getParsedUserInfo()
         userInfo._customName = name
         self.userInfo = userInfo
     }
-    
+
     func getParsedUserInfo() -> SolanaWalletUserInfo {
         userInfo as? SolanaWalletUserInfo ?? SolanaWalletUserInfo()
     }
-    
+
     mutating func updateBalance(diff: Double) {
-        guard diff != 0 else {return}
-        
+        guard diff != 0 else { return }
+
         let currentBalance = lamports ?? 0
         let reduction = abs(diff).toLamport(decimals: token.decimals)
-        
+
         if diff > 0 {
             lamports = currentBalance + reduction
         } else {
@@ -125,12 +125,12 @@ extension SolanaSDK.Wallet {
             }
         }
     }
-    
+
     mutating func increaseBalance(diffInLamports: SolanaSDK.Lamports) {
         let currentBalance = lamports ?? 0
         lamports = currentBalance + diffInLamports
     }
-    
+
     mutating func decreaseBalance(diffInLamports: SolanaSDK.Lamports) {
         let currentBalance = lamports ?? 0
         if currentBalance >= diffInLamports {

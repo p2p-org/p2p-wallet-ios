@@ -12,25 +12,24 @@ extension Settings {
     class ViewController: BEScene {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         let viewModel: SettingsViewModelType
-        
+
         init(viewModel: SettingsViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
-        
+
         override func setUp() {
             super.setUp()
             view.backgroundColor = .settingsBackground
         }
-        
+
         override func build() -> UIView {
             BEVStack {
                 NewWLNavigationBar(initialTitle: L10n.settings, separatorEnable: false)
                     .onBack { [unowned self] in self.back() }
                     .backIsHidden(!viewModel.canGoBack)
-                
+
                 BEScrollView(contentInsets: .init(x: 18, y: 18), spacing: 36) {
-                    
                     // Acount section
                     SectionView(title: L10n.profile) {
                         // Profile
@@ -46,31 +45,30 @@ extension Settings {
                                     .disposed(by: disposeBag)
                             }
                         )
-                            .onTap { [unowned self] in
-                                if self.viewModel.getUsername() == nil {
-                                    viewModel.showOrReserveUsername()
-                                } else {
-                                    viewModel.navigate(to: .username)
-                                }
+                        .onTap { [unowned self] in
+                            if self.viewModel.getUsername() == nil {
+                                viewModel.showOrReserveUsername()
+                            } else {
+                                viewModel.navigate(to: .username)
                             }
-                        
+                        }
+
                         // Contact
                         // CellView(icon: .contactIcon, title: L10n.contact.onlyUppercaseFirst())
-                        
+
                         // History
                         // CellView(icon: .historyIcon, title: L10n.history.onlyUppercaseFirst())
-                        
+
                         // Sign out button
                         BECenter {
                             UILabel(text: "Sign out", textColor: .ff3b30)
                         }
-                            .frame(height: 60)
-                            .onTap { [unowned self] in viewModel.showLogoutAlert() }
+                        .frame(height: 60)
+                        .onTap { [unowned self] in viewModel.showLogoutAlert() }
                     }
-                    
+
                     // Security & network section
                     SectionView(title: L10n.securityNetwork) {
-                        
                         // Backup
                         CellView(
                             icon: .backupIcon,
@@ -88,29 +86,30 @@ extension Settings {
                                     .disposed(by: disposeBag)
                             }
                         )
-                            .onTap { [unowned self] in viewModel.navigate(to: .backup) }
-                        
+                        .onTap { [unowned self] in viewModel.navigate(to: .backup) }
+
                         // Pin
                         CellView(
                             icon: .pinIcon,
                             title: UILabel(text: L10n.yourPIN.uppercaseFirst),
                             trailing: UILabel(text: L10n.pinIsSet, textSize: 15, textColor: .h34c759)
                         ).onTap { [unowned self] in viewModel.changePincode() }
-                        
+
                         // Face id
                         CellView(
                             icon: .faceIdIcon,
                             title: UILabel().setupWithType(UILabel.self) { view in
                                 viewModel.biometryTypeDriver.map {
-                                        switch $0 {
-                                        case .touch: return L10n.touchID
-                                        default: return L10n.faceID
-                                        }
-                                    }.drive(view.rx.text)
+                                    switch $0 {
+                                    case .touch: return L10n.touchID
+                                    default: return L10n.faceID
+                                    }
+                                }.drive(view.rx.text)
                                     .disposed(by: disposeBag)
                             },
                             trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
-                                viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled).disposed(by: disposeBag)
+                                viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled)
+                                    .disposed(by: disposeBag)
                                 viewModel.isBiometryEnabledDriver.drive(switcher.rx.value).disposed(by: disposeBag)
                                 switcher.rx
                                     .controlEvent(.valueChanged)
@@ -125,66 +124,68 @@ extension Settings {
                             },
                             nextArrowEnable: false
                         )
-                        
+
                         // Transaction
                         /*
-                        CellView(
-                            icon: .securityIcon,
-                            title: L10n.confirmTransactions.onlyUppercaseFirst(),
-                            trailing: UISwitch(),
-                            nextArrowEnable: false
-                        )
-                        */
-                        
+                         CellView(
+                             icon: .securityIcon,
+                             title: L10n.confirmTransactions.onlyUppercaseFirst(),
+                             trailing: UISwitch(),
+                             nextArrowEnable: false
+                         )
+                         */
+
                         // Network
                         CellView(icon: .networkIcon, title: UILabel(text: L10n.network.onlyUppercaseFirst()))
                             .onTap { [unowned self] in viewModel.navigate(to: .network) }
-                        
+
                         /*
-                        // Fee
-                        CellView(
-                            icon: .payFeeIcon,
-                            title: L10n.payFeesWith.onlyUppercaseFirst(),
-                            trailing: UILabel(text: "SOL"),
-                            dividerEnable: false
-                        )
-                        */
+                         // Fee
+                         CellView(
+                             icon: .payFeeIcon,
+                             title: L10n.payFeesWith.onlyUppercaseFirst(),
+                             trailing: UILabel(text: "SOL"),
+                             dividerEnable: false
+                         )
+                         */
                     }
-                    
+
                     // Appearance section
                     SectionView(title: L10n.appearance) {
                         /*
-                        // Notification
-                        CellView(
-                            icon: .notification,
-                            title: L10n.notifications.onlyUppercaseFirst(),
-                            trailing: UISwitch(),
-                            nextArrowEnable: false
-                        )
-                        */
-                        
+                         // Notification
+                         CellView(
+                             icon: .notification,
+                             title: L10n.notifications.onlyUppercaseFirst(),
+                             trailing: UISwitch(),
+                             nextArrowEnable: false
+                         )
+                         */
+
                         // Currency
                         CellView(
                             icon: .currency,
                             title: UILabel(text: L10n.currency.onlyUppercaseFirst()),
-                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel).setupWithType(UILabel.self) { label in
-                                viewModel.fiatDriver
-                                    .map { fiat in fiat.name }
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
-                            }
+                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
+                                .setupWithType(UILabel.self) { label in
+                                    viewModel.fiatDriver
+                                        .map { fiat in fiat.name }
+                                        .drive(label.rx.text)
+                                        .disposed(by: disposeBag)
+                                }
                         )
-                            .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
-                        
+                        .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
+
                         // Appearance
+
 //                        CellView(
 //                            icon: .appearanceIcon,
 //                            title: UILabel(text: L10n.appearance.onlyUppercaseFirst()),
 //                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
 //                        ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
-                        
+
                         // Hide zero balance
-                        
+
                         CellView(
                             icon: .hideZeroBalance,
                             title: UILabel(text: L10n.hideZeroBalances.onlyUppercaseFirst()),
@@ -197,47 +198,53 @@ extension Settings {
                             },
                             nextArrowEnable: false
                         )
-                        
+
                         /*
-                        // App icon
-                        CellView(
-                            icon: .appIcon,
-                            title: L10n.appIcon,
-                            trailing: UILabel(text: L10n.classic.onlyUppercaseFirst(), textColor: .secondaryLabel)
-                        )
-                        
-                        // Swipes
-                        CellView(
-                            icon: .swipesIcon,
-                            title: L10n.swapping.onlyUppercaseFirst(),
-                            dividerEnable: false
-                        )
-                        */
+                         // App icon
+                         CellView(
+                             icon: .appIcon,
+                             title: L10n.appIcon,
+                             trailing: UILabel(text: L10n.classic.onlyUppercaseFirst(), textColor: .secondaryLabel)
+                         )
+
+                         // Swipes
+                         CellView(
+                             icon: .swipesIcon,
+                             title: L10n.swapping.onlyUppercaseFirst(),
+                             dividerEnable: false
+                         )
+                         */
                     }
-                    
+
                     /*
-                    // Appearance section
-                    SectionView {
-                        // Ask
-                        CellView(icon: .askIcon, title: L10n.askAQuestionRequestAFeature)
-                        
-                        // Version
-                        CellView(icon: .appVersionIcon, title: L10n.appVersion, dividerEnable: false)
-                    }
-                    */
+                     // Appearance section
+                     SectionView {
+                         // Ask
+                         CellView(icon: .askIcon, title: L10n.askAQuestionRequestAFeature)
+
+                         // Version
+                         CellView(icon: .appVersionIcon, title: L10n.appVersion, dividerEnable: false)
+                     }
+                     */
                 }
             }
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
-            
+
             viewModel.logoutAlertSignal
                 .emit(onNext: { [weak self] in
-                    self?.showAlert(title: L10n.logout, message: L10n.doYouReallyWantToLogout, buttonTitles: ["OK", L10n.cancel], highlightedButtonIndex: 1) { [weak self] (index) in
+                    self?.showAlert(
+                        title: L10n.areYouSureYouWantToSignOut,
+                        message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
+                        buttonTitles: [L10n.signOut, L10n.stay],
+                        highlightedButtonIndex: 1,
+                        destroingIndex: 0
+                    ) { [weak self] index in
                         guard index == 0 else { return }
                         self?.dismiss(animated: true, completion: { [weak self] in
                             self?.viewModel.logout()
@@ -246,8 +253,9 @@ extension Settings {
                 })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else { return }
             switch scene {
@@ -255,7 +263,7 @@ extension Settings {
                 let vc = NewUsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .reserveUsername:
-                guard let owner = viewModel.getUserAddress() else {return}
+                guard let owner = viewModel.getUserAddress() else { return }
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
@@ -266,7 +274,7 @@ extension Settings {
                 show(vc, sender: nil)
             case .backup:
                 let viewModel = Backup.ViewModel()
-                viewModel.didBackupHandler = {[weak self] in
+                viewModel.didBackupHandler = { [weak self] in
                     self?.viewModel.setDidBackup(true)
                 }
                 let vc = Backup.ViewController(viewModel: viewModel)
@@ -295,11 +303,11 @@ extension Settings {
                 createPincodeVC.onCancel = { [weak createPincodeVC] in
                     createPincodeVC?.dismiss(animated: true, completion: nil)
                 }
-                
+
                 // modal
                 let modalVC = WLIndicatorModalVC()
                 modalVC.add(child: createPincodeVC, to: modalVC.containerView)
-                
+
                 present(modalVC, animated: true, completion: nil)
             case .language:
                 let vc = SelectLanguageViewController(viewModel: viewModel)
@@ -307,7 +315,7 @@ extension Settings {
             case .appearance:
                 let vc = SelectAppearanceViewController(viewModel: viewModel)
                 show(vc, sender: nil)
-            case .share(let item):
+            case let .share(item):
                 let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)
                 present(vc, animated: true, completion: nil)
             case .accessToPhoto:
@@ -320,11 +328,11 @@ extension Settings {
 private class PinCodeChangedVC: FlexibleHeightVC {
     override var padding: UIEdgeInsets { UIEdgeInsets(all: 20).modifying(dBottom: -20) }
     override var margin: UIEdgeInsets { UIEdgeInsets(all: 16).modifying(dBottom: -12) }
-    
+
     init() {
         super.init(position: .center)
     }
-    
+
     override func setUp() {
         super.setUp()
         stackView.addArrangedSubviews([
@@ -334,12 +342,20 @@ private class PinCodeChangedVC: FlexibleHeightVC {
             UILabel(text: L10n.pinCodeChanged, textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center),
             BEStackViewSpacing(30),
             WLButton.stepButton(type: .blue, label: L10n.goBackToProfile)
-                .onTap(self, action: #selector(back))
+                .onTap(self, action: #selector(back)),
         ])
     }
-    
-    override func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        let pc = super.presentationController(forPresented: presented, presenting: presenting, source: source) as! PresentationController
+
+    override func presentationController(
+        forPresented presented: UIViewController,
+        presenting: UIViewController?,
+        source: UIViewController
+    ) -> UIPresentationController? {
+        let pc = super.presentationController(
+            forPresented: presented,
+            presenting: presenting,
+            source: source
+        ) as! PresentationController
         pc.roundedCorner = .allCorners
         pc.cornerRadius = 24
         return pc

@@ -5,18 +5,20 @@
 //  Created by Andrew Vasiliev on 30.01.2022.
 //
 
-import UIKit
-import RxSwift
 import BECollectionView
+import RxSwift
+import UIKit
 
 extension SupportedTokens {
     class RootView: BEView {
         // MARK: - Constants
 
         // MARK: - Properties
+
         let viewModel: SupportedTokensViewModelType
 
         // MARK: - Subviews
+
         private lazy var searchBar: BESearchBar = {
             let searchBar = BESearchBar(fixedHeight: 36, cornerRadius: 12)
 
@@ -34,6 +36,7 @@ extension SupportedTokens {
 
             return searchBar
         }()
+
         private lazy var collectionView: CollectionView = {
             let collectionView = CollectionView(viewModel: viewModel)
             collectionView.keyboardDismissMode = .onDrag
@@ -41,12 +44,14 @@ extension SupportedTokens {
         }()
 
         // MARK: - Initializers
+
         init(viewModel: ViewModel) {
             self.viewModel = viewModel
             super.init(frame: .zero)
         }
 
         // MARK: - Methods
+
         override func commonInit() {
             super.commonInit()
             layout()
@@ -54,21 +59,24 @@ extension SupportedTokens {
         }
 
         // MARK: - Layout
+
         private func layout() {
             addSubview(searchBar)
             addSubview(collectionView)
 
-            searchBar.autoPinEdgesToSuperviewEdges(with: .init(top: .defaultPadding, left: 16, bottom: 0, right: 16), excludingEdge: .bottom)
+            searchBar.autoPinEdgesToSuperviewEdges(
+                with: .init(top: .defaultPadding, left: 16, bottom: 0, right: 16),
+                excludingEdge: .bottom
+            )
 
             collectionView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
             collectionView.autoPinEdge(.top, to: .bottom, of: searchBar, withOffset: 18)
         }
 
-        private func bind() {
-
-        }
+        private func bind() {}
 
         // MARK: - Helper
+
         func forwardDelegate(to delegate: BECollectionViewDelegate) {
             collectionView.delegate = delegate
         }
@@ -76,17 +84,13 @@ extension SupportedTokens {
 }
 
 extension SupportedTokens.RootView: BESearchBarDelegate {
-    func beSearchBar(_ searchBar: BESearchBar, searchWithKeyword keyword: String) {
+    func beSearchBar(_: BESearchBar, searchWithKeyword keyword: String) {
         viewModel.search(keyword: keyword)
     }
 
-    func beSearchBarDidBeginSearching(_ searchBar: BESearchBar) {
+    func beSearchBarDidBeginSearching(_: BESearchBar) {}
 
-    }
-
-    func beSearchBarDidEndSearching(_ searchBar: BESearchBar) {
-
-    }
+    func beSearchBarDidEndSearching(_: BESearchBar) {}
 
     func beSearchBarDidCancelSearching(_ searchBar: BESearchBar) {
         searchBar.clear()

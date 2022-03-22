@@ -11,7 +11,7 @@ struct DApp {
     let name: String
     let description: String
     let url: String
-    
+
     static var fake: DApp {
         .init(name: "Fake DApp", description: "A fake dapp", url: "https://web.beardict.net/dapp/")
     }

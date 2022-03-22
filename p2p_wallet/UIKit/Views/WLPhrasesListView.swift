@@ -5,12 +5,17 @@
 //  Created by Chung Tran on 11/03/2021.
 //
 
+import Action
 import Foundation
 import TagListView
-import Action
 
 class WLPhrasesListView: BEView {
-    private lazy var descriptionLabel = UILabel(text: L10n.WriteDownOrDuplicateTheseWordsInTheCorrectOrderAndKeepThemInASafePlace.copyThemManuallyOrBackupToICloud, textColor: .textSecondary, numberOfLines: 0)
+    private lazy var descriptionLabel = UILabel(
+        text: L10n.WriteDownOrDuplicateTheseWordsInTheCorrectOrderAndKeepThemInASafePlace
+            .copyThemManuallyOrBackupToICloud,
+        textColor: .textSecondary,
+        numberOfLines: 0
+    )
     lazy var tagListView: TagListView = {
         let tagListView = TagListView(forAutoLayout: ())
         tagListView.tagBackgroundColor = .tagBackground
@@ -25,33 +30,45 @@ class WLPhrasesListView: BEView {
         tagListView.cornerRadius = 8
         return tagListView
     }()
-    lazy var copyToClipboardButton = UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: .textSecondary.onDarkMode(.white), textAlignment: .center)
-        .padding(.init(all: 9))
-        .onTap(self, action: #selector(copyToClipboard))
-    
+
+    lazy var copyToClipboardButton = UILabel(
+        text: L10n.copyToClipboard,
+        weight: .medium,
+        textColor: .textSecondary.onDarkMode(.white),
+        textAlignment: .center
+    )
+    .padding(.init(all: 9))
+    .onTap(self, action: #selector(copyToClipboard))
+
     var copyToClipboardAction: CocoaAction?
-    
+
     override func commonInit() {
         super.commonInit()
-        let stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
-            descriptionLabel,
-            BEStackViewSpacing(20),
-            UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                tagListView
-                    .padding(.init(all: 10), cornerRadius: 12),
-                UIView.defaultSeparator(),
-                copyToClipboardButton
-            ])
-                .padding(.zero, backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b), cornerRadius: 12)
-        ])
+        let stackView = UIStackView(
+            axis: .vertical,
+            spacing: 0,
+            alignment: .fill,
+            distribution: .fill,
+            arrangedSubviews: [
+                descriptionLabel,
+                BEStackViewSpacing(20),
+                UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill, arrangedSubviews: [
+                    tagListView
+                        .padding(.init(all: 10), cornerRadius: 12),
+                    UIView.defaultSeparator(),
+                    copyToClipboardButton,
+                ])
+                .padding(.zero, backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b), cornerRadius: 12),
+            ]
+        )
         addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges()
     }
-    
+
     @objc func copyToClipboard() {
         copyToClipboardAction?.execute()
     }
-    
+
     func setUp(phrases: [String]) {
         tagListView.removeAllTags()
         for (index, phrase) in phrases.enumerated() {
@@ -62,11 +79,10 @@ class WLPhrasesListView: BEView {
                     .text(phrase),
                 for: .normal
             )
-                
         }
         setNeedsLayout()
     }
-    
+
     func setUp(description: String) {
         descriptionLabel.text = description
     }

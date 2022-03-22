@@ -5,8 +5,8 @@
 //  Created by Chung Tran on 08/04/2021.
 //
 
-import Foundation
 import BECollectionView
+import Foundation
 
 class NewsSection: BEStaticSectionsCollectionView.Section {
     init(index: Int, viewModel: NewsViewModel) {
@@ -30,10 +30,13 @@ class NewsSection: BEStaticSectionsCollectionView.Section {
             viewModel: viewModel
         )
     }
-    
+
     override func configureHeader(indexPath: IndexPath) -> UICollectionReusableView? {
         let header = super.configureHeader(indexPath: indexPath) as? SectionHeaderView
-        header?.setUp(headerTitle: L10n.makeYourCryptoWorkingOnYou, headerFont: .systemFont(ofSize: 28, weight: .semibold))
+        header?.setUp(
+            headerTitle: L10n.makeYourCryptoWorkingOnYou,
+            headerFont: .systemFont(ofSize: 28, weight: .semibold)
+        )
         return header
     }
 }
@@ -41,7 +44,7 @@ class NewsSection: BEStaticSectionsCollectionView.Section {
 private func groupLayoutForFirstSection(width: CGFloat, height: CGFloat) -> NSCollectionLayoutGroup {
     let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1), heightDimension: .fractionalHeight(1))
     let item = NSCollectionLayoutItem(layoutSize: itemSize)
-    
+
     let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(width), heightDimension: .absolute(height))
     return NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
 }

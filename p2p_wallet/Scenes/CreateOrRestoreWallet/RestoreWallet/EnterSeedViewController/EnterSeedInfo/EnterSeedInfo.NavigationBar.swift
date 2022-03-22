@@ -23,7 +23,7 @@ extension EnterSeedInfo {
 
         private func configureSelf() {
             titleLabel.text = L10n.whatIsASecurityKey
-            let infoButton = UIButton.init(
+            let infoButton = UIButton(
                 label: L10n.done,
                 labelFont: .systemFont(ofSize: 17, weight: .bold),
                 textColor: .h5887ff

@@ -5,27 +5,30 @@
 //  Created by Andrew Vasiliev on 30.01.2022.
 //
 
+import BECollectionView
 import Foundation
 import UIKit
-import BECollectionView
 
 extension SupportedTokens {
     final class ViewController: BaseVC {
-
         // MARK: - Properties
+
         private let viewModel: ViewModel
 
         private lazy var rootView = RootView(viewModel: viewModel)
 
         // MARK: - Initializer
+
         init(viewModel: ViewModel) {
             self.viewModel = viewModel
 
             super.init()
 
-            self.title = L10n.listOfSupportedTokens
+            title = L10n.listOfSupportedTokens
         }
+
         // MARK: - Methods
+
         override func setUp() {
             super.setUp()
 
@@ -42,7 +45,7 @@ extension SupportedTokens {
                             self?.dismiss(animated: true)
                         }
                     ),
-                    rootView
+                    rootView,
                 ]
             )
 

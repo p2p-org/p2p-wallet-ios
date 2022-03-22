@@ -24,6 +24,7 @@ protocol NewSwapTokenSettingsViewModelType: AnyObject {
 extension SwapTokenSettings {
     final class ViewModel: NewSwapTokenSettingsViewModelType {
         // MARK: - Properties
+
         var slippageType: SwapTokenSettings.SlippageType {
             .init(doubleValue: swapViewModel.slippageSubject.value)
         }
@@ -34,6 +35,7 @@ extension SwapTokenSettings {
         @Injected private var notificationService: NotificationsService
 
         // MARK: - Subject
+
         var customSlippageIsOpenedDriver: Driver<Bool> { customSlippageIsOpenedSubject.asDriver() }
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
@@ -56,7 +58,7 @@ extension SwapTokenSettings {
                             isSelected: feePayingToken == wallet,
                             onTapHandler: {
                                 [weak self] in
-                                self?.swapViewModel.changeFeePayingToken(to: wallet)
+                                    self?.swapViewModel.changeFeePayingToken(to: wallet)
                             }
                         )
                     )
@@ -67,6 +69,7 @@ extension SwapTokenSettings {
         }
 
         // MARK: NewSwapTokenSettingsViewModelType
+
         var possibleSlippageTypes: [SlippageType] {
             SlippageType.allCases
         }
@@ -76,6 +79,7 @@ extension SwapTokenSettings {
         }
 
         // MARK: - Actions
+
         init(
             nativeWallet: Wallet?,
             swapViewModel: OrcaSwapV2ViewModelType
@@ -97,7 +101,7 @@ extension SwapTokenSettings {
 
         func customSlippageChanged(_ value: Double?) {
             if let value = SlippageType.custom(value).doubleValue,
-                customSlippageIsOpenedSubject.value
+               customSlippageIsOpenedSubject.value
             {
                 swapViewModel.slippageSubject.accept(value)
             }

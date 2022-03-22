@@ -11,7 +11,7 @@ struct SystemVersion {
     static func isIOS13() -> Bool {
         let os = ProcessInfo().operatingSystemVersion
         switch (os.majorVersion, os.minorVersion, os.patchVersion) {
-        case (let x, _, _) where x == 13:
+        case let (x, _, _) where x == 13:
             return true
         default:
             return false

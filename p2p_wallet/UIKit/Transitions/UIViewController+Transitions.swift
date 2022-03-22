@@ -6,8 +6,12 @@ enum InteractiveDismissalType {
 }
 
 extension UIViewController {
-    func present(_ viewController: CustomPresentableViewController, interactiveDismissalType: InteractiveDismissalType, tapOutsideToDismiss: Bool = true, completion: (() -> Void)? = nil) {
-
+    func present(
+        _ viewController: CustomPresentableViewController,
+        interactiveDismissalType: InteractiveDismissalType,
+        tapOutsideToDismiss: Bool = true,
+        completion: (() -> Void)? = nil
+    ) {
         let interactionController: InteractionControlling?
         switch interactiveDismissalType {
         case .none:
@@ -16,7 +20,10 @@ extension UIViewController {
             interactionController = StandardInteractionController(viewController: viewController)
         }
 
-        let transitionManager = ModalTransitionManager(interactionController: interactionController, tapFadeViewToDismiss: tapOutsideToDismiss)
+        let transitionManager = ModalTransitionManager(
+            interactionController: interactionController,
+            tapFadeViewToDismiss: tapOutsideToDismiss
+        )
         viewController.transitionManager = transitionManager
         viewController.transitioningDelegate = transitionManager
         viewController.modalPresentationStyle = .custom

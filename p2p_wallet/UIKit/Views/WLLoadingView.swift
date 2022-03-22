@@ -9,17 +9,17 @@ import Foundation
 
 open class WLLoadingView: BEView {
     var isLoading = false
-    
+
     lazy var fillLayer = CALayer()
-    
-    open override func commonInit() {
+
+    override open func commonInit() {
         super.commonInit()
         fillLayer.backgroundColor = UIColor.textWhite.withAlphaComponent(0.5).cgColor
     }
-    
+
     func setUp(loading: Bool) {
         isLoading = loading
-        
+
         if loading {
             fillLayer.removeFromSuperlayer()
             layer.insertSublayer(fillLayer, at: 1)

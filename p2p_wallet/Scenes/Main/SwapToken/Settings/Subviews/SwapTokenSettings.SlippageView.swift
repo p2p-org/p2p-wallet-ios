@@ -5,9 +5,9 @@
 //  Created by Andrew Vasiliev on 21.12.2021.
 //
 
-import UIKit
 import BEPureLayout
 import RxSwift
+import UIKit
 
 extension SwapTokenSettings {
     final class SlippageView: UIStackView {
@@ -26,7 +26,7 @@ extension SwapTokenSettings {
         init(viewModel: NewSwapTokenSettingsViewModelType) {
             self.viewModel = viewModel
             let slippageType = viewModel.slippageType
-            self.segmentedControl = .init(
+            segmentedControl = .init(
                 items: viewModel.possibleSlippageTypes,
                 selectedItem: slippageType,
                 changeHandler: { [weak viewModel] selectedSlippage in
@@ -51,7 +51,7 @@ extension SwapTokenSettings {
         }
 
         @available(*, unavailable)
-        required init(coder: NSCoder) {
+        required init(coder _: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
 

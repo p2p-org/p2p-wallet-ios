@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import UIKit
 import RxSwift
+import UIKit
 
 extension OrcaSwapV2 {
     class ViewController: BaseVC {
@@ -16,11 +16,13 @@ extension OrcaSwapV2 {
         }
 
         // MARK: - Dependencies
+
         private let viewModel: OrcaSwapV2ViewModelType
 
         // MARK: - Properties
-        
+
         // MARK: - Subviews
+
         private lazy var navigationBar = NavigationBar(
             backHandler: { [weak viewModel] in
                 viewModel?.navigate(to: .back)
@@ -31,8 +33,9 @@ extension OrcaSwapV2 {
         )
         private lazy var rootView = RootView(viewModel: viewModel)
             .onTap(self, action: #selector(hideKeyboard))
-        
+
         // MARK: - Methods
+
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
             super.init()
@@ -48,20 +51,21 @@ extension OrcaSwapV2 {
             super.setUp()
             view.addSubview(navigationBar)
             navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-            
+
             view.addSubview(rootView)
             rootView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
             rootView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
         }
-        
+
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: {[weak self] in self?.navigate(to: $0)})
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
         }
-        
+
         // MARK: - Navigation
+
         private func navigate(to scene: OrcaSwapV2.NavigatableScene?) {
             switch scene {
             case .settings:
@@ -74,7 +78,11 @@ extension OrcaSwapV2 {
                 let viewController = SwapTokenSettings.ViewController(viewModel: vm)
                 show(viewController, sender: nil)
             case let .chooseSourceWallet(currentlySelectedWallet: currentlySelectedWallet):
-                let vm = ChooseWallet.ViewModel(selectedWallet: currentlySelectedWallet, handler: viewModel, showOtherWallets: false)
+                let vm = ChooseWallet.ViewModel(
+                    selectedWallet: currentlySelectedWallet,
+                    handler: viewModel,
+                    showOtherWallets: false
+                )
                 vm.customFilter = { $0.amount > 0 }
                 let vc = ChooseWallet.ViewController(
                     title: L10n.selectTheFirstToken,
@@ -86,7 +94,11 @@ extension OrcaSwapV2 {
                 validMints: validMints,
                 excludedSourceWalletPubkey: excludedSourceWalletPubkey
             ):
-                let vm = ChooseWallet.ViewModel(selectedWallet: currentlySelectedWallet, handler: viewModel, showOtherWallets: true)
+                let vm = ChooseWallet.ViewModel(
+                    selectedWallet: currentlySelectedWallet,
+                    handler: viewModel,
+                    showOtherWallets: true
+                )
                 vm.customFilter = {
                     $0.pubkey != excludedSourceWalletPubkey &&
                         validMints.contains($0.mintAddress)
@@ -100,7 +112,7 @@ extension OrcaSwapV2 {
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-            case .processTransaction(let transaction):
+            case let .processTransaction(transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
                 vc.backCompletion = { [weak self] in
@@ -112,7 +124,7 @@ extension OrcaSwapV2 {
                     self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
                 }
                 vc.specificErrorHandler = { [weak self] error in
-                    guard let self = self else {return}
+                    guard let self = self else { return }
                     if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
                         self.backCompletion { [weak self] in
                             self?.viewModel.navigate(to: .settings)

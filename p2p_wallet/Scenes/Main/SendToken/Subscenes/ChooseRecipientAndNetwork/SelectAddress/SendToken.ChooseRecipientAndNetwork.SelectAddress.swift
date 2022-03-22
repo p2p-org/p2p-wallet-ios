@@ -14,7 +14,7 @@ extension SendToken.ChooseRecipientAndNetwork {
             case scanQrCode
             case selectPayingWallet
         }
-        
+
         enum InputState: Equatable {
             case searching
             case recipientSelected

@@ -5,13 +5,14 @@
 //  Created by Chung Tran on 22/11/2021.
 //
 
-import Foundation
-import Charts
 import BECollectionView
+import Charts
+import Foundation
 
 extension Home {
     class BalancesOverviewView: WLOverviewView {
         // MARK: - Subviews
+
         private lazy var equityValueLabel = UILabel(text: " ", textSize: 20, weight: .bold, textAlignment: .right)
         private lazy var changeLabel = UILabel(text: " ", textSize: 13)
         private lazy var chartView: PieChartView = {
@@ -34,10 +35,11 @@ extension Home {
             .onTap { [unowned self] in self.didTapReceive?() }
         private lazy var swapButton = createButton(image: .buttonSwap, title: L10n.swap)
             .onTap { [unowned self] in self.didTapSwap?() }
-        
+
         public lazy var topStackConstraint = stackView.autoPinEdge(toSuperviewEdge: .top)
-        
+
         // MARK: - Callbacks
+
         var didTapBuy: (() -> Void)?
         var didTapSend: (() -> Void)?
         var didTapReceive: (() -> Void)?
@@ -53,13 +55,18 @@ extension Home {
             UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
                 chartView
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
-                    UILabel(text: L10n.combinedTokensValue, textSize: 13, textColor: .textSecondary, textAlignment: .right)
+                    UILabel(
+                        text: L10n.combinedTokensValue,
+                        textSize: 13,
+                        textColor: .textSecondary,
+                        textAlignment: .right
+                    )
                     equityValueLabel
                 }
             }
-                .padding(.init(x: 24, y: 13))
+            .padding(.init(x: 24, y: 13))
         }
-        
+
         override func createButtonsView() -> UIView {
             UIStackView(axis: .horizontal, spacing: 0, alignment: .fill, distribution: .fillEqually) {
 //                buyButton
@@ -70,11 +77,11 @@ extension Home {
         }
 
         override func layoutStackView() {
-             topStackConstraint.priority = .defaultHigh
-             stackView.autoPinEdge(toSuperviewEdge: .top, withInset: .zero, relation: .lessThanOrEqual)
-             stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-         }
-        
+            topStackConstraint.priority = .defaultHigh
+            stackView.autoPinEdge(toSuperviewEdge: .top, withInset: .zero, relation: .lessThanOrEqual)
+            stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
+        }
+
         func setUp(state: BEFetcherState, data: [Wallet]) {
             switch state {
             case .initializing:
@@ -97,41 +104,41 @@ extension Home {
                 hideLoading()
             }
         }
-        
+
         func setUpChartView(wallets: [Wallet]) {
             // filter
             let wallets = wallets
-                .filter { $0.amountInCurrentFiat > 0}
-            
+                .filter { $0.amountInCurrentFiat > 0 }
+
             // get entries
             let entries = wallets
-                .map { $0.amountInCurrentFiat}
-                .map {PieChartDataEntry(value: $0)}
-            
+                .map(\.amountInCurrentFiat)
+                .map { PieChartDataEntry(value: $0) }
+
             let set = PieChartDataSet(entries: entries)
             set.sliceSpace = 2
             set.drawValuesEnabled = false
             set.selectionShift = 0
-            
-            set.colors = wallets.map {$0.token.indicatorColor}
-            
+
+            set.colors = wallets.map(\.token.indicatorColor)
+
             let data = PieChartData(dataSet: set)
             data.setValueTextColor(.clear)
-            
+
             chartView.data = data
             chartView.highlightValues(nil)
         }
-        
+
         @objc
         private func buttonSendDidTouch() {
             didTapSend?()
         }
-        
+
         @objc
         private func buttonReceiveDidTouch() {
             didTapReceive?()
         }
-        
+
         @objc
         private func buttonSwapDidTouch() {
             didTapSwap?()

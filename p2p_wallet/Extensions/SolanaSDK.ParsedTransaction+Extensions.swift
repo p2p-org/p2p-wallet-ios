@@ -23,16 +23,16 @@ extension SolanaSDK.ParsedTransaction {
             default:
                 return L10n.transfer
             }
-            
+
         case is SolanaSDK.SwapTransaction:
             return L10n.swap
         default:
             break
         }
-        
+
         return L10n.transaction
     }
-    
+
     var icon: UIImage {
         switch value {
         case is SolanaSDK.CreateAccountTransaction:

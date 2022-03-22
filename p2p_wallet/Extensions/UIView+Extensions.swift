@@ -5,29 +5,29 @@
 //  Created by Chung Tran on 11/5/20.
 //
 
-import Foundation
 import Action
+import Foundation
 
 extension UIView {
     static func copyToClipboardButton(spacing: CGFloat = 10, tintColor: UIColor = .textSecondary) -> UIStackView {
         UIStackView(axis: .horizontal, spacing: spacing, alignment: .center, distribution: .fill, arrangedSubviews: [
             UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: tintColor),
-            UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: tintColor)
+            UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: tintColor),
         ])
     }
-    
+
     func showIndetermineHud() {
         // Hide all previous hud
         hideHud()
-        
+
         // show new hud
         showLoadingIndicatorView()
     }
-    
+
     func hideHud() {
         hideLoadingIndicatorView()
     }
-    
+
     func removeErrorView() {
         subviews.filter {
             $0 is ErrorView
@@ -35,7 +35,7 @@ extension UIView {
             $0.removeFromSuperview()
         }
     }
-    
+
     func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
         removeErrorView()
         let errorView = ErrorView(backgroundColor: .textWhite)
@@ -56,14 +56,17 @@ extension UIView {
         addSubview(errorView)
         errorView.autoPinEdgesToSuperviewEdges()
     }
-    
+
     func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
-        showErrorView(title: L10n.error, description: error?.readableDescription ?? L10n.somethingWentWrongPleaseTryAgainLater, retryAction: retryAction)
+        showErrorView(
+            title: L10n.error,
+            description: error?.readableDescription ?? L10n.somethingWentWrongPleaseTryAgainLater,
+            retryAction: retryAction
+        )
     }
 }
 
 extension UIView {
-    
     // Using a function since `var image` might conflict with an existing variable
     // (like on `UIImageView`)
     func asImage() -> UIImage {
@@ -72,7 +75,7 @@ extension UIView {
             layer.render(in: rendererContext.cgContext)
         }
     }
-    
+
     func asImageInBackground() -> UIImage {
         layoutIfNeeded()
         let renderer = UIGraphicsImageRenderer(bounds: bounds)
@@ -86,7 +89,7 @@ extension UIView {
     func lightShadow() -> Self {
         shadow(color: .black, alpha: 0.05, x: 0, y: 0, blur: 8, spread: 0)
     }
-    
+
     func mediumShadow() -> Self {
         shadow(color: .black, alpha: 0.07, x: 0, y: 2, blur: 8, spread: 0)
     }

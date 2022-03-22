@@ -11,20 +11,20 @@ class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
     override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
         .hidden
     }
-    
+
     var transitionManager: UIViewControllerTransitioningDelegate?
     private let fileName: String
     private lazy var markdownView = WLMarkdownView(bundledMarkdownTxtFileName: fileName)
-    
+
     init(title: String, bundledMarkdownTxtFileName: String) {
-        self.fileName = bundledMarkdownTxtFileName
+        fileName = bundledMarkdownTxtFileName
         super.init()
         self.title = title
     }
-    
+
     override func setUp() {
         super.setUp()
-        
+
         // stack view
         let stackView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
             UILabel(text: title, textSize: 21, weight: .medium)
@@ -35,14 +35,14 @@ class WLMarkdownVC: WLIndicatorModalVC, CustomPresentableViewController {
         }
         containerView.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewEdges(with: .init(x: 0, y: 20))
-        
+
         markdownView.load()
     }
-    
-    override func calculateFittingHeightForPresentedView(targetWidth: CGFloat) -> CGFloat {
+
+    override func calculateFittingHeightForPresentedView(targetWidth _: CGFloat) -> CGFloat {
         .greatestFiniteMagnitude
     }
-    
+
     var dismissalHandlingScrollView: UIScrollView? {
         markdownView.scrollView
     }

@@ -6,7 +6,7 @@ import Foundation
 import RxSwift
 
 class FeedbackBanner: Banners.Banner {
-    static fileprivate let id = "feedback-banner"
+    fileprivate static let id = "feedback-banner"
 
     init() {
         super.init(
@@ -21,7 +21,7 @@ class FeedbackBanner: Banners.Banner {
             .title: L10n.suggestWaysToImproveP2PWallet,
             .action: L10n.leaveFeedback,
             .background: UIColor(red: 0.843, green: 0.819, blue: 1, alpha: 1),
-            .icon: UIImage.bannerFeedback
+            .icon: UIImage.bannerFeedback,
         ]
     }
 }
