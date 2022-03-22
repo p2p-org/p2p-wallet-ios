@@ -211,7 +211,8 @@ extension SendToken.ChooseTokenAndAmount {
                 viewModel.currencyModeDriver
             )
             .map { [weak self] wallet, mode -> String? in
-                guard let wallet = wallet, let amount = self?.viewModel.calculateAvailableAmount() else { return nil }
+                guard let wallet = wallet,
+                      let amount = self?.viewModel.calculateAvailableAmount() else { return nil }
                 var string = amount.toString(maximumFractionDigits: 9)
                 string += " "
                 if mode == .fiat {

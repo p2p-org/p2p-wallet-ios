@@ -786,3 +786,5 @@ Reset the PIN or wait for %@.";
 "If you have no backup, you may never be able to access this account." = "If you have no backup, you may never be able to access this account.";
 "Resetting your PIN" = "Resetting your PIN";
 "Reset your PIN" = "Reset your PIN";
+"Are you sure you want to sign out?" = "Are you sure you want to sign out?";
+"Without the backup, you may never be able to access this account." = "Without the backup, you may never be able to access this account.";

@@ -272,11 +272,6 @@
 		BC19DF532701A24E00A3A8D8 /* WLBalanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF522701A24E00A3A8D8 /* WLBalanceView.swift */; };
 		BC19DF572701B7A100A3A8D8 /* SingleSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF562701B7A100A3A8D8 /* SingleSelectionViewController.swift */; };
 		BC19DF592701BC9100A3A8D8 /* WLDefaultOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC19DF582701BC9100A3A8D8 /* WLDefaultOptionView.swift */; };
-		BC1BEBF926CDF6520049A44C /* SerumSwapV1.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF526CDF6520049A44C /* SerumSwapV1.swift */; };
-		BC1BEBFA26CDF6520049A44C /* SwapToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF626CDF6520049A44C /* SwapToken.ViewController.swift */; };
-		BC1BEBFC26CDF6520049A44C /* SwapToken.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF826CDF6520049A44C /* SwapToken.RootView.swift */; };
-		BC1BEBFE26CDFE290049A44C /* SwapToken.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBFD26CDFE290049A44C /* SwapToken.WalletView.swift */; };
-		BC1BEBFF26CE12170049A44C /* SwapToken.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEBF726CDF6520049A44C /* SwapToken.ViewModel.swift */; };
 		BC1FFED1262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFECE262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewModel.swift */; };
 		BC1FFED3262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFED0262975200014F027 /* ResetPinCodeWithSeedPhrases.ViewController.swift */; };
 		BC1FFEE8262977940014F027 /* WLEnterPhrasesVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1FFEE7262977940014F027 /* WLEnterPhrasesVC.swift */; };
@@ -710,7 +705,7 @@
 		7053CD2D5518767674E98C06 /* Pods-p2p wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p wallet/Pods-p2p wallet.release.xcconfig"; sourceTree = "<group>"; };
 		737429C7857F21D93FBEE72A /* Pods_p2p_wallet_p2p_walletUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet_p2p_walletUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7EF7143B121F6324037B556D /* Pods-p2p wallet-p2p walletUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p wallet-p2p walletUITests.debug.xcconfig"; path = "Target Support Files/Pods-p2p wallet-p2p walletUITests/Pods-p2p wallet-p2p walletUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		8469900B881EF729CE394E29 /* BuyProcessing.InputCryptoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BuyProcessing.InputCryptoView.swift; path = Subview/BuyProcessing.InputCryptoView.swift; sourceTree = "<group>"; };
+		8469900B881EF729CE394E29 /* BuyProcessing.InputCryptoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; name = BuyProcessing.InputCryptoView.swift; path = Subview/BuyProcessing.InputCryptoView.swift; sourceTree = "<group>"; };
 		8469902AC70FC9230511E124 /* NotificationBannerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationBannerHandler.swift; sourceTree = "<group>"; };
 		8469907019755990A0585C61 /* KeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		846990E0164D14FE11A72F13 /* BuyRoot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.swift; sourceTree = "<group>"; };
@@ -2324,7 +2319,6 @@
 				BCB2231625412AF8002D997F /* Products */,
 				14A0B50387D380623394B692 /* Pods */,
 				0702C5D804E7759F2AE102B8 /* Frameworks */,
-				3B79E0A227D0DA9D00BCB884 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2857,7 +2851,7 @@
 			buildPhases = (
 				08B83D8022A1F262E2F8AAA9 /* [CP] Check Pods Manifest.lock */,
 				BC65EA002542C305005F50CE /* Swiftgen Run Script */,
-				BC0E0A252542CAFA00CADA18 /* Swiftlint Run Script */,
+				3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */,
 				BCB2231125412AF8002D997F /* Sources */,
 				BCB2231225412AF8002D997F /* Frameworks */,
 				BCB2231325412AF8002D997F /* Resources */,
@@ -2975,6 +2969,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Format and lint Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#!/bin/bash\n#\n# Run SwiftLint\n\nSTART_DATE=$(date +\"%s\")\n\nSWIFT_LINT=/usr/local/bin/swiftlint\nSWIFT_FORMAT=/usr/local/bin/swiftformat\n\nif [[ -e \"${SWIFT_LINT}\" ]]; then\n    echo \"[I] Found SwiftLint at ${SWIFT_LINT}\"\nelse\n    echo \"[!] Local SwiftLint not found at ${SWIFT_LINT}\"\n    export SWIFT_LINT=${PWD}/Pods/SwiftLint/swiftlint\n    echo \"[I] Try to using SwiftLint from cocoapods at ${SWIFT_LINT}\"\nfi\n\nif [[ -e \"${SWIFT_FORMAT}\" ]]; then\n    echo \"[I] Found SwiftFormat at ${SWIFT_FORMAT}\"\nelse\n    echo \"[!] Local SwiftFormat not found at ${SWIFT_FORMAT}\"\n    export SWIFT_FORMAT=${PWD}/Pods/SwiftFormat/CommandLineTool/swiftformat\n    echo \"[I] Try to using SwiftFormat from cocoapods at ${SWIFT_FORMAT}\"\nfi\n\nif [[ ! -e \"${SWIFT_LINT}\" ]]; then\n    echo \"[!] SwifLint is not installed.\"\n    echo \"[!] Expected location is '${SWIFT_LINT}'\"\n    echo \"[!] Please install it. eg. 'brew install swiftlint'\"\n    echo \"[!] Or using via Cocoapods by 'pod 'SwiftLint'' in your Podfile\"\n    exit 1\nfi\n\necho \"[I] SwiftLint version: $(${SWIFT_LINT} version)\"\n\nif [[ ! -e \"${SWIFT_FORMAT}\" ]]; then\n    echo \"[!] SwiftFormat is not installed.\"\n    echo \"[!] Expected location is '${SWIFT_LINT}'\"\n    echo \"[!] Please install it. eg. 'brew install swiftformat'\"\n    echo \"[!] Or using via Cocoapods by 'pod 'SwiftFormat/CLI'' in your Podfile\"\n    exit 1\nfi\n\necho \"[I] SwiftFormat version: $(${SWIFT_FORMAT} --version)\"\n\n# Run for unstaged, staged, new files, excluded for deleted files\ngit diff --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\ngit diff --cached --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\ngit ls-files --others --exclude-standard -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\nEND_DATE=$(date +\"%s\")\n\nDIFF=$(($END_DATE - $START_DATE))\necho \"SwiftLint took $(($DIFF / 60)) minutes and $(($DIFF % 60)) seconds to complete.\"\n";
+		};
 		3F0DFDEF46907C0993E62949 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3008,24 +3020,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		BC0E0A252542CAFA00CADA18 /* Swiftlint Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Swiftlint Run Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PODS_ROOT}/SwiftLint/swiftlint\n";
 		};
 		BC636756255AB64C00D585FD /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3082,7 +3076,6 @@
 				BCC1F20D269EC712003DD648 /* WLNotificationsRepository.swift in Sources */,
 				BCB286DC2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.swift in Sources */,
 				BC6FED91270BF47E002B6255 /* RenBTCReceivingStatuses.ViewController.swift in Sources */,
-				BC1BEBFF26CE12170049A44C /* SwapToken.ViewModel.swift in Sources */,
 				BCB286DE2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.ViewModel.swift in Sources */,
 				BC460AC4257A46940035F6AA /* BehaviorRelay+Extensions.swift in Sources */,
 				BCB286BA274CC2590074E1D5 /* SendToken.ViewController.swift in Sources */,
@@ -3182,7 +3175,6 @@
 				BCB2870B27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift in Sources */,
 				412DBFDC273D7B81000F514E /* EnterSeed.swift in Sources */,
 				3B87A1532762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift in Sources */,
-				BC1BEBF926CDF6520049A44C /* SerumSwapV1.swift in Sources */,
 				BC4B9E9527153EBB005B9ECA /* Settings.Backup.ViewController.swift in Sources */,
 				BCB28695274B81FD0074E1D5 /* WalletDetail.ViewController.swift in Sources */,
 				BCE77E6626537067000B68BB /* DerivableAccounts.ViewModel.swift in Sources */,
@@ -3219,7 +3211,6 @@
 				86A90D18273D306400D180EF /* VerifySecurityKeys.ViewController.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWallet.ViewController.swift in Sources */,
 				3B7DE7EC2775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift in Sources */,
-				BC1BEBFC26CDF6520049A44C /* SwapToken.RootView.swift in Sources */,
 				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WelcomeViewController.swift in Sources */,
 				3B1615512769ABB10080DE42 /* OrcaSwapV2.ConfirmSwapping.RootView.swift in Sources */,
@@ -3458,7 +3449,6 @@
 				BCDABE7826FC6E2400E083B8 /* WLIndicatorModalFlexibleHeightVC.swift in Sources */,
 				41C460262771CF4D009C12D9 /* SwapTokenSettings.SlippageView.swift in Sources */,
 				BC7BCB7B2562807E0018DECA /* Double+Extensions.swift in Sources */,
-				BC1BEBFA26CDF6520049A44C /* SwapToken.ViewController.swift in Sources */,
 				BC036C162692C070005C1BEC /* Collection+Extensions.swift in Sources */,
 				BC2EC1802553B1F7006EEDA5 /* SectionFooterView.swift in Sources */,
 				41BDBD5527A6670F00000EF7 /* SupportedTokens.swift in Sources */,
@@ -3483,7 +3473,6 @@
 				BC53E2242654ECCD005624CC /* DerivableAccounts.ListViewModel.swift in Sources */,
 				BCA93F5325E77C240081DDF6 /* TokenSettingsViewModel.swift in Sources */,
 				BC2EC93A2705C1E9005FC432 /* PayingFee.swift in Sources */,
-				BC1BEBFE26CDFE290049A44C /* SwapToken.WalletView.swift in Sources */,
 				BCB5837A255D29C500B10F65 /* WLBottomSheet.swift in Sources */,
 				BCD3CB5A27586C31002F3C06 /* SendToken.ConfirmViewController.swift in Sources */,
 				BCA93F5425E77C240081DDF6 /* TokenSettingsRootView.swift in Sources */,

@@ -81,7 +81,8 @@ extension OrcaSwapV2 {
                     }
 
                     if self?.destinationWalletSubject.value?.pubkey != nil,
-                       let wallet = wallets?.first(where: { $0.pubkey == self?.destinationWalletSubject.value?.pubkey })
+                       let wallet = wallets?
+                       .first(where: { $0.pubkey == self?.destinationWalletSubject.value?.pubkey })
                     {
                         self?.destinationWalletSubject.accept(wallet)
                     }

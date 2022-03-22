@@ -79,7 +79,8 @@ extension SendToken {
                 }
                 .onTap { [weak self] in
                     self?.viewModel
-                        .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: nil))
+                        .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true,
+                                                                 preSelectedNetwork: nil))
                 }
 
                 // Network
