@@ -97,10 +97,8 @@ extension ProcessTransaction.Status {
                                     viewModel.pendingTransactionDriver
                                         .map {
                                             $0.transactionId?
-                                                .truncatingMiddle(
-                                                    numOfSymbolsRevealed: 9,
-                                                    numOfSymbolsRevealedInSuffix: 9
-                                                )
+                                                .truncatingMiddle(numOfSymbolsRevealed: 9,
+                                                                  numOfSymbolsRevealedInSuffix: 9)
                                         }
                                         .drive(label.rx.text)
                                         .disposed(by: disposeBag)

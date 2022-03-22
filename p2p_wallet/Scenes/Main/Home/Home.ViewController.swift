@@ -52,17 +52,6 @@ extension Home {
                 .asDriver(onErrorJustReturn: .initializing)
 
             stateDriver
-                .map { $0 == .loading }
-                .drive(onNext: { [weak self] isLoading in
-                    if isLoading {
-                        self?.view.showLoadingIndicatorView()
-                    } else {
-                        self?.view.hideLoadingIndicatorView()
-                    }
-                })
-                .disposed(by: disposeBag)
-
-            stateDriver
                 .map { $0 == .error }
                 .drive(onNext: { [weak self] hasError in
                     if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil {

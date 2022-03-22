@@ -111,7 +111,7 @@ extension WalletDetail {
             if symbol == "SOL" {
                 tokens = .sol
             }
-            print(symbol)
+            debugPrint(symbol)
             if symbol == "USDC" {
                 tokens = .usdc
             }

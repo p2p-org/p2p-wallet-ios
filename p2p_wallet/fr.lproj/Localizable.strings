@@ -786,3 +786,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "If you have no backup, you may never be able to access this account." = "Si vous n'avez pas de sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";
 "Resetting your PIN" = "Réinitialiser votre code PIN";
 "Reset your PIN" = "Réinitialisez votre NIP";
+"Are you sure you want to sign out?" = "Êtes-vous certain de vouloir vous déconnecter?";
+"Without the backup, you may never be able to access this account." = "Sans la sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";

@@ -405,7 +405,7 @@ extension SerumSwapV1.ViewModel {
         authenticationHandler.authenticate(
             presentationStyle:
             .init(
-                completion: { [weak self] _ in
+                completion: { [weak self] in
                     self?.swap()
                 }
             )

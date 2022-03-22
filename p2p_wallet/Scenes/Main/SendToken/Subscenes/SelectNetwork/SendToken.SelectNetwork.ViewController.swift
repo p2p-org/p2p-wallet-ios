@@ -53,7 +53,8 @@ extension SendToken.SelectNetwork {
                                 viewModel.getFreeTransactionFeeLimit()
                                     .map(\.maxUsage)
                                     .subscribe(onSuccess: { [weak label] maxUsage in
-                                        label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                                        label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P
+                                            .Org
                                             .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(
                                                 maxUsage
                                             )
