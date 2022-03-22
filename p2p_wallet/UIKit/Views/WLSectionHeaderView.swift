@@ -41,12 +41,4 @@ class WLSectionHeaderView: UICollectionReusableView {
             completion?()
         }
     }
-
-    func removeStackView(completion: (() -> Void)? = nil) {
-        if stackView.superview != nil {
-            stackView.removeFromSuperview()
-            setNeedsLayout()
-            completion?()
-        }
-    }
 }

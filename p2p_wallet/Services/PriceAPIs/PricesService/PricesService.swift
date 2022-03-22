@@ -12,11 +12,9 @@ import RxSwift
 protocol PricesServiceType {
     // Observables
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> { get }
-    func observePrice(of coinName: String) -> Observable<CurrentPrice?>
 
     // Getters
     func getWatchList() -> [String]
-    func getCurrentPrices() -> [String: CurrentPrice]
     func currentPrice(for coinName: String) -> CurrentPrice?
 
     // Actions
@@ -28,12 +26,6 @@ protocol PricesServiceType {
 
     func startObserving()
     func stopObserving()
-}
-
-extension PricesServiceType {
-    var solPrice: CurrentPrice? {
-        currentPrice(for: "SOL")
-    }
 }
 
 class PricesLoadableRelay: LoadableRelay<[String: CurrentPrice]> {
@@ -63,7 +55,6 @@ class PricesService {
 
     @Injected private var storage: PricesStorage
     @Injected private var fetcher: PricesFetcher
-    @Injected private var tokensRepository: TokensRepository
 
     // MARK: - Properties
 
@@ -128,17 +119,8 @@ extension PricesService: PricesServiceType {
         currentPricesSubject.asDriver()
     }
 
-    func observePrice(of coinName: String) -> Observable<CurrentPrice?> {
-        currentPricesSubject.valueObservable
-            .map { $0?[coinName] }
-    }
-
     func getWatchList() -> [String] {
         watchList
-    }
-
-    func getCurrentPrices() -> [String: CurrentPrice] {
-        currentPricesSubject.value ?? [:]
     }
 
     func currentPrice(for coinName: String) -> CurrentPrice? {
