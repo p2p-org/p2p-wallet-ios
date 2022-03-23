@@ -145,10 +145,7 @@ extension Authentication {
                         .doYouWantToTurnItOn,
                     buttonTitles: [L10n.turnOn, L10n.cancel],
                     highlightedButtonIndex: 0
-                ) {
-                    index
-                    in
-
+                ) { index in
                     if index == 0 {
                         if let url = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
