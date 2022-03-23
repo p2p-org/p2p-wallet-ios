@@ -2029,6 +2029,7 @@
 				BCE42DE125DF9B980021540E /* CreateOrRestoreWallet */,
 				BCE42DF125DF9C360021540E /* Onboarding */,
 				BCEB206825E1559500B54FEF /* Main */,
+				41CA056E2754722F00953322 /* ReserveName */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -2640,7 +2641,6 @@
 			isa = PBXGroup;
 			children = (
 				3B1681FB278B3F7D00838F1B /* CreateOrRestoreWalletHandler.swift */,
-				41CA056E2754722F00953322 /* ReserveName */,
 				BC134FA426FD76E100DB15BF /* CreateOrRestoreWallet.swift */,
 				BCE42DE225DF9BDA0021540E /* CreateOrRestoreWallet.ViewModel.swift */,
 				BCE42DE425DF9BDA0021540E /* CreateOrRestoreWallet.ViewController.swift */,
