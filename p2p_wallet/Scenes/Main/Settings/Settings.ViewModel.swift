@@ -251,7 +251,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     func handleName(_ name: String?) {
         guard let name = name else { return }
         storage.save(name: name)
-        usernameSubject.accept(name)
+        usernameSubject.accept(name.withNameServiceDomain())
     }
 
     func setEnabledBiometry(_: Bool, onError: @escaping (Error?) -> Void) {
