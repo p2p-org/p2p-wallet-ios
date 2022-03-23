@@ -179,8 +179,8 @@ private extension BuyPreparingSceneModel {
     var exchangeRateStringDriver: Driver<String> {
         exchangeRateDriver
             .map { rate in
-                if rate != nil {
-                    return "$ \(rate!.amount.toString())"
+                if let rate = rate {
+                    return "$ \(rate.amount.fixedDecimal(2))"
                 } else {
                     return ""
                 }
@@ -213,14 +213,17 @@ private extension BuyPreparingSceneModel {
 
                 if input.currency is Buy.FiatCurrency {
                     if input.amount < minUSD {
-                        return NextStatus(text: L10n.minimumPurchaseOfRequired("$\(minUSD)"), isEnable: false)
+                        return NextStatus(
+                            text: L10n.minimumPurchaseOfRequired("$\(minUSD.fixedDecimal(2))"),
+                            isEnable: false
+                        )
                     }
                     return NextStatus(text: L10n.continue, isEnable: true)
                 } else {
                     if input.amount < minSol {
                         return NextStatus(
                             text: L10n
-                                .minimumPurchaseOfRequired("\(minSol) \(self?.crypto.rawValue.uppercased() ?? "?")"),
+                                .minimumPurchaseOfRequired("\(minSol) \(self?.crypto.name ?? "?")"),
                             isEnable: false
                         )
                     }

@@ -59,11 +59,14 @@ extension BuyPreparing {
 
             Single.zip(
                 exchangeService.getExchangeRate(from: .usd, to: crypto),
-                exchangeService.getMinAmount(currency: crypto)
-            ).subscribe(onSuccess: { [weak self] exchangeRate, minCryptoAmount in
+                exchangeService.getMinAmount(currency: crypto),
+                exchangeService.getMinAmount(currency: Buy.FiatCurrency.usd)
+            ).subscribe(onSuccess: { [weak self] exchangeRate, minCryptoAmount, minFiatAmount in
                 self?.exchangeRateRelay.accept(exchangeRate)
                 self?.minCryptoAmountsRelay.accept(minCryptoAmount)
-                self?.minFiatAmountsRelay.accept(minCryptoAmount * exchangeRate.amount)
+
+                let minFiatAmount = max(ceil(minCryptoAmount * exchangeRate.amount), minFiatAmount).rounded(decimals: 2)
+                self?.minFiatAmountsRelay.accept(minFiatAmount)
             }).disposed(by: disposeBag)
 
             inputRelay
@@ -142,8 +145,8 @@ extension BuyPreparing {
 
         func back() { buyViewModel.navigate(to: .back) }
 
-        var minFiatAmount: Driver<Double> { minCryptoAmountsRelay.asDriver() }
+        var minFiatAmount: Driver<Double> { minFiatAmountsRelay.asDriver() }
 
-        var minCryptoAmount: Driver<Double> { minFiatAmountsRelay.asDriver() }
+        var minCryptoAmount: Driver<Double> { minCryptoAmountsRelay.asDriver() }
     }
 }
