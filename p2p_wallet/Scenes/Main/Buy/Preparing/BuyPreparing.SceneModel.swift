@@ -57,17 +57,24 @@ extension BuyPreparing {
                 )
             )
 
-            Single.zip(
-                exchangeService.getExchangeRate(from: .usd, to: crypto),
-                exchangeService.getMinAmount(currency: crypto),
-                exchangeService.getMinAmount(currency: Buy.FiatCurrency.usd)
-            ).subscribe(onSuccess: { [weak self] exchangeRate, minCryptoAmount, minFiatAmount in
-                self?.exchangeRateRelay.accept(exchangeRate)
-                self?.minCryptoAmountsRelay.accept(minCryptoAmount)
+            Observable<Int>
+                .timer(.seconds(0), period: .seconds(10), scheduler: ConcurrentDispatchQueueScheduler(qos: .background))
+                .subscribe(onNext: { [weak self] _ in
+                    guard let self = self else { return }
+                    Single.zip(
+                        self.exchangeService.getExchangeRate(from: .usd, to: crypto),
+                        self.exchangeService.getMinAmount(currency: crypto),
+                        self.exchangeService.getMinAmount(currency: Buy.FiatCurrency.usd)
+                    ).subscribe(onSuccess: { [weak self] exchangeRate, minCryptoAmount, minFiatAmount in
+                        self?.exchangeRateRelay.accept(exchangeRate)
+                        self?.minCryptoAmountsRelay.accept(minCryptoAmount)
 
-                let minFiatAmount = max(ceil(minCryptoAmount * exchangeRate.amount), minFiatAmount).rounded(decimals: 2)
-                self?.minFiatAmountsRelay.accept(minFiatAmount)
-            }).disposed(by: disposeBag)
+                        let minFiatAmount = max(ceil(minCryptoAmount * exchangeRate.amount), minFiatAmount)
+                            .rounded(decimals: 2)
+                        self?.minFiatAmountsRelay.accept(minFiatAmount)
+                    }).disposed(by: self.disposeBag)
+                })
+                .disposed(by: disposeBag)
 
             inputRelay
                 .flatMapLatest { [weak self] input -> Single<Buy.ExchangeOutput> in
