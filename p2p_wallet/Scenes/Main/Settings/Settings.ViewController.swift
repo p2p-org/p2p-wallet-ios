@@ -61,7 +61,7 @@ extension Settings {
 
                         // Sign out button
                         BECenter {
-                            UILabel(text: "Sign out", textColor: .ff3b30)
+                            UILabel(text: L10n.signOut, textColor: .ff3b30)
                         }
                         .frame(height: 60)
                         .onTap { [unowned self] in viewModel.showLogoutAlert() }
