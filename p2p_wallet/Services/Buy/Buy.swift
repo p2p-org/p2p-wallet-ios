@@ -12,13 +12,6 @@ struct Buy {
     enum FiatCurrency: BuyCurrencyType {
         case usd
 
-        var code: String {
-            switch self {
-            case .usd:
-                return "usd"
-            }
-        }
-
         var name: String {
             switch self {
             case .usd:
@@ -40,18 +33,6 @@ struct Buy {
                 return "Solana"
             case .usdc:
                 return "USD Coin"
-            }
-        }
-
-        // TODO: move code to moonpay domain
-        var code: String {
-            switch self {
-            case .eth:
-                return "eth"
-            case .sol:
-                return "sol"
-            case .usdc:
-                return "usdc_sol"
             }
         }
 
@@ -123,6 +104,5 @@ struct Buy {
 }
 
 protocol BuyCurrencyType {
-    var code: String { get }
     var name: String { get }
 }

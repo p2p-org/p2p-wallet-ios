@@ -117,17 +117,25 @@ extension BuyPreparing {
                 descriptionRow(
                     label: L10n.purchaseCost("\(viewModel.crypto.name)"),
                     initial: "$ 0.00",
-                    viewModel.purchaseCost.map { "$ \($0)" }
+                    viewModel.purchaseCost.map { "$ \($0.fixedDecimal(2))" }
                 )
                 UIView(height: 8)
-                descriptionRow(label: L10n.processingFee, initial: "$ 0.00", viewModel.feeAmount.map { "$ \($0)" })
+                descriptionRow(
+                    label: L10n.processingFee,
+                    initial: "$ 0.00",
+                    viewModel.feeAmount.map { "$ \($0.fixedDecimal(2))" }
+                )
                 UIView(height: 8)
-                descriptionRow(label: L10n.networkFee, initial: "$ 0.00", viewModel.networkFee.map { "$ \($0)" })
+                descriptionRow(
+                    label: L10n.networkFee,
+                    initial: "$ 0.00",
+                    viewModel.networkFee.map { "$ \($0.fixedDecimal(2))" }
+                )
                 UIView(height: 8)
 
                 UIView.defaultSeparator()
                 UIView(height: 8)
-                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
+                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0.fixedDecimal(2))" })
             }
         }
 
@@ -180,7 +188,7 @@ private extension BuyPreparingSceneModel {
         exchangeRateDriver
             .map { rate in
                 if let rate = rate {
-                    return "$ \(rate.amount.fixedDecimal(2))"
+                    return "$ \(rate.amount)"
                 } else {
                     return ""
                 }

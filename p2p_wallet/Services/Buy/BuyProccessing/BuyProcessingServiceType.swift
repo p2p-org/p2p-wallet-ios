@@ -36,9 +36,9 @@ extension Buy {
                 apiKey: Defaults.apiEndPoint.network == .mainnetBeta ?
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
-                currencyCode: crypto.code,
+                currencyCode: crypto.moonpayCode,
                 walletAddress: walletRepository.nativeWallet?.pubkey,
-                baseCurrencyCode: currency.code,
+                baseCurrencyCode: currency.moonpayCode,
                 baseCurrencyAmount: initialAmount
             )
         }
