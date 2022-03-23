@@ -40,6 +40,8 @@ extension BuyPreparing {
         private let minFiatAmountsRelay = BehaviorRelay<Double>(value: 0)
         private let minCryptoAmountsRelay = BehaviorRelay<Double>(value: 0)
         private let exchangeRateRelay = BehaviorRelay<Buy.ExchangeRate?>(value: nil)
+        private let updateTimer = Observable<Int>
+            .timer(.seconds(0), period: .seconds(10), scheduler: ConcurrentDispatchQueueScheduler(qos: .background))
 
         init(crypto: Buy.CryptoCurrency, buyViewModel: BuyViewModelType, exchangeService: Buy.ExchangeService) {
             self.crypto = crypto
@@ -57,8 +59,7 @@ extension BuyPreparing {
                 )
             )
 
-            Observable<Int>
-                .timer(.seconds(0), period: .seconds(10), scheduler: ConcurrentDispatchQueueScheduler(qos: .background))
+            updateTimer
                 .subscribe(onNext: { [weak self] _ in
                     guard let self = self else { return }
                     Single.zip(
@@ -76,8 +77,8 @@ extension BuyPreparing {
                 })
                 .disposed(by: disposeBag)
 
-            inputRelay
-                .flatMapLatest { [weak self] input -> Single<Buy.ExchangeOutput> in
+            Observable.combineLatest(inputRelay, updateTimer)
+                .flatMapLatest { [weak self] input, _ -> Single<Buy.ExchangeOutput> in
                     guard let self = self else { return .error(NSError(domain: "Preparing", code: -1)) }
                     if input.amount == 0 {
                         return .just(.init(
