@@ -71,6 +71,15 @@ extension Double {
         return formatter.string(from: self as NSNumber) ?? "0"
     }
 
+    public func fixedDecimal(_ value: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = NumberFormatter.Style.decimal
+        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
+        formatter.maximumFractionDigits = value
+
+        return formatter.string(for: self) ?? toString(maximumFractionDigits: value)
+    }
+
     public func toString(
         maximumFractionDigits: Int = 3,
         showPlus: Bool = false,
