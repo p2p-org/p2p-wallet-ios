@@ -62,10 +62,8 @@ extension FeeRelayer.Error: LocalizedError {
         case .clientError:
             if let error = clientError, let type = error.type {
                 string = type.rawValue
-            } else if let errorLog = clientError?.errorLog {
-                string = errorLog
             } else {
-                string = "Solana RPC client error"
+                string = clientError?.errorLog ?? message
             }
         case .programError: string = "Solana program error"
         case .tooSmallAmount: string = "Amount is too small"
