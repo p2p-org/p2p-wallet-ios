@@ -69,7 +69,8 @@ extension ReserveName {
             kind: ReserveNameKind,
             owner: String,
             reserveNameHandler: ReserveNameHandler?,
-            goBackOnCompletion: Bool = false
+            goBackOnCompletion: Bool = false,
+            checkBeforeReserving: Bool
         ) {
             self.kind = kind
             self.owner = owner
@@ -77,6 +78,10 @@ extension ReserveName {
             self.goBackOnCompletion = goBackOnCompletion
 
             super.init()
+
+            if checkBeforeReserving {
+                checkIfUsernameHasAlreadyBeenRegistered()
+            }
 
             bind()
             manager.registerCaptcha(nil)
@@ -114,6 +119,20 @@ extension ReserveName {
                 )
         }
 
+        private func checkIfUsernameHasAlreadyBeenRegistered() {
+            isLoadingSubject.accept(true)
+            nameService.getName(owner)
+                .subscribe(onSuccess: { [weak self] name in
+                    self?.isLoadingSubject.accept(false)
+                    if let name = name {
+                        self?.nameDidReserve(name)
+                    }
+                }, onFailure: { [weak self] _ in
+                    self?.isLoadingSubject.accept(false)
+                })
+                .disposed(by: disposeBag)
+        }
+
         private func setEmptyState() {
             textFieldStateSubject.accept(.empty)
             mainButtonStateSubject.accept(.empty)
@@ -127,7 +146,7 @@ extension ReserveName {
             guard let name = textFieldTextSubject.value else { return }
             analyticsManager.log(event: .usernameSaved(lastScreen: "Onboarding"))
 
-            startLoading()
+            isLoadingSubject.accept(true)
             nameService
                 .post(
                     name: name,
@@ -141,18 +160,10 @@ extension ReserveName {
                     )
                 )
                 .subscribe(onSuccess: { [weak self] _ in
-                    self?.stopLoading()
+                    self?.isLoadingSubject.accept(false)
                     self?.nameDidReserve(name)
-                    self?.analyticsManager.log(event: .usernameReserved)
-                    self?.notificationsService.showInAppNotification(
-                        .message(L10n.usernameWasReserved(name))
-                    )
-
-                    if self?.goBackOnCompletion == true {
-                        self?.goBack()
-                    }
                 }, onFailure: { [weak self] error in
-                    self?.stopLoading()
+                    self?.isLoadingSubject.accept(false)
                     self?.notificationsService.showInAppNotification(.error(error))
                 })
                 .disposed(by: disposeBag)
@@ -160,14 +171,14 @@ extension ReserveName {
 
         private func nameDidReserve(_ name: String) {
             reserveNameHandler?.handleName(name)
-        }
+            analyticsManager.log(event: .usernameReserved)
+            notificationsService.showInAppNotification(
+                .message(L10n.usernameWasReserved(name))
+            )
 
-        private func startLoading() {
-            isLoadingSubject.accept(true)
-        }
-
-        private func stopLoading() {
-            isLoadingSubject.accept(false)
+            if goBackOnCompletion {
+                goBack()
+            }
         }
 
         private func handleSkipAlertAction(isProceed: Bool) {
