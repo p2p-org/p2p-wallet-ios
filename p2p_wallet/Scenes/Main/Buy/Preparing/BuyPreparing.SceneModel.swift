@@ -57,22 +57,14 @@ extension BuyPreparing {
                 )
             )
 
-            exchangeService
-                .getExchangeRate(from: .usd, to: crypto)
-                .asObservable()
-                .bind(to: exchangeRateRelay)
-                .disposed(by: disposeBag)
-
-            exchangeService
-                .getMinAmounts(
-                    Buy.FiatCurrency.usd,
-                    crypto
-                )
-                .subscribe(onSuccess: { [weak self] fiatMinAmount, cryptoMinAmount in
-                    self?.minCryptoAmountsRelay.accept(fiatMinAmount)
-                    self?.minFiatAmountsRelay.accept(cryptoMinAmount)
-                })
-                .disposed(by: disposeBag)
+            Single.zip(
+                exchangeService.getExchangeRate(from: .usd, to: crypto),
+                exchangeService.getMinAmount(currency: crypto)
+            ).subscribe(onSuccess: { [weak self] exchangeRate, minCryptoAmount in
+                self?.exchangeRateRelay.accept(exchangeRate)
+                self?.minCryptoAmountsRelay.accept(minCryptoAmount)
+                self?.minFiatAmountsRelay.accept(minCryptoAmount * exchangeRate.amount)
+            }).disposed(by: disposeBag)
 
             inputRelay
                 .flatMapLatest { [weak self] input -> Single<Buy.ExchangeOutput> in
