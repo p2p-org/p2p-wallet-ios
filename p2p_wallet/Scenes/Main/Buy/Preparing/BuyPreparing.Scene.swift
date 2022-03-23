@@ -69,7 +69,7 @@ extension BuyPreparing {
 
                         BEVStack {
                             descriptionRow(
-                                label: "\(viewModel.crypto.rawValue.uppercased()) \(L10n.price)",
+                                label: "\(viewModel.crypto.name) \(L10n.price)",
                                 initial: "$ 0.0",
                                 viewModel.exchangeRateStringDriver
                             )
@@ -115,7 +115,7 @@ extension BuyPreparing {
             BEVStack {
                 UIView(height: 18)
                 descriptionRow(
-                    label: L10n.purchaseCost("\(viewModel.crypto.rawValue.uppercased())"),
+                    label: L10n.purchaseCost("\(viewModel.crypto.name)"),
                     initial: "$ 0.00",
                     viewModel.purchaseCost.map { "$ \($0)" }
                 )

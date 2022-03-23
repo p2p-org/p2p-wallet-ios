@@ -24,8 +24,8 @@ extension Buy {
 
             return provider
                 .getBuyQuote(
-                    baseCurrencyCode: base.toString(),
-                    quoteCurrencyCode: quote.toString(),
+                    baseCurrencyCode: base.code,
+                    quoteCurrencyCode: quote.code,
                     baseCurrencyAmount: baseAmount,
                     quoteCurrencyAmount: quoteAmount
                 )
@@ -54,14 +54,14 @@ extension Buy {
             to cryptoCurrency: CryptoCurrency
         ) -> Single<ExchangeRate> {
             provider
-                .getPrice(for: cryptoCurrency.rawValue, as: fiatCurrency.rawValue.uppercased())
+                .getPrice(for: cryptoCurrency.code, as: fiatCurrency.code.uppercased())
                 .map { exchangeRate in
                     .init(amount: exchangeRate, cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency)
                 }
         }
 
         private func _getMinAmount(currencies: Moonpay.Currencies, for currency: Currency) -> Double {
-            currencies.first { e in e.code == currency.toString() }?.minBuyAmount ?? 0.0
+            currencies.first { e in e.code == currency.code }?.minBuyAmount ?? 0.0
         }
 
         func getMinAmounts(_ currency1: Currency, _ currency2: Currency) -> Single<(Double, Double)> {

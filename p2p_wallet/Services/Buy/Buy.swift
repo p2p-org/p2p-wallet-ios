@@ -9,18 +9,28 @@ struct Buy {
     public typealias ExchangeService = BuyExchangeServiceType
     public typealias Currency = BuyCurrencyType
 
-    enum FiatCurrency: String, BuyCurrencyType {
+    enum FiatCurrency: BuyCurrencyType {
         case usd
 
-        func toString() -> String { rawValue }
+        var code: String {
+            switch self {
+            case .usd:
+                return "usd"
+            }
+        }
+
+        var name: String {
+            switch self {
+            case .usd:
+                return "USD"
+            }
+        }
     }
 
-    enum CryptoCurrency: String, BuyCurrencyType {
+    enum CryptoCurrency: BuyCurrencyType {
         case eth
         case sol
         case usdc
-
-        func toString() -> String { rawValue }
 
         var fullname: String {
             switch self {
@@ -45,7 +55,18 @@ struct Buy {
             }
         }
 
-        var tokenName: String {
+        var solanaCode: String {
+            switch self {
+            case .eth:
+                return "eth"
+            case .sol:
+                return "sol"
+            case .usdc:
+                return "usdc"
+            }
+        }
+
+        var name: String {
             switch self {
             case .eth:
                 return "ETH"
@@ -99,4 +120,9 @@ struct Buy {
         case invalidInput
         case message(String)
     }
+}
+
+protocol BuyCurrencyType {
+    var code: String { get }
+    var name: String { get }
 }
