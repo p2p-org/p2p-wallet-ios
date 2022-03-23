@@ -44,6 +44,16 @@ extension ReserveName {
 
         override func bind() {
             super.bind()
+            viewModel.isLoadingDriver
+                .drive(onNext: { [weak self] isLoading in
+                    if isLoading {
+                        self?.view.showIndetermineHud()
+                    } else {
+                        self?.view.hideHud()
+                    }
+                })
+                .disposed(by: disposeBag)
+
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)

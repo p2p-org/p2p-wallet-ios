@@ -267,7 +267,8 @@ extension Settings {
                     kind: .independent,
                     owner: owner,
                     reserveNameHandler: viewModel,
-                    goBackOnCompletion: true
+                    goBackOnCompletion: true,
+                    checkBeforeReserving: true
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
                 show(vc, sender: nil)
