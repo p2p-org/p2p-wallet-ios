@@ -160,7 +160,8 @@ extension Home {
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
-                    reserveNameHandler: nil
+                    reserveNameHandler: nil,
+                    checkBeforeReserving: true
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
 
