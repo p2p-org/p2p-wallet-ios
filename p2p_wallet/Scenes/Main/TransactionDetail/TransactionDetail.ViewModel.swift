@@ -21,6 +21,7 @@ protocol TransactionDetailViewModelType: AnyObject {
 
     func getTransactionId() -> String?
     func getPayingFeeWallet() -> Wallet?
+    func getCreatedAccountSymbol() -> String?
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double?
 
     func navigate(to scene: TransactionDetail.NavigatableScene)
@@ -191,6 +192,19 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func getPayingFeeWallet() -> Wallet? {
         payingFeeWallet
+    }
+
+    func getCreatedAccountSymbol() -> String? {
+        let createdWallet: String?
+        switch parsedTransationSubject.value?.value {
+        case let transaction as SolanaSDK.TransferTransaction:
+            createdWallet = transaction.destination?.token.symbol
+        case let transaction as SolanaSDK.SwapTransaction:
+            createdWallet = transaction.destination?.token.symbol
+        default:
+            return nil
+        }
+        return createdWallet
     }
 
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double? {

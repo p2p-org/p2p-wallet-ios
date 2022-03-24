@@ -121,7 +121,8 @@ extension TransactionDetail {
                 .map { $0?.fee }
 
             return BEHStack(spacing: 4, alignment: .top) {
-                titleLabel(text: L10n.transferFee)
+                titleLabel(text: L10n.transferFee, numberOfLines: 1)
+                    .withContentHuggingPriority(.required, for: .horizontal)
                     .setup { label in
                         viewModel.parsedTransactionDriver
                             .map { $0?.value is SolanaSDK.SwapTransaction }
@@ -157,31 +158,42 @@ extension TransactionDetail {
 //                        }
 
                     // account creation fee
-                    UILabel(text: "0.02 SOL (BTC Account Creation)", textSize: 15, textAlignment: .right)
-                        .setup { accountCreationLabel in
-                            feesDriver
-                                .map { [weak self] feeAmount -> NSAttributedString? in
-                                    guard let self = self else { return nil }
-                                    let payingWallet = self.getPayingFeeWallet()
-                                    let amount = feeAmount?.accountBalances
-                                        .convertToBalance(decimals: payingWallet.token.decimals)
+                    UILabel(
+                        text: "0.02 SOL (BTC Account Creation)",
+                        textSize: 15,
+                        numberOfLines: 2,
+                        textAlignment: .right
+                    )
+                    .setup { accountCreationLabel in
+                        feesDriver
+                            .map { [weak self] feeAmount -> NSAttributedString? in
+                                guard let self = self else { return nil }
+                                let payingWallet = self.getPayingFeeWallet()
+                                let amount = feeAmount?.accountBalances
+                                    .convertToBalance(decimals: payingWallet.token.decimals)
 
-                                    return self.getAttributedString(
-                                        amount: amount,
-                                        symbol: payingWallet.token.symbol,
-                                        withFiatValue: false
-                                    )
-                                    .text(" (\(L10n.accountCreation("")))", size: 15, color: .textSecondary)
-                                }
-                                .drive(accountCreationLabel.rx.attributedText)
-                                .disposed(by: disposeBag)
+                                let createdWalletSymbol = self.viewModel.getCreatedAccountSymbol()
 
-                            feesDriver
-                                .map { $0?.accountBalances ?? 0 }
-                                .map { $0 == 0 }
-                                .drive(accountCreationLabel.rx.isHidden)
-                                .disposed(by: disposeBag)
-                        }
+                                return self.getAttributedString(
+                                    amount: amount,
+                                    symbol: payingWallet.token.symbol,
+                                    withFiatValue: false
+                                )
+                                .text(
+                                    " (\(L10n.accountCreation(createdWalletSymbol ?? L10n.unknownToken)))",
+                                    size: 15,
+                                    color: .textSecondary
+                                )
+                            }
+                            .drive(accountCreationLabel.rx.attributedText)
+                            .disposed(by: disposeBag)
+
+                        feesDriver
+                            .map { $0?.accountBalances ?? 0 }
+                            .map { $0 == 0 }
+                            .drive(accountCreationLabel.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
 
                     // transfer fee
                     BEHStack(spacing: 4) {
@@ -353,6 +365,6 @@ extension TransactionDetail {
     }
 }
 
-private func titleLabel(text: String) -> UILabel {
-    UILabel(text: text, textSize: 15, textColor: .textSecondary, numberOfLines: 2)
+private func titleLabel(text: String, numberOfLines: Int = 2) -> UILabel {
+    UILabel(text: text, textSize: 15, textColor: .textSecondary, numberOfLines: numberOfLines)
 }
