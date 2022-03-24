@@ -22,21 +22,6 @@ extension DerivablePaths {
             .init(x: 10, y: 0)
         }
 
-        // MARK: - Subviews
-
-        private lazy var collectionView = BEStaticSectionsCollectionView(
-            sections: [
-                .init(
-                    index: 0,
-                    layout: .init(
-                        cellType: Cell.self,
-                        itemHeight: .estimated(64)
-                    ),
-                    viewModel: viewModel
-                ),
-            ]
-        )
-
         // MARK: - Initializers
 
         init(currentPath: SolanaSDK.DerivablePath, onSelect: Callback?) {

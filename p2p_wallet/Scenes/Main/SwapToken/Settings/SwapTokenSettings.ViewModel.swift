@@ -29,7 +29,6 @@ extension SwapTokenSettings {
             .init(doubleValue: swapViewModel.slippageSubject.value)
         }
 
-        private let nativeWallet: Wallet?
         private let swapViewModel: OrcaSwapV2ViewModelType
         @Injected private var walletRepository: WalletsRepository
         @Injected private var notificationService: NotificationsService
@@ -81,10 +80,9 @@ extension SwapTokenSettings {
         // MARK: - Actions
 
         init(
-            nativeWallet: Wallet?,
+            nativeWallet _: Wallet?,
             swapViewModel: OrcaSwapV2ViewModelType
         ) {
-            self.nativeWallet = nativeWallet
             self.swapViewModel = swapViewModel
 
             setCustomSlippageIsOpened(slippageType: slippageType)

@@ -5,7 +5,7 @@
 import Foundation
 
 struct BuyProviderUtils {
-    public typealias Params = [String: String?]
+    typealias Params = [String: String?]
 }
 
 extension BuyProviderUtils.Params {

@@ -1,0 +1,6 @@
+retain_objc_accessible: true
+schemes:
+- p2p_wallet
+targets:
+- p2p_wallet
+workspace: p2p_wallet.xcworkspace

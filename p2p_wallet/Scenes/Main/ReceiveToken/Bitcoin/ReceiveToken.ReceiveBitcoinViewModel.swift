@@ -11,24 +11,15 @@ import RxCocoa
 import RxSwift
 
 protocol ReceiveTokenBitcoinViewModelType: AnyObject {
-    var notificationsService: NotificationsServiceType { get }
     var isReceivingRenBTCDriver: Driver<Bool> { get }
-    var isLoadingDriver: Driver<Bool> { get }
-    var errorDriver: Driver<String?> { get }
-    var renBTCWalletCreatingDriver: Driver<Loadable<String>> { get }
     var conditionAcceptedDriver: Driver<Bool> { get }
     var addressDriver: Driver<String?> { get }
     var timerSignal: Signal<Void> { get }
-    var minimumTransactionAmountDriver: Driver<Loadable<Double>> { get }
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
     var hasExplorerButton: Bool { get }
 
-    func reload()
-    func reloadMinimumTransactionAmount()
     func getSessionEndDate() -> Date?
-    func createRenBTCWallet()
     func acceptConditionAndLoadAddress()
-    func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool)
     func showReceivingStatuses()
     func copyToClipboard()
     func share(image: UIImage)
@@ -89,14 +80,6 @@ extension ReceiveToken {
             debugPrint("\(String(describing: self)) deinited")
         }
 
-        func reload() {
-            renVMService.reload()
-        }
-
-        func createRenBTCWallet() {
-            createRenBTCSubject.reload()
-        }
-
         func acceptConditionAndLoadAddress() {
             renVMService.acceptConditionAndLoadAddress()
         }
@@ -115,28 +98,12 @@ extension ReceiveToken {
                 })
                 .disposed(by: disposeBag)
         }
-
-        func toggleIsReceivingRenBTC(isReceivingRenBTC: Bool) {
-            isReceivingRenBTCSubject.accept(isReceivingRenBTC)
-        }
     }
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
     var isReceivingRenBTCDriver: Driver<Bool> {
         isReceivingRenBTCSubject.asDriver()
-    }
-
-    var isLoadingDriver: Driver<Bool> {
-        renVMService.isLoadingDriver
-    }
-
-    var errorDriver: Driver<String?> {
-        renVMService.errorDriver
-    }
-
-    var renBTCWalletCreatingDriver: Driver<Loadable<String>> {
-        createRenBTCSubject.asDriver()
     }
 
     var conditionAcceptedDriver: Driver<Bool> {
@@ -149,10 +116,6 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
     var timerSignal: Signal<Void> {
         timerSubject.asSignal()
-    }
-
-    var minimumTransactionAmountDriver: Driver<Loadable<Double>> {
-        renVMService.minimumTransactionAmountDriver
     }
 
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
@@ -200,10 +163,6 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         guard let address = renVMService.getCurrentAddress() else { return }
         analyticsManager.log(event: .receiveViewingExplorer)
         navigationSubject.accept(.showBTCExplorer(address: address))
-    }
-
-    func reloadMinimumTransactionAmount() {
-        renVMService.reloadMinimumTransactionAmount()
     }
 
     func showReceivingStatuses() {

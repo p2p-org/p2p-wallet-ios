@@ -9,12 +9,10 @@ import RxSwift
 
 class BEBuilder<T>: UIView {
     typealias Build<T> = (T) -> UIView
-    private let driver: Driver<T>
     private let build: Build<T>
     private let disposeBag = DisposeBag()
     private var child: UIView?
     init(driver: Driver<T>, build: @escaping Build<T>) {
-        self.driver = driver
         self.build = build
         super.init(frame: .zero)
 
@@ -37,7 +35,7 @@ class BEBuilder<T>: UIView {
     }
 
     @available(*, unavailable)
-    public required init?(coder _: NSCoder) {
+    required init?(coder _: NSCoder) {
         fatalError("Loading this view from a nib is unsupported in favor of initializer dependency injection.")
     }
 }
