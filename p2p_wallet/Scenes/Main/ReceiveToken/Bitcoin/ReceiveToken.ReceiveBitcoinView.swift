@@ -37,7 +37,7 @@ extension ReceiveToken {
                         self.viewModel.share(image: image)
                     }.onSave { [unowned self] image in
                         self.viewModel.saveAction(image: image)
-                    }.setupWithType(QrCodeCard.self) { card in
+                    }.setup { card in
                         viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
                     }
 
@@ -75,13 +75,13 @@ extension ReceiveToken {
                         UILabel(text: L10n.statusesReceived, textSize: 17)
                         // Last time
                         UILabel(text: "\(L10n.theLastOne) 0m ago", textSize: 13, textColor: .secondaryLabel)
-                            .setupWithType(UILabel.self) { view in
+                            .setup { view in
                                 viewModel.lastTrxDate().drive(view.rx.text).disposed(by: disposeBag)
                             }
                     }
                     UIView.spacer
                     UILabel(text: "0")
-                        .setupWithType(UILabel.self) { view in
+                        .setup { view in
                             viewModel.txsCountDriver().drive(view.rx.text).disposed(by: disposeBag)
                         }
                         .padding(.init(only: .right, inset: 8))

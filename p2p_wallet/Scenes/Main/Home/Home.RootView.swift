@@ -42,7 +42,7 @@ extension Home {
                     }.padding(.init(x: 0, y: 12))
 
                     // Indicator
-                    WLStatusIndicatorView(forAutoLayout: ()).setupWithType(WLStatusIndicatorView.self) { view in
+                    WLStatusIndicatorView(forAutoLayout: ()).setup { view in
                         viewModel.currentPricesDriver
                             .map(\.state)
                             .drive(onNext: { [weak view] state in
@@ -113,7 +113,7 @@ extension Home {
                                 }
                             ),
                         ]
-                    ).setupWithType(WalletsCollectionView.self) { collectionView in
+                    ).setup { collectionView in
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
 
@@ -131,7 +131,7 @@ extension Home {
                 // Action bar
                 BEZStackPosition(mode: .pinEdges([.top, .left, .right])) {
                     FloatingHeaderView(viewModel: viewModel)
-                        .setupWithType(FloatingHeaderView.self) { view in headerViewScrollDelegate.headerView = view }
+                        .setup { view in headerViewScrollDelegate.headerView = view }
                         .padding(.init(x: 18, y: 0))
                 }
             }.padding(.init(only: .top, inset: 20))

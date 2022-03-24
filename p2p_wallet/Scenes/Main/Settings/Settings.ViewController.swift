@@ -36,7 +36,7 @@ extension Settings {
                         CellView(
                             icon: .profileIcon,
                             title: UILabel(text: L10n.username.onlyUppercaseFirst()),
-                            trailing: UILabel(textSize: 15).setupWithType(UILabel.self) { label in
+                            trailing: UILabel(textSize: 15).setup { label in
                                 viewModel.usernameDriver
                                     .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notYetReserved }
                                     .drive(label.rx.text)
@@ -74,7 +74,7 @@ extension Settings {
                         CellView(
                             icon: .backupIcon,
                             title: UILabel(text: L10n.backup.onlyUppercaseFirst()),
-                            trailing: UILabel(textSize: 15).setupWithType(UILabel.self) { label in
+                            trailing: UILabel(textSize: 15).setup { label in
                                 // Text
                                 viewModel.didBackupDriver
                                     .map { $0 ? L10n.backupIsReady : L10n.backupRequired }
@@ -99,7 +99,7 @@ extension Settings {
                         // Face id
                         CellView(
                             icon: .faceIdIcon,
-                            title: UILabel().setupWithType(UILabel.self) { view in
+                            title: UILabel().setup { view in
                                 viewModel.biometryTypeDriver.map {
                                     switch $0 {
                                     case .touch: return L10n.touchID
@@ -108,7 +108,7 @@ extension Settings {
                                 }.drive(view.rx.text)
                                     .disposed(by: disposeBag)
                             },
-                            trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
+                            trailing: UISwitch().setup { switcher in
                                 viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled)
                                     .disposed(by: disposeBag)
                                 viewModel.isBiometryEnabledDriver.drive(switcher.rx.value).disposed(by: disposeBag)
@@ -168,7 +168,7 @@ extension Settings {
                             icon: .currency,
                             title: UILabel(text: L10n.currency.onlyUppercaseFirst()),
                             trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
-                                .setupWithType(UILabel.self) { label in
+                                .setup { label in
                                     viewModel.fiatDriver
                                         .map { fiat in fiat.name }
                                         .drive(label.rx.text)
@@ -189,7 +189,7 @@ extension Settings {
                         CellView(
                             icon: .hideZeroBalance,
                             title: UILabel(text: L10n.hideZeroBalances.onlyUppercaseFirst()),
-                            trailing: UISwitch().setupWithType(UISwitch.self) { switcher in
+                            trailing: UISwitch().setup { switcher in
                                 viewModel.hideZeroBalancesDriver.drive(switcher.rx.value).disposed(by: disposeBag)
                                 switcher.rx.controlEvent(.valueChanged)
                                     .withLatestFrom(switcher.rx.value)
