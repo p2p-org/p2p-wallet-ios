@@ -26,13 +26,11 @@ protocol RawTransactionType {
 }
 
 extension RawTransactionType {
-    var isSwap: Bool {
-        self is ProcessTransaction.OrcaSwapTransaction || self is ProcessTransaction.SwapTransaction
-    }
+    var isSwap: Bool { self is ProcessTransaction.SwapTransaction }
 
     var payingWallet: Wallet? {
         switch self {
-        case let transaction as ProcessTransaction.OrcaSwapTransaction:
+        case let transaction as ProcessTransaction.SwapTransaction:
             return transaction.payingWallet
         case let transaction as ProcessTransaction.SendTransaction:
             return transaction.payingFeeWallet
@@ -44,16 +42,11 @@ extension RawTransactionType {
 
 extension ProcessTransaction {
     struct SwapTransaction: RawTransactionType {
-        var mainDescription: String {
-            fatalError()
+        struct MetaInfo {
+            let swapMAX: Bool
+            let swapUSD: Double
         }
 
-        func createRequest() -> Single<String> {
-            fatalError()
-        }
-    }
-
-    struct OrcaSwapTransaction: RawTransactionType {
         let swapService: SwapServiceType
         let sourceWallet: Wallet
         let destinationWallet: Wallet
@@ -64,6 +57,7 @@ extension ProcessTransaction {
         let estimatedAmount: Double
         let slippage: Double
         let fees: [PayingFee]
+        let metaInfo: MetaInfo
 
         var mainDescription: String {
             amount.toString(maximumFractionDigits: 9) + " " + sourceWallet.token.symbol +
