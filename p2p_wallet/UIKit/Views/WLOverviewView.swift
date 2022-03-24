@@ -30,13 +30,4 @@ class WLOverviewView: WLFloatingPanelView {
     func createButtonsView() -> UIView {
         fatalError("Must override")
     }
-
-    func showLoading() {
-        stackView.arrangedSubviews.forEach { $0.hideLoader() }
-        stackView.arrangedSubviews.forEach { $0.showLoader(customGradientColor: .defaultLoaderGradientColors) }
-    }
-
-    func hideLoading() {
-        stackView.arrangedSubviews.forEach { $0.hideLoader() }
-    }
 }

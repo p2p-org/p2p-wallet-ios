@@ -16,7 +16,6 @@ protocol TabBarNeededViewController: UIViewController {}
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     @Injected private var helpCenterLauncher: HelpCenterLauncher
-    private let disposeBag = DisposeBag()
     private var tabBarTopConstraint: NSLayoutConstraint!
 
     deinit {
@@ -196,8 +195,6 @@ private final class NavigationController: UINavigationController {
         }
     }
 }
-
-private class _PlaceholderVC: BaseVC, TabBarNeededViewController {}
 
 extension UIViewController {
     func tabBar() -> TabBarVC? {

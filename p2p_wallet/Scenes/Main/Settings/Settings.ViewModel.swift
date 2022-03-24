@@ -23,16 +23,11 @@ protocol LogoutResponder {
 }
 
 protocol SettingsViewModelType: ReserveNameHandler {
-    var notificationsService: NotificationsServiceType { get }
     var selectableLanguages: [LocalizedLanguage: Bool] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
     var usernameDriver: Driver<String?> { get }
     var didBackupDriver: Driver<Bool> { get }
     var fiatDriver: Driver<Fiat> { get }
-    var endpointDriver: Driver<SolanaSDK.APIEndPoint> { get }
-    var securityMethodsDriver: Driver<[String]> { get }
-    var currentLanguageDriver: Driver<String?> { get }
-    var themeDriver: Driver<UIUserInterfaceStyle?> { get }
     var hideZeroBalancesDriver: Driver<Bool> { get }
     var logoutAlertSignal: Signal<Void> { get }
     var biometryTypeDriver: Driver<Settings.BiometryType> { get }
@@ -70,7 +65,6 @@ extension Settings {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var logoutResponder: LogoutResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
-        @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
         @Injected private var localizationManager: LocalizationManagerType
@@ -83,19 +77,18 @@ extension Settings {
         // MARK: - Properties
 
         private var disposables = [DefaultsDisposable]()
+        private let disposeBag = DisposeBag()
         let canGoBack: Bool
 
         // MARK: - Subject
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var usernameSubject = BehaviorRelay<String?>(value: storage.getName()?.withNameServiceDomain())
+        private lazy var usernameSubject = BehaviorRelay<String?>(value: storage.getName())
         private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
             .didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
         private let endpointSubject = BehaviorRelay<SolanaSDK.APIEndPoint>(value: Defaults.apiEndPoint)
         private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
-        private let currentLanguageSubject = BehaviorRelay<String?>(value: Locale.current.uiLanguageLocalizedString?
-            .uppercaseFirst)
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?
             .overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
@@ -108,6 +101,7 @@ extension Settings {
 
         init(canGoBack: Bool = true) {
             self.canGoBack = canGoBack
+            setUp()
             bind()
         }
 
@@ -115,11 +109,9 @@ extension Settings {
             debugPrint("\(String(describing: self)) deinited")
         }
 
-        func bind() {
-            disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
-                self?.usernameSubject.accept(self?.storage.getName()?.withNameServiceDomain())
-            })
+        // MARK: - Methods
 
+        func setUp() {
             let context = LAContext()
             if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
                 isBiometryAvailableSubject.accept(true)
@@ -133,6 +125,21 @@ extension Settings {
             default:
                 biometryTypeSubject.accept(.none)
             }
+        }
+
+        func bind() {
+            disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
+                self?.usernameSubject.accept(self?.storage.getName())
+            })
+
+            storage
+                .onValueChange
+                .emit(onNext: { [weak self] event in
+                    if event.key == "getName", let name = event.value as? String {
+                        self?.usernameSubject.accept(name)
+                    }
+                })
+                .disposed(by: disposeBag)
         }
 
         // MARK: - Methods
@@ -167,22 +174,6 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     var fiatDriver: Driver<Fiat> {
         fiatSubject.asDriver()
-    }
-
-    var endpointDriver: Driver<SolanaSDK.APIEndPoint> {
-        endpointSubject.asDriver()
-    }
-
-    var securityMethodsDriver: Driver<[String]> {
-        securityMethodsSubject.asDriver()
-    }
-
-    var currentLanguageDriver: Driver<String?> {
-        currentLanguageSubject.asDriver()
-    }
-
-    var themeDriver: Driver<UIUserInterfaceStyle?> {
-        themeSubject.asDriver()
     }
 
     var hideZeroBalancesDriver: Driver<Bool> {
@@ -251,7 +242,6 @@ extension Settings.ViewModel: SettingsViewModelType {
     func handleName(_ name: String?) {
         guard let name = name else { return }
         storage.save(name: name)
-        usernameSubject.accept(name)
     }
 
     func setEnabledBiometry(_: Bool, onError: @escaping (Error?) -> Void) {

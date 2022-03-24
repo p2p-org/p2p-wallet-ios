@@ -15,12 +15,12 @@ class WLModalViewController: BaseVC, CustomPresentableViewController {
 
     private var panGestureRecognizer: UIPanGestureRecognizer!
     private var originalPosition: CGPoint!
-    private var currentPositionTouched: CGPoint!
-    var canSwipeToDismiss: Bool = true {
-        didSet {
-            panGestureRecognizer.isEnabled = canSwipeToDismiss
-        }
-    }
+//    private var currentPositionTouched: CGPoint!
+//    var canSwipeToDismiss: Bool = true {
+//        didSet {
+//            panGestureRecognizer.isEnabled = canSwipeToDismiss
+//        }
+//    }
 
     var dismissCompletion: (() -> Void)?
 
@@ -73,7 +73,7 @@ class WLModalViewController: BaseVC, CustomPresentableViewController {
         switch panGesture.state {
         case .began:
             originalPosition = view.center
-            currentPositionTouched = panGesture.location(in: view)
+//            currentPositionTouched = panGesture.location(in: view)
         case .changed:
             guard translation.y > 0 else { break }
             var newPosition = originalPosition

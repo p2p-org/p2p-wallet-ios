@@ -18,7 +18,7 @@ enum Home {
         case closeReserveNameAlert((ClosingBannerType) -> Void)
         case swapToken
         case settings
-        case reserveName(owner: String)
+        case reserveName
         case walletDetail(wallet: Wallet)
         case walletSettings(wallet: Wallet)
         case feedback

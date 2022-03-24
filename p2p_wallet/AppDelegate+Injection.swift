@@ -41,9 +41,6 @@ extension Resolver: ResolverRegistering {
         register { NameService(cache: NameServiceUserDefaultCache()) }
             .implements(NameServiceType.self)
             .scope(.application)
-        register { AddressFormatter() }
-            .implements(AddressFormatterType.self)
-            .scope(.application)
         register { LocalizationManager() }
             .implements(LocalizationManagerType.self)
 

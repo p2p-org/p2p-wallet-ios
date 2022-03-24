@@ -121,7 +121,8 @@ extension RestoreWallet {
                 let viewModel = ReserveName.ViewModel(
                     kind: .reserveCreateWalletPart,
                     owner: owner,
-                    reserveNameHandler: viewModel
+                    reserveNameHandler: viewModel,
+                    checkBeforeReserving: false
                 )
                 let viewController = ReserveName.ViewController(viewModel: viewModel)
                 navigationController?.pushViewController(viewController, animated: true)

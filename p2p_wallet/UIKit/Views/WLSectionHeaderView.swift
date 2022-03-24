@@ -41,24 +41,4 @@ class WLSectionHeaderView: UICollectionReusableView {
             completion?()
         }
     }
-
-    func removeStackView(completion: (() -> Void)? = nil) {
-        if stackView.superview != nil {
-            stackView.removeFromSuperview()
-            setNeedsLayout()
-            completion?()
-        }
-    }
-
-    func setUp(
-        headerTitle: String,
-        headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold),
-        headerColor: UIColor? = nil
-    ) {
-        headerLabel.text = headerTitle
-        headerLabel.font = headerFont
-        if let color = headerColor {
-            headerLabel.textColor = color
-        }
-    }
 }

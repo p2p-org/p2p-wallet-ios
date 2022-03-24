@@ -31,6 +31,7 @@ extension ResetPinCodeWithSeedPhrases {
         override func build() -> UIView {
             BESafeArea {
                 BEZStack {
+                    // Content
                     BEZStackPosition(mode: .fill) {
                         BEVStack {
                             BEHStack(distribution: .equalCentering) {
@@ -46,7 +47,7 @@ extension ResetPinCodeWithSeedPhrases {
 
                                 UIView(width: 24)
                             }
-                            .backgroundColor(color: .fafafa)
+                            .backgroundColor(color: .fafafc)
                             .frame(height: 58)
 
                             // Separator
@@ -55,7 +56,7 @@ extension ResetPinCodeWithSeedPhrases {
                             // Input
                             BEHStack {
                                 ExpandableTextView()
-                                    .setupWithType(ExpandableTextView.self) { textField in
+                                    .setup { textField in
                                         textField.becomeFirstResponder()
                                         textField.placeholder = L10n.yourSecurityKey
 

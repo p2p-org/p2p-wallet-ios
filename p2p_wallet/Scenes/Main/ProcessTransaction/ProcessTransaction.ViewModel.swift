@@ -17,7 +17,6 @@ protocol ProcessTransactionViewModelType {
 
     var isSwapping: Bool { get }
     var transactionID: String? { get }
-    var rawTransaction: RawTransactionType { get }
 
     func getMainDescription() -> String
 
@@ -36,7 +35,7 @@ extension ProcessTransaction {
         // MARK: - Properties
 
         private let disposeBag = DisposeBag()
-        let rawTransaction: RawTransactionType
+        private let rawTransaction: RawTransactionType
 
         // MARK: - Subjects
 

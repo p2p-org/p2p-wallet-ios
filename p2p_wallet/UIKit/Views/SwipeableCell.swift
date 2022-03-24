@@ -40,7 +40,7 @@ class SwipeableCell: BECompositionView {
                         // trailing action
                         if trailingActions != nil { trailingActions! }
                     }
-                }.setupWithType(BEScrollView.self) { view in
+                }.setup { view in
                     view.scrollView.addObserver(self, forKeyPath: "contentSize", options: [], context: nil)
                 }.bind(scrollViewRef)
             }.setup { view in
