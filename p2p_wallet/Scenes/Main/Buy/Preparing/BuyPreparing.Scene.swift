@@ -76,7 +76,7 @@ extension BuyPreparing {
 
                             BEHStack(alignment: .center) {
                                 UILabel(text: L10n.hideFees)
-                                    .setupWithType(UILabel.self) { view in
+                                    .setup { view in
                                         self
                                             .infoToggle
                                             .asDriver()
@@ -86,7 +86,7 @@ extension BuyPreparing {
                                             .disposed(by: disposeBag)
                                     }
                                 UIImageView(image: .chevronDown, tintColor: .black)
-                                    .setupWithType(UIImageView.self) { view in
+                                    .setup { view in
                                         self
                                             .infoToggle
                                             .asDriver()

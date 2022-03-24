@@ -73,24 +73,7 @@ extension SendToken {
                     childNavigationController.pushViewController(vc, animated: true)
                 } else {
                     childNavigationController = .init(rootViewController: vc)
-                    #if DEBUG
-                        let label = UILabel(
-                            text: "Relay method: \(viewModel.relayMethod.rawValue)",
-                            textColor: .red,
-                            numberOfLines: 0,
-                            textAlignment: .center
-                        )
-                        view.addSubview(label)
-                        label.autoPinEdge(toSuperviewSafeArea: .top)
-                        label.autoAlignAxis(toSuperviewAxis: .vertical)
-                        let containerView = UIView(forAutoLayout: ())
-                        view.addSubview(containerView)
-                        containerView.autoPinEdge(.top, to: .bottom, of: label)
-                        containerView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-                        add(child: childNavigationController, to: containerView)
-                    #else
-                        add(child: childNavigationController)
-                    #endif
+                    add(child: childNavigationController)
                 }
             case let .chooseRecipientAndNetwork(showAfterConfirmation, preSelectedNetwork):
                 let vm = ChooseRecipientAndNetwork.ViewModel(

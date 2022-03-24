@@ -25,7 +25,7 @@ extension Home {
             BEVStack(alignment: .center) {
                 UILabel(text: L10n.balance, textSize: 13, textColor: .secondaryLabel)
                 UIView(height: 4)
-                UILabel(text: "", textSize: 28, weight: .bold).setupWithType(UILabel.self) { view in
+                UILabel(text: "", textSize: 28, weight: .bold).setup { view in
                     viewModel
                         .balance
                         .drive(view.rx.text)

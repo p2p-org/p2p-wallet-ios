@@ -34,7 +34,7 @@ extension RenBTCReceivingStatuses {
                 UIStackView(axis: .vertical, alignment: .fill) {
                     NewWLNavigationBar(initialTitle: L10n.receivingStatuses, separatorEnable: false)
                         .onBack { [unowned self] in self.back() }
-                        .setupWithType(NewWLNavigationBar.self) { view in
+                        .setup { view in
                             viewModel.processingTxsDriver
                                 .map { txs in L10n.statusesReceived(txs.count) }
                                 .drive(view.titleLabel.rx.text)
