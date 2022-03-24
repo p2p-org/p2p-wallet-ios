@@ -28,4 +28,24 @@ extension NSMutableAttributedString {
         append(normal)
         return self
     }
+
+    @discardableResult
+    func withParagraphStyle(
+        minimumLineHeight: CGFloat? = nil,
+        lineSpacing: CGFloat? = nil,
+        alignment: NSTextAlignment? = nil
+    ) -> NSMutableAttributedString {
+        let paragraphStyle = NSMutableParagraphStyle()
+        if let minimumLineHeight = minimumLineHeight {
+            paragraphStyle.minimumLineHeight = minimumLineHeight
+        }
+        if let lineSpacing = lineSpacing {
+            paragraphStyle.lineSpacing = lineSpacing
+        }
+        if let alignment = alignment {
+            paragraphStyle.alignment = alignment
+        }
+        addAttributes([.paragraphStyle: paragraphStyle], range: .init(location: 0, length: length))
+        return self
+    }
 }
