@@ -12,8 +12,6 @@ import RxSwift
 import SolanaSwift
 
 protocol SupportedTokensViewModelType: BEListViewModelType {
-    var navigationDriver: Driver<SupportedTokens.NavigatableScene?> { get }
-
     func search(keyword: String)
 }
 
@@ -29,7 +27,6 @@ extension SupportedTokens {
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private var keywordSubject = BehaviorRelay<String?>(value: nil)
 
         init(tokensRepository: TokensRepository) {
@@ -95,10 +92,6 @@ extension SupportedTokens {
 }
 
 extension SupportedTokens.ViewModel: SupportedTokensViewModelType {
-    var navigationDriver: Driver<SupportedTokens.NavigatableScene?> {
-        navigationSubject.asDriver()
-    }
-
     // MARK: - Actions
 
     func search(keyword: String) {

@@ -30,7 +30,6 @@ protocol OnboardingViewModelType {
 
     func navigateNext()
     func cancelOnboarding()
-    func endOnboarding()
 }
 
 extension Onboarding {
@@ -43,7 +42,6 @@ extension Onboarding {
 
         // MARK: - Properties
 
-        private let bag = DisposeBag()
         private let context = LAContext()
 
         // MARK: - Subjects

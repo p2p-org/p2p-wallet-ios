@@ -145,11 +145,3 @@ extension SendTokenRecipientAndNetworkHandler {
             .disposed(by: disposeBag)
     }
 }
-
-private func getPayingToken(payingWallet wallet: Wallet?) -> FeeRelayer.Relay.TokenInfo? {
-    guard let wallet = wallet, let address = wallet.pubkey
-    else {
-        return nil
-    }
-    return .init(address: address, mint: wallet.mintAddress)
-}

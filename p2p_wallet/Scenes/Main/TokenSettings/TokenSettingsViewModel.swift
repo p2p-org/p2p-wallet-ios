@@ -23,7 +23,6 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
 
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var solanaSDK: SolanaSDK
-    @Injected private var pricesService: PricesServiceType
 
     // MARK: - Properties
 

@@ -59,7 +59,7 @@ extension ReceiveToken {
                 UIStackView(axis: .vertical, alignment: .fill) {
                     // Username
                     UILabel(textSize: 20, weight: .semibold, numberOfLines: 3, textAlignment: .center)
-                        .setupWithType(UILabel.self) { label in
+                        .setup { label in
                             usernameLabel = label
                             guard let username = username else { return }
                             updateUsername(username)
@@ -67,14 +67,14 @@ extension ReceiveToken {
 
                     // QR code
                     QrCodeView(size: 190, coinLogoSize: 32, showCoinLogo: showCoinLogo)
-                        .setupWithType(QrCodeView.self) { view in qrView = view }
+                        .setup { view in qrView = view }
                         .with(string: pubKey, token: token)
                         .autoAdjustWidthHeightRatio(1)
                         .padding(.init(x: 50, y: 0))
 
                     // Address
                     UILabel(textSize: 15, weight: .semibold, numberOfLines: 5, textAlignment: .center)
-                        .setupWithType(UILabel.self) { label in
+                        .setup { label in
                             pubKeyView = label
                             updatePubKey(pubKey)
                         }.padding(.init(x: 50, y: 24))
@@ -163,15 +163,7 @@ extension ReceiveToken {
 }
 
 extension Reactive where Base: ReceiveToken.QrCodeCard {
-    var username: Binder<String?> {
-        Binder(base) { view, username in view.username = username }
-    }
-
     var pubKey: Binder<String?> {
         Binder(base) { view, pubKey in view.pubKey = pubKey }
-    }
-
-    var token: Binder<SolanaSDK.Token?> {
-        Binder(base) { view, token in view.token = token }
     }
 }

@@ -51,7 +51,6 @@ extension DefaultsKeys {
     var hiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var unhiddenWalletPubkey: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var hideZeroBalances: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
-    var useFreeTransaction: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
     var p2pFeePayerPubkeys: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var prices: DefaultsKey<Data> { .init(#function, defaultValue: Data()) }
     var payingTokenMint: DefaultsKey<String> {

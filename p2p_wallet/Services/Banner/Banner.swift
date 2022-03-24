@@ -60,9 +60,6 @@ class Banners {
 protocol BannerServiceType: AnyObject {
     var banners: Driver<[Banners.Banner]> { get }
 
-    func register(handler: Banners.Handler)
-    func unregister(handler: Banners.Handler)
-
     func update(banner: Banners.Banner)
     func remove(bannerId: String)
 }

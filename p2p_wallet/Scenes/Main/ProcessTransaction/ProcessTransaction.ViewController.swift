@@ -21,7 +21,6 @@ extension ProcessTransaction {
         // MARK: - Handlers
 
         var makeAnotherTransactionHandler: (() -> Void)?
-        var backCompletion: (() -> Void)?
         var specificErrorHandler: ((Swift.Error) -> Void)?
 
         // MARK: - Initializer

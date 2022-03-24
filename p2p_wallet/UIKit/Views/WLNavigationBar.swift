@@ -146,7 +146,7 @@ class NewWLNavigationBar: BECompositionView {
                         numberOfLines: 1,
                         textAlignment: .center
                     )
-                    .setupWithType(UILabel.self) { view in titleLabel = view }
+                    .setup { view in titleLabel = view }
 
                     // Actions
                     actions

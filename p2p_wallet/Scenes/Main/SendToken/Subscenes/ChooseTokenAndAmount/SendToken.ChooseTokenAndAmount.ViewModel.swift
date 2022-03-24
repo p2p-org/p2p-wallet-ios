@@ -17,7 +17,6 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> { get }
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> { get }
     var showAfterConfirmation: Bool { get }
-    var selectedNetwork: SendToken.Network? { get }
     var canGoBack: Bool { get }
 
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene)

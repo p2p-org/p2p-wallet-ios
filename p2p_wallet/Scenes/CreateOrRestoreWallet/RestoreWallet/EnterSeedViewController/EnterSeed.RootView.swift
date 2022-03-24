@@ -136,7 +136,7 @@ extension EnterSeed {
                         labelFont: .systemFont(ofSize: 15, weight: .semibold),
                         textColor: .h5887ff
                     )
-                    .setupWithType(UIButton.self) { button in
+                    .setup { button in
                         button.addTarget(self, action: #selector(securityExplanation), for: .touchUpInside)
                     }
                 }

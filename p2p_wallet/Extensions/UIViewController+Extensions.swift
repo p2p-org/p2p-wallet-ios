@@ -79,35 +79,8 @@ extension UIViewController {
         }
     }
 
-    var errorView: ErrorView? {
-        view.subviews.first(where: { $0 is ErrorView }) as? ErrorView
-    }
-
-    func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
-        view.showErrorView(error: error, retryAction: retryAction)
-    }
-
     func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
         view.showErrorView(title: title, description: description, retryAction: retryAction)
-    }
-
-    func removeErrorView() {
-        view.removeErrorView()
-    }
-
-    func topViewController() -> UIViewController {
-        if isKind(of: UITabBarController.self) {
-            let tabbarController = self as! UITabBarController
-            return tabbarController.selectedViewController!.topViewController()
-        } else if isKind(of: UINavigationController.self) {
-            let navigationController = self as! UINavigationController
-            return navigationController.visibleViewController!.topViewController()
-        } else if presentedViewController != nil {
-            let controller = presentedViewController
-            return controller!.topViewController()
-        } else {
-            return parent ?? self
-        }
     }
 
     func showWebsite(url: String) {
