@@ -5,9 +5,9 @@
 import Foundation
 
 struct Buy {
-    public typealias ProcessingService = BuyProcessingServiceType
-    public typealias ExchangeService = BuyExchangeServiceType
-    public typealias Currency = BuyCurrencyType
+    typealias ProcessingService = BuyProcessingServiceType
+    typealias ExchangeService = BuyExchangeServiceType
+    typealias Currency = BuyCurrencyType
 
     enum FiatCurrency: String, BuyCurrencyType {
         case usd
@@ -55,8 +55,6 @@ struct Buy {
                 return "USDC"
             }
         }
-
-        static let all: Set<CryptoCurrency> = [.eth, .sol, .usdc]
     }
 
     struct ExchangeInput {

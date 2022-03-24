@@ -39,7 +39,7 @@ extension BuyTokenSelection {
 
         private func cell(cryptoCurrency: Buy.CryptoCurrency) -> UIView {
             Cell()
-                .setupWithType(Cell.self) { cell in
+                .setup { cell in
                     if let wallet = walletRepository.getWallets().first(where: {
                         $0.token.symbol == cryptoCurrency.tokenName
                     }) {

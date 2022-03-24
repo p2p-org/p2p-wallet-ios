@@ -34,7 +34,7 @@ extension Home {
                     // Title
                     BEHStack {
                         UILabel(textAlignment: .center)
-                            .setupWithType(UILabel.self) { label in
+                            .setup { label in
                                 let p2pWallet = NSMutableAttributedString()
                                     .text(L10n.p2PWallet, size: 17, weight: .semibold)
                                 label.attributedText = p2pWallet
@@ -42,7 +42,7 @@ extension Home {
                     }.padding(.init(x: 0, y: 12))
 
                     // Indicator
-                    WLStatusIndicatorView(forAutoLayout: ()).setupWithType(WLStatusIndicatorView.self) { view in
+                    WLStatusIndicatorView(forAutoLayout: ()).setup { view in
                         viewModel.currentPricesDriver
                             .map(\.state)
                             .drive(onNext: { [weak view] state in
@@ -91,7 +91,7 @@ extension Home {
                             BannerSection(index: 1, viewModel: viewModel.bannerViewModel) { [unowned self] action in
                                 if let action = action as? Banners.Actions.OpenScreen {
                                     switch action.screen {
-                                    case "reserve": viewModel.navigate(to: .reserveName(owner: ""))
+                                    case "reserve": viewModel.navigate(to: .reserveName)
                                     case "feedback": viewModel.navigate(to: .feedback)
                                     case "backup": viewModel.navigate(to: .backup)
                                     default:
@@ -113,7 +113,7 @@ extension Home {
                                 }
                             ),
                         ]
-                    ).setupWithType(WalletsCollectionView.self) { collectionView in
+                    ).setup { collectionView in
                         collectionView.delegate = self
                         collectionView.scrollDelegate = headerViewScrollDelegate
 
@@ -131,7 +131,7 @@ extension Home {
                 // Action bar
                 BEZStackPosition(mode: .pinEdges([.top, .left, .right])) {
                     FloatingHeaderView(viewModel: viewModel)
-                        .setupWithType(FloatingHeaderView.self) { view in headerViewScrollDelegate.headerView = view }
+                        .setup { view in headerViewScrollDelegate.headerView = view }
                         .padding(.init(x: 18, y: 0))
                 }
             }.padding(.init(only: .top, inset: 20))

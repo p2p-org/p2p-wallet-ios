@@ -10,9 +10,6 @@ extension Home {
 
         private(set) var preferredTopHeight: CGFloat = 90
         let bottomMaxHeight: CGFloat = 80
-        let bottomMinHeight: CGFloat = 40
-
-        var top: UIView!
         var collapseConstraint: NSLayoutConstraint!
         var bottomCollapseConstraint: NSLayoutConstraint!
 
@@ -46,7 +43,6 @@ extension Home {
                 v2.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
                 v1.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
 
-                top = v2
                 collapseConstraint = v2.autoPinEdge(.bottom, to: .top, of: v1, withOffset: 0, relation: .equal)
                 bottomCollapseConstraint = v1.autoSetDimension(.height, toSize: bottomMaxHeight)
 

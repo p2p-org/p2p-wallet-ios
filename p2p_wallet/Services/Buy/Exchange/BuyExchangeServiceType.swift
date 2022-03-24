@@ -6,7 +6,6 @@ import Foundation
 import RxSwift
 
 protocol BuyExchangeServiceType {
-    func getMinAmount(currency: Buy.Currency) -> Single<Double>
     func getMinAmounts(_ currency1: Buy.Currency, _ currency2: Buy.Currency) -> Single<(Double, Double)>
 
     func convert(input: Buy.ExchangeInput, to currency: Buy.Currency) -> Single<Buy.ExchangeOutput>

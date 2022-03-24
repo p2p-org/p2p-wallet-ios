@@ -49,24 +49,3 @@ extension NSMutableAttributedString {
         return self
     }
 }
-
-extension NSAttributedString {
-    static func slippageAttributedText(
-        slippage: Double
-    ) -> NSAttributedString {
-        if slippage > .maxSlippage {
-            return NSMutableAttributedString()
-                .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
-                .text(" ", weight: .medium)
-                .text(L10n.slippageExceedsMaximum, weight: .medium, color: .red)
-        } else if slippage > .frontrunSlippage, slippage <= .maxSlippage {
-            return NSMutableAttributedString()
-                .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
-                .text(" ", weight: .medium)
-                .text(L10n.yourTransactionMayBeFrontrun, weight: .medium, color: .attentionGreen)
-        } else {
-            return NSMutableAttributedString()
-                .text((slippage * 100).toString(maximumFractionDigits: 9) + "%", weight: .medium)
-        }
-    }
-}

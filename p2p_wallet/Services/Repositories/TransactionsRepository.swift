@@ -16,13 +16,6 @@ protocol TransactionsRepository {
         limit: Int,
         p2pFeePayerPubkeys: [String]
     ) -> Single<[SolanaSDK.ParsedTransaction]>
-    func getTransaction(
-        account: String,
-        accountSymbol: String?,
-        signature: String,
-        parser: SolanaSDKTransactionParserType,
-        p2pFeePayerPubkeys: [String]
-    ) -> Single<SolanaSDK.ParsedTransaction>
 }
 
 extension SolanaSDK: TransactionsRepository {
