@@ -258,69 +258,62 @@ extension TransactionDetail {
         private func totalSectionForTransfer() -> BEHStack {
             BEHStack(spacing: 4, alignment: .top) {
                 titleLabel(text: L10n.total)
-                UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
+                    .withContentHuggingPriority(.required, for: .horizontal)
+                UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, numberOfLines: 2, textAlignment: .right)
                     .setup { label in
                         viewModel.parsedTransactionDriver
                             .map { [weak self] transaction -> NSAttributedString? in
                                 guard let self = self else { return nil }
 
-                                let payingWallet = self.getPayingFeeWallet()
-                                let fees =
-                                    ((transaction?.fee?.transaction ?? 0) + (transaction?.fee?.accountBalances ?? 0))
-                                        .convertToBalance(decimals: payingWallet.token.decimals)
                                 var amount = transaction?.amount ?? 0
 
                                 // received
                                 if amount > 0 {
                                     return self.getAttributedString(
                                         amount: amount,
-                                        symbol: payingWallet.token.symbol
+                                        symbol: transaction?.symbol
                                     )
                                 }
 
                                 // sent
                                 else {
+                                    let payingWallet = self.getPayingFeeWallet()
+                                    let fees = (transaction?.fee?.total ?? 0)
+                                        .convertToBalance(decimals: payingWallet.token.decimals)
+
                                     amount = abs(amount)
+
+                                    // if the value is of the same token
                                     if payingWallet.token.symbol == transaction?.symbol {
                                         let totalAmount = fees + amount
                                         return self.getAttributedString(
                                             amount: totalAmount,
                                             symbol: payingWallet.token.symbol
                                         )
-                                    } else {
+                                    }
+
+                                    // if the value is from different tokens
+                                    else {
+                                        // amount spent
                                         let attrStr = self.getAttributedString(
                                             amount: amount,
-                                            symbol: transaction?.symbol,
-                                            withFiatValue: false
+                                            symbol: transaction?.symbol
                                         )
+
+                                        // fee (if exists)
                                         if fees > 0 {
-                                            attrStr.text(" + ", size: 15, color: .textBlack)
+                                            attrStr.text("\n", size: 15, color: .textBlack)
 
                                             attrStr.append(
                                                 self.getAttributedString(
                                                     amount: fees,
-                                                    symbol: payingWallet.token.symbol,
-                                                    withFiatValue: false
+                                                    symbol: payingWallet.token.symbol
                                                 )
                                             )
                                         }
 
-                                        let totalAmountInFiat = self.viewModel.getAmountInCurrentFiat(
-                                            amountInToken: amount,
-                                            symbol: transaction?.symbol
-                                        ) + self.viewModel.getAmountInCurrentFiat(
-                                            amountInToken: fees,
-                                            symbol: payingWallet.token.symbol
-                                        )
-
-                                        attrStr
-                                            .text(
-                                                " (~\(Defaults.fiat.symbol)\(totalAmountInFiat.toString(maximumFractionDigits: 9)))",
-                                                size: 15,
-                                                color: .textSecondary
-                                            )
-
                                         return attrStr
+                                            .withParagraphStyle(lineSpacing: 8, alignment: .right)
                                     }
                                 }
                             }
