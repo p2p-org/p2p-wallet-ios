@@ -201,51 +201,51 @@ extension OrcaSwapV2 {
         func swap() {
             guard verify() == nil else { return }
 
+            let authority = walletsRepository.nativeWallet?.pubkey
             let sourceWallet = sourceWalletSubject.value!
             let destinationWallet = destinationWalletSubject.value!
             let bestPoolsPair = bestPoolsPairSubject.value!
             let inputAmount = inputAmountSubject.value!
             let estimatedAmount = estimatedAmountSubject.value!
             let payingWallet = payingWalletSubject.value
+            let slippage = slippageSubject.value
+            let fees = feesSubject.value?.filter { $0.type != .liquidityProviderFee } ?? []
+
+            let swapMAX = availableAmountSubject.value == inputAmount
 
             // log
             minimumReceiveAmountObservable
                 .first()
-                .subscribe(onSuccess: { receiveAmount in
+                .subscribe(onSuccess: { [weak self] receiveAmount in
+                    guard let self = self else { return }
+
                     let receiveAmount: Double = receiveAmount.map { $0 ?? 0 } ?? 0
                     let receivePriceFiat: Double = destinationWallet.priceInCurrentFiat ?? 0.0
+                    let swapUSD = receiveAmount * receivePriceFiat
 
-                    self.analyticsManager.log(
-                        event: .swapUserConfirmed(
-                            tokenAName: sourceWallet.token.symbol,
-                            tokenBName: destinationWallet.token.symbol,
-                            swapSum: inputAmount,
-                            swapMAX: self.availableAmountSubject.value == inputAmount,
-                            swapUSD: "\(receiveAmount * receivePriceFiat)",
-                            priceSlippage: self.slippageSubject.value,
-                            feesSource: payingWallet?.token.name ?? "Unknown"
+                    // show processing scene
+                    self.navigationSubject.accept(
+                        .processTransaction(
+                            ProcessTransaction.SwapTransaction(
+                                swapService: self.swapService,
+                                sourceWallet: sourceWallet,
+                                destinationWallet: destinationWallet,
+                                payingWallet: payingWallet,
+                                authority: authority,
+                                poolsPair: bestPoolsPair,
+                                amount: inputAmount,
+                                estimatedAmount: estimatedAmount,
+                                slippage: slippage,
+                                fees: fees,
+                                metaInfo: .init(
+                                    swapMAX: swapMAX,
+                                    swapUSD: swapUSD
+                                )
+                            )
                         )
                     )
                 })
                 .disposed(by: disposeBag)
-
-            // show processing scene
-            navigationSubject.accept(
-                .proceslssTransaction(
-                    ProcessTransaction.OrcaSwapTransaction(
-                        swapService: swapService,
-                        sourceWallet: sourceWallet,
-                        destinationWallet: destinationWallet,
-                        payingWallet: payingWallet,
-                        authority: walletsRepository.nativeWallet?.pubkey,
-                        poolsPair: bestPoolsPair,
-                        amount: inputAmount,
-                        estimatedAmount: estimatedAmount,
-                        slippage: slippageSubject.value,
-                        fees: feesSubject.value?.filter { $0.type != .liquidityProviderFee } ?? []
-                    )
-                )
-            )
         }
     }
 }

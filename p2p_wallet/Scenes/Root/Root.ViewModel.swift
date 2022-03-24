@@ -26,8 +26,12 @@ extension Root {
 
         private var appEventHandler: AppEventHandlerType = Resolver.resolve()
         private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-        private let analyticsManager: AnalyticsManagerType = Resolver.resolve()
         private let notificationsService: NotificationsServiceType = Resolver.resolve()
+
+        private let analyticsManager: AnalyticsManagerType = Resolver.resolve()
+        private let transactionAnalytics = [
+            Resolver.resolve(SwapTransactionAnalytics.self),
+        ]
 
         // MARK: - Properties
 

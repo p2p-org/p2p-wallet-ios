@@ -17,10 +17,13 @@ protocol TransactionHandlerType {
 
     func observeProcessingTransactions(forAccount account: String) -> Observable<[SolanaSDK.ParsedTransaction]>
     func getProccessingTransactions(of account: String) -> [SolanaSDK.ParsedTransaction]
+
+    var onNewTransaction: Observable<(trx: PendingTransaction, index: Int)> { get }
 }
 
 class TransactionHandler: TransactionHandlerType {
     @Injected var notificationsService: NotificationsServiceType
+    @Injected var analyticsManager: AnalyticsManager
     @Injected var apiClient: ProcessTransactionAPIClient
     @Injected var walletsRepository: WalletsRepository
     @Injected var pricesService: PricesServiceType
@@ -28,6 +31,12 @@ class TransactionHandler: TransactionHandlerType {
 
     let disposeBag = DisposeBag()
     let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
+    let onNewTransactionPublish = PublishRelay<(trx: PendingTransaction, index: Int)>()
+    var onNewTransaction: Observable<(trx: PendingTransaction, index: Int)> { onNewTransactionPublish.asObservable() }
+
+    init() {
+        print("Init TransactionHandler")
+    }
 
     func sendTransaction(
         _ processingTransaction: RawTransactionType
@@ -36,11 +45,18 @@ class TransactionHandler: TransactionHandlerType {
         let txIndex = transactionsSubject.value.count
 
         // add to processing
-        var value = transactionsSubject.value
-        value.append(
-            .init(transactionId: nil, sentAt: Date(), rawTransaction: processingTransaction, status: .sending)
+        let trx = PendingTransaction(
+            transactionId: nil,
+            sentAt: Date(),
+            rawTransaction: processingTransaction,
+            status: .sending
         )
+
+        var value = transactionsSubject.value
+        value.append(trx)
+
         transactionsSubject.accept(value)
+        onNewTransactionPublish.accept((trx, txIndex))
 
         // process
         sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
@@ -79,7 +95,7 @@ class TransactionHandler: TransactionHandlerType {
                     {
                         return true
                     }
-                case let transaction as ProcessTransaction.OrcaSwapTransaction:
+                case let transaction as ProcessTransaction.SwapTransaction:
                     if transaction.sourceWallet.pubkey == account ||
                         transaction.destinationWallet.pubkey == account ||
                         transaction.authority == account

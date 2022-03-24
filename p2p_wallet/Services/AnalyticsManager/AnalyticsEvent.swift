@@ -117,10 +117,33 @@ enum AnalyticsEvent: MirrorableEnum {
         tokenBName: String,
         swapSum: Double,
         swapMAX: Bool,
-        swapUSD: String,
+        swapUSD: Double,
         priceSlippage: Double,
         feesSource: String
     )
+
+    // #132
+    case swapStarted(
+        tokenAName: String,
+        tokenBName: String,
+        swapSum: Double,
+        swapMAX: Bool,
+        swapUSD: Double,
+        priceSlippage: Double,
+        feesSource: String
+    )
+
+    // #134
+    case swapCompleted(
+        tokenAName: String,
+        tokenBName: String,
+        swapSum: Double,
+        swapMAX: Bool,
+        swapUSD: Double,
+        priceSlippage: Double,
+        feesSource: String
+    )
+
     // scan_qr
     case scanQrOpen(fromPage: String)
     case scanQrSuccess
