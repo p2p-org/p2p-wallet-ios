@@ -34,10 +34,6 @@ class TransactionHandler: TransactionHandlerType {
     let onNewTransactionPublish = PublishRelay<(trx: PendingTransaction, index: Int)>()
     var onNewTransaction: Observable<(trx: PendingTransaction, index: Int)> { onNewTransactionPublish.asObservable() }
 
-    init() {
-        print("Init TransactionHandler")
-    }
-
     func sendTransaction(
         _ processingTransaction: RawTransactionType
     ) -> TransactionIndex {
