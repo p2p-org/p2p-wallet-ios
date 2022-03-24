@@ -69,7 +69,7 @@ extension BuyPreparing {
 
                         BEVStack {
                             descriptionRow(
-                                label: "\(viewModel.crypto.rawValue.uppercased()) \(L10n.price)",
+                                label: "\(viewModel.crypto.name) \(L10n.price)",
                                 initial: "$ 0.0",
                                 viewModel.exchangeRateStringDriver
                             )
@@ -115,19 +115,27 @@ extension BuyPreparing {
             BEVStack {
                 UIView(height: 18)
                 descriptionRow(
-                    label: L10n.purchaseCost("\(viewModel.crypto.rawValue.uppercased())"),
+                    label: L10n.purchaseCost("\(viewModel.crypto.name)"),
                     initial: "$ 0.00",
-                    viewModel.purchaseCost.map { "$ \($0)" }
+                    viewModel.purchaseCost.map { "$ \($0.fixedDecimal(2))" }
                 )
                 UIView(height: 8)
-                descriptionRow(label: L10n.processingFee, initial: "$ 0.00", viewModel.feeAmount.map { "$ \($0)" })
+                descriptionRow(
+                    label: L10n.processingFee,
+                    initial: "$ 0.00",
+                    viewModel.feeAmount.map { "$ \($0.fixedDecimal(2))" }
+                )
                 UIView(height: 8)
-                descriptionRow(label: L10n.networkFee, initial: "$ 0.00", viewModel.networkFee.map { "$ \($0)" })
+                descriptionRow(
+                    label: L10n.networkFee,
+                    initial: "$ 0.00",
+                    viewModel.networkFee.map { "$ \($0.fixedDecimal(2))" }
+                )
                 UIView(height: 8)
 
                 UIView.defaultSeparator()
                 UIView(height: 8)
-                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0)" })
+                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0.fixedDecimal(2))" })
             }
         }
 
@@ -179,8 +187,8 @@ private extension BuyPreparingSceneModel {
     var exchangeRateStringDriver: Driver<String> {
         exchangeRateDriver
             .map { rate in
-                if rate != nil {
-                    return "$ \(rate!.amount.toString())"
+                if let rate = rate {
+                    return "$ \(rate.amount)"
                 } else {
                     return ""
                 }
@@ -213,14 +221,17 @@ private extension BuyPreparingSceneModel {
 
                 if input.currency is Buy.FiatCurrency {
                     if input.amount < minUSD {
-                        return NextStatus(text: L10n.minimumPurchaseOfRequired("$\(minUSD)"), isEnable: false)
+                        return NextStatus(
+                            text: L10n.minimumPurchaseOfRequired("$\(minUSD.fixedDecimal(2))"),
+                            isEnable: false
+                        )
                     }
                     return NextStatus(text: L10n.continue, isEnable: true)
                 } else {
                     if input.amount < minSol {
                         return NextStatus(
                             text: L10n
-                                .minimumPurchaseOfRequired("\(minSol) \(self?.crypto.rawValue.uppercased() ?? "?")"),
+                                .minimumPurchaseOfRequired("\(minSol) \(self?.crypto.name ?? "?")"),
                             isEnable: false
                         )
                     }
