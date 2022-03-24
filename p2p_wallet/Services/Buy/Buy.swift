@@ -9,18 +9,21 @@ struct Buy {
     typealias ExchangeService = BuyExchangeServiceType
     typealias Currency = BuyCurrencyType
 
-    enum FiatCurrency: String, BuyCurrencyType {
+    enum FiatCurrency: BuyCurrencyType {
         case usd
 
-        func toString() -> String { rawValue }
+        var name: String {
+            switch self {
+            case .usd:
+                return "USD"
+            }
+        }
     }
 
-    enum CryptoCurrency: String, BuyCurrencyType {
+    enum CryptoCurrency: BuyCurrencyType {
         case eth
         case sol
         case usdc
-
-        func toString() -> String { rawValue }
 
         var fullname: String {
             switch self {
@@ -33,19 +36,18 @@ struct Buy {
             }
         }
 
-        // TODO: move code to moonpay domain
-        var code: String {
+        var solanaCode: String {
             switch self {
             case .eth:
                 return "eth"
             case .sol:
                 return "sol"
             case .usdc:
-                return "usdc_sol"
+                return "usdc"
             }
         }
 
-        var tokenName: String {
+        var name: String {
             switch self {
             case .eth:
                 return "ETH"
@@ -97,4 +99,8 @@ struct Buy {
         case invalidInput
         case message(String)
     }
+}
+
+protocol BuyCurrencyType {
+    var name: String { get }
 }
