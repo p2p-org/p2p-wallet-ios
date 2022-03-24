@@ -73,53 +73,34 @@ extension ProcessTransaction {
 
         func createRequest() -> Single<String> {
             // check if payingWallet has enough balance to cover fee
-            let checkRequest: Completable
             if let fees = fees.networkFees,
-               let payingWallet = payingWallet
+               let payingWallet = payingWallet,
+               let currentAmount = payingWallet.lamports,
+               fees.total > currentAmount
             {
-                checkRequest = swapService.calculateNetworkFeeInPayingToken(
-                    networkFee: fees,
-                    payingTokenMint: payingWallet.mintAddress
-                )
-                .map { amount -> Bool in
-                    if let amount = amount?.total,
-                       let currentAmount = payingWallet.lamports,
-                       amount > currentAmount
-                    {
-                        throw SolanaSDK.Error.other(
-                            L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
-                                + ". "
-                                + L10n
-                                .needsAtLeast(
-                                    "\(amount.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)"
-                                )
-                                + ". "
-                                + L10n.pleaseChooseAnotherTokenAndTryAgain
+                return .error(SolanaSDK.Error.other(
+                    L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                        + ". "
+                        + L10n
+                        .needsAtLeast(
+                            "\(fees.total.convertToBalance(decimals: payingWallet.token.decimals)) \(payingWallet.token.symbol)"
                         )
-                    }
-                    return true
-                }
-                .asCompletable()
-            } else {
-                checkRequest = .empty()
+                        + ". "
+                        + L10n.pleaseChooseAnotherTokenAndTryAgain
+                ))
             }
 
-            let request = checkRequest
-                .andThen(
-                    swapService.swap(
-                        sourceAddress: sourceWallet.pubkey!,
-                        sourceTokenMint: sourceWallet.mintAddress,
-                        destinationAddress: destinationWallet.pubkey,
-                        destinationTokenMint: destinationWallet.mintAddress,
-                        payingTokenAddress: payingWallet?.pubkey,
-                        payingTokenMint: payingWallet?.mintAddress,
-                        poolsPair: poolsPair,
-                        amount: amount.toLamport(decimals: sourceWallet.token.decimals),
-                        slippage: slippage
-                    ).map { $0.first ?? "" }
-                )
-
-            return request
+            return swapService.swap(
+                sourceAddress: sourceWallet.pubkey!,
+                sourceTokenMint: sourceWallet.mintAddress,
+                destinationAddress: destinationWallet.pubkey,
+                destinationTokenMint: destinationWallet.mintAddress,
+                payingTokenAddress: payingWallet?.pubkey,
+                payingTokenMint: payingWallet?.mintAddress,
+                poolsPair: poolsPair,
+                amount: amount.toLamport(decimals: sourceWallet.token.decimals),
+                slippage: slippage
+            ).map { $0.first ?? "" }
         }
     }
 
