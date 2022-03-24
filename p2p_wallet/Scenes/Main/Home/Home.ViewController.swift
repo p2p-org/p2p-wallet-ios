@@ -46,12 +46,23 @@ extension Home {
         override func bind() {
             super.bind()
 
-            let stateDriver = viewModel.walletsRepository
+            let stateObservable = viewModel.walletsRepository
                 .stateObservable
                 .distinctUntilChanged()
-                .asDriver(onErrorJustReturn: .initializing)
 
-            stateDriver
+            stateObservable
+                .take(until: { $0 == .loaded })
+                .asDriver(onErrorJustReturn: .initializing)
+                .map { $0 == .loading }
+                .drive(onNext: { [weak self] _ in
+                    self?.view.showLoadingIndicatorView()
+                }, onCompleted: { [weak self] in
+                    self?.view.hideLoadingIndicatorView()
+                })
+                .disposed(by: disposeBag)
+
+            stateObservable
+                .asDriver(onErrorJustReturn: .initializing)
                 .map { $0 == .error }
                 .drive(onNext: { [weak self] hasError in
                     if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil {
