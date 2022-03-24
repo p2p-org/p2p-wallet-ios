@@ -772,6 +772,17 @@
 "Deposit" = "Депозит";
 "This value is calculated by subtracting the transaction fee from your balance." = "Это значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "Максимальное значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
+"Incorrect PIN, try again (%@ attempt left)" = "Неверный PIN-код, повторите попытку (осталось %@ попыток)";
+"Forgot your PIN?" = "Забыли PIN-код?";
+"Reset it" = "Сбросить это";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "У вас осталось %@ попыток для ввода правильного PIN-кода.
+ Сбросьте PIN-код или дождитесь %@.";
+"You have successfully set your PIN" = "Вы успешно установили свой PIN-код";
+"Sign out" = "выход";
+"Are you sure you want to sign out?" = "Вы уверены, что хотите выйти?";
+"If you have no backup, you may never be able to access this account." = "Если у вас нет резервной копии, вы никогда не сможете получить доступ к этой учетной записи.";
+"Resetting your PIN" = "Сброс PIN-кода";
+"Reset your PIN" = "Сбросить PIN-код";
 "Are you sure you want to sign out?" = "Вы уверены, что хотите выйти?";
 "Without the backup, you may never be able to access this account." = "Без резервной копии вы никогда не сможете получить доступ к этой учетной записи.";
-"Sign Out" = "Выход";

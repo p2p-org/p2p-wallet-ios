@@ -776,6 +776,17 @@
 "Deposit" = "Đặt cọc";
 "This value is calculated by subtracting the transaction fee from your balance." = "Giá trị này được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "Giá trị tối đa được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
+"Incorrect PIN, try again (%@ attempt left)" = "Mã PIN không chính xác, hãy thử lại (còn lại %@ lần thử)";
+"Forgot your PIN?" = "Quên mã PIN của bạn?";
+"Reset it" = "Đặt lại nó";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN chính xác.
+ Đặt lại mã PIN hoặc đợi %@.";
+"You have successfully set your PIN" = "Bạn đã đặt thành công mã PIN của mình";
+"Sign out" = "Đăng xuất";
+"Are you sure you want to sign out?" = "bạn có chắc chắn muốn đăng xuất không?";
+"If you have no backup, you may never be able to access this account." = "Nếu bạn không có bản sao lưu, bạn có thể không bao giờ truy cập được vào tài khoản này.";
+"Resetting your PIN" = "Đặt lại mã PIN của bạn";
+"Reset your PIN" = "Đặt lại mã PIN của bạn";
 "Are you sure you want to sign out?" = "bạn có chắc chắn muốn đăng xuất không?";
 "Without the backup, you may never be able to access this account." = "Nếu không có bản sao lưu, bạn có thể không bao giờ truy cập được vào tài khoản này.";
-"Sign Out" = "Đăng xuất";

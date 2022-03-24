@@ -21,18 +21,19 @@ extension Authentication {
         override var title: String? { didSet { pincodeVC.title = title } }
         var isIgnorable: Bool = false { didSet { pincodeVC.isIgnorable = isIgnorable } }
         var useBiometry: Bool = true { didSet { pincodeVC.useBiometry = useBiometry } }
+        let extraAction: ExtraAction
 
         // MARK: - Callbacks
 
-        var onSuccess: (() -> Void)?
+        var onSuccess: ((_ resetPassword: Bool) -> Void)?
         var onCancel: (() -> Void)?
 
         // MARK: - Subscenes
 
-        private lazy var pincodeVC: PincodeViewController = {
-            let pincodeVC = PincodeViewController(viewModel: viewModel)
+        private lazy var pincodeVC: PinCodeViewController = {
+            let pincodeVC = PinCodeViewController(viewModel: viewModel, extraAction: extraAction)
             pincodeVC.onSuccess = { [weak self] in
-                self?.authenticationDidComplete()
+                self?.authenticationDidComplete(resetPassword: false)
             }
             pincodeVC.onCancel = { [weak self] in
                 self?.cancel()
@@ -45,8 +46,9 @@ extension Authentication {
 
         // MARK: - Initializer
 
-        init(viewModel: AuthenticationViewModelType) {
+        init(viewModel: AuthenticationViewModelType, extraAction: ExtraAction = .none) {
             self.viewModel = viewModel
+            self.extraAction = extraAction
             super.init()
         }
 
@@ -74,9 +76,20 @@ extension Authentication {
                 let vc = ResetPinCodeWithSeedPhrases.ViewController(viewModel: vm)
                 vc.completion = { [weak self] in
                     self?.viewModel.setBlockedTime(nil)
-                    self?.authenticationDidComplete()
+                    self?.authenticationDidComplete(resetPassword: true)
                 }
                 present(vc, animated: true, completion: nil)
+            case let .signOutAlert(onLogout):
+                showAlert(
+                    title: L10n.areYouSureYouWantToSignOut,
+                    message: L10n.ifYouHaveNoBackupYouMayNeverBeAbleToAccessThisAccount,
+                    buttonTitles: [L10n.signOut, L10n.stay],
+                    highlightedButtonIndex: 1,
+                    destroingIndex: 0
+                ) { [weak self] index in
+                    guard index == 0 else { return }
+                    self?.dismiss(animated: true, completion: { onLogout() })
+                }
             }
         }
 
@@ -87,8 +100,8 @@ extension Authentication {
             dismiss(animated: true, completion: nil)
         }
 
-        private func authenticationDidComplete() {
-            onSuccess?()
+        private func authenticationDidComplete(resetPassword: Bool) {
+            onSuccess?(resetPassword)
             dismiss(animated: true, completion: nil)
         }
     }
