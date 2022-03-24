@@ -1,4 +1,5 @@
 # P2P Wallet
+
 P2P Wallet on Solana blockchain
 
 ## Features
@@ -18,6 +19,7 @@ P2P Wallet on Solana blockchain
 - SwiftFormat
 
 ## Installation
+
 - Clone project and retrieve all submodules
 ```zsh
 git clone git@github.com:p2p-org/p2p-wallet-ios.git
@@ -52,8 +54,36 @@ AMPLITUDE_API_KEY = fake_api_key
 FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 ```
-### Code style
+
+## Localization
+
+- Download [LocalizationHelper app](https://github.com/bigearsenal/XCodeLocalizationHelper/raw/main/release/LocalizationHelper.zip)
+- Copy `LocalizationHelper` to `Applications`
+- Open `.xcproj` file from `LocalizationHelper`
+- Add key and setup automation
+
+## CI/CD
+
+- `Swiftgen` for automatically generating strings, assets.
+- `Swiftlint`, SwiftFormat for linting, automatically formating code
+- `Periphery` for detecting dead code (use Detect Unused Code target and run)
+- `CircleCI` or `GithubAction`: implementing...
+
+## Code style
+
 - Space indent: 4
+
+## UI Templates
+
+- Copy template `BEScene.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/File\ Templates/Templates/BEScene.xctemplate`
+```zsh
+mkdir -p ~/Library/Developer/Xcode/Templates/File\ Templates/BEScene.xctemplate
+cp -R Templates/BEScene.xctemplate ~/Library/Developer/Xcode/Templates/File\ Templates/BEScene.xctemplate
+```
+
+## Dependency Injection
+
+- Resolver
 
 ## Contribute
 
