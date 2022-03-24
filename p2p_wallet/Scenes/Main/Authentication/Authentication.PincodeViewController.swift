@@ -62,13 +62,13 @@ extension Authentication {
                         .setAlpha(isBiometryAvailable() ? 1 : 0)
                         .bind(biometryButton)
                         .onClick { [weak self] in self?.authWithBiometry() }
-                        .setupWithType(BiometricButton.self) { button in
+                        .setup { button in
                             let biometryType = viewModel.getCurrentBiometryType()
                             button.setBiometricType(type: biometryType)
                         }
                 )
                 .bind(pincodeView)
-                .setupWithType(WLPinCodeView.self) { pincodeView in
+                .setup { pincodeView in
                     pincodeView.onSuccess = { [weak self] _ in
                         self?.authenticationDidComplete()
                     }
