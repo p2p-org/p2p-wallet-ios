@@ -228,7 +228,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             guard let self = self else { throw SolanaSDK.Error.unknown }
 
             // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
-            if self.isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
+            if self.isSwappingNatively(
                 expectedTransactionFee: networkFee.transaction,
                 payingTokenMint: payingWallet.mintAddress
             ) {
@@ -283,7 +283,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 )
             }
 
-            if sourceMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+            if self.isSwappingNatively(
+                payingTokenMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+            ) {
                 allFees.append(
                     .init(
                         type: .depositWillBeReturned,
@@ -334,8 +336,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         if let payingTokenAddress = payingTokenAddress, let payingTokenMint = payingTokenMint {
             payingFeeToken = FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
         }
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
-        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(payingTokenMint: payingTokenMint) {
+
+        if isSwappingNatively(payingTokenMint: payingTokenMint) {
             return orcaSwap.swap(
                 fromWalletPubkey: sourceAddress,
                 toWalletPubkey: destinationAddress,
@@ -362,7 +364,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         }
     }
 
-    private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
+    /// when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+    private func isSwappingNatively(
         expectedTransactionFee: UInt64? = nil,
         payingTokenMint: String?
     ) -> Bool {
