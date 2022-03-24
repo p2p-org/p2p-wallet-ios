@@ -22,9 +22,7 @@ extension CreateOrRestoreWallet {
 
         @Injected var analyticsManager: AnalyticsManagerType
 
-        // MARK: - Properties
-
-        private let bag = DisposeBag()
+        // MARK: - Initializer
 
         deinit {
             debugPrint("\(String(describing: self)) deinited")

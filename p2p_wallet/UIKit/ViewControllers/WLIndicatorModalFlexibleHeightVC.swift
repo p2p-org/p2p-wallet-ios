@@ -69,10 +69,6 @@ class WLIndicatorModalFlexibleHeightVC: WLIndicatorModalVC, CustomPresentableVie
         stackView.autoPinBottomToSuperViewSafeAreaAvoidKeyboard()
     }
 
-    func hideBackButton(_ isHidden: Bool = true) {
-        backButton.isHidden = isHidden
-    }
-
     // MARK: - Transition
 
     func updatePresentationLayout(animated: Bool = false) {

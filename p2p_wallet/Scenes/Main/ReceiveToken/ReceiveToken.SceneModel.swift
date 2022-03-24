@@ -18,7 +18,6 @@ protocol ReceiveSceneModel: BESceneModel {
     var showHideAddressesInfoButtonTapSubject: PublishRelay<Void> { get }
     var addressesHintIsHiddenDriver: Driver<Bool> { get }
     var hideAddressesHintSubject: PublishRelay<Void> { get }
-    var updateLayoutDriver: Driver<Void> { get }
     var tokenListAvailabilityDriver: Driver<Bool> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
     var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
@@ -29,7 +28,6 @@ protocol ReceiveSceneModel: BESceneModel {
     func isRenBtcCreated() -> Bool
     func acceptReceivingRenBTC() -> Completable
     func switchToken(_ tokenType: ReceiveToken.TokenType)
-    func copyToClipboard(address: String, logEvent: AnalyticsEvent)
     func showSelectionNetwork()
     func copyDirectAddress()
     func copyMintAddress()
@@ -38,7 +36,6 @@ protocol ReceiveSceneModel: BESceneModel {
 extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
         @Injected private var handler: AssociatedTokenAccountHandler
-        @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
         @Injected private var walletsRepository: WalletsRepository
@@ -59,8 +56,6 @@ extension ReceiveToken {
         private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
         let tokenWallet: Wallet?
         private let canOpenTokensList: Bool
-        let hasAddressesInfo: Bool
-        let hasHintViewOnTop: Bool
         let shouldShowChainsSwitcher: Bool
         private let screenCanHaveAddressesInfo: Bool
         private let screenCanHaveHint: Bool
@@ -74,8 +69,6 @@ extension ReceiveToken {
             let isRenBTC = solanaTokenWallet?.token.isRenBTC ?? false
             let hasExplorerButton = !isOpeningFromToken
             tokenWallet = solanaTokenWallet
-            hasAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
-            hasHintViewOnTop = isOpeningFromToken
             canOpenTokensList = !isOpeningFromToken
             screenCanHaveAddressesInfo = isOpeningFromToken && solanaTokenWallet != nil
             screenCanHaveHint = isOpeningFromToken
@@ -103,18 +96,6 @@ extension ReceiveToken {
         }
 
         var tokenTypeDriver: Driver<ReceiveToken.TokenType> { tokenTypeSubject.asDriver() }
-
-        var updateLayoutDriver: Driver<Void> {
-            Driver.combineLatest(
-                tokenTypeDriver,
-                receiveBitcoinViewModel.isReceivingRenBTCDriver,
-                receiveBitcoinViewModel.renBTCWalletCreatingDriver,
-                receiveBitcoinViewModel.conditionAcceptedDriver,
-                receiveBitcoinViewModel.addressDriver,
-                receiveBitcoinViewModel.processingTxsDriver
-            )
-            .map { _ in () }.asDriver()
-        }
 
         var hasAddressesInfoDriver: Driver<Bool> {
             tokenTypeDriver
@@ -166,11 +147,6 @@ extension ReceiveToken {
 
         func switchToken(_ tokenType: ReceiveToken.TokenType) {
             tokenTypeSubject.accept(tokenType)
-        }
-
-        func copyToClipboard(address: String, logEvent: AnalyticsEvent) {
-            clipboardManager.copyToClipboard(address)
-            analyticsManager.log(event: logEvent)
         }
 
         func showSelectionNetwork() {

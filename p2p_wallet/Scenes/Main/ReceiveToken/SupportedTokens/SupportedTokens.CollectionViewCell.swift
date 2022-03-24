@@ -61,8 +61,6 @@ extension SupportedTokens.CollectionView {
             coinFullnameLabel.text = item.symbol == "SOL" ? L10n.solana : item.name
         }
 
-        lazy var addressLabel = UILabel(textSize: 13, textColor: .textSecondary)
-
         func setUp(with item: AnyHashable?) {
             guard let item = item as? SolanaSDK.Token else { return }
             setUp(with: item)

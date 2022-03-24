@@ -73,11 +73,5 @@ extension Buy {
                     )
                 }
         }
-
-        func getMinAmount(currency: Currency) -> Single<Double> {
-            provider
-                .getAllSupportedCurrencies()
-                .map { _getMinAmount(currencies: $0, for: currency) }
-        }
     }
 }

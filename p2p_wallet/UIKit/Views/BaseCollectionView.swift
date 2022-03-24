@@ -22,10 +22,4 @@ class BaseCollectionView: UICollectionView {
     func commonInit() {
         backgroundColor = .clear
     }
-
-    func registerCells(_ cellTypes: [UICollectionViewCell.Type]) {
-        for type in cellTypes {
-            register(type, forCellWithReuseIdentifier: String(describing: type))
-        }
-    }
 }

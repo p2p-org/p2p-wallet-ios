@@ -10,11 +10,7 @@ import SolanaSwift
 
 extension SupportedTokens {
     class CollectionView: BEDynamicSectionsCollectionView {
-        private let specificViewModel: SupportedTokensViewModelType
-
         init(viewModel: SupportedTokensViewModelType) {
-            specificViewModel = viewModel
-
             super.init(
                 header: .init(
                     viewType: TableHeaderView.self,
