@@ -23,16 +23,11 @@ protocol LogoutResponder {
 }
 
 protocol SettingsViewModelType: ReserveNameHandler {
-    var notificationsService: NotificationsServiceType { get }
     var selectableLanguages: [LocalizedLanguage: Bool] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
     var usernameDriver: Driver<String?> { get }
     var didBackupDriver: Driver<Bool> { get }
     var fiatDriver: Driver<Fiat> { get }
-    var endpointDriver: Driver<SolanaSDK.APIEndPoint> { get }
-    var securityMethodsDriver: Driver<[String]> { get }
-    var currentLanguageDriver: Driver<String?> { get }
-    var themeDriver: Driver<UIUserInterfaceStyle?> { get }
     var hideZeroBalancesDriver: Driver<Bool> { get }
     var logoutAlertSignal: Signal<Void> { get }
     var biometryTypeDriver: Driver<Settings.BiometryType> { get }
@@ -70,7 +65,6 @@ extension Settings {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var logoutResponder: LogoutResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
-        @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
         @Injected private var localizationManager: LocalizationManagerType
@@ -95,8 +89,6 @@ extension Settings {
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
         private let endpointSubject = BehaviorRelay<SolanaSDK.APIEndPoint>(value: Defaults.apiEndPoint)
         private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
-        private let currentLanguageSubject = BehaviorRelay<String?>(value: Locale.current.uiLanguageLocalizedString?
-            .uppercaseFirst)
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?
             .overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
@@ -182,22 +174,6 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     var fiatDriver: Driver<Fiat> {
         fiatSubject.asDriver()
-    }
-
-    var endpointDriver: Driver<SolanaSDK.APIEndPoint> {
-        endpointSubject.asDriver()
-    }
-
-    var securityMethodsDriver: Driver<[String]> {
-        securityMethodsSubject.asDriver()
-    }
-
-    var currentLanguageDriver: Driver<String?> {
-        currentLanguageSubject.asDriver()
-    }
-
-    var themeDriver: Driver<UIUserInterfaceStyle?> {
-        themeSubject.asDriver()
     }
 
     var hideZeroBalancesDriver: Driver<Bool> {

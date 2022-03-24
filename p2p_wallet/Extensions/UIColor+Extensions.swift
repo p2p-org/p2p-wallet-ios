@@ -15,10 +15,6 @@ extension UIColor {
         }
     }
 
-    static var random: UIColor {
-        UIColor(hue: CGFloat(drand48()), saturation: 1, brightness: 1, alpha: 1)
-    }
-
     func onDarkMode(_ color: UIColor) -> UIColor {
         let lightColor = self
         return UIColor { trait in

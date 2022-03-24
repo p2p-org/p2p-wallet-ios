@@ -37,14 +37,6 @@ extension Home {
 }
 
 private extension HomeViewModelType {
-    var isLoading: Driver<Bool> {
-        walletsRepository
-            .stateObservable
-            .map { state in state != .loaded }
-            .distinctUntilChanged { $0 }
-            .asDriver(onErrorJustReturn: false)
-    }
-
     var balance: Driver<String> {
         Observable
             .zip(

@@ -13,7 +13,6 @@ extension Onboarding {
         // MARK: - Dependencies
 
         private let viewModel: OnboardingViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
 
         // MARK: - Properties
 

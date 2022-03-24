@@ -12,7 +12,6 @@ import UIKit
 
 extension ProcessTransaction.Status {
     final class ProgressView: UIView {
-        private let disposeBag = DisposeBag()
         fileprivate let determinedProgressView = UIProgressView(height: 2)
         private let indeterminedProgressView = IndetermineView(height: 2)
 

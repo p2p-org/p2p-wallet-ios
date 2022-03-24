@@ -42,14 +42,6 @@ class SectionHeaderView: UICollectionReusableView {
         }
     }
 
-    func removeStackView(completion: (() -> Void)? = nil) {
-        if stackView.superview != nil {
-            stackView.removeFromSuperview()
-            setNeedsLayout()
-            completion?()
-        }
-    }
-
     func setUp(
         headerTitle: String,
         headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold),
