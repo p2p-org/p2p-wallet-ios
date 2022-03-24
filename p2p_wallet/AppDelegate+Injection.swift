@@ -99,10 +99,10 @@ extension Resolver: ResolverRegistering {
 
         register { TransactionHandler() }
             .implements(TransactionHandlerType.self)
-            .scope(.application)
+            .scope(.session)
 
         register { SwapTransactionAnalytics(analyticsManager: resolve(), transactionHandler: resolve()) }
-            .scope(.application)
+            .scope(.session)
 
         // MARK: - FeeRelayer
 
