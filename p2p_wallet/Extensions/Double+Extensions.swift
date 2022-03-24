@@ -58,7 +58,7 @@ extension Double {
         if value <= 0 { return "\(value)" }
         if self == 0.0 {
             var r = "0."
-            for i in 0 ..< value { r += "0" }
+            for _ in 0 ..< value { r += "0" }
             return r
         }
 
