@@ -37,7 +37,8 @@ extension Settings {
                             icon: .profileIcon,
                             title: UILabel(text: L10n.username.onlyUppercaseFirst()),
                             trailing: UILabel(textSize: 15).setupWithType(UILabel.self) { label in
-                                viewModel.usernameDriver.map { $0 != nil ? $0! : L10n.notYetReserved }
+                                viewModel.usernameDriver
+                                    .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notYetReserved }
                                     .drive(label.rx.text)
                                     .disposed(by: disposeBag)
                                 viewModel.usernameDriver.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }

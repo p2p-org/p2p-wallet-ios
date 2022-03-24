@@ -68,14 +68,6 @@ extension Home {
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
-
-            viewModel.nameDidReserveSignal
-                .emit(onNext: { [weak self] in
-                    if self?.navigationController?.viewControllers.last is ReserveName.ViewController {
-                        self?.navigationController?.popViewController(animated: true)
-                    }
-                })
-                .disposed(by: disposeBag)
         }
 
         // MARK: - Navigation
@@ -156,22 +148,18 @@ extension Home {
                 let vm = Settings.ViewModel()
                 let vc = Settings.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-            case let .reserveName(owner):
+            case .reserveName:
+                guard let owner = viewModel.getOwner() else { return }
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
-                    reserveNameHandler: nil,
+                    reserveNameHandler: viewModel,
+                    goBackOnCompletion: true,
                     checkBeforeReserving: true
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
 
                 show(vc, sender: nil)
-
-                viewModel.nameDidReserveSignal
-                    .emit(onNext: { [weak vc] in
-                        vc?.back()
-                    })
-                    .disposed(by: disposeBag)
             case let .walletDetail(wallet):
                 guard let pubkey = wallet.pubkey else { return }
 

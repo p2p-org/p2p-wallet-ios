@@ -83,12 +83,13 @@ extension Settings {
         // MARK: - Properties
 
         private var disposables = [DefaultsDisposable]()
+        private let disposeBag = DisposeBag()
         let canGoBack: Bool
 
         // MARK: - Subject
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var usernameSubject = BehaviorRelay<String?>(value: storage.getName()?.withNameServiceDomain())
+        private lazy var usernameSubject = BehaviorRelay<String?>(value: storage.getName())
         private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
             .didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
@@ -108,6 +109,7 @@ extension Settings {
 
         init(canGoBack: Bool = true) {
             self.canGoBack = canGoBack
+            setUp()
             bind()
         }
 
@@ -115,11 +117,9 @@ extension Settings {
             debugPrint("\(String(describing: self)) deinited")
         }
 
-        func bind() {
-            disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
-                self?.usernameSubject.accept(self?.storage.getName()?.withNameServiceDomain())
-            })
+        // MARK: - Methods
 
+        func setUp() {
             let context = LAContext()
             if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
                 isBiometryAvailableSubject.accept(true)
@@ -133,6 +133,21 @@ extension Settings {
             default:
                 biometryTypeSubject.accept(.none)
             }
+        }
+
+        func bind() {
+            disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
+                self?.usernameSubject.accept(self?.storage.getName())
+            })
+
+            storage
+                .onValueChange
+                .emit(onNext: { [weak self] event in
+                    if event.key == "getName", let name = event.value as? String {
+                        self?.usernameSubject.accept(name)
+                    }
+                })
+                .disposed(by: disposeBag)
         }
 
         // MARK: - Methods
@@ -251,7 +266,6 @@ extension Settings.ViewModel: SettingsViewModelType {
     func handleName(_ name: String?) {
         guard let name = name else { return }
         storage.save(name: name)
-        usernameSubject.accept(name.withNameServiceDomain())
     }
 
     func setEnabledBiometry(_: Bool, onError: @escaping (Error?) -> Void) {
