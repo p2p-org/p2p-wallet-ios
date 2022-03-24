@@ -15,7 +15,7 @@ extension Authentication {
         override func build() -> UIView {
             UIButton(frame: .zero)
                 .bind(button)
-                .setupWithType(UIButton.self) { button in
+                .setup { button in
                     button.tintColor = .textBlack
                     button.contentEdgeInsets = .init(top: 12, left: 12, bottom: 12, right: 12)
                 }
