@@ -71,7 +71,7 @@ extension ReceiveToken {
                 // Username
                 if username != nil {
                     UILabel(textSize: 20, weight: .semibold, numberOfLines: 2, textAlignment: .center)
-                        .setupWithType(UILabel.self) { view in
+                        .setup { view in
                             let text = NSMutableAttributedString(string: username!.withNameServiceDomain())
                             text.addAttribute(
                                 .foregroundColor,
@@ -105,7 +105,7 @@ extension ReceiveToken {
 
                 // Address
                 UILabel(textSize: 15, weight: .semibold, numberOfLines: 5, textAlignment: .center)
-                    .setupWithType(UILabel.self) { label in
+                    .setup { label in
                         let address = NSMutableAttributedString(string: address)
                         address.addAttribute(
                             .foregroundColor,

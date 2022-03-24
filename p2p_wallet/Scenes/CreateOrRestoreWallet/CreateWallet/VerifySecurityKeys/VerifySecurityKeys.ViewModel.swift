@@ -32,7 +32,6 @@ extension VerifySecurityKeys {
 
         // MARK: - Properties
 
-        let numberOfQuestions: Int = 4
         let keyPhrase: [String]
 
         // MARK: - Subject

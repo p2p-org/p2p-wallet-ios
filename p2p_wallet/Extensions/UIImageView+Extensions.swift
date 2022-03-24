@@ -26,20 +26,11 @@ extension UIImageView {
         }
         kf.setImage(with: url, placeholder: placeholder, options: [.processor(ImgProcessor())])
     }
-
-    func with(urlString: String?) -> Self {
-        setImage(urlString: urlString)
-        return self
-    }
-
-    static var walletIntro: UIImageView {
-        UIImageView(width: 90, height: 90, image: .walletIntro)
-    }
 }
 
 private struct ImgProcessor: ImageProcessor {
-    public var identifier: String = "com.appidentifier.webpprocessor"
-    public func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
+    var identifier: String = "com.appidentifier.webpprocessor"
+    func process(item: ImageProcessItem, options: KingfisherParsedOptionsInfo) -> KFCrossPlatformImage? {
         if let image = DefaultImageProcessor.default.process(item: item, options: options) {
             return image
         }

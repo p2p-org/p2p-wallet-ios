@@ -19,7 +19,7 @@ extension RenBTCReceivingStatuses {
                 UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
                     UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                         UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 2)
-                            .setupWithType(UILabel.self) { view in titleLabel = view }
+                            .setup { view in titleLabel = view }
                         UILabel(
                             text: "<Minting>",
                             textSize: 13,
@@ -27,7 +27,7 @@ extension RenBTCReceivingStatuses {
                             textColor: .textSecondary,
                             numberOfLines: 0
                         )
-                        .setupWithType(UILabel.self) { view in descriptionLabel = view }
+                        .setup { view in descriptionLabel = view }
                     }
                     UIView.defaultNextArrow()
                 }
@@ -61,7 +61,7 @@ extension RenBTCReceivingStatuses {
                 UIStackView(axis: .horizontal, alignment: .top, distribution: .fill) {
                     UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                         UILabel(text: "<0.002 renBTC>", textSize: 15, weight: .medium, numberOfLines: 8)
-                            .setupWithType(UILabel.self) { view in titleLabel = view }
+                            .setup { view in titleLabel = view }
                         UILabel(
                             text: "<Minting>",
                             textSize: 13,
@@ -69,11 +69,11 @@ extension RenBTCReceivingStatuses {
                             textColor: .textSecondary,
                             numberOfLines: 0
                         )
-                        .setupWithType(UILabel.self) { view in descriptionLabel = view }
+                        .setup { view in descriptionLabel = view }
                     }
                     UIView.spacer
                     UILabel(textSize: 15, weight: .semibold)
-                        .setupWithType(UILabel.self) { view in resultLabel = view }
+                        .setup { view in resultLabel = view }
                 }
                 UIView.defaultSeparator().padding(.init(only: .top, inset: 14))
             }.padding(.init(x: 20, y: 12))

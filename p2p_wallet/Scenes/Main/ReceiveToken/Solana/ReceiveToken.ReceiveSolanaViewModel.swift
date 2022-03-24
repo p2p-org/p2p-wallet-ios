@@ -27,14 +27,12 @@ extension ReceiveToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationsServiceType
-        @Injected private var tokensRepository: TokensRepository
         @Injected private var imageSaver: ImageSaverType
         private let navigationSubject: PublishRelay<NavigatableScene?>
 
         let pubkey: String
         let tokenWallet: Wallet?
         let hasExplorerButton: Bool
-        private let disposeBag = DisposeBag()
 
         init(
             solanaPubkey: String,

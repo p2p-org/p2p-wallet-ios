@@ -115,10 +115,10 @@ extension OrcaSwapV2 {
             case let .processTransaction(transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.backCompletion = { [weak self] in
-                    self?.viewModel.cleanAllFields()
-                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
-                }
+//                vc.backCompletion = { [weak self] in
+//                    self?.viewModel.cleanAllFields()
+//                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+//                }
                 vc.makeAnotherTransactionHandler = { [weak self] in
                     self?.viewModel.cleanAllFields()
                     self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)

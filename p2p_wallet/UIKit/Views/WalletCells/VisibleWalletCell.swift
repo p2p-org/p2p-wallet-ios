@@ -8,8 +8,8 @@ import RxCocoa
 import RxSwift
 
 class VisibleWalletCell: BECollectionCell, BECollectionViewCell {
-    public var onSend: BEVoidCallback?
-    public var onHide: BEVoidCallback?
+    var onSend: BEVoidCallback?
+    var onHide: BEVoidCallback?
 
     private let baseWalletRef = BERef<BaseWalletCell>()
 

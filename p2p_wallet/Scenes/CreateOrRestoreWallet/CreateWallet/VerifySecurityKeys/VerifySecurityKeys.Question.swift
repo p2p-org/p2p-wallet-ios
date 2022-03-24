@@ -150,11 +150,3 @@ extension VerifySecurityKeys {
         }
     }
 }
-
-extension Reactive where Base: VerifySecurityKeys.QuestionsView {
-    var keys: Binder<[VerifySecurityKeys.Question]> {
-        Binder(base) { view, questions in
-            view.questions = questions
-        }
-    }
-}

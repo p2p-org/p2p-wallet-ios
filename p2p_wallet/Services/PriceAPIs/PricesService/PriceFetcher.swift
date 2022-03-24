@@ -75,20 +75,4 @@ enum Period: String, CaseIterable {
     case month
 //    case year
 //    case all
-    var shortString: String {
-        var string = ""
-        switch self {
-        case .last1h:
-            string = L10n._1h
-        case .last4h:
-            string = L10n._4h
-        case .day:
-            string = L10n._1d
-        case .week:
-            string = L10n._1w
-        case .month:
-            string = L10n._1m
-        }
-        return string
-    }
 }

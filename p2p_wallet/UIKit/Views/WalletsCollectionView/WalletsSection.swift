@@ -20,7 +20,6 @@ class WalletsSection: BEStaticSectionsCollectionView.Section {
         }
     }
 
-    var walletCellEditAction: Action<Wallet, Void>?
     var onSend: BECallback<Wallet>?
 
     init(

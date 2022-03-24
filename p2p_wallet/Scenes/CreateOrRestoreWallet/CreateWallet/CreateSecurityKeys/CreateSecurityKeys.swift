@@ -7,8 +7,4 @@
 
 import Foundation
 
-enum CreateSecurityKeys {
-    enum NavigatableScene {
-        case termsAndConditions
-    }
-}
+enum CreateSecurityKeys {}
