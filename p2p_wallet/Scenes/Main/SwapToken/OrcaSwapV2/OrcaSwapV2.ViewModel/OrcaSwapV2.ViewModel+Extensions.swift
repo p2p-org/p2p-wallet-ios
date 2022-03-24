@@ -46,7 +46,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         slippageSubject.asDriver()
     }
 
-    var minimumReceiveAmountDriver: Driver<Double?> {
+    var minimumReceiveAmountObservable: Observable<Double?> {
         bestPoolsPairSubject
             .withLatestFrom(
                 Observable.combineLatest(
@@ -65,7 +65,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?
                     .convertToBalance(decimals: destinationDecimals)
             }
-            .asDriver(onErrorJustReturn: nil)
+    }
+
+    var minimumReceiveAmountDriver: Driver<Double?> {
+        minimumReceiveAmountObservable.asDriver(onErrorJustReturn: nil)
     }
 
     var exchangeRateDriver: Driver<Double?> {

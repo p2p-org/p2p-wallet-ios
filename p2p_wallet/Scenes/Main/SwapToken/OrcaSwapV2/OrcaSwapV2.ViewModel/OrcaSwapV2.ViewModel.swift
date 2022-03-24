@@ -209,18 +209,29 @@ extension OrcaSwapV2 {
             let payingWallet = payingWalletSubject.value
 
             // log
-            analyticsManager.log(
-                event: .swapSwapClick(
-                    tokenA: sourceWallet.token.symbol,
-                    tokenB: destinationWallet.token.symbol,
-                    sumA: inputAmount,
-                    sumB: estimatedAmount
-                )
-            )
+            minimumReceiveAmountObservable
+                .first()
+                .subscribe(onSuccess: { receiveAmount in
+                    let receiveAmount: Double = receiveAmount.map { $0 ?? 0 } ?? 0
+                    let receivePriceFiat: Double = destinationWallet.priceInCurrentFiat ?? 0.0
+
+                    self.analyticsManager.log(
+                        event: .swapUserConfirmed(
+                            tokenAName: sourceWallet.token.symbol,
+                            tokenBName: destinationWallet.token.symbol,
+                            swapSum: inputAmount,
+                            swapMAX: self.availableAmountSubject.value == inputAmount,
+                            swapUSD: "\(receiveAmount * receivePriceFiat)",
+                            priceSlippage: self.slippageSubject.value,
+                            feesSource: payingWallet?.token.name ?? "Unknown"
+                        )
+                    )
+                })
+                .disposed(by: disposeBag)
 
             // show processing scene
             navigationSubject.accept(
-                .processTransaction(
+                .proceslssTransaction(
                     ProcessTransaction.OrcaSwapTransaction(
                         swapService: swapService,
                         sourceWallet: sourceWallet,
