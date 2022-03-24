@@ -34,7 +34,7 @@ extension Home {
                     // Title
                     BEHStack {
                         UILabel(textAlignment: .center)
-                            .setupWithType(UILabel.self) { label in
+                            .setup { label in
                                 let p2pWallet = NSMutableAttributedString()
                                     .text(L10n.p2PWallet, size: 17, weight: .semibold)
                                 label.attributedText = p2pWallet
@@ -91,7 +91,7 @@ extension Home {
                             BannerSection(index: 1, viewModel: viewModel.bannerViewModel) { [unowned self] action in
                                 if let action = action as? Banners.Actions.OpenScreen {
                                     switch action.screen {
-                                    case "reserve": viewModel.navigate(to: .reserveName(owner: ""))
+                                    case "reserve": viewModel.navigate(to: .reserveName)
                                     case "feedback": viewModel.navigate(to: .feedback)
                                     case "backup": viewModel.navigate(to: .backup)
                                     default:

@@ -10,13 +10,14 @@ import Resolver
 import RxCocoa
 import RxSwift
 
-protocol HomeViewModelType {
+protocol HomeViewModelType: ReserveNameHandler {
     var navigationDriver: Driver<Home.NavigatableScene?> { get }
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> { get }
 
-    var nameDidReserveSignal: Signal<Void> { get }
     var walletsRepository: WalletsRepository { get }
     var bannerViewModel: Home.BannerViewModel { get }
+
+    func getOwner() -> String?
 
     func navigate(to scene: Home.NavigatableScene?)
     func navigateToScanQrCodeWithSwiper(progress: CGFloat, swiperState: UIGestureRecognizer.State)
@@ -35,7 +36,6 @@ extension Home {
         // MARK: - Subjects
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let nameDidReserveSubject = PublishRelay<Void>()
 
         deinit {
             debugPrint("\(String(describing: self)) deinited")
@@ -44,16 +44,21 @@ extension Home {
 }
 
 extension Home.ViewModel: HomeViewModelType {
+    func handleName(_ name: String?) {
+        guard let name = name else { return }
+        storage.save(name: name)
+    }
+
+    func getOwner() -> String? {
+        walletsRepository.nativeWallet?.pubkey
+    }
+
     var navigationDriver: Driver<Home.NavigatableScene?> {
         navigationSubject.asDriver()
     }
 
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
         pricesService.currentPricesDriver
-    }
-
-    var nameDidReserveSignal: Signal<Void> {
-        nameDidReserveSubject.asSignal()
     }
 
     // MARK: - Actions
