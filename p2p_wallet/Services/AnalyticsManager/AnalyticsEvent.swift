@@ -110,6 +110,17 @@ enum AnalyticsEvent: MirrorableEnum {
     case swapExplorerClick(txStatus: String)
     case swapTryAgainClick(error: String)
     case swapCancelClick(error: String)
+
+    // #131
+    case swapUserConfirmed(
+        tokenAName: String,
+        tokenBName: String,
+        swapSum: Double,
+        swapMAX: Bool,
+        swapUSD: String,
+        priceSlippage: Double,
+        feesSource: String
+    )
     // scan_qr
     case scanQrOpen(fromPage: String)
     case scanQrSuccess
