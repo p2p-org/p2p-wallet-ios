@@ -46,7 +46,8 @@ class SwapTransactionAnalytics {
             }
         }
         .distinctUntilChanged(at: \.status.rawValue)
-        .subscribe(onNext: { trx in
+        .withPrevious()
+        .subscribe(onNext: { prevTrx, trx in
             guard let rawTrx = trx.rawTransaction as? ProcessTransaction.SwapTransaction else { return }
 
             switch trx.status {
@@ -62,18 +63,32 @@ class SwapTransactionAnalytics {
                         feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
                     )
                 )
-            case .confirmed:
-                self.analyticsManager.log(
-                    event: .swapStarted(
-                        tokenAName: rawTrx.sourceWallet.token.symbol,
-                        tokenBName: rawTrx.destinationWallet.token.symbol,
-                        swapSum: rawTrx.amount,
-                        swapMAX: rawTrx.metaInfo.swapMAX,
-                        swapUSD: rawTrx.metaInfo.swapUSD,
-                        priceSlippage: rawTrx.slippage,
-                        feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+            case let .confirmed(confirmation):
+                if confirmation == 0 {
+                    self.analyticsManager.log(
+                        event: .swapStarted(
+                            tokenAName: rawTrx.sourceWallet.token.symbol,
+                            tokenBName: rawTrx.destinationWallet.token.symbol,
+                            swapSum: rawTrx.amount,
+                            swapMAX: rawTrx.metaInfo.swapMAX,
+                            swapUSD: rawTrx.metaInfo.swapUSD,
+                            priceSlippage: rawTrx.slippage,
+                            feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                        )
                     )
-                )
+                } else if prevTrx?.status.numberOfConfirmations == 0 {
+                    self.analyticsManager.log(
+                        event: .swapApprovedByNetwork(
+                            tokenAName: rawTrx.sourceWallet.token.symbol,
+                            tokenBName: rawTrx.destinationWallet.token.symbol,
+                            swapSum: rawTrx.amount,
+                            swapMAX: rawTrx.metaInfo.swapMAX,
+                            swapUSD: rawTrx.metaInfo.swapUSD,
+                            priceSlippage: rawTrx.slippage,
+                            feesSource: rawTrx.payingWallet?.token.name ?? "Unknown"
+                        )
+                    )
+                }
             case .finalized:
                 self.analyticsManager.log(
                     event: .swapCompleted(

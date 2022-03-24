@@ -64,8 +64,8 @@ struct PendingTransaction {
             switch self {
             case .sending:
                 return "sending"
-            case .confirmed:
-                return "processing"
+            case let .confirmed(value):
+                return "processing(\(value))"
             case .finalized:
                 return "finalized"
             case .error:

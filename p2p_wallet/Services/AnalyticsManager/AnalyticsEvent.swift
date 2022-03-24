@@ -133,6 +133,17 @@ enum AnalyticsEvent: MirrorableEnum {
         feesSource: String
     )
 
+    // #133
+    case swapApprovedByNetwork(
+        tokenAName: String,
+        tokenBName: String,
+        swapSum: Double,
+        swapMAX: Bool,
+        swapUSD: Double,
+        priceSlippage: Double,
+        feesSource: String
+    )
+
     // #134
     case swapCompleted(
         tokenAName: String,
