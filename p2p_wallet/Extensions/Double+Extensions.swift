@@ -54,6 +54,22 @@ extension Optional where Wrapped == Double {
 extension Double {
     static var maxSlippage: Self { 0.5 }
 
+    public func fixedDecimal(_ value: Int) -> String {
+        if value <= 0 { return "\(value)" }
+        if self == 0.0 {
+            var r = "0."
+            for _ in 0 ..< value { r += "0" }
+            return r
+        }
+
+        let formatter = NumberFormatter()
+        formatter.numberStyle = NumberFormatter.Style.decimal
+        formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
+        formatter.maximumFractionDigits = value
+
+        return formatter.string(for: self) ?? toString(maximumFractionDigits: value)
+    }
+
     public func toString(
         maximumFractionDigits: Int = 3,
         showPlus: Bool = false,
