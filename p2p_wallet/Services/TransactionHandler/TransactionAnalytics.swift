@@ -17,7 +17,6 @@ class SwapTransactionAnalytics {
         transactionHandler
             .onNewTransaction
             .subscribe(onNext: { [weak self] trx, index in
-                print(trx.rawTransaction.isSwap, index)
                 if trx.rawTransaction.isSwap { self?.observer(index: index) }
             })
             .disposed(by: disposeBag)
