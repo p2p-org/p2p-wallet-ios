@@ -70,10 +70,6 @@ class WLNavigationBar: BEView {
 
         backgroundColor = .background
     }
-
-    func setTitle(_ title: String?) {
-        titleLabel.text = title
-    }
 }
 
 class NewWLNavigationBar: BECompositionView {
@@ -138,7 +134,7 @@ class NewWLNavigationBar: BECompositionView {
                         numberOfLines: 1,
                         textAlignment: .center
                     )
-                    .setupWithType(UILabel.self) { view in titleLabel = view }
+                    .setup { view in titleLabel = view }
 
                     // Actions
                     actions

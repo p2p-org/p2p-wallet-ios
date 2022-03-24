@@ -11,8 +11,6 @@ import OrcaSwapSwift
 import RxSwift
 
 protocol SendServiceType {
-    var relayMethod: SendTokenRelayMethod { get }
-
     func load() -> Completable
     func checkAccountValidation(account: String) -> Single<Bool>
     func isTestNet() -> Bool

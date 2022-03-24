@@ -16,7 +16,7 @@ class BaseWalletCell: BECompositionView {
     private var amountRef = BERef<UILabel>()
     private var amountInFiatRef = BERef<UILabel>()
     private var contentRef = BERef<UIView>()
-    public var swipeableCellRef = BERef<SwipeableCell>()
+    var swipeableCellRef = BERef<SwipeableCell>()
 
     init(leadingActions: UIView? = nil, trailingActions: UIView? = nil) {
         self.leadingActions = leadingActions

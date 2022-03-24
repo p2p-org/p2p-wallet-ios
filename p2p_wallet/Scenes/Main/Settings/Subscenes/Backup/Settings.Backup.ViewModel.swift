@@ -14,8 +14,6 @@ protocol SettingsBackupViewModelType {
     func backupUsingICloud()
     func backupManually()
     func setDidBackupOffline()
-
-    func navigate(to scene: Settings.Backup.NavigatableScene)
 }
 
 extension Settings.Backup {

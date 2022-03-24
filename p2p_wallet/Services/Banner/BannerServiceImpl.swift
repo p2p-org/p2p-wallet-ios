@@ -28,10 +28,6 @@ class BannerServiceImpl: Banners.Service {
         _handler.append(handler)
     }
 
-    func unregister(handler: Banners.Handler) {
-        _handler = _handler.filter { $0 !== handler }
-    }
-
     func update(banner: Banners.Banner) {
         debugPrint(banner)
         _banners.insert(banner)

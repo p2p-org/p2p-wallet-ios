@@ -21,15 +21,14 @@ protocol TransactionDetailViewModelType: AnyObject {
 
     func getTransactionId() -> String?
     func getPayingFeeWallet() -> Wallet?
+    func getCreatedAccountSymbol() -> String?
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double?
 
     func navigate(to scene: TransactionDetail.NavigatableScene)
 
     func copyTransactionIdToClipboard()
     func copySourceAddressToClipboard()
-    func copySourceNameToClipboard()
     func copyDestinationAddressToClipboard()
-    func copyDestinationNameToClipboard()
 }
 
 extension TransactionDetail {
@@ -195,6 +194,19 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         payingFeeWallet
     }
 
+    func getCreatedAccountSymbol() -> String? {
+        let createdWallet: String?
+        switch parsedTransationSubject.value?.value {
+        case let transaction as SolanaSDK.TransferTransaction:
+            createdWallet = transaction.destination?.token.symbol
+        case let transaction as SolanaSDK.SwapTransaction:
+            createdWallet = transaction.destination?.token.symbol
+        default:
+            return nil
+        }
+        return createdWallet
+    }
+
     func getAmountInCurrentFiat(amountInToken: Double?, symbol: String?) -> Double? {
         guard let amountInToken = amountInToken,
               let symbol = symbol,
@@ -235,12 +247,6 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
 
-    func copySourceNameToClipboard() {
-        guard let name = senderNameSubject.value else { return }
-        clipboardManager.copyToClipboard(name)
-        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
-    }
-
     func copyDestinationAddressToClipboard() {
         let destinationAddress: String?
         switch parsedTransationSubject.value?.value {
@@ -255,12 +261,6 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
             return
         }
         clipboardManager.copyToClipboard(destinationAddress)
-        notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
-    }
-
-    func copyDestinationNameToClipboard() {
-        guard let name = receiverNameSubject.value else { return }
-        clipboardManager.copyToClipboard(name)
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
 }

@@ -35,7 +35,6 @@ protocol PincodeStorageType {
 }
 
 protocol AccountStorageType: SolanaSDKAccountStorage {
-    var phrases: [String]? { get }
     func getDerivablePath() -> SolanaSDK.DerivablePath?
 
     func save(phrases: [String]) throws

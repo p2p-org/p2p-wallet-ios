@@ -21,7 +21,6 @@ protocol BuyPreparingSceneModel: BESceneModel {
     var minFiatAmount: Driver<Double> { get }
     var minCryptoAmount: Driver<Double> { get }
     var exchangeRateDriver: Driver<Buy.ExchangeRate?> { get }
-    var errorDriver: Driver<String?> { get }
     var input: Buy.ExchangeInput { get }
     var crypto: Buy.CryptoCurrency { get }
 }
@@ -146,8 +145,6 @@ extension BuyPreparing {
         var exchangeRateDriver: Driver<Buy.ExchangeRate?> { exchangeRateRelay.asDriver() }
 
         var input: Buy.ExchangeInput { inputRelay.value }
-
-        var errorDriver: Driver<String?> { errorRelay.asDriver() }
 
         func next() { buyViewModel.navigate(to: .buyToken(crypto: crypto, amount: outputRelay.value.total)) }
 

@@ -12,14 +12,4 @@ extension UILabel {
         attributedText = text
         return self
     }
-
-    func semiboldTexts(_ texts: [String]) {
-        let aStr = NSMutableAttributedString(string: text!)
-        for text in texts {
-            let range = NSString(string: self.text!).range(of: text)
-            aStr.addAttribute(.font, value: UIFont.systemFont(ofSize: 15, weight: .semibold), range: range)
-            aStr.addAttribute(.foregroundColor, value: UIColor.h5887ff, range: range)
-        }
-        attributedText = aStr
-    }
 }

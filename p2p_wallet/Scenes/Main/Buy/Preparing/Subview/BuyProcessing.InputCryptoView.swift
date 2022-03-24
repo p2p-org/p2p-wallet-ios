@@ -25,7 +25,7 @@ extension BuyPreparing {
                         UIView.spacer
                         // Amount
                         CoinLogoImageView(size: 24, cornerRadius: 8)
-                            .setupWithType(CoinLogoImageView.self) { view in
+                            .setup { view in
                                 Resolver
                                     .resolve(TokensRepository.self)
                                     .getTokensList()

@@ -45,17 +45,6 @@ extension ReceiveToken {
             }
         }
 
-        func setUp(wallet: Wallet?) {
-            if let pubkey = wallet?.pubkey {
-                qrCodeImageView.setQrCode(string: pubkey)
-                logoImageView.setUp(wallet: wallet)
-                logoImageView.isHidden = false
-            } else {
-                qrCodeImageView.setQrCode(string: "<placeholder>")
-                logoImageView.isHidden = true
-            }
-        }
-
         func setUp(string: String?, token: SolanaSDK.Token? = nil) {
             qrCodeImageView.setQrCode(string: string)
             logoImageView.setUp(token: token ?? .nativeSolana)
@@ -65,23 +54,6 @@ extension ReceiveToken {
         func with(string: String?, token: SolanaSDK.Token? = nil) -> Self {
             setUp(string: string, token: token)
             return self
-        }
-
-        static func withFrame(string: String? = nil, token: SolanaSDK.Token? = nil) -> (UIView, QrCodeView) {
-            let qrCodeView = QrCodeView(size: 190, coinLogoSize: 32)
-                .with(string: string, token: token)
-
-            let view = UIImageView(
-                width: 207,
-                height: 207,
-                image: .receiveQrCodeFrame,
-                tintColor: .f6f6f8.onDarkMode(.h8d8d8d)
-            )
-            .withCenteredChild(
-                qrCodeView
-            )
-            .centeredHorizontallyView
-            return (view, qrCodeView)
         }
     }
 

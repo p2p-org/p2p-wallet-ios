@@ -5,8 +5,8 @@
 import CryptoKit
 import Foundation
 
-public struct MoonpayBuyProcessing: BuyProcessingServiceType {
-    public enum Environment {
+struct MoonpayBuyProcessing: BuyProcessingServiceType {
+    enum Environment {
         case staging
         case production
     }
@@ -24,7 +24,7 @@ public struct MoonpayBuyProcessing: BuyProcessingServiceType {
     let baseCurrencyAmount: Double?
     let quoteCurrencyAmount: Double?
 
-    public init(
+    init(
         environment: Environment,
         apiKey: String,
         showOnlyCurrencies: String? = nil,
@@ -48,7 +48,7 @@ public struct MoonpayBuyProcessing: BuyProcessingServiceType {
         self.quoteCurrencyAmount = quoteCurrencyAmount
     }
 
-    public func getUrl() -> String {
+    func getUrl() -> String {
         let params: BuyProviderUtils.Params = [
             "apiKey": apiKey,
             "showOnlyCurrencies": showOnlyCurrencies,
