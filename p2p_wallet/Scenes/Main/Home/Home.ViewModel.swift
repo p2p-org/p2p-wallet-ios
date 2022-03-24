@@ -28,6 +28,7 @@ extension Home {
 
         @Injected var walletsRepository: WalletsRepository
         @Injected var pricesService: PricesServiceType
+        @Injected var storage: AccountStorageType & NameStorageType
         let bannerViewModel = BannerViewModel(service: Resolver.resolve())
 
         // MARK: - Subjects
