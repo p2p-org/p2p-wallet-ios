@@ -11,7 +11,7 @@ import Foundation
 extension WalletDetail {
     class HistoryViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
+            .embeded
         }
 
         // MARK: - Dependencies
