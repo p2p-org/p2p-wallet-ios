@@ -71,7 +71,7 @@ extension BuyPreparing {
                                     .drive(onNext: { [weak self, weak view] tokens in
                                         if let token = tokens.first(where: { token in
                                             self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
-                                                .symbol == self?.viewModel.crypto.rawValue
+                                                .symbol == self?.viewModel.crypto.solanaCode
                                         }) {
                                             view?.setUp(token: token)
                                         }
@@ -82,7 +82,7 @@ extension BuyPreparing {
                         UILabel(text: "0.00 \(viewModel.crypto)").setup { view in
                             viewModel.outputDriver
                                 .map { [weak self] output in
-                                    "\(output.amount) \(self?.viewModel.crypto.rawValue.uppercased() ?? "?")"
+                                    "\(output.amount) \(self?.viewModel.crypto.name ?? "?")"
                                 }
                                 .drive(view.rx.text).disposed(by: disposeBag)
                         }

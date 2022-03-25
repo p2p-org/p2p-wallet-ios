@@ -5,6 +5,10 @@
 import Foundation
 import RxSwift
 
+protocol MoonpayCodeMapping {
+    var moonpayCode: String { get }
+}
+
 extension Buy {
     struct MoonpayExchange: Buy.ExchangeService {
         let provider: Moonpay.Provider
@@ -16,7 +20,7 @@ extension Buy {
             let base = currencies.first { $0 is FiatCurrency }
             let quote = currencies.first { $0 is CryptoCurrency }
 
-            guard let base = base, let quote = quote
+            guard let base = base as? MoonpayCodeMapping, let quote = quote as? MoonpayCodeMapping
             else { return .error(Exception.invalidInput) }
 
             let baseAmount = input.currency is FiatCurrency ? input.amount : nil
@@ -24,8 +28,8 @@ extension Buy {
 
             return provider
                 .getBuyQuote(
-                    baseCurrencyCode: base.toString(),
-                    quoteCurrencyCode: quote.toString(),
+                    baseCurrencyCode: base.moonpayCode,
+                    quoteCurrencyCode: quote.moonpayCode,
                     baseCurrencyAmount: baseAmount,
                     quoteCurrencyAmount: quoteAmount
                 )
@@ -54,14 +58,21 @@ extension Buy {
             to cryptoCurrency: CryptoCurrency
         ) -> Single<ExchangeRate> {
             provider
-                .getPrice(for: cryptoCurrency.rawValue, as: fiatCurrency.rawValue.uppercased())
+                .getPrice(for: cryptoCurrency.moonpayCode, as: fiatCurrency.moonpayCode.uppercased())
                 .map { exchangeRate in
                     .init(amount: exchangeRate, cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency)
                 }
         }
 
         private func _getMinAmount(currencies: Moonpay.Currencies, for currency: Currency) -> Double {
-            currencies.first { e in e.code == currency.toString() }?.minBuyAmount ?? 0.0
+            guard let currency = currency as? MoonpayCodeMapping else { return 0.0 }
+            return currencies.first { e in e.code == currency.moonpayCode }?.minBuyAmount ?? 0.0
+        }
+
+        func getMinAmount(currency: Currency) -> Single<Double> {
+            provider
+                .getAllSupportedCurrencies()
+                .map { _getMinAmount(currencies: $0, for: currency) }
         }
 
         func getMinAmounts(_ currency1: Currency, _ currency2: Currency) -> Single<(Double, Double)> {
@@ -72,6 +83,28 @@ extension Buy {
                         _getMinAmount(currencies: currencies, for: currency2)
                     )
                 }
+        }
+    }
+}
+
+extension Buy.CryptoCurrency: MoonpayCodeMapping {
+    var moonpayCode: String {
+        switch self {
+        case .eth:
+            return "eth"
+        case .sol:
+            return "sol"
+        case .usdc:
+            return "usdc_sol"
+        }
+    }
+}
+
+extension Buy.FiatCurrency: MoonpayCodeMapping {
+    var moonpayCode: String {
+        switch self {
+        case .usd:
+            return "usd"
         }
     }
 }

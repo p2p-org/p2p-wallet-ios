@@ -8,10 +8,6 @@ protocol BuyProcessingServiceType {
     func getUrl() -> String
 }
 
-protocol BuyCurrencyType {
-    func toString() -> String
-}
-
 protocol BuyProcessingFactory {
     func create(
         walletRepository: WalletsRepository,
@@ -40,9 +36,9 @@ extension Buy {
                 apiKey: Defaults.apiEndPoint.network == .mainnetBeta ?
                     .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
                     .secretConfig("MOONPAY_STAGING_API_KEY")!,
-                currencyCode: crypto.code,
+                currencyCode: crypto.moonpayCode,
                 walletAddress: walletRepository.nativeWallet?.pubkey,
-                baseCurrencyCode: currency.rawValue,
+                baseCurrencyCode: currency.moonpayCode,
                 baseCurrencyAmount: initialAmount
             )
         }
