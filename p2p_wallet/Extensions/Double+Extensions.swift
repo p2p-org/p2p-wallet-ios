@@ -74,7 +74,7 @@ extension Double {
         maximumFractionDigits: Int = 3,
         showPlus: Bool = false,
         showMinus: Bool = true,
-        groupingSeparator: String? = " ",
+        groupingSeparator: String? = nil,
         autoSetMaximumFractionDigits: Bool = false
     ) -> String {
         let formatter = NumberFormatter()
