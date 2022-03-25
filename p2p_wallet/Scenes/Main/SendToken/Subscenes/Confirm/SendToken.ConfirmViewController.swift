@@ -157,7 +157,8 @@ extension SendToken {
                                 return NSMutableAttributedString()
                                     .text(
                                         "\(amount.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "") ",
-                                        size: 15
+                                        size: 15,
+                                        color: .textBlack
                                     )
                                     .text(
                                         "(~\(Defaults.fiat.symbol)\(amountInFiat.toString(maximumFractionDigits: 2)))",
