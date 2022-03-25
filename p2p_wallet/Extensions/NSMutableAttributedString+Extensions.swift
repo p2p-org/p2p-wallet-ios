@@ -48,4 +48,10 @@ extension NSMutableAttributedString {
         addAttributes([.paragraphStyle: paragraphStyle], range: .init(location: 0, length: length))
         return self
     }
+
+    @discardableResult
+    func appending(_ attributedString: NSAttributedString) -> Self {
+        append(attributedString)
+        return self
+    }
 }

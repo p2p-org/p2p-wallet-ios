@@ -28,7 +28,7 @@ struct PayingFee {
             case .orderCreationFee:
                 return L10n.serumOrderCreationPaidOncePerPair
             case .transactionFee:
-                return L10n.transactionFee
+                return L10n.networkFee
             case .depositWillBeReturned:
                 return L10n.depositWillBeReturned
             }
