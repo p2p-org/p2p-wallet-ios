@@ -115,6 +115,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         }
     }
 
+    func getPrice(symbol: String) -> Double? {
+        pricesService.currentPrice(for: symbol)?.value
+    }
+
     // MARK: - Actions
 
     func reload() {

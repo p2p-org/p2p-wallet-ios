@@ -10,6 +10,10 @@ import RxCocoa
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewModel {
+        // MARK: - Dependencies
+
+        @Injected private var pricesService: PricesServiceType
+
         // MARK: - Properties
 
         private let swapViewModel: OrcaSwapV2ViewModelType
@@ -59,11 +63,19 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
         !Defaults.shouldShowConfirmAlertOnSwap
     }
 
+    func getPrice(symbol: String) -> Double? {
+        pricesService.currentPrice(for: symbol)?.value
+    }
+
     func closeBanner() {
         Defaults.shouldShowConfirmAlertOnSwap = false
     }
 
     func authenticateAndSwap() {
         swapViewModel.authenticateAndSwap()
+    }
+
+    func showFeesInfo(_ info: PayingFee.Info) {
+        swapViewModel.navigate(to: .info(title: info.alertTitle, description: info.alertDescription))
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
+protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesViewModelType {
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> { get }
     var loadingStateDriver: Driver<LoadableState> { get }
 
@@ -20,7 +20,6 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     var slippageDriver: Driver<Double> { get }
     var exchangeRateDriver: Driver<Double?> { get }
 
-    var feesDriver: Driver<Loadable<[PayingFee]>> { get }
     var feePayingTokenDriver: Driver<Wallet?> { get }
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> { get }
     var isSendingMaxAmountDriver: Driver<Bool> { get }
