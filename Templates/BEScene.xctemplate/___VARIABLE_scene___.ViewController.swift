@@ -9,20 +9,24 @@ import Foundation
 import UIKit
 
 extension ___VARIABLE_scene___ {
-    class ViewController: BaseVC {
+    class ViewController: BEScene {
         // MARK: - Dependencies
-        @Injected private var viewModel: ___VARIABLE_scene___ViewModelType
+        let viewModel: ___VARIABLE_scene___ViewModelType
         
         // MARK: - Properties
         
+        // MARK: - Initializer
+        init(viewModel: ___VARIABLE_scene___ViewModelType) {
+            self.viewModel = viewModel
+        }
+        
         // MARK: - Methods
-        override func loadView() {
-            view = RootView()
+        override func build() -> UIView {
+            BEContainer {}
         }
         
         override func setUp() {
             super.setUp()
-            
         }
         
         override func bind() {

@@ -41,7 +41,7 @@ extension BuyTokenSelection {
             Cell()
                 .setup { cell in
                     if let wallet = walletRepository.getWallets().first(where: {
-                        $0.token.symbol == cryptoCurrency.tokenName
+                        $0.token.symbol == cryptoCurrency.name
                     }) {
                         cell.setup(wallet: wallet)
                     } else {
@@ -49,7 +49,7 @@ extension BuyTokenSelection {
                             .getTokensList()
                             .asDriver(onErrorJustReturn: [])
                             .drive(onNext: { [weak cell] tokens in
-                                guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.tokenName }) else {
+                                guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
                                     cell?.isHidden = true
                                     return
                                 }
