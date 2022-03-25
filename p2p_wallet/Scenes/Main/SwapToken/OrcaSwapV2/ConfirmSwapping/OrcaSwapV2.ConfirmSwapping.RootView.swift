@@ -41,7 +41,7 @@ extension OrcaSwapV2.ConfirmSwapping {
             sourceWalletDriver: viewModel.sourceWalletDriver,
             destinationWalletDriver: viewModel.destinationWalletDriver
         )
-        private lazy var feesView = OrcaSwapV2.DetailFeesView(feesDriver: viewModel.feesDriver)
+        private lazy var feesView = OrcaSwapV2.DetailFeesView(viewModel: viewModel)
         private lazy var actionButton = WLStepButton.main(image: .buttonSwapSmall, text: nil)
             .onTap(self, action: #selector(actionButtonDidTouch))
 
@@ -132,6 +132,11 @@ extension OrcaSwapV2.ConfirmSwapping {
             .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
             .drive(actionButton.rx.text)
             .disposed(by: disposeBag)
+
+            feesView.clickHandler = { [weak self] fee in
+                guard let info = fee.info else { return }
+                self?.viewModel.showFeesInfo(info)
+            }
         }
 
         // MARK: - Action

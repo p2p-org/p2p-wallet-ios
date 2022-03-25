@@ -8,20 +8,20 @@
 import Foundation
 import RxCocoa
 
-protocol OrcaSwapV2ConfirmSwappingViewModelType {
+protocol OrcaSwapV2ConfirmSwappingViewModelType: DetailFeesViewModelType {
     var sourceWalletDriver: Driver<Wallet?> { get }
     var destinationWalletDriver: Driver<Wallet?> { get }
     var inputAmountDriver: Driver<Double?> { get }
     var estimatedAmountDriver: Driver<Double?> { get }
     var minimumReceiveAmountDriver: Driver<Double?> { get }
     var exchangeRatesDriver: Driver<Double?> { get }
-    var feesDriver: Driver<Loadable<[PayingFee]>> { get }
     var slippageDriver: Driver<Double> { get }
 
     func isBannerForceClosed() -> Bool
 
     func closeBanner()
     func authenticateAndSwap()
+    func showFeesInfo(_ info: PayingFee.Info)
 }
 
 extension OrcaSwapV2ConfirmSwappingViewModelType {
