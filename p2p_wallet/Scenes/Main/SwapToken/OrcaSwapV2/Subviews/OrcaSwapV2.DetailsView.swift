@@ -19,7 +19,7 @@ extension OrcaSwapV2 {
         )
         private let slippageView = ClickableRow(title: L10n.maxPriceSlippage)
         private let payFeesWithView = ClickableRow(title: L10n.paySwapFeesWith)
-        private lazy var feesView = DetailFeesView(feesDriver: viewModel.feesDriver)
+        private lazy var feesView = DetailFeesView(viewModel: viewModel)
 
         private let viewModel: OrcaSwapV2ViewModelType
         private let disposeBag = DisposeBag()
