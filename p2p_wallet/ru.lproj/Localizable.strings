@@ -777,3 +777,4 @@
 "Are you sure you want to sign out?" = "Вы уверены, что хотите выйти?";
 "Without the backup, you may never be able to access this account." = "Без резервной копии вы никогда не сможете получить доступ к этой учетной записи.";
 "Sign Out" = "Выход";
+"If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "Если есть токен с именем «%@», мы не рекомендуем отправлять его на ваш адрес в Солане, так как он, скорее всего, будет потерян навсегда.";
