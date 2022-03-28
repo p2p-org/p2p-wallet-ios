@@ -13,6 +13,7 @@ enum AuthenticationOptions {
     case disableBiometric
     case withResetPassword
     case withSignOut
+    case withLogo
 }
 
 struct AuthenticationPresentationStyle {
@@ -36,7 +37,7 @@ struct AuthenticationPresentationStyle {
      */
     static func login() -> Self {
         .init(
-            options: [.required, .fullscreen, .withSignOut],
+            options: [.required, .fullscreen, .withSignOut, .withLogo],
             completion: nil
         )
     }

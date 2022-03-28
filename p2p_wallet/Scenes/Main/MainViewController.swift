@@ -87,6 +87,10 @@ class MainViewController: BaseVC {
             localAuthVC?.modalPresentationStyle = .fullScreen
         }
 
+        if authStyle.options.contains(.withLogo) {
+            localAuthVC?.withLogo = true
+        }
+
         // completion
         localAuthVC?.onSuccess = { [weak self] resetPassword in
             self?.viewModel.authenticate(presentationStyle: nil)
