@@ -21,7 +21,7 @@ struct PayingFee {
                 return L10n.liquidityProviderFee
             case let .accountCreationFee(token: token):
                 if let token = token {
-                    return "\(token) \(L10n.accountCreationFee)"
+                    return L10n.accountCreation(token)
                 } else {
                     return L10n.accountCreationFee
                 }

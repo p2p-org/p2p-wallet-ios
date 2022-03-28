@@ -13,6 +13,8 @@ import SolanaSwift
 
 protocol SupportedTokensViewModelType: BEListViewModelType {
     func search(keyword: String)
+
+    var keyword: String { get }
 }
 
 extension SupportedTokens {
@@ -94,9 +96,9 @@ extension SupportedTokens {
 extension SupportedTokens.ViewModel: SupportedTokensViewModelType {
     // MARK: - Actions
 
-    func search(keyword: String) {
-        keywordSubject.accept(keyword)
-    }
+    func search(keyword: String) { keywordSubject.accept(keyword) }
+
+    var keyword: String { keywordSubject.value ?? "" }
 }
 
 private extension SolanaSDK.Token {

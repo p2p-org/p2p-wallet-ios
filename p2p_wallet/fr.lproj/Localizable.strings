@@ -775,3 +775,4 @@
 "Are you sure you want to sign out?" = "Êtes-vous certain de vouloir vous déconnecter?";
 "Without the backup, you may never be able to access this account." = "Sans la sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";
 "Sign Out" = "Se déconnecter";
+"If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "S'il existe un jeton nommé \"%@\", nous vous déconseillons de l'envoyer à votre adresse Solana car il sera probablement perdu à jamais.";

@@ -779,3 +779,4 @@
 "Are you sure you want to sign out?" = "bạn có chắc chắn muốn đăng xuất không?";
 "Without the backup, you may never be able to access this account." = "Nếu không có bản sao lưu, bạn có thể không bao giờ truy cập được vào tài khoản này.";
 "Sign Out" = "Đăng xuất";
+"If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "Nếu có mã thông báo có tên “%@”, chúng tôi khuyên bạn không nên gửi mã đó đến địa chỉ Solana của mình vì rất có thể nó sẽ bị mất vĩnh viễn.";
