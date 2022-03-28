@@ -290,9 +290,10 @@ extension Settings {
                 show(vc, sender: nil)
             case .changePincode:
                 let createPincodeVC = WLCreatePincodeVC(
-                    createPincodeTitle: L10n.newPINCode,
+                    createPincodeTitle: L10n.setUpANewWalletPIN,
                     confirmPincodeTitle: L10n.confirmPINCode
                 )
+
                 createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
                     self?.viewModel.savePincode(String(pincode))
                     createPincodeVC?.dismiss(animated: true) { [weak self] in
@@ -304,11 +305,7 @@ extension Settings {
                     createPincodeVC?.dismiss(animated: true, completion: nil)
                 }
 
-                // modal
-                let modalVC = WLIndicatorModalVC()
-                modalVC.add(child: createPincodeVC, to: modalVC.containerView)
-
-                present(modalVC, animated: true, completion: nil)
+                present(createPincodeVC, animated: true, completion: nil)
             case .language:
                 let vc = SelectLanguageViewController(viewModel: viewModel)
                 show(vc, sender: nil)

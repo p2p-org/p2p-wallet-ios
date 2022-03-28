@@ -284,7 +284,7 @@
 "Powered by Project Serum" = "Được cung cấp bởi Project Serum";
 "PIN-code changed!" = "Mã PIN đã thay đổi!";
 "Go back to profile" = "Quay lại hồ sơ";
-"Enter current PIN-code" = "Nhập mã PIN hiện tại";
+"Enter current PIN" = "Nhập mã PIN";
 "Reset and try again" = "Đặt lại và thử lại";
 "Confirm PIN-code" = "Xác nhận mã PIN";
 "Enter PIN-code" = "Nhập mã PIN";
@@ -792,3 +792,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Reset your PIN" = "Đặt lại mã PIN của bạn";
 "Are you sure you want to sign out?" = "bạn có chắc chắn muốn đăng xuất không?";
 "Without the backup, you may never be able to access this account." = "Nếu không có bản sao lưu, bạn có thể không bao giờ truy cập được vào tài khoản này.";
+"Set up a new wallet PIN" = "Thiết lập mã PIN ví mới";
+"Set up a new PIN" = "Thiết lập mã PIN mới";

@@ -74,6 +74,8 @@ extension Authentication {
             case .resetPincodeWithASeedPhrase:
                 let vm = ResetPinCodeWithSeedPhrases.ViewModel()
                 let vc = ResetPinCodeWithSeedPhrases.ViewController(viewModel: vm)
+
+                vc.modalPresentationStyle = .pageSheet
                 vc.completion = { [weak self] in
                     self?.viewModel.setBlockedTime(nil)
                     self?.authenticationDidComplete(resetPassword: true)

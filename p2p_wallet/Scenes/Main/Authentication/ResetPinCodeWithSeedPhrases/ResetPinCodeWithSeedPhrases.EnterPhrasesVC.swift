@@ -35,7 +35,7 @@ extension ResetPinCodeWithSeedPhrases {
                     BEZStackPosition(mode: .fill) {
                         BEVStack {
                             BEHStack(distribution: .equalCentering) {
-                                UIButton.text(text: L10n.back, fontSize: 17, weight: .regular, tintColor: .h5887ff)
+                                UIButton.text(text: L10n.cancel, fontSize: 17, weight: .regular, tintColor: .h5887ff)
                                     .setTarget(target: self, action: #selector(back), for: .touchUpInside)
 
                                 UILabel(
@@ -57,7 +57,6 @@ extension ResetPinCodeWithSeedPhrases {
                             BEHStack {
                                 ExpandableTextView()
                                     .setup { textField in
-                                        textField.becomeFirstResponder()
                                         textField.placeholder = L10n.yourSecurityKey
 
                                         textField.rxText
@@ -132,7 +131,7 @@ extension ResetPinCodeWithSeedPhrases {
         }
 
         @objc func past() {
-            inputTextField.view?.paste()
+            inputTextField.view?.set(text: UIPasteboard.general.string)
         }
     }
 }
