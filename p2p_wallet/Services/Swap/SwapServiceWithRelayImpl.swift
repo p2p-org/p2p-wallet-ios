@@ -355,11 +355,12 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             swapPools: poolsPair,
             inputAmount: amount,
             slippage: slippage
-        ).flatMap { [weak self] transactions in
+        ).flatMap { [weak self] preparedTransactions in
             guard let feeRelay = self?.relayService else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
             return feeRelay.topUpAndRelayTransactions(
-                preparedTransactions: transactions,
-                payingFeeToken: payingFeeToken
+                preparedTransactions: preparedTransactions.transactions,
+                payingFeeToken: payingFeeToken,
+                additionalPaybackFee: preparedTransactions.additionalPaybackFee
             )
         }
     }
