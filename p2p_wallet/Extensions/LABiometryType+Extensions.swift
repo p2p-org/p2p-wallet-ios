@@ -37,8 +37,4 @@ extension LABiometryType {
         _ = context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
         return context.biometryType
     }
-
-    static var isEnabled: Bool {
-        Defaults.isBiometryEnabled
-    }
 }

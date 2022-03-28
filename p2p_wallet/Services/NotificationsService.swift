@@ -10,16 +10,11 @@ import UIKit
 
 protocol NotificationsServiceType {
     func showInAppNotification(_ notification: InAppNotification)
-    func showInAppNotification(_ notification: InAppNotification, completion: (() -> Void)?)
 }
 
 class NotificationsService: NotificationsServiceType {
     func showInAppNotification(_ notification: InAppNotification) {
         UIApplication.shared.showToast(message: createTextFromNotification(notification))
-    }
-
-    func showInAppNotification(_ notification: InAppNotification, completion: (() -> Void)?) {
-        UIApplication.shared.showToast(message: createTextFromNotification(notification), completion: completion)
     }
 
     private func createTextFromNotification(_ notification: InAppNotification) -> String {

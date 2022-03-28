@@ -15,9 +15,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandl
     var isLoadingDriver: Driver<Bool> { get }
     var isRestorableUsingIcloud: Driver<Bool> { get }
     var errorSignal: Signal<String> { get }
-    var finishedSignal: Signal<Void> { get }
 
-    func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?)
     func handleICloudAccount(_ account: Account)
     func restoreFromICloud()
     func restoreManually()
@@ -70,10 +68,6 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
 
     var errorSignal: Signal<String> {
         errorSubject.asSignal()
-    }
-
-    var finishedSignal: Signal<Void> {
-        finishedSubject.asSignal()
     }
 
     // MARK: - Actions
@@ -160,37 +154,61 @@ extension RestoreWallet.ViewModel {
 
         // create account
         isLoadingSubject.accept(true)
-        DispatchQueue(label: "Create account", qos: .userInteractive).async { [unowned self] in
-            guard let phrases = self.phrases else { return }
+        DispatchQueue(label: "Create account", qos: .userInteractive).async {
             do {
                 let account = try SolanaSDK.Account(
                     phrase: phrases,
                     network: Defaults.apiEndPoint.network,
                     derivablePath: derivablePath
                 )
+
+                let owner = account.publicKey.base58EncodedString
+
+                // check if name available
                 DispatchQueue.main.async { [weak self] in
-                    self?.checkIfNameIsReservedAndReserveNameIfNeeded(owner: account.publicKey.base58EncodedString)
+                    guard let self = self else { return }
+                    self.nameService.getName(owner)
+                        .subscribe(on: MainScheduler.instance)
+                        .subscribe(onSuccess: { [weak self] name in
+                            guard let self = self else { return }
+                            self.isLoadingSubject.accept(false)
+
+                            // save to icloud
+                            self.saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
+
+                            if let name = name {
+                                self.handleName(name)
+                            } else {
+                                self.navigationSubject.accept(.reserveName(owner: owner))
+                            }
+                        }, onFailure: { [weak self] _ in
+                            guard let self = self else { return }
+                            self.isLoadingSubject.accept(false)
+
+                            // save to icloud
+                            self.saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+
+                            self.finish()
+                        })
+                        .disposed(by: self.disposeBag)
                 }
             } catch {
-                self.errorSubject.accept(error.readableDescription)
+                DispatchQueue.main.async { [weak self] in
+                    self?.errorSubject.accept(error.readableDescription)
+                }
             }
         }
     }
 
-    private func checkIfNameIsReservedAndReserveNameIfNeeded(owner: String) {
-        nameService.getName(owner)
-            .subscribe(onSuccess: { [weak self] name in
-                self?.isLoadingSubject.accept(false)
-                if let name = name {
-                    self?.handleName(name)
-                } else {
-                    self?.navigationSubject.accept(.reserveName(owner: owner))
-                }
-            }, onFailure: { [weak self] _ in
-                self?.isLoadingSubject.accept(false)
-                self?.finish()
-            })
-            .disposed(by: disposeBag)
+    private func saveToICloud(name: String?, phrase: [String], derivablePath: SolanaSDK.DerivablePath) {
+        _ = iCloudStorage.saveToICloud(
+            account: .init(
+                name: name,
+                phrase: phrase.joined(separator: " "),
+                derivablePath: derivablePath
+            )
+        )
+        notificationsService.showInAppNotification(.done(L10n.savedToICloud))
     }
 }
 

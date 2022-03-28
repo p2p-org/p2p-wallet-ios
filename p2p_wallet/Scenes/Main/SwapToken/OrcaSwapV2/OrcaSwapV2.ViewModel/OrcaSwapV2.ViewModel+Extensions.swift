@@ -118,6 +118,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         }
     }
 
+    func getPrice(symbol: String) -> Double? {
+        pricesService.currentPrice(for: symbol)?.value
+    }
+
     // MARK: - Actions
 
     func reload() {
@@ -136,10 +140,6 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             }
         )
         .disposed(by: disposeBag)
-    }
-
-    func log(_ event: AnalyticsEvent) {
-        analyticsManager.log(event: event)
     }
 
     func navigate(to scene: OrcaSwapV2.NavigatableScene) {
@@ -166,10 +166,6 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             validMints: Set(destinationMints),
             excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey
         ))
-    }
-
-    func retryLoadingRoutes() {
-        tradablePoolsPairsSubject.reload()
     }
 
     func swapSourceAndDestination() {
@@ -221,11 +217,6 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             inputAmountSubject.accept(nil)
             bestPoolsPairSubject.accept(nil)
         }
-    }
-
-    func changeSlippage(to slippage: Double) {
-        Defaults.slippage = slippage
-        slippageSubject.accept(slippage)
     }
 
     func choosePayFee() {

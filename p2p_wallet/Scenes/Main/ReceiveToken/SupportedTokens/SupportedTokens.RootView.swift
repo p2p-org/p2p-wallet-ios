@@ -74,12 +74,6 @@ extension SupportedTokens {
         }
 
         private func bind() {}
-
-        // MARK: - Helper
-
-        func forwardDelegate(to delegate: BECollectionViewDelegate) {
-            collectionView.delegate = delegate
-        }
     }
 }
 

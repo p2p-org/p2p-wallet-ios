@@ -25,7 +25,7 @@ extension BuyPreparing {
                         UIView.spacer
                         // Amount
                         CoinLogoImageView(size: 24, cornerRadius: 8)
-                            .setupWithType(CoinLogoImageView.self) { view in
+                            .setup { view in
                                 Resolver
                                     .resolve(TokensRepository.self)
                                     .getTokensList()
@@ -33,8 +33,7 @@ extension BuyPreparing {
                                     .drive(onNext: { [weak self, weak view] tokens in
                                         if let token = tokens.first(where: { token in
                                             self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
-                                                .symbol == self?
-                                                .viewModel.crypto.rawValue
+                                                .symbol == self?.viewModel.crypto.solanaCode
                                         }) {
                                             view?.setUp(token: token)
                                         }

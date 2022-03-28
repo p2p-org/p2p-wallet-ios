@@ -11,7 +11,6 @@ import RxSwift
 import UIKit
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
-    var notificationsService: NotificationsServiceType { get }
     var showTermsAndConditionsSignal: Signal<Void> { get }
     var showPhotoLibraryUnavailableSignal: Signal<Void> { get }
     var phrasesDriver: Driver<[String]> { get }
@@ -20,7 +19,6 @@ protocol CreateSecurityKeysViewModelType: AnyObject {
     func copyToClipboard()
     func renewPhrases()
 
-    func showTermsAndConditions()
     func saveToICloud()
     func back()
     func verifyPhrase()
@@ -37,12 +35,8 @@ extension CreateSecurityKeys {
         private let createWalletViewModel: CreateWalletViewModelType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationsServiceType
         @Injected var imageSaver: ImageSaverType
-
-        // MARK: - Properties
-
-        private let disposeBag = DisposeBag()
 
         // MARK: - Subjects
 
@@ -87,11 +81,6 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
 
     // MARK: - Actions
-
-    func showTermsAndConditions() {
-        analyticsManager.log(event: .createWalletTermsAndConditionsClick)
-        showTermsAndConditionsSubject.accept(())
-    }
 
     func renewPhrases() {
         analyticsManager.log(event: .backingUpRenewing)

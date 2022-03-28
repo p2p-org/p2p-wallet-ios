@@ -46,12 +46,23 @@ extension Home {
         override func bind() {
             super.bind()
 
-            let stateDriver = viewModel.walletsRepository
+            let stateObservable = viewModel.walletsRepository
                 .stateObservable
                 .distinctUntilChanged()
-                .asDriver(onErrorJustReturn: .initializing)
 
-            stateDriver
+            stateObservable
+                .take(until: { $0 == .loaded })
+                .asDriver(onErrorJustReturn: .initializing)
+                .map { $0 == .loading }
+                .drive(onNext: { [weak self] _ in
+                    self?.view.showLoadingIndicatorView()
+                }, onCompleted: { [weak self] in
+                    self?.view.hideLoadingIndicatorView()
+                })
+                .disposed(by: disposeBag)
+
+            stateObservable
+                .asDriver(onErrorJustReturn: .initializing)
                 .map { $0 == .error }
                 .drive(onNext: { [weak self] hasError in
                     if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil {
@@ -67,14 +78,6 @@ extension Home {
 
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
-
-            viewModel.nameDidReserveSignal
-                .emit(onNext: { [weak self] in
-                    if self?.navigationController?.viewControllers.last is ReserveName.ViewController {
-                        self?.navigationController?.popViewController(animated: true)
-                    }
-                })
                 .disposed(by: disposeBag)
         }
 
@@ -156,22 +159,18 @@ extension Home {
                 let vm = Settings.ViewModel()
                 let vc = Settings.ViewController(viewModel: vm)
                 show(vc, sender: nil)
-            case let .reserveName(owner):
+            case .reserveName:
+                guard let owner = viewModel.getOwner() else { return }
                 let vm = ReserveName.ViewModel(
                     kind: .independent,
                     owner: owner,
-                    reserveNameHandler: nil,
+                    reserveNameHandler: viewModel,
+                    goBackOnCompletion: true,
                     checkBeforeReserving: true
                 )
                 let vc = ReserveName.ViewController(viewModel: vm)
 
                 show(vc, sender: nil)
-
-                viewModel.nameDidReserveSignal
-                    .emit(onNext: { [weak vc] in
-                        vc?.back()
-                    })
-                    .disposed(by: disposeBag)
             case let .walletDetail(wallet):
                 guard let pubkey = wallet.pubkey else { return }
 

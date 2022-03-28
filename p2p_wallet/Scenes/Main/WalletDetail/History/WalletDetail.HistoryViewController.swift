@@ -11,7 +11,7 @@ import Foundation
 extension WalletDetail {
     class HistoryViewController: BaseVC {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
+            .embeded
         }
 
         // MARK: - Dependencies
@@ -23,9 +23,7 @@ extension WalletDetail {
         private lazy var collectionView: TransactionsCollectionView = {
             let collectionView = TransactionsCollectionView(
                 transactionViewModel: viewModel.transactionsViewModel,
-                graphViewModel: viewModel.graphViewModel,
-                wallet: viewModel.walletDriver,
-                nativePubkey: viewModel.nativePubkey
+                graphViewModel: viewModel.graphViewModel
             )
             collectionView.delegate = self
             return collectionView

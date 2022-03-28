@@ -196,10 +196,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         data.filter(\.isHidden)
     }
 
-    func shownWallets() -> [Wallet] {
-        data.filter { !hiddenWallets().contains($0) }
-    }
-
     // MARK: - Actions
 
     @objc func toggleIsHiddenWalletShown() {
@@ -212,15 +208,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         } else {
             hideWallet(wallet)
         }
-    }
-
-    func updateWallet(_ wallet: Wallet, withName name: String) {
-        Defaults.walletName[wallet.pubkey!] = name
-        updateItem(where: { wallet.pubkey == $0.pubkey }, transform: {
-            var newItem = $0
-            newItem.setName(name)
-            return newItem
-        })
     }
 
     // MARK: - Mappers

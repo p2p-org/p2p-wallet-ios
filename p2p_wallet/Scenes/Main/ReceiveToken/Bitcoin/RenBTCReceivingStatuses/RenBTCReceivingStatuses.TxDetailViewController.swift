@@ -29,7 +29,7 @@ extension RenBTCReceivingStatuses {
                 UIStackView(axis: .vertical, alignment: .fill) {
                     NewWLNavigationBar(initialTitle: L10n.receivingStatus, separatorEnable: false)
                         .onBack { [unowned self] in self.back() }
-                        .setupWithType(NewWLNavigationBar.self) { view in
+                        .setup { view in
                             viewModel.currentTx
                                 .map { tx in
                                     guard let value = tx?.value else { return L10n.receivingStatus }

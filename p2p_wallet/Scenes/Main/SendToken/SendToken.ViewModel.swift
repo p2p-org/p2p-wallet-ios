@@ -41,7 +41,6 @@ extension SendToken {
     class ViewModel {
         // MARK: - Dependencies
 
-        @Injected private var addressFormatter: AddressFormatterType
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var pricesService: PricesServiceType
@@ -51,13 +50,8 @@ extension SendToken {
         // MARK: - Properties
 
         let disposeBag = DisposeBag()
-        private let initialWalletPubkey: String?
-        private let initialDestinationWalletPubkey: String?
         let relayMethod: SendTokenRelayMethod
         let canGoBack: Bool
-
-        private var selectedNetwork: SendToken.Network?
-        private var selectableNetworks: [SendToken.Network]?
 
         // MARK: - Subject
 
@@ -75,12 +69,10 @@ extension SendToken {
 
         init(
             walletPubkey: String?,
-            destinationAddress: String?,
+            destinationAddress _: String?,
             relayMethod: SendTokenRelayMethod,
             canGoBack: Bool = true
         ) {
-            initialWalletPubkey = walletPubkey
-            initialDestinationWalletPubkey = destinationAddress
             self.relayMethod = relayMethod
             self.canGoBack = canGoBack
             sendService = Resolver.resolve(args: relayMethod)
@@ -105,20 +97,18 @@ extension SendToken {
             bindFees(walletSubject: walletSubject)
 
             // update wallet after swapping
-            Observable.combineLatest(
-                walletsRepository.dataObservable
-                    .skip(1),
-                walletSubject.asObservable()
-            )
-            .subscribe(onNext: { [weak self] wallets, myWallet in
-                guard let self = self else { return }
-                if let wallet = wallets?.first(where: { $0.pubkey == myWallet?.pubkey }),
-                   wallet.lamports != myWallet?.lamports
-                {
-                    self.walletSubject.accept(wallet)
-                }
-            })
-            .disposed(by: disposeBag)
+            walletsRepository.dataObservable
+                .skip(1)
+                .withLatestFrom(walletSubject.asObservable(), resultSelector: { ($0, $1) })
+                .subscribe(onNext: { [weak self] wallets, myWallet in
+                    guard let self = self else { return }
+                    if let wallet = wallets?.first(where: { $0.pubkey == myWallet?.pubkey }),
+                       wallet.lamports != myWallet?.lamports
+                    {
+                        self.walletSubject.accept(wallet)
+                    }
+                })
+                .disposed(by: disposeBag)
         }
 
         func reload() {
@@ -261,14 +251,5 @@ extension SendToken.ViewModel: SendTokenViewModelType {
                 }
             )
         )
-    }
-
-    // MARK: - Helpers
-
-    private func isRecipientBTCAddress() -> Bool {
-        guard let recipient = recipientSubject.value else { return false }
-        return recipient.name == nil &&
-            recipient.address
-            .matches(oneOfRegexes: .bitcoinAddress(isTestnet: sendService.isTestNet()))
     }
 }
