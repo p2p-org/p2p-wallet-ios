@@ -13,7 +13,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     private let feeRelayApi: FeeRelayerAPIClientType
     private let orcaSwap: OrcaSwapType
     private var relayService: FeeRelayerRelayType?
-    @Injected var notification: NotificationsServiceType
 
     init(
         solanaClient: SolanaSDK,
@@ -43,10 +42,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         } catch {
             return .error(error)
         }
-    }
-
-    func getSwapInfo(from _: SolanaSDK.Token, to _: SolanaSDK.Token) -> Swap.SwapInfo {
-        .init(payingTokenMode: .any)
     }
 
     func getPoolPair(
@@ -106,7 +101,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             }
     }
 
-    public func findPosibleDestinationMints(fromMint: String) throws -> [String] {
+    func findPosibleDestinationMints(fromMint: String) throws -> [String] {
         try orcaSwap.findPosibleDestinationMints(fromMint: fromMint)
     }
 
@@ -233,7 +228,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             guard let self = self else { throw SolanaSDK.Error.unknown }
 
             // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
-            if self.isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
+            if self.isSwappingNatively(
                 expectedTransactionFee: networkFee.transaction,
                 payingTokenMint: payingWallet.mintAddress
             ) {
@@ -288,7 +283,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 )
             }
 
-            if sourceMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+            if self.isSwappingNatively(
+                payingTokenMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+            ) {
                 allFees.append(
                     .init(
                         type: .depositWillBeReturned,
@@ -313,7 +310,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                     type: .transactionFee,
                     lamports: neededTopUpAmount.transaction,
                     token: payingWallet.token,
-                    toString: nil,
                     isFree: isFree,
                     info: info
                 )
@@ -340,8 +336,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         if let payingTokenAddress = payingTokenAddress, let payingTokenMint = payingTokenMint {
             payingFeeToken = FeeRelayer.Relay.TokenInfo(address: payingTokenAddress, mint: payingTokenMint)
         }
-        // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
-        if isFreeTransactionNotAvailableAndUserIsPayingWithSOL(payingTokenMint: payingTokenMint) {
+
+        if isSwappingNatively(payingTokenMint: payingTokenMint) {
             return orcaSwap.swap(
                 fromWalletPubkey: sourceAddress,
                 toWalletPubkey: destinationAddress,
@@ -359,16 +355,18 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             swapPools: poolsPair,
             inputAmount: amount,
             slippage: slippage
-        ).flatMap { [weak self] transactions in
+        ).flatMap { [weak self] preparedTransactions in
             guard let feeRelay = self?.relayService else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
             return feeRelay.topUpAndRelayTransactions(
-                preparedTransactions: transactions,
-                payingFeeToken: payingFeeToken
+                preparedTransactions: preparedTransactions.transactions,
+                payingFeeToken: payingFeeToken,
+                additionalPaybackFee: preparedTransactions.additionalPaybackFee
             )
         }
     }
 
-    private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
+    /// when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
+    private func isSwappingNatively(
         expectedTransactionFee: UInt64? = nil,
         payingTokenMint: String?
     ) -> Bool {

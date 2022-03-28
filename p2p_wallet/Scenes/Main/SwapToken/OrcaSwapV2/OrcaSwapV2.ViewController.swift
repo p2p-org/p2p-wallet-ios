@@ -5,12 +5,13 @@
 //  Created by Chung Tran on 15/10/2021.
 //
 
+import BEPureLayout
 import Foundation
 import RxSwift
 import UIKit
 
 extension OrcaSwapV2 {
-    class ViewController: BaseVC {
+    class ViewController: BEScene {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
@@ -19,42 +20,31 @@ extension OrcaSwapV2 {
 
         private let viewModel: OrcaSwapV2ViewModelType
 
-        // MARK: - Properties
-
-        // MARK: - Subviews
-
-        private lazy var navigationBar = NavigationBar(
-            backHandler: { [weak viewModel] in
-                viewModel?.navigate(to: .back)
-            },
-            settingsHandler: { [weak viewModel] in
-                viewModel?.openSettings()
-            }
-        )
-        private lazy var rootView = RootView(viewModel: viewModel)
-            .onTap(self, action: #selector(hideKeyboard))
-
-        // MARK: - Methods
+        // MARK: - Initializer
 
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
 
-        override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
+        // MARK: - Methods
 
-            rootView.makeFromFirstResponder()
-        }
+        override func build() -> UIView {
+            BESafeArea {
+                BEVStack(spacing: 8) {
+                    NavigationBar(
+                        backHandler: { [weak viewModel] in
+                            viewModel?.navigate(to: .back)
+                        },
+                        settingsHandler: { [weak viewModel] in
+                            viewModel?.openSettings()
+                        }
+                    )
 
-        override func setUp() {
-            super.setUp()
-            view.addSubview(navigationBar)
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-
-            view.addSubview(rootView)
-            rootView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
-            rootView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+                    RootView(viewModel: viewModel)
+                        .onTap(self, action: #selector(hideKeyboard))
+                }
+            }
         }
 
         override func bind() {
@@ -115,10 +105,10 @@ extension OrcaSwapV2 {
             case let .processTransaction(transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-                vc.backCompletion = { [weak self] in
-                    self?.viewModel.cleanAllFields()
-                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
-                }
+//                vc.backCompletion = { [weak self] in
+//                    self?.viewModel.cleanAllFields()
+//                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
+//                }
                 vc.makeAnotherTransactionHandler = { [weak self] in
                     self?.viewModel.cleanAllFields()
                     self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)

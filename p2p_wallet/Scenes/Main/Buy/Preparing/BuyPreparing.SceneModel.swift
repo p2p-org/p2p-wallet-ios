@@ -21,7 +21,6 @@ protocol BuyPreparingSceneModel: BESceneModel {
     var minFiatAmount: Driver<Double> { get }
     var minCryptoAmount: Driver<Double> { get }
     var exchangeRateDriver: Driver<Buy.ExchangeRate?> { get }
-    var errorDriver: Driver<String?> { get }
     var input: Buy.ExchangeInput { get }
     var crypto: Buy.CryptoCurrency { get }
 }
@@ -40,6 +39,8 @@ extension BuyPreparing {
         private let minFiatAmountsRelay = BehaviorRelay<Double>(value: 0)
         private let minCryptoAmountsRelay = BehaviorRelay<Double>(value: 0)
         private let exchangeRateRelay = BehaviorRelay<Buy.ExchangeRate?>(value: nil)
+        private let updateTimer = Observable<Int>
+            .timer(.seconds(0), period: .seconds(10), scheduler: ConcurrentDispatchQueueScheduler(qos: .background))
 
         init(crypto: Buy.CryptoCurrency, buyViewModel: BuyViewModelType, exchangeService: Buy.ExchangeService) {
             self.crypto = crypto
@@ -57,25 +58,26 @@ extension BuyPreparing {
                 )
             )
 
-            exchangeService
-                .getExchangeRate(from: .usd, to: crypto)
-                .asObservable()
-                .bind(to: exchangeRateRelay)
-                .disposed(by: disposeBag)
+            updateTimer
+                .subscribe(onNext: { [weak self] _ in
+                    guard let self = self else { return }
+                    Single.zip(
+                        self.exchangeService.getExchangeRate(from: .usd, to: crypto),
+                        self.exchangeService.getMinAmount(currency: crypto),
+                        self.exchangeService.getMinAmount(currency: Buy.FiatCurrency.usd)
+                    ).subscribe(onSuccess: { [weak self] exchangeRate, minCryptoAmount, minFiatAmount in
+                        self?.exchangeRateRelay.accept(exchangeRate)
+                        self?.minCryptoAmountsRelay.accept(minCryptoAmount)
 
-            exchangeService
-                .getMinAmounts(
-                    Buy.FiatCurrency.usd,
-                    crypto
-                )
-                .subscribe(onSuccess: { [weak self] fiatMinAmount, cryptoMinAmount in
-                    self?.minCryptoAmountsRelay.accept(fiatMinAmount)
-                    self?.minFiatAmountsRelay.accept(cryptoMinAmount)
+                        let minFiatAmount = max(ceil(minCryptoAmount * exchangeRate.amount), minFiatAmount)
+                            .rounded(decimals: 2)
+                        self?.minFiatAmountsRelay.accept(minFiatAmount)
+                    }).disposed(by: self.disposeBag)
                 })
                 .disposed(by: disposeBag)
 
-            inputRelay
-                .flatMapLatest { [weak self] input -> Single<Buy.ExchangeOutput> in
+            Observable.combineLatest(inputRelay, updateTimer)
+                .flatMapLatest { [weak self] input, _ -> Single<Buy.ExchangeOutput> in
                     guard let self = self else { return .error(NSError(domain: "Preparing", code: -1)) }
                     if input.amount == 0 {
                         return .just(.init(
@@ -144,14 +146,12 @@ extension BuyPreparing {
 
         var input: Buy.ExchangeInput { inputRelay.value }
 
-        var errorDriver: Driver<String?> { errorRelay.asDriver() }
-
         func next() { buyViewModel.navigate(to: .buyToken(crypto: crypto, amount: outputRelay.value.total)) }
 
         func back() { buyViewModel.navigate(to: .back) }
 
-        var minFiatAmount: Driver<Double> { minCryptoAmountsRelay.asDriver() }
+        var minFiatAmount: Driver<Double> { minFiatAmountsRelay.asDriver() }
 
-        var minCryptoAmount: Driver<Double> { minFiatAmountsRelay.asDriver() }
+        var minCryptoAmount: Driver<Double> { minCryptoAmountsRelay.asDriver() }
     }
 }

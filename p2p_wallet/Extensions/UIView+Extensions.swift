@@ -9,13 +9,6 @@ import Action
 import Foundation
 
 extension UIView {
-    static func copyToClipboardButton(spacing: CGFloat = 10, tintColor: UIColor = .textSecondary) -> UIStackView {
-        UIStackView(axis: .horizontal, spacing: spacing, alignment: .center, distribution: .fill, arrangedSubviews: [
-            UIImageView(width: 24, height: 24, image: .copyToClipboard, tintColor: tintColor),
-            UILabel(text: L10n.copyToClipboard, weight: .medium, textColor: tintColor),
-        ])
-    }
-
     func showIndetermineHud() {
         // Hide all previous hud
         hideHud()
@@ -55,14 +48,6 @@ extension UIView {
         spacer1.heightAnchor.constraint(equalTo: spacer2.heightAnchor).isActive = true
         addSubview(errorView)
         errorView.autoPinEdgesToSuperviewEdges()
-    }
-
-    func showErrorView(error: Error?, retryAction: CocoaAction? = nil) {
-        showErrorView(
-            title: L10n.error,
-            description: error?.readableDescription ?? L10n.somethingWentWrongPleaseTryAgainLater,
-            retryAction: retryAction
-        )
     }
 }
 

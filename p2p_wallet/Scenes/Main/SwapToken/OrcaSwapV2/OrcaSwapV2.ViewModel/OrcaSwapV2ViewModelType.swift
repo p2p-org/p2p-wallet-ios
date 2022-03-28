@@ -8,7 +8,7 @@
 import Foundation
 import RxCocoa
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
+protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesViewModelType {
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> { get }
     var loadingStateDriver: Driver<LoadableState> { get }
 
@@ -16,12 +16,10 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     var destinationWalletDriver: Driver<Wallet?> { get }
     var inputAmountDriver: Driver<Double?> { get }
     var estimatedAmountDriver: Driver<Double?> { get }
-    var availableAmountDriver: Driver<Double?> { get }
     var minimumReceiveAmountDriver: Driver<Double?> { get }
     var slippageDriver: Driver<Double> { get }
     var exchangeRateDriver: Driver<Double?> { get }
 
-    var feesDriver: Driver<Loadable<[PayingFee]>> { get }
     var feePayingTokenDriver: Driver<Wallet?> { get }
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> { get }
     var isSendingMaxAmountDriver: Driver<Bool> { get }
@@ -31,16 +29,13 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject {
     var slippageSubject: BehaviorRelay<Double> { get }
 
     func reload()
-    func log(_ event: AnalyticsEvent)
     func navigate(to scene: OrcaSwapV2.NavigatableScene)
     func chooseSourceWallet()
     func chooseDestinationWallet()
-    func retryLoadingRoutes()
     func swapSourceAndDestination()
     func useAllBalance()
     func enterInputAmount(_ amount: Double?)
     func enterEstimatedAmount(_ amount: Double?)
-    func changeSlippage(to slippage: Double)
     func changeFeePayingToken(to payingToken: Wallet)
     func choosePayFee()
     func openSettings()
