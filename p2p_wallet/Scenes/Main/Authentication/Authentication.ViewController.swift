@@ -21,6 +21,7 @@ extension Authentication {
         override var title: String? { didSet { pincodeVC.title = title } }
         var isIgnorable: Bool = false { didSet { pincodeVC.isIgnorable = isIgnorable } }
         var useBiometry: Bool = true { didSet { pincodeVC.useBiometry = useBiometry } }
+        var withLogo: Bool = false { didSet { pincodeVC.withLogo = withLogo } }
         let extraAction: ExtraAction
 
         // MARK: - Callbacks
