@@ -284,7 +284,7 @@
 "Powered by Project Serum" = "Propulsé par Project Serum";
 "PIN-code changed!" = "Code PIN changé!";
 "Go back to profile" = "Revenir au profil";
-"Enter current PIN-code" = "Entrez le code PIN actuel";
+"Enter current PIN" = "Entrez le code PIN";
 "Reset and try again" = "Réinitialiser et réessayer";
 "Confirm PIN-code" = "Confirmer le code PIN";
 "Enter PIN-code" = "Entrez le code PIN";
@@ -788,3 +788,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Reset your PIN" = "Réinitialisez votre NIP";
 "Are you sure you want to sign out?" = "Êtes-vous certain de vouloir vous déconnecter?";
 "Without the backup, you may never be able to access this account." = "Sans la sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";
+"Set up a new wallet PIN" = "Configurer un nouveau code PIN de portefeuille";
+"Set up a new PIN" = "Configurer un nouveau NIP";

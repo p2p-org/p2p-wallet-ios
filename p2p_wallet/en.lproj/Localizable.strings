@@ -284,7 +284,7 @@
 "Powered by Project Serum" = "Powered by Project Serum";
 "PIN-code changed!" = "PIN-code changed!";
 "Go back to profile" = "Go back to profile";
-"Enter current PIN-code" = "Enter current PIN-code";
+"Enter current PIN" = "Enter current PIN";
 "Reset and try again" = "Reset and try again";
 "Confirm PIN-code" = "Confirm PIN-code";
 "Enter PIN-code" = "Enter PIN-code";
@@ -788,3 +788,5 @@ Reset the PIN or wait for %@.";
 "Reset your PIN" = "Reset your PIN";
 "Are you sure you want to sign out?" = "Are you sure you want to sign out?";
 "Without the backup, you may never be able to access this account." = "Without the backup, you may never be able to access this account.";
+"Set up a new wallet PIN" = "Set up a new wallet PIN";
+"Set up a new PIN" = "Set up a new PIN";

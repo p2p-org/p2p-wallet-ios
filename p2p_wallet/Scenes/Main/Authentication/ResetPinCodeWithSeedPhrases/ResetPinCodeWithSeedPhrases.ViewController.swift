@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension ResetPinCodeWithSeedPhrases {
-    class ViewController: WLIndicatorModalVC {
+    class ViewController: BaseVC {
         // MARK: - Dependencies
 
         private let viewModel: ResetPinCodeWithSeedPhrasesViewModelType
@@ -42,7 +42,7 @@ extension ResetPinCodeWithSeedPhrases {
         override func setUp() {
             super.setUp()
             childNavigationController = .init()
-            add(child: childNavigationController, to: containerView)
+            add(child: childNavigationController, to: view)
         }
 
         override func bind() {
@@ -64,7 +64,7 @@ extension ResetPinCodeWithSeedPhrases {
                 childNavigationController.pushViewController(enterPhrasesVC, animated: true)
             case .createNewPasscode:
                 let createPincodeVC = WLCreatePincodeVC(
-                    createPincodeTitle: L10n.newPINCode,
+                    createPincodeTitle: L10n.setUpAWalletPIN,
                     confirmPincodeTitle: L10n.confirmPINCode
                 )
                 createPincodeVC.onSuccess = { [weak self] pincode in

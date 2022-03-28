@@ -277,7 +277,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     func changePincode() {
         authenticationHandler.authenticate(
             presentationStyle: .init(
-                title: L10n.enterCurrentPINCode,
+                title: L10n.enterCurrentPIN,
                 options: [.fullscreen, .disableBiometric, .withResetPassword],
                 completion: { [weak self] passwordReset in
                     guard !passwordReset else {
