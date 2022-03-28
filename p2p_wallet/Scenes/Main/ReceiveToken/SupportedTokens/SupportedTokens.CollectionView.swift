@@ -27,7 +27,7 @@ extension SupportedTokens {
                 },
                 layout: BECollectionViewSectionLayout(
                     cellType: Cell.self,
-                    emptyCellType: WLEmptyCell.self,
+                    emptyCellType: EmptyCell.self,
                     interGroupSpacing: 8
                 )
             )
@@ -36,9 +36,10 @@ extension SupportedTokens {
         override func configureCell(indexPath: IndexPath, item: BECollectionViewItem) -> UICollectionViewCell? {
             let cell = super.configureCell(indexPath: indexPath, item: item)
 
-            if let cell = cell as? WLEmptyCell {
-                cell.titleLabel.text = L10n.nothingFound
-                cell.subtitleLabel.text = L10n.changeYourSearchPhrase
+            if let cell = cell as? EmptyCell,
+               let viewModel = viewModel as? SupportedTokensViewModelType
+            {
+                cell.searchKey = viewModel.keyword
             }
 
             return cell
