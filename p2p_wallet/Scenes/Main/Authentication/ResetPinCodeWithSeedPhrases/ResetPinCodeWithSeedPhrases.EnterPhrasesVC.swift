@@ -131,7 +131,8 @@ extension ResetPinCodeWithSeedPhrases {
         }
 
         @objc func past() {
-            inputTextField.view?.set(text: UIPasteboard.general.string)
+            let clipboard = Resolver.resolve(ClipboardManager.self)
+            inputTextField.view?.set(text: clipboard.stringFromClipboard())
         }
     }
 }
