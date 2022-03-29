@@ -65,9 +65,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             feeInfoDriver: viewModel.feeInfoDriver,
             payingWalletDriver: viewModel.payingWalletDriver
         )
-        .onTap { [weak self] in
-            self?.viewModel.navigate(to: .selectPayingWallet)
-        }
+            .onTap { [weak self] in
+                self?.viewModel.navigate(to: .selectPayingWallet)
+            }
 
         private lazy var actionButton = WLStepButton.main(text: L10n.chooseTheRecipientToProceed)
             .onTap(self, action: #selector(actionButtonDidTouch))
@@ -168,8 +168,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     isSearchingDriver.map { !$0 },
                     viewModel.searchTextDriver.map { $0 == nil || $0?.isEmpty == true }
                 )
-                .map { $0.1 || $0.0 }
-                .map { !$0 }
+                    .map { $0.1 || $0.0 }
+                    .map { !$0 }
             }
 
             // collection view
@@ -212,18 +212,18 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 viewModel.networkDriver,
                 viewModel.feeInfoDriver
             )
-            .map { isSearching, network, fee in
-                if isSearching || network != .solana {
-                    return true
+                .map { isSearching, network, fee in
+                    if isSearching || network != .solana {
+                        return true
+                    }
+                    if let fee = fee.value?.feeAmountInSOL {
+                        return fee.total == 0
+                    } else {
+                        return true
+                    }
                 }
-                if let fee = fee.value?.feeAmountInSOL {
-                    return fee.total == 0
-                } else {
-                    return true
-                }
-            }
-            .drive(feeView.rx.isHidden)
-            .disposed(by: disposeBag)
+                .drive(feeView.rx.isHidden)
+                .disposed(by: disposeBag)
 
             viewModel.inputStateDriver
                 .skip(1)
@@ -259,53 +259,53 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 viewModel.feeInfoDriver,
                 viewModel.networkDriver
             )
-            .map { [weak self] recipient, payingWallet, feeInfo, network in
-                guard let self = self else { return "" }
-                if recipient == nil {
-                    return L10n.chooseTheRecipientToProceed
-                }
+                .map { [weak self] recipient, payingWallet, feeInfo, network in
+                    guard let self = self else { return "" }
+                    if recipient == nil {
+                        return L10n.chooseTheRecipientToProceed
+                    }
 
-                switch network {
-                case .solana:
-                    switch self.viewModel.relayMethod {
-                    case .relay:
-                        switch feeInfo.state {
-                        case .notRequested:
-                            return L10n.chooseTheTokenToPayFees
-                        case .loading:
-                            return L10n.calculatingFees
-                        case .loaded:
-                            guard let value = feeInfo.value else {
+                    switch network {
+                    case .solana:
+                        switch self.viewModel.relayMethod {
+                        case .relay:
+                            switch feeInfo.state {
+                            case .notRequested:
+                                return L10n.chooseTheTokenToPayFees
+                            case .loading:
+                                return L10n.calculatingFees
+                            case .loaded:
+                                guard let value = feeInfo.value else {
+                                    return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                                }
+                                if let wallet = payingWallet,
+                                   let lamports = wallet.lamports,
+                                   lamports < value.feeAmount.total
+                                {
+                                    let neededAmount = value.feeAmount.total
+                                        .convertToBalance(decimals: wallet.token.decimals)
+                                        .toString(maximumFractionDigits: Int(wallet.token.decimals))
+                                    return L10n.yourAccountDoesNotHaveEnoughToCoverFees(wallet.token.symbol)
+                                        + ". "
+                                        + L10n.needsAtLeast(neededAmount + " \(wallet.token.symbol)")
+                                }
+                                if value.feeAmount.total == 0, value.feeAmountInSOL.total > 0 {
+                                    return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                                }
+                            case .error:
                                 return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                             }
-                            if let wallet = payingWallet,
-                               let lamports = wallet.lamports,
-                               lamports < value.feeAmount.total
-                            {
-                                let neededAmount = value.feeAmount.total
-                                    .convertToBalance(decimals: wallet.token.decimals)
-                                    .toString(maximumFractionDigits: Int(wallet.token.decimals))
-                                return L10n.yourAccountDoesNotHaveEnoughToCoverFees(wallet.token.symbol)
-                                    + ". "
-                                    + L10n.needsAtLeast(neededAmount + " \(wallet.token.symbol)")
-                            }
-                            if value.feeAmount.total == 0, value.feeAmountInSOL.total > 0 {
-                                return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
-                            }
-                        case .error:
-                            return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
+                        case .reward:
+                            break
                         }
-                    case .reward:
+                    case .bitcoin:
                         break
                     }
-                case .bitcoin:
-                    break
-                }
 
-                return L10n.reviewAndConfirm
-            }
-            .drive(actionButton.rx.text)
-            .disposed(by: disposeBag)
+                    return L10n.reviewAndConfirm
+                }
+                .drive(actionButton.rx.text)
+                .disposed(by: disposeBag)
         }
 
         // MARK: - Actions
@@ -347,15 +347,15 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 viewModel.payingWalletDriver,
                 viewModel.feeInfoDriver
             )
-            .drive(onNext: { [weak self] network, payingWallet, feeInfo in
-                self?._networkView.setUp(
-                    network: network,
-                    payingWallet: payingWallet,
-                    feeInfo: feeInfo.value,
-                    prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
-                )
-            })
-            .disposed(by: disposeBag)
+                .drive(onNext: { [weak self] network, payingWallet, feeInfo in
+                    self?._networkView.setUp(
+                        network: network,
+                        payingWallet: payingWallet,
+                        feeInfo: feeInfo.value,
+                        prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
+                    )
+                })
+                .disposed(by: disposeBag)
         }
     }
 }

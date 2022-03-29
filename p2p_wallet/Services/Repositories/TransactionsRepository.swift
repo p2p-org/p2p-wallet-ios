@@ -42,17 +42,17 @@ extension SolanaSDK: TransactionsRepository {
                         parser: parser,
                         p2pFeePayerPubkeys: p2pFeePayerPubkeys
                     )
-                    .map {
-                        SolanaSDK.ParsedTransaction(
-                            status: $0.status,
-                            signature: $0.signature,
-                            value: $0.value,
-                            slot: activity.slot,
-                            blockTime: $0.blockTime,
-                            fee: $0.fee,
-                            blockhash: $0.blockhash
-                        )
-                    }
+                        .map {
+                            SolanaSDK.ParsedTransaction(
+                                status: $0.status,
+                                signature: $0.signature,
+                                value: $0.value,
+                                slot: activity.slot,
+                                blockTime: $0.blockTime,
+                                fee: $0.fee,
+                                blockhash: $0.blockhash
+                            )
+                        }
                 })
             }
             .do(onSuccess: { transactions in
@@ -79,28 +79,28 @@ extension SolanaSDK: TransactionsRepository {
                     myAccountSymbol: accountSymbol,
                     p2pFeePayerPubkeys: p2pFeePayerPubkeys
                 )
-                .map {
-                    SolanaSDK.ParsedTransaction(
-                        status: $0.status,
-                        signature: signature,
-                        value: $0.value,
-                        slot: nil,
-                        blockTime: time,
-                        fee: $0.fee,
-                        blockhash: $0.blockhash
+                    .map {
+                        SolanaSDK.ParsedTransaction(
+                            status: $0.status,
+                            signature: signature,
+                            value: $0.value,
+                            slot: nil,
+                            blockTime: time,
+                            fee: $0.fee,
+                            blockhash: $0.blockhash
+                        )
+                    }
+                    .catchAndReturn(
+                        SolanaSDK.ParsedTransaction(
+                            status: .confirmed,
+                            signature: signature,
+                            value: nil,
+                            slot: nil,
+                            blockTime: time,
+                            fee: .init(transaction: info.meta?.fee ?? 0, accountBalances: 0),
+                            blockhash: info.transaction.message.recentBlockhash
+                        )
                     )
-                }
-                .catchAndReturn(
-                    SolanaSDK.ParsedTransaction(
-                        status: .confirmed,
-                        signature: signature,
-                        value: nil,
-                        slot: nil,
-                        blockTime: time,
-                        fee: .init(transaction: info.meta?.fee ?? 0, accountBalances: 0),
-                        blockhash: info.transaction.message.recentBlockhash
-                    )
-                )
             }
             .catchAndReturn(
                 SolanaSDK.ParsedTransaction(

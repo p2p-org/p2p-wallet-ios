@@ -49,18 +49,18 @@ extension SendToken.SelectNetwork {
                                 textColor: .h34c759,
                                 numberOfLines: 5
                             )
-                            .setup { label in
-                                viewModel.getFreeTransactionFeeLimit()
-                                    .map(\.maxUsage)
-                                    .subscribe(onSuccess: { [weak label] maxUsage in
-                                        label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P
-                                            .Org
-                                            .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(
-                                                maxUsage
-                                            )
-                                    })
-                                    .disposed(by: disposeBag)
-                            }
+                                .setup { label in
+                                    viewModel.getFreeTransactionFeeLimit()
+                                        .map(\.maxUsage)
+                                        .subscribe(onSuccess: { [weak label] maxUsage in
+                                            label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P
+                                                .Org
+                                                .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(
+                                                    maxUsage
+                                                )
+                                        })
+                                        .disposed(by: disposeBag)
+                                }
                         }.padding(.init(only: .top, inset: 18))
                     }
 
@@ -80,15 +80,15 @@ extension SendToken.SelectNetwork {
                         viewModel.feeInfoDriver,
                         viewModel.payingWalletDriver
                     )
-                    .drive(onNext: { [weak view, weak self] feeInfo, payingWallet in
-                        view?.setUp(
-                            network: network,
-                            payingWallet: payingWallet,
-                            feeInfo: feeInfo.value,
-                            prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
-                        )
-                    })
-                    .disposed(by: disposeBag)
+                        .drive(onNext: { [weak view, weak self] feeInfo, payingWallet in
+                            view?.setUp(
+                                network: network,
+                                payingWallet: payingWallet,
+                                feeInfo: feeInfo.value,
+                                prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
+                            )
+                        })
+                        .disposed(by: disposeBag)
 
                     selectedNetwork.asDriver()
                         .map { $0 != network }

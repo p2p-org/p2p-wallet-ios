@@ -76,15 +76,15 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             inputAmountSubject,
             estimatedAmountSubject
         )
-        .map { inputAmount, estimatedAmount in
-            guard let inputAmount = inputAmount,
-                  let estimatedAmount = estimatedAmount,
-                  inputAmount > 0,
-                  estimatedAmount > 0
-            else { return nil }
-            return estimatedAmount / inputAmount
-        }
-        .asDriver(onErrorJustReturn: nil)
+            .map { inputAmount, estimatedAmount in
+                guard let inputAmount = inputAmount,
+                      let estimatedAmount = estimatedAmount,
+                      inputAmount > 0,
+                      estimatedAmount > 0
+                else { return nil }
+                return estimatedAmount / inputAmount
+            }
+            .asDriver(onErrorJustReturn: nil)
     }
 
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {
@@ -103,9 +103,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             isShowingDetailsSubject.asDriver(),
             isShowingShowDetailsButtonDriver
         )
-        .map {
-            $0 && $1
-        }
+            .map {
+                $0 && $1
+            }
     }
 
     var isShowingShowDetailsButtonDriver: Driver<Bool> {
@@ -113,9 +113,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             sourceWalletDriver,
             destinationWalletDriver
         )
-        .map {
-            $0 != nil && $1 != nil
-        }
+            .map {
+                $0 != nil && $1 != nil
+            }
     }
 
     func getPrice(symbol: String) -> Double? {
@@ -131,15 +131,15 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             feeService.load(),
             swapService.load()
         )
-        .subscribe(
-            onCompleted: { [weak self] in
-                self?.loadingStateSubject.accept(.loaded)
-            },
-            onError: { [weak self] error in
-                self?.loadingStateSubject.accept(.error(error.readableDescription))
-            }
-        )
-        .disposed(by: disposeBag)
+            .subscribe(
+                onCompleted: { [weak self] in
+                    self?.loadingStateSubject.accept(.loaded)
+                },
+                onError: { [weak self] error in
+                    self?.loadingStateSubject.accept(.error(error.readableDescription))
+                }
+            )
+            .disposed(by: disposeBag)
     }
 
     func navigate(to scene: OrcaSwapV2.NavigatableScene) {

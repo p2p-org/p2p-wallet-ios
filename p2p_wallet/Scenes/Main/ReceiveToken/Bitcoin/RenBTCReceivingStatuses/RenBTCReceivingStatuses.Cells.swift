@@ -27,7 +27,7 @@ extension RenBTCReceivingStatuses {
                             textColor: .textSecondary,
                             numberOfLines: 0
                         )
-                        .setup { view in descriptionLabel = view }
+                            .setup { view in descriptionLabel = view }
                     }
                     UIView.defaultNextArrow()
                 }
@@ -69,7 +69,7 @@ extension RenBTCReceivingStatuses {
                             textColor: .textSecondary,
                             numberOfLines: 0
                         )
-                        .setup { view in descriptionLabel = view }
+                            .setup { view in descriptionLabel = view }
                     }
                     UIView.spacer
                     UILabel(textSize: 15, weight: .semibold)

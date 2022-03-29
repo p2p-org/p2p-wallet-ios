@@ -154,21 +154,21 @@ private extension HomeViewModelType {
                 .filter { $0 != nil }
                 .withPrevious()
         )
-        .map { state, change in
-            if let previous = change.0 {
-                if state == .loading || state == .initializing {
-                    let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
-                    return amount > 0
-                } else {
-                    let amount = change.1?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
-                    return amount > 0
+            .map { state, change in
+                if let previous = change.0 {
+                    if state == .loading || state == .initializing {
+                        let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
+                        return amount > 0
+                    } else {
+                        let amount = change.1?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
+                        return amount > 0
+                    }
                 }
-            }
 
-            // First initialize
-            return true
-        }
-        .distinctUntilChanged { $0 }
-        .asDriver(onErrorJustReturn: true)
+                // First initialize
+                return true
+            }
+            .distinctUntilChanged { $0 }
+            .asDriver(onErrorJustReturn: true)
     }
 }

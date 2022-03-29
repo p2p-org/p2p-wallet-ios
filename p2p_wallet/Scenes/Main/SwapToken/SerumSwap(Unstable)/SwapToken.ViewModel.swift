@@ -149,11 +149,11 @@ extension SerumSwapV1 {
                 lamportsPerSignatureRelay.valueObservable,
                 creatingAccountFeeRelay.valueObservable
             )
-            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] _ in
-                self?.calculateExchangeRateFeesAndMinOrderSize()
-            })
-            .disposed(by: disposeBag)
+                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+                .subscribe(onNext: { [weak self] _ in
+                    self?.calculateExchangeRateFeesAndMinOrderSize()
+                })
+                .disposed(by: disposeBag)
 
             exchangeRateRelay
                 .stateObservable
@@ -170,30 +170,30 @@ extension SerumSwapV1 {
                 exchangeRateRelay.valueObservable,
                 slippageRelay
             )
-            .map { [weak self] in
-                self?.provider.calculateEstimatedAmount(
-                    inputAmount: $0,
-                    rate: $1,
-                    slippage: $2
-                )
-            }
-            .bind(to: estimatedAmountRelay)
-            .disposed(by: disposeBag)
+                .map { [weak self] in
+                    self?.provider.calculateEstimatedAmount(
+                        inputAmount: $0,
+                        rate: $1,
+                        slippage: $2
+                    )
+                }
+                .bind(to: estimatedAmountRelay)
+                .disposed(by: disposeBag)
 
             Observable.combineLatest(
                 estimatedAmountSubject.map { $0?.double },
                 exchangeRateRelay.valueObservable,
                 slippageRelay
             )
-            .map { [weak self] in
-                self?.provider.calculateNeededInputAmount(
-                    forReceivingEstimatedAmount: $0,
-                    rate: $1,
-                    slippage: $2
-                )
-            }
-            .bind(to: inputAmountRelay)
-            .disposed(by: disposeBag)
+                .map { [weak self] in
+                    self?.provider.calculateNeededInputAmount(
+                        forReceivingEstimatedAmount: $0,
+                        rate: $1,
+                        slippage: $2
+                    )
+                }
+                .bind(to: inputAmountRelay)
+                .disposed(by: disposeBag)
         }
 
         fileprivate func swap() {
@@ -246,8 +246,8 @@ extension SerumSwapV1.ViewModel: SwapTokenViewModelType {
             lamportsPerSignatureRelay.stateObservable,
             creatingAccountFeeRelay.stateObservable,
         ])
-        .map(\.combined)
-        .asDriver(onErrorJustReturn: .notRequested)
+            .map(\.combined)
+            .asDriver(onErrorJustReturn: .notRequested)
     }
 
     var sourceWalletDriver: Driver<Wallet?> { sourceWalletRelay.asDriver() }
@@ -256,8 +256,8 @@ extension SerumSwapV1.ViewModel: SwapTokenViewModelType {
             sourceWalletRelay,
             feesRelay.valueObservable
         )
-        .map { [weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0, fees: $1) }
-        .asDriver(onErrorJustReturn: nil)
+            .map { [weak self] in self?.provider.calculateAvailableAmount(sourceWallet: $0, fees: $1) }
+            .asDriver(onErrorJustReturn: nil)
     }
 
     var inputAmountDriver: Driver<Double?> { inputAmountRelay.asDriver() }
@@ -277,24 +277,24 @@ extension SerumSwapV1.ViewModel: SwapTokenViewModelType {
             ),
             slippageDriver
         )
-        .map { [
-            weak self
-        ] initialState, sourceWallet, inputAmount, destinationWallet, estimatedAmount, providerInfo, slippage -> String? in
-            guard let self = self else { return nil }
-            return validate(
-                provider: self.provider,
-                initialState: initialState,
-                sourceWallet: sourceWallet,
-                inputAmount: inputAmount,
-                destinationWallet: destinationWallet,
-                estimatedAmount: estimatedAmount,
-                exchangeRate: providerInfo.0,
-                fees: providerInfo.1,
-                solWallet: self.walletsRepository.nativeWallet,
-                slippage: slippage,
-                minOrderSize: providerInfo.2
-            )
-        }
+            .map { [
+                weak self
+            ] initialState, sourceWallet, inputAmount, destinationWallet, estimatedAmount, providerInfo, slippage -> String? in
+                guard let self = self else { return nil }
+                return validate(
+                    provider: self.provider,
+                    initialState: initialState,
+                    sourceWallet: sourceWallet,
+                    inputAmount: inputAmount,
+                    destinationWallet: destinationWallet,
+                    estimatedAmount: estimatedAmount,
+                    exchangeRate: providerInfo.0,
+                    fees: providerInfo.1,
+                    solWallet: self.walletsRepository.nativeWallet,
+                    slippage: slippage,
+                    minOrderSize: providerInfo.2
+                )
+            }
     }
 
     var exchangeRateDriver: Driver<Loadable<Double>> { exchangeRateRelay.asDriver() }
