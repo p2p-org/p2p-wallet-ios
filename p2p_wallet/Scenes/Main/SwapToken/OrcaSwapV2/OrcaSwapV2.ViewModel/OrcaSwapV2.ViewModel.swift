@@ -155,6 +155,7 @@ extension OrcaSwapV2 {
                 sourceWalletSubject,
                 payingWalletSubject
             )
+                .observe(on: MainScheduler.asyncInstance)
                 .subscribe(onNext: { [weak self] _ in
                     guard let self = self else { return }
                     self.feesSubject.request = self.feesRequest()
