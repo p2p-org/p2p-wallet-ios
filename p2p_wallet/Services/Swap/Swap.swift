@@ -54,6 +54,10 @@ protocol SwapServicePoolsPair {
     ) -> UInt64?
 }
 
+/**
+ This protocol describes an interface for swapping service.
+ In general you have to call `load` method first to prepare a service.
+ */
 protocol SwapServiceType {
     /**
      Prepare swap service.
