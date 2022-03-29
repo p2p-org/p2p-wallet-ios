@@ -64,8 +64,8 @@ struct PendingTransaction {
             switch self {
             case .sending:
                 return "sending"
-            case .confirmed:
-                return "processing"
+            case let .confirmed(value):
+                return "processing(\(value))"
             case .finalized:
                 return "finalized"
             case .error:
@@ -117,7 +117,7 @@ extension PendingTransaction {
             )
             amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
             fee = transaction.feeInToken
-        case let transaction as ProcessTransaction.OrcaSwapTransaction:
+        case let transaction as ProcessTransaction.SwapTransaction:
             var destinationWallet = transaction.destinationWallet
             if let authority = try? SolanaSDK.PublicKey(string: authority),
                let mintAddress = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress)
