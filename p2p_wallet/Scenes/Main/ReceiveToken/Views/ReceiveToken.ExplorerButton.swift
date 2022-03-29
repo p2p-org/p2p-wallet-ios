@@ -31,7 +31,7 @@ extension ReceiveToken {
             textColor: .textBlack,
             textAlignment: .center
         )
-        .withContentCompressionResistancePriority(.required, for: .horizontal)
+            .withContentCompressionResistancePriority(.required, for: .horizontal)
 
         init(title: String) {
             super.init(frame: .zero)

@@ -52,11 +52,11 @@ extension OrcaSwapV2.ConfirmSwapping {
                 viewModel.sourceWalletDriver,
                 viewModel.destinationWalletDriver
             )
-            .map { source, destination in
-                L10n.confirmSwapping(source?.token.symbol ?? "", destination?.token.symbol ?? "")
-            }
-            .drive(navigationBar.titleLabel.rx.text)
-            .disposed(by: disposeBag)
+                .map { source, destination in
+                    L10n.confirmSwapping(source?.token.symbol ?? "", destination?.token.symbol ?? "")
+                }
+                .drive(navigationBar.titleLabel.rx.text)
+                .disposed(by: disposeBag)
         }
     }
 }

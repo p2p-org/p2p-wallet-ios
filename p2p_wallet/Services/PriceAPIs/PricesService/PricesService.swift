@@ -163,15 +163,15 @@ extension PricesService: PricesServiceType {
                     self.fetcher.getHistoricalPrice(of: coinName, fiat: "USD", period: period),
                     self.fetcher.getValueInUSD(fiat: Defaults.fiat.code)
                 )
-                .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-                .map { records, rate in
-                    guard let rate = rate else { return [] }
-                    var records = records
-                    for i in 0 ..< records.count {
-                        records[i] = records[i].converting(exchangeRate: rate)
+                    .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+                    .map { records, rate in
+                        guard let rate = rate else { return [] }
+                        var records = records
+                        for i in 0 ..< records.count {
+                            records[i] = records[i].converting(exchangeRate: rate)
+                        }
+                        return records
                     }
-                    return records
-                }
             }
             .observe(on: MainScheduler.instance)
     }

@@ -58,15 +58,15 @@ extension SendToken {
                                 payingWalletDriver,
                                 feeInfoDriver
                             )
-                            .map { payingWallet, feeInfo in
-                                payingWalletToString(
-                                    state: feeInfo.state,
-                                    value: feeInfo.value,
-                                    payingWallet: payingWallet
-                                )
-                            }
-                            .drive(label.rx.text)
-                            .disposed(by: disposeBag)
+                                .map { payingWallet, feeInfo in
+                                    payingWalletToString(
+                                        state: feeInfo.state,
+                                        value: feeInfo.value,
+                                        payingWallet: payingWallet
+                                    )
+                                }
+                                .drive(label.rx.text)
+                                .disposed(by: disposeBag)
                         }
                 }
                 UIView.defaultNextArrow()

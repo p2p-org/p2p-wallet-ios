@@ -70,8 +70,8 @@ extension Settings {
                         ]).with(spacing: 5),
                         biometrySwitcher,
                     ])
-                    .with(spacing: 16, alignment: .center, distribution: .fill)
-                    .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
+                        .with(spacing: 16, alignment: .center, distribution: .fill)
+                        .padding(.init(x: 20, y: 14), backgroundColor: .contentBackground)
 
                     BEStackViewSpacing(1)
                 }

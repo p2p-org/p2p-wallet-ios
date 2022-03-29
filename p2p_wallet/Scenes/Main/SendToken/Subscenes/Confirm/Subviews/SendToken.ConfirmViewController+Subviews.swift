@@ -109,7 +109,7 @@ extension SendToken.ConfirmViewController {
             numberOfLines: 0,
             textAlignment: .right
         )
-        .withContentHuggingPriority(.required, for: .vertical)
+            .withContentHuggingPriority(.required, for: .vertical)
 
         init(title: String) {
             super.init(frame: .zero)
@@ -157,18 +157,18 @@ extension SendToken.ConfirmViewController {
                                 viewModel.feeInfoDriver.map { $0.value?.feeAmount },
                                 viewModel.payingWalletDriver
                             )
-                            .map { [weak self] feeAmount, payingWallet in
-                                guard let self = self else { return NSAttributedString() }
-                                guard let feeAmount = feeAmount else { return NSAttributedString() }
-                                let prices = self.viewModel.getPrices(for: [payingWallet?.token.symbol ?? ""])
-                                return feeAmount.attributedStringForTransactionFee(
-                                    prices: prices,
-                                    symbol: payingWallet?.token.symbol ?? "",
-                                    decimals: payingWallet?.token.decimals
-                                )
-                            }
-                            .drive(view.rightLabel.rx.attributedText)
-                            .disposed(by: disposeBag)
+                                .map { [weak self] feeAmount, payingWallet in
+                                    guard let self = self else { return NSAttributedString() }
+                                    guard let feeAmount = feeAmount else { return NSAttributedString() }
+                                    let prices = self.viewModel.getPrices(for: [payingWallet?.token.symbol ?? ""])
+                                    return feeAmount.attributedStringForTransactionFee(
+                                        prices: prices,
+                                        symbol: payingWallet?.token.symbol ?? "",
+                                        decimals: payingWallet?.token.decimals
+                                    )
+                                }
+                                .drive(view.rightLabel.rx.attributedText)
+                                .disposed(by: disposeBag)
                         }
                     // info
                     UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
@@ -194,32 +194,32 @@ extension SendToken.ConfirmViewController {
                             viewModel.networkDriver,
                             viewModel.feeInfoDriver.map { $0.value?.feeAmount }
                         )
-                        .map { network, feeAmount -> Bool in
-                            if network != .solana { return true }
-                            guard let feeAmount = feeAmount else { return true }
-                            return feeAmount.accountBalances == 0
-                        }
-                        .drive(view.rx.isHidden)
-                        .disposed(by: disposeBag)
+                            .map { network, feeAmount -> Bool in
+                                if network != .solana { return true }
+                                guard let feeAmount = feeAmount else { return true }
+                                return feeAmount.accountBalances == 0
+                            }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
 
                         Driver.combineLatest(
                             viewModel.networkDriver,
                             viewModel.payingWalletDriver,
                             viewModel.feeInfoDriver.map { $0.value?.feeAmount }
                         )
-                        .map { [weak self] network, payingWallet, feeAmount -> NSAttributedString? in
-                            if network != .solana { return nil }
-                            guard let feeAmount = feeAmount else {
-                                return nil
+                            .map { [weak self] network, payingWallet, feeAmount -> NSAttributedString? in
+                                if network != .solana { return nil }
+                                guard let feeAmount = feeAmount else {
+                                    return nil
+                                }
+                                return feeAmount.attributedStringForAccountCreationFee(
+                                    price: self?.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""),
+                                    symbol: payingWallet?.token.symbol ?? "",
+                                    decimals: payingWallet?.token.decimals
+                                )
                             }
-                            return feeAmount.attributedStringForAccountCreationFee(
-                                price: self?.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""),
-                                symbol: payingWallet?.token.symbol ?? "",
-                                decimals: payingWallet?.token.decimals
-                            )
-                        }
-                        .drive(view.rightLabel.rx.attributedText)
-                        .disposed(by: disposeBag)
+                            .drive(view.rightLabel.rx.attributedText)
+                            .disposed(by: disposeBag)
                     }
 
                 // Other fees
@@ -229,13 +229,13 @@ extension SendToken.ConfirmViewController {
                             viewModel.networkDriver,
                             viewModel.feeInfoDriver.map { $0.value?.feeAmount }
                         )
-                        .map { network, feeAmount -> Bool in
-                            if network != .bitcoin { return true }
-                            guard let otherFees = feeAmount?.others else { return true }
-                            return otherFees.isEmpty
-                        }
-                        .drive(view.rx.isHidden)
-                        .disposed(by: disposeBag)
+                            .map { network, feeAmount -> Bool in
+                                if network != .bitcoin { return true }
+                                guard let otherFees = feeAmount?.others else { return true }
+                                return otherFees.isEmpty
+                            }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
 
                         viewModel.feeInfoDriver
                             .map { $0.value?.feeAmountInSOL }
@@ -264,16 +264,16 @@ extension SendToken.ConfirmViewController {
                             viewModel.feeInfoDriver.map { $0.value?.feeAmount },
                             viewModel.payingWalletDriver
                         )
-                        .map { [weak self] feeAmount, payingWallet -> NSAttributedString in
-                            guard let self = self, let feeAmount = feeAmount else { return NSAttributedString() }
-                            return feeAmount.attributedStringForTotalFee(
-                                price: self.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""),
-                                symbol: payingWallet?.token.symbol ?? "",
-                                decimals: payingWallet?.token.decimals
-                            )
-                        }
-                        .drive(view.rightLabel.rx.attributedText)
-                        .disposed(by: disposeBag)
+                            .map { [weak self] feeAmount, payingWallet -> NSAttributedString in
+                                guard let self = self, let feeAmount = feeAmount else { return NSAttributedString() }
+                                return feeAmount.attributedStringForTotalFee(
+                                    price: self.viewModel.getPrice(for: payingWallet?.token.symbol ?? ""),
+                                    symbol: payingWallet?.token.symbol ?? "",
+                                    decimals: payingWallet?.token.decimals
+                                )
+                            }
+                            .drive(view.rightLabel.rx.attributedText)
+                            .disposed(by: disposeBag)
                     }
             }
         }

@@ -40,8 +40,8 @@ class BaseWalletCell: BECompositionView {
                 ),
             trailingActions: trailingActions
         )
-        .bind(swipeableCellRef)
-        .frame(height: 63)
+            .bind(swipeableCellRef)
+            .frame(height: 63)
     }
 
     private func content() -> UIView {

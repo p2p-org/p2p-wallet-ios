@@ -136,9 +136,9 @@ extension EnterSeed {
                         labelFont: .systemFont(ofSize: 15, weight: .semibold),
                         textColor: .h5887ff
                     )
-                    .setup { button in
-                        button.addTarget(self, action: #selector(securityExplanation), for: .touchUpInside)
-                    }
+                        .setup { button in
+                            button.addTarget(self, action: #selector(securityExplanation), for: .touchUpInside)
+                        }
                 }
                 BEStackViewSpacing(18)
                 agreeTermsAndConditionsView
