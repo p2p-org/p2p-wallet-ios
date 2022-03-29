@@ -228,6 +228,7 @@
 		84699EB808181B89DFF647E9 /* BESceneModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699CFE43666FACF9062699 /* BESceneModel.swift */; };
 		84699EE1F69CF22302F3F831 /* MoonpayExchangeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469935E58251A19EB02F459 /* MoonpayExchangeService.swift */; };
 		84699F1F56756CE9EBB99B98 /* TokenSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C532C9A1D3FFDBC8F3E /* TokenSelection.swift */; };
+		84699F2C69908573C61A8E6D /* TransactionAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993CDD1FB1E8A31A9BCF7 /* TransactionAnalytics.swift */; };
 		84699F38A20F24A0D2281DE8 /* CreateSecurityKeys.RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699CB4D013E8D2ECC9D2DA /* CreateSecurityKeys.RootView.swift */; };
 		84699F5842CCABBD8B33DF6E /* BuyRoot.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993534B18B8841213679D /* BuyRoot.ViewController.swift */; };
 		84699F599B47C30D251B657D /* ReceiveToken.ViewBuilders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699E5ED9376E01FBD8B3DB /* ReceiveToken.ViewBuilders.swift */; };
@@ -696,6 +697,7 @@
 		846993611CD0B957C592D868 /* SupportedTokens.EmptyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedTokens.EmptyCell.swift; sourceTree = "<group>"; };
 		846993A9B7C558B1E379CF0C /* Buy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buy.swift; sourceTree = "<group>"; };
 		846993C80C502EDC0FBF1067 /* BuyPreparing.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyPreparing.Scene.swift; sourceTree = "<group>"; };
+		846993CDD1FB1E8A31A9BCF7 /* TransactionAnalytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionAnalytics.swift; sourceTree = "<group>"; };
 		84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.RootView.swift; sourceTree = "<group>"; };
 		8469946C7AC15ACE4B8C7FB2 /* BuyExchangeServiceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyExchangeServiceType.swift; sourceTree = "<group>"; };
 		84699474E0B586007CA0B9A2 /* ReserveNameBannerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReserveNameBannerHandler.swift; sourceTree = "<group>"; };
@@ -1214,6 +1216,7 @@
 			children = (
 				3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */,
 				3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */,
+				846993CDD1FB1E8A31A9BCF7 /* TransactionAnalytics.swift */,
 			);
 			path = TransactionHandler;
 			sourceTree = "<group>";
@@ -3404,6 +3407,7 @@
 				84699437F451E8074D200B9A /* BuyProcessing.InputCryptoView.swift in Sources */,
 				846993455464139EC88B91F8 /* TokenSelection.Scene.swift in Sources */,
 				84699F1F56756CE9EBB99B98 /* TokenSelection.swift in Sources */,
+				84699F2C69908573C61A8E6D /* TransactionAnalytics.swift in Sources */,
 				8469941E530E40CFC0FA0380 /* SupportedTokens.EmptyCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
