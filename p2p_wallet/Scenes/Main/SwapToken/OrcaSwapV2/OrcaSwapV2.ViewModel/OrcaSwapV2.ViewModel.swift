@@ -163,10 +163,35 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
 
             // Smart selection fee token paying
+
+            // Input wallet was changed
             sourceWalletSubject
                 .subscribe(onNext: { [weak self] wallet in
-                    guard let self = self else { return }
+                    guard let self = self, let wallet = wallet else { return }
                     self.payingWalletSubject.accept(wallet)
+                })
+                .disposed(by: disposeBag)
+
+            // Input amount was changed
+            inputAmountSubject
+                .flatMap { Single.zip(.just($0), self.feesRequest()) }
+                .subscribe(onNext: { [weak self] input, fees in
+                    guard
+                        let self = self,
+                        let input = input,
+                        let availableAmount = self.availableAmountSubject.value
+                    else { return }
+
+                    // If paying token fee equals input token
+                    if self.payingWalletSubject.value == self.sourceWalletSubject.value,
+                       self.payingWalletSubject.value?.isNativeSOL == false
+                    {
+                        // Selected wallet can not covert fee
+                        if input + fees.total > availableAmount, self.walletsRepository.nativeWallet?.amount > 0 {
+                            guard let solWallet = self.walletsRepository.nativeWallet else { return }
+                            self.changeFeePayingToken(to: solWallet)
+                        }
+                    }
                 })
                 .disposed(by: disposeBag)
 
