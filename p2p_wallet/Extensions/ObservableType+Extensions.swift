@@ -13,9 +13,9 @@ extension ObservableType {
         scan([], accumulator: { previous, current in
             Array(previous + [current]).suffix(2)
         })
-        .map { arr -> (previous: Element?, current: Element) in
-            (arr.count > 1 ? arr.first : nil, arr.last!)
-        }
+            .map { arr -> (previous: Element?, current: Element) in
+                (arr.count > 1 ? arr.first : nil, arr.last!)
+            }
     }
 }
 

@@ -181,7 +181,7 @@ extension TransactionHandler {
                 return wallets
             }
 
-        case let transaction as ProcessTransaction.OrcaSwapTransaction:
+        case let transaction as ProcessTransaction.SwapTransaction:
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 

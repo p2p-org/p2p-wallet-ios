@@ -22,7 +22,7 @@ extension SendToken.ChooseTokenAndAmount {
                 labelFont: .systemFont(ofSize: 17),
                 textColor: .h5887ff
             )
-            .onTap(self, action: #selector(buttonNextDidTouch))
+                .onTap(self, action: #selector(buttonNextDidTouch))
             nextButton.setTitleColor(.h5887ff, for: .normal)
             nextButton.setTitleColor(.textSecondary, for: .disabled)
             return nextButton

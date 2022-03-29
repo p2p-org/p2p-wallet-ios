@@ -29,18 +29,18 @@ class CryptoComparePricesFetcher: PricesFetcher {
                     "\(path)fsyms=\(coinListQuery)&tsyms=\(fiat)",
                     decodedTo: [String: [String: Double]].self
                 )
-                .map { dict in
-                    var result = [String: CurrentPrice?]()
-                    for key in dict.keys {
-                        var price: CurrentPrice?
-                        if let value = dict[key]?[fiat] {
-                            price = CurrentPrice(value: value)
+                    .map { dict in
+                        var result = [String: CurrentPrice?]()
+                        for key in dict.keys {
+                            var price: CurrentPrice?
+                            if let value = dict[key]?[fiat] {
+                                price = CurrentPrice(value: value)
+                            }
+                            result[key] = price
                         }
-                        result[key] = price
+                        return result
                     }
-                    return result
-                }
-                .catchAndReturn([:])
+                    .catchAndReturn([:])
             }
 
         return Single.zip(requests)

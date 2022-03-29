@@ -56,14 +56,14 @@ extension DerivableAccounts {
                             )
                         }
                 })
-                .observe(on: MainScheduler.instance)
-                .do(onSuccess: { [weak self] accounts in
-                    self?.fetchSOLPrice()
-                    for account in accounts {
-                        self?.fetchBalances(account: account.info.publicKey.base58EncodedString)
-                    }
-                })
-                .observe(on: MainScheduler.instance)
+                    .observe(on: MainScheduler.instance)
+                    .do(onSuccess: { [weak self] accounts in
+                        self?.fetchSOLPrice()
+                        for account in accounts {
+                            self?.fetchBalances(account: account.info.publicKey.base58EncodedString)
+                        }
+                    })
+                    .observe(on: MainScheduler.instance)
         }
 
         private func createAccountSingle(index: Int) -> Single<SolanaSDK.Account> {

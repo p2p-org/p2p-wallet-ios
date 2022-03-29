@@ -66,8 +66,8 @@ extension Authentication {
                 textColor: .textSecondary,
                 textAlignment: .center
             )
-            .padding(.init(top: 8, left: 19, bottom: 8, right: 19), backgroundColor: .f6f6f8, cornerRadius: 12)
-            .onTap(self, action: #selector(resetPincodeWithASeedPhrase))
+                .padding(.init(top: 8, left: 19, bottom: 8, right: 19), backgroundColor: .f6f6f8, cornerRadius: 12)
+                .onTap(self, action: #selector(resetPincodeWithASeedPhrase))
             button.isHidden = true
             return button
         }()

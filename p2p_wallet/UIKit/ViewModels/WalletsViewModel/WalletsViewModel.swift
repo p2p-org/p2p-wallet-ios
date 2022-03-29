@@ -118,37 +118,37 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             solanaSDK.getBalance(),
             solanaSDK.getTokenWallets()
         )
-        .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-        .map { [weak self] balance, wallets in
-            guard let self = self else { return [] }
-            var wallets = wallets
+            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+            .map { [weak self] balance, wallets in
+                guard let self = self else { return [] }
+                var wallets = wallets
 
-            // add sol wallet on top
-            let solWallet = Wallet.nativeSolana(
-                pubkey: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
-                lamport: balance
-            )
-            wallets.insert(solWallet, at: 0)
+                // add sol wallet on top
+                let solWallet = Wallet.nativeSolana(
+                    pubkey: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
+                    lamport: balance
+                )
+                wallets.insert(solWallet, at: 0)
 
-            // update visibility
-            wallets = self.mapVisibility(wallets: wallets)
+                // update visibility
+                wallets = self.mapVisibility(wallets: wallets)
 
-            // map prices
-            wallets = self.mapPrices(wallets: wallets)
+                // map prices
+                wallets = self.mapPrices(wallets: wallets)
 
-            // sort
-            wallets.sort(by: Wallet.defaultSorter)
+                // sort
+                wallets.sort(by: Wallet.defaultSorter)
 
-            return wallets
-        }
-        .observe(on: MainScheduler.instance)
-        .do(onSuccess: { [weak self] wallets in
-            guard let self = self else { return }
-            let newTokens = wallets.map(\.token.symbol)
-                .filter { !self.pricesService.getWatchList().contains($0) }
-            self.pricesService.addToWatchList(newTokens)
-            self.pricesService.fetchPrices(tokens: newTokens)
-        })
+                return wallets
+            }
+            .observe(on: MainScheduler.instance)
+            .do(onSuccess: { [weak self] wallets in
+                guard let self = self else { return }
+                let newTokens = wallets.map(\.token.symbol)
+                    .filter { !self.pricesService.getWatchList().contains($0) }
+                self.pricesService.addToWatchList(newTokens)
+                self.pricesService.fetchPrices(tokens: newTokens)
+            })
     }
 
     override func reload() {
@@ -187,7 +187,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             super.dataDidChange,
             isHiddenWalletsShown.distinctUntilChanged()
         )
-        .map { _ in () }
+            .map { _ in () }
     }
 
     // MARK: - getters

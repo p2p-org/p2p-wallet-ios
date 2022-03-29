@@ -51,13 +51,13 @@ class NameService: NameServiceType {
             observable: request(url: endpoint + "/resolve/\(name)"),
             defaultValue: []
         )
-        .do(onSuccess: { [weak self] result in
-            for record in result {
-                if let name = record.name {
-                    self?.cache.save(name, for: record.owner)
+            .do(onSuccess: { [weak self] result in
+                for record in result {
+                    if let name = record.name {
+                        self?.cache.save(name, for: record.owner)
+                    }
                 }
-            }
-        })
+            })
     }
 
     func getOwnerAddress(_ name: String) -> Single<String?> {

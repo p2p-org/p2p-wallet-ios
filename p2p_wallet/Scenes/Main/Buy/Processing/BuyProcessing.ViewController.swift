@@ -26,7 +26,7 @@ extension BuyProcessing {
                 UILabel(text: L10n.buy, textSize: 17, weight: .semibold),
             ]
         )
-        .padding(.init(all: 20))
+            .padding(.init(all: 20))
 
         // MARK: - Methods
 

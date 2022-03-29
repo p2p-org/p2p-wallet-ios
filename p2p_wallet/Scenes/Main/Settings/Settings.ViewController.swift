@@ -46,13 +46,13 @@ extension Settings {
                                     .disposed(by: disposeBag)
                             }
                         )
-                        .onTap { [unowned self] in
-                            if self.viewModel.getUsername() == nil {
-                                viewModel.showOrReserveUsername()
-                            } else {
-                                viewModel.navigate(to: .username)
+                            .onTap { [unowned self] in
+                                if self.viewModel.getUsername() == nil {
+                                    viewModel.showOrReserveUsername()
+                                } else {
+                                    viewModel.navigate(to: .username)
+                                }
                             }
-                        }
 
                         // Contact
                         // CellView(icon: .contactIcon, title: L10n.contact.onlyUppercaseFirst())
@@ -87,7 +87,7 @@ extension Settings {
                                     .disposed(by: disposeBag)
                             }
                         )
-                        .onTap { [unowned self] in viewModel.navigate(to: .backup) }
+                            .onTap { [unowned self] in viewModel.navigate(to: .backup) }
 
                         // Pin
                         CellView(
@@ -175,7 +175,7 @@ extension Settings {
                                         .disposed(by: disposeBag)
                                 }
                         )
-                        .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
+                            .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
 
                         // Appearance
 
