@@ -80,7 +80,7 @@ extension SendToken {
             // accept initial values
             if let pubkey = walletPubkey,
                let selectableWallet = walletsRepository.getWallets()
-               .first(where: { $0.pubkey == pubkey }) ?? walletsRepository.nativeWallet
+                   .first(where: { $0.pubkey == pubkey }) ?? walletsRepository.nativeWallet
             {
                 walletSubject.accept(selectableWallet)
             }
@@ -122,21 +122,21 @@ extension SendToken {
                     .asSingle()
                     .asCompletable()
             )
-            .subscribe(onCompleted: { [weak self] in
-                guard let self = self else { return }
-                self.loadingStateSubject.accept(.loaded)
-                if self.walletSubject.value == nil {
-                    self.walletSubject.accept(self.walletsRepository.getWallets().first(where: { $0.isNativeSOL }))
-                }
-                if let payingWallet = self.walletsRepository.getWallets()
-                    .first(where: { $0.mintAddress == Defaults.payingTokenMint })
-                {
-                    self.payingWalletSubject.accept(payingWallet)
-                }
-            }, onError: { [weak self] error in
-                self?.loadingStateSubject.accept(.error(error.readableDescription))
-            })
-            .disposed(by: disposeBag)
+                .subscribe(onCompleted: { [weak self] in
+                    guard let self = self else { return }
+                    self.loadingStateSubject.accept(.loaded)
+                    if self.walletSubject.value == nil {
+                        self.walletSubject.accept(self.walletsRepository.getWallets().first(where: { $0.isNativeSOL }))
+                    }
+                    if let payingWallet = self.walletsRepository.getWallets()
+                        .first(where: { $0.mintAddress == Defaults.payingTokenMint })
+                    {
+                        self.payingWalletSubject.accept(payingWallet)
+                    }
+                }, onError: { [weak self] error in
+                    self?.loadingStateSubject.accept(.error(error.readableDescription))
+                })
+                .disposed(by: disposeBag)
         }
 
         private func send() {

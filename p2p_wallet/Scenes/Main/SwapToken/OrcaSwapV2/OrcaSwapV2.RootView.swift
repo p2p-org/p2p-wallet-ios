@@ -110,10 +110,10 @@ extension OrcaSwapV2 {
                 viewModel.errorDriver,
                 viewModel.sourceWalletDriver.map { $0?.token.symbol }
             )
-            .drive { [weak self] in
-                self?.setError(error: $0, sourceSymbol: $1)
-            }
-            .disposed(by: disposeBag)
+                .drive { [weak self] in
+                    self?.setError(error: $0, sourceSymbol: $1)
+                }
+                .disposed(by: disposeBag)
         }
 
         private func setError(error: OrcaSwapV2.VerificationError?, sourceSymbol: String?) {

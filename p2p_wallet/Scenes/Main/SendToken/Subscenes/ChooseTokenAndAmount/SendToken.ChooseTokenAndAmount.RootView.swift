@@ -49,7 +49,7 @@ extension SendToken.ChooseTokenAndAmount {
             image: viewModel.showAfterConfirmation ? .buttonCheckSmall : nil,
             text: viewModel.showAfterConfirmation ? L10n.reviewAndConfirm : L10n.chooseDestinationWallet
         )
-        .onTap(self, action: #selector(actionButtonDidTouch))
+            .onTap(self, action: #selector(actionButtonDidTouch))
 
         #if DEBUG
             private lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
@@ -162,23 +162,23 @@ extension SendToken.ChooseTokenAndAmount {
                 viewModel.walletDriver,
                 viewModel.currencyModeDriver
             )
-            .map { amount, wallet, currencyMode -> String in
-                guard let wallet = wallet else { return "" }
-                var equityValue = amount * wallet.priceInCurrentFiat
-                var equityValueSymbol = Defaults.fiat.code
-                if currencyMode == .fiat {
-                    if wallet.priceInCurrentFiat > 0 {
-                        equityValue = amount / wallet.priceInCurrentFiat
-                    } else {
-                        equityValue = 0
+                .map { amount, wallet, currencyMode -> String in
+                    guard let wallet = wallet else { return "" }
+                    var equityValue = amount * wallet.priceInCurrentFiat
+                    var equityValueSymbol = Defaults.fiat.code
+                    if currencyMode == .fiat {
+                        if wallet.priceInCurrentFiat > 0 {
+                            equityValue = amount / wallet.priceInCurrentFiat
+                        } else {
+                            equityValue = 0
+                        }
+                        equityValueSymbol = wallet.token.symbol
                     }
-                    equityValueSymbol = wallet.token.symbol
+                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
                 }
-                return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
-            }
-            .asDriver(onErrorJustReturn: nil)
-            .drive(equityValueLabel.rx.text)
-            .disposed(by: disposeBag)
+                .asDriver(onErrorJustReturn: nil)
+                .drive(equityValueLabel.rx.text)
+                .disposed(by: disposeBag)
 
             // amount
             amountTextField.rx.text
@@ -210,18 +210,18 @@ extension SendToken.ChooseTokenAndAmount {
                 viewModel.walletDriver,
                 viewModel.currencyModeDriver
             )
-            .map { [weak self] wallet, mode -> String? in
-                guard let wallet = wallet,
-                      let amount = self?.viewModel.calculateAvailableAmount() else { return nil }
-                var string = amount.toString(maximumFractionDigits: 9)
-                string += " "
-                if mode == .fiat {
-                    string += Defaults.fiat.code
-                } else {
-                    string += wallet.token.symbol
+                .map { [weak self] wallet, mode -> String? in
+                    guard let wallet = wallet,
+                          let amount = self?.viewModel.calculateAvailableAmount() else { return nil }
+                    var string = amount.toString(maximumFractionDigits: 9)
+                    string += " "
+                    if mode == .fiat {
+                        string += Defaults.fiat.code
+                    } else {
+                        string += wallet.token.symbol
+                    }
+                    return string
                 }
-                return string
-            }
 
             balanceTextDriver
                 .drive(balanceLabel.rx.text)

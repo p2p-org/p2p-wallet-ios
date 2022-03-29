@@ -51,7 +51,7 @@ extension Onboarding {
                 textColor: .black,
                 numberOfLines: 0
             )
-            .padding(.init(all: 18), backgroundColor: .fafafc, cornerRadius: 12)
+                .padding(.init(all: 18), backgroundColor: .fafafc, cornerRadius: 12)
             view.addSubview(explanationView)
             explanationView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 18)
             explanationView.autoPinEdge(toSuperviewSafeArea: .leading, withInset: 18)
@@ -69,7 +69,7 @@ extension Onboarding {
                 image: .notificationsButtonSmall,
                 text: L10n.allowNotifications
             )
-            .onTap(self, action: #selector(buttonAllowDidTouch))
+                .onTap(self, action: #selector(buttonAllowDidTouch))
             view.addSubview(allowButton)
             allowButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
             allowButton.autoPinEdge(.top, to: .bottom, of: scrollView)

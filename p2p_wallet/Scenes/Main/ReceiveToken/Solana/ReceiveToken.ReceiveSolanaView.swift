@@ -25,13 +25,13 @@ extension ReceiveToken {
                     pubKey: viewModel.pubkey,
                     token: viewModel.tokenWallet?.token
                 )
-                .onCopy { [unowned self] _ in
-                    self.viewModel.copyAction()
-                }.onShare { [unowned self] image in
-                    self.viewModel.shareAction(image: image)
-                }.onSave { [unowned self] image in
-                    self.viewModel.saveAction(image: image)
-                }
+                    .onCopy { [unowned self] _ in
+                        self.viewModel.copyAction()
+                    }.onShare { [unowned self] image in
+                        self.viewModel.shareAction(image: image)
+                    }.onSave { [unowned self] image in
+                        self.viewModel.saveAction(image: image)
+                    }
 
                 // Explore button
                 if viewModel.hasExplorerButton {

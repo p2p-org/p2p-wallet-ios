@@ -64,17 +64,17 @@ extension RenVM.BurnAndRelease {
                 client: rpcClient,
                 solanaClient: solanaClient
             )
-            .observe(on: scheduler)
-            .map { [weak self] solanaChain in
-                guard let self = self else { throw RenVM.Error.unknown }
-                return .init(
-                    rpcClient: self.rpcClient,
-                    chain: solanaChain,
-                    mintTokenSymbol: self.mintTokenSymbol,
-                    version: self.version,
-                    burnTo: "Bitcoin"
-                )
-            }
+                .observe(on: scheduler)
+                .map { [weak self] solanaChain in
+                    guard let self = self else { throw RenVM.Error.unknown }
+                    return .init(
+                        rpcClient: self.rpcClient,
+                        chain: solanaChain,
+                        mintTokenSymbol: self.mintTokenSymbol,
+                        version: self.version,
+                        burnTo: "Bitcoin"
+                    )
+                }
 
             transactionStorage.newSubmittedBurnTxDetailsHandler = { [weak self] burnDetails in
                 let burnDetails = burnDetails.filter { self?.releasingTxs.contains($0) == false }

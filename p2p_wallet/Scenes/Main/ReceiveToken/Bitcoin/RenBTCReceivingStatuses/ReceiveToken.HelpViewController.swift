@@ -35,7 +35,7 @@ extension ReceiveToken {
                     textSize: 15,
                     numberOfLines: 0
                 )
-                .padding(.init(x: 20, y: 0))
+                    .padding(.init(x: 20, y: 0))
             }
         }
     }

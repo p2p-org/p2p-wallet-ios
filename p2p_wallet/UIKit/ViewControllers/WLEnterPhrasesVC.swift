@@ -52,7 +52,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         textColor: .white,
         contentInsets: .init(x: 16, y: 10)
     )
-    .onTap(self, action: #selector(buttonNextDidTouch))
+        .onTap(self, action: #selector(buttonNextDidTouch))
     lazy var pasteButton = WLButton(
         backgroundColor: UIColor.a3a5ba.withAlphaComponent(0.1),
         cornerRadius: 12,
@@ -61,7 +61,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         textColor: .white,
         contentInsets: .init(x: 16, y: 10)
     )
-    .onTap(self, action: #selector(buttonPasteDidTouch))
+        .onTap(self, action: #selector(buttonPasteDidTouch))
     lazy var retryButton = WLButton.stepButton(type: .gray, label: L10n.resetAndTryAgain)
         .onTap(self, action: #selector(resetAndTryAgainButtonDidTouch))
 
@@ -126,10 +126,10 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
                 .map { [weak self] _ in self?.textView.getPhrases().isEmpty == false },
             error.map { $0 == nil }
         )
-        .map { $0 && $1 }
-        .asDriver(onErrorJustReturn: false)
-        .drive(nextButton.rx.isEnabled)
-        .disposed(by: disposeBag)
+            .map { $0 && $1 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(nextButton.rx.isEnabled)
+            .disposed(by: disposeBag)
 
         let errorDriver = error.asDriver(onErrorJustReturn: nil)
 

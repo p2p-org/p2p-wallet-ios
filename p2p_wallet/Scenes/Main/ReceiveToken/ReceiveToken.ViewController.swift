@@ -112,24 +112,24 @@ extension ReceiveToken {
                     ReceiveBitcoinView(
                         viewModel: viewModel.receiveBitcoinViewModel
                     )
-                    .setup { view in
-                        viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
-                    }
+                        .setup { view in
+                            viewModel.tokenTypeDriver.map { token in token != .btc }.drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
 
                     UIStackView(axis: .vertical, spacing: 16, alignment: .fill) {
                         ShowHideButton(
                             closedText: L10n.showDirectAndMintAddresses,
                             openedText: L10n.hideDirectAndMintAddresses
                         )
-                        .setup { view in
-                            viewModel.addressesInfoIsOpenedDriver
-                                .drive(view.rx.isOpened)
-                                .disposed(by: disposeBag)
-                            view.rx.tap
-                                .bind(to: viewModel.showHideAddressesInfoButtonTapSubject)
-                                .disposed(by: disposeBag)
-                        }
+                            .setup { view in
+                                viewModel.addressesInfoIsOpenedDriver
+                                    .drive(view.rx.isOpened)
+                                    .disposed(by: disposeBag)
+                                view.rx.tap
+                                    .bind(to: viewModel.showHideAddressesInfoButtonTapSubject)
+                                    .disposed(by: disposeBag)
+                            }
                         TokenAddressesView(viewModel: viewModel)
                             .setup { view in
                                 viewModel.addressesInfoIsOpenedDriver

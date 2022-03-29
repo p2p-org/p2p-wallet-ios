@@ -30,9 +30,9 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             sourceWalletDriver,
             inputAmountDriver
         )
-        .map { wallet, amount in
-            amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
-        }
+            .map { wallet, amount in
+                amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
+            }
     }
 
     var inputAmountInFiatStringDriver: Driver<String?> {
@@ -40,9 +40,9 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             sourceWalletDriver,
             inputAmountDriver
         )
-        .map { wallet, amount in
-            Defaults.fiat.symbol + (amount * wallet?.priceInCurrentFiat).toString(maximumFractionDigits: 2)
-        }
+            .map { wallet, amount in
+                Defaults.fiat.symbol + (amount * wallet?.priceInCurrentFiat).toString(maximumFractionDigits: 2)
+            }
     }
 
     var estimatedAmountStringDriver: Driver<String?> {
@@ -50,9 +50,9 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             destinationWalletDriver,
             estimatedAmountDriver
         )
-        .map { wallet, amount in
-            amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
-        }
+            .map { wallet, amount in
+                amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
+            }
     }
 
     var receiveAtLeastStringDriver: Driver<String?> {
@@ -60,9 +60,9 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             destinationWalletDriver,
             minimumReceiveAmountDriver
         )
-        .map { wallet, amount in
-            amount.toString(maximumFractionDigits: 9) + " " + (wallet?.token.symbol ?? "")
-        }
+            .map { wallet, amount in
+                amount.toString(maximumFractionDigits: 9) + " " + (wallet?.token.symbol ?? "")
+            }
     }
 
     var receiveAtLeastInFiatStringDriver: Driver<String?> {
@@ -70,8 +70,8 @@ extension OrcaSwapV2ConfirmSwappingViewModelType {
             destinationWalletDriver,
             minimumReceiveAmountDriver
         )
-        .map { wallet, amount in
-            Defaults.fiat.symbol + (amount * wallet?.priceInCurrentFiat).toString(maximumFractionDigits: 2)
-        }
+            .map { wallet, amount in
+                Defaults.fiat.symbol + (amount * wallet?.priceInCurrentFiat).toString(maximumFractionDigits: 2)
+            }
     }
 }

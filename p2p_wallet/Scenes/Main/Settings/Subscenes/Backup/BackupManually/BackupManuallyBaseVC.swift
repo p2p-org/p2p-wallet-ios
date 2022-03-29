@@ -19,7 +19,7 @@ class BackupManuallyBaseVC: BaseVC {
         UILabel(text: L10n.done, textSize: 17, textColor: .h5887ff)
             .onTap(self, action: #selector(back)),
     ])
-    .padding(.init(x: 20, y: 0))
+        .padding(.init(x: 20, y: 0))
 
     lazy var rootView: ScrollableVStackRootView = {
         let rootView = ScrollableVStackRootView(forAutoLayout: ())
