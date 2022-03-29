@@ -347,7 +347,7 @@ private class _NumpadView: BEView {
         image: .pincodeDelete,
         tintColor: deleteButtonColor.normal
     )
-    .onTap(self, action: #selector(deleteButtonDidTap))
+        .onTap(self, action: #selector(deleteButtonDidTap))
 
     fileprivate init(bottomLeftButton: UIView? = nil) {
         self.bottomLeftButton = bottomLeftButton

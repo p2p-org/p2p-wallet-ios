@@ -17,7 +17,7 @@ extension ResetPinCodeWithSeedPhrases {
                     UIImageView(width: 24, height: 24, image: .securityKey, tintColor: .white),
                     UILabel(text: L10n.securityKey.uppercaseFirst, textSize: 21, weight: .semibold),
                 ])
-                .padding(.init(all: 20))
+                    .padding(.init(all: 20))
                 UIView.separator(height: 1, color: .separator)
             }
         }

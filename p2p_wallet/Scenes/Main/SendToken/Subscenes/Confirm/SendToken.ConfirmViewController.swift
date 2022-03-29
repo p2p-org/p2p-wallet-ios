@@ -55,10 +55,10 @@ extension SendToken {
                                 viewModel.walletDriver,
                                 viewModel.amountDriver
                             )
-                            .drive(with: view, onNext: { view, param in
-                                view.setUp(wallet: param.0, amount: param.1 ?? 0)
-                            })
-                            .disposed(by: disposeBag)
+                                .drive(with: view, onNext: { view, param in
+                                    view.setUp(wallet: param.0, amount: param.1 ?? 0)
+                                })
+                                .disposed(by: disposeBag)
                         }
                 }
                 .onTap { [weak self] in
@@ -93,16 +93,16 @@ extension SendToken {
                                 viewModel.payingWalletDriver,
                                 viewModel.feeInfoDriver
                             )
-                            .drive(onNext: { [weak self, weak view] network, payingWallet, feeInfo in
-                                guard let self = self else { return }
-                                view?.setUp(
-                                    network: network,
-                                    payingWallet: payingWallet,
-                                    feeInfo: feeInfo.value,
-                                    prices: self.viewModel.getPrices(for: ["SOL", "renBTC"])
-                                )
-                            })
-                            .disposed(by: disposeBag)
+                                .drive(onNext: { [weak self, weak view] network, payingWallet, feeInfo in
+                                    guard let self = self else { return }
+                                    view?.setUp(
+                                        network: network,
+                                        payingWallet: payingWallet,
+                                        feeInfo: feeInfo.value,
+                                        prices: self.viewModel.getPrices(for: ["SOL", "renBTC"])
+                                    )
+                                })
+                                .disposed(by: disposeBag)
                         }
                 }
                 .onTap { [weak self] in
@@ -116,27 +116,27 @@ extension SendToken {
                         payingWalletDriver: viewModel.payingWalletDriver,
                         feeInfoDriver: viewModel.feeInfoDriver
                     )
-                    .setup { view in
-                        Driver.combineLatest(
-                            viewModel.networkDriver,
-                            viewModel.feeInfoDriver
-                        )
-                        .map { network, fee in
-                            if network != .solana { return true }
-                            if let fee = fee.value?.feeAmount {
-                                return fee.total == 0
-                            } else {
-                                return true
-                            }
+                        .setup { view in
+                            Driver.combineLatest(
+                                viewModel.networkDriver,
+                                viewModel.feeInfoDriver
+                            )
+                                .map { network, fee in
+                                    if network != .solana { return true }
+                                    if let fee = fee.value?.feeAmount {
+                                        return fee.total == 0
+                                    } else {
+                                        return true
+                                    }
+                                }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
                         }
-                        .drive(view.rx.isHidden)
-                        .disposed(by: disposeBag)
-                    }
-                    .onTap { [weak self] in
-                        self?.viewModel
-                            .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true,
-                                                                     preSelectedNetwork: nil))
-                    }
+                        .onTap { [weak self] in
+                            self?.viewModel
+                                .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true,
+                                                                         preSelectedNetwork: nil))
+                        }
                 }
 
                 BEStackViewSpacing(18)
@@ -150,24 +150,24 @@ extension SendToken {
                                 viewModel.walletDriver,
                                 viewModel.amountDriver
                             )
-                            .map { wallet, amount in
-                                let amount = amount
-                                let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
+                                .map { wallet, amount in
+                                    let amount = amount
+                                    let amountInFiat = amount * wallet?.priceInCurrentFiat.orZero
 
-                                return NSMutableAttributedString()
-                                    .text(
-                                        "\(amount.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "") ",
-                                        size: 15,
-                                        color: .textBlack
-                                    )
-                                    .text(
-                                        "(~\(Defaults.fiat.symbol)\(amountInFiat.toString(maximumFractionDigits: 2)))",
-                                        size: 15,
-                                        color: .textSecondary
-                                    )
-                            }
-                            .drive(view.rightLabel.rx.attributedText)
-                            .disposed(by: disposeBag)
+                                    return NSMutableAttributedString()
+                                        .text(
+                                            "\(amount.toString(maximumFractionDigits: 9)) \(wallet?.token.symbol ?? "") ",
+                                            size: 15,
+                                            color: .textBlack
+                                        )
+                                        .text(
+                                            "(~\(Defaults.fiat.symbol)\(amountInFiat.toString(maximumFractionDigits: 2)))",
+                                            size: 15,
+                                            color: .textSecondary
+                                        )
+                                }
+                                .drive(view.rightLabel.rx.attributedText)
+                                .disposed(by: disposeBag)
                         }
 
                     // Fees
@@ -244,22 +244,22 @@ extension SendToken {
                         viewModel.walletDriver,
                         viewModel.amountDriver
                     )
-                    .map { wallet, amount in
-                        let amount = amount ?? 0
-                        let symbol = wallet?.token.symbol ?? ""
-                        return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
-                    }
-                    .drive(view.rx.text)
-                    .disposed(by: disposeBag)
+                        .map { wallet, amount in
+                            let amount = amount ?? 0
+                            let symbol = wallet?.token.symbol ?? ""
+                            return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+                        }
+                        .drive(view.rx.text)
+                        .disposed(by: disposeBag)
 
                     Driver.combineLatest([
                         viewModel.walletDriver.map { $0 != nil },
                         viewModel.amountDriver.map { $0 != nil },
                         viewModel.recipientDriver.map { $0 != nil },
                     ])
-                    .map { $0.allSatisfy { $0 }}
-                    .drive(view.rx.isEnabled)
-                    .disposed(by: disposeBag)
+                        .map { $0.allSatisfy { $0 }}
+                        .drive(view.rx.isEnabled)
+                        .disposed(by: disposeBag)
                 }
                 .onTap { [weak self] in
                     self?.viewModel.authenticateAndSend()
@@ -273,11 +273,11 @@ extension SendToken {
                 viewModel.feeInfoDriver.map { $0.value?.feeAmount },
                 viewModel.payingWalletDriver
             )
-            .drive(onNext: { [weak stackView, weak view] _ in
-                stackView?.setNeedsLayout()
-                view?.layoutIfNeeded()
-            })
-            .disposed(by: disposeBag)
+                .drive(onNext: { [weak stackView, weak view] _ in
+                    stackView?.setNeedsLayout()
+                    view?.layoutIfNeeded()
+                })
+                .disposed(by: disposeBag)
         }
 
         override func bind() {

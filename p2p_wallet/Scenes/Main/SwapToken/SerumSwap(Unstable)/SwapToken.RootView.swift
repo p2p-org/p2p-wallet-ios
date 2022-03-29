@@ -34,8 +34,8 @@ extension SerumSwapV1 {
             image: .walletSwap,
             tintColor: .h8b94a9
         )
-        .padding(.init(all: 3))
-        .onTap(self, action: #selector(reverseExchangeRate))
+            .padding(.init(all: 3))
+            .onTap(self, action: #selector(reverseExchangeRate))
 
         private lazy var slippageLabel = UILabel(textSize: 15, weight: .medium, numberOfLines: 0)
 
@@ -87,7 +87,7 @@ extension SerumSwapV1 {
                     rightView: exchangeRateReverseButton,
                     addSeparatorOnTop: false
                 )
-                .withTag(1)
+                    .withTag(1)
 
                 UIView.defaultSeparator()
                     .withTag(2)
@@ -97,8 +97,8 @@ extension SerumSwapV1 {
                     contentView: slippageLabel,
                     addSeparatorOnTop: false
                 )
-                .onTap(self, action: #selector(chooseSlippage))
-                .withTag(3)
+                    .onTap(self, action: #selector(chooseSlippage))
+                    .withTag(3)
 
                 UIView.defaultSeparator()
                     .withTag(4)
@@ -108,13 +108,13 @@ extension SerumSwapV1 {
                     contentView: UIView(),
                     addSeparatorOnTop: false
                 )
-                .withModifier { view in
-                    let view = view
-                    view.autoSetDimension(.height, toSize: 48, relation: .greaterThanOrEqual)
-                    return view
-                }
-                .onTap(self, action: #selector(showSwapFees))
-                .withTag(5)
+                    .withModifier { view in
+                        let view = view
+                        view.autoSetDimension(.height, toSize: 48, relation: .greaterThanOrEqual)
+                        return view
+                    }
+                    .onTap(self, action: #selector(showSwapFees))
+                    .withTag(5)
 
                 errorLabel
 
@@ -150,16 +150,16 @@ extension SerumSwapV1 {
                 viewModel.exchangeRateDriver,
                 viewModel.isExchangeRateReversedDriver
             )
-            .withLatestFrom(
-                Driver.combineLatest(
-                    viewModel.sourceWalletDriver,
-                    viewModel.destinationWalletDriver
-                ),
-                resultSelector: { ($0.0, $0.1, $1.0, $1.1) }
-            )
-            .map(generateExchangeRateText)
-            .drive(exchangeRateLabel.rx.text)
-            .disposed(by: disposeBag)
+                .withLatestFrom(
+                    Driver.combineLatest(
+                        viewModel.sourceWalletDriver,
+                        viewModel.destinationWalletDriver
+                    ),
+                    resultSelector: { ($0.0, $0.1, $1.0, $1.1) }
+                )
+                .map(generateExchangeRateText)
+                .drive(exchangeRateLabel.rx.text)
+                .disposed(by: disposeBag)
 
             // slippage
             viewModel.slippageDriver
@@ -183,7 +183,7 @@ extension SerumSwapV1 {
                 viewModel.feesDriver.map(\.state),
                 viewModel.errorDriver
             )
-            .map(generateErrorText)
+                .map(generateErrorText)
 
             presentableErrorDriver
                 .map { $0 == nil }
@@ -201,9 +201,9 @@ extension SerumSwapV1 {
                 viewModel.feesDriver.map { $0.state == .loaded },
                 viewModel.errorDriver.map { $0 == nil },
             ])
-            .map { $0.allSatisfy { $0 }}
-            .drive(swapButton.rx.isEnabled)
-            .disposed(by: disposeBag)
+                .map { $0.allSatisfy { $0 }}
+                .drive(swapButton.rx.isEnabled)
+                .disposed(by: disposeBag)
 
             Driver.combineLatest(
                 viewModel.exchangeRateDriver,
@@ -213,9 +213,9 @@ extension SerumSwapV1 {
                 viewModel.inputAmountDriver.map { $0 == nil },
                 viewModel.errorDriver
             )
-            .map(generateSwapButtonText)
-            .drive(swapButton.rx.title())
-            .disposed(by: disposeBag)
+                .map(generateSwapButtonText)
+                .drive(swapButton.rx.title())
+                .disposed(by: disposeBag)
         }
 
         // MARK: - Actions

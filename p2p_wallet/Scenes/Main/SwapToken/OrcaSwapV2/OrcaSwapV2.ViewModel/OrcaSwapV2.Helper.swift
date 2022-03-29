@@ -146,7 +146,7 @@ extension OrcaSwapV2.ViewModel {
             lamportsPerSignature: lamportsPerSignature,
             minRentExempt: minRenExempt
         )
-        .map { info in info.fees }
-        .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .map { info in info.fees }
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
     }
 }

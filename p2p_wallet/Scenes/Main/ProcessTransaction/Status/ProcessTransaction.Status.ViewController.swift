@@ -39,10 +39,10 @@ extension ProcessTransaction.Status {
                         numberOfLines: 0,
                         textAlignment: .center
                     )
-                    .setup { label in
-                        label.text = viewModel.getMainDescription()
-                    }
-                    .padding(.init(all: 18, excludingEdge: .top))
+                        .setup { label in
+                            label.text = viewModel.getMainDescription()
+                        }
+                        .padding(.init(all: 18, excludingEdge: .top))
 
                     // Loader
                     BEZStack {
@@ -93,16 +93,16 @@ extension ProcessTransaction.Status {
                                     textSize: 15,
                                     textAlignment: .right
                                 )
-                                .setup { label in
-                                    viewModel.pendingTransactionDriver
-                                        .map {
-                                            $0.transactionId?
-                                                .truncatingMiddle(numOfSymbolsRevealed: 9,
-                                                                  numOfSymbolsRevealedInSuffix: 9)
-                                        }
-                                        .drive(label.rx.text)
-                                        .disposed(by: disposeBag)
-                                }
+                                    .setup { label in
+                                        viewModel.pendingTransactionDriver
+                                            .map {
+                                                $0.transactionId?
+                                                    .truncatingMiddle(numOfSymbolsRevealed: 9,
+                                                                      numOfSymbolsRevealedInSuffix: 9)
+                                            }
+                                            .drive(label.rx.text)
+                                            .disposed(by: disposeBag)
+                                    }
                                 UIImageView(
                                     width: 16,
                                     height: 16,
@@ -145,9 +145,9 @@ extension ProcessTransaction.Status {
                             image: .info,
                             text: viewModel.isSwapping ? L10n.showSwapDetails : L10n.showTransactionDetails
                         )
-                        .onTap { [weak self] in
-                            self?.dismiss(animated: true, completion: nil)
-                        }
+                            .onTap { [weak self] in
+                                self?.dismiss(animated: true, completion: nil)
+                            }
                         SubButton(viewModel: viewModel)
                     }
                     .padding(.init(x: 18, y: 0))

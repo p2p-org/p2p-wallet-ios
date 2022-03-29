@@ -119,7 +119,7 @@ class SendService: SendServiceType {
                         mintAddress: wallet.mintAddress,
                         destinationAddress: receiver
                     )
-                    .map(\.isUnregisteredAsocciatedToken)
+                        .map(\.isUnregisteredAsocciatedToken)
                 }
 
                 // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
@@ -147,7 +147,7 @@ class SendService: SendServiceType {
                             expectedFee: expectedFee,
                             payingTokenMint: payingTokenMint
                         )
-                        .map(Optional.init)
+                            .map(Optional.init)
                     }
             case .reward:
                 return .just(.zero)
@@ -233,29 +233,29 @@ class SendService: SendServiceType {
             amount: amount.convertToBalance(decimals: wallet.token.decimals),
             payingFeeToken: payingFeeToken
         )
-        .flatMap { [weak self] preparedTransaction, useFeeRelayer in
-            guard let self = self else { throw SolanaSDK.Error.unknown }
+            .flatMap { [weak self] preparedTransaction, useFeeRelayer in
+                guard let self = self else { throw SolanaSDK.Error.unknown }
 
-            if useFeeRelayer {
-                // using fee relayer
-                return self.relayService.topUpAndRelayTransaction(
-                    preparedTransaction: preparedTransaction,
-                    payingFeeToken: payingFeeToken
-                )
-                .map { $0.first ?? "" }
-            } else {
-                // send normally, paid by SOL
-                return self.solanaSDK.serializeAndSend(
-                    preparedTransaction: preparedTransaction,
-                    isSimulation: false
-                )
+                if useFeeRelayer {
+                    // using fee relayer
+                    return self.relayService.topUpAndRelayTransaction(
+                        preparedTransaction: preparedTransaction,
+                        payingFeeToken: payingFeeToken
+                    )
+                        .map { $0.first ?? "" }
+                } else {
+                    // send normally, paid by SOL
+                    return self.solanaSDK.serializeAndSend(
+                        preparedTransaction: preparedTransaction,
+                        isSimulation: false
+                    )
+                }
             }
-        }
-        .do(onSuccess: {
-            Logger.log(message: "\($0)", event: .response)
-        }, onError: {
-            Logger.log(message: "\($0)", event: .error)
-        })
+            .do(onSuccess: {
+                Logger.log(message: "\($0)", event: .response)
+            }, onError: {
+                Logger.log(message: "\($0)", event: .error)
+            })
     }
 
     private func prepareForSendingToSolanaNetworkViaRelayMethod(
@@ -362,7 +362,7 @@ class SendService: SendServiceType {
                     amount: amount.convertToBalance(decimals: wallet.token.decimals),
                     recentBlockhash: recentBlockhash
                 )
-                .map { ($0, recentBlockhash) }
+                    .map { ($0, recentBlockhash) }
             }
             .flatMap { [weak self] params, recentBlockhash in
                 guard let self = self else { throw SolanaSDK.Error.unknown }

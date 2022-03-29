@@ -134,7 +134,7 @@ extension SendTokenRecipientAndNetworkHandler {
                                 feeInSOL: feeAmountInSOL,
                                 payingFeeWallet: payingWallet
                             )
-                            .map { (feeAmountInSOL, $0 ?? .zero) }
+                                .map { (feeAmountInSOL, $0 ?? .zero) }
                         }
                         .map { .init(feeAmount: $0.1, feeAmountInSOL: $0.0) }
                 } else {

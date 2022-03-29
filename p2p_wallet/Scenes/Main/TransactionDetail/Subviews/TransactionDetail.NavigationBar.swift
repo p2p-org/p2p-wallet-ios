@@ -44,10 +44,10 @@ extension TransactionDetail {
                                 numOfSymbolsRevealedInSuffix: 4
                             ),
                             let destinationSymbol = swapTransaction.destination?.token.symbol ?? swapTransaction
-                            .destination?.mintAddress.truncatingMiddle(
-                                numOfSymbolsRevealed: 4,
-                                numOfSymbolsRevealedInSuffix: 4
-                            )
+                                .destination?.mintAddress.truncatingMiddle(
+                                    numOfSymbolsRevealed: 4,
+                                    numOfSymbolsRevealedInSuffix: 4
+                                )
                         {
                             text = sourceSymbol + " → " + destinationSymbol
                         }

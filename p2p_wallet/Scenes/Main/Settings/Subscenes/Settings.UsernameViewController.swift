@@ -30,13 +30,13 @@ extension Settings {
                         token: .nativeSolana,
                         showCoinLogo: false
                     )
-                    .onCopy { [weak self] _ in
-                        self?.viewModel.copyUsernameToClipboard()
-                    }.onShare { [weak self] image in
-                        self?.viewModel.share(image: image)
-                    }.onSave { [weak self] image in
-                        self?.viewModel.saveImage(image: image)
-                    }
+                        .onCopy { [weak self] _ in
+                            self?.viewModel.copyUsernameToClipboard()
+                        }.onShare { [weak self] image in
+                            self?.viewModel.share(image: image)
+                        }.onSave { [weak self] image in
+                            self?.viewModel.saveImage(image: image)
+                        }
 
                     UIView.greyBannerView {
                         UILabel(

@@ -25,29 +25,29 @@ class BonfidaPricesFetcher: PricesFetcher {
                         "/candles/\(coin)USDT?limit=1&resolution=86400",
                         decodedTo: Response<[ResponsePriceRecord]>.self
                     )
-                    .map {
-                        let open: Double = $0.data?.first?.open ?? 0
-                        let close: Double = $0.data?.first?.close ?? 0
-                        let change24h = close - open
-                        let change24hInPercentages = change24h / (open == 0 ? 1 : open)
-                        return (coin, CurrentPrice(
-                            value: close,
-                            change24h: CurrentPrice.Change24h(
-                                value: change24h,
-                                percentage: change24hInPercentages
-                            )
-                        ))
-                    }
-                    .catchAndReturn((coin, nil))
+                        .map {
+                            let open: Double = $0.data?.first?.open ?? 0
+                            let close: Double = $0.data?.first?.close ?? 0
+                            let change24h = close - open
+                            let change24hInPercentages = change24h / (open == 0 ? 1 : open)
+                            return (coin, CurrentPrice(
+                                value: close,
+                                change24h: CurrentPrice.Change24h(
+                                    value: change24h,
+                                    percentage: change24hInPercentages
+                                )
+                            ))
+                        }
+                        .catchAndReturn((coin, nil))
                 }
         )
-        .map { prices in
-            var result = [String: CurrentPrice]()
-            for (coin, price) in prices {
-                result[coin] = price
+            .map { prices in
+                var result = [String: CurrentPrice]()
+                for (coin, price) in prices {
+                    result[coin] = price
+                }
+                return result
             }
-            return result
-        }
     }
 
     func getHistoricalPrice(of coinName: String, fiat _: String, period: Period) -> Single<[PriceRecord]> {

@@ -83,7 +83,7 @@ extension OrcaSwapV2 {
 
                     if self?.destinationWalletSubject.value?.pubkey != nil,
                        let wallet = wallets?
-                       .first(where: { $0.pubkey == self?.destinationWalletSubject.value?.pubkey })
+                           .first(where: { $0.pubkey == self?.destinationWalletSubject.value?.pubkey })
                     {
                         self?.destinationWalletSubject.accept(wallet)
                     }
@@ -96,41 +96,41 @@ extension OrcaSwapV2 {
                 payingWalletSubject,
                 feesSubject.valueObservable
             )
-            .map { sourceWallet, payingWallet, fees in
-                calculateAvailableAmount(
-                    sourceWallet: sourceWallet,
-                    payingFeeWallet: payingWallet,
-                    fees: fees
-                )
-            }
-            .bind(to: availableAmountSubject)
-            .disposed(by: disposeBag)
+                .map { sourceWallet, payingWallet, fees in
+                    calculateAvailableAmount(
+                        sourceWallet: sourceWallet,
+                        payingFeeWallet: payingWallet,
+                        fees: fees
+                    )
+                }
+                .bind(to: availableAmountSubject)
+                .disposed(by: disposeBag)
 
             // get tradable pools pair for each token pair
             Observable.combineLatest(
                 sourceWalletSubject.distinctUntilChanged(),
                 destinationWalletSubject.distinctUntilChanged()
             )
-            .subscribe(onNext: { [weak self] sourceWallet, destinationWallet in
-                guard let self = self,
-                      let sourceWallet = sourceWallet,
-                      let destinationWallet = destinationWallet
-                else {
-                    self?.tradablePoolsPairsSubject.request = .just([])
-                    self?.tradablePoolsPairsSubject.reload()
-                    return
-                }
+                .subscribe(onNext: { [weak self] sourceWallet, destinationWallet in
+                    guard let self = self,
+                          let sourceWallet = sourceWallet,
+                          let destinationWallet = destinationWallet
+                    else {
+                        self?.tradablePoolsPairsSubject.request = .just([])
+                        self?.tradablePoolsPairsSubject.reload()
+                        return
+                    }
 
-                self.tradablePoolsPairsSubject.request = self.swapService.getPoolPair(
-                    from: sourceWallet.token.address,
-                    to: destinationWallet.token.address,
-                    amount: 1000, // TODO: fix me
-                    as: .source
-                )
+                    self.tradablePoolsPairsSubject.request = self.swapService.getPoolPair(
+                        from: sourceWallet.token.address,
+                        to: destinationWallet.token.address,
+                        amount: 1000, // TODO: fix me
+                        as: .source
+                    )
 
-                self.tradablePoolsPairsSubject.reload()
-            })
-            .disposed(by: disposeBag)
+                    self.tradablePoolsPairsSubject.reload()
+                })
+                .disposed(by: disposeBag)
 
             // Fill input amount and estimated amount after loaded
             tradablePoolsPairsSubject.stateObservable
@@ -155,12 +155,12 @@ extension OrcaSwapV2 {
                 sourceWalletSubject,
                 payingWalletSubject
             )
-            .subscribe(onNext: { [weak self] _ in
-                guard let self = self else { return }
-                self.feesSubject.request = self.feesRequest()
-                self.feesSubject.reload()
-            })
-            .disposed(by: disposeBag)
+                .subscribe(onNext: { [weak self] _ in
+                    guard let self = self else { return }
+                    self.feesSubject.request = self.feesRequest()
+                    self.feesSubject.reload()
+                })
+                .disposed(by: disposeBag)
 
             // Error
             Observable.combineLatest(
@@ -173,9 +173,9 @@ extension OrcaSwapV2 {
                 slippageSubject,
                 payingWalletSubject
             )
-            .map { [weak self] _ in self?.verify() }
-            .bind(to: errorSubject)
-            .disposed(by: disposeBag)
+                .map { [weak self] _ in self?.verify() }
+                .bind(to: errorSubject)
+                .disposed(by: disposeBag)
 
             showHideDetailsButtonTapSubject
                 .subscribe(onNext: { [weak self] in

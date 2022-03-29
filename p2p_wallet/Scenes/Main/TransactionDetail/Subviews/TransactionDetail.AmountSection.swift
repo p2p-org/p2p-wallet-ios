@@ -164,36 +164,36 @@ extension TransactionDetail {
                         numberOfLines: 2,
                         textAlignment: .right
                     )
-                    .setup { accountCreationLabel in
-                        feesDriver
-                            .map { [weak self] feeAmount -> NSAttributedString? in
-                                guard let self = self else { return nil }
-                                let payingWallet = self.getPayingFeeWallet()
-                                let amount = feeAmount?.accountBalances
-                                    .convertToBalance(decimals: payingWallet.token.decimals)
+                        .setup { accountCreationLabel in
+                            feesDriver
+                                .map { [weak self] feeAmount -> NSAttributedString? in
+                                    guard let self = self else { return nil }
+                                    let payingWallet = self.getPayingFeeWallet()
+                                    let amount = feeAmount?.accountBalances
+                                        .convertToBalance(decimals: payingWallet.token.decimals)
 
-                                let createdWalletSymbol = self.viewModel.getCreatedAccountSymbol()
+                                    let createdWalletSymbol = self.viewModel.getCreatedAccountSymbol()
 
-                                return self.getAttributedString(
-                                    amount: amount,
-                                    symbol: payingWallet.token.symbol,
-                                    withFiatValue: false
-                                )
-                                .text(
-                                    " (\(L10n.accountCreation(createdWalletSymbol ?? L10n.unknownToken)))",
-                                    size: 15,
-                                    color: .textSecondary
-                                )
-                            }
-                            .drive(accountCreationLabel.rx.attributedText)
-                            .disposed(by: disposeBag)
+                                    return self.getAttributedString(
+                                        amount: amount,
+                                        symbol: payingWallet.token.symbol,
+                                        withFiatValue: false
+                                    )
+                                        .text(
+                                            " (\(L10n.accountCreation(createdWalletSymbol ?? L10n.unknownToken)))",
+                                            size: 15,
+                                            color: .textSecondary
+                                        )
+                                }
+                                .drive(accountCreationLabel.rx.attributedText)
+                                .disposed(by: disposeBag)
 
-                        feesDriver
-                            .map { $0?.accountBalances ?? 0 }
-                            .map { $0 == 0 }
-                            .drive(accountCreationLabel.rx.isHidden)
-                            .disposed(by: disposeBag)
-                    }
+                            feesDriver
+                                .map { $0?.accountBalances ?? 0 }
+                                .map { $0 == 0 }
+                                .drive(accountCreationLabel.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
 
                     // transfer fee
                     BEHStack(spacing: 4) {
@@ -212,7 +212,7 @@ extension TransactionDetail {
                                                 symbol: payingWallet.token.symbol,
                                                 withFiatValue: false
                                             )
-                                            .text(" (\(L10n.transferFee))", size: 15, color: .textSecondary)
+                                                .text(" (\(L10n.transferFee))", size: 15, color: .textSecondary)
                                         } else {
                                             return NSMutableAttributedString()
                                                 .text(L10n.free, size: 15, weight: .semibold)
@@ -247,14 +247,14 @@ extension TransactionDetail {
                                         let payingWallet = self.getPayingFeeWallet()
                                         let totalFee =
                                             ((feeAmount?.transaction ?? 0) + (feeAmount?.accountBalances ?? 0))
-                                                .convertToBalance(decimals: payingWallet.token.decimals)
+                                            .convertToBalance(decimals: payingWallet.token.decimals)
 
                                         return self.getAttributedString(
                                             amount: totalFee,
                                             symbol: payingWallet.token.symbol,
                                             withFiatValue: false
                                         )
-                                        .text(" (\(L10n.totalFee))", size: 15, color: .textSecondary)
+                                            .text(" (\(L10n.totalFee))", size: 15, color: .textSecondary)
                                     }
                                     .drive(totalFeeLabel.rx.attributedText)
                                     .disposed(by: disposeBag)
