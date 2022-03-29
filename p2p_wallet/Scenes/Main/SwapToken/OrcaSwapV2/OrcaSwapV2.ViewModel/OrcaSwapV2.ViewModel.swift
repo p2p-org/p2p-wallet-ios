@@ -188,7 +188,9 @@ extension OrcaSwapV2 {
                        self.payingWalletSubject.value?.isNativeSOL == false
                     {
                         // Selected wallet can not covert fee
-                        if input + fees.total > availableAmount, self.walletsRepository.nativeWallet?.amount > 0 {
+                        if input + fees.totalDecimal > availableAmount,
+                           self.walletsRepository.nativeWallet?.amount > 0
+                        {
                             guard let solWallet = self.walletsRepository.nativeWallet else { return }
                             self.changeFeePayingToken(to: solWallet)
                         }
