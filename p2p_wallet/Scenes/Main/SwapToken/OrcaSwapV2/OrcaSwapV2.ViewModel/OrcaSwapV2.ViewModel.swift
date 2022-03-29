@@ -162,6 +162,14 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
 
+            // Smart selection fee token paying
+            sourceWalletSubject
+                .subscribe(onNext: { [weak self] wallet in
+                    guard let self = self else { return }
+                    self.payingWalletSubject.accept(wallet)
+                })
+                .disposed(by: disposeBag)
+
             // Error
             Observable.combineLatest(
                 loadingStateSubject,
