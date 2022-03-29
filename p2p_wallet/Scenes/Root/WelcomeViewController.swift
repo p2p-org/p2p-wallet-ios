@@ -44,13 +44,13 @@ class WelcomeViewController: BaseVC {
                 title: title,
                 description: L10n.YourP2PWalletIsFullySetUp.getReadyToExploreTheCryptoWorld
             )
-            .padding(.init(x: 20, y: 0))
+                .padding(.init(x: 20, y: 0))
             WLStepButton.main(
                 image: .lightningButton,
                 text: L10n.startUsingP2PWallet
             )
-            .onTap(self, action: #selector(finishSetup))
-            .padding(.init(x: 20, y: 0))
+                .onTap(self, action: #selector(finishSetup))
+                .padding(.init(x: 20, y: 0))
         }
         view.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)

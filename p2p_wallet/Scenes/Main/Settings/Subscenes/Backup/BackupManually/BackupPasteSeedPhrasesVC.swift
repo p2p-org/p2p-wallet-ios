@@ -29,7 +29,7 @@ class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
         labelFont: .systemFont(ofSize: 17, weight: .medium),
         textColor: .h5887ff
     )
-    .onTap(self, action: #selector(buttonNextDidTouch))
+        .onTap(self, action: #selector(buttonNextDidTouch))
 
     override func setUp() {
         super.setUp()
@@ -56,9 +56,9 @@ class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
                 .map { [weak self] _ in self?.textView.getPhrases().isEmpty == false },
             error.map { $0 == nil }
         )
-        .map { $0 && $1 }
-        .asDriver(onErrorJustReturn: false)
-        .drive(rightBarButton.rx.isEnabled)
-        .disposed(by: disposeBag)
+            .map { $0 && $1 }
+            .asDriver(onErrorJustReturn: false)
+            .drive(rightBarButton.rx.isEnabled)
+            .disposed(by: disposeBag)
     }
 }

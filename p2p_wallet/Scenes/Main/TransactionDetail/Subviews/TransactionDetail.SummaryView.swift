@@ -57,27 +57,27 @@ extension TransactionDetail {
                         viewModel.parsedTransactionDriver,
                         viewModel.receiverNameDriver
                     )
-                    .drive(onNext: { [weak view] parsedTransaction, receiverName in
-                        switch parsedTransaction?.value {
-                        case let transaction as SolanaSDK.TransferTransaction:
-                            view?.logoImageView.setUp(token: nil, placeholder: .squircleWallet)
-                            view?.titleLabel.text = transaction.destination?.pubkey?.truncatingMiddle()
-                            view?.subtitleLabel.text = receiverName ?? " "
-                        case let transaction as SolanaSDK.SwapTransaction:
-                            view?.logoImageView.setUp(wallet: transaction.destination)
-                            view?.titleLabel.text = transaction.destinationAmount?
-                                .toString(maximumFractionDigits: 9) + " " + transaction.destination?.token.symbol
-                            view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol +
-                                viewModel.getAmountInCurrentFiat(
-                                    amountInToken: transaction.destinationAmount,
-                                    symbol: transaction.destination?.token.symbol
-                                )
-                                .toString(maximumFractionDigits: 2)
-                        default:
-                            break
-                        }
-                    })
-                    .disposed(by: disposeBag)
+                        .drive(onNext: { [weak view] parsedTransaction, receiverName in
+                            switch parsedTransaction?.value {
+                            case let transaction as SolanaSDK.TransferTransaction:
+                                view?.logoImageView.setUp(token: nil, placeholder: .squircleWallet)
+                                view?.titleLabel.text = transaction.destination?.pubkey?.truncatingMiddle()
+                                view?.subtitleLabel.text = receiverName ?? " "
+                            case let transaction as SolanaSDK.SwapTransaction:
+                                view?.logoImageView.setUp(wallet: transaction.destination)
+                                view?.titleLabel.text = transaction.destinationAmount?
+                                    .toString(maximumFractionDigits: 9) + " " + transaction.destination?.token.symbol
+                                view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol +
+                                    viewModel.getAmountInCurrentFiat(
+                                        amountInToken: transaction.destinationAmount,
+                                        symbol: transaction.destination?.token.symbol
+                                    )
+                                    .toString(maximumFractionDigits: 2)
+                            default:
+                                break
+                            }
+                        })
+                        .disposed(by: disposeBag)
                 }
 
             addArrangedSubviews {

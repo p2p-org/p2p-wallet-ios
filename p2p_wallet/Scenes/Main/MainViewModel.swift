@@ -24,6 +24,10 @@ class MainViewModel {
     @Injected private var burnAndRelease: RenVMBurnAndReleaseServiceType // start service right here by triggering resolver
     @Injected private var authenticationHandler: AuthenticationHandlerType
 
+    private let transactionAnalytics = [
+        Resolver.resolve(SwapTransactionAnalytics.self),
+    ]
+
     // MARK: - Initializer
 
     init() {

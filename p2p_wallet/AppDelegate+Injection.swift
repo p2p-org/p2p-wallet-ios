@@ -98,6 +98,9 @@ extension Resolver: ResolverRegistering {
             .implements(TransactionHandlerType.self)
             .scope(.session)
 
+        register { SwapTransactionAnalytics(analyticsManager: resolve(), transactionHandler: resolve()) }
+            .scope(.session)
+
         // MARK: - FeeRelayer
 
         register { FeeRelayer.APIClient(version: 1) }

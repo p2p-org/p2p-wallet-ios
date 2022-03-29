@@ -65,13 +65,13 @@ extension SendToken.ChooseRecipientAndNetwork {
                 viewModel.walletDriver,
                 viewModel.amountDriver
             )
-            .map { wallet, amount -> String in
-                let amount = amount ?? 0
-                let symbol = wallet?.token.symbol ?? ""
-                return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
-            }
-            .drive(navigationBar.titleLabel.rx.text)
-            .disposed(by: disposeBag)
+                .map { wallet, amount -> String in
+                    let amount = amount ?? 0
+                    let symbol = wallet?.token.symbol ?? ""
+                    return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+                }
+                .drive(navigationBar.titleLabel.rx.text)
+                .disposed(by: disposeBag)
 
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })

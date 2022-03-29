@@ -29,8 +29,8 @@ extension SupportedTokens {
                             ),
                         numberOfLines: 10
                     )
-                    .bind(textLabel)
-                    .padding(.init(x: 14, y: 18))
+                        .bind(textLabel)
+                        .padding(.init(x: 14, y: 18))
                 }
             }
             .padding(.init(x: 18, y: 0), cornerRadius: 12.0, borderColor: .ff3b30)

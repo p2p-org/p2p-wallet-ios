@@ -128,38 +128,38 @@ extension RenVM.LockAndMint {
                 client: rpcClient,
                 solanaClient: solanaClient
             )
-            .observe(on: MainScheduler.instance)
-            .flatMap { [weak self] solanaChain -> Single<RenVM.LockAndMint.GatewayAddressResponse> in
-                guard let self = self else { throw RenVM.Error.unknown }
+                .observe(on: MainScheduler.instance)
+                .flatMap { [weak self] solanaChain -> Single<RenVM.LockAndMint.GatewayAddressResponse> in
+                    guard let self = self else { throw RenVM.Error.unknown }
 
-                // create lock and mint
-                self.lockAndMint = try .init(
-                    rpcClient: self.rpcClient,
-                    chain: solanaChain,
-                    mintTokenSymbol: self.mintTokenSymbol,
-                    version: self.version,
-                    destinationAddress: self.account.publicKey.data,
-                    session: savedSession
-                )
+                    // create lock and mint
+                    self.lockAndMint = try .init(
+                        rpcClient: self.rpcClient,
+                        chain: solanaChain,
+                        mintTokenSymbol: self.mintTokenSymbol,
+                        version: self.version,
+                        destinationAddress: self.account.publicKey.data,
+                        session: savedSession
+                    )
 
-                // save session
-                if savedSession == nil {
-                    self.sessionStorage.saveSession(self.lockAndMint!.session)
+                    // save session
+                    if savedSession == nil {
+                        self.sessionStorage.saveSession(self.lockAndMint!.session)
+                    }
+
+                    // generate address
+                    return self.lockAndMint!.generateGatewayAddress()
                 }
-
-                // generate address
-                return self.lockAndMint!.generateGatewayAddress()
-            }
-            .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] response in
-                self?.isLoadingSubject.accept(false)
-                self?.addressSubject.accept(Base58.encode(response.gatewayAddress.bytes))
-                self?.mintStoredTxs(response: response)
-                self?.observeTxStreamAndMint(response: response)
-            }, onFailure: { [weak self] error in
-                self?.isLoadingSubject.accept(false)
-                self?.errorSubject.accept(error.readableDescription)
-            })
+                .observe(on: MainScheduler.instance)
+                .subscribe(onSuccess: { [weak self] response in
+                    self?.isLoadingSubject.accept(false)
+                    self?.addressSubject.accept(Base58.encode(response.gatewayAddress.bytes))
+                    self?.mintStoredTxs(response: response)
+                    self?.observeTxStreamAndMint(response: response)
+                }, onFailure: { [weak self] error in
+                    self?.isLoadingSubject.accept(false)
+                    self?.errorSubject.accept(error.readableDescription)
+                })
         }
 
         func expireCurrentSession() {
@@ -187,10 +187,10 @@ extension RenVM.LockAndMint {
                 seconds: refreshRate,
                 scheduler: scheduler
             )
-            .observe(on: scheduler)
-            .subscribe(onNext: { [weak self] in
-                try? self?.observeTxStatusAndMint(response: response)
-            })
+                .observe(on: scheduler)
+                .subscribe(onNext: { [weak self] in
+                    try? self?.observeTxStatusAndMint(response: response)
+                })
         }
 
         private func observeTxStatusAndMint(response: RenVM.LockAndMint.GatewayAddressResponse) throws {
