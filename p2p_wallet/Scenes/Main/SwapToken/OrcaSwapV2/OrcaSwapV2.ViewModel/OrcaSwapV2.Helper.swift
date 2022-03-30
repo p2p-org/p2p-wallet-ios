@@ -49,7 +49,9 @@ extension OrcaSwapV2.ViewModel {
             return .inputAmountIsNotValid
         }
 
-        if inputAmount > availableAmountSubject.value {
+        if inputAmount.rounded(decimals: sourceWallet.token.decimals) > availableAmountSubject.value?
+            .rounded(decimals: sourceWallet.token.decimals)
+        {
             return .insufficientFunds
         }
 
