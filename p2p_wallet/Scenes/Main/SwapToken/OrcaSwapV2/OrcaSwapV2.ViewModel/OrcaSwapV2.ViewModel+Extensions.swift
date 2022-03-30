@@ -175,9 +175,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func useAllBalance() {
+        isUsingAllBalance = true
         enterInputAmount(availableAmountSubject.value)
 
-        if feesSubject.value != nil {
+        if let fees = feesSubject.value, !fees.isEmpty, availableAmountSubject.value != inputAmountSubject.value {
             notificationsService
                 .showInAppNotification(.message(L10n
                         .thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
