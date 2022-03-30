@@ -12,7 +12,7 @@ import RxSwift
 import UIKit
 
 extension SendToken {
-    final class ConfirmViewController: BaseViewController {
+    final class ConfirmViewController: BaseVC {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenViewModelType
@@ -234,7 +234,7 @@ extension SendToken {
             stackView.autoPinEdgesToSuperviewEdges()
 
             view.addSubview(scrollView)
-            scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
+            scrollView.autoPinEdge(toSuperviewEdge: .top, withInset: 8)
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
 
@@ -285,7 +285,9 @@ extension SendToken {
             // title
             viewModel.walletDriver
                 .map { L10n.confirmSending($0?.token.symbol ?? "") }
-                .drive(navigationBar.titleLabel.rx.text)
+                .drive(onNext: { [weak self] in
+                    self?.navigationItem.title = $0
+                })
                 .disposed(by: disposeBag)
         }
 

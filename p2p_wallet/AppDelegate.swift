@@ -44,6 +44,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         BEPureLayoutConfigs.defaultNavigationBarColor = .textWhite
         BEPureLayoutConfigs.defaultNavigationBarTextFont = .systemFont(ofSize: 17, weight: .semibold)
         BEPureLayoutConfigs.defaultShadowColor = .textBlack
+
+        let barButtonAppearance = UIBarButtonItem.appearance()
+        barButtonAppearance.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
+        barButtonAppearance.setBackButtonTitlePositionAdjustment(
+            .init(horizontal: -UIScreen.main.bounds.width * 1.2, vertical: 0),
+            for: .default
+        )
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 16.0, weight: .medium),
+            .foregroundColor: UIColor.textBlack,
+        ]
+        barButtonAppearance.setTitleTextAttributes(attributes, for: .normal)
+        barButtonAppearance.setTitleTextAttributes(attributes, for: .highlighted)
 //        let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
 //        BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
         BEPureLayoutConfigs.defaultCheckBoxActiveColor = .h5887ff

@@ -27,8 +27,6 @@ extension ResetPinCodeWithSeedPhrases {
             } validate: { [weak self] phrase in
                 self?.viewModel.validatePhrases(phrase) ?? (false, L10n.error)
             }
-
-            vc.dismissAfterCompletion = false
             return vc
         }()
 

@@ -18,7 +18,6 @@ protocol EnterSeedViewModelType: AnyObject {
     var mainButtonContentDriver: Driver<EnterSeed.MainButtonContent> { get }
 
     func showInfo()
-    func goBack()
     func goForth()
     func showTermsAndConditions()
 }
@@ -103,10 +102,6 @@ extension EnterSeed.ViewModel: EnterSeedViewModelType {
     }
 
     // MARK: - Actions
-
-    func goBack() {
-        navigationSubject.accept(.back)
-    }
 
     func goForth() {
         let words = getSeedWords()
