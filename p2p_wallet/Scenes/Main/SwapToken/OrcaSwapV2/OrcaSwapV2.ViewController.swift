@@ -20,6 +20,10 @@ extension OrcaSwapV2 {
 
         private let viewModel: OrcaSwapV2ViewModelType
 
+        // MARK: - Handlers
+
+        var doneHandler: (() -> Void)?
+
         // MARK: - Initializer
 
         init(viewModel: OrcaSwapV2ViewModelType) {
@@ -109,6 +113,7 @@ extension OrcaSwapV2 {
 //                    self?.viewModel.cleanAllFields()
 //                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
 //                }
+                vc.doneHandler = doneHandler
                 vc.makeAnotherTransactionHandler = { [weak self] in
                     self?.viewModel.cleanAllFields()
                     self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
