@@ -24,6 +24,10 @@ extension SendToken {
 
         private var childNavigationController: UINavigationController!
 
+        // MARK: - Handlers
+
+        var doneHandler: (() -> Void)?
+
         // MARK: - Initializer
 
         init(viewModel: SendTokenViewModelType) {
@@ -54,6 +58,10 @@ extension SendToken {
         }
 
         // MARK: - Navigation
+
+        func popToRootViewController(animated: Bool) {
+            childNavigationController.popToRootViewController(animated: animated)
+        }
 
         private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else { return }
@@ -99,6 +107,7 @@ extension SendToken {
 //                        self.childNavigationController.popToRootViewController(animated: true)
 //                    }
 //                }
+                vc.doneHandler = doneHandler
                 vc.makeAnotherTransactionHandler = { [weak self] in
                     guard let self = self else { return }
                     self.viewModel.cleanAllFields()

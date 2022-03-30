@@ -15,6 +15,10 @@ extension ProcessTransaction.Status {
 
         private let viewModel: ProcessTransactionViewModelType
 
+        // MARK: - Handlers
+
+        var doneHandler: (() -> Void)?
+
         // MARK: - Initializer
 
         init(viewModel: ProcessTransactionViewModelType) {
@@ -142,13 +146,27 @@ extension ProcessTransaction.Status {
                     // Buttons
                     BEVStack(spacing: 10) {
                         WLStepButton.main(
-                            image: .info,
-                            text: viewModel.isSwapping ? L10n.showSwapDetails : L10n.showTransactionDetails
+                            image: .buttonCheckSmall,
+                            text: L10n.done
                         )
                             .onTap { [weak self] in
-                                self?.dismiss(animated: true, completion: nil)
+                                self?.dismiss(animated: true) { [weak self] in
+                                    self?.doneHandler?()
+                                }
                             }
-                        SubButton(viewModel: viewModel)
+//                        WLStepButton.sub(text: L10n.increaseMaximumPriceSlippage)
+//                            .setup { subButton in
+//                                viewModel.pendingTransactionDriver
+//                                    .map {
+//                                        $0.status.error?.readableDescription != L10n
+//                                            .swapInstructionExceedsDesiredSlippageLimit
+//                                    }
+//                                    .drive(subButton.rx.isHidden)
+//                                    .disposed(by: disposeBag)
+//                            }
+//                            .onTap { [weak self] in
+//                                self?.viewModel.handleErrorRetryOrMakeAnotherTransaction()
+//                            }
                     }
                     .padding(.init(x: 18, y: 0))
                 }

@@ -24,7 +24,6 @@
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
 		3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */; };
-		3B01DFBC27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBB27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift */; };
 		3B01DFBE27DB19AB003E19BD /* ProcessTransaction.Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */; };
 		3B0D87B227EC770200DEE867 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3B0D87B127EC770200DEE867 /* README.md */; };
 		3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */; };
@@ -541,7 +540,6 @@
 
 /* Begin PBXFileReference section */
 		3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
-		3B01DFBB27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.SubButton.swift; sourceTree = "<group>"; };
 		3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.swift; sourceTree = "<group>"; };
 		3B0D87B127EC770200DEE867 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		3B1615492769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmSwapping.ViewController.swift; sourceTree = "<group>"; };
@@ -1207,7 +1205,6 @@
 				3B7DE7E82775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift */,
 				3BCEED5527D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift */,
 				3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift */,
-				3B01DFBB27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift */,
 			);
 			path = Status;
 			sourceTree = "<group>";
@@ -2954,7 +2951,6 @@
 				BCB28699274B89670074E1D5 /* WalletDetail.HistoryViewController.swift in Sources */,
 				BCEB206C25E1561200B54FEF /* TabBarVC.swift in Sources */,
 				BC80203E26F1EBA500C109C2 /* ReceiveToken.ReceiveBitcoinView.swift in Sources */,
-				3B01DFBC27DB185E003E19BD /* ProcessTransaction.Status.SubButton.swift in Sources */,
 				BC0978F925AEEA1D00DB02E9 /* CoinLogoImageView.swift in Sources */,
 				BC65E004261D711900E436C7 /* TransactionsViewModel.swift in Sources */,
 				BCB286E72754C2B40074E1D5 /* WLSegmentedPagesVC.swift in Sources */,

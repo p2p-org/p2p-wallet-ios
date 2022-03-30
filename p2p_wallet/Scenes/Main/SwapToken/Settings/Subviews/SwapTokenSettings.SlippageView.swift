@@ -75,9 +75,16 @@ extension SwapTokenSettings {
 
         private func bind() {
             viewModel.customSlippageIsOpenedDriver
-                .map { !$0 }
-                .drive(customField.rx.isHidden)
+                .drive(onNext: { [weak self] in
+                    self?.customField.isHidden = !$0
+                    if $0 {
+                        self?.customField.becomeFirstResponder()
+                    } else {
+                        self?.customField.endEditing(true)
+                    }
+                })
                 .disposed(by: disposeBag)
+
             customField.rxText
                 .distinctUntilChanged()
                 .map { $0.flatMap(NumberFormatter().number) }
