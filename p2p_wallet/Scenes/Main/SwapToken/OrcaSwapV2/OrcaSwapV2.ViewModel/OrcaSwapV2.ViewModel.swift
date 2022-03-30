@@ -25,6 +25,7 @@ extension OrcaSwapV2 {
 
         let disposeBag = DisposeBag()
         var isSelectingSourceWallet = false // indicate if selecting source wallet or destination wallet
+        var isUsingAllBalance = false
 
         // MARK: - Subject
 
@@ -104,6 +105,20 @@ extension OrcaSwapV2 {
                     )
                 }
                 .bind(to: availableAmountSubject)
+                .disposed(by: disposeBag)
+
+            // auto fill balance after tapping max
+            availableAmountSubject
+                .filter { [weak self] availableAmount in
+                    guard let self = self else { return false }
+                    return self.isUsingAllBalance && self.inputAmountSubject.value?
+                        .rounded(decimals: self.sourceWalletSubject.value?.token.decimals) > availableAmount?
+                        .rounded(decimals: self.sourceWalletSubject.value?.token.decimals)
+                }
+                .subscribe(onNext: { [weak self] availableAmount in
+                    self?.isUsingAllBalance = false
+                    self?.enterInputAmount(availableAmount)
+                })
                 .disposed(by: disposeBag)
 
             // get tradable pools pair for each token pair
