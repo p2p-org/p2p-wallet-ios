@@ -12,10 +12,6 @@ import UIKit
 
 extension WalletDetail {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: WalletDetailViewModelType
@@ -25,20 +21,6 @@ extension WalletDetail {
         var processingTransactionDoneHandler: (() -> Void)?
 
         // MARK: - Subviews
-
-        private lazy var navigationBar: WLNavigationBar = {
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.backButton.onTap(self, action: #selector(back))
-            #if DEBUG
-                navigationBar.rightItems.addArrangedSubview(
-                    UIButton(label: "Settings", textColor: .red)
-                        .onTap { [weak self] in
-                            self?.viewModel.showWalletSettings()
-                        }
-                )
-            #endif
-            return navigationBar
-        }()
 
         private lazy var balanceView = BalanceView(viewModel: viewModel)
         private let actionsView = ColorfulHorizontalView()
@@ -58,8 +40,17 @@ extension WalletDetail {
 
         override func setUp() {
             super.setUp()
-            view.addSubview(navigationBar)
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+
+            #if DEBUG
+                let rightButton = UIBarButtonItem(
+                    title: "Settings",
+                    style: .plain,
+                    target: self,
+                    action: #selector(showWalletSettings)
+                )
+                rightButton.setTitleTextAttributes([.foregroundColor: UIColor.red], for: .normal)
+                navigationItem.rightBarButtonItem = rightButton
+            #endif
 
             let containerView = UIView(forAutoLayout: ())
 
@@ -77,15 +68,18 @@ extension WalletDetail {
 
             view.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            stackView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            stackView.autoPinEdge(toSuperviewSafeArea: .top)
 
             add(child: historyVC, to: containerView)
         }
 
         override func bind() {
             super.bind()
-            viewModel.walletDriver.map { $0?.token.name }
-                .drive(navigationBar.titleLabel.rx.text)
+            viewModel.walletDriver
+                .map { $0?.token.name }
+                .drive(onNext: { [weak self] in
+                    self?.navigationItem.title = $0
+                })
                 .disposed(by: disposeBag)
 
             viewModel.navigatableSceneDriver
@@ -108,9 +102,14 @@ extension WalletDetail {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
-                let vm = BuyRoot.ViewModel()
-                let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
-                present(vc, animated: true, completion: nil)
+                let vc = BuyPreparing.Scene(
+                    viewModel: BuyPreparing.SceneModel(
+                        crypto: crypto,
+                        exchangeService: Resolver.resolve()
+                    )
+                )
+                let navigation = UINavigationController(rootViewController: vc)
+                present(navigation, animated: true)
             case let .settings(pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)

@@ -18,6 +18,8 @@ class TabBarVC: BEPagesVC {
     @Injected private var helpCenterLauncher: HelpCenterLauncher
     private var tabBarTopConstraint: NSLayoutConstraint!
 
+    fileprivate var tabBarIsHidden: Bool { tabBarTopConstraint.isActive }
+
     deinit {
         debugPrint("\(String(describing: self)) deinited")
     }
@@ -47,7 +49,7 @@ class TabBarVC: BEPagesVC {
             CATransaction.commit()
         }
 
-        let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
+        let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel())
 
         viewControllers = [
             createNavigationController(rootVC: homeVC),
@@ -87,16 +89,13 @@ class TabBarVC: BEPagesVC {
     // MARK: - Helpers
 
     private func createNavigationController(rootVC: UIViewController) -> UINavigationController {
-        let nc = NavigationController(rootViewController: rootVC)
-        nc.hideTabBarHandler = { [weak self] shouldHide in
-            self?.hideTabBar(shouldHide)
-        }
+        let nc = UINavigationController(rootViewController: rootVC)
+        nc.delegate = self
         return nc
     }
 
     private func hideTabBar(_ shouldHide: Bool) {
         tabBarTopConstraint.isActive = shouldHide
-        containerView.setNeedsLayout()
         UIView.animate(withDuration: 0.3) {
             self.view.layoutIfNeeded()
         }
@@ -150,67 +149,20 @@ class TabBarVC: BEPagesVC {
         items.first { $0.tag == currentPage }?.subviews.first?.tintColor = .tabbarSelected
 
         items.filter { $0.tag != currentPage }.forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
-
-        setNeedsStatusBarAppearanceUpdate()
     }
 }
 
-private final class NavigationController: UINavigationController {
-    var hideTabBarHandler: ((Bool) -> Void)?
+// MARK: - UINavigationControllerDelegate
 
-    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        guard viewControllers.count >= 1 else {
-            super.pushViewController(viewController, animated: animated)
-            return
-        }
-
-        // check current view controller and pushing view controller
-        let currentVC = viewControllers.last!
-        let pushingVC = viewController
-
-        handleShowHideTabBar(previousVC: currentVC, nextVC: pushingVC)
-
-        super.pushViewController(viewController, animated: animated)
-    }
-
-    override func popViewController(animated: Bool) -> UIViewController? {
-        guard viewControllers.count >= 2 else {
-            return super.popViewController(animated: animated)
-        }
-        // check previous view controller and popping view controller
-        let poppingVC = viewControllers.last!
-        let parentVC = viewControllers[viewControllers.count - 2]
-
-        handleShowHideTabBar(previousVC: poppingVC, nextVC: parentVC)
-
-        return super.popViewController(animated: animated)
-    }
-
-    override func popToRootViewController(animated: Bool) -> [UIViewController]? {
-        guard viewControllers.count >= 2 else {
-            return super.popToRootViewController(animated: animated)
-        }
-        handleShowHideTabBar(previousVC: viewControllers.last!, nextVC: viewControllers.first!)
-        return super.popToRootViewController(animated: animated)
-    }
-
-    private func handleShowHideTabBar(previousVC: UIViewController, nextVC: UIViewController) {
-        // if previous view controller is already TabBarNeededViewController
-        if previousVC is TabBarNeededViewController {
-            // if next VC is not TabBarNeededViewController, hide the tabBar
-            if !(nextVC is TabBarNeededViewController) {
-                hideTabBarHandler?(true)
-            }
-            // else (next VC is also TabBarNeededViewController) do nothing, as showing has already been done in previous step
-        }
-        // if current view controller is not TabBarNeededViewController
-        else {
-            // if next VC is TabBarNeededViewController, show the tabBar
-            if nextVC is TabBarNeededViewController {
-                hideTabBarHandler?(false)
-            }
-            // else (next VC is also not TabBarNeededViewController) do nothing, as hiding has already been done in previous step
-        }
+extension TabBarVC: UINavigationControllerDelegate {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow _: UIViewController,
+        animated _: Bool
+    ) {
+        let hide = navigationController.viewControllers.count > 1
+        guard hide != tabBarIsHidden else { return }
+        hideTabBar(hide)
     }
 }
 

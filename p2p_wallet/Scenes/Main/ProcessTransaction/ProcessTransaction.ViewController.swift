@@ -48,7 +48,6 @@ extension ProcessTransaction {
                     self.detailViewController?.removeFromParent()
                     let vm = TransactionDetail.ViewModel(observingTransactionIndex: index)
                     self.detailViewController = TransactionDetail.ViewController(viewModel: vm)
-                    self.detailViewController.backCompletion = self.makeAnotherTransactionHandler
                     self.add(child: self.detailViewController)
                 })
                 .disposed(by: disposeBag)

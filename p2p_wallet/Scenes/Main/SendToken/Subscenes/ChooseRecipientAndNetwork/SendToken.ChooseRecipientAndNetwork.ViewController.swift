@@ -11,7 +11,7 @@ import RxSwift
 import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork {
-    class ViewController: SendToken.BaseViewController {
+    class ViewController: BaseVC {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseRecipientAndNetworkViewModelType
@@ -48,7 +48,7 @@ extension SendToken.ChooseRecipientAndNetwork {
             // container
             let containerView = UIView(forAutoLayout: ())
             view.addSubview(containerView)
-            containerView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 8)
+            containerView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 8)
             containerView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
 
             add(child: pagesVC, to: containerView)
@@ -70,7 +70,9 @@ extension SendToken.ChooseRecipientAndNetwork {
                     let symbol = wallet?.token.symbol ?? ""
                     return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
                 }
-                .drive(navigationBar.titleLabel.rx.text)
+                .drive(onNext: { [weak self] in
+                    self?.navigationItem.title = $0
+                })
                 .disposed(by: disposeBag)
 
             viewModel.navigationDriver

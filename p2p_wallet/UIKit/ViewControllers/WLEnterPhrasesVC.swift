@@ -11,10 +11,6 @@ import RxSwift
 import SubviewAttachingTextView
 
 class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-        .hidden
-    }
-
     // MARK: - Properties
 
     var completion: (([String]) -> Void)?
