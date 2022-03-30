@@ -13,8 +13,8 @@ import UIKit
 extension ResetPinCodeWithSeedPhrases {
     class EnterPhrasesVC: BEScene {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-        var completion: (([String]) -> Void)?
-        let error = BehaviorRelay<Error?>(value: nil)
+        private let completion: ([String]) -> Void
+        private let validate: (_ keyPhrase: [String]) -> (status: Bool, error: String?)
         var dismissAfterCompletion = true
 
         private let pastButton = BERef<UIButton>()
@@ -27,6 +27,15 @@ extension ResetPinCodeWithSeedPhrases {
         }
 
         private let buttonState = BehaviorSubject<ButtonState>(value: .enter)
+
+        init(
+            completion: @escaping ([String]) -> Void,
+            validate: @escaping ([String]) -> (status: Bool, error: String?)
+        ) {
+            self.completion = completion
+            self.validate = validate
+            super.init()
+        }
 
         override func build() -> UIView {
             BESafeArea {
@@ -61,16 +70,17 @@ extension ResetPinCodeWithSeedPhrases {
 
                                         textField.rxText
                                             .bind { [weak self] text in
+                                                guard let self = self else { return }
                                                 let text = text ?? ""
-                                                self?.pastButton.isHidden = text.count > 0
+                                                self.pastButton.isHidden = text.count > 0
 
                                                 if text.isEmpty {
-                                                    self?.buttonState.on(.next(.enter))
+                                                    self.buttonState.on(.next(.enter))
                                                 } else {
                                                     let keyPhrase = text.trimmingCharacters(in: .whitespacesAndNewlines)
                                                         .components(separatedBy: " ")
-                                                    let (status, error) = KeyPhrase.checkPhrase(in: keyPhrase)
-                                                    self?.buttonState
+                                                    let (status, error) = self.validate(keyPhrase)
+                                                    self.buttonState
                                                         .on(.next(status ? .reset(keyPhrase) :
                                                                 .error(error ?? L10n.error)))
                                                 }
@@ -117,7 +127,7 @@ extension ResetPinCodeWithSeedPhrases {
                                 return button
                             case let .reset(keyPhrase):
                                 let button = WLStepButton.main(text: L10n.resetYourPIN)
-                                    .onTap { [unowned self] in completion?(keyPhrase) }
+                                    .onTap { [unowned self] in completion(keyPhrase) }
                                 return button
                             case let .error(message):
                                 let button = WLStepButton.main(text: message)
