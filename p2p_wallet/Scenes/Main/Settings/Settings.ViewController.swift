@@ -297,8 +297,8 @@ extension Settings {
                 createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
                     self?.viewModel.savePincode(String(pincode))
                     createPincodeVC?.dismiss(animated: true) { [weak self] in
-                        let vc = PinCodeChangedVC()
-                        self?.present(vc, animated: true, completion: nil)
+                        Resolver.resolve(NotificationsService.self)
+                            .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
                     }
                 }
                 createPincodeVC.onCancel = { [weak createPincodeVC] in
