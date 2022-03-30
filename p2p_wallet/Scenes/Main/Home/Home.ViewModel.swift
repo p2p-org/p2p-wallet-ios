@@ -13,6 +13,7 @@ import RxSwift
 protocol HomeViewModelType: ReserveNameHandler {
     var navigationDriver: Driver<Home.NavigatableScene?> { get }
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> { get }
+    var scrollToTopSignal: Signal<Void> { get }
 
     var walletsRepository: WalletsRepository { get }
     var bannerViewModel: Home.BannerViewModel { get }
@@ -20,6 +21,7 @@ protocol HomeViewModelType: ReserveNameHandler {
     func getOwner() -> String?
 
     func navigate(to scene: Home.NavigatableScene?)
+    func scrollToTop()
 }
 
 extension Home {
@@ -34,6 +36,7 @@ extension Home {
         // MARK: - Subjects
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        private let scrollToTopSubject = PublishRelay<Void>()
 
         deinit {
             debugPrint("\(String(describing: self)) deinited")
@@ -42,6 +45,10 @@ extension Home {
 }
 
 extension Home.ViewModel: HomeViewModelType {
+    var scrollToTopSignal: Signal<Void> {
+        scrollToTopSubject.asSignal()
+    }
+
     func handleName(_ name: String?) {
         guard let name = name else { return }
         storage.save(name: name)
@@ -63,5 +70,9 @@ extension Home.ViewModel: HomeViewModelType {
 
     func navigate(to scene: Home.NavigatableScene?) {
         navigationSubject.accept(scene)
+    }
+
+    func scrollToTop() {
+        scrollToTopSubject.accept(())
     }
 }
