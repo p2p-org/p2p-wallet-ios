@@ -177,8 +177,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func useAllBalance() {
         enterInputAmount(availableAmountSubject.value)
 
-        notificationsService
-            .showInAppNotification(.message(L10n.thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
+        if feesSubject.value != nil {
+            notificationsService
+                .showInAppNotification(.message(L10n
+                        .thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
+        }
     }
 
     func enterInputAmount(_ amount: Double?) {
