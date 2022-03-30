@@ -103,8 +103,8 @@ extension TransactionDetail {
             var toAddress: String?
             switch parsedTransaction?.value {
             case let transaction as SolanaSDK.TransferTransaction:
-                fromAddress = transaction.source?.pubkey
-                toAddress = transaction.destination?.pubkey
+                fromAddress = transaction.authority ?? transaction.source?.pubkey
+                toAddress = transaction.destinationAuthority ?? transaction.destination?.pubkey
             default:
                 return
             }
