@@ -121,7 +121,7 @@ extension TransactionDetail {
                 .map { $0?.fee }
 
             return BEHStack(spacing: 4, alignment: .top) {
-                titleLabel(text: L10n.transferFee, numberOfLines: 1)
+                titleLabel(text: L10n.transferFee)
                     .withContentHuggingPriority(.required, for: .horizontal)
                     .setup { label in
                         viewModel.parsedTransactionDriver

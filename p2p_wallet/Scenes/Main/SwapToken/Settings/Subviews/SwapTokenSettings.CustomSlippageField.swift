@@ -46,6 +46,14 @@ extension SwapTokenSettings {
         func setText(_ text: String) {
             textField.text = text
         }
+
+        override func becomeFirstResponder() -> Bool {
+            textField.becomeFirstResponder()
+        }
+
+        override func endEditing(_ force: Bool) -> Bool {
+            textField.endEditing(force)
+        }
     }
 }
 

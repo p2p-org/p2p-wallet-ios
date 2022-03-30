@@ -559,9 +559,7 @@
 "Create a new wallet" = "Créer un nouveau portefeuille";
 "Import a wallet" = "Importer un portefeuille";
 "iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "La restauration iCloud est destinée aux utilisateurs qui reviennent.\nColler la clé de sécurité manuellement est pour tout le monde";
-"Show your security key" = "Montrez votre clé de sécurité";
-"Secure your wallet" = "Sécurisez votre portefeuille";
-"Create a new wallet" = "Créer un nouveau portefeuille";
+"Simple decentralized finance for everyone" = "Finance décentralisée simple pour tous";
 "Your security key" = "Votre clé de sécurité";
 "Verify manually" = "Vérifier manuellement";
 "Renew" = "Renouveler";

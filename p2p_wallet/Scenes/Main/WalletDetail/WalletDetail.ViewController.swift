@@ -20,7 +20,9 @@ extension WalletDetail {
 
         private let viewModel: WalletDetailViewModelType
 
-        // MARK: - Properties
+        // MARK: - Handler
+
+        var processingTransactionDoneHandler: (() -> Void)?
 
         // MARK: - Subviews
 
@@ -121,6 +123,7 @@ extension WalletDetail {
                     relayMethod: .default
                 )
                 let vc = SendToken.ViewController(viewModel: vm)
+                vc.doneHandler = processingTransactionDoneHandler
                 show(vc, sender: nil)
             case let .receive(pubkey):
                 if let solanaPubkey = try? SolanaSDK
@@ -146,6 +149,7 @@ extension WalletDetail {
             case let .swap(wallet):
                 let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
                 let vc = OrcaSwapV2.ViewController(viewModel: vm)
+                vc.doneHandler = processingTransactionDoneHandler
                 show(vc, sender: nil)
             case let .transactionInfo(transaction):
                 let vm = TransactionDetail.ViewModel(parsedTransaction: transaction)

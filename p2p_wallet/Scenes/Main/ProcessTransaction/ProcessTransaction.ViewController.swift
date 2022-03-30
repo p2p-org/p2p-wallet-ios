@@ -20,6 +20,7 @@ extension ProcessTransaction {
 
         // MARK: - Handlers
 
+        var doneHandler: (() -> Void)?
         var makeAnotherTransactionHandler: (() -> Void)?
         var specificErrorHandler: ((Swift.Error) -> Void)?
 
@@ -61,6 +62,7 @@ extension ProcessTransaction {
             super.viewDidAppear(animated)
             if !statusViewControllerShown {
                 statusViewController = .init(viewModel: viewModel)
+                statusViewController.doneHandler = doneHandler
                 present(statusViewController, interactiveDismissalType: .none, completion: nil)
                 statusViewControllerShown = true
             }
