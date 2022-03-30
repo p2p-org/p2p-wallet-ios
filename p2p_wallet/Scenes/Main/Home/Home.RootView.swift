@@ -125,6 +125,13 @@ extension Home {
                             .map { !$0 }
                             .drive(collectionView.rx.isHidden)
                             .disposed(by: disposeBag)
+
+                        viewModel
+                            .scrollToTopSignal
+                            .emit(onNext: { [weak collectionView] in
+                                collectionView?.collectionView.setContentOffset(.init(x: 0, y: -190), animated: true)
+                            })
+                            .disposed(by: disposeBag)
                     }.padding(.init(only: .top, inset: 12))
                 }
 

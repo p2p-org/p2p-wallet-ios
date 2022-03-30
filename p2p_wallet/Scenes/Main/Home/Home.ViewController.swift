@@ -142,6 +142,9 @@ extension Home {
                     relayMethod: .default
                 )
                 let vc = SendToken.ViewController(viewModel: vm)
+                vc.doneHandler = { [weak self] in
+                    self?.popToThisViewControllerAndScrollToTop()
+                }
                 show(vc, sender: nil)
 
                 analyticsManager.log(event: .mainScreenSendOpen)
@@ -149,6 +152,9 @@ extension Home {
             case .swapToken:
                 let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
                 let vc = OrcaSwapV2.ViewController(viewModel: vm)
+                vc.doneHandler = { [weak self] in
+                    self?.popToThisViewControllerAndScrollToTop()
+                }
                 analyticsManager.log(event: .mainScreenSwapOpen)
                 analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
                 show(vc, sender: nil)
@@ -177,6 +183,9 @@ extension Home {
                 analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: wallet.token.symbol))
                 let vm = WalletDetail.ViewModel(pubkey: pubkey, symbol: wallet.token.symbol)
                 let vc = WalletDetail.ViewController(viewModel: vm)
+                vc.processingTransactionDoneHandler = { [weak self] in
+                    self?.popToThisViewControllerAndScrollToTop()
+                }
                 show(vc, sender: nil)
             case let .walletSettings(wallet):
                 guard let pubkey = wallet.pubkey else { return }
@@ -209,6 +218,15 @@ extension Home {
                 show(vc, sender: nil)
                 return
             }
+        }
+
+        private func popToThisViewControllerAndScrollToTop() {
+            CATransaction.begin()
+            CATransaction.setCompletionBlock {
+                self.viewModel.scrollToTop()
+            }
+            navigationController?.popToViewController(ofClass: Self.self, animated: true)
+            CATransaction.commit()
         }
 
         private func qrCodeScannerHandler(code: String) -> Bool {
