@@ -165,14 +165,10 @@ extension SwipeableCell: UIScrollViewDelegate {
 
         if offset > 2 {
             focus = .right
-            leadingActions?.alpha = 0
         } else if offset < -2 {
             focus = .left
-            trailingActions?.alpha = 0
         } else {
             focus = .center
-            trailingActions?.alpha = 1
-            leadingActions?.alpha = 1
         }
     }
 }
