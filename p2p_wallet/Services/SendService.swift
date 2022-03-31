@@ -29,6 +29,10 @@ protocol SendServiceType {
     func getFreeTransactionFeeLimit(
     ) -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
 
+    func getAvailableWalletsToPayFee(
+        feeInSOL: SolanaSDK.FeeAmount
+    ) -> Single<[Wallet]>
+
     func send(
         from wallet: Wallet,
         receiver: String,
@@ -39,6 +43,7 @@ protocol SendServiceType {
 }
 
 class SendService: SendServiceType {
+    private let locker = NSLock()
     let relayMethod: SendTokenRelayMethod
     @Injected private var solanaSDK: SolanaSDK
     @Injected private var orcaSwap: OrcaSwapType
@@ -46,7 +51,9 @@ class SendService: SendServiceType {
     @Injected private var relayService: FeeRelayerRelayType
     @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
     @Injected private var feeService: FeeServiceType
+    @Injected private var walletsRepository: WalletsRepository
     private var cachedFeePayerPubkey: String?
+    private var cachedPoolsSPLToSOL = [String: [OrcaSwap.PoolsPair]]() // [Mint: Pools]
 
     init(relayMethod: SendTokenRelayMethod) {
         self.relayMethod = relayMethod
@@ -58,7 +65,29 @@ class SendService: SendServiceType {
         var completables = [feeService.load()]
 
         if relayMethod == .relay {
-            completables.append(orcaSwap.load().andThen(relayService.load()))
+            completables.append(
+                orcaSwap.load()
+                    .andThen(relayService.load())
+                    .andThen(
+                        // load all pools
+                        Single.zip(
+                            walletsRepository.getWallets()
+                                .filter { ($0.lamports ?? 0) > 0 }
+                                .map { wallet in
+                                    orcaSwap.getTradablePoolsPairs(
+                                        fromMint: wallet.mintAddress,
+                                        toMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+                                    )
+                                        .do(onSuccess: { [weak self] poolsPair in
+                                            self?.locker.lock()
+                                            self?.cachedPoolsSPLToSOL[wallet.mintAddress] = poolsPair
+                                            self?.locker.unlock()
+                                        })
+                                }
+                        )
+                            .asCompletable()
+                    )
+            )
         }
 
         return .zip(completables)
@@ -153,6 +182,26 @@ class SendService: SendServiceType {
                 return .just(.zero)
             }
         }
+    }
+
+    func getAvailableWalletsToPayFee(feeInSOL: SolanaSDK.FeeAmount) -> Single<[Wallet]> {
+        Single.zip(
+            walletsRepository.getWallets()
+                .filter { ($0.lamports ?? 0) > 0 }
+                .map { wallet -> Single<Wallet?> in
+                    if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                        return (wallet.lamports ?? 0) >= feeInSOL.total ? .just(wallet) : .just(nil)
+                    }
+                    return relayService.calculateFeeInPayingToken(
+                        feeInSOL: feeInSOL,
+                        payingFeeTokenMint: wallet.mintAddress
+                    )
+                        .map { ($0?.total ?? 0) <= (wallet.lamports ?? 0) }
+                        .map { $0 ? wallet : nil }
+                        .catchAndReturn(nil)
+                }
+        )
+            .map { $0.compactMap { $0 }}
     }
 
     func getFeesInPayingToken(
