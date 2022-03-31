@@ -37,8 +37,8 @@ class WLPhrasesListView: BEView {
         textColor: .textSecondary.onDarkMode(.white),
         textAlignment: .center
     )
-    .padding(.init(all: 9))
-    .onTap(self, action: #selector(copyToClipboard))
+        .padding(.init(all: 9))
+        .onTap(self, action: #selector(copyToClipboard))
 
     var copyToClipboardAction: CocoaAction?
 
@@ -58,7 +58,7 @@ class WLPhrasesListView: BEView {
                     UIView.defaultSeparator(),
                     copyToClipboardButton,
                 ])
-                .padding(.zero, backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b), cornerRadius: 12),
+                    .padding(.zero, backgroundColor: .f6f6f8.onDarkMode(.h1b1b1b), cornerRadius: 12),
             ]
         )
         addSubview(stackView)

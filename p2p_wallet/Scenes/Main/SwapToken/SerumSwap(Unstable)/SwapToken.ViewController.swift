@@ -32,7 +32,7 @@ extension SerumSwapV1 {
                     .onTap(self, action: #selector(showSettings)),
             ]
         )
-        .padding(.init(all: 20))
+            .padding(.init(all: 20))
         private lazy var rootView = RootView(viewModel: viewModel)
 
         // MARK: - Initializer
@@ -84,10 +84,10 @@ extension SerumSwapV1 {
                 viewModel.feesDriver,
                 viewModel.exchangeRateDriver
             )
-            .drive(onNext: { [weak self] _ in
-                self?.updatePresentationLayout(animated: true)
-            })
-            .disposed(by: disposeBag)
+                .drive(onNext: { [weak self] _ in
+                    self?.updatePresentationLayout(animated: true)
+                })
+                .disposed(by: disposeBag)
         }
 
         // MARK: - Actions

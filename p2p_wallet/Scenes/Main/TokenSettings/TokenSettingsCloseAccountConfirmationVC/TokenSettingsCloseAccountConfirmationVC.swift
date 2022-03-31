@@ -34,7 +34,7 @@ class TokenSettingsCloseAccountConfirmationVC: WLIndicatorModalVC {
                 textColor: .textSecondary,
                 numberOfLines: 0
             )
-            .padding(.init(x: 20, y: 0)),
+                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(20),
             UIView.defaultSeparator(),
             BEStackViewSpacing(20),
@@ -45,9 +45,9 @@ class TokenSettingsCloseAccountConfirmationVC: WLIndicatorModalVC {
                 textColor: .alert,
                 textAlignment: .center
             )
-            .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
-            .onTap(self, action: #selector(buttonCloseDidTouch))
-            .padding(.init(x: 20, y: 0)),
+                .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
+                .onTap(self, action: #selector(buttonCloseDidTouch))
+                .padding(.init(x: 20, y: 0)),
             BEStackViewSpacing(10),
             UILabel(
                 text: L10n.cancel,
@@ -56,9 +56,9 @@ class TokenSettingsCloseAccountConfirmationVC: WLIndicatorModalVC {
                 textColor: .h5887ff.onDarkMode(.white),
                 textAlignment: .center
             )
-            .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
-            .onTap(self, action: #selector(back))
-            .padding(.init(x: 20, y: 0)),
+                .padding(.init(all: 18), backgroundColor: .grayPanel, cornerRadius: 12)
+                .onTap(self, action: #selector(back))
+                .padding(.init(x: 20, y: 0)),
         ])
     }
 

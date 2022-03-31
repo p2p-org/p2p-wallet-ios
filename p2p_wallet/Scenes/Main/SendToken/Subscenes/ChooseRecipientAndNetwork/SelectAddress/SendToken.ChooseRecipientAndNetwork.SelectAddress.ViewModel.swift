@@ -141,33 +141,33 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
                 payingWalletDriver,
                 feeInfoDriver
             )
-            .map { [weak self] network, payingWallet, feeInfo -> Bool in
-                guard let self = self else { return false }
-                switch network {
-                case .solana:
-                    switch self.relayMethod {
-                    case .relay:
-                        guard let value = feeInfo.value else {
-                            return false
-                        }
-
-                        let feeAmountInSOL = value.feeAmountInSOL
-                        let feeAmountInToken = value.feeAmount
-                        if feeAmountInSOL.total == 0 {
-                            return true
-                        } else {
-                            guard let payingWallet = payingWallet else {
+                .map { [weak self] network, payingWallet, feeInfo -> Bool in
+                    guard let self = self else { return false }
+                    switch network {
+                    case .solana:
+                        switch self.relayMethod {
+                        case .relay:
+                            guard let value = feeInfo.value else {
                                 return false
                             }
-                            return (payingWallet.lamports ?? 0) >= feeAmountInToken.total
+
+                            let feeAmountInSOL = value.feeAmountInSOL
+                            let feeAmountInToken = value.feeAmount
+                            if feeAmountInSOL.total == 0 {
+                                return true
+                            } else {
+                                guard let payingWallet = payingWallet else {
+                                    return false
+                                }
+                                return (payingWallet.lamports ?? 0) >= feeAmountInToken.total
+                            }
+                        case .reward:
+                            return true
                         }
-                    case .reward:
+                    case .bitcoin:
                         return true
                     }
-                case .bitcoin:
-                    return true
                 }
-            }
         )
 
         return Driver.combineLatest(conditionDrivers)

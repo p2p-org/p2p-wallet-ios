@@ -28,21 +28,31 @@ class TabBarVC: BEPagesVC {
 
         let homeViewModel = Home.ViewModel()
         let homeVC = Home.ViewController(viewModel: homeViewModel)
+
+        let sendTokenVC = SendToken.ViewController(
+            viewModel: SendToken.ViewModel(
+                walletPubkey: nil,
+                destinationAddress: nil,
+                relayMethod: .default,
+                canGoBack: false
+            )
+        )
+        sendTokenVC.doneHandler = { [weak sendTokenVC, weak self] in
+            sendTokenVC?.popToRootViewController(animated: false)
+            CATransaction.begin()
+            CATransaction.setCompletionBlock { [weak homeViewModel] in
+                homeViewModel?.scrollToTop()
+            }
+            self?.moveToPage(0)
+            CATransaction.commit()
+        }
+
+        let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
+
         viewControllers = [
             createNavigationController(rootVC: homeVC),
-            createNavigationController(
-                rootVC: SendToken.ViewController(
-                    viewModel: SendToken.ViewModel(
-                        walletPubkey: nil,
-                        destinationAddress: nil,
-                        relayMethod: .default,
-                        canGoBack: false
-                    )
-                )
-            ),
-            createNavigationController(
-                rootVC: Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
-            ),
+            createNavigationController(rootVC: sendTokenVC),
+            createNavigationController(rootVC: settingsVC),
         ]
 
         // disable scrolling
@@ -174,6 +184,14 @@ private final class NavigationController: UINavigationController {
         handleShowHideTabBar(previousVC: poppingVC, nextVC: parentVC)
 
         return super.popViewController(animated: animated)
+    }
+
+    override func popToRootViewController(animated: Bool) -> [UIViewController]? {
+        guard viewControllers.count >= 2 else {
+            return super.popToRootViewController(animated: animated)
+        }
+        handleShowHideTabBar(previousVC: viewControllers.last!, nextVC: viewControllers.first!)
+        return super.popToRootViewController(animated: animated)
     }
 
     private func handleShowHideTabBar(previousVC: UIViewController, nextVC: UIViewController) {

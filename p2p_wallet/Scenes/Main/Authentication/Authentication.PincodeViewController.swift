@@ -83,28 +83,28 @@ extension Authentication {
                                 button.setBiometricType(type: biometryType)
                             }
                     )
-                    .bind(pincodeView)
-                    .setup { pincodeView in
-                        pincodeView.onSuccess = { [weak self] _ in
-                            self?.authenticationDidComplete()
-                        }
+                        .bind(pincodeView)
+                        .setup { pincodeView in
+                            pincodeView.onSuccess = { [weak self] _ in
+                                self?.authenticationDidComplete()
+                            }
 
-                        pincodeView.onFailedAndExceededMaxAttemps = { [weak self] in
-                            self?.viewModel.setBlockedTime(Date())
-                            self?.numpadDidLock()
-                        }
+                            pincodeView.onFailedAndExceededMaxAttemps = { [weak self] in
+                                self?.viewModel.setBlockedTime(Date())
+                                self?.numpadDidLock()
+                            }
 
-                        if (viewModel.getBlockedTime()) != nil {
-                            pincodeView.setBlock(true)
-                            pincodeView.errorLabel.isHidden = false
-                            numpadDidLock()
-                        } else {
-                            if isBiometryAvailable() {
-                                authWithBiometry()
+                            if (viewModel.getBlockedTime()) != nil {
+                                pincodeView.setBlock(true)
+                                pincodeView.errorLabel.isHidden = false
+                                numpadDidLock()
+                            } else {
+                                if isBiometryAvailable() {
+                                    authWithBiometry()
+                                }
                             }
                         }
-                    }
-                    .centered(.vertical)
+                        .centered(.vertical)
 
                     // Extra actions
                     switch extraAction {
@@ -117,8 +117,8 @@ extension Authentication {
                                 weight: .medium,
                                 textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
                             )
-                            .setUserInteractionEnabled(true)
-                            .onTap { [weak self] in self?.viewModel.showResetPincodeWithASeedPhrase() }
+                                .setUserInteractionEnabled(true)
+                                .onTap { [weak self] in self?.viewModel.showResetPincodeWithASeedPhrase() }
                         }
                         .centered(.horizontal)
                         .padding(.init(only: .bottom, inset: 50))
@@ -131,8 +131,8 @@ extension Authentication {
                                 weight: .medium,
                                 textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
                             )
-                            .setUserInteractionEnabled(true)
-                            .onTap { [weak self] in self?.viewModel.signOut() }
+                                .setUserInteractionEnabled(true)
+                                .onTap { [weak self] in self?.viewModel.signOut() }
                         }
                         .centered(.horizontal)
                         .padding(.init(only: .bottom, inset: 50))

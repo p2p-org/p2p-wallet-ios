@@ -20,7 +20,7 @@ extension TransactionHandler {
                 guard let self = self else { return }
 
                 // show notification
-                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
+//                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
 
                 // update status
                 self.updateTransactionAtIndex(index) { _ in
@@ -85,8 +85,8 @@ extension TransactionHandler {
             .retry(maxAttempts: .max, delayInSeconds: 1)
             .timeout(.seconds(60), scheduler: scheduler)
             .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: { [weak self] in
-                self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+            .subscribe(onCompleted: { // [weak self] in
+//                self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
             }, onError: { [weak self] error in
                 debugPrint(error)
                 self?.updateTransactionAtIndex(index) { currentValue in
@@ -181,7 +181,7 @@ extension TransactionHandler {
                 return wallets
             }
 
-        case let transaction as ProcessTransaction.OrcaSwapTransaction:
+        case let transaction as ProcessTransaction.SwapTransaction:
             walletsRepository.batchUpdate { currentValue in
                 var wallets = currentValue
 

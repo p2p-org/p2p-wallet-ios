@@ -52,7 +52,7 @@ extension UIView {
                     numberOfLines: 0,
                     textAlignment: .center
                 )
-                .withContentHuggingPriority(.required, for: .vertical)
+                    .withContentHuggingPriority(.required, for: .vertical)
             )
         }
 
@@ -134,7 +134,7 @@ extension UIView {
             image: .nextArrow,
             tintColor: .h8b94a9.onDarkMode(.white)
         )
-        .padding(.init(all: 2.5))
+            .padding(.init(all: 2.5))
         // swiftlint:enable next_arrow
     }
 

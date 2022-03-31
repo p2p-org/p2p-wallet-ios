@@ -97,7 +97,7 @@ extension ReceiveToken {
                             ).subscribe(onSuccess: { [weak self] image in
                                 self?.onShare?(image)
                             })
-                            .disposed(by: disposeBag)
+                                .disposed(by: disposeBag)
                         }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in
@@ -109,7 +109,7 @@ extension ReceiveToken {
                             ).subscribe(onSuccess: { [weak self] image in
                                 self?.onSave?(image)
                             })
-                            .disposed(by: disposeBag)
+                                .disposed(by: disposeBag)
                         }
                 }.padding(.init(x: 0, y: 4))
 

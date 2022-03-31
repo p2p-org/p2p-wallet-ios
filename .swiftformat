@@ -1,6 +1,6 @@
 # file options
 
---exclude Tests/XCTestManifests.swift,Tests/BadConfig,Snapshots,Pods,Templates,"p2p_wallet/Fonts+Generated.swift","p2p_wallet/Asset+Generated.swift","p2p_wallet/Strings+Generated.swift"
+--exclude Tests/XCTestManifests.swift,Tests/BadConfig,Snapshots,Pods,Templates,"p2p_wallet/Fonts+Generated.swift","p2p_wallet/Asset+Generated.swift","p2p_wallet/Strings+Generated.swift",BECollectionView,BEPureLayout,FeeRelayerSwift,LazySubject,OrcaSwapSwift,RenVMSwift,SolanaSwift
 
 # format options
 
@@ -34,6 +34,7 @@
 --trimwhitespace always
 --wraparguments preserve
 --wrapcollections preserve
+--xcodeindentation true
 
 # rules
 

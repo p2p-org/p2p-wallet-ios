@@ -46,7 +46,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         slippageSubject.asDriver()
     }
 
-    var minimumReceiveAmountDriver: Driver<Double?> {
+    var minimumReceiveAmountObservable: Observable<Double?> {
         bestPoolsPairSubject
             .withLatestFrom(
                 Observable.combineLatest(
@@ -65,7 +65,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?
                     .convertToBalance(decimals: destinationDecimals)
             }
-            .asDriver(onErrorJustReturn: nil)
+    }
+
+    var minimumReceiveAmountDriver: Driver<Double?> {
+        minimumReceiveAmountObservable.asDriver(onErrorJustReturn: nil)
     }
 
     var exchangeRateDriver: Driver<Double?> {
@@ -73,15 +76,15 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             inputAmountSubject,
             estimatedAmountSubject
         )
-        .map { inputAmount, estimatedAmount in
-            guard let inputAmount = inputAmount,
-                  let estimatedAmount = estimatedAmount,
-                  inputAmount > 0,
-                  estimatedAmount > 0
-            else { return nil }
-            return estimatedAmount / inputAmount
-        }
-        .asDriver(onErrorJustReturn: nil)
+            .map { inputAmount, estimatedAmount in
+                guard let inputAmount = inputAmount,
+                      let estimatedAmount = estimatedAmount,
+                      inputAmount > 0,
+                      estimatedAmount > 0
+                else { return nil }
+                return estimatedAmount / inputAmount
+            }
+            .asDriver(onErrorJustReturn: nil)
     }
 
     var errorDriver: Driver<OrcaSwapV2.VerificationError?> {
@@ -100,9 +103,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             isShowingDetailsSubject.asDriver(),
             isShowingShowDetailsButtonDriver
         )
-        .map {
-            $0 && $1
-        }
+            .map {
+                $0 && $1
+            }
     }
 
     var isShowingShowDetailsButtonDriver: Driver<Bool> {
@@ -110,9 +113,9 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             sourceWalletDriver,
             destinationWalletDriver
         )
-        .map {
-            $0 != nil && $1 != nil
-        }
+            .map {
+                $0 != nil && $1 != nil
+            }
     }
 
     func getPrice(symbol: String) -> Double? {
@@ -128,15 +131,15 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             feeService.load(),
             swapService.load()
         )
-        .subscribe(
-            onCompleted: { [weak self] in
-                self?.loadingStateSubject.accept(.loaded)
-            },
-            onError: { [weak self] error in
-                self?.loadingStateSubject.accept(.error(error.readableDescription))
-            }
-        )
-        .disposed(by: disposeBag)
+            .subscribe(
+                onCompleted: { [weak self] in
+                    self?.loadingStateSubject.accept(.loaded)
+                },
+                onError: { [weak self] error in
+                    self?.loadingStateSubject.accept(.error(error.readableDescription))
+                }
+            )
+            .disposed(by: disposeBag)
     }
 
     func navigate(to scene: OrcaSwapV2.NavigatableScene) {
@@ -172,10 +175,14 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func useAllBalance() {
+        isUsingAllBalance = true
         enterInputAmount(availableAmountSubject.value)
 
-        notificationsService
-            .showInAppNotification(.message(L10n.thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
+        if let fees = feesSubject.value, !fees.isEmpty, availableAmountSubject.value != inputAmountSubject.value {
+            notificationsService
+                .showInAppNotification(.message(L10n
+                        .thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
+        }
     }
 
     func enterInputAmount(_ amount: Double?) {

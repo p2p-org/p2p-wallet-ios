@@ -49,7 +49,9 @@ extension OrcaSwapV2.ViewModel {
             return .inputAmountIsNotValid
         }
 
-        if inputAmount > availableAmountSubject.value {
+        if inputAmount.rounded(decimals: sourceWallet.token.decimals) > availableAmountSubject.value?
+            .rounded(decimals: sourceWallet.token.decimals)
+        {
             return .insufficientFunds
         }
 
@@ -146,7 +148,7 @@ extension OrcaSwapV2.ViewModel {
             lamportsPerSignature: lamportsPerSignature,
             minRentExempt: minRenExempt
         )
-        .map { info in info.fees }
-        .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+            .map { info in info.fees }
+            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
     }
 }

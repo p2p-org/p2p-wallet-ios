@@ -125,35 +125,35 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             limit: 3,
             p2pFeePayerPubkeys: Defaults.p2pFeePayerPubkeys
         )
-        .map { [weak self] transactions -> [SolanaSDK.ParsedTransaction] in
-            // find receipt
-            let newTransactions = transactions
-                .filter { newTx in self?.data.contains(where: { $0.signature == newTx.signature }) == false }
+            .map { [weak self] transactions -> [SolanaSDK.ParsedTransaction] in
+                // find receipt
+                let newTransactions = transactions
+                    .filter { newTx in self?.data.contains(where: { $0.signature == newTx.signature }) == false }
 
-            // receive
-            if newTransactions
-                .contains(where: { ($0.value as? SolanaSDK.TransferTransaction)?.transferType == .receive })
-            {
-                return newTransactions
+                // receive
+                if newTransactions
+                    .contains(where: { ($0.value as? SolanaSDK.TransferTransaction)?.transferType == .receive })
+                {
+                    return newTransactions
+                }
+
+                // throw
+                throw SolanaSDK.Error.notFound
             }
-
-            // throw
-            throw SolanaSDK.Error.notFound
-        }
-        .retry(maxAttempts: 3, delayInSeconds: 2)
-        .subscribe(onSuccess: { [weak self] newTransactions in
-            guard let self = self else { return }
-            self.isFetchingReceiptSubject.accept(false)
-            let newTransactions = newTransactions
-                .filter { newTx in !self.data.contains(where: { $0.signature == newTx.signature }) }
-            var data = self.data
-            data = newTransactions + data
-            self.overrideData(by: data)
-        }, onFailure: { [weak self] _ in
-            self?.isFetchingReceiptSubject.accept(false)
+            .retry(maxAttempts: 3, delayInSeconds: 2)
+            .subscribe(onSuccess: { [weak self] newTransactions in
+                guard let self = self else { return }
+                self.isFetchingReceiptSubject.accept(false)
+                let newTransactions = newTransactions
+                    .filter { newTx in !self.data.contains(where: { $0.signature == newTx.signature }) }
+                var data = self.data
+                data = newTransactions + data
+                self.overrideData(by: data)
+            }, onFailure: { [weak self] _ in
+                self?.isFetchingReceiptSubject.accept(false)
 //                self.notificationsService.showToast(message: L10n.errorRetrievingReceipt + ": " + error.readableDescription + ". " + L10n.pleaseTryAgainLater.uppercaseFirst)
-        })
-        .disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Helpers

@@ -143,17 +143,17 @@ extension OrcaSwapV2 {
                         .map { $0 == .insufficientFunds || $0 == .inputAmountIsNotValid },
                     viewModel.isSendingMaxAmountDriver
                 )
-                .map { isErrorState, isSendingMax -> UIColor in
-                    if isErrorState {
-                        return .alert
-                    } else if isSendingMax {
-                        return .h34c759
-                    } else {
-                        return .h8e8e93
+                    .map { isErrorState, isSendingMax -> UIColor in
+                        if isErrorState {
+                            return .alert
+                        } else if isSendingMax {
+                            return .h34c759
+                        } else {
+                            return .h8e8e93
+                        }
                     }
-                }
-                .drive(balanceView.rx.tintColor)
-                .disposed(by: disposeBag)
+                    .drive(balanceView.rx.tintColor)
+                    .disposed(by: disposeBag)
                 viewModel.isSendingMaxAmountDriver
                     .drive(balanceView.maxButton.rx.isHidden)
                     .disposed(by: disposeBag)

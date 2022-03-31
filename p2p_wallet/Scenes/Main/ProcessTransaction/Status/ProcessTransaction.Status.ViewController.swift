@@ -15,6 +15,10 @@ extension ProcessTransaction.Status {
 
         private let viewModel: ProcessTransactionViewModelType
 
+        // MARK: - Handlers
+
+        var doneHandler: (() -> Void)?
+
         // MARK: - Initializer
 
         init(viewModel: ProcessTransactionViewModelType) {
@@ -39,10 +43,10 @@ extension ProcessTransaction.Status {
                         numberOfLines: 0,
                         textAlignment: .center
                     )
-                    .setup { label in
-                        label.text = viewModel.getMainDescription()
-                    }
-                    .padding(.init(all: 18, excludingEdge: .top))
+                        .setup { label in
+                            label.text = viewModel.getMainDescription()
+                        }
+                        .padding(.init(all: 18, excludingEdge: .top))
 
                     // Loader
                     BEZStack {
@@ -93,16 +97,16 @@ extension ProcessTransaction.Status {
                                     textSize: 15,
                                     textAlignment: .right
                                 )
-                                .setup { label in
-                                    viewModel.pendingTransactionDriver
-                                        .map {
-                                            $0.transactionId?
-                                                .truncatingMiddle(numOfSymbolsRevealed: 9,
-                                                                  numOfSymbolsRevealedInSuffix: 9)
-                                        }
-                                        .drive(label.rx.text)
-                                        .disposed(by: disposeBag)
-                                }
+                                    .setup { label in
+                                        viewModel.pendingTransactionDriver
+                                            .map {
+                                                $0.transactionId?
+                                                    .truncatingMiddle(numOfSymbolsRevealed: 9,
+                                                                      numOfSymbolsRevealedInSuffix: 9)
+                                            }
+                                            .drive(label.rx.text)
+                                            .disposed(by: disposeBag)
+                                    }
                                 UIImageView(
                                     width: 16,
                                     height: 16,
@@ -142,13 +146,27 @@ extension ProcessTransaction.Status {
                     // Buttons
                     BEVStack(spacing: 10) {
                         WLStepButton.main(
-                            image: .info,
-                            text: viewModel.isSwapping ? L10n.showSwapDetails : L10n.showTransactionDetails
+                            image: .buttonCheckSmall,
+                            text: L10n.done
                         )
-                        .onTap { [weak self] in
-                            self?.dismiss(animated: true, completion: nil)
-                        }
-                        SubButton(viewModel: viewModel)
+                            .onTap { [weak self] in
+                                self?.dismiss(animated: true) { [weak self] in
+                                    self?.doneHandler?()
+                                }
+                            }
+//                        WLStepButton.sub(text: L10n.increaseMaximumPriceSlippage)
+//                            .setup { subButton in
+//                                viewModel.pendingTransactionDriver
+//                                    .map {
+//                                        $0.status.error?.readableDescription != L10n
+//                                            .swapInstructionExceedsDesiredSlippageLimit
+//                                    }
+//                                    .drive(subButton.rx.isHidden)
+//                                    .disposed(by: disposeBag)
+//                            }
+//                            .onTap { [weak self] in
+//                                self?.viewModel.handleErrorRetryOrMakeAnotherTransaction()
+//                            }
                     }
                     .padding(.init(x: 18, y: 0))
                 }
