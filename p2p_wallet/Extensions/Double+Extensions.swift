@@ -40,6 +40,18 @@ extension Optional where Wrapped == Double {
         left.orZero > right.orZero
     }
 
+    static func >= (left: Double?, right: Double?) -> Bool {
+        left.orZero >= right.orZero
+    }
+
+    static func < (left: Double?, right: Double?) -> Bool {
+        left.orZero < right.orZero
+    }
+
+    static func <= (left: Double?, right: Double?) -> Bool {
+        left.orZero <= right.orZero
+    }
+
     static func / (left: Double?, right: Double?) -> Double {
         let right = right.orZero
         if right == 0 { return 0 }

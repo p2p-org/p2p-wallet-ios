@@ -33,10 +33,10 @@ extension SerumSwapV1 {
             weight: .semibold,
             textColor: .textSecondary.onDarkMode(.white)
         )
-        .withContentHuggingPriority(.required, for: .horizontal)
-        .padding(.init(x: 13.5, y: 8), backgroundColor: .f6f6f8.onDarkMode(.h404040), cornerRadius: 12)
-        .withContentHuggingPriority(.required, for: .horizontal)
-        .onTap(self, action: #selector(useAllBalance))
+            .withContentHuggingPriority(.required, for: .horizontal)
+            .padding(.init(x: 13.5, y: 8), backgroundColor: .f6f6f8.onDarkMode(.h404040), cornerRadius: 12)
+            .withContentHuggingPriority(.required, for: .horizontal)
+            .onTap(self, action: #selector(useAllBalance))
 
         private lazy var amountTextField = TokenAmountTextField(
             font: .systemFont(ofSize: 27, weight: .bold),
@@ -140,14 +140,14 @@ extension SerumSwapV1 {
                     viewModel.inputAmountDriver,
                     viewModel.sourceWalletDriver
                 )
-                .map { amount, wallet in
-                    if let wallet = wallet {
-                        let value = amount * wallet.priceInCurrentFiat
-                        return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
-                    } else {
-                        return L10n.selectCurrency
+                    .map { amount, wallet in
+                        if let wallet = wallet {
+                            let value = amount * wallet.priceInCurrentFiat
+                            return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
+                        } else {
+                            return L10n.selectCurrency
+                        }
                     }
-                }
 
                 inputSubject = viewModel.inputAmountSubject
                 outputDriver = viewModel.inputAmountDriver
@@ -167,10 +167,10 @@ extension SerumSwapV1 {
                     viewModel.availableAmountDriver,
                     viewModel.sourceWalletDriver
                 )
-                .map { amount, wallet -> String? in
-                    guard let amount = amount else { return nil }
-                    return amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
-                }
+                    .map { amount, wallet -> String? in
+                        guard let amount = amount else { return nil }
+                        return amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
+                    }
 
                 viewModel.errorDriver
                     .map { $0 == L10n.insufficientFunds || $0 == L10n.amountIsNotValid }
@@ -182,9 +182,9 @@ extension SerumSwapV1 {
                     viewModel.inputAmountDriver,
                     viewModel.sourceWalletDriver
                 )
-                .map { $0 != nil || $1 == nil }
-                .drive(maxButton.rx.isHidden)
-                .disposed(by: disposeBag)
+                    .map { $0 != nil || $1 == nil }
+                    .drive(maxButton.rx.isHidden)
+                    .disposed(by: disposeBag)
 
             case .destination:
                 walletDriver = viewModel.destinationWalletDriver
@@ -197,12 +197,12 @@ extension SerumSwapV1 {
                     viewModel.estimatedAmountDriver,
                     viewModel.destinationWalletDriver
                 )
-                .map { minReceiveAmount, wallet -> String? in
-                    guard let symbol = wallet?.token.symbol,
-                          let minReceiveAmount = minReceiveAmount?.toString(maximumFractionDigits: 9)
-                    else { return nil }
-                    return L10n.receiveAtLeast + ": " + minReceiveAmount + " " + symbol
-                }
+                    .map { minReceiveAmount, wallet -> String? in
+                        guard let symbol = wallet?.token.symbol,
+                              let minReceiveAmount = minReceiveAmount?.toString(maximumFractionDigits: 9)
+                        else { return nil }
+                        return L10n.receiveAtLeast + ": " + minReceiveAmount + " " + symbol
+                    }
 
                 inputSubject = viewModel.estimatedAmountSubject
                 outputDriver = viewModel.estimatedAmountDriver

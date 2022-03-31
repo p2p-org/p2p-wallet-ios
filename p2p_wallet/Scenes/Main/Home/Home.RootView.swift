@@ -125,6 +125,13 @@ extension Home {
                             .map { !$0 }
                             .drive(collectionView.rx.isHidden)
                             .disposed(by: disposeBag)
+
+                        viewModel
+                            .scrollToTopSignal
+                            .emit(onNext: { [weak collectionView] in
+                                collectionView?.collectionView.setContentOffset(.init(x: 0, y: -190), animated: true)
+                            })
+                            .disposed(by: disposeBag)
                     }.padding(.init(only: .top, inset: 12))
                 }
 
@@ -154,21 +161,21 @@ private extension HomeViewModelType {
                 .filter { $0 != nil }
                 .withPrevious()
         )
-        .map { state, change in
-            if let previous = change.0 {
-                if state == .loading || state == .initializing {
-                    let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
-                    return amount > 0
-                } else {
-                    let amount = change.1?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
-                    return amount > 0
+            .map { state, change in
+                if let previous = change.0 {
+                    if state == .loading || state == .initializing {
+                        let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
+                        return amount > 0
+                    } else {
+                        let amount = change.1?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
+                        return amount > 0
+                    }
                 }
-            }
 
-            // First initialize
-            return true
-        }
-        .distinctUntilChanged { $0 }
-        .asDriver(onErrorJustReturn: true)
+                // First initialize
+                return true
+            }
+            .distinctUntilChanged { $0 }
+            .asDriver(onErrorJustReturn: true)
     }
 }

@@ -39,7 +39,7 @@ private class _BackupShowPhrasesVC: BackupManuallyBaseVC {
         textColor: .white,
         label: " " + L10n.backupUsingICloud
     )
-    .onTap(self, action: #selector(backupUsingICloudButtonDidTouch))
+        .onTap(self, action: #selector(backupUsingICloudButtonDidTouch))
 
     @Injected private var authenticationHandler: AuthenticationHandlerType
 

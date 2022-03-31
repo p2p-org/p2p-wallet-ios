@@ -57,7 +57,7 @@ class WLNavigationBar: BEView {
         image: UIImage(systemName: "chevron.left"),
         tintColor: .h5887ff
     )
-    .padding(.init(x: 6, y: 4))
+        .padding(.init(x: 6, y: 4))
     lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
 
     override func commonInit() {
@@ -131,11 +131,11 @@ class NewWLNavigationBar: BECompositionView {
                             image: UIImage(systemName: "chevron.left"),
                             tintColor: .h5887ff
                         )
-                        .padding(.init(x: 6, y: 4))
-                        .setup { view in
-                            self.backButton = view
-                            self.backButton.isUserInteractionEnabled = true
-                        }
+                            .padding(.init(x: 6, y: 4))
+                            .setup { view in
+                                self.backButton = view
+                                self.backButton.isUserInteractionEnabled = true
+                            }
                     }
 
                     // Title
@@ -146,7 +146,7 @@ class NewWLNavigationBar: BECompositionView {
                         numberOfLines: 1,
                         textAlignment: .center
                     )
-                    .setup { view in titleLabel = view }
+                        .setup { view in titleLabel = view }
 
                     // Actions
                     actions

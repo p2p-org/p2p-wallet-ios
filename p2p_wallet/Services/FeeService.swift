@@ -36,13 +36,13 @@ extension FeeServiceType {
             apiClient.getLamportsPerSignature(),
             apiClient.getCreatingTokenAccountFee()
         )
-        .do(onSuccess: { [weak self] lps, mbr in
-            self?.lamportsPerSignature = lps
-            self?.minimumBalanceForRenExemption = mbr
-        })
-        .flatMapCompletable { _ in
-            .empty()
-        }
+            .do(onSuccess: { [weak self] lps, mbr in
+                self?.lamportsPerSignature = lps
+                self?.minimumBalanceForRenExemption = mbr
+            })
+            .flatMapCompletable { _ in
+                .empty()
+            }
     }
 }
 

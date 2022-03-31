@@ -110,15 +110,15 @@ extension OrcaSwapV2.ConfirmSwapping {
                 amountDriver: viewModel.inputAmountStringDriver,
                 amountInFiatDriver: viewModel.inputAmountInFiatStringDriver
             )
-            .drive(inputAmountLabel.rx.attributedText)
-            .disposed(by: disposeBag)
+                .drive(inputAmountLabel.rx.attributedText)
+                .disposed(by: disposeBag)
 
             combinedAmountDriver(
                 amountDriver: viewModel.receiveAtLeastStringDriver,
                 amountInFiatDriver: viewModel.receiveAtLeastInFiatStringDriver
             )
-            .drive(minimumAmountLabel.rx.attributedText)
-            .disposed(by: disposeBag)
+                .drive(minimumAmountLabel.rx.attributedText)
+                .disposed(by: disposeBag)
 
             viewModel.slippageDriver
                 .map { ($0 * 100).toString(maximumFractionDigits: 2) + "%" }
@@ -129,9 +129,9 @@ extension OrcaSwapV2.ConfirmSwapping {
                 viewModel.sourceWalletDriver.map { $0?.token.symbol },
                 viewModel.destinationWalletDriver.map { $0?.token.symbol }
             )
-            .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
-            .drive(actionButton.rx.text)
-            .disposed(by: disposeBag)
+                .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
+                .drive(actionButton.rx.text)
+                .disposed(by: disposeBag)
 
             feesView.clickHandler = { [weak self] fee in
                 guard let info = fee.info else { return }
@@ -168,11 +168,11 @@ extension OrcaSwapV2.ConfirmSwapping {
                 amountDriver,
                 amountInFiatDriver
             )
-            .map {
-                NSMutableAttributedString()
-                    .text($0.0 ?? "0", size: 15)
-                    .text(" (~" + ($0.1 ?? "") + ")", size: 15, color: .textSecondary)
-            }
+                .map {
+                    NSMutableAttributedString()
+                        .text($0.0 ?? "0", size: 15)
+                        .text(" (~" + ($0.1 ?? "") + ")", size: 15, color: .textSecondary)
+                }
         }
     }
 }
