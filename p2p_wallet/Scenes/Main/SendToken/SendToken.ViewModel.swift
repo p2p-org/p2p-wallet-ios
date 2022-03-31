@@ -244,9 +244,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         authenticationHandler.authenticate(
             presentationStyle:
             .init(
-                isRequired: false,
-                isFullScreen: false,
-                completion: { [weak self] in
+                completion: { [weak self] _ in
                     self?.send()
                 }
             )

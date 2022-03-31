@@ -284,7 +284,7 @@
 "Powered by Project Serum" = "При поддержке Project Serum";
 "PIN-code changed!" = "PIN-код изменен!";
 "Go back to profile" = "Вернуться к профилю";
-"Enter current PIN-code" = "Введите текущий PIN-код";
+"Enter current PIN" = "Введите текущий PIN";
 "Reset and try again" = "Сбросить и попробовать еще раз";
 "Confirm PIN-code" = "Подтвердите PIN-код";
 "Enter PIN-code" = "Введите PIN-код";
@@ -772,7 +772,20 @@
 "Deposit" = "Депозит";
 "This value is calculated by subtracting the transaction fee from your balance." = "Это значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "Максимальное значение рассчитывается путем вычитания комиссии за транзакцию из вашего баланса.";
+"Incorrect PIN, try again (%@ attempt left)" = "Неверный PIN-код, повторите попытку (осталось %@ попыток)";
+"Forgot your PIN?" = "Забыли PIN-код?";
+"Reset it" = "Сбросить это";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "У вас осталось %@ попыток для ввода правильного PIN-кода.
+ Сбросьте PIN-код или дождитесь %@.";
+"You have successfully set your PIN" = "Вы успешно установили свой PIN-код";
+"Are you sure you want to sign out?" = "Вы уверены, что хотите выйти?";
+"If you have no backup, you may never be able to access this account." = "Если у вас нет резервной копии, вы никогда не сможете получить доступ к этой учетной записи.";
+"Resetting your PIN" = "Сброс PIN-кода";
+"Reset your PIN" = "Сбросить PIN-код";
 "Are you sure you want to sign out?" = "Вы уверены, что хотите выйти?";
 "Without the backup, you may never be able to access this account." = "Без резервной копии вы никогда не сможете получить доступ к этой учетной записи.";
+"Set up a new wallet PIN" = "Установите новый PIN-код кошелька";
+"Set up a new PIN" = "Установить новый PIN-код";
 "Sign Out" = "Выход";
 "If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "Если есть токен с именем «%@», мы не рекомендуем отправлять его на ваш адрес в Солане, так как он, скорее всего, будет потерян навсегда.";

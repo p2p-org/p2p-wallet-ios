@@ -186,6 +186,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func enterInputAmount(_ amount: Double?) {
+        let amount = amount?.rounded(decimals: sourceWalletSubject.value?.token.decimals)
         inputAmountSubject.accept(amount)
 
         // calculate estimated amount
@@ -194,9 +195,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let inputAmount = amount?.toLamport(decimals: sourceDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
            let bestPoolsPair = poolsPairs.findBestPoolsPairForInputAmount(inputAmount),
-           let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)
+           let bestEstimatedAmount = bestPoolsPair.getOutputAmount(fromInputAmount: inputAmount)?
+               .convertToBalance(decimals: destinationDecimals)
+               .rounded(decimals: destinationDecimals)
         {
-            estimatedAmountSubject.accept(bestEstimatedAmount.convertToBalance(decimals: destinationDecimals))
+            estimatedAmountSubject.accept(bestEstimatedAmount)
             bestPoolsPairSubject.accept(bestPoolsPair)
         } else {
             estimatedAmountSubject.accept(nil)
@@ -205,6 +208,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func enterEstimatedAmount(_ amount: Double?) {
+        let amount = amount?.rounded(decimals: destinationWalletSubject.value?.token.decimals)
         estimatedAmountSubject.accept(amount)
 
         // calculate input amount
@@ -213,9 +217,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
            let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
            let bestPoolsPair = poolsPairs.findBestPoolsPairForEstimatedAmount(estimatedAmount),
-           let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)
+           let bestInputAmount = bestPoolsPair.getInputAmount(fromEstimatedAmount: estimatedAmount)?
+               .convertToBalance(decimals: sourceDecimals)
+               .rounded(decimals: sourceDecimals)
         {
-            inputAmountSubject.accept(bestInputAmount.convertToBalance(decimals: sourceDecimals))
+            inputAmountSubject.accept(bestInputAmount)
             bestPoolsPairSubject.accept(bestPoolsPair)
         } else {
             inputAmountSubject.accept(nil)

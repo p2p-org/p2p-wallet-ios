@@ -284,7 +284,7 @@
 "Powered by Project Serum" = "Được cung cấp bởi Project Serum";
 "PIN-code changed!" = "Mã PIN đã thay đổi!";
 "Go back to profile" = "Quay lại hồ sơ";
-"Enter current PIN-code" = "Nhập mã PIN hiện tại";
+"Enter current PIN" = "Nhập mã PIN";
 "Reset and try again" = "Đặt lại và thử lại";
 "Confirm PIN-code" = "Xác nhận mã PIN";
 "Enter PIN-code" = "Nhập mã PIN";
@@ -776,7 +776,20 @@
 "Deposit" = "Đặt cọc";
 "This value is calculated by subtracting the transaction fee from your balance." = "Giá trị này được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "Giá trị tối đa được tính bằng cách trừ phí giao dịch vào số dư của bạn.";
+"Incorrect PIN, try again (%@ attempt left)" = "Mã PIN không chính xác, hãy thử lại (còn lại %@ lần thử)";
+"Forgot your PIN?" = "Quên mã PIN của bạn?";
+"Reset it" = "Đặt lại nó";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN chính xác.
+ Đặt lại mã PIN hoặc đợi %@.";
+"You have successfully set your PIN" = "Bạn đã đặt thành công mã PIN của mình";
+"Are you sure you want to sign out?" = "bạn có chắc chắn muốn đăng xuất không?";
+"If you have no backup, you may never be able to access this account." = "Nếu bạn không có bản sao lưu, bạn có thể không bao giờ truy cập được vào tài khoản này.";
+"Resetting your PIN" = "Đặt lại mã PIN của bạn";
+"Reset your PIN" = "Đặt lại mã PIN của bạn";
 "Are you sure you want to sign out?" = "bạn có chắc chắn muốn đăng xuất không?";
 "Without the backup, you may never be able to access this account." = "Nếu không có bản sao lưu, bạn có thể không bao giờ truy cập được vào tài khoản này.";
+"Set up a new wallet PIN" = "Thiết lập mã PIN ví mới";
+"Set up a new PIN" = "Thiết lập mã PIN mới";
 "Sign Out" = "Đăng xuất";
 "If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "Nếu có mã thông báo có tên “%@”, chúng tôi khuyên bạn không nên gửi mã đó đến địa chỉ Solana của mình vì rất có thể nó sẽ bị mất vĩnh viễn.";

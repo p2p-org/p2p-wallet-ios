@@ -284,7 +284,7 @@
 "Powered by Project Serum" = "Propulsé par Project Serum";
 "PIN-code changed!" = "Code PIN changé!";
 "Go back to profile" = "Revenir au profil";
-"Enter current PIN-code" = "Entrez le code PIN actuel";
+"Enter current PIN" = "Entrez le code PIN";
 "Reset and try again" = "Réinitialiser et réessayer";
 "Confirm PIN-code" = "Confirmer le code PIN";
 "Enter PIN-code" = "Entrez le code PIN";
@@ -772,7 +772,20 @@
 "Deposit" = "Verser";
 "This value is calculated by subtracting the transaction fee from your balance." = "Cette valeur est calculée en soustrayant les frais de transaction de votre solde.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "La valeur maximale est calculée en soustrayant les frais de transaction de votre solde.";
+"Incorrect PIN, try again (%@ attempt left)" = "Code PIN incorrect, réessayez (%@ tentative restante)";
+"Forgot your PIN?" = "Vous avez oublié votre NIP ?";
+"Reset it" = "Réinitialisez-le";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le code PIN correct.
+ Réinitialisez le code PIN ou attendez %@.";
+"You have successfully set your PIN" = "Vous avez réussi à définir votre code PIN";
+"Are you sure you want to sign out?" = "Êtes-vous certain de vouloir vous déconnecter?";
+"If you have no backup, you may never be able to access this account." = "Si vous n'avez pas de sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";
+"Resetting your PIN" = "Réinitialiser votre code PIN";
+"Reset your PIN" = "Réinitialisez votre NIP";
 "Are you sure you want to sign out?" = "Êtes-vous certain de vouloir vous déconnecter?";
 "Without the backup, you may never be able to access this account." = "Sans la sauvegarde, vous ne pourrez peut-être jamais accéder à ce compte.";
+"Set up a new wallet PIN" = "Configurer un nouveau code PIN de portefeuille";
+"Set up a new PIN" = "Configurer un nouveau NIP";
 "Sign Out" = "Se déconnecter";
 "If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "S'il existe un jeton nommé \"%@\", nous vous déconseillons de l'envoyer à votre adresse Solana car il sera probablement perdu à jamais.";
