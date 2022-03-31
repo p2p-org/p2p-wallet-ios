@@ -100,7 +100,7 @@ extension SendToken {
         func bind() {
             bindFees(walletSubject: walletSubject)
 
-            // update wallet after swapping
+            // update wallet after sending
             walletsRepository.dataObservable
                 .skip(1)
                 .withLatestFrom(walletSubject.asObservable(), resultSelector: { ($0, $1) })
