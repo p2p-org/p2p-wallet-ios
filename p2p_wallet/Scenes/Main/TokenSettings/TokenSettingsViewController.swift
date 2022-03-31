@@ -77,9 +77,7 @@ class TokenSettingsViewController: WLIndicatorModalVC {
                 vc?.dismiss(animated: true) { [weak self] in
                     self?.authenticationHandler.authenticate(
                         presentationStyle: .init(
-                            isRequired: false,
-                            isFullScreen: false,
-                            completion: {
+                            completion: { _ in
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                                     self?.viewModel.closeAccount()
                                 }

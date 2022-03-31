@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension ResetPinCodeWithSeedPhrases {
-    class ViewController: WLIndicatorModalVC {
+    class ViewController: BaseVC {
         // MARK: - Dependencies
 
         private let viewModel: ResetPinCodeWithSeedPhrasesViewModelType
@@ -22,10 +22,12 @@ extension ResetPinCodeWithSeedPhrases {
         // MARK: - ChildVC
 
         lazy var enterPhrasesVC: EnterPhrasesVC = {
-            let vc = EnterPhrasesVC()
-            vc.completion = { [weak self] phrases in
+            let vc = EnterPhrasesVC { [weak self] phrases in
                 self?.viewModel.handlePhrases(phrases)
+            } validate: { [weak self] phrase in
+                self?.viewModel.validatePhrases(phrase) ?? (false, L10n.error)
             }
+
             vc.dismissAfterCompletion = false
             return vc
         }()
@@ -42,17 +44,13 @@ extension ResetPinCodeWithSeedPhrases {
         override func setUp() {
             super.setUp()
             childNavigationController = .init()
-            add(child: childNavigationController, to: containerView)
+            add(child: childNavigationController, to: view)
         }
 
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
-
-            viewModel.errorDriver
-                .drive(enterPhrasesVC.error)
                 .disposed(by: disposeBag)
         }
 
@@ -64,7 +62,7 @@ extension ResetPinCodeWithSeedPhrases {
                 childNavigationController.pushViewController(enterPhrasesVC, animated: true)
             case .createNewPasscode:
                 let createPincodeVC = WLCreatePincodeVC(
-                    createPincodeTitle: L10n.newPINCode,
+                    createPincodeTitle: L10n.setUpAWalletPIN,
                     confirmPincodeTitle: L10n.confirmPINCode
                 )
                 createPincodeVC.onSuccess = { [weak self] pincode in

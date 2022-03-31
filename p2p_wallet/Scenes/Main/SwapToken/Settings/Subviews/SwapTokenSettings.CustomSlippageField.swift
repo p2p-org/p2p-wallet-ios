@@ -47,10 +47,12 @@ extension SwapTokenSettings {
             textField.text = text
         }
 
+        @discardableResult
         override func becomeFirstResponder() -> Bool {
             textField.becomeFirstResponder()
         }
 
+        @discardableResult
         override func endEditing(_ force: Bool) -> Bool {
             textField.endEditing(force)
         }
