@@ -8,12 +8,35 @@ import RxCocoa
 import RxSwift
 
 class SwipeableCell: BECompositionView {
+    /**
+     Describes current swipe state
+     */
+    enum Focus {
+        case right
+        case left
+        case center
+    }
+
     let leadingActions: UIView?
     let trailingActions: UIView?
     let content: UIView
 
     private let scrollTriggerOffset: CGFloat = 30
     private var scrollViewRef = BERef<BEScrollView>()
+
+    fileprivate var focus: Focus = .center {
+        didSet {
+            switch focus {
+            case .left:
+                trailingActions?.alpha = 0
+            case .right:
+                leadingActions?.alpha = 0
+            case .center:
+                leadingActions?.alpha = 1
+                trailingActions?.alpha = 1
+            }
+        }
+    }
 
     init(leadingActions: UIView?, content: UIView, trailingActions: UIView?) {
         self.leadingActions = leadingActions
@@ -98,13 +121,11 @@ extension SwipeableCell: UIScrollViewDelegate {
     func nearestAnchor(forContentOffset offset: CGPoint) -> CGPoint {
         let offsetFromCenter = content.frame.origin.x - offset.x
 
-        if offsetFromCenter > scrollTriggerOffset {
+        if offsetFromCenter > scrollTriggerOffset, focus == .center, let leadingActions = leadingActions {
             // left
-            guard let leadingActions = leadingActions else { return .zero }
             return .init(x: leadingActions.frame.origin.x, y: offset.y)
-        } else if offsetFromCenter < -scrollTriggerOffset {
+        } else if offsetFromCenter < -scrollTriggerOffset, focus == .center, let trailingActions = trailingActions {
             // right
-            guard let trailingActions = trailingActions else { return .zero }
             return .init(x: trailingActions.frame.origin.x, y: offset.y)
         } else {
             // center
@@ -125,6 +146,34 @@ extension SwipeableCell: UIScrollViewDelegate {
         let targetAnchor = nearestAnchor(forContentOffset: offsetProjection)
 
         targetContentOffset.pointee = targetAnchor
+    }
+
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        scrollViewFinishScroll(scrollView)
+    }
+
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        scrollViewFinishScroll(scrollView)
+    }
+
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate { scrollViewFinishScroll(scrollView) }
+    }
+
+    func scrollViewFinishScroll(_ scrollView: UIScrollView) {
+        let offset = scrollView.contentOffset.x - content.frame.origin.x
+
+        if offset > 2 {
+            focus = .right
+            leadingActions?.alpha = 0
+        } else if offset < -2 {
+            focus = .left
+            trailingActions?.alpha = 0
+        } else {
+            focus = .center
+            trailingActions?.alpha = 1
+            leadingActions?.alpha = 1
+        }
     }
 }
 
