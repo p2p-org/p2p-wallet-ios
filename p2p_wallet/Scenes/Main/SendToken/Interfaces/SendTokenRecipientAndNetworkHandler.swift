@@ -119,25 +119,43 @@ extension SendTokenRecipientAndNetworkHandler {
                             network: network,
                             payingTokenMint: payingWallet?.mintAddress
                         )
-                        .flatMap { [weak self] feeAmountInSOL -> Single<SendToken.FeeInfo> in
-                            guard let sendService = self?.sendService else {
+                        .flatMap { [weak self] feeAmountInSOL in
+                            guard let self = self else {
                                 throw SolanaSDK.Error.unknown
                             }
-                            guard let feeAmountInSOL = feeAmountInSOL else {
-                                return .just(.zero)
-                            }
-                            guard let payingWallet = payingWallet else {
-                                return .just(.zero)
+
+                            // if fee is nil, no need to check for available wallets to pay fee
+                            let feeAmountInSOL = feeAmountInSOL ?? .zero
+
+                            if feeAmountInSOL.total == 0 {
+                                return .just(.init(
+                                    feeAmount: .zero,
+                                    feeAmountInSOL: .zero,
+                                    hasAvailableWalletToPayFee: true
+                                ))
                             }
 
-                            return sendService.getFeesInPayingToken(
-                                feeInSOL: feeAmountInSOL,
-                                payingFeeWallet: payingWallet
+                            // else, check available wallets to pay fee
+                            guard let payingFeeWallet = payingWallet else {
+                                return .just(.init(feeAmount: .zero, feeAmountInSOL: .zero,
+                                                   hasAvailableWalletToPayFee: nil))
+                            }
+                            return Single.zip(
+                                self.sendService.getAvailableWalletsToPayFee(feeInSOL: feeAmountInSOL),
+                                self.sendService.getFeesInPayingToken(
+                                    feeInSOL: feeAmountInSOL,
+                                    payingFeeWallet: payingFeeWallet
+                                )
                             )
-                                .map { .init(feeAmount: $0 ?? .zero, feeAmountInSOL: feeAmountInSOL) }
+                                .map {
+                                    .init(feeAmount: $1 ?? .zero, feeAmountInSOL: feeAmountInSOL,
+                                          hasAvailableWalletToPayFee: $0.isEmpty == false)
+                                }
                         }
                 } else {
-                    self.feeInfoSubject.request = .just(.init(feeAmount: .zero, feeAmountInSOL: .zero))
+                    self.feeInfoSubject
+                        .request =
+                        .just(.init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil))
                 }
                 self.feeInfoSubject.reload()
             })
