@@ -15,6 +15,7 @@ protocol ResetPinCodeWithSeedPhrasesViewModelType {
 
     func savePincode(_ code: String)
     func handlePhrases(_ phrases: [String])
+    func validatePhrases(_ phrases: [String]) -> (status: Bool, error: String?)
 }
 
 extension ResetPinCodeWithSeedPhrases {
@@ -55,5 +56,15 @@ extension ResetPinCodeWithSeedPhrases.ViewModel: ResetPinCodeWithSeedPhrasesView
             return
         }
         navigationSubject.accept(.createNewPasscode)
+    }
+
+    func validatePhrases(_ phrases: [String]) -> (status: Bool, error: String?) {
+        let (status, error) = KeyPhrase.checkPhrase(in: phrases)
+        if !status { return (status, error) }
+
+        if storage.phrases != phrases {
+            return (false, L10n.wrongOrderOrSeedPhrasePleaseCheckItAndTryAgain)
+        }
+        return (true, nil)
     }
 }

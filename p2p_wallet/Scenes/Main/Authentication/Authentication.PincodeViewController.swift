@@ -6,12 +6,11 @@
 //
 
 import Foundation
+import UIKit
 
 extension Authentication {
-    class PincodeViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
+    class PinCodeViewController: BEScene {
+        private let viewModel: AuthenticationViewModelType
 
         // MARK: - Constants
 
@@ -21,15 +20,23 @@ extension Authentication {
             let lockingTimeInSeconds = 15 * 60 // 15 minutes
         #endif
 
-        // MARK: - Dependencies
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle { .hidden }
+        private var navigationBar = BERef<NewWLNavigationBar>()
+        private var biometryButton = BERef<UIButton>()
+        private var pincodeView = BERef<WLPinCodeView>()
+        private var logoView = BERef<UIImageView>()
 
-        private let viewModel: AuthenticationViewModelType
+        override var title: String? { didSet { navigationBar.view?.titleLabel.text = title } }
+        var isIgnorable: Bool = false { didSet { navigationBar.view?.backIsHidden(!isIgnorable) } }
+        var useBiometry: Bool = true { didSet { biometryButton.view?.alpha = isBiometryAvailable() ? 1 : 0 } }
+        var withLogo: Bool = false {
+            didSet {
+                logoView.view?.isHidden = !withLogo
+                navigationBar.view?.isHidden = withLogo
+            }
+        }
 
-        // MARK: - Properties
-
-        override var title: String? { didSet { navigationBar.titleLabel.text = title } }
-        var isIgnorable: Bool = false { didSet { navigationBar.backButton.isHidden = !isIgnorable } }
-        var useBiometry: Bool = true { didSet { updateBiometryButtonVisibility() } }
+        let extraAction: ExtraAction
 
         // MARK: - Callbacks
 
@@ -37,112 +44,111 @@ extension Authentication {
         var onCancel: (() -> Void)?
         var didTapResetPincodeWithASeedPhraseButton: (() -> Void)?
 
-        // MARK: - Subviews
+        private func isBiometryAvailable() -> Bool {
+            useBiometry && viewModel.isBiometryEnabled()
+        }
 
-        fileprivate let navigationBar = WLNavigationBar(forAutoLayout: ())
-        private lazy var pincodeView = WLPinCodeView(
-            correctPincode: viewModel.getCurrentPincode(),
-            maxAttemptsCount: 3,
-            bottomLeftButton: biometryButton
-        )
-        private lazy var biometryButton: UIButton? = {
-            let biometryType = viewModel.getCurrentBiometryType()
-            guard let icon = biometryType.icon?.withRenderingMode(.alwaysTemplate) else {
-                return nil
-            }
-            let button = UIButton(frame: .zero)
-            button.tintColor = .textBlack
-            button.setImage(icon, for: .normal)
-            button.contentEdgeInsets = .init(top: 12, left: 12, bottom: 12, right: 12)
-            button.onTap(self, action: #selector(authWithBiometry))
-            return button
-        }()
-
-        private lazy var resetPinCodeWithASeedPhraseButton: UIView = {
-            let button = UILabel(
-                text: L10n.resetPINWithASeedPhrase,
-                textSize: 13,
-                weight: .semibold,
-                textColor: .textSecondary,
-                textAlignment: .center
-            )
-                .padding(.init(top: 8, left: 19, bottom: 8, right: 19), backgroundColor: .f6f6f8, cornerRadius: 12)
-                .onTap(self, action: #selector(resetPincodeWithASeedPhrase))
-            button.isHidden = true
-            return button
-        }()
-
-        // MARK: - Initializer
-
-        init(viewModel: AuthenticationViewModelType) {
+        init(viewModel: AuthenticationViewModelType, extraAction: ExtraAction = .none) {
             self.viewModel = viewModel
+            self.extraAction = extraAction
             super.init()
         }
 
-        // MARK: - Methods
+        override func build() -> UIView {
+            BESafeArea {
+                BEVStack {
+                    // Navigation
+                    NewWLNavigationBar(initialTitle: title, separatorEnable: false)
+                        .backIsHidden(!isIgnorable)
+                        .onBack { [unowned self] in cancel() }
+                        .bind(navigationBar)
+                        .hidden(withLogo)
 
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            // is blocking
-            if (viewModel.getBlockedTime()) != nil {
-                pincodeView.setBlock(true)
-                pincodeView.errorLabel.isHidden = false
-                numpadDidLock()
-            } else {
-                if isBiometryAvailable() {
-                    authWithBiometry()
+                    UIImageView(width: 64, height: 48, image: .pLogo, tintColor: .textBlack)
+                        .bind(logoView)
+                        .padding(.init(only: .top, inset: 60))
+                        .hidden(!withLogo)
+                        .centered(.horizontal)
+
+                    // Pincode
+                    WLPinCodeView(
+                        correctPincode: viewModel.getCurrentPincode(),
+                        maxAttemptsCount: 3,
+                        bottomLeftButton: BiometricButton()
+                            .setAlpha(isBiometryAvailable() ? 1 : 0)
+                            .bind(biometryButton)
+                            .onClick { [weak self] in self?.authWithBiometry() }
+                            .setup { button in
+                                let biometryType = viewModel.getCurrentBiometryType()
+                                button.setBiometricType(type: biometryType)
+                            }
+                    )
+                        .bind(pincodeView)
+                        .setup { pincodeView in
+                            pincodeView.onSuccess = { [weak self] _ in
+                                self?.authenticationDidComplete()
+                            }
+
+                            pincodeView.onFailedAndExceededMaxAttemps = { [weak self] in
+                                self?.viewModel.setBlockedTime(Date())
+                                self?.numpadDidLock()
+                            }
+
+                            if (viewModel.getBlockedTime()) != nil {
+                                pincodeView.setBlock(true)
+                                pincodeView.errorLabel.isHidden = false
+                                numpadDidLock()
+                            } else {
+                                if isBiometryAvailable() {
+                                    authWithBiometry()
+                                }
+                            }
+                        }
+                        .centered(.vertical)
+
+                    // Extra actions
+                    switch extraAction {
+                    case .reset:
+                        BEHStack {
+                            UILabel(text: L10n.forgotYourPIN + " ", textSize: 17, weight: .medium)
+                            UILabel(
+                                text: L10n.resetIt,
+                                textSize: 17,
+                                weight: .medium,
+                                textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
+                            )
+                                .setUserInteractionEnabled(true)
+                                .onTap { [weak self] in self?.viewModel.showResetPincodeWithASeedPhrase() }
+                        }
+                        .centered(.horizontal)
+                        .padding(.init(only: .bottom, inset: 50))
+                    case .signOut:
+                        BEHStack {
+                            UILabel(text: L10n.forgotYourPIN + " ", textSize: 17, weight: .medium)
+                            UILabel(
+                                text: L10n.signOut,
+                                textSize: 17,
+                                weight: .medium,
+                                textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
+                            )
+                                .setUserInteractionEnabled(true)
+                                .onTap { [weak self] in self?.viewModel.signOut() }
+                        }
+                        .centered(.horizontal)
+                        .padding(.init(only: .bottom, inset: 50))
+                    case .none:
+                        BEContainer()
+                    }
                 }
             }
         }
 
-        override func setUp() {
-            super.setUp()
-            // navigation bar
-            if isIgnorable {
-                navigationBar.backButton.onTap(self, action: #selector(cancel))
-            }
-            view.addSubview(navigationBar)
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-
-            // pincode view
-            let wrappedView = UIView(forAutoLayout: ())
-            view.addSubview(wrappedView)
-            wrappedView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
-            wrappedView.autoPinEdge(.top, to: .bottom, of: navigationBar)
-
-            wrappedView.addSubview(pincodeView)
-            pincodeView.autoCenterInSuperview()
-            pincodeView.autoPinEdge(toSuperviewEdge: .leading, withInset: 20, relation: .greaterThanOrEqual)
-            pincodeView.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20, relation: .greaterThanOrEqual)
-
-            pincodeView.onSuccess = { [weak self] _ in
-                self?.authenticationDidComplete()
-            }
-
-            pincodeView.onFailedAndExceededMaxAttemps = { [weak self] in
-                self?.viewModel.setBlockedTime(Date())
-                self?.numpadDidLock()
-            }
-
-            // biometry button
-            updateBiometryButtonVisibility()
-
-            // reset pincode with a seed phrase
-            pincodeView.addSubview(resetPinCodeWithASeedPhraseButton)
-            resetPinCodeWithASeedPhraseButton.autoPinEdge(.top, to: .bottom, of: pincodeView.errorLabel, withOffset: 10)
-            resetPinCodeWithASeedPhraseButton.autoAlignAxis(toSuperviewAxis: .vertical)
+        @objc private func cancel() {
+            onCancel?()
         }
 
-        // MARK: - Actions
-
-        func reset() {
-            pincodeView.reset()
-            pincodeView.stackViewSpacing = 68
-            resetPinCodeWithASeedPhraseButton.isHidden = true
-        }
-
-        @objc private func resetPincodeWithASeedPhrase() {
-            didTapResetPincodeWithASeedPhraseButton?()
+        private func authenticationDidComplete() {
+            onSuccess?()
         }
 
         @objc private func authWithBiometry() {
@@ -157,7 +163,6 @@ extension Authentication {
                     buttonTitles: [L10n.turnOn, L10n.cancel],
                     highlightedButtonIndex: 0
                 ) { index in
-
                     if index == 0 {
                         if let url = URL(string: UIApplication.openSettingsURLString) {
                             UIApplication.shared.open(url, options: [:], completionHandler: nil)
@@ -167,21 +172,15 @@ extension Authentication {
             }
         }
 
-        @objc private func cancel() {
-            onCancel?()
-        }
-
-        private func authenticationDidComplete() {
-            onSuccess?()
+        func reset() {
+            pincodeView.view?.reset()
+            pincodeView.stackViewSpacing = 68
         }
 
         private func numpadDidLock() {
             guard let blockTime = viewModel.getBlockedTime() else { return }
 
             isIgnorable = false
-            resetPinCodeWithASeedPhraseButton.isHidden = false
-
-            pincodeView.stackViewSpacing = 108
 
             let lockingTimeInSeconds = lockingTimeInSeconds
 
@@ -197,9 +196,12 @@ extension Authentication {
                 let minutes = minutesAndSeconds.0
                 let seconds = minutesAndSeconds.1
 
-                self?.pincodeView.errorLabel.text = L10n
-                    .weVeLockedYourWalletTryAgainIn("\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)") + " " +
-                    L10n.orResetItWithASeedPhrase
+                self?.pincodeView.view?.errorLabel.text = L10n
+                    .YouHaveAttemptsLeftToTypeTheCorrectPIN
+                    .resetThePINOrWaitFor(
+                        "0",
+                        "\(minutes) \(L10n.minutes) \(seconds) \(L10n.seconds)"
+                    )
 
                 if secondsPassed >= lockingTimeInSeconds {
                     self?.viewModel.setBlockedTime(nil)
@@ -208,19 +210,9 @@ extension Authentication {
                 }
             }
         }
-
-        // MARK: - Helpers
-
-        private func isBiometryAvailable() -> Bool {
-            useBiometry && viewModel.isBiometryEnabled()
-        }
-
-        private func updateBiometryButtonVisibility() {
-            biometryButton?.alpha = isBiometryAvailable() ? 1 : 0
-        }
     }
 }
 
 private func secondsToMinutesSeconds(seconds: Int) -> (Int, Int) {
-    return ((seconds % 3600) / 60, (seconds % 3600) % 60)
+    ((seconds % 3600) / 60, (seconds % 3600) % 60)
 }

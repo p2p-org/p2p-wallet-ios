@@ -239,11 +239,10 @@ extension Settings {
             viewModel.logoutAlertSignal
                 .emit(onNext: { [weak self] in
                     self?.showAlert(
-                        title: L10n.areYouSureYouWantToSignOut,
-                        message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
-                        buttonTitles: [L10n.signOut, L10n.stay],
-                        highlightedButtonIndex: 1,
-                        destroingIndex: 0
+                        title: L10n.logout,
+                        message: L10n.doYouReallyWantToLogout,
+                        buttonTitles: ["OK", L10n.cancel],
+                        highlightedButtonIndex: 1
                     ) { [weak self] index in
                         guard index == 0 else { return }
                         self?.dismiss(animated: true, completion: { [weak self] in
@@ -291,25 +290,22 @@ extension Settings {
                 show(vc, sender: nil)
             case .changePincode:
                 let createPincodeVC = WLCreatePincodeVC(
-                    createPincodeTitle: L10n.newPINCode,
+                    createPincodeTitle: L10n.setUpANewWalletPIN,
                     confirmPincodeTitle: L10n.confirmPINCode
                 )
+
                 createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
                     self?.viewModel.savePincode(String(pincode))
-                    createPincodeVC?.dismiss(animated: true) { [weak self] in
-                        let vc = PinCodeChangedVC()
-                        self?.present(vc, animated: true, completion: nil)
+                    createPincodeVC?.dismiss(animated: true) {
+                        Resolver.resolve(NotificationsService.self)
+                            .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
                     }
                 }
                 createPincodeVC.onCancel = { [weak createPincodeVC] in
                     createPincodeVC?.dismiss(animated: true, completion: nil)
                 }
 
-                // modal
-                let modalVC = WLIndicatorModalVC()
-                modalVC.add(child: createPincodeVC, to: modalVC.containerView)
-
-                present(modalVC, animated: true, completion: nil)
+                present(createPincodeVC, animated: true, completion: nil)
             case .language:
                 let vc = SelectLanguageViewController(viewModel: viewModel)
                 show(vc, sender: nil)

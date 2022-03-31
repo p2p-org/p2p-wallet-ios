@@ -284,7 +284,7 @@
 "Powered by Project Serum" = "Powered by Project Serum";
 "PIN-code changed!" = "PIN-code changed!";
 "Go back to profile" = "Go back to profile";
-"Enter current PIN-code" = "Enter current PIN-code";
+"Enter current PIN" = "Enter current PIN";
 "Reset and try again" = "Reset and try again";
 "Confirm PIN-code" = "Confirm PIN-code";
 "Enter PIN-code" = "Enter PIN-code";
@@ -774,7 +774,20 @@
 "Deposit" = "Deposit";
 "This value is calculated by subtracting the transaction fee from your balance." = "This value is calculated by subtracting the transaction fee from your balance.";
 "The maximum value is calculated by subtracting the transaction fee from your balance." = "The maximum value is calculated by subtracting the transaction fee from your balance.";
+"Incorrect PIN, try again (%@ attempt left)" = "Incorrect PIN, try again (%@ attempt left)";
+"Forgot your PIN?" = "Forgot your PIN?";
+"Reset it" = "Reset it";
+"You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@." = "You have %@ attempts left to type the correct PIN.
+Reset the PIN or wait for %@.";
+"You have successfully set your PIN" = "You have successfully set your PIN";
+"Are you sure you want to sign out?" = "Are you sure you want to sign out?";
+"If you have no backup, you may never be able to access this account." = "If you have no backup, you may never be able to access this account.";
+"Resetting your PIN" = "Resetting your PIN";
+"Reset your PIN" = "Reset your PIN";
 "Are you sure you want to sign out?" = "Are you sure you want to sign out?";
 "Without the backup, you may never be able to access this account." = "Without the backup, you may never be able to access this account.";
+"Set up a new wallet PIN" = "Set up a new wallet PIN";
+"Set up a new PIN" = "Set up a new PIN";
 "Sign Out" = "Sign Out";
 "If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever.";
