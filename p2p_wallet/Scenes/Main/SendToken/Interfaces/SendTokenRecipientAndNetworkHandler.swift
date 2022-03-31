@@ -119,24 +119,23 @@ extension SendTokenRecipientAndNetworkHandler {
                             network: network,
                             payingTokenMint: payingWallet?.mintAddress
                         )
-                        .flatMap { [weak self] feeAmountInSOL -> Single<(SolanaSDK.FeeAmount, SolanaSDK.FeeAmount)> in
+                        .flatMap { [weak self] feeAmountInSOL -> Single<SendToken.FeeInfo> in
                             guard let sendService = self?.sendService else {
                                 throw SolanaSDK.Error.unknown
                             }
                             guard let feeAmountInSOL = feeAmountInSOL else {
-                                return .just((.zero, .zero))
+                                return .just(.zero)
                             }
                             guard let payingWallet = payingWallet else {
-                                return .just((feeAmountInSOL, .zero))
+                                return .just(.zero)
                             }
 
                             return sendService.getFeesInPayingToken(
                                 feeInSOL: feeAmountInSOL,
                                 payingFeeWallet: payingWallet
                             )
-                                .map { (feeAmountInSOL, $0 ?? .zero) }
+                                .map { .init(feeAmount: $0 ?? .zero, feeAmountInSOL: feeAmountInSOL) }
                         }
-                        .map { .init(feeAmount: $0.1, feeAmountInSOL: $0.0) }
                 } else {
                     self.feeInfoSubject.request = .just(.init(feeAmount: .zero, feeAmountInSOL: .zero))
                 }
