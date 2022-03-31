@@ -278,6 +278,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                 guard let value = feeInfo.value else {
                                     return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                                 }
+                                if value.hasAvailableWalletToPayFee == false {
+                                    return L10n.insufficientFundsToCoverFees
+                                }
                                 if let wallet = payingWallet,
                                    let lamports = wallet.lamports,
                                    lamports < value.feeAmount.total
