@@ -205,9 +205,7 @@ extension OrcaSwapV2 {
             authenticationHandler.authenticate(
                 presentationStyle:
                 .init(
-                    isRequired: false,
-                    isFullScreen: false,
-                    completion: { [weak self] in
+                    completion: { [weak self] _ in
                         self?.swap()
                     }
                 )

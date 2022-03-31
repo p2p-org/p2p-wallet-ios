@@ -161,13 +161,13 @@ extension Array where Element == Swap.PoolsPair {
         guard count > 0 else { return nil }
 
         var bestPools: Swap.PoolsPair?
-        var bestEstimatedAmount: UInt64 = 0
+        var bestInputAmount: UInt64 = .max
 
         for pair in self {
-            guard let estimatedAmount = pair.getInputAmount(fromEstimatedAmount: estimatedAmount)
+            guard let inputAmount = pair.getInputAmount(fromEstimatedAmount: estimatedAmount)
             else { continue }
-            if estimatedAmount > bestEstimatedAmount {
-                bestEstimatedAmount = estimatedAmount
+            if inputAmount < bestInputAmount {
+                bestInputAmount = inputAmount
                 bestPools = pair
             }
         }
