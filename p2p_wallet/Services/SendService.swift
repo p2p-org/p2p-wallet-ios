@@ -189,9 +189,16 @@ class SendService: SendServiceType {
             walletsRepository.getWallets()
                 .filter { ($0.lamports ?? 0) > 0 }
                 .map { wallet -> Single<Wallet?> in
-                    relayService.calculateFeeInPayingToken(feeInSOL: feeInSOL, payingFeeTokenMint: wallet.mintAddress)
+                    if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+                        return (wallet.lamports ?? 0) >= feeInSOL.total ? .just(wallet) : .just(nil)
+                    }
+                    return relayService.calculateFeeInPayingToken(
+                        feeInSOL: feeInSOL,
+                        payingFeeTokenMint: wallet.mintAddress
+                    )
                         .map { ($0?.total ?? 0) <= (wallet.lamports ?? 0) }
                         .map { $0 ? wallet : nil }
+                        .catchAndReturn(nil)
                 }
         )
             .map { $0.compactMap { $0 }}
