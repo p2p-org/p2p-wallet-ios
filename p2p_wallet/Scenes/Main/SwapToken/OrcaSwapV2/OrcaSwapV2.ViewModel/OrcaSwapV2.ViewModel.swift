@@ -45,6 +45,7 @@ extension OrcaSwapV2 {
         let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
         let showHideDetailsButtonTapSubject = PublishRelay<Void>()
         let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
+        var activeInputField = ActiveInputField.none
 
         // MARK: - setter
 
@@ -153,7 +154,9 @@ extension OrcaSwapV2 {
                 .filter { $0 == .loaded }
                 .subscribe(onNext: { [weak self] _ in
                     guard let self = self else { return }
-                    if let inputAmount = self.inputAmountSubject.value {
+                    if let inputAmount = self.inputAmountSubject.value,
+                       self.activeInputField != .destination
+                    {
                         self.enterInputAmount(inputAmount)
                     } else if let estimatedAmount = self.estimatedAmountSubject.value {
                         self.enterEstimatedAmount(estimatedAmount)
