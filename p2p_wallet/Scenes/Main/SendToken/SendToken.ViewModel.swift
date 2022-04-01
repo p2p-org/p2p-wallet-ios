@@ -141,9 +141,17 @@ extension SendToken {
 
         private func send() {
             guard let wallet = walletSubject.value,
-                  let amount = amountSubject.value,
+                  var amount = amountSubject.value,
                   let receiver = recipientSubject.value
             else { return }
+
+            // modify amount if using source wallet as paying wallet
+            if let totalFee = feeInfoSubject.value?.feeAmount,
+               totalFee.total > 0,
+               payingWalletSubject.value?.pubkey == wallet.pubkey
+            {
+                amount -= totalFee.total.convertToBalance(decimals: payingWalletSubject.value?.token.decimals)
+            }
 
             let network = networkSubject.value
 
