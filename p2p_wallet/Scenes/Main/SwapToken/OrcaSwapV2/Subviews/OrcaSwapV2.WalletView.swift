@@ -270,6 +270,14 @@ extension OrcaSwapV2.WalletView: UITextFieldDelegate {
         }
         return true
     }
+
+    func textFieldDidBeginEditing(_: UITextField) {
+        viewModel.activeInputField = type == .source ? .source : .destination
+    }
+
+    func textFieldDidEndEditing(_: UITextField) {
+        viewModel.activeInputField = .none
+    }
 }
 
 private extension OrcaSwapV2.WalletView {
