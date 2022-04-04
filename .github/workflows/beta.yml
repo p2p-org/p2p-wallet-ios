@@ -5,8 +5,19 @@ on:
     types: [submitted]
 
 jobs:
-  approved:
+  # if the current branch has prefix "pwn-", a build for testing is needed
+  check_if_build_is_needed:
     if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     steps:
-      - run: echo "This PR was approved"
+      - uses: actions/checkout@v3
+      - run: echo "Checking if branch ##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/}) is a feature branch..."
+      - run: 
+  
+  # upload needed-for-testing build
+  upload_build_for_testing:
+    if: github.event.review.state == 'approved'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "This PR was approved from branch ##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"

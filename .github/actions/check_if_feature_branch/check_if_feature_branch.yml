@@ -1,0 +1,6 @@
+name: 'check_if_feature_branch'
+description: 'Check if the current branch is a feature branch'
+inputs:
+  branch-name:
+    description: 'Current branch name. For example, `features/pwn-1234-test-feature`, `fixes/pwn-1234`, `ci/no-need-to-build`'
+    default: ${GITHUB_REF##*/}
