@@ -19,4 +19,4 @@ jobs:
       - name: Modify branch name
         id: mbn
         shell: bash
-        run: echo ${steps.extract_branch.branch}
+        run: echo ${GITHUB_REF##*/}
