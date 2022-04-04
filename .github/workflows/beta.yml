@@ -12,7 +12,11 @@ jobs:
     steps:
       - name: Check out current branch
         uses: actions/checkout@v3
-      - name: Check if feature branch
-        uses: ./.github/actions/check_if_feature_branch
-      # create build and deploy beta if true
-      - run: echo "Create beta release from branch ${{ steps.check_if_feature_branch.outputs.*  }}"
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=name;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Modify branch name
+        id: mbn
+        shell: bash
+        run: echo "${steps.extract_branch.name}"
