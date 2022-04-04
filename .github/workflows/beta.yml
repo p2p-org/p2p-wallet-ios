@@ -12,9 +12,12 @@ jobs:
     steps:
       - name: Check out current branch
         uses: actions/checkout@v3
-      - name: Get branch name
-        shell: bash
+      - shell: bash
         run: |
-          branch=${GITHUB_REF##*/} \
-            sed 's/.*pwn-\(.*\)-.*/\1/' <<< "$branch" \
-            echo $branch 
+          branch=${GITHUB_REF##*/}
+      - shell: bash
+        run: |
+          sed 's/.*pwn-\(.*\)-.*/\1/' <<< "$branch"
+      - shell: bash
+        run: |
+          echo $branch
