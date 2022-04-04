@@ -16,6 +16,5 @@ jobs:
         shell: bash
         run: |
           branch=${GITHUB_REF##*/} \
-            echo $branch | cut -d "auto" -f2
-            
-        
+            sed 's/.*pwn-\(.*\)-.*/\1/' <<< "$branch" \
+            echo $branch 
