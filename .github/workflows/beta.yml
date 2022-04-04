@@ -12,11 +12,10 @@ jobs:
     steps:
       - name: Check out current branch
         uses: actions/checkout@v3
-      - name: Extract branch name
+      - name: Get branch name
         shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF##*/})"
-        id: extract_branch
-      - name: Modify branch name
-        id: mbn
-        shell: bash
-        run: echo ${GITHUB_REF##*/}
+        run: |
+          branch=${GITHUB_REF##*/} \
+            echo $branch | cut -d "auto" -f2
+            
+        
