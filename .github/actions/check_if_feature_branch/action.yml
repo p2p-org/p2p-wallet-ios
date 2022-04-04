@@ -1,0 +1,7 @@
+name: 'check_if_feature_branch'
+description: 'Check if the current branch is a feature branch'
+outputs:
+  is_feature_branch: # id of the output
+    description: 'Return true if the current branch is a feature branch'
+    value: ${GITHUB_REF##*/}
+  
