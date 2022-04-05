@@ -97,7 +97,7 @@ platform :ios do
      
     # check if branch is a feature branch
     if !branch.include?("pwn-")
-      puts "The branch is not a feature branch. Skiping..."
+      puts "The branch is not a feature branch. Skipping..."
       next
     end
 
@@ -111,10 +111,20 @@ platform :ios do
       next
     end
 
+    # set prefix for tagging
+    tag_prefix = "builds/feature_test/"
+
+    # get number of builds released of this feature
+    number_of_released_builds = 0
+    current_build = (feature_number.to_str + (number_of_released_builds + 1).to_str).to_i # pwn-1234, released 1 build -> builds/features_test/12342
+    while git_tag_exists(tag: "#{tag_prefix}/#{current_build}")
+      current_build += 1
+    end
+
     # set build number
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
-      build_number: feature_number,
+      build_number: current_build,
       skip_info_plist: true
     )
 
@@ -129,7 +139,7 @@ platform :ios do
 
     # tag
     version = get_version_number
-    add_git_tag(tag: "builds/feature_test/#{feature_number}")
+    add_git_tag(tag: "#{tag_prefix}#{current_build}")
 
     # reset file
     reset_git_repo(
