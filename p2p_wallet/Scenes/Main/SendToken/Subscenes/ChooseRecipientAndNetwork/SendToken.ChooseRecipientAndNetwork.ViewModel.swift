@@ -48,7 +48,11 @@ extension SendToken.ChooseRecipientAndNetwork {
         let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
         let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
         let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.zero))
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(
+            request: .just(
+                .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
+            )
+        )
 
         // MARK: - Initializers
 

@@ -63,7 +63,11 @@ extension SendToken {
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.zero))
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(
+            request: .just(
+                .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
+            )
+        )
 
         // MARK: - Initializers
 
