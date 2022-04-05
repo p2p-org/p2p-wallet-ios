@@ -116,10 +116,12 @@ platform :ios do
 
     # get number of builds released of this feature
     number_of_released_builds = 0
-    current_build = (feature_number.to_str + (number_of_released_builds + 1).to_str).to_i # pwn-1234, released 1 build -> builds/features_test/12342
+    current_build = (feature_number.to_s + (number_of_released_builds + 1).to_s).to_i # pwn-1234, released 1 build -> builds/features_test/12342
     while git_tag_exists(tag: "#{tag_prefix}/#{current_build}")
       current_build += 1
     end
+
+    puts "Set build number to #{current_build}"
 
     # set build number
     increment_build_number(
