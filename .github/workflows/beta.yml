@@ -1,7 +1,7 @@
 name: beta
-on:
-  pull_request_review:
-    types: [submitted]
+on: [push]
+  #pull_request_review:
+    #types: [submitted]
 jobs:
   # upload needed-for-testing build
   upload_build_for_testing:
@@ -18,20 +18,20 @@ jobs:
         with:
           lane: feature_test
         env:
-          DEVELOPER_APP_IDENTIFIER='${{ secrets.DEVELOPER_APP_IDENTIFIER }}'
-          APP_STORE_CONNECT_TEAM_ID='${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
-          DEVELOPER_PORTAL_TEAM_ID='${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
-          DEVELOPER_APP_ID='${{ secrets.DEVELOPER_APP_ID }}'
-          PROVISIONING_PROFILE_SPECIFIER='${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}'
-          APPLE_ISSUER_ID='${{ secrets.APPLE_ISSUER_ID }}'
-          PROVISIONING_REPO='${{ secrets.PROVISIONING_REPO }}'
-          FIREBASE_APP_ID='${{ secrets.FIREBASE_APP_ID }}'
-          FIREBASE_CLI_TOKEN='${{ secrets.FIREBASE_CLI_TOKEN }}'
-          BROWSERSTACK_USERNAME='${{ secrets.BROWSERSTACK_USERNAME }}'
-          BROWSERSTACK_ACCESS_KEY='${{ secrets.BROWSERSTACK_ACCESS_KEY }}'
-          FASTLANE_APPLE_ID='${{ secrets.FASTLANE_APPLE_ID }}'
-          TEMP_KEYCHAIN_USER='${{ secrets.TEMP_KEYCHAIN_USER }}'
-          TEMP_KEYCHAIN_PASSWORD='${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
-          APPLE_KEY_ID='${{ secrets.APPLE_KEY_ID }}'
-          APPLE_KEY_CONTENT='${{ secrets.APPLE_KEY_CONTENT }}'
-          GIT_AUTHORIZATION='${{ secrets.GIT_AUTHORIZATION }}'
+          DEVELOPER_APP_IDENTIFIER: '${{ secrets.DEVELOPER_APP_IDENTIFIER }}'
+          APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
+          DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
+          DEVELOPER_APP_ID: '${{ secrets.DEVELOPER_APP_ID }}'
+          PROVISIONING_PROFILE_SPECIFIER: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}'
+          APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
+          PROVISIONING_REPO: '${{ secrets.PROVISIONING_REPO }}'
+          FIREBASE_APP_ID: '${{ secrets.FIREBASE_APP_ID }}'
+          FIREBASE_CLI_TOKEN: '${{ secrets.FIREBASE_CLI_TOKEN }}'
+          BROWSERSTACK_USERNAME: '${{ secrets.BROWSERSTACK_USERNAME }}'
+          BROWSERSTACK_ACCESS_KEY: '${{ secrets.BROWSERSTACK_ACCESS_KEY }}'
+          FASTLANE_APPLE_ID: '${{ secrets.FASTLANE_APPLE_ID }}'
+          TEMP_KEYCHAIN_USER: '${{ secrets.TEMP_KEYCHAIN_USER }}'
+          TEMP_KEYCHAIN_PASSWORD: '${{ secrets.TEMP_KEYCHAIN_PASSWORD }}'
+          APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
+          APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
+          GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
