@@ -83,10 +83,12 @@ def upload_to_firebase_and_browserstack
 end 
 
 def commit_changes
-  version = get_version_number
+  version = get_version_number(target: "p2p_wallet")
   build = get_build_number
   git_commit(path: ["p2p_wallet.xcodeproj/project.pbxproj"], message: "release(beta): version #{version}, build #{build}")
-  add_git_tag(tag: "v#{version}(#{build})")
+  tag_name = "v#{version}(#{build})"
+  add_git_tag(tag: tag_name)
+  push_git_tags(tag: tag_name)
 end 
 
 platform :ios do
@@ -140,8 +142,9 @@ platform :ios do
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
 
     # tag
-    version = get_version_number
-    add_git_tag(tag: "#{tag_prefix}/#{current_build}")
+    tag_name = "#{tag_prefix}/#{current_build}"
+    add_git_tag(tag: tag_name)
+    push_git_tags(tag: tag_name)
 
     # reset file
     reset_git_repo(
