@@ -116,12 +116,11 @@ platform :ios do
 
     # prepare for tagging
     tag_prefix = "builds/feature_test"
-#     git_pull(only_tags: true)
 
     # get number of builds released of this feature
     number_of_released_builds = 0
     current_build = (feature_number.to_s + (number_of_released_builds + 1).to_s).to_i # pwn-1234, released 1 build -> builds/features_test/12342
-    while git_tag_exists(tag: "#{tag_prefix}/#{current_build}")
+    while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
       current_build += 1
     end
 
