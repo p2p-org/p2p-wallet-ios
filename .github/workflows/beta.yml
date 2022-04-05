@@ -6,7 +6,6 @@ jobs:
   # upload needed-for-testing build
   upload_build_for_testing:
     name: Deploy specific feature for testing
-    if: github.event.review.state == 'approved'
     runs-on: macOS-latest
 
     steps:
