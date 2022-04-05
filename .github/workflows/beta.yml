@@ -1,12 +1,12 @@
 name: beta
-on: pull_request 
-  #pull_request_review:
-    #types: [submitted]
+on:
+  pull_request_review:
+    types: [submitted]
 jobs:
   # upload needed-for-testing build
   upload_build_for_testing:
     name: Deploy specific feature for testing
-    # if: github.event.review.state == 'approved'
+    if: github.event.review.state == 'approved'
     runs-on: macOS-latest
 
     steps:
