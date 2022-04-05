@@ -35,6 +35,7 @@ extension SendToken.ChooseRecipientAndNetwork {
         private let sendTokenViewModel: SendTokenViewModelType
         let showAfterConfirmation: Bool
         let preSelectedNetwork: SendToken.Network?
+        @Injected var walletRepository: WalletsRepository
 
         // MARK: - Properties
 
@@ -80,6 +81,46 @@ extension SendToken.ChooseRecipientAndNetwork {
 
             sendTokenViewModel.payingWalletDriver
                 .drive(payingWalletSubject)
+                .disposed(by: disposeBag)
+
+            // Smart select fee token
+            recipientSubject
+                .flatMapLatest { [weak self] _ -> Single<SolanaSDK.FeeAmount?> in
+                    guard
+                        let self = self,
+                        let wallet = self.sendTokenViewModel.walletSubject.value,
+                        let receiver = self.recipientSubject.value
+                    else { return .just(.zero) }
+
+                    return self.sendService.getFees(
+                        from: wallet,
+                        receiver: receiver.address,
+                        network: self.networkSubject.value,
+                        payingTokenMint: wallet.mintAddress
+                    )
+                        .flatMap { [weak self] fee -> Single<SolanaSDK.FeeAmount?> in
+                            guard let self = self, let fee = fee else { return .just(.zero) }
+
+                            return self.sendService.getFeesInPayingToken(
+                                feeInSOL: fee,
+                                payingFeeWallet: wallet
+                            )
+                        }
+                }
+                .subscribe(onNext: { [weak self] fee in
+                    guard
+                        let self = self,
+                        let amount = self.sendTokenViewModel.amountSubject.value,
+                        let wallet = self.sendTokenViewModel.walletSubject.value,
+                        let fee = fee
+                    else { return }
+
+                    if amount.toLamport(decimals: wallet.token.decimals) + fee.total > (wallet.lamports ?? 0) {
+                        self.payingWalletSubject.accept(self.walletRepository.nativeWallet)
+                    } else {
+                        self.payingWalletSubject.accept(wallet)
+                    }
+                })
                 .disposed(by: disposeBag)
 
             bindFees()
