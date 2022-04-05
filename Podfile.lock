@@ -176,7 +176,7 @@ DEPENDENCIES:
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
-  - "Down (from `git@github.com:p2p-org/Down.git`)"
+  - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
   - Firebase/Crashlytics
@@ -186,7 +186,7 @@ DEPENDENCIES:
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - LazySubject (from `LazySubject`)
-  - "ListPlaceholder (from `git@github.com:p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)"
+  - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
   - OrcaSwapSwift (from `OrcaSwapSwift`)
   - Periphery
   - RenVMSwift (from `RenVMSwift`)
@@ -252,14 +252,14 @@ EXTERNAL SOURCES:
   BEPureLayout:
     :path: BEPureLayout
   Down:
-    :git: "git@github.com:p2p-org/Down.git"
+    :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
     :path: FeeRelayerSwift
   LazySubject:
     :path: LazySubject
   ListPlaceholder:
     :branch: custom_gradient_color
-    :git: "git@github.com:p2p-org/ListPlaceholder.git"
+    :git: https://github.com/p2p-org/ListPlaceholder.git
   OrcaSwapSwift:
     :path: OrcaSwapSwift
   RenVMSwift:
@@ -270,10 +270,10 @@ EXTERNAL SOURCES:
 CHECKOUT OPTIONS:
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
-    :git: "git@github.com:p2p-org/Down.git"
+    :git: https://github.com/p2p-org/Down.git
   ListPlaceholder:
     :commit: a729fd45aa22b9d087477d1ccedb9f4292762a58
-    :git: "git@github.com:p2p-org/ListPlaceholder.git"
+    :git: https://github.com/p2p-org/ListPlaceholder.git
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
@@ -327,6 +327,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 8cae22dd1d77d89cd1a46a68537ef07599a5d6f0
+PODFILE CHECKSUM: 2da43afd93c2dc6c6defbb54f762dfd29464894e
 
 COCOAPODS: 1.11.3
