@@ -49,11 +49,6 @@ def create_release_build(match_type)
     in_house: false
   )
   
-  increment_build_number(
-    xcodeproj: "p2p_wallet.xcodeproj", 
-    skip_info_plist: true
-  )
-  
   cocoapods(
     clean_install: true
   )
@@ -80,7 +75,32 @@ def commit_changes
 end 
 
 platform :ios do
+  lane :feature_test do
+    # get current branch name
+    branch = git_branch
+    
+    # check if branch is a feature branch
+    if !branch.include?("pwn-")
+      puts "The branch is not a feature branch. Skiping..."
+      next
+    end
+
+    # else get feature number
+    feature_number = branch.split("pwn-").last.split("-").first.to_i
+    puts feature_number
+
+    # create_release_build('adhoc')
+    
+  end
+  
   lane :beta do
+    # increment build number
+    increment_build_number(
+      xcodeproj: "p2p_wallet.xcodeproj",
+      skip_info_plist: true
+    )
+
+    # create release build
     create_release_build('adhoc')
     
     # upload to firebase
@@ -104,6 +124,11 @@ platform :ios do
   end 
 
   lane :closed_beta do
+    increment_build_number(
+      xcodeproj: "p2p_wallet.xcodeproj",
+      skip_info_plist: true
+    )
+
     create_release_build
 
     pilot(
