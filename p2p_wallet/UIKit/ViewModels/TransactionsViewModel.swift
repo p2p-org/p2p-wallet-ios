@@ -22,6 +22,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     @Injected private var transactionHandler: TransactionHandlerType
     @Injected private var feeRelayer: FeeRelayerAPIClientType
     @Injected private var notificationsRepository: WLNotificationsRepository
+    @Injected private var walletsRepository: WalletsRepository
 
     // MARK: - Properties
 
@@ -100,6 +101,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             }
             .do(
                 afterSuccess: { [weak self] transactions in
+                    self?.walletsRepository.reload()
                     self?.before = transactions.last?.signature
                 }
             )
