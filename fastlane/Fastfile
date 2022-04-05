@@ -103,8 +103,36 @@ platform :ios do
       skip_info_plist: true
     )
 
-    # create_release_build('adhoc')
+    # create release build for this feature
+    create_release_build('adhoc')
     
+    # upload to firebase
+    firebase_app_distribution(
+      app: FIREBASE_APP_ID,
+      groups: "dev_team",
+      firebase_cli_token: FIREBASE_CLI_TOKEN
+    )
+
+    # upload to browserstack
+    upload_to_browserstack_app_live(
+      browserstack_username: BROWSERSTACK_USERNAME,
+      browserstack_access_key: BROWSERSTACK_ACCESS_KEY,
+    )
+    
+    # delete temp keychain
+    delete_temp_keychain(TEMP_KEYCHAIN_USER)
+
+    # tag
+    version = get_version_number
+    add_git_tag(tag: "builds/feature_test/(#{feature_number})")
+
+    # reset file
+    reset_git_repo(
+      force: true,
+      files: [
+        "p2p_wallet.xcodeproj/project.pbxproj"
+      ]
+    ) 
   end
   
   lane :beta do
