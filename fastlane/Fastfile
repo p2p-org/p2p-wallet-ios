@@ -94,7 +94,7 @@ end
 platform :ios do
   lane :feature_test do
     # get current branch name
-    branch = git_branch.downcase
+    branch = ENV["GITHUB_HEAD_REF"]
     puts "Current branch is #{branch}"
      
     # check if branch is a feature branch
