@@ -1,10 +1,10 @@
 default_platform(:ios)
 
-GITHUB_REF = ENV["GITHUB"]
+GITHUB_REF = ENV["GITHUB_REF"]
 GITHUB_HEAD_REF = ENV["GITHUB_HEAD_REF"]
 
-puts "REF: ${GITHUB_REF}"
-puts "HEAD REF: ${GITHUB_HEAD_REF}"
+puts "REF: #{GITHUB_REF}"
+puts "HEAD REF: #{GITHUB_HEAD_REF}"
 
 platform :ios do
   lane :feature_test do
