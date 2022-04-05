@@ -65,6 +65,21 @@ def create_release_build(match_type)
   )
 
   gym(scheme: 'p2p_wallet', export_method: 'ad-hoc', export_xcargs: '-allowProvisioningUpdates')
+end
+
+def upload_to_firebase_and_browserstack
+  # upload to firebase
+  firebase_app_distribution(
+    app: FIREBASE_APP_ID,
+    groups: "dev_team",
+    firebase_cli_token: FIREBASE_CLI_TOKEN
+  )
+
+  # upload to browserstack
+  upload_to_browserstack_app_live(
+    browserstack_username: BROWSERSTACK_USERNAME,
+    browserstack_access_key: BROWSERSTACK_ACCESS_KEY,
+  )
 end 
 
 def commit_changes
@@ -105,26 +120,16 @@ platform :ios do
 
     # create release build for this feature
     create_release_build('adhoc')
-    
-    # upload to firebase
-    firebase_app_distribution(
-      app: FIREBASE_APP_ID,
-      groups: "dev_team",
-      firebase_cli_token: FIREBASE_CLI_TOKEN
-    )
-
-    # upload to browserstack
-    upload_to_browserstack_app_live(
-      browserstack_username: BROWSERSTACK_USERNAME,
-      browserstack_access_key: BROWSERSTACK_ACCESS_KEY,
-    )
+   
+    # upload to firebase and browser stack
+    upload_to_firebase_and_browserstack 
     
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
 
     # tag
     version = get_version_number
-    add_git_tag(tag: "builds/feature_test/(#{feature_number})")
+    add_git_tag(tag: "builds/feature_test/#{feature_number}")
 
     # reset file
     reset_git_repo(
