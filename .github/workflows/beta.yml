@@ -15,6 +15,10 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
 
+      - name: Checkout submodules
+        run: |
+          git submodule update --init --recursive
+
       - name: Deploy specific feature for testing via Fastlane
         uses: maierj/fastlane-action@v2.2.0
         with:
