@@ -1,7 +1,7 @@
 name: beta
-on:
-  pull_request_review:
-    types: [submitted]
+on: [push]
+  #pull_request_review:
+    #types: [submitted]
 jobs:
   # upload needed-for-testing build
   upload_build_for_testing:
@@ -10,8 +10,15 @@ jobs:
     runs-on: macOS-latest
 
     steps:
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
       - name: Check out current branch
         uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.run_tests.outputs.extract_branch }}
 
       - name: Deploy specific feature for testing via Fastlane
         uses: maierj/fastlane-action@v2.2.0
