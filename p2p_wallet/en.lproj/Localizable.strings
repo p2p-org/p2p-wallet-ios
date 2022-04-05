@@ -791,3 +791,5 @@ Reset the PIN or wait for %@.";
 "Set up a new PIN" = "Set up a new PIN";
 "Sign Out" = "Sign Out";
 "If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever.";
+"Not enough funds" = "Not enough funds";
+"Insufficient funds to cover fees" = "Insufficient funds to cover fees";

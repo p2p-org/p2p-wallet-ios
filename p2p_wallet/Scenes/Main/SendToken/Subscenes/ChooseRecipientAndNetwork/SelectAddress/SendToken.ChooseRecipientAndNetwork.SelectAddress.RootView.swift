@@ -254,12 +254,13 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
 
             Driver.combineLatest(
+                viewModel.walletDriver,
                 viewModel.recipientDriver,
                 viewModel.payingWalletDriver,
                 viewModel.feeInfoDriver,
                 viewModel.networkDriver
             )
-                .map { [weak self] recipient, payingWallet, feeInfo, network in
+                .map { [weak self] sourceWallet, recipient, payingWallet, feeInfo, network in
                     guard let self = self else { return "" }
                     if recipient == nil {
                         return L10n.chooseTheRecipientToProceed
@@ -278,16 +279,25 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                 guard let value = feeInfo.value else {
                                     return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne
                                 }
-                                if let wallet = payingWallet,
-                                   let lamports = wallet.lamports,
+                                if value.hasAvailableWalletToPayFee == false {
+                                    return L10n.insufficientFundsToCoverFees
+                                }
+                                if let payingWallet = payingWallet,
+                                   let lamports = payingWallet.lamports,
                                    lamports < value.feeAmount.total
                                 {
-                                    let neededAmount = value.feeAmount.total
-                                        .convertToBalance(decimals: wallet.token.decimals)
-                                        .toString(maximumFractionDigits: Int(wallet.token.decimals))
-                                    return L10n.yourAccountDoesNotHaveEnoughToCoverFees(wallet.token.symbol)
-                                        + ". "
-                                        + L10n.needsAtLeast(neededAmount + " \(wallet.token.symbol)")
+                                    if lamports < value.feeAmount.total {
+                                        let neededAmount = value.feeAmount.total
+                                            .convertToBalance(decimals: payingWallet.token.decimals)
+                                            .toString(maximumFractionDigits: Int(payingWallet.token.decimals))
+                                        return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                                            + ". "
+                                            + L10n.needsAtLeast(neededAmount + " \(payingWallet.token.symbol)")
+                                    }
+
+                                    if lamports == value.feeAmount.total, sourceWallet?.pubkey == payingWallet.pubkey {
+                                        return L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
+                                    }
                                 }
                                 if value.feeAmount.total == 0, value.feeAmountInSOL.total > 0 {
                                     return L10n.PayingTokenIsNotValid.pleaseChooseAnotherOne

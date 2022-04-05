@@ -108,15 +108,15 @@ extension OrcaSwapV2 {
 
             Driver.combineLatest(
                 viewModel.errorDriver,
-                viewModel.sourceWalletDriver.map { $0?.token.symbol }
+                viewModel.feePayingTokenDriver.map { $0?.token.symbol }
             )
                 .drive { [weak self] in
-                    self?.setError(error: $0, sourceSymbol: $1)
+                    self?.setError(error: $0, feePayingTokenSymbol: $1)
                 }
                 .disposed(by: disposeBag)
         }
 
-        private func setError(error: OrcaSwapV2.VerificationError?, sourceSymbol: String?) {
+        private func setError(error: OrcaSwapV2.VerificationError?, feePayingTokenSymbol: String?) {
             let text: String
             var image: UIImage?
 
@@ -154,7 +154,7 @@ extension OrcaSwapV2 {
             case .notEnoughSOLToCoverFees:
                 text = L10n.yourAccountDoesNotHaveEnoughSOLToCoverFee
             case .notEnoughBalanceToCoverFees:
-                text = L10n.yourAccountDoesNotHaveEnoughToCoverFees(sourceSymbol ?? "")
+                text = L10n.yourAccountDoesNotHaveEnoughToCoverFees(feePayingTokenSymbol ?? "")
             case .unknown:
                 text = L10n.unknownError
             case .none:
