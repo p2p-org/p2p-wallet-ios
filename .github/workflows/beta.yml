@@ -10,8 +10,14 @@ jobs:
     runs-on: macOS-latest
 
     steps:
+      - name: Get branch name
+        id: branch-name
+        uses: tj-actions/branch-names@v5.2
+
       - name: Check out current branch
         uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.branch-name.outputs.current_branch }}
 
       - name: Deploy specific feature for testing via Fastlane
         uses: maierj/fastlane-action@v2.2.0
