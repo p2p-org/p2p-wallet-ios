@@ -1,6 +1,5 @@
 default_platform(:ios)
 
-GITHUB_HEAD_REF = ENV["GITHUB_HEAD_REF"]
 DEVELOPER_APP_ID = ENV["DEVELOPER_APP_ID"]
 DEVELOPER_APP_IDENTIFIER = ENV["DEVELOPER_APP_IDENTIFIER"]
 PROVISIONING_PROFILE_SPECIFIER = ENV["PROVISIONING_PROFILE_SPECIFIER"]
@@ -95,7 +94,7 @@ end
 platform :ios do
   lane :feature_test do
     # get current branch name
-    branch = GITHUB_HEAD_REF.downcase
+    branch = git_branch.downcase
     puts "Current branch is #{branch}"
      
     # check if branch is a feature branch
