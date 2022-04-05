@@ -114,8 +114,9 @@ platform :ios do
       next
     end
 
-    # set prefix for tagging
+    # prepare for tagging
     tag_prefix = "builds/feature_test"
+    git_pull(only_tags: true)
 
     # get number of builds released of this feature
     number_of_released_builds = 0
