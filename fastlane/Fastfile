@@ -112,7 +112,7 @@ platform :ios do
     end
 
     # set prefix for tagging
-    tag_prefix = "builds/feature_test/"
+    tag_prefix = "builds/feature_test"
 
     # get number of builds released of this feature
     number_of_released_builds = 0
@@ -141,7 +141,7 @@ platform :ios do
 
     # tag
     version = get_version_number
-    add_git_tag(tag: "#{tag_prefix}#{current_build}")
+    add_git_tag(tag: "#{tag_prefix}/#{current_build}")
 
     # reset file
     reset_git_repo(
