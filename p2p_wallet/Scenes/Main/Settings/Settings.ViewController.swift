@@ -239,10 +239,11 @@ extension Settings {
             viewModel.logoutAlertSignal
                 .emit(onNext: { [weak self] in
                     self?.showAlert(
-                        title: L10n.logout,
-                        message: L10n.doYouReallyWantToLogout,
-                        buttonTitles: ["OK", L10n.cancel],
-                        highlightedButtonIndex: 1
+                        title: L10n.areYouSureYouWantToSignOut,
+                        message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
+                        buttonTitles: [L10n.signOut, L10n.stay],
+                        highlightedButtonIndex: 1,
+                        destroingIndex: 0
                     ) { [weak self] index in
                         guard index == 0 else { return }
                         self?.dismiss(animated: true, completion: { [weak self] in
