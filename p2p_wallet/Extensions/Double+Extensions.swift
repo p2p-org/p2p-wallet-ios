@@ -115,7 +115,7 @@ extension Double {
 
         let number = showMinus ? self : abs(self)
 
-        return (formatter.string(from: number as NSNumber) ?? "0")
+        return (formatter.string(from: number as NSNumber) ?? "0").replacingOccurrences(of: ",", with: ".")
     }
 
     func rounded(decimals: Int?) -> Double {
