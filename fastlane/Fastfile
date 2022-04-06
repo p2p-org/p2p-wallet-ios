@@ -94,6 +94,8 @@ end
 
 platform :ios do
   lane :feature_test do
+    xcversion(version: "13.0")
+
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
