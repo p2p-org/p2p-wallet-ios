@@ -1,13 +1,13 @@
 name: beta
-on:
-  pull_request_review:
-    types: [submitted]
+on: push
+#  pull_request_review:
+#    types: [submitted]
 jobs:
   # upload needed-for-testing build
   upload_build_for_testing:
     name: Deploy specific feature for testing
-    if: github.event.review.state == 'approved'
-    runs-on: macOS-latest
+#    if: github.event.review.state == 'approved'
+    runs-on: macos-latest
 
     steps:
       - name: Check out current branch
@@ -16,6 +16,14 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+
+#      - name: Set XCode Version
+#        run: sudo xcode-select -s /Applications/Xcode_13.app
+
+      - name: Install Dependencies
+        run: |
+          pod install --repo-update
+        shell: bash
 
       - name: Deploy specific feature for testing via Fastlane
         uses: maierj/fastlane-action@v2.2.0
@@ -39,3 +47,5 @@ jobs:
           APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
           APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
           GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
+          MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
+          IS_CI: '${{ secrets.IS_CI }}'
