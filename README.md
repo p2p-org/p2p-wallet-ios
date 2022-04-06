@@ -104,6 +104,8 @@ cp -R Templates/BEScene.xctemplate ~/Library/Developer/Xcode/Templates/File\ Tem
 
 - Resolver
 
+## Fastlane
+
 ## Contribute
 
 We would love you for the contribution to **P2P Wallet**, check the ``LICENSE`` file for more info.
