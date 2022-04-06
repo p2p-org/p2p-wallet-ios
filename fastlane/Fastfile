@@ -65,7 +65,7 @@ def create_release_build(match_type)
     api_key: api_key
   )
 
-  gym(scheme: 'p2p_wallet', export_method: 'ad-hoc', export_xcargs: '-allowProvisioningUpdates')
+  gym(scheme: 'p2p_wallet', export_method: match_type, xcargs: '-allowProvisioningUpdates')
 end
 
 def upload_to_firebase_and_browserstack
@@ -94,8 +94,6 @@ end
 
 platform :ios do
   lane :feature_test do
-    xcversion(version: "13.0")
-
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
