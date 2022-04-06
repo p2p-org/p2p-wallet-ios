@@ -117,25 +117,25 @@ extension BuyPreparing {
                 descriptionRow(
                     label: L10n.purchaseCost("\(viewModel.crypto.name)"),
                     initial: "$ 0.00",
-                    viewModel.purchaseCost.map { "$ \($0.fixedDecimal(2))" }
+                    viewModel.purchaseCost.map(\.convertedFiat)
                 )
                 UIView(height: 8)
                 descriptionRow(
                     label: L10n.processingFee,
                     initial: "$ 0.00",
-                    viewModel.feeAmount.map { "$ \($0.fixedDecimal(2))" }
+                    viewModel.feeAmount.map(\.convertedFiat)
                 )
                 UIView(height: 8)
                 descriptionRow(
                     label: L10n.networkFee,
                     initial: "$ 0.00",
-                    viewModel.networkFee.map { "$ \($0.fixedDecimal(2))" }
+                    viewModel.networkFee.map(\.convertedFiat)
                 )
                 UIView(height: 8)
 
                 UIView.defaultSeparator()
                 UIView(height: 8)
-                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0.fixedDecimal(2))" })
+                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map(\.convertedFiat))
             }
         }
 
@@ -238,5 +238,11 @@ private extension BuyPreparingSceneModel {
                     return NextStatus(text: L10n.continue, isEnable: true)
                 }
             }
+    }
+}
+
+private extension Double {
+    var convertedFiat: String {
+        "$ \(toString(maximumFractionDigits: 2, groupingSeparator: " "))"
     }
 }
