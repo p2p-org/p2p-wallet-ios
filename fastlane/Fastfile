@@ -82,12 +82,7 @@ def upload_to_firebase_and_browserstack
   # upload to browserstack
   upload_to_browserstack_app_live(
     browserstack_username: BROWSERSTACK_USERNAME,
-    browserstack_access_key: BROWSERSTACK_ACCESS_KEY,
-    export_options: {
-      provisioningProfiles: {
-        DEVELOPER_APP_ID => PROVISIONING_PROFILE_SPECIFIER
-      }
-    }
+    browserstack_access_key: BROWSERSTACK_ACCESS_KEY
   )
 end 
 
