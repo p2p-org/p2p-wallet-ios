@@ -97,7 +97,7 @@ end
 platform :ios do
   lane :feature_test do
     # check xcode version (for ci only)
-    if IS_CI == true
+    if IS_CI == "true"
       xcversion(version: "13.0")
     end
 
