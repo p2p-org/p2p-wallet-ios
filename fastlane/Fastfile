@@ -28,8 +28,13 @@ def create_temp_keychain(name, password)
   create_keychain(
     name: name,
     password: password,
-    unlock: true,
+    unlock: false,
     timeout: 0
+  )
+
+  unlock_keychain(
+    path: "login.keychain-db",
+    password: password
   )
 end
 
