@@ -28,8 +28,8 @@ def create_temp_keychain(name, password)
   create_keychain(
     name: name,
     password: password,
-    unlock: false,
-    timeout: 0
+    unlock: true,
+    timeout: 3600
   )
 end
 
@@ -55,7 +55,7 @@ def create_release_build(match_type)
   )
 
   match(
-    type: match_type,
+    type: match_type.gsub("-", ""),
     git_url: PROVISIONING_REPO,
     app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
     git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
@@ -65,7 +65,17 @@ def create_release_build(match_type)
     api_key: api_key
   )
 
-  gym(scheme: 'p2p_wallet', export_method: 'ad-hoc', export_xcargs: '-allowProvisioningUpdates')
+  gym(
+    configuration: "Release",
+    workspace: "p2p_wallet.xcworkspace",
+    scheme: 'p2p_wallet',
+    export_method: match_type,
+    export_options: {
+      provisioningProfiles: {
+        DEVELOPER_APP_ID => PROVISIONING_PROFILE_SPECIFIER
+      }
+    }
+  )
 end
 
 def upload_to_firebase_and_browserstack
@@ -134,7 +144,7 @@ platform :ios do
     )
 
     # create release build for this feature
-    create_release_build('adhoc')
+    create_release_build('ad-hoc')
    
     # upload to firebase and browser stack
     upload_to_firebase_and_browserstack 
@@ -164,7 +174,7 @@ platform :ios do
     )
 
     # create release build
-    create_release_build('adhoc')
+    create_release_build('ad-hoc')
     
     # upload to firebase
     firebase_app_distribution(
@@ -192,7 +202,7 @@ platform :ios do
       skip_info_plist: true
     )
 
-    create_release_build
+    create_release_build('app-store')
 
     pilot(
       apple_id: "#{DEVELOPER_APP_ID}",

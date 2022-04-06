@@ -7,7 +7,7 @@ jobs:
   upload_build_for_testing:
     name: Deploy specific feature for testing
     if: github.event.review.state == 'approved'
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     steps:
       - name: Check out current branch
@@ -39,3 +39,4 @@ jobs:
           APPLE_KEY_ID: '${{ secrets.APPLE_KEY_ID }}'
           APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
           GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
+          MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
