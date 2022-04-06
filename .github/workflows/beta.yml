@@ -48,3 +48,4 @@ jobs:
           APPLE_KEY_CONTENT: '${{ secrets.APPLE_KEY_CONTENT }}'
           GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
           MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
+          IS_CI: '${{ secrets.IS_CI }}'
