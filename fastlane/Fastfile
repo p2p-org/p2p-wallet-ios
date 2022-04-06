@@ -49,10 +49,6 @@ def create_release_build(match_type)
     duration: 1200,
     in_house: false
   )
-  
-  cocoapods(
-    clean_install: true
-  )
 
   match(
     type: match_type.gsub("-", ""),
