@@ -72,13 +72,13 @@ def create_release_build(match_type)
   gym(
     scheme: 'p2p_wallet',
     export_method: match_type,
-    export_options: {
-      provisioningProfiles: {
-        "#{DEVELOPER_APP_IDENTIFIER}" => "match AdHoc #{DEVELOPER_APP_IDENTIFIER}"
-      },
-      "signingStyle": "manual"
-    },
-    export_xcargs: '-allowProvisioningUpdates'
+#     export_options: {
+#       provisioningProfiles: {
+#         "#{DEVELOPER_APP_IDENTIFIER}" => "match AdHoc #{DEVELOPER_APP_IDENTIFIER}"
+#       },
+#       "signingStyle": "manual"
+#     },
+    xcargs: '-allowProvisioningUpdates'
   )
 end
 
