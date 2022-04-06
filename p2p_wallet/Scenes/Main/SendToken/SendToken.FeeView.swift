@@ -27,15 +27,25 @@ extension SendToken {
             stackView.addArrangedSubviews {
                 coinLogoImageView
                     .setup { imageView in
-                        payingWalletDriver
-                            .map { $0 == nil }
+
+                        let driver = Driver.combineLatest(
+                            payingWalletDriver,
+                            feeInfoDriver
+                        )
+
+                        driver
+                            .map { $0 == nil && $1.value?.hasAvailableWalletToPayFee != false }
                             .drive(imageView.rx.isHidden)
                             .disposed(by: disposeBag)
 
-                        payingWalletDriver
-                            .filter { $0 != nil }
-                            .map { $0! }
-                            .drive(onNext: { [weak imageView] in imageView?.setUp(wallet: $0) })
+                        driver
+                            .drive(onNext: { [weak imageView] in
+                                if $1.value?.hasAvailableWalletToPayFee == false {
+                                    imageView?.tokenIcon.image = .squircleNotEnoughFunds
+                                } else {
+                                    imageView?.setUp(wallet: $0)
+                                }
+                            })
                             .disposed(by: disposeBag)
                     }
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
@@ -54,7 +64,7 @@ extension SendToken {
                         }
                     UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold, numberOfLines: 0)
                         .setup { label in
-                            Driver.combineLatest(
+                            let driver = Driver.combineLatest(
                                 payingWalletDriver,
                                 feeInfoDriver
                             )
@@ -65,7 +75,13 @@ extension SendToken {
                                         payingWallet: payingWallet
                                     )
                                 }
+
+                            driver.map(\.0)
                                 .drive(label.rx.text)
+                                .disposed(by: disposeBag)
+
+                            driver.map(\.1)
+                                .drive(label.rx.textColor)
                                 .disposed(by: disposeBag)
                         }
                 }
@@ -110,26 +126,30 @@ private func payingWalletToString(
     state: LoadableState,
     value: SendToken.FeeInfo?,
     payingWallet: Wallet?
-) -> String? {
+) -> (String?, UIColor) {
     guard let payingWallet = payingWallet else {
-        return L10n.chooseTheTokenToPayFees
+        return (L10n.chooseTheTokenToPayFees, .textBlack)
     }
     switch state {
     case .notRequested:
-        return L10n.chooseTheTokenToPayFees
+        return (L10n.chooseTheTokenToPayFees, .textBlack)
     case .loading:
-        return L10n.calculatingFees
+        return (L10n.calculatingFees, .textBlack)
     case .loaded:
         guard let value = value else {
-            return L10n.couldNotCalculatingFees
+            return (L10n.couldNotCalculatingFees, .textBlack)
         }
-        return value.feeAmount.total.convertToBalance(decimals: payingWallet.token.decimals)
-            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(payingWallet.token.symbol)"
+        if value.hasAvailableWalletToPayFee == false {
+            return (L10n.notEnoughFunds, .alert)
+        }
+        return (value.feeAmount.total.convertToBalance(decimals: payingWallet.token.decimals)
+            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true) + " \(payingWallet.token.symbol)",
+            .textBlack)
     case let .error(optional):
         #if DEBUG
-            return optional
+            return (optional, .alert)
         #else
-            return L10n.couldNotCalculatingFees
+            return (L10n.couldNotCalculatingFees, .alert)
         #endif
     }
 }

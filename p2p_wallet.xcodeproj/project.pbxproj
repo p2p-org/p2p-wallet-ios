@@ -43,6 +43,7 @@
 		3B29B69B27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */; };
 		3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */; };
 		3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */; };
+		3B2F9EEF27F5B76D005BD49B /* SendServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2F9EEE27F5B76D005BD49B /* SendServiceType.swift */; };
 		3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */; };
 		3B3A8EDC27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift */; };
 		3B3A8EEC27D7A8290026E0FE /* TransactionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EE827D7A8290026E0FE /* TransactionDetail.swift */; };
@@ -550,6 +551,7 @@
 		3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWallet.IntroPlayerView.swift; sourceTree = "<group>"; };
 		3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRecipientAndNetworkHandler.swift; sourceTree = "<group>"; };
 		3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
+		3B2F9EEE27F5B76D005BD49B /* SendServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendServiceType.swift; sourceTree = "<group>"; };
 		3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ConfirmSwappingViewModelType.swift; sourceTree = "<group>"; };
 		3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.HeaderLabel.swift; sourceTree = "<group>"; };
 		3B3A8EE827D7A8290026E0FE /* TransactionDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.swift; sourceTree = "<group>"; };
@@ -704,7 +706,6 @@
 		846996B110978DCB7A6D4A74 /* Swap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
 		8469973F517781E128015A0E /* Moonpay.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
-		846998347726DB596CBF222F /* TransakBuyProccessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakBuyProccessing.swift; sourceTree = "<group>"; };
 		84699843D0D43ABFAA0417BA /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		84699858C3DF47632C790981 /* Home.EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.EmptyView.swift; sourceTree = "<group>"; };
 		846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
@@ -1132,6 +1133,15 @@
 			path = Interfaces;
 			sourceTree = "<group>";
 		};
+		3B2F9EED27F5B758005BD49B /* SendService */ = {
+			isa = PBXGroup;
+			children = (
+				3B2F9EEE27F5B76D005BD49B /* SendServiceType.swift */,
+				BC19DF4E270169CF00A3A8D8 /* SendService.swift */,
+			);
+			path = SendService;
+			sourceTree = "<group>";
+		};
 		3B3A8EDF27D7A7B30026E0FE /* TransactionDetail */ = {
 			isa = PBXGroup;
 			children = (
@@ -1152,13 +1162,6 @@
 				3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */,
 			);
 			path = Subviews;
-			sourceTree = "<group>";
-		};
-		3B79E0A227D0DA9D00BCB884 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		3B856FC527B76D1A00973039 /* Confirm */ = {
@@ -2202,7 +2205,7 @@
 			children = (
 				BC036C1A269449A7005C1BEC /* Socket.swift */,
 				41EB2E6327B23CFD007D5F7F /* Intercom */,
-				BC19DF4E270169CF00A3A8D8 /* SendService.swift */,
+				3B2F9EED27F5B758005BD49B /* SendService */,
 				3B1681F8278B3E5E00838F1B /* AppEventHandler */,
 				41DD026B2760A95E00545A73 /* TextChangesFilters */,
 				BC32A3AB254A8884002156F0 /* Storage.swift */,
@@ -3045,6 +3048,7 @@
 				BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */,
 				86A90D18273D306400D180EF /* VerifySecurityKeys.ViewController.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWallet.ViewController.swift in Sources */,
+				3B2F9EEF27F5B76D005BD49B /* SendServiceType.swift in Sources */,
 				3B7DE7EC2775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift in Sources */,
 				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WelcomeViewController.swift in Sources */,
@@ -3582,8 +3586,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
@@ -3614,7 +3618,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.p2p.cyber;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc org.p2p.cyber";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -3627,8 +3631,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
-				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
@@ -3659,7 +3663,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.p2p.cyber;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc org.p2p.cyber";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};

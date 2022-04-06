@@ -45,4 +45,8 @@ enum OrcaSwapV2 {
         case notEnoughBalanceToCoverFees
         case unknown
     }
+
+    enum ActiveInputField {
+        case source, destination, none
+    }
 }
