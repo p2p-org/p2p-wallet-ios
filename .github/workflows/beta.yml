@@ -7,7 +7,7 @@ jobs:
   upload_build_for_testing:
     name: Deploy specific feature for testing
     if: github.event.review.state == 'approved'
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     steps:
       - name: Check out current branch

@@ -58,7 +58,7 @@ def create_release_build(match_type)
     type: match_type,
     git_url: PROVISIONING_REPO,
     app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
-    git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
+    git_basic_authorization: GIT_AUTHORIZATION,
     readonly: true,
     keychain_name: TEMP_KEYCHAIN_USER,
     keychain_password: TEMP_KEYCHAIN_PASSWORD,
