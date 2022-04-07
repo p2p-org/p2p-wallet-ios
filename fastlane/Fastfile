@@ -67,7 +67,12 @@ def create_release_build(match_type)
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
     clean: true,
-    verbose: true
+    verbose: true,
+    export_options: {
+      provisioningProfiles: {
+        DEVELOPER_APP_ID => PROVISIONING_PROFILE_SPECIFIER
+      }
+    }
   )
 end
 
