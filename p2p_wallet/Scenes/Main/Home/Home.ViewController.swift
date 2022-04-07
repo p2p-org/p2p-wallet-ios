@@ -225,7 +225,7 @@ extension Home {
             CATransaction.setCompletionBlock {
                 self.viewModel.scrollToTop()
             }
-            navigationController?.popToViewController(ofClass: Self.self, animated: true)
+            navigationController?.popToRootViewController(animated: true)
             CATransaction.commit()
         }
 

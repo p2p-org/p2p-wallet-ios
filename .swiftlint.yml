@@ -1,19 +1,19 @@
 warning_threshold: 1000
 
 excluded:
- - Pods
- - Templates
- - "*/.build"
- - SolanaSwift
- - BEPureLayout
- - LazySubject
- - BECollectionView
- - THPinViewController
- - FeeRelayerSwift
- - OrcaSwapSwift
- - RenVMSwift
- - TransakSwift
- - "p2p_wallet/Scenes/Main/SwapToken/SerumSwap(Unstable)"
+  - Pods
+  - Templates
+  - "*/.build"
+  - SolanaSwift
+  - BEPureLayout
+  - LazySubject
+  - BECollectionView
+  - THPinViewController
+  - FeeRelayerSwift
+  - OrcaSwapSwift
+  - RenVMSwift
+  - TransakSwift
+  - "p2p_wallet/Scenes/Main/SwapToken/SerumSwap(Unstable)"
 
 disabled_rules:
   - identifier_name
@@ -44,7 +44,7 @@ file_length:
 
 type_body_length:
   warning: 400
-  
+
 custom_rules:
   swiftgen_assets:
     name: "SwiftGen Assets"

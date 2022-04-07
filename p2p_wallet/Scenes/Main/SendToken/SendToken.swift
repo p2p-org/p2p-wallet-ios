@@ -51,9 +51,6 @@ enum SendToken {
     struct FeeInfo {
         let feeAmount: SolanaSDK.FeeAmount
         let feeAmountInSOL: SolanaSDK.FeeAmount
-
-        static var zero: Self {
-            .init(feeAmount: .zero, feeAmountInSOL: .zero)
-        }
+        let hasAvailableWalletToPayFee: Bool?
     }
 }
