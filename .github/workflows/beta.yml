@@ -17,15 +17,22 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
-#      - name: Set XCode Version
-#        run: sudo xcode-select -s /Applications/Xcode_13.app
+      - name: Copy xcconfig file
+        run: |
+          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+        shell: bash
 
       - name: Install Dependencies
         run: |
           pod install --repo-update
         shell: bash
 
-      - name: Deploy specific feature for testing via Fastlane
+      - name: Generate Strings+Asset
+        run: |
+          Pods/SwiftGen/bin/swiftgen
+        shell: bash
+
+      - name: "Upload to firebase for testing"
         uses: maierj/fastlane-action@v2.2.0
         with:
           lane: feature_test
@@ -49,3 +56,31 @@ jobs:
           GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
           MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
           IS_CI: '${{ secrets.IS_CI }}'
+
+      - name: Login to JIRA
+        uses: atlassian/gajira-login@master
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Find JIRA issue from branchname
+        id: find_issue
+        if: ${{ env.BRANCH_NAME }}
+        uses: atlassian/gajira-find-issue-key@master
+        with:
+          string: ${{ env.BRANCH_NAME }}
+
+      - name: Comment on issue
+        if: ${{ steps.find_issue.outputs.issue }}
+        uses: atlassian/gajira-comment@master
+        with:
+          issue: ${{ steps.find_issue.outputs.issue }}
+          comment: "A build ${{ env.BUILD_NUMBER }} added for testing this issue"
+
+      - name: Move issue to READY FOR TESTING
+        if: ${{ steps.find_issue.outputs.issue }}
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.find_issue.outputs.issue }}
+          transition: ${{ secrets.JIRA_READY_FOR_TESTING_TRANSITION_NAME }}
