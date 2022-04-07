@@ -67,7 +67,7 @@ def create_release_build(match_type)
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
     clean: true,
-    silent: true
+    verbose: true
   )
 end
 
