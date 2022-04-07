@@ -32,7 +32,7 @@ jobs:
           Pods/SwiftGen/bin/swiftgen
         shell: bash
 
-      - name: "Upload ${{ github.event.pull_request.head.ref }} for testing"
+      - name: "Upload to firebase for testing"
         uses: maierj/fastlane-action@v2.2.0
         with:
           lane: feature_test
