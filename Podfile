@@ -30,7 +30,7 @@ target 'p2p_wallet' do
   pod 'JazziconSwift'
   pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
-  pod 'ListPlaceholder', :git => 'git@github.com:p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
+  pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'Intercom'
   pod 'SwiftFormat/CLI', '~> 0.49'
   pod 'Periphery'
@@ -41,7 +41,7 @@ target 'p2p_wallet' do
   pod 'Resolver'
   
   pod 'GT3Captcha-iOS'
-  pod 'Down', :git => 'git@github.com:p2p-org/Down.git'
+  pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths
