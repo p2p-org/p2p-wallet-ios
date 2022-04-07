@@ -17,15 +17,19 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
-      - name: Copy xcconfig file and call swiftgen
+      - name: Copy xcconfig file
         run: |
-          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }} |
-          Pods/SwiftGen/bin/swiftgen
+          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
       - name: Install Dependencies
         run: |
           pod install --repo-update
+        shell: bash
+
+      - name: Generate Strings+Asset
+        run: |
+          Pods/SwiftGen/bin/swiftgen
         shell: bash
 
       - name: "Upload ${{ github.event.pull_request.head.ref }} for testing"
