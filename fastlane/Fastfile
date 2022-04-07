@@ -116,7 +116,7 @@ platform :ios do
       next
     end
 
-    # else get feature number
+    # get feature number
     feature_number = branch.split("pwn-").last.split("-").first.to_i
     puts "Got the feature number: #{feature_number}"
 
@@ -165,9 +165,13 @@ platform :ios do
       files: [
         "p2p_wallet.xcodeproj/project.pbxproj"
       ]
-    ) 
+    )
+
+    # output
+    sh("echo BRANCH_NAME=#{name} >> $GITHUB_ENV")
+    sh("echo BUILD_NUMBER=#{name} >> $GITHUB_ENV")
   end
-  
+
   lane :beta do
     # increment build number
     increment_build_number(
