@@ -66,17 +66,20 @@ jobs:
 
       - name: Find JIRA issue from branchname
         id: find_issue
+        if: ${{ env.BRANCH_NAME }}
         uses: atlassian/gajira-find-issue-key@master
         with:
-          string: ${{ github.event.pull_request.head.ref }}
+          string: ${{ env.BRANCH_NAME }}
 
       - name: Comment on issue
+        if: ${{ steps.find_issue.outputs.issue }}
         uses: atlassian/gajira-comment@master
         with:
           issue: ${{ steps.find_issue.outputs.issue }}
-          comment: "There is a new build added for testing this issue"
+          comment: "A build ${{ env.BUILD_NUMBER }} added for testing this issue"
 
       - name: Move issue to READY FOR TESTING
+        if: ${{ steps.find_issue.outputs.issue }}
         uses: atlassian/gajira-transition@master
         with:
           issue: ${{ steps.find_issue.outputs.issue }}
