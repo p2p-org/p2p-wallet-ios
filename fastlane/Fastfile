@@ -169,7 +169,7 @@ platform :ios do
 
     # output
     sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
-    sh("echo BUILD_NUMBER=#{feature_number} >> $GITHUB_ENV")
+    sh("echo BUILD_NUMBER=#{current_build} >> $GITHUB_ENV")
   end
 
   lane :beta do
