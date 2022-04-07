@@ -15,12 +15,13 @@ jobs:
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
 
       - name: Find in commit messages
+        id: find_issue
         uses: atlassian/gajira-find-issue-key@master
         with:
-          string: "features/pwn-3182"
+          string: "features/pwn-3182-testafdf"
 
       - name: Transition issue
         uses: atlassian/gajira-transition@master
         with:
-          issue: ${{ steps.create.outputs.issue }}
+          issue: ${{ steps.find_issue.outputs.issue }}
           transition: "Ready for testing"
