@@ -17,9 +17,10 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
-      - name: Copy xcconfig file
+      - name: Copy xcconfig file and call swiftgen
         run: |
-          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+          curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }} |
+          Pods/SwiftGen/bin/swiftgen
         shell: bash
 
       - name: Install Dependencies
@@ -27,7 +28,7 @@ jobs:
           pod install --repo-update
         shell: bash
 
-      - name: Deploy specific feature for testing via Fastlane
+      - name: "Upload ${{ github.event.pull_request.head.ref }} for testing"
         uses: maierj/fastlane-action@v2.2.0
         with:
           lane: feature_test
