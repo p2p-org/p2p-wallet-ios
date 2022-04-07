@@ -237,6 +237,20 @@ extension Resolver: ResolverRegistering {
         }
         .implements(Banners.Service.self)
         .scope(.shared)
+
+        // MARK: - RentBTC
+
+        register {
+            try! RenBtcServiceImpl(
+                solanaSDK: resolve(),
+                feeRelayerApi: resolve(),
+                accountStorage: resolve(),
+                orcaSwap: resolve(),
+                walletRepository: resolve()
+            )
+        }
+        .implements(RentBTC.Service.self)
+        .scope(.session)
     }
 }
 

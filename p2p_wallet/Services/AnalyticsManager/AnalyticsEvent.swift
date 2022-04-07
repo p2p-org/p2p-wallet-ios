@@ -74,6 +74,7 @@ enum AnalyticsEvent: MirrorableEnum {
     case receiveNameCopy
     case receiveAddressCopied
     case receiveNameShare
+    case receiveQrcodeShare
     case receiveAddressShare
     case receiveWalletAddressCopy
     case receiveUsercardShared

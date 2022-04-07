@@ -56,44 +56,12 @@ extension ReceiveToken {
                             icon: .squircleBitcoinIcon
                         ).setup { [unowned self] view in
                             self.viewModel.tokenTypeDriver
-                                .map { type -> Bool in type == .btc }
+                                .map { $0 == .btc }
                                 .asDriver()
                                 .drive(view.rx.isSelected)
                                 .disposed(by: disposeBag)
                         }.onTap { [unowned self] in
-                            Driver.combineLatest(
-                                self.viewModel.receiveBitcoinViewModel.isReceivingRenBTCDriver,
-                                self.viewModel.receiveBitcoinViewModel.conditionAcceptedDriver
-                            ).drive { [weak self] isRenBTCCreated, conditionalAccepted in
-                                if isRenBTCCreated, conditionalAccepted {
-                                    self?.viewModel.switchToken(.btc)
-                                    self?.back()
-                                } else {
-                                    let vc = BitcoinConfirmScene(isRenBTCCreated: viewModel
-                                        .isRenBtcCreated()) { [weak self] in
-                                            guard let self = self else { return }
-                                            self.showIndetermineHud()
-                                            self.viewModel.acceptReceivingRenBTC()
-                                                .subscribe(onCompleted: { [weak self] in
-                                                    guard let self = self else { return }
-                                                    self.hideHud()
-                                                    self.back()
-                                                }, onError: { [weak self] error in
-                                                    guard let self = self else { return }
-                                                    #if DEBUG
-                                                        debugPrint("Create renBTC error: \(error)")
-                                                    #endif
-                                                    self.hideHud()
-                                                    self.showAlert(
-                                                        title: L10n.error.uppercaseFirst,
-                                                        message: L10n.couldNotCreateRenBTCTokenPleaseTryAgainLater
-                                                    )
-                                                })
-                                                .disposed(by: self.disposeBag)
-                                        }
-                                    self?.present(vc, animated: true)
-                                }
-                            }.disposed(by: disposeBag)
+                            viewModel.tapOnBitcoin()
                         }
 
                         // Description
@@ -119,6 +87,55 @@ extension ReceiveToken {
                     }
                 }
             }
+        }
+
+        override func bind() {
+            viewModel.showLoader
+                .drive(onNext: { [weak self] show in
+                    if show {
+                        self?.showIndetermineHud()
+                    } else {
+                        self?.hideHud()
+                    }
+                })
+                .disposed(by: disposeBag)
+            viewModel.toggleToBtc
+                .drive(onNext: { [unowned self] in
+                    viewModel.switchToken(.btc)
+                    back()
+                })
+                .disposed(by: disposeBag)
+            viewModel.showBitcoinConfirmation
+                .drive(onNext: { [weak self] sceneType in
+                    guard let self = self else { return }
+
+                    let vc = BitcoinConfirmScene(
+                        sceneType: sceneType,
+                        viewModel: ReceiveToken.BitcoinConfirmScene.ViewModel(
+                            receiveBitcoinViewModel: self.viewModel.receiveBitcoinViewModel
+                        )
+                    )
+
+                    vc.rx.navigationAction
+                        .bind(to: self.viewModel.renBtcAction)
+                        .disposed(by: self.disposeBag)
+
+                    self.present(vc, animated: true)
+                })
+                .disposed(by: disposeBag)
+            viewModel.back
+                .drive(onNext: { [weak self] in
+                    self?.back()
+                })
+                .disposed(by: disposeBag)
+            viewModel.showAlert
+                .drive(onNext: { [weak self] title, message in
+                    self?.showAlert(
+                        title: title,
+                        message: message
+                    )
+                })
+                .disposed(by: disposeBag)
         }
     }
 

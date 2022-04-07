@@ -230,6 +230,10 @@ extension ReceiveToken.ViewController {
             present(vc, animated: true)
         case .showPhotoLibraryUnavailable:
             PhotoLibraryAlertPresenter().present(on: self)
+        case .showBuy:
+            let vm = BuyRoot.ViewModel()
+            let vc = BuyRoot.ViewController(viewModel: vm)
+            present(vc, animated: true)
         case .none:
             return
         }

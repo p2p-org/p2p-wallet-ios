@@ -23,6 +23,10 @@
 
 /* Begin PBXBuildFile section */
 		123FAB5940E0D4B8471D53F2 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */; };
+		2C4D7A4428044BD5004604F2 /* BitcoinConfirmSceneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4D7A4328044BD5004604F2 /* BitcoinConfirmSceneViewModel.swift */; };
+		2C4D7A502805765D004604F2 /* RenBTCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4D7A4E2805765D004604F2 /* RenBTCService.swift */; };
+		2C4D7A512805765D004604F2 /* RenBTCImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4D7A4F2805765D004604F2 /* RenBTCImpl.swift */; };
+		2CC15BB527FDD2B100C414AB /* RxSwift + Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CC15BB427FDD2B100C414AB /* RxSwift + Extensions.swift */; };
 		3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */; };
 		3B01DFBE27DB19AB003E19BD /* ProcessTransaction.Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */; };
 		3B0D87B227EC770200DEE867 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3B0D87B127EC770200DEE867 /* README.md */; };
@@ -541,6 +545,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C4D7A4328044BD5004604F2 /* BitcoinConfirmSceneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitcoinConfirmSceneViewModel.swift; sourceTree = "<group>"; };
+		2C4D7A4E2805765D004604F2 /* RenBTCService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenBTCService.swift; sourceTree = "<group>"; };
+		2C4D7A4F2805765D004604F2 /* RenBTCImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RenBTCImpl.swift; sourceTree = "<group>"; };
+		2CC15BB427FDD2B100C414AB /* RxSwift + Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RxSwift + Extensions.swift"; sourceTree = "<group>"; };
 		3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
 		3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.swift; sourceTree = "<group>"; };
 		3B0D87B127EC770200DEE867 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1112,6 +1120,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		2C4D7A4D28057657004604F2 /* RenBtc */ = {
+			isa = PBXGroup;
+			children = (
+				2C4D7A4F2805765D004604F2 /* RenBTCImpl.swift */,
+				2C4D7A4E2805765D004604F2 /* RenBTCService.swift */,
+			);
+			path = RenBtc;
+			sourceTree = "<group>";
+		};
 		3B16154B2769A10B0080DE42 /* ConfirmSwapping */ = {
 			isa = PBXGroup;
 			children = (
@@ -1499,6 +1516,7 @@
 			children = (
 				846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */,
 				84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */,
+				2C4D7A4328044BD5004604F2 /* BitcoinConfirmSceneViewModel.swift */,
 			);
 			path = NetworkSelection;
 			sourceTree = "<group>";
@@ -1831,6 +1849,7 @@
 				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
 				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
 				8469964AD773095EEFA52701 /* CALayer+Extensions.swift */,
+				2CC15BB427FDD2B100C414AB /* RxSwift + Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2233,6 +2252,7 @@
 			isa = PBXGroup;
 			children = (
 				BC036C1A269449A7005C1BEC /* Socket.swift */,
+				2C4D7A4D28057657004604F2 /* RenBtc */,
 				41EB2E6327B23CFD007D5F7F /* Intercom */,
 				3B2F9EED27F5B758005BD49B /* SendService */,
 				3B1681F8278B3E5E00838F1B /* AppEventHandler */,
@@ -2817,7 +2837,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  echo \"Check Pods Manifest.lock is disabled in Release mode\"\n  exit 0\nfi\n\ndiff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */ = {
@@ -3075,6 +3094,7 @@
 				41DE53C8279795EE00F24B0B /* WalletDetail.BalanceView.swift in Sources */,
 				BCCF23C826FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift in Sources */,
 				BC38555E26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift in Sources */,
+				2C4D7A512805765D004604F2 /* RenBTCImpl.swift in Sources */,
 				3B3A8EEC27D7A8290026E0FE /* TransactionDetail.swift in Sources */,
 				4183007827576450007BBEBF /* ReserveName.LoadingView.swift in Sources */,
 				412DBFDD273D7B81000F514E /* EnterSeed.ViewController.swift in Sources */,
@@ -3101,6 +3121,7 @@
 				3B29B69B27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */,
 				BCB286C6274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.ViewController.swift in Sources */,
 				41C460212771BDCB009C12D9 /* SwapTokenSettings.swift in Sources */,
+				2C4D7A502805765D004604F2 /* RenBTCService.swift in Sources */,
 				3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */,
 				BCE42E0225DFA0B50021540E /* CreateWallet.ViewModel.swift in Sources */,
 				BC54DCF92587089700A65566 /* WalletGraphViewModel.swift in Sources */,
@@ -3205,6 +3226,7 @@
 				BC4B9E9D27153FBA005B9ECA /* Settings.ConfigureSecurityViewController.swift in Sources */,
 				414C36592774F53A007B2194 /* SwapTokenSettings.CustomSlippageField.swift in Sources */,
 				41C4601E2771BCA1009C12D9 /* SwapTokenSettings.ViewModel.swift in Sources */,
+				2CC15BB527FDD2B100C414AB /* RxSwift + Extensions.swift in Sources */,
 				BC4B9EBF27191843005B9ECA /* OrcaSwapV2.RootView.swift in Sources */,
 				86A90D17273D306400D180EF /* VerifySecurityKeys.RootView.swift in Sources */,
 				BCE04C6B268D901400CE131A /* UIViewController+Transitions.swift in Sources */,
@@ -3413,6 +3435,7 @@
 				3BCEED5627D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift in Sources */,
 				84699FE9610FE1FD6BCE2F65 /* BuyExchangeServiceType.swift in Sources */,
 				8469917D8E71B0E435F7EA48 /* Moonpay.swift in Sources */,
+				2C4D7A4428044BD5004604F2 /* BitcoinConfirmSceneViewModel.swift in Sources */,
 				8469996EF705D60C94EB79FC /* Moonpay.API.swift in Sources */,
 				84699B60E46C2AE4B6243CC2 /* Moonpay.Model.swift in Sources */,
 				84699BC20CB341D9BDA75595 /* Moonpay.Provider.swift in Sources */,
@@ -3626,8 +3649,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
@@ -3658,7 +3681,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.p2p.cyber;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc org.p2p.cyber";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -3671,8 +3694,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
@@ -3703,7 +3726,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = org.p2p.cyber;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc org.p2p.cyber";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
