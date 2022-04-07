@@ -83,7 +83,7 @@ extension OrcaSwapV2.ViewModel {
         }
 
         // paying with SOL
-        if payingWalletSubject.value?.isNativeSOL ?? false {
+        if payingWalletSubject.value?.isNativeSOL == true {
             guard let wallet = walletsRepository.nativeWallet else {
                 return .nativeWalletNotFound
             }
@@ -101,9 +101,12 @@ extension OrcaSwapV2.ViewModel {
             //                if feeCompensationPool == nil {
             //                    return L10n.feeCompensationPoolNotFound
             //                }
-            let feeInToken = feesSubject.value?.transactionFees(of: sourceWallet.token.symbol) ?? 0
-            if feeInToken > (sourceWallet.lamports ?? 0) {
-                return .notEnoughBalanceToCoverFees
+            if let payingWallet = payingWalletSubject.value, let feeTotal = feesSubject.value?.totalLamport {
+                if payingWallet.token.symbol == feesSubject.value?.totalToken?.symbol {
+                    if feeTotal > (payingWallet.lamports ?? 0) {
+                        return .notEnoughBalanceToCoverFees
+                    }
+                }
             }
         }
 
