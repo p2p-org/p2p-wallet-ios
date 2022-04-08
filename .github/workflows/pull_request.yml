@@ -1,4 +1,4 @@
-name: Pull request approved
+name: Pull request review submitted
 on:
   pull_request_review:
     types: [submitted]
