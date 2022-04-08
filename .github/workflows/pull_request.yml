@@ -1,9 +1,9 @@
 name: Pull request created
 on:
   pull_request:
-    types: [ready_for_review]
+    types: [opened]
 jobs:
-  # Send task to review when pull request is ready for review
+  # Send task to review when pull request is opened
   return_task_to_in_progress:
     name: Send task to review
     runs-on: ubuntu-latest
