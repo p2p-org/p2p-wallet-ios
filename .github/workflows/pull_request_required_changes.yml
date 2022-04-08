@@ -1,0 +1,32 @@
+name: beta
+on:
+  pull_request_review:
+    types: [submitted]
+jobs:
+  # return task to in progress
+  return_task_to_in_progress:
+    name: Deploy specific feature for testing
+    if: github.event.review.state == 'changes_requested'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to JIRA
+        uses: atlassian/gajira-login@master
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Find JIRA issue from branchname
+        id: find_issue
+        if: ${{ github.head_ref }}
+        uses: atlassian/gajira-find-issue-key@master
+        with:
+          string: ${{ github.head_ref }}
+
+      - name: Move issue back to IN PROGRESS
+        if: ${{ steps.find_issue.outputs.issue }}
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.find_issue.outputs.issue }}
+          transition: ${{ secrets.JIRA_IN_PROGRESS_TRANSITION_NAME }}
