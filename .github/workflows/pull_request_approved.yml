@@ -1,4 +1,4 @@
-name: beta
+name: Pull request approved
 on:
   pull_request_review:
     types: [submitted]
