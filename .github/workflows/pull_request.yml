@@ -13,13 +13,10 @@ jobs:
       - name: Check out current branch
         uses: actions/checkout@v3
 
-      - name: Get branch names
-        id: branch-name
-        uses: tj-actions/branch-names@v4.9
-
-      - name: Current branch name
-        run: |
-          echo "${{ steps.branch-name.outputs.current_branch }}"
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
       - name: Login to JIRA
         uses: atlassian/gajira-login@master
