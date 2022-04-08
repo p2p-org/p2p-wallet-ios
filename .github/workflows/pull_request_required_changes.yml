@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out current branch
+        uses: actions/checkout@v3
+        
       - name: Login to JIRA
         uses: atlassian/gajira-login@master
         env:
