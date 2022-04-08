@@ -1,0 +1,31 @@
+name: Pull request created
+on:
+  pull_request:
+    types: [created]
+jobs:
+  # Send task to review when pull request is created
+  return_task_to_in_progress:
+    name: Send task to review
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login to JIRA
+        uses: atlassian/gajira-login@master
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+
+      - name: Find JIRA issue from branchname
+        id: find_issue
+        if: ${{ github.event.pull_request.head.ref }}
+        uses: atlassian/gajira-find-issue-key@master
+        with:
+          string: ${{ github.event.pull_request.head.ref }}
+
+      - name: Move issue to REVIEW
+        if: ${{ steps.find_issue.outputs.issue }}
+        uses: atlassian/gajira-transition@master
+        with:
+          issue: ${{ steps.find_issue.outputs.issue }}
+          transition: ${{ secrets.JIRA_REVIEW_TRANSITION_NAME }}
