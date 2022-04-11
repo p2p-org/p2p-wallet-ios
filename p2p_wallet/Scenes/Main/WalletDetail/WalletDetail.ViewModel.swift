@@ -70,10 +70,13 @@ extension WalletDetail {
 
         /// Bind subjects
         private func bind() {
-            bindSubjectsIntoSubjects()
-        }
+            transactionsViewModel
+                .stateObservable
+                .filter { $0 == .loading }
+                .do(onNext: { _ in print("Reload wallet") })
+                .subscribe(onNext: { [weak self] _ in self?.walletsRepository.reload() })
+                .disposed(by: disposeBag)
 
-        private func bindSubjectsIntoSubjects() {
             walletsRepository
                 .dataObservable
                 .map { [weak self] in $0?.first(where: { $0.pubkey == self?.pubkey }) }
