@@ -154,7 +154,10 @@ extension SendToken {
                totalFee.total > 0,
                payingWalletSubject.value?.pubkey == wallet.pubkey
             {
-                amount -= totalFee.total.convertToBalance(decimals: payingWalletSubject.value?.token.decimals)
+                let feeAmount = totalFee.total.convertToBalance(decimals: payingWalletSubject.value?.token.decimals)
+                if amount + feeAmount > wallet.amount {
+                    amount -= feeAmount
+                }
             }
 
             let network = networkSubject.value
