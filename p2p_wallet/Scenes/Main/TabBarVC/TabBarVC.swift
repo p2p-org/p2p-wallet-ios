@@ -29,6 +29,10 @@ class TabBarVC: BEPagesVC {
         let homeViewModel = Home.ViewModel()
         let homeVC = Home.ViewController(viewModel: homeViewModel)
 
+        // TODO: - For the next task
+        let historyVM = WalletDetail.ViewModel(pubkey: "", symbol: "")
+        let historyVC = WalletDetail.HistoryViewController(viewModel: historyVM)
+
         let sendTokenVC = SendToken.ViewController(
             viewModel: SendToken.ViewModel(
                 walletPubkey: nil,
@@ -51,6 +55,7 @@ class TabBarVC: BEPagesVC {
 
         viewControllers = [
             createNavigationController(rootVC: homeVC),
+            createNavigationController(rootVC: historyVC),
             createNavigationController(rootVC: sendTokenVC),
             createNavigationController(rootVC: settingsVC),
         ]
@@ -106,9 +111,10 @@ class TabBarVC: BEPagesVC {
         tabBar.stackView.addArrangedSubviews([
             .spacer,
             buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
-            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 1),
+            buttonTabBarItem(image: .tabbarHistory, title: L10n.history, tag: 1),
+            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 2),
             buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
-            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 2),
+            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 3),
             .spacer,
         ])
     }
