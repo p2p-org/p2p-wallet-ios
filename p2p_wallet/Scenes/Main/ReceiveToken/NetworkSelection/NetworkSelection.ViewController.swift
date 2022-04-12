@@ -65,11 +65,12 @@ extension ReceiveToken {
                                 self.viewModel.receiveBitcoinViewModel.isReceivingRenBTCDriver,
                                 self.viewModel.receiveBitcoinViewModel.conditionAcceptedDriver
                             ).drive { [weak self] isRenBTCCreated, conditionalAccepted in
+                                guard let self = self else { return }
                                 if isRenBTCCreated, conditionalAccepted {
-                                    self?.viewModel.switchToken(.btc)
-                                    self?.back()
+                                    self.viewModel.switchToken(.btc)
+                                    self.back()
                                 } else {
-                                    let vc = BitcoinConfirmScene(isRenBTCCreated: viewModel
+                                    let vc = BitcoinConfirmScene(isRenBTCCreated: self.viewModel
                                         .isRenBtcCreated()) { [weak self] in
                                             guard let self = self else { return }
                                             self.showIndetermineHud()
@@ -91,7 +92,7 @@ extension ReceiveToken {
                                                 })
                                                 .disposed(by: self.disposeBag)
                                         }
-                                    self?.present(vc, animated: true)
+                                    self.present(vc, animated: true)
                                 }
                             }.disposed(by: disposeBag)
                         }
