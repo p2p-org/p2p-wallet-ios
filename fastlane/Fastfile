@@ -62,6 +62,11 @@ def create_release_build(match_type)
     api_key: api_key
   )
 
+  update_code_signing_settings(
+    use_automatic_signing: false,
+    profile_name: PROVISIONING_PROFILE_SPECIFIER
+  )
+
   gym(
     scheme: 'p2p_wallet',
     export_method: match_type,
