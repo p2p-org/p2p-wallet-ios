@@ -75,6 +75,7 @@
 		3BCEED5D27D4737600BA9110 /* PendingTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */; };
 		3BCEED5F27D475BC00BA9110 /* TransactionHandler+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */; };
 		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
+		3BF4279A2805332100C0F75B /* SwiftyUserDefaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */; };
 		3BFA644B27D888BE001CA631 /* TransactionDetail.FromToSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */; };
 		3BFA644D27D89A2A001CA631 /* TransactionDetail.AmountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */; };
 		3BFA645027D99FBC001CA631 /* NameServiceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644F27D99FBC001CA631 /* NameServiceCache.swift */; };
@@ -593,6 +594,7 @@
 		3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingTransaction.swift; sourceTree = "<group>"; };
 		3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionHandler+Extensions.swift"; sourceTree = "<group>"; };
 		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
+		3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftyUserDefaults+Workaround.swift"; sourceTree = "<group>"; };
 		3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.FromToSection.swift; sourceTree = "<group>"; };
 		3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.AmountSection.swift; sourceTree = "<group>"; };
 		3BFA644F27D99FBC001CA631 /* NameServiceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameServiceCache.swift; sourceTree = "<group>"; };
@@ -1831,6 +1833,7 @@
 				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
 				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
 				8469964AD773095EEFA52701 /* CALayer+Extensions.swift */,
+				3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -3192,6 +3195,7 @@
 				BC4B9EA427158886005B9ECA /* LocalizedLanguage.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWallet.ViewModel.swift in Sources */,
 				4114D16B2746272400352CDF /* EnterSeedInfo.ViewController.swift in Sources */,
+				3BF4279A2805332100C0F75B /* SwiftyUserDefaults+Workaround.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
 				BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */,
 				3B78CB512773067100FB3C4C /* NotificationsService.swift in Sources */,
