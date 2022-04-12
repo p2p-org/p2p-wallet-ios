@@ -66,12 +66,7 @@ def create_release_build(match_type)
     scheme: 'p2p_wallet',
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
-    silent: true,
-    export_options: {
-      provisioningProfiles: {
-        DEVELOPER_APP_ID => PROVISIONING_PROFILE_SPECIFIER
-      }
-    }
+    silent: true
   )
 end
 
