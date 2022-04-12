@@ -34,3 +34,17 @@ extension Array {
         }
     }
 }
+
+extension Array where Element: Hashable {
+    var unique: [Element] {
+        var buffer = [Element]()
+        var added = Set<Element>()
+        for elem in self {
+            if !added.contains(elem) {
+                buffer.append(elem)
+                added.insert(elem)
+            }
+        }
+        return buffer
+    }
+}
