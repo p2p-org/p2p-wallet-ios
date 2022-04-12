@@ -28,11 +28,7 @@ class TabBarVC: BEPagesVC {
 
         let homeViewModel = Home.ViewModel()
         let homeVC = Home.ViewController(viewModel: homeViewModel)
-
-        // TODO: - For the next task
-        let historyVM = WalletDetail.ViewModel(pubkey: "", symbol: "")
-        let historyVC = WalletDetail.HistoryViewController(viewModel: historyVM)
-
+        let historyVC = History.Scene()
         let sendTokenVC = SendToken.ViewController(
             viewModel: SendToken.ViewModel(
                 walletPubkey: nil,
