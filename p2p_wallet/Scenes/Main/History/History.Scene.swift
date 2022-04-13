@@ -13,52 +13,19 @@ extension History {
 
         override func build() -> UIView {
             BEVStack {
-                NewWLNavigationBar(initialTitle: L10n.history)
+                // Navbar
+                NewWLNavigationBar(initialTitle: L10n.history, separatorEnable: false)
                     .backIsHidden(true)
 
-                BEDynamicSectionsCollectionView(
+                // History
+                NBENewDynamicSectionsCollectionView(
                     viewModel: SceneModel(),
                     mapDataToSections: { viewModel in
-                        let transactions = viewModel.getData(type: SolanaSDK.ParsedTransaction.self)
-
-                        let calendar = Calendar.current
-                        let today = calendar.startOfDay(for: Date())
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateStyle = .medium
-                        dateFormatter.timeStyle = .none
-                        dateFormatter.locale = Locale.shared
-
-                        let dictionary = Dictionary(grouping: transactions) { item -> Int in
-                            guard let date = item.blockTime else { return .max }
-                            let createdDate = calendar.startOfDay(for: date)
-                            return calendar.dateComponents([.day], from: createdDate, to: today).day ?? 0
-                        }
-
-                        return dictionary.keys.sorted()
-                            .map { key -> BEDynamicSectionsCollectionView.SectionInfo in
-                                var sectionInfo: String
-                                switch key {
-                                case 0:
-                                    sectionInfo = L10n.today + ", " + dateFormatter.string(from: today)
-                                case 1:
-                                    sectionInfo = L10n.yesterday
-                                    if let date = calendar.date(byAdding: .day, value: -1, to: today) {
-                                        sectionInfo += ", " + dateFormatter.string(from: date)
-                                    }
-                                case .max:
-                                    sectionInfo = L10n.unknownDate
-                                default:
-                                    if let date = calendar.date(byAdding: .day, value: -key, to: today) {
-                                        sectionInfo = dateFormatter.string(from: date)
-                                    } else {
-                                        sectionInfo = L10n.unknownDate
-                                    }
-                                }
-                                return .init(
-                                    userInfo: sectionInfo,
-                                    items: dictionary[key] ?? []
-                                )
-                            }
+                        CollectionViewMappingStrategy.byData(
+                            viewModel: viewModel,
+                            forType: SolanaSDK.ParsedTransaction.self,
+                            where: \SolanaSDK.ParsedTransaction.blockTime
+                        )
                     },
                     layout: .init(
                         header: .init(
@@ -69,7 +36,15 @@ extension History {
                         emptyCellType: WLEmptyCell.self,
                         interGroupSpacing: 1,
                         itemHeight: .estimated(85)
-                    )
+                    ),
+                    headerBuilder: { view, sectionInfo in
+                        guard
+                            let view = view as? SectionHeaderView,
+                            let date = sectionInfo?.userInfo as? String
+                        else { return }
+
+                        view.setUp(headerTitle: date)
+                    }
                 )
             }
         }
