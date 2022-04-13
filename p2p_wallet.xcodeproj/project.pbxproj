@@ -726,7 +726,6 @@
 		846996B110978DCB7A6D4A74 /* Swap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
 		8469973F517781E128015A0E /* Moonpay.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
-		84699843D0D43ABFAA0417BA /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		84699858C3DF47632C790981 /* Home.EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.EmptyView.swift; sourceTree = "<group>"; };
 		846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
 		846998A492BB5B9DDE59C8DA /* Moonpay.Provider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Provider.swift; sourceTree = "<group>"; };
@@ -2809,7 +2808,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  echo \"Check Pods Manifest.lock is disabled in Release mode\"\n  exit 0\nfi\n\ndiff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */ = {
@@ -3386,7 +3385,6 @@
 				84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */,
 				846993316E60603167DE5520 /* LockView.swift in Sources */,
 				84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */,
-				846999AD4696D6B6BC592165 /* (null) in Sources */,
 				84699C160676335B4D6F9607 /* Swap.swift in Sources */,
 				846993134D5452A2084089DC /* SwapServiceWithRelayImpl.swift in Sources */,
 				84699A485A6FC25C5C40FEB1 /* OrcaSwapV2.Helper.swift in Sources */,
