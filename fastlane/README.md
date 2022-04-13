@@ -31,10 +31,10 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
-### ios closed_beta
+### ios release
 
 ```sh
-[bundle exec] fastlane ios closed_beta
+[bundle exec] fastlane ios release
 ```
 
 
