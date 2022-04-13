@@ -17,10 +17,11 @@ BROWSERSTACK_USERNAME = ENV["BROWSERSTACK_USERNAME"]
 BROWSERSTACK_ACCESS_KEY = ENV["BROWSERSTACK_ACCESS_KEY"]
 
 PROVISIONING_REPO = ENV["PROVISIONING_REPO"]
-IS_CI = ENV["IS_CI"]
+IS_CI = ENV["IS_CI"] == "true"
 
 APP_STORE_CONNECT_TEAM_ID = ENV["APP_STORE_CONNECT_TEAM_ID"]
 PROVISIONING_PROFILE_UUID_adhoc = ENV["PROVISIONING_PROFILE_UUID_adhoc"]
+DEVELOPER_PORTAL_TEAM_ID = ENV["DEVELOPER_PORTAL_TEAM_ID"]
 
 def delete_temp_keychain(name)
   delete_keychain(
@@ -104,11 +105,6 @@ end
 
 platform :ios do
   lane :feature_test do
-    # check xcode version (for ci only)
-    if IS_CI == "true"
-      xcversion(version: "13.0")
-    end
-
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
@@ -149,11 +145,14 @@ platform :ios do
     )
 
     # create release build for this feature
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      profile_uuid: PROVISIONING_PROFILE_UUID_adhoc,
-      team_id: APP_STORE_CONNECT_TEAM_ID
-    )
+    if IS_CI
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        profile_name: PROVISIONING_PROFILE_SPECIFIER,
+        team_id: DEVELOPER_PORTAL_TEAM_ID
+      )
+    end
+
     create_release_build('ad-hoc')
    
     # upload to firebase and browser stack
