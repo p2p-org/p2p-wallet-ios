@@ -4,7 +4,7 @@
 
 ## Fastlane
 fastlane/*.env
-
+fastlane/README.md
 ## Build generated
 build/
 DerivedData/

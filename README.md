@@ -69,6 +69,36 @@ TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 - `Periphery` for detecting dead code (use Detect Unused Code target and run)
 - `CircleCI` or `GithubAction`: implementing...
 
+### Fastlane config (optional)
+Add `.env` file contains following content (ask teamate):
+```
+DEVELOPER_APP_IDENTIFIER=""
+APP_STORE_CONNECT_TEAM_ID=""
+DEVELOPER_PORTAL_TEAM_ID=""
+DEVELOPER_APP_ID=""
+PROVISIONING_PROFILE_SPECIFIER=""
+APPLE_ISSUER_ID=""
+PROVISIONING_REPO=""
+
+FIREBASE_APP_ID=""
+FIREBASE_CLI_TOKEN=""
+
+BROWSERSTACK_USERNAME=""
+BROWSERSTACK_ACCESS_KEY=""
+
+FASTLANE_APPLE_ID=""
+TEMP_KEYCHAIN_USER=""
+TEMP_KEYCHAIN_PASSWORD=""
+APPLE_KEY_ID=""
+APPLE_KEY_CONTENT=""
+GIT_AUTHORIZATION=""
+MATCH_PASSWORD=""
+IS_CI=false
+
+XCCONFIG_URL=""
+
+```
+
 ## Code style
 
 - Space indent: 4

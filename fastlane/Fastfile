@@ -17,7 +17,10 @@ BROWSERSTACK_USERNAME = ENV["BROWSERSTACK_USERNAME"]
 BROWSERSTACK_ACCESS_KEY = ENV["BROWSERSTACK_ACCESS_KEY"]
 
 PROVISIONING_REPO = ENV["PROVISIONING_REPO"]
-IS_CI = ENV["IS_CI"]
+IS_CI = ENV["IS_CI"] == "true"
+
+APP_STORE_CONNECT_TEAM_ID = ENV["APP_STORE_CONNECT_TEAM_ID"]
+DEVELOPER_PORTAL_TEAM_ID = ENV["DEVELOPER_PORTAL_TEAM_ID"]
 
 def delete_temp_keychain(name)
   delete_keychain(
@@ -101,11 +104,6 @@ end
 
 platform :ios do
   lane :feature_test do
-    # check xcode version (for ci only)
-    if IS_CI == "true"
-      xcversion(version: "13.0")
-    end
-
     # get current branch name
     branch = git_branch.downcase
     puts "Current branch is #{branch}"
@@ -131,9 +129,11 @@ platform :ios do
 
     # get number of builds released of this feature
     number_of_released_builds = 0
-    current_build = (feature_number.to_s + (number_of_released_builds + 1).to_s).to_i # pwn-1234, released 1 build -> builds/features_test/12342
+    build_number = number_of_released_builds + 1
+    current_build = feature_number.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
     while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
-      current_build += 1
+      build_number += 1
+      current_build = feature_number.to_s + "." + build_number.to_s
     end
 
     puts "Set build number to #{current_build}"
@@ -146,11 +146,20 @@ platform :ios do
     )
 
     # create release build for this feature
+    if IS_CI
+      update_code_signing_settings(
+        use_automatic_signing: false,
+        profile_name: PROVISIONING_PROFILE_SPECIFIER,
+        team_id: DEVELOPER_PORTAL_TEAM_ID,
+        code_sign_identity: "Apple Distribution"
+      )
+    end
+
     create_release_build('ad-hoc')
-   
+
     # upload to firebase and browser stack
-    upload_to_firebase_and_browserstack 
-    
+    upload_to_firebase_and_browserstack
+
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
 
@@ -168,8 +177,10 @@ platform :ios do
     )
 
     # output
-    sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
-    sh("echo BUILD_NUMBER=#{current_build} >> $GITHUB_ENV")
+    if IS_CI
+      sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
+      sh("echo BUILD_NUMBER=#{current_build} >> $GITHUB_ENV")
+    end
   end
 
   lane :beta do
@@ -181,13 +192,13 @@ platform :ios do
 
     # create release build
     create_release_build('ad-hoc')
-    
+
     # upload to firebase
     firebase_app_distribution(
       app: FIREBASE_APP_ID,
       groups: "dev_team",
       firebase_cli_token: FIREBASE_CLI_TOKEN
-    )    
+    )
 
     # upload to browserstack
     upload_to_browserstack_app_live(
@@ -197,12 +208,12 @@ platform :ios do
 
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
-    
+
     # commit
     commit_changes
-  end 
+  end
 
-  lane :closed_beta do
+  lane :release do
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
       skip_info_plist: true
@@ -213,7 +224,7 @@ platform :ios do
     pilot(
       apple_id: "#{DEVELOPER_APP_ID}",
       app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
-      skip_waiting_for_build_processing: true,
+      skip_waiting_for_build_processing: IS_CI,
       skip_submission: true,
       distribute_external: false,
       notify_external_testers: false,
