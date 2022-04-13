@@ -98,6 +98,7 @@ jobs:
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ env.BRANCH_NAME }}
+          from: ""
 
       - name: Comment on issue
         if: ${{ steps.find_issue.outputs.issue }}
