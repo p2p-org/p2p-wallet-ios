@@ -64,7 +64,7 @@ jobs:
       - name: "Upload to firebase for testing"
         uses: maierj/fastlane-action@v2.2.0
         with:
-          lane: release
+          lane: feature_test
         env:
           DEVELOPER_APP_IDENTIFIER: '${{ secrets.DEVELOPER_APP_IDENTIFIER }}'
           APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
