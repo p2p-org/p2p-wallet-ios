@@ -69,7 +69,7 @@ TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 - `Periphery` for detecting dead code (use Detect Unused Code target and run)
 - `CircleCI` or `GithubAction`: implementing...
 
-### Fastlane
+### Fastlane config (optional)
 Add `.env` file contains following content (ask teamate):
 ```
 DEVELOPER_APP_IDENTIFIER=""
