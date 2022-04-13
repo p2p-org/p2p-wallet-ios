@@ -3,7 +3,8 @@ platform :ios, '13.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 def common_pods
-  pod 'RxCocoa'
+  pod 'RxSwift', '6.5.0'
+  pod 'RxCocoa', '6.5.0'
   pod 'SolanaSwift', :path => 'SolanaSwift'
 end
 
