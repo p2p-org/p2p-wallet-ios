@@ -23,6 +23,7 @@ jobs:
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.pull_request.head.ref }}
+          from: ""
 
       - name: Move issue back to IN PROGRESS
         if: ${{ steps.find_issue.outputs.issue }}
