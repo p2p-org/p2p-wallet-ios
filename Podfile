@@ -33,7 +33,7 @@ target 'p2p_wallet' do
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'Intercom'
-  pod 'SwiftFormat/CLI', '~> 0.49'
+  pod 'SwiftFormat/CLI', '0.49.6'
   pod 'Periphery'
   
   # Firebase
