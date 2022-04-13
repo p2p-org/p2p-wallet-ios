@@ -19,6 +19,9 @@ BROWSERSTACK_ACCESS_KEY = ENV["BROWSERSTACK_ACCESS_KEY"]
 PROVISIONING_REPO = ENV["PROVISIONING_REPO"]
 IS_CI = ENV["IS_CI"]
 
+APP_STORE_CONNECT_TEAM_ID = ENV["APP_STORE_CONNECT_TEAM_ID"]
+PROVISIONING_PROFILE_UUID_adhoc = ENV["PROVISIONING_PROFILE_UUID_adhoc"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -60,11 +63,6 @@ def create_release_build(match_type)
     keychain_name: TEMP_KEYCHAIN_USER,
     keychain_password: TEMP_KEYCHAIN_PASSWORD,
     api_key: api_key
-  )
-
-  update_code_signing_settings(
-    use_automatic_signing: false,
-    profile_name: PROVISIONING_PROFILE_SPECIFIER
   )
 
   gym(
@@ -151,6 +149,11 @@ platform :ios do
     )
 
     # create release build for this feature
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      profile_uuid: PROVISIONING_PROFILE_UUID_adhoc,
+      team_id: APP_STORE_CONNECT_TEAM_ID
+    )
     create_release_build('ad-hoc')
    
     # upload to firebase and browser stack
