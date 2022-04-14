@@ -9,10 +9,10 @@ import RxSwift
 import SolanaSwift
 
 extension History {
-    class SceneModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
+    class SceneModel: BEStreamListViewModel<SolanaSDK.ParsedTransaction> {
         private let disposeBag = DisposeBag()
 
-        @Injected private var transactionsRepository: TransactionsRepository
+        @Injected private var solanaSDK: SolanaSDK
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var feeRelayer: FeeRelayerAPIClientType
 
@@ -33,13 +33,18 @@ extension History {
                 .map { wallet in AccountStreamSource(account: wallet.pubkey ?? "", accountSymbol: wallet.token.symbol) }
         }
 
-        override func createRequest() -> Single<[SolanaSDK.ParsedTransaction]> {
-            Single
-                .zip(sources.map { source -> Single<[SolanaSDK.ParsedTransaction]> in
-                    source.next(fetchingConfiguration)
+        override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
+            Observable
+                .zip(sources.map { source -> Observable<[SolanaSDK.SignatureInfo]> in
+                    source.next(fetchingConfiguration).asObservable()
                 })
-                .map { sourceResults -> [SolanaSDK.ParsedTransaction] in sourceResults.reduce([], +) }
-                .map { transactions in transactions.unique }
+                .map { results -> [SolanaSDK.SignatureInfo] in results.reduce([], +) }
+                .map { signatures in signatures.unique(keyPath: \SolanaSDK.SignatureInfo.signature) }
+                .flatMap { infos in Observable.from(infos) }
+                .flatMap { [weak self] (info: SolanaSDK.SignatureInfo) in
+                    guard let self = self else { return Observable.just(nil) }
+                    return self.solanaSDK
+                }
         }
     }
 }

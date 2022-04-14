@@ -11,8 +11,8 @@ import RxSwift
 import SolanaSwift
 
 protocol HistoryStreamSource {
-    /// Fetches new transactions sequencely.
-    func next(_ configuration: History.FetchingConfiguration) -> Single<[SolanaSDK.ParsedTransaction]>
+    /// Fetches new transaction signatures sequencely.
+    func next(_ configuration: History.FetchingConfiguration) -> Single<[SolanaSDK.SignatureInfo]>
 
     /// Resets the stream.
     func reset()
@@ -27,7 +27,7 @@ extension History {
     }
 
     class AccountStreamSource: StreamSource {
-        let transactionsRepository: TransactionsRepository
+        let solanaSDK: SolanaSDK
 
         /// The account address
         private let account: String
@@ -42,21 +42,18 @@ extension History {
         init(
             account: String,
             accountSymbol: String,
-            transactionsRepository: TransactionsRepository = Resolver.resolve()
+            solanaSDK: SolanaSDK = Resolver.resolve()
         ) {
             self.account = account
             self.accountSymbol = accountSymbol
-            self.transactionsRepository = transactionsRepository
+            self.solanaSDK = solanaSDK
         }
 
-        func next(_ configuration: History.FetchingConfiguration) -> Single<[SolanaSDK.ParsedTransaction]> {
-            transactionsRepository
-                .getTransactionsHistory(
-                    account: account,
-                    accountSymbol: accountSymbol,
-                    before: latestFetchedSignature,
-                    limit: configuration.limit,
-                    p2pFeePayerPubkeys: configuration.feePayer
+        func next(_ configuration: History.FetchingConfiguration) -> Single<[SolanaSDK.SignatureInfo]> {
+            solanaSDK
+                .getSignaturesForAddress(
+                    address: account,
+                    configs: .init(limit: configuration.limit, before: latestFetchedSignature)
                 )
                 .do(onSuccess: { [weak self] transactions in
                     self?.latestFetchedSignature = transactions.last?.signature
