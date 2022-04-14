@@ -12,7 +12,7 @@ import SolanaSwift
 
 protocol HistoryStreamSource {
     /// Fetches new transaction signatures sequencely.
-    func next(_ configuration: History.FetchingConfiguration) -> Single<[SolanaSDK.SignatureInfo]>
+    func next(_ configuration: History.FetchingConfiguration) async throws -> [History.TransactionSignature]
 
     /// Resets the stream.
     func reset()
@@ -20,6 +20,23 @@ protocol HistoryStreamSource {
 
 extension History {
     typealias StreamSource = HistoryStreamSource
+
+    struct TransactionSignature {
+        /// The account address
+        let account: String
+
+        /// The account's token symbol
+        let accountSymbol: String
+
+        // Meta data about signature
+        let signatureInfo: SolanaSDK.SignatureInfo
+
+        init(account: String, accountSymbol: String, signatureInfo: SolanaSDK.SignatureInfo) {
+            self.account = account
+            self.accountSymbol = accountSymbol
+            self.signatureInfo = signatureInfo
+        }
+    }
 
     struct FetchingConfiguration {
         let feePayer: [String]
@@ -49,15 +66,26 @@ extension History {
             self.solanaSDK = solanaSDK
         }
 
-        func next(_ configuration: History.FetchingConfiguration) -> Single<[SolanaSDK.SignatureInfo]> {
-            solanaSDK
+        func next(_ configuration: History.FetchingConfiguration) async throws -> [History.TransactionSignature] {
+            try await solanaSDK
                 .getSignaturesForAddress(
                     address: account,
                     configs: .init(limit: configuration.limit, before: latestFetchedSignature)
                 )
-                .do(onSuccess: { [weak self] transactions in
-                    self?.latestFetchedSignature = transactions.last?.signature
+                .map { [weak self] infos -> [History.TransactionSignature] in
+                    infos
+                        .map {
+                            TransactionSignature(
+                                account: self?.account ?? "",
+                                accountSymbol: self?.accountSymbol ?? "",
+                                signatureInfo: $0
+                            )
+                        }
+                }
+                .do(onSuccess: { [weak self] transactionSignature in
+                    self?.latestFetchedSignature = transactionSignature.last?.signatureInfo.signature
                 })
+                .value
         }
 
         func reset() { latestFetchedSignature = nil }
