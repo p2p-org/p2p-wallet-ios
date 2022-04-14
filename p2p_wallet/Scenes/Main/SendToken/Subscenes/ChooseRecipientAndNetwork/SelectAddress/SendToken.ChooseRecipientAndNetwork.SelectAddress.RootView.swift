@@ -282,9 +282,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                 if value.hasAvailableWalletToPayFee == false {
                                     return L10n.insufficientFundsToCoverFees
                                 }
-                                if let payingWallet = payingWallet,
-                                   let lamports = payingWallet.lamports,
-                                   lamports < value.feeAmount.total
+                                if value.feeAmount.total > 0,
+                                   let payingWallet = payingWallet,
+                                   let lamports = payingWallet.lamports
                                 {
                                     if lamports < value.feeAmount.total {
                                         let neededAmount = value.feeAmount.total

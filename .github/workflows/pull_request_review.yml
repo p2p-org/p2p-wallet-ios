@@ -23,6 +23,7 @@ jobs:
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.pull_request.head.ref }}
+          from: ""
 
       - name: Move issue back to IN PROGRESS
         if: ${{ steps.find_issue.outputs.issue }}
@@ -69,7 +70,8 @@ jobs:
           APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
           DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
           DEVELOPER_APP_ID: '${{ secrets.DEVELOPER_APP_ID }}'
-          PROVISIONING_PROFILE_SPECIFIER: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER }}'
+          PROVISIONING_PROFILE_SPECIFIER_ADHOC: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER_ADHOC }}'
+          PROVISIONING_PROFILE_SPECIFIER_APPSTORE: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER_APPSTORE }}'
           APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
           PROVISIONING_REPO: '${{ secrets.PROVISIONING_REPO }}'
           FIREBASE_APP_ID: '${{ secrets.FIREBASE_APP_ID }}'
@@ -98,6 +100,7 @@ jobs:
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ env.BRANCH_NAME }}
+          from: ""
 
       - name: Comment on issue
         if: ${{ steps.find_issue.outputs.issue }}

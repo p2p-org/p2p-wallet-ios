@@ -22,6 +22,7 @@ jobs:
         uses: atlassian/gajira-find-issue-key@master
         with:
           string: ${{ github.event.pull_request.head.ref }}
+          from: ""
 
       - name: Move issue to REVIEW
         if: ${{ steps.find_issue.outputs.issue }}

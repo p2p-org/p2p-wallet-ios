@@ -559,9 +559,7 @@
 "Create a new wallet" = "Создать новый кошелек";
 "Import a wallet" = "Импортировать кошелек";
 "iCloud restore is for returning users.\nPasting the security key manually is for everyone" = "Восстановление iCloud предназначено для вернувшихся пользователей.\nВставка ключа безопасности вручную предназначена для всех.";
-"Show your security key" = "Покажи свой электронный ключ";
-"Secure your wallet" = "Защитите свой кошелек";
-"Create a new wallet" = "Создать новый кошелек";
+"Simple decentralized finance for everyone" = "Простые децентрализованные финансы для всех";
 "Your security key" = "Ваш электронный ключ";
 "Verify manually" = "Проверить вручную";
 "Renew" = "Возобновить";
