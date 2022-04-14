@@ -2,7 +2,8 @@ default_platform(:ios)
 
 DEVELOPER_APP_ID = ENV["DEVELOPER_APP_ID"]
 DEVELOPER_APP_IDENTIFIER = ENV["DEVELOPER_APP_IDENTIFIER"]
-PROVISIONING_PROFILE_SPECIFIER = ENV["PROVISIONING_PROFILE_SPECIFIER"]
+PROVISIONING_PROFILE_SPECIFIER_ADHOC = ENV["PROVISIONING_PROFILE_SPECIFIER_ADHOC"]
+PROVISIONING_PROFILE_SPECIFIER_APPSTORE = ENV["PROVISIONING_PROFILE_SPECIFIER_APPSTORE"]
 TEMP_KEYCHAIN_USER = ENV["TEMP_KEYCHAIN_USER"]
 TEMP_KEYCHAIN_PASSWORD = ENV["TEMP_KEYCHAIN_PASSWORD"]
 APPLE_ISSUER_ID = ENV["APPLE_ISSUER_ID"]
@@ -17,6 +18,10 @@ BROWSERSTACK_USERNAME = ENV["BROWSERSTACK_USERNAME"]
 BROWSERSTACK_ACCESS_KEY = ENV["BROWSERSTACK_ACCESS_KEY"]
 
 PROVISIONING_REPO = ENV["PROVISIONING_REPO"]
+IS_CI = ENV["IS_CI"] == "true"
+
+APP_STORE_CONNECT_TEAM_ID = ENV["APP_STORE_CONNECT_TEAM_ID"]
+DEVELOPER_PORTAL_TEAM_ID = ENV["DEVELOPER_PORTAL_TEAM_ID"]
 
 def delete_temp_keychain(name)
   delete_keychain(
@@ -28,7 +33,7 @@ def create_temp_keychain(name, password)
   create_keychain(
     name: name,
     password: password,
-    unlock: false,
+    unlock: true,
     timeout: 0
   )
 end
@@ -41,25 +46,31 @@ end
 def create_release_build(match_type)
   ensure_temp_keychain(TEMP_KEYCHAIN_USER, TEMP_KEYCHAIN_PASSWORD)
 
+  profileSpecifier = PROVISIONING_PROFILE_SPECIFIER_ADHOC
+  if match_type == "app-store"
+    profileSpecifier = PROVISIONING_PROFILE_SPECIFIER_APPSTORE
+  end
+
+  if IS_CI
+    update_code_signing_settings(
+      use_automatic_signing: false,
+      profile_name: profileSpecifier,
+      team_id: DEVELOPER_PORTAL_TEAM_ID,
+      code_sign_identity: "Apple Distribution"
+    )
+  end
+
   api_key = app_store_connect_api_key(
     key_id: APPLE_KEY_ID,
     issuer_id: APPLE_ISSUER_ID,
-    key_content: APPLE_KEY_CONTENT,  
-    duration: 1200,  
+    key_content: APPLE_KEY_CONTENT,
+    is_key_content_base64: true,
+    duration: 1200,
     in_house: false
-  )
-  
-  increment_build_number(
-    xcodeproj: "p2p_wallet.xcodeproj", 
-    skip_info_plist: true
-  )
-  
-  cocoapods(
-    clean_install: true
   )
 
   match(
-    type: match_type,
+    type: match_type.gsub("-", ""),
     git_url: PROVISIONING_REPO,
     app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
     git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
@@ -69,26 +80,131 @@ def create_release_build(match_type)
     api_key: api_key
   )
 
-  gym(scheme: 'p2p_wallet', export_method: 'ad-hoc', export_xcargs: '-allowProvisioningUpdates')
+  gym(
+    scheme: 'p2p_wallet',
+    export_method: match_type,
+    export_xcargs: '-allowProvisioningUpdates',
+    silent: true,
+    export_options: {
+      provisioningProfiles: {
+        DEVELOPER_APP_ID => profileSpecifier
+      }
+    }
+  )
+end
+
+def upload_to_firebase_and_browserstack
+  # upload to firebase
+  firebase_app_distribution(
+    app: FIREBASE_APP_ID,
+    groups: "dev_team",
+    firebase_cli_token: FIREBASE_CLI_TOKEN
+  )
+
+  # upload to browserstack
+  upload_to_browserstack_app_live(
+    browserstack_username: BROWSERSTACK_USERNAME,
+    browserstack_access_key: BROWSERSTACK_ACCESS_KEY
+  )
 end 
 
 def commit_changes
-  version = get_version_number
+  version = get_version_number(target: "p2p_wallet")
   build = get_build_number
   git_commit(path: ["p2p_wallet.xcodeproj/project.pbxproj"], message: "release(beta): version #{version}, build #{build}")
-  add_git_tag(tag: "v#{version}(#{build})")
+  tag_name = "v#{version}(#{build})"
+  add_git_tag(tag: tag_name)
+  push_git_tags(tag: tag_name)
 end 
 
 platform :ios do
+  lane :feature_test do
+    # get current branch name
+    branch = git_branch.downcase
+    puts "Current branch is #{branch}"
+     
+    # check if branch is a feature branch
+    if !branch.include?("pwn-")
+      puts "The branch is not a feature branch. Skipping..."
+      next
+    end
+
+    # get feature number
+    feature_number = branch.split("pwn-").last.split("-").first.to_i
+    puts "Got the feature number: #{feature_number}"
+
+    # check feature number
+    if feature_number <= 0
+      puts "The feature number is not valid. Skipping..."
+      next
+    end
+
+    # prepare for tagging
+    tag_prefix = "builds/feature_test"
+
+    # get number of builds released of this feature
+    number_of_released_builds = 0
+    build_number = number_of_released_builds + 1
+    current_build = feature_number.to_s + "." + build_number.to_s # pwn-1234, released 1 build -> builds/feature_test/1234.2
+    while git_tag_exists(tag: "#{tag_prefix}/#{current_build}", remote: true)
+      build_number += 1
+      current_build = feature_number.to_s + "." + build_number.to_s
+    end
+
+    puts "Set build number to #{current_build}"
+
+    # set build number
+    increment_build_number(
+      xcodeproj: "p2p_wallet.xcodeproj",
+      build_number: current_build,
+      skip_info_plist: true
+    )
+
+    # create release build for this feature
+    create_release_build('ad-hoc')
+
+    # upload to firebase and browser stack
+    upload_to_firebase_and_browserstack
+
+    # delete temp keychain
+    delete_temp_keychain(TEMP_KEYCHAIN_USER)
+
+    # tag
+    tag_name = "#{tag_prefix}/#{current_build}"
+    add_git_tag(tag: tag_name)
+    push_git_tags(tag: tag_name)
+
+    # reset file
+    reset_git_repo(
+      force: true,
+      files: [
+        "p2p_wallet.xcodeproj/project.pbxproj"
+      ]
+    )
+
+    # output
+    if IS_CI
+      sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
+      sh("echo BUILD_NUMBER=#{current_build} >> $GITHUB_ENV")
+    end
+  end
+
   lane :beta do
-    create_release_build('adhoc')
-    
+    # increment build number
+    increment_build_number(
+      xcodeproj: "p2p_wallet.xcodeproj",
+      skip_info_plist: true
+    )
+
+    # create release build
+    create_release_build('ad-hoc')
+
     # upload to firebase
     firebase_app_distribution(
       app: FIREBASE_APP_ID,
       groups: "dev_team",
       firebase_cli_token: FIREBASE_CLI_TOKEN
-    )    
+    )
 
     # upload to browserstack
     upload_to_browserstack_app_live(
@@ -98,18 +214,23 @@ platform :ios do
 
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
-    
+
     # commit
     commit_changes
-  end 
+  end
 
-  lane :closed_beta do
-    create_release_build
+  lane :release do
+    increment_build_number(
+      xcodeproj: "p2p_wallet.xcodeproj",
+      skip_info_plist: true
+    )
+
+    create_release_build('app-store')
 
     pilot(
       apple_id: "#{DEVELOPER_APP_ID}",
       app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
-      skip_waiting_for_build_processing: true,
+      skip_waiting_for_build_processing: IS_CI,
       skip_submission: true,
       distribute_external: false,
       notify_external_testers: false,

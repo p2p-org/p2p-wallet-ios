@@ -63,7 +63,11 @@ extension SendToken {
         let networkSubject = BehaviorRelay<Network>(value: .solana)
         let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
         let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(request: .just(.zero))
+        let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(
+            request: .just(
+                .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
+            )
+        )
 
         // MARK: - Initializers
 
@@ -96,7 +100,7 @@ extension SendToken {
         func bind() {
             bindFees(walletSubject: walletSubject)
 
-            // update wallet after swapping
+            // update wallet after sending
             walletsRepository.dataObservable
                 .skip(1)
                 .withLatestFrom(walletSubject.asObservable(), resultSelector: { ($0, $1) })
@@ -141,9 +145,20 @@ extension SendToken {
 
         private func send() {
             guard let wallet = walletSubject.value,
-                  let amount = amountSubject.value,
+                  var amount = amountSubject.value,
                   let receiver = recipientSubject.value
             else { return }
+
+            // modify amount if using source wallet as paying wallet
+            if let totalFee = feeInfoSubject.value?.feeAmount,
+               totalFee.total > 0,
+               payingWalletSubject.value?.pubkey == wallet.pubkey
+            {
+                let feeAmount = totalFee.total.convertToBalance(decimals: payingWalletSubject.value?.token.decimals)
+                if amount + feeAmount > wallet.amount {
+                    amount -= feeAmount
+                }
+            }
 
             let network = networkSubject.value
 
