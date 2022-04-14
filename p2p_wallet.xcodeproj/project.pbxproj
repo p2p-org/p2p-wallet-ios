@@ -43,6 +43,7 @@
 		3B29B69B27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */; };
 		3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */; };
 		3B2BAFA82761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */; };
+		3B2F9EEF27F5B76D005BD49B /* SendServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2F9EEE27F5B76D005BD49B /* SendServiceType.swift */; };
 		3B35734C2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */; };
 		3B3A8EDC27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift */; };
 		3B3A8EEC27D7A8290026E0FE /* TransactionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EE827D7A8290026E0FE /* TransactionDetail.swift */; };
@@ -77,6 +78,7 @@
 		3BCEED5D27D4737600BA9110 /* PendingTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */; };
 		3BCEED5F27D475BC00BA9110 /* TransactionHandler+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */; };
 		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
+		3BF4279A2805332100C0F75B /* SwiftyUserDefaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */; };
 		3BFA644B27D888BE001CA631 /* TransactionDetail.FromToSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */; };
 		3BFA644D27D89A2A001CA631 /* TransactionDetail.AmountSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */; };
 		3BFA645027D99FBC001CA631 /* NameServiceCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644F27D99FBC001CA631 /* NameServiceCache.swift */; };
@@ -203,7 +205,6 @@
 		8469996EF705D60C94EB79FC /* Moonpay.API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469973F517781E128015A0E /* Moonpay.API.swift */; };
 		8469996FB7AC9BB16D283B3B /* BuyProcessing.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699603F79402208A4B88C8 /* BuyProcessing.ViewController.swift */; };
 		8469998D03BF3A0606D0D42D /* VerifySecurityKeys.Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */; };
-		846999AD4696D6B6BC592165 /* (null) in Sources */ = {isa = PBXBuildFile; };
 		846999D7A0F0B2DC6E8C8A9B /* UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */; };
 		84699A0E3799F04752491CFD /* Home.BannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469932EA412472FEEE08702 /* Home.BannerViewModel.swift */; };
 		84699A43732ECB8E6362161E /* Home.Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994CA82A154C3617A2A35 /* Home.Header.swift */; };
@@ -561,6 +562,7 @@
 		3B29B69A27C8830500D39E7B /* CreateOrRestoreWallet.IntroPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateOrRestoreWallet.IntroPlayerView.swift; sourceTree = "<group>"; };
 		3B2BAFA52761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRecipientAndNetworkHandler.swift; sourceTree = "<group>"; };
 		3B2BAFA72761E2490008DA0A /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
+		3B2F9EEE27F5B76D005BD49B /* SendServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendServiceType.swift; sourceTree = "<group>"; };
 		3B35734B2769F48A00B1738F /* OrcaSwapV2ConfirmSwappingViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ConfirmSwappingViewModelType.swift; sourceTree = "<group>"; };
 		3B3A8EDB27D4D6E40026E0FE /* ProcessTransaction.Status.HeaderLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.HeaderLabel.swift; sourceTree = "<group>"; };
 		3B3A8EE827D7A8290026E0FE /* TransactionDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.swift; sourceTree = "<group>"; };
@@ -595,6 +597,7 @@
 		3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingTransaction.swift; sourceTree = "<group>"; };
 		3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionHandler+Extensions.swift"; sourceTree = "<group>"; };
 		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
+		3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftyUserDefaults+Workaround.swift"; sourceTree = "<group>"; };
 		3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.FromToSection.swift; sourceTree = "<group>"; };
 		3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.AmountSection.swift; sourceTree = "<group>"; };
 		3BFA644F27D99FBC001CA631 /* NameServiceCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameServiceCache.swift; sourceTree = "<group>"; };
@@ -723,8 +726,6 @@
 		846996B110978DCB7A6D4A74 /* Swap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
 		8469973F517781E128015A0E /* Moonpay.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
-		846998347726DB596CBF222F /* TransakBuyProccessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransakBuyProccessing.swift; sourceTree = "<group>"; };
-		84699843D0D43ABFAA0417BA /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		84699858C3DF47632C790981 /* Home.EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.EmptyView.swift; sourceTree = "<group>"; };
 		846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
 		846998A492BB5B9DDE59C8DA /* Moonpay.Provider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Provider.swift; sourceTree = "<group>"; };
@@ -1145,6 +1146,15 @@
 			path = Interfaces;
 			sourceTree = "<group>";
 		};
+		3B2F9EED27F5B758005BD49B /* SendService */ = {
+			isa = PBXGroup;
+			children = (
+				3B2F9EEE27F5B76D005BD49B /* SendServiceType.swift */,
+				BC19DF4E270169CF00A3A8D8 /* SendService.swift */,
+			);
+			path = SendService;
+			sourceTree = "<group>";
+		};
 		3B3A8EDF27D7A7B30026E0FE /* TransactionDetail */ = {
 			isa = PBXGroup;
 			children = (
@@ -1166,13 +1176,6 @@
 				3BFA644C27D89A2A001CA631 /* TransactionDetail.AmountSection.swift */,
 			);
 			path = Subviews;
-			sourceTree = "<group>";
-		};
-		3B79E0A227D0DA9D00BCB884 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		3B856FC527B76D1A00973039 /* Confirm */ = {
@@ -1821,6 +1824,7 @@
 				BCC1F211269ED30A003DD648 /* PrimitiveSequence+Extensions.swift */,
 				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
 				8469964AD773095EEFA52701 /* CALayer+Extensions.swift */,
+				3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2224,7 +2228,7 @@
 			children = (
 				BC036C1A269449A7005C1BEC /* Socket.swift */,
 				41EB2E6327B23CFD007D5F7F /* Intercom */,
-				BC19DF4E270169CF00A3A8D8 /* SendService.swift */,
+				3B2F9EED27F5B758005BD49B /* SendService */,
 				3B1681F8278B3E5E00838F1B /* AppEventHandler */,
 				41DD026B2760A95E00545A73 /* TextChangesFilters */,
 				BC32A3AB254A8884002156F0 /* Storage.swift */,
@@ -2823,7 +2827,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#!/bin/bash\n#\n# Run SwiftLint\n\nSTART_DATE=$(date +\"%s\")\n\nSWIFT_LINT=/usr/local/bin/swiftlint\nSWIFT_FORMAT=/usr/local/bin/swiftformat\n\nif [[ -e \"${SWIFT_LINT}\" ]]; then\n    echo \"[I] Found SwiftLint at ${SWIFT_LINT}\"\nelse\n    echo \"[!] Local SwiftLint not found at ${SWIFT_LINT}\"\n    export SWIFT_LINT=${PWD}/Pods/SwiftLint/swiftlint\n    echo \"[I] Try to using SwiftLint from cocoapods at ${SWIFT_LINT}\"\nfi\n\nif [[ -e \"${SWIFT_FORMAT}\" ]]; then\n    echo \"[I] Found SwiftFormat at ${SWIFT_FORMAT}\"\nelse\n    echo \"[!] Local SwiftFormat not found at ${SWIFT_FORMAT}\"\n    export SWIFT_FORMAT=${PWD}/Pods/SwiftFormat/CommandLineTool/swiftformat\n    echo \"[I] Try to using SwiftFormat from cocoapods at ${SWIFT_FORMAT}\"\nfi\n\nif [[ ! -e \"${SWIFT_LINT}\" ]]; then\n    echo \"[!] SwifLint is not installed.\"\n    echo \"[!] Expected location is '${SWIFT_LINT}'\"\n    echo \"[!] Please install it. eg. 'brew install swiftlint'\"\n    echo \"[!] Or using via Cocoapods by 'pod 'SwiftLint'' in your Podfile\"\n    exit 1\nfi\n\necho \"[I] SwiftLint version: $(${SWIFT_LINT} version)\"\n\nif [[ ! -e \"${SWIFT_FORMAT}\" ]]; then\n    echo \"[!] SwiftFormat is not installed.\"\n    echo \"[!] Expected location is '${SWIFT_LINT}'\"\n    echo \"[!] Please install it. eg. 'brew install swiftformat'\"\n    echo \"[!] Or using via Cocoapods by 'pod 'SwiftFormat/CLI'' in your Podfile\"\n    exit 1\nfi\n\necho \"[I] SwiftFormat version: $(${SWIFT_FORMAT} --version)\"\n\n# Run for unstaged, staged, new files, excluded for deleted files\ngit diff --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\ngit diff --cached --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\ngit ls-files --others --exclude-standard -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\nEND_DATE=$(date +\"%s\")\n\nDIFF=$(($END_DATE - $START_DATE))\necho \"SwiftLint took $(($DIFF / 60)) minutes and $(($DIFF % 60)) seconds to complete.\"\n";
+			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  echo \"Swiftformat and Swiftlint is disabled in Release mode\"\n  exit 0\nfi\n\nSTART_DATE=$(date +\"%s\")\n\nSWIFT_LINT=/usr/local/bin/swiftlint\nSWIFT_FORMAT=/usr/local/bin/swiftformat\n\nif [[ -e \"${SWIFT_LINT}\" ]]; then\n    echo \"[I] Found SwiftLint at ${SWIFT_LINT}\"\nelse\n    echo \"[!] Local SwiftLint not found at ${SWIFT_LINT}\"\n    export SWIFT_LINT=${PWD}/Pods/SwiftLint/swiftlint\n    echo \"[I] Try to using SwiftLint from cocoapods at ${SWIFT_LINT}\"\nfi\n\nif [[ -e \"${SWIFT_FORMAT}\" ]]; then\n    echo \"[I] Found SwiftFormat at ${SWIFT_FORMAT}\"\nelse\n    echo \"[!] Local SwiftFormat not found at ${SWIFT_FORMAT}\"\n    export SWIFT_FORMAT=${PWD}/Pods/SwiftFormat/CommandLineTool/swiftformat\n    echo \"[I] Try to using SwiftFormat from cocoapods at ${SWIFT_FORMAT}\"\nfi\n\nif [[ ! -e \"${SWIFT_LINT}\" ]]; then\n    echo \"[!] SwifLint is not installed.\"\n    echo \"[!] Expected location is '${SWIFT_LINT}'\"\n    echo \"[!] Please install it. eg. 'brew install swiftlint'\"\n    echo \"[!] Or using via Cocoapods by 'pod 'SwiftLint'' in your Podfile\"\n    exit 1\nfi\n\necho \"[I] SwiftLint version: $(${SWIFT_LINT} version)\"\n\nif [[ ! -e \"${SWIFT_FORMAT}\" ]]; then\n    echo \"[!] SwiftFormat is not installed.\"\n    echo \"[!] Expected location is '${SWIFT_LINT}'\"\n    echo \"[!] Please install it. eg. 'brew install swiftformat'\"\n    echo \"[!] Or using via Cocoapods by 'pod 'SwiftFormat/CLI'' in your Podfile\"\n    exit 1\nfi\n\necho \"[I] SwiftFormat version: $(${SWIFT_FORMAT} --version)\"\n\n# Run for unstaged, staged, new files, excluded for deleted files\ngit diff --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\ngit diff --cached --diff-filter=d --name-only -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\ngit ls-files --others --exclude-standard -- \"*.swift\" | while read filename; do\n    $SWIFT_FORMAT \"$filename\"\n    $SWIFT_LINT lint --path \"$filename\";\ndone\n\nEND_DATE=$(date +\"%s\")\n\nDIFF=$(($END_DATE - $START_DATE))\necho \"SwiftLint took $(($DIFF / 60)) minutes and $(($DIFF % 60)) seconds to complete.\"\n";
 		};
 		3BFD4E4127E9A60400C0388F /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2928,7 +2932,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
+			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  echo \"Swiftgen is disabled in Release mode\"\n  exit 0\nfi\n\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3068,6 +3072,7 @@
 				BC18CA8526318F120054E624 /* SolanaSDK.Wallet+Extensions.swift in Sources */,
 				86A90D18273D306400D180EF /* VerifySecurityKeys.ViewController.swift in Sources */,
 				BCE42E1A25DFA5100021540E /* RestoreWallet.ViewController.swift in Sources */,
+				3B2F9EEF27F5B76D005BD49B /* SendServiceType.swift in Sources */,
 				3B7DE7EC2775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift in Sources */,
 				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WelcomeViewController.swift in Sources */,
@@ -3179,6 +3184,7 @@
 				BC4B9EA427158886005B9ECA /* LocalizedLanguage.swift in Sources */,
 				BCE42E1825DFA5100021540E /* RestoreWallet.ViewModel.swift in Sources */,
 				4114D16B2746272400352CDF /* EnterSeedInfo.ViewController.swift in Sources */,
+				3BF4279A2805332100C0F75B /* SwiftyUserDefaults+Workaround.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
 				BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */,
 				3B78CB512773067100FB3C4C /* NotificationsService.swift in Sources */,
@@ -3379,7 +3385,6 @@
 				84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */,
 				846993316E60603167DE5520 /* LockView.swift in Sources */,
 				84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */,
-				846999AD4696D6B6BC592165 /* (null) in Sources */,
 				84699C160676335B4D6F9607 /* Swap.swift in Sources */,
 				846993134D5452A2084089DC /* SwapServiceWithRelayImpl.swift in Sources */,
 				84699A485A6FC25C5C40FEB1 /* OrcaSwapV2.Helper.swift in Sources */,
@@ -3606,7 +3611,7 @@
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3614,7 +3619,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3651,7 +3656,7 @@
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3659,7 +3664,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
