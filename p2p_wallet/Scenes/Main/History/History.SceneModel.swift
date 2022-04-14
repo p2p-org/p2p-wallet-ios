@@ -20,7 +20,7 @@ extension History {
         private var sources: [StreamSource] = []
 
         /// Default fetching configuration
-        private let fetchingConfiguration = FetchingConfiguration(
+        private static let fetchingConfiguration = FetchingConfiguration(
             feePayer: Defaults.p2pFeePayerPubkeys,
             limit: 10
         )
@@ -34,17 +34,33 @@ extension History {
         }
 
         override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
-            Observable
-                .zip(sources.map { source -> Observable<[SolanaSDK.SignatureInfo]> in
-                    source.next(fetchingConfiguration).asObservable()
-                })
-                .map { results -> [SolanaSDK.SignatureInfo] in results.reduce([], +) }
-                .map { signatures in signatures.unique(keyPath: \SolanaSDK.SignatureInfo.signature) }
-                .flatMap { infos in Observable.from(infos) }
-                .flatMap { [weak self] (info: SolanaSDK.SignatureInfo) in
-                    guard let self = self else { return Observable.just(nil) }
-                    return self.solanaSDK
+            AsyncThrowingStream<[SolanaSDK.ParsedTransaction], Error> { stream in
+                Task { [weak self] in
+                    defer { stream.finish(throwing: nil) }
+                    do {
+                        var fetchingIds: [String] = []
+                        for source in sources {
+                            let history = try await source.next(SceneModel.fetchingConfiguration)
+                            for trx in history {
+                                if fetchingIds.contains(trx.signatureInfo.signature) { continue }
+                                fetchingIds.append(trx.account)
+
+                                let trx = try await solanaSDK.getTransaction(
+                                    account: trx.account,
+                                    accountSymbol: trx.accountSymbol,
+                                    signature: trx.signatureInfo.signature,
+                                    parser: SolanaSDK.TransactionParser(solanaSDK: solanaSDK),
+                                    p2pFeePayerPubkeys: Defaults.p2pFeePayerPubkeys
+                                ).value
+
+                                stream.yield([trx])
+                            }
+                        }
+                    } catch {
+                        stream.finish(throwing: error)
+                    }
                 }
+            }.asObservable()
         }
     }
 }
