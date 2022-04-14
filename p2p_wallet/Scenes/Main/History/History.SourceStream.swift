@@ -2,8 +2,6 @@
 // Created by Giang Long Tran on 12.04.2022.
 //
 
-import Foundation
-
 import BECollectionView
 import FeeRelayerSwift
 import Foundation
