@@ -12,50 +12,89 @@ extension History {
     class SceneModel: BEStreamListViewModel<SolanaSDK.ParsedTransaction> {
         private let disposeBag = DisposeBag()
 
-        @Injected private var solanaSDK: SolanaSDK
-        @Injected private var walletsRepository: WalletsRepository
+        private let solanaSDK: SolanaSDK
+        private let walletsRepository: WalletsRepository
         @Injected private var feeRelayer: FeeRelayerAPIClientType
 
         /// A list of source, where data can be fetched
-        private var sources: [StreamSource] = []
+        private var source: StreamSource
 
-        /// Default fetching configuration
-        private static let fetchingConfiguration = FetchingConfiguration(
-            feePayer: Defaults.p2pFeePayerPubkeys,
-            limit: 10
-        )
+        init(
+            solanaSDK: SolanaSDK = Resolver.resolve(),
+            walletsRepository: WalletsRepository = Resolver.resolve()
+        ) {
+            self.solanaSDK = solanaSDK
+            self.walletsRepository = walletsRepository
 
-        init() {
+            let transactionRepository = CachingTransactionRepository(
+                delegate: SolanaTransactionRepository(solanaSDK: solanaSDK)
+            )
+
+            let transactionParser = CachingTransactionParsing(
+                delegate: DefaultTransactionParser(solanaSDK: solanaSDK, p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+            )
+
+            source = MultipleAccountsStreamSource(
+                sources: walletsRepository
+                    .getWallets()
+                    .map { wallet in
+                        AccountStreamSource(
+                            account: wallet.pubkey ?? "",
+                            accountSymbol: wallet.token.symbol,
+                            transactionRepository: transactionRepository,
+                            transactionParser: transactionParser
+                        )
+                    }
+            )
+
+            // TODO: Remove - for testing purpose
+            /*
+             if let wallet = walletsRepository.nativeWallet {
+                 source = AccountStreamSource(
+                     account: wallet.pubkey ?? "",
+                     accountSymbol: wallet.token.symbol,
+                     transactionRepository: transactionRepository,
+                     transactionParser: transactionParser
+                 )
+             }
+             */
+
             super.init(isPaginationEnabled: true, limit: 10)
+        }
 
-            sources = walletsRepository
-                .getWallets()
-                .map { wallet in AccountStreamSource(account: wallet.pubkey ?? "", accountSymbol: wallet.token.symbol) }
+        override func clear() {
+            source.reset()
+            super.clear()
         }
 
         override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
             AsyncThrowingStream<[SolanaSDK.ParsedTransaction], Error> { stream in
-                Task { [weak self] in
+                Task {
                     defer { stream.finish(throwing: nil) }
+
                     do {
-                        var fetchingIds: [String] = []
-                        for source in sources {
-                            let history = try await source.next(SceneModel.fetchingConfiguration)
-                            for trx in history {
-                                if fetchingIds.contains(trx.signatureInfo.signature) { continue }
-                                fetchingIds.append(trx.account)
+                        var receivedItem = 0
+                        while receivedItem < 10 {
+                            let firstTrx = try await source.first()
+                            guard
+                                let firstTrx = firstTrx,
+                                var timeEndFilter = firstTrx.blockTime
+                            else { return }
 
-                                let trx = try await solanaSDK.getTransaction(
-                                    account: trx.account,
-                                    accountSymbol: trx.accountSymbol,
-                                    signature: trx.signatureInfo.signature,
-                                    parser: SolanaSDK.TransactionParser(solanaSDK: solanaSDK),
-                                    p2pFeePayerPubkeys: Defaults.p2pFeePayerPubkeys
-                                ).value
+                            // Fetch next 3 days
+                            timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 3)
+                            print("START FETCHING AT: ", timeEndFilter)
 
-                                stream.yield([trx])
+                            for try await transaction in source.next(configuration: .init(
+                                timestampEnd: timeEndFilter,
+                                limit: 10
+                            )) {
+                                receivedItem += 1
+                                stream.yield([transaction])
                             }
                         }
+
+                        stream.finish(throwing: nil)
                     } catch {
                         stream.finish(throwing: error)
                     }
