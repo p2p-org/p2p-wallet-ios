@@ -7,14 +7,56 @@ import BEPureLayout
 import RxCocoa
 import RxSwift
 
+/// This class is responsible for left and right swipe to show extra actions.
 class SwipeableCell: BECompositionView {
+    /// The enum describes current swipe state.
+    enum Focus {
+        case right
+        case left
+        case center
+    }
+
+    /// Leading action view.
     let leadingActions: UIView?
+
+    /// Trailing action view.
     let trailingActions: UIView?
+
+    /// Primary content view.
     let content: UIView
 
+    /// The value determines when view should scroll to nearest action view
     private let scrollTriggerOffset: CGFloat = 30
+
+    /// The value determines when view should change state and disable/enable interaction.
+    private let stateTriggerOffset: CGFloat = 2
+
     private var scrollViewRef = BERef<BEScrollView>()
 
+    /// Current focus state
+    fileprivate var focus: Focus = .center {
+        didSet {
+            switch focus {
+            case .left:
+                trailingActions?.alpha = 0
+            case .right:
+                leadingActions?.alpha = 0
+            case .center:
+                leadingActions?.alpha = 1
+                trailingActions?.alpha = 1
+            }
+        }
+    }
+
+    /// Initialize a view that supports swipe for showing extra actions.
+    ///
+    /// This class listens `contentSize` changes of scroll view to set start position (center).
+    /// Unfortunately there is not way to set start position of scroll view before it has been layouted.
+    ///
+    /// - Parameters:
+    ///   - leadingActions: Leading actions view
+    ///   - content: Content view
+    ///   - trailingActions: Trailing actions view
     init(leadingActions: UIView?, content: UIView, trailingActions: UIView?) {
         self.leadingActions = leadingActions
         self.trailingActions = trailingActions
@@ -69,6 +111,7 @@ class SwipeableCell: BECompositionView {
 
     private var isFirstRun = true
 
+    /// This method will be called when content size of scroll view has changed.
     func contentSizeDidUpdate() {
         guard let leadingActions = leadingActions else { return }
         if isFirstRun, leadingActions.frame.width > 0 {
@@ -77,6 +120,9 @@ class SwipeableCell: BECompositionView {
         }
     }
 
+    /// Set center position of swipe
+    ///
+    /// - Parameter animated: The value used to show animation by centralizing.
     func centralize(animated: Bool = true) {
         guard let leadingActions = leadingActions else {
             scrollViewRef.view?.scrollView.setContentOffset(.zero, animated: animated)
@@ -88,7 +134,7 @@ class SwipeableCell: BECompositionView {
 
 extension SwipeableCell: UIScrollViewDelegate {
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if abs(scrollView.contentOffset.x - content.frame.origin.x) < 2 {
+        if abs(scrollView.contentOffset.x - content.frame.origin.x) < stateTriggerOffset {
             content.isUserInteractionEnabled = false
         } else {
             content.isUserInteractionEnabled = true
@@ -98,13 +144,11 @@ extension SwipeableCell: UIScrollViewDelegate {
     func nearestAnchor(forContentOffset offset: CGPoint) -> CGPoint {
         let offsetFromCenter = content.frame.origin.x - offset.x
 
-        if offsetFromCenter > scrollTriggerOffset {
+        if offsetFromCenter > scrollTriggerOffset, focus == .center, let leadingActions = leadingActions {
             // left
-            guard let leadingActions = leadingActions else { return .zero }
             return .init(x: leadingActions.frame.origin.x, y: offset.y)
-        } else if offsetFromCenter < -scrollTriggerOffset {
+        } else if offsetFromCenter < -scrollTriggerOffset, focus == .center, let trailingActions = trailingActions {
             // right
-            guard let trailingActions = trailingActions else { return .zero }
             return .init(x: trailingActions.frame.origin.x, y: offset.y)
         } else {
             // center
@@ -125,6 +169,30 @@ extension SwipeableCell: UIScrollViewDelegate {
         let targetAnchor = nearestAnchor(forContentOffset: offsetProjection)
 
         targetContentOffset.pointee = targetAnchor
+    }
+
+    public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        scrollViewFinishScroll(scrollView)
+    }
+
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        scrollViewFinishScroll(scrollView)
+    }
+
+    public func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if !decelerate { scrollViewFinishScroll(scrollView) }
+    }
+
+    func scrollViewFinishScroll(_ scrollView: UIScrollView) {
+        let offset = scrollView.contentOffset.x - content.frame.origin.x
+
+        if offset > stateTriggerOffset {
+            focus = .right
+        } else if offset < -stateTriggerOffset {
+            focus = .left
+        } else {
+            focus = .center
+        }
     }
 }
 
