@@ -211,10 +211,11 @@
 		8469998D03BF3A0606D0D42D /* VerifySecurityKeys.Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */; };
 		846999D7A0F0B2DC6E8C8A9B /* UIStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699D3DBA0FA60C1B1CCD70 /* UIStackView.swift */; };
 		84699A0E3799F04752491CFD /* Home.BannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469932EA412472FEEE08702 /* Home.BannerViewModel.swift */; };
+		84699A29BCC1B0CB7B6CFCB5 /* History.TransactionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469920931BF6188A42E474C /* History.TransactionParser.swift */; };
 		84699A43732ECB8E6362161E /* Home.Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994CA82A154C3617A2A35 /* Home.Header.swift */; };
 		84699A485A6FC25C5C40FEB1 /* OrcaSwapV2.Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998AB61BE23DF5EDCBD3B /* OrcaSwapV2.Helper.swift */; };
 		84699A514766BA921F1CEBBB /* VisibleWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699A6A04BAA3E42E18DB52 /* VisibleWalletCell.swift */; };
-		84699A8A407ADE38BF74CD17 /* History.TransactionParsing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993DD1804BFE20C845310 /* History.TransactionParsing.swift */; };
+		84699AC0C9A864ED8F69425E /* History.Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993A9C241AEA47DE8003C /* History.Repository.swift */; };
 		84699AF5B3069ECD1CBDE3B5 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990F92D4739D72B04E397 /* Utils.swift */; };
 		84699AFDE6821C43A4F93FC7 /* WLWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D5BC06C25591CFA36D /* WLWebView.swift */; };
 		84699AFF5091E0304EC6CA9C /* Keyphrase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992F9B16CDB1281124049 /* Keyphrase.swift */; };
@@ -699,6 +700,7 @@
 		846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.ViewController.swift; sourceTree = "<group>"; };
 		846991D31FA9B8B77AD4DAD1 /* LockView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockView.swift; sourceTree = "<group>"; };
 		846991D5BC06C25591CFA36D /* WLWebView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WLWebView.swift; sourceTree = "<group>"; };
+		8469920931BF6188A42E474C /* History.TransactionParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.TransactionParser.swift; sourceTree = "<group>"; };
 		8469921CB588561D32F0BA43 /* BEBuilder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BEBuilder.swift; sourceTree = "<group>"; };
 		84699278391D27DF0EB6406C /* Authentication.BiometricButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authentication.BiometricButton.swift; sourceTree = "<group>"; };
 		846992B55E29D7DA05ED2F4C /* DAppContainer.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.ViewModel.swift; sourceTree = "<group>"; };
@@ -710,9 +712,9 @@
 		84699360187D203C37C9FFEB /* DAppContainer.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.ViewController.swift; sourceTree = "<group>"; };
 		846993611CD0B957C592D868 /* SupportedTokens.EmptyCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SupportedTokens.EmptyCell.swift; sourceTree = "<group>"; };
 		846993A9B7C558B1E379CF0C /* Buy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Buy.swift; sourceTree = "<group>"; };
+		846993A9C241AEA47DE8003C /* History.Repository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.Repository.swift; sourceTree = "<group>"; };
 		846993C80C502EDC0FBF1067 /* BuyPreparing.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyPreparing.Scene.swift; sourceTree = "<group>"; };
 		846993CDD1FB1E8A31A9BCF7 /* TransactionAnalytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionAnalytics.swift; sourceTree = "<group>"; };
-		846993DD1804BFE20C845310 /* History.TransactionParsing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.TransactionParsing.swift; sourceTree = "<group>"; };
 		84699455C34FBC56A4B9E122 /* DAppContainer.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAppContainer.RootView.swift; sourceTree = "<group>"; };
 		8469946C7AC15ACE4B8C7FB2 /* BuyExchangeServiceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyExchangeServiceType.swift; sourceTree = "<group>"; };
 		84699474E0B586007CA0B9A2 /* ReserveNameBannerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReserveNameBannerHandler.swift; sourceTree = "<group>"; };
@@ -1572,7 +1574,8 @@
 				84699DBB6E0B23A7C77E3323 /* History.SceneModel.swift */,
 				84699740E9890A4FDC17D1AE /* History.SourceStream.swift */,
 				846995C6C18953024812DF66 /* History.Utils.swift */,
-				846993DD1804BFE20C845310 /* History.TransactionParsing.swift */,
+				846993A9C241AEA47DE8003C /* History.Repository.swift */,
+				8469920931BF6188A42E474C /* History.TransactionParser.swift */,
 			);
 			path = History;
 			sourceTree = "<group>";
@@ -3456,7 +3459,8 @@
 				84699DFA023DD6FB4A09DBE8 /* History.SceneModel.swift in Sources */,
 				84699203137A7432438DDF91 /* History.SourceStream.swift in Sources */,
 				846993270F5E62A4ABFA212D /* History.Utils.swift in Sources */,
-				84699A8A407ADE38BF74CD17 /* History.TransactionParsing.swift in Sources */,
+				84699AC0C9A864ED8F69425E /* History.Repository.swift in Sources */,
+				84699A29BCC1B0CB7B6CFCB5 /* History.TransactionParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

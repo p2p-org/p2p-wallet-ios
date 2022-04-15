@@ -25,7 +25,7 @@ extension History {
                             viewModel: viewModel,
                             forType: SolanaSDK.ParsedTransaction.self,
                             where: \SolanaSDK.ParsedTransaction.blockTime
-                        )
+                        ).reversed()
                     },
                     layout: .init(
                         header: .init(
@@ -38,12 +38,13 @@ extension History {
                         itemHeight: .estimated(85)
                     ),
                     headerBuilder: { view, sectionInfo in
-                        guard
-                            let view = view as? SectionHeaderView,
-                            let date = sectionInfo?.userInfo as? String
-                        else { return }
+                        guard let view = view as? SectionHeaderView else { return }
 
-                        view.setUp(headerTitle: date)
+                        if let date = sectionInfo?.userInfo as? String {
+                            view.setUp(headerTitle: date)
+                        } else {
+                            view.setUp(headerTitle: L10n.loading)
+                        }
                     }
                 )
             }
