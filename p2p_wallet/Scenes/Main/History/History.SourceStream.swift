@@ -157,16 +157,9 @@ extension History {
                                 )
 
                                 let transactionTime = transaction.blockTime ?? Date()
-                                print(
-                                    transactionTime,
-                                    configuration.timestampEnd,
-                                    transactionTime >= configuration.timestampEnd
-                                )
-
-                                latestFetchedSignature = signature
-
                                 if transactionTime >= configuration.timestampEnd {
                                     // Emit transction
+                                    latestFetchedSignature = signature
                                     stream.yield(transaction)
                                 } else {
                                     // Break stream and return

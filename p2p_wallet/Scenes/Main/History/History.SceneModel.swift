@@ -74,7 +74,7 @@ extension History {
 
                     do {
                         var receivedItem = 0
-                        while receivedItem < 10 {
+                        while true {
                             let firstTrx = try await source.first()
                             guard
                                 let firstTrx = firstTrx,
@@ -83,18 +83,17 @@ extension History {
 
                             // Fetch next 3 days
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 3)
-                            print("START FETCHING AT: ", timeEndFilter)
 
                             for try await transaction in source.next(configuration: .init(
                                 timestampEnd: timeEndFilter,
                                 limit: 10
                             )) {
-                                receivedItem += 1
                                 stream.yield([transaction])
+
+                                receivedItem += 1
+                                if receivedItem > 10 { return }
                             }
                         }
-
-                        stream.finish(throwing: nil)
                     } catch {
                         stream.finish(throwing: error)
                     }
