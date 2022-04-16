@@ -6,7 +6,6 @@ import Foundation
 
 import BECollectionView
 import FeeRelayerSwift
-import Foundation
 import RxSwift
 import SolanaSwift
 

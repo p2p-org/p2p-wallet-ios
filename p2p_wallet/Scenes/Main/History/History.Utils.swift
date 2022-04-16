@@ -73,10 +73,10 @@ extension History {
             }
 
             func summarize() {
-                print("Summarize cache:")
-                print("Hit: ", hit)
-                print("Total: ", total)
-                if total > 0 { print("Coefficient: ", Double(hit) / Double(total)) }
+                debugPrint("Summarize cache:")
+                debugPrint("Hit: ", hit)
+                debugPrint("Total: ", total)
+                if total > 0 { debugPrint("Coefficient: ", Double(hit) / Double(total)) }
             }
         }
     }
