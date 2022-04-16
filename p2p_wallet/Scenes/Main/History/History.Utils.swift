@@ -4,18 +4,29 @@
 
 import Foundation
 
+/// The protocol describes ability of class to caching
+protocol Cachable {
+    /// Clear all cache
+    func clear()
+}
+
+/// The protocol describes a cache storage
 protocol Caching {
     associatedtype Element
 
+    /// Read element from cache
     func read(key: String) -> Element?
 
+    /// Write element from cache
     func write(key: String, data: Element)
 
+    /// Clear all data in cache
     func clear()
 }
 
 extension History {
     enum Utils {
+        /// Simple cache storage
         class Cache<T>: Caching {
             typealias Element = T
 
@@ -37,6 +48,7 @@ extension History {
                 check()
             }
 
+            /// Free the resource if cache storage has reached a limit.
             private func check() {
                 while keysOrder.count > maxSize {
                     let key = keysOrder.remove(at: 0)
@@ -50,6 +62,7 @@ extension History {
             }
         }
 
+        /// This class help to track and analyse caching process.
         class TrackingCache<T>: Caching {
             typealias Element = T
 
@@ -65,13 +78,15 @@ extension History {
 
             func clear() { delegate.clear() }
 
-            func record(element: T?) -> T? {
+            /// Records reading process.
+            private func record(element: T?) -> T? {
                 total += 1
                 if element != nil { hit += 1 }
 
                 return element
             }
 
+            /// Shows to console the statistic.
             func summarize() {
                 debugPrint("Summarize cache:")
                 debugPrint("Hit: ", hit)
