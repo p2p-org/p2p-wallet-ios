@@ -226,6 +226,7 @@
 		84699BC20CB341D9BDA75595 /* Moonpay.Provider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998A492BB5B9DDE59C8DA /* Moonpay.Provider.swift */; };
 		84699C160676335B4D6F9607 /* Swap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846996B110978DCB7A6D4A74 /* Swap.swift */; };
 		84699C3944366D31B692FBDA /* BuyProcessing.InputFiatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469991A43A0AC4B9161CA0F /* BuyProcessing.InputFiatView.swift */; };
+		84699CA2430B7AEA8F7D1B77 /* Swift-Concurrency.MD in Sources */ = {isa = PBXBuildFile; fileRef = 84699841A443554840AD8530 /* Swift-Concurrency.MD */; };
 		84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699AC2656E48F105F10AB1 /* BESuperScene.swift */; };
 		84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C929DA7046907362DFE /* ColumnFlowLayout.swift */; };
 		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */; };
@@ -737,6 +738,7 @@
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
 		8469973F517781E128015A0E /* Moonpay.API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
 		84699740E9890A4FDC17D1AE /* History.SourceStream.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.SourceStream.swift; sourceTree = "<group>"; };
+		84699841A443554840AD8530 /* Swift-Concurrency.MD */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = "Swift-Concurrency.MD"; path = "Docs/Swift-Concurrency.MD"; sourceTree = "<group>"; };
 		84699858C3DF47632C790981 /* Home.EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.EmptyView.swift; sourceTree = "<group>"; };
 		846998A1800117507320C6CD /* ReceiveToken.QrCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeView.swift; sourceTree = "<group>"; };
 		846998A492BB5B9DDE59C8DA /* Moonpay.Provider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Moonpay.Provider.swift; sourceTree = "<group>"; };
@@ -1106,6 +1108,7 @@
 			isa = PBXGroup;
 			children = (
 				653ADBB4458A354579AED1F0 /* Pods_p2p_wallet.framework */,
+				84699841A443554840AD8530 /* Swift-Concurrency.MD */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -3461,6 +3464,7 @@
 				846993270F5E62A4ABFA212D /* History.Utils.swift in Sources */,
 				84699AC0C9A864ED8F69425E /* History.Repository.swift in Sources */,
 				84699A29BCC1B0CB7B6CFCB5 /* History.TransactionParser.swift in Sources */,
+				84699CA2430B7AEA8F7D1B77 /* Swift-Concurrency.MD in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
