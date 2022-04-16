@@ -26,8 +26,6 @@ extension History {
     struct FetchingConfiguration {
         /// The indicator that help to fetch all transactions before this time.
         let timestampEnd: Date
-
-        let limit: Int
     }
 
     class MultipleAccountsStreamSource: StreamSource {
@@ -94,6 +92,9 @@ extension History {
         /// This value will be used as pagination indicator and all next transactions after this one will be loaded.
         private var latestFetchedSignature: String?
 
+        /// Fixed number of transactions that will be requested each time.
+        private let batchSize: Int = 10
+
         init(
             account: String,
             accountSymbol: String,
@@ -109,7 +110,7 @@ extension History {
         func first() async throws -> SolanaSDK.ParsedTransaction? {
             guard let signatureInfo = try await transactionRepository.getSignatures(
                 address: account,
-                limit: 1,
+                limit: batchSize,
                 before: latestFetchedSignature
             ).first else { return nil }
 
@@ -131,7 +132,7 @@ extension History {
                             // Fetch transaction signatures
                             let signatureInfos = try await transactionRepository.getSignatures(
                                 address: account,
-                                limit: configuration.limit,
+                                limit: batchSize,
                                 before: latestFetchedSignature
                             )
 
@@ -158,7 +159,7 @@ extension History {
 
                                 let transactionTime = transaction.blockTime ?? Date()
                                 if transactionTime >= configuration.timestampEnd {
-                                    // Emit transction
+                                    // Emit transaction
                                     latestFetchedSignature = signature
                                     stream.yield(transaction)
                                 } else {

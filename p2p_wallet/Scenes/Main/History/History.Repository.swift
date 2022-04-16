@@ -37,26 +37,34 @@ extension History {
 
         let delegate: TransactionRepository
 
-        private let cache = Utils.Cache<SolanaSDK.TransactionInfo>(maxSize: 50)
+        private let signaturesCache = Utils.Cache<[SolanaSDK.SignatureInfo]>(maxSize: 50)
+        private let transactionCache = Utils.Cache<SolanaSDK.TransactionInfo>(maxSize: 50)
 
         init(delegate: TransactionRepository) { self.delegate = delegate }
 
         func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo {
             // Return from cache
-            var transaction: SolanaSDK.TransactionInfo? = cache.read(key: signature)
+            var transaction: SolanaSDK.TransactionInfo? = transactionCache.read(key: signature)
             if let transaction = transaction { return transaction }
 
             // Fetch and store in cache
             transaction = try await delegate.getTransaction(signature: signature)
-            cache.write(key: signature, data: transaction!)
+            transactionCache.write(key: signature, data: transaction!)
 
             return transaction!
         }
 
         func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo] {
-            try await delegate.getSignatures(address: address, limit: limit, before: before)
+            let cacheKey = "\(address)-\(limit)-\(before ?? "nil")"
+            
+            var signatures = signaturesCache.read(key: cacheKey)
+            if let signatures = signatures { return signatures }
+            
+            signatures = try await delegate.getSignatures(address: address, limit: limit, before: before)
+            signaturesCache.write(key: cacheKey, data: signatures!)
+            return signatures!
         }
 
-        func clear() { cache.clear() }
+        func clear() { transactionCache.clear() }
     }
 }
