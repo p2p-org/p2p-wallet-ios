@@ -49,5 +49,35 @@ extension History {
                 storage = [:]
             }
         }
+
+        class TrackingCache<T>: Caching {
+            typealias Element = T
+
+            private let delegate: Cache<T>
+            private var hit: Int = 0
+            private var total: Int = 0
+
+            init(delegate: Cache<T>) { self.delegate = delegate }
+
+            func read(key: String) -> T? { record(element: delegate.read(key: key)) }
+
+            func write(key: String, data: T) { delegate.write(key: key, data: data) }
+
+            func clear() { delegate.clear() }
+
+            func record(element: T?) -> T? {
+                total += 1
+                if element != nil { hit += 1 }
+
+                return element
+            }
+
+            func summarize() {
+                print("Summarize cache:")
+                print("Hit: ", hit)
+                print("Total: ", total)
+                if total > 0 { print("Coefficient: ", Double(hit) / Double(total)) }
+            }
+        }
     }
 }
