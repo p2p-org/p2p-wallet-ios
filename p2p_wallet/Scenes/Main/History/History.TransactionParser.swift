@@ -6,6 +6,14 @@ import Foundation
 import SolanaSwift
 
 protocol HistoryTransactionParser {
+    ///  Parse transaction.
+    ///
+    /// - Parameters:
+    ///   - signatureInfo: the raw signature info
+    ///   - transactionInfo: the raw transaction info
+    ///   - account: the account that the transaction info belongs to.
+    ///   - symbol: the token symbol that the transaction has to do.
+    /// - Returns: parsed transaction
     func parse(
         signatureInfo: SolanaSDK.SignatureInfo,
         transactionInfo: SolanaSDK.TransactionInfo,
@@ -16,7 +24,8 @@ protocol HistoryTransactionParser {
 
 extension History {
     typealias TransactionParser = HistoryTransactionParser
-
+    
+    /// The default transaction parser.
     class DefaultTransactionParser: TransactionParser {
         private let p2pFeePayers: [String]
         private let parser: SolanaSDKTransactionParserType

@@ -4,13 +4,22 @@
 
 import Foundation
 
+/// The repository that works with transactions.
 protocol HistoryTransactionRepository {
+    /// Fetches a list of signatures, that belongs to the `address`.
+    ///
+    /// - Parameters:
+    ///   - address: the account address
+    ///   - limit: the number of transactions that will be fetched.
+    ///   - before: the transaction signature, that indicates the offset of fetching.
+    /// - Returns: the list of `SignatureInfo`
     func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo]
+    
+    /// Fetch all data of the transaction
+    ///
+    /// - Parameter signature: The transaction signature
+    /// - Returns: `TransactionInfo`, that can be parsed later.
     func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo
-}
-
-protocol Cachable {
-    func clear()
 }
 
 extension History {
