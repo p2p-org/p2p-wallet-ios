@@ -84,10 +84,9 @@ extension History {
                             // Fetch next 3 days
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 3)
 
-                            for try await transaction in source.next(configuration: .init(
-                                timestampEnd: timeEndFilter,
-                                limit: 10
-                            )) {
+                            for try await transaction in source.next(
+                                configuration: .init(timestampEnd: timeEndFilter)
+                            ) {
                                 stream.yield([transaction])
 
                                 receivedItem += 1
