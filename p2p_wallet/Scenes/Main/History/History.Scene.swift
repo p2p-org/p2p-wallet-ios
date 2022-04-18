@@ -44,7 +44,7 @@ extension History {
                         if let date = sectionInfo?.userInfo as? String {
                             view.setUp(headerTitle: date)
                         } else {
-                            view.setUp(headerTitle: L10n.loading)
+                            view.setUp(headerTitle: "")
                         }
                     }
                 )
