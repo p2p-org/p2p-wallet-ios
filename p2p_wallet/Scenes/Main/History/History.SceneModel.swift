@@ -27,7 +27,7 @@ extension History {
             self.walletsRepository = walletsRepository
 
             let transactionRepository = CachingTransactionRepository(
-                delegate: SolanaTransactionRepository(solanaSDK: solanaSDK)
+                delegate: SolanaTransactionRepository()
             )
 
             let transactionParser = CachingTransactionParsing(
