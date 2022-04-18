@@ -9,7 +9,7 @@ import Foundation
 import GT3Captcha
 
 extension GT3Error: LocalizedError {
-    private static var nameServiceUnavailableCodes = ["_12"]
+    private static var nameServiceUnavailableCodes = [-20, -1001]
 
     public var errorDescription: String? {
         if isNameServiceUnavailable {
@@ -19,6 +19,6 @@ extension GT3Error: LocalizedError {
     }
 
     var isNameServiceUnavailable: Bool {
-        Self.nameServiceUnavailableCodes.contains(error_code)
+        Self.nameServiceUnavailableCodes.contains(code)
     }
 }
