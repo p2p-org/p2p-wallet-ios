@@ -792,3 +792,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Not enough funds" = "Pas assez de fonds";
 "Insufficient funds to cover fees" = "Fonds insuffisants pour couvrir les frais";
 "The name service is experiencing some issues, please try again later." = "Le service de noms rencontre des problèmes, veuillez réessayer plus tard.";
+"Try again later" = "Réessayez plus tard";

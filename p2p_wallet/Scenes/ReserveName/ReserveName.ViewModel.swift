@@ -64,7 +64,6 @@ extension ReserveName {
         let textFieldTextSubject = BehaviorRelay<String?>(value: nil)
         private let usernameValidationLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
-        private let captchaErrorSubject = BehaviorRelay<GT3Error?>(value: nil)
 
         init(
             kind: ReserveNameKind,
@@ -245,8 +244,11 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
 
 extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
     func gtCaptcha(_: GT3CaptchaManager, errorHandler error: GT3Error) {
-        captchaErrorSubject.accept(error)
-        notificationsService.showInAppNotification(.error(error))
+        if error.isNameServiceUnavailable {
+            mainButtonStateSubject.accept(.unavailableNameService)
+        }
+        notificationsService
+            .showInAppNotification(.message(L10n.theNameServiceIsExperiencingSomeIssuesPleaseTryAgainLater))
     }
 
     func gtCaptcha(
@@ -255,7 +257,6 @@ extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
         result: [AnyHashable: Any]?,
         message _: String?
     ) {
-        captchaErrorSubject.accept(nil)
         guard code == "1",
               let geetest_seccode = result?["geetest_seccode"] as? String,
               let geetest_challenge = result?["geetest_challenge"] as? String,
@@ -281,7 +282,5 @@ extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
         response _: URLResponse?,
         error _: GT3Error?,
         decisionHandler _: @escaping (GT3SecondaryCaptchaPolicy) -> Void
-    ) {
-        captchaErrorSubject.accept(nil)
-    }
+    ) {}
 }
