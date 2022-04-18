@@ -21,6 +21,11 @@ final class TransactionImageView: BEView {
         height: basicIconSize,
         tintColor: .iconSecondary
     )
+    private lazy var statusIconImageView: UIImageView = {
+        let image = UIImageView(width: 18, height: 18, tintColor: .iconSecondary)
+        image.isHidden = true
+        return image
+    }()
     private lazy var fromTokenImageView = CoinLogoImageView(size: miniIconsSize)
     private lazy var toTokenImageView = CoinLogoImageView(size: miniIconsSize)
 
@@ -49,6 +54,9 @@ final class TransactionImageView: BEView {
         addSubview(basicIconImageView)
         basicIconImageView.autoCenterInSuperview()
 
+        addSubview(statusIconImageView)
+        statusIconImageView.autoPinToBottomRightCornerOfSuperview(xInset: -2, yInset: 0)
+
         addSubview(fromTokenImageView)
         fromTokenImageView.autoPinToTopLeftCornerOfSuperview()
 
@@ -72,6 +80,18 @@ final class TransactionImageView: BEView {
             toTokenImageView.alpha = 1
             fromTokenImageView.setUp(token: from)
             toTokenImageView.setUp(token: to)
+        }
+
+        statusIconImageView.isHidden = true
+        switch transaction.status {
+        case .requesting, .processing:
+            statusIconImageView.isHidden = false
+            statusIconImageView.image = .transactionIndicatorPending
+        case .error:
+            statusIconImageView.isHidden = false
+            statusIconImageView.image = .transactionIndicatorError
+        default:
+            break
         }
     }
 }

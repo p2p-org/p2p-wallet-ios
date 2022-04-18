@@ -16,12 +16,7 @@ class TransactionCell: BaseCollectionViewCell {
     private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
     private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
     private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
-    lazy var spacer = BEStackViewSpacing(5)
-    lazy var transactionStatusIndicator = UIImageView(
-        width: 20,
-        height: 20,
-        image: .transactionIndicatorPending
-    )
+
     private lazy var descriptionLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     private lazy var amountInTokenLabel = UILabel(
         textSize: 15,
@@ -178,19 +173,6 @@ extension TransactionCell: BECollectionViewCell {
             }
         } else if let blockhash = transaction.blockhash {
             amountInTokenLabel.text = "#" + blockhash.prefix(4) + "..." + blockhash.suffix(4)
-        }
-
-        // status
-        transactionStatusIndicator.isHidden = true
-        switch transaction.status {
-        case .requesting, .processing:
-            transactionStatusIndicator.isHidden = false
-            transactionStatusIndicator.image = .transactionIndicatorPending
-        case .error:
-            transactionStatusIndicator.isHidden = false
-            transactionStatusIndicator.image = .transactionIndicatorError
-        default:
-            break
         }
     }
 }
