@@ -67,7 +67,6 @@
 		3B87A1552762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */; };
 		3B87A157276357AC00F09883 /* OrcaSwapV2.WalletView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B87A156276357AC00F09883 /* OrcaSwapV2.WalletView.swift */; };
 		3B9C3DDD27A7BDAA0032548A /* SendToken.FeeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DDC27A7BDAA0032548A /* SendToken.FeeView.swift */; };
-		3B9C3DDF27A7CEBF0032548A /* LockScreenWrapperViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DDE27A7CEBF0032548A /* LockScreenWrapperViewController.swift */; };
 		3B9C3DE327A7CF040032548A /* Section.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DE127A7CF040032548A /* Section.View.swift */; };
 		3B9C3DE427A7CF040032548A /* Cell.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DE227A7CF040032548A /* Cell.View.swift */; };
 		3BA4A0D527E31251006AFC01 /* Tokens.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BA4A0D427E31251006AFC01 /* Tokens.xcassets */; };
@@ -586,7 +585,6 @@
 		3B87A1542762FCFB00F09883 /* SendToken.SelectNetwork.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.SelectNetwork.ViewController.swift; sourceTree = "<group>"; };
 		3B87A156276357AC00F09883 /* OrcaSwapV2.WalletView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.WalletView.swift; sourceTree = "<group>"; };
 		3B9C3DDC27A7BDAA0032548A /* SendToken.FeeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.FeeView.swift; sourceTree = "<group>"; };
-		3B9C3DDE27A7CEBF0032548A /* LockScreenWrapperViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockScreenWrapperViewController.swift; sourceTree = "<group>"; };
 		3B9C3DE127A7CF040032548A /* Section.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.View.swift; sourceTree = "<group>"; };
 		3B9C3DE227A7CF040032548A /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		3BA4A0D427E31251006AFC01 /* Tokens.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tokens.xcassets; sourceTree = "<group>"; };
@@ -2373,7 +2371,6 @@
 		BCB58370255D28E100B10F65 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				3B9C3DDE27A7CEBF0032548A /* LockScreenWrapperViewController.swift */,
 				BCDABE7726FC6E2400E083B8 /* WLIndicatorModalFlexibleHeightVC.swift */,
 				BC65E9B82542B98D005F50CE /* BaseVC.swift */,
 				BC65E9C02542BA1D005F50CE /* BaseVStackVC.swift */,
@@ -3152,7 +3149,6 @@
 				41DD026D2760A9B300545A73 /* TextChangesFilter.swift in Sources */,
 				BCA93FB125ECD2250081DDF6 /* TokenSettingsCloseAccountConfirmationVC.swift in Sources */,
 				BCFEDC002727B43C008AE4AD /* WLMarkdownVC.swift in Sources */,
-				3B9C3DDF27A7CEBF0032548A /* LockScreenWrapperViewController.swift in Sources */,
 				BCA93F5525E77C240081DDF6 /* TokenSettingsViewController.swift in Sources */,
 				3B856FC827B76E0800973039 /* SendToken.ConfirmViewController+Subviews.swift in Sources */,
 				BC6FED95270BF5C1002B6255 /* RenBTCReceivingStatuses.Cells.swift in Sources */,
