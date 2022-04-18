@@ -14,7 +14,7 @@ protocol HistoryTransactionRepository {
     ///   - before: the transaction signature, that indicates the offset of fetching.
     /// - Returns: the list of `SignatureInfo`
     func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo]
-    
+
     /// Fetch all data of the transaction
     ///
     /// - Parameter signature: The transaction signature
@@ -23,8 +23,6 @@ protocol HistoryTransactionRepository {
 }
 
 extension History {
-    typealias TransactionRepository = HistoryTransactionRepository
-
     class SolanaTransactionRepository: HistoryTransactionRepository {
         private let solanaSDK: SolanaSDK
 
@@ -41,15 +39,15 @@ extension History {
         }
     }
 
-    class CachingTransactionRepository: TransactionRepository, Cachable {
+    class CachingTransactionRepository: HistoryTransactionRepository, Cachable {
         private static let maxCacheSize = 50
 
-        let delegate: TransactionRepository
+        let delegate: HistoryTransactionRepository
 
-        private let signaturesCache = Utils.Cache<[SolanaSDK.SignatureInfo]>(maxSize: 50)
-        private let transactionCache = Utils.Cache<SolanaSDK.TransactionInfo>(maxSize: 50)
+        private let signaturesCache = Utils.InMemoryCache<[SolanaSDK.SignatureInfo]>(maxSize: 50)
+        private let transactionCache = Utils.InMemoryCache<SolanaSDK.TransactionInfo>(maxSize: 50)
 
-        init(delegate: TransactionRepository) { self.delegate = delegate }
+        init(delegate: HistoryTransactionRepository) { self.delegate = delegate }
 
         func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo {
             // Return from cache
@@ -65,10 +63,10 @@ extension History {
 
         func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo] {
             let cacheKey = "\(address)-\(limit)-\(before ?? "nil")"
-            
+
             var signatures = signaturesCache.read(key: cacheKey)
             if let signatures = signatures { return signatures }
-            
+
             signatures = try await delegate.getSignatures(address: address, limit: limit, before: before)
             signaturesCache.write(key: cacheKey, data: signatures!)
             return signatures!

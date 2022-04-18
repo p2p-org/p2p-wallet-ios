@@ -27,7 +27,7 @@ protocol Caching {
 extension History {
     enum Utils {
         /// Simple cache storage
-        class Cache<T>: Caching {
+        class InMemoryCache<T>: Caching {
             typealias Element = T
 
             private let maxSize: Int
@@ -66,11 +66,11 @@ extension History {
         class TrackingCache<T>: Caching {
             typealias Element = T
 
-            private let delegate: Cache<T>
+            private let delegate: InMemoryCache<T>
             private var hit: Int = 0
             private var total: Int = 0
 
-            init(delegate: Cache<T>) { self.delegate = delegate }
+            init(delegate: InMemoryCache<T>) { self.delegate = delegate }
 
             func read(key: String) -> T? { record(element: delegate.read(key: key)) }
 

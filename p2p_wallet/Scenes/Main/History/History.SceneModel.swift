@@ -17,7 +17,7 @@ extension History {
         @Injected private var feeRelayer: FeeRelayerAPIClientType
 
         /// A list of source, where data can be fetched
-        private var source: StreamSource
+        private var source: HistoryStreamSource
 
         init(
             solanaSDK: SolanaSDK = Resolver.resolve(),

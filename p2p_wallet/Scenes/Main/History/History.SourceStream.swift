@@ -26,8 +26,6 @@ protocol HistoryStreamSource {
 }
 
 extension History {
-    typealias StreamSource = HistoryStreamSource
-
     /// The configuration that accepted by `next()` method of `StreamSource`.
     struct FetchingConfiguration {
         /// Fetches transactions until this time. If the timestamp of transaction is after it, the stream will be finished.
@@ -35,15 +33,15 @@ extension History {
     }
 
     /// The class helps to merge many source into one and fetch it like a single source.
-    class MultipleAccountsStreamSource: StreamSource {
+    class MultipleAccountsStreamSource: HistoryStreamSource {
         /// The list of sources
-        private let sources: [StreamSource]
-        
-        init(sources: [StreamSource]) {
+        private let sources: [HistoryStreamSource]
+
+        init(sources: [HistoryStreamSource]) {
             self.sources = sources
             reset()
         }
-        
+
         func first() async throws -> SolanaSDK.ParsedTransaction? {
             var mostFirst: SolanaSDK.ParsedTransaction?
             for source in sources {
@@ -85,8 +83,8 @@ extension History {
     }
 
     /// The class helps to retrieves all transactions as stream from defined account.
-    class AccountStreamSource: StreamSource {
-        let transactionRepository: TransactionRepository
+    class AccountStreamSource: HistoryStreamSource {
+        let transactionRepository: HistoryTransactionRepository
 
         /// The object that is responsible for parsing transactions
         let transactionParser: TransactionParser
@@ -107,7 +105,7 @@ extension History {
         init(
             account: String,
             accountSymbol: String,
-            transactionRepository: TransactionRepository,
+            transactionRepository: HistoryTransactionRepository,
             transactionParser: TransactionParser
         ) {
             self.account = account
