@@ -796,3 +796,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Not enough funds" = "Không đủ tiền";
 "Insufficient funds to cover fees" = "Không đủ tiền để trả phí";
 "The name service is experiencing some issues, please try again later." = "Dịch vụ tên đang gặp một số sự cố, vui lòng thử lại sau.";
+"Try again later" = "Thử lại sau";
