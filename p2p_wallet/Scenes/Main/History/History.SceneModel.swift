@@ -30,7 +30,9 @@ extension History {
 
             sources = walletsRepository
                 .getWallets()
-                .map { wallet in AccountStreamSource(account: wallet.pubkey ?? "", accountSymbol: wallet.token.symbol) }
+                .map { wallet in
+                    AccountStreamSource(account: wallet.pubkey ?? "", accountSymbol: wallet.token.symbol)
+                }
         }
 
         override func createRequest() -> Single<[SolanaSDK.ParsedTransaction]> {
@@ -38,8 +40,12 @@ extension History {
                 .zip(sources.map { source -> Single<[SolanaSDK.ParsedTransaction]> in
                     source.next(fetchingConfiguration)
                 })
-                .map { sourceResults -> [SolanaSDK.ParsedTransaction] in sourceResults.reduce([], +) }
-                .map { transactions in transactions.unique }
+                .map { sourceResults -> [SolanaSDK.ParsedTransaction] in
+                    sourceResults.reduce([], +)
+                }
+                .map { transactions in
+                    transactions.unique
+                }
         }
     }
 }

@@ -16,7 +16,8 @@ class TransactionCell: BaseCollectionViewCell {
     private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
     private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
     private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
-    private lazy var transactionStatusIndicator = UIImageView(
+    lazy var spacer = BEStackViewSpacing(5)
+    lazy var transactionStatusIndicator = UIImageView(
         width: 20,
         height: 20,
         image: .transactionIndicatorPending
@@ -29,6 +30,24 @@ class TransactionCell: BaseCollectionViewCell {
         textAlignment: .right
     )
     private lazy var swapTransactionImageView = SwapTransactionImageView(height: 18)
+    lazy var topStackView = UIStackView(
+        axis: .horizontal,
+        spacing: 8,
+        alignment: .center,
+        distribution: .fill,
+        arrangedSubviews: [
+            transactionTypeLabel, amountInFiatLabel, spacer, transactionStatusIndicator,
+        ]
+    )
+    lazy var bottomStackView = UIStackView(
+        axis: .horizontal,
+        spacing: 8,
+        alignment: .center,
+        distribution: .fill,
+        arrangedSubviews: [
+            descriptionLabel, swapTransactionImageView, amountInTokenLabel,
+        ]
+    )
 
     override func commonInit() {
         super.commonInit()
@@ -40,27 +59,39 @@ class TransactionCell: BaseCollectionViewCell {
         stackView.addArrangedSubviews {
             imageView
             UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    transactionTypeLabel, amountInFiatLabel, BEStackViewSpacing(5), transactionStatusIndicator,
-                ]),
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    descriptionLabel, swapTransactionImageView, amountInTokenLabel,
-                ]),
+                topStackView,
+                bottomStackView,
             ])
         }
 
-        let separator = UIView.defaultSeparator()
-        contentView.addSubview(separator)
-        separator.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 20).modifying(dBottom: -20), excludingEdge: .top)
-
         swapTransactionImageView.isHidden = true
+
+        setupSkeleton()
+    }
+
+    private func setupSkeleton() {
+        imageView.layer.cornerRadius = 12
+        transactionTypeLabel.layer.cornerRadius = 12
+        amountInFiatLabel.layer.cornerRadius = 12
+        descriptionLabel.layer.cornerRadius = 12
+        amountInTokenLabel.layer.cornerRadius = 12
+        transactionTypeLabel.text = "               "
+        amountInFiatLabel.text = "                           "
+        descriptionLabel.text = "                        "
+        amountInTokenLabel.text = "                    "
+
+        NSLayoutConstraint.activate([
+            transactionTypeLabel.heightAnchor.constraint(equalToConstant: 19),
+            amountInFiatLabel.heightAnchor.constraint(equalToConstant: 16),
+            descriptionLabel.heightAnchor.constraint(equalToConstant: 18),
+            amountInTokenLabel.heightAnchor.constraint(equalToConstant: 18),
+        ])
     }
 }
 
 extension TransactionCell: BECollectionViewCell {
     func setUp(with item: AnyHashable?) {
-        guard let transaction = item as? SolanaSDK.ParsedTransaction
-        else { return }
+        guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
 
         // clear
         descriptionLabel.text = nil

@@ -13,7 +13,7 @@ extension History {
 
         override func build() -> UIView {
             BEVStack {
-                NewWLNavigationBar(initialTitle: L10n.history)
+                NewWLNavigationBar(initialTitle: L10n.history, separatorEnable: false)
                     .backIsHidden(true)
 
                 BEDynamicSectionsCollectionView(
@@ -26,7 +26,7 @@ extension History {
                         let dateFormatter = DateFormatter()
                         dateFormatter.dateStyle = .medium
                         dateFormatter.timeStyle = .none
-                        dateFormatter.locale = Locale.shared
+                        dateFormatter.locale = .shared
 
                         let dictionary = Dictionary(grouping: transactions) { item -> Int in
                             guard let date = item.blockTime else { return .max }
@@ -65,8 +65,9 @@ extension History {
                             viewClass: SectionHeaderView.self,
                             heightDimension: .estimated(15)
                         ),
-                        cellType: TransactionCell.self,
+                        cellType: Cell.self,
                         emptyCellType: WLEmptyCell.self,
+                        numberOfLoadingCells: 7,
                         interGroupSpacing: 1,
                         itemHeight: .estimated(85)
                     )
