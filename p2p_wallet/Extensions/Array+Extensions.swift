@@ -33,6 +33,16 @@ extension Array {
             Array(self[$0 ..< Swift.min($0 + size, count)])
         }
     }
+
+    func unique<T: Equatable>(keyPath: KeyPath<Element, T>) -> [Element] {
+        var result: [Element] = []
+        for item in self {
+            if result.first(where: { e in e[keyPath: keyPath] == item[keyPath: keyPath] }) == nil {
+                result.append(item)
+            }
+        }
+        return result
+    }
 }
 
 extension Array where Element: Hashable {

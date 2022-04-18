@@ -9,43 +9,96 @@ import RxSwift
 import SolanaSwift
 
 extension History {
-    class SceneModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
+    class SceneModel: BEStreamListViewModel<SolanaSDK.ParsedTransaction> {
         private let disposeBag = DisposeBag()
 
-        @Injected private var transactionsRepository: TransactionsRepository
-        @Injected private var walletsRepository: WalletsRepository
+        private let solanaSDK: SolanaSDK
+        private let walletsRepository: WalletsRepository
         @Injected private var feeRelayer: FeeRelayerAPIClientType
 
         /// A list of source, where data can be fetched
-        private var sources: [StreamSource] = []
+        private var source: HistoryStreamSource
 
-        /// Default fetching configuration
-        private let fetchingConfiguration = FetchingConfiguration(
-            feePayer: Defaults.p2pFeePayerPubkeys,
-            limit: 10
-        )
+        init(
+            solanaSDK: SolanaSDK = Resolver.resolve(),
+            walletsRepository: WalletsRepository = Resolver.resolve()
+        ) {
+            self.solanaSDK = solanaSDK
+            self.walletsRepository = walletsRepository
 
-        init() {
+            let transactionRepository = CachingTransactionRepository(
+                delegate: SolanaTransactionRepository()
+            )
+
+            let transactionParser = CachingTransactionParsing(
+                delegate: DefaultTransactionParser(solanaSDK: solanaSDK, p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+            )
+
+            /// Create source
+            source = MultipleAccountsStreamSource(
+                sources: walletsRepository
+                    .getWallets()
+                    .map { wallet in
+                        AccountStreamSource(
+                            account: wallet.pubkey ?? "",
+                            accountSymbol: wallet.token.symbol,
+                            transactionRepository: transactionRepository,
+                            transactionParser: transactionParser
+                        )
+                    }
+            )
+
+            // TODO: Remove - for testing purpose
+            /*
+             if let wallet = walletsRepository.nativeWallet {
+                 source = AccountStreamSource(
+                     account: wallet.pubkey ?? "",
+                     accountSymbol: wallet.token.symbol,
+                     transactionRepository: transactionRepository,
+                     transactionParser: transactionParser
+                 )
+             }
+             */
+
             super.init(isPaginationEnabled: true, limit: 10)
-
-            sources = walletsRepository
-                .getWallets()
-                .map { wallet in
-                    AccountStreamSource(account: wallet.pubkey ?? "", accountSymbol: wallet.token.symbol)
-                }
         }
 
-        override func createRequest() -> Single<[SolanaSDK.ParsedTransaction]> {
-            Single
-                .zip(sources.map { source -> Single<[SolanaSDK.ParsedTransaction]> in
-                    source.next(fetchingConfiguration)
-                })
-                .map { sourceResults -> [SolanaSDK.ParsedTransaction] in
-                    sourceResults.reduce([], +)
+        override func clear() {
+            source.reset()
+            super.clear()
+        }
+
+        override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
+            AsyncThrowingStream<[SolanaSDK.ParsedTransaction], Error> { stream in
+                Task {
+                    defer { stream.finish(throwing: nil) }
+
+                    do {
+                        var receivedItem = 0
+                        while true {
+                            let firstTrx = try await source.first()
+                            guard
+                                let firstTrx = firstTrx,
+                                var timeEndFilter = firstTrx.blockTime
+                            else { return }
+
+                            // Fetch next 3 days
+                            timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 3)
+
+                            for try await transaction in source.next(
+                                configuration: .init(timestampEnd: timeEndFilter)
+                            ) {
+                                stream.yield([transaction])
+
+                                receivedItem += 1
+                                if receivedItem > 10 { return }
+                            }
+                        }
+                    } catch {
+                        stream.finish(throwing: error)
+                    }
                 }
-                .map { transactions in
-                    transactions.unique
-                }
+            }.asObservable()
         }
     }
 }
