@@ -32,8 +32,9 @@ extension History {
                             viewClass: SectionHeaderView.self,
                             heightDimension: .estimated(15)
                         ),
-                        cellType: TransactionCell.self,
+                        cellType: Cell.self,
                         emptyCellType: WLEmptyCell.self,
+                        numberOfLoadingCells: 7,
                         interGroupSpacing: 1,
                         itemHeight: .estimated(85)
                     ),
