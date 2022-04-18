@@ -24,7 +24,7 @@ protocol HistoryTransactionParser {
 
 extension History {
     typealias TransactionParser = HistoryTransactionParser
-    
+
     /// The default transaction parser.
     class DefaultTransactionParser: TransactionParser {
         private let p2pFeePayers: [String]
@@ -65,7 +65,7 @@ extension History {
 
     class CachingTransactionParsing: TransactionParser, Cachable {
         private let delegate: TransactionParser
-        private let cache = Utils.Cache<SolanaSDK.ParsedTransaction>(maxSize: 50)
+        private let cache = Utils.InMemoryCache<SolanaSDK.ParsedTransaction>(maxSize: 50)
 
         init(delegate: TransactionParser) { self.delegate = delegate }
 
