@@ -248,7 +248,7 @@ extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
             mainButtonStateSubject.accept(.unavailableNameService)
         }
         notificationsService
-            .showInAppNotification(.message(L10n.theNameServiceIsExperiencingSomeIssuesPleaseTryAgainLater))
+            .showInAppNotification(.message(error.readableDescription))
     }
 
     func gtCaptcha(
