@@ -16,6 +16,7 @@ extension History {
         override init() {
             super.init()
 
+            // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
                 .dataObservable
                 .compactMap { $0 }

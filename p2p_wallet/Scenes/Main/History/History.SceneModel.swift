@@ -106,8 +106,9 @@ extension History {
                             ) {
                                 // Skip duplicated transaction
                                 if data.contains(where: { $0.signature == transaction.signature }) { continue }
-
+    
                                 stream.yield([transaction])
+
                                 receivedItem += 1
                                 if receivedItem > 15 { return }
                             }
