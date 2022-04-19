@@ -11,6 +11,21 @@ extension History {
     class Scene: BEScene {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
 
+        let viewModel = SceneModel()
+
+        override init() {
+            super.init()
+
+            // Start loading when wallets are ready.
+            Resolver.resolve(WalletsRepository.self)
+                .dataObservable
+                .compactMap { $0 }
+                .filter { $0?.count ?? 0 > 0 }
+                .first()
+                .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
+                .disposed(by: disposeBag)
+        }
+
         override func build() -> UIView {
             BEVStack {
                 // Navbar
@@ -19,7 +34,7 @@ extension History {
 
                 // History
                 NBENewDynamicSectionsCollectionView(
-                    viewModel: SceneModel(),
+                    viewModel: viewModel,
                     mapDataToSections: { viewModel in
                         CollectionViewMappingStrategy.byData(
                             viewModel: viewModel,
@@ -44,7 +59,9 @@ extension History {
                         if let date = sectionInfo?.userInfo as? String {
                             view.setUp(headerTitle: date)
                         } else {
-                            view.setUp(headerTitle: "")
+                            // We have to have this text, otherwise the header cell will jump,
+                            // because passing empty string will resize cell height
+                            view.setUp(headerTitle: " ")
                         }
                     }
                 )

@@ -1,87 +1,10 @@
 //
-// Created by Giang Long Tran on 12.04.2022.
+// Created by Giang Long Tran on 18.04.2022.
 //
 
 import Foundation
 
-import BECollectionView
-import FeeRelayerSwift
-import RxSwift
-import SolanaSwift
-
-protocol HistoryStreamSource {
-    /// Fetches new transaction signatures sequencely.
-    ///
-    /// - Parameter configuration: the fetching configuration that contains things like filtering
-    /// - Returns: A stream of parsed transactions and the error that can be occurred.
-    func next(configuration: History.FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error>
-
-    /// Fetch the most earliest transaction.
-    ///
-    /// - Returns: parsed transaction
-    func first() async throws -> SolanaSDK.ParsedTransaction?
-
-    /// Resets the stream.
-    func reset()
-}
-
 extension History {
-    /// The configuration that accepted by `next()` method of `StreamSource`.
-    struct FetchingConfiguration {
-        /// Fetches transactions until this time. If the timestamp of transaction is after it, the stream will be finished.
-        let timestampEnd: Date
-    }
-
-    /// The class helps to merge many source into one and fetch it like a single source.
-    class MultipleAccountsStreamSource: HistoryStreamSource {
-        /// The list of sources
-        private let sources: [HistoryStreamSource]
-
-        init(sources: [HistoryStreamSource]) {
-            self.sources = sources
-            reset()
-        }
-
-        func first() async throws -> SolanaSDK.ParsedTransaction? {
-            var mostFirst: SolanaSDK.ParsedTransaction?
-            for source in sources {
-                let trx = try await source.first()
-
-                guard let t1 = trx?.blockTime else { continue }
-                guard let t2 = mostFirst?.blockTime else {
-                    mostFirst = trx
-                    continue
-                }
-
-                if t1 > t2 {
-                    mostFirst = trx
-                }
-            }
-            return mostFirst
-        }
-
-        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error> {
-            AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error> { stream in
-                Task {
-                    do {
-                        for source in sources {
-                            for try await transaction in source.next(configuration: configuration) {
-                                stream.yield(transaction)
-                            }
-                        }
-                        stream.finish(throwing: nil)
-                    } catch {
-                        stream.finish(throwing: error)
-                    }
-                }
-            }
-        }
-
-        func reset() {
-            for source in sources { source.reset() }
-        }
-    }
-
     /// The class helps to retrieves all transactions as stream from defined account.
     class AccountStreamSource: HistoryStreamSource {
         let transactionRepository: HistoryTransactionRepository
