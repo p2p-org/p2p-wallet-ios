@@ -17,6 +17,7 @@ protocol ReceiveTokenSolanaViewModelType: BESceneModel {
 
     func showSOLAddressInExplorer()
     func copyAction()
+    func shareAction()
     func shareAction(image: UIImage)
     func saveAction(image: UIImage)
 }
@@ -29,6 +30,8 @@ extension ReceiveToken {
         @Injected private var notificationsService: NotificationsServiceType
         @Injected private var imageSaver: ImageSaverType
         private let navigationSubject: PublishRelay<NavigatableScene?>
+
+        private let disposeBag = DisposeBag()
 
         let pubkey: String
         let tokenWallet: Wallet?
@@ -58,6 +61,18 @@ extension ReceiveToken {
             notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         }
 
+        func shareAction() {
+            analyticsManager.log(event: .receiveQrcodeShare)
+            generateQrCode()
+                .subscribe(onSuccess: { [weak self] image in
+                    self?.navigationSubject.accept(.share(
+                        address: self?.pubkey,
+                        qrCode: image
+                    ))
+                })
+                .disposed(by: disposeBag)
+        }
+
         func shareAction(image: UIImage) {
             analyticsManager.log(event: .receiveUsercardShared)
             navigationSubject.accept(.share(address: pubkey, qrCode: image))
@@ -85,6 +100,16 @@ extension ReceiveToken {
         func showSOLAddressInExplorer() {
             analyticsManager.log(event: .receiveViewingExplorer)
             navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
+        }
+
+        private func generateQrCode() -> Single<UIImage> {
+            let render: QrCodeImageRender = Resolver.resolve()
+            return render.render(
+                username: username,
+                address: pubkey,
+                token: .nativeSolana,
+                showTokenIcon: true
+            )
         }
     }
 }

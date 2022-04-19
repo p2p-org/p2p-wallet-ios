@@ -17,6 +17,7 @@ enum ReceiveToken {
         case networkSelection
         case showSupportedTokens
         case help
+        case showBuy
     }
 
     enum TokenType: CaseIterable {
