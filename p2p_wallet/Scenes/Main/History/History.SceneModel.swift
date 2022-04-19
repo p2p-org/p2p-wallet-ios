@@ -14,10 +14,29 @@ extension History {
 
         private let solanaSDK: SolanaSDK
         private let walletsRepository: WalletsRepository
-        @Injected private var feeRelayer: FeeRelayerAPIClientType
+
+        let cachedTransactionRepository: CachingTransactionRepository = .init(
+            delegate: SolanaTransactionRepository()
+        )
+        let cachedTransactionParser: CachingTransactionParsing = .init(
+            delegate: DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+        )
+
+        /// Refresh handling
+        private let refreshTriggers: [HistoryRefreshTrigger] = [
+            PriceRefreshTrigger(),
+            ProcessingTransactionRefreshTrigger(),
+        ]
 
         /// A list of source, where data can be fetched
-        private var source: HistoryStreamSource
+        private var source: HistoryStreamSource = EmptyStreamSource()
+
+        /// A list of output objects, that builds, forms, maps, filters and updates a final list.
+        /// This list will be delivered to UI layer.
+        private let outputs: [HistoryOutput] = [
+            ProcessingTransactionsOutput(),
+            PriceUpdatingOutput(),
+        ]
 
         init(
             solanaSDK: SolanaSDK = Resolver.resolve(),
@@ -26,45 +45,42 @@ extension History {
             self.solanaSDK = solanaSDK
             self.walletsRepository = walletsRepository
 
-            let transactionRepository = CachingTransactionRepository(
-                delegate: SolanaTransactionRepository()
-            )
-
-            let transactionParser = CachingTransactionParsing(
-                delegate: DefaultTransactionParser(solanaSDK: solanaSDK, p2pFeePayers: Defaults.p2pFeePayerPubkeys)
-            )
-
-            /// Create source
-            source = MultipleAccountsStreamSource(
-                sources: walletsRepository
-                    .getWallets()
-                    .map { wallet in
-                        AccountStreamSource(
-                            account: wallet.pubkey ?? "",
-                            accountSymbol: wallet.token.symbol,
-                            transactionRepository: transactionRepository,
-                            transactionParser: transactionParser
-                        )
-                    }
-            )
-
-            // TODO: Remove - for testing purpose
-            /*
-             if let wallet = walletsRepository.nativeWallet {
-                 source = AccountStreamSource(
-                     account: wallet.pubkey ?? "",
-                     accountSymbol: wallet.token.symbol,
-                     transactionRepository: transactionRepository,
-                     transactionParser: transactionParser
-                 )
-             }
-             */
-
             super.init(isPaginationEnabled: true, limit: 10)
+
+            // Register all refresh triggers
+            for trigger in refreshTriggers {
+                trigger.register()
+                    .emit(onNext: { [weak self] in self?.refreshUI() })
+                    .disposed(by: disposeBag)
+            }
+
+            // Build source
+            buildSource()
+        }
+
+        func buildSource() {
+            let accountStreamSources = walletsRepository
+                .getWallets()
+                .map { wallet in
+                    AccountStreamSource(
+                        account: wallet.pubkey ?? "",
+                        accountSymbol: wallet.token.symbol,
+                        transactionRepository: self.cachedTransactionRepository,
+                        transactionParser: self.cachedTransactionParser
+                    )
+                }
+
+            source = MultipleStreamSource(sources: accountStreamSources)
         }
 
         override func clear() {
-            source.reset()
+            // Build source
+            buildSource()
+
+            // Clear cache
+            cachedTransactionRepository.clear()
+            cachedTransactionParser.clear()
+
             super.clear()
         }
 
@@ -88,10 +104,12 @@ extension History {
                             for try await transaction in source.next(
                                 configuration: .init(timestampEnd: timeEndFilter)
                             ) {
-                                stream.yield([transaction])
+                                // Skip duplicated transaction
+                                if data.contains(where: { $0.signature == transaction.signature }) { continue }
 
+                                stream.yield([transaction])
                                 receivedItem += 1
-                                if receivedItem > 10 { return }
+                                if receivedItem > 15 { return }
                             }
                         }
                     } catch {
@@ -99,6 +117,13 @@ extension History {
                     }
                 }
             }.asObservable()
+        }
+
+        override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+            // Apply output transformation
+            var data = newData
+            for output in outputs { data = output.process(newData: data) }
+            return super.map(newData: data)
         }
     }
 }
