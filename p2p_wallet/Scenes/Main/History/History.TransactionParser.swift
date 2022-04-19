@@ -30,9 +30,9 @@ extension History {
         private let p2pFeePayers: [String]
         private let parser: SolanaSDKTransactionParserType
 
-        init(solanaSDK: SolanaSDK, p2pFeePayers: [String]) {
+        init(p2pFeePayers: [String]) {
             self.p2pFeePayers = p2pFeePayers
-            parser = SolanaSDK.TransactionParser(solanaSDK: solanaSDK)
+            parser = SolanaSDK.TransactionParser(solanaSDK: Resolver.resolve())
         }
 
         func parse(
