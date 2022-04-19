@@ -5,11 +5,15 @@
 import BECollectionView
 import BEPureLayout
 import Foundation
+import Resolver
 import UIKit
 
 extension History {
     class Scene: BEScene {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+
+        @Injected private var clipboardManager: ClipboardManagerType
+        @Injected private var pricesService: PricesServiceType
 
         let viewModel = SceneModel()
 
@@ -64,8 +68,28 @@ extension History {
                             view.setUp(headerTitle: " ")
                         }
                     }
-                )
+                ).withDelegate(self)
             }
         }
+    }
+}
+
+// MARK: - BECollectionViewDelegate
+
+extension History.Scene: BECollectionViewDelegate {
+    func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
+        guard let item = item as? SolanaSDK.ParsedTransaction else { return }
+
+        let viewController = History.TransactionViewController(
+            viewModel: .init(
+                transaction: item,
+                clipboardManager: clipboardManager,
+                pricesService: pricesService
+            )
+        )
+        viewController.dismissCompletion = { [weak self] in
+            self?.dismiss(animated: true)
+        }
+        present(viewController, interactiveDismissalType: .none)
     }
 }
