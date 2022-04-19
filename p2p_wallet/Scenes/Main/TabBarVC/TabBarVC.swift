@@ -16,6 +16,7 @@ protocol TabBarNeededViewController: UIViewController {}
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     @Injected private var helpCenterLauncher: HelpCenterLauncher
+    @Injected private var clipboardManager: ClipboardManagerType
     private var tabBarTopConstraint: NSLayoutConstraint!
 
     deinit {
