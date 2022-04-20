@@ -87,7 +87,7 @@ extension ProcessTransaction.Status {
                     }
                     .padding(.init(only: .bottom, inset: 18))
 
-                    // Green alert https://www.figma.com/file/2gGLaD2vj6dgFloHX9CGBl/iOs?node-id=22435%3A73542
+                    // Green alert (shown only when top up is finished but transaction is not)
                     UIView.greenBannerView {
                         UILabel(text: nil, textSize: 13, numberOfLines: 0)
                             .setup { label in
