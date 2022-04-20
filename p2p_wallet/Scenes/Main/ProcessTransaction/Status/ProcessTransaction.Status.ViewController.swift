@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import FeeRelayerSwift
 import Foundation
 import UIKit
 
@@ -86,6 +87,38 @@ extension ProcessTransaction.Status {
                     }
                     .padding(.init(only: .bottom, inset: 18))
 
+                    // Green alert https://www.figma.com/file/2gGLaD2vj6dgFloHX9CGBl/iOs?node-id=22435%3A73542
+                    UIView.greenBannerView {
+                        UILabel(text: nil, textSize: 13, numberOfLines: 0)
+                            .setup { label in
+                                viewModel.pendingTransactionDriver
+                                    .map(\.rawTransaction.networkFees)
+                                    .filter { $0 != nil }
+                                    .map {
+                                        $0!.total.convertToBalance(
+                                            decimals: $0!.token.decimals
+                                        ).toString()
+                                            + " "
+                                            + $0!.token.symbol
+                                    }
+                                    .map {
+                                        L10n
+                                            .theFeeWasReservedSoYouWouldnTPayItAgainTheNextTimeYouCreatedATransactionOfTheSameType(
+                                                $0
+                                            )
+                                    }
+                                    .drive(label.rx.text)
+                                    .disposed(by: disposeBag)
+                            }
+                    }
+                    .padding(.init(top: 0, left: 18, bottom: 14, right: 18))
+                    .setup { view in
+                        viewModel.pendingTransactionDriver
+                            .map { $0.status.error as? FeeRelayer.Error != .topUpSuccessButTransactionThrows }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
+
                     // Transaction ID
                     BEHStack(spacing: 4, alignment: .top, distribution: .fill) {
                         UILabel(text: L10n.transactionID, textSize: 15, textColor: .textSecondary)
@@ -132,15 +165,6 @@ extension ProcessTransaction.Status {
                             .map { $0.transactionId == nil }
                             .drive(view.rx.isHidden)
                             .disposed(by: disposeBag)
-
-                        viewModel.pendingTransactionDriver
-                            .map { $0.transactionId == nil }
-                            .drive(onNext: { [weak self] _ in
-                                UIView.animate(withDuration: 0.3) {
-                                    self?.updatePresentationLayout()
-                                }
-                            })
-                            .disposed(by: disposeBag)
                     }
 
                     // Buttons
@@ -178,6 +202,15 @@ extension ProcessTransaction.Status {
             super.bind()
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
+                .disposed(by: disposeBag)
+
+            viewModel.pendingTransactionDriver
+                .map { $0.transactionId == nil }
+                .drive(onNext: { [weak self] _ in
+                    UIView.animate(withDuration: 0.3) {
+                        self?.updatePresentationLayout()
+                    }
+                })
                 .disposed(by: disposeBag)
         }
 
