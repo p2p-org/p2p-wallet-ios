@@ -166,7 +166,7 @@ extension ReceiveToken {
                         }.padding(.init(only: .left, inset: 12))
                         UIView.defaultNextArrow()
                     }.padding(.init(x: 18, y: 14))
-                }.onTap {
+                }.onTap { [unowned self] in
                     let vm = ChooseWallet.ViewModel(
                         selectedWallet: selectedWallet,
                         handler: self,
