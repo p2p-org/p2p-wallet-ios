@@ -155,13 +155,14 @@ extension Home.RootView: BECollectionViewDelegate {
 
 private extension HomeViewModelType {
     var isWalletReadyDriver: Driver<Bool> {
-        Observable.zip(
+        Observable.combineLatest(
             walletsRepository.stateObservable,
             walletsRepository.dataObservable
                 .filter { $0 != nil }
                 .withPrevious()
         )
             .map { state, change in
+                // if loaded
                 if let previous = change.0 {
                     if state == .loading || state == .initializing {
                         let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
@@ -172,7 +173,7 @@ private extension HomeViewModelType {
                     }
                 }
 
-                // First initialize
+                // Not loaded
                 return true
             }
             .distinctUntilChanged { $0 }
