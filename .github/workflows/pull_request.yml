@@ -36,6 +36,7 @@ jobs:
         uses: tzkhan/pr-update-action@v2
         with:
           repo-token: "${{ secrets.SUBMODULES_ACCESS_TOKEN }}"
+          head-branch-regex: '(?i)pwn-\d+'
           title-template: '[${{ steps.find_issue.outputs.issue }}] '
           body-template: |
             ## Link jirra to issue
