@@ -5,7 +5,7 @@ on:
 jobs:
   # Send task to review when pull request is opened
   return_task_to_in_progress:
-    name: Send task to review
+    name: Send task to review and update description
     runs-on: ubuntu-latest
 
     steps:
@@ -30,3 +30,15 @@ jobs:
         with:
           issue: ${{ steps.find_issue.outputs.issue }}
           transition: ${{ secrets.JIRA_REVIEW_TRANSITION_NAME }}
+
+      - name: Update PR description
+        if: ${{ steps.find_issue.outputs.issue }}
+        uses: tzkhan/pr-update-action@v2
+        with:
+          repo-token: "${{ secrets.SUBMODULES_ACCESS_TOKEN }}"
+          head-branch-regex: 'pwn-\d+'
+          title-template: '[${{ steps.find_issue.outputs.issue }}] '
+          body-template: |
+            ## Link jira to issue
+            ${{ secrets.JIRA_BASE_URL }}/${{ steps.find_issue.outputs.issue }}
+          body-update-action: 'prefix'
