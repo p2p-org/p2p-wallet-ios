@@ -51,7 +51,9 @@ final class AuthenticationHandler: AuthenticationHandlerType {
         UIApplication.shared.rx
             .applicationWillResignActive
             .subscribe(onNext: { [weak self] _ in
-                self?.isLockedSubject.accept(true)
+                if self?.authenticationStatusSubject.value == nil {
+                    self?.isLockedSubject.accept(true)
+                }
             })
             .disposed(by: disposeBag)
 
