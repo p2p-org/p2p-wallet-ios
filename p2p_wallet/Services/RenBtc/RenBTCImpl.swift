@@ -42,7 +42,9 @@ class RenBtcServiceImpl: RentBTC.Service {
     }
 
     func isAssociatedAccountCreatable() async throws -> Bool {
-        let wallets = walletRepository.getWallets()
+        let wallets = walletRepository
+            .getWallets()
+            .sorted { w1, w2 in (w1.lamports ?? 0) > (w2.lamports ?? 0) }
 
         // At lease one wallet is payable
         for wallet in wallets {
@@ -80,7 +82,6 @@ class RenBtcServiceImpl: RentBTC.Service {
         let accountCreationFee: UInt64 = try await solanaSDK
             .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
             .value
-
         let lamportPerSignature: UInt64 = try await solanaSDK.getLamportsPerSignature().value
         let feePayerAccount: String = try await feeRelayerApi.getFeePayerPubkey().value
         let recentBlockHash: String = try await solanaSDK.getRecentBlockhash().value
@@ -91,11 +92,12 @@ class RenBtcServiceImpl: RentBTC.Service {
             try solanaSDK.createAssociatedTokenAccountInstruction(
                 for: account.publicKey,
                 tokenMint: .renBTCMint,
-                payer: try SolanaSDK.PublicKey(string: feePayerAccount)
+                payer: account.publicKey
             )
         )
         transaction.feePayer = try SolanaSDK.PublicKey(string: feePayerAccount)
         transaction.recentBlockhash = recentBlockHash
+        try transaction.sign(signers: [account])
 
         // Calculate expected transaction fee
         let expectedFee: SolanaSDK.FeeAmount = try await feeRelayer.calculateNeededTopUpAmount(
@@ -123,18 +125,16 @@ class RenBtcServiceImpl: RentBTC.Service {
 
     func getCreationFee(payingFeeMintAddress: String) async throws -> SolanaSDK.Lamports {
         // Prepare
-        try await orcaSwap.load().value
-        try await feeRelayer.load().value
+        try await [orcaSwap.load().value, feeRelayer.load().value]
 
-        // Calculate account creation fee
-        let accountCreationFee: UInt64 = try await solanaSDK
-            .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
-            .value
-
-        // Calculate transaction fee
-        let transactionFee: UInt64 = try await solanaSDK.getLamportsPerSignature().value * 1
-
-        // Convert fee amount to spl amount
+        let (accountCreationFee, transactionFee) = try await(
+            solanaSDK
+                .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
+                .value,
+            solanaSDK
+                .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
+                .value
+        )
 
         // SOL case
         if payingFeeMintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {

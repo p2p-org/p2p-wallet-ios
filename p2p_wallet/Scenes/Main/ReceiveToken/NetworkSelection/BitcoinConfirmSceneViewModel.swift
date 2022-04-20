@@ -70,8 +70,10 @@ extension ReceiveToken.BitcoinConfirmScene {
                     try await self.solanaSDK.waitForConfirmation(signature: signature).value
                 }
                 .do(onError: { [weak self] error in
-                    self?.notification.showInAppNotification(.error(error))
                     self?.isLoadingRelay.accept(false)
+                    DispatchQueue.main.async {
+                        self?.notification.showInAppNotification(.error(error))
+                    }
                 })
         }
 
@@ -89,8 +91,6 @@ extension ReceiveToken.BitcoinConfirmScene {
                     else {
                         return .just("")
                     }
-
-                    return .just("")
 
                     return Single
                         .asyncThrowing { [weak self] () -> SolanaSDK.Lamports in
