@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxAppState
 import UIKit
 
 extension Root {
@@ -51,34 +50,6 @@ extension Root {
                     isLoading ? self?.showIndetermineHud() : self?.hideHud()
                 })
                 .disposed(by: disposeBag)
-
-            UIApplication.shared.rx
-                .applicationWillResignActive
-                .subscribe(onNext: { [weak self] _ in
-                    self?.showLockView()
-                })
-                .disposed(by: disposeBag)
-
-            UIApplication.shared.rx
-                .applicationDidBecomeActive
-                .subscribe(onNext: { [weak self] _ in
-                    self?.hideLockView()
-                })
-                .disposed(by: disposeBag)
-        }
-
-        // MARK: - Locking
-
-        private func showLockView() {
-            let lockView = LockView()
-            UIApplication.shared.windows.last?.addSubview(lockView)
-            lockView.autoPinEdgesToSuperviewEdges()
-        }
-
-        private func hideLockView() {
-            for view in UIApplication.shared.windows.last?.subviews ?? [] where view is LockView {
-                view.removeFromSuperview()
-            }
         }
 
         // MARK: - Navigation

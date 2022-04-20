@@ -12,6 +12,8 @@ import RxSwift
 protocol MainViewModelType {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get
     } // nil if non authentication process is processing
+    var isLockedDriver: Driver<Bool> { get }
+
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
 }
 
@@ -45,6 +47,10 @@ class MainViewModel {
 extension MainViewModel: MainViewModelType {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
         authenticationHandler.authenticationStatusDriver
+    }
+
+    var isLockedDriver: Driver<Bool> {
+        authenticationHandler.isLockedDriver
     }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {

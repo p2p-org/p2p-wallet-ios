@@ -53,11 +53,32 @@ class MainViewController: BaseVC {
             .drive(onNext: { [weak self] in self?.handleAuthenticationStatus($0) })
             .disposed(by: disposeBag)
 
+        // locking status
+        viewModel.isLockedDriver
+            .drive(onNext: { [weak self] isLocked in
+                isLocked ? self?.showLockView() : self?.hideLockView()
+            })
+            .disposed(by: disposeBag)
+
         // blurEffectView
         viewModel.authenticationStatusDriver
             .map { $0 == nil }
             .drive(blurEffectView.rx.isHidden)
             .disposed(by: disposeBag)
+    }
+
+    // MARK: - Locking
+
+    private func showLockView() {
+        let lockView = LockView()
+        UIApplication.shared.windows.last?.addSubview(lockView)
+        lockView.autoPinEdgesToSuperviewEdges()
+    }
+
+    private func hideLockView() {
+        for view in UIApplication.shared.windows.last?.subviews ?? [] where view is LockView {
+            view.removeFromSuperview()
+        }
     }
 
     // MARK: - Helpers
