@@ -25,6 +25,25 @@ final class AppEventHandler {
     private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
     weak var delegate: AppEventHandlerDelegate?
     private var resolvedName: String?
+
+    init() {
+        disableDevnetTestnetIfDebug()
+    }
+
+    private func disableDevnetTestnetIfDebug() {
+        #if !DEBUG
+            switch Defaults.apiEndPoint.network {
+            case .mainnetBeta:
+                break
+            case .devnet, .testnet:
+                if let definedEndpoint = (SolanaSDK.APIEndPoint.definedEndpoints
+                    .first { $0.network != .devnet && $0.network != .testnet })
+                {
+                    changeAPIEndpoint(to: definedEndpoint)
+                }
+            }
+        #endif
+    }
 }
 
 extension AppEventHandler: AppEventHandlerType {
