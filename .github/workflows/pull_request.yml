@@ -40,5 +40,5 @@ jobs:
           title-template: '[${{ steps.find_issue.outputs.issue }}] '
           body-template: |
             ## Link jira to issue
-            ${{ secrets.JIRA_BASE_URL }}/${{ steps.find_issue.outputs.issue }}
+            ${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.find_issue.outputs.issue }}
           body-update-action: 'prefix'
