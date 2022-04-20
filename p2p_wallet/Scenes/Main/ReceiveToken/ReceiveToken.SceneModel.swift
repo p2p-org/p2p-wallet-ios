@@ -33,7 +33,6 @@ protocol ReceiveSceneModel: BESceneModel {
     var tokenWallet: Wallet? { get }
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
 
-    func isRenBtcCreated() -> Bool
     func acceptReceivingRenBTC() -> Completable
     func switchToken(_ tokenType: ReceiveToken.TokenType)
     func showSelectionNetwork()
@@ -174,25 +173,21 @@ extension ReceiveToken {
         typealias BitcoinSceneType = ReceiveToken.BitcoinConfirmScene.SceneType
 
         var showBitcoinConfirmation: Driver<BitcoinSceneType> {
-            let cantToggleToBtc = toggleToBtcAccount.filter { !$0 }.mapToVoid()
+            toggleToBtcAccount.filter { !$0 }
+                .mapToVoid()
+                .flatMap { [weak self] () -> Observable<BitcoinSceneType> in
+                    guard let self = self else { return .empty() }
 
-            let creationComission = cantToggleToBtc
-                .filter { [unowned self] in !isRenBtcCreated() }
-                .flatMapLatest { [unowned self] in
-                    renBtcService.isAssociatedAccountCreatable()
-                        .asObservable()
-                        .materializeAndFilterComplete()
-                        .elements()
+                    if self.renBtcService.hasAssociatedTokenAccountBeenCreated() {
+                        return .just(.btcAccountCreated)
+                    }
+
+                    return Observable.asyncThrowing { [weak self] () -> BitcoinSceneType in
+                        let isCreatable = try await self?.renBtcService.isAssociatedAccountCreatable() ?? false
+                        return isCreatable ? .noBtcAccount : .noBtcAccountAndFundsForPay
+                    }
                 }
-                .map { $0 ? BitcoinSceneType.noBtcAccount : .noBtcAccountAndFundsForPay }
-
-            return Driver.merge(
-                creationComission.asDriver(),
-                cantToggleToBtc
-                    .filter { [unowned self] in isRenBtcCreated() }
-                    .mapTo(.btcAccountCreated)
-                    .asDriver()
-            )
+                .asDriver()
         }
 
         var showLoader: Driver<Bool> {
@@ -236,10 +231,6 @@ extension ReceiveToken {
         func tapOnBitcoin() {
             showLoaderRelay.accept(true)
             toggleToBtcRelay.onNext(())
-        }
-
-        func isRenBtcCreated() -> Bool {
-            walletsRepository.getWallets().contains(where: \.token.isRenBTC)
         }
 
         func acceptReceivingRenBTC() -> Completable {

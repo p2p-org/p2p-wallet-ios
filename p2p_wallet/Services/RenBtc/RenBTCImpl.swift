@@ -37,178 +37,116 @@ class RenBtcServiceImpl: RentBTC.Service {
         )
     }
 
-    func hasAssociatedTokenAccountBeenCreated() -> Single<Bool> {
-        solanaSDK.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
-            .catch { error in
-                if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
-                    return .just(false)
-                }
-                throw error
+    func hasAssociatedTokenAccountBeenCreated() -> Bool {
+        walletRepository.getWallets().contains(where: \.token.isRenBTC)
+    }
+
+    func isAssociatedAccountCreatable() async throws -> Bool {
+        let wallets = walletRepository.getWallets()
+
+        // At lease one wallet is payable
+        for wallet in wallets {
+            let fee = try await getCreationFee(payingFeeMintAddress: wallet.mintAddress)
+            if fee <= (wallet.lamports ?? 0) {
+                return true
             }
+        }
+
+        return false
     }
 
-    func isAssociatedAccountCreatable() -> Single<Bool> {
-        .just(walletRepository.getWallets().filter { $0.amount > 0 }.isEmpty == false)
-    }
-
-    func createAssociatedTokenAccount(
-        payingFeeAddress: String,
-        payingFeeMintAddress: String
-    ) -> Single<SolanaSDK.TransactionID> {
+    func createAccount(payingFeeAddress: String, payingFeeMintAddress: String) async throws -> SolanaSDK.TransactionID {
         if payingFeeMintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-            return createAssociatedTokenAccount()
+            return try await createAccountUsingSolToken()
         } else {
-            return createAssociatedTokenAccountWithRelay(
+            return try await createAccountUsingSplToken(
                 payingFeeAddress: payingFeeAddress,
                 payingFeeMintAddress: payingFeeMintAddress
             )
         }
     }
 
-    private func createAssociatedTokenAccount() -> Single<SolanaSDK.TransactionID> {
-        do {
-            return solanaSDK.createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
-        } catch {
-            return .error(error)
-        }
+    private func createAccountUsingSolToken() async throws -> SolanaSDK.TransactionID {
+        try await solanaSDK.createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false).value
     }
 
-    private func createAssociatedTokenAccountWithRelay(
+    private func createAccountUsingSplToken(
         payingFeeAddress: String,
         payingFeeMintAddress: String
-    ) -> Single<SolanaSDK.TransactionID> {
-        guard let account = accountStorage.account else { return .error(SolanaSDK.Error.unauthorized) }
+    ) async throws -> SolanaSDK.TransactionID {
+        guard let account = accountStorage.account else { throw SolanaSDK.Error.unauthorized }
 
-        return Single.zip(
-            solanaSDK.getMinimumBalanceForRentExemption(span: 165),
-            solanaSDK.getLamportsPerSignature(),
-            solanaSDK.getRecentBlockhash(),
-            feeRelayerApi.getFeePayerPubkey()
-        ).flatMap { minimumBalanceForRentExemption, lamports, recentBlockHash, feePayer in
-            var transaction = SolanaSDK.Transaction()
-            transaction.instructions.append(
-                try self.solanaSDK.createAssociatedTokenAccountInstruction(
-                    for: account.publicKey,
-                    tokenMint: .renBTCMint,
-                    payer: try SolanaSDK.PublicKey(string: feePayer)
-                )
+        // Preparing
+        let accountCreationFee: UInt64 = try await solanaSDK
+            .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
+            .value
+
+        let lamportPerSignature: UInt64 = try await solanaSDK.getLamportsPerSignature().value
+        let feePayerAccount: String = try await feeRelayerApi.getFeePayerPubkey().value
+        let recentBlockHash: String = try await solanaSDK.getRecentBlockhash().value
+
+        // Create raw transaction
+        var transaction = SolanaSDK.Transaction()
+        transaction.instructions.append(
+            try solanaSDK.createAssociatedTokenAccountInstruction(
+                for: account.publicKey,
+                tokenMint: .renBTCMint,
+                payer: try SolanaSDK.PublicKey(string: feePayerAccount)
             )
-            transaction.feePayer = try SolanaSDK.PublicKey(string: feePayer)
-            transaction.recentBlockhash = recentBlockHash
-
-            let transactionFee = try transaction.calculateTransactionFee(lamportsPerSignatures: lamports)
-            let accountCreationFee = minimumBalanceForRentExemption
-
-            let expectedFee = SolanaSDK.FeeAmount(
-                transaction: transactionFee,
-                accountBalances: accountCreationFee
-            )
-
-            let preparedTransaction = SolanaSDK.PreparedTransaction(
-                transaction: transaction,
-                signers: [account],
-                expectedFee: expectedFee
-            )
-
-            return self.feeRelayer
-                .load()
-                .andThen(
-                    self.feeRelayer.topUpAndRelayTransaction(
-                        preparedTransaction: preparedTransaction,
-                        payingFeeToken: FeeRelayer.Relay.TokenInfo(
-                            address: payingFeeAddress,
-                            mint: payingFeeMintAddress
-                        )
-                    )
-                ).map { transactionIds in transactionIds.first ?? "" }
-        }
-    }
-
-    func getCreationFee(payingFeeMintAddress: String) -> Single<SolanaSDK.Lamports> {
-        Completable.zip(
-            orcaSwap.load(),
-            feeRelayer.load()
-        ).andThen(
-            Single.zip(
-                solanaSDK.getMinimumBalanceForRentExemption(span: 165),
-                solanaSDK.getLamportsPerSignature()
-            ).flatMap { [weak self] minimumBalance, lamportPerSignature -> Single<SolanaSDK.Lamports> in
-                guard let self = self else { return .error(SolanaSDK.Error.unknown) }
-
-                if payingFeeMintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-                    // Create fake transaction
-                    var transaction = SolanaSDK.Transaction()
-                    transaction.instructions.append(
-                        try self.solanaSDK.createAssociatedTokenAccountInstruction(
-                            for: SolanaSDK.PublicKey.fake,
-                            tokenMint: .renBTCMint,
-                            payer: SolanaSDK.PublicKey.fake
-                        )
-                    )
-                    transaction.feePayer = SolanaSDK.PublicKey.fake
-                    transaction.recentBlockhash = ""
-
-                    let transactionFee = try transaction.calculateTransactionFee(
-                        lamportsPerSignatures: lamportPerSignature
-                    )
-                    let accountCreationFee = minimumBalance
-
-                    let feeAmount = transactionFee + accountCreationFee
-
-                    return .just(feeAmount)
-                } else {
-                    var transaction = SolanaSDK.Transaction()
-                    transaction.instructions.append(
-                        try self.solanaSDK.createAssociatedTokenAccountInstruction(
-                            for: SolanaSDK.PublicKey.fake,
-                            tokenMint: .renBTCMint,
-                            payer: SolanaSDK.PublicKey.fake
-                        )
-                    )
-                    transaction.feePayer = SolanaSDK.PublicKey.fake
-                    transaction.recentBlockhash = ""
-
-                    let transactionFee = try transaction.calculateTransactionFee(
-                        lamportsPerSignatures: lamportPerSignature
-                    )
-                    let accountCreationFee = minimumBalance
-
-                    let expectedFee = SolanaSDK.FeeAmount(
-                        transaction: transactionFee,
-                        accountBalances: accountCreationFee
-                    )
-
-                    let feeAmount = self.calculateFee(preparedTransaction: .init(
-                        transaction: transaction,
-                        signers: [],
-                        expectedFee: expectedFee
-                    ))
-                    return self.orcaSwap.getTradablePoolsPairs(
-                        fromMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString,
-                        toMint: payingFeeMintAddress
-                    ).map { pairs -> SolanaSDK.Lamports in
-                        let pair = try self.orcaSwap.findBestPoolsPairForInputAmount(feeAmount.total, from: pairs)
-                        return pair?.getOutputAmount(fromInputAmount: feeAmount.total) ?? 0
-                    }
-                }
-            }
         )
+        transaction.feePayer = try SolanaSDK.PublicKey(string: feePayerAccount)
+        transaction.recentBlockhash = recentBlockHash
+
+        // Calculate expected transaction fee
+        let expectedFee: SolanaSDK.FeeAmount = try await feeRelayer.calculateNeededTopUpAmount(
+            expectedFee: .init(transaction: lamportPerSignature * 1, accountBalances: accountCreationFee),
+            payingTokenMint: payingFeeMintAddress
+        ).value
+
+        // Prepare transaction
+        let preparedTransaction = SolanaSDK.PreparedTransaction(
+            transaction: transaction,
+            signers: [account],
+            expectedFee: expectedFee
+        )
+
+        // Submit
+        try await feeRelayer.load().value
+        return try await feeRelayer
+            .topUpAndRelayTransaction(
+                preparedTransaction: preparedTransaction,
+                payingFeeToken: .init(address: payingFeeAddress, mint: payingFeeMintAddress)
+            )
+            .map(\.first)
+            .value!
     }
 
-    /// Calculate fee for given transaction, including top up fee
-    private func calculateFee(preparedTransaction: SolanaSDK.PreparedTransaction) -> SolanaSDK.FeeAmount {
-        var fee = preparedTransaction.expectedFee
-        if feeRelayer.cache.freeTransactionFeeLimit?
-            .isFreeTransactionFeeAvailable(transactionFee: fee.transaction) == true
-        {
-            fee.transaction = 0
-        } else if feeRelayer.cache.relayAccountStatus == .notYetCreated {
-            fee.transaction += getRelayAccountCreationCost() // TODO: - accountBalances or transaction?
+    func getCreationFee(payingFeeMintAddress: String) async throws -> SolanaSDK.Lamports {
+        // Prepare
+        try await orcaSwap.load().value
+        try await feeRelayer.load().value
+
+        // Calculate account creation fee
+        let accountCreationFee: UInt64 = try await solanaSDK
+            .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
+            .value
+
+        // Calculate transaction fee
+        let transactionFee: UInt64 = try await solanaSDK.getLamportsPerSignature().value * 1
+
+        // Convert fee amount to spl amount
+
+        // SOL case
+        if payingFeeMintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+            return accountCreationFee + transactionFee
         }
-        return fee
-    }
 
-    private func getRelayAccountCreationCost() -> UInt64 {
-        feeRelayer.cache.lamportsPerSignature ?? 0 // TODO: Check again
+        // SPL case
+        let feeInSplToken: SolanaSDK.FeeAmount = try await feeRelayer.calculateNeededTopUpAmount(
+            expectedFee: .init(transaction: transactionFee, accountBalances: accountCreationFee),
+            payingTokenMint: payingFeeMintAddress
+        ).value
+
+        return feeInSplToken.total
     }
 }

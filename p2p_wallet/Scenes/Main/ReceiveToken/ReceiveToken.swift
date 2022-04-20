@@ -20,6 +20,10 @@ enum ReceiveToken {
         case showBuy
     }
 
+    enum Error: Swift.Error {
+        case unknown
+    }
+
     enum TokenType: CaseIterable {
         case solana, btc
 

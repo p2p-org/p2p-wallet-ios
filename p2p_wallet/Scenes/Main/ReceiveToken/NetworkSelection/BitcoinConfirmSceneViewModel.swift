@@ -30,10 +30,16 @@ extension ReceiveToken.BitcoinConfirmScene {
         private let isLoadingRelay: BehaviorRelay<Bool> = BehaviorRelay(value: false)
 
         init(receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType) {
+            debugPrint("Init ReceiveToken.BitcoinConfirmScene.ViewModel")
+
             self.receiveBitcoinViewModel = receiveBitcoinViewModel
             if let wallet = (walletRepository.getWallets().first { $0.amount > 0 }) {
                 payingWalletRelay.accept(wallet)
             }
+        }
+
+        deinit {
+            debugPrint("Deinit ReceiveToken.BitcoinConfirmScene.ViewModel")
         }
 
         // MARK: - Implementation BitcoinCreateAccountViewModelType
@@ -54,24 +60,19 @@ extension ReceiveToken.BitcoinConfirmScene {
                 ))
             }
 
-            return rentBTCService.createAssociatedTokenAccount(
-                payingFeeAddress: payingAddress,
-                payingFeeMintAddress: payingWallet.mintAddress
-            )
-                .flatMap { [weak self] id -> Single<Any?> in
-                    guard let self = self else {
-                        return .error(NSError(
-                            domain: "ReceiveToken.BitcoinCreateAccountScene.ViewModel",
-                            code: 1
-                        ))
-                    }
-                    return self.solanaSDK.waitForConfirmation(signature: id).andThen(.just(nil))
+            return Completable
+                .asyncThrowing { [weak self] in
+                    guard let self = self else { throw ReceiveToken.Error.unknown }
+                    let signature = try await self.rentBTCService.createAccount(
+                        payingFeeAddress: payingAddress,
+                        payingFeeMintAddress: payingWallet.mintAddress
+                    )
+                    try await self.solanaSDK.waitForConfirmation(signature: signature).value
                 }
                 .do(onError: { [weak self] error in
                     self?.notification.showInAppNotification(.error(error))
                     self?.isLoadingRelay.accept(false)
                 })
-                .asCompletable()
         }
 
         func selectWallet(wallet: Wallet) {
@@ -89,9 +90,14 @@ extension ReceiveToken.BitcoinConfirmScene {
                         return .just("")
                     }
 
-                    return self
-                        .rentBTCService
-                        .getCreationFee(payingFeeMintAddress: wallet.mintAddress)
+                    return .just("")
+
+                    return Single
+                        .asyncThrowing { [weak self] () -> SolanaSDK.Lamports in
+                            guard let self = self else { return 0 }
+                            return try await self.rentBTCService
+                                .getCreationFee(payingFeeMintAddress: wallet.mintAddress)
+                        }
                         .map { lamports in
                             "\(lamports.convertToBalance(decimals: wallet.token.decimals)) \(wallet.token.symbol)"
                         }
