@@ -19,7 +19,7 @@ final class TransactionImageView: BEView {
     private lazy var basicIconImageView = UIImageView(
         width: basicIconSize,
         height: basicIconSize,
-        tintColor: .iconSecondary
+        tintColor: .black
     )
     private lazy var statusIconImageView: UIImageView = {
         let image = UIImageView(width: statusIconSize.width, height: statusIconSize.height, tintColor: .iconSecondary)

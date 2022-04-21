@@ -10,8 +10,6 @@ import UIKit
 
 extension History {
     final class Cell: TransactionCell {
-        override var padding: UIEdgeInsets { .init(x: 20, y: 8) }
-
         override func commonInit() {
             super.commonInit()
             setupSkeleton()

@@ -21,7 +21,8 @@ extension History {
             backgroundColor: .grayPanel,
             cornerRadius: 16,
             basicIconSize: 32,
-            miniIconsSize: 39
+            miniIconsSize: 39,
+            statusIconSize: .init(width: 24, height: 24)
         )
         private let amountLabel = UILabel(
             textSize: 16,
@@ -196,7 +197,8 @@ extension History {
         }
 
         fileprivate func setModel(_ model: Model) {
-            imageView.setUp(imageType: model.imageType)
+            imageView.setUp(imageType: model.imageType.imageType)
+            imageView.setUp(statusImage: model.imageType.statusImage)
             amountLabel.text = model.amount
             amountLabel.isHidden = model.amount == nil
             usdAmountLabel.text = model.usdAmount
@@ -214,7 +216,7 @@ extension History {
 
 extension History.TransactionView {
     struct Model {
-        let imageType: TransactionImageView.ImageType
+        let imageType: (imageType: TransactionImageView.ImageType, statusImage: UIImage?)
         let amount: String?
         let usdAmount: String?
         let blockTime: String
