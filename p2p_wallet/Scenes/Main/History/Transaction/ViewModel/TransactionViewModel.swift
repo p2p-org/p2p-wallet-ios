@@ -10,6 +10,7 @@ import Foundation
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import UIKit
 
 extension History {
     final class TransactionViewModel {
@@ -67,12 +68,25 @@ private extension SolanaSDK.ParsedTransaction {
         )
     }
 
-    func imageType() -> TransactionImageView.ImageType {
+    func imageType() -> (imageType: TransactionImageView.ImageType, statusImage: UIImage?) {
+        var statusImage: UIImage?
+        switch status {
+        case .requesting, .processing:
+            statusImage = .transactionIndicatorPending
+        case .error:
+            statusImage = .transactionIndicatorError
+        default:
+            break
+        }
+
         switch value {
         case let transaction as SolanaSDK.SwapTransaction:
-            return .fromOneToOne(from: transaction.source?.token, to: transaction.destination?.token)
+            return (
+                imageType: .fromOneToOne(from: transaction.source?.token, to: transaction.destination?.token),
+                statusImage: statusImage
+            )
         default:
-            return .oneImage(image: icon)
+            return (imageType: .oneImage(image: icon), statusImage: statusImage)
         }
     }
 
@@ -109,7 +123,7 @@ private extension SolanaSDK.ParsedTransaction {
         }
     }
 
-    private func getAmountInCurrentFiat(
+    func getAmountInCurrentFiat(
         pricesService: PricesServiceType,
         amountInToken: Double?,
         symbol: String?
@@ -121,7 +135,7 @@ private extension SolanaSDK.ParsedTransaction {
         return amountInToken * price
     }
 
-    private func getAddresses() -> (from: String?, to: String?) {
+    func getAddresses() -> (from: String?, to: String?) {
         let transaction = value
 
         let from: String?
@@ -150,7 +164,7 @@ private extension SolanaSDK.ParsedTransaction {
         )
     }
 
-    private func mapFee() -> NSAttributedString? {
+    func mapFee() -> NSAttributedString? {
         let payingWallet = Wallet.nativeSolana(pubkey: nil, lamport: 0)
         let feeAmount = fee
 

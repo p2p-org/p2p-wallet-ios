@@ -10,63 +10,56 @@ import Foundation
 import UIKit
 
 class TransactionCell: BaseCollectionViewCell {
-    override var padding: UIEdgeInsets { .init(all: 20) }
+    override var padding: UIEdgeInsets { .init(x: 16, y: 8) }
 
     // MARK: - Subviews
 
-    private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
-    private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
-    private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
-
-    private lazy var descriptionLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
-    private lazy var amountInTokenLabel = UILabel(
-        textSize: 15,
-        weight: .medium,
-        textColor: .textSecondary,
-        textAlignment: .right
+    private lazy var imageView = TransactionImageView(
+        size: 48,
+        backgroundColor: .grayPanel,
+        cornerRadius: 16,
+        miniIconsSize: 29
     )
-    private lazy var swapTransactionImageView = SwapTransactionImageView(height: 18)
+
+    private lazy var transactionTypeLabel = UILabel(textSize: 16)
+    private lazy var amountInFiatLabel = UILabel(textSize: 16, weight: .medium, textAlignment: .right)
+
+    private lazy var descriptionLabel = UILabel(textSize: 12, textColor: .textSecondary)
+    private lazy var amountInTokenLabel = UILabel(textSize: 12, textColor: .textSecondary, textAlignment: .right)
+
     lazy var topStackView = UIStackView(
         axis: .horizontal,
         spacing: 8,
         alignment: .center,
-        distribution: .fill,
-        arrangedSubviews: [
-            transactionTypeLabel, amountInFiatLabel,
-        ]
+        arrangedSubviews: [transactionTypeLabel, amountInFiatLabel]
     )
     lazy var bottomStackView = UIStackView(
         axis: .horizontal,
         spacing: 8,
         alignment: .center,
-        distribution: .fill,
-        arrangedSubviews: [
-            descriptionLabel, swapTransactionImageView, amountInTokenLabel,
-        ]
+        arrangedSubviews: [descriptionLabel, amountInTokenLabel]
     )
 
     override func commonInit() {
         super.commonInit()
 
         stackView.axis = .horizontal
-        stackView.spacing = 16
+        stackView.spacing = 12
         stackView.alignment = .center
 
         stackView.addArrangedSubviews {
             imageView
-            UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
+            UIStackView(axis: .vertical, spacing: 6, alignment: .fill, arrangedSubviews: [
                 topStackView,
                 bottomStackView,
             ])
         }
 
-        swapTransactionImageView.isHidden = true
-
         setupSkeleton()
     }
 
     private func setupSkeleton() {
-        imageView.layer.cornerRadius = 12
+        imageView.layer.cornerRadius = 16
         transactionTypeLabel.layer.cornerRadius = 12
         amountInFiatLabel.layer.cornerRadius = 12
         descriptionLabel.layer.cornerRadius = 12
@@ -119,7 +112,6 @@ extension TransactionCell: BECollectionViewCell {
             default:
                 break
             }
-
         case let transaction as SolanaSDK.SwapTransaction:
             if let source = transaction.source,
                let destination = transaction.destination
