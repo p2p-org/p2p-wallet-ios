@@ -77,7 +77,7 @@ class RenBtcServiceImpl: RentBTC.Service {
                 try solanaSDK.createAssociatedTokenAccountInstruction(
                     for: account.publicKey,
                     tokenMint: .renBTCMint,
-                    payer: account.publicKey
+                    payer: try SolanaSDK.PublicKey(string: feePayerAccount)
                 ),
             ],
             signers: [account],
