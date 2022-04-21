@@ -14,8 +14,6 @@ extension History {
 
         override func commonInit() {
             super.commonInit()
-            spacer = BEStackViewSpacing(0)
-            transactionStatusIndicator.isHidden = true
             setupSkeleton()
         }
 
