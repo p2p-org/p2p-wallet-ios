@@ -28,6 +28,7 @@
 		2C591E43280D440E0044ABB0 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E3F280D440E0044ABB0 /* ViewModel.swift */; };
 		2C591E44280D440E0044ABB0 /* TransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E41280D440E0044ABB0 /* TransactionViewController.swift */; };
 		2C591E50280EA2FD0044ABB0 /* TransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E4F280EA2FD0044ABB0 /* TransactionView.swift */; };
+		2CB62D20281141BB008A950A /* EmptyTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB62D1F281141BB008A950A /* EmptyTransactionsView.swift */; };
 		3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */; };
 		3B01DFBE27DB19AB003E19BD /* ProcessTransaction.Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */; };
 		3B0D87B227EC770200DEE867 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3B0D87B127EC770200DEE867 /* README.md */; };
@@ -571,6 +572,7 @@
 		2C591E3F280D440E0044ABB0 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		2C591E41280D440E0044ABB0 /* TransactionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionViewController.swift; sourceTree = "<group>"; };
 		2C591E4F280EA2FD0044ABB0 /* TransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionView.swift; sourceTree = "<group>"; };
+		2CB62D1F281141BB008A950A /* EmptyTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTransactionsView.swift; sourceTree = "<group>"; };
 		3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
 		3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.swift; sourceTree = "<group>"; };
 		3B0D87B127EC770200DEE867 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1170,6 +1172,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		2CB62D1E281141A7008A950A /* Empty */ = {
+			isa = PBXGroup;
+			children = (
+				2CB62D1F281141BB008A950A /* EmptyTransactionsView.swift */,
+			);
+			path = Empty;
+			sourceTree = "<group>";
+		};
 		3B16154B2769A10B0080DE42 /* ConfirmSwapping */ = {
 			isa = PBXGroup;
 			children = (
@@ -1652,6 +1662,7 @@
 		84699DFB8392151E123EF267 /* History */ = {
 			isa = PBXGroup;
 			children = (
+				2CB62D1E281141A7008A950A /* Empty */,
 				846991ABB9332CED23540FA8 /* SourceStream */,
 				2C591E3C280D440E0044ABB0 /* Transaction */,
 				84699B35A8C4EC353874C536 /* Output */,
@@ -3209,6 +3220,7 @@
 				3B2F9EEF27F5B76D005BD49B /* SendServiceType.swift in Sources */,
 				3B7DE7EC2775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift in Sources */,
 				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
+				2CB62D20281141BB008A950A /* EmptyTransactionsView.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WelcomeViewController.swift in Sources */,
 				3B1615512769ABB10080DE42 /* OrcaSwapV2.ConfirmSwapping.RootView.swift in Sources */,
 				BC35082F273FFC08009D4441 /* Authentication.PincodeViewController.swift in Sources */,

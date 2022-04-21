@@ -798,3 +798,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "USDC" = "USDC";
 "Transaction detail" = "Détail de la transaction";
 "Free by p2p.org" = "Gratuit sur p2p.org";
+"After first transaction you will be able to view it here" = "Après la première transaction, vous pourrez le voir ici";
+"After first transaction you will\nbe able to view it here" = "Après la première transaction, vous\npouvez la voir ici";

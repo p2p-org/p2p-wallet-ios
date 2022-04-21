@@ -5,6 +5,7 @@
 import BECollectionView
 import FeeRelayerSwift
 import Foundation
+import RxCocoa
 import RxSwift
 import SolanaSwift
 
@@ -37,6 +38,26 @@ extension History {
             ProcessingTransactionsOutput(),
             PriceUpdatingOutput(),
         ]
+
+        var showItems: Driver<Bool> {
+            Observable.zip(
+                stateObservable.startWith(.loading),
+                dataObservable.startWith([])
+                    .filter { $0 != nil }
+                    .withPrevious()
+            ).map { state, change in
+                if state == .loading || state == .initializing {
+                    return true
+                } else {
+                    let amount = change.1?.reduce(0) { partialResult, wallet in
+                        partialResult + wallet.amount
+                    } ?? 0
+                    return amount > 0
+                }
+            }
+            .distinctUntilChanged { $0 }
+            .asDriver()
+        }
 
         init(
             solanaSDK: SolanaSDK = Resolver.resolve(),
