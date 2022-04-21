@@ -798,3 +798,5 @@ Reset the PIN or wait for %@." = "У вас осталось %@ попыток �
 "USDC" = "USDC";
 "Transaction detail" = "Детали транзакции";
 "Free by p2p.org" = "Бесплатно от p2p.org";
+"After first transaction you will be able to view it here" = "После первой транзакции вы сможете просмотреть ее здесь";
+"After first transaction you will\nbe able to view it here" = "После первой транзакции вы сможете\nпросмотреть ее здесь";
