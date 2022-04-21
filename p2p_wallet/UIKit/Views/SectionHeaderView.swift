@@ -10,7 +10,13 @@ import Foundation
 class SectionHeaderView: UICollectionReusableView {
     lazy var stackView = UIStackView(axis: .vertical, spacing: 16, alignment: .fill, distribution: .fill)
 
-    lazy var headerLabel = UILabel(text: "Wallets", textSize: 17, weight: .bold, numberOfLines: 0)
+    lazy var headerLabel = UILabel(
+        text: "Wallets",
+        textSize: 12,
+        weight: .medium,
+        textColor: .secondaryLabel,
+        numberOfLines: 0
+    )
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,8 +50,8 @@ class SectionHeaderView: UICollectionReusableView {
 
     func setUp(
         headerTitle: String,
-        headerFont: UIFont = .systemFont(ofSize: 17, weight: .bold),
-        textColor: UIColor = .black
+        headerFont: UIFont = .systemFont(ofSize: 12, weight: .medium),
+        textColor: UIColor = .secondaryLabel
     ) {
         headerLabel.text = headerTitle
         headerLabel.font = headerFont
