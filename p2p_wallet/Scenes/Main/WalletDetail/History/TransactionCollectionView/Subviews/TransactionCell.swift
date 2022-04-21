@@ -151,7 +151,7 @@ extension TransactionCell: BECollectionViewCell {
         case .error:
             imageView.setUp(statusImage: .transactionIndicatorError)
         default:
-            break
+            imageView.setUp(statusImage: nil)
         }
 
         // amount in fiat

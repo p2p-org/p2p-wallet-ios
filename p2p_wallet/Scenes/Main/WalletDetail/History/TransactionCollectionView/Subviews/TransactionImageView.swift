@@ -86,7 +86,7 @@ final class TransactionImageView: BEView {
         }
     }
 
-    func setUp(statusImage: UIImage) {
+    func setUp(statusImage: UIImage?) {
         statusIconImageView.isHidden = false
         statusIconImageView.image = statusImage
     }
