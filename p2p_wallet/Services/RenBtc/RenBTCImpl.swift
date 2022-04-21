@@ -58,59 +58,35 @@ class RenBtcServiceImpl: RentBTC.Service {
     }
 
     func createAccount(payingFeeAddress: String, payingFeeMintAddress: String) async throws -> SolanaSDK.TransactionID {
-        if payingFeeMintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-            return try await createAccountUsingSolToken()
-        } else {
-            return try await createAccountUsingSplToken(
-                payingFeeAddress: payingFeeAddress,
-                payingFeeMintAddress: payingFeeMintAddress
-            )
-        }
-    }
-
-    private func createAccountUsingSolToken() async throws -> SolanaSDK.TransactionID {
-        try await solanaSDK.createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false).value
-    }
-
-    private func createAccountUsingSplToken(
-        payingFeeAddress: String,
-        payingFeeMintAddress: String
-    ) async throws -> SolanaSDK.TransactionID {
         guard let account = accountStorage.account else { throw SolanaSDK.Error.unauthorized }
 
         // Preparing
-        let accountCreationFee: UInt64 = try await solanaSDK
-            .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
-            .value
-        let lamportPerSignature: UInt64 = try await solanaSDK.getLamportsPerSignature().value
-        let feePayerAccount: String = try await feeRelayerApi.getFeePayerPubkey().value
-        let recentBlockHash: String = try await solanaSDK.getRecentBlockhash().value
+        let (accountCreationFee, lamportPerSignature, feePayerAccount, recentBlockHash) =
+            try await(
+                solanaSDK
+                    .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
+                    .value,
+                solanaSDK.getLamportsPerSignature().value,
+                feeRelayerApi.getFeePayerPubkey().value,
+                solanaSDK.getRecentBlockhash().value
+            )
 
         // Create raw transaction
-        var transaction = SolanaSDK.Transaction()
-        transaction.instructions.append(
-            try solanaSDK.createAssociatedTokenAccountInstruction(
-                for: account.publicKey,
-                tokenMint: .renBTCMint,
-                payer: account.publicKey
-            )
-        )
-        transaction.feePayer = try SolanaSDK.PublicKey(string: feePayerAccount)
-        transaction.recentBlockhash = recentBlockHash
-        try transaction.sign(signers: [account])
-
-        // Calculate expected transaction fee
-        let expectedFee: SolanaSDK.FeeAmount = try await feeRelayer.calculateNeededTopUpAmount(
-            expectedFee: .init(transaction: lamportPerSignature * 1, accountBalances: accountCreationFee),
-            payingTokenMint: payingFeeMintAddress
-        ).value
-
-        // Prepare transaction
-        let preparedTransaction = SolanaSDK.PreparedTransaction(
-            transaction: transaction,
+        let preparedTransaction = try await solanaSDK.prepareTransaction(
+            instructions: [
+                try solanaSDK.createAssociatedTokenAccountInstruction(
+                    for: account.publicKey,
+                    tokenMint: .renBTCMint,
+                    payer: account.publicKey
+                ),
+            ],
             signers: [account],
-            expectedFee: expectedFee
+            feePayer: try SolanaSDK.PublicKey(string: feePayerAccount),
+            accountsCreationFee: accountCreationFee,
+            recentBlockhash: recentBlockHash,
+            lamportsPerSignature: lamportPerSignature
         )
+            .value
 
         // Submit
         try await feeRelayer.load().value
@@ -125,7 +101,7 @@ class RenBtcServiceImpl: RentBTC.Service {
 
     func getCreationFee(payingFeeMintAddress: String) async throws -> SolanaSDK.Lamports {
         // Prepare
-        try await [orcaSwap.load().value, feeRelayer.load().value]
+        _ = try await [orcaSwap.load().value, feeRelayer.load().value]
 
         let (accountCreationFee, transactionFee) = try await(
             solanaSDK
