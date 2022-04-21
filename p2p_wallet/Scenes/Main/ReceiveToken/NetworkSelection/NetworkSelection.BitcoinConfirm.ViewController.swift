@@ -151,11 +151,18 @@ extension ReceiveToken {
                         BEVStack {
                             BEHStack {
                                 UILabel(
-                                    text: L10n.accountCreationFee,
+                                    text: L10n.accountCreationFee + " ",
                                     textSize: 13,
                                     textColor: .secondaryLabel
                                 )
-                                UILabel(text: "~0.5$", textSize: 13)
+                                UILabel(text: "~0.0$", textSize: 13)
+                                    .setup { label in
+                                        self.viewModel
+                                            .feeAmountInFiat
+                                            .drive(label.rx.text)
+                                            .disposed(by: self.disposeBag)
+                                    }
+                                UIView.spacer
                             }
                             UILabel(textSize: 17, weight: .semibold).setup { view in
                                 self.viewModel.feeAmount

@@ -13,6 +13,7 @@ protocol BitcoinCreateAccountViewModelType {
     var isLoadingDriver: Driver<Bool> { get }
     var payingWallet: Driver<Wallet?> { get }
     var feeAmount: Driver<String> { get }
+    var feeAmountInFiat: Driver<String> { get }
 
     func create() -> Completable
     func selectWallet(wallet: Wallet)
@@ -81,15 +82,15 @@ extension ReceiveToken.BitcoinConfirmScene {
             payingWalletRelay.accept(wallet)
         }
 
-        var feeAmount: Driver<String> {
+        private var rawFeeAmount: Observable<UInt64> {
             payingWalletRelay
-                .flatMap { [weak self] wallet -> Single<String> in
+                .flatMap { [weak self] wallet -> Single<UInt64> in
                     guard
                         let self = self,
                         let wallet = wallet,
                         wallet.pubkey != nil
                     else {
-                        return .just("")
+                        return .just(0)
                     }
 
                     return Single
@@ -98,13 +99,39 @@ extension ReceiveToken.BitcoinConfirmScene {
                             return try await self.rentBTCService
                                 .getCreationFee(payingFeeMintAddress: wallet.mintAddress)
                         }
-                        .map { lamports in
-                            "\(lamports.convertToBalance(decimals: wallet.token.decimals)) \(wallet.token.symbol)"
-                        }
                 }
-                .asDriver { _ in
-                    .just("")
+                .asObservable()
+        }
+
+        var feeAmount: Driver<String> {
+            rawFeeAmount
+                .map { [weak self] lamports in
+                    guard
+                        let self = self,
+                        let wallet = self.payingWalletRelay.value,
+                        wallet.pubkey != nil
+                    else {
+                        return "0"
+                    }
+
+                    return "\(lamports.convertToBalance(decimals: wallet.token.decimals)) \(wallet.token.symbol)"
                 }
+                .asDriver()
+        }
+
+        var feeAmountInFiat: Driver<String> {
+            rawFeeAmount
+                .map { [weak self] amount in
+                    guard
+                        let self = self,
+                        let wallet = self.payingWalletRelay.value
+                    else {
+                        return ""
+                    }
+
+                    return "\((wallet.priceInCurrentFiat ?? 0) * Double(amount))$"
+                }
+                .asDriver()
         }
     }
 }
