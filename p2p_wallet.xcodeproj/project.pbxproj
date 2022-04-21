@@ -24,6 +24,10 @@
 /* Begin PBXBuildFile section */
 		0CE687AED7EB505F27BD021B /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 243409A57F9FCEF5FC3A12C8 /* Pods_p2p_wallet.framework */; };
 		2C2645AA280707950058E7F6 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2645A9280707950058E7F6 /* HistoryCell.swift */; };
+		2C591E42280D440E0044ABB0 /* TransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */; };
+		2C591E43280D440E0044ABB0 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E3F280D440E0044ABB0 /* ViewModel.swift */; };
+		2C591E44280D440E0044ABB0 /* TransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E41280D440E0044ABB0 /* TransactionViewController.swift */; };
+		2C591E50280EA2FD0044ABB0 /* TransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E4F280EA2FD0044ABB0 /* TransactionView.swift */; };
 		3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */; };
 		3B01DFBE27DB19AB003E19BD /* ProcessTransaction.Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */; };
 		3B0D87B227EC770200DEE867 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3B0D87B127EC770200DEE867 /* README.md */; };
@@ -563,6 +567,10 @@
 /* Begin PBXFileReference section */
 		243409A57F9FCEF5FC3A12C8 /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C2645A9280707950058E7F6 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
+		2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionViewModel.swift; sourceTree = "<group>"; };
+		2C591E3F280D440E0044ABB0 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		2C591E41280D440E0044ABB0 /* TransactionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionViewController.swift; sourceTree = "<group>"; };
+		2C591E4F280EA2FD0044ABB0 /* TransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionView.swift; sourceTree = "<group>"; };
 		3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
 		3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.swift; sourceTree = "<group>"; };
 		3B0D87B127EC770200DEE867 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -1135,6 +1143,33 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		2C591E3C280D440E0044ABB0 /* Transaction */ = {
+			isa = PBXGroup;
+			children = (
+				2C591E3D280D440E0044ABB0 /* ViewModel */,
+				2C591E40280D440E0044ABB0 /* View */,
+			);
+			path = Transaction;
+			sourceTree = "<group>";
+		};
+		2C591E3D280D440E0044ABB0 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */,
+				2C591E3F280D440E0044ABB0 /* ViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		2C591E40280D440E0044ABB0 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				2C591E41280D440E0044ABB0 /* TransactionViewController.swift */,
+				2C591E4F280EA2FD0044ABB0 /* TransactionView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		3B16154B2769A10B0080DE42 /* ConfirmSwapping */ = {
 			isa = PBXGroup;
 			children = (
@@ -1618,6 +1653,7 @@
 			isa = PBXGroup;
 			children = (
 				846991ABB9332CED23540FA8 /* SourceStream */,
+				2C591E3C280D440E0044ABB0 /* Transaction */,
 				84699B35A8C4EC353874C536 /* Output */,
 				84699B766AD65E9C0A49B0F8 /* History.swift */,
 				846999A7633E2BB66AC51674 /* History.Scene.swift */,
@@ -3215,6 +3251,7 @@
 				3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift in Sources */,
 				BCE04C68268D901400CE131A /* CustomPresentableViewController.swift in Sources */,
 				3B1681F7278B3E0700838F1B /* AppEventHandler.swift in Sources */,
+				2C591E42280D440E0044ABB0 /* TransactionViewModel.swift in Sources */,
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */,
@@ -3238,6 +3275,7 @@
 				86A90D1A273D306400D180EF /* VerifySecurityKeys.ViewModel.swift in Sources */,
 				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
+				2C591E44280D440E0044ABB0 /* TransactionViewController.swift in Sources */,
 				BC85EA69266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift in Sources */,
 				41CA05762754725200953322 /* ReserveName.ViewController.swift in Sources */,
 				BCB286F62754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.swift in Sources */,
@@ -3263,6 +3301,7 @@
 				BCE04C6C268D901400CE131A /* ModalTransitionManager.swift in Sources */,
 				BC534D6C2738C9B500BF1750 /* WLStepButton.swift in Sources */,
 				3B2BAFA62761E0190008DA0A /* SendTokenRecipientAndNetworkHandler.swift in Sources */,
+				2C591E43280D440E0044ABB0 /* ViewModel.swift in Sources */,
 				BC4593A326423F0100E11A52 /* ConnectionErrorVC.swift in Sources */,
 				BC4B9EC5271A791A005B9ECA /* SolanaSDK+Extensions.swift in Sources */,
 				41D7F6AE2739109D00453B61 /* PageableHorizontalLayoutScrollHandler.swift in Sources */,
@@ -3458,6 +3497,7 @@
 				8469926908C12A54B0D0850E /* DAppContainer.ViewModel.swift in Sources */,
 				846995ACEC50F650033C707E /* DAppContainer.RootView.swift in Sources */,
 				846995027222B9BE2C4B0698 /* WLCard.swift in Sources */,
+				2C591E50280EA2FD0044ABB0 /* TransactionView.swift in Sources */,
 				846995A6F31CA183C1D3A133 /* BEScene.swift in Sources */,
 				84699EB808181B89DFF647E9 /* BESceneModel.swift in Sources */,
 				84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */,

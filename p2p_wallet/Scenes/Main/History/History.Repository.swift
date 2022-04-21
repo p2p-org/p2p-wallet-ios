@@ -25,7 +25,7 @@ protocol HistoryTransactionRepository {
 extension History {
     class SolanaTransactionRepository: HistoryTransactionRepository {
         @Injected private var solanaSDK: SolanaSDK
-        
+
         func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo] {
             try await solanaSDK
                 .getSignaturesForAddress(address: address, configs: .init(limit: limit, before: before))

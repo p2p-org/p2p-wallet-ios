@@ -55,7 +55,7 @@ extension History {
                 status: parsedTrx.status,
                 signature: signatureInfo.signature,
                 value: parsedTrx.value,
-                slot: nil,
+                slot: transactionInfo.slot,
                 blockTime: time,
                 fee: parsedTrx.fee,
                 blockhash: parsedTrx.blockhash
@@ -78,7 +78,6 @@ extension History {
             // Read from cache
             var parsedTransaction = cache.read(key: signatureInfo.signature)
             if let parsedTransaction = parsedTransaction { return parsedTransaction }
-
             // Parse
             parsedTransaction = try await delegate.parse(
                 signatureInfo: signatureInfo,
