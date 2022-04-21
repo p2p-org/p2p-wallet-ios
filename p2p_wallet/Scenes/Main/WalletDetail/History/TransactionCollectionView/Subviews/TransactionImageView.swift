@@ -15,17 +15,18 @@ final class TransactionImageView: BEView {
     private let _cornerRadius: CGFloat?
     private let basicIconSize: CGFloat
     private let miniIconsSize: CGFloat
-
+    private let statusIconSize: CGSize
     private lazy var basicIconImageView = UIImageView(
         width: basicIconSize,
         height: basicIconSize,
         tintColor: .iconSecondary
     )
     private lazy var statusIconImageView: UIImageView = {
-        let image = UIImageView(width: 18, height: 18, tintColor: .iconSecondary)
+        let image = UIImageView(width: statusIconSize.width, height: statusIconSize.height, tintColor: .iconSecondary)
         image.isHidden = true
         return image
     }()
+
     private lazy var fromTokenImageView = CoinLogoImageView(size: miniIconsSize)
     private lazy var toTokenImageView = CoinLogoImageView(size: miniIconsSize)
 
@@ -34,12 +35,14 @@ final class TransactionImageView: BEView {
         backgroundColor: UIColor? = nil,
         cornerRadius: CGFloat? = nil,
         basicIconSize: CGFloat = 24.38,
-        miniIconsSize: CGFloat = 30
+        miniIconsSize: CGFloat = 30,
+        statusIconSize: CGSize = .init(width: 18, height: 18)
     ) {
         _backgroundColor = backgroundColor
         _cornerRadius = cornerRadius
         self.basicIconSize = basicIconSize
         self.miniIconsSize = miniIconsSize
+        self.statusIconSize = statusIconSize
         super.init(frame: .zero)
         configureForAutoLayout()
         autoSetDimensions(to: .init(width: size, height: size))
@@ -81,18 +84,11 @@ final class TransactionImageView: BEView {
             fromTokenImageView.setUp(token: from)
             toTokenImageView.setUp(token: to)
         }
+    }
 
-        statusIconImageView.isHidden = true
-        switch transaction.status {
-        case .requesting, .processing:
-            statusIconImageView.isHidden = false
-            statusIconImageView.image = .transactionIndicatorPending
-        case .error:
-            statusIconImageView.isHidden = false
-            statusIconImageView.image = .transactionIndicatorError
-        default:
-            break
-        }
+    func setUp(statusImage: UIImage) {
+        statusIconImageView.isHidden = false
+        statusIconImageView.image = statusImage
     }
 }
 

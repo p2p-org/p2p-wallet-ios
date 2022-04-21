@@ -31,7 +31,7 @@ class TransactionCell: BaseCollectionViewCell {
         alignment: .center,
         distribution: .fill,
         arrangedSubviews: [
-            transactionTypeLabel, amountInFiatLabel, spacer, transactionStatusIndicator,
+            transactionTypeLabel, amountInFiatLabel,
         ]
     )
     lazy var bottomStackView = UIStackView(
@@ -142,6 +142,16 @@ extension TransactionCell: BECollectionViewCell {
             ))
         default:
             imageView.setUp(imageType: .oneImage(image: transaction.icon))
+        }
+
+        // set up status icon
+        switch transaction.status {
+        case .requesting, .processing:
+            imageView.setUp(statusImage: .transactionIndicatorPending)
+        case .error:
+            imageView.setUp(statusImage: .transactionIndicatorError)
+        default:
+            break
         }
 
         // amount in fiat
