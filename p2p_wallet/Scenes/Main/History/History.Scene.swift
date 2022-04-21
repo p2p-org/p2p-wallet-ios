@@ -60,7 +60,7 @@ extension History {
                     emptyCellType: WLEmptyCell.self,
                     numberOfLoadingCells: 7,
                     interGroupSpacing: 1,
-                    itemHeight: .estimated(85)
+                    itemHeight: .estimated(64)
                 ),
                 headerBuilder: { view, sectionInfo in
                     guard let view = view as? SectionHeaderView else { return }
