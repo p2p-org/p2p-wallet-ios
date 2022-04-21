@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import UIKit
 
 class TransactionCell: BaseCollectionViewCell {
     override var padding: UIEdgeInsets { .init(all: 20) }
@@ -145,14 +146,16 @@ extension TransactionCell: BECollectionViewCell {
         }
 
         // set up status icon
+        var statusImage: UIImage?
         switch transaction.status {
         case .requesting, .processing:
-            imageView.setUp(statusImage: .transactionIndicatorPending)
+            statusImage = .transactionIndicatorPending
         case .error:
-            imageView.setUp(statusImage: .transactionIndicatorError)
+            statusImage = .transactionIndicatorError
         default:
-            imageView.setUp(statusImage: nil)
+            break
         }
+        imageView.setUp(statusImage: statusImage)
 
         // amount in fiat
         amountInFiatLabel.text = nil
