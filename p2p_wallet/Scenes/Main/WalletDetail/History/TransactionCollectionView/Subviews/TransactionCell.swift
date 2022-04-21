@@ -139,7 +139,15 @@ extension TransactionCell: BECollectionViewCell {
         }
 
         // set up icon
-        imageView.setUp(transaction: transaction)
+        switch transaction.value {
+        case let transaction as SolanaSDK.SwapTransaction:
+            imageView.setUp(imageType: .fromOneToOne(
+                from: transaction.source?.token,
+                to: transaction.destination?.token
+            ))
+        default:
+            imageView.setUp(imageType: .oneImage(image: transaction.icon))
+        }
 
         // amount in fiat
         amountInFiatLabel.text = nil
