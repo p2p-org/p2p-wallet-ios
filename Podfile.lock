@@ -117,7 +117,7 @@ PODS:
   - Intercom (12.0.0)
   - JazziconSwift (1.0.0)
   - KeychainSwift (19.0.0)
-  - Kingfisher (7.2.0)
+  - Kingfisher (7.2.1)
   - LazySubject (0.1.0):
     - RxCocoa
     - RxSwift
@@ -308,7 +308,7 @@ SPEC CHECKSUMS:
   Intercom: d706bc52b0e80758b38ceadce9143b76577100fb
   JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
-  Kingfisher: 3ac0b75b155cabc0e544877d1a4deea29feece92
+  Kingfisher: 7c084bebf7d548c623ad41bcf765fb200efed369
   LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96

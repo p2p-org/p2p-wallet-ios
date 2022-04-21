@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import UIKit
 
 class TransactionCell: BaseCollectionViewCell {
     override var padding: UIEdgeInsets { .init(all: 20) }
@@ -16,12 +17,7 @@ class TransactionCell: BaseCollectionViewCell {
     private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
     private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
     private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
-    lazy var spacer = BEStackViewSpacing(5)
-    lazy var transactionStatusIndicator = UIImageView(
-        width: 20,
-        height: 20,
-        image: .transactionIndicatorPending
-    )
+
     private lazy var descriptionLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
     private lazy var amountInTokenLabel = UILabel(
         textSize: 15,
@@ -36,7 +32,7 @@ class TransactionCell: BaseCollectionViewCell {
         alignment: .center,
         distribution: .fill,
         arrangedSubviews: [
-            transactionTypeLabel, amountInFiatLabel, spacer, transactionStatusIndicator,
+            transactionTypeLabel, amountInFiatLabel,
         ]
     )
     lazy var bottomStackView = UIStackView(
@@ -149,6 +145,18 @@ extension TransactionCell: BECollectionViewCell {
             imageView.setUp(imageType: .oneImage(image: transaction.icon))
         }
 
+        // set up status icon
+        var statusImage: UIImage?
+        switch transaction.status {
+        case .requesting, .processing:
+            statusImage = .transactionIndicatorPending
+        case .error:
+            statusImage = .transactionIndicatorError
+        default:
+            break
+        }
+        imageView.setUp(statusImage: statusImage)
+
         // amount in fiat
         amountInFiatLabel.text = nil
         amountInFiatLabel.textColor = .textBlack
@@ -178,19 +186,6 @@ extension TransactionCell: BECollectionViewCell {
             }
         } else if let blockhash = transaction.blockhash {
             amountInTokenLabel.text = "#" + blockhash.prefix(4) + "..." + blockhash.suffix(4)
-        }
-
-        // status
-        transactionStatusIndicator.isHidden = true
-        switch transaction.status {
-        case .requesting, .processing:
-            transactionStatusIndicator.isHidden = false
-            transactionStatusIndicator.image = .transactionIndicatorPending
-        case .error:
-            transactionStatusIndicator.isHidden = false
-            transactionStatusIndicator.image = .transactionIndicatorError
-        default:
-            break
         }
     }
 }
