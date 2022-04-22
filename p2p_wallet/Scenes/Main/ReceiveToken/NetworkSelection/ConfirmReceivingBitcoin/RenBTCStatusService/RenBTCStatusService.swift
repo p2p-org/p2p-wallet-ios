@@ -38,7 +38,9 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         // At lease one wallet is payable
         return Single
             .zip(wallets.map { w in
-                getCreationFee(payingFeeMintAddress: w.mintAddress).map { $0 <= (w.lamports ?? 0) }
+                getCreationFee(payingFeeMintAddress: w.mintAddress)
+                    .map { $0 <= (w.lamports ?? 0) }
+                    .catchAndReturn(false)
             })
             .map { $0.contains(true) }
     }

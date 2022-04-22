@@ -8,11 +8,6 @@
 import Foundation
 
 enum ConfirmReceivingBitcoin {
-    struct Output {
-        var isLoading: Bool = true
-        var accountStatus: RenBTCAccountStatus?
-    }
-
     enum RenBTCAccountStatus {
         case topUpRequired
         case payingWalletAvailable
