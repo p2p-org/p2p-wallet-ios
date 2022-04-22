@@ -67,6 +67,7 @@ extension ConfirmReceivingBitcoin {
                         separator.autoPinEdge(toSuperviewEdge: .leading)
                         separator.autoPinEdge(toSuperviewEdge: .trailing)
                     }
+                    .padding(.init(only: .bottom, inset: 18))
 
                 // Descripton label
                 contentView()
@@ -79,7 +80,62 @@ extension ConfirmReceivingBitcoin {
         }
 
         func contentView() -> UIView {
-            UILabel(text: "content")
+            BEVStack(spacing: 12) {
+                topUpRequiredView()
+                    .setup { view in
+                        viewModel.outputDriver.map(\.accountStatus)
+                            .map { $0 != .topUpRequired }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
+
+                createRenBTCView()
+                    .setup { view in
+                        viewModel.outputDriver.map(\.accountStatus)
+                            .map { $0 != .payingWalletAvailable }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
+            }
+        }
+
+        func topUpRequiredView() -> BEVStack {
+            BEVStack(spacing: 12) {
+                createExplanationView(
+                    mainString: L10n.aToReceiveBitcoinsOverTheBitcoinNetwork(L10n.renBTCAccountIsRequired),
+                    boldString: L10n.renBTCAccountIsRequired
+                )
+
+                createExplanationView(
+                    mainString: L10n
+                        .yourWalletListDoesNotContainARenBTCAccountAndToCreateOne(L10n
+                            .youNeedToMakeATransaction),
+                    boldString: L10n
+                        .youNeedToMakeATransaction
+                )
+
+                createExplanationView(
+                    mainString: L10n
+                        .youToPayForAccountCreationButIfSomeoneSendsRenBTCToYourAddressItWillBeCreatedForYou(L10n
+                            .donTHaveFunds),
+                    boldString: L10n
+                        .donTHaveFunds
+                )
+            }
+        }
+
+        func createRenBTCView() -> BEVStack {
+            BEVStack(spacing: 12) {
+                createExplanationView(
+                    mainString: L10n.aToReceiveBitcoinsOverTheBitcoinNetwork(L10n.renBTCAccountIsRequired),
+                    boldString: L10n.renBTCAccountIsRequired
+                )
+
+                createExplanationView(
+                    mainString: L10n.aToReceiveBitcoinsOverTheBitcoinNetwork(L10n.renBTCAccountIsRequired),
+                    boldString: L10n.renBTCAccountIsRequired
+                )
+            }
         }
 
         func buttonsView() -> BEVStack {
@@ -97,10 +153,33 @@ extension ConfirmReceivingBitcoin {
                 .disposed(by: disposeBag)
 
             viewModel.outputDriver
+                .debounce(.milliseconds(100))
                 .drive(onNext: { [weak self] _ in
                     self?.updatePresentationLayout(animated: true)
                 })
                 .disposed(by: disposeBag)
+        }
+
+        // MARK: - Text builder
+
+        private func createExplanationView(mainString: String, boldString: String) -> UIView {
+            BEHStack(spacing: 10, alignment: .top) {
+                UILabel(text: "•")
+                    .withContentHuggingPriority(.required, for: .horizontal)
+                UILabel(text: nil, numberOfLines: 0)
+                    .withAttributedText(
+                        createExplanationAttributedString(
+                            mainString: mainString,
+                            boldString: boldString
+                        )
+                    )
+                    .withContentHuggingPriority(.required, for: .horizontal)
+            }
+        }
+
+        private func createExplanationAttributedString(mainString: String, boldString _: String) -> NSAttributedString {
+            NSMutableAttributedString()
+                .text(mainString, size: 15, color: .textBlack)
         }
     }
 }
