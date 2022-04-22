@@ -23,6 +23,7 @@ protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
     func navigate(to scene: ConfirmReceivingBitcoin.NavigatableScene?)
     func navigateToChoosingWallet()
     func createRenBTC()
+    func dismissAndTopUp()
 }
 
 extension ConfirmReceivingBitcoinViewModelType {
@@ -51,6 +52,7 @@ extension ConfirmReceivingBitcoin {
 
         private let disposeBag = DisposeBag()
         var completion: (() -> Void)?
+        var topUpCompletion: (() -> Void)?
 
         // MARK: - Subject
 
@@ -190,5 +192,9 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                 self.errorSubject.accept(error.readableDescription)
             })
             .disposed(by: disposeBag)
+    }
+
+    func dismissAndTopUp() {
+        topUpCompletion?()
     }
 }
