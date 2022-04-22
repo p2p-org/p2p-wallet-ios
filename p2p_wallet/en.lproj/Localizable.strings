@@ -798,3 +798,5 @@ Reset the PIN or wait for %@.";
 "You %@ to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "You %@ to pay for account creation, but if someone sends renBTC to your address, it will be created for you.";
 "don’t have funds" = "don’t have funds";
 "You can choose which currency to pay in below." = "You can choose which currency to pay in below.";
+"Top up your account" = "Top up your account";
+"Share your Solana network address" = "Share your Solana network address";
