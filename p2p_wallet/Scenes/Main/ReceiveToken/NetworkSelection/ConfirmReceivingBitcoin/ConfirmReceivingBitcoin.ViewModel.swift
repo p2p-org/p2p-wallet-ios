@@ -18,7 +18,25 @@ extension ConfirmReceivingBitcoin {
 
         // MARK: - Subject
 
-        private let outputSubject = BehaviorRelay<Output>(value: .initializing)
+        private let outputSubject = BehaviorRelay<Output>(value: .init())
+
+        // MARK: - Initializer
+
+        init() {
+            reload()
+        }
+
+        // MARK: - Methods
+
+        private func reload() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2)) { [weak self] in
+                guard let self = self else { return }
+                var currentState = self.outputSubject.value
+                currentState.accountStatus = .payingWalletAvailable
+                currentState.isLoading = false
+                self.outputSubject.accept(currentState)
+            }
+        }
     }
 }
 

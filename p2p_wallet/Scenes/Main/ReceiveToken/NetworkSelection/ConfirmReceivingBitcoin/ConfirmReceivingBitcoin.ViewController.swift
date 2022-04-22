@@ -91,8 +91,14 @@ extension ConfirmReceivingBitcoin {
         override func bind() {
             super.bind()
             viewModel.outputDriver.map(\.isLoading)
+                .drive(onNext: { [weak self] isLoading in
+                    isLoading ? self?.showIndetermineHud() : self?.hideHud()
+                })
+                .disposed(by: disposeBag)
+
+            viewModel.outputDriver
                 .drive(onNext: { [weak self] _ in
-                    self?.showIndetermineHud()
+                    self?.updatePresentationLayout(animated: true)
                 })
                 .disposed(by: disposeBag)
         }
