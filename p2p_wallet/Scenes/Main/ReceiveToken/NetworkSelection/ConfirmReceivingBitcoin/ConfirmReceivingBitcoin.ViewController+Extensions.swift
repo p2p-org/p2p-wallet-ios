@@ -87,7 +87,7 @@ extension ConfirmReceivingBitcoin.ViewController {
         BEVStack(spacing: 10) {
             WLStepButton.main(image: .add, text: L10n.topUpYourAccount)
                 .setup { view in
-                    viewModel.outputDriver.map(\.accountStatus)
+                    viewModel.accountStatusDriver
                         .map { $0 != .topUpRequired }
                         .drive(view.rx.isHidden)
                         .disposed(by: disposeBag)
@@ -95,7 +95,7 @@ extension ConfirmReceivingBitcoin.ViewController {
 
             WLStepButton.sub(text: L10n.shareYourSolanaNetworkAddress)
                 .setup { view in
-                    viewModel.outputDriver.map(\.accountStatus)
+                    viewModel.accountStatusDriver
                         .map { $0 != .topUpRequired }
                         .drive(view.rx.isHidden)
                         .disposed(by: disposeBag)
@@ -103,7 +103,7 @@ extension ConfirmReceivingBitcoin.ViewController {
 
             WLStepButton.main(text: "Pay 0.509 USDC & Continue")
                 .setup { view in
-                    viewModel.outputDriver.map(\.accountStatus)
+                    viewModel.accountStatusDriver
                         .map { $0 != .payingWalletAvailable }
                         .drive(view.rx.isHidden)
                         .disposed(by: disposeBag)

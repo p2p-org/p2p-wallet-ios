@@ -47,7 +47,8 @@ extension ConfirmReceivingBitcoin {
                 )
                     .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
                     .setup { label in
-                        viewModel.outputDriver.map { $0.accountStatus != .payingWalletAvailable }
+                        viewModel.accountStatusDriver
+                            .map { $0 != .payingWalletAvailable }
                             .drive(label.rx.isHidden)
                             .disposed(by: disposeBag)
                     }
@@ -83,7 +84,7 @@ extension ConfirmReceivingBitcoin {
             BEVStack(spacing: 12) {
                 topUpRequiredView()
                     .setup { view in
-                        viewModel.outputDriver.map(\.accountStatus)
+                        viewModel.accountStatusDriver
                             .map { $0 != .topUpRequired }
                             .drive(view.rx.isHidden)
                             .disposed(by: disposeBag)
@@ -91,7 +92,7 @@ extension ConfirmReceivingBitcoin {
 
                 createRenBTCView()
                     .setup { view in
-                        viewModel.outputDriver.map(\.accountStatus)
+                        viewModel.accountStatusDriver
                             .map { $0 != .payingWalletAvailable }
                             .drive(view.rx.isHidden)
                             .disposed(by: disposeBag)
@@ -103,16 +104,26 @@ extension ConfirmReceivingBitcoin {
 
         override func bind() {
             super.bind()
-            viewModel.outputDriver.map(\.isLoading)
+            viewModel.isLoadingDriver
                 .drive(onNext: { [weak self] isLoading in
                     isLoading ? self?.showIndetermineHud() : self?.hideHud()
                 })
                 .disposed(by: disposeBag)
 
-            viewModel.outputDriver
-                .debounce(.milliseconds(100))
+            viewModel.accountStatusDriver
                 .drive(onNext: { [weak self] _ in
                     self?.updatePresentationLayout(animated: true)
+                })
+                .disposed(by: disposeBag)
+
+            viewModel.errorDriver
+                .drive(onNext: { [weak self] error in
+                    if error != nil {
+                        self?.showErrorView(retryAction: .init { [weak self] in
+                            self?.viewModel.reload()
+                            return .just(())
+                        })
+                    }
                 })
                 .disposed(by: disposeBag)
         }
