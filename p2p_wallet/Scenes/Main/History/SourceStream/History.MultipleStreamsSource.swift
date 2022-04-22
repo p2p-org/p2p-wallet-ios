@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import RxSwift
 
 extension History {
     /// The class helps to merge many source into one and fetch it like a single source.
@@ -16,21 +17,19 @@ extension History {
         }
 
         func first() async throws -> SolanaSDK.SignatureInfo? {
-            var mostFirst: SolanaSDK.SignatureInfo?
-            for source in sources {
-                let trx = try await source.first()
-
-                guard let t1 = trx?.blockTime else { continue }
-                guard let t2 = mostFirst?.blockTime else {
-                    mostFirst = trx
-                    continue
+            try await Observable
+                .from(sources)
+                .flatMap { source -> Observable<SolanaSDK.SignatureInfo?> in
+                    Observable.asyncThrowing { () -> SolanaSDK.SignatureInfo? in try await source.first() }
                 }
-
-                if t1 > t2 {
-                    mostFirst = trx
+                .reduce(nil) { (mostFirst: SolanaSDK.SignatureInfo?, trx: SolanaSDK.SignatureInfo?) -> SolanaSDK.SignatureInfo? in
+                    guard let t1 = trx?.blockTime else { return mostFirst }
+                    guard let t2 = mostFirst?.blockTime else { return trx }
+                    if t1 > t2 { return trx }
+                    return mostFirst
                 }
-            }
-            return mostFirst
+                .asSingle()
+                .value
         }
 
         func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> {

@@ -15,6 +15,7 @@ extension History {
 
         private let solanaSDK: SolanaSDK
         private let walletsRepository: WalletsRepository
+        @Injected private var notificationService: NotificationsService
 
         let transactionRepository = SolanaTransactionRepository()
         let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
@@ -141,6 +142,9 @@ extension History {
             }
             .asObservable()
             .flatMap { infos in Observable.from(infos) }
+            .delay(.seconds(2), scheduler: MainScheduler.instance)
+            .observe(on: SceneModel.historyFetchingScheduler)
+
             .flatMap { signatureInfo in
                 Observable.asyncThrowing { () -> [SolanaSDK.ParsedTransaction] in
                     let transactionInfo = try await self.transactionRepository
@@ -155,7 +159,15 @@ extension History {
                     return [transaction]
                 }
             }
+            .do(onError: { [weak self] error in
+                DispatchQueue.main.async {
+                    self?.notificationService.showInAppNotification(.error(error))
+                }
+            })
         }
+
+        static let historyFetchingScheduler =
+            SerialDispatchQueueScheduler(internalSerialQueueName: "HistoryTransactionFetching")
 
         override func join(_ newItems: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
             var filteredNewData: [SolanaSDK.ParsedTransaction] = []
