@@ -37,7 +37,7 @@ extension History {
         }
     }
 
-    class CachingTransactionRepository: HistoryTransactionRepository, Cachable {
+    class CachingTransactionRepository: HistoryTransactionRepository {
         private static let maxCacheSize = 50
 
         let delegate: HistoryTransactionRepository
@@ -49,12 +49,12 @@ extension History {
 
         func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo {
             // Return from cache
-            var transaction: SolanaSDK.TransactionInfo? = transactionCache.read(key: signature)
+            var transaction: SolanaSDK.TransactionInfo? = await transactionCache.read(key: signature)
             if let transaction = transaction { return transaction }
 
             // Fetch and store in cache
             transaction = try await delegate.getTransaction(signature: signature)
-            transactionCache.write(key: signature, data: transaction!)
+            await transactionCache.write(key: signature, data: transaction!)
 
             return transaction!
         }
@@ -62,14 +62,12 @@ extension History {
         func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo] {
             let cacheKey = "\(address)-\(limit)-\(before ?? "nil")"
 
-            var signatures = signaturesCache.read(key: cacheKey)
+            var signatures = await signaturesCache.read(key: cacheKey)
             if let signatures = signatures { return signatures }
 
             signatures = try await delegate.getSignatures(address: address, limit: limit, before: before)
-            signaturesCache.write(key: cacheKey, data: signatures!)
+            await signaturesCache.write(key: cacheKey, data: signatures!)
             return signatures!
         }
-
-        func clear() { transactionCache.clear() }
     }
 }

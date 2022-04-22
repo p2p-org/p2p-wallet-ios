@@ -14,12 +14,12 @@ protocol HistoryStreamSource {
     ///
     /// - Parameter configuration: the fetching configuration that contains things like filtering
     /// - Returns: A stream of parsed transactions and the error that can be occurred.
-    func next(configuration: History.FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error>
+    func next(configuration: History.FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.SignatureInfo, Error>
 
     /// Fetch the most earliest transaction.
     ///
     /// - Returns: parsed transaction
-    func first() async throws -> SolanaSDK.ParsedTransaction?
+    func first() async throws -> SolanaSDK.SignatureInfo?
 
     /// Resets the stream.
     func reset()

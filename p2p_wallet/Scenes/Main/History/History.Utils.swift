@@ -4,30 +4,24 @@
 
 import Foundation
 
-/// The protocol describes ability of class to caching
-protocol Cachable {
-    /// Clear all cache
-    func clear()
-}
-
 /// The protocol describes a cache storage
 protocol Caching {
     associatedtype Element
 
     /// Read element from cache
-    func read(key: String) -> Element?
+    func read(key: String) async -> Element?
 
     /// Write element from cache
-    func write(key: String, data: Element)
+    func write(key: String, data: Element) async
 
     /// Clear all data in cache
-    func clear()
+    func clear() async
 }
 
 extension History {
     enum Utils {
         /// Simple cache storage
-        class InMemoryCache<T>: Caching {
+        actor InMemoryCache<T>: Caching {
             typealias Element = T
 
             private let maxSize: Int
@@ -37,12 +31,12 @@ extension History {
 
             init(maxSize: Int) { self.maxSize = maxSize }
 
-            func read(key: String) -> Element? {
+            func read(key: String) async -> Element? {
                 if keysOrder.contains(key) { return storage[key] }
                 return nil
             }
 
-            func write(key: String, data: Element) {
+            func write(key: String, data: Element) async {
                 keysOrder.append(key)
                 storage[key] = data
                 check()
@@ -56,7 +50,7 @@ extension History {
                 }
             }
 
-            func clear() {
+            func clear() async {
                 keysOrder = []
                 storage = [:]
             }
@@ -72,11 +66,11 @@ extension History {
 
             init(delegate: InMemoryCache<T>) { self.delegate = delegate }
 
-            func read(key: String) -> T? { record(element: delegate.read(key: key)) }
+            func read(key: String) async -> T? { await record(element: delegate.read(key: key)) }
 
-            func write(key: String, data: T) { delegate.write(key: key, data: data) }
+            func write(key: String, data: T) async { await delegate.write(key: key, data: data) }
 
-            func clear() { delegate.clear() }
+            func clear() async { await delegate.clear() }
 
             /// Records reading process.
             private func record(element: T?) -> T? {

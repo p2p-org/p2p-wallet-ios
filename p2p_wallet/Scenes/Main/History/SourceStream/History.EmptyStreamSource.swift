@@ -6,11 +6,11 @@ import Foundation
 
 extension History {
     class EmptyStreamSource: HistoryStreamSource {
-        func next(configuration _: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error> {
-            AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error> { stream in stream.finish() }
+        func next(configuration _: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> {
+            AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> { stream in stream.finish() }
         }
 
-        func first() async throws -> SolanaSDK.ParsedTransaction? { nil }
+        func first() async throws -> SolanaSDK.SignatureInfo? { nil }
 
         func reset() {}
     }
