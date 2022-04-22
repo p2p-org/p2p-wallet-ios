@@ -53,6 +53,16 @@ extension ConfirmReceivingBitcoin {
                             .disposed(by: disposeBag)
                     }
 
+                // Additional spacer in top up view
+                UIView.spacer
+                    .setup { view in
+                        view.autoSetDimension(.height, toSize: 14)
+                        viewModel.accountStatusDriver
+                            .map { $0 != .topUpRequired }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
+
                 // Alert and separator
                 UIView()
                     .setup { view in
