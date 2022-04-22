@@ -82,6 +82,9 @@ extension ConfirmReceivingBitcoin.ViewController {
                 }
                 .padding(.init(x: 18, y: 14))
             }
+            .onTap { [unowned self] in
+                self.viewModel.navigateToChoosingWallet()
+            }
             .padding(.init(only: .bottom, inset: 12))
 
             ReceiveToken.textBuilder(

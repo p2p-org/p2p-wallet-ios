@@ -8,6 +8,10 @@
 import Foundation
 
 enum ConfirmReceivingBitcoin {
+    enum NavigatableScene {
+        case chooseWallet(selectedWallet: Wallet?, payableWallets: [Wallet])
+    }
+
     enum RenBTCAccountStatus {
         case topUpRequired
         case payingWalletAvailable

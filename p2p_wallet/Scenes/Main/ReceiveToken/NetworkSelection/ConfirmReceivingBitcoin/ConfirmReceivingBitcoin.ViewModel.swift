@@ -9,7 +9,8 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-protocol ConfirmReceivingBitcoinViewModelType {
+protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
+    var navigationDriver: Driver<ConfirmReceivingBitcoin.NavigatableScene?> { get }
     var isLoadingDriver: Driver<Bool> { get }
     var errorDriver: Driver<String?> { get }
     var accountStatusDriver: Driver<ConfirmReceivingBitcoin.RenBTCAccountStatus?> { get }
@@ -18,6 +19,8 @@ protocol ConfirmReceivingBitcoinViewModelType {
     var feeInFiatDriver: Driver<Double?> { get }
 
     func reload()
+    func navigate(to scene: ConfirmReceivingBitcoin.NavigatableScene?)
+    func navigateToChoosingWallet()
 }
 
 extension ConfirmReceivingBitcoinViewModelType {
@@ -48,6 +51,7 @@ extension ConfirmReceivingBitcoin {
 
         // MARK: - Subject
 
+        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let isLoadingSubject = BehaviorRelay<Bool>(value: true)
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let accountStatusSubject = BehaviorRelay<RenBTCAccountStatus?>(value: nil)
@@ -140,5 +144,22 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
 
     var feeInFiatDriver: Driver<Double?> {
         feeInFiatSubject.asDriver()
+    }
+
+    var navigationDriver: Driver<ConfirmReceivingBitcoin.NavigatableScene?> {
+        navigationSubject.asDriver()
+    }
+
+    func navigate(to scene: ConfirmReceivingBitcoin.NavigatableScene?) {
+        navigationSubject.accept(scene)
+    }
+
+    func walletDidSelect(_ wallet: Wallet) {
+        payingWalletSubject.accept(wallet)
+    }
+
+    func navigateToChoosingWallet() {
+        navigate(to: .chooseWallet(selectedWallet: payingWalletSubject.value,
+                                   payableWallets: payableWalletsSubject.value))
     }
 }

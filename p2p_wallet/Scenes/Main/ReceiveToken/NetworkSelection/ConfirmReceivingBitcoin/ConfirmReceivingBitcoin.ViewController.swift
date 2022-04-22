@@ -126,6 +126,28 @@ extension ConfirmReceivingBitcoin {
                     }
                 })
                 .disposed(by: disposeBag)
+
+            viewModel.navigationDriver
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
+                .disposed(by: disposeBag)
+        }
+
+        // MARK: - Navigation
+
+        private func navigate(to scene: NavigatableScene?) {
+            switch scene {
+            case let .chooseWallet(selectedWallet, payableWallets):
+                let vm = ChooseWallet.ViewModel(
+                    selectedWallet: selectedWallet,
+                    handler: viewModel,
+                    staticWallets: payableWallets,
+                    showOtherWallets: false
+                )
+                let vc = ChooseWallet.ViewController(title: L10n.chooseWallet, viewModel: vm)
+                present(vc, animated: true)
+            default:
+                break
+            }
         }
     }
 }
