@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxCocoa
 
 extension ConfirmReceivingBitcoin.ViewController {
     func createRenBTCView() -> BEVStack {
@@ -87,5 +88,19 @@ extension ConfirmReceivingBitcoin.ViewController {
 
     func createRenBTCButton() -> UIView {
         WLStepButton.main(text: "Pay 0.509 USDC & Continue")
+            .setup { button in
+                Driver.combineLatest(
+                    viewModel.totalFeeDriver,
+                    viewModel.payingWalletDriver
+                )
+                    .map { fee, wallet in
+                        guard let fee = fee, let wallet = wallet, fee > 0 else {
+                            return L10n.continue
+                        }
+                        return L10n.payAndContinue(fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol)
+                    }
+                    .drive(button.rx.text)
+                    .disposed(by: disposeBag)
+            }
     }
 }

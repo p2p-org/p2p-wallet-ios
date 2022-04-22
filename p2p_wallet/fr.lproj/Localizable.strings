@@ -800,3 +800,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You can choose which currency to pay in below." = "Vous pouvez choisir la devise dans laquelle payer ci-dessous.";
 "Top up your account" = "Rechargez votre compte";
 "Share your Solana network address" = "Partagez votre adresse réseau Solana";
+"Pay %@ and Continue" = "Payez %@ & continuez";
