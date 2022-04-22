@@ -70,29 +70,9 @@ extension ReceiveToken {
                                     self.viewModel.switchToken(.btc)
                                     self.back()
                                 } else {
-                                    let vc = BitcoinConfirmScene(isRenBTCCreated: self.viewModel
-                                        .isRenBtcCreated()) { [weak self] in
-                                            guard let self = self else { return }
-                                            self.showIndetermineHud()
-                                            self.viewModel.acceptReceivingRenBTC()
-                                                .subscribe(onCompleted: { [weak self] in
-                                                    guard let self = self else { return }
-                                                    self.hideHud()
-                                                    self.back()
-                                                }, onError: { [weak self] error in
-                                                    guard let self = self else { return }
-                                                    #if DEBUG
-                                                        debugPrint("Create renBTC error: \(error)")
-                                                    #endif
-                                                    self.hideHud()
-                                                    self.showAlert(
-                                                        title: L10n.error.uppercaseFirst,
-                                                        message: L10n.couldNotCreateRenBTCTokenPleaseTryAgainLater
-                                                    )
-                                                })
-                                                .disposed(by: self.disposeBag)
-                                        }
-                                    self.present(vc, animated: true)
+                                    let vm = ConfirmReceivingBitcoin.ViewModel()
+                                    let vc = ConfirmReceivingBitcoin.ViewController(viewModel: vm)
+                                    self.present(vc, interactiveDismissalType: .none, completion: nil)
                                 }
                             }.disposed(by: disposeBag)
                         }
