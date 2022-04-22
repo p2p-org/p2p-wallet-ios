@@ -36,6 +36,14 @@ extension ConfirmReceivingBitcoin {
                 currentState.isLoading = false
                 self.outputSubject.accept(currentState)
             }
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(5)) { [weak self] in
+                guard let self = self else { return }
+                var currentState = self.outputSubject.value
+                currentState.accountStatus = .topUpRequired
+                currentState.isLoading = false
+                self.outputSubject.accept(currentState)
+            }
         }
     }
 }
