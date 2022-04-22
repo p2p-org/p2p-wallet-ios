@@ -8,9 +8,8 @@ import Foundation
 class NewTabBar: BEView {
     lazy var stackView = UIStackView(
         axis: .horizontal,
-        spacing: 10,
-        alignment: .center,
-        distribution: .equalSpacing
+        alignment: .fill,
+        distribution: .fillEqually
     )
 
     override func commonInit() {
