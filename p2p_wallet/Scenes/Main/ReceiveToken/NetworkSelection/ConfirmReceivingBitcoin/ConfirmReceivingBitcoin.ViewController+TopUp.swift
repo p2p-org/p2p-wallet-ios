@@ -40,5 +40,10 @@ extension ConfirmReceivingBitcoin.ViewController {
 
     func shareSolanaAddressButton() -> UIView {
         WLStepButton.sub(text: L10n.shareYourSolanaNetworkAddress)
+            .onTap { [unowned self] in
+                guard let item = viewModel.solanaPubkey else { return }
+                let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)
+                present(vc, animated: true, completion: nil)
+            }
     }
 }
