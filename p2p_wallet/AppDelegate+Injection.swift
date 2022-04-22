@@ -237,6 +237,12 @@ extension Resolver: ResolverRegistering {
         }
         .implements(Banners.Service.self)
         .scope(.shared)
+
+        // MARK: - RenBTCStatusService
+
+        register { RenBTCStatusService() }
+            .implements(RenBTCStatusServiceType.self)
+            .scope(.session)
     }
 }
 
