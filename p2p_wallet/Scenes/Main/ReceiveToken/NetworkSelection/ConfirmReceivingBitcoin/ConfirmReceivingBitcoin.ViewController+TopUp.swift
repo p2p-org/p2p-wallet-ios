@@ -30,7 +30,12 @@ extension ConfirmReceivingBitcoin.ViewController {
     }
 
     func topUpButtonsView() -> UIView {
-        WLStepButton.main(image: .add, text: L10n.topUpYourAccount)
+        WLStepButton.main(image: .buttonBuy.withTintColor(.white), text: L10n.topUpYourAccount)
+            .onTap { [unowned self] in
+                self.dismiss(animated: true) {
+                    self.viewModel.dismissAndTopUp()
+                }
+            }
     }
 
     func shareSolanaAddressButton() -> UIView {

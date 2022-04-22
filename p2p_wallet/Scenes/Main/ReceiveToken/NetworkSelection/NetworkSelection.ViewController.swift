@@ -74,6 +74,11 @@ extension ReceiveToken {
                                         self?.back()
                                     }
                                 }
+                                vm.topUpCompletion = { [weak vc] in
+                                    vc?.dismiss(animated: false) { [weak self] in
+                                        self?.viewModel.navigateToBuy()
+                                    }
+                                }
                             }
                         }
 
