@@ -27,13 +27,14 @@ extension ChooseWallet {
         init(
             selectedWallet: Wallet?,
             handler: WalletDidSelectHandler,
+            staticWallets: [Wallet]? = nil,
             showOtherWallets: Bool
         ) {
             self.selectedWallet = selectedWallet
             self.handler = handler
             self.showOtherWallets = showOtherWallets
             super.init()
-            myWallets = walletsRepository.getWallets()
+            myWallets = staticWallets ?? walletsRepository.getWallets()
         }
 
         deinit {
