@@ -797,3 +797,4 @@ Reset the PIN or wait for %@." = "У вас осталось %@ попыток �
 "you need to make a transaction" = "вам нужно совершить транзакцию";
 "You %@ to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "Вы %@ платите за создание аккаунта, но если кто-то отправит renBTC на ваш адрес, он будет создан для вас.";
 "don’t have funds" = "нет средств";
+"You can choose which currency to pay in below." = "Ниже вы можете выбрать, в какой валюте платить.";

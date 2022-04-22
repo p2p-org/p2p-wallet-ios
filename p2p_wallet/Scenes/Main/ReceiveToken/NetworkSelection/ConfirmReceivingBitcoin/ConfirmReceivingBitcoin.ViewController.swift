@@ -55,17 +55,17 @@ extension ConfirmReceivingBitcoin {
                 // Alert and separator
                 UIView()
                     .setup { view in
-                        let imageView = UIImageView(width: 44, height: 44, image: .squircleAlert)
-                        view.addSubview(imageView)
-                        imageView.autoAlignAxis(toSuperviewAxis: .vertical)
-                        imageView.autoPinEdge(toSuperviewEdge: .top)
-                        imageView.autoPinEdge(toSuperviewEdge: .bottom)
-
                         let separator = UIView.defaultSeparator()
                         view.addSubview(separator)
                         separator.autoAlignAxis(toSuperviewAxis: .horizontal)
                         separator.autoPinEdge(toSuperviewEdge: .leading)
                         separator.autoPinEdge(toSuperviewEdge: .trailing)
+
+                        let imageView = UIImageView(width: 44, height: 44, image: .squircleAlert)
+                        view.addSubview(imageView)
+                        imageView.autoAlignAxis(toSuperviewAxis: .vertical)
+                        imageView.autoPinEdge(toSuperviewEdge: .top)
+                        imageView.autoPinEdge(toSuperviewEdge: .bottom)
                     }
                     .padding(.init(only: .bottom, inset: 18))
 
@@ -127,13 +127,48 @@ extension ConfirmReceivingBitcoin {
         func createRenBTCView() -> BEVStack {
             BEVStack(spacing: 12) {
                 createExplanationView(
-                    mainString: L10n.aToReceiveBitcoinsOverTheBitcoinNetwork(L10n.renBTCAccountIsRequired),
-                    boldString: L10n.renBTCAccountIsRequired
+                    mainString: L10n
+                        .yourWalletListDoesNotContainARenBTCAccountAndToCreateOne(L10n
+                            .youNeedToMakeATransaction) + " " + L10n.youCanChooseWhichCurrencyToPayInBelow,
+                    boldString: L10n
+                        .youNeedToMakeATransaction
+                )
+
+                WLCard {
+                    BEHStack(spacing: 12, alignment: .center) {
+                        CoinLogoImageView(size: 44)
+
+                        BEVStack(spacing: 4) {
+                            UILabel(
+                                text: "Account creation fee:",
+                                textSize: 13,
+                                textColor: .textSecondary,
+                                numberOfLines: 0
+                            )
+                            UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold)
+                        }
+
+                        UIView.defaultNextArrow()
+                    }
+                    .padding(.init(x: 18, y: 14))
+                }
+                .padding(.init(only: .bottom, inset: 12))
+
+                createExplanationView(
+                    mainString: L10n
+                        .ThisAddressAccepts.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin),
+                    boldString: L10n.onlyBitcoin
                 )
 
                 createExplanationView(
-                    mainString: L10n.aToReceiveBitcoinsOverTheBitcoinNetwork(L10n.renBTCAccountIsRequired),
-                    boldString: L10n.renBTCAccountIsRequired
+                    mainString: L10n
+                        .minimumTransactionAmountOf("0.000112 BTC"),
+                    boldString: "0.000112 BTC"
+                )
+
+                createExplanationView(
+                    mainString: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59"),
+                    boldString: "35:59:59"
                 )
             }
         }
@@ -166,6 +201,7 @@ extension ConfirmReceivingBitcoin {
             BEHStack(spacing: 10, alignment: .top) {
                 UILabel(text: "•")
                     .withContentHuggingPriority(.required, for: .horizontal)
+                    .withContentCompressionResistancePriority(.required, for: .horizontal)
                 UILabel(text: nil, numberOfLines: 0)
                     .withAttributedText(
                         createExplanationAttributedString(

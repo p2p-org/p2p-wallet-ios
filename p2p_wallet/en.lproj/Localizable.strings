@@ -797,3 +797,4 @@ Reset the PIN or wait for %@.";
 "you need to make a transaction" = "you need to make a transaction";
 "You %@ to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "You %@ to pay for account creation, but if someone sends renBTC to your address, it will be created for you.";
 "don’t have funds" = "don’t have funds";
+"You can choose which currency to pay in below." = "You can choose which currency to pay in below.";
