@@ -106,13 +106,11 @@ class TabBarVC: BEPagesVC {
 
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
-            .spacer,
             buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
             buttonTabBarItem(image: .tabbarHistory, title: L10n.history, tag: 1),
             buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 2),
             buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
             buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 3),
-            .spacer,
         ])
     }
 
@@ -122,7 +120,7 @@ class TabBarVC: BEPagesVC {
         item.imageView.image = image
         item.titleLabel.text = title
         return item
-            .padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
+            .padding(.init(x: 0, y: 16))
             .withTag(tag)
             .onTap(self, action: #selector(switchTab(_:)))
     }
