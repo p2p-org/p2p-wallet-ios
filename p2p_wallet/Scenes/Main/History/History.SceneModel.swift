@@ -36,6 +36,39 @@ extension History {
             PriceUpdatingOutput(),
         ]
 
+        enum State {
+            case items
+            case empty
+            case error
+        }
+
+        var stateDriver: Driver<State> {
+            Observable.combineLatest(
+                stateObservable.startWith(.loading),
+                dataObservable.startWith([])
+                    .filter { $0 != nil }
+                    .withPrevious(),
+                errorRelay.startWith(false)
+            ).map { state, change, error in
+                if error {
+                    return .error
+                }
+
+                if state == .loading || state == .initializing {
+                    return .items
+                } else {
+                    let amount = change.1?.reduce(0) { partialResult, wallet in
+                        partialResult + wallet.amount
+                    } ?? 0
+                    return amount > 0 ? .items : .empty
+                }
+            }
+            .asDriver()
+        }
+
+        let tryAgain = PublishRelay<Void>()
+        private let errorRelay = PublishRelay<Bool>()
+
         init(
             solanaSDK: SolanaSDK = Resolver.resolve(),
             walletsRepository: WalletsRepository = Resolver.resolve()
@@ -54,6 +87,13 @@ extension History {
 
             // Build source
             buildSource()
+
+            tryAgain
+                .subscribe(onNext: { [weak self] in
+                    self?.reload()
+                    self?.errorRelay.accept(false)
+                })
+                .disposed(by: disposeBag)
         }
 
         func buildSource() {
@@ -145,7 +185,8 @@ extension History {
                 }
             }
             .do(onError: { [weak self] error in
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    self?.errorRelay.accept(true)
                     self?.notificationService.showInAppNotification(.error(error))
                 }
             })

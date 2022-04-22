@@ -9,9 +9,7 @@ import Resolver
 import UIKit
 
 extension History {
-    class Scene: BEScene {
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-
+    final class Scene: BEScene {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var pricesService: PricesServiceType
 
@@ -20,6 +18,7 @@ extension History {
         override init() {
             super.init()
 
+            navigationItem.title = L10n.history
             // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
                 .dataObservable
@@ -31,12 +30,20 @@ extension History {
         }
 
         override func build() -> UIView {
-            BEVStack {
-                NewWLNavigationBar(initialTitle: L10n.history, separatorEnable: false)
-                    .backIsHidden(true)
-                BEBuilder(driver: viewModel.showItems) { [weak self] show in
-                    guard let self = self else { return UIView() }
-                    return show ? self.content : EmptyTransactionsView()
+            BEBuilder(driver: viewModel.stateDriver) { [weak self] state in
+                guard let self = self else { return UIView() }
+                switch state {
+                case .items:
+                    return self.content
+                case .empty:
+                    return EmptyTransactionsView()
+                case .error:
+                    return ErrorView()
+                        .setup {
+                            $0.rx.tryAgainClicked
+                                .bind(to: self.viewModel.tryAgain)
+                                .disposed(by: self.disposeBag)
+                        }
                 }
             }
         }
