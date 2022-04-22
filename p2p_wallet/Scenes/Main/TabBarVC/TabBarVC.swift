@@ -106,11 +106,13 @@ class TabBarVC: BEPagesVC {
 
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
+            .spacer,
             buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
             buttonTabBarItem(image: .tabbarHistory, title: L10n.history, tag: 1),
             buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 2),
             buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
             buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 3),
+            .spacer,
         ])
     }
 
@@ -127,30 +129,21 @@ class TabBarVC: BEPagesVC {
 
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
         let tag = gesture.view!.tag
-
         moveToPage(tag)
     }
 
     override func moveToPage(_ index: Int) {
-        // scroll to top if index is selected
-        if currentPage == index {
-            return
-        }
-
-        guard index != 10 else {
-            return helpCenterLauncher.launch()
-        }
+        if currentPage == index { return }
+        guard index != 10 else { return helpCenterLauncher.launch() }
 
         super.moveToPage(index)
 
-        let items = tabBar.stackView.arrangedSubviews[1 ..< tabBar.stackView.arrangedSubviews.count - 1]
+        guard let item = (tabBar.stackView.arrangedSubviews.first { $0.tag == currentPage }) else { return }
 
-        guard index < items.count else { return }
-
-        // change tabs' color
-        items.first { $0.tag == currentPage }?.subviews.first?.tintColor = .tabbarSelected
-
-        items.filter { $0.tag != currentPage }.forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
+        item.subviews.first?.tintColor = .tabbarSelected
+        tabBar.stackView.arrangedSubviews
+            .filter { $0.tag != currentPage }
+            .forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
 
         setNeedsStatusBarAppearanceUpdate()
     }
