@@ -797,3 +797,5 @@ Reset the PIN or wait for %@.";
 "Transaction detail" = "Transaction detail";
 "Free by p2p.org" = "Free by p2p.org";
 "After first transaction you will\nbe able to view it here" = "After first transaction you will\nbe able to view it here";
+"We couldn't upload the history.\nTry again later" = "We couldn't upload the history.\nTry again later";
+"Sorry" = "Sorry";

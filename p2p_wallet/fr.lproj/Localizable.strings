@@ -800,3 +800,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Free by p2p.org" = "Gratuit sur p2p.org";
 "After first transaction you will be able to view it here" = "Après la première transaction, vous pourrez le voir ici";
 "After first transaction you will\nbe able to view it here" = "Après la première transaction, vous\npouvez la voir ici";
+"Sorry :(" = "Désolé :(";
+"We couldn't upload the history.\nTry again later" = "Nous n'avons pas pu télécharger l'historique.\nRéessayez plus tard";
+"Sorry" = "Désolé";
