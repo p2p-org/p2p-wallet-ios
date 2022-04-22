@@ -16,7 +16,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClientType
     @Injected private var accountStorage: AccountStorageType
     @Injected private var orcaSwap: OrcaSwapType
-    @Injected private var walletRepository: WalletsRepository
+    @Injected private var walletsRepository: WalletsRepository
     @Injected private var feeRelayer: FeeRelayer.Relay
 
     private let locker = NSLock()
@@ -47,11 +47,11 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     }
 
     func hasRenBTCAccountBeenCreated() -> Bool {
-        walletRepository.getWallets().contains(where: \.token.isRenBTC)
+        walletsRepository.getWallets().contains(where: \.token.isRenBTC)
     }
 
     func getPayableWallets() -> Single<[Wallet]> {
-        let wallets = walletRepository
+        let wallets = walletsRepository
             .getWallets()
             .filter { ($0.lamports ?? 0) > 0 }
 
@@ -65,7 +65,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             .map { $0.compactMap { $0 } }
     }
 
-    func createAccount(payingFeeAddress: String, payingFeeMintAddress: String) -> Single<SolanaSDK.TransactionID?> {
+    func createAccount(payingFeeAddress: String, payingFeeMintAddress: String) -> Completable {
         guard let account = accountStorage.account else { return .error(SolanaSDK.Error.unauthorized) }
 
         return Single.zip(
@@ -75,7 +75,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             feeRelayerAPIClient.getFeePayerPubkey(),
             solanaSDK.getRecentBlockhash()
         )
-            .flatMap { [weak self] accountCreationFee, lamportPerSignature, feePayerAccount, recentBlockHash in
+            .flatMap { [weak self] accountCreationFee, lamportPerSignature, feePayerAccount, recentBlockHash -> Single<String?> in
                 guard let self = self else { return .error(SolanaSDK.Error.unknown) }
                 return self.solanaSDK.prepareTransaction(
                     instructions: [
@@ -101,6 +101,39 @@ class RenBTCStatusService: RenBTCStatusServiceType {
                             .map(\.first)
                     }
             }
+            .flatMapCompletable { [weak self] in
+                guard let self = self else { throw SolanaSDK.Error.unknown }
+                guard let signature = $0 else { throw SolanaSDK.Error.other("Could not get transaction id") }
+                return self.solanaSDK.waitForConfirmation(signature: signature)
+            }
+            .do(onCompleted: { [weak self] in
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self else { return }
+                    self.walletsRepository.batchUpdate { wallets in
+                        guard let string = wallets.first(where: { $0.isNativeSOL })?.pubkey,
+                              let nativeWalletAddress = try? SolanaSDK.PublicKey(string: string),
+                              let renBTCAddress = try? SolanaSDK.PublicKey.associatedTokenAddress(
+                                  walletAddress: nativeWalletAddress,
+                                  tokenMintAddress: .renBTCMint
+                              )
+                        else { return wallets }
+
+                        var wallets = wallets
+
+                        if !wallets.contains(where: { $0.pubkey == renBTCAddress.base58EncodedString }) {
+                            wallets.append(
+                                .init(
+                                    pubkey: renBTCAddress.base58EncodedString,
+                                    lamports: 0,
+                                    token: .renBTC
+                                )
+                            )
+                        }
+
+                        return wallets
+                    }
+                }
+            })
     }
 
     func getCreationFee(payingFeeMintAddress: String) -> Single<SolanaSDK.Lamports> {

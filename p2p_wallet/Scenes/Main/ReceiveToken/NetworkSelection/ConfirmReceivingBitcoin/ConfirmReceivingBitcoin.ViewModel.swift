@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
     var navigationDriver: Driver<ConfirmReceivingBitcoin.NavigatableScene?> { get }
@@ -21,6 +22,7 @@ protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
     func reload()
     func navigate(to scene: ConfirmReceivingBitcoin.NavigatableScene?)
     func navigateToChoosingWallet()
+    func createRenBTC()
 }
 
 extension ConfirmReceivingBitcoinViewModelType {
@@ -161,5 +163,32 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
     func navigateToChoosingWallet() {
         navigate(to: .chooseWallet(selectedWallet: payingWalletSubject.value,
                                    payableWallets: payableWalletsSubject.value))
+    }
+
+    func createRenBTC() {
+        guard let mintAddress = payingWalletSubject.value?.mintAddress,
+              let address = payingWalletSubject.value?.pubkey
+        else { return }
+
+        isLoadingSubject.accept(true)
+        errorSubject.accept(nil)
+
+        renBTCStatusService.createAccount(
+            payingFeeAddress: address,
+            payingFeeMintAddress: mintAddress
+        )
+            .subscribe(on: MainScheduler.instance)
+            .subscribe(onCompleted: { [weak self] in
+                guard let self = self else { return }
+                self.isLoadingSubject.accept(false)
+                self.errorSubject.accept(nil)
+
+                // TODO: - After creating RenBTC
+            }, onError: { [weak self] error in
+                guard let self = self else { return }
+                self.isLoadingSubject.accept(false)
+                self.errorSubject.accept(error.readableDescription)
+            })
+            .disposed(by: disposeBag)
     }
 }

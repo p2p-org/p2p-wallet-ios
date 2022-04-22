@@ -38,7 +38,7 @@ protocol RenBTCStatusServiceType {
     func createAccount(
         payingFeeAddress: String,
         payingFeeMintAddress: String
-    ) -> Single<SolanaSDK.TransactionID?>
+    ) -> Completable
 
     /// Get amount of feed needed to create renBTC account.
     ///

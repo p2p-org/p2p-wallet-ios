@@ -102,5 +102,8 @@ extension ConfirmReceivingBitcoin.ViewController {
                     .drive(button.rx.text)
                     .disposed(by: disposeBag)
             }
+            .onTap { [unowned self] in
+                self.viewModel.createRenBTC()
+            }
     }
 }
