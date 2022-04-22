@@ -75,8 +75,32 @@ extension ConfirmReceivingBitcoin {
                     .padding(.init(top: 0, left: 18, bottom: 36, right: 18))
 
                 // Button stack view
-                buttonsView()
-                    .padding(.init(top: 0, left: 18, bottom: 0, right: 18))
+                BEVStack(spacing: 10) {
+                    topUpButtonsView()
+                        .setup { view in
+                            viewModel.accountStatusDriver
+                                .map { $0 != .topUpRequired }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
+
+                    shareSolanaAddressButton()
+                        .setup { view in
+                            viewModel.accountStatusDriver
+                                .map { $0 != .topUpRequired }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
+
+                    createRenBTCButton()
+                        .setup { view in
+                            viewModel.accountStatusDriver
+                                .map { $0 != .payingWalletAvailable }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
+                }
+                .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
             }
         }
 

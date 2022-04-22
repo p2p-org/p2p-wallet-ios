@@ -74,9 +74,10 @@
 		3B9C3DE327A7CF040032548A /* Section.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DE127A7CF040032548A /* Section.View.swift */; };
 		3B9C3DE427A7CF040032548A /* Cell.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DE227A7CF040032548A /* Cell.View.swift */; };
 		3BA4A0D527E31251006AFC01 /* Tokens.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BA4A0D427E31251006AFC01 /* Tokens.xcassets */; };
-		3BA4F6152812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+Extensions.swift */; };
+		3BA4F6152812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift */; };
 		3BA4F617281268CA00EB8962 /* RenBTCStatusServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F616281268CA00EB8962 /* RenBTCStatusServiceType.swift */; };
 		3BA4F61A2812696B00EB8962 /* RenBTCStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F6192812696B00EB8962 /* RenBTCStatusService.swift */; };
+		3BA4F61C2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F61B2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift */; };
 		3BAC28B927670178007900E2 /* UIView+Rx+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */; };
 		3BCD00A52795A3F600576190 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BCD00A42795A3F600576190 /* GoogleService-Info.plist */; };
 		3BCEED5627D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5527D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift */; };
@@ -598,9 +599,10 @@
 		3B9C3DE127A7CF040032548A /* Section.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.View.swift; sourceTree = "<group>"; };
 		3B9C3DE227A7CF040032548A /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		3BA4A0D427E31251006AFC01 /* Tokens.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tokens.xcassets; sourceTree = "<group>"; };
-		3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConfirmReceivingBitcoin.ViewController+Extensions.swift"; sourceTree = "<group>"; };
+		3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConfirmReceivingBitcoin.ViewController+TopUp.swift"; sourceTree = "<group>"; };
 		3BA4F616281268CA00EB8962 /* RenBTCStatusServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenBTCStatusServiceType.swift; sourceTree = "<group>"; };
 		3BA4F6192812696B00EB8962 /* RenBTCStatusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenBTCStatusService.swift; sourceTree = "<group>"; };
+		3BA4F61B2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift"; sourceTree = "<group>"; };
 		3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Rx+Builders.swift"; sourceTree = "<group>"; };
 		3BCD00A42795A3F600576190 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BCEED5527D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.ProgressView.swift; sourceTree = "<group>"; };
@@ -1194,7 +1196,8 @@
 				3B5A2E8128124DE6003D5DBB /* ConfirmReceivingBitcoin.swift */,
 				3B5A2E8328124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift */,
 				3B5A2E8528124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift */,
-				3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+Extensions.swift */,
+				3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift */,
+				3BA4F61B2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift */,
 				3BA4F6182812695700EB8962 /* RenBTCStatusService */,
 			);
 			path = ConfirmReceivingBitcoin;
@@ -3068,6 +3071,7 @@
 				BCB286D327508A7E0074E1D5 /* DApp.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
 				BCB2870B27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift in Sources */,
+				3BA4F61C2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift in Sources */,
 				412DBFDC273D7B81000F514E /* EnterSeed.swift in Sources */,
 				3B87A1532762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift in Sources */,
 				BC4B9E9527153EBB005B9ECA /* Settings.Backup.ViewController.swift in Sources */,
@@ -3149,7 +3153,7 @@
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
 				41DE53CA2797A29700F24B0B /* ColorfulHorizontalView.swift in Sources */,
 				3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift in Sources */,
-				3BA4F6152812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+Extensions.swift in Sources */,
+				3BA4F6152812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift in Sources */,
 				BCE04C68268D901400CE131A /* CustomPresentableViewController.swift in Sources */,
 				3B1681F7278B3E0700838F1B /* AppEventHandler.swift in Sources */,
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
