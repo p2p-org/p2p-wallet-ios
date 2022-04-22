@@ -17,8 +17,8 @@ protocol HistoryTransactionParser {
     func parse(
         signatureInfo: SolanaSDK.SignatureInfo,
         transactionInfo: SolanaSDK.TransactionInfo,
-        account: String,
-        symbol: String
+        account: String?,
+        symbol: String?
     ) async throws -> SolanaSDK.ParsedTransaction
 }
 
@@ -38,8 +38,8 @@ extension History {
         func parse(
             signatureInfo: SolanaSDK.SignatureInfo,
             transactionInfo: SolanaSDK.TransactionInfo,
-            account: String,
-            symbol: String
+            account: String?,
+            symbol: String?
         ) async throws -> SolanaSDK.ParsedTransaction {
             let parsedTrx = try await parser.parse(
                 transactionInfo: transactionInfo,
@@ -72,8 +72,8 @@ extension History {
         func parse(
             signatureInfo: SolanaSDK.SignatureInfo,
             transactionInfo: SolanaSDK.TransactionInfo,
-            account: String,
-            symbol: String
+            account: String?,
+            symbol: String?
         ) async throws -> SolanaSDK.ParsedTransaction {
             // Read from cache
             var parsedTransaction = await cache.read(key: signatureInfo.signature)

@@ -15,8 +15,8 @@ extension History {
             reset()
         }
 
-        func first() async throws -> SolanaSDK.ParsedTransaction? {
-            var mostFirst: SolanaSDK.ParsedTransaction?
+        func first() async throws -> SolanaSDK.SignatureInfo? {
+            var mostFirst: SolanaSDK.SignatureInfo?
             for source in sources {
                 let trx = try await source.first()
 
@@ -33,8 +33,8 @@ extension History {
             return mostFirst
         }
 
-        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error> {
-            AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error> { stream in
+        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> {
+            AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> { stream in
                 Task {
                     do {
                         for source in sources {
