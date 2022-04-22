@@ -46,6 +46,11 @@ extension ConfirmReceivingBitcoin {
                     textAlignment: .center
                 )
                     .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
+                    .setup { label in
+                        viewModel.outputDriver.map { $0.accountStatus != .payingWalletAvailable }
+                            .drive(label.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
 
                 // Alert and separator
                 UIView()

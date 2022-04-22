@@ -10,5 +10,15 @@ import Foundation
 enum ConfirmReceivingBitcoin {
     struct Output {
         let isLoading: Bool
+        let accountStatus: RenBTCAccountStatus?
+
+        static var initializing: Self {
+            .init(isLoading: false, accountStatus: nil)
+        }
+    }
+
+    enum RenBTCAccountStatus {
+        case topUpRequired
+        case payingWalletAvailable
     }
 }

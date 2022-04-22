@@ -18,7 +18,7 @@ extension ConfirmReceivingBitcoin {
 
         // MARK: - Subject
 
-        private let outputSubject = BehaviorRelay<Output>(value: .init(isLoading: false))
+        private let outputSubject = BehaviorRelay<Output>(value: .initializing)
     }
 }
 
