@@ -804,3 +804,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "You can choose which currency to pay in below." = "Bạn có thể chọn đơn vị tiền tệ để thanh toán bên dưới.";
 "Top up your account" = "Nạp tiền vào tài khoản của bạn";
 "Share your Solana network address" = "Chia sẻ địa chỉ mạng Solana của bạn";
+"Pay %@ and Continue" = "Thanh toán %@ & tiếp tục";
