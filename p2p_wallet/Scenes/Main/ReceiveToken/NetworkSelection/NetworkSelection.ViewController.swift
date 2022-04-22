@@ -61,20 +61,20 @@ extension ReceiveToken {
                                 .drive(view.rx.isSelected)
                                 .disposed(by: disposeBag)
                         }.onTap { [unowned self] in
-                            Driver.combineLatest(
-                                self.viewModel.receiveBitcoinViewModel.isReceivingRenBTCDriver,
-                                self.viewModel.receiveBitcoinViewModel.conditionAcceptedDriver
-                            ).drive { [weak self] isRenBTCCreated, conditionalAccepted in
-                                guard let self = self else { return }
-                                if isRenBTCCreated, conditionalAccepted {
-                                    self.viewModel.switchToken(.btc)
-                                    self.back()
-                                } else {
-                                    let vm = ConfirmReceivingBitcoin.ViewModel()
-                                    let vc = ConfirmReceivingBitcoin.ViewController(viewModel: vm)
-                                    self.present(vc, interactiveDismissalType: .none, completion: nil)
+                            if self.viewModel.isRenBtcCreated() {
+                                self.viewModel.switchToken(.btc)
+                                self.back()
+                            } else {
+                                let vm = ConfirmReceivingBitcoin.ViewModel()
+                                let vc = ConfirmReceivingBitcoin.ViewController(viewModel: vm)
+                                self.present(vc, interactiveDismissalType: .none, completion: nil)
+                                vm.completion = { [weak vc] in
+                                    vc?.dismiss(animated: false) { [weak self] in
+                                        self?.viewModel.switchToken(.btc)
+                                        self?.back()
+                                    }
                                 }
-                            }.disposed(by: disposeBag)
+                            }
                         }
 
                         // Description

@@ -50,6 +50,7 @@ extension ConfirmReceivingBitcoin {
         // MARK: - Properties
 
         private let disposeBag = DisposeBag()
+        var completion: (() -> Void)?
 
         // MARK: - Subject
 
@@ -182,8 +183,7 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                 guard let self = self else { return }
                 self.isLoadingSubject.accept(false)
                 self.errorSubject.accept(nil)
-
-                // TODO: - After creating RenBTC
+                self.completion?()
             }, onError: { [weak self] error in
                 guard let self = self else { return }
                 self.isLoadingSubject.accept(false)
