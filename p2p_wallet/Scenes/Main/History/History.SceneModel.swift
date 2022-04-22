@@ -16,6 +16,9 @@ extension History {
         private let solanaSDK: SolanaSDK
         private let walletsRepository: WalletsRepository
 
+        let transactionRepository = SolanaTransactionRepository()
+        let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
             PriceRefreshTrigger(),
@@ -49,7 +52,7 @@ extension History {
                 }
             }
             .distinctUntilChanged { $0 }
-            .asDriver()
+            .asDriver(onErrorJustReturn: true)
         }
 
         init(
@@ -102,7 +105,7 @@ extension History {
         }
 
         override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
-            AsyncThrowingStream<[SolanaSDK.ParsedTransaction], Error> { stream in
+            AsyncThrowingStream<[SolanaSDK.SignatureInfo], Error> { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
 
@@ -112,19 +115,20 @@ extension History {
                             let firstTrx = try await source.first()
                             guard
                                 let firstTrx = firstTrx,
-                                var timeEndFilter = firstTrx.blockTime
+                                let rawTime = firstTrx.blockTime
                             else { return }
 
                             // Fetch next 3 days
+                            var timeEndFilter = Date(timeIntervalSince1970: TimeInterval(rawTime))
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 3)
 
-                            for try await transaction in source.next(
+                            for try await signatureInfo in source.next(
                                 configuration: .init(timestampEnd: timeEndFilter)
                             ) {
                                 // Skip duplicated transaction
-                                if data.contains(where: { $0.signature == transaction.signature }) { continue }
+                                if data.contains(where: { $0.signature == signatureInfo.signature }) { continue }
 
-                                stream.yield([transaction])
+                                stream.yield([signatureInfo])
 
                                 receivedItem += 1
                                 if receivedItem > 15 { return }
@@ -134,7 +138,23 @@ extension History {
                         stream.finish(throwing: error)
                     }
                 }
-            }.asObservable()
+            }
+            .asObservable()
+            .flatMap { infos in Observable.from(infos) }
+            .flatMap { signatureInfo in
+                Observable.asyncThrowing { () -> [SolanaSDK.ParsedTransaction] in
+                    let transactionInfo = try await self.transactionRepository
+                        .getTransaction(signature: signatureInfo.signature)
+                    let transaction = try await self.transactionParser.parse(
+                        signatureInfo: signatureInfo,
+                        transactionInfo: transactionInfo,
+                        account: nil,
+                        symbol: nil
+                    )
+
+                    return [transaction]
+                }
+            }
         }
 
         override func join(_ newItems: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
