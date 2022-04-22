@@ -15,13 +15,10 @@ extension History {
 
         private let solanaSDK: SolanaSDK
         private let walletsRepository: WalletsRepository
+        @Injected private var notificationService: NotificationsService
 
-        let cachedTransactionRepository: CachingTransactionRepository = .init(
-            delegate: SolanaTransactionRepository()
-        )
-        let cachedTransactionParser: CachingTransactionParsing = .init(
-            delegate: DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
-        )
+        let transactionRepository = SolanaTransactionRepository()
+        let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
 
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
@@ -56,7 +53,7 @@ extension History {
                 }
             }
             .distinctUntilChanged { $0 }
-            .asDriver()
+            .asDriver(onErrorJustReturn: true)
         }
 
         init(
@@ -80,14 +77,21 @@ extension History {
         }
 
         func buildSource() {
+            let cachedTransactionRepository: CachingTransactionRepository = .init(
+                delegate: SolanaTransactionRepository()
+            )
+            let cachedTransactionParser: CachingTransactionParsing = .init(
+                delegate: DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+            )
+
             let accountStreamSources = walletsRepository
                 .getWallets()
                 .map { wallet in
                     AccountStreamSource(
                         account: wallet.pubkey ?? "",
                         accountSymbol: wallet.token.symbol,
-                        transactionRepository: self.cachedTransactionRepository,
-                        transactionParser: self.cachedTransactionParser
+                        transactionRepository: cachedTransactionRepository,
+                        transactionParser: cachedTransactionParser
                     )
                 }
 
@@ -98,15 +102,11 @@ extension History {
             // Build source
             buildSource()
 
-            // Clear cache
-            cachedTransactionRepository.clear()
-            cachedTransactionParser.clear()
-
             super.clear()
         }
 
         override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
-            AsyncThrowingStream<[SolanaSDK.ParsedTransaction], Error> { stream in
+            AsyncThrowingStream<[SolanaSDK.SignatureInfo], Error> { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
 
@@ -116,19 +116,20 @@ extension History {
                             let firstTrx = try await source.first()
                             guard
                                 let firstTrx = firstTrx,
-                                var timeEndFilter = firstTrx.blockTime
+                                let rawTime = firstTrx.blockTime
                             else { return }
 
                             // Fetch next 3 days
+                            var timeEndFilter = Date(timeIntervalSince1970: TimeInterval(rawTime))
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 3)
 
-                            for try await transaction in source.next(
+                            for try await signatureInfo in source.next(
                                 configuration: .init(timestampEnd: timeEndFilter)
                             ) {
                                 // Skip duplicated transaction
-                                if data.contains(where: { $0.signature == transaction.signature }) { continue }
+                                if data.contains(where: { $0.signature == signatureInfo.signature }) { continue }
 
-                                stream.yield([transaction])
+                                stream.yield([signatureInfo])
 
                                 receivedItem += 1
                                 if receivedItem > 15 { return }
@@ -138,7 +139,43 @@ extension History {
                         stream.finish(throwing: error)
                     }
                 }
-            }.asObservable()
+            }
+            .asObservable()
+            .flatMap { infos in Observable.from(infos) }
+            .delay(.seconds(2), scheduler: MainScheduler.instance)
+            .observe(on: SceneModel.historyFetchingScheduler)
+
+            .flatMap { signatureInfo in
+                Observable.asyncThrowing { () -> [SolanaSDK.ParsedTransaction] in
+                    let transactionInfo = try await self.transactionRepository
+                        .getTransaction(signature: signatureInfo.signature)
+                    let transaction = try await self.transactionParser.parse(
+                        signatureInfo: signatureInfo,
+                        transactionInfo: transactionInfo,
+                        account: nil,
+                        symbol: nil
+                    )
+
+                    return [transaction]
+                }
+            }
+            .do(onError: { [weak self] error in
+                DispatchQueue.main.async {
+                    self?.notificationService.showInAppNotification(.error(error))
+                }
+            })
+        }
+
+        static let historyFetchingScheduler =
+            SerialDispatchQueueScheduler(internalSerialQueueName: "HistoryTransactionFetching")
+
+        override func join(_ newItems: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+            var filteredNewData: [SolanaSDK.ParsedTransaction] = []
+            for trx in newItems {
+                if data.contains(where: { $0.signature == trx.signature }) { continue }
+                filteredNewData.append(trx)
+            }
+            return data + filteredNewData
         }
 
         override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {

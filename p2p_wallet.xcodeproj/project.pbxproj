@@ -182,6 +182,7 @@
 		846991E94E5B357F70EACC4C /* Buy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846993A9B7C558B1E379CF0C /* Buy.swift */; };
 		846991FDD72B6D65D11F8814 /* History.EmptyStreamSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846992DA21E8EDE2B111DB8E /* History.EmptyStreamSource.swift */; };
 		84699203BA88E73988650B2B /* Home.ClosingBannerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699E22DF6711217BFBB3BF /* Home.ClosingBannerType.swift */; };
+		84699215B37F1283D1984812 /* RxSwift+Concurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846999677D69EBB5ABC0B240 /* RxSwift+Concurrency.swift */; };
 		8469922B1734B0B5200C4641 /* MoonpayBuyProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699F9FD88FC765CD82349A /* MoonpayBuyProcessing.swift */; };
 		8469923A8BD54C585185546C /* ReceiveToken.QrCodeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846999B04075AE392A600C35 /* ReceiveToken.QrCodeCard.swift */; };
 		84699260E4D199A70FC4ED2A /* VerifySecurityKeys.Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */; };
@@ -777,6 +778,7 @@
 		846998DE3DDA2311FDCDC27F /* Home.BalanceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Home.BalanceView.swift; sourceTree = "<group>"; };
 		8469991A43A0AC4B9161CA0F /* BuyProcessing.InputFiatView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = BuyProcessing.InputFiatView.swift; path = Subview/BuyProcessing.InputFiatView.swift; sourceTree = "<group>"; };
 		8469995401F6BFC283896AD6 /* UIButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIButton.swift; sourceTree = "<group>"; };
+		846999677D69EBB5ABC0B240 /* RxSwift+Concurrency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RxSwift+Concurrency.swift"; sourceTree = "<group>"; };
 		8469996FE57E1A717BD82B85 /* BuyRoot.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.ViewModel.swift; sourceTree = "<group>"; };
 		8469997B237A1D90A34F7C12 /* History.RefreshTrigger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.RefreshTrigger.swift; sourceTree = "<group>"; };
 		8469998E20AA97B6D499EF55 /* BaseWalletCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseWalletCell.swift; sourceTree = "<group>"; };
@@ -1959,6 +1961,7 @@
 				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
 				8469964AD773095EEFA52701 /* CALayer+Extensions.swift */,
 				3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */,
+				846999677D69EBB5ABC0B240 /* RxSwift+Concurrency.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -3593,6 +3596,7 @@
 				846994568133A2AAAC8B9966 /* History.RefreshTrigger.swift in Sources */,
 				846997A12C4F207FC2F8C0F6 /* History.ProcessingTransactionRefreshTrigger.swift in Sources */,
 				8469960A84807166759A1130 /* History.PriceRefreshTrigger.swift in Sources */,
+				84699215B37F1283D1984812 /* RxSwift+Concurrency.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

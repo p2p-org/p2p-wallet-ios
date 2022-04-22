@@ -37,25 +37,18 @@ extension History {
             self.transactionParser = transactionParser
         }
 
-        func first() async throws -> SolanaSDK.ParsedTransaction? {
+        func first() async throws -> SolanaSDK.SignatureInfo? {
             guard let signatureInfo = try await transactionRepository.getSignatures(
                 address: account,
                 limit: batchSize,
                 before: latestFetchedSignature
             ).first else { return nil }
 
-            let transactionInfo = try await transactionRepository.getTransaction(signature: signatureInfo.signature)
-
-            return try await transactionParser.parse(
-                signatureInfo: signatureInfo,
-                transactionInfo: transactionInfo,
-                account: account,
-                symbol: accountSymbol
-            )
+            return signatureInfo
         }
 
-        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error> {
-            AsyncThrowingStream<SolanaSDK.ParsedTransaction, Error> { stream in
+        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> {
+            AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> { stream in
                 Task {
                     do {
                         while true {
@@ -73,25 +66,16 @@ extension History {
 
                             // Fetch transaction and parse it
                             for signatureInfo in signatureInfos {
-                                let signature = signatureInfo.signature
+                                // Calculate time
+                                var transactionTime = Date()
+                                if let time = signatureInfo.blockTime {
+                                    transactionTime = Date(timeIntervalSince1970: TimeInterval(time))
+                                }
 
-                                // Fetch transaction info
-                                let transactionInfo = try await transactionRepository
-                                    .getTransaction(signature: signature)
-
-                                // Parse transaction
-                                let transaction = try await transactionParser.parse(
-                                    signatureInfo: signatureInfo,
-                                    transactionInfo: transactionInfo,
-                                    account: account,
-                                    symbol: accountSymbol
-                                )
-
-                                let transactionTime = transaction.blockTime ?? Date()
                                 if transactionTime >= configuration.timestampEnd {
                                     // Emit transaction
-                                    latestFetchedSignature = signature
-                                    stream.yield(transaction)
+                                    latestFetchedSignature = signatureInfo.signature
+                                    stream.yield(signatureInfo)
                                 } else {
                                     // Break stream and return
                                     stream.finish(throwing: nil)
