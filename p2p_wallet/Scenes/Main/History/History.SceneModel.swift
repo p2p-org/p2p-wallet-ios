@@ -16,13 +16,6 @@ extension History {
         private let solanaSDK: SolanaSDK
         private let walletsRepository: WalletsRepository
 
-        let cachedTransactionRepository: CachingTransactionRepository = .init(
-            delegate: SolanaTransactionRepository()
-        )
-        let cachedTransactionParser: CachingTransactionParsing = .init(
-            delegate: DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
-        )
-
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
             PriceRefreshTrigger(),
@@ -80,14 +73,21 @@ extension History {
         }
 
         func buildSource() {
+            let cachedTransactionRepository: CachingTransactionRepository = .init(
+                delegate: SolanaTransactionRepository()
+            )
+            let cachedTransactionParser: CachingTransactionParsing = .init(
+                delegate: DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+            )
+
             let accountStreamSources = walletsRepository
                 .getWallets()
                 .map { wallet in
                     AccountStreamSource(
                         account: wallet.pubkey ?? "",
                         accountSymbol: wallet.token.symbol,
-                        transactionRepository: self.cachedTransactionRepository,
-                        transactionParser: self.cachedTransactionParser
+                        transactionRepository: cachedTransactionRepository,
+                        transactionParser: cachedTransactionParser
                     )
                 }
 
@@ -97,10 +97,6 @@ extension History {
         override func clear() {
             // Build source
             buildSource()
-
-            // Clear cache
-            cachedTransactionRepository.clear()
-            cachedTransactionParser.clear()
 
             super.clear()
         }

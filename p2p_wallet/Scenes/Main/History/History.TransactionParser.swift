@@ -63,7 +63,7 @@ extension History {
         }
     }
 
-    class CachingTransactionParsing: TransactionParser, Cachable {
+    class CachingTransactionParsing: TransactionParser {
         private let delegate: TransactionParser
         private let cache = Utils.InMemoryCache<SolanaSDK.ParsedTransaction>(maxSize: 50)
 
@@ -76,7 +76,7 @@ extension History {
             symbol: String
         ) async throws -> SolanaSDK.ParsedTransaction {
             // Read from cache
-            var parsedTransaction = cache.read(key: signatureInfo.signature)
+            var parsedTransaction = await cache.read(key: signatureInfo.signature)
             if let parsedTransaction = parsedTransaction { return parsedTransaction }
             // Parse
             parsedTransaction = try await delegate.parse(
@@ -85,12 +85,8 @@ extension History {
                 account: account,
                 symbol: symbol
             )
-            cache.write(key: signatureInfo.signature, data: parsedTransaction!)
+            await cache.write(key: signatureInfo.signature, data: parsedTransaction!)
             return parsedTransaction!
-        }
-
-        func clear() {
-            cache.clear()
         }
     }
 }
