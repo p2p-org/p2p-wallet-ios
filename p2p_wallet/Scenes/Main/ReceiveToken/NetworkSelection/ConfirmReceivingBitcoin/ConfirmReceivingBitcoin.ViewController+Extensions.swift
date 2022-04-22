@@ -12,37 +12,30 @@ import RxSwift
 extension ConfirmReceivingBitcoin.ViewController {
     func topUpRequiredView() -> BEVStack {
         BEVStack(spacing: 12) {
-            createExplanationView(
-                mainString: L10n.aToReceiveBitcoinsOverTheBitcoinNetwork(L10n.renBTCAccountIsRequired),
-                boldString: L10n.renBTCAccountIsRequired
+            ReceiveToken.textBuilder(
+                text: L10n.aToReceiveBitcoinsOverTheBitcoinNetwork(L10n.renBTCAccountIsRequired)
+                    .asMarkdown()
             )
-
-            createExplanationView(
-                mainString: L10n
-                    .yourWalletListDoesNotContainARenBTCAccountAndToCreateOne(L10n
-                        .youNeedToMakeATransaction),
-                boldString: L10n
-                    .youNeedToMakeATransaction
+            ReceiveToken.textBuilder(
+                text: L10n.yourWalletListDoesNotContainARenBTCAccountAndToCreateOne(L10n
+                    .youNeedToMakeATransaction)
+                    .asMarkdown()
             )
-
-            createExplanationView(
-                mainString: L10n
-                    .youToPayForAccountCreationButIfSomeoneSendsRenBTCToYourAddressItWillBeCreatedForYou(L10n
-                        .donTHaveFunds),
-                boldString: L10n
-                    .donTHaveFunds
+            ReceiveToken.textBuilder(
+                text: L10n.youToPayForAccountCreationButIfSomeoneSendsRenBTCToYourAddressItWillBeCreatedForYou(L10n
+                    .donTHaveFunds)
+                    .asMarkdown()
             )
         }
     }
 
     func createRenBTCView() -> BEVStack {
         BEVStack(spacing: 12) {
-            createExplanationView(
-                mainString: L10n
+            ReceiveToken.textBuilder(
+                text: (L10n
                     .yourWalletListDoesNotContainARenBTCAccountAndToCreateOne(L10n
-                        .youNeedToMakeATransaction) + " " + L10n.youCanChooseWhichCurrencyToPayInBelow,
-                boldString: L10n
-                    .youNeedToMakeATransaction
+                        .youNeedToMakeATransaction) + " " + L10n.youCanChooseWhichCurrencyToPayInBelow)
+                    .asMarkdown()
             )
 
             WLCard {
@@ -91,21 +84,21 @@ extension ConfirmReceivingBitcoin.ViewController {
             }
             .padding(.init(only: .bottom, inset: 12))
 
-            createExplanationView(
-                mainString: L10n
-                    .ThisAddressAccepts.youMayLoseAssetsBySendingAnotherCoin(L10n.onlyBitcoin),
-                boldString: L10n.onlyBitcoin
+            ReceiveToken.textBuilder(
+                text: L10n
+                    .ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin)
+                    .asMarkdown()
             )
 
-            createExplanationView(
-                mainString: L10n
-                    .minimumTransactionAmountOf("0.000112 BTC"),
-                boldString: "0.000112 BTC"
+            ReceiveToken.textBuilder(
+                text: L10n
+                    .minimumTransactionAmountOf("0.000112 BTC")
+                    .asMarkdown()
             )
 
-            createExplanationView(
-                mainString: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59"),
-                boldString: "35:59:59"
+            ReceiveToken.textBuilder(
+                text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59")
+                    .asMarkdown()
             )
         }
     }
@@ -137,28 +130,5 @@ extension ConfirmReceivingBitcoin.ViewController {
                 }
         }
         .padding(.init(only: .bottom, inset: 18))
-    }
-
-    // MARK: - Text builder
-
-    private func createExplanationView(mainString: String, boldString: String) -> UIView {
-        BEHStack(spacing: 10, alignment: .top) {
-            UILabel(text: "•")
-                .withContentHuggingPriority(.required, for: .horizontal)
-                .withContentCompressionResistancePriority(.required, for: .horizontal)
-            UILabel(text: nil, numberOfLines: 0)
-                .withAttributedText(
-                    createExplanationAttributedString(
-                        mainString: mainString,
-                        boldString: boldString
-                    )
-                )
-                .withContentHuggingPriority(.required, for: .horizontal)
-        }
-    }
-
-    private func createExplanationAttributedString(mainString: String, boldString _: String) -> NSAttributedString {
-        NSMutableAttributedString()
-            .text(mainString, size: 15, color: .textBlack)
     }
 }
