@@ -13,6 +13,8 @@ import SolanaSwift
 ///
 /// The protocol contains creating account, calculate fee for creation and check availability of balance.
 protocol RenBTCStatusServiceType {
+    func load() -> Completable
+
     /// Checks the associated account has been created.
     ///
     /// RenBTC works, when account has been created.
@@ -25,7 +27,7 @@ protocol RenBTCStatusServiceType {
     /// This methods calculate all factors, that may affect to fee like account creation fee, trx fee and fee relayer fee.
     ///
     /// - Returns: true if account is creatable or false. The false happens when wallet balance is not enough for creating.
-    func isRenBTCAccountCreatable() async throws -> Bool
+    func isRenBTCAccountCreatable() -> Single<Bool>
 
     /// Creates a associated account.
     ///
@@ -36,7 +38,7 @@ protocol RenBTCStatusServiceType {
     func createAccount(
         payingFeeAddress: String,
         payingFeeMintAddress: String
-    ) async throws -> SolanaSDK.TransactionID
+    ) -> Single<SolanaSDK.TransactionID?>
 
     /// Get amount of feed needed to create renBTC account.
     ///
@@ -46,5 +48,5 @@ protocol RenBTCStatusServiceType {
     /// - Returns: the amount of fee
     func getCreationFee(
         payingFeeMintAddress: String
-    ) async throws -> SolanaSDK.Lamports
+    ) -> Single<SolanaSDK.Lamports>
 }
