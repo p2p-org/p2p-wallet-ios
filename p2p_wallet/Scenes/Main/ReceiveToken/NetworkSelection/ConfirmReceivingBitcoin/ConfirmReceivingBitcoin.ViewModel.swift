@@ -11,6 +11,7 @@ import RxSwift
 import SolanaSwift
 
 protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
+    var solanaPubkey: String? { get }
     var navigationDriver: Driver<ConfirmReceivingBitcoin.NavigatableScene?> { get }
     var isLoadingDriver: Driver<Bool> { get }
     var errorDriver: Driver<String?> { get }
@@ -47,6 +48,7 @@ extension ConfirmReceivingBitcoin {
 
         @Injected private var renBTCStatusService: RenBTCStatusServiceType
         @Injected private var pricesService: PricesServiceType
+        @Injected private var walletsRepository: WalletsRepository
 
         // MARK: - Properties
 
@@ -127,6 +129,10 @@ extension ConfirmReceivingBitcoin {
 }
 
 extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelType {
+    var solanaPubkey: String? {
+        walletsRepository.nativeWallet?.pubkey
+    }
+
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
     }
