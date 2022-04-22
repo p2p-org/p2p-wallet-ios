@@ -46,6 +46,7 @@ class TransactionCell: BaseCollectionViewCell {
         stackView.axis = .horizontal
         stackView.spacing = 12
         stackView.alignment = .center
+        imageView.layer.cornerRadius = 12
 
         stackView.addArrangedSubviews {
             imageView
@@ -59,7 +60,6 @@ class TransactionCell: BaseCollectionViewCell {
     }
 
     private func setupSkeleton() {
-        imageView.layer.cornerRadius = 16
         transactionTypeLabel.layer.cornerRadius = 12
         amountInFiatLabel.layer.cornerRadius = 12
         descriptionLabel.layer.cornerRadius = 12

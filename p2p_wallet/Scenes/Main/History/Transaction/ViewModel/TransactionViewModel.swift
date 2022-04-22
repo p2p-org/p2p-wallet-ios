@@ -24,11 +24,9 @@ extension History {
         ) {
             let fromView = input.view
 
-            let model = fromView.viewDidLoad
-                .mapTo(transaction.mapTransaction(pricesService: pricesService))
             let showWebView = fromView.transactionDetailClicked
-                .withLatestFrom(model)
-                .map { "https://explorer.solana.com/tx/\($0.transactionId)" }
+                .mapTo("https://explorer.solana.com/tx/\(transaction.signature ?? "")")
+            let model = fromView.viewDidLoad.mapTo(transaction.mapTransaction(pricesService: pricesService))
             let copyTransactionId = fromView.transactionIdClicked
                 .withLatestFrom(model)
                 .do(onNext: { clipboardManager.copyToClipboard($0.transactionId) })
@@ -95,29 +93,33 @@ private extension SolanaSDK.ParsedTransaction {
         case let transaction as SolanaSDK.TransferTransaction:
             let fromAmount = transaction.amount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
-            let toAmount = transaction.destination?.pubkey?.truncatingMiddle() ?? ""
             let usd = "~ " + Defaults.fiat.symbol + getAmountInCurrentFiat(
                 pricesService: pricesService,
                 amountInToken: transaction.amount,
                 symbol: transaction.source?.token.symbol
             ).toString(maximumFractionDigits: 2)
-            return (tokens: "\(fromAmount) - \(toAmount)", usd: usd)
+            return (tokens: fromAmount, usd: usd)
         case let transaction as SolanaSDK.SwapTransaction:
             let fromAmount = transaction.sourceAmount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
             let toAmount = transaction.destinationAmount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.destination?.token.symbol
-            let fromUsd = "~ " + Defaults.fiat.symbol + getAmountInCurrentFiat(
-                pricesService: pricesService,
-                amountInToken: transaction.sourceAmount,
-                symbol: transaction.source?.token.symbol
-            ).toString(maximumFractionDigits: 2)
-            let toUsd = "~ " + Defaults.fiat.symbol + getAmountInCurrentFiat(
-                pricesService: pricesService,
-                amountInToken: transaction.destinationAmount,
-                symbol: transaction.destination?.token.symbol
-            ).toString(maximumFractionDigits: 2)
-            return (tokens: "\(fromAmount) - \(toAmount)", usd: "\(fromUsd) - \(toUsd)")
+            let usd = max(
+                getAmountInCurrentFiat(
+                    pricesService: pricesService,
+                    amountInToken: transaction.sourceAmount,
+                    symbol: transaction.source?.token.symbol
+                ) ?? 0,
+                getAmountInCurrentFiat(
+                    pricesService: pricesService,
+                    amountInToken: transaction.destinationAmount,
+                    symbol: transaction.destination?.token.symbol
+                ) ?? 0
+            )
+            return (
+                tokens: "\(fromAmount) - \(toAmount)",
+                usd: "~ \(Defaults.fiat.symbol)\(usd.toString(maximumFractionDigits: 2))"
+            )
         default:
             return (nil, nil)
         }
