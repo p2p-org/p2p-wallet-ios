@@ -137,6 +137,15 @@ extension History {
             }.asObservable()
         }
 
+        override func join(_ newItems: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+            var filteredNewData: [SolanaSDK.ParsedTransaction] = []
+            for trx in newItems {
+                if data.contains(where: { $0.signature == trx.signature }) { continue }
+                filteredNewData.append(trx)
+            }
+            return data + filteredNewData
+        }
+
         override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
             // Apply output transformation
             var data = newData
