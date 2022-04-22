@@ -27,7 +27,7 @@ protocol RenBTCStatusServiceType {
     /// This methods calculate all factors, that may affect to fee like account creation fee, trx fee and fee relayer fee.
     ///
     /// - Returns: true if account is creatable or false. The false happens when wallet balance is not enough for creating.
-    func isRenBTCAccountCreatable() -> Single<Bool>
+    func getPayableWallets() -> Single<[Wallet]>
 
     /// Creates a associated account.
     ///

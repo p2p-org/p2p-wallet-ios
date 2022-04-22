@@ -19,10 +19,30 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     @Injected private var walletRepository: WalletsRepository
     @Injected private var feeRelayer: FeeRelayer.Relay
 
+    private let locker = NSLock()
+    private var minRenExemption: SolanaSDK.Lamports?
+    private var lamportsPerSignature: SolanaSDK.Lamports?
+
     func load() -> Completable {
         Completable.zip(
             orcaSwap.load(),
-            feeRelayer.load()
+            feeRelayer.load(),
+            solanaSDK
+                .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
+                .do(onSuccess: { [weak self] in
+                    self?.locker.lock()
+                    self?.minRenExemption = $0
+                    self?.locker.unlock()
+                })
+                .asCompletable(),
+            solanaSDK
+                .getLamportsPerSignature()
+                .do(onSuccess: { [weak self] in
+                    self?.locker.lock()
+                    self?.lamportsPerSignature = $0
+                    self?.locker.unlock()
+                })
+                .asCompletable()
         )
     }
 
@@ -30,19 +50,19 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         walletRepository.getWallets().contains(where: \.token.isRenBTC)
     }
 
-    func isRenBTCAccountCreatable() -> Single<Bool> {
+    func getPayableWallets() -> Single<[Wallet]> {
         let wallets = walletRepository
             .getWallets()
-            .sorted { w1, w2 in (w1.lamports ?? 0) > (w2.lamports ?? 0) }
+            .filter { ($0.lamports ?? 0) > 0 }
 
         // At lease one wallet is payable
         return Single
-            .zip(wallets.map { w in
+            .zip(wallets.map { w -> Single<Wallet?> in
                 getCreationFee(payingFeeMintAddress: w.mintAddress)
-                    .map { $0 <= (w.lamports ?? 0) }
-                    .catchAndReturn(false)
+                    .map { $0 <= (w.lamports ?? 0) ? w : nil }
+                    .catchAndReturn(nil)
             })
-            .map { $0.contains(true) }
+            .map { $0.compactMap { $0 } }
     }
 
     func createAccount(payingFeeAddress: String, payingFeeMintAddress: String) -> Single<SolanaSDK.TransactionID?> {
@@ -84,26 +104,26 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     }
 
     func getCreationFee(payingFeeMintAddress: String) -> Single<SolanaSDK.Lamports> {
-        Single.zip(
-            solanaSDK
-                .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span),
-            solanaSDK
-                .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span)
+        let feeAmount = SolanaSDK.FeeAmount(
+            transaction: lamportsPerSignature ?? 5000,
+            accountBalances: minRenExemption ?? 2_039_280
         )
-            .flatMap { [weak self] accountCreationFee, transactionFee in
+        return feeRelayer.calculateNeededTopUpAmount(
+            expectedFee: feeAmount,
+            payingTokenMint: payingFeeMintAddress
+        )
+            .flatMap { [weak self] feeInSol -> Single<SolanaSDK.FeeAmount?> in
                 guard let self = self else { throw SolanaSDK.Error.unknown }
-                return self.feeRelayer.calculateNeededTopUpAmount(
-                    expectedFee: .init(transaction: transactionFee, accountBalances: accountCreationFee),
-                    payingTokenMint: payingFeeMintAddress
+                return self.feeRelayer.calculateFeeInPayingToken(
+                    feeInSOL: feeInSol,
+                    payingFeeTokenMint: payingFeeMintAddress
                 )
-                    .flatMap { [weak self] feeInSol -> Single<SolanaSDK.FeeAmount?> in
-                        guard let self = self else { throw SolanaSDK.Error.unknown }
-                        return self.feeRelayer.calculateFeeInPayingToken(
-                            feeInSOL: feeInSol,
-                            payingFeeTokenMint: payingFeeMintAddress
-                        )
-                    }
-                    .map { $0?.total ?? accountCreationFee + transactionFee }
+            }
+            .map {
+                if let fees = $0?.total {
+                    return fees
+                }
+                throw SolanaSDK.Error.other("Could not calculate fee")
             }
     }
 }
