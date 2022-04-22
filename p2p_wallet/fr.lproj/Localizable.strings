@@ -791,3 +791,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "If there is a token named “%@“, we don't recommend sending it to your Solana address since it will most likely be lost forever." = "S'il existe un jeton nommé \"%@\", nous vous déconseillons de l'envoyer à votre adresse Solana car il sera probablement perdu à jamais.";
 "Not enough funds" = "Pas assez de fonds";
 "Insufficient funds to cover fees" = "Fonds insuffisants pour couvrir les frais";
+"The wrong security key or words order. Please try again" = "Mauvaise clé de sécurité ou ordre des mots.  Veuillez réessayer";
