@@ -80,9 +80,7 @@ extension History {
             let cachedTransactionRepository: CachingTransactionRepository = .init(
                 delegate: SolanaTransactionRepository()
             )
-            let cachedTransactionParser: CachingTransactionParsing = .init(
-                delegate: DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
-            )
+            let cachedTransactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
 
             let accountStreamSources = walletsRepository
                 .getWallets()
@@ -142,9 +140,7 @@ extension History {
             }
             .asObservable()
             .flatMap { infos in Observable.from(infos) }
-            .delay(.seconds(2), scheduler: MainScheduler.instance)
             .observe(on: SceneModel.historyFetchingScheduler)
-
             .flatMap { signatureInfo in
                 Observable.asyncThrowing { () -> [SolanaSDK.ParsedTransaction] in
                     let transactionInfo = try await self.transactionRepository
