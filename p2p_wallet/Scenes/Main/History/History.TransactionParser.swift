@@ -76,17 +76,17 @@ extension History {
             symbol: String?
         ) async throws -> SolanaSDK.ParsedTransaction {
             // Read from cache
-            var parsedTransaction = await cache.read(key: signatureInfo.signature)
-            if let parsedTransaction = parsedTransaction { return parsedTransaction }
+            if let parsedTransaction = await cache.read(key: signatureInfo.signature) { return parsedTransaction }
+
             // Parse
-            parsedTransaction = try await delegate.parse(
+            let parsedTransaction = try await delegate.parse(
                 signatureInfo: signatureInfo,
                 transactionInfo: transactionInfo,
                 account: account,
                 symbol: symbol
             )
-            await cache.write(key: signatureInfo.signature, data: parsedTransaction!)
-            return parsedTransaction!
+            await cache.write(key: signatureInfo.signature, data: parsedTransaction)
+            return parsedTransaction
         }
     }
 }
