@@ -797,3 +797,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "you need to make a transaction" = "vous devez effectuer une transaction";
 "You %@ to pay for account creation, but if someone sends renBTC to your address, it will be created for you." = "Vous %@ payez pour la création du compte, mais si quelqu'un envoie renBTC à votre adresse, il sera créé pour vous.";
 "don’t have funds" = "n'a pas de fonds";
+"You can choose which currency to pay in below." = "Vous pouvez choisir la devise dans laquelle payer ci-dessous.";
