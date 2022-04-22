@@ -112,17 +112,18 @@ class RenBtcServiceImpl: RentBTC.Service {
                 .value
         )
 
-        // SOL case
-        if payingFeeMintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-            return accountCreationFee + transactionFee
-        }
-
-        // SPL case
-        let feeInSplToken: SolanaSDK.FeeAmount = try await feeRelayer.calculateNeededTopUpAmount(
+        let feeInSol = try await feeRelayer.calculateNeededTopUpAmount(
             expectedFee: .init(transaction: transactionFee, accountBalances: accountCreationFee),
             payingTokenMint: payingFeeMintAddress
-        ).value
+        )
+            .value
 
-        return feeInSplToken.total
+        let feeInPayingToken = try await feeRelayer.calculateFeeInPayingToken(
+            feeInSOL: feeInSol,
+            payingFeeTokenMint: payingFeeMintAddress
+        )
+            .value
+
+        return feeInPayingToken?.total ?? .zero
     }
 }
