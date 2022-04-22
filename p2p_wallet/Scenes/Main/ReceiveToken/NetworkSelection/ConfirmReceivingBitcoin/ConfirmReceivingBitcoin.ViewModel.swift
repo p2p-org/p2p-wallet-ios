@@ -13,8 +13,26 @@ protocol ConfirmReceivingBitcoinViewModelType {
     var isLoadingDriver: Driver<Bool> { get }
     var errorDriver: Driver<String?> { get }
     var accountStatusDriver: Driver<ConfirmReceivingBitcoin.RenBTCAccountStatus?> { get }
+    var payingWalletDriver: Driver<Wallet?> { get }
+    var totalFeeDriver: Driver<Double?> { get }
+    var feeInFiatDriver: Driver<Double?> { get }
 
     func reload()
+}
+
+extension ConfirmReceivingBitcoinViewModelType {
+    var feeInTextDriver: Driver<String?> {
+        Driver.combineLatest(
+            totalFeeDriver,
+            payingWalletDriver
+        )
+            .map { fee, wallet in
+                guard let fee = fee, let wallet = wallet else {
+                    return nil
+                }
+                return fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol
+            }
+    }
 }
 
 extension ConfirmReceivingBitcoin {
@@ -22,6 +40,7 @@ extension ConfirmReceivingBitcoin {
         // MARK: - Dependencies
 
         @Injected private var renBTCStatusService: RenBTCStatusServiceType
+        @Injected private var pricesService: PricesServiceType
 
         // MARK: - Properties
 
@@ -36,6 +55,7 @@ extension ConfirmReceivingBitcoin {
 
         private let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
         private let totalFeeSubject = BehaviorRelay<Double?>(value: nil)
+        private let feeInFiatSubject = BehaviorRelay<Double?>(value: nil)
 
         // MARK: - Initializer
 
@@ -84,6 +104,15 @@ extension ConfirmReceivingBitcoin {
                 .catchAndReturn(nil)
                 .bind(to: totalFeeSubject)
                 .disposed(by: disposeBag)
+
+            totalFeeSubject
+                .map { [weak self] fee -> Double? in
+                    guard let fee = fee, let symbol = self?.payingWalletSubject.value?.token.symbol,
+                          let price = self?.pricesService.currentPrice(for: symbol)?.value else { return nil }
+                    return fee * price
+                }
+                .bind(to: feeInFiatSubject)
+                .disposed(by: disposeBag)
         }
     }
 }
@@ -99,5 +128,17 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
 
     var accountStatusDriver: Driver<ConfirmReceivingBitcoin.RenBTCAccountStatus?> {
         accountStatusSubject.asDriver()
+    }
+
+    var payingWalletDriver: Driver<Wallet?> {
+        payingWalletSubject.asDriver()
+    }
+
+    var totalFeeDriver: Driver<Double?> {
+        totalFeeSubject.asDriver()
+    }
+
+    var feeInFiatDriver: Driver<Double?> {
+        feeInFiatSubject.asDriver()
     }
 }

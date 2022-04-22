@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxCocoa
 import RxSwift
 
 extension ConfirmReceivingBitcoin.ViewController {
@@ -47,6 +48,13 @@ extension ConfirmReceivingBitcoin.ViewController {
             WLCard {
                 BEHStack(spacing: 12, alignment: .center) {
                     CoinLogoImageView(size: 44)
+                        .setup { logoView in
+                            viewModel.payingWalletDriver
+                                .drive(onNext: { [weak logoView] in
+                                    logoView?.setUp(wallet: $0)
+                                })
+                                .disposed(by: disposeBag)
+                        }
 
                     BEVStack(spacing: 4) {
                         UILabel(
@@ -55,7 +63,26 @@ extension ConfirmReceivingBitcoin.ViewController {
                             textColor: .textSecondary,
                             numberOfLines: 0
                         )
+                            .setup { label in
+                                viewModel.feeInFiatDriver
+                                    .map { fee in
+                                        NSMutableAttributedString()
+                                            .text(L10n.accountCreationFee + ": ", size: 13, color: .textSecondary)
+                                            .text(
+                                                "~" + Defaults.fiat.symbol + fee.toString(maximumFractionDigits: 2),
+                                                size: 13,
+                                                color: .textBlack
+                                            )
+                                    }
+                                    .drive(label.rx.attributedText)
+                                    .disposed(by: disposeBag)
+                            }
                         UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold)
+                            .setup { label in
+                                viewModel.feeInTextDriver
+                                    .drive(label.rx.text)
+                                    .disposed(by: disposeBag)
+                            }
                     }
 
                     UIView.defaultNextArrow()
