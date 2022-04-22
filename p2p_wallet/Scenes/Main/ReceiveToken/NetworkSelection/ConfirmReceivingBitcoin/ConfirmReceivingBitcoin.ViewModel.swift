@@ -35,11 +35,13 @@ extension ConfirmReceivingBitcoin {
         private let payableWalletsSubject = BehaviorRelay<[Wallet]>(value: [])
 
         private let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        private let totalFeeSubject = BehaviorRelay<Double?>(value: nil)
 
         // MARK: - Initializer
 
         init() {
             reload()
+            bind()
         }
 
         // MARK: - Methods
@@ -69,6 +71,18 @@ extension ConfirmReceivingBitcoin {
                     self.payableWalletsSubject.accept([])
                     self.payingWalletSubject.accept(nil)
                 })
+                .disposed(by: disposeBag)
+        }
+
+        private func bind() {
+            payingWalletSubject
+                .flatMapLatest { [weak self] wallet -> Single<Double?> in
+                    guard let self = self, let wallet = wallet else { return .just(nil) }
+                    return self.renBTCStatusService.getCreationFee(payingFeeMintAddress: wallet.mintAddress)
+                        .map { $0.convertToBalance(decimals: wallet.token.decimals) }
+                }
+                .catchAndReturn(nil)
+                .bind(to: totalFeeSubject)
                 .disposed(by: disposeBag)
         }
     }
