@@ -30,7 +30,13 @@ extension EnterSeedInfo {
             infoButton.addTarget(self, action: #selector(done), for: .touchUpInside)
             rightItems.addArrangedSubview(infoButton)
             backgroundColor = .clear
-            addSubview(UIView.defaultSeparator())
+            // Navigation separator
+            let separator = UIView.defaultSeparator(height: 0.5)
+            separator.backgroundColor = .black.withAlphaComponent(0.3)
+            addSubview(separator)
+            separator.autoPinEdge(toSuperviewEdge: .leading)
+            separator.autoPinEdge(toSuperviewEdge: .trailing)
+            separator.autoPinEdge(toSuperviewEdge: .bottom)
         }
 
         @objc
