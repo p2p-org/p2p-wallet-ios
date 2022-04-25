@@ -15,7 +15,6 @@ extension EnterSeedInfo {
             self.doneHandler = doneHandler
 
             super.init(frame: .zero)
-
             leftItems.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
             configureSelf()
@@ -30,6 +29,8 @@ extension EnterSeedInfo {
             )
             infoButton.addTarget(self, action: #selector(done), for: .touchUpInside)
             rightItems.addArrangedSubview(infoButton)
+            backgroundColor = .clear
+            addSubview(UIView.defaultSeparator())
         }
 
         @objc
