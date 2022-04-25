@@ -16,7 +16,7 @@ extension History {
         private let account: String
 
         /// The account's token symbol
-        private let accountSymbol: String
+        private let symbol: String
 
         /// The most latest signature of transactions, that has been loaded.
         /// This value will be used as pagination indicator and all next transactions after this one will be loaded.
@@ -27,28 +27,28 @@ extension History {
 
         init(
             account: String,
-            accountSymbol: String,
+            symbol: String,
             transactionRepository: HistoryTransactionRepository,
             transactionParser: TransactionParser
         ) {
             self.account = account
-            self.accountSymbol = accountSymbol
+            self.symbol = symbol
             self.transactionRepository = transactionRepository
             self.transactionParser = transactionParser
         }
 
-        func first() async throws -> SolanaSDK.SignatureInfo? {
+        func first() async throws -> HistoryStreamSource.Result? {
             guard let signatureInfo = try await transactionRepository.getSignatures(
                 address: account,
                 limit: batchSize,
                 before: latestFetchedSignature
             ).first else { return nil }
 
-            return signatureInfo
+            return (signatureInfo, account, symbol)
         }
 
-        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> {
-            AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> { stream in
+        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<HistoryStreamSource.Result, Error> {
+            AsyncThrowingStream<HistoryStreamSource.Result, Error> { stream in
                 Task {
                     do {
                         while true {
@@ -75,7 +75,7 @@ extension History {
                                 if transactionTime >= configuration.timestampEnd {
                                     // Emit transaction
                                     latestFetchedSignature = signatureInfo.signature
-                                    stream.yield(signatureInfo)
+                                    stream.yield((signatureInfo, account, symbol))
                                 } else {
                                     // Break stream and return
                                     stream.finish(throwing: nil)
