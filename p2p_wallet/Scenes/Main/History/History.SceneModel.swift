@@ -57,12 +57,10 @@ extension History {
                 if state == .loading || state == .initializing {
                     return .items
                 } else {
-                    let amount = change.1?.reduce(0) { partialResult, wallet in
-                        partialResult + wallet.amount
-                    } ?? 0
-                    return amount > 0 ? .items : .empty
+                    return (change.1?.count ?? 0) > 0 ? .items : .empty
                 }
             }
+            .distinctUntilChanged()
             .asDriver()
         }
 
@@ -104,6 +102,7 @@ extension History {
 
             let accountStreamSources = walletsRepository
                 .getWallets()
+                .reversed()
                 .map { wallet in
                     AccountStreamSource(
                         account: wallet.pubkey ?? "",
