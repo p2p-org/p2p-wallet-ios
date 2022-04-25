@@ -54,7 +54,7 @@ extension History {
                 layout: .init(
                     header: .init(
                         viewClass: SectionHeaderView.self,
-                        heightDimension: .estimated(15)
+                        heightDimension: .estimated(0)
                     ),
                     cellType: Cell.self,
                     emptyCellType: WLEmptyCell.self,
@@ -67,10 +67,6 @@ extension History {
 
                     if let date = sectionInfo?.userInfo as? String {
                         view.setUp(headerTitle: date)
-                    } else {
-                        // We have to have this text, otherwise the header cell will jump,
-                        // because passing empty string will resize cell height
-                        view.setUp(headerTitle: " ")
                     }
                 }
             ).withDelegate(self)
