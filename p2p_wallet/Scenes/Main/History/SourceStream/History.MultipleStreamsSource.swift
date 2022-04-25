@@ -16,15 +16,15 @@ extension History {
             reset()
         }
 
-        func first() async throws -> SolanaSDK.SignatureInfo? {
+        func first() async throws -> HistoryStreamSource.Result? {
             try await Observable
                 .from(sources)
-                .flatMap { source -> Observable<SolanaSDK.SignatureInfo?> in
-                    Observable.asyncThrowing { () -> SolanaSDK.SignatureInfo? in try await source.first() }
+                .flatMap { source -> Observable<HistoryStreamSource.Result?> in
+                    Observable.asyncThrowing { () -> HistoryStreamSource.Result? in try await source.first() }
                 }
-                .reduce(nil) { (mostFirst: SolanaSDK.SignatureInfo?, trx: SolanaSDK.SignatureInfo?) -> SolanaSDK.SignatureInfo? in
-                    guard let t1 = trx?.blockTime else { return mostFirst }
-                    guard let t2 = mostFirst?.blockTime else { return trx }
+                .reduce(nil) { (mostFirst: HistoryStreamSource.Result?, trx: HistoryStreamSource.Result?) -> HistoryStreamSource.Result? in
+                    guard let t1 = trx?.0.blockTime else { return mostFirst }
+                    guard let t2 = mostFirst?.0.blockTime else { return trx }
                     if t1 > t2 { return trx }
                     return mostFirst
                 }
@@ -32,8 +32,8 @@ extension History {
                 .value
         }
 
-        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> {
-            AsyncThrowingStream<SolanaSDK.SignatureInfo, Error> { stream in
+        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<HistoryStreamSource.Result, Error> {
+            AsyncThrowingStream<HistoryStreamSource.Result, Error> { stream in
                 Task {
                     do {
                         for source in sources {

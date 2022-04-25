@@ -194,7 +194,6 @@
 		846993316E60603167DE5520 /* LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991D31FA9B8B77AD4DAD1 /* LockView.swift */; };
 		846993455464139EC88B91F8 /* TokenSelection.Scene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699E7A726FBFDE0ABA8783 /* TokenSelection.Scene.swift */; };
 		84699354E360221ABDFEE6C1 /* History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699B766AD65E9C0A49B0F8 /* History.swift */; };
-		846993573F5F1DD95EE8C9F5 /* History.ProcessingTransactionStreamSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990A3AF244576488C136C /* History.ProcessingTransactionStreamSource.swift */; };
 		84699381FC597DE50CD1D0AA /* Home.BannerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846998BD838DC8068136D236 /* Home.BannerCell.swift */; };
 		846993A488279BF423E70048 /* History.PriceUpdatingOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469907A8017683D66200171 /* History.PriceUpdatingOutput.swift */; };
 		846993C005071DBC7474F46B /* BuyRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846990E0164D14FE11A72F13 /* BuyRoot.swift */; };
@@ -717,7 +716,6 @@
 		8469900B881EF729CE394E29 /* BuyProcessing.InputCryptoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; name = BuyProcessing.InputCryptoView.swift; path = Subview/BuyProcessing.InputCryptoView.swift; sourceTree = "<group>"; };
 		8469907019755990A0585C61 /* KeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		8469907A8017683D66200171 /* History.PriceUpdatingOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.PriceUpdatingOutput.swift; sourceTree = "<group>"; };
-		846990A3AF244576488C136C /* History.ProcessingTransactionStreamSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.ProcessingTransactionStreamSource.swift; sourceTree = "<group>"; };
 		846990E0164D14FE11A72F13 /* BuyRoot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyRoot.swift; sourceTree = "<group>"; };
 		846990F92D4739D72B04E397 /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		8469911222E0E8EAEAA5CC14 /* FeedbackBannerHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedbackBannerHandler.swift; sourceTree = "<group>"; };
@@ -1486,7 +1484,6 @@
 			children = (
 				8469943B14D82696CC20ABD1 /* History.MultipleStreamsSource.swift */,
 				8469988A5ADDB6806E3723F8 /* History.AccountStreamSource.swift */,
-				846990A3AF244576488C136C /* History.ProcessingTransactionStreamSource.swift */,
 				846994A5D6C2F9CFF34E6E4C /* History.SourceStream.swift */,
 				846992DA21E8EDE2B111DB8E /* History.EmptyStreamSource.swift */,
 			);
@@ -3587,7 +3584,6 @@
 				84699CA2430B7AEA8F7D1B77 /* Swift-Concurrency.MD in Sources */,
 				846990C9E076987B58D1FD9F /* History.MultipleStreamsSource.swift in Sources */,
 				8469907CE84DEBEB9F9D8695 /* History.AccountStreamSource.swift in Sources */,
-				846993573F5F1DD95EE8C9F5 /* History.ProcessingTransactionStreamSource.swift in Sources */,
 				846997B26B5F8E03A34EE7B2 /* History.SourceStream.swift in Sources */,
 				84699D49ECCFC66EDA89BD75 /* History.OutputStream.swift in Sources */,
 				84699E70F7A53581B47F3C6B /* History.ProcessingTransactionsOutput.swift in Sources */,

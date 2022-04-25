@@ -36,26 +36,6 @@ extension History {
             PriceUpdatingOutput(),
         ]
 
-        var showItems: Driver<Bool> {
-            Observable.zip(
-                stateObservable.startWith(.loading),
-                dataObservable.startWith([])
-                    .filter { $0 != nil }
-                    .withPrevious()
-            ).map { state, change in
-                if state == .loading || state == .initializing {
-                    return true
-                } else {
-                    let amount = change.1?.reduce(0) { partialResult, wallet in
-                        partialResult + wallet.amount
-                    } ?? 0
-                    return amount > 0
-                }
-            }
-            .distinctUntilChanged { $0 }
-            .asDriver(onErrorJustReturn: true)
-        }
-
         init(
             solanaSDK: SolanaSDK = Resolver.resolve(),
             walletsRepository: WalletsRepository = Resolver.resolve()
@@ -87,7 +67,7 @@ extension History {
                 .map { wallet in
                     AccountStreamSource(
                         account: wallet.pubkey ?? "",
-                        accountSymbol: wallet.token.symbol,
+                        symbol: wallet.token.symbol,
                         transactionRepository: cachedTransactionRepository,
                         transactionParser: cachedTransactionParser
                     )
@@ -104,52 +84,61 @@ extension History {
         }
 
         override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
-            AsyncThrowingStream<[SolanaSDK.SignatureInfo], Error> { stream in
+            AsyncThrowingStream<[HistoryStreamSource.Result], Error> { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
 
+                    var results: [HistoryStreamSource.Result] = []
                     do {
-                        var receivedItem = 0
                         while true {
                             let firstTrx = try await source.first()
                             guard
                                 let firstTrx = firstTrx,
-                                let rawTime = firstTrx.blockTime
+                                let rawTime = firstTrx.0.blockTime
                             else { return }
 
                             // Fetch next 3 days
                             var timeEndFilter = Date(timeIntervalSince1970: TimeInterval(rawTime))
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 3)
 
-                            for try await signatureInfo in source.next(
+                            if Task.isCancelled { return }
+                            for try await result in source.next(
                                 configuration: .init(timestampEnd: timeEndFilter)
                             ) {
+                                if Task.isCancelled { return }
+
+                                let (signatureInfo, _, _) = result
+
                                 // Skip duplicated transaction
                                 if data.contains(where: { $0.signature == signatureInfo.signature }) { continue }
+                                if results
+                                    .contains(where: { $0.0.signature == signatureInfo.signature }) { continue }
 
-                                stream.yield([signatureInfo])
+                                results.append(result)
 
-                                receivedItem += 1
-                                if receivedItem > 15 { return }
+                                if results.count > 15 {
+                                    stream.yield(results)
+                                    return
+                                }
                             }
                         }
                     } catch {
+                        stream.yield(results)
                         stream.finish(throwing: error)
                     }
                 }
             }
             .asObservable()
-            .flatMap { infos in Observable.from(infos) }
-            .observe(on: SceneModel.historyFetchingScheduler)
-            .flatMap { signatureInfo in
+            .flatMap { results in Observable.from(results) }
+            .concatMap { result in
                 Observable.asyncThrowing { () -> [SolanaSDK.ParsedTransaction] in
                     let transactionInfo = try await self.transactionRepository
-                        .getTransaction(signature: signatureInfo.signature)
+                        .getTransaction(signature: result.0.signature)
                     let transaction = try await self.transactionParser.parse(
-                        signatureInfo: signatureInfo,
+                        signatureInfo: result.0,
                         transactionInfo: transactionInfo,
-                        account: nil,
-                        symbol: nil
+                        account: result.1,
+                        symbol: result.2
                     )
 
                     return [transaction]
@@ -161,9 +150,6 @@ extension History {
                 }
             })
         }
-
-        static let historyFetchingScheduler =
-            SerialDispatchQueueScheduler(internalSerialQueueName: "HistoryTransactionFetching")
 
         override func join(_ newItems: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
             var filteredNewData: [SolanaSDK.ParsedTransaction] = []
@@ -179,6 +165,23 @@ extension History {
             var data = newData
             for output in outputs { data = output.process(newData: data) }
             return super.map(newData: data)
+        }
+
+        var showItems: Driver<Bool> {
+            Observable.zip(
+                stateObservable.startWith(.loading),
+                dataObservable.startWith([])
+                    .filter { $0 != nil }
+                    .withPrevious()
+            ).map { state, change in
+                if state == .loading || state == .initializing {
+                    return true
+                } else {
+                    return (change.1?.count ?? 0) > 0
+                }
+            }
+            .distinctUntilChanged { $0 }
+            .asDriver(onErrorJustReturn: true)
         }
     }
 }

@@ -10,16 +10,19 @@ import RxSwift
 import SolanaSwift
 
 protocol HistoryStreamSource {
+    /// The result that contains signatureInfo, account and symbol.
+    typealias Result = (signatureInfo: SolanaSDK.SignatureInfo, account: String, symbol: String)
+
     /// Fetches new transaction signatures sequencely.
     ///
     /// - Parameter configuration: the fetching configuration that contains things like filtering
     /// - Returns: A stream of parsed transactions and the error that can be occurred.
-    func next(configuration: History.FetchingConfiguration) -> AsyncThrowingStream<SolanaSDK.SignatureInfo, Error>
+    func next(configuration: History.FetchingConfiguration) -> AsyncThrowingStream<Result, Error>
 
     /// Fetch the most earliest transaction.
     ///
     /// - Returns: parsed transaction
-    func first() async throws -> SolanaSDK.SignatureInfo?
+    func first() async throws -> Result?
 
     /// Resets the stream.
     func reset()
