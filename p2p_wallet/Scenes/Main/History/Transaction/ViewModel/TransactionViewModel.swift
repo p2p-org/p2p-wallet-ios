@@ -28,8 +28,8 @@ extension History {
                 .mapTo("https://explorer.solana.com/tx/\(transaction.signature ?? "")")
             let model = fromView.viewDidLoad.mapTo(transaction.mapTransaction(pricesService: pricesService))
             let copyTransactionId = fromView.transactionIdClicked
-                .withLatestFrom(model)
-                .do(onNext: { clipboardManager.copyToClipboard($0.transactionId) })
+                .mapTo(transaction.signature ?? "")
+                .do(onNext: { clipboardManager.copyToClipboard($0) })
                 .mapToVoid()
 
             let view = Output.View(
