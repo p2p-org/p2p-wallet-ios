@@ -79,7 +79,7 @@ extension EnterSeedInfo {
             navigationBar.autoPinEdgesToSuperviewEdges(with: .init(only: .top, inset: 14))
             headerView.backgroundColor = .fafafc
             addSubview(headerView)
-            headerView.autoPinEdgesToSuperviewEdges(with: .init(only: .top, inset: 0), excludingEdge: .bottom)
+            headerView.autoPinEdgesToSuperviewEdges(with: .init(), excludingEdge: .bottom)
 
             // Navigation separator
             let separator = UIView.defaultSeparator()
