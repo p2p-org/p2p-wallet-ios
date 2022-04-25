@@ -804,3 +804,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Free by p2p.org" = "Miễn phí bởi p2p.org";
 "After first transaction you will be able to view it here" = "Sau giao dịch đầu tiên, bạn sẽ có thể xem nó ở đây";
 "After first transaction you will\nbe able to view it here" = "Sau giao dịch đầu tiên, bạn sẽ \n có thể xem nó ở đây";
+"Sorry :(" = "Xin lỗi :(";
+"We couldn't upload the history.\nTry again later" = "Chúng tôi không thể tải lịch sử lên. \n Hãy thử lại sau";
+"Sorry" = "Xin lỗi";

@@ -106,13 +106,11 @@ class TabBarVC: BEPagesVC {
 
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
-            .spacer,
             buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
             buttonTabBarItem(image: .tabbarHistory, title: L10n.history, tag: 1),
             buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 2),
             buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
             buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 3),
-            .spacer,
         ])
     }
 
@@ -133,16 +131,14 @@ class TabBarVC: BEPagesVC {
     }
 
     override func moveToPage(_ index: Int) {
-        if currentPage == index { return }
+        guard currentPage != index else { return }
         guard index != 10 else { return helpCenterLauncher.launch() }
-
         super.moveToPage(index)
-
-        guard let item = (tabBar.stackView.arrangedSubviews.first { $0.tag == currentPage }) else { return }
+        guard let item = (tabBar.stackView.arrangedSubviews.first { $0.tag == index }) else { return }
 
         item.subviews.first?.tintColor = .tabbarSelected
         tabBar.stackView.arrangedSubviews
-            .filter { $0.tag != currentPage }
+            .filter { $0.tag != index }
             .forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
 
         setNeedsStatusBarAppearanceUpdate()
