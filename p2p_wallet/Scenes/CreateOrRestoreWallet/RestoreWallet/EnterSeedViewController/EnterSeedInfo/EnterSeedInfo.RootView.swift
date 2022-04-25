@@ -81,13 +81,6 @@ extension EnterSeedInfo {
             addSubview(headerView)
             headerView.autoPinEdgesToSuperviewEdges(with: .init(), excludingEdge: .bottom)
 
-            // Navigation separator
-            let separator = UIView.defaultSeparator()
-            addSubview(separator)
-            separator.autoPinEdge(.top, to: .bottom, of: navigationBar)
-            separator.autoPinEdge(toSuperviewEdge: .leading)
-            separator.autoPinEdge(toSuperviewEdge: .trailing)
-
             addSubview(scrollView)
             scrollView.contentView.addSubview(stackView)
 
