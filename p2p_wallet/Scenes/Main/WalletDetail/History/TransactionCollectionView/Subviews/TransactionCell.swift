@@ -9,7 +9,7 @@ import BECollectionView
 import Foundation
 import UIKit
 
-class TransactionCell: BaseCollectionViewCell {
+class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     override var padding: UIEdgeInsets { .init(x: 16, y: 8) }
 
     // MARK: - Subviews
@@ -22,7 +22,7 @@ class TransactionCell: BaseCollectionViewCell {
     )
 
     private lazy var transactionTypeLabel = UILabel(textSize: 16)
-    private lazy var amountInFiatLabel = UILabel(textSize: 16, weight: .medium, textAlignment: .right)
+    lazy var amountInFiatLabel = UILabel(textSize: 16, weight: .medium, textAlignment: .right)
 
     private lazy var descriptionLabel = UILabel(textSize: 12, textColor: .textSecondary)
     private lazy var amountInTokenLabel = UILabel(textSize: 12, textColor: .textSecondary, textAlignment: .right)
@@ -76,9 +76,9 @@ class TransactionCell: BaseCollectionViewCell {
             amountInTokenLabel.heightAnchor.constraint(equalToConstant: 18),
         ])
     }
-}
 
-extension TransactionCell: BECollectionViewCell {
+    // MARK: - BECollectionViewCell
+
     func setUp(with item: AnyHashable?) {
         guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
 
