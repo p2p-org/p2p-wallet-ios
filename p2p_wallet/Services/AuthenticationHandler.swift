@@ -45,6 +45,13 @@ final class AuthenticationHandler: AuthenticationHandlerType {
             .disposed(by: disposeBag)
 
         observeAppNotifications()
+
+        authenticationStatusSubject
+            .skip(1)
+            .filter { $0 == nil }
+            .map { _ in true }
+            .bind(to: isLockedSubject)
+            .disposed(by: disposeBag)
     }
 
     private func observeAppNotifications() {
@@ -67,7 +74,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
                     return
                 }
                 self.authenticate(presentationStyle: .login())
-                self.isLockedSubject.accept(false)
             })
             .disposed(by: disposeBag)
     }
