@@ -23,6 +23,6 @@ final class IntercomUserAttributesService {
             userAttributes.customAttributes = ["public_address": userAddress]
         }
 
-        Intercom.updateUser(userAttributes)
+        Intercom.updateUser(with: userAttributes)
     }
 }
