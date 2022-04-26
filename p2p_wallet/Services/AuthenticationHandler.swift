@@ -90,7 +90,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
         // accept current if nil
         if current == nil {
             authenticationStatusSubject.accept(nil)
-            isLockedSubject.accept(false)
             return
         }
 
@@ -103,7 +102,6 @@ final class AuthenticationHandler: AuthenticationHandlerType {
         // force a dissmision if not
         else {
             authenticationStatusSubject.accept(nil)
-            isLockedSubject.accept(false)
             return
         }
     }
