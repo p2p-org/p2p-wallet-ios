@@ -49,7 +49,7 @@ final class AuthenticationHandler: AuthenticationHandlerType {
         authenticationStatusSubject
             .skip(1)
             .filter { $0 == nil }
-            .map { _ in true }
+            .map { _ in false }
             .bind(to: isLockedSubject)
             .disposed(by: disposeBag)
     }
