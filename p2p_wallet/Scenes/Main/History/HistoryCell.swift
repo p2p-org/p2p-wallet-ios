@@ -21,5 +21,19 @@ extension History {
             topStackView.insertArrangedSubview(topSpacer, at: 1)
             bottomStackView.insertArrangedSubview(bottomSpacer, at: 1)
         }
+
+        override func setUp(with item: AnyHashable?) {
+            super.setUp(with: item)
+            guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
+
+            switch transaction.value {
+            case _ as SolanaSDK.SwapTransaction:
+                amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "+", with: "")
+                amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "-", with: "")
+                amountInFiatLabel.textColor = .textBlack
+            default:
+                return
+            }
+        }
     }
 }
