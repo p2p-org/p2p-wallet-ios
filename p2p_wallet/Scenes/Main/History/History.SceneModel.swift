@@ -136,9 +136,9 @@ extension History {
                                 let rawTime = firstTrx.0.blockTime
                             else { return }
 
-                            // Fetch next 3 days
+                            // Fetch next 1 days
                             var timeEndFilter = Date(timeIntervalSince1970: TimeInterval(rawTime))
-                            timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 3)
+                            timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 1)
 
                             if Task.isCancelled { return }
                             for try await result in source.next(
