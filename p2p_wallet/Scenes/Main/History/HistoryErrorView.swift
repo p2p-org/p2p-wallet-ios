@@ -17,7 +17,11 @@ extension History {
 
         private let disposeBag = DisposeBag()
 
-        private let imageView = UIImageView(width: 80, height: 80, cornerRadius: 12, image: nil)
+        private let imageView = UIImageView(
+            width: 80,
+            height: 80,
+            image: .transactionsError
+        )
         private let titleLabel = UILabel(
             text: "\(L10n.sorry) :(",
             textSize: 22,
