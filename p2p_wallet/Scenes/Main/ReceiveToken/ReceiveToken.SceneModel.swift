@@ -26,11 +26,11 @@ protocol ReceiveSceneModel: BESceneModel {
     var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
 
     func isRenBtcCreated() -> Bool
-    func acceptReceivingRenBTC() -> Completable
     func switchToken(_ tokenType: ReceiveToken.TokenType)
     func showSelectionNetwork()
     func copyDirectAddress()
     func copyMintAddress()
+    func navigateToBuy()
 }
 
 extension ReceiveToken {
@@ -63,7 +63,6 @@ extension ReceiveToken {
         init(
             solanaPubkey: SolanaSDK.PublicKey,
             solanaTokenWallet: Wallet? = nil,
-            isRenBTCWalletCreated: Bool,
             isOpeningFromToken: Bool = false
         ) {
             let isRenBTC = solanaTokenWallet?.token.isRenBTC ?? false
@@ -82,7 +81,6 @@ extension ReceiveToken {
 
             receiveBitcoinViewModel = ReceiveToken.ReceiveBitcoinViewModel(
                 navigationSubject: navigationSubject,
-                isRenBTCWalletCreated: isRenBTCWalletCreated,
                 hasExplorerButton: hasExplorerButton
             )
 
@@ -147,6 +145,9 @@ extension ReceiveToken {
 
         func switchToken(_ tokenType: ReceiveToken.TokenType) {
             tokenTypeSubject.accept(tokenType)
+            if tokenType == .btc {
+                receiveBitcoinViewModel.acceptConditionAndLoadAddress()
+            }
         }
 
         func showSelectionNetwork() {
@@ -171,26 +172,6 @@ extension ReceiveToken {
             walletsRepository.getWallets().contains(where: \.token.isRenBTC)
         }
 
-        func acceptReceivingRenBTC() -> Completable {
-            handler.hasAssociatedTokenAccountBeenCreated(tokenMint: .renBTCMint)
-                .catch { error in
-                    if error.isEqualTo(SolanaSDK.Error.couldNotRetrieveAccountInfo) {
-                        return .just(false)
-                    }
-                    throw error
-                }
-                .flatMapCompletable { [weak self] isRenBtcCreated in
-                    guard let self = self else { return .error(SolanaSDK.Error.unknown) }
-                    if isRenBtcCreated {
-                        self.receiveBitcoinViewModel.acceptConditionAndLoadAddress()
-                        self.switchToken(.btc)
-                        return .empty()
-                    }
-                    return self.handler.createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
-                        .asCompletable()
-                }
-        }
-
         var navigation: Driver<NavigatableScene?> { navigationSubject.asDriver(onErrorDriveWith: Driver.empty()) }
 
         private func bind() {
@@ -211,6 +192,10 @@ extension ReceiveToken {
 
         private func showCopied() {
             notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
+        }
+
+        func navigateToBuy() {
+            navigationSubject.accept(.buy)
         }
     }
 }
