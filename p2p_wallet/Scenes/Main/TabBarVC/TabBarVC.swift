@@ -16,6 +16,7 @@ protocol TabBarNeededViewController: UIViewController {}
 class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     @Injected private var helpCenterLauncher: HelpCenterLauncher
+    @Injected private var clipboardManager: ClipboardManagerType
     private var tabBarTopConstraint: NSLayoutConstraint!
 
     deinit {
@@ -28,7 +29,7 @@ class TabBarVC: BEPagesVC {
 
         let homeViewModel = Home.ViewModel()
         let homeVC = Home.ViewController(viewModel: homeViewModel)
-
+        let historyVC = History.Scene()
         let sendTokenVC = SendToken.ViewController(
             viewModel: SendToken.ViewModel(
                 walletPubkey: nil,
@@ -51,6 +52,7 @@ class TabBarVC: BEPagesVC {
 
         viewControllers = [
             createNavigationController(rootVC: homeVC),
+            createNavigationController(rootVC: historyVC),
             createNavigationController(rootVC: sendTokenVC),
             createNavigationController(rootVC: settingsVC),
         ]
@@ -104,12 +106,11 @@ class TabBarVC: BEPagesVC {
 
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
-            .spacer,
             buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
-            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 1),
+            buttonTabBarItem(image: .tabbarHistory, title: L10n.history, tag: 1),
+            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 2),
             buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
-            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 2),
-            .spacer,
+            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 3),
         ])
     }
 
@@ -119,37 +120,26 @@ class TabBarVC: BEPagesVC {
         item.imageView.image = image
         item.titleLabel.text = title
         return item
-            .padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
+            .padding(.init(x: 0, y: 16))
             .withTag(tag)
             .onTap(self, action: #selector(switchTab(_:)))
     }
 
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
         let tag = gesture.view!.tag
-
         moveToPage(tag)
     }
 
     override func moveToPage(_ index: Int) {
-        // scroll to top if index is selected
-        if currentPage == index {
-            return
-        }
-
-        guard index != 10 else {
-            return helpCenterLauncher.launch()
-        }
-
+        guard currentPage != index else { return }
+        guard index != 10 else { return helpCenterLauncher.launch() }
         super.moveToPage(index)
+        guard let item = (tabBar.stackView.arrangedSubviews.first { $0.tag == index }) else { return }
 
-        let items = tabBar.stackView.arrangedSubviews[1 ..< tabBar.stackView.arrangedSubviews.count - 1]
-
-        guard index < items.count else { return }
-
-        // change tabs' color
-        items.first { $0.tag == currentPage }?.subviews.first?.tintColor = .tabbarSelected
-
-        items.filter { $0.tag != currentPage }.forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
+        item.subviews.first?.tintColor = .tabbarSelected
+        tabBar.stackView.arrangedSubviews
+            .filter { $0.tag != index }
+            .forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
 
         setNeedsStatusBarAppearanceUpdate()
     }
