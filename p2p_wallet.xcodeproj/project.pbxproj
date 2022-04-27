@@ -55,6 +55,9 @@
 		3B3A8EF827D7B58E0026E0FE /* TapAndHoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EF727D7B58E0026E0FE /* TapAndHoldView.swift */; };
 		3B46C27D27B0A6830036C278 /* SendTokenRelayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B46C27C27B0A6830036C278 /* SendTokenRelayMethod.swift */; };
 		3B478C392817D5CA002FCE4A /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B478C382817D5CA002FCE4A /* Main.swift */; };
+		3B5A2E8228124DE6003D5DBB /* ConfirmReceivingBitcoin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8128124DE6003D5DBB /* ConfirmReceivingBitcoin.swift */; };
+		3B5A2E8428124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8328124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift */; };
+		3B5A2E8628124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8528124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift */; };
 		3B78CB512773067100FB3C4C /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB502773067100FB3C4C /* NotificationsService.swift */; };
 		3B78CB53277306BA00FB3C4C /* InAppNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB52277306BA00FB3C4C /* InAppNotification.swift */; };
 		3B78CB572773147F00FB3C4C /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB562773147F00FB3C4C /* ClipboardManager.swift */; };
@@ -71,6 +74,10 @@
 		3B9C3DE327A7CF040032548A /* Section.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DE127A7CF040032548A /* Section.View.swift */; };
 		3B9C3DE427A7CF040032548A /* Cell.View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9C3DE227A7CF040032548A /* Cell.View.swift */; };
 		3BA4A0D527E31251006AFC01 /* Tokens.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3BA4A0D427E31251006AFC01 /* Tokens.xcassets */; };
+		3BA4F6152812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift */; };
+		3BA4F617281268CA00EB8962 /* RenBTCStatusServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F616281268CA00EB8962 /* RenBTCStatusServiceType.swift */; };
+		3BA4F61A2812696B00EB8962 /* RenBTCStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F6192812696B00EB8962 /* RenBTCStatusService.swift */; };
+		3BA4F61C2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BA4F61B2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift */; };
 		3BAC28B927670178007900E2 /* UIView+Rx+Builders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */; };
 		3BCD00A52795A3F600576190 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3BCD00A42795A3F600576190 /* GoogleService-Info.plist */; };
 		3BCEED5627D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5527D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift */; };
@@ -222,7 +229,6 @@
 		84699C3944366D31B692FBDA /* BuyProcessing.InputFiatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469991A43A0AC4B9161CA0F /* BuyProcessing.InputFiatView.swift */; };
 		84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699AC2656E48F105F10AB1 /* BESuperScene.swift */; };
 		84699D43B0BAEA149C81B17D /* ColumnFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699C929DA7046907362DFE /* ColumnFlowLayout.swift */; };
-		84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */; };
 		84699DA6AF178F0B0837C438 /* HidedWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699CAA56E35B94E120FA70 /* HidedWalletCell.swift */; };
 		84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846995D0006E36B802E2110E /* ReceiveToken.QrCodeImageRender.swift */; };
 		84699E4D8F94698F85066761 /* Authentication.BiometricButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699278391D27DF0EB6406C /* Authentication.BiometricButton.swift */; };
@@ -574,6 +580,9 @@
 		3B3A8EF727D7B58E0026E0FE /* TapAndHoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapAndHoldView.swift; sourceTree = "<group>"; };
 		3B46C27C27B0A6830036C278 /* SendTokenRelayMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRelayMethod.swift; sourceTree = "<group>"; };
 		3B478C382817D5CA002FCE4A /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
+		3B5A2E8128124DE6003D5DBB /* ConfirmReceivingBitcoin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.swift; sourceTree = "<group>"; };
+		3B5A2E8328124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.ViewModel.swift; sourceTree = "<group>"; };
+		3B5A2E8528124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.ViewController.swift; sourceTree = "<group>"; };
 		3B78CB502773067100FB3C4C /* NotificationsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
 		3B78CB52277306BA00FB3C4C /* InAppNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotification.swift; sourceTree = "<group>"; };
 		3B78CB562773147F00FB3C4C /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
@@ -590,6 +599,10 @@
 		3B9C3DE127A7CF040032548A /* Section.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.View.swift; sourceTree = "<group>"; };
 		3B9C3DE227A7CF040032548A /* Cell.View.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cell.View.swift; sourceTree = "<group>"; };
 		3BA4A0D427E31251006AFC01 /* Tokens.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Tokens.xcassets; sourceTree = "<group>"; };
+		3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConfirmReceivingBitcoin.ViewController+TopUp.swift"; sourceTree = "<group>"; };
+		3BA4F616281268CA00EB8962 /* RenBTCStatusServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenBTCStatusServiceType.swift; sourceTree = "<group>"; };
+		3BA4F6192812696B00EB8962 /* RenBTCStatusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenBTCStatusService.swift; sourceTree = "<group>"; };
+		3BA4F61B2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift"; sourceTree = "<group>"; };
 		3BAC28B827670178007900E2 /* UIView+Rx+Builders.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Rx+Builders.swift"; sourceTree = "<group>"; };
 		3BCD00A42795A3F600576190 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3BCEED5527D30A1D00BA9110 /* ProcessTransaction.Status.ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.ProgressView.swift; sourceTree = "<group>"; };
@@ -721,7 +734,6 @@
 		846995D0006E36B802E2110E /* ReceiveToken.QrCodeImageRender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReceiveToken.QrCodeImageRender.swift; sourceTree = "<group>"; };
 		84699603F79402208A4B88C8 /* BuyProcessing.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProcessing.ViewController.swift; sourceTree = "<group>"; };
 		8469964AD773095EEFA52701 /* CALayer+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CALayer+Extensions.swift"; sourceTree = "<group>"; };
-		84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkSelection.BitcoinConfirm.ViewController.swift; sourceTree = "<group>"; };
 		84699696974A7AE7835EE4CE /* BuyPreparing.SceneModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyPreparing.SceneModel.swift; sourceTree = "<group>"; };
 		846996B110978DCB7A6D4A74 /* Swap.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Swap.swift; sourceTree = "<group>"; };
 		846996D7323D5A30EC3AD735 /* VerifySecurityKeys.Question.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.Question.swift; sourceTree = "<group>"; };
@@ -1178,6 +1190,19 @@
 			path = Subviews;
 			sourceTree = "<group>";
 		};
+		3B5A2E8028124DB7003D5DBB /* ConfirmReceivingBitcoin */ = {
+			isa = PBXGroup;
+			children = (
+				3B5A2E8128124DE6003D5DBB /* ConfirmReceivingBitcoin.swift */,
+				3B5A2E8328124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift */,
+				3B5A2E8528124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift */,
+				3BA4F6142812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift */,
+				3BA4F61B2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift */,
+				3BA4F6182812695700EB8962 /* RenBTCStatusService */,
+			);
+			path = ConfirmReceivingBitcoin;
+			sourceTree = "<group>";
+		};
 		3B856FC527B76D1A00973039 /* Confirm */ = {
 			isa = PBXGroup;
 			children = (
@@ -1212,6 +1237,15 @@
 				3B9C3DE227A7CF040032548A /* Cell.View.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		3BA4F6182812695700EB8962 /* RenBTCStatusService */ = {
+			isa = PBXGroup;
+			children = (
+				3BA4F616281268CA00EB8962 /* RenBTCStatusServiceType.swift */,
+				3BA4F6192812696B00EB8962 /* RenBTCStatusService.swift */,
+			);
+			path = RenBTCStatusService;
 			sourceTree = "<group>";
 		};
 		3BCEED5427D30A0F00BA9110 /* Status */ = {
@@ -1491,7 +1525,7 @@
 			isa = PBXGroup;
 			children = (
 				846995A0D2FB66B8BDFAD1B5 /* NetworkSelection.ViewController.swift */,
-				84699663502889D06ED9B528 /* NetworkSelection.BitcoinConfirm.ViewController.swift */,
+				3B5A2E8028124DB7003D5DBB /* ConfirmReceivingBitcoin */,
 			);
 			path = NetworkSelection;
 			sourceTree = "<group>";
@@ -2959,6 +2993,7 @@
 				BCC1F207269E96A1003DD648 /* SolanaSDK.DerivablePath+Extensions.swift in Sources */,
 				BC6342E1268B2C72005723FC /* SolanaSDK.ParsedTransaction.Status+Extensions.swift in Sources */,
 				BC134FA726FD7C6600DB15BF /* CreateWallet.swift in Sources */,
+				3BA4F61A2812696B00EB8962 /* RenBTCStatusService.swift in Sources */,
 				BCE42E0425DFA0B50021540E /* CreateWallet.ViewController.swift in Sources */,
 				BC22ABE12552A4B70071C69F /* DismissMenuAnimator.swift in Sources */,
 				3B3A8EF227D7AECB0026E0FE /* TransactionDetail.NavigationBar.swift in Sources */,
@@ -3036,6 +3071,7 @@
 				BCB286D327508A7E0074E1D5 /* DApp.swift in Sources */,
 				BC1255092653A2E400695A2B /* DerivablePaths.ViewController.swift in Sources */,
 				BCB2870B27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientCell.swift in Sources */,
+				3BA4F61C2812921900EB8962 /* ConfirmReceivingBitcoin.ViewController+CreateRenBTC.swift in Sources */,
 				412DBFDC273D7B81000F514E /* EnterSeed.swift in Sources */,
 				3B87A1532762FCE900F09883 /* SendToken.SelectNetwork.ViewModel.swift in Sources */,
 				BC4B9E9527153EBB005B9ECA /* Settings.Backup.ViewController.swift in Sources */,
@@ -3076,6 +3112,7 @@
 				3B7DE7EC2775B01D00A92429 /* ProcessTransaction.Status.ViewController.swift in Sources */,
 				BC7DD92127327872000F50D0 /* UIView+Builders.swift in Sources */,
 				BC6EE7E2254BD23700FE1025 /* WelcomeViewController.swift in Sources */,
+				3B5A2E8228124DE6003D5DBB /* ConfirmReceivingBitcoin.swift in Sources */,
 				3B1615512769ABB10080DE42 /* OrcaSwapV2.ConfirmSwapping.RootView.swift in Sources */,
 				BC35082F273FFC08009D4441 /* Authentication.PincodeViewController.swift in Sources */,
 				BCB28693274B62920074E1D5 /* FeeService.swift in Sources */,
@@ -3107,6 +3144,7 @@
 				BCE42DE525DF9BDA0021540E /* CreateOrRestoreWallet.ViewModel.swift in Sources */,
 				41461B832772275A004C12D9 /* SwapTokenSettings.SegmentedControl.swift in Sources */,
 				BC38556126AE9CD100BD8BF7 /* ChooseWallet.CollectionsView+Subviews.swift in Sources */,
+				3BA4F617281268CA00EB8962 /* RenBTCStatusServiceType.swift in Sources */,
 				BCE04C6A268D901400CE131A /* ModalTransitionAnimator.swift in Sources */,
 				41EB2E6727B23E76007D5F7F /* HelpCenterLauncher.swift in Sources */,
 				BC85EA68266E1324005006D5 /* ReceiveToken.SceneModel.swift in Sources */,
@@ -3115,6 +3153,7 @@
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
 				41DE53CA2797A29700F24B0B /* ColorfulHorizontalView.swift in Sources */,
 				3B16154A2769A05C0080DE42 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift in Sources */,
+				3BA4F6152812645400EB8962 /* ConfirmReceivingBitcoin.ViewController+TopUp.swift in Sources */,
 				BCE04C68268D901400CE131A /* CustomPresentableViewController.swift in Sources */,
 				3B1681F7278B3E0700838F1B /* AppEventHandler.swift in Sources */,
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
@@ -3360,6 +3399,7 @@
 				8469926908C12A54B0D0850E /* DAppContainer.ViewModel.swift in Sources */,
 				846995ACEC50F650033C707E /* DAppContainer.RootView.swift in Sources */,
 				846995027222B9BE2C4B0698 /* WLCard.swift in Sources */,
+				3B5A2E8428124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift in Sources */,
 				846995A6F31CA183C1D3A133 /* BEScene.swift in Sources */,
 				84699EB808181B89DFF647E9 /* BESceneModel.swift in Sources */,
 				84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */,
@@ -3376,7 +3416,6 @@
 				846993C005071DBC7474F46B /* BuyRoot.swift in Sources */,
 				84699F5842CCABBD8B33DF6E /* BuyRoot.ViewController.swift in Sources */,
 				84699154DB17DE5EB2D0DF08 /* BuyRoot.ViewModel.swift in Sources */,
-				84699D9D35BB1C10A7427A9B /* NetworkSelection.BitcoinConfirm.ViewController.swift in Sources */,
 				84699F599B47C30D251B657D /* ReceiveToken.ViewBuilders.swift in Sources */,
 				84699FAFF6F54DA93EE08CD8 /* ReceiveToken.QrCodeView.swift in Sources */,
 				8469923A8BD54C585185546C /* ReceiveToken.QrCodeCard.swift in Sources */,
@@ -3385,6 +3424,7 @@
 				84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */,
 				846993316E60603167DE5520 /* LockView.swift in Sources */,
 				84699D04271BF0A23550DE5F /* BESuperScene.swift in Sources */,
+				3B5A2E8628124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift in Sources */,
 				84699C160676335B4D6F9607 /* Swap.swift in Sources */,
 				846993134D5452A2084089DC /* SwapServiceWithRelayImpl.swift in Sources */,
 				84699A485A6FC25C5C40FEB1 /* OrcaSwapV2.Helper.swift in Sources */,
