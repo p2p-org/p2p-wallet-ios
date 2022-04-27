@@ -31,7 +31,7 @@ enum WalletActionType {
         case .receive:
             return .buttonReceive
         case .buy:
-            return .buttonBuy
+            return .buttonBuy.withTintColor(.h5887ff)
         case .send:
             return .buttonSend
         case .swap:
