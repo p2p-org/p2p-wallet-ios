@@ -28,6 +28,7 @@ target 'p2p_wallet' do
   pod 'SubviewAttachingTextView'
   pod 'Charts'
   pod "RxAppState"
+  pod "RxGesture"
   pod 'JazziconSwift'
   pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
