@@ -17,7 +17,6 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    private var lockViewController: LockScreenWrapperViewController?
 
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -63,21 +62,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // set rootVC
         let vm = Root.ViewModel()
         let vc = Root.ViewController(viewModel: vm)
-        lockViewController = LockScreenWrapperViewController(vc)
-        window?.rootViewController = lockViewController
+        window?.rootViewController = vc
 
         window?.makeKeyAndVisible()
         return true
-    }
-
-    func applicationWillResignActive(_: UIApplication) {
-        debugPrint("Lock")
-        lockViewController?.isLocked = true
-    }
-
-    func applicationDidBecomeActive(_: UIApplication) {
-        debugPrint("Unlock")
-        lockViewController?.isLocked = false
     }
 
     func application(
