@@ -299,7 +299,7 @@ extension Settings {
                 createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
                     self?.viewModel.savePincode(String(pincode))
                     createPincodeVC?.dismiss(animated: true) {
-                        Resolver.resolve(NotificationsService.self)
+                        Resolver.resolve(NotificationService.self)
                             .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
                     }
                 }
