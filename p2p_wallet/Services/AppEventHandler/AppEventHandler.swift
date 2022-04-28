@@ -18,7 +18,7 @@ final class AppEventHandler {
     // MARK: - Dependencies
 
     private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-    private let notificationsService: NotificationsServiceType = Resolver.resolve()
+    private let notificationsService: NotificationService = Resolver.resolve()
 
     // MARK: - Properties
 

@@ -15,7 +15,7 @@ extension History {
 
         private let solanaSDK: SolanaSDK
         private let walletsRepository: WalletsRepository
-        @Injected private var notificationService: NotificationsService
+        @Injected private var notificationService: NotificationService
 
         let transactionRepository = SolanaTransactionRepository()
         let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)

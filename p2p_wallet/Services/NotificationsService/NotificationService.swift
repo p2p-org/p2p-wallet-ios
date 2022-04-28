@@ -1,18 +1,43 @@
 //
-//  NotificationsService.swift
+//  NotificationService.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 22/12/2021.
 //
 
 import Foundation
+import Resolver
 import UIKit
 
-protocol NotificationsServiceType {
+protocol NotificationService {
+    typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
+
+    func sendRegisteredDeviceToken(_ deviceToken: Data)
     func showInAppNotification(_ notification: InAppNotification)
 }
 
-class NotificationsService: NotificationsServiceType {
+final class NotificationServiceImpl: NotificationService {
+    @Injected private var accountStorage: AccountStorageType
+    @Injected private var notificationRepository: NotificationRepository
+
+    func sendRegisteredDeviceToken(_ deviceToken: Data) {
+        guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+
+        Task {
+            try? await notificationRepository.sendDeviceToken(model: .init(
+                deviceToken: token,
+                clientId: publicKey,
+                deviceInfo: .init(
+                    osName: UIDevice.current.systemName,
+                    osVersion: UIDevice.current.systemVersion,
+                    deviceModel: UIDevice.current.model
+                )
+            ))
+        }
+    }
+
     func showInAppNotification(_ notification: InAppNotification) {
         UIApplication.shared.showToast(message: createTextFromNotification(notification))
     }

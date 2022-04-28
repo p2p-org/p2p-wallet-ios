@@ -18,6 +18,8 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
+    @Injected private var notificationService: NotificationService
+
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
@@ -72,9 +74,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
-        let token = tokenParts.joined()
-        debugPrint("Device Token: \(token)")
+        notificationService.sendRegisteredDeviceToken(deviceToken)
     }
 
     func application(

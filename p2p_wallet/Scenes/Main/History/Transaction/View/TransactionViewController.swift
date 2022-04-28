@@ -10,7 +10,7 @@ import RxCocoa
 
 extension History {
     final class TransactionViewController: WLModalViewController {
-        @Injected private var notificationService: NotificationsServiceType
+        @Injected private var notificationService: NotificationService
 
         private lazy var customView = TransactionView()
 
