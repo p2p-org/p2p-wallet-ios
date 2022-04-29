@@ -20,21 +20,33 @@ final class NotificationServiceImpl: NotificationService {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var notificationRepository: NotificationRepository
 
+    private let deviceTokenKey = "deviceToken"
+
+    init() {
+        guard let deviceToken = UserDefaults.standard.data(forKey: deviceTokenKey) else { return }
+        sendRegisteredDeviceToken(deviceToken)
+    }
+
     func sendRegisteredDeviceToken(_ deviceToken: Data) {
         guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
 
         Task {
-            try? await notificationRepository.sendDeviceToken(model: .init(
-                deviceToken: token,
-                clientId: publicKey,
-                deviceInfo: .init(
-                    osName: UIDevice.current.systemName,
-                    osVersion: UIDevice.current.systemVersion,
-                    deviceModel: UIDevice.current.model
-                )
-            ))
+            do {
+                _ = try await notificationRepository.sendDeviceToken(model: .init(
+                    deviceToken: token,
+                    clientId: publicKey,
+                    deviceInfo: .init(
+                        osName: UIDevice.current.systemName,
+                        osVersion: UIDevice.current.systemVersion,
+                        deviceModel: UIDevice.current.model
+                    )
+                ))
+                UserDefaults.standard.removeObject(forKey: deviceTokenKey)
+            } catch {
+                UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
+            }
         }
     }
 
