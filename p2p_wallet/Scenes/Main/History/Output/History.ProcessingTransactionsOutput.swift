@@ -13,7 +13,6 @@ extension History {
 
         func process(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
             let transactions = repository.getProcessingTransaction()
-                .filter { !$0.isFailure }
                 .sorted(by: { $0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970 })
 
             var data = newData
