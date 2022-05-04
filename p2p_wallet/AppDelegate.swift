@@ -31,9 +31,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func application(_: UIApplication,
-                     didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
-    {
+    func application(
+        _: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
 //        Bundle.swizzleLocalization()
@@ -61,12 +62,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
 
+        notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
+
         // set rootVC
         let vm = Root.ViewModel()
         let vc = Root.ViewController(viewModel: vm)
         window?.rootViewController = vc
-
         window?.makeKeyAndVisible()
+
         return true
     }
 
@@ -74,7 +77,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        notificationService.sendRegisteredDeviceToken(deviceToken)
+        Task.detached(priority: .background) { [unowned self] in
+            await notificationService.sendRegisteredDeviceToken(deviceToken)
+        }
     }
 
     func application(
@@ -82,5 +87,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         debugPrint("Failed to register: \(error)")
+    }
+
+    func application(
+        _: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        notificationService.didReceivePush(userInfo: userInfo)
     }
 }
