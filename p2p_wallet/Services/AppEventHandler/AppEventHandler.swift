@@ -129,6 +129,7 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
                 DispatchQueue.main.async { [weak self] in
                     self?.isLoadingSubject.accept(false)
                 }
+                self?.notificationsService.registerForRemoteNotifications()
             } catch {
                 self?.isLoadingSubject.accept(false)
                 DispatchQueue.main.async { [weak self] in

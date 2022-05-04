@@ -153,5 +153,6 @@ extension Root.ViewModel: AppEventHandlerDelegate {
 
     func userDidLogout() {
         reload()
+        notificationsService.unregisterForRemoteNotifications()
     }
 }
