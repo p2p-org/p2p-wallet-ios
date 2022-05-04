@@ -7,51 +7,121 @@
 
 import Foundation
 import Resolver
+import RxCocoa
+import RxSwift
 import UIKit
 
 protocol NotificationService {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>
 
-    func sendRegisteredDeviceToken(_ deviceToken: Data)
+    func sendRegisteredDeviceToken(_ deviceToken: Data) async
+    func deleteDeviceToken() async
     func showInAppNotification(_ notification: InAppNotification)
+    func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
+    func didReceivePush(userInfo: [AnyHashable: Any])
+    func notificationWasOpened()
+    func unregisterForRemoteNotifications()
+    func registerForRemoteNotifications()
+
+    var showNotification: Observable<NotificationType> { get }
+    var showFromLaunch: Bool { get }
 }
 
-final class NotificationServiceImpl: NotificationService {
+final class NotificationServiceImpl: NSObject, NotificationService {
     @Injected private var accountStorage: AccountStorageType
     @Injected private var notificationRepository: NotificationRepository
 
     private let deviceTokenKey = "deviceToken"
+    private let openAfterPushKey = "openAfterPushKey"
 
-    init() {
+    private let showNotificationRelay = PublishRelay<NotificationType>()
+    var showNotification: Observable<NotificationType> { showNotificationRelay.asObservable() }
+    var showFromLaunch: Bool { UserDefaults.standard.bool(forKey: openAfterPushKey) }
+
+    override init() {
+        super.init()
+
+        if !Defaults.wasFirstAttemptForSendingToken, Defaults.didSetEnableNotifications {
+            goFlowForUnregisteredUserWithToken()
+        }
+
+        UNUserNotificationCenter.current().delegate = self
         guard let deviceToken = UserDefaults.standard.data(forKey: deviceTokenKey) else { return }
-        sendRegisteredDeviceToken(deviceToken)
+
+        Task.detached(priority: .background) { [unowned self] in
+            await sendRegisteredDeviceToken(deviceToken)
+        }
     }
 
-    func sendRegisteredDeviceToken(_ deviceToken: Data) {
-        guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
-        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
-        let token = tokenParts.joined()
+    private func goFlowForUnregisteredUserWithToken() {
+        unregisterForRemoteNotifications()
+        registerForRemoteNotifications()
+    }
 
-        Task {
-            do {
-                _ = try await notificationRepository.sendDeviceToken(model: .init(
-                    deviceToken: token,
-                    clientId: publicKey,
-                    deviceInfo: .init(
-                        osName: UIDevice.current.systemName,
-                        osVersion: UIDevice.current.systemVersion,
-                        deviceModel: UIDevice.current.model
-                    )
-                ))
-                UserDefaults.standard.removeObject(forKey: deviceTokenKey)
-            } catch {
-                UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
-            }
+    func unregisterForRemoteNotifications() {
+        DispatchQueue.main.async {
+            UIApplication.shared.unregisterForRemoteNotifications()
         }
+    }
+
+    func registerForRemoteNotifications() {
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+    }
+
+    func sendRegisteredDeviceToken(_ deviceToken: Data) async {
+        UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
+        Defaults.wasFirstAttemptForSendingToken = true
+        Defaults.lastDeviceToken = deviceToken
+
+        guard let publicKey = accountStorage.account?.publicKey.base58EncodedString else { return }
+        let token = deviceToken.formattedDeviceToken
+
+        do {
+            _ = try await notificationRepository.sendDeviceToken(model: .init(
+                deviceToken: token,
+                clientId: publicKey,
+                deviceInfo: .init(
+                    osName: UIDevice.current.systemName,
+                    osVersion: UIDevice.current.systemVersion,
+                    deviceModel: UIDevice.current.model
+                )
+            ))
+            UserDefaults.standard.removeObject(forKey: deviceTokenKey)
+        } catch {
+            UserDefaults.standard.set(deviceToken, forKey: deviceTokenKey)
+        }
+    }
+
+    func deleteDeviceToken() async {
+        guard
+            let token = Defaults.lastDeviceToken?.formattedDeviceToken,
+            let publicKey = accountStorage.account?.publicKey.base58EncodedString
+        else { return }
+
+        _ = try? await notificationRepository.removeDeviceToken(model: .init(
+            deviceToken: token,
+            clientId: publicKey
+        ))
     }
 
     func showInAppNotification(_ notification: InAppNotification) {
         UIApplication.shared.showToast(message: createTextFromNotification(notification))
+    }
+
+    func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
+        if launchOptions?[.remoteNotification] != nil {
+            UserDefaults.standard.set(true, forKey: openAfterPushKey)
+        }
+    }
+
+    func didReceivePush(userInfo _: [AnyHashable: Any]) {
+        showNotificationRelay.accept(.history)
+    }
+
+    func notificationWasOpened() {
+        UserDefaults.standard.removeObject(forKey: openAfterPushKey)
     }
 
     private func createTextFromNotification(_ notification: InAppNotification) -> String {
@@ -63,6 +133,20 @@ final class NotificationServiceImpl: NotificationService {
         return array.joined(separator: " ")
     }
 }
+
+// MARK: - UNUserNotificationCenterDelegate
+
+extension NotificationServiceImpl: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        willPresent _: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.alert, .sound, .badge])
+    }
+}
+
+// MARK: - Show Toast
 
 private extension UIApplication {
     func showToast(
@@ -114,5 +198,12 @@ private extension UIApplication {
                 }
             }
         }
+    }
+}
+
+private extension Data {
+    var formattedDeviceToken: String {
+        let tokenParts = map { data in String(format: "%02.2hhx", data) }
+        return tokenParts.joined()
     }
 }
