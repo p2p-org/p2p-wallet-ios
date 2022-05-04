@@ -23,6 +23,7 @@
 
 /* Begin PBXBuildFile section */
 		2C2645AA280707950058E7F6 /* History.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2645A9280707950058E7F6 /* History.Cell.swift */; };
+		2C2E498D2822804A00FB7655 /* NotificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2E498C2822804A00FB7655 /* NotificationType.swift */; };
 		2C591E42280D440E0044ABB0 /* TransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */; };
 		2C591E43280D440E0044ABB0 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E3F280D440E0044ABB0 /* ViewModel.swift */; };
 		2C591E44280D440E0044ABB0 /* TransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E41280D440E0044ABB0 /* TransactionViewController.swift */; };
@@ -588,6 +589,7 @@
 
 /* Begin PBXFileReference section */
 		2C2645A9280707950058E7F6 /* History.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.Cell.swift; sourceTree = "<group>"; };
+		2C2E498C2822804A00FB7655 /* NotificationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationType.swift; sourceTree = "<group>"; };
 		2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionViewModel.swift; sourceTree = "<group>"; };
 		2C591E3F280D440E0044ABB0 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		2C591E41280D440E0044ABB0 /* TransactionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionViewController.swift; sourceTree = "<group>"; };
@@ -1218,6 +1220,7 @@
 			isa = PBXGroup;
 			children = (
 				3B78CB502773067100FB3C4C /* NotificationService.swift */,
+				2C2E498C2822804A00FB7655 /* NotificationType.swift */,
 				2CCDD681281BF12600AB7A82 /* Repository */,
 			);
 			path = NotificationsService;
@@ -3269,6 +3272,7 @@
 				BC65DFFA261D6D3F00E436C7 /* SwapTransactionImageView.swift in Sources */,
 				BC38555926AE971400BD8BF7 /* ChooseWallet.swift in Sources */,
 				BC65DFF4261D6AD400E436C7 /* TransactionImageView.swift in Sources */,
+				2C2E498D2822804A00FB7655 /* NotificationType.swift in Sources */,
 				BCB286DD2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.ViewController.swift in Sources */,
 				41EA3B092777389000832109 /* SwapTokenSettings.FeesView.swift in Sources */,
 				BCB286F92754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift in Sources */,

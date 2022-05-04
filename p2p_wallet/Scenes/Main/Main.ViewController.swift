@@ -24,6 +24,8 @@ extension Main {
         private lazy var blurEffectView: UIView = LockView()
         private var localAuthVC: Authentication.ViewController?
 
+        private lazy var tabBar = TabBarVC()
+
         // MARK: - Initializer
 
         init(viewModel: MainViewModelType) {
@@ -42,18 +44,29 @@ extension Main {
 
         override func setUp() {
             super.setUp()
-            add(child: TabBarVC())
+            add(child: tabBar)
             view.addSubview(blurEffectView)
             blurEffectView.autoPinEdgesToSuperviewEdges()
         }
 
         override func bind() {
             super.bind()
+
+            rx.viewWillAppear
+                .take(1)
+                .mapToVoid()
+                .bind(to: viewModel.viewDidLoad)
+                .disposed(by: disposeBag)
+
             // authentication status
             viewModel.authenticationStatusDriver
                 .drive(onNext: { [weak self] in self?.handleAuthenticationStatus($0) })
                 .disposed(by: disposeBag)
-
+            viewModel.moveToHistory
+                .drive(onNext: { [unowned self] in
+                    tabBar.moveToItem(.history)
+                })
+                .disposed(by: disposeBag)
             // locking status
             viewModel.isLockedDriver
                 .drive(onNext: { [weak self] isLocked in
