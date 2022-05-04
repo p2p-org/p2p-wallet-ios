@@ -24,5 +24,11 @@ extension Endpoint {
         ]
     }
 
-    var baseURL: String { "http://35.234.120.240:9090/" }
+    var baseURL: String {
+        #if PRODUCTION
+            return "https://push-service.wallet.p2p.org/"
+        #else
+            return "http://35.234.120.240:9090/"
+        #endif
+    }
 }
