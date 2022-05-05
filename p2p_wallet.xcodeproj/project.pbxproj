@@ -222,6 +222,7 @@
 		8469960A84807166759A1130 /* History.PriceRefreshTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699149045AA20A8BA529DB /* History.PriceRefreshTrigger.swift */; };
 		846996465818387C8B28FC1F /* ReceiveToken.HelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699A1D9765DC3DFB275A4E /* ReceiveToken.HelpViewController.swift */; };
 		846996AAD0560194436016E0 /* CreateWallet.ExplanationVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469955789FEB4DC7C8A9697 /* CreateWallet.ExplanationVC.swift */; };
+		846996D71A625D3D4EA6320B /* Task+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699FCA81D94DD25E1DA16B /* Task+Extensions.swift */; };
 		84699760FDC373E6F7B6208F /* Home.HeaderScrollDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699E40AD7E88D393DF2EF9 /* Home.HeaderScrollDelegate.swift */; };
 		846997A12C4F207FC2F8C0F6 /* History.ProcessingTransactionRefreshTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469956A880070F4005F7C32 /* History.ProcessingTransactionRefreshTrigger.swift */; };
 		846997B26B5F8E03A34EE7B2 /* History.SourceStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846994A5D6C2F9CFF34E6E4C /* History.SourceStream.swift */; };
@@ -821,6 +822,7 @@
 		84699E7A726FBFDE0ABA8783 /* TokenSelection.Scene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TokenSelection.Scene.swift; path = TokenSelection/TokenSelection.Scene.swift; sourceTree = "<group>"; };
 		84699F6B05B92BB60E73037B /* Banner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Banner.swift; sourceTree = "<group>"; };
 		84699F9FD88FC765CD82349A /* MoonpayBuyProcessing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MoonpayBuyProcessing.swift; sourceTree = "<group>"; };
+		84699FCA81D94DD25E1DA16B /* Task+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Task+Extensions.swift"; sourceTree = "<group>"; };
 		84699FF3E0F973EDC052ED23 /* BuyProcessing.WidgetViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuyProcessing.WidgetViewController.swift; sourceTree = "<group>"; };
 		86A90D13273D306400D180EF /* VerifySecurityKeys.RootView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.RootView.swift; sourceTree = "<group>"; };
 		86A90D14273D306400D180EF /* VerifySecurityKeys.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.ViewController.swift; sourceTree = "<group>"; };
@@ -2004,6 +2006,7 @@
 				8469964AD773095EEFA52701 /* CALayer+Extensions.swift */,
 				3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */,
 				846999677D69EBB5ABC0B240 /* RxSwift+Concurrency.swift */,
+				84699FCA81D94DD25E1DA16B /* Task+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -3637,6 +3640,7 @@
 				846997A12C4F207FC2F8C0F6 /* History.ProcessingTransactionRefreshTrigger.swift in Sources */,
 				8469960A84807166759A1130 /* History.PriceRefreshTrigger.swift in Sources */,
 				84699215B37F1283D1984812 /* RxSwift+Concurrency.swift in Sources */,
+				846996D71A625D3D4EA6320B /* Task+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

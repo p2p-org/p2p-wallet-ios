@@ -141,11 +141,10 @@ extension History {
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 1)
 
                             if Task.isCancelled { return }
-                            for try await result in source.next(
-                                configuration: .init(timestampEnd: timeEndFilter)
-                            ) {
-                                if Task.isCancelled { return }
-
+                            while
+                                let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter)),
+                                Task.isNotCancelled
+                            {
                                 let (signatureInfo, _, _) = result
 
                                 // Skip duplicated transaction

@@ -13,11 +13,17 @@ protocol HistoryStreamSource {
     /// The result that contains signatureInfo, account and symbol.
     typealias Result = (signatureInfo: SolanaSDK.SignatureInfo, account: String, symbol: String)
 
-    /// Fetches new transaction signatures sequencely.
+    /// Fetches next single transaction that satisfies the configuration.
     ///
     /// - Parameter configuration: the fetching configuration that contains things like filtering
     /// - Returns: A stream of parsed transactions and the error that can be occurred.
-    func next(configuration: History.FetchingConfiguration) -> AsyncThrowingStream<Result, Error>
+    func next(configuration: History.FetchingConfiguration) async throws -> Result?
+
+    /// Fetches next sequence of transactions signatures that satisfies the configuration.
+    ///
+    /// - Parameter configuration: the fetching configuration that contains things like filtering
+    /// - Returns: A stream of parsed transactions and the error that can be occurred.
+    func nextItems(configuration: History.FetchingConfiguration) async throws -> [Result]
 
     /// Fetch the most earliest transaction.
     ///
@@ -25,7 +31,19 @@ protocol HistoryStreamSource {
     func first() async throws -> Result?
 
     /// Resets the stream.
-    func reset()
+    func reset() async
+}
+
+extension HistoryStreamSource {
+    func nextItems(configuration: History.FetchingConfiguration) async throws -> [Result] {
+        var sequence: [Result] = []
+
+        while let item = try await next(configuration: configuration), Task.isNotCancelled {
+            sequence.append(item)
+        }
+
+        return sequence
+    }
 }
 
 extension History {
