@@ -111,7 +111,7 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPri
     if let solPrice = solPrice {
         amount *= solPrice
         amountString = "~\(Defaults.fiat.symbol)" + amount
-            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true)
+            .toString(maximumFractionDigits: 2)
     }
 
     let attrString = NSMutableAttributedString()

@@ -174,7 +174,7 @@ extension SendToken.ChooseTokenAndAmount {
                         }
                         equityValueSymbol = wallet.token.symbol
                     }
-                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
+                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 2)
                 }
                 .asDriver(onErrorJustReturn: nil)
                 .drive(equityValueLabel.rx.text)
@@ -213,7 +213,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .map { [weak self] wallet, mode -> String? in
                     guard let wallet = wallet,
                           let amount = self?.viewModel.calculateAvailableAmount() else { return nil }
-                    var string = amount.toString(maximumFractionDigits: 9)
+                    var string = amount.toString(maximumFractionDigits: 2)
                     string += " "
                     if mode == .fiat {
                         string += Defaults.fiat.code
