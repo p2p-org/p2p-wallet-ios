@@ -214,15 +214,16 @@ extension OrcaSwapV2 {
 //                .drive(equityValueLabel.rx.text)
 //                .disposed(by: disposeBag)
 
-            amountTextField.rx.text
+            amountTextField.rx.controlEvent(.editingChanged)
                 .filter { [weak self] _ in self?.amountTextField.isFirstResponder == true }
-                .distinctUntilChanged()
-                .map { $0?.double }
-                .subscribe(onNext: { [weak self] double in
-                    if self?.type == .source {
-                        self?.viewModel.enterInputAmount(double)
-                    } else if self?.type == .destination {
-                        self?.viewModel.enterEstimatedAmount(double)
+                .subscribe(onNext: { [weak self] _ in
+                    guard let self = self else { return }
+                    let amount = self.amountTextField.text?.double
+
+                    if self.type == .source {
+                        self.viewModel.enterInputAmount(amount)
+                    } else if self.type == .destination {
+                        self.viewModel.enterEstimatedAmount(amount)
                     }
                 })
                 .disposed(by: disposeBag)

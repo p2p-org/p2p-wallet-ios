@@ -15,6 +15,7 @@ PODS:
     - Charts/Core (= 4.0.2)
   - Charts/Core (4.0.2):
     - SwiftAlgorithms (~> 1.0)
+  - CocoaDebug (1.7.2)
   - CryptoSwift (1.4.3)
   - Down (0.11.0)
   - FeeRelayerSwift (2.2.7):
@@ -149,6 +150,9 @@ PODS:
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
+  - RxGesture (4.0.4):
+    - RxCocoa (~> 6.0)
+    - RxSwift (~> 6.0)
   - RxRelay (6.5.0):
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
@@ -178,6 +182,7 @@ DEPENDENCIES:
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
+  - CocoaDebug
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
@@ -195,6 +200,7 @@ DEPENDENCIES:
   - Resolver
   - RxAppState
   - RxCocoa (= 6.5.0)
+  - RxGesture
   - RxSwift (= 6.5.0)
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
@@ -212,6 +218,7 @@ SPEC REPOS:
     - Amplitude
     - BufferLayoutSwift
     - Charts
+    - CocoaDebug
     - CryptoSwift
     - Firebase
     - FirebaseAnalytics
@@ -236,6 +243,7 @@ SPEC REPOS:
     - RxAlamofire
     - RxAppState
     - RxCocoa
+    - RxGesture
     - RxRelay
     - RxSwift
     - secp256k1.swift
@@ -287,6 +295,7 @@ SPEC CHECKSUMS:
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   BufferLayoutSwift: 94e01c016df92afb017b2f7d4bc434f9915a275a
   Charts: cfa4e911e6dc289582c2fe011a0e87c03d96727f
+  CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   CryptoSwift: a0799ee936271bd2253a006f1e4523df21845000
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 82735496fb274d698cd3eadd75c44e18be8c5b39
@@ -317,6 +326,7 @@ SPEC CHECKSUMS:
   RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
@@ -332,6 +342,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 56ca8f01ea66b1831b964a9efea6dae45be96be7
+PODFILE CHECKSUM: 61767e8d6ccea4db2162a17d5c3ce131c5a8998d
 
 COCOAPODS: 1.11.3

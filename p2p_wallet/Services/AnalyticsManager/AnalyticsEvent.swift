@@ -8,7 +8,7 @@
 import Foundation
 
 enum AnalyticsEvent: MirrorableEnum {
-    // MARK: Onboarding
+    // MARK: - Onboarding
 
     /// Event 32: The user sees the splash screen
     case splashViewed
@@ -19,7 +19,7 @@ enum AnalyticsEvent: MirrorableEnum {
     /// Event 34: The user presses the "I already have a wallet" button
     case splashRestoring
 
-    // MARK: Create wallet
+    // MARK: - Create wallet
 
     case createWalletOpen
     case createSeedInvoked

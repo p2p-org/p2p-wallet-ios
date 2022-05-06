@@ -69,7 +69,7 @@ extension Settings {
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
         @Injected private var localizationManager: LocalizationManagerType
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected var notificationsService: NotificationsServiceType
+        @Injected var notificationsService: NotificationService
         @Injected private var pricesService: PricesServiceType
         @Injected private var renVMService: RenVMLockAndMintServiceType
         @Injected private var imageSaver: ImageSaverType
