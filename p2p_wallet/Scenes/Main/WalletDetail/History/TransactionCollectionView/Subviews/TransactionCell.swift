@@ -7,60 +7,80 @@
 
 import BECollectionView
 import Foundation
+import UIKit
 
-class TransactionCell: BaseCollectionViewCell {
-    override var padding: UIEdgeInsets { .init(all: 20) }
+class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
+    override var padding: UIEdgeInsets { .init(x: 16, y: 8) }
 
     // MARK: - Subviews
 
-    private lazy var imageView = TransactionImageView(size: 45, backgroundColor: .grayPanel, cornerRadius: 12)
-    private lazy var transactionTypeLabel = UILabel(textSize: 17, weight: .semibold)
-    private lazy var amountInFiatLabel = UILabel(textSize: 15, weight: .semibold, textAlignment: .right)
-    private lazy var transactionStatusIndicator = UIImageView(
-        width: 20,
-        height: 20,
-        image: .transactionIndicatorPending
+    private lazy var imageView = TransactionImageView(
+        size: 48,
+        backgroundColor: .grayPanel,
+        cornerRadius: 16,
+        miniIconsSize: 29
     )
-    private lazy var descriptionLabel = UILabel(textSize: 15, weight: .medium, textColor: .textSecondary)
-    private lazy var amountInTokenLabel = UILabel(
-        textSize: 15,
-        weight: .medium,
-        textColor: .textSecondary,
-        textAlignment: .right
+
+    private lazy var transactionTypeLabel = UILabel(textSize: 16)
+    lazy var amountInFiatLabel = UILabel(textSize: 16, weight: .medium, textAlignment: .right)
+
+    private lazy var descriptionLabel = UILabel(textSize: 12, textColor: .textSecondary)
+    private lazy var amountInTokenLabel = UILabel(textSize: 12, textColor: .textSecondary, textAlignment: .right)
+
+    lazy var topStackView = UIStackView(
+        axis: .horizontal,
+        spacing: 8,
+        alignment: .center,
+        arrangedSubviews: [transactionTypeLabel, amountInFiatLabel]
     )
-    private lazy var swapTransactionImageView = SwapTransactionImageView(height: 18)
+    lazy var bottomStackView = UIStackView(
+        axis: .horizontal,
+        spacing: 8,
+        alignment: .center,
+        arrangedSubviews: [descriptionLabel, amountInTokenLabel]
+    )
 
     override func commonInit() {
         super.commonInit()
 
         stackView.axis = .horizontal
-        stackView.spacing = 16
+        stackView.spacing = 12
         stackView.alignment = .center
+        imageView.layer.cornerRadius = 12
 
         stackView.addArrangedSubviews {
             imageView
-            UIStackView(axis: .vertical, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    transactionTypeLabel, amountInFiatLabel, BEStackViewSpacing(5), transactionStatusIndicator,
-                ]),
-                UIStackView(axis: .horizontal, spacing: 8, alignment: .fill, distribution: .fill, arrangedSubviews: [
-                    descriptionLabel, swapTransactionImageView, amountInTokenLabel,
-                ]),
+            UIStackView(axis: .vertical, spacing: 6, alignment: .fill, arrangedSubviews: [
+                topStackView,
+                bottomStackView,
             ])
         }
 
-        let separator = UIView.defaultSeparator()
-        contentView.addSubview(separator)
-        separator.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(all: 20).modifying(dBottom: -20), excludingEdge: .top)
-
-        swapTransactionImageView.isHidden = true
+        setupSkeleton()
     }
-}
 
-extension TransactionCell: BECollectionViewCell {
+    private func setupSkeleton() {
+        transactionTypeLabel.layer.cornerRadius = 12
+        amountInFiatLabel.layer.cornerRadius = 12
+        descriptionLabel.layer.cornerRadius = 12
+        amountInTokenLabel.layer.cornerRadius = 12
+        transactionTypeLabel.text = "               "
+        amountInFiatLabel.text = "                           "
+        descriptionLabel.text = "                        "
+        amountInTokenLabel.text = "                    "
+
+        NSLayoutConstraint.activate([
+            transactionTypeLabel.heightAnchor.constraint(equalToConstant: 19),
+            amountInFiatLabel.heightAnchor.constraint(equalToConstant: 16),
+            descriptionLabel.heightAnchor.constraint(equalToConstant: 18),
+            amountInTokenLabel.heightAnchor.constraint(equalToConstant: 18),
+        ])
+    }
+
+    // MARK: - BECollectionViewCell
+
     func setUp(with item: AnyHashable?) {
-        guard let transaction = item as? SolanaSDK.ParsedTransaction
-        else { return }
+        guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
 
         // clear
         descriptionLabel.text = nil
@@ -92,7 +112,6 @@ extension TransactionCell: BECollectionViewCell {
             default:
                 break
             }
-
         case let transaction as SolanaSDK.SwapTransaction:
             if let source = transaction.source,
                let destination = transaction.destination
@@ -108,7 +127,27 @@ extension TransactionCell: BECollectionViewCell {
         }
 
         // set up icon
-        imageView.setUp(transaction: transaction)
+        switch transaction.value {
+        case let transaction as SolanaSDK.SwapTransaction:
+            imageView.setUp(imageType: .fromOneToOne(
+                from: transaction.source?.token,
+                to: transaction.destination?.token
+            ))
+        default:
+            imageView.setUp(imageType: .oneImage(image: transaction.icon))
+        }
+
+        // set up status icon
+        var statusImage: UIImage?
+        switch transaction.status {
+        case .requesting, .processing:
+            statusImage = .transactionIndicatorPending
+        case .error:
+            statusImage = .transactionIndicatorError
+        default:
+            break
+        }
+        imageView.setUp(statusImage: statusImage)
 
         // amount in fiat
         amountInFiatLabel.text = nil
@@ -139,19 +178,6 @@ extension TransactionCell: BECollectionViewCell {
             }
         } else if let blockhash = transaction.blockhash {
             amountInTokenLabel.text = "#" + blockhash.prefix(4) + "..." + blockhash.suffix(4)
-        }
-
-        // status
-        transactionStatusIndicator.isHidden = true
-        switch transaction.status {
-        case .requesting, .processing:
-            transactionStatusIndicator.isHidden = false
-            transactionStatusIndicator.image = .transactionIndicatorPending
-        case .error:
-            transactionStatusIndicator.isHidden = false
-            transactionStatusIndicator.image = .transactionIndicatorError
-        default:
-            break
         }
     }
 }

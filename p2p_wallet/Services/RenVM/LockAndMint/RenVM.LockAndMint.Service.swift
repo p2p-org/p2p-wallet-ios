@@ -15,14 +15,13 @@ import RxSwift
 protocol RenVMLockAndMintServiceType {
     var isLoadingDriver: Driver<Bool> { get }
     var errorDriver: Driver<String?> { get }
-    var conditionAcceptedDriver: Driver<Bool> { get }
     var addressDriver: Driver<String?> { get }
     var minimumTransactionAmountDriver: Driver<Loadable<Double>> { get }
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
 
     func reload()
     func reloadMinimumTransactionAmount()
-    func acceptConditionAndLoadAddress()
+    func loadSession()
     func expireCurrentSession()
     func getSessionEndDate() -> Date?
     func getCurrentAddress() -> String?
@@ -44,7 +43,7 @@ extension RenVM.LockAndMint {
         private let solanaClient: RenVMSolanaAPIClientType
         private let account: SolanaSDK.Account
         private let sessionStorage: RenVMLockAndMintSessionStorageType
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
 
         // MARK: - Properties
 
@@ -62,7 +61,6 @@ extension RenVM.LockAndMint {
         private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let errorSubject = BehaviorRelay<String?>(value: nil)
         private let addressSubject = BehaviorRelay<String?>(value: nil)
-        private let conditionAcceptedSubject = BehaviorRelay<Bool>(value: false)
         private let minimumTransactionAmountSubject: LoadableRelay<Double>
         private var processingTxs = [String]()
 
@@ -93,7 +91,6 @@ extension RenVM.LockAndMint {
             // clear old values
             isLoadingSubject.accept(false)
             errorSubject.accept(nil)
-            conditionAcceptedSubject.accept(false)
             addressSubject.accept(nil)
             loadingDisposable?.dispose()
             observingTxStreamDisposable?.dispose()
@@ -103,7 +100,7 @@ extension RenVM.LockAndMint {
                 if Date() >= session.endAt {
                     expireCurrentSession()
                 } else {
-                    acceptConditionAndLoadAddress()
+                    loadSession()
                 }
             }
         }
@@ -112,8 +109,7 @@ extension RenVM.LockAndMint {
             minimumTransactionAmountSubject.reload()
         }
 
-        func acceptConditionAndLoadAddress() {
-            conditionAcceptedSubject.accept(true)
+        func loadSession() {
             loadSession(savedSession: sessionStorage.loadSession())
         }
 
@@ -377,10 +373,6 @@ extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
 
     var errorDriver: Driver<String?> {
         errorSubject.asDriver()
-    }
-
-    var conditionAcceptedDriver: Driver<Bool> {
-        conditionAcceptedSubject.asDriver()
     }
 
     var addressDriver: Driver<String?> {
