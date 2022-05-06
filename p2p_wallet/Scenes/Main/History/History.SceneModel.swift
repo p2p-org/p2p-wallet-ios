@@ -171,16 +171,34 @@ extension History {
             .flatMap { results in Observable.from(results) }
             .concatMap { result in
                 Observable.asyncThrowing { () -> [SolanaSDK.ParsedTransaction] in
-                    let transactionInfo = try await self.transactionRepository
-                        .getTransaction(signature: result.0.signature)
-                    let transaction = try await self.transactionParser.parse(
-                        signatureInfo: result.0,
-                        transactionInfo: transactionInfo,
-                        account: result.1,
-                        symbol: result.2
-                    )
+                    do {
+                        let transactionInfo = try await self.transactionRepository
+                            .getTransaction(signature: result.0.signature)
+                        let transaction = try await self.transactionParser.parse(
+                            signatureInfo: result.0,
+                            transactionInfo: transactionInfo,
+                            account: result.1,
+                            symbol: result.2
+                        )
+                        return [transaction]
+                    } catch {
+                        var blockTime: Date?
+                        if let time = result.0.blockTime {
+                            blockTime = Date(timeIntervalSince1970: TimeInterval(time))
+                        }
 
-                    return [transaction]
+                        let trx = SolanaSDK.ParsedTransaction(
+                            status: .confirmed,
+                            signature: result.0.signature,
+                            value: nil,
+                            slot: result.0.slot,
+                            blockTime: blockTime,
+                            fee: nil,
+                            blockhash: nil
+                        )
+
+                        return [trx]
+                    }
                 }
             }
             .do(onError: { [weak self] error in
