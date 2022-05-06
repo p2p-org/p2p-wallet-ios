@@ -38,7 +38,7 @@ extension ReceiveToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var imageSaver: ImageSaverType
-        @Injected var notificationsService: NotificationsServiceType
+        @Injected var notificationsService: NotificationService
         private let navigationSubject: PublishRelay<NavigatableScene?>
 
         // MARK: - Subjects

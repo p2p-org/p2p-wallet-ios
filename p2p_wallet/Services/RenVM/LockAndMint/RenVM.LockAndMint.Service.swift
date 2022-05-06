@@ -43,7 +43,7 @@ extension RenVM.LockAndMint {
         private let solanaClient: RenVMSolanaAPIClientType
         private let account: SolanaSDK.Account
         private let sessionStorage: RenVMLockAndMintSessionStorageType
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
 
         // MARK: - Properties
 

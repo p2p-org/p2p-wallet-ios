@@ -18,7 +18,7 @@ extension OrcaSwapV2 {
         @Injected var feeService: FeeServiceType
         @Injected var swapService: Swap.Service
         @Injected var walletsRepository: WalletsRepository
-        @Injected var notificationsService: NotificationsServiceType
+        @Injected var notificationsService: NotificationService
         @Injected var pricesService: PricesServiceType
 
         // MARK: - Properties

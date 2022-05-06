@@ -8,6 +8,7 @@
 import Action
 import BECollectionView
 @_exported import BEPureLayout
+import CocoaDebug
 import Firebase
 @_exported import Resolver
 @_exported import SolanaSwift
@@ -17,6 +18,8 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+
+    @Injected private var notificationService: NotificationService
 
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -29,9 +32,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func application(_: UIApplication,
-                     didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
-    {
+    func application(
+        _: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
 //        Bundle.swizzleLocalization()
@@ -59,12 +63,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
 
+        notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
+
         // set rootVC
         let vm = Root.ViewModel()
         let vc = Root.ViewController(viewModel: vm)
         window?.rootViewController = vc
-
         window?.makeKeyAndVisible()
+        CocoaDebugSettings.shared.enableLogMonitoring = true
+
         return true
     }
 
@@ -72,9 +79,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
-        let token = tokenParts.joined()
-        debugPrint("Device Token: \(token)")
+        Task.detached(priority: .background) { [unowned self] in
+            await notificationService.sendRegisteredDeviceToken(deviceToken)
+        }
     }
 
     func application(
@@ -82,5 +89,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         debugPrint("Failed to register: \(error)")
+    }
+
+    func application(
+        _: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        notificationService.didReceivePush(userInfo: userInfo)
     }
 }

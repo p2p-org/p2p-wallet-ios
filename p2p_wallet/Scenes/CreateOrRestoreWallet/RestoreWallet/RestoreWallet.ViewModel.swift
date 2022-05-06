@@ -30,7 +30,7 @@ extension RestoreWallet {
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var nameService: NameServiceType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
 
         // MARK: - Properties
 
