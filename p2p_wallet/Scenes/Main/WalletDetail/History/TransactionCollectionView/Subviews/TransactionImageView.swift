@@ -57,14 +57,14 @@ final class TransactionImageView: BEView {
         addSubview(basicIconImageView)
         basicIconImageView.autoCenterInSuperview()
 
-        addSubview(statusIconImageView)
-        statusIconImageView.autoPinToBottomRightCornerOfSuperview(xInset: -2, yInset: 0)
-
         addSubview(fromTokenImageView)
         fromTokenImageView.autoPinToTopLeftCornerOfSuperview()
 
         addSubview(toTokenImageView)
         toTokenImageView.autoPinToBottomRightCornerOfSuperview()
+
+        addSubview(statusIconImageView)
+        statusIconImageView.autoPinToBottomRightCornerOfSuperview(xInset: -2, yInset: 0)
 
         fromTokenImageView.alpha = 0
         toTokenImageView.alpha = 0
