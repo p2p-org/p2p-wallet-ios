@@ -206,22 +206,5 @@ extension History {
             for output in outputs { data = output.process(newData: data) }
             return super.map(newData: data)
         }
-
-        var showItems: Driver<Bool> {
-            Observable.zip(
-                stateObservable.startWith(.loading),
-                dataObservable.startWith([])
-                    .filter { $0 != nil }
-                    .withPrevious()
-            ).map { state, change in
-                if state == .loading || state == .initializing {
-                    return true
-                } else {
-                    return (change.1?.count ?? 0) > 0
-                }
-            }
-            .distinctUntilChanged { $0 }
-            .asDriver(onErrorJustReturn: true)
-        }
     }
 }
