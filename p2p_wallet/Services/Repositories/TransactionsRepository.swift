@@ -35,6 +35,9 @@ extension SolanaSDK: TransactionsRepository {
                 // parse
                 return Single.zip(try activities.map { [weak self] activity in
                     guard let self = self else { throw Error.unknown }
+                    let time = activity
+                        .blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(activity.blockTime!)) : nil
+
                     return self.getTransaction(
                         account: account,
                         accountSymbol: accountSymbol,
@@ -52,7 +55,15 @@ extension SolanaSDK: TransactionsRepository {
                                 fee: $0.fee,
                                 blockhash: $0.blockhash
                             )
-                        }
+                        }.catchAndReturn(.init(
+                            status: .confirmed,
+                            signature: activity.signature,
+                            value: nil,
+                            slot: activity.slot,
+                            blockTime: time,
+                            fee: nil,
+                            blockhash: nil
+                        ))
                 })
             }
             .do(onSuccess: { transactions in
