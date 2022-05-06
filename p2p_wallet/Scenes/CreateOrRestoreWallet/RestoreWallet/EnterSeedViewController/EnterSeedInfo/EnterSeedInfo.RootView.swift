@@ -73,12 +73,16 @@ extension EnterSeedInfo {
             let navigationBar = NavigationBar(doneHandler: { [weak self] in
                 self?.viewModel.done()
             })
+            let headerView = UIView()
+            headerView.addSubview(navigationBar)
+            headerView.frame = navigationBar.frame
+            navigationBar.autoPinEdgesToSuperviewEdges(with: .init(only: .top, inset: 14))
+            headerView.backgroundColor = .fafafc
+            addSubview(headerView)
+            headerView.autoPinEdgesToSuperviewEdges(with: .init(), excludingEdge: .bottom)
 
-            addSubview(navigationBar)
             addSubview(scrollView)
             scrollView.contentView.addSubview(stackView)
-
-            navigationBar.autoPinEdgesToSuperviewEdges(with: .init(only: .top, inset: 14), excludingEdge: .bottom)
 
             scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 24)
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
