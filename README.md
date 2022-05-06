@@ -103,8 +103,7 @@ XCCONFIG_URL=""
 ## Code style
 
 - Space indent: 4
-- NSAttributedString 
-Example:
+- NSAttributedString
 ```swift
 label.attributedText = 
    NSMutableAttributedString()
@@ -119,9 +118,132 @@ label.attributedText =
           color: .textSecondary
       )
 ```
-Result
-<img width="113" alt="image" src="https://user-images.githubusercontent.com/6975538/160050828-f1231cbb-070b-4dba-bb83-c4a284cf3d2d.png">
+Result: <img width="113" alt="image" src="https://user-images.githubusercontent.com/6975538/160050828-f1231cbb-070b-4dba-bb83-c4a284cf3d2d.png">
 
+- MVVM RxSwift
+```swift
+// MARK: - ViewModel
+final class TransactionViewModel {
+    let input = Input()
+    let output: Output
+
+    init(transaction: SolanaSDK.ParsedTransaction, clipboardManager: ClipboardManagerType) {
+        let fromView = input.view
+        let showWebView = fromView.transactionDetailClicked
+            .mapTo("https://explorer.solana.com/tx/\(transaction.signature ?? "")")
+        let model = fromView.viewDidLoad.mapTo(transaction.formatted())
+        let copyTransactionId = fromView.transactionIdClicked
+            .mapTo(transaction.signature ?? "")
+            .do(onNext: { clipboardManager.copyToClipboard($0) })
+            .mapToVoid()
+
+        let view = Output.View(model: model.asDriver(), copied: copyTransactionId.asDriver())
+        let coord = Output.Coord(showWebView: showWebView.asDriver())
+        output = Output(view: view, coord: coord)
+    }
+}
+
+extension TransactionViewModel: ViewModel {
+    struct Input: ViewModelIO {
+        let view = View()
+        let coord = Coord()
+
+        struct View {
+            let viewDidLoad = PublishRelay<Void>()
+            let transactionIdClicked = PublishRelay<Void>()
+        }
+
+        class Coord {}
+    }
+
+    struct Output: ViewModelIO {
+        typealias Model = History.TransactionView.Model
+
+        let view: View
+        let coord: Coord
+
+        struct View {
+            var model: Driver<Model>
+            var copied: Driver<Void>
+
+            init(
+                model: Driver<Model>,
+                copied: Driver<Void>
+            ) {
+                self.model = model
+                self.copied = copied
+            }
+        }
+
+        class Coord {
+            var showWebView: Driver<String>
+
+            init(showWebView: Driver<String>) {
+                self.showWebView = showWebView
+            }
+        }
+    }
+}
+```
+```swift
+// MARK: - ViewController
+final class TransactionViewController: WLModalViewController {
+    @Injected private var notificationService: NotificationsServiceType
+
+    private lazy var customView = TransactionView()
+
+    private let viewModel: TransactionViewModel
+
+    init(viewModel: TransactionViewModel) {
+        self.viewModel = viewModel
+    }
+
+    override func build() -> UIView { customView }
+
+    override func bind() {
+        super.bind()
+
+        let (input, output) = viewModel.viewIO
+
+        rx.viewWillAppear
+            .take(1)
+            .mapTo(())
+            .bind(to: input.viewDidLoad)
+            .disposed(by: disposeBag)
+        customView.rx
+            .transactionIdClicked
+            .bind(to: input.transactionIdClicked)
+            .disposed(by: disposeBag)
+
+        output.model
+            .drive(customView.rx.model)
+            .disposed(by: disposeBag)
+        output.copied
+            .drive(onNext: { [weak self] in
+                self?.notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
+            })
+            .disposed(by: disposeBag)
+
+        // TODO: - Move to coordinator later
+
+        let (_, coordinatorOutput) = viewModel.coordIO
+
+        coordinatorOutput.showWebView
+            .drive(onNext: { [unowned self] url in
+                showWebsite(url: url)
+            })
+            .disposed(by: disposeBag)
+    }
+}
+```
+```swift
+// MARK: - View
+final class TransactionView: BECompositionView {
+    override func build() -> UIView {
+        UILabel(text: "Hello World")
+    }
+}
+```
 
 ## UI Templates
 
