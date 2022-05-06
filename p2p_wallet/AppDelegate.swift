@@ -8,7 +8,6 @@
 import Action
 import BECollectionView
 @_exported import BEPureLayout
-import CocoaDebug
 import Firebase
 @_exported import Resolver
 @_exported import SolanaSwift
@@ -70,8 +69,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let vc = Root.ViewController(viewModel: vm)
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
-        CocoaDebugSettings.shared.enableLogMonitoring = true
-
         return true
     }
 
