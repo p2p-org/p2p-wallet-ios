@@ -4,8 +4,6 @@
 //
 //  Created by Ivan on 28.04.2022.
 //
-
-import CocoaDebug
 import Foundation
 
 protocol HttpClient {
@@ -29,7 +27,6 @@ final class HttpClientImpl: HttpClient {
             guard let response = response as? HTTPURLResponse else { throw ErrorModel.noResponse }
             switch response.statusCode {
             case 200 ... 299:
-                CocoaDebugTool.log(withJsonData: data)
                 let decoder = JSONDecoder()
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 guard let decodedResponse = try? decoder.decode(responseModel, from: data) else {
