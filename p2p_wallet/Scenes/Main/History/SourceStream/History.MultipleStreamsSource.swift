@@ -6,22 +6,25 @@ import Foundation
 import RxSwift
 
 extension History {
-    /// The class helps to merge many source into one and fetch it like a single source.
+    /// The class that merges many sources into one and represents as single stream of sequential transactions.
+    ///
+    /// The items can be emits two or more times if transaction belongs to many streams.
     class MultipleStreamSource: HistoryStreamSource {
         /// The list of sources
         private let sources: [HistoryStreamSource]
+
+        /// A stream's buffer of transactions
         private var buffer: [HistoryStreamSource.Result] = []
-        private(set) var isEmpty: Bool = false
 
         init(sources: [HistoryStreamSource]) {
             self.sources = sources
         }
 
-        func first() async throws -> HistoryStreamSource.Result? {
+        func currentItem() async throws -> HistoryStreamSource.Result? {
             try await Observable
                 .from(sources)
                 .flatMap { source -> Observable<HistoryStreamSource.Result?> in
-                    Observable.asyncThrowing { () -> HistoryStreamSource.Result? in try await source.first() }
+                    Observable.asyncThrowing { () -> HistoryStreamSource.Result? in try await source.currentItem() }
                 }
                 .reduce(nil) { (mostFirst: HistoryStreamSource.Result?, trx: HistoryStreamSource.Result?) -> HistoryStreamSource.Result? in
                     guard let t1 = trx?.0.blockTime else { return mostFirst }
@@ -41,6 +44,7 @@ extension History {
             return item
         }
 
+        /// A method that fills a buffer
         private func fillBuffer(configuration: FetchingConfiguration) async throws {
             try Task.checkCancellation()
             let newResults = try await withThrowingTaskGroup(

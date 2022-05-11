@@ -95,9 +95,7 @@ extension History {
         }
 
         func buildSource() {
-            let cachedTransactionRepository: CachingTransactionRepository = .init(
-                delegate: SolanaTransactionRepository()
-            )
+            let cachedTransactionRepository = SolanaTransactionRepository()
             let cachedTransactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
 
             let accountStreamSources = walletsRepository
@@ -130,7 +128,7 @@ extension History {
                     var results: [HistoryStreamSource.Result] = []
                     do {
                         while true {
-                            let firstTrx = try await source.first()
+                            let firstTrx = try await source.currentItem()
                             guard
                                 let firstTrx = firstTrx,
                                 let rawTime = firstTrx.0.blockTime
