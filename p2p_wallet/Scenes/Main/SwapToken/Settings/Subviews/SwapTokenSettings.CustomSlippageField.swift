@@ -15,7 +15,7 @@ extension SwapTokenSettings {
         private let textField = BEDecimalTextField(
             font: .systemFont(ofSize: 15),
             textAlignment: .right,
-            keyboardType: .numbersAndPunctuation,
+            keyboardType: .decimalPad,
             placeholder: nil
         )
         private let percentLabel = UILabel(text: "%", textSize: 15)
