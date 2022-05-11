@@ -9,8 +9,12 @@ import FeeRelayerSwift
 import RxSwift
 import SolanaSwift
 
+/// The protocol that manages the sequential loading of transaction.
+///
+/// The ``Result`` type is temporary solution, since the caller need to know more information about transaction (account address or symbol).
+/// TODO: Make result more abstract
 protocol HistoryStreamSource {
-    /// The result that contains signatureInfo, account and symbol.
+    /// The result that contains ``SignatureInfo``, account and symbol.
     typealias Result = (signatureInfo: SolanaSDK.SignatureInfo, account: String, symbol: String)
 
     /// Fetches next single transaction that satisfies the configuration.
@@ -21,20 +25,24 @@ protocol HistoryStreamSource {
 
     /// Fetches next sequence of transactions signatures that satisfies the configuration.
     ///
-    /// - Parameter configuration: the fetching configuration that contains things like filtering
-    /// - Returns: A stream of parsed transactions and the error that can be occurred.
+    /// - Parameter configuration: the fetching configuration that contains things like filtering.
+    /// - Returns: A current item in stream and move cursor to next item.
     func nextItems(configuration: History.FetchingConfiguration) async throws -> [Result]
 
-    /// Fetch the most earliest transaction.
+    /// Current item that stream's cursor is holding at current moment.
     ///
     /// - Returns: parsed transaction
-    func first() async throws -> Result?
+    func currentItem() async throws -> Result?
 
     /// Resets the stream.
     func reset() async
 }
 
 extension HistoryStreamSource {
+    /// Fetches all items that satisfy configuration.
+    ///
+    /// - Parameter configuration: the fetching configuration that contains things like filtering.
+    /// - Returns: a full list of transactions.
     func nextItems(configuration: History.FetchingConfiguration) async throws -> [Result] {
         var sequence: [Result] = []
 

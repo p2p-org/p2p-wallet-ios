@@ -5,7 +5,7 @@
 import Foundation
 
 extension History {
-    /// The class helps to retrieves all transactions as stream from defined account.
+    /// The class that retrieves all sequential transactions as stream from defined account.
     actor AccountStreamSource: HistoryStreamSource {
         let transactionRepository: HistoryTransactionRepository
 
@@ -25,10 +25,13 @@ extension History {
         /// Fixed number of transactions that will be requested each time.
         private let batchSize: Int = 15
 
+        /// A stream's buffer size
         private let bufferSize: Int = 15
 
+        /// A stream's buffer
         private var buffer: [SolanaSDK.SignatureInfo] = []
 
+        /// A indicator that shows emptiness of transaction.
         private(set) var isEmpty: Bool = false
 
         init(
@@ -43,7 +46,7 @@ extension History {
             self.transactionParser = transactionParser
         }
 
-        func first() async throws -> HistoryStreamSource.Result? {
+        func currentItem() async throws -> HistoryStreamSource.Result? {
             if buffer.isEmpty { try await fillBuffer() }
 
             guard let signatureInfo = buffer.first else { return nil }
@@ -72,6 +75,7 @@ extension History {
             return nil
         }
 
+        /// This method fills buffer of transaction.
         private func fillBuffer() async throws {
             if isEmpty { return }
 
