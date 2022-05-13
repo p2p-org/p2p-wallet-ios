@@ -12,6 +12,7 @@ import RxSwift
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
     func sendTransaction(_ processingTransaction: RawTransactionType) -> TransactionIndex
+    func sendAgainTransaction(sentAt: Date, rawTransaction: RawTransactionType) -> Observable<PendingTransaction?>
     func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PendingTransaction?>
     func areSomeTransactionsInProgress() -> Bool
 
@@ -61,6 +62,12 @@ class TransactionHandler: TransactionHandlerType {
         sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
 
         return txIndex
+    }
+
+    func sendAgainTransaction(sentAt: Date, rawTransaction: RawTransactionType) -> Observable<PendingTransaction?> {
+        guard let index = (transactionsSubject.value.firstIndex { $0.sentAt == sentAt }) else { return .empty() }
+        sendAndObserve(index: index, processingTransaction: rawTransaction)
+        return transactionsSubject.map { $0[safe: index] }
     }
 
     func observeTransaction(

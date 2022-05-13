@@ -20,11 +20,6 @@ extension SolanaSDK: ProcessTransactionAPIClient {}
 
 // MARK: - Transaction type
 
-protocol RawTransactionType {
-    func createRequest() -> Single<String>
-    var mainDescription: String { get }
-}
-
 extension RawTransactionType {
     var isSwap: Bool { self is ProcessTransaction.SwapTransaction }
 

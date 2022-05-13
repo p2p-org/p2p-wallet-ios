@@ -12,6 +12,7 @@ extension History {
     final class Scene: BEScene {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var pricesService: PricesServiceType
+        @Injected private var transactionHandler: TransactionHandlerType
 
         let viewModel = SceneModel()
 
@@ -91,7 +92,8 @@ extension History.Scene: BECollectionViewDelegate {
             viewModel: .init(
                 transaction: item,
                 clipboardManager: clipboardManager,
-                pricesService: pricesService
+                pricesService: pricesService,
+                transactionHandler: transactionHandler
             )
         )
         viewController.dismissCompletion = { [weak self] in
