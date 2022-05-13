@@ -50,9 +50,10 @@ extension History {
         private let modelRelay = PublishRelay<Model>()
         private var model: Driver<Model> { modelRelay.asDriver() }
 
-        fileprivate var transactionIdClicked = PublishRelay<Void>()
-        fileprivate var doneClicked = PublishRelay<Void>()
-        fileprivate var transactionDetailClicked = PublishRelay<Void>()
+        fileprivate let transactionIdClicked = PublishRelay<Void>()
+        fileprivate let doneClicked = PublishRelay<Void>()
+        fileprivate let transactionDetailClicked = PublishRelay<Void>()
+        fileprivate let tryAgainClicked = PublishRelay<Void>()
 
         private let disposeBag = DisposeBag()
 
@@ -69,7 +70,12 @@ extension History {
                             }
                         }
                         BEVStack(spacing: 23) {
-                            transactionIdView
+                            transactionIdView.setup {
+                                model
+                                    .map(\.transactionId.isEmpty)
+                                    .drive($0.rx.isHidden)
+                                    .disposed(by: disposeBag)
+                            }
                             fromAddressView
                             toAddressView
                             feeView
@@ -85,8 +91,21 @@ extension History {
                             labelFont: .systemFont(ofSize: 17, weight: .medium)
                         ).setup {
                             $0.layer.cornerRadius = 12
+                            model
+                                .map { $0.tryAgain ? L10n.tryAgain : L10n.done }
+                                .drive($0.rx.title())
+                                .disposed(by: disposeBag)
                             $0.rx.controlEvent(.touchUpInside)
+                                .withLatestFrom(model.map(\.tryAgain))
+                                .filter { !$0 }
+                                .mapToVoid()
                                 .bind(to: doneClicked)
+                                .disposed(by: disposeBag)
+                            $0.rx.controlEvent(.touchUpInside)
+                                .withLatestFrom(model.map(\.tryAgain))
+                                .filter { $0 }
+                                .mapToVoid()
+                                .bind(to: tryAgainClicked)
                                 .disposed(by: disposeBag)
                         }
                         UIButton(
@@ -225,6 +244,7 @@ extension History.TransactionView {
         let fee: NSAttributedString?
         let status: Status
         let blockNumber: String
+        let tryAgain: Bool
     }
 
     struct Status {
@@ -241,4 +261,5 @@ extension Reactive where Base == History.TransactionView {
     var transactionIdClicked: Observable<Void> { base.transactionIdClicked.asObservable() }
     var doneClicked: Observable<Void> { base.doneClicked.asObservable() }
     var transactionDetailClicked: Observable<Void> { base.transactionDetailClicked.asObservable() }
+    var tryAgainClicked: Observable<Void> { base.tryAgainClicked.asObservable() }
 }

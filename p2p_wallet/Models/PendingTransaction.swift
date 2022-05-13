@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 struct PendingTransaction {
     enum TransactionStatus {
@@ -142,7 +143,7 @@ extension PendingTransaction {
             return nil
         }
 
-        return .init(
+        var parsedTransaction = SolanaSDK.ParsedTransaction(
             status: status,
             signature: signature,
             value: value,
@@ -152,5 +153,9 @@ extension PendingTransaction {
             fee: fee,
             blockhash: nil
         )
+        if case .error = self.status {
+            parsedTransaction.rawTransaction = (transaction: rawTransaction, sentAt: sentAt)
+        }
+        return parsedTransaction
     }
 }

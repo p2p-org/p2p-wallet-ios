@@ -105,29 +105,25 @@ extension TransactionHandler {
         update: (PendingTransaction) -> PendingTransaction
     ) -> Bool {
         var value = transactionsSubject.value
+        guard let currentValue = value[safe: index] else { return false }
+        var newValue = update(currentValue)
 
-        if let currentValue = value[safe: index] {
-            var newValue = update(currentValue)
+        // write to repository if the transaction is not yet written and there is at least 1 confirmation
+        if !newValue.writtenToRepository,
+           let numberOfConfirmations = newValue.status.numberOfConfirmations,
+           numberOfConfirmations > 0
+        {
+            // manually update balances if socket is not connected
+            updateRepository(with: newValue.rawTransaction)
 
-            // write to repository if the transaction is not yet written and there is at least 1 confirmation
-            if !newValue.writtenToRepository,
-               let numberOfConfirmations = newValue.status.numberOfConfirmations,
-               numberOfConfirmations > 0
-            {
-                // manually update balances if socket is not connected
-                updateRepository(with: newValue.rawTransaction)
-
-                // mark as written
-                newValue.writtenToRepository = true
-            }
-
-            // update
-            value[index] = newValue
-            transactionsSubject.accept(value)
-            return true
+            // mark as written
+            newValue.writtenToRepository = true
         }
 
-        return false
+        // update
+        value[index] = newValue
+        transactionsSubject.accept(value)
+        return true
     }
 
     private func updateRepository(with rawTransaction: RawTransactionType) {

@@ -22,6 +22,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		2C13F743282EA7F1001F6C54 /* TransactionPendingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C13F742282EA7F1001F6C54 /* TransactionPendingView.swift */; };
+		2C13F74E282EC9DF001F6C54 /* CGRect+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C13F74D282EC9DF001F6C54 /* CGRect+Extension.swift */; };
+		2C13F750282ECA3F001F6C54 /* AnimatedCircleCompletionLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C13F74F282ECA3F001F6C54 /* AnimatedCircleCompletionLayer.swift */; };
+		2C13F752282ECA59001F6C54 /* AnimatedProgressLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C13F751282ECA59001F6C54 /* AnimatedProgressLayer.swift */; };
+		2C13F754282ECA70001F6C54 /* AnimatedCircleCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C13F753282ECA70001F6C54 /* AnimatedCircleCompletionView.swift */; };
+		2C13F756282ECA89001F6C54 /* AnimatedProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C13F755282ECA89001F6C54 /* AnimatedProgressView.swift */; };
 		2C2645AA280707950058E7F6 /* History.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2645A9280707950058E7F6 /* History.Cell.swift */; };
 		2C2E498D2822804A00FB7655 /* NotificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2E498C2822804A00FB7655 /* NotificationType.swift */; };
 		2C591E42280D440E0044ABB0 /* TransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */; };
@@ -588,6 +594,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C13F742282EA7F1001F6C54 /* TransactionPendingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionPendingView.swift; sourceTree = "<group>"; };
+		2C13F74D282EC9DF001F6C54 /* CGRect+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extension.swift"; sourceTree = "<group>"; };
+		2C13F74F282ECA3F001F6C54 /* AnimatedCircleCompletionLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedCircleCompletionLayer.swift; sourceTree = "<group>"; };
+		2C13F751282ECA59001F6C54 /* AnimatedProgressLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedProgressLayer.swift; sourceTree = "<group>"; };
+		2C13F753282ECA70001F6C54 /* AnimatedCircleCompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedCircleCompletionView.swift; sourceTree = "<group>"; };
+		2C13F755282ECA89001F6C54 /* AnimatedProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedProgressView.swift; sourceTree = "<group>"; };
 		2C2645A9280707950058E7F6 /* History.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.Cell.swift; sourceTree = "<group>"; };
 		2C2E498C2822804A00FB7655 /* NotificationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationType.swift; sourceTree = "<group>"; };
 		2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionViewModel.swift; sourceTree = "<group>"; };
@@ -1189,6 +1201,17 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		2C13F744282EBFE0001F6C54 /* Loaders */ = {
+			isa = PBXGroup;
+			children = (
+				2C13F74F282ECA3F001F6C54 /* AnimatedCircleCompletionLayer.swift */,
+				2C13F751282ECA59001F6C54 /* AnimatedProgressLayer.swift */,
+				2C13F753282ECA70001F6C54 /* AnimatedCircleCompletionView.swift */,
+				2C13F755282ECA89001F6C54 /* AnimatedProgressView.swift */,
+			);
+			path = Loaders;
+			sourceTree = "<group>";
+		};
 		2C591E3C280D440E0044ABB0 /* Transaction */ = {
 			isa = PBXGroup;
 			children = (
@@ -1212,6 +1235,7 @@
 			children = (
 				2C591E41280D440E0044ABB0 /* TransactionViewController.swift */,
 				2C591E4F280EA2FD0044ABB0 /* TransactionView.swift */,
+				2C13F742282EA7F1001F6C54 /* TransactionPendingView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -2104,6 +2128,7 @@
 				8469964AD773095EEFA52701 /* CALayer+Extensions.swift */,
 				3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */,
 				846999677D69EBB5ABC0B240 /* RxSwift+Concurrency.swift */,
+				2C13F74D282EC9DF001F6C54 /* CGRect+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2357,6 +2382,7 @@
 		BC9DFA152541F777009DB93E /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				2C13F744282EBFE0001F6C54 /* Loaders */,
 				41D7F6AA27390FF900453B61 /* CollectionViewAccessories */,
 				BCEE522B2626D3F900271AB9 /* Views */,
 				BC1ABC37255BD0B8002FCE65 /* ViewModels */,
@@ -3296,6 +3322,7 @@
 				BC4B9E7B2713FB99005B9ECA /* CryptoComparePricesFetcher.swift in Sources */,
 				BC123E7F25B181B60043178E /* NSObject+Extensions.swift in Sources */,
 				BCACA7E12679E75E0091E118 /* AnalyticsEvent.swift in Sources */,
+				2C13F743282EA7F1001F6C54 /* TransactionPendingView.swift in Sources */,
 				BC2EC1D02553ED1B006EEDA5 /* DimmingPresentationController.swift in Sources */,
 				BC54DD232587169400A65566 /* ValueByDateChartMarker.swift in Sources */,
 				BCB286C8274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.RootView.swift in Sources */,
@@ -3417,6 +3444,7 @@
 				BC2EB61F26032BD8006CE170 /* WLLoadingIndicatorView.swift in Sources */,
 				BC5ED758256269FE0030572D /* PriceFetcher.swift in Sources */,
 				BC4B9E9F2715401F005B9ECA /* Settings.SelectLanguageViewController.swift in Sources */,
+				2C13F752282ECA59001F6C54 /* AnimatedProgressLayer.swift in Sources */,
 				41EB2E6227B23CF7007D5F7F /* IntercomMessengerLauncher.swift in Sources */,
 				417EB68927480FA700856C6E /* AgreeTermsAndConditionsView.swift in Sources */,
 				412DBFDE273D7B81000F514E /* EnterSeed.ViewModel.swift in Sources */,
@@ -3628,6 +3656,7 @@
 				BCB286C5274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.swift in Sources */,
 				BCB2868C274763BA0074E1D5 /* MirrorableEnum.swift in Sources */,
 				2C5CF1322816E1CB003AF25E /* History.ErrorView.swift in Sources */,
+				2C13F74E282EC9DF001F6C54 /* CGRect+Extension.swift in Sources */,
 				BCB286B9274CC2590074E1D5 /* SendToken.swift in Sources */,
 				3B9C3DE327A7CF040032548A /* Section.View.swift in Sources */,
 				41DE53D427990E4200F24B0B /* ReceiveToken.TokenAddressesView.swift in Sources */,
@@ -3652,6 +3681,7 @@
 				BCB286FB2755D5FB0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.AddressInputView.swift in Sources */,
 				846993CEE73D894A69FE84A6 /* UIButton.swift in Sources */,
 				8469998D03BF3A0606D0D42D /* VerifySecurityKeys.Question.swift in Sources */,
+				2C13F756282ECA89001F6C54 /* AnimatedProgressView.swift in Sources */,
 				846995192F640AE9B9541C87 /* KeyView.swift in Sources */,
 				84699260E4D199A70FC4ED2A /* VerifySecurityKeys.Button.swift in Sources */,
 				BCB286F72754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewController.swift in Sources */,
@@ -3716,6 +3746,7 @@
 				8469996EF705D60C94EB79FC /* Moonpay.API.swift in Sources */,
 				84699B60E46C2AE4B6243CC2 /* Moonpay.Model.swift in Sources */,
 				84699BC20CB341D9BDA75595 /* Moonpay.Provider.swift in Sources */,
+				2C13F750282ECA3F001F6C54 /* AnimatedCircleCompletionLayer.swift in Sources */,
 				84699EE1F69CF22302F3F831 /* MoonpayExchangeService.swift in Sources */,
 				84699B13FA126D0F569A19A8 /* Banner.swift in Sources */,
 				846994A2BB42A05CE960DEFC /* BannerServiceImpl.swift in Sources */,
@@ -3725,6 +3756,7 @@
 				84699F61097311CBE8F22F40 /* Home.BannerSection.swift in Sources */,
 				84699A0E3799F04752491CFD /* Home.BannerViewModel.swift in Sources */,
 				84699381FC597DE50CD1D0AA /* Home.BannerCell.swift in Sources */,
+				2C13F754282ECA70001F6C54 /* AnimatedCircleCompletionView.swift in Sources */,
 				84699C3944366D31B692FBDA /* BuyProcessing.InputFiatView.swift in Sources */,
 				84699437F451E8074D200B9A /* BuyProcessing.InputCryptoView.swift in Sources */,
 				846993455464139EC88B91F8 /* TokenSelection.Scene.swift in Sources */,

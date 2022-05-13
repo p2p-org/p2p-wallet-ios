@@ -12,8 +12,6 @@ extension History {
     final class TransactionViewController: WLModalViewController {
         @Injected private var notificationService: NotificationService
 
-        private lazy var customView = TransactionView()
-
         private let viewModel: TransactionViewModel
 
         init(viewModel: TransactionViewModel) {
@@ -21,7 +19,49 @@ extension History {
         }
 
         override func build() -> UIView {
-            customView
+            BEBuilder(driver: viewModel.viewIO.1.state) { [weak self] state in
+                guard let self = self else { return UIView() }
+                let (input, _) = self.viewModel.viewIO
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
+                    self?.presentationController?.containerViewWillLayoutSubviews()
+                }
+
+                switch state {
+                case let .single(model):
+                    return TransactionView().setup { view in
+                        view.rx.model.onNext(model)
+                        view.rx
+                            .transactionIdClicked
+                            .bind(to: input.transactionIdClicked)
+                            .disposed(by: self.disposeBag)
+                        view.rx
+                            .doneClicked
+                            .bind(to: input.doneClicked)
+                            .disposed(by: self.disposeBag)
+                        view.rx
+                            .transactionDetailClicked
+                            .bind(to: input.transactionDetailClicked)
+                            .disposed(by: self.disposeBag)
+                        view.rx
+                            .tryAgainClicked
+                            .bind(to: input.tryAgain)
+                            .disposed(by: self.disposeBag)
+                    }
+                case let .pending(model):
+                    return TransactionPendingView(height: 654).setup { view in
+                        view.rx.model.onNext(model)
+                        view.rx
+                            .doneClicked
+                            .bind(to: input.doneClicked)
+                            .disposed(by: self.disposeBag)
+                        view.rx
+                            .transactionDetailClicked
+                            .bind(to: input.transactionDetailClicked)
+                            .disposed(by: self.disposeBag)
+                    }
+                }
+            }
         }
 
         override func bind() {
@@ -31,25 +71,14 @@ extension History {
 
             rx.viewWillAppear
                 .take(1)
-                .mapTo(())
+                .mapToVoid()
                 .bind(to: input.viewDidLoad)
                 .disposed(by: disposeBag)
-            customView.rx
-                .transactionIdClicked
-                .bind(to: input.transactionIdClicked)
-                .disposed(by: disposeBag)
-            customView.rx
-                .doneClicked
-                .bind(to: input.doneClicked)
-                .disposed(by: disposeBag)
-            customView.rx
-                .transactionDetailClicked
-                .bind(to: input.transactionDetailClicked)
+            rx.viewWillAppear
+                .mapToVoid()
+                .bind(to: input.viewWillAppear)
                 .disposed(by: disposeBag)
 
-            output.model
-                .drive(customView.rx.model)
-                .disposed(by: disposeBag)
             output.copied
                 .drive(onNext: { [weak self] in
                     self?.notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
