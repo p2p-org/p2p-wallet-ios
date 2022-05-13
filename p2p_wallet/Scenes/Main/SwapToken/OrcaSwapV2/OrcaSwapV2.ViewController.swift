@@ -12,9 +12,12 @@ import UIKit
 
 extension OrcaSwapV2 {
     class ViewController: BEScene {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
+        private let settingButton = UIBarButtonItem(
+            image: .settings,
+            style: .plain,
+            target: nil,
+            action: nil
+        )
 
         // MARK: - Dependencies
 
@@ -29,30 +32,30 @@ extension OrcaSwapV2 {
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
             super.init()
+
+            navigationItem.title = L10n.swap
+            settingButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
+            navigationItem.rightBarButtonItem = settingButton
         }
 
         // MARK: - Methods
 
         override func build() -> UIView {
             BESafeArea {
-                BEVStack(spacing: 8) {
-                    NavigationBar(
-                        backHandler: { [weak viewModel] in
-                            viewModel?.navigate(to: .back)
-                        },
-                        settingsHandler: { [weak viewModel] in
-                            viewModel?.openSettings()
-                        }
-                    )
-
-                    RootView(viewModel: viewModel)
-                        .onTap(self, action: #selector(hideKeyboard))
-                }
+                RootView(viewModel: viewModel)
+                    .onTap(self, action: #selector(hideKeyboard))
             }
         }
 
         override func bind() {
             super.bind()
+
+            settingButton.rx.tap
+                .asDriver()
+                .drive(onNext: { [unowned viewModel] in
+                    viewModel.openSettings()
+                })
+                .disposed(by: disposeBag)
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
@@ -109,15 +112,8 @@ extension OrcaSwapV2 {
             case let .processTransaction(transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
-//                vc.backCompletion = { [weak self] in
-//                    self?.viewModel.cleanAllFields()
-//                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
-//                }
-                vc.doneHandler = doneHandler
-                vc.makeAnotherTransactionHandler = { [weak self] in
-                    self?.viewModel.cleanAllFields()
-                    self?.navigationController?.popToViewController(ofClass: Self.self, animated: true)
-                }
+                viewModel.cleanAllFields()
+                navigationController?.popToViewController(ofClass: Self.self, animated: false)
                 vc.specificErrorHandler = { [weak self] error in
                     guard let self = self else { return }
                     if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {

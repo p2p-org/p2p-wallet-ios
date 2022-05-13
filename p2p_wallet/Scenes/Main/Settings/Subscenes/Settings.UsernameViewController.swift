@@ -9,20 +9,16 @@ import Foundation
 
 extension Settings {
     class NewUsernameViewController: BEScene {
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-
         let viewModel: SettingsViewModelType
 
         init(viewModel: SettingsViewModelType) {
             self.viewModel = viewModel
             super.init()
+            navigationItem.title = L10n.yourP2pUsername
         }
 
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                NewWLNavigationBar(initialTitle: L10n.yourP2pUsername, separatorEnable: false)
-                    .onBack { [unowned self] in back() }
-
                 BEScrollView(contentInsets: .init(x: 0, y: 8), spacing: 18) {
                     ReceiveToken.QrCodeCard(
                         username: viewModel.getUsername(),
