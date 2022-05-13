@@ -13,8 +13,6 @@ import RxSwift
 protocol BuyPreparingSceneModel: BESceneModel {
     func setAmount(value: Double?)
     func swap()
-    func back()
-    func next()
 
     var inputDriver: Driver<Buy.ExchangeInput> { get }
     var outputDriver: Driver<Buy.ExchangeOutput> { get }
@@ -23,13 +21,16 @@ protocol BuyPreparingSceneModel: BESceneModel {
     var exchangeRateDriver: Driver<Buy.ExchangeRate?> { get }
     var input: Buy.ExchangeInput { get }
     var crypto: Buy.CryptoCurrency { get }
+    var amount: Double { get }
+    var walletsRepository: WalletsRepository { get }
 }
 
 extension BuyPreparing {
     class SceneModel: BuyPreparingSceneModel {
         private let exchangeService: Buy.ExchangeService
-        private let buyViewModel: BuyViewModelType
         let disposeBag = DisposeBag()
+
+        @Injected var walletsRepository: WalletsRepository
 
         let crypto: Buy.CryptoCurrency
         private let errorRelay = BehaviorRelay<String?>(value: nil)
@@ -42,9 +43,8 @@ extension BuyPreparing {
         private let updateTimer = Observable<Int>
             .timer(.seconds(0), period: .seconds(10), scheduler: ConcurrentDispatchQueueScheduler(qos: .background))
 
-        init(crypto: Buy.CryptoCurrency, buyViewModel: BuyViewModelType, exchangeService: Buy.ExchangeService) {
+        init(crypto: Buy.CryptoCurrency, exchangeService: Buy.ExchangeService) {
             self.crypto = crypto
-            self.buyViewModel = buyViewModel
             self.exchangeService = exchangeService
 
             outputRelay = BehaviorRelay<Buy.ExchangeOutput>(
@@ -146,12 +146,10 @@ extension BuyPreparing {
 
         var input: Buy.ExchangeInput { inputRelay.value }
 
-        func next() { buyViewModel.navigate(to: .buyToken(crypto: crypto, amount: outputRelay.value.total)) }
-
-        func back() { buyViewModel.navigate(to: .back) }
-
         var minFiatAmount: Driver<Double> { minFiatAmountsRelay.asDriver() }
 
         var minCryptoAmount: Driver<Double> { minCryptoAmountsRelay.asDriver() }
+
+        var amount: Double { outputRelay.value.total }
     }
 }

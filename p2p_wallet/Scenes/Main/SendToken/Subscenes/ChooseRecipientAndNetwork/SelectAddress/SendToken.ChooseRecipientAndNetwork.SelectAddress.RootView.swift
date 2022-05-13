@@ -26,6 +26,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private lazy var titleView = TitleView(viewModel: viewModel)
         private lazy var addressInputView = AddressInputView(viewModel: viewModel)
+        var addressTextField: UITextField { addressInputView.textField }
         private lazy var recipientView: RecipientView = {
             let view = RecipientView()
             view.addArrangedSubview(
@@ -95,6 +96,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private func layout() {
             scrollView.contentInset.modify(dTop: -.defaultPadding, dBottom: 56 + 18)
+
             stackView.addArrangedSubviews {
                 UIView.floatingPanel {
                     titleView

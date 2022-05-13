@@ -61,8 +61,9 @@ extension Onboarding {
             case .setUpNotifications:
                 let enableNotificationsVC = EnableNotificationsVC(viewModel: viewModel)
                 childNavigationController.pushViewController(enableNotificationsVC, animated: true)
+                childNavigationController.setNavigationBarHidden(false, animated: true)
             case .dismiss:
-                dismiss(animated: true, completion: nil)
+                dismiss(animated: true)
             case .none:
                 break
             }

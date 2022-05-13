@@ -12,10 +12,8 @@ import UIKit
 
 extension ResetPinCodeWithSeedPhrases {
     class EnterPhrasesVC: BEScene {
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         private let completion: ([String]) -> Void
         private let validate: (_ keyPhrase: [String]) -> (status: Bool, error: String?)
-        var dismissAfterCompletion = true
 
         private let pastButton = BERef<UIButton>()
         private let inputTextField = BERef<ExpandableTextView>()
@@ -35,6 +33,14 @@ extension ResetPinCodeWithSeedPhrases {
             self.completion = completion
             self.validate = validate
             super.init()
+
+            navigationItem.title = L10n.resettingYourPIN
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                title: L10n.cancel,
+                style: .plain,
+                target: self,
+                action: #selector(back)
+            )
         }
 
         override func build() -> UIView {
@@ -43,25 +49,6 @@ extension ResetPinCodeWithSeedPhrases {
                     // Content
                     BEZStackPosition(mode: .fill) {
                         BEVStack {
-                            BEHStack(distribution: .equalCentering) {
-                                UIButton.text(text: L10n.cancel, fontSize: 17, weight: .regular, tintColor: .h5887ff)
-                                    .setTarget(target: self, action: #selector(back), for: .touchUpInside)
-
-                                UILabel(
-                                    text: L10n.resettingYourPIN,
-                                    textSize: 17,
-                                    weight: .semibold,
-                                    textAlignment: .center
-                                )
-
-                                UIView(width: 24)
-                            }
-                            .backgroundColor(color: .fafafc)
-                            .frame(height: 58)
-
-                            // Separator
-                            UIView.separator(height: 1, color: .separator)
-
                             // Input
                             BEHStack {
                                 ExpandableTextView()

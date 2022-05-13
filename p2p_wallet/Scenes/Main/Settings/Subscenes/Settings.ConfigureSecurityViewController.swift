@@ -31,7 +31,7 @@ extension Settings {
 
         override func setUp() {
             super.setUp()
-            navigationBar.titleLabel.text = L10n.security
+            navigationItem.title = L10n.security
             stackView.setCustomSpacing(10, after: stackView.arrangedSubviews[1]) // separator
             stackView.addArrangedSubviews {
                 UIStackView(axis: .horizontal, spacing: 16, alignment: .center, distribution: .fill) {
