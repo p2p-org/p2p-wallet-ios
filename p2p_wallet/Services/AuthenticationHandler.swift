@@ -59,6 +59,7 @@ final class AuthenticationHandler: AuthenticationHandlerType {
             .applicationWillResignActive
             .subscribe(onNext: { [weak self] _ in
                 if self?.authenticationStatusSubject.value == nil {
+                    self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
                     self?.isLockedSubject.accept(true)
                 }
             })
@@ -67,13 +68,13 @@ final class AuthenticationHandler: AuthenticationHandlerType {
         UIApplication.shared.rx.applicationDidBecomeActive
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                guard Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self
+                if Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self
                     .timeRequiredForAuthentication
-                else {
-                    self.isLockedSubject.accept(false)
-                    return
+                {
+                    self.authenticate(presentationStyle: .login())
                 }
-                self.authenticate(presentationStyle: .login())
+
+                self.isLockedSubject.accept(false)
             })
             .disposed(by: disposeBag)
     }
