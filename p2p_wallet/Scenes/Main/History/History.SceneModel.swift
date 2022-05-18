@@ -132,7 +132,10 @@ extension History {
                             guard
                                 let firstTrx = firstTrx,
                                 let rawTime = firstTrx.0.blockTime
-                            else { return }
+                            else {
+                                stream.yield(results)
+                                return
+                            }
 
                             // Fetch next 1 days
                             var timeEndFilter = Date(timeIntervalSince1970: TimeInterval(rawTime))
