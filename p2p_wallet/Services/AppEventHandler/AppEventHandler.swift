@@ -18,7 +18,7 @@ final class AppEventHandler {
     // MARK: - Dependencies
 
     private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-    private let notificationsService: NotificationsServiceType = Resolver.resolve()
+    private let notificationsService: NotificationService = Resolver.resolve()
 
     // MARK: - Properties
 
@@ -75,17 +75,23 @@ extension AppEventHandler: ChangeLanguageResponder {
 
 extension AppEventHandler: LogoutResponder {
     func logout() {
-        storage.clearAccount()
-        Defaults.walletName = [:]
-        Defaults.didSetEnableBiometry = false
-        Defaults.didSetEnableNotifications = false
-        Defaults.didBackupOffline = false
-        Defaults.renVMSession = nil
-        Defaults.renVMProcessingTxs = []
-        Defaults.forceCloseNameServiceBanner = false
-        Defaults.shouldShowConfirmAlertOnSend = true
-        Defaults.shouldShowConfirmAlertOnSwap = true
-        delegate?.userDidLogout()
+        notificationsService.unregisterForRemoteNotifications()
+        Task {
+            await notificationsService.deleteDeviceToken()
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.storage.clearAccount()
+            Defaults.walletName = [:]
+            Defaults.didSetEnableBiometry = false
+            Defaults.didSetEnableNotifications = false
+            Defaults.didBackupOffline = false
+            Defaults.renVMSession = nil
+            Defaults.renVMProcessingTxs = []
+            Defaults.forceCloseNameServiceBanner = false
+            Defaults.shouldShowConfirmAlertOnSend = true
+            Defaults.shouldShowConfirmAlertOnSwap = true
+            self.delegate?.userDidLogout()
+        }
     }
 }
 
@@ -129,6 +135,7 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
                 DispatchQueue.main.async { [weak self] in
                     self?.isLoadingSubject.accept(false)
                 }
+                self?.notificationsService.registerForRemoteNotifications()
             } catch {
                 self?.isLoadingSubject.accept(false)
                 DispatchQueue.main.async { [weak self] in

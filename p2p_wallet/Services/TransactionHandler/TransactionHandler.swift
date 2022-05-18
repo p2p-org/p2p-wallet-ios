@@ -25,7 +25,7 @@ protocol TransactionHandlerType {
 }
 
 class TransactionHandler: TransactionHandlerType {
-    @Injected var notificationsService: NotificationsServiceType
+    @Injected var notificationsService: NotificationService
     @Injected var analyticsManager: AnalyticsManager
     @Injected var apiClient: ProcessTransactionAPIClient
     @Injected var walletsRepository: WalletsRepository

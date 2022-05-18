@@ -13,7 +13,7 @@ import UIKit
 
 protocol TabBarNeededViewController: UIViewController {}
 
-class TabBarVC: BEPagesVC {
+final class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     @Injected private var helpCenterLauncher: HelpCenterLauncher
     @Injected private var clipboardManager: ClipboardManagerType
@@ -106,28 +106,32 @@ class TabBarVC: BEPagesVC {
 
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
-            buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
-            buttonTabBarItem(image: .tabbarHistory, title: L10n.history, tag: 1),
-            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 2),
-            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
-            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 3),
+            buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, item: .wallet),
+            buttonTabBarItem(image: .tabbarHistory, title: L10n.history, item: .history),
+            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, item: .send),
+            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, item: .feedback),
+            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, item: .settings),
         ])
     }
 
-    private func buttonTabBarItem(image: UIImage, title: String, tag: Int) -> UIView {
-        let item = TabBarItemView(forAutoLayout: ())
-        item.tintColor = .tabbarUnselected
-        item.imageView.image = image
-        item.titleLabel.text = title
-        return item
+    private func buttonTabBarItem(image: UIImage, title: String, item: Item) -> UIView {
+        let itemView = TabBarItemView(forAutoLayout: ())
+        itemView.tintColor = .tabbarUnselected
+        itemView.imageView.image = image
+        itemView.titleLabel.text = title
+        return itemView
             .padding(.init(x: 0, y: 16))
-            .withTag(tag)
+            .withTag(item.rawValue)
             .onTap(self, action: #selector(switchTab(_:)))
     }
 
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
-        let tag = gesture.view!.tag
-        moveToPage(tag)
+        guard let tag = gesture.view?.tag, let item = Item(rawValue: tag) else { return }
+        moveToItem(item)
+    }
+
+    func moveToItem(_ item: Item) {
+        moveToPage(item.rawValue)
     }
 
     override func moveToPage(_ index: Int) {
@@ -208,5 +212,15 @@ extension UIViewController {
     func tabBar() -> TabBarVC? {
         guard let vc = self as? TabBarVC else { return parent?.tabBar() }
         return vc
+    }
+}
+
+extension TabBarVC {
+    enum Item: Int {
+        case wallet = 0
+        case history = 1
+        case send = 2
+        case feedback = 10
+        case settings = 3
     }
 }
