@@ -136,16 +136,9 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Swap
 
-        register {
-            SwapServiceWithRelayImpl(
-                solanaClient: Resolver.resolve(),
-                accountStorage: Resolver.resolve(),
-                feeRelay: Resolver.resolve(),
-                orcaSwap: Resolver.resolve()
-            )
-        }
-        .implements(Swap.Service.self)
-        .scope(.session)
+        register { SwapServiceWithRelayImpl() }
+            .implements(Swap.Service.self)
+            .scope(.session)
 
         register {
             OrcaSwap(
