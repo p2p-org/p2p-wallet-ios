@@ -23,12 +23,27 @@
 
 /* Begin PBXBuildFile section */
 		2C2645AA280707950058E7F6 /* History.Cell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2645A9280707950058E7F6 /* History.Cell.swift */; };
+		2C2E498D2822804A00FB7655 /* NotificationType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2E498C2822804A00FB7655 /* NotificationType.swift */; };
 		2C591E42280D440E0044ABB0 /* TransactionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */; };
 		2C591E43280D440E0044ABB0 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E3F280D440E0044ABB0 /* ViewModel.swift */; };
 		2C591E44280D440E0044ABB0 /* TransactionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E41280D440E0044ABB0 /* TransactionViewController.swift */; };
 		2C591E50280EA2FD0044ABB0 /* TransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C591E4F280EA2FD0044ABB0 /* TransactionView.swift */; };
 		2C5CF1322816E1CB003AF25E /* History.ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF1312816E1CB003AF25E /* History.ErrorView.swift */; };
+		2C5CF146281A7924003AF25E /* DeviceTokenDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF145281A7924003AF25E /* DeviceTokenDto.swift */; };
+		2C5CF14B281AA6A4003AF25E /* HttpClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF14A281AA6A4003AF25E /* HttpClient.swift */; };
+		2C5CF14D281AA6CB003AF25E /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF14C281AA6CB003AF25E /* Endpoint.swift */; };
+		2C5CF14F281AA6F8003AF25E /* RequestMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF14E281AA6F8003AF25E /* RequestMethod.swift */; };
+		2C5CF151281AA715003AF25E /* ErrorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF150281AA715003AF25E /* ErrorModel.swift */; };
+		2C5CF153281AA7E1003AF25E /* URLSession+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF152281AA7E1003AF25E /* URLSession+Extensions.swift */; };
+		2C5CF155281AAB86003AF25E /* NotifierEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF154281AAB86003AF25E /* NotifierEndpoint.swift */; };
+		2C5CF157281AAC9B003AF25E /* DeleteDeviceTokenDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF156281AAC9B003AF25E /* DeleteDeviceTokenDto.swift */; };
+		2C5CF159281AB3D2003AF25E /* DeviceTokenInfoDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5CF158281AB3D2003AF25E /* DeviceTokenInfoDto.swift */; };
+		2CAFA760281AC3A700C48208 /* Codable+SnakeCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAFA75F281AC3A700C48208 /* Codable+SnakeCase.swift */; };
+		2CAFA76A281ACFBB00C48208 /* DeviceTokenResposeDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CAFA769281ACFBB00C48208 /* DeviceTokenResposeDto.swift */; };
 		2CB62D20281141BB008A950A /* EmptyTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB62D1F281141BB008A950A /* EmptyTransactionsView.swift */; };
+		2CCDD67E281BEFBD00AB7A82 /* JsonRpcResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDD67D281BEFBD00AB7A82 /* JsonRpcResponseDto.swift */; };
+		2CCDD680281BF03800AB7A82 /* JsonRpcRequestDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDD67F281BF03800AB7A82 /* JsonRpcRequestDto.swift */; };
+		2CCDD683281BF15700AB7A82 /* NotificationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDD682281BF15700AB7A82 /* NotificationRepository.swift */; };
 		3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */; };
 		3B01DFBE27DB19AB003E19BD /* ProcessTransaction.Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */; };
 		3B0D87B227EC770200DEE867 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3B0D87B127EC770200DEE867 /* README.md */; };
@@ -64,7 +79,7 @@
 		3B5A2E8228124DE6003D5DBB /* ConfirmReceivingBitcoin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8128124DE6003D5DBB /* ConfirmReceivingBitcoin.swift */; };
 		3B5A2E8428124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8328124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift */; };
 		3B5A2E8628124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8528124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift */; };
-		3B78CB512773067100FB3C4C /* NotificationsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB502773067100FB3C4C /* NotificationsService.swift */; };
+		3B78CB512773067100FB3C4C /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB502773067100FB3C4C /* NotificationService.swift */; };
 		3B78CB53277306BA00FB3C4C /* InAppNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB52277306BA00FB3C4C /* InAppNotification.swift */; };
 		3B78CB572773147F00FB3C4C /* ClipboardManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B78CB562773147F00FB3C4C /* ClipboardManager.swift */; };
 		3B7DE7EB2775B01D00A92429 /* ProcessTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B7DE7E72775B01D00A92429 /* ProcessTransaction.swift */; };
@@ -175,7 +190,7 @@
 		41EB2E6727B23E76007D5F7F /* HelpCenterLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */; };
 		41F4476E2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */; };
 		41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */; };
-		622D257310E211606CCD9328 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 811225835DF48D2D5DC1E73B /* Pods_p2p_wallet.framework */; };
+		7EA06713C09305179750985A /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */; };
 		84699019D2C5C5E05EC8466A /* BuyProcessing.WidgetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699FF3E0F973EDC052ED23 /* BuyProcessing.WidgetViewController.swift */; };
 		84699053FB6A42A263B2DA69 /* BaseWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469998E20AA97B6D499EF55 /* BaseWalletCell.swift */; };
 		84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */; };
@@ -574,12 +589,28 @@
 
 /* Begin PBXFileReference section */
 		2C2645A9280707950058E7F6 /* History.Cell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.Cell.swift; sourceTree = "<group>"; };
+		2C2E498C2822804A00FB7655 /* NotificationType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationType.swift; sourceTree = "<group>"; };
 		2C591E3E280D440E0044ABB0 /* TransactionViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionViewModel.swift; sourceTree = "<group>"; };
 		2C591E3F280D440E0044ABB0 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		2C591E41280D440E0044ABB0 /* TransactionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionViewController.swift; sourceTree = "<group>"; };
 		2C591E4F280EA2FD0044ABB0 /* TransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionView.swift; sourceTree = "<group>"; };
 		2C5CF1312816E1CB003AF25E /* History.ErrorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.ErrorView.swift; sourceTree = "<group>"; };
+		2C5CF145281A7924003AF25E /* DeviceTokenDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTokenDto.swift; sourceTree = "<group>"; };
+		2C5CF14A281AA6A4003AF25E /* HttpClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HttpClient.swift; sourceTree = "<group>"; };
+		2C5CF14C281AA6CB003AF25E /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
+		2C5CF14E281AA6F8003AF25E /* RequestMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestMethod.swift; sourceTree = "<group>"; };
+		2C5CF150281AA715003AF25E /* ErrorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorModel.swift; sourceTree = "<group>"; };
+		2C5CF152281AA7E1003AF25E /* URLSession+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLSession+Extensions.swift"; sourceTree = "<group>"; };
+		2C5CF154281AAB86003AF25E /* NotifierEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotifierEndpoint.swift; sourceTree = "<group>"; };
+		2C5CF156281AAC9B003AF25E /* DeleteDeviceTokenDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteDeviceTokenDto.swift; sourceTree = "<group>"; };
+		2C5CF158281AB3D2003AF25E /* DeviceTokenInfoDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTokenInfoDto.swift; sourceTree = "<group>"; };
+		2CAFA75F281AC3A700C48208 /* Codable+SnakeCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Codable+SnakeCase.swift"; sourceTree = "<group>"; };
+		2CAFA769281ACFBB00C48208 /* DeviceTokenResposeDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTokenResposeDto.swift; sourceTree = "<group>"; };
 		2CB62D1F281141BB008A950A /* EmptyTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyTransactionsView.swift; sourceTree = "<group>"; };
+		2CCDD67D281BEFBD00AB7A82 /* JsonRpcResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonRpcResponseDto.swift; sourceTree = "<group>"; };
+		2CCDD67F281BF03800AB7A82 /* JsonRpcRequestDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonRpcRequestDto.swift; sourceTree = "<group>"; };
+		2CCDD682281BF15700AB7A82 /* NotificationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRepository.swift; sourceTree = "<group>"; };
+		31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
 		3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.swift; sourceTree = "<group>"; };
 		3B0D87B127EC770200DEE867 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -615,7 +646,7 @@
 		3B5A2E8128124DE6003D5DBB /* ConfirmReceivingBitcoin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.swift; sourceTree = "<group>"; };
 		3B5A2E8328124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.ViewModel.swift; sourceTree = "<group>"; };
 		3B5A2E8528124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.ViewController.swift; sourceTree = "<group>"; };
-		3B78CB502773067100FB3C4C /* NotificationsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationsService.swift; sourceTree = "<group>"; };
+		3B78CB502773067100FB3C4C /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		3B78CB52277306BA00FB3C4C /* InAppNotification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InAppNotification.swift; sourceTree = "<group>"; };
 		3B78CB562773147F00FB3C4C /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
 		3B7DE7E72775B01D00A92429 /* ProcessTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.swift; sourceTree = "<group>"; };
@@ -726,7 +757,8 @@
 		41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCenterLauncher.swift; sourceTree = "<group>"; };
 		41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeeCellContent.swift; sourceTree = "<group>"; };
 		41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.SignificantView.swift; sourceTree = "<group>"; };
-		811225835DF48D2D5DC1E73B /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		8469900B881EF729CE394E29 /* BuyProcessing.InputCryptoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; name = BuyProcessing.InputCryptoView.swift; path = Subview/BuyProcessing.InputCryptoView.swift; sourceTree = "<group>"; };
 		8469907019755990A0585C61 /* KeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		8469907A8017683D66200171 /* History.PriceUpdatingOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.PriceUpdatingOutput.swift; sourceTree = "<group>"; };
@@ -826,8 +858,6 @@
 		86A90D14273D306400D180EF /* VerifySecurityKeys.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.ViewController.swift; sourceTree = "<group>"; };
 		86A90D15273D306400D180EF /* VerifySecurityKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.swift; sourceTree = "<group>"; };
 		86A90D16273D306400D180EF /* VerifySecurityKeys.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.ViewModel.swift; sourceTree = "<group>"; };
-		AFC6E8194D84525D5919BA73 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
-		B7F186E9B331C3123918C54F /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		BC036C152692C070005C1BEC /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		BC036C1A269449A7005C1BEC /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionReusableView.swift; sourceTree = "<group>"; };
@@ -1143,7 +1173,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				622D257310E211606CCD9328 /* Pods_p2p_wallet.framework in Frameworks */,
+				7EA06713C09305179750985A /* Pods_p2p_wallet.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1153,8 +1183,8 @@
 		14A0B50387D380623394B692 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B7F186E9B331C3123918C54F /* Pods-p2p_wallet.debug.xcconfig */,
-				AFC6E8194D84525D5919BA73 /* Pods-p2p_wallet.release.xcconfig */,
+				711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */,
+				31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1186,12 +1216,82 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		2C5CF13F281A65E9003AF25E /* NotificationsService */ = {
+			isa = PBXGroup;
+			children = (
+				3B78CB502773067100FB3C4C /* NotificationService.swift */,
+				2C2E498C2822804A00FB7655 /* NotificationType.swift */,
+				2CCDD681281BF12600AB7A82 /* Repository */,
+			);
+			path = NotificationsService;
+			sourceTree = "<group>";
+		};
+		2C5CF142281A78E6003AF25E /* Dto */ = {
+			isa = PBXGroup;
+			children = (
+				2CAFA767281ACE7100C48208 /* Request */,
+				2CAFA768281ACE7C00C48208 /* Response */,
+			);
+			path = Dto;
+			sourceTree = "<group>";
+		};
+		2C5CF149281AA498003AF25E /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				2C5CF14A281AA6A4003AF25E /* HttpClient.swift */,
+				2C5CF14C281AA6CB003AF25E /* Endpoint.swift */,
+				2C5CF14E281AA6F8003AF25E /* RequestMethod.swift */,
+				2C5CF150281AA715003AF25E /* ErrorModel.swift */,
+				2C5CF152281AA7E1003AF25E /* URLSession+Extensions.swift */,
+				2CAFA75F281AC3A700C48208 /* Codable+SnakeCase.swift */,
+				2CCDD67C281BEFAC00AB7A82 /* Dto */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		2CAFA767281ACE7100C48208 /* Request */ = {
+			isa = PBXGroup;
+			children = (
+				2C5CF145281A7924003AF25E /* DeviceTokenDto.swift */,
+				2C5CF158281AB3D2003AF25E /* DeviceTokenInfoDto.swift */,
+				2C5CF156281AAC9B003AF25E /* DeleteDeviceTokenDto.swift */,
+			);
+			path = Request;
+			sourceTree = "<group>";
+		};
+		2CAFA768281ACE7C00C48208 /* Response */ = {
+			isa = PBXGroup;
+			children = (
+				2CAFA769281ACFBB00C48208 /* DeviceTokenResposeDto.swift */,
+			);
+			path = Response;
+			sourceTree = "<group>";
+		};
 		2CB62D1E281141A7008A950A /* Empty */ = {
 			isa = PBXGroup;
 			children = (
 				2CB62D1F281141BB008A950A /* EmptyTransactionsView.swift */,
 			);
 			path = Empty;
+			sourceTree = "<group>";
+		};
+		2CCDD67C281BEFAC00AB7A82 /* Dto */ = {
+			isa = PBXGroup;
+			children = (
+				2CCDD67F281BF03800AB7A82 /* JsonRpcRequestDto.swift */,
+				2CCDD67D281BEFBD00AB7A82 /* JsonRpcResponseDto.swift */,
+			);
+			path = Dto;
+			sourceTree = "<group>";
+		};
+		2CCDD681281BF12600AB7A82 /* Repository */ = {
+			isa = PBXGroup;
+			children = (
+				2CCDD682281BF15700AB7A82 /* NotificationRepository.swift */,
+				2C5CF154281AAB86003AF25E /* NotifierEndpoint.swift */,
+				2C5CF142281A78E6003AF25E /* Dto */,
+			);
+			path = Repository;
 			sourceTree = "<group>";
 		};
 		3B16154B2769A10B0080DE42 /* ConfirmSwapping */ = {
@@ -1773,10 +1873,10 @@
 			path = VerifySecurityKeys;
 			sourceTree = "<group>";
 		};
-		91BD0428A987B4F821332EB9 /* Frameworks */ = {
+		B9FAB58A12FD64D2B0CC985C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				811225835DF48D2D5DC1E73B /* Pods_p2p_wallet.framework */,
+				4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2376,7 +2476,7 @@
 				BCB2231625412AF8002D997F /* Products */,
 				14A0B50387D380623394B692 /* Pods */,
 				864D26D1280EB64E003D4D82 /* Recovered References */,
-				91BD0428A987B4F821332EB9 /* Frameworks */,
+				B9FAB58A12FD64D2B0CC985C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2406,6 +2506,7 @@
 		BCB22370254137C2002D997F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				2C5CF149281AA498003AF25E /* Networking */,
 				BC036C1A269449A7005C1BEC /* Socket.swift */,
 				41EB2E6327B23CFD007D5F7F /* Intercom */,
 				3B2F9EED27F5B758005BD49B /* SendService */,
@@ -2425,7 +2526,7 @@
 				BCB286CD275084A10074E1D5 /* DAppChannel.swift */,
 				3B78CB562773147F00FB3C4C /* ClipboardManager.swift */,
 				3BCEED5727D32C1300BA9110 /* TransactionHandler */,
-				3B78CB502773067100FB3C4C /* NotificationsService.swift */,
+				2C5CF13F281A65E9003AF25E /* NotificationsService */,
 				3B1681FF278B55DC00838F1B /* AuthenticationHandler.swift */,
 				41D59FE027AD1CA400829B90 /* CachedTokensRepository.swift */,
 				84699EEE2AAF2DB90B7E2EF4 /* Swap */,
@@ -2870,15 +2971,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BCB2233F25412AF9002D997F /* Build configuration list for PBXNativeTarget "p2p_wallet" */;
 			buildPhases = (
-				ABBBFD22C6FF0AF28A819DFE /* [CP] Check Pods Manifest.lock */,
+				1ED1F6FE33F689DD698C1141 /* [CP] Check Pods Manifest.lock */,
 				BC65EA002542C305005F50CE /* Swiftgen Run Script */,
 				3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */,
 				BCB2231125412AF8002D997F /* Sources */,
 				BCB2231225412AF8002D997F /* Frameworks */,
 				BCB2231325412AF8002D997F /* Resources */,
 				BC636756255AB64C00D585FD /* ShellScript */,
-				B6CDC51BD81CC6BCCDB428CB /* [CP] Embed Pods Frameworks */,
-				7669C5BD04A32186D11FC1D3 /* [CP] Copy Pods Resources */,
+				17FE11FE86CB0D754F84BBC3 /* [CP] Embed Pods Frameworks */,
+				5FD6DD551FAE63F0DBF6F9DF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -2970,6 +3071,45 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		17FE11FE86CB0D754F84BBC3 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		1ED1F6FE33F689DD698C1141 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-p2p_wallet-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3022,7 +3162,7 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml\n";
 		};
-		7669C5BD04A32186D11FC1D3 /* [CP] Copy Pods Resources */ = {
+		5FD6DD551FAE63F0DBF6F9DF /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3037,45 +3177,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		ABBBFD22C6FF0AF28A819DFE /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-p2p_wallet-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B6CDC51BD81CC6BCCDB428CB /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BC636756255AB64C00D585FD /* ShellScript */ = {
@@ -3129,6 +3230,7 @@
 				3B3A8EF627D7B4680026E0FE /* TransactionDetail.SummaryView.swift in Sources */,
 				BCE42DF725DF9C7A0021540E /* Onboarding.ViewController.swift in Sources */,
 				41CA057A2754800D00953322 /* ReserveName.NavigationBar.swift in Sources */,
+				2C5CF14B281AA6A4003AF25E /* HttpClient.swift in Sources */,
 				41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */,
 				BCC1F20D269EC712003DD648 /* WLNotificationsRepository.swift in Sources */,
 				BCB286DC2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.swift in Sources */,
@@ -3170,6 +3272,7 @@
 				BC65DFFA261D6D3F00E436C7 /* SwapTransactionImageView.swift in Sources */,
 				BC38555926AE971400BD8BF7 /* ChooseWallet.swift in Sources */,
 				BC65DFF4261D6AD400E436C7 /* TransactionImageView.swift in Sources */,
+				2C2E498D2822804A00FB7655 /* NotificationType.swift in Sources */,
 				BCB286DD2754B5070074E1D5 /* SendToken.ChooseRecipientAndNetwork.ViewController.swift in Sources */,
 				41EA3B092777389000832109 /* SwapTokenSettings.FeesView.swift in Sources */,
 				BCB286F92754CCE20074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView.swift in Sources */,
@@ -3177,6 +3280,8 @@
 				BC699AB925F9E69B00F57209 /* WLPhrasesListView.swift in Sources */,
 				BC32A393254A77A9002156F0 /* UIViewController+Extensions.swift in Sources */,
 				41BDBD5727A6670F00000EF7 /* SupportedTokens.ViewModel.swift in Sources */,
+				2C5CF14D281AA6CB003AF25E /* Endpoint.swift in Sources */,
+				2CCDD680281BF03800AB7A82 /* JsonRpcRequestDto.swift in Sources */,
 				BC5140C3272ABC0800DB84BD /* Home.RootView.swift in Sources */,
 				BC53E23E26578224005624CC /* DeviceOwnerAuthenticationHandler.swift in Sources */,
 				BC8F6945260AE69E002FDCCD /* WLSectionHeaderView.swift in Sources */,
@@ -3236,6 +3341,7 @@
 				BC4B9EA127154050005B9ECA /* Settings.SelectAppearanceViewController.swift in Sources */,
 				3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */,
 				3B7DE7EB2775B01D00A92429 /* ProcessTransaction.swift in Sources */,
+				2C5CF153281AA7E1003AF25E /* URLSession+Extensions.swift in Sources */,
 				BC15EEF226FDE10A00F30605 /* DerivablePaths.swift in Sources */,
 				412DBFE3273E999E000F514E /* ClearableButton.swift in Sources */,
 				BC53E2262654FE56005624CC /* DerivableAccount.swift in Sources */,
@@ -3250,6 +3356,7 @@
 				41DE53C8279795EE00F24B0B /* WalletDetail.BalanceView.swift in Sources */,
 				BCCF23C826FAF52C00D08724 /* RenVM.BurnAndRelease.Service.swift in Sources */,
 				BC38555E26AE9A2B00BD8BF7 /* ChooseWallet.CollectionView.swift in Sources */,
+				2C5CF159281AB3D2003AF25E /* DeviceTokenInfoDto.swift in Sources */,
 				3B3A8EEC27D7A8290026E0FE /* TransactionDetail.swift in Sources */,
 				4183007827576450007BBEBF /* ReserveName.LoadingView.swift in Sources */,
 				412DBFDD273D7B81000F514E /* EnterSeed.ViewController.swift in Sources */,
@@ -3297,6 +3404,7 @@
 				BCE04C6A268D901400CE131A /* ModalTransitionAnimator.swift in Sources */,
 				41EB2E6727B23E76007D5F7F /* HelpCenterLauncher.swift in Sources */,
 				BC85EA68266E1324005006D5 /* ReceiveToken.SceneModel.swift in Sources */,
+				2C5CF155281AAB86003AF25E /* NotifierEndpoint.swift in Sources */,
 				41EA3B0D2777448000832109 /* SwapTokenSettings.FeeCell.swift in Sources */,
 				BCB286E32754B9680074E1D5 /* SendToken.ChooseRecipientAndNetwork.ContactViewController.swift in Sources */,
 				BC75339C257F2953007A00D9 /* Date+Extensions.swift in Sources */,
@@ -3329,6 +3437,7 @@
 				86A90D1A273D306400D180EF /* VerifySecurityKeys.ViewModel.swift in Sources */,
 				BC185EF826E20CFF00280FE6 /* SwapProvider.swift in Sources */,
 				BC22ABE62552A5E10071C69F /* QrCodeScannerVC.swift in Sources */,
+				2C5CF157281AAC9B003AF25E /* DeleteDeviceTokenDto.swift in Sources */,
 				2C591E44280D440E0044ABB0 /* TransactionViewController.swift in Sources */,
 				BC85EA69266E1324005006D5 /* ReceiveToken.ReceiveSolanaView.swift in Sources */,
 				41CA05762754725200953322 /* ReserveName.ViewController.swift in Sources */,
@@ -3337,6 +3446,7 @@
 				BCA93F6225E77EF50081DDF6 /* TokenSettingsCell.swift in Sources */,
 				BC5257E725CBACEA0076317E /* Fiat.swift in Sources */,
 				41CA05772754725200953322 /* ReserveName.ViewModel.swift in Sources */,
+				2CCDD683281BF15700AB7A82 /* NotificationRepository.swift in Sources */,
 				BCB286C7274CCAA30074E1D5 /* SendToken.ChooseTokenAndAmount.ViewModel.swift in Sources */,
 				BC4B9E87271425B9005B9ECA /* Settings.ViewModel.swift in Sources */,
 				41DD026D2760A9B300545A73 /* TextChangesFilter.swift in Sources */,
@@ -3376,8 +3486,9 @@
 				4114D16B2746272400352CDF /* EnterSeedInfo.ViewController.swift in Sources */,
 				3BF4279A2805332100C0F75B /* SwiftyUserDefaults+Workaround.swift in Sources */,
 				BC22ABD72552A30B0071C69F /* MenuHelper.swift in Sources */,
+				2C5CF151281AA715003AF25E /* ErrorModel.swift in Sources */,
 				BC4B9E8C27153430005B9ECA /* Settings.UsernameViewController.swift in Sources */,
-				3B78CB512773067100FB3C4C /* NotificationsService.swift in Sources */,
+				3B78CB512773067100FB3C4C /* NotificationService.swift in Sources */,
 				BCB2870C27560F1D0074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift in Sources */,
 				BC7AD0E8254A540700B4A070 /* WLButton.swift in Sources */,
 				412DBFE527460014000F514E /* EnterSeed.MainButtonContent.swift in Sources */,
@@ -3415,6 +3526,7 @@
 				BC4B9EBD27191843005B9ECA /* OrcaSwapV2.ViewController.swift in Sources */,
 				BC12550B2653A61C00695A2B /* SelectableDerivablePath.swift in Sources */,
 				BC03EC93256F59CF00A68D18 /* LABiometryType+Extensions.swift in Sources */,
+				2C5CF14F281AA6F8003AF25E /* RequestMethod.swift in Sources */,
 				BC134FA926FD810200DB15BF /* CreateSecurityKeys.swift in Sources */,
 				BCA0CFD2255E4E4000CD0F8D /* UIImageView+Extensions.swift in Sources */,
 				BCE3D58525F2426D0092F91B /* SystemVersion.swift in Sources */,
@@ -3452,6 +3564,7 @@
 				BCFC768825E2EAB800FBE148 /* Main.ViewController.swift in Sources */,
 				41B351F5275F131C0027328E /* OrcaSwapV2.ClickableRow.swift in Sources */,
 				BCB2867D2745F4D10074E1D5 /* PricesStorage.swift in Sources */,
+				2CAFA760281AC3A700C48208 /* Codable+SnakeCase.swift in Sources */,
 				BCB287022755DB980074E1D5 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.TitleView.swift in Sources */,
 				BC036C3126959F6C005C1BEC /* BaseCollectionReusableView.swift in Sources */,
 				BC460768266F4B3200A12E07 /* ObservableType+Extensions.swift in Sources */,
@@ -3573,6 +3686,7 @@
 				84699F599B47C30D251B657D /* ReceiveToken.ViewBuilders.swift in Sources */,
 				84699FAFF6F54DA93EE08CD8 /* ReceiveToken.QrCodeView.swift in Sources */,
 				8469923A8BD54C585185546C /* ReceiveToken.QrCodeCard.swift in Sources */,
+				2C5CF146281A7924003AF25E /* DeviceTokenDto.swift in Sources */,
 				84699180BD00AC7A82B3DC28 /* SortByDataStrategy.swift in Sources */,
 				41D59FD927ABC68A00829B90 /* IntercomUserAttributesService.swift in Sources */,
 				84699DE4F5BFA86D17B61078 /* ReceiveToken.QrCodeImageRender.swift in Sources */,
@@ -3617,7 +3731,9 @@
 				84699F1F56756CE9EBB99B98 /* TokenSelection.swift in Sources */,
 				84699E4D8F94698F85066761 /* Authentication.BiometricButton.swift in Sources */,
 				84699AFF5091E0304EC6CA9C /* Keyphrase.swift in Sources */,
+				2CAFA76A281ACFBB00C48208 /* DeviceTokenResposeDto.swift in Sources */,
 				84699F2C69908573C61A8E6D /* TransactionAnalytics.swift in Sources */,
+				2CCDD67E281BEFBD00AB7A82 /* JsonRpcResponseDto.swift in Sources */,
 				8469941E530E40CFC0FA0380 /* SupportedTokens.EmptyCell.swift in Sources */,
 				84699354E360221ABDFEE6C1 /* History.swift in Sources */,
 				84699420D5B65B2B98BC0901 /* History.Scene.swift in Sources */,
@@ -3816,14 +3932,14 @@
 		};
 		BCB2234025412AF9002D997F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B7F186E9B331C3123918C54F /* Pods-p2p_wallet.debug.xcconfig */;
+			baseConfigurationReference = 711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3831,7 +3947,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.4.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3861,14 +3977,14 @@
 		};
 		BCB2234125412AF9002D997F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFC6E8194D84525D5919BA73 /* Pods-p2p_wallet.release.xcconfig */;
+			baseConfigurationReference = 31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3876,7 +3992,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.1;
+				MARKETING_VERSION = 1.4.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",

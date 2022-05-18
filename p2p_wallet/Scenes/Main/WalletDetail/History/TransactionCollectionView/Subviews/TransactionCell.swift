@@ -154,7 +154,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         amountInFiatLabel.textColor = .textBlack
         if let amountInFiat = transaction.amountInFiat {
             var amountText =
-                "\(Defaults.fiat.symbol)\(abs(amountInFiat).toString(showMinus: false, autoSetMaximumFractionDigits: true))"
+                "\(Defaults.fiat.symbol)\(abs(amountInFiat).toString(maximumFractionDigits: 2, showMinus: false))"
             var textColor = UIColor.textBlack
             if transaction.amount < 0 {
                 amountText = "- " + amountText
