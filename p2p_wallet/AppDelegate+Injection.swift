@@ -114,7 +114,9 @@ extension Resolver: ResolverRegistering {
             apiClient: resolve(),
             solanaClient: resolve(),
             accountStorage: resolve(SolanaSDK.self).accountStorage,
-            orcaSwapClient: resolve()
+            orcaSwapClient: resolve(),
+            deviceType: .iOS,
+            buildNumber: Bundle.main.fullVersionNumber
         ) }
         .implements(FeeRelayerRelayType.self)
         .scope(.session)

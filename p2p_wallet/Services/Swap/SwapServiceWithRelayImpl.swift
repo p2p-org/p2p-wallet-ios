@@ -32,7 +32,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
                 apiClient: feeRelayApi,
                 solanaClient: solanaClient,
                 accountStorage: accountStorage,
-                orcaSwapClient: orcaSwap
+                orcaSwapClient: orcaSwap,
+                deviceType: .iOS,
+                buildNumber: Bundle.main.fullVersionNumber
             )
 
             return .zip(
@@ -360,7 +362,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
             return feeRelay.topUpAndRelayTransactions(
                 preparedTransactions: preparedTransactions.transactions,
                 payingFeeToken: payingFeeToken,
-                additionalPaybackFee: preparedTransactions.additionalPaybackFee
+                additionalPaybackFee: preparedTransactions.additionalPaybackFee,
+                operationType: .swap,
+                currency: sourceTokenMint
             )
         }
     }
