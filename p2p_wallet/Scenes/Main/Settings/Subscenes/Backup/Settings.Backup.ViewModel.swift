@@ -21,7 +21,7 @@ extension Settings.Backup {
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
         var didBackupHandler: (() -> Void)?
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)

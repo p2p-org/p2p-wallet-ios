@@ -50,8 +50,11 @@ extension Resolver: ResolverRegistering {
         register { CryptoComparePricesFetcher() }
             .implements(PricesFetcher.self)
             .scope(.application)
-        register { NotificationsService() }
-            .implements(NotificationsServiceType.self)
+        register { NotificationServiceImpl() }
+            .implements(NotificationService.self)
+            .scope(.application)
+        register { NotificationRepositoryImpl() }
+            .implements(NotificationRepository.self)
             .scope(.application)
         register { ClipboardManager() }
             .implements(ClipboardManagerType.self)
@@ -237,6 +240,18 @@ extension Resolver: ResolverRegistering {
         }
         .implements(Banners.Service.self)
         .scope(.shared)
+
+        // MARK: - RenBTCStatusService
+
+        register { RenBTCStatusService() }
+            .implements(RenBTCStatusServiceType.self)
+            .scope(.session)
+
+        // MARK: - HttpClient
+
+        register { HttpClientImpl() }
+            .implements(HttpClient.self)
+            .scope(.session)
     }
 }
 

@@ -35,7 +35,7 @@ extension CreateSecurityKeys {
         private let createWalletViewModel: CreateWalletViewModelType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
         @Injected var imageSaver: ImageSaverType
 
         // MARK: - Subjects

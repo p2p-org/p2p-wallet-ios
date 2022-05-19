@@ -16,13 +16,16 @@ protocol TransactionHandlerType {
     func areSomeTransactionsInProgress() -> Bool
 
     func observeProcessingTransactions(forAccount account: String) -> Observable<[SolanaSDK.ParsedTransaction]>
+    func observeProcessingTransactions() -> Observable<[SolanaSDK.ParsedTransaction]>
+
     func getProccessingTransactions(of account: String) -> [SolanaSDK.ParsedTransaction]
+    func getProcessingTransaction() -> [SolanaSDK.ParsedTransaction]
 
     var onNewTransaction: Observable<(trx: PendingTransaction, index: Int)> { get }
 }
 
 class TransactionHandler: TransactionHandlerType {
-    @Injected var notificationsService: NotificationsServiceType
+    @Injected var notificationsService: NotificationService
     @Injected var analyticsManager: AnalyticsManager
     @Injected var apiClient: ProcessTransactionAPIClient
     @Injected var walletsRepository: WalletsRepository
@@ -78,6 +81,12 @@ class TransactionHandler: TransactionHandlerType {
             .asObservable()
     }
 
+    func observeProcessingTransactions() -> Observable<[SolanaSDK.ParsedTransaction]> {
+        transactionsSubject
+            .map { [weak self] _ in self?.getProcessingTransaction() ?? [] }
+            .asObservable()
+    }
+
     func getProccessingTransactions(
         of account: String
     ) -> [SolanaSDK.ParsedTransaction] {
@@ -103,6 +112,13 @@ class TransactionHandler: TransactionHandlerType {
                 }
                 return false
             }
+            .compactMap { pt -> SolanaSDK.ParsedTransaction? in
+                pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
+            }
+    }
+
+    func getProcessingTransaction() -> [SolanaSDK.ParsedTransaction] {
+        transactionsSubject.value
             .compactMap { pt -> SolanaSDK.ParsedTransaction? in
                 pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
             }

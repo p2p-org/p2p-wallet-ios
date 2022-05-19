@@ -31,7 +31,7 @@ class BaseWalletCell: BECompositionView {
                 .bind(contentRef)
                 .padding(.init(x: 18, y: 0))
                 .withTag(1)
-                .padding(.init(x: 0, y: 12))
+                .padding(.init(x: 0, y: 8))
                 .backgroundColor(color: .background)
                 .lightShadow()
                 .roundCorners(
@@ -41,13 +41,13 @@ class BaseWalletCell: BECompositionView {
             trailingActions: trailingActions
         )
             .bind(swipeableCellRef)
-            .frame(height: 63)
+            .frame(height: 64)
     }
 
     private func content() -> UIView {
         BEHStack {
             // Icon
-            CoinLogoImageView(size: 32)
+            CoinLogoImageView(size: 48, cornerRadius: 16)
                 .bind(iconRef)
                 .centered(.vertical)
 
@@ -55,10 +55,10 @@ class BaseWalletCell: BECompositionView {
 
             // Title
             BEVStack {
-                UILabel(text: "<Coin name>")
+                UILabel(text: "<Coin name>", textSize: 16)
                     .bind(coinNameRef)
-                UIView(height: 6)
-                UILabel(text: "<Amount>", textSize: 13, weight: .medium, textColor: .secondaryLabel)
+                UIView(height: 8)
+                UILabel(text: "<Amount>", textSize: 12, weight: .medium, textColor: .secondaryLabel)
                     .bind(amountRef)
             }
             UIView.spacer

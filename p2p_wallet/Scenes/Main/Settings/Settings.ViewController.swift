@@ -178,11 +178,12 @@ extension Settings {
                             .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
 
                         // Appearance
-                        CellView(
-                            icon: .appearanceIcon,
-                            title: UILabel(text: L10n.appearance.onlyUppercaseFirst()),
-                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
-                        ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
+
+//                        CellView(
+//                            icon: .appearanceIcon,
+//                            title: UILabel(text: L10n.appearance.onlyUppercaseFirst()),
+//                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
+//                        ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
 
                         // Hide zero balance
 
@@ -298,7 +299,7 @@ extension Settings {
                 createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
                     self?.viewModel.savePincode(String(pincode))
                     createPincodeVC?.dismiss(animated: true) {
-                        Resolver.resolve(NotificationsService.self)
+                        Resolver.resolve(NotificationService.self)
                             .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
                     }
                 }
