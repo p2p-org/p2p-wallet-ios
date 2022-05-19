@@ -26,7 +26,7 @@ extension ReceiveToken {
         @Injected private var nameStorage: NameStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManger: ClipboardManagerType
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
         @Injected private var imageSaver: ImageSaverType
         private let navigationSubject: PublishRelay<NavigatableScene?>
 

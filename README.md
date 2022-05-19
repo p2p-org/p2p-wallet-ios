@@ -36,7 +36,7 @@ chmod -R +x .githooks
 ```zsh
 Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
 ```
-- Add `Config.xconfig` to `p2p-wallet-ios/p2p-wallet` contains following content
+- Add `Config.xcconfig` to `p2p-wallet-ios/p2p-wallet` contains following content
 ```
 // MARK: - Transak
 TRANSAK_STAGING_API_KEY = fake_api_key
@@ -68,6 +68,37 @@ TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 - `Swiftlint`, SwiftFormat for linting, automatically formating code
 - `Periphery` for detecting dead code (use Detect Unused Code target and run)
 - `CircleCI` or `GithubAction`: implementing...
+
+### Fastlane config (optional)
+Add `.env` file contains following content (ask teamate):
+```
+DEVELOPER_APP_IDENTIFIER=""
+APP_STORE_CONNECT_TEAM_ID=""
+DEVELOPER_PORTAL_TEAM_ID=""
+DEVELOPER_APP_ID=""
+PROVISIONING_PROFILE_SPECIFIER_ADHOC=""
+PROVISIONING_PROFILE_SPECIFIER_APPSTORE=""
+APPLE_ISSUER_ID=""
+PROVISIONING_REPO=""
+
+FIREBASE_APP_ID=""
+FIREBASE_CLI_TOKEN=""
+
+BROWSERSTACK_USERNAME=""
+BROWSERSTACK_ACCESS_KEY=""
+
+FASTLANE_APPLE_ID=""
+TEMP_KEYCHAIN_USER=""
+TEMP_KEYCHAIN_PASSWORD=""
+APPLE_KEY_ID=""
+APPLE_KEY_CONTENT=""
+GIT_AUTHORIZATION=""
+MATCH_PASSWORD=""
+IS_CI=false
+
+XCCONFIG_URL=""
+
+```
 
 ## Code style
 

@@ -3,7 +3,8 @@ platform :ios, '13.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 def common_pods
-  pod 'RxCocoa'
+  pod 'RxSwift', '6.5.0'
+  pod 'RxCocoa', '6.5.0'
   pod 'SolanaSwift', :path => 'SolanaSwift'
 end
 
@@ -11,6 +12,7 @@ target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   common_pods
+#  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'LazySubject', :path => 'LazySubject'
   pod 'BECollectionView', :path => 'BECollectionView'
@@ -27,12 +29,13 @@ target 'p2p_wallet' do
   pod 'SubviewAttachingTextView'
   pod 'Charts'
   pod "RxAppState"
+  pod "RxGesture"
   pod 'JazziconSwift'
   pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'Intercom'
-  pod 'SwiftFormat/CLI', '~> 0.49'
+  pod 'SwiftFormat/CLI', '0.49.6'
   pod 'Periphery'
   
   # Firebase

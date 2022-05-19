@@ -17,7 +17,8 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
-    private var lockViewController: LockScreenWrapperViewController?
+
+    @Injected private var notificationService: NotificationService
 
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -30,11 +31,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
-    func application(_: UIApplication,
-                     didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool
-    {
+    func application(
+        _: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-        Bundle.swizzleLocalization()
+        // TODO: - Swizzle localization later
+//        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
         // BEPureLayoutConfiguration
@@ -59,33 +62,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
 
+        notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
+
         // set rootVC
         let vm = Root.ViewModel()
         let vc = Root.ViewController(viewModel: vm)
-        lockViewController = LockScreenWrapperViewController(vc)
-        window?.rootViewController = lockViewController
-
+        window?.rootViewController = vc
         window?.makeKeyAndVisible()
         return true
-    }
-
-    func applicationWillResignActive(_: UIApplication) {
-        debugPrint("Lock")
-        lockViewController?.isLocked = true
-    }
-
-    func applicationDidBecomeActive(_: UIApplication) {
-        debugPrint("Unlock")
-        lockViewController?.isLocked = false
     }
 
     func application(
         _: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
-        let token = tokenParts.joined()
-        debugPrint("Device Token: \(token)")
+        Task.detached(priority: .background) { [unowned self] in
+            await notificationService.sendRegisteredDeviceToken(deviceToken)
+        }
     }
 
     func application(
@@ -93,5 +86,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         debugPrint("Failed to register: \(error)")
+    }
+
+    func application(
+        _: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        notificationService.didReceivePush(userInfo: userInfo)
     }
 }

@@ -97,16 +97,9 @@ extension Home {
                 )
             case .receiveToken:
                 if let pubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
-                    let isDevnet = Defaults.apiEndPoint.network == .devnet
-                    let renBTCMint: SolanaSDK.PublicKey = isDevnet ? .renBTCMintDevnet : .renBTCMint
-
-                    let isRenBTCWalletCreated = viewModel.walletsRepository.getWallets().contains(where: {
-                        $0.token.address == renBTCMint.base58EncodedString
-                    })
                     let vm = ReceiveToken.SceneModel(
                         solanaPubkey: pubkey,
-                        solanaTokenWallet: nil,
-                        isRenBTCWalletCreated: isRenBTCWalletCreated
+                        solanaTokenWallet: nil
                     )
                     let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: false)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
