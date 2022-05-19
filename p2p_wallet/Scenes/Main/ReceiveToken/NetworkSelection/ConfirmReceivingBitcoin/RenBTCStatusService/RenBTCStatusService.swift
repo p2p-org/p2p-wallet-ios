@@ -100,7 +100,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
                                     address: payingFeeAddress,
                                     mint: payingFeeMintAddress
                                 ),
-                                operationType: .other("CreateAssociatedToken"), // TODO: - Which?
+                                operationType: .other,
                                 currency: SolanaSDK.PublicKey.renBTCMint.base58EncodedString
                             )
                             .map(\.first)
