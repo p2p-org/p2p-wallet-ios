@@ -11,8 +11,6 @@ import RxCocoa
 import RxSwift
 
 protocol ReceiveTokenBitcoinViewModelType: AnyObject {
-    var isReceivingRenBTCDriver: Driver<Bool> { get }
-    var conditionAcceptedDriver: Driver<Bool> { get }
     var addressDriver: Driver<String?> { get }
     var timerSignal: Signal<Void> { get }
     var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
@@ -40,38 +38,21 @@ extension ReceiveToken {
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var imageSaver: ImageSaverType
-        @Injected var notificationsService: NotificationsServiceType
+        @Injected var notificationsService: NotificationService
         private let navigationSubject: PublishRelay<NavigatableScene?>
-        @Injected private var associatedTokenAccountHandler: AssociatedTokenAccountHandler
 
         // MARK: - Subjects
 
-        private let isReceivingRenBTCSubject = BehaviorRelay<Bool>(value: true)
-        private lazy var createRenBTCSubject: LoadableRelay<String> = .init(
-            request: associatedTokenAccountHandler
-                .createAssociatedTokenAccount(tokenMint: .renBTCMint, isSimulation: false)
-                .catch { error in
-                    if error.isAlreadyInUseSolanaError {
-                        return .just("")
-                    }
-                    throw error
-                }
-        )
         private let timerSubject = PublishRelay<Void>()
 
         // MARK: - Initializers
 
         init(
             navigationSubject: PublishRelay<NavigatableScene?>,
-            isRenBTCWalletCreated: Bool,
             hasExplorerButton: Bool
         ) {
             self.navigationSubject = navigationSubject
             self.hasExplorerButton = hasExplorerButton
-
-            if isRenBTCWalletCreated {
-                createRenBTCSubject.accept(nil, state: .loaded)
-            }
 
             bind()
         }
@@ -81,7 +62,7 @@ extension ReceiveToken {
         }
 
         func acceptConditionAndLoadAddress() {
-            renVMService.acceptConditionAndLoadAddress()
+            renVMService.loadSession()
         }
 
         private func bind() {
@@ -102,14 +83,6 @@ extension ReceiveToken {
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
-    var isReceivingRenBTCDriver: Driver<Bool> {
-        isReceivingRenBTCSubject.asDriver()
-    }
-
-    var conditionAcceptedDriver: Driver<Bool> {
-        renVMService.conditionAcceptedDriver
-    }
-
     var addressDriver: Driver<String?> {
         renVMService.addressDriver
     }
