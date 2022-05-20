@@ -190,6 +190,16 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     }
 
     func endOnboarding() {
+        switch OnboardingTracking.currentFlow {
+        case .create:
+            analyticsManager
+                .log(event: .walletCreated(lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"))
+        case .restore:
+            analyticsManager
+                .log(event: .walletRestored(lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"))
+        case .none: break
+        }
+
         navigationSubject.accept(.dismiss)
         handler.onboardingDidComplete()
     }
