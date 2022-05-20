@@ -142,7 +142,7 @@ extension Resolver: ResolverRegistering {
 
         register {
             OrcaSwap(
-                apiClient: OrcaSwap.APIClient(
+                apiClient: OrcaSwapSwift.APIClient(
                     network: Defaults.apiEndPoint.network.cluster
                 ),
                 solanaClient: resolve(),

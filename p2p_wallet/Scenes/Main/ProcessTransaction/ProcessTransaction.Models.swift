@@ -23,6 +23,7 @@ extension SolanaSDK: ProcessTransactionAPIClient {}
 protocol RawTransactionType {
     func createRequest() -> Single<String>
     var mainDescription: String { get }
+    var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? { get }
 }
 
 extension RawTransactionType {
@@ -96,6 +97,15 @@ extension ProcessTransaction {
                 slippage: slippage
             ).map { $0.first ?? "" }
         }
+
+        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+            guard let networkFees = fees.networkFees?.total,
+                  let payingFeeToken = payingWallet?.token
+            else {
+                return nil
+            }
+            return (total: networkFees, payingFeeToken)
+        }
     }
 
     struct CloseTransaction: RawTransactionType {
@@ -112,6 +122,10 @@ extension ProcessTransaction {
                 return .error(SolanaSDK.Error.unknown)
             }
             return solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
+        }
+
+        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+            (total: 5000, token: .nativeSolana) // TODO: Fix later
         }
     }
 
@@ -143,6 +157,13 @@ extension ProcessTransaction {
                 network: network,
                 payingFeeWallet: payingFeeWallet
             )
+        }
+
+        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+            guard let feeInToken = feeInToken, let token = payingFeeWallet?.token else {
+                return nil
+            }
+            return (total: feeInToken.total, token: token)
         }
     }
 }
