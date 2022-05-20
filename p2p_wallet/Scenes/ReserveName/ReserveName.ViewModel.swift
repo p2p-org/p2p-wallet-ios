@@ -244,7 +244,11 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
 
 extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
     func gtCaptcha(_: GT3CaptchaManager, errorHandler error: GT3Error) {
-        notificationsService.showInAppNotification(.error(error))
+        if error.isNameServiceUnavailable {
+            mainButtonStateSubject.accept(.unavailableNameService)
+        }
+        notificationsService
+            .showInAppNotification(.message(error.readableDescription))
     }
 
     func gtCaptcha(
