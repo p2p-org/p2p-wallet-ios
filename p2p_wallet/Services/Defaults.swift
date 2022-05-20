@@ -32,6 +32,8 @@ extension DefaultsKeys {
     var didSetEnableBiometry: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var isBiometryEnabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didSetEnableNotifications: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var wasFirstAttemptForSendingToken: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var lastDeviceToken: DefaultsKey<Data?> { .init(#function, defaultValue: nil) }
     var apiEndPoint: DefaultsKey<SolanaSDK.APIEndPoint> {
         .init(
             #function,

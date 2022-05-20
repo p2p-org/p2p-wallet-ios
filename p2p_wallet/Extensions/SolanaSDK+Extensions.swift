@@ -15,6 +15,9 @@ extension SolanaSDK.APIEndPoint {
                   additionalQuery: .secretConfig("RPCPOOL_API_KEY")),
             at: 0
         )
+        #if !DEBUG
+            endpoints.removeAll { $0.network == .testnet || $0.network == .devnet }
+        #endif
         return endpoints
     }
 }

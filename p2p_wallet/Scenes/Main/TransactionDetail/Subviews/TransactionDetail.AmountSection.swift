@@ -343,7 +343,7 @@ extension TransactionDetail {
             if withFiatValue {
                 attStr.text(" ")
                     .text(
-                        "(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol)?.toString(maximumFractionDigits: 9) ?? "0"))",
+                        "(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol)?.toString(maximumFractionDigits: 2) ?? "0"))",
                         size: 15,
                         color: .textSecondary
                     )

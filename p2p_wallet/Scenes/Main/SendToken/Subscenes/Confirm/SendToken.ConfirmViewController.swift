@@ -218,7 +218,7 @@ extension SendToken {
                                      $0?.token.symbol ?? "")
                                 }
                                 .map { price, _ in
-                                    price?.toString(maximumFractionDigits: 9) + " " + Defaults.fiat.code
+                                    price?.toString(maximumFractionDigits: 2) + " " + Defaults.fiat.code
                                 }
                                 .drive(view.rightLabel.rx.text)
                                 .disposed(by: disposeBag)
