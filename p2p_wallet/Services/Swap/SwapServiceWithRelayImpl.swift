@@ -119,7 +119,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
 
     struct PoolsPair: Swap.PoolsPair {
-        let orcaPoolPair: OrcaSwap.PoolsPair
+        let orcaPoolPair: OrcaSwapSwift.PoolsPair
 
         func getMinimumAmountOut(inputAmount: UInt64, slippage: Double) -> UInt64? {
             orcaPoolPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)
@@ -137,7 +137,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     // MARK: - Helpers
 
     private func getLiquidityProviderFees(
-        poolsPair: OrcaSwap.PoolsPair?,
+        poolsPair: OrcaSwapSwift.PoolsPair?,
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token?,
         inputAmount: Double?,
@@ -186,7 +186,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
 
     private func getNetworkFeesForSwappingViaRelayProgram(
-        swapPools: OrcaSwap.PoolsPair?,
+        swapPools: OrcaSwapSwift.PoolsPair?,
         sourceMint: String,
         destinationAddress: String?,
         destinationToken: SolanaSDK.Token,
@@ -300,7 +300,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         destinationTokenMint: String,
         payingTokenAddress: String?,
         payingTokenMint: String?,
-        poolsPair: OrcaSwap.PoolsPair,
+        poolsPair: OrcaSwapSwift.PoolsPair,
         amount: UInt64,
         decimals: UInt8,
         slippage: Double
@@ -352,6 +352,6 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
 }
 
-private extension OrcaSwap.PoolsPair {
+private extension PoolsPair {
     func toPoolsPair() -> SwapServiceWithRelayImpl.PoolsPair { .init(orcaPoolPair: self) }
 }
