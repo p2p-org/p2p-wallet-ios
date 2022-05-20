@@ -25,7 +25,7 @@ class TabBar: BERoundedCornerShadowView {
 }
 
 extension TabBarVC {
-    class TabBarItemView: BEView {
+    final class TabBarItemView: BEView {
         lazy var imageView = UIImageView(width: 24, height: 24)
         lazy var titleLabel = UILabel(textSize: 10, weight: .medium, textAlignment: .center)
 

@@ -32,7 +32,7 @@ extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
 
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
         @Injected private var analyticsManager: AnalyticsManagerType
         private let nameService: NameServiceType = Resolver.resolve()
         private let owner: String

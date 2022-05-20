@@ -143,7 +143,7 @@ extension SerumSwapV1 {
                     .map { amount, wallet in
                         if let wallet = wallet {
                             let value = amount * wallet.priceInCurrentFiat
-                            return "≈ \(value.toString(maximumFractionDigits: 9)) \(Defaults.fiat.symbol)"
+                            return "≈ \(value.toString(maximumFractionDigits: 2)) \(Defaults.fiat.symbol)"
                         } else {
                             return L10n.selectCurrency
                         }
