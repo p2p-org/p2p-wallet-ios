@@ -20,7 +20,7 @@ class SendService: SendServiceType {
     @Injected private var feeService: FeeServiceType
     @Injected private var walletsRepository: WalletsRepository
     private var cachedFeePayerPubkey: String?
-    private var cachedPoolsSPLToSOL = [String: [OrcaSwap.PoolsPair]]() // [Mint: Pools]
+    private var cachedPoolsSPLToSOL = [String: [PoolsPair]]() // [Mint: Pools]
 
     init(relayMethod: SendTokenRelayMethod) {
         self.relayMethod = relayMethod
