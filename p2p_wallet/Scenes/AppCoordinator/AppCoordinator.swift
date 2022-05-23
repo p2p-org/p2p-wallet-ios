@@ -61,12 +61,6 @@ class AppCoordinator {
             storage.account
         }.value
 
-        // remove lockview
-        await MainActor.run {
-            lockView.removeFromSuperview()
-            indicator.removeFromSuperview()
-        }
-
         // show scene
         if account == nil {
             showAuthenticationOnMainOnAppear = false
@@ -85,6 +79,12 @@ class AppCoordinator {
             await MainActor.run {
                 navigateToMain()
             }
+        }
+
+        // remove lockview
+        await MainActor.run {
+            lockView.removeFromSuperview()
+            indicator.removeFromSuperview()
         }
     }
 
