@@ -2209,7 +2209,6 @@
 		BC65E9D52542BD1F005F50CE /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
-				3B10A006283B333C001AB06C /* AppCoordinator */,
 				BC6EE7E1254BD23700FE1025 /* WelcomeViewController.swift */,
 				BCE42DE125DF9B980021540E /* CreateOrRestoreWallet */,
 				BCE42DF125DF9C360021540E /* Onboarding */,
@@ -2490,6 +2489,7 @@
 			children = (
 				BCB2231825412AF8002D997F /* AppDelegate.swift */,
 				BC134FA226FCD1E500DB15BF /* AppDelegate+Injection.swift */,
+				3B10A006283B333C001AB06C /* AppCoordinator */,
 				BC65E9D52542BD1F005F50CE /* Scenes */,
 				BC7A8EB1255BCE360023C918 /* Models */,
 				BCB22370254137C2002D997F /* Services */,
