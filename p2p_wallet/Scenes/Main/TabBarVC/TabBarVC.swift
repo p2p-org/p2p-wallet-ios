@@ -39,8 +39,8 @@ final class TabBarVC: BEPagesVC {
             )
         )
         sendTokenVC.doneHandler = { [weak sendTokenVC, weak self] in
-            sendTokenVC?.popToRootViewController(animated: false)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            CATransaction.begin()
+            CATransaction.setCompletionBlock { [weak homeViewModel] in
                 CATransaction.begin()
                 CATransaction.setCompletionBlock { [weak homeViewModel] in
                     homeViewModel?.scrollToTop()
@@ -48,6 +48,9 @@ final class TabBarVC: BEPagesVC {
                 self?.moveToPage(0)
                 CATransaction.commit()
             }
+
+            sendTokenVC?.popToRootViewController(animated: false)
+            CATransaction.commit()
         }
 
         let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
