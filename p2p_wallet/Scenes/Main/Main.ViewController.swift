@@ -58,10 +58,13 @@ extension Main {
                 .bind(to: viewModel.viewDidLoad)
                 .disposed(by: disposeBag)
 
-            // authentication status
-            viewModel.authenticationStatusDriver
-                .drive(onNext: { [weak self] in self?.handleAuthenticationStatus($0) })
-                .disposed(by: disposeBag)
+            // delay authentication status
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
+                self.viewModel.authenticationStatusDriver
+                    .drive(onNext: { [weak self] in self?.handleAuthenticationStatus($0) })
+                    .disposed(by: disposeBag)
+            }
+
             viewModel.moveToHistory
                 .drive(onNext: { [unowned self] in
                     tabBar.moveToItem(.history)
