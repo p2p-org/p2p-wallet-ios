@@ -10,11 +10,10 @@ import LocalAuthentication
 import RxCocoa
 
 protocol AppEventHandlerType {
-    var isLoadingDriver: Driver<Bool> { get }
     var delegate: AppEventHandlerDelegate? { get set }
 }
 
-final class AppEventHandler {
+final class AppEventHandler: AppEventHandlerType {
     // MARK: - Dependencies
 
     private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
@@ -22,7 +21,6 @@ final class AppEventHandler {
 
     // MARK: - Properties
 
-    private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
     weak var delegate: AppEventHandlerDelegate?
     private var resolvedName: String?
 
@@ -43,12 +41,6 @@ final class AppEventHandler {
                 }
             }
         #endif
-    }
-}
-
-extension AppEventHandler: AppEventHandlerType {
-    var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
     }
 }
 
@@ -121,7 +113,8 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
             return
         }
 
-        isLoadingSubject.accept(true)
+        delegate?.didStartLoading()
+
         DispatchQueue.global().async { [weak self] in
             do {
                 try self?.storage.save(phrases: phrases)
@@ -133,11 +126,11 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
                 }
 
                 DispatchQueue.main.async { [weak self] in
-                    self?.isLoadingSubject.accept(false)
+                    self?.delegate?.didStopLoading()
                 }
                 self?.notificationsService.registerForRemoteNotifications()
             } catch {
-                self?.isLoadingSubject.accept(false)
+                self?.delegate?.didStopLoading()
                 DispatchQueue.main.async { [weak self] in
                     self?.notificationsService.showInAppNotification(.error(error))
                     self?.creatingOrRestoringWalletDidCancel()
