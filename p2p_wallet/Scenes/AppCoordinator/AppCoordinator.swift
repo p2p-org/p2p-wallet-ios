@@ -19,6 +19,8 @@ class AppCoordinator {
     // MARK: - Properties
 
     let window: UIWindow
+    let lockView = LockView()
+    let indicator = WLLoadingIndicatorView(isBlocking: true)
     var isRestoration = false
     var showAuthenticationOnMainOnAppear = true
     var resolvedName: String?
@@ -41,12 +43,14 @@ class AppCoordinator {
         await MainActor.run {
             window.rootViewController = nil
             // add lockview
-            let lockView = LockView()
+            lockView.removeFromSuperview()
             window.addSubview(lockView)
             lockView.autoPinEdgesToSuperviewEdges()
 
             // show loading
-            window.showLoadingIndicatorView()
+            indicator.removeFromSuperview()
+            window.addSubview(indicator)
+            indicator.autoPinEdgesToSuperviewEdges()
         }
 
         // reload session
@@ -57,6 +61,13 @@ class AppCoordinator {
             storage.account
         }.value
 
+        // remove lockview
+        await MainActor.run {
+            lockView.removeFromSuperview()
+            indicator.removeFromSuperview()
+        }
+
+        // show scene
         if account == nil {
             showAuthenticationOnMainOnAppear = false
             await MainActor.run {
@@ -74,12 +85,6 @@ class AppCoordinator {
             await MainActor.run {
                 navigateToMain()
             }
-        }
-
-        // remove lockview
-        await MainActor.run {
-            window.subviews.filter { $0 is LockView }.forEach { $0.removeFromSuperview() }
-            window.hideLoadingIndicatorView()
         }
     }
 
