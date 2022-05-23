@@ -8,6 +8,9 @@
 import Foundation
 
 protocol AppEventHandlerDelegate: AnyObject {
+    func didStartLoading()
+    func didStopLoading()
+
     func createWalletDidComplete()
     func restoreWalletDidComplete()
 

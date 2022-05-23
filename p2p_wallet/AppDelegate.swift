@@ -17,6 +17,7 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    private var appCoordinator: AppCoordinator?
 
     @Injected private var notificationService: NotificationService
 
@@ -62,13 +63,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
 
+        // add placeholder
+        window?.rootViewController = BaseVC()
+        window?.makeKeyAndVisible()
+
+        // set app coordinator
+        appCoordinator = AppCoordinator(window: window!)
+        appCoordinator!.start()
+
+        // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
-        // set rootVC
-        let vm = Root.ViewModel()
-        let vc = Root.ViewController(viewModel: vm)
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
         return true
     }
 
