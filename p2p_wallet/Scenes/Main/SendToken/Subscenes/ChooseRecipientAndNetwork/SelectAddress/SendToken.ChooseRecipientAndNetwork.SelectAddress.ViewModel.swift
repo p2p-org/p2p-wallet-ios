@@ -23,6 +23,7 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var networkDriver: Driver<SendToken.Network> { get }
     var payingWalletDriver: Driver<Wallet?> { get }
     var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> { get }
+    var warningDriver: Driver<String?> { get }
     var isValidDriver: Driver<Bool> { get }
 
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
@@ -56,6 +57,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var analyticsManager: AnalyticsManagerType
 
+        let minSolForSending = 0.0009
+        private let amount: Double
+
         // MARK: - Properties
 
         let relayMethod: SendTokenRelayMethod
@@ -72,11 +76,13 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         init(
             chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType,
             showAfterConfirmation: Bool,
-            relayMethod: SendTokenRelayMethod
+            relayMethod: SendTokenRelayMethod,
+            amount: Double
         ) {
             self.relayMethod = relayMethod
             self.chooseRecipientAndNetworkViewModel = chooseRecipientAndNetworkViewModel
             self.showAfterConfirmation = showAfterConfirmation
+            self.amount = amount
             recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getSendService()
             recipientsListViewModel.preSelectedNetwork = preSelectedNetwork
 
@@ -130,8 +136,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
         chooseRecipientAndNetworkViewModel.feeInfoDriver
     }
 
+    var warningDriver: Driver<String?> {
+        walletDriver.map { [weak self] in
+            guard let self = self else { return nil }
+            return self.amount < self.minSolForSending && ($0?.token.symbol ?? "") == "SOL"
+                ? L10n.youCanTSendLessThan("\(self.minSolForSending) SOL")
+                : nil
+        }
+    }
+
     var isValidDriver: Driver<Bool> {
-        var conditionDrivers: [Driver<Bool>] = [
+        var conditionDrivers = [
             recipientDriver.map { $0 != nil },
         ]
 
@@ -139,39 +154,35 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
             Driver.combineLatest(
                 networkDriver,
                 payingWalletDriver,
-                feeInfoDriver
-            )
-                .map { [weak self] network, payingWallet, feeInfo -> Bool in
-                    guard let self = self else { return false }
-                    switch network {
-                    case .solana:
-                        switch self.relayMethod {
-                        case .relay:
-                            guard let value = feeInfo.value else {
-                                return false
-                            }
+                feeInfoDriver,
+                warningDriver
+            ).map { [weak self] network, payingWallet, feeInfo, warning -> Bool in
+                guard let self = self, (warning ?? "").isEmpty else { return false }
 
-                            let feeAmountInSOL = value.feeAmountInSOL
-                            let feeAmountInToken = value.feeAmount
-                            if feeAmountInSOL.total == 0 {
-                                return true
-                            } else {
-                                guard let payingWallet = payingWallet else {
-                                    return false
-                                }
-                                return (payingWallet.lamports ?? 0) >= feeAmountInToken.total
-                            }
-                        case .reward:
+                switch network {
+                case .solana:
+                    switch self.relayMethod {
+                    case .relay:
+                        guard let value = feeInfo.value else { return false }
+
+                        let feeAmountInSOL = value.feeAmountInSOL
+                        let feeAmountInToken = value.feeAmount
+                        if feeAmountInSOL.total == 0 {
                             return true
+                        } else {
+                            guard let payingWallet = payingWallet else { return false }
+                            return (payingWallet.lamports ?? 0) >= feeAmountInToken.total
                         }
-                    case .bitcoin:
+                    case .reward:
                         return true
                     }
+                case .bitcoin:
+                    return true
                 }
+            }
         )
 
-        return Driver.combineLatest(conditionDrivers)
-            .map { $0.allSatisfy { $0 }}
+        return Driver.combineLatest(conditionDrivers).map { $0.allSatisfy { $0 }}
     }
 
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {

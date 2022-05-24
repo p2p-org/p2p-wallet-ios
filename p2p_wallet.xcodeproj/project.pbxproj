@@ -44,6 +44,7 @@
 		2CCDD67E281BEFBD00AB7A82 /* JsonRpcResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDD67D281BEFBD00AB7A82 /* JsonRpcResponseDto.swift */; };
 		2CCDD680281BF03800AB7A82 /* JsonRpcRequestDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDD67F281BF03800AB7A82 /* JsonRpcRequestDto.swift */; };
 		2CCDD683281BF15700AB7A82 /* NotificationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCDD682281BF15700AB7A82 /* NotificationRepository.swift */; };
+		35C6118D8E8E20313D6E5910 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E21854FDEDDCAAC9EF137819 /* Pods_p2p_wallet.framework */; };
 		3B01DFB827DAF351003E19BD /* ProcessTransaction.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */; };
 		3B01DFBE27DB19AB003E19BD /* ProcessTransaction.Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */; };
 		3B0D87B227EC770200DEE867 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 3B0D87B127EC770200DEE867 /* README.md */; };
@@ -193,7 +194,6 @@
 		41EB2E6727B23E76007D5F7F /* HelpCenterLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */; };
 		41F4476E2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */; };
 		41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */; };
-		7EA06713C09305179750985A /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */; };
 		84699019D2C5C5E05EC8466A /* BuyProcessing.WidgetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699FF3E0F973EDC052ED23 /* BuyProcessing.WidgetViewController.swift */; };
 		84699053FB6A42A263B2DA69 /* BaseWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469998E20AA97B6D499EF55 /* BaseWalletCell.swift */; };
 		84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */; };
@@ -613,7 +613,6 @@
 		2CCDD67D281BEFBD00AB7A82 /* JsonRpcResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonRpcResponseDto.swift; sourceTree = "<group>"; };
 		2CCDD67F281BF03800AB7A82 /* JsonRpcRequestDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonRpcRequestDto.swift; sourceTree = "<group>"; };
 		2CCDD682281BF15700AB7A82 /* NotificationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRepository.swift; sourceTree = "<group>"; };
-		31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
 		3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.swift; sourceTree = "<group>"; };
 		3B0D87B127EC770200DEE867 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -763,8 +762,6 @@
 		41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCenterLauncher.swift; sourceTree = "<group>"; };
 		41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeeCellContent.swift; sourceTree = "<group>"; };
 		41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.SignificantView.swift; sourceTree = "<group>"; };
-		4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		8469900B881EF729CE394E29 /* BuyProcessing.InputCryptoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; name = BuyProcessing.InputCryptoView.swift; path = Subview/BuyProcessing.InputCryptoView.swift; sourceTree = "<group>"; };
 		8469907019755990A0585C61 /* KeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		8469907A8017683D66200171 /* History.PriceUpdatingOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.PriceUpdatingOutput.swift; sourceTree = "<group>"; };
@@ -1172,6 +1169,9 @@
 		BCFEDBFD2727B3D7008AE4AD /* Privacy_policy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Privacy_policy.txt; sourceTree = "<group>"; };
 		BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLMarkdownVC.swift; sourceTree = "<group>"; };
 		BCFEDC022727F860008AE4AD /* OrcaSwapV2ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ViewModelType.swift; sourceTree = "<group>"; };
+		E21854FDEDDCAAC9EF137819 /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0F701CDA58CEF18669D1984 /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
+		FDA737557ECF8049E4E8859A /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1179,7 +1179,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7EA06713C09305179750985A /* Pods_p2p_wallet.framework in Frameworks */,
+				35C6118D8E8E20313D6E5910 /* Pods_p2p_wallet.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1189,8 +1189,8 @@
 		14A0B50387D380623394B692 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */,
-				31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */,
+				F0F701CDA58CEF18669D1984 /* Pods-p2p_wallet.debug.xcconfig */,
+				FDA737557ECF8049E4E8859A /* Pods-p2p_wallet.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1606,6 +1606,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		58FC15A61E13EBDCCCC3ADF1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E21854FDEDDCAAC9EF137819 /* Pods_p2p_wallet.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		846990A571B89EB7593B08E3 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -1879,14 +1887,6 @@
 				84699BB5204C753606EBF829 /* VerifySecurityKeys.Button.swift */,
 			);
 			path = VerifySecurityKeys;
-			sourceTree = "<group>";
-		};
-		B9FAB58A12FD64D2B0CC985C /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		BC09B99D273ECAE0009CAF4E /* Authentication */ = {
@@ -2485,7 +2485,7 @@
 				BCB2231625412AF8002D997F /* Products */,
 				14A0B50387D380623394B692 /* Pods */,
 				864D26D1280EB64E003D4D82 /* Recovered References */,
-				B9FAB58A12FD64D2B0CC985C /* Frameworks */,
+				58FC15A61E13EBDCCCC3ADF1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2980,15 +2980,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BCB2233F25412AF9002D997F /* Build configuration list for PBXNativeTarget "p2p_wallet" */;
 			buildPhases = (
-				1ED1F6FE33F689DD698C1141 /* [CP] Check Pods Manifest.lock */,
+				F728C0A057F4D296CE80A187 /* [CP] Check Pods Manifest.lock */,
 				BC65EA002542C305005F50CE /* Swiftgen Run Script */,
 				3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */,
 				BCB2231125412AF8002D997F /* Sources */,
 				BCB2231225412AF8002D997F /* Frameworks */,
 				BCB2231325412AF8002D997F /* Resources */,
 				BC636756255AB64C00D585FD /* ShellScript */,
-				17FE11FE86CB0D754F84BBC3 /* [CP] Embed Pods Frameworks */,
-				5FD6DD551FAE63F0DBF6F9DF /* [CP] Copy Pods Resources */,
+				EE4FA1D07C6788C0F3AF1297 /* [CP] Embed Pods Frameworks */,
+				EDBE87E4F63905881CC4A2A4 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -3080,45 +3080,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		17FE11FE86CB0D754F84BBC3 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		1ED1F6FE33F689DD698C1141 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-p2p_wallet-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3171,23 +3132,6 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml\n";
 		};
-		5FD6DD551FAE63F0DBF6F9DF /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		BC636756255AB64C00D585FD /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3224,6 +3168,62 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  echo \"Swiftgen is disabled in Release mode\"\n  exit 0\nfi\n\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
+		};
+		EDBE87E4F63905881CC4A2A4 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		EE4FA1D07C6788C0F3AF1297 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F728C0A057F4D296CE80A187 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-p2p_wallet-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -3944,7 +3944,7 @@
 		};
 		BCB2234025412AF9002D997F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */;
+			baseConfigurationReference = F0F701CDA58CEF18669D1984 /* Pods-p2p_wallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -3989,7 +3989,7 @@
 		};
 		BCB2234125412AF9002D997F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */;
+			baseConfigurationReference = FDA737557ECF8049E4E8859A /* Pods-p2p_wallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
