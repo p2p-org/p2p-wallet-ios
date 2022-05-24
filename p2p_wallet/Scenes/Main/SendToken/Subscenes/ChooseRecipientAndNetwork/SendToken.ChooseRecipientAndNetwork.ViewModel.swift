@@ -157,7 +157,8 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
             chooseRecipientAndNetworkViewModel: self,
             showAfterConfirmation: showAfterConfirmation,
-            relayMethod: relayMethod
+            relayMethod: relayMethod,
+            amount: sendTokenViewModel.amountSubject.value ?? 0
         )
         return vm
     }

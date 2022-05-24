@@ -822,3 +822,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Top up your account" = "Nạp tiền vào tài khoản của bạn";
 "Share your Solana network address" = "Chia sẻ địa chỉ mạng Solana của bạn";
 "Pay %@ and Continue" = "Thanh toán %@ & tiếp tục";
+"You can’t send less than %@" = "Bạn không thể gửi ít hơn %@";
