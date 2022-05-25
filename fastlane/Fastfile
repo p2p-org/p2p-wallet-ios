@@ -254,7 +254,10 @@ platform :ios do
 
     # get current build number. Ex. get 1234 from tag v1.0.0(1234)
     version = get_version_number(target: "p2p_wallet")
+    lt = last_git_tag
+    puts "last_git_tag #{lt}"
     tag = last_git_tag(pattern: "v*")
+    puts "matched tag #{tag}"
     build_number = tag.sub("v#{version}(", '').sub(")", '')
 
     # set build number
