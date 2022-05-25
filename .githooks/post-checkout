@@ -8,5 +8,6 @@ else
   if [ -e ~/.zprofile ]; then
     source ~/.zprofile
   fi
+fi
 
 xcodegen
