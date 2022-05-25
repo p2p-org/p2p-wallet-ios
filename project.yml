@@ -28,8 +28,6 @@ targets:
         sources:
         - p2p_wallet
         - path: README.MD
-        - path: Docs/Swift-Concurrency.MD
-          group: Recovered References
         preBuildScripts:
           - script: |
                   if [ "${CONFIGURATION}" = "Release" ]; then
