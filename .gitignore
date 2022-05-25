@@ -2,6 +2,9 @@
 #
 # gitignore contributors: remember to update Global/Xcode.gitignore, Objective-C.gitignore & Swift.gitignore
 
+## MacOS file system
+.DS_Store
+
 ## Fastlane
 fastlane/*.env
 fastlane/README.md
@@ -27,9 +30,9 @@ xcuserdata/
 *.xcscmblueprint
 
 ## Swiftgen
-p2p_wallet/Strings+Generated.swift
-p2p_wallet/Asset+Generated.swift
-p2p_wallet/Fonts+Generated.swift
+p2p_wallet/Resources/Strings+Generated.swift
+p2p_wallet/Resources/Asset+Generated.swift
+p2p_wallet/Resources/Fonts+Generated.swift
 
 ## Obj-C/Swift specific
 *.hmap
