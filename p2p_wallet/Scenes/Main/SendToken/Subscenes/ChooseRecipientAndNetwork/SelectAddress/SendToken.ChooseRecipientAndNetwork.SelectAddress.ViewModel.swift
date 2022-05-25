@@ -155,30 +155,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
                     .asObservable()
             }
             .asDriver()
-//        .merge(
-//            recipientDriver
-//                .withLatestFrom(walletDriver) { ($0, $1) }
-//                .filter { [weak self] in
-//                    $0.1?.isNativeSOL != true || self?.amount >= self?.minSolForSending
-//                }
-//                .map { _ in nil },
-//            recipientDriver
-//                .withLatestFrom(walletDriver) { ($0, $1) }
-//                .filter { [weak self] in
-//                    $0.1?.isNativeSOL == true && self?.amount < self?.minSolForSending
-//                }
-//                .map(\.0)
-//                .asObservable()
-//                .flatMapLatest { [weak self] recipient in
-//                    self?.solanaSDK.getBalance(account: recipient?.address, commitment: nil)
-//                        .asObservable() ?? .empty()
-//                }
-//                .map { [weak self] balance in
-//                    guard let self = self, balance == 0 else { return nil }
-//                    return L10n.youCanTSendLessThan("\(self.minSolForSending) SOL")
-//                }
-//                .asDriver()
-//        )
     }
 
     var isValidDriver: Driver<Bool> {
