@@ -51,14 +51,9 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
-      - name: Install Dependencies
+      - name: Generate a project file
         run: |
-          pod install --repo-update
-        shell: bash
-
-      - name: Generate Strings+Asset
-        run: |
-          Pods/SwiftGen/bin/swiftgen
+          xcodegen
         shell: bash
 
       - name: "Upload to firebase for testing"

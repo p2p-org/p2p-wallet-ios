@@ -20,22 +20,8 @@ P2P Wallet on Solana blockchain
 
 ## Installation
 
-- Clone project and retrieve all submodules
-```zsh
-git clone git@github.com:p2p-org/p2p-wallet-ios.git
-cd p2p-wallet-ios
-git submodule update --init --recursive
-```
-- Override `githook` directory:
-```zsh
-git config core.hooksPath .githooks
-chmod -R +x .githooks
-```
-- Run `pod install`
-- Run `swiftgen` for the first time
-```zsh
-Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
-```
+- Clone project
+- Run `xcodegen` from the project folder
 - Add `Config.xcconfig` to `p2p-wallet-ios/p2p-wallet` contains following content
 ```
 // MARK: - Transak
