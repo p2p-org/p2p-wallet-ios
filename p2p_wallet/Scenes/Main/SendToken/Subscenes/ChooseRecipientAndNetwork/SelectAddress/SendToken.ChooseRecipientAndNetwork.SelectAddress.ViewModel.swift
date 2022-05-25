@@ -138,30 +138,23 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
     }
 
     var warningDriver: Driver<String?> {
-        .merge(
-            recipientDriver
-                .withLatestFrom(walletDriver) { ($0, $1) }
-                .filter { [weak self] in
-                    $0.1?.isNativeSOL != true || self?.amount >= self?.minSolForSending
-                }
-                .map { _ in nil },
-            recipientDriver
-                .withLatestFrom(walletDriver) { ($0, $1) }
-                .filter { [weak self] in
-                    $0.1?.isNativeSOL == true && self?.amount < self?.minSolForSending
-                }
-                .map(\.0)
-                .asObservable()
-                .flatMapLatest { [weak self] recipient in
-                    self?.solanaSDK.getBalance(account: recipient?.address, commitment: nil)
-                        .asObservable() ?? .empty()
-                }
-                .map { [weak self] balance in
-                    guard let self = self, balance == 0 else { return nil }
-                    return L10n.youCanTSendLessThan("\(self.minSolForSending) SOL")
-                }
-                .asDriver()
-        )
+        recipientDriver
+            .withLatestFrom(walletDriver) { ($0, $1) }
+            .asObservable()
+            .flatMapLatest { [weak self] recipient, wallet -> Observable<String?> in
+                guard let self = self,
+                      let wallet = wallet,
+                      wallet.isNativeSOL,
+                      self.amount < self.minSolForSending
+                else { return .just(nil) }
+                return self.solanaSDK.getBalance(account: recipient?.address, commitment: nil)
+                    .map { [weak self] balance in
+                        guard let self = self, balance == 0 else { return nil }
+                        return L10n.youCanTSendLessThan("\(self.minSolForSending) SOL")
+                    }
+                    .asObservable()
+            }
+            .asDriver()
     }
 
     var isValidDriver: Driver<Bool> {
