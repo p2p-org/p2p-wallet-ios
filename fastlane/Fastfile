@@ -206,9 +206,24 @@ platform :ios do
   end
 
   lane :beta do
-    # increment build number
+    # get version
+    version = get_version_number(target: "p2p_wallet")
+
+    # prepare for tagging
+    tag_prefix = "v"
+
+    # find available build number via tags
+    build_number = 1
+    tag = "#{tag_prefix}#{version}(#{build_number})"
+    while git_tag_exists(tag: tag, remote: true)
+      build_number += 1
+      tag = "#{tag_prefix}#{version}(#{build_number})"
+    end
+
+    # set build number
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
+      build_number: build_number,
       skip_info_plist: true
     )
 
@@ -216,16 +231,22 @@ platform :ios do
     create_release_build('ad-hoc')
 
     # upload to firebase
-    version = get_version_number(target: "p2p_wallet")
-    build_number = get_build_number(xcodeproj: "p2p_wallet.xcodeproj")
-    full_version = "#{version} (#{build_number})"
-    upload_build(full_version, false, "")
+    upload_build("#{version} (#{build_number})", false, "")
 
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
 
-    # commit
-    commit_changes
+    # tag
+    add_git_tag(tag: tag)
+    push_git_tags(tag: tag)
+
+    # reset file
+    reset_git_repo(
+      force: true,
+      files: [
+        "p2p_wallet.xcodeproj/project.pbxproj"
+      ]
+    )
   end
 
   lane :release do
@@ -251,8 +272,5 @@ platform :ios do
     )
 
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
-
-    # commit
-    commit_changes
   end
 end
