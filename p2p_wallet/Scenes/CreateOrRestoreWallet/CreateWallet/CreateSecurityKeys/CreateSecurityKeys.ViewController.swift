@@ -10,10 +10,6 @@ import UIKit
 
 extension CreateSecurityKeys {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: CreateSecurityKeysViewModelType
@@ -23,6 +19,7 @@ extension CreateSecurityKeys {
         init(viewModel: CreateSecurityKeysViewModelType) {
             self.viewModel = viewModel
             super.init()
+            navigationItem.title = L10n.yourSecurityKey
         }
 
         // MARK: - Methods

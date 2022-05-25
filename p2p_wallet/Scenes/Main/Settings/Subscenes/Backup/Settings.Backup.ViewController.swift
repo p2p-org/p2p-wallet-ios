@@ -49,7 +49,7 @@ extension Settings.Backup {
 
         override func setUp() {
             super.setUp()
-            navigationBar.titleLabel.text = L10n.backup
+            navigationItem.title = L10n.backup
             view.backgroundColor = .white.onDarkMode(.h1b1b1b)
 
             stackView.spacing = 0

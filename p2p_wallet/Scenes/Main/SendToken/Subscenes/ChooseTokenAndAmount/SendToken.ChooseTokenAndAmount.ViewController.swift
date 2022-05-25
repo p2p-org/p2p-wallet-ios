@@ -9,30 +9,34 @@ import Foundation
 import UIKit
 
 extension SendToken.ChooseTokenAndAmount {
-    class ViewController: SendToken.BaseViewController {
+    final class ViewController: BaseVC {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
 
         // MARK: - Properties
 
-        private lazy var nextButton: UIButton = {
-            let nextButton = UIButton(
-                label: L10n.next.uppercaseFirst,
-                labelFont: .systemFont(ofSize: 17),
-                textColor: .h5887ff
+        var customView: RootView {
+            guard let customView = view as? RootView else {
+                preconditionFailure("A custom view should be of type \(RootView.self)")
+            }
+            return customView
+        }
+
+        private lazy var nextButton: UIBarButtonItem = {
+            let nextButton = UIBarButtonItem(
+                title: L10n.next.uppercaseFirst,
+                style: .plain,
+                target: self,
+                action: #selector(buttonNextDidTouch)
             )
-                .onTap(self, action: #selector(buttonNextDidTouch))
-            nextButton.setTitleColor(.h5887ff, for: .normal)
-            nextButton.setTitleColor(.textSecondary, for: .disabled)
+            nextButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
             return nextButton
         }()
 
         // MARK: - Initializer
 
-        init(
-            viewModel: SendTokenChooseTokenAndAmountViewModelType
-        ) {
+        init(viewModel: SendTokenChooseTokenAndAmountViewModelType) {
             self.viewModel = viewModel
             super.init()
         }
@@ -41,15 +45,19 @@ extension SendToken.ChooseTokenAndAmount {
 
         override func setUp() {
             super.setUp()
-            navigationBar.titleLabel.text = L10n.send
-            navigationBar.backButton.isHidden = !viewModel.canGoBack
-            navigationBar.backButton.onTap(self, action: #selector(_back))
-            navigationBar.rightItems.addArrangedSubview(nextButton)
 
-            let rootView = RootView(viewModel: viewModel)
-            view.addSubview(rootView)
-            rootView.autoPinEdge(.top, to: .bottom, of: navigationBar)
-            rootView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .top)
+            view.onTap { [weak view] in
+                view?.endEditing(true)
+            }
+
+            navigationItem.title = L10n.send
+            navigationItem.rightBarButtonItem = nextButton
+            navigationItem.setHidesBackButton(!viewModel.canGoBack, animated: true)
+        }
+
+        override func loadView() {
+            super.loadView()
+            view = RootView(viewModel: viewModel)
         }
 
         override func bind() {
@@ -61,6 +69,16 @@ extension SendToken.ChooseTokenAndAmount {
             viewModel.errorDriver
                 .map { $0 == nil }
                 .drive(nextButton.rx.isEnabled)
+                .disposed(by: disposeBag)
+
+            rx.viewDidAppear
+                .take(1)
+                .mapToVoid()
+                .subscribe(onNext: { [weak self] in
+                    DispatchQueue.main.async { [weak self] in
+                        self?.customView.amountTextField.becomeFirstResponder()
+                    }
+                })
                 .disposed(by: disposeBag)
         }
 
@@ -76,7 +94,7 @@ extension SendToken.ChooseTokenAndAmount {
                     title: nil,
                     viewModel: vm
                 )
-                present(vc, animated: true, completion: nil)
+                present(vc, animated: true)
             case .backToConfirmation:
                 navigationController?.popToViewController(ofClass: SendToken.ConfirmViewController.self, animated: true)
             case .invalidTokenForSelectedNetworkAlert:
@@ -94,14 +112,6 @@ extension SendToken.ChooseTokenAndAmount {
                     self?.viewModel.save()
                     self?.viewModel.navigateNext()
                 }
-            }
-        }
-
-        @objc override func _back() {
-            if viewModel.showAfterConfirmation {
-                back()
-            } else {
-                viewModel.cancelSending()
             }
         }
 

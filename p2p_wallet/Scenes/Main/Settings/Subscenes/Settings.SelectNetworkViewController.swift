@@ -20,7 +20,7 @@ extension Settings {
 
         override func setUp() {
             super.setUp()
-            navigationBar.titleLabel.text = L10n.network
+            navigationItem.title = L10n.network
         }
 
         override func createCell(item: SolanaSDK.APIEndPoint) -> Cell<SolanaSDK.APIEndPoint> {

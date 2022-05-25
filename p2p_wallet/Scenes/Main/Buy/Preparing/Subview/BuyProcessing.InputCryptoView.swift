@@ -50,7 +50,9 @@ extension BuyPreparing {
                             placeholder: "0",
                             autocorrectionType: .no
                         ).setup { [weak self] view in
-                            view.becomeFirstResponder()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                                view.becomeFirstResponder()
+                            }
                             view.delegate = self
                             view.text = viewModel.input.amount.toString()
                             view.rx.text

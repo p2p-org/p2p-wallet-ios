@@ -18,26 +18,28 @@ extension ReceiveToken {
             super.init()
 
             viewModel.navigation.drive(onNext: { [weak self] in self?.navigate(to: $0) }).disposed(by: disposeBag)
+
+            if isOpeningFromToken {
+                navigationItem.title = "\(L10n.receive) \(viewModel.tokenWallet?.token.name ?? "")"
+                let closeButton = UIBarButtonItem(
+                    title: L10n.close,
+                    style: .plain,
+                    target: self,
+                    action: #selector(goBack)
+                )
+                navigationItem.rightBarButtonItem = closeButton
+                closeButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
+            } else {
+                navigationItem.title = L10n.receive
+            }
         }
 
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+        @objc func goBack() {
+            dismiss(animated: true)
+        }
 
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                // Navbar
-                if isOpeningFromToken {
-                    ModalNavigationBar(
-                        title: L10n.receive(viewModel.tokenWallet?.token.name ?? ""),
-                        rightButtonTitle: L10n.close,
-                        closeHandler: { [weak self] in
-                            self?.dismiss(animated: true)
-                        }
-                    )
-                } else {
-                    NewWLNavigationBar(initialTitle: L10n.receive, separatorEnable: false)
-                        .onBack { [unowned self] in self.back() }
-                }
-
                 BEScrollView(contentInsets: .init(x: .defaultPadding, y: .defaultPadding), spacing: 16) {
                     // Network button
                     if viewModel.shouldShowChainsSwitcher {

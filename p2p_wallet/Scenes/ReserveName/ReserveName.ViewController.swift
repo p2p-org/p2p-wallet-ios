@@ -10,10 +10,6 @@ import UIKit
 
 extension ReserveName {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: ReserveNameViewModelType
@@ -26,20 +22,30 @@ extension ReserveName {
 
         init(viewModel: ReserveNameViewModelType) {
             self.viewModel = viewModel
-
             super.init()
+            navigationItem.title = L10n.reserveP2PUsername
+
+            if viewModel.kind == .reserveCreateWalletPart {
+                let rightButton = UIBarButtonItem(
+                    title: L10n.skip.capitalized,
+                    style: .plain,
+                    target: self,
+                    action: #selector(skip)
+                )
+                rightButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
+                navigationItem.rightBarButtonItem = rightButton
+            }
         }
 
         override func loadView() {
             view = rootView
         }
 
-        override func setUp() {
-            super.setUp()
-        }
-
-        override func viewDidAppear(_: Bool) {
-            rootView.startTyping()
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            DispatchQueue.main.async {
+                self.rootView.startTyping()
+            }
         }
 
         override func bind() {
@@ -96,6 +102,10 @@ extension ReserveName {
                     completion(choose == 1)
                 }
             )
+        }
+
+        @objc func skip() {
+            viewModel.skipButtonPressed()
         }
     }
 }
