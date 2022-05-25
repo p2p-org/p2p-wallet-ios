@@ -250,8 +250,24 @@ platform :ios do
   end
 
   lane :release do
+    # REQUIREMENT: THERE IS AT LEAST 1 TAG LIKE v1.0.0(1234) THAT HAS ALREADY BEEN PASSED REGRESSION
+
+    # get current build number. Ex. get 1234 from tag v1.0.0(1234)
+    version = get_version_number(target: "p2p_wallet")
+    tag = last_git_tag(pattern: "v*")
+    build_number = tag.sub("v#{version}(", '').sub(")", '')
+
+    # set build number
+    increment_build_number(
+      xcodeproj: "p2p_wallet.xcodeproj",
+      build_number: build_number,
+      skip_info_plist: true
+    )
+
+    # create release build
     create_release_build('app-store')
 
+    # upload to testflight
     pilot(
       apple_id: "#{DEVELOPER_APP_ID}",
       app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
@@ -262,8 +278,7 @@ platform :ios do
       ipa: "./p2p_wallet.ipa"
     )
 
-    version = get_version_number(target: "p2p_wallet")
-    build_number = get_build_number(xcodeproj: "p2p_wallet.xcodeproj")
+    # post to slack
     full_version = "#{version} (#{build_number})"
     post_to_slack(
       api_token: SLACK_API_TOKEN,
@@ -271,6 +286,15 @@ platform :ios do
       channel: "#p2p-wallet-builds-ios"
     )
 
+    # clean
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
+
+    # reset file
+    reset_git_repo(
+      force: true,
+      files: [
+        "p2p_wallet.xcodeproj/project.pbxproj"
+      ]
+    )
   end
 end
