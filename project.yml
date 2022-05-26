@@ -1,10 +1,5 @@
 name: p2p_wallet
 
-configs:
-    Development: debug
-    Production: release
-    Enterprise: release
-
 options:
     deploymentTarget: 
         iOS: 13.0
