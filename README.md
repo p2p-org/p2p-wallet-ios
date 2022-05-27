@@ -125,10 +125,10 @@ Result
 
 ## UI Templates
 
-- Copy template `BEScene.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/File\ Templates/Templates/BEScene.xctemplate`
+- Copy template `BEScene2.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
 ```zsh
-mkdir -p ~/Library/Developer/Xcode/Templates/File\ Templates/BEScene.xctemplate
-cp -R Templates/BEScene.xctemplate ~/Library/Developer/Xcode/Templates/File\ Templates/BEScene.xctemplate
+mkdir -p ~/Library/Developer/Xcode/Templates/BEScene2.xctemplate
+cp -R Templates/BEScene2.xctemplate ~/Library/Developer/Xcode/Templates
 ```
 
 ## Dependency Injection
