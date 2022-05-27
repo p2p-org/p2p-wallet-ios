@@ -6,7 +6,6 @@
 //
 
 import BEPureLayout
-import Foundation
 
 extension ___VARIABLE_scene___ {
     final class ViewController: BEScene {
@@ -24,9 +23,7 @@ extension ___VARIABLE_scene___ {
         // MARK: - Methods
 
         override func build() -> UIView {
-            BEVStack(spacing: 8) {
-                <#code#>
-            }
+            RootView(viewModel: ViewModel)
         }
 
         override func bind() {
