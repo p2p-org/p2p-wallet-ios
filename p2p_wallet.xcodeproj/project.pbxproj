@@ -76,6 +76,7 @@
 		3B3A8EF827D7B58E0026E0FE /* TapAndHoldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B3A8EF727D7B58E0026E0FE /* TapAndHoldView.swift */; };
 		3B46C27D27B0A6830036C278 /* SendTokenRelayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B46C27C27B0A6830036C278 /* SendTokenRelayMethod.swift */; };
 		3B478C392817D5CA002FCE4A /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B478C382817D5CA002FCE4A /* Main.swift */; };
+		3B5A2E78280D0564003D5DBB /* GT3Error+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E77280D0564003D5DBB /* GT3Error+Extensions.swift */; };
 		3B5A2E8228124DE6003D5DBB /* ConfirmReceivingBitcoin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8128124DE6003D5DBB /* ConfirmReceivingBitcoin.swift */; };
 		3B5A2E8428124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8328124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift */; };
 		3B5A2E8628124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5A2E8528124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift */; };
@@ -105,6 +106,8 @@
 		3BCEED5927D32C2600BA9110 /* TransactionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */; };
 		3BCEED5D27D4737600BA9110 /* PendingTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */; };
 		3BCEED5F27D475BC00BA9110 /* TransactionHandler+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */; };
+		3BD4415828349DEA00C42A7F /* SendService+RelayMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD4415728349DEA00C42A7F /* SendService+RelayMethod.swift */; };
+		3BD4415A28349F8500C42A7F /* SendService+RewardMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD4415928349F8500C42A7F /* SendService+RewardMethod.swift */; };
 		3BF088262768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */; };
 		3BF4279A2805332100C0F75B /* SwiftyUserDefaults+Workaround.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */; };
 		3BFA644B27D888BE001CA631 /* TransactionDetail.FromToSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */; };
@@ -190,7 +193,7 @@
 		41EB2E6727B23E76007D5F7F /* HelpCenterLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */; };
 		41F4476E2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */; };
 		41F44775277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */; };
-		7EA06713C09305179750985A /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */; };
+		540D1537AB0F4F39A3CE4EE8 /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92D0475A5BD7813ED2BA1419 /* Pods_p2p_wallet.framework */; };
 		84699019D2C5C5E05EC8466A /* BuyProcessing.WidgetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84699FF3E0F973EDC052ED23 /* BuyProcessing.WidgetViewController.swift */; };
 		84699053FB6A42A263B2DA69 /* BaseWalletCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8469998E20AA97B6D499EF55 /* BaseWalletCell.swift */; };
 		84699079946496609D51B833 /* ReceiveToken.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846991CEF8AFD01A61E2FAE8 /* ReceiveToken.ViewController.swift */; };
@@ -610,7 +613,6 @@
 		2CCDD67D281BEFBD00AB7A82 /* JsonRpcResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonRpcResponseDto.swift; sourceTree = "<group>"; };
 		2CCDD67F281BF03800AB7A82 /* JsonRpcRequestDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonRpcRequestDto.swift; sourceTree = "<group>"; };
 		2CCDD682281BF15700AB7A82 /* NotificationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRepository.swift; sourceTree = "<group>"; };
-		31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		3B01DFB727DAF351003E19BD /* ProcessTransaction.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.ViewController.swift; sourceTree = "<group>"; };
 		3B01DFBD27DB19AB003E19BD /* ProcessTransaction.Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTransaction.Status.swift; sourceTree = "<group>"; };
 		3B0D87B127EC770200DEE867 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -643,6 +645,7 @@
 		3B3A8EF727D7B58E0026E0FE /* TapAndHoldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapAndHoldView.swift; sourceTree = "<group>"; };
 		3B46C27C27B0A6830036C278 /* SendTokenRelayMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenRelayMethod.swift; sourceTree = "<group>"; };
 		3B478C382817D5CA002FCE4A /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
+		3B5A2E77280D0564003D5DBB /* GT3Error+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GT3Error+Extensions.swift"; sourceTree = "<group>"; };
 		3B5A2E8128124DE6003D5DBB /* ConfirmReceivingBitcoin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.swift; sourceTree = "<group>"; };
 		3B5A2E8328124E4A003D5DBB /* ConfirmReceivingBitcoin.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.ViewModel.swift; sourceTree = "<group>"; };
 		3B5A2E8528124E7D003D5DBB /* ConfirmReceivingBitcoin.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmReceivingBitcoin.ViewController.swift; sourceTree = "<group>"; };
@@ -672,6 +675,8 @@
 		3BCEED5827D32C2600BA9110 /* TransactionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionHandler.swift; sourceTree = "<group>"; };
 		3BCEED5C27D4737600BA9110 /* PendingTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PendingTransaction.swift; sourceTree = "<group>"; };
 		3BCEED5E27D475BC00BA9110 /* TransactionHandler+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionHandler+Extensions.swift"; sourceTree = "<group>"; };
+		3BD4415728349DEA00C42A7F /* SendService+RelayMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SendService+RelayMethod.swift"; sourceTree = "<group>"; };
+		3BD4415928349F8500C42A7F /* SendService+RewardMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SendService+RewardMethod.swift"; sourceTree = "<group>"; };
 		3BF088252768861A006EEA66 /* OrcaSwapV2.ViewModel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OrcaSwapV2.ViewModel+Extensions.swift"; sourceTree = "<group>"; };
 		3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftyUserDefaults+Workaround.swift"; sourceTree = "<group>"; };
 		3BFA644A27D888BE001CA631 /* TransactionDetail.FromToSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.FromToSection.swift; sourceTree = "<group>"; };
@@ -757,8 +762,7 @@
 		41EB2E6627B23E76007D5F7F /* HelpCenterLauncher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelpCenterLauncher.swift; sourceTree = "<group>"; };
 		41F4476D2779AF2A00BFC46D /* SwapTokenSettings.FeeCellContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.FeeCellContent.swift; sourceTree = "<group>"; };
 		41F44774277B4E9500BFC46D /* SwapTokenSettings.SignificantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.SignificantView.swift; sourceTree = "<group>"; };
-		4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
+		78B56A39E66BA7BD5E594223 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		8469900B881EF729CE394E29 /* BuyProcessing.InputCryptoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.swift; name = BuyProcessing.InputCryptoView.swift; path = Subview/BuyProcessing.InputCryptoView.swift; sourceTree = "<group>"; };
 		8469907019755990A0585C61 /* KeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
 		8469907A8017683D66200171 /* History.PriceUpdatingOutput.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = History.PriceUpdatingOutput.swift; sourceTree = "<group>"; };
@@ -858,6 +862,7 @@
 		86A90D14273D306400D180EF /* VerifySecurityKeys.ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.ViewController.swift; sourceTree = "<group>"; };
 		86A90D15273D306400D180EF /* VerifySecurityKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.swift; sourceTree = "<group>"; };
 		86A90D16273D306400D180EF /* VerifySecurityKeys.ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerifySecurityKeys.ViewModel.swift; sourceTree = "<group>"; };
+		92D0475A5BD7813ED2BA1419 /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC036C152692C070005C1BEC /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
 		BC036C1A269449A7005C1BEC /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
 		BC036C3026959F6C005C1BEC /* BaseCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCollectionReusableView.swift; sourceTree = "<group>"; };
@@ -1166,6 +1171,7 @@
 		BCFEDBFD2727B3D7008AE4AD /* Privacy_policy.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Privacy_policy.txt; sourceTree = "<group>"; };
 		BCFEDBFF2727B43C008AE4AD /* WLMarkdownVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLMarkdownVC.swift; sourceTree = "<group>"; };
 		BCFEDC022727F860008AE4AD /* OrcaSwapV2ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ViewModelType.swift; sourceTree = "<group>"; };
+		FA4930F2C7A986C08A7AA426 /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1173,7 +1179,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7EA06713C09305179750985A /* Pods_p2p_wallet.framework in Frameworks */,
+				540D1537AB0F4F39A3CE4EE8 /* Pods_p2p_wallet.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1183,8 +1189,8 @@
 		14A0B50387D380623394B692 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */,
-				31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */,
+				FA4930F2C7A986C08A7AA426 /* Pods-p2p_wallet.debug.xcconfig */,
+				78B56A39E66BA7BD5E594223 /* Pods-p2p_wallet.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -1340,6 +1346,8 @@
 			children = (
 				3B2F9EEE27F5B76D005BD49B /* SendServiceType.swift */,
 				BC19DF4E270169CF00A3A8D8 /* SendService.swift */,
+				3BD4415728349DEA00C42A7F /* SendService+RelayMethod.swift */,
+				3BD4415928349F8500C42A7F /* SendService+RewardMethod.swift */,
 			);
 			path = SendService;
 			sourceTree = "<group>";
@@ -1873,14 +1881,6 @@
 			path = VerifySecurityKeys;
 			sourceTree = "<group>";
 		};
-		B9FAB58A12FD64D2B0CC985C /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				4D073937161B2F748978F0FF /* Pods_p2p_wallet.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		BC09B99D273ECAE0009CAF4E /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
@@ -2103,6 +2103,7 @@
 				BC3AB76727021E180096E4D8 /* NSRegularExpression+Extensions.swift */,
 				8469964AD773095EEFA52701 /* CALayer+Extensions.swift */,
 				3BF427992805332100C0F75B /* SwiftyUserDefaults+Workaround.swift */,
+				3B5A2E77280D0564003D5DBB /* GT3Error+Extensions.swift */,
 				846999677D69EBB5ABC0B240 /* RxSwift+Concurrency.swift */,
 			);
 			path = Extensions;
@@ -2476,7 +2477,7 @@
 				BCB2231625412AF8002D997F /* Products */,
 				14A0B50387D380623394B692 /* Pods */,
 				864D26D1280EB64E003D4D82 /* Recovered References */,
-				B9FAB58A12FD64D2B0CC985C /* Frameworks */,
+				D3BB9E95AEFA28509F271548 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2964,6 +2965,14 @@
 			path = OrcaSwapV2.ViewModel;
 			sourceTree = "<group>";
 		};
+		D3BB9E95AEFA28509F271548 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				92D0475A5BD7813ED2BA1419 /* Pods_p2p_wallet.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -2971,15 +2980,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BCB2233F25412AF9002D997F /* Build configuration list for PBXNativeTarget "p2p_wallet" */;
 			buildPhases = (
-				1ED1F6FE33F689DD698C1141 /* [CP] Check Pods Manifest.lock */,
+				59D8D3AA2A82BB8D8F79F969 /* [CP] Check Pods Manifest.lock */,
 				BC65EA002542C305005F50CE /* Swiftgen Run Script */,
 				3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */,
 				BCB2231125412AF8002D997F /* Sources */,
 				BCB2231225412AF8002D997F /* Frameworks */,
 				BCB2231325412AF8002D997F /* Resources */,
 				BC636756255AB64C00D585FD /* ShellScript */,
-				17FE11FE86CB0D754F84BBC3 /* [CP] Embed Pods Frameworks */,
-				5FD6DD551FAE63F0DBF6F9DF /* [CP] Copy Pods Resources */,
+				091AD9002D75BDF38F335D50 /* [CP] Embed Pods Frameworks */,
+				881430CEDEA7E038E8FFF0B0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -3071,7 +3080,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		17FE11FE86CB0D754F84BBC3 /* [CP] Embed Pods Frameworks */ = {
+		091AD9002D75BDF38F335D50 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3086,28 +3095,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		1ED1F6FE33F689DD698C1141 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-p2p_wallet-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3BA4A0E527E83EF1006AFC01 /* Format and lint Run Script */ = {
@@ -3162,7 +3149,29 @@
 			shellPath = /bin/sh;
 			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml\n";
 		};
-		5FD6DD551FAE63F0DBF6F9DF /* [CP] Copy Pods Resources */ = {
+		59D8D3AA2A82BB8D8F79F969 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-p2p_wallet-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		881430CEDEA7E038E8FFF0B0 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3423,11 +3432,13 @@
 				3B78CB53277306BA00FB3C4C /* InAppNotification.swift in Sources */,
 				BC22ABDC2552A3CD0071C69F /* PresentMenuAnimator.swift in Sources */,
 				BC105130258B05DF00398EA2 /* BackupManuallyVC.swift in Sources */,
+				3B5A2E78280D0564003D5DBB /* GT3Error+Extensions.swift in Sources */,
 				3B270F42277454FF009B2C97 /* WLModalViewController.swift in Sources */,
 				41BDBD5627A6670F00000EF7 /* SupportedTokens.ViewController.swift in Sources */,
 				3B3A8EF427D7AF540026E0FE /* TransactionDetail.StatusView.swift in Sources */,
 				BCEB206D25E1561200B54FEF /* TabBar.swift in Sources */,
 				3B3A8EF827D7B58E0026E0FE /* TapAndHoldView.swift in Sources */,
+				3BD4415828349DEA00C42A7F /* SendService+RelayMethod.swift in Sources */,
 				412DBFDF273D7B81000F514E /* EnterSeed.RootView.swift in Sources */,
 				BC699AB425F9DE3400F57209 /* WLRadioButton.swift in Sources */,
 				BCE77E6326536817000B68BB /* DerivableAccounts.ViewController.swift in Sources */,
@@ -3503,6 +3514,7 @@
 				86A90D17273D306400D180EF /* VerifySecurityKeys.RootView.swift in Sources */,
 				BCE04C6B268D901400CE131A /* UIViewController+Transitions.swift in Sources */,
 				3B9C3DE427A7CF040032548A /* Cell.View.swift in Sources */,
+				3BD4415A28349F8500C42A7F /* SendService+RewardMethod.swift in Sources */,
 				BCA93F8125E883A50081DDF6 /* Array+Extensions.swift in Sources */,
 				BC4B9E9927153F49005B9ECA /* Settings.SelectFiatViewController.swift in Sources */,
 				4183007627573DCB007BBEBF /* HorizontalLabelsWithSpacer.swift in Sources */,
@@ -3932,14 +3944,14 @@
 		};
 		BCB2234025412AF9002D997F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 711EB44381C51E07B5573724 /* Pods-p2p_wallet.debug.xcconfig */;
+			baseConfigurationReference = FA4930F2C7A986C08A7AA426 /* Pods-p2p_wallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3947,7 +3959,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 1.5.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
@@ -3977,14 +3989,14 @@
 		};
 		BCB2234125412AF9002D997F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 31879EF9418EDF0425230F81 /* Pods-p2p_wallet.release.xcconfig */;
+			baseConfigurationReference = 78B56A39E66BA7BD5E594223 /* Pods-p2p_wallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = p2p_wallet/p2p_wallet.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = A72KN37UN2;
 				INFOPLIST_FILE = p2p_wallet/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -3992,7 +4004,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4.1;
+				MARKETING_VERSION = 1.5.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-framework",
