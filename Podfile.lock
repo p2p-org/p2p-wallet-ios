@@ -5,8 +5,8 @@ PODS:
   - Alamofire (5.5.0)
   - Amplitude (8.3.1)
   - BECollectionView (0.1.0):
-    - PureLayout
-    - RxCocoa
+    - PureLayout (~> 3.1.9)
+    - RxCocoa (~> 6.5.0)
   - BEPureLayout (0.4.0):
     - PureLayout
   - BufferLayoutSwift (0.9.0):
@@ -118,9 +118,6 @@ PODS:
   - JazziconSwift (1.0.0)
   - KeychainSwift (19.0.0)
   - Kingfisher (7.2.0)
-  - LazySubject (0.1.0):
-    - RxCocoa
-    - RxSwift
   - ListPlaceholder (1.5)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -189,7 +186,6 @@ DEPENDENCIES:
   - JazziconSwift
   - KeychainSwift (~> 19.0)
   - Kingfisher
-  - LazySubject (from `LazySubject`)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
   - OrcaSwapSwift (from `OrcaSwapSwift`)
   - Periphery
@@ -263,8 +259,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
     :path: FeeRelayerSwift
-  LazySubject:
-    :path: LazySubject
   ListPlaceholder:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
@@ -287,7 +281,7 @@ SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Alamofire: 1c4fb5369c3fe93d2857c780d8bbe09f06f97e7c
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
-  BECollectionView: 9120725dd693271cef287447e3d1aa844f77535f
+  BECollectionView: df50e80ef1aeeaab1d77620d84e63265a9e7f380
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   BufferLayoutSwift: 94e01c016df92afb017b2f7d4bc434f9915a275a
   Charts: cfa4e911e6dc289582c2fe011a0e87c03d96727f
@@ -308,7 +302,6 @@ SPEC CHECKSUMS:
   JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 3ac0b75b155cabc0e544877d1a4deea29feece92
-  LazySubject: 9eb19a8524f377efd877f44d9f48c17be7962ebd
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OrcaSwapSwift: b825bf695bf5a393e7c42001fc2eeedbb3728bfd
@@ -337,6 +330,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 889df63bd6888141b82783265d831deed3f0ea9a
+PODFILE CHECKSUM: e0038e4c54169265d62dfc874df184f0f996261f
 
 COCOAPODS: 1.11.3
