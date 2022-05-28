@@ -14,7 +14,6 @@ target 'p2p_wallet' do
   common_pods
 #  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
   pod 'BEPureLayout', :path => 'BEPureLayout'
-  pod 'LazySubject', :path => 'LazySubject'
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
