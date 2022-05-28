@@ -1,0 +1,93 @@
+name: p2p_wallet
+
+options:
+    deploymentTarget: 
+        iOS: 13.0
+    groupSortPosition: top
+    minimumXcodeGenVersion: 2.18.0
+    postGenCommand: sh Scripts/postxcodegen.sh
+
+configs:
+  Debug: debug
+  Release: release
+
+configFiles:
+  Debug: p2p_wallet/Config.xcconfig
+  Release: p2p_wallet/Config.xcconfig
+
+targets:
+    p2p_wallet:
+        type: application
+        platform: iOS
+        deploymentTarget: 13.0
+        sources:
+        - p2p_wallet
+        - path: README.MD
+        preBuildScripts:
+          - script: |
+                  if [ "${CONFIGURATION}" = "Release" ]; then
+                    echo "Swiftgen is disabled in Release mode"
+                    exit 0
+                  fi
+                  "$PODS_ROOT/SwiftGen/bin/swiftgen"
+            name: "Swiftgen Run Script"
+          - script: |
+                  "$SRCROOT"/Scripts/formatAndLint.sh
+            name: "Format and lint Run Script"
+        postBuildScripts:
+          - script: |
+                  "${PODS_ROOT}/FirebaseCrashlytics/run"
+            name: "Crashlytics Run Script"
+            inputFiles:
+              - "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}"
+              - "$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)"
+        settings:
+            base:
+                TARGETED_DEVICE_FAMILY: 1
+                PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber
+                DEVELOPMENT_TEAM: A72KN37UN2
+                MARKETING_VERSION: 1.4.0
+                ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+                ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+                CODE_SIGN_IDENTITY: 'Apple Development'
+                CODE_SIGN_ENTITLEMENTS: p2p_wallet/p2p_wallet.entitlements
+                CODE_SIGN_STYLE: Automatic
+                CURRENT_PROJECT_VERSION: 5
+                OTHER_LDFLAGS:
+                - "$(inherited)"
+                - "-framework"
+                - "\"BEPureLayout\""
+                - "-framework"
+                - "\"CFNetwork\""
+                - "-framework"
+                - "\"Foundation\""
+                - "-framework"
+                - "\"PureLayout\""
+                - "-framework"
+                - "\"RxCocoa\""
+                - "-framework"
+                - "\"RxRelay\""
+                - "-framework"
+                - "\"RxSwift\""
+                - "-framework"
+                - "\"SolanaSwift\""
+                PRODUCT_NAME: "$(TARGET_NAME)"
+                ENABLE_BITCODE: false
+                DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
+
+    Detect Unused Code:
+        type: app-extension.intents-service
+        platform: iOS
+        name: "Detect Unused Code"
+        preBuildScripts:
+          - script: |
+                  "${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml"
+            name: "Swiftgen Run Script"
+          - script: |
+                  "${PWD}/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace"
+            name: "Periphery Run Script"
+        settings:
+            base:
+                PRODUCT_NAME: "$(TARGET_NAME)"
+                TARGETED_DEVICE_FAMILY: 1
+                CODE_SIGN_STYLE: Automatic
