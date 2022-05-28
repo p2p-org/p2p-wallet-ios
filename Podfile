@@ -12,8 +12,8 @@ target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   common_pods
+#  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
   pod 'BEPureLayout', :path => 'BEPureLayout'
-  pod 'LazySubject', :path => 'LazySubject'
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
@@ -28,6 +28,7 @@ target 'p2p_wallet' do
   pod 'SubviewAttachingTextView'
   pod 'Charts'
   pod "RxAppState"
+  pod "RxGesture"
   pod 'JazziconSwift'
   pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'

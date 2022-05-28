@@ -50,8 +50,11 @@ extension Resolver: ResolverRegistering {
         register { CryptoComparePricesFetcher() }
             .implements(PricesFetcher.self)
             .scope(.application)
-        register { NotificationsService() }
-            .implements(NotificationsServiceType.self)
+        register { NotificationServiceImpl() }
+            .implements(NotificationService.self)
+            .scope(.application)
+        register { NotificationRepositoryImpl() }
+            .implements(NotificationRepository.self)
             .scope(.application)
         register { ClipboardManager() }
             .implements(ClipboardManagerType.self)
@@ -111,7 +114,9 @@ extension Resolver: ResolverRegistering {
             apiClient: resolve(),
             solanaClient: resolve(),
             accountStorage: resolve(SolanaSDK.self).accountStorage,
-            orcaSwapClient: resolve()
+            orcaSwapClient: resolve(),
+            deviceType: .iOS,
+            buildNumber: Bundle.main.fullVersionNumber
         ) }
         .implements(FeeRelayerRelayType.self)
         .scope(.session)
@@ -131,20 +136,13 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Swap
 
-        register {
-            SwapServiceWithRelayImpl(
-                solanaClient: Resolver.resolve(),
-                accountStorage: Resolver.resolve(),
-                feeRelay: Resolver.resolve(),
-                orcaSwap: Resolver.resolve()
-            )
-        }
-        .implements(Swap.Service.self)
-        .scope(.session)
+        register { SwapServiceWithRelayImpl() }
+            .implements(Swap.Service.self)
+            .scope(.session)
 
         register {
             OrcaSwap(
-                apiClient: OrcaSwap.APIClient(
+                apiClient: OrcaSwapSwift.APIClient(
                     network: Defaults.apiEndPoint.network.cluster
                 ),
                 solanaClient: resolve(),
@@ -237,6 +235,18 @@ extension Resolver: ResolverRegistering {
         }
         .implements(Banners.Service.self)
         .scope(.shared)
+
+        // MARK: - RenBTCStatusService
+
+        register { RenBTCStatusService() }
+            .implements(RenBTCStatusServiceType.self)
+            .scope(.session)
+
+        // MARK: - HttpClient
+
+        register { HttpClientImpl() }
+            .implements(HttpClient.self)
+            .scope(.session)
     }
 }
 

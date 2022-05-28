@@ -40,7 +40,7 @@ extension TransactionDetail {
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var nameService: NameServiceType
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected private var notificationService: NotificationsServiceType
+        @Injected private var notificationService: NotificationService
 
         // MARK: - Properties
 
