@@ -5,6 +5,7 @@
 //  Created by Andrew Vasiliev on 26.11.2021.
 //
 
+import Alamofire
 import Foundation
 import GT3Captcha
 import Resolver
@@ -164,6 +165,22 @@ extension ReserveName {
                     self?.nameDidReserve(name)
                 }, onFailure: { [weak self] error in
                     self?.isLoadingSubject.accept(false)
+                    if let error = error as? AFError {
+                        switch error {
+                        case let .responseValidationFailed(reason):
+                            switch reason {
+                            case let .unacceptableStatusCode(code) where code == 500:
+                                self?.notificationsService
+                                    .showInAppNotification(.error(L10n
+                                            .theNameServiceIsExperiencingSomeIssuesPleaseTryAgainLater))
+                                return
+                            default:
+                                break
+                            }
+                        default:
+                            break
+                        }
+                    }
                     self?.notificationsService.showInAppNotification(.error(error))
                 })
                 .disposed(by: disposeBag)
@@ -244,7 +261,11 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
 
 extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
     func gtCaptcha(_: GT3CaptchaManager, errorHandler error: GT3Error) {
-        notificationsService.showInAppNotification(.error(error))
+        if error.isNameServiceUnavailable {
+            mainButtonStateSubject.accept(.unavailableNameService)
+        }
+        notificationsService
+            .showInAppNotification(.message(error.readableDescription))
     }
 
     func gtCaptcha(
