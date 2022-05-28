@@ -10,5 +10,6 @@ extension ReserveName {
         case empty
         case unavailableUsername
         case canContinue
+        case unavailableNameService
     }
 }
