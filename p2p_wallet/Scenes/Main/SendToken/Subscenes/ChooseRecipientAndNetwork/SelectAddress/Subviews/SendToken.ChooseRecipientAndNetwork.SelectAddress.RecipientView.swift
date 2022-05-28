@@ -50,7 +50,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 if shouldShowDescriptionLabel {
                     descriptionLabel.text = recipient.hasNoFunds ? L10n.cautionThisAddressHasNoFunds : L10n
                         .couldNotRetrieveAccountInfo
-                    recipientIcon.image = .warningUserAvatarSquareRounded
+                    recipientIcon.image = .warningUserAvatar
                     descriptionLabel.textColor = .ff9500
                 }
             } else {
