@@ -36,7 +36,7 @@ chmod -R +x .githooks
 ```zsh
 Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
 ```
-- Add `Config.xconfig` to `p2p-wallet-ios/p2p-wallet` contains following content
+- Add `Config.xcconfig` to `p2p-wallet-ios/p2p-wallet` contains following content
 ```
 // MARK: - Transak
 TRANSAK_STAGING_API_KEY = fake_api_key

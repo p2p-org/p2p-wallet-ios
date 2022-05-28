@@ -13,9 +13,10 @@ import UIKit
 
 protocol TabBarNeededViewController: UIViewController {}
 
-class TabBarVC: BEPagesVC {
+final class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     @Injected private var helpCenterLauncher: HelpCenterLauncher
+    @Injected private var clipboardManager: ClipboardManagerType
     private var tabBarTopConstraint: NSLayoutConstraint!
 
     deinit {
@@ -28,7 +29,7 @@ class TabBarVC: BEPagesVC {
 
         let homeViewModel = Home.ViewModel()
         let homeVC = Home.ViewController(viewModel: homeViewModel)
-
+        let historyVC = History.Scene()
         let sendTokenVC = SendToken.ViewController(
             viewModel: SendToken.ViewModel(
                 walletPubkey: nil,
@@ -39,18 +40,21 @@ class TabBarVC: BEPagesVC {
         )
         sendTokenVC.doneHandler = { [weak sendTokenVC, weak self] in
             sendTokenVC?.popToRootViewController(animated: false)
-            CATransaction.begin()
-            CATransaction.setCompletionBlock { [weak homeViewModel] in
-                homeViewModel?.scrollToTop()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                CATransaction.begin()
+                CATransaction.setCompletionBlock { [weak homeViewModel] in
+                    homeViewModel?.scrollToTop()
+                }
+                self?.moveToPage(0)
+                CATransaction.commit()
             }
-            self?.moveToPage(0)
-            CATransaction.commit()
         }
 
         let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
 
         viewControllers = [
             createNavigationController(rootVC: homeVC),
+            createNavigationController(rootVC: historyVC),
             createNavigationController(rootVC: sendTokenVC),
             createNavigationController(rootVC: settingsVC),
         ]
@@ -104,52 +108,44 @@ class TabBarVC: BEPagesVC {
 
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
-            .spacer,
-            buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
-            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 1),
-            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
-            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 2),
-            .spacer,
+            buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, item: .wallet),
+            buttonTabBarItem(image: .tabbarHistory, title: L10n.history, item: .history),
+            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, item: .send),
+            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, item: .feedback),
+            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, item: .settings),
         ])
     }
 
-    private func buttonTabBarItem(image: UIImage, title: String, tag: Int) -> UIView {
-        let item = TabBarItemView(forAutoLayout: ())
-        item.tintColor = .tabbarUnselected
-        item.imageView.image = image
-        item.titleLabel.text = title
-        return item
-            .padding(UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16))
-            .withTag(tag)
+    private func buttonTabBarItem(image: UIImage, title: String, item: Item) -> UIView {
+        let itemView = TabBarItemView(forAutoLayout: ())
+        itemView.tintColor = .tabbarUnselected
+        itemView.imageView.image = image
+        itemView.titleLabel.text = title
+        return itemView
+            .padding(.init(x: 0, y: 16))
+            .withTag(item.rawValue)
             .onTap(self, action: #selector(switchTab(_:)))
     }
 
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
-        let tag = gesture.view!.tag
+        guard let tag = gesture.view?.tag, let item = Item(rawValue: tag) else { return }
+        moveToItem(item)
+    }
 
-        moveToPage(tag)
+    func moveToItem(_ item: Item) {
+        moveToPage(item.rawValue)
     }
 
     override func moveToPage(_ index: Int) {
-        // scroll to top if index is selected
-        if currentPage == index {
-            return
-        }
-
-        guard index != 10 else {
-            return helpCenterLauncher.launch()
-        }
-
+        guard currentPage != index else { return }
+        guard index != 10 else { return helpCenterLauncher.launch() }
         super.moveToPage(index)
+        guard let item = (tabBar.stackView.arrangedSubviews.first { $0.tag == index }) else { return }
 
-        let items = tabBar.stackView.arrangedSubviews[1 ..< tabBar.stackView.arrangedSubviews.count - 1]
-
-        guard index < items.count else { return }
-
-        // change tabs' color
-        items.first { $0.tag == currentPage }?.subviews.first?.tintColor = .tabbarSelected
-
-        items.filter { $0.tag != currentPage }.forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
+        item.subviews.first?.tintColor = .tabbarSelected
+        tabBar.stackView.arrangedSubviews
+            .filter { $0.tag != index }
+            .forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
 
         setNeedsStatusBarAppearanceUpdate()
     }
@@ -218,5 +214,15 @@ extension UIViewController {
     func tabBar() -> TabBarVC? {
         guard let vc = self as? TabBarVC else { return parent?.tabBar() }
         return vc
+    }
+}
+
+extension TabBarVC {
+    enum Item: Int {
+        case wallet = 0
+        case history = 1
+        case send = 2
+        case feedback = 10
+        case settings = 3
     }
 }

@@ -27,7 +27,7 @@ extension CreateWallet {
 
         @Injected private var handler: CreateOrRestoreWalletHandler
         @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
 
         // MARK: - Properties
 

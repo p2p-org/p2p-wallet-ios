@@ -1,9 +1,5 @@
 name: Release application
-on:
-  push:
-    branches: [main]
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+on: workflow_dispatch
 jobs:
   deploy:
     name: Deploying to Testflight
@@ -56,3 +52,5 @@ jobs:
           GIT_AUTHORIZATION: '${{ secrets.GIT_AUTHORIZATION }}'
           MATCH_PASSWORD: '${{ secrets.MATCH_PASSWORD }}'
           IS_CI: '${{ secrets.IS_CI }}'
+          SLACK_API_TOKEN: '${{ secrets.SLACK_API_TOKEN }}'
+          JIRA_BASE_URL: '${{ secrets.JIRA_BASE_URL }}'

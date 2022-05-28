@@ -13,6 +13,7 @@ protocol AuthenticationHandlerType {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
     func pauseAuthentication(_ isPaused: Bool)
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get }
+    var isLockedDriver: Driver<Bool> { get }
 }
 
 final class AuthenticationHandler: AuthenticationHandlerType {
@@ -26,6 +27,7 @@ final class AuthenticationHandler: AuthenticationHandlerType {
     // MARK: - Subjects
 
     private let authenticationStatusSubject = BehaviorRelay<AuthenticationPresentationStyle?>(value: nil)
+    private let isLockedSubject = BehaviorRelay<Bool>(value: false)
 
     init() {
         bind()
@@ -43,16 +45,36 @@ final class AuthenticationHandler: AuthenticationHandlerType {
             .disposed(by: disposeBag)
 
         observeAppNotifications()
+
+        authenticationStatusSubject
+            .skip(1)
+            .filter { $0 == nil }
+            .map { _ in false }
+            .bind(to: isLockedSubject)
+            .disposed(by: disposeBag)
     }
 
     private func observeAppNotifications() {
+        UIApplication.shared.rx
+            .applicationWillResignActive
+            .subscribe(onNext: { [weak self] _ in
+                if self?.authenticationStatusSubject.value == nil {
+                    self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
+                    self?.isLockedSubject.accept(true)
+                }
+            })
+            .disposed(by: disposeBag)
+
         UIApplication.shared.rx.applicationDidBecomeActive
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                guard Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self
+                if Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self
                     .timeRequiredForAuthentication
-                else { return }
-                self.authenticate(presentationStyle: .login())
+                {
+                    self.authenticate(presentationStyle: .login())
+                }
+
+                self.isLockedSubject.accept(false)
             })
             .disposed(by: disposeBag)
     }
@@ -91,6 +113,10 @@ final class AuthenticationHandler: AuthenticationHandlerType {
 
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
         authenticationStatusSubject.asDriver()
+    }
+
+    var isLockedDriver: Driver<Bool> {
+        isLockedSubject.asDriver()
     }
 
     // MARK: - Helpers

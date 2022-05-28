@@ -74,7 +74,7 @@ extension EnterSeed {
             do {
                 _ = try Mnemonic(phrase: words)
             } catch {
-                return L10n.wrongOrderOrSeedPhrasePleaseCheckItAndTryAgain
+                return L10n.TheWrongSecurityKeyOrWordsOrder.pleaseTryAgain
             }
 
             return nil
