@@ -10,7 +10,8 @@ import Resolver
 import RxCocoa
 import RxSwift
 
-final class ___VARIABLE_scene___ViewModel: ViewModelType {
+extension ___VARIABLE_scene___ViewModel: ViewModelType {
+    
     // MARK: - Nested type
 
     struct Input {
@@ -22,7 +23,10 @@ final class ___VARIABLE_scene___ViewModel: ViewModelType {
         let navigatableScene: Signal<___VARIABLE_scene___NavigatableScene>
 //        let text: Driver<String?>
     }
+}
 
+final class ___VARIABLE_scene___ViewModel {
+    
     // MARK: - Dependencies
 
 //        @Injected private var service: Service
