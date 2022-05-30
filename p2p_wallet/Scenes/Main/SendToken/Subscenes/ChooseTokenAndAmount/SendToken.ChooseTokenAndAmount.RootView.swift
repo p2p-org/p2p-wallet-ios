@@ -161,31 +161,32 @@ extension SendToken.ChooseTokenAndAmount {
                 viewModel.amountDriver,
                 viewModel.walletDriver,
                 viewModel.currencyModeDriver
-            )
-                .map { amount, wallet, currencyMode -> String in
-                    guard let wallet = wallet else { return "" }
-                    var equityValue = amount * wallet.priceInCurrentFiat
-                    var equityValueSymbol = Defaults.fiat.code
-                    if currencyMode == .fiat {
-                        if wallet.priceInCurrentFiat > 0 {
-                            equityValue = amount / wallet.priceInCurrentFiat
-                        } else {
-                            equityValue = 0
-                        }
-                        equityValueSymbol = wallet.token.symbol
+            ).map { amount, wallet, currencyMode -> String in
+                guard let wallet = wallet else { return "" }
+
+                var equityValue = amount * wallet.priceInCurrentFiat
+                var equityValueSymbol = Defaults.fiat.code
+                if currencyMode == .fiat {
+                    if wallet.priceInCurrentFiat > 0 {
+                        equityValue = amount / wallet.priceInCurrentFiat
+                    } else {
+                        equityValue = 0
                     }
-                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
+                    equityValueSymbol = wallet.token.symbol
                 }
-                .asDriver(onErrorJustReturn: nil)
-                .drive(equityValueLabel.rx.text)
-                .disposed(by: disposeBag)
+                let value = currencyMode != .fiat
+                    ? equityValue.toString(maximumFractionDigits: 2, groupingSeparator: " ")
+                    : equityValue.toString(maximumFractionDigits: 9, groupingSeparator: "")
+                return equityValueSymbol + " " + value
+            }
+            .asDriver()
+            .drive(equityValueLabel.rx.text)
+            .disposed(by: disposeBag)
 
             // amount
             amountTextField.rx.text
-                .map { $0?.double }
-                .distinctUntilChanged()
-                .subscribe(onNext: { [weak self] amount in
-                    self?.viewModel.enterAmount(amount)
+                .subscribe(onNext: { [weak self] text in
+                    self?.viewModel.enterAmount(Double(text ?? "") ?? 0)
                 })
                 .disposed(by: disposeBag)
 

@@ -6,7 +6,7 @@ import Foundation
 import RxSwift
 
 extension BuyPreparing {
-    class InputCryptoView: BECompositionView {
+    final class InputCryptoView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: BuyPreparingSceneModel
 
@@ -49,16 +49,12 @@ extension BuyPreparing {
                             keyboardType: .decimalPad,
                             placeholder: "0",
                             autocorrectionType: .no
-                        ).setup { [weak self] view in
+                        ).setup { view in
                             view.becomeFirstResponder()
-                            view.delegate = self
                             view.text = viewModel.input.amount.toString()
                             view.rx.text
-                                .map { $0?.double }
-                                .distinctUntilChanged()
-                                .subscribe(onNext: { [weak self] amount in
-                                    guard let amount = amount else { return }
-                                    self?.viewModel.setAmount(value: amount)
+                                .subscribe(onNext: { [weak viewModel] text in
+                                    viewModel?.setAmount(value: Double(text ?? "") ?? 0)
                                 })
                                 .disposed(by: disposeBag)
                         }
@@ -86,21 +82,6 @@ extension BuyPreparing {
                         .box(cornerRadius: 12)
                 }
             }
-        }
-    }
-}
-
-extension BuyPreparing.InputCryptoView: UITextFieldDelegate {
-    func textField(
-        _ textField: UITextField,
-        shouldChangeCharactersIn range: NSRange,
-        replacementString string: String
-    ) -> Bool {
-        switch textField {
-        case let amountTextField as TokenAmountTextField:
-            return amountTextField.shouldChangeCharactersInRange(range, replacementString: string)
-        default:
-            return true
         }
     }
 }
