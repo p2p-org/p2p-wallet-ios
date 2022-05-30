@@ -1,3 +1,4 @@
 #!/bin/sh
 pwd
 Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
+xcodegen
