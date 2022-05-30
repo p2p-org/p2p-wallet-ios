@@ -17,7 +17,7 @@ extension Resolver: ResolverRegistering {
         register { KeychainStorage() }
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
-            .implements(SolanaSDKAccountStorage.self)
+            .implements(SolanaAccountStorage.self)
             .implements(PincodeStorageType.self)
             .implements(AccountStorageType.self)
             .implements(PincodeSeedPhrasesStorage.self)
@@ -155,7 +155,7 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - RenVM
 
-        register { RenVM.RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
+        register { RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
             .implements(RenVMRpcClientType.self)
             .scope(.session)
 

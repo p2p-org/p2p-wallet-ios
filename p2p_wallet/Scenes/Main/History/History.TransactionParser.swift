@@ -16,7 +16,7 @@ protocol HistoryTransactionParser {
     /// - Returns: parsed transaction
     func parse(
         signatureInfo: SolanaSDK.SignatureInfo,
-        transactionInfo: SolanaSDK.TransactionInfo,
+        transactionInfo: TransactionInfo,
         account: String?,
         symbol: String?
     ) async throws -> SolanaSDK.ParsedTransaction
@@ -37,7 +37,7 @@ extension History {
 
         func parse(
             signatureInfo: SolanaSDK.SignatureInfo,
-            transactionInfo: SolanaSDK.TransactionInfo,
+            transactionInfo: TransactionInfo,
             account: String?,
             symbol: String?
         ) async throws -> SolanaSDK.ParsedTransaction {
@@ -71,7 +71,7 @@ extension History {
 
         func parse(
             signatureInfo: SolanaSDK.SignatureInfo,
-            transactionInfo: SolanaSDK.TransactionInfo,
+            transactionInfo: TransactionInfo,
             account: String?,
             symbol: String?
         ) async throws -> SolanaSDK.ParsedTransaction {

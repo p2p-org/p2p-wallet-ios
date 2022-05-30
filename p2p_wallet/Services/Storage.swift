@@ -34,11 +34,11 @@ protocol PincodeStorageType {
     var pinCode: String? { get }
 }
 
-protocol AccountStorageType: SolanaSDKAccountStorage {
-    func getDerivablePath() -> SolanaSDK.DerivablePath?
+protocol AccountStorageType: SolanaAccountStorage {
+    func getDerivablePath() -> DerivablePath?
 
     func save(phrases: [String]) throws
-    func save(derivableType: SolanaSDK.DerivablePath.DerivableType) throws
+    func save(derivableType: DerivablePath.DerivableType) throws
     func save(walletIndex: Int) throws
     func clearAccount()
 }
@@ -62,7 +62,7 @@ class KeychainStorage {
 
     // MARK: - Properties
 
-    private var _account: SolanaSDK.Account?
+    private var _account: Account?
 
     // MARK: - Services
 
@@ -198,7 +198,7 @@ extension KeychainStorage: NameStorageType {
 }
 
 extension KeychainStorage: AccountStorageType {
-    var account: SolanaSDK.Account? {
+    var account: Account? {
         if let account = _account {
             return account
         }
@@ -210,13 +210,13 @@ extension KeychainStorage: AccountStorageType {
         let derivableTypeRaw = keychain.get(derivableTypeKey) ?? ""
         let walletIndexRaw = keychain.get(walletIndexKey) ?? ""
 
-        let defaultDerivablePath = SolanaSDK.DerivablePath.default
+        let defaultDerivablePath = DerivablePath.default
 
-        let derivableType = SolanaSDK.DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath
+        let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath
             .type
         let walletIndex = Int(walletIndexRaw) ?? defaultDerivablePath.walletIndex
 
-        _account = try? SolanaSDK.Account(
+        _account = try? Account(
             phrase: phrases,
             network: Defaults.apiEndPoint.network,
             derivablePath: .init(type: derivableType, walletIndex: walletIndex)
@@ -229,7 +229,7 @@ extension KeychainStorage: AccountStorageType {
         account?.phrase
     }
 
-    func save(_ account: SolanaSDK.Account) throws {
+    func save(_ account: Account) throws {
         let phrases = account.phrase
         try save(phrases: phrases)
     }
@@ -239,7 +239,7 @@ extension KeychainStorage: AccountStorageType {
         _account = nil
     }
 
-    func save(derivableType: SolanaSDK.DerivablePath.DerivableType) throws {
+    func save(derivableType: DerivablePath.DerivableType) throws {
         keychain.set(derivableType.rawValue, forKey: derivableTypeKey)
         _account = nil
     }
@@ -249,9 +249,9 @@ extension KeychainStorage: AccountStorageType {
         _account = nil
     }
 
-    func getDerivablePath() -> SolanaSDK.DerivablePath? {
+    func getDerivablePath() -> DerivablePath? {
         guard let derivableTypeRaw = keychain.get(derivableTypeKey),
-              let derivableType = SolanaSDK.DerivablePath.DerivableType(rawValue: derivableTypeRaw)
+              let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw)
         else { return nil }
 
         let walletIndexRaw = keychain.get(walletIndexKey)
