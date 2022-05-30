@@ -18,10 +18,9 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
-      - name: Generate a project file
+      - name: Install project
         run: |
-          brew install xcodegen
-          xcodegen
+          chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
       - name: "Upload to firebase for testing"
