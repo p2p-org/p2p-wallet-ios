@@ -9,15 +9,6 @@ import Foundation
 import RxSwift
 import SolanaSwift
 
-// MARK: - APIClient
-
-protocol ProcessTransactionAPIClient {
-    func getSignatureStatus(signature: String, configs: SolanaSDK.RequestConfiguration?)
-        -> Single<SolanaSDK.SignatureStatus>
-}
-
-extension SolanaSDK: ProcessTransactionAPIClient {}
-
 // MARK: - Transaction type
 
 protocol RawTransactionType {
