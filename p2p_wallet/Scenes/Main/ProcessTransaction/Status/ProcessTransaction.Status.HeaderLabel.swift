@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 06/03/2022.
 //
 
+import FeeRelayerSwift
 import Foundation
 import RxCocoa
 import RxSwift
@@ -42,10 +43,15 @@ extension ProcessTransaction.Status {
                     case .sending, .confirmed:
                         return originalText
                     case let .error(error):
-                        if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                        switch error {
+                        case let error
+                            where error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit:
                             return L10n.lowSlippageCausedTheSwapToFail
+                        case let error where error as? FeeRelayer.Error == .topUpSuccessButTransactionThrows:
+                            return L10n.theTransactionFailedDueToABlockchainError
+                        default:
+                            return L10n.theTransactionHasBeenRejected
                         }
-                        return L10n.theTransactionHasBeenRejected
                     case .finalized:
                         switch info.rawTransaction {
                         case let transaction as ProcessTransaction.SendTransaction:
