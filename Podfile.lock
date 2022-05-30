@@ -2,7 +2,6 @@ PODS:
   - Action (5.0.0):
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
-  - Alamofire (5.6.1)
   - Amplitude (8.3.1)
   - BECollectionView (0.1.0):
     - PureLayout (~> 3.1.8)
@@ -129,11 +128,6 @@ PODS:
   - RenVMSwift (2.0.0):
     - SolanaSwift (~> 1.9.0)
   - Resolver (1.5.0)
-  - RxAlamofire (6.1.1):
-    - RxAlamofire/Core (= 6.1.1)
-  - RxAlamofire/Core (6.1.1):
-    - Alamofire (~> 5.4)
-    - RxSwift (~> 6.0)
   - RxAppState (1.7.1):
     - RxCocoa (~> 6.2)
     - RxSwift (~> 6.2)
@@ -149,13 +143,9 @@ PODS:
   - secp256k1.swift (0.1.4)
   - SolanaSwift (1.9.0):
     - LoggerSwift (~> 1.0.0)
-    - RxAlamofire (~> 6.1.1)
-    - RxCocoa (~> 6.5.0)
     - secp256k1.swift (~> 0.1.0)
-    - Starscream (~> 4.0.0)
     - Task_retrying (~> 1.0.1)
     - TweetNacl (~> 1.0.2)
-  - Starscream (4.0.4)
   - SubviewAttachingTextView (1.5.0)
   - SwiftAlgorithms (1.0.0)
   - SwiftFormat/CLI (0.49.6)
@@ -203,7 +193,6 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Action
-    - Alamofire
     - Amplitude
     - Charts
     - Firebase
@@ -226,14 +215,12 @@ SPEC REPOS:
     - PromisesObjC
     - PureLayout
     - Resolver
-    - RxAlamofire
     - RxAppState
     - RxCocoa
     - RxGesture
     - RxRelay
     - RxSwift
     - secp256k1.swift
-    - Starscream
     - SubviewAttachingTextView
     - SwiftAlgorithms
     - SwiftFormat
@@ -274,7 +261,6 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
-  Alamofire: 87bd8c952f9a4454320fce00d9cc3de57bcadaf5
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
@@ -304,15 +290,13 @@ SPEC CHECKSUMS:
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
   RenVMSwift: 8039a3bca5becebb4649f894950681847c4550b1
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
-  RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaSwift: 1ae4e880c977d9cbafc51822696573c66edaa3b3
-  Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
+  SolanaSwift: 4a4cda0e3f410653af642d6893a964f032cef6e3
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
