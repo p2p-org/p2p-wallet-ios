@@ -14,36 +14,29 @@ final class ___VARIABLE_scene___ViewModel: ViewModelType {
     // MARK: - Nested type
 
     struct Input {
-        let navigate: AnyObserver<___VARIABLE_scene___NavigatableScene?>
+        let navigatableScene = PublishRelay<___VARIABLE_scene___NavigatableScene>()
     }
 
     struct Output {
-        let navigatableScene: Signal<___VARIABLE_scene___NavigatableScene?>
+        let navigatableScene: Signal<___VARIABLE_scene___NavigatableScene>
     }
 
     // MARK: - Dependencies
 
-//        private let service: Service = Resolver.resolve()
+//        @Injected private var service: Service
 
     // MARK: - Properties
 
     let input: Input
     let output: Output
 
-    // MARK: - Subjects
-
-    private let navigatableSceneSubject = PublishSubject<___VARIABLE_scene___NavigatableScene?>()
-//        private let stringSubject = BehaviorRelay<String?>(value: nil)
-
     // MARK: - Initializers
 
     init() {
-        input = Input(
-            navigate: navigatableSceneSubject.asObserver()
-        )
+        input = Input()
         output = Output(
-            navigatableScene: navigatableSceneSubject
-                .asSignal(onErrorJustReturn: nil)
+            navigatableScene: input.navigatableScene
+                .asSignal()
         )
     }
 }
