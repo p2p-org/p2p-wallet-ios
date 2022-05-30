@@ -23,7 +23,7 @@ jobs:
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
-      - name: "Upload to firebase for testing"
+      - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0
         with:
           lane: beta
