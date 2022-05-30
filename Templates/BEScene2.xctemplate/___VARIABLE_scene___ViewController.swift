@@ -46,7 +46,8 @@ final class ___VARIABLE_scene___ViewController: BaseViewController {
     private func navigate(to scene: ___VARIABLE_scene___NavigatableScene?) {
         switch scene {
         case .detail:
-            <#code#>
+//            let vc = ___VARIABLE_scene___DetailViewController(viewModel: ___VARIABLE_scene___DetailViewModel())
+//            show(vc, sender: nil)
         case .none:
             break
         }
