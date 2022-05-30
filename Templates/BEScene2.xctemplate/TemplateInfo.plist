@@ -24,7 +24,7 @@
 		</dict>
 		<dict>
 			<key>Default</key>
-			<string>___VARIABLE_scene:identifier___.ViewController</string>
+			<string>___VARIABLE_scene:identifier___ViewController</string>
 			<key>Description</key>
 			<string>The ViewController&apos;s name</string>
 			<key>Identifier</key>
@@ -38,7 +38,7 @@
 		</dict>
 		<dict>
 			<key>Default</key>
-			<string>___VARIABLE_scene:identifier___.ViewModel</string>
+			<string>___VARIABLE_scene:identifier___ViewModel</string>
 			<key>Description</key>
 			<string>The ViewModel&apos;s name</string>
 			<key>Identifier</key>
@@ -52,7 +52,7 @@
 		</dict>
 		<dict>
 			<key>Default</key>
-			<string>___VARIABLE_scene:identifier___.RootView</string>
+			<string>___VARIABLE_scene:identifier___RootView</string>
 			<key>Description</key>
 			<string>The RootView&apos;s name</string>
 			<key>Identifier</key>
