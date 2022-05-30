@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 protocol SocketType {
     var isConnected: Bool { get }
@@ -14,8 +15,15 @@ protocol SocketType {
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)>
 }
 
-extension SolanaSDK.Socket: SocketType {
+extension Socket: SocketType {
+    func subscribeAccountNotification(account _: String, isNative _: Bool) {
+        fatalError("Method is not implemented")
+    }
+
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)> {
-        observeAccountNotifications()
+        fatalError("Method is not implemented")
+
+        // TODO: Fix
+        // observeAccountNotifications()
     }
 }

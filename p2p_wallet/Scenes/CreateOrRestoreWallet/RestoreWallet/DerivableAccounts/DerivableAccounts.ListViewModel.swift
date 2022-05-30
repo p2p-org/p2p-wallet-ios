@@ -9,6 +9,7 @@ import BECollectionView
 import Foundation
 import RxAlamofire
 import RxSwift
+import SolanaSwift
 
 protocol DerivableAccountsListViewModelType: BEListViewModelType {
     func cancelRequest()
@@ -132,14 +133,6 @@ extension DerivableAccounts {
                     .validate(statusCode: 200 ..< 300)
                     .responseData()
                     .map { _, data -> SolanaSDK.Rpc<UInt64> in
-                        // Print
-                        Logger.log(
-                            message: String(data: data, encoding: .utf8) ?? "",
-                            event: .response,
-                            apiMethod: bcMethod
-                        )
-
-                        // Print
                         let response = try JSONDecoder()
                             .decode(SolanaSDK.Response<SolanaSDK.Rpc<UInt64>>.self, from: data)
                         if let result = response.result {

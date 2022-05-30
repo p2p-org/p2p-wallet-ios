@@ -18,7 +18,7 @@ protocol SendTokenSelectNetworkViewModelType {
     func getSendService() -> SendServiceType
     func getPrices(for symbols: [String]) -> [String: Double]
     func getSelectedNetwork() -> SendToken.Network
-    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
+    func getFreeTransactionFeeLimit() -> Single<UsageStatus>
     func selectRecipient(_ recipient: SendToken.Recipient?)
     func selectNetwork(_ network: SendToken.Network)
     func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network)

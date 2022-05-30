@@ -108,7 +108,8 @@ class KeychainStorage {
             self.walletIndexKey = walletIndexKey
             Defaults.keychainWalletIndexKey = walletIndexKey
 
-            removeCurrentAccount()
+            fatalError("Method has not been implemented")
+            // removeCurrentAccount()
         }
 
         migrate()
@@ -169,8 +170,9 @@ extension KeychainStorage: ICloudStorageType {
     }
 
     var didBackupUsingIcloud: Bool {
-        guard let phrases = account?.phrase.joined(separator: " ") else { return false }
-        return accountFromICloud()?.contains(where: { $0.phrase == phrases }) == true
+        fatalError("Method has not been implemented")
+        // guard let phrases = account?.phrase else { return false }
+        // return accountFromICloud()?.contains(where: { $0.phrase == phrases }) == true
     }
 }
 
@@ -198,85 +200,115 @@ extension KeychainStorage: NameStorageType {
 }
 
 extension KeychainStorage: AccountStorageType {
-    var account: Account? {
-        if let account = _account {
-            return account
-        }
-
-        guard let phrases = keychain.get(phrasesKey)?.components(separatedBy: " ")
-        else {
-            return nil
-        }
-        let derivableTypeRaw = keychain.get(derivableTypeKey) ?? ""
-        let walletIndexRaw = keychain.get(walletIndexKey) ?? ""
-
-        let defaultDerivablePath = DerivablePath.default
-
-        let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath
-            .type
-        let walletIndex = Int(walletIndexRaw) ?? defaultDerivablePath.walletIndex
-
-        _account = try? Account(
-            phrase: phrases,
-            network: Defaults.apiEndPoint.network,
-            derivablePath: .init(type: derivableType, walletIndex: walletIndex)
-        )
-
-        return _account
+    func save(phrases _: [String]) throws {
+        fatalError("Method has not been implemented")
     }
 
-    var phrases: [String]? {
-        account?.phrase
-    }
-
-    func save(_ account: Account) throws {
-        let phrases = account.phrase
-        try save(phrases: phrases)
-    }
-
-    func save(phrases: [String]) throws {
-        keychain.set(phrases.joined(separator: " "), forKey: phrasesKey)
-        _account = nil
-    }
-
-    func save(derivableType: DerivablePath.DerivableType) throws {
-        keychain.set(derivableType.rawValue, forKey: derivableTypeKey)
-        _account = nil
-    }
-
-    func save(walletIndex: Int) throws {
-        keychain.set("\(walletIndex)", forKey: walletIndexKey)
-        _account = nil
-    }
-
-    func getDerivablePath() -> DerivablePath? {
-        guard let derivableTypeRaw = keychain.get(derivableTypeKey),
-              let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw)
-        else { return nil }
-
-        let walletIndexRaw = keychain.get(walletIndexKey)
-        let walletIndex = Int(walletIndexRaw ?? "0")
-
-        return .init(type: derivableType, walletIndex: walletIndex ?? 0)
+    func save(walletIndex _: Int) throws {
+        fatalError("Method has not been implemented")
     }
 
     func clearAccount() {
-        removeCurrentAccount()
+        fatalError("Method has not been implemented")
     }
 
-    private func removeCurrentAccount() {
-        keychain.delete(pincodeKey)
-        keychain.delete(phrasesKey)
-        keychain.delete(derivableTypeKey)
-        keychain.delete(walletIndexKey)
-        keychain.delete(nameKey)
+    func getDerivablePath() -> DerivablePath? { fatalError("Method has not been implemented") }
 
-        removeAccountCache()
-    }
+    func save(derivableType _: DerivablePath.DerivableType) throws { fatalError("Method has not been implemented") }
 
-    private func removeAccountCache() {
-        _account = nil
-    }
+    public var account: SolanaSwift.Account? { fatalError("account has not been implemented") }
+
+    public func save(_: SolanaSwift.Account) throws { fatalError("Method has not been implemented") }
+}
+
+class Test {
+    // var account: Account? {
+    //     fatalError("Method has not been implemented")
+    //
+    //     // if let account = _account {
+    //     //     return account
+    //     // }
+    //     //
+    //     // guard let phrases = keychain.get(phrasesKey)?.components(separatedBy: " ")
+    //     // else {
+    //     //     return nil
+    //     // }
+    //     // let derivableTypeRaw = keychain.get(derivableTypeKey) ?? ""
+    //     // let walletIndexRaw = keychain.get(walletIndexKey) ?? ""
+    //     //
+    //     // let defaultDerivablePath = DerivablePath.default
+    //     //
+    //     // let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath
+    //     //     .type
+    //     // let walletIndex = Int(walletIndexRaw) ?? defaultDerivablePath.walletIndex
+    //     //
+    //     // _account = try? Account(
+    //     //     phrase: phrases,
+    //     //     network: Defaults.apiEndPoint.network,
+    //     //     derivablePath: .init(type: derivableType, walletIndex: walletIndex)
+    //     // )
+    //     //
+    //     // return _account
+    // }
+    //
+    // var phrases: [String]? {
+    //     fatalError("Method has not been implemented")
+    //     // account?.phrase
+    // }
+    //
+    // public func save(_ account: SolanaSwift.Account) throws {
+    //     try save(phrases: account.phrase)
+    // }
+    //
+    // public func save(_: Account) throws {
+    //     fatalError("Method has not been implemented")
+    //     // let phrases = account.phrase
+    //     // try save(phrases: phrases)
+    // }
+    //
+    // func save(phrases: [String]) throws {
+    //     keychain.set(phrases.joined(separator: " "), forKey: phrasesKey)
+    //     _account = nil
+    // }
+    //
+    // func save(derivableType: DerivablePath.DerivableType) throws {
+    //     keychain.set(derivableType.rawValue, forKey: derivableTypeKey)
+    //     _account = nil
+    // }
+    //
+    // func save(walletIndex: Int) throws {
+    //     keychain.set("\(walletIndex)", forKey: walletIndexKey)
+    //     _account = nil
+    // }
+    //
+    // func getDerivablePath() -> DerivablePath? {
+    //     guard let derivableTypeRaw = keychain.get(derivableTypeKey),
+    //           let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw)
+    //     else { return nil }
+    //
+    //     let walletIndexRaw = keychain.get(walletIndexKey)
+    //     let walletIndex = Int(walletIndexRaw ?? "0")
+    //
+    //     return .init(type: derivableType, walletIndex: walletIndex ?? 0)
+    // }
+    //
+    // func clearAccount() {
+    //     removeCurrentAccount()
+    // }
+    //
+    // private func removeCurrentAccount() {
+    //     keychain.delete(pincodeKey)
+    //     keychain.delete(phrasesKey)
+    //     keychain.delete(derivableTypeKey)
+    //     keychain.delete(walletIndexKey)
+    //     keychain.delete(nameKey)
+    //
+    //     removeAccountCache()
+    // }
+    //
+    // private func removeAccountCache() {
+    //     _account = nil
+    // }
 }
 
 extension KeychainStorage: PincodeStorageType {
@@ -289,4 +321,8 @@ extension KeychainStorage: PincodeStorageType {
     }
 }
 
-extension KeychainStorage: PincodeSeedPhrasesStorage {}
+extension KeychainStorage: PincodeSeedPhrasesStorage {
+    var phrases: [String]? {
+        fatalError("Method has not been implemented")
+    }
+}

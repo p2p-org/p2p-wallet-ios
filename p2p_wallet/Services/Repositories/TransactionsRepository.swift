@@ -55,11 +55,6 @@ extension SolanaSDK: TransactionsRepository {
                         }
                 })
             }
-            .do(onSuccess: { transactions in
-                Logger.log(message: "Fetched \(transactions.count) transactions", event: .debug)
-            }, onError: {
-                Logger.log(message: $0.readableDescription, event: .debug)
-            })
     }
 
     func getTransaction(

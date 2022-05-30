@@ -175,7 +175,7 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.getPrices(for: symbols)
     }
 
-    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+    func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
         sendTokenViewModel.getFreeTransactionFeeLimit()
     }
 

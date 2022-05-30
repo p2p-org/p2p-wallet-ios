@@ -6,7 +6,6 @@
 //
 
 import FeeRelayerSwift
-import OrcaSwapSwift
 import RenVMSwift
 import SolanaSwift
 
@@ -66,14 +65,16 @@ extension Resolver: ResolverRegistering {
             .implements(TokensRepository.self)
             .implements(TransactionsRepository.self)
             .implements(AssociatedTokenAccountHandler.self)
-            .implements(RenVMSolanaAPIClientType.self)
+//            .implements(RenVMSolanaAPIClientType.self)
             .implements(FeeAPIClient.self)
-            .implements(OrcaSwapSolanaClient.self)
-            .implements(OrcaSwapAccountProvider.self)
-            .implements(OrcaSwapSignatureConfirmationHandler.self)
+//            .implements(OrcaSwapAccountProvider.self)
+//            .implements(OrcaSwapSignatureConfirmationHandler.self)
             .implements(ProcessTransactionAPIClient.self)
-            .implements(FeeRelayerRelaySolanaClient.self)
+//            .implements(FeeRelayerRelaySolanaClient.self)
             .scope(.session)
+
+//        register { OrcaSwapSwift.APIClient(configsProvider: .init()) }
+//            .implements(OrcaSwapSwift.OrcaSwapAPIClient.self)
 
         // MARK: - Send service
 
@@ -91,9 +92,9 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Socket
 
-        register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
-            .implements(SocketType.self)
-            .scope(.session)
+//        register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
+//            .implements(SocketType.self)
+//            .scope(.session)
 
         // MARK: - TransactionHandler (new)
 
@@ -106,20 +107,20 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - FeeRelayer
 
-        register { FeeRelayer.APIClient(version: 1) }
-            .implements(FeeRelayerAPIClientType.self)
-            .scope(.session)
-
-        register { try! FeeRelayer.Relay(
-            apiClient: resolve(),
-            solanaClient: resolve(),
-            accountStorage: resolve(SolanaSDK.self).accountStorage,
-            orcaSwapClient: resolve(),
-            deviceType: .iOS,
-            buildNumber: Bundle.main.fullVersionNumber
-        ) }
-        .implements(FeeRelayerRelayType.self)
-        .scope(.session)
+//        register { FeeRelayer.APIClient(version: 1) }
+//            .implements(FeeRelayerAPIClientType.self)
+//            .scope(.session)
+//
+//        register { try! FeeRelayer.Relay(
+//            apiClient: resolve(),
+//            solanaClient: resolve(),
+//            accountStorage: resolve(SolanaSDK.self).accountStorage,
+//            orcaSwapClient: resolve(),
+//            deviceType: .iOS,
+//            buildNumber: Bundle.main.fullVersionNumber
+//        ) }
+//        .implements(FeeRelayerRelayType.self)
+//        .scope(.session)
 
         // MARK: - PricesService
 
@@ -140,24 +141,24 @@ extension Resolver: ResolverRegistering {
             .implements(Swap.Service.self)
             .scope(.session)
 
-        register {
-            OrcaSwap(
-                apiClient: OrcaSwapSwift.APIClient(
-                    network: Defaults.apiEndPoint.network.cluster
-                ),
-                solanaClient: resolve(),
-                accountProvider: resolve(),
-                notificationHandler: resolve()
-            )
-        }
-        .implements(OrcaSwapType.self)
-        .scope(.session)
+//        register {
+//            OrcaSwap(
+//                apiClient: OrcaSwapSwift.APIClient(
+//                    network: Defaults.apiEndPoint.network.cluster
+//                ),
+//                solanaClient: resolve(),
+//                accountProvider: resolve(),
+//                notificationHandler: resolve()
+//            )
+//        }
+//        .implements(OrcaSwapType.self)
+//        .scope(.session)
 
         // MARK: - RenVM
 
-        register { RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
-            .implements(RenVMRpcClientType.self)
-            .scope(.session)
+//        register { RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
+//            .implements(RenVMRpcClientType.self)
+//            .scope(.session)
 
         register {
             RenVM.LockAndMint.Service(
@@ -172,10 +173,10 @@ extension Resolver: ResolverRegistering {
 
         register {
             RenVM.BurnAndRelease.Service(
-                rpcClient: resolve(),
-                solanaClient: resolve(),
-                account: resolve(SolanaSDK.self).accountStorage.account!,
-                transactionStorage: RenVM.BurnAndRelease.TransactionStorage()
+                //                rpcClient: resolve(),
+//                solanaClient: resolve(),
+//                account: resolve(SolanaSDK.self).accountStorage.account!,
+//                transactionStorage: RenVM.BurnAndRelease.TransactionStorage()
             )
         }
         .implements(RenVMBurnAndReleaseServiceType.self)

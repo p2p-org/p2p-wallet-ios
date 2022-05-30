@@ -20,7 +20,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     @Injected private var repository: TransactionsRepository
     @Injected private var pricesService: PricesServiceType
     @Injected private var transactionHandler: TransactionHandlerType
-    @Injected private var feeRelayer: FeeRelayerAPIClientType
+    @Injected private var feeRelayer: FeeRelayerSwift.APIClient
     @Injected private var notificationsRepository: WLNotificationsRepository
 
     // MARK: - Properties
@@ -73,36 +73,38 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     }
 
     override func createRequest() -> Single<[SolanaSDK.ParsedTransaction]> {
-        let fetchPubkeys: Single<[String]>
-        if fetchedFeePayer {
-            fetchPubkeys = .just(Defaults.p2pFeePayerPubkeys)
-        } else {
-            fetchPubkeys = feeRelayer.getFeePayerPubkey()
-                .catchAndReturn("")
-                .flatMap { newFeePayer in
-                    if !newFeePayer.isEmpty, !Defaults.p2pFeePayerPubkeys.contains(newFeePayer) {
-                        Defaults.p2pFeePayerPubkeys.append(newFeePayer)
-                    }
-                    return .just(Defaults.p2pFeePayerPubkeys)
-                }
-        }
+        fatalError("Method has not been implemented")
 
-        return fetchPubkeys
-            .flatMap { [weak self] pubkeys -> Single<[SolanaSDK.ParsedTransaction]> in
-                guard let self = self else { return .error(SolanaSDK.Error.unknown) }
-                return self.repository.getTransactionsHistory(
-                    account: self.account,
-                    accountSymbol: self.accountSymbol,
-                    before: self.before,
-                    limit: self.limit,
-                    p2pFeePayerPubkeys: pubkeys
-                )
-            }
-            .do(
-                afterSuccess: { [weak self] transactions in
-                    self?.before = transactions.last?.signature
-                }
-            )
+        // let fetchPubkeys: Single<[String]>
+        // if fetchedFeePayer {
+        //     fetchPubkeys = .just(Defaults.p2pFeePayerPubkeys)
+        // } else {
+        //     fetchPubkeys = feeRelayer.getFeePayerPubkey()
+        //         .catchAndReturn("")
+        //         .flatMap { newFeePayer in
+        //             if !newFeePayer.isEmpty, !Defaults.p2pFeePayerPubkeys.contains(newFeePayer) {
+        //                 Defaults.p2pFeePayerPubkeys.append(newFeePayer)
+        //             }
+        //             return .just(Defaults.p2pFeePayerPubkeys)
+        //         }
+        // }
+        //
+        // return fetchPubkeys
+        //     .flatMap { [weak self] pubkeys -> Single<[SolanaSDK.ParsedTransaction]> in
+        //         guard let self = self else { return .error(SolanaSDK.Error.unknown) }
+        //         return self.repository.getTransactionsHistory(
+        //             account: self.account,
+        //             accountSymbol: self.accountSymbol,
+        //             before: self.before,
+        //             limit: self.limit,
+        //             p2pFeePayerPubkeys: pubkeys
+        //         )
+        //     }
+        //     .do(
+        //         afterSuccess: { [weak self] transactions in
+        //             self?.before = transactions.last?.signature
+        //         }
+        //     )
     }
 
     override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {

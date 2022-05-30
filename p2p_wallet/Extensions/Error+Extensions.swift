@@ -8,8 +8,9 @@
 import FeeRelayerSwift
 import Foundation
 import RxSwift
+import SolanaSwift
 
-extension SolanaSDK.Error: LocalizedError {
+extension SolanaError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .unauthorized:
@@ -29,7 +30,9 @@ extension SolanaSDK.Error: LocalizedError {
             }
             return string
         case let .transactionError(transactionError, _):
-            return transactionError.keys.first
+            return transactionError.snakeCaseEncoded
+        // TODO: Check
+        // return transactionError.keys.first
         case let .socket(error):
             var string = L10n.socketReturnsAnError + ": "
             if let error = error as? LocalizedError {
@@ -45,11 +48,13 @@ extension SolanaSDK.Error: LocalizedError {
         case .assertionFailed:
             // TODO: pick correct name
             return L10n.error
+        default:
+            return L10n.error
         }
     }
 }
 
-extension FeeRelayer.Error: LocalizedError {
+extension FeeRelayerError: LocalizedError {
     public var errorDescription: String? {
         var string: String
         switch data?.type {

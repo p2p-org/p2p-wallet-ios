@@ -12,10 +12,10 @@ import RxSwift
 class SendService: SendServiceType {
     private let locker = NSLock()
     let relayMethod: SendTokenRelayMethod
-    @Injected var solanaSDK: SolanaSDK
+    @Injected var solanaAPIClient: SolanaAPIClient
     @Injected private var orcaSwap: OrcaSwapType
-    @Injected var feeRelayerAPIClient: FeeRelayerAPIClientType
-    @Injected var relayService: FeeRelayerRelayType
+    @Injected var feeRelayerAPIClient: FeeRelayerAPIClient
+    @Injected var relayService: FeeRelayer
     @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
     @Injected private var feeService: FeeServiceType
     @Injected private var walletsRepository: WalletsRepository
@@ -29,43 +29,47 @@ class SendService: SendServiceType {
     // MARK: - Methods
 
     func load() -> Completable {
-        var completables = [feeService.load()]
+        fatalError("Method has not been implemented")
 
-        if relayMethod == .relay {
-            completables.append(
-                orcaSwap.load()
-                    .andThen(relayService.load())
-                    .andThen(
-                        // load all pools
-                        Single.zip(
-                            walletsRepository.getWallets()
-                                .filter { ($0.lamports ?? 0) > 0 }
-                                .map { wallet in
-                                    orcaSwap.getTradablePoolsPairs(
-                                        fromMint: wallet.mintAddress,
-                                        toMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-                                    )
-                                        .do(onSuccess: { [weak self] poolsPair in
-                                            self?.locker.lock()
-                                            self?.cachedPoolsSPLToSOL[wallet.mintAddress] = poolsPair
-                                            self?.locker.unlock()
-                                        })
-                                }
-                        )
-                            .asCompletable()
-                    )
-            )
-        }
-
-        return .zip(completables)
+        // TODO: fix
+        // var completables = [feeService.load()]
+        //
+        // if relayMethod == .relay {
+        //     completables.append(
+        //         orcaSwap.load()
+        //             .andThen(relayService.load())
+        //             .andThen(
+        //                 // load all pools
+        //                 Single.zip(
+        //                     walletsRepository.getWallets()
+        //                         .filter { ($0.lamports ?? 0) > 0 }
+        //                         .map { wallet in
+        //                             orcaSwap.getTradablePoolsPairs(
+        //                                 fromMint: wallet.mintAddress,
+        //                                 toMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+        //                             )
+        //                                 .do(onSuccess: { [weak self] poolsPair in
+        //                                     self?.locker.lock()
+        //                                     self?.cachedPoolsSPLToSOL[wallet.mintAddress] = poolsPair
+        //                                     self?.locker.unlock()
+        //                                 })
+        //                         }
+        //                 )
+        //                     .asCompletable()
+        //             )
+        //     )
+        // }
+        //
+        // return .zip(completables)
     }
 
-    func checkAccountValidation(account: String) -> Single<Bool> {
-        solanaSDK.checkAccountValidation(account: account)
+    func checkAccountValidation(account _: String) -> Single<Bool> {
+        fatalError("Method has not been implemented")
+        // solanaAPIClient.checkAccountValidation(account: account)
     }
 
     func isTestNet() -> Bool {
-        solanaSDK.endpoint.network.isTestnet
+        solanaAPIClient.endpoint.network.isTestnet
     }
 
     // MARK: - Fees calculator
@@ -105,41 +109,46 @@ class SendService: SendServiceType {
         }
     }
 
-    func getAvailableWalletsToPayFee(feeInSOL: SolanaSDK.FeeAmount) -> Single<[Wallet]> {
-        Single.zip(
-            walletsRepository.getWallets()
-                .filter { ($0.lamports ?? 0) > 0 }
-                .map { wallet -> Single<Wallet?> in
-                    if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
-                        return (wallet.lamports ?? 0) >= feeInSOL.total ? .just(wallet) : .just(nil)
-                    }
-                    return relayService.calculateFeeInPayingToken(
-                        feeInSOL: feeInSOL,
-                        payingFeeTokenMint: wallet.mintAddress
-                    )
-                        .map { ($0?.total ?? 0) <= (wallet.lamports ?? 0) }
-                        .map { $0 ? wallet : nil }
-                        .catchAndReturn(nil)
-                }
-        )
-            .map { $0.compactMap { $0 }}
+    func getAvailableWalletsToPayFee(feeInSOL _: SolanaSDK.FeeAmount) -> Single<[Wallet]> {
+        fatalError("Method has not been implemented")
+
+        // Single.zip(
+        //     walletsRepository.getWallets()
+        //         .filter { ($0.lamports ?? 0) > 0 }
+        //         .map { wallet -> Single<Wallet?> in
+        //             if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+        //                 return (wallet.lamports ?? 0) >= feeInSOL.total ? .just(wallet) : .just(nil)
+        //             }
+        //             return relayService.calculateFeeInPayingToken(
+        //                 feeInSOL: feeInSOL,
+        //                 payingFeeTokenMint: wallet.mintAddress
+        //             )
+        //                 .map { ($0?.total ?? 0) <= (wallet.lamports ?? 0) }
+        //                 .map { $0 ? wallet : nil }
+        //                 .catchAndReturn(nil)
+        //         }
+        // )
+        //     .map { $0.compactMap { $0 }}
     }
 
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.FeeAmount,
-        payingFeeWallet: Wallet
+        feeInSOL _: SolanaSDK.FeeAmount,
+        payingFeeWallet _: Wallet
     ) -> Single<SolanaSDK.FeeAmount?> {
-        guard relayMethod == .relay else { return .just(nil) }
-        if payingFeeWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint
-            .base58EncodedString { return .just(feeInSOL) }
-        return relayService.calculateFeeInPayingToken(
-            feeInSOL: feeInSOL,
-            payingFeeTokenMint: payingFeeWallet.mintAddress
-        )
+        fatalError("Method has not been implemented")
+
+        // guard relayMethod == .relay else { return .just(nil) }
+        // if payingFeeWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint
+        //     .base58EncodedString { return .just(feeInSOL) }
+        // return relayService.calculateFeeInPayingToken(
+        //     feeInSOL: feeInSOL,
+        //     payingFeeTokenMint: payingFeeWallet.mintAddress
+        // )
     }
 
-    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
-        relayService.getFreeTransactionFeeLimit()
+    func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
+        fatalError("Method has not been implemented")
+        // relayService.getFreeTransactionFeeLimit()
     }
 
     // MARK: - Send method

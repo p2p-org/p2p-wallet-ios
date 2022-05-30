@@ -6,6 +6,7 @@ import BECollectionView
 import FeeRelayerSwift
 import Foundation
 import RxCocoa
+import RxConcurrency
 import RxSwift
 import SolanaSwift
 
@@ -173,7 +174,7 @@ extension History {
             .asObservable()
             .flatMap { results in Observable.from(results) }
             .concatMap { result in
-                Observable.asyncThrowing { () -> [SolanaSDK.ParsedTransaction] in
+                Observable.async { () -> [SolanaSDK.ParsedTransaction] in
                     let transactionInfo = try await self.transactionRepository
                         .getTransaction(signature: result.0.signature)
                     let transaction = try await self.transactionParser.parse(
