@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import SolanaSwift
 
 struct Account: Codable, Hashable {
     let name: String?
     let phrase: String
-    let derivablePath: SolanaSDK.DerivablePath
+    let derivablePath: DerivablePath
 }

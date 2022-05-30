@@ -32,7 +32,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         sourceMint: String,
         availableSourceMintAddresses _: [String],
         destinationAddress: String?,
-        destinationToken: SolanaSDK.Token,
+        destinationToken: Token,
         bestPoolsPair: Swap.PoolsPair?,
         payingWallet: Wallet?,
         inputAmount: Double?,

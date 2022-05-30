@@ -68,26 +68,26 @@ extension RenVM.LockAndMint {
         // MARK: - Initializers
 
         init(
-            rpcClient _: RenVMRpcClientType,
-            solanaClient _: SolanaAPIClient,
-            account _: SolanaSDK.Account,
-            sessionStorage _: RenVMLockAndMintSessionStorageType
+            rpcClient: RenVMRpcClientType,
+            solanaClient: SolanaAPIClient,
+            account: SolanaSDK.Account,
+            sessionStorage: RenVMLockAndMintSessionStorageType
         ) {
-            fatalError("Method has not been implemented")
-            //
-            // self.rpcClient = rpcClient
-            // self.solanaClient = solanaClient
-            // self.account = account
-            // self.sessionStorage = sessionStorage
-            // minimumTransactionAmountSubject = .init(
-            //     request: Single.async { () async throws -> Double in
-            //         let value = try await rpcClient.getTransactionFee(mintTokenSymbol: self.mintTokenSymbol)
-            //         return value.convertToBalance(decimals: 8)
-            //     }
-            // )
-            //
-            // reload()
-            // reloadMinimumTransactionAmount()
+            self.rpcClient = rpcClient
+            self.solanaClient = solanaClient
+            self.account = account
+            self.sessionStorage = sessionStorage
+            minimumTransactionAmountSubject = .init(
+                request: Single.async { () async throws -> Double in
+                    // TODO: fix
+                    // let value = try await rpcClient.getTransactionFee(mintTokenSymbol: self?.mintTokenSymbol)
+                    // return value.convertToBalance(decimals: 8)
+                    0.0
+                }
+            )
+
+            reload()
+            reloadMinimumTransactionAmount()
         }
 
         // MARK: - Sessions
