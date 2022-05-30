@@ -56,7 +56,7 @@ TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 chmod u+x Scripts/install.sh && Scripts/install.sh
 ```
 
-- Select target `p2p_wallet` (`Detect Unused Code` is selected by default after xcodegen)
+- Select target `p2p_wallet` (if `Detect Unused Code` is selected by default after xcodegen)
 
 ## Localization
 
