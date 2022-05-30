@@ -7,7 +7,7 @@
 
 import BEPureLayout
 
-final class ___VARIABLE_scene___ViewController: BEScene {
+final class ___VARIABLE_scene___ViewController: BaseViewController {
     // MARK: - Dependencies
 
     private let viewModel: ___VARIABLE_scene___ViewModel
