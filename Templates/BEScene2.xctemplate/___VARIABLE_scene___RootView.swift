@@ -7,27 +7,32 @@
 
 import BEPureLayout
 import RxCocoa
+import RxGesture
 import RxSwift
 import UIKit
 
 final class ___VARIABLE_scene___RootView: BECompositionView {
 //    // MARK: - Subject
 //
-//    let clicked = PublishRelay<Void>()
+//    fileprivate let clicked = PublishRelay<Void>()
+//    fileprivate let text = PublishRelay<String?>()
 //
 //    // MARK: - Properties
 //
 //    let disposeBag = DisposeBag()
-    
-    // MARK: - Subviews
-    
-    fileprivate let label = UILabel(text: "Hello World")
 
     // MARK: - Builder
     override func build() -> UIView {
-        label
-//            .onTap { [weak self] in
-//                self?.clicked.accept(())
+        UILabel(text: "Hello World")
+//            .setup { label in
+//                label.rx.onTap
+//                    .bind(to: clicked)
+//                    .disposed(by: disposeBag)
+//
+//                text.asDriver()
+//                    .drive(label.rx.text)
+//                    .disposed(by: disposeBag)
+//
 //            }
     }
 }
@@ -38,7 +43,7 @@ final class ___VARIABLE_scene___RootView: BECompositionView {
 //    }
 //    var text: Binder<String?> {
 //        Binder(base) { view, text in
-//            view.label.text = text
+//            view.text.accept(text)
 //        }
 //    }
 //}
