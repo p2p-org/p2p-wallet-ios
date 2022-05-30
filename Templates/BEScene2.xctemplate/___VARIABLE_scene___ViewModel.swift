@@ -15,10 +15,12 @@ final class ___VARIABLE_scene___ViewModel: ViewModelType {
 
     struct Input {
         let navigatableScene = PublishRelay<___VARIABLE_scene___NavigatableScene>()
+//        let clicked = PublishRelay<Void>()
     }
 
     struct Output {
         let navigatableScene: Signal<___VARIABLE_scene___NavigatableScene>
+//        let text: Driver<String?>
     }
 
     // MARK: - Dependencies
@@ -37,6 +39,7 @@ final class ___VARIABLE_scene___ViewModel: ViewModelType {
         output = Output(
             navigatableScene: input.navigatableScene
                 .asSignal()
+//            text: service.text.asDriver()
         )
     }
 }
