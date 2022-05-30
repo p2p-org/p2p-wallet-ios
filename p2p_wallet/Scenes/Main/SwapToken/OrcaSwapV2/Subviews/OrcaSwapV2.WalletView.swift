@@ -209,11 +209,6 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
 
-            // equity value label
-//            equityValueLabelDriver
-//                .drive(equityValueLabel.rx.text)
-//                .disposed(by: disposeBag)
-
             amountTextField.rx.controlEvent(.editingChanged)
                 .filter { [weak self] _ in self?.amountTextField.isFirstResponder == true }
                 .subscribe(onNext: { [weak self] _ in
