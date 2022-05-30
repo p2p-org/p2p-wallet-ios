@@ -24,7 +24,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network
     func getSelectedAmount() -> Double?
-    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
+    func getFreeTransactionFeeLimit() -> Single<UsageStatus>
 
     func reload()
     func navigate(to scene: SendToken.NavigatableScene)
@@ -218,8 +218,9 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         sendService
     }
 
-    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
-        sendService.getFreeTransactionFeeLimit()
+    func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
+        fatalError("Method has not been implemented")
+        // sendService.getFreeTransactionFeeLimit()
     }
 
     func navigate(to scene: SendToken.NavigatableScene) {

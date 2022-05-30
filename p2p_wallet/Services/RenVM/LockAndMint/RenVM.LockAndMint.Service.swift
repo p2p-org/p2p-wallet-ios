@@ -11,6 +11,7 @@ import Resolver
 import RxAlamofire
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol RenVMLockAndMintServiceType {
     var isLoadingDriver: Driver<Bool> { get }
@@ -40,7 +41,7 @@ extension RenVM.LockAndMint {
         // MARK: - Dependencies
 
         private let rpcClient: RenVMRpcClientType
-        private let solanaClient: RenVMSolanaAPIClientType
+        private let solanaClient: SolanaAPIClient
         private let account: SolanaSDK.Account
         private let sessionStorage: RenVMLockAndMintSessionStorageType
         @Injected private var notificationsService: NotificationService
@@ -67,22 +68,26 @@ extension RenVM.LockAndMint {
         // MARK: - Initializers
 
         init(
-            rpcClient: RenVMRpcClientType,
-            solanaClient: RenVMSolanaAPIClientType,
-            account: SolanaSDK.Account,
-            sessionStorage: RenVMLockAndMintSessionStorageType
+            rpcClient _: RenVMRpcClientType,
+            solanaClient _: SolanaAPIClient,
+            account _: SolanaSDK.Account,
+            sessionStorage _: RenVMLockAndMintSessionStorageType
         ) {
-            self.rpcClient = rpcClient
-            self.solanaClient = solanaClient
-            self.account = account
-            self.sessionStorage = sessionStorage
-            minimumTransactionAmountSubject = .init(
-                request: rpcClient.getTransactionFee(mintTokenSymbol: mintTokenSymbol)
-                    .map { $0.convertToBalance(decimals: 8) }
-            )
-
-            reload()
-            reloadMinimumTransactionAmount()
+            fatalError("Method has not been implemented")
+            //
+            // self.rpcClient = rpcClient
+            // self.solanaClient = solanaClient
+            // self.account = account
+            // self.sessionStorage = sessionStorage
+            // minimumTransactionAmountSubject = .init(
+            //     request: Single.async { () async throws -> Double in
+            //         let value = try await rpcClient.getTransactionFee(mintTokenSymbol: self.mintTokenSymbol)
+            //         return value.convertToBalance(decimals: 8)
+            //     }
+            // )
+            //
+            // reload()
+            // reloadMinimumTransactionAmount()
         }
 
         // MARK: - Sessions
@@ -113,49 +118,51 @@ extension RenVM.LockAndMint {
             loadSession(savedSession: sessionStorage.loadSession())
         }
 
-        private func loadSession(savedSession: RenVM.Session?) {
-            // set loading
-            isLoadingSubject.accept(true)
+        private func loadSession(savedSession _: RenVM.Session?) {
+            fatalError("Method has not been implemented")
 
-            loadingDisposable?.dispose()
-
-            // request
-            loadingDisposable = RenVM.SolanaChain.load(
-                client: rpcClient,
-                solanaClient: solanaClient
-            )
-                .observe(on: MainScheduler.instance)
-                .flatMap { [weak self] solanaChain -> Single<RenVM.LockAndMint.GatewayAddressResponse> in
-                    guard let self = self else { throw RenVM.Error.unknown }
-
-                    // create lock and mint
-                    self.lockAndMint = try .init(
-                        rpcClient: self.rpcClient,
-                        chain: solanaChain,
-                        mintTokenSymbol: self.mintTokenSymbol,
-                        version: self.version,
-                        destinationAddress: self.account.publicKey.data,
-                        session: savedSession
-                    )
-
-                    // save session
-                    if savedSession == nil {
-                        self.sessionStorage.saveSession(self.lockAndMint!.session)
-                    }
-
-                    // generate address
-                    return self.lockAndMint!.generateGatewayAddress()
-                }
-                .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { [weak self] response in
-                    self?.isLoadingSubject.accept(false)
-                    self?.addressSubject.accept(Base58.encode(response.gatewayAddress.bytes))
-                    self?.mintStoredTxs(response: response)
-                    self?.observeTxStreamAndMint(response: response)
-                }, onFailure: { [weak self] error in
-                    self?.isLoadingSubject.accept(false)
-                    self?.errorSubject.accept(error.readableDescription)
-                })
+            // // set loading
+            // isLoadingSubject.accept(true)
+            //
+            // loadingDisposable?.dispose()
+            //
+            // // request
+            // loadingDisposable = RenVM.SolanaChain.load(
+            //     client: rpcClient,
+            //     solanaClient: solanaClient
+            // )
+            //     .observe(on: MainScheduler.instance)
+            //     .flatMap { [weak self] solanaChain -> Single<RenVM.LockAndMint.GatewayAddressResponse> in
+            //         guard let self = self else { throw RenVM.Error.unknown }
+            //
+            //         // create lock and mint
+            //         self.lockAndMint = try .init(
+            //             rpcClient: self.rpcClient,
+            //             chain: solanaChain,
+            //             mintTokenSymbol: self.mintTokenSymbol,
+            //             version: self.version,
+            //             destinationAddress: self.account.publicKey.data,
+            //             session: savedSession
+            //         )
+            //
+            //         // save session
+            //         if savedSession == nil {
+            //             self.sessionStorage.saveSession(self.lockAndMint!.session)
+            //         }
+            //
+            //         // generate address
+            //         return self.lockAndMint!.generateGatewayAddress()
+            //     }
+            //     .observe(on: MainScheduler.instance)
+            //     .subscribe(onSuccess: { [weak self] response in
+            //         self?.isLoadingSubject.accept(false)
+            //         self?.addressSubject.accept(Base58.encode(response.gatewayAddress.bytes))
+            //         self?.mintStoredTxs(response: response)
+            //         self?.observeTxStreamAndMint(response: response)
+            //     }, onFailure: { [weak self] error in
+            //         self?.isLoadingSubject.accept(false)
+            //         self?.errorSubject.accept(error.readableDescription)
+            //     })
         }
 
         func expireCurrentSession() {
@@ -217,11 +224,6 @@ extension RenVM.LockAndMint {
                     // filter out processing txs
                     let txs = txs.filter { !self.processingTxs.contains($0.txid) }
 
-                    // log
-                    if !txs.isEmpty {
-                        Logger.log(message: "renBTC event new transactions: \(txs)", event: .info)
-                    }
-
                     // save processing txs to storage and process confirmed transactions
                     for tx in txs {
                         var date = Date()
@@ -242,40 +244,36 @@ extension RenVM.LockAndMint {
         }
 
         private func processConfirmedAndSubmitedTransaction(
-            _ tx: ProcessingTx,
-            response: RenVM.LockAndMint.GatewayAddressResponse
+            _: ProcessingTx,
+            response _: RenVM.LockAndMint.GatewayAddressResponse
         ) {
-            // Mark as processing
-            guard !processingTxs.contains(tx.tx.txid) else { return }
-            processingTxs.append(tx.tx.txid)
+            fatalError("Method has not been implemented")
 
-            // request
-            return prepareRequest(response: response, tx: tx)
-                .flatMap { [weak self] response -> Single<(amountOut: String?, signature: String)> in
-                    guard let self = self else { throw RenVM.Error.unknown }
-                    Logger.log(message: "renBTC event mint response: \(response)", event: .info)
-                    return self.solanaClient.waitForConfirmation(signature: response.signature)
-                        .andThen(.just(response))
-                }
-                .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { [weak self] response in
-                    let amount = UInt64(response.amountOut ?? "")
-                    let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
-                        .toString(maximumFractionDigits: 8)
-                    self?.notificationsService.showInAppNotification(.message(L10n.receivedRenBTC(value)))
-
-                    // remove minted after 1 minute
-                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(60)) { [weak self] in
-                        self?.sessionStorage.removeMintedTx(txid: tx.tx.txid)
-                    }
-                }, onFailure: { [weak self] error in
-                    // other error
-                    Logger.log(
-                        message: "renBTC event mint error: \(error), tx: \(String(describing: self?.sessionStorage.getProcessingTx(txid: tx.tx.txid)))",
-                        event: .error
-                    )
-                })
-                .disposed(by: disposeBag)
+            // // Mark as processing
+            // guard !processingTxs.contains(tx.tx.txid) else { return }
+            // processingTxs.append(tx.tx.txid)
+            //
+            // // request
+            // return prepareRequest(response: response, tx: tx)
+            //     .flatMap { [weak self] response -> Single<(amountOut: String?, signature: String)> in
+            //         guard let self = self else { throw RenVM.Error.unknown }
+            //         Logger.log(message: "renBTC event mint response: \(response)", event: .info)
+            //         return self.solanaClient.waitForConfirmation(signature: response.signature)
+            //             .andThen(.just(response))
+            //     }
+            //     .observe(on: MainScheduler.instance)
+            //     .subscribe(onSuccess: { [weak self] response in
+            //         let amount = UInt64(response.amountOut ?? "")
+            //         let value = (amount ?? tx.tx.value).convertToBalance(decimals: 8)
+            //             .toString(maximumFractionDigits: 8)
+            //         self?.notificationsService.showInAppNotification(.message(L10n.receivedRenBTC(value)))
+            //
+            //         // remove minted after 1 minute
+            //         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(60)) { [weak self] in
+            //             self?.sessionStorage.removeMintedTx(txid: tx.tx.txid)
+            //         }
+            //     })
+            //     .disposed(by: disposeBag)
         }
 
         private func prepareRequest(response: GatewayAddressResponse,
@@ -334,34 +332,38 @@ extension RenVM.LockAndMint {
         }
 
         private func submitTransaction(
-            lockAndMint: RenVM.LockAndMint,
-            state: RenVM.State,
-            tx: ProcessingTx
+            lockAndMint _: RenVM.LockAndMint,
+            state _: RenVM.State,
+            tx _: ProcessingTx
         ) -> Completable {
-            lockAndMint.submitMintTransaction(state: state)
-                .asCompletable()
-                .do(onCompleted: { [weak self] in
-                    self?.sessionStorage.processingTx(tx: tx.tx, didSubmitAt: Date())
-                })
-                .catch { _ in
-                    .empty() // try to mint no matter what
-                }
+            fatalError("Method has not been implemented")
+
+            // lockAndMint.submitMintTransaction(state: state)
+            //     .asCompletable()
+            //     .do(onCompleted: { [weak self] in
+            //         self?.sessionStorage.processingTx(tx: tx.tx, didSubmitAt: Date())
+            //     })
+            //     .catch { _ in
+            //         .empty() // try to mint no matter what
+            //     }
         }
 
         private func mint(
-            lockAndMint: RenVM.LockAndMint,
-            state: RenVM.State,
-            tx: ProcessingTx
+            lockAndMint _: RenVM.LockAndMint,
+            state _: RenVM.State,
+            tx _: ProcessingTx
         ) -> Single<(amountOut: String?, signature: String)> {
-            lockAndMint.mint(state: state, signer: account.secretKey)
-                .do(onSuccess: { [weak self] _ in
-                    self?.sessionStorage.processingTx(tx: tx.tx, didMintAt: Date())
-                }, onError: { [weak self] error in
-                    if error.isAlreadyInUseSolanaError {
-                        Logger.log(message: "txDetail is already minted \(tx)", event: .error)
-                        self?.sessionStorage.processingTx(tx: tx.tx, didMintAt: Date())
-                    }
-                })
+            fatalError("Method has not been implemented")
+
+            // lockAndMint.mint(state: state, signer: account.secretKey)
+            //     .do(onSuccess: { [weak self] _ in
+            //         self?.sessionStorage.processingTx(tx: tx.tx, didMintAt: Date())
+            //     }, onError: { [weak self] error in
+            //         if error.isAlreadyInUseSolanaError {
+            //             Logger.log(message: "txDetail is already minted \(tx)", event: .error)
+            //             self?.sessionStorage.processingTx(tx: tx.tx, didMintAt: Date())
+            //         }
+            //     })
         }
     }
 }

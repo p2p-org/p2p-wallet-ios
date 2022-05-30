@@ -36,7 +36,8 @@ target 'p2p_wallet' do
   pod 'Intercom'
   pod 'SwiftFormat/CLI', '0.49.6'
   pod 'Periphery'
-  
+  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
+
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'

@@ -140,6 +140,8 @@ PODS:
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
+  - RxConcurrency (0.1.0):
+    - RxSwift (~> 6.5.0)
   - RxGesture (4.0.4):
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
@@ -189,6 +191,7 @@ DEPENDENCIES:
   - Resolver
   - RxAppState
   - RxCocoa (= 6.5.0)
+  - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture
   - RxSwift (= 6.5.0)
   - SolanaSwift (from `SolanaSwift`)
@@ -261,6 +264,9 @@ EXTERNAL SOURCES:
     :path: OrcaSwapSwift
   RenVMSwift:
     :path: RenVMSwift
+  RxConcurrency:
+    :branch: main
+    :git: https://github.com/TrGiLong/RxConcurrency.git
   SolanaSwift:
     :path: SolanaSwift
 
@@ -271,6 +277,9 @@ CHECKOUT OPTIONS:
   ListPlaceholder:
     :commit: a729fd45aa22b9d087477d1ccedb9f4292762a58
     :git: https://github.com/p2p-org/ListPlaceholder.git
+  RxConcurrency:
+    :commit: 493c4c02645e01e1e117cd4d3b1447ff8ae3e0c9
+    :git: https://github.com/TrGiLong/RxConcurrency.git
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
@@ -307,6 +316,7 @@ SPEC CHECKSUMS:
   RxAlamofire: beb75a1c452d0de225651db4903f5d29d034a620
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxConcurrency: 0199aa1d767ee3af7ea512afd0629d59beca0170
   RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
@@ -324,6 +334,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: e0038e4c54169265d62dfc874df184f0f996261f
+PODFILE CHECKSUM: 42dbfc3916ff8df38da2df5ef8ca8fc701d0b7dc
 
 COCOAPODS: 1.11.3

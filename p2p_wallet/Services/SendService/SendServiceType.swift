@@ -25,8 +25,9 @@ protocol SendServiceType {
         payingFeeWallet: Wallet
     ) -> Single<SolanaSDK.FeeAmount?>
 
+    // TODO: hide direct usage of ``UsageStatus``
     func getFreeTransactionFeeLimit(
-    ) -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
+    ) -> Single<UsageStatus>
 
     func getAvailableWalletsToPayFee(
         feeInSOL: SolanaSDK.FeeAmount
