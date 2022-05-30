@@ -5,7 +5,6 @@ options:
         iOS: 13.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
-    postGenCommand: sh Scripts/postxcodegen.sh
 
 configs:
   Debug: debug

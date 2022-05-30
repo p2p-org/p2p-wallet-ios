@@ -20,9 +20,19 @@ P2P Wallet on Solana blockchain
 
 ## Installation
 
-- Clone project
-- Run `brew install xcodegen`
-- Run `xcodegen` from the project folder
+- Clone project and move to folder
+```shell
+git clone git@github.com:p2p-org/p2p-wallet-ios.git && cd p2p-wallet-ios
+```
+- Get submodules
+```shell
+git submodule update --init --recursive
+```
+- Set git hooks (Optional)
+```shell
+git config core.hooksPath .githooks
+chmod -R +x .githooks
+```
 - Add `Config.xcconfig` to `p2p-wallet-ios/p2p-wallet` contains following content
 ```
 // MARK: - Transak
@@ -41,6 +51,12 @@ AMPLITUDE_API_KEY = fake_api_key
 FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 ```
+- Run install.sh
+```shell
+chmod u+x Scripts/install.sh && Scripts/install.sh
+```
+
+- Select target `p2p_wallet` (if `Detect Unused Code` is selected by default after xcodegen)
 
 ## Localization
 
