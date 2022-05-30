@@ -190,14 +190,6 @@ platform :ios do
     add_git_tag(tag: tag_name)
     push_git_tags(tag: tag_name)
 
-    # reset file
-    reset_git_repo(
-      force: true,
-      files: [
-        "p2p_wallet.xcodeproj/project.pbxproj"
-      ]
-    )
-
     # output
     if IS_CI
       sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
@@ -239,14 +231,6 @@ platform :ios do
     # tag
     add_git_tag(tag: tag)
     push_git_tags(tag: tag)
-
-    # reset file
-    reset_git_repo(
-      force: true,
-      files: [
-        "p2p_wallet.xcodeproj/project.pbxproj"
-      ]
-    )
   end
 
   lane :release do
@@ -292,13 +276,5 @@ platform :ios do
 
     # clean
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
-
-    # reset file
-    reset_git_repo(
-      force: true,
-      files: [
-        "p2p_wallet.xcodeproj/project.pbxproj"
-      ]
-    )
   end
 end
