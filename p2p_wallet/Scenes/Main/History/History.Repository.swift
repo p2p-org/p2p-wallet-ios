@@ -19,7 +19,7 @@ protocol HistoryTransactionRepository {
     ///
     /// - Parameter signature: The transaction signature
     /// - Returns: `TransactionInfo`, that can be parsed later.
-    func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo
+    func getTransaction(signature: String) async throws -> TransactionInfo
 }
 
 extension History {
@@ -32,7 +32,7 @@ extension History {
                 .value
         }
 
-        func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo {
+        func getTransaction(signature: String) async throws -> TransactionInfo {
             try await solanaSDK.getTransaction(transactionSignature: signature).value
         }
     }
@@ -43,13 +43,13 @@ extension History {
         let delegate: HistoryTransactionRepository
 
         private let signaturesCache = Utils.InMemoryCache<[SolanaSDK.SignatureInfo]>(maxSize: 50)
-        private let transactionCache = Utils.InMemoryCache<SolanaSDK.TransactionInfo>(maxSize: 50)
+        private let transactionCache = Utils.InMemoryCache<TransactionInfo>(maxSize: 50)
 
         init(delegate: HistoryTransactionRepository) { self.delegate = delegate }
 
-        func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo {
+        func getTransaction(signature: String) async throws -> TransactionInfo {
             // Return from cache
-            var transaction: SolanaSDK.TransactionInfo? = await transactionCache.read(key: signature)
+            var transaction: TransactionInfo? = await transactionCache.read(key: signature)
             if let transaction = transaction { return transaction }
 
             // Fetch and store in cache
