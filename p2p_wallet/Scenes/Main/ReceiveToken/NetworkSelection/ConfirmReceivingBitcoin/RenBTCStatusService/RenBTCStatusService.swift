@@ -96,7 +96,12 @@ class RenBTCStatusService: RenBTCStatusServiceType {
                         return self.feeRelayer
                             .topUpAndRelayTransaction(
                                 preparedTransaction: preparedTransaction,
-                                payingFeeToken: .init(address: payingFeeAddress, mint: payingFeeMintAddress)
+                                payingFeeToken: .init(
+                                    address: payingFeeAddress,
+                                    mint: payingFeeMintAddress
+                                ),
+                                operationType: .other,
+                                currency: SolanaSDK.PublicKey.renBTCMint.base58EncodedString
                             )
                             .map(\.first)
                     }

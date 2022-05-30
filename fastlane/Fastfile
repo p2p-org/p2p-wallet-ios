@@ -253,8 +253,12 @@ platform :ios do
     # REQUIREMENT: THERE IS AT LEAST 1 TAG LIKE v1.0.0(1234) THAT HAS ALREADY BEEN PASSED REGRESSION
 
     # get current build number. Ex. get 1234 from tag v1.0.0(1234)
+    sh('git fetch --tags --no-recurse-submodules')
     version = get_version_number(target: "p2p_wallet")
-    tag = last_git_tag(pattern: "v*")
+    lt = last_git_tag
+    puts "last_git_tag #{lt}"
+    tag = last_git_tag(pattern: "v#{version}(*")
+    puts "matched tag #{tag}"
     build_number = tag.sub("v#{version}(", '').sub(")", '')
 
     # set build number
