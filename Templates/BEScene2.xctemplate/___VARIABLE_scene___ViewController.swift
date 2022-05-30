@@ -22,7 +22,16 @@ final class ___VARIABLE_scene___ViewController: BaseViewController {
     // MARK: - Methods
 
     override func build() -> UIView {
-        ___VARIABLE_scene___RootView(viewModel: viewModel)
+        ___VARIABLE_scene___RootView()
+//            .setup { rootView in
+//                rootView.rx.clicked
+//                    .bind(to: viewModel.input.clicked)
+//                    .disposed(by: disposeBag)
+//
+//                viewModel.output.text
+//                    .drive(rootView.rx.text)
+//                    .disposed(by: disposeBag)
+//            }
     }
 
     override func bind() {
