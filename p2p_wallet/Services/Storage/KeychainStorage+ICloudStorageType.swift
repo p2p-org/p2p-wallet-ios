@@ -5,7 +5,7 @@
 import Foundation
 
 extension KeychainStorage: ICloudStorageType {
-    func saveToICloud(account: Account) -> Bool {
+    func saveToICloud(account: RawAccount) -> Bool {
         var accountsToSave = [account]
 
         if var currentAccounts = accountFromICloud() {
@@ -31,9 +31,9 @@ extension KeychainStorage: ICloudStorageType {
         return false
     }
 
-    func accountFromICloud() -> [Account]? {
+    func accountFromICloud() -> [RawAccount]? {
         guard let data = keychain.getData(iCloudAccountsKey) else { return nil }
-        return try? JSONDecoder().decode([Account].self, from: data)
+        return try? JSONDecoder().decode([RawAccount].self, from: data)
     }
 
     var didBackupUsingIcloud: Bool {

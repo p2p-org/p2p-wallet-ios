@@ -17,7 +17,7 @@ extension KeychainStorage: NameStorageType {
 
     private func saveNameToICloudIfAccountSaved() {
         if let account = accountFromICloud()?.first(where: { $0.phrase.components(separatedBy: " ") == phrases }) {
-            let account = Account(
+            let account = RawAccount(
                 name: getName(),
                 phrase: account.phrase,
                 derivablePath: account.derivablePath

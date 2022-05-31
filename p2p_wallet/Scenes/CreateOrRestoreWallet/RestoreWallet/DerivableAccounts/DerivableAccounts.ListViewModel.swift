@@ -7,32 +7,30 @@
 
 import BECollectionView
 import Foundation
-import RxAlamofire
+import RxConcurrency
 import RxSwift
 import SolanaSwift
 
 protocol DerivableAccountsListViewModelType: BEListViewModelType {
     func cancelRequest()
     func reload()
-    func setDerivablePath(_ derivablePath: SolanaSDK.DerivablePath)
+    func setDerivablePath(_ derivablePath: DerivablePath)
 }
 
 extension DerivableAccounts {
     class ListViewModel: BEListViewModel<DerivableAccount> {
-        private var queues: [DispatchQueue] {
-            var queues = [DispatchQueue]()
-            for i in 0 ..< 5 {
-                queues.append(.init(label: "create-account-\(i)", qos: .userInitiated))
-            }
-            return queues
-        }
+        // MARK: - Dependencies
+
+        @Injected private var pricesFetcher: PricesFetcher
+        @Injected private var solanaAPIClient: SolanaAPIClient
+
+        // MARK: - Properties
 
         private let phrases: [String]
-        @Injected private var pricesFetcher: PricesFetcher
-        var derivablePath: SolanaSDK.DerivablePath?
+        var derivablePath: DerivablePath?
         let disposeBag = DisposeBag()
-        var balanceCache = [String: Double]() // PublicKey: Balance
-        var priceCache: Double?
+
+        fileprivate let cache = Cache()
 
         init(phrases: [String]) {
             self.phrases = phrases
@@ -44,129 +42,113 @@ extension DerivableAccounts {
         }
 
         override func createRequest() -> Single<[DerivableAccount]> {
-            Single.zip(Array(0 ..< 5)
-                .map { index in
-                    createAccountSingle(index: index)
-                        .map { [weak self] account in
-                            guard let self = self else { throw SolanaSDK.Error.unknown }
-                            return DerivableAccount(
-                                info: account,
-                                amount: self.balanceCache[account.publicKey.base58EncodedString],
-                                price: self.priceCache,
-                                isBlured: index > 2
-                            )
-                        }
-                })
-                    .observe(on: MainScheduler.instance)
-                    .do(onSuccess: { [weak self] accounts in
-                        self?.fetchSOLPrice()
-                        for account in accounts {
-                            self?.fetchBalances(account: account.info.publicKey.base58EncodedString)
-                        }
-                    })
-                    .observe(on: MainScheduler.instance)
-        }
+            Task<[DerivableAccount], Error> {
+                let accounts = try await createDerivableAccounts()
 
-        private func createAccountSingle(index: Int) -> Single<SolanaSDK.Account> {
-            Single.create { [weak self] observer in
-                guard let strongSelf = self, let path = strongSelf.derivablePath else {
-                    observer(.failure(SolanaSDK.Error.unknown))
-                    return Disposables.create()
-                }
-
-                do {
-                    let account = try SolanaSDK.Account(
-                        phrase: strongSelf.phrases,
-                        network: Defaults.apiEndPoint.network,
-                        derivablePath: .init(type: path.type, walletIndex: index)
+                Task {
+                    try? await(
+                        fetchSOLPrice(),
+                        fetchBalances(accounts: accounts.map(\.info.publicKey.base58EncodedString))
                     )
-                    debugPrint("successfully created account #\(index)")
-                    observer(.success(account))
-                } catch {
-                    observer(.failure(error))
                 }
-                return Disposables.create()
+
+                return accounts
             }
-            .subscribe(on: ConcurrentDispatchQueueScheduler(queue: queues[index]))
+            .asSingle()
         }
 
-        private func fetchSOLPrice() {
-            if priceCache != nil { return }
-            pricesFetcher.getCurrentPrices(coins: ["SOL"], toFiat: Defaults.fiat.code)
-                .map { $0.first?.value?.value ?? 0 }
-                .do(onSuccess: { [weak self] in
-                    if $0 != 0 {
-                        self?.priceCache = $0
-                    }
-                })
-                .subscribe(onSuccess: { [weak self] price in
-                    guard let strongSelf = self, strongSelf.currentState == .loaded else { return }
+        private func createDerivableAccounts() async throws -> [DerivableAccount] {
+            let phrases = self.phrases
+            guard let path = derivablePath else {
+                throw SolanaError.unknown
+            }
+            return try await withThrowingTaskGroup(of: (Int, SolanaSwift.Account).self) { group in
+                var accounts = [DerivableAccount]()
 
-                    let data = strongSelf.data.map { account -> DerivableAccount in
+                for i in 0 ..< 5 {
+                    group.addTask(priority: .userInitiated) {
+                        (i, try await SolanaSwift.Account(
+                            phrase: phrases,
+                            network: Defaults.apiEndPoint.network,
+                            derivablePath: .init(type: path.type, walletIndex: i)
+                        ))
+                    }
+                }
+
+                for try await(index, account) in group {
+                    accounts.append(
+                        .init(
+                            info: account,
+                            amount: await self.cache.balanceCache[account.publicKey.base58EncodedString],
+                            price: await self.cache.solPriceCache,
+                            isBlured: index > 2
+                        )
+                    )
+                }
+
+                return accounts
+            }
+        }
+
+        private func fetchSOLPrice() async throws {
+            if await cache.solPriceCache != nil { return }
+            let solPrice = try await pricesFetcher.getCurrentPrices(coins: ["SOL"], toFiat: Defaults.fiat.code)
+                .map { $0.first?.value?.value ?? 0 }
+                .value
+            await cache.save(solPrice: solPrice)
+
+            if currentState == .loaded {
+                let data = data.map { account -> DerivableAccount in
+                    var account = account
+                    account.price = solPrice
+                    return account
+                }
+                overrideData(by: data)
+            }
+        }
+
+        private func fetchBalances(accounts: [String]) async throws {
+            try await withThrowingTaskGroup(of: Void.self) { group in
+                for account in accounts {
+                    group.addTask {
+                        try await self.fetchBalance(account: account)
+                    }
+                    try Task.checkCancellation()
+                    for try await _ in group {}
+                }
+            }
+        }
+
+        private func fetchBalance(account: String) async throws {
+            if await cache.balanceCache[account] != nil {
+                return
+            }
+
+            try Task.checkCancellation()
+
+            let amount = try await solanaAPIClient.getBalance(account: account, commitment: nil)
+                .convertToBalance(decimals: 9)
+
+            try Task.checkCancellation()
+            await cache.save(account: account, amount: amount)
+
+            try Task.checkCancellation()
+            if currentState == .loaded {
+                updateItem(
+                    where: { $0.info.publicKey.base58EncodedString == account },
+                    transform: { account in
                         var account = account
-                        account.price = price
+                        account.amount = amount
                         return account
                     }
-                    strongSelf.overrideData(by: data)
-                })
-                .disposed(by: disposeBag)
-        }
-
-        private func fetchBalances(account: String) {
-            if balanceCache[account] != nil {
-                return
-            }
-
-            let bcMethod = "getBalance"
-
-            let requestAPI = SolanaSDK.RequestAPI(method: bcMethod, params: [account])
-
-            do {
-                var urlRequest = try URLRequest(
-                    url: SolanaSDK.APIEndPoint.definedEndpoints.first!.getURL(),
-                    method: .post,
-                    headers: [.contentType("application/json")]
                 )
-                urlRequest.httpBody = try JSONEncoder().encode(requestAPI)
-
-                RxAlamofire.request(urlRequest)
-                    .validate(statusCode: 200 ..< 300)
-                    .responseData()
-                    .map { _, data -> SolanaSDK.Rpc<UInt64> in
-                        let response = try JSONDecoder()
-                            .decode(SolanaSDK.Response<SolanaSDK.Rpc<UInt64>>.self, from: data)
-                        if let result = response.result {
-                            return result
-                        }
-                        if let error = response.error {
-                            throw SolanaSDK.Error.invalidResponse(error)
-                        }
-                        throw SolanaSDK.Error.unknown
-                    }
-                    .map { $0.value.convertToBalance(decimals: 9) }
-                    .take(1)
-                    .asSingle()
-                    .do(onSuccess: { [weak self] in self?.balanceCache[account] = $0 })
-                    .subscribe(onSuccess: { [weak self] amount in
-                        self?.updateItem(
-                            where: { $0.info.publicKey.base58EncodedString == account },
-                            transform: { account in
-                                var account = account
-                                account.amount = amount
-                                return account
-                            }
-                        )
-                    })
-                    .disposed(by: disposeBag)
-            } catch {
-                return
             }
         }
     }
 }
 
 extension DerivableAccounts.ListViewModel: DerivableAccountsListViewModelType {
-    func setDerivablePath(_ derivablePath: SolanaSDK.DerivablePath) {
+    func setDerivablePath(_ derivablePath: DerivablePath) {
         self.derivablePath = derivablePath
     }
 }
