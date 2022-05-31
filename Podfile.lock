@@ -125,6 +125,7 @@ PODS:
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
   - OrcaSwapSwift (1.0.20):
+    - RxAlamofire (~> 6.1.1)
     - SolanaSwift (~> 1.3.8)
   - Periphery (2.8.6)
   - PromisesObjC (2.1.0)
@@ -304,7 +305,7 @@ SPEC CHECKSUMS:
   Kingfisher: 3ac0b75b155cabc0e544877d1a4deea29feece92
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  OrcaSwapSwift: b825bf695bf5a393e7c42001fc2eeedbb3728bfd
+  OrcaSwapSwift: 788b0eace6298d9a6985bb74c7d26b03297341e7
   Periphery: 2b693a570f0878ccc825728e7dbf31934f7a5aee
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
