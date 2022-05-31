@@ -21,8 +21,8 @@ class SendService: SendServiceType {
     @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
     @Injected private var feeService: FeeServiceType
     @Injected private var walletsRepository: WalletsRepository
-    var cachedFeePayerPubkey: String?
-    private var cachedPoolsSPLToSOL = [String: [PoolsPair]]()
+
+    let cache = Cache()
 
     init(relayMethod: SendTokenRelayMethod) {
         self.relayMethod = relayMethod
@@ -31,43 +31,32 @@ class SendService: SendServiceType {
     // MARK: - Methods
 
     func load() -> Completable {
-        fatalError("Method has not been implemented")
-
-        // TODO: fix
-        // var completables = [feeService.load()]
-        //
-        // if relayMethod == .relay {
-        //     completables.append(
-        //         orcaSwap.load()
-        //             .andThen(relayService.load())
-        //             .andThen(
-        //                 // load all pools
-        //                 Single.zip(
-        //                     walletsRepository.getWallets()
-        //                         .filter { ($0.lamports ?? 0) > 0 }
-        //                         .map { wallet in
-        //                             orcaSwap.getTradablePoolsPairs(
-        //                                 fromMint: wallet.mintAddress,
-        //                                 toMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
-        //                             )
-        //                                 .do(onSuccess: { [weak self] poolsPair in
-        //                                     self?.locker.lock()
-        //                                     self?.cachedPoolsSPLToSOL[wallet.mintAddress] = poolsPair
-        //                                     self?.locker.unlock()
-        //                                 })
-        //                         }
-        //                 )
-        //                     .asCompletable()
-        //             )
-        //     )
-        // }
-        //
-        // return .zip(completables)
+        Completable.async { [weak self] in
+            guard let self = self else { throw SolanaError.unknown }
+            try await self.orcaSwap.load()
+            try await withThrowingTaskGroup(of: (String, [PoolsPair]).self) { group in
+                for wallet in self.walletsRepository.getWallets().filter({ ($0.lamports ?? 0) > 0 }) {
+                    group.addTask { [weak self] in
+                        guard let self = self else { throw OrcaSwapError.unknown }
+                        try Task.checkCancellation()
+                        return (wallet.mintAddress, try await self.orcaSwap.getTradablePoolsPairs(
+                            fromMint: wallet.mintAddress,
+                            toMint: PublicKey.wrappedSOLMint.base58EncodedString
+                        ))
+                    }
+                }
+                for try await result in group {
+                    await self.cache.save(pubkey: result.0, poolsPairs: result.1)
+                }
+            }
+        }
     }
 
-    func checkAccountValidation(account _: String) -> Single<Bool> {
-        fatalError("Method has not been implemented")
-        // solanaAPIClient.checkAccountValidation(account: account)
+    func checkAccountValidation(account: String) -> Single<Bool> {
+        Single.async { [weak self] in
+            guard let self = self else { return false }
+            return try await self.solanaAPIClient.checkAccountValidation(account: account)
+        }
     }
 
     func isTestNet() -> Bool {
@@ -81,7 +70,7 @@ class SendService: SendServiceType {
         receiver: String?,
         network: SendToken.Network,
         payingTokenMint: String?
-    ) -> Single<SolanaSDK.FeeAmount?> {
+    ) -> Single<FeeAmount?> {
         switch network {
         case .bitcoin:
             return .just(
@@ -111,7 +100,7 @@ class SendService: SendServiceType {
         }
     }
 
-    func getAvailableWalletsToPayFee(feeInSOL _: SolanaSDK.FeeAmount) -> Single<[Wallet]> {
+    func getAvailableWalletsToPayFee(feeInSOL _: FeeAmount) -> Single<[Wallet]> {
         fatalError("Method has not been implemented")
 
         // Single.zip(

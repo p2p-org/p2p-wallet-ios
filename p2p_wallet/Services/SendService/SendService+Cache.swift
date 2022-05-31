@@ -16,7 +16,7 @@ extension SendService {
         func save(pubkey: String, poolsPairs: [PoolsPair]) {
             poolsSPLToSOL[pubkey] = poolsPairs
         }
-        
+
         func saveFeePayerPubkey(_ pubkey: String) {
             feePayerPubkey = pubkey
         }
