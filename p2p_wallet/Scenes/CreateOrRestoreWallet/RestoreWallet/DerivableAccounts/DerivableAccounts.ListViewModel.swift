@@ -92,10 +92,15 @@ extension DerivableAccounts {
 
         private func fetchSOLPrice() async throws {
             if await cache.solPriceCache != nil { return }
+
+            try Task.checkCancellation()
+
             let solPrice = try await pricesFetcher.getCurrentPrices(coins: ["SOL"], toFiat: Defaults.fiat.code)
                 .map { $0.first?.value?.value ?? 0 }
                 .value
             await cache.save(solPrice: solPrice)
+
+            try Task.checkCancellation()
 
             if currentState == .loaded {
                 let data = data.map { account -> DerivableAccount in
