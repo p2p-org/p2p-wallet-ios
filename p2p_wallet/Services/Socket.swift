@@ -12,11 +12,11 @@ import SolanaSwift
 protocol SocketType {
     var isConnected: Bool { get }
     func subscribeAccountNotification(account: String, isNative: Bool)
-    func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)>
+    func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: Lamports)>
 }
 
 extension SolanaSDK.Socket: SocketType {
-    func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)> {
+    func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: Lamports)> {
         observeAccountNotifications()
     }
 }

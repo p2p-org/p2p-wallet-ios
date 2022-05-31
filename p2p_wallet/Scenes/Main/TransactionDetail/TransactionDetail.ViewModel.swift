@@ -13,7 +13,7 @@ import SolanaSwift
 
 protocol TransactionDetailViewModelType: AnyObject {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> { get }
-    var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> { get }
+    var parsedTransactionDriver: Driver<ParsedTransaction?> { get }
     var senderNameDriver: Driver<String?> { get }
     var receiverNameDriver: Driver<String?> { get }
     var isSummaryAvailableDriver: Driver<Bool> { get }
@@ -51,13 +51,13 @@ extension TransactionDetail {
         // MARK: - Subject
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let parsedTransationSubject: BehaviorRelay<SolanaSDK.ParsedTransaction?>
+        private let parsedTransationSubject: BehaviorRelay<ParsedTransaction?>
         private let senderNameSubject = BehaviorRelay<String?>(value: nil)
         private let receiverNameSubject = BehaviorRelay<String?>(value: nil)
 
         // MARK: - Initializers
 
-        init(parsedTransaction: SolanaSDK.ParsedTransaction) {
+        init(parsedTransaction: ParsedTransaction) {
             observingTransactionIndex = nil
             parsedTransationSubject = .init(value: parsedTransaction)
 
@@ -83,7 +83,7 @@ extension TransactionDetail {
                     guard let self = self else { return }
                     self.payingFeeWallet = pendingTransaction?.rawTransaction.payingWallet
                 })
-                .map { [weak self] pendingTransaction -> SolanaSDK.ParsedTransaction? in
+                .map { [weak self] pendingTransaction -> ParsedTransaction? in
                     guard let self = self else { return nil }
                     return pendingTransaction?.parse(
                         pricesService: self.pricesService,
@@ -98,11 +98,11 @@ extension TransactionDetail {
                 .disposed(by: disposeBag)
         }
 
-        func mapNames(parsedTransaction: SolanaSDK.ParsedTransaction?) {
+        func mapNames(parsedTransaction: ParsedTransaction?) {
             var fromAddress: String?
             var toAddress: String?
             switch parsedTransaction?.value {
-            case let transaction as SolanaSDK.TransferTransaction:
+            case let transaction as TransferTransaction:
                 fromAddress = transaction.authority ?? transaction.source?.pubkey
                 toAddress = transaction.destinationAuthority ?? transaction.destination?.pubkey
             default:
@@ -149,7 +149,7 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         navigationSubject.asDriver()
     }
 
-    var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {
+    var parsedTransactionDriver: Driver<ParsedTransaction?> {
         parsedTransationSubject.asDriver()
     }
 
@@ -166,15 +166,15 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
             .asDriver()
             .map { parsedTransaction in
                 switch parsedTransaction?.value {
-                case _ as SolanaSDK.CreateAccountTransaction:
+                case _ as CreateAccountTransaction:
                     return false
-                case _ as SolanaSDK.CloseAccountTransaction:
+                case _ as CloseAccountTransaction:
                     return false
 
-                case _ as SolanaSDK.TransferTransaction:
+                case _ as TransferTransaction:
                     return true
 
-                case _ as SolanaSDK.SwapTransaction:
+                case _ as SwapTransaction:
                     return true
                 default:
                     return false
@@ -197,9 +197,9 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     func getCreatedAccountSymbol() -> String? {
         let createdWallet: String?
         switch parsedTransationSubject.value?.value {
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             createdWallet = transaction.destination?.token.symbol
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             createdWallet = transaction.destination?.token.symbol
         default:
             return nil
@@ -233,9 +233,9 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     func copySourceAddressToClipboard() {
         let sourceAddress: String?
         switch parsedTransationSubject.value?.value {
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             sourceAddress = transaction.source?.pubkey
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             sourceAddress = transaction.source?.pubkey
         default:
             return
@@ -250,9 +250,9 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     func copyDestinationAddressToClipboard() {
         let destinationAddress: String?
         switch parsedTransationSubject.value?.value {
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             destinationAddress = transaction.destination?.pubkey
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             destinationAddress = transaction.destination?.pubkey
         default:
             return

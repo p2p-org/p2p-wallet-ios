@@ -10,6 +10,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 extension ChooseWallet {
     class ViewModel: BEListViewModel<Wallet> {

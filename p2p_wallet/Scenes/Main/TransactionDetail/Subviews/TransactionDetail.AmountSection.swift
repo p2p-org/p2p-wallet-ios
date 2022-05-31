@@ -30,13 +30,13 @@ extension TransactionDetail {
                     // Swap
                     swapSection()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: SolanaSDK.SwapTransaction.self)
+                            showView(view, onlyWhenTransactionIs: SwapTransaction.self)
                         }
 
                     // Transfer
                     transferSection()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: SolanaSDK.TransferTransaction.self)
+                            showView(view, onlyWhenTransactionIs: TransferTransaction.self)
                         }
 
                     // Fee
@@ -45,7 +45,7 @@ extension TransactionDetail {
                     // Total
                     totalSectionForTransfer()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: SolanaSDK.TransferTransaction.self)
+                            showView(view, onlyWhenTransactionIs: TransferTransaction.self)
                         }
                 }
             }
@@ -58,7 +58,7 @@ extension TransactionDetail {
 
         private func swapSection() -> BEVStack {
             let swapTransactionDriver = viewModel.parsedTransactionDriver
-                .map { $0?.value as? SolanaSDK.SwapTransaction }
+                .map { $0?.value as? SwapTransaction }
 
             return BEVStack(spacing: 8) {
                 BEHStack(spacing: 12) {
@@ -126,7 +126,7 @@ extension TransactionDetail {
                     .withContentHuggingPriority(.required, for: .horizontal)
                     .setup { label in
                         viewModel.parsedTransactionDriver
-                            .map { $0?.value is SolanaSDK.SwapTransaction }
+                            .map { $0?.value is SwapTransaction }
                             .map { $0 ? L10n.swapFees : L10n.transferFee }
                             .drive(label.rx.text)
                             .disposed(by: disposeBag)
@@ -262,7 +262,7 @@ extension TransactionDetail {
                             }
                     }
                     .setup { view in
-                        showView(view, onlyWhenTransactionIs: SolanaSDK.SwapTransaction.self)
+                        showView(view, onlyWhenTransactionIs: SwapTransaction.self)
                     }
                 }
             }

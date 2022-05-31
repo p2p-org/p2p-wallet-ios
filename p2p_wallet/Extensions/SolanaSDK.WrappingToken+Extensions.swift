@@ -8,7 +8,7 @@
 import Foundation
 import SolanaSwift
 
-extension SolanaSDK.WrappingToken {
+extension WrappingToken {
     var image: UIImage? {
         // swiftlint:disable swiftgen_assets
 //        UIImage(named: "wrapped-by-" + rawValue)

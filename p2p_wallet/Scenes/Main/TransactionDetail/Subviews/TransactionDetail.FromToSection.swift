@@ -17,7 +17,7 @@ extension TransactionDetail {
         private let viewModel: TransactionDetailViewModelType
         var isSwapDriver: Driver<Bool> {
             viewModel.parsedTransactionDriver
-                .map { $0?.value is SolanaSDK.SwapTransaction }
+                .map { $0?.value is SwapTransaction }
         }
 
         init(viewModel: TransactionDetailViewModelType) {
@@ -45,9 +45,9 @@ extension TransactionDetail {
                                     .map { $0?.value }
                                     .map { transaction -> String? in
                                         switch transaction {
-                                        case let transaction as SolanaSDK.SwapTransaction:
+                                        case let transaction as SwapTransaction:
                                             return transaction.source?.pubkey
-                                        case let transaction as SolanaSDK.TransferTransaction:
+                                        case let transaction as TransferTransaction:
                                             return transaction.source?.pubkey
                                         default:
                                             return nil
@@ -93,9 +93,9 @@ extension TransactionDetail {
                                     .map { $0?.value }
                                     .map { transaction -> String? in
                                         switch transaction {
-                                        case let transaction as SolanaSDK.SwapTransaction:
+                                        case let transaction as SwapTransaction:
                                             return transaction.destination?.pubkey
-                                        case let transaction as SolanaSDK.TransferTransaction:
+                                        case let transaction as TransferTransaction:
                                             return transaction.destination?.pubkey
                                         default:
                                             return nil

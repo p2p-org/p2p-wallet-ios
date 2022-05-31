@@ -1,5 +1,5 @@
 //
-//  SolanaSDK.ParsedTransaction+Extensions.swift
+//  ParsedTransaction+Extensions.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 09/04/2021.
@@ -8,14 +8,14 @@
 import Foundation
 import SolanaSwift
 
-extension SolanaSDK.ParsedTransaction {
+extension ParsedTransaction {
     var label: String {
         switch value {
-        case is SolanaSDK.CreateAccountTransaction:
+        case is CreateAccountTransaction:
             return L10n.createAccount
-        case is SolanaSDK.CloseAccountTransaction:
+        case is CloseAccountTransaction:
             return L10n.closeAccount
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             switch transaction.transferType {
             case .send:
                 return L10n.transfer
@@ -25,7 +25,7 @@ extension SolanaSDK.ParsedTransaction {
                 return L10n.transfer
             }
 
-        case is SolanaSDK.SwapTransaction:
+        case is SwapTransaction:
             return L10n.swap
         default:
             break
@@ -36,11 +36,11 @@ extension SolanaSDK.ParsedTransaction {
 
     var icon: UIImage {
         switch value {
-        case is SolanaSDK.CreateAccountTransaction:
+        case is CreateAccountTransaction:
             return .transactionCreateAccount
-        case is SolanaSDK.CloseAccountTransaction:
+        case is CloseAccountTransaction:
             return .transactionCloseAccount
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             switch transaction.transferType {
             case .send:
                 return .transactionSend
@@ -49,7 +49,7 @@ extension SolanaSDK.ParsedTransaction {
             default:
                 break
             }
-        case is SolanaSDK.SwapTransaction:
+        case is SwapTransaction:
             return .transactionSwap
         default:
             break

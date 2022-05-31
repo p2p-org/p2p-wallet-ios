@@ -9,6 +9,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol NewSwapTokenSettingsViewModelType: AnyObject {
     var navigationDriver: Driver<SwapTokenSettings.NavigatableScene?> { get }

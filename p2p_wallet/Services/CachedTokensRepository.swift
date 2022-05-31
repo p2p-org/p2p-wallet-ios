@@ -12,9 +12,9 @@ import SolanaSwift
 final class CachedTokensRepository: TokensRepository {
     @Injected private var tokensRepository: TokensRepository
 
-    private var cache: [SolanaSDK.Token]?
+    private var cache: [Token]?
 
-    func getTokensList() -> Single<[SolanaSDK.Token]> {
+    func getTokensList() -> Single<[Token]> {
         guard let cache = cache else {
             return tokensRepository.getTokensList()
                 .do(onSuccess: { [weak self] in

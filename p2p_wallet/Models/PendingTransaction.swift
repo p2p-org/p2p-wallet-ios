@@ -84,9 +84,9 @@ struct PendingTransaction {
 }
 
 extension PendingTransaction {
-    func parse(pricesService: PricesServiceType, authority: String? = nil) -> SolanaSDK.ParsedTransaction? {
+    func parse(pricesService: PricesServiceType, authority: String? = nil) -> ParsedTransaction? {
         // status
-        let status: SolanaSDK.ParsedTransaction.Status
+        let status: ParsedTransaction.Status
 
         switch self.status {
         case .sending:
@@ -103,12 +103,12 @@ extension PendingTransaction {
 
         var value: AnyHashable?
         let amountInFiat: Double?
-        let fee: SolanaSDK.FeeAmount?
+        let fee: FeeAmount?
 
         switch rawTransaction {
         case let transaction as ProcessTransaction.SendTransaction:
             let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
-            value = SolanaSDK.TransferTransaction(
+            value = TransferTransaction(
                 source: transaction.sender,
                 destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
                 authority: authority,
@@ -120,16 +120,16 @@ extension PendingTransaction {
             fee = transaction.feeInToken
         case let transaction as ProcessTransaction.SwapTransaction:
             var destinationWallet = transaction.destinationWallet
-            if let authority = try? SolanaSDK.PublicKey(string: authority),
-               let mintAddress = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress)
+            if let authority = try? PublicKey(string: authority),
+               let mintAddress = try? PublicKey(string: destinationWallet.mintAddress)
             {
-                destinationWallet.pubkey = try? SolanaSDK.PublicKey.associatedTokenAddress(
+                destinationWallet.pubkey = try? PublicKey.associatedTokenAddress(
                     walletAddress: authority,
                     tokenMintAddress: mintAddress
                 ).base58EncodedString
             }
 
-            value = SolanaSDK.SwapTransaction(
+            value = SwapTransaction(
                 source: transaction.sourceWallet,
                 sourceAmount: transaction.amount,
                 destination: destinationWallet,

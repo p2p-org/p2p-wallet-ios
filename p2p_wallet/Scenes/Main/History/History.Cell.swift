@@ -25,10 +25,10 @@ extension History {
 
         override func setUp(with item: AnyHashable?) {
             super.setUp(with: item)
-            guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
+            guard let transaction = item as? ParsedTransaction else { return }
 
             switch transaction.value {
-            case _ as SolanaSDK.SwapTransaction:
+            case _ as SwapTransaction:
                 amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "+", with: "")
                 amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "-", with: "")
                 amountInFiatLabel.textColor = .textBlack

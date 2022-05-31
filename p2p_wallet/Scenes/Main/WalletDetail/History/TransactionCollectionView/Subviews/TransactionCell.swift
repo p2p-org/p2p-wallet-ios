@@ -81,7 +81,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     // MARK: - BECollectionViewCell
 
     func setUp(with item: AnyHashable?) {
-        guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
+        guard let transaction = item as? ParsedTransaction else { return }
 
         // clear
         descriptionLabel.text = nil
@@ -92,15 +92,15 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         // description texts
         var isUndefinedTransaction = false
         switch transaction.value {
-        case let transaction as SolanaSDK.CreateAccountTransaction:
+        case let transaction as CreateAccountTransaction:
             if let newWallet = transaction.newWallet {
                 descriptionLabel.text = L10n.created(newWallet.token.symbol)
             }
-        case let transaction as SolanaSDK.CloseAccountTransaction:
+        case let transaction as CloseAccountTransaction:
             if let closedWallet = transaction.closedWallet {
                 descriptionLabel.text = L10n.closed(closedWallet.token.symbol)
             }
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             switch transaction.transferType {
             case .send:
                 if let destination = transaction.destination {
@@ -113,7 +113,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             default:
                 break
             }
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             if let source = transaction.source,
                let destination = transaction.destination
             {
@@ -129,7 +129,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
         // set up icon
         switch transaction.value {
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             imageView.setUp(imageType: .fromOneToOne(
                 from: transaction.source?.token,
                 to: transaction.destination?.token
