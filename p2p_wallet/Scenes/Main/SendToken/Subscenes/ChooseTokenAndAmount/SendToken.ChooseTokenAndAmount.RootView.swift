@@ -173,7 +173,7 @@ extension SendToken.ChooseTokenAndAmount {
                         }
                         equityValueSymbol = wallet.token.symbol
                     }
-                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 2)
+                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
                 }
                 .asDriver(onErrorJustReturn: nil)
                 .drive(equityValueLabel.rx.text)
@@ -210,15 +210,13 @@ extension SendToken.ChooseTokenAndAmount {
                 viewModel.currencyModeDriver
             )
                 .map { [weak self] wallet, mode -> String? in
-                    guard let wallet = wallet,
-                          let amount = self?.viewModel.calculateAvailableAmount() else { return nil }
-                    var string = amount.toString(maximumFractionDigits: 2)
-                    string += " "
-                    if mode == .fiat {
-                        string += Defaults.fiat.code
-                    } else {
-                        string += wallet.token.symbol
-                    }
+                    guard
+                        let wallet = wallet,
+                        let amount = self?.viewModel.calculateAvailableAmount()
+                    else { return nil }
+
+                    var string = amount.toString(maximumFractionDigits: mode == .fiat ? 2 : 9) + " "
+                    string += mode == .fiat ? Defaults.fiat.code : wallet.token.symbol
                     return string
                 }
 
@@ -300,13 +298,12 @@ extension SendToken.ChooseTokenAndAmount {
         }
 
         @objc private func actionButtonDidTouch() {
-            if viewModel.isTokenValidForSelectedNetwork() {
-                viewModel.save()
-                if viewModel.showAfterConfirmation {
-                    viewModel.navigate(to: .backToConfirmation)
-                } else {
-                    viewModel.navigateNext()
-                }
+            guard viewModel.isTokenValidForSelectedNetwork() else { return }
+            viewModel.save()
+            if viewModel.showAfterConfirmation {
+                viewModel.navigate(to: .backToConfirmation)
+            } else {
+                viewModel.navigateNext()
             }
         }
     }

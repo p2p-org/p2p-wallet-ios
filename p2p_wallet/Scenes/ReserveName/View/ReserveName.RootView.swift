@@ -176,6 +176,16 @@ extension ReserveName {
                     self?.setHintIsLoading(isLoading)
                 }
                 .disposed(by: disposeBag)
+
+            viewModel.mainButtonStateDriver
+                .map { $0 == .unavailableNameService }
+                .drive(onNext: { [weak self] isNameServiceUnavailable in
+                    if isNameServiceUnavailable {
+                        self?.endEditing(true)
+                        self?.textView.isUserInteractionEnabled = false
+                    }
+                })
+                .disposed(by: disposeBag)
         }
 
         private func setHintIsLoading(_ isLoading: Bool) {
@@ -227,6 +237,10 @@ extension ReserveName {
                 image = .check
                 isEnabled = true
                 title = L10n.saveContinue
+            case .unavailableNameService:
+                image = nil
+                isEnabled = false
+                title = L10n.tryAgainLater
             }
 
             nextButton.isEnabled = isEnabled

@@ -190,14 +190,6 @@ platform :ios do
     add_git_tag(tag: tag_name)
     push_git_tags(tag: tag_name)
 
-    # reset file
-    reset_git_repo(
-      force: true,
-      files: [
-        "p2p_wallet.xcodeproj/project.pbxproj"
-      ]
-    )
-
     # output
     if IS_CI
       sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
@@ -239,22 +231,18 @@ platform :ios do
     # tag
     add_git_tag(tag: tag)
     push_git_tags(tag: tag)
-
-    # reset file
-    reset_git_repo(
-      force: true,
-      files: [
-        "p2p_wallet.xcodeproj/project.pbxproj"
-      ]
-    )
   end
 
   lane :release do
     # REQUIREMENT: THERE IS AT LEAST 1 TAG LIKE v1.0.0(1234) THAT HAS ALREADY BEEN PASSED REGRESSION
 
     # get current build number. Ex. get 1234 from tag v1.0.0(1234)
+    sh('git fetch --tags --no-recurse-submodules')
     version = get_version_number(target: "p2p_wallet")
-    tag = last_git_tag(pattern: "v*")
+    lt = last_git_tag
+    puts "last_git_tag #{lt}"
+    tag = last_git_tag(pattern: "v#{version}(*")
+    puts "matched tag #{tag}"
     build_number = tag.sub("v#{version}(", '').sub(")", '')
 
     # set build number
@@ -288,13 +276,5 @@ platform :ios do
 
     # clean
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
-
-    # reset file
-    reset_git_repo(
-      force: true,
-      files: [
-        "p2p_wallet.xcodeproj/project.pbxproj"
-      ]
-    )
   end
 end

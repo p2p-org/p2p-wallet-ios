@@ -51,17 +51,12 @@ jobs:
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
-      - name: Install Dependencies
+      - name: Install project
         run: |
-          pod install --repo-update
+          chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
-      - name: Generate Strings+Asset
-        run: |
-          Pods/SwiftGen/bin/swiftgen
-        shell: bash
-
-      - name: "Upload to firebase for testing"
+      - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0
         with:
           lane: feature_test

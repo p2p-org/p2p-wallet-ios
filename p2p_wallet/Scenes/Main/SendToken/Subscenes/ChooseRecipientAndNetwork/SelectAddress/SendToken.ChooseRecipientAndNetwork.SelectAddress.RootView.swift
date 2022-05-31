@@ -54,10 +54,25 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             errorLabel
         }
         .padding(.init(x: 20, y: 0))
+        private lazy var warningView = UIStackView(
+            axis: .horizontal,
+            spacing: 12,
+            alignment: .center,
+            distribution: .fill
+        ) {
+            UIImageView(width: 44, height: 44, image: .warningUserAvatar)
+            warningLabel
+        }
+
         private lazy var errorLabel = UILabel(
             text: L10n.thereSNoAddressLikeThis,
             textSize: 17,
             textColor: .ff3b30,
+            numberOfLines: 0
+        )
+        private lazy var warningLabel = UILabel(
+            textSize: 13,
+            textColor: .ff9500,
             numberOfLines: 0
         )
         private lazy var feeView = _FeeView( // for relayMethod == .relay only
@@ -112,6 +127,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 if viewModel.relayMethod == .relay {
                     feeView
                 }
+                warningView
                 #if DEBUG
                     UILabel(textColor: .red, numberOfLines: 0, textAlignment: .center)
                         .setup { label in
@@ -317,6 +333,14 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     return L10n.reviewAndConfirm
                 }
                 .drive(actionButton.rx.text)
+                .disposed(by: disposeBag)
+
+            viewModel.warningDriver
+                .drive(warningLabel.rx.text)
+                .disposed(by: disposeBag)
+            viewModel.warningDriver
+                .map { ($0 ?? "").isEmpty }
+                .drive(warningView.rx.isHidden)
                 .disposed(by: disposeBag)
         }
 
