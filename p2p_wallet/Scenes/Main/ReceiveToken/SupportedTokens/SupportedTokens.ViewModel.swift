@@ -18,10 +18,10 @@ protocol SupportedTokensViewModelType: BEListViewModelType {
 }
 
 extension SupportedTokens {
-    final class ViewModel: BEListViewModel<SolanaSDK.Token> {
+    final class ViewModel: BEListViewModel<Token> {
         // MARK: - Dependencies
 
-        private let tokensRepository: TokensRepository
+        private let tokensRepository: SolanaTokensRepository
 
         // MARK: - Properties
 
@@ -31,7 +31,7 @@ extension SupportedTokens {
 
         private var keywordSubject = BehaviorRelay<String?>(value: nil)
 
-        init(tokensRepository: TokensRepository) {
+        init(tokensRepository: SolanaTokensRepository) {
             self.tokensRepository = tokensRepository
 
             super.init()
@@ -45,15 +45,17 @@ extension SupportedTokens {
                 .disposed(by: disposeBag)
         }
 
-        override func createRequest() -> Single<[SolanaSDK.Token]> {
+        override func createRequest() -> Single<[Token]> {
             var existingSymbols: Set<String> = []
 
-            return tokensRepository.getTokensList()
-                .map { tokens -> [SolanaSDK.Token] in
-                    tokens
-                        .excludingSpecialTokens()
-                        .filter { existingSymbols.insert($0.symbol).inserted }
-                }
+            return Single<[Token]>.async {
+                Array(try await self.tokensRepository.getTokensList())
+            }
+            .map { tokens -> [Token] in
+                tokens
+                    .excludingSpecialTokens()
+                    .filter { existingSymbols.insert($0.symbol).inserted }
+            }
         }
 
         override func map(newData: [SolanaSDK.Token]) -> [SolanaSDK.Token] {
