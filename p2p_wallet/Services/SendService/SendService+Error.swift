@@ -11,6 +11,7 @@ extension SendService {
     enum Error: String, Swift.Error, LocalizedError {
         case invalidSourceWallet = "Source wallet is not valid"
         case sendToYourself = "You can not send tokens to yourself"
+        case invalidPayingFeeWallet = "Paying fee wallet is not valid"
         case unknown = "Unknown error"
 
         var errorDescription: String? {

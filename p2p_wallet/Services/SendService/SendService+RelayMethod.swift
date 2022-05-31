@@ -197,16 +197,17 @@ extension SendService {
         //     }
     }
 
-    private func getPayingFeeToken(payingFeeWallet _: Wallet?) throws -> FeeRelayerSwift.TokenAccount? {
-        fatalError("Method has not been implemented")
-
-        // if let payingFeeWallet = payingFeeWallet {
-        //     guard let address = payingFeeWallet.pubkey else {
-        //         throw SolanaSDK.Error.other("Paying fee wallet is not valid")
-        //     }
-        //     return .init(address: address, mint: payingFeeWallet.mintAddress)
-        // }
-        // return nil
+    private func getPayingFeeToken(payingFeeWallet: Wallet?) throws -> FeeRelayerSwift.TokenAccount? {
+        if let payingFeeWallet = payingFeeWallet {
+            guard let addressString = payingFeeWallet.pubkey,
+                  let address = try? PublicKey(string: addressString),
+                  let mintAddress = try? PublicKey(string: payingFeeWallet.mintAddress)
+            else {
+                throw Error.invalidPayingFeeWallet
+            }
+            return .init(address: address, mint: mintAddress)
+        }
+        return nil
     }
 
     private func isFreeTransactionNotAvailableAndUserIsPayingWithSOL(
