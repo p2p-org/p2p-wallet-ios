@@ -37,7 +37,7 @@ extension RenVM.BurnAndRelease {
 //
 //        private let rpcClient: RenVMRpcClientType
 //        private let solanaClient: RenVMSolanaAPIClientType
-//        private let account: SolanaSDK.Account
+//        private let account: Account
 //        private var transactionStorage: RenVMBurnAndReleaseTransactionStorageType
 //
 //        // MARK: - Properties
@@ -53,7 +53,7 @@ extension RenVM.BurnAndRelease {
 //        init(
 //            rpcClient: RenVMRpcClientType,
 //            solanaClient: RenVMSolanaAPIClientType,
-//            account: SolanaSDK.Account,
+//            account: Account,
 //            transactionStorage: RenVMBurnAndReleaseTransactionStorageType
 //        ) {
 //            self.rpcClient = rpcClient

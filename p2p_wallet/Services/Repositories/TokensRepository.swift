@@ -10,7 +10,7 @@ import RxSwift
 import SolanaSwift
 
 protocol TokensRepository {
-    func getTokensList() -> Single<[SolanaSDK.Token]>
+    func getTokensList() -> Single<[Token]>
 }
 
 extension SolanaSDK: TokensRepository {}

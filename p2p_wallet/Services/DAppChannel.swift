@@ -12,8 +12,8 @@ import WebKit
 
 protocol DAppChannelDelegate: AnyObject {
     func connect() -> Single<String>
-    func signTransaction(transaction: SolanaSDK.Transaction) -> Single<SolanaSDK.Transaction>
-    func signTransactions(transactions: [SolanaSDK.Transaction]) -> Single<[SolanaSDK.Transaction]>
+    func signTransaction(transaction: Transaction) -> Single<Transaction>
+    func signTransactions(transactions: [Transaction]) -> Single<[Transaction]>
 }
 
 protocol DAppChannelType {
@@ -114,7 +114,7 @@ extension DAppChannel: WKScriptMessageHandler {
                     return
                 }
 
-                let transaction = try SolanaSDK.Transaction.from(data: data)
+                let transaction = try Transaction.from(data: data)
                 delegate.signTransaction(transaction: transaction).subscribe(onSuccess: { [weak self] trx in
                     do {
                         var trx = trx
@@ -133,7 +133,7 @@ extension DAppChannel: WKScriptMessageHandler {
             }
 
             do {
-                let transactions = try data.map { try SolanaSDK.Transaction.from(data: Data(base64urlEncoded: $0)!) }
+                let transactions = try data.map { try Transaction.from(data: Data(base64urlEncoded: $0)!) }
                 delegate.signTransactions(transactions: transactions).subscribe(onSuccess: { [weak self] values in
                     do {
                         self?.call(webView: webView, id: id, args: try values.map { trx -> String in

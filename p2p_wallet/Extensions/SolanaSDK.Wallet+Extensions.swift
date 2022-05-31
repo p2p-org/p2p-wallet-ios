@@ -1,5 +1,5 @@
 //
-//  SolanaSDK.Wallet+Extensions.swift
+//  Wallet+Extensions.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 22/04/2021.
@@ -7,8 +7,6 @@
 
 import Foundation
 import SolanaSwift
-
-typealias Wallet = SolanaSDK.Wallet
 
 struct SolanaWalletUserInfo: Hashable {
     var price: CurrentPrice?
@@ -19,7 +17,7 @@ struct SolanaWalletUserInfo: Hashable {
     var creatingError: String?
 }
 
-extension SolanaSDK.Wallet {
+extension Wallet {
     var name: String {
         guard let pubkey = pubkey else { return token.symbol }
         return Defaults.walletName[pubkey] ?? token.symbol
@@ -127,12 +125,12 @@ extension SolanaSDK.Wallet {
         }
     }
 
-    mutating func increaseBalance(diffInLamports: SolanaSDK.Lamports) {
+    mutating func increaseBalance(diffInLamports: Lamports) {
         let currentBalance = lamports ?? 0
         lamports = currentBalance + diffInLamports
     }
 
-    mutating func decreaseBalance(diffInLamports: SolanaSDK.Lamports) {
+    mutating func decreaseBalance(diffInLamports: Lamports) {
         let currentBalance = lamports ?? 0
         if currentBalance >= diffInLamports {
             lamports = currentBalance - diffInLamports

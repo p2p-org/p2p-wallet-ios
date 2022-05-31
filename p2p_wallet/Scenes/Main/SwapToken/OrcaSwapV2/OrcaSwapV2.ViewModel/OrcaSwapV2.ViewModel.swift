@@ -9,6 +9,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 extension OrcaSwapV2 {
     class ViewModel {

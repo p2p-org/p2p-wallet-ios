@@ -15,7 +15,7 @@ extension SendService {
         from _: Wallet,
         receiver _: String,
         payingTokenMint _: String?
-    ) -> Single<SolanaSDK.FeeAmount?> {
+    ) -> Single<FeeAmount?> {
         // TODO: fix
         fatalError("Method has not been implemented")
 
@@ -33,7 +33,7 @@ extension SendService {
         // transactionFee += lamportsPerSignature
         //
         // let isUnregisteredAsocciatedTokenRequest: Single<Bool>
-        // if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+        // if wallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
         //     isUnregisteredAsocciatedTokenRequest = .just(false)
         // } else {
         //     isUnregisteredAsocciatedTokenRequest = solanaSDK.findSPLTokenDestinationAddress(
@@ -51,7 +51,7 @@ extension SendService {
         //
         // return isUnregisteredAsocciatedTokenRequest
         //     .map {
-        //         SolanaSDK.FeeAmount(
+        //         FeeAmount(
         //             transaction: transactionFee,
         //             accountBalances: $0 ? minRentExemption : 0
         //         )
@@ -75,7 +75,7 @@ extension SendService {
     func sendToSolanaBCViaRelayMethod(
         from _: Wallet,
         receiver _: String,
-        amount _: SolanaSDK.Lamports,
+        amount _: Lamports,
         payingFeeWallet _: Wallet?
     ) -> Single<String> {
         // TODO: fix
@@ -125,10 +125,10 @@ extension SendService {
         amount _: Double,
         payingFeeToken _: FeeRelayerSwift.TokenAccount?,
         recentBlockhash _: String? = nil,
-        lamportsPerSignature _: SolanaSDK.Lamports? = nil,
-        minRentExemption _: SolanaSDK.Lamports? = nil,
+        lamportsPerSignature _: Lamports? = nil,
+        minRentExemption _: Lamports? = nil,
         usingCachedFeePayerPubkey _: Bool = false
-    ) -> Single<(preparedTransaction: SolanaSDK.PreparedTransaction, useFeeRelayer: Bool)> {
+    ) -> Single<(preparedTransaction: PreparedTransaction, useFeeRelayer: Bool)> {
         fatalError("Method has not been implemented")
 
         // TODO: fix
@@ -164,9 +164,9 @@ extension SendService {
         // return feePayerRequest
         //     .flatMap { [weak self] feePayer in
         //         guard let self = self else { return .error(SolanaError.unknown) }
-        //         let feePayer = feePayer == nil ? nil : try SolanaSDK.PublicKey(string: feePayer)
+        //         let feePayer = feePayer == nil ? nil : try PublicKey(string: feePayer)
         //
-        //         let request: Single<SolanaSDK.PreparedTransaction>
+        //         let request: Single<PreparedTransaction>
         //         if wallet.isNativeSOL {
         //             request = self.solanaSDK.prepareSendingNativeSOL(
         //                 to: receiver,
@@ -215,7 +215,7 @@ extension SendService {
         fatalError("Method has not been implemented")
 
         // let expectedTransactionFee = (relayService.cache.lamportsPerSignature ?? 5000) * 2
-        // return payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString &&
+        // return payingTokenMint == PublicKey.wrappedSOLMint.base58EncodedString &&
         //     relayService.cache.freeTransactionFeeLimit?
         //     .isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }

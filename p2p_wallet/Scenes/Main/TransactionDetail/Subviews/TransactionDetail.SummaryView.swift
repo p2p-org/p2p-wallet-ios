@@ -27,7 +27,7 @@ extension TransactionDetail {
                     viewModel.parsedTransactionDriver
                         .drive(onNext: { [weak view] parsedTransaction in
                             switch parsedTransaction?.value {
-                            case let transaction as SolanaSDK.TransferTransaction:
+                            case let transaction as TransferTransaction:
                                 view?.logoImageView.setUp(wallet: transaction.source)
                                 view?.titleLabel.text = transaction.amount?
                                     .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
@@ -36,7 +36,7 @@ extension TransactionDetail {
                                         amountInToken: transaction.amount,
                                         symbol: transaction.source?.token.symbol
                                     ).toString(maximumFractionDigits: 2)
-                            case let transaction as SolanaSDK.SwapTransaction:
+                            case let transaction as SwapTransaction:
                                 view?.logoImageView.setUp(wallet: transaction.source)
                                 view?.titleLabel.text = transaction.sourceAmount?
                                     .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
@@ -59,11 +59,11 @@ extension TransactionDetail {
                     )
                         .drive(onNext: { [weak view] parsedTransaction, receiverName in
                             switch parsedTransaction?.value {
-                            case let transaction as SolanaSDK.TransferTransaction:
+                            case let transaction as TransferTransaction:
                                 view?.logoImageView.setUp(token: nil, placeholder: .squircleWallet)
                                 view?.titleLabel.text = transaction.destination?.pubkey?.truncatingMiddle()
                                 view?.subtitleLabel.text = receiverName ?? " "
-                            case let transaction as SolanaSDK.SwapTransaction:
+                            case let transaction as SwapTransaction:
                                 view?.logoImageView.setUp(wallet: transaction.destination)
                                 view?.titleLabel.text = transaction.destinationAmount?
                                     .toString(maximumFractionDigits: 9) + " " + transaction.destination?.token.symbol

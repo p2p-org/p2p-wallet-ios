@@ -17,7 +17,7 @@ extension History {
         let output: Output
 
         init(
-            transaction: SolanaSDK.ParsedTransaction,
+            transaction: ParsedTransaction,
             clipboardManager: ClipboardManagerType,
             pricesService: PricesServiceType
         ) {
@@ -46,7 +46,7 @@ extension History {
 
 // MARK: - Mappers
 
-private extension SolanaSDK.ParsedTransaction {
+private extension ParsedTransaction {
     func mapTransaction(
         pricesService: PricesServiceType
     ) -> History.TransactionView.Model {
@@ -77,7 +77,7 @@ private extension SolanaSDK.ParsedTransaction {
         }
 
         switch value {
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             return (
                 imageType: .fromOneToOne(from: transaction.source?.token, to: transaction.destination?.token),
                 statusImage: statusImage
@@ -89,7 +89,7 @@ private extension SolanaSDK.ParsedTransaction {
 
     func mapAmounts(pricesService: PricesServiceType) -> (tokens: String?, usd: String?) {
         switch value {
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             let fromAmount = transaction.amount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
             let usd = "~ " + Defaults.fiat.symbol + getAmountInCurrentFiat(
@@ -98,7 +98,7 @@ private extension SolanaSDK.ParsedTransaction {
                 symbol: transaction.source?.token.symbol
             ).toString(maximumFractionDigits: 2)
             return (tokens: fromAmount, usd: usd)
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             let fromAmount = transaction.sourceAmount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
             let toAmount = transaction.destinationAmount?
@@ -141,9 +141,9 @@ private extension SolanaSDK.ParsedTransaction {
 
         let from: String?
         switch transaction {
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             from = transaction.source?.pubkey
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             from = transaction.source?.pubkey
         default:
             from = nil
@@ -151,9 +151,9 @@ private extension SolanaSDK.ParsedTransaction {
 
         let to: String?
         switch transaction {
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapTransaction:
             to = transaction.destination?.pubkey
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferTransaction:
             to = transaction.destination?.pubkey
         default:
             to = nil

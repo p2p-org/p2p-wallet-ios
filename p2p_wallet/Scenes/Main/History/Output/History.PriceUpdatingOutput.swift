@@ -11,7 +11,7 @@ extension History {
     class PriceUpdatingOutput: HistoryOutput {
         @Injected private var pricesService: PricesServiceType
 
-        func process(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+        func process(newData: [ParsedTransaction]) -> [ParsedTransaction] {
             var transactions = newData
             for index in 0 ..< transactions.count {
                 transactions[index] = updatedTransactionWithPrice(transaction: transactions[index])
@@ -20,8 +20,8 @@ extension History {
         }
 
         private func updatedTransactionWithPrice(
-            transaction: SolanaSDK.ParsedTransaction
-        ) -> SolanaSDK.ParsedTransaction {
+            transaction: ParsedTransaction
+        ) -> ParsedTransaction {
             guard let price = pricesService.currentPrice(for: transaction.symbol)
             else { return transaction }
 

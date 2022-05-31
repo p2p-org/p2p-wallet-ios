@@ -13,7 +13,7 @@ extension SendService {
     func sendToSolanaBCViaRewardMethod(
         from _: Wallet,
         receiver _: String,
-        amount _: SolanaSDK.Lamports
+        amount _: Lamports
     ) -> Single<String> {
         fatalError("Method has not been implemented")
 
@@ -21,7 +21,7 @@ extension SendService {
         //       let sender = wallet.pubkey
         // else { return .error(SolanaError.unauthorized) }
         // return solanaSDK.getRecentBlockhash(commitment: nil)
-        //     .flatMap { [weak self] recentBlockhash -> Single<((SolanaSDK.PreparedTransaction, String?), String)> in
+        //     .flatMap { [weak self] recentBlockhash -> Single<((PreparedTransaction, String?), String)> in
         //         guard let self = self else { throw SolanaError.unknown }
         //         return self.prepareForSendingToSolanaNetworkViaRewardMethod(
         //             from: wallet,
@@ -88,10 +88,10 @@ extension SendService {
         receiver _: String,
         amount _: Double,
         recentBlockhash _: String? = nil,
-        lamportsPerSignature _: SolanaSDK.Lamports? = nil,
-        minRentExemption _: SolanaSDK.Lamports? = nil,
+        lamportsPerSignature _: Lamports? = nil,
+        minRentExemption _: Lamports? = nil,
         usingCachedFeePayerPubkey _: Bool = false
-    ) -> Single<(SolanaSDK.PreparedTransaction, String?)> {
+    ) -> Single<(PreparedTransaction, String?)> {
         fatalError("Method has not been implemented")
 
         // let amount = amount.toLamport(decimals: wallet.token.decimals)
@@ -114,7 +114,7 @@ extension SendService {
         // return feePayerRequest
         //     .flatMap { [weak self] feePayer in
         //         guard let self = self else { return .error(SolanaError.unknown) }
-        //         let feePayer = feePayer == nil ? nil : try SolanaSDK.PublicKey(string: feePayer)
+        //         let feePayer = feePayer == nil ? nil : try PublicKey(string: feePayer)
         //
         //         if wallet.isNativeSOL {
         //             return self.solanaSDK.prepareSendingNativeSOL(

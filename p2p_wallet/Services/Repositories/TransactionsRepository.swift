@@ -16,7 +16,7 @@ protocol TransactionsRepository {
         before: String?,
         limit: Int,
         p2pFeePayerPubkeys: [String]
-    ) -> Single<[SolanaSDK.ParsedTransaction]>
+    ) -> Single<[ParsedTransaction]>
 }
 
 extension SolanaSDK: TransactionsRepository {
@@ -26,12 +26,12 @@ extension SolanaSDK: TransactionsRepository {
         before: String?,
         limit: Int,
         p2pFeePayerPubkeys: [String]
-    ) -> Single<[SolanaSDK.ParsedTransaction]> {
+    ) -> Single<[ParsedTransaction]> {
         getSignaturesForAddress(address: account, configs: RequestConfiguration(limit: limit, before: before))
             .flatMap { [weak self] activities in
                 guard let self = self else { throw Error.unknown }
                 // construct parser
-                let parser = SolanaSDK.TransactionParser(solanaSDK: self)
+                let parser = TransactionParser(solanaSDK: self)
 
                 // parse
                 return Single.zip(try activities.map { [weak self] activity in
@@ -44,7 +44,7 @@ extension SolanaSDK: TransactionsRepository {
                         p2pFeePayerPubkeys: p2pFeePayerPubkeys
                     )
                         .map {
-                            SolanaSDK.ParsedTransaction(
+                            ParsedTransaction(
                                 status: $0.status,
                                 signature: $0.signature,
                                 value: $0.value,
@@ -64,7 +64,7 @@ extension SolanaSDK: TransactionsRepository {
         signature: String,
         parser: SolanaSDKTransactionParserType,
         p2pFeePayerPubkeys: [String]
-    ) -> Single<SolanaSDK.ParsedTransaction> {
+    ) -> Single<ParsedTransaction> {
         getTransaction(transactionSignature: signature)
             .flatMap { info in
                 let time = info.blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(info.blockTime!)) : nil
@@ -76,7 +76,7 @@ extension SolanaSDK: TransactionsRepository {
                     p2pFeePayerPubkeys: p2pFeePayerPubkeys
                 )
                     .map {
-                        SolanaSDK.ParsedTransaction(
+                        ParsedTransaction(
                             status: $0.status,
                             signature: signature,
                             value: $0.value,
@@ -87,7 +87,7 @@ extension SolanaSDK: TransactionsRepository {
                         )
                     }
                     .catchAndReturn(
-                        SolanaSDK.ParsedTransaction(
+                        ParsedTransaction(
                             status: .confirmed,
                             signature: signature,
                             value: nil,
@@ -99,7 +99,7 @@ extension SolanaSDK: TransactionsRepository {
                     )
             }
             .catchAndReturn(
-                SolanaSDK.ParsedTransaction(
+                ParsedTransaction(
                     status: .confirmed,
                     signature: signature,
                     value: nil,

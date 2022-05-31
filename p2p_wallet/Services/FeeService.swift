@@ -14,7 +14,7 @@ import SolanaSwift
 // MARK: - FeeAPIClient
 
 protocol FeeAPIClient {
-    func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
+    func getLamportsPerSignature() -> Single<Lamports>
     func getCreatingTokenAccountFee() -> Single<UInt64>
 }
 
@@ -28,8 +28,8 @@ extension SolanaSDK: FeeAPIClient {
 
 protocol FeeServiceType: AnyObject {
     var apiClient: FeeAPIClient { get }
-    var lamportsPerSignature: SolanaSDK.Lamports? { get set }
-    var minimumBalanceForRenExemption: SolanaSDK.Lamports? { get set }
+    var lamportsPerSignature: Lamports? { get set }
+    var minimumBalanceForRenExemption: Lamports? { get set }
 }
 
 extension FeeServiceType {
@@ -50,6 +50,6 @@ extension FeeServiceType {
 
 class FeeService: FeeServiceType {
     @Injected var apiClient: FeeAPIClient
-    var lamportsPerSignature: SolanaSDK.Lamports?
-    var minimumBalanceForRenExemption: SolanaSDK.Lamports?
+    var lamportsPerSignature: Lamports?
+    var minimumBalanceForRenExemption: Lamports?
 }

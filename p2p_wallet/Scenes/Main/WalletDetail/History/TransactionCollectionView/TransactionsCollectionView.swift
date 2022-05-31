@@ -24,7 +24,7 @@ class TransactionsCollectionView: BEDynamicSectionsCollectionView {
         super.init(
             viewModel: transactionViewModel,
             mapDataToSections: { viewModel in
-                let transactions = viewModel.getData(type: SolanaSDK.ParsedTransaction.self)
+                let transactions = viewModel.getData(type: ParsedTransaction.self)
 
                 let calendar = Calendar.current
                 let today = calendar.startOfDay(for: Date())

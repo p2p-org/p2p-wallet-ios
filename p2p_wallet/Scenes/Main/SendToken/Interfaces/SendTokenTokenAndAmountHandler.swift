@@ -7,6 +7,7 @@
 
 import Foundation
 import RxCocoa
+import SolanaSwift
 
 protocol SendTokenTokenAndAmountHandler {
     var walletSubject: BehaviorRelay<Wallet?> { get }
