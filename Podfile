@@ -18,6 +18,7 @@ target 'p2p_wallet' do
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
   pod 'RenVMSwift', :path => 'RenVMSwift' 
+  pod 'TransactionParser', :path => 'SolanaSwiftMagic'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
