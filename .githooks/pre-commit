@@ -1,3 +1,5 @@
 #!/bin/bash
+
+# Ensure code format is correct
 pwd
 "Pods/SwiftFormat/CommandLineTool/swiftformat" --lint ./p2p_wallet
