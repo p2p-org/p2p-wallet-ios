@@ -75,7 +75,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     }
 
     override func createRequest() -> Single<[SolanaSDK.ParsedTransaction]> {
-        fatalError("Method has not been implemented")
+        .just([])
+        // fatalError("Method has not been implemented")
 
         // let fetchPubkeys: Single<[String]>
         // if fetchedFeePayer {

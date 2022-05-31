@@ -81,6 +81,11 @@ extension Resolver: ResolverRegistering {
         register { BlockchainClient(apiClient: resolve()) }
             .implements(SolanaBlockchainClient.self)
 
+        register { SolanaSwift.TokensRepository(endpoint: resolve(SolanaAPIClient.self).endpoint) }
+            .implements(SolanaTokensRepository.self)
+
+        register { CachedTokensRepository() }
+
         // register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
         //     .implements(TokensRepository.self)
         //     .implements(TransactionsRepository.self)
@@ -98,6 +103,9 @@ extension Resolver: ResolverRegistering {
         //     .scope(.session)
 
         // MARK: - Send service
+
+        register { TransactionsRepositoryImpl() }
+            .implements(TransactionsRepository.self)
 
         register { _, args in
             SendService(relayMethod: args())
@@ -144,16 +152,14 @@ extension Resolver: ResolverRegistering {
         .implements(FeeRelayer.self)
         .scope(.session)
 
-//        register { try! FeeRelayer.Relay(
-//            apiClient: resolve(),
-//            solanaClient: resolve(),
-//            accountStorage: resolve(SolanaSDK.self).accountStorage,
-//            orcaSwapClient: resolve(),
-//            deviceType: .iOS,
-//            buildNumber: Bundle.main.fullVersionNumber
-//        ) }
-//        .implements(FeeRelayerRelayType.self)
-//        .scope(.session)
+        register {
+            FeeRelayerContextManagerImpl(
+                accountStorage: resolve(),
+                solanaAPIClient: resolve(),
+                feeRelayerAPIClient: resolve()
+            )
+        }
+        .implements(FeeRelayerContextManager.self)
 
         // MARK: - PricesService
 

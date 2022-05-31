@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxConcurrency
 import RxSwift
 import SolanaSwift
 
@@ -14,7 +15,7 @@ import SolanaSwift
 protocol RawTransactionType {
     func createRequest() -> Single<String>
     var mainDescription: String { get }
-    var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? { get }
+    var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? { get }
 }
 
 extension RawTransactionType {
@@ -126,10 +127,10 @@ extension ProcessTransaction {
         let sender: Wallet
         let receiver: SendToken.Recipient
         let authority: String?
-        let amount: SolanaSDK.Lamports
+        let amount: SolanaSwift.Lamports
         let payingFeeWallet: Wallet?
         let feeInSOL: UInt64
-        let feeInToken: SolanaSDK.FeeAmount?
+        let feeInToken: SolanaSwift.FeeAmount?
         let isSimulation: Bool
 
         var mainDescription: String {
@@ -141,16 +142,18 @@ extension ProcessTransaction {
         }
 
         func createRequest() -> Single<String> {
-            sendService.send(
-                from: sender,
-                receiver: receiver.address,
-                amount: amount.convertToBalance(decimals: sender.token.decimals),
-                network: network,
-                payingFeeWallet: payingFeeWallet
-            )
+            Single.async { () -> String in
+                try await sendService.send(
+                    from: sender,
+                    receiver: receiver.address,
+                    amount: amount.convertToBalance(decimals: sender.token.decimals),
+                    network: network,
+                    payingFeeWallet: payingFeeWallet
+                )
+            }
         }
 
-        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+        var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? {
             guard let feeInToken = feeInToken, let token = payingFeeWallet?.token else {
                 return nil
             }
