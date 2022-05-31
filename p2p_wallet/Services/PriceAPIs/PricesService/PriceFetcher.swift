@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import RxAlamofire
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol PricesFetcher {
     var endpoint: String { get }
@@ -19,14 +19,17 @@ protocol PricesFetcher {
 
 extension PricesFetcher {
     func send<T: Decodable>(_ path: String, decodedTo _: T.Type) -> Single<T> {
-        request(.get, "\(endpoint)\(path)")
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-            .validate(statusCode: 200 ..< 300)
-            .validate(contentType: ["application/json"])
-            .responseData()
-            .take(1)
-            .asSingle()
-            .map { try JSONDecoder().decode(T.self, from: $0.1) }
+        Task {
+            let (data, response) = try await URLSession.shared.data(from: .init(string: "\(endpoint)\(path)")!)
+            guard let response = response as? HTTPURLResponse else { throw SolanaError.unknown }
+            switch response.statusCode {
+            case 200 ... 299:
+                return try JSONDecoder().decode(T.self, from: data)
+            default:
+                throw SolanaError.other("Invalid status code") // TODO: - Fix later
+            }
+        }
+        .asSingle()
     }
 }
 

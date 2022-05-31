@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxAlamofire
 import RxCocoa
 import RxSwift
 
