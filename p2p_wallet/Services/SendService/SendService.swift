@@ -152,10 +152,10 @@ class SendService: SendServiceType {
         payingFeeWallet: Wallet? // nil for relayMethod == .reward
     ) -> Single<String> {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
-        guard let sender = wallet.pubkey else { return .error(SolanaSDK.Error.other("Source wallet is not valid")) }
+        guard let sender = wallet.pubkey else { return .error(Error.invalidSourceWallet) }
         // form request
         if receiver == sender {
-            return .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
+            return .error(Error.sendToYourself)
         }
 
         // detect network

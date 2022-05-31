@@ -20,18 +20,18 @@ protocol SendServiceType {
         receiver: String?,
         network: SendToken.Network,
         payingTokenMint: String?
-    ) -> Single<SolanaSDK.FeeAmount?>
+    ) -> Single<FeeAmount?>
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.FeeAmount,
+        feeInSOL: FeeAmount,
         payingFeeWallet: Wallet
-    ) -> Single<SolanaSDK.FeeAmount?>
+    ) -> Single<FeeAmount?>
 
     // TODO: hide direct usage of ``UsageStatus``
     func getFreeTransactionFeeLimit(
     ) -> Single<UsageStatus>
 
     func getAvailableWalletsToPayFee(
-        feeInSOL: SolanaSDK.FeeAmount
+        feeInSOL: FeeAmount
     ) -> Single<[Wallet]>
 
     func send(
