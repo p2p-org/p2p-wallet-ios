@@ -15,7 +15,7 @@ extension SendService {
         from _: Wallet,
         receiver _: String,
         payingTokenMint _: String?
-    ) -> Single<SolanaSDK.FeeAmount?> {
+    ) -> Single<FeeAmount?> {
         // TODO: fix
         fatalError("Method has not been implemented")
 
@@ -75,7 +75,7 @@ extension SendService {
     func sendToSolanaBCViaRelayMethod(
         from _: Wallet,
         receiver _: String,
-        amount _: SolanaSDK.Lamports,
+        amount _: Lamports,
         payingFeeWallet _: Wallet?
     ) -> Single<String> {
         // TODO: fix
@@ -125,10 +125,10 @@ extension SendService {
         amount _: Double,
         payingFeeToken _: FeeRelayerSwift.TokenAccount?,
         recentBlockhash _: String? = nil,
-        lamportsPerSignature _: SolanaSDK.Lamports? = nil,
-        minRentExemption _: SolanaSDK.Lamports? = nil,
+        lamportsPerSignature _: Lamports? = nil,
+        minRentExemption _: Lamports? = nil,
         usingCachedFeePayerPubkey _: Bool = false
-    ) -> Single<(preparedTransaction: SolanaSDK.PreparedTransaction, useFeeRelayer: Bool)> {
+    ) -> Single<(preparedTransaction: PreparedTransaction, useFeeRelayer: Bool)> {
         fatalError("Method has not been implemented")
 
         // TODO: fix

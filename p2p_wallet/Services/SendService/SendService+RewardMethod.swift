@@ -13,7 +13,7 @@ extension SendService {
     func sendToSolanaBCViaRewardMethod(
         from _: Wallet,
         receiver _: String,
-        amount _: SolanaSDK.Lamports
+        amount _: Lamports
     ) -> Single<String> {
         fatalError("Method has not been implemented")
 
@@ -88,10 +88,10 @@ extension SendService {
         receiver _: String,
         amount _: Double,
         recentBlockhash _: String? = nil,
-        lamportsPerSignature _: SolanaSDK.Lamports? = nil,
-        minRentExemption _: SolanaSDK.Lamports? = nil,
+        lamportsPerSignature _: Lamports? = nil,
+        minRentExemption _: Lamports? = nil,
         usingCachedFeePayerPubkey _: Bool = false
-    ) -> Single<(SolanaSDK.PreparedTransaction, String?)> {
+    ) -> Single<(PreparedTransaction, String?)> {
         fatalError("Method has not been implemented")
 
         // let amount = amount.toLamport(decimals: wallet.token.decimals)

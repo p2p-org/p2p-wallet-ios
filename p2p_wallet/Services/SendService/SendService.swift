@@ -123,9 +123,9 @@ class SendService: SendServiceType {
     }
 
     func getFeesInPayingToken(
-        feeInSOL _: SolanaSDK.FeeAmount,
+        feeInSOL _: FeeAmount,
         payingFeeWallet _: Wallet
-    ) -> Single<SolanaSDK.FeeAmount?> {
+    ) -> Single<FeeAmount?> {
         fatalError("Method has not been implemented")
 
         // guard relayMethod == .relay else { return .just(nil) }
