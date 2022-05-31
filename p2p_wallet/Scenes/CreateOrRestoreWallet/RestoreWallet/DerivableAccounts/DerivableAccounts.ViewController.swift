@@ -143,7 +143,7 @@ extension DerivableAccounts {
             }
         }
 
-        func derivablePathsVC(didSelectPath path: SolanaSDK.DerivablePath) {
+        func derivablePathsVC(didSelectPath path: DerivablePath) {
             viewModel.selectDerivationPath(path)
             analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: path.rawValue))
         }

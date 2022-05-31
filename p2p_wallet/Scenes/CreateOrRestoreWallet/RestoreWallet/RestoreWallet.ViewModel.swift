@@ -37,7 +37,7 @@ extension RestoreWallet {
 
         private let disposeBag = DisposeBag()
         private var phrases: [String]?
-        private var derivablePath: SolanaSDK.DerivablePath?
+        private var derivablePath: DerivablePath?
         private var name: String?
 
         // MARK: - Subjects
@@ -106,7 +106,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         navigationSubject.accept(.enterPhrases)
     }
 
-    func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?) {
+    func handlePhrases(_ phrases: [String], derivablePath: DerivablePath?) {
         self.phrases = phrases
         if let derivablePath = derivablePath {
             derivablePathDidSelect(derivablePath, phrases: phrases)
@@ -123,22 +123,25 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
             finish()
         } else {
             // create account
+            guard let phrases = phrases else { return }
             isLoadingSubject.accept(true)
-            DispatchQueue(label: "Create account", qos: .userInteractive).async { [unowned self] in
-                guard let phrases = self.phrases else { return }
+            Task(priority: .userInitiated) {
                 do {
-                    let account = try SolanaSDK.Account(
+                    let account = try await Account(
                         phrase: phrases,
                         network: Defaults.apiEndPoint.network,
                         derivablePath: derivablePath
                     )
-                    DispatchQueue.main.async { [weak self] in
+                    await MainActor.run { [weak self] in
                         // reserve name
                         self?.isLoadingSubject.accept(false)
                         self?.navigationSubject.accept(.reserveName(owner: account.publicKey.base58EncodedString))
                     }
                 } catch {
-                    self.errorSubject.accept(error.readableDescription)
+                    await MainActor.run { [weak self] in
+                        self?.isLoadingSubject.accept(false)
+                        self?.errorSubject.accept(error.readableDescription)
+                    }
                 }
             }
         }
@@ -148,16 +151,16 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
 // MARK: - AccountRestorationHandler
 
 extension RestoreWallet.ViewModel {
-    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath, phrases: [String]) {
+    func derivablePathDidSelect(_ derivablePath: DerivablePath, phrases: [String]) {
         analyticsManager.log(event: .recoveryRestoreClick)
         self.derivablePath = derivablePath
         self.phrases = phrases
 
         // create account
         isLoadingSubject.accept(true)
-        DispatchQueue(label: "Create account", qos: .userInteractive).async {
+        Task(priority: .userInitiated) {
             do {
-                let account = try SolanaSDK.Account(
+                let account = try await Account(
                     phrase: phrases,
                     network: Defaults.apiEndPoint.network,
                     derivablePath: derivablePath
@@ -166,7 +169,7 @@ extension RestoreWallet.ViewModel {
                 let owner = account.publicKey.base58EncodedString
 
                 // check if name available
-                DispatchQueue.main.async { [weak self] in
+                await MainActor.run { [weak self] in
                     guard let self = self else { return }
                     self.nameService.getName(owner)
                         .subscribe(on: MainScheduler.instance)
@@ -194,14 +197,14 @@ extension RestoreWallet.ViewModel {
                         .disposed(by: self.disposeBag)
                 }
             } catch {
-                DispatchQueue.main.async { [weak self] in
+                await MainActor.run { [weak self] in
                     self?.errorSubject.accept(error.readableDescription)
                 }
             }
         }
     }
 
-    private func saveToICloud(name: String?, phrase: [String], derivablePath: SolanaSDK.DerivablePath) {
+    private func saveToICloud(name: String?, phrase: [String], derivablePath: DerivablePath) {
         _ = iCloudStorage.saveToICloud(
             account: .init(
                 name: name,
