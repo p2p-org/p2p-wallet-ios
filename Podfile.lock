@@ -307,7 +307,7 @@ SPEC CHECKSUMS:
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerSwift: 3a35c45a15ad9198d99327844dd40be32b90fba4
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  OrcaSwapSwift: 201fbc86040e57355966aa37822721d840abd038
+  OrcaSwapSwift: 6e37f8add27c37846f9832e97f49f569f332e9a6
   Periphery: 2b693a570f0878ccc825728e7dbf31934f7a5aee
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
@@ -321,7 +321,7 @@ SPEC CHECKSUMS:
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaSwift: 6d6108e514697447fe11ba5a1e47f75495c8fe3b
+  SolanaSwift: 1ae4e880c977d9cbafc51822696573c66edaa3b3
   Starscream: 5178aed56b316f13fa3bc55694e583d35dd414d9
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53

@@ -10,7 +10,7 @@ import RxCocoa
 
 enum RestoreICloud {
     struct ParsedAccount: Hashable {
-        let account: Account
-        let parsedAccount: SolanaSDK.Account
+        let account: RawAccount
+        let parsedAccount: SolanaSwift.Account
     }
 }

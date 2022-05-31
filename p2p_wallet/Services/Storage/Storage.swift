@@ -19,8 +19,8 @@ protocol StorageType {
 }
 
 protocol ICloudStorageType: AnyObject, StorageType {
-    func saveToICloud(account: Account) -> Bool
-    func accountFromICloud() -> [Account]?
+    func saveToICloud(account: RawAccount) -> Bool
+    func accountFromICloud() -> [RawAccount]?
     var didBackupUsingIcloud: Bool { get }
 }
 

@@ -16,7 +16,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandl
     var isRestorableUsingIcloud: Driver<Bool> { get }
     var errorSignal: Signal<String> { get }
 
-    func handleICloudAccount(_ account: Account)
+    func handleICloudAccount(_ account: RawAccount)
     func restoreFromICloud()
     func restoreManually()
 }
@@ -114,7 +114,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         }
     }
 
-    func handleICloudAccount(_ account: Account) {
+    func handleICloudAccount(_ account: RawAccount) {
         phrases = account.phrase.components(separatedBy: " ")
         derivablePath = account.derivablePath
         if let name = account.name {

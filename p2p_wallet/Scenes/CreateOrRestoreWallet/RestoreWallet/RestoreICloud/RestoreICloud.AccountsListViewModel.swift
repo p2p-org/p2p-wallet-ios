@@ -27,7 +27,7 @@ extension RestoreICloud {
         }
 
         override func createRequest() -> Single<[ParsedAccount]> {
-            let accountsRequest = Single<[Account]>.just(iCloudStorage.accountFromICloud() ?? [])
+            let accountsRequest = Single<[RawAccount]>.just(iCloudStorage.accountFromICloud() ?? [])
 
             return accountsRequest
                 .flatMap { [weak self] accounts in
@@ -49,7 +49,7 @@ extension RestoreICloud {
             for account in neededNameAccounts {
                 nameService.getName(account.parsedAccount.publicKey.base58EncodedString)
                     .map {
-                        Account(
+                        RawAccount(
                             name: $0,
                             phrase: account.parsedAccount.phrase.joined(separator: " "),
                             derivablePath: account.account.derivablePath
@@ -73,12 +73,12 @@ extension RestoreICloud {
             }
         }
 
-        private func createParsedAccountSingle(account: Account) -> Single<ParsedAccount> {
+        private func createParsedAccountSingle(account: RawAccount) -> Single<ParsedAccount> {
             Single<SolanaSDK.Account>.create { observer in
                 DispatchQueue(label: "createAccount#\(account.phrase)", qos: .userInitiated)
                     .async {
                         do {
-                            let account = try SolanaSDK.Account(
+                            let account = try Account(
                                 phrase: account.phrase.components(separatedBy: " "),
                                 network: Defaults.apiEndPoint.network,
                                 derivablePath: account.derivablePath
