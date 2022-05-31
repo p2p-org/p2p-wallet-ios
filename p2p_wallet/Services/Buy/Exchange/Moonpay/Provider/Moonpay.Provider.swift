@@ -5,6 +5,10 @@
 import Foundation
 
 extension Moonpay {
+    enum MoonpayProviderError: Swift.Error {
+        case unknown
+    }
+
     class Provider {
         private let api: API
 
@@ -39,7 +43,7 @@ extension Moonpay {
 
             let (data, response) = try await URLSession.shared.data(from: urlRequest)
             guard let response = response as? HTTPURLResponse else {
-                throw SolanaError.unknown
+                throw MoonpayProviderError.unknown
             }
             switch response.statusCode {
             case 200 ... 299:
@@ -53,7 +57,7 @@ extension Moonpay {
         func getPrice(for crypto: String, as currency: String) async throws -> Double {
             guard let url = URL(string: api.endpoint + "/currencies/\(crypto)/ask_price")
             else {
-                throw SolanaError.unknown
+                throw MoonpayProviderError.unknown
             }
             let (data, _) = try await URLSession.shared.data(from: url)
             guard let json = try? JSONDecoder().decode([String: Double].self, from: data)
@@ -72,7 +76,7 @@ extension Moonpay {
 
             let (data, response) = try await URLSession.shared.data(from: urlRequest)
             guard let response = response as? HTTPURLResponse else {
-                throw SolanaError.unknown
+                throw MoonpayProviderError.unknown
             }
             switch response.statusCode {
             case 200 ... 299:

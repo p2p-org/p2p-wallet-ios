@@ -65,21 +65,21 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
         self.phrases = phrases
 
         UIApplication.shared.showIndetermineHud()
-        DispatchQueue.global().async { [weak self] in
+
+        Task {
             do {
-                // create wallet
-                let account = try SolanaSDK.Account(
+                let account = try await Account(
                     phrase: phrases,
                     network: Defaults.apiEndPoint.network,
                     derivablePath: .default
                 )
 
-                DispatchQueue.main.async { [weak self] in
+                await MainActor.run { [weak self] in
                     UIApplication.shared.hideHud()
                     self?.navigateToReserveName(owner: account.publicKey.base58EncodedString)
                 }
             } catch {
-                DispatchQueue.main.async { [weak self] in
+                await MainActor.run { [weak self] in
                     UIApplication.shared.hideHud()
                     self?.notificationsService.showInAppNotification(.error(error))
                 }

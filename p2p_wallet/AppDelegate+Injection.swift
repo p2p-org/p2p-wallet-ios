@@ -13,9 +13,15 @@ import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
+        // MARK: - Deprecated (REMOVE LATER)
+
+        register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
+            .scope(.session)
+
         // MARK: - Lifetime app's services
 
         register { KeychainStorage() }
+            .implements(SolanaSDKAccountStorage.self) // Deprecated
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
             .implements(SolanaAccountStorage.self)
