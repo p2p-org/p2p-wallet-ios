@@ -23,7 +23,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         amount _: UInt64,
         as _: Swap.InputMode
     ) -> Single<[Swap.PoolsPair]> {
-        Single.async {
+        Single.async { [weak self] in
+            guard let self = self else { throw SolanaError.unknown }
             let poolPairs = try await self.orcaSwap.getTradablePoolsPairs(fromMint: sourceMint, toMint: destinationMint)
             return poolPairs.map { $0.toPoolsPair() }
         }
