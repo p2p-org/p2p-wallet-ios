@@ -123,18 +123,36 @@ class SendService: SendServiceType {
     }
 
     func getFeesInPayingToken(
-        feeInSOL _: FeeAmount,
-        payingFeeWallet _: Wallet
+        feeInSOL: FeeAmount,
+        payingFeeWallet: Wallet
     ) -> Single<FeeAmount?> {
-        fatalError("Method has not been implemented")
+        guard relayMethod == .relay else { return .just(nil) }
 
-        // guard relayMethod == .relay else { return .just(nil) }
-        // if payingFeeWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint
-        //     .base58EncodedString { return .just(feeInSOL) }
-        // return relayService.calculateFeeInPayingToken(
-        //     feeInSOL: feeInSOL,
-        //     payingFeeTokenMint: payingFeeWallet.mintAddress
-        // )
+        if payingFeeWallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
+            return .just(feeInSOL)
+        }
+
+        return Single.async { [weak self] in
+            guard let self = self else { throw Error.unknown }
+            let tradableTopUpPoolsPair = try await self.orcaSwap.getTradablePoolsPairs(
+                fromMint: payingFeeWallet.mintAddress,
+                toMint: PublicKey.wrappedSOLMint.base58EncodedString
+            )
+            guard let topUpPools = try self.orcaSwap.findBestPoolsPairForEstimatedAmount(
+                feeInSOL.total,
+                from: tradableTopUpPoolsPair
+            ) else {
+                throw Error.swapPoolsNotFound
+            }
+
+            let transactionFee = topUpPools.getInputAmount(minimumAmountOut: feeInSOL.transaction, slippage: 0.01)
+            let accountCreationFee = topUpPools.getInputAmount(
+                minimumAmountOut: feeInSOL.accountBalances,
+                slippage: 0.01
+            )
+
+            return .init(transaction: transactionFee ?? 0, accountBalances: accountCreationFee ?? 0)
+        }
     }
 
     func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
