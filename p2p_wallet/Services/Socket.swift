@@ -15,15 +15,8 @@ protocol SocketType {
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)>
 }
 
-extension Socket: SocketType {
-    func subscribeAccountNotification(account _: String, isNative _: Bool) {
-        fatalError("Method is not implemented")
-    }
-
+extension SolanaSDK.Socket: SocketType {
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: SolanaSDK.Lamports)> {
-        fatalError("Method is not implemented")
-
-        // TODO: Fix
-        // observeAccountNotifications()
+        observeAccountNotifications()
     }
 }
