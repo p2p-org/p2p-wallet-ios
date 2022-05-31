@@ -19,7 +19,7 @@ protocol PricesFetcher {
 
 extension PricesFetcher {
     func send<T: Decodable>(_ path: String, decodedTo _: T.Type) -> Single<T> {
-        Task {
+        Single.async {
             let (data, response) = try await URLSession.shared.data(from: .init(string: "\(endpoint)\(path)")!)
             guard let response = response as? HTTPURLResponse else { throw SolanaError.unknown }
             switch response.statusCode {
@@ -29,7 +29,6 @@ extension PricesFetcher {
                 throw SolanaError.other("Invalid status code") // TODO: - Fix later
             }
         }
-        .asSingle()
     }
 }
 

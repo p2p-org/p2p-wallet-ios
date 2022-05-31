@@ -43,7 +43,7 @@ extension DerivableAccounts {
         }
 
         override func createRequest() -> Single<[DerivableAccount]> {
-            Task<[DerivableAccount], Error> {
+            Single.async {
                 let accounts = try await createDerivableAccounts()
 
                 Task {
@@ -55,7 +55,6 @@ extension DerivableAccounts {
 
                 return accounts
             }
-            .asSingle()
         }
 
         private func createDerivableAccounts() async throws -> [DerivableAccount] {
