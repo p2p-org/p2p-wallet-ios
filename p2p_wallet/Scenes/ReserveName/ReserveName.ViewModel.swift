@@ -5,7 +5,6 @@
 //  Created by Andrew Vasiliev on 26.11.2021.
 //
 
-import Alamofire
 import Foundation
 import GT3Captcha
 import Resolver
@@ -165,21 +164,13 @@ extension ReserveName {
                     self?.nameDidReserve(name)
                 }, onFailure: { [weak self] error in
                     self?.isLoadingSubject.accept(false)
-                    if let error = error as? AFError {
-                        switch error {
-                        case let .responseValidationFailed(reason):
-                            switch reason {
-                            case let .unacceptableStatusCode(code) where code == 500:
-                                self?.notificationsService
-                                    .showInAppNotification(.error(L10n
-                                            .theNameServiceIsExperiencingSomeIssuesPleaseTryAgainLater))
-                                return
-                            default:
-                                break
-                            }
-                        default:
-                            break
-                        }
+                    if let error = error as? NameService.Error,
+                       error == .invalidStatusCode(500)
+                    {
+                        self?.notificationsService
+                            .showInAppNotification(.error(L10n
+                                    .theNameServiceIsExperiencingSomeIssuesPleaseTryAgainLater))
+                        return
                     }
                     self?.notificationsService.showInAppNotification(.error(error))
                 })

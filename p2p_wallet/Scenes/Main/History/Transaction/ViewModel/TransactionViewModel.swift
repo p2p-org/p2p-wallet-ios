@@ -5,7 +5,6 @@
 //  Created by Ivan on 17.04.2022.
 //
 
-import Alamofire
 import Foundation
 import RxCocoa
 import RxSwift

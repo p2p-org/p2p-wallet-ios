@@ -5,9 +5,7 @@
 //  Created by Chung Tran on 06/10/2021.
 //
 
-import Alamofire
 import Foundation
-import RxAlamofire
 import RxSwift
 
 protocol NameServiceType {
@@ -72,25 +70,17 @@ class NameService: NameServiceType {
 
     func post(name: String, params: PostParams) -> Single<PostResponse> {
         let urlString = "\(endpoint)/\(name)"
-        guard let url = URL(string: urlString) else {
-            return .error(Alamofire.AFError.invalidURL(url: urlString))
-        }
-        do {
-            var urlRequest = try URLRequest(url: url, method: .post, headers: [.contentType("application/json")])
+        let url = URL(string: urlString)!
+
+        return Task {
+            var urlRequest = URLRequest(url: url)
+            urlRequest.httpMethod = "POST"
+            urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = try JSONEncoder().encode(params)
-            return RxAlamofire.request(urlRequest)
-                .validate(statusCode: 200 ..< 300)
-                .responseData()
-                .take(1)
-                .asSingle()
-                .debug()
-                .map { $1 }
-                .map { data in
-                    try JSONDecoder().decode(PostResponse.self, from: data)
-                }
-        } catch {
-            return .error(error)
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            return try JSONDecoder().decode(PostResponse.self, from: data)
         }
+        .asSingle()
     }
 
     private func getOwner(_ name: String) -> Single<Owner?> {
@@ -104,24 +94,33 @@ class NameService: NameServiceType {
     private func catchNotFound<T>(observable: Single<T>, defaultValue: T) -> Single<T> {
         observable
             .catch { error in
-                guard case AFError.responseValidationFailed(.unacceptableStatusCode(404)) = error else {
-                    throw error
+                if let error = error as? NameService.Error,
+                   error == .notFound
+                {
+                    return .just(defaultValue)
                 }
 
-                return .just(defaultValue)
+                throw error
             }
     }
 
     private func request<T: Decodable>(url: String) -> Single<T> {
-        RxAlamofire.request(.get, url)
-            .validate(statusCode: 200 ..< 300)
-            .responseData()
-            .take(1)
-            .asSingle()
-            .map { $1 }
-            .map { data in
-                try JSONDecoder().decode(T.self, from: data)
+        Task {
+            guard let url = URL(string: url) else {
+                throw NameService.Error.invalidURL
             }
+            let (data, response) = try await URLSession.shared.data(from: url)
+            guard let response = response as? HTTPURLResponse else {
+                throw NameService.Error.invalidResponseCode
+            }
+            switch response.statusCode {
+            case 200 ... 299:
+                return try JSONDecoder().decode(T.self, from: data)
+            default:
+                throw NameService.Error.invalidStatusCode(response.statusCode)
+            }
+        }
+        .asSingle()
     }
 }
 
@@ -159,5 +158,16 @@ extension NameService {
 
     struct PostResponse: Decodable {
         let signature: String
+    }
+
+    enum Error: Swift.Error, Equatable {
+        case invalidURL
+        case invalidResponseCode
+        case invalidStatusCode(Int)
+        case unknown
+
+        static var notFound: Self {
+            .invalidStatusCode(404)
+        }
     }
 }
