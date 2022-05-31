@@ -33,7 +33,7 @@ extension RestoreICloud {
 
             return accountsRequest
                 .flatMap { [weak self] accounts in
-                    guard let self = self else { throw SolanaSDK.Error.unknown }
+                    guard let self = self else { throw SolanaError.unknown }
                     return Single
                         .zip(
                             accounts

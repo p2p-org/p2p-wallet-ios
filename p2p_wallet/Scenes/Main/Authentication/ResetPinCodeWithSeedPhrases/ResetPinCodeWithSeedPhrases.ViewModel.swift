@@ -54,7 +54,7 @@ extension ResetPinCodeWithSeedPhrases.ViewModel: ResetPinCodeWithSeedPhrasesView
 
     func handlePhrases(_ phrases: [String]) {
         guard storage.phrases == phrases else {
-            errorSubject.accept(SolanaSDK.Error.other("Seed phrases is not correct"))
+            errorSubject.accept(SolanaError.other("Seed phrases is not correct"))
             return
         }
         navigationSubject.accept(.createNewPasscode)

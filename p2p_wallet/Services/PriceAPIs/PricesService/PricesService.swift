@@ -160,7 +160,7 @@ extension PricesService: PricesServiceType {
             }
             .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
             .catch { [weak self] _ in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
+                guard let self = self else { throw SolanaError.unknown }
                 return Single.zip(
                     self.fetcher.getHistoricalPrice(of: coinName, fiat: "USD", period: period),
                     self.fetcher.getValueInUSD(fiat: Defaults.fiat.code)

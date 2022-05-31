@@ -59,13 +59,13 @@ extension TransactionHandler {
         let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
 
         Single.async { [weak self] () -> SignatureStatus in
-            guard let self = self else { throw SolanaSDK.Error.unknown }
+            guard let self = self else { throw SolanaError.unknown }
             return try await self.apiClient.getSignatureStatus(signature: transactionId, configs: nil)
         }
         .subscribe(on: scheduler)
         .observe(on: MainScheduler.instance)
         .do(onSuccess: { [weak self] status in
-            guard let self = self else { throw SolanaSDK.Error.unknown }
+            guard let self = self else { throw SolanaError.unknown }
             let txStatus: PendingTransaction.TransactionStatus
 
             if status.confirmations == nil || status.confirmationStatus == "finalized" {

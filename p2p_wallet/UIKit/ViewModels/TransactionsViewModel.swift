@@ -93,7 +93,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         //
         // return fetchPubkeys
         //     .flatMap { [weak self] pubkeys -> Single<[SolanaSDK.ParsedTransaction]> in
-        //         guard let self = self else { return .error(SolanaSDK.Error.unknown) }
+        //         guard let self = self else { return .error(SolanaError.unknown) }
         //         return self.repository.getTransactionsHistory(
         //             account: self.account,
         //             accountSymbol: self.accountSymbol,
@@ -142,7 +142,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
                 }
 
                 // throw
-                throw SolanaSDK.Error.notFound
+                throw SolanaError.notFound
             }
             .retry(maxAttempts: 3, delayInSeconds: 2)
             .subscribe(onSuccess: { [weak self] newTransactions in

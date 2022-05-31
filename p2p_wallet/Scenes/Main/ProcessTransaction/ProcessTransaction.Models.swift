@@ -64,7 +64,7 @@ extension ProcessTransaction {
                let currentAmount = payingWallet.lamports,
                fees.total > currentAmount
             {
-                return .error(SolanaSDK.Error.other(
+                return .error(SolanaError.other(
                     L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
                         + ". "
                         + L10n
@@ -110,7 +110,7 @@ extension ProcessTransaction {
 
         func createRequest() -> Single<String> {
             guard let pubkey = closingWallet.pubkey else {
-                return .error(SolanaSDK.Error.unknown)
+                return .error(SolanaError.unknown)
             }
             return solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
         }
