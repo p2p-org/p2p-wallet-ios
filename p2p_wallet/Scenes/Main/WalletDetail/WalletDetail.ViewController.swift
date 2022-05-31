@@ -8,6 +8,7 @@
 import BEPureLayout
 import Foundation
 import RxSwift
+import SolanaSwift
 import UIKit
 
 extension WalletDetail {

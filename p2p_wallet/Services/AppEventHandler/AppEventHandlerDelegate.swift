@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 protocol AppEventHandlerDelegate: AnyObject {
     func createWalletDidComplete()

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 import UIKit
 
 extension History {

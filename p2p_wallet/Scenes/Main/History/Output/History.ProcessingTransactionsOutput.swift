@@ -3,6 +3,8 @@
 //
 
 import Foundation
+import Resolver
+import SolanaSwift
 
 extension History {
     /// Combine final list with processing transactions.

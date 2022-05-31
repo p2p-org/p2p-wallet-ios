@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 
 extension OrcaSwapV2.ConfirmSwapping {

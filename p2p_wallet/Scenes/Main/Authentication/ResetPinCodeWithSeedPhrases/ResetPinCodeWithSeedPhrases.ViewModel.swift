@@ -5,8 +5,10 @@
 //  Created by Chung Tran on 16/04/2021.
 //
 
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 protocol ResetPinCodeWithSeedPhrasesViewModelType {

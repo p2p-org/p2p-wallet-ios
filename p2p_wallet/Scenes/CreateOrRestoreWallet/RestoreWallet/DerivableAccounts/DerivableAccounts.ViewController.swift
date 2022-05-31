@@ -7,6 +7,8 @@
 
 import BECollectionView
 import Foundation
+import Resolver
+import SolanaSwift
 
 extension DerivableAccounts {
     class ViewController: BaseVC {

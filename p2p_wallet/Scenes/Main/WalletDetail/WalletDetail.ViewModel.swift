@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol WalletDetailViewModelType {
     var walletsRepository: WalletsRepository { get }

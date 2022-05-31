@@ -8,6 +8,7 @@
 import Foundation
 import JazziconSwift
 import RxSwift
+import SolanaSwift
 import UIKit
 
 class CoinLogoImageView: BEView {

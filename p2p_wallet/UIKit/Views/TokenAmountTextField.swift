@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 class TokenAmountTextField: BEDecimalTextField {
     private var decimals: SolanaSDK.Decimals?

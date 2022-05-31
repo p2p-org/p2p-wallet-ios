@@ -7,6 +7,7 @@
 
 import Foundation
 import LocalAuthentication
+import SolanaSwift
 
 extension Settings {
     class ConfigureSecurityViewController: BaseViewController {

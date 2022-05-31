@@ -10,6 +10,7 @@ import LocalAuthentication
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol RootViewModelType {
     var navigationSceneDriver: Driver<Root.NavigatableScene?> { get }

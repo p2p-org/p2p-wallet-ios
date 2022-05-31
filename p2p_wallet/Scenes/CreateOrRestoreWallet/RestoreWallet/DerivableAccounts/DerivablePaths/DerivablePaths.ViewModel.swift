@@ -8,6 +8,7 @@
 import BECollectionView
 import Foundation
 import RxSwift
+import SolanaSwift
 
 extension DerivablePaths {
     class ViewModel: BEListViewModel<SelectableDerivablePath> {

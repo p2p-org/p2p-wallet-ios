@@ -7,7 +7,9 @@
 
 import Foundation
 import LocalAuthentication
+import Resolver
 import RxCocoa
+import SolanaSwift
 
 protocol AppEventHandlerType {
     var isLoadingDriver: Driver<Bool> { get }

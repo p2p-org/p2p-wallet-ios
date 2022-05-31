@@ -8,6 +8,7 @@
 import FeeRelayerSwift
 import OrcaSwapSwift
 import RenVMSwift
+import Resolver
 import SolanaSwift
 
 extension Resolver: ResolverRegistering {

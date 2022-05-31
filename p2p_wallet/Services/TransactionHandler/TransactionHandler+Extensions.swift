@@ -8,6 +8,7 @@
 import Foundation
 import RxConcurrency
 import RxSwift
+import SolanaSwift
 
 extension TransactionHandler {
     /// Send and observe transaction

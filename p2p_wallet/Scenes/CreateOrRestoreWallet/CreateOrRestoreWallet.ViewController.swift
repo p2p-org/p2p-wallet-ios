@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Resolver
 import UIKit
 
 extension CreateOrRestoreWallet {

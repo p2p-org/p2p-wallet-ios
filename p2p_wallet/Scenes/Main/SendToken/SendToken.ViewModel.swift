@@ -7,6 +7,7 @@
 
 import FeeRelayerSwift
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 

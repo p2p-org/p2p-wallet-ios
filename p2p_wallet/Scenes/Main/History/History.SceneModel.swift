@@ -5,6 +5,7 @@
 import BECollectionView
 import FeeRelayerSwift
 import Foundation
+import Resolver
 import RxCocoa
 import RxConcurrency
 import RxSwift

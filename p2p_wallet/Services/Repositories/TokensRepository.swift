@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 protocol TokensRepository {
     func getTokensList() -> Single<[SolanaSDK.Token]>

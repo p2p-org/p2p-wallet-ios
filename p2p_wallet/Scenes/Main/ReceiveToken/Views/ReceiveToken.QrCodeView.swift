@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension ReceiveToken {
     class QrCodeView: BEView {

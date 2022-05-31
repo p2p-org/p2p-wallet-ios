@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension Settings {
     class SelectNetworkViewController: SingleSelectionViewController<SolanaSDK.APIEndPoint> {

@@ -7,6 +7,7 @@
 
 import Foundation
 import RxCocoa
+import SolanaSwift
 
 enum RestoreICloud {
     struct ParsedAccount: Hashable {

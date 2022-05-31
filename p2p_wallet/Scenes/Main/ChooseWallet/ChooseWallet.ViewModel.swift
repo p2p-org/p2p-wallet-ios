@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 

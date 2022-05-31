@@ -10,6 +10,7 @@ import BECollectionView
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let graphViewModel: WalletGraphViewModel

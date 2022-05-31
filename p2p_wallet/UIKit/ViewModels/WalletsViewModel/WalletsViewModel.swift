@@ -11,6 +11,7 @@ import Resolver
 import RxAppState
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Dependencies

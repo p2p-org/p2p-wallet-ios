@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension SolanaSDK.DerivablePath {
     var title: String {

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension SolanaSDK.Token {
     var image: UIImage? {

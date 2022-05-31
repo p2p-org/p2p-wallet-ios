@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import Resolver
 import RxSwift
 
 class WalletGraphViewModel: BEListViewModel<PriceRecord> {

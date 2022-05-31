@@ -7,6 +7,7 @@
 
 import Action
 import Foundation
+import Resolver
 
 class BackupShowPhrasesVC: WLIndicatorModalVC, CustomPresentableViewController {
     var transitionManager: UIViewControllerTransitioningDelegate?

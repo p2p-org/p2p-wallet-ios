@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 enum WLNotification: Equatable {
     case sent(account: String, lamports: SolanaSDK.Lamports)
