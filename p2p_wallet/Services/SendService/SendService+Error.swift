@@ -12,6 +12,7 @@ extension SendService {
         case invalidSourceWallet = "Source wallet is not valid"
         case sendToYourself = "You can not send tokens to yourself"
         case invalidPayingFeeWallet = "Paying fee wallet is not valid"
+        case swapPoolsNotFound = "Swap pools not found"
         case unknown = "Unknown error"
 
         var errorDescription: String? {

@@ -21,6 +21,7 @@ protocol SendServiceType {
         network: SendToken.Network,
         payingTokenMint: String?
     ) -> Single<FeeAmount?>
+
     func getFeesInPayingToken(
         feeInSOL: FeeAmount,
         payingFeeWallet: Wallet
