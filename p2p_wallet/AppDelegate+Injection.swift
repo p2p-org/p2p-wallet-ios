@@ -18,6 +18,10 @@ extension Resolver: ResolverRegistering {
         register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
             .scope(.session)
 
+        register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
+            .implements(SocketType.self)
+            .scope(.session)
+
         // MARK: - Lifetime app's services
 
         register { KeychainStorage() }
@@ -27,7 +31,6 @@ extension Resolver: ResolverRegistering {
             .implements(SolanaAccountStorage.self)
             .implements(PincodeStorageType.self)
             .implements(AccountStorageType.self)
-            .implements(SolanaAccountStorage.self)
             .implements(PincodeSeedPhrasesStorage.self)
             .implements((AccountStorageType & NameStorageType).self)
             .implements((AccountStorageType & PincodeStorageType & NameStorageType).self)
@@ -109,9 +112,9 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Socket
 
-        register { SolanaSwift.Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!, enableDebugLogs: true) }
-            .implements(SocketType.self)
-            .scope(.session)
+//        register { SolanaSD.Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!,enableDebugLogs: true) }
+//            .implements(SocketType.self)
+//            .scope(.session)
 
         // MARK: - TransactionHandler (new)
 
@@ -158,18 +161,22 @@ extension Resolver: ResolverRegistering {
             .implements(Swap.Service.self)
             .scope(.session)
 
-//        register {
-//            OrcaSwap(
-//                apiClient: OrcaSwapSwift.APIClient(
-//                    network: Defaults.apiEndPoint.network.cluster
-//                ),
-//                solanaClient: resolve(),
-//                accountProvider: resolve(),
-//                notificationHandler: resolve()
-//            )
-//        }
-//        .implements(OrcaSwapType.self)
-//        .scope(.session)
+        register { OrcaSwapSwift.NetworkConfigsProvider(network: Defaults.apiEndPoint.network.cluster) }
+            .implements(OrcaSwapConfigsProvider.self)
+
+        register { OrcaSwapSwift.APIClient(configsProvider: resolve()) }
+            .implements(OrcaSwapAPIClient.self)
+
+        register {
+            OrcaSwap(
+                apiClient: resolve(),
+                solanaClient: resolve(),
+                blockchainClient: resolve(),
+                accountStorage: resolve()
+            )
+        }
+        .implements(OrcaSwapType.self)
+        .scope(.session)
 
         // MARK: - RenVM
 
