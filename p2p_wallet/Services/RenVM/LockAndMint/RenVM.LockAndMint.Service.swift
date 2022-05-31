@@ -8,7 +8,6 @@
 import Foundation
 import RenVMSwift
 import Resolver
-import RxAlamofire
 import RxCocoa
 import RxSwift
 import SolanaSwift
@@ -210,37 +209,37 @@ extension RenVM.LockAndMint {
                 url += "/testnet"
             }
             url += "/api/address/\(address)/utxo"
-            let request = try URLRequest(url: url, method: .get)
+            let request = URLRequest(url: .init(string: url)!)
 
-            RxAlamofire.request(request)
-                .responseData()
-                .take(1).asSingle()
-                .map { try JSONDecoder().decode(TxDetails.self, from: $1) }
+            return Task<TxDetails, Error> {
+                let (data, _) = try await URLSession.shared.data(from: request)
+                return try JSONDecoder().decode(TxDetails.self, from: data)
+            }
+            .asSingle()
+            // merge result to storage
+            .subscribe(onSuccess: { [weak self] txs in
+                guard let self = self else { return }
 
-                // merge result to storage
-                .subscribe(onSuccess: { [weak self] txs in
-                    guard let self = self else { return }
+                // filter out processing txs
+                let txs = txs.filter { !self.processingTxs.contains($0.txid) }
 
-                    // filter out processing txs
-                    let txs = txs.filter { !self.processingTxs.contains($0.txid) }
-
-                    // save processing txs to storage and process confirmed transactions
-                    for tx in txs {
-                        var date = Date()
-                        if let blocktime = tx.status.blockTime {
-                            date = Date(timeIntervalSince1970: TimeInterval(blocktime))
-                        }
-
-                        if tx.status.confirmed {
-                            self.sessionStorage.processingTx(tx: tx, didConfirmAt: date)
-                        } else {
-                            self.sessionStorage.processingTx(tx: tx, didReceiveAt: date)
-                        }
-
-                        self.mintStoredTxs(response: response)
+                // save processing txs to storage and process confirmed transactions
+                for tx in txs {
+                    var date = Date()
+                    if let blocktime = tx.status.blockTime {
+                        date = Date(timeIntervalSince1970: TimeInterval(blocktime))
                     }
-                })
-                .disposed(by: disposeBag)
+
+                    if tx.status.confirmed {
+                        self.sessionStorage.processingTx(tx: tx, didConfirmAt: date)
+                    } else {
+                        self.sessionStorage.processingTx(tx: tx, didReceiveAt: date)
+                    }
+
+                    self.mintStoredTxs(response: response)
+                }
+            })
+            .disposed(by: disposeBag)
         }
 
         private func processConfirmedAndSubmitedTransaction(
