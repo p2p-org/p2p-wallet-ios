@@ -43,13 +43,14 @@ extension DerivableAccounts {
         }
 
         override func createRequest() -> Single<[DerivableAccount]> {
-            Single.async {
-                let accounts = try await createDerivableAccounts()
+            Single.async { [weak self] in
+                guard let self = self else { throw SolanaError.unknown }
+                let accounts = try await self.createDerivableAccounts()
 
                 Task {
                     try? await(
-                        fetchSOLPrice(),
-                        fetchBalances(accounts: accounts.map(\.info.publicKey.base58EncodedString))
+                        self.fetchSOLPrice(),
+                        self.fetchBalances(accounts: accounts.map(\.info.publicKey.base58EncodedString))
                     )
                 }
 
