@@ -21,16 +21,4 @@ extension SendService {
             feePayerPubkey = pubkey
         }
     }
-
-    enum Error: String, Swift.Error, LocalizedError {
-        case invalidSourceWallet = "Source wallet is not valid"
-        case sendToYourself = "You can not send tokens to yourself"
-        case unknown = "Unknown error"
-
-        var errorDescription: String? {
-            // swiftlint:disable swiftgen_strings
-            NSLocalizedString(rawValue, comment: "")
-            // swiftlint:enable swiftgen_strings
-        }
-    }
 }
