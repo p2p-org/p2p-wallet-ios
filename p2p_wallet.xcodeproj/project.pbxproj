@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -149,7 +149,6 @@
 		3E940662C503F079AE64259C /* onboarding_01_w.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 6A2C0B3C6CC03E76BBA10FBA /* onboarding_01_w.mp4 */; };
 		3F04C94261B67162BA4AFE90 /* OrcaSwapV2.DetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5323CF911050DD58ADF1DA22 /* OrcaSwapV2.DetailsView.swift */; };
 		3FDA59131878E8A55FEC9E8F /* WalletActionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEE4C6AEA9088F4493FBAB8F /* WalletActionType.swift */; };
-		4161CD926272FA54385C8B51 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FFD3CB4E8BE150DBBFCA3160 /* Assets.xcassets */; };
 		424AB2083DF12CF79F5A7A56 /* RenVM.BurnAndRelease.Service.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7EF3C43BC53F01325A74A69 /* RenVM.BurnAndRelease.Service.swift */; };
 		42E2DC2F0F4D9F2976D42F37 /* IntercomStartingConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A5456725CD6DB8470709C9A /* IntercomStartingConfigurator.swift */; };
 		42E693935232AB667E29D9B6 /* CreateOrRestoreWallet.IntroPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF350967483B39F82D466110 /* CreateOrRestoreWallet.IntroPlayerView.swift */; };
@@ -475,6 +474,7 @@
 		D217A10D4E7572AEFD5C8B1A /* ValueByDateChartMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A2DB809602DAFF79169E0F0 /* ValueByDateChartMarker.swift */; };
 		D2E5746363D98B1E6A7D069A /* ReceiveToken.QrCodeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9938351347691B47A188648 /* ReceiveToken.QrCodeCard.swift */; };
 		D3C7168E533DEF94AE0DD1DB /* OrcaSwapV2.MainSwapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D92DF13A7596808DCF68A1 /* OrcaSwapV2.MainSwapView.swift */; };
+		D47949CD47001E53844A4F0A /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD61DFAF96BF1FDE29C840C2 /* Pods_p2p_wallet.framework */; };
 		D4E5D9F6186B2758C5B17E12 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC98B6CA5DB337DCCABAEFEF /* UIViewController+Extensions.swift */; };
 		D52CAA6574A005814A3095C3 /* Authentication.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 089FD00FEB0A4469F83439DB /* Authentication.ViewController.swift */; };
 		D56CB83823C4849FF033BDE0 /* OrcaSwapV2.ConfirmSwapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A0230B9023E5A857496FF7 /* OrcaSwapV2.ConfirmSwapping.swift */; };
@@ -496,7 +496,6 @@
 		DC2EA2E9FBB4BC1F78A06476 /* Moonpay.Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F13BB2CD61445645646403 /* Moonpay.Model.swift */; };
 		DC8B3FA4FF7AF54403076810 /* Settings.Backup.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EA8BBF192A840A7FA41089A /* Settings.Backup.ViewController.swift */; };
 		DC8FC39A467189A54E0146D5 /* BuyRoot.ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CE6C61B53541167B3669647 /* BuyRoot.ViewController.swift */; };
-		DCACEBF04011B0B0FF24215E /* Pods_p2p_wallet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B148AC93A11A68933AA85B9B /* Pods_p2p_wallet.framework */; };
 		DD1E91C4DE93166587E56B38 /* RenBTCReceivingStatuses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16752FA56A533A985AE91D11 /* RenBTCReceivingStatuses.swift */; };
 		DE66020AE19140C1E2B66F08 /* TransactionDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A26479A855941A92340BF9 /* TransactionDetail.swift */; };
 		DEB07DC087EB3FD5E90B4263 /* ErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C900CADF0D7BCED771B022D /* ErrorView.swift */; };
@@ -628,7 +627,7 @@
 		12A70CA12FF75F260277DC7B /* TokenSelection.Scene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSelection.Scene.swift; sourceTree = "<group>"; };
 		12BF95829F87CE0E2F34291B /* SwapTransactionImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTransactionImageView.swift; sourceTree = "<group>"; };
 		14E18564C0E5536B45A8AD14 /* SendTokenTokenAndAmountHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendTokenTokenAndAmountHandler.swift; sourceTree = "<group>"; };
-		15FE1AB5595A333950BE8262 /* onboarding_02_b.mp4 */ = {isa = PBXFileReference; path = onboarding_02_b.mp4; sourceTree = "<group>"; };
+		15FE1AB5595A333950BE8262 /* onboarding_02_b.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_02_b.mp4; sourceTree = "<group>"; };
 		166A8C1E943F101D63BA2C40 /* LockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockView.swift; sourceTree = "<group>"; };
 		16752FA56A533A985AE91D11 /* RenBTCReceivingStatuses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenBTCReceivingStatuses.swift; sourceTree = "<group>"; };
 		1700EF036DE7A318AB355B0E /* Home.HeaderScrollDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.HeaderScrollDelegate.swift; sourceTree = "<group>"; };
@@ -723,7 +722,7 @@
 		40E073A33429A19377A53C7D /* HorizontalPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalPicker.swift; sourceTree = "<group>"; };
 		42227F64D6EE93CE29B6AB94 /* SendToken.ConfirmViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ConfirmViewController.swift; sourceTree = "<group>"; };
 		4282F13743A2EA25ACE9EAFC /* WalletGraphViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletGraphViewModel.swift; sourceTree = "<group>"; };
-		4351DBA084BF465FDAF0DFF3 /* README.MD */ = {isa = PBXFileReference; path = README.MD; sourceTree = "<group>"; };
+		4351DBA084BF465FDAF0DFF3 /* README.MD */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.MD; sourceTree = "<group>"; };
 		43D9074094AB961DED54EA4D /* SwapProviderType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapProviderType.swift; sourceTree = "<group>"; };
 		43F0D7603F28A5625AB396E3 /* Settings.Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.Backup.swift; sourceTree = "<group>"; };
 		4408D0D244B9266E585F57CE /* FlexibleHeightPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlexibleHeightPresentationController.swift; sourceTree = "<group>"; };
@@ -803,7 +802,7 @@
 		69B38246B8495B4ECA37864D /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientView.swift; sourceTree = "<group>"; };
 		69C639B540E4DCA6DB3375F4 /* SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsCollectionView.swift; sourceTree = "<group>"; };
 		69E5F8CDF19E59AD9E40E974 /* WLCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLCard.swift; sourceTree = "<group>"; };
-		6A2C0B3C6CC03E76BBA10FBA /* onboarding_01_w.mp4 */ = {isa = PBXFileReference; path = onboarding_01_w.mp4; sourceTree = "<group>"; };
+		6A2C0B3C6CC03E76BBA10FBA /* onboarding_01_w.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_01_w.mp4; sourceTree = "<group>"; };
 		6AE841DE7D44370236F0713F /* EnterSeedInfo.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.ViewController.swift; sourceTree = "<group>"; };
 		6B49D46BE0F632F4AAE4B57C /* ObservableType+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObservableType+Extensions.swift"; sourceTree = "<group>"; };
 		6B7D3DCC8BB8194797327725 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
@@ -819,7 +818,6 @@
 		6E3FD5D68A5E2C6A833CC47D /* History.SourceStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.SourceStream.swift; sourceTree = "<group>"; };
 		6E7DB2E8E480F8490BECAC7D /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		6F0F40E1789D4B204071040B /* BECollectionView.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = BECollectionView.md; sourceTree = "<group>"; };
-		6F7A2CC7A37EFF7B3967AFDC /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		6FC5B63955F76BF9F79E4C0C /* SupportedTokens.EmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedTokens.EmptyCell.swift; sourceTree = "<group>"; };
 		6FFCFD1DE7DAF9A5DF824C6E /* History.RefreshTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = History.RefreshTrigger.swift; sourceTree = "<group>"; };
 		7145BB2E6F7A2C2079720B17 /* TransactionsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsRepository.swift; sourceTree = "<group>"; };
@@ -916,6 +914,7 @@
 		9AE0CBD40B9B4CD489116174 /* RenVM.LockAndMint.SessionStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenVM.LockAndMint.SessionStorage.swift; sourceTree = "<group>"; };
 		9B355176E0FAE5D98E54700B /* BackupBannerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupBannerHandler.swift; sourceTree = "<group>"; };
 		9B738B2D374E6DD94BC1677A /* WLIndicatorModalFlexibleHeightVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLIndicatorModalFlexibleHeightVC.swift; sourceTree = "<group>"; };
+		9BB3137D5559AB8D3E5214FB /* Pods-p2p_wallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.debug.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.debug.xcconfig"; sourceTree = "<group>"; };
 		9C1CB4FB0F78F8AFB8543168 /* ClipboardManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardManager.swift; sourceTree = "<group>"; };
 		9CA2CD12FDA69CAF172D1D91 /* ErrorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorModel.swift; sourceTree = "<group>"; };
 		9CE6C61B53541167B3669647 /* BuyRoot.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyRoot.ViewController.swift; sourceTree = "<group>"; };
@@ -938,7 +937,6 @@
 		A3085E89D4E695D9503DCB70 /* DerivablePaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DerivablePaths.swift; sourceTree = "<group>"; };
 		A3D6A760DA6E149952449590 /* EnterSeedInfo.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnterSeedInfo.RootView.swift; sourceTree = "<group>"; };
 		A455A3CDBA423FBA01521B3E /* WLModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLModalViewController.swift; sourceTree = "<group>"; };
-		A48A96745035E41AEA02F26F /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		A4B65B48EB14F1CDA33CAB06 /* WLMarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLMarkdownView.swift; sourceTree = "<group>"; };
 		A52688EB9FF96531C5B99B9F /* WLEmptyCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLEmptyCell.swift; sourceTree = "<group>"; };
 		A534ECC06141FA4F461FC384 /* TokenSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenSettings.swift; sourceTree = "<group>"; };
@@ -950,10 +948,11 @@
 		A91D65EBCC89631D67E8F821 /* WLSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLSectionHeaderView.swift; sourceTree = "<group>"; };
 		A94E88D13E606FF01E07A9BB /* AgreeTermsAndPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgreeTermsAndPolicyView.swift; sourceTree = "<group>"; };
 		AADCEF5D8FEEBD0556D0CE0F /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
-		ABA7A98CD1F25660DD68B8F0 /* onboarding_01_b.mp4 */ = {isa = PBXFileReference; path = onboarding_01_b.mp4; sourceTree = "<group>"; };
+		ABA7A98CD1F25660DD68B8F0 /* onboarding_01_b.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_01_b.mp4; sourceTree = "<group>"; };
 		ABE932C8A6F115DDAE355B06 /* DeviceTokenDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceTokenDto.swift; sourceTree = "<group>"; };
 		AC98B6CA5DB337DCCABAEFEF /* UIViewController+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions.swift"; sourceTree = "<group>"; };
 		AD44AD0DD903BE2C6BEF42EA /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
+		AD61DFAF96BF1FDE29C840C2 /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ADB04B40F72738D3E167334C /* WalletDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletDetail.swift; sourceTree = "<group>"; };
 		AE4E50039AC567A3B1082B3C /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		AE56501B76368348B3E3FE53 /* Terms_of_service.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Terms_of_service.txt; sourceTree = "<group>"; };
@@ -963,7 +962,6 @@
 		AFD14442ED3616C732707DE2 /* TextChangesFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextChangesFilter.swift; sourceTree = "<group>"; };
 		B0C138D59B3980E75D7EDAD7 /* TokensRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokensRepository.swift; sourceTree = "<group>"; };
 		B12DC066D6E1E4CD5127F81E /* ResetPinCodeWithSeedPhrases.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPinCodeWithSeedPhrases.ViewModel.swift; sourceTree = "<group>"; };
-		B148AC93A11A68933AA85B9B /* Pods_p2p_wallet.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_p2p_wallet.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B17FBD11D2E6D01BFF1FCA9E /* TransactionHandler+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TransactionHandler+Extensions.swift"; sourceTree = "<group>"; };
 		B1D72E98140511CD4869836D /* SolanaSDK.Token+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SolanaSDK.Token+Extensions.swift"; sourceTree = "<group>"; };
 		B211F2EBBF4D1585BA12E0A5 /* OrcaSwapV2.ConfirmSwapping.ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2.ConfirmSwapping.ViewController.swift; sourceTree = "<group>"; };
@@ -986,7 +984,7 @@
 		B5F280345C2E02A3ECEBA433 /* UIStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIStackView.swift; sourceTree = "<group>"; };
 		B6518DF8829B375616C4099E /* NSMutableAttributedString+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSMutableAttributedString+Extensions.swift"; sourceTree = "<group>"; };
 		B6C9CBCF3E0DA7952E8EBB92 /* BuyPreparing.SceneModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyPreparing.SceneModel.swift; sourceTree = "<group>"; };
-		B741F93368CAD84389C21537 /* Swift-Concurrency.MD */ = {isa = PBXFileReference; path = "Swift-Concurrency.MD"; sourceTree = "<group>"; };
+		B741F93368CAD84389C21537 /* Swift-Concurrency.MD */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Swift-Concurrency.MD"; sourceTree = "<group>"; };
 		B83006F1990BF3EF2611781E /* SendToken.NetworkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.NetworkView.swift; sourceTree = "<group>"; };
 		B856CFEBB50DA0D1BA431389 /* BannerServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerServiceImpl.swift; sourceTree = "<group>"; };
 		B862A6329AD05913E9E5EA9E /* Moonpay.API.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Moonpay.API.swift; sourceTree = "<group>"; };
@@ -994,7 +992,7 @@
 		B941B2C96652A77138D20676 /* CreateWallet.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateWallet.ViewModel.swift; sourceTree = "<group>"; };
 		B97231D4EC76E1CFF16D2336 /* BuyProcessingServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuyProcessingServiceType.swift; sourceTree = "<group>"; };
 		BA5B17D45ADFF12CD4996B29 /* RenBTCReceivingStatuses.TxDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenBTCReceivingStatuses.TxDetailViewController.swift; sourceTree = "<group>"; };
-		BAA844F344920346EB1E2CD6 /* onboarding_02_w.mp4 */ = {isa = PBXFileReference; path = onboarding_02_w.mp4; sourceTree = "<group>"; };
+		BAA844F344920346EB1E2CD6 /* onboarding_02_w.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = onboarding_02_w.mp4; sourceTree = "<group>"; };
 		BAD940938E48A72DCE811345 /* TransactionDetail.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetail.ViewModel.swift; sourceTree = "<group>"; };
 		BADE4CA4AFAEC974C2D00166 /* ReserveName.MainButtonState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.MainButtonState.swift; sourceTree = "<group>"; };
 		BBABA32BE0497D7D2AC476CF /* DAppChannelError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAppChannelError.swift; sourceTree = "<group>"; };
@@ -1066,6 +1064,7 @@
 		D3846CB27E37DAFD518E480E /* ReserveName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.swift; sourceTree = "<group>"; };
 		D39AA406BCDF591AD3EDF626 /* OrcaSwapV2ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrcaSwapV2ViewModelType.swift; sourceTree = "<group>"; };
 		D3F45FCBFA65B296BA04632A /* CreateSecurityKeys.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateSecurityKeys.ViewModel.swift; sourceTree = "<group>"; };
+		D3F4787AD06D2DDD899DF8D5 /* Pods-p2p_wallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-p2p_wallet.release.xcconfig"; path = "Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet.release.xcconfig"; sourceTree = "<group>"; };
 		D4EDD2EC93CEA66D7F34EC70 /* Authentication.ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.ViewModel.swift; sourceTree = "<group>"; };
 		D517E3B50CE1EFB3C3C6B90E /* SendToken.ChooseTokenAndAmount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendToken.ChooseTokenAndAmount.swift; sourceTree = "<group>"; };
 		D5F24AF41D7690A942F96C29 /* WLButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WLButton.swift; sourceTree = "<group>"; };
@@ -1160,16 +1159,15 @@
 		FEAB93C4B8B5EB4D07372ED0 /* ReserveName.TextFieldState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReserveName.TextFieldState.swift; sourceTree = "<group>"; };
 		FF62BE57DA68663526742711 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		FFC54D828CC679F88B3BD3BC /* SwapTokenSettings.RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapTokenSettings.RootView.swift; sourceTree = "<group>"; };
-		FFD3CB4E8BE150DBBFCA3160 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FFE6FCE02D5780B709DADCD5 /* Montserrat-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Montserrat-Thin.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		731904581BC132DEC0ED20B8 /* Frameworks */ = {
+		2C2727187E3D31C5ED3B0A02 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DCACEBF04011B0B0FF24215E /* Pods_p2p_wallet.framework in Frameworks */,
+				D47949CD47001E53844A4F0A /* Pods_p2p_wallet.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1238,6 +1236,15 @@
 				AC98B6CA5DB337DCCABAEFEF /* UIViewController+Extensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		06C5127D17691B75C3AB8290 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9BB3137D5559AB8D3E5214FB /* Pods-p2p_wallet.debug.xcconfig */,
+				D3F4787AD06D2DDD899DF8D5 /* Pods-p2p_wallet.release.xcconfig */,
+			);
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		07D8872E62D0E40F326A2FF7 /* Settings */ = {
@@ -1520,16 +1527,6 @@
 				0884F4197F17CE13647C3707 /* BackupShowPhrasesVC.swift */,
 			);
 			path = BackupManually;
-			sourceTree = "<group>";
-		};
-		2F59E9B584B45B275E539F5C /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				6F7A2CC7A37EFF7B3967AFDC /* Pods-p2p_wallet.debug.xcconfig */,
-				A48A96745035E41AEA02F26F /* Pods-p2p_wallet.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
 			sourceTree = "<group>";
 		};
 		3010E5FA94F4415454863DF1 /* SelectNetwork */ = {
@@ -2045,6 +2042,14 @@
 			path = Dto;
 			sourceTree = "<group>";
 		};
+		6E77D93518E607D2E0926866 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AD61DFAF96BF1FDE29C840C2 /* Pods_p2p_wallet.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		73EF797CEBB60DF1A14DF149 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
@@ -2423,7 +2428,6 @@
 				C5FB8A1BA95D0684B334B8A7 /* UIKit */,
 				C714F6ED25DB1E6E5A4F39D1 /* AppDelegate.swift */,
 				BC583C05A24FE5366762DDFC /* AppDelegate+Injection.swift */,
-				FFD3CB4E8BE150DBBFCA3160 /* Assets.xcassets */,
 				3BF0AC0973E2CDFD4965837E /* Config.xcconfig */,
 				6E7DB2E8E480F8490BECAC7D /* GoogleService-Info.plist */,
 				50981ABA2032D72E54E3439A /* Info.plist */,
@@ -2526,14 +2530,6 @@
 				9512913264C874C3275980A2 /* VerifySecurityKeys.ViewModel.swift */,
 			);
 			path = VerifySecurityKeys;
-			sourceTree = "<group>";
-		};
-		C5F7437F12AD41EF34E98926 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B148AC93A11A68933AA85B9B /* Pods_p2p_wallet.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		C5FB8A1BA95D0684B334B8A7 /* UIKit */ = {
@@ -2644,8 +2640,8 @@
 				AA86863C2187CBDE129F05DA /* p2p_wallet */,
 				4351DBA084BF465FDAF0DFF3 /* README.MD */,
 				83761FBE9E8C733B4481C701 /* Products */,
-				2F59E9B584B45B275E539F5C /* Pods */,
-				C5F7437F12AD41EF34E98926 /* Frameworks */,
+				06C5127D17691B75C3AB8290 /* Pods */,
+				6E77D93518E607D2E0926866 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -2993,15 +2989,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7CB93C4C680D3EC5CE343D88 /* Build configuration list for PBXNativeTarget "p2p_wallet" */;
 			buildPhases = (
-				B173E31DC2C5F559B21954AC /* [CP] Check Pods Manifest.lock */,
+				126078E86F7F6759CA75EC77 /* [CP] Check Pods Manifest.lock */,
 				A9BF9E0F8500DFD3B9ABDCA7 /* Swiftgen Run Script */,
 				F4AB742195EA0EDF3F819C98 /* Format and lint Run Script */,
 				8F89345BB9E5B8E4F3207B4E /* Sources */,
 				8954874BA72043B506DF6341 /* Resources */,
 				01F0705E49666B082BAADFA4 /* Crashlytics Run Script */,
-				731904581BC132DEC0ED20B8 /* Frameworks */,
-				9C06D01DFA243BFCB4BA935A /* [CP] Embed Pods Frameworks */,
-				61CEBFA0676B937F85390548 /* [CP] Copy Pods Resources */,
+				2C2727187E3D31C5ED3B0A02 /* Frameworks */,
+				D9612AA93277DA9D287DF2DB /* [CP] Embed Pods Frameworks */,
+				C7368CAF2A43EFF487F5CC84 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -3056,7 +3052,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4161CD926272FA54385C8B51 /* Assets.xcassets in Resources */,
 				EDF75B522FD715BDBA46C4C7 /* Assets.xcassets in Resources */,
 				8250E11E6A736D2339B763E7 /* BECollectionView.md in Resources */,
 				ED6A6D14F6437A35F22DC022 /* Colors.xcassets in Resources */,
@@ -3123,77 +3118,7 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
 		};
-		221B06F262FDEF3B78C0AB74 /* Periphery Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Periphery Run Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"/Users/ivan/Projects/p2p-wallet-ios/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace\"\n";
-		};
-		61CEBFA0676B937F85390548 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9C06D01DFA243BFCB4BA935A /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		A9BF9E0F8500DFD3B9ABDCA7 /* Swiftgen Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Swiftgen Run Script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  echo \"Swiftgen is disabled in Release mode\"\n  exit 0\nfi\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
-		};
-		B173E31DC2C5F559B21954AC /* [CP] Check Pods Manifest.lock */ = {
+		126078E86F7F6759CA75EC77 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3215,6 +3140,42 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		221B06F262FDEF3B78C0AB74 /* Periphery Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Periphery Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"/Users/ivan/Projects/p2p-wallet-ios/Pods/Periphery/periphery scan --workspace p2p_wallet.xcworkspace\"\n";
+		};
+		A9BF9E0F8500DFD3B9ABDCA7 /* Swiftgen Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swiftgen Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" = \"Release\" ]; then\n  echo \"Swiftgen is disabled in Release mode\"\n  exit 0\nfi\n\"$PODS_ROOT/SwiftGen/bin/swiftgen\"\n";
+		};
 		C4D1E7945427290620DC1CC8 /* Swiftgen Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -3232,6 +3193,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"/Users/ivan/Projects/p2p-wallet-ios/Pods/SwiftGen/bin/swiftgen config run --config /Users/ivan/Projects/p2p-wallet-ios/swiftgen.yml\"\n";
+		};
+		C7368CAF2A43EFF487F5CC84 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D9612AA93277DA9D287DF2DB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-p2p_wallet/Pods-p2p_wallet-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 		F4AB742195EA0EDF3F819C98 /* Format and lint Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3816,7 +3811,7 @@
 /* Begin XCBuildConfiguration section */
 		4FB770B7BC75EDDB3C999C14 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = A48A96745035E41AEA02F26F /* Pods-p2p_wallet.release.xcconfig */;
+			baseConfigurationReference = D3F4787AD06D2DDD899DF8D5 /* Pods-p2p_wallet.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -3926,7 +3921,7 @@
 		};
 		6028F73AB758CA4E44EEAAFF /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6F7A2CC7A37EFF7B3967AFDC /* Pods-p2p_wallet.debug.xcconfig */;
+			baseConfigurationReference = 9BB3137D5559AB8D3E5214FB /* Pods-p2p_wallet.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
