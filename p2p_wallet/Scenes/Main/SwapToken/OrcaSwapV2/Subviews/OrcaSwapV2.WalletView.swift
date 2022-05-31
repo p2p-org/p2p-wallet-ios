@@ -8,6 +8,7 @@
 import Action
 import BEPureLayout
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 import UIKit

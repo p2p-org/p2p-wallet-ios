@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol AccountRestorationHandler {
     func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath, phrases: [String])

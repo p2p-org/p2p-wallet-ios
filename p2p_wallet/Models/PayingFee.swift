@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 struct PayingFee {
     enum FeeType: Equatable {

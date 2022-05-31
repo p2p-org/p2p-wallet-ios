@@ -7,6 +7,7 @@
 
 import Foundation
 import RenVMSwift
+import SolanaSwift
 import SwiftyUserDefaults
 
 extension UIUserInterfaceStyle: DefaultsSerializable {}

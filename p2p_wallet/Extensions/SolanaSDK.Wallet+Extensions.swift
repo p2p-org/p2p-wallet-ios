@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 typealias Wallet = SolanaSDK.Wallet
 

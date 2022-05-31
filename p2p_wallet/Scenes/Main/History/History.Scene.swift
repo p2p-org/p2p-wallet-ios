@@ -6,6 +6,7 @@ import BECollectionView
 import BEPureLayout
 import Foundation
 import Resolver
+import SolanaSwift
 import UIKit
 
 extension History {

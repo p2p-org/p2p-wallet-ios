@@ -7,6 +7,7 @@
 
 import Action
 import Foundation
+import Resolver
 import RxSwift
 import UIKit
 

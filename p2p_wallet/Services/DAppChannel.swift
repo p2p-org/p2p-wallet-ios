@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 import WebKit
 
 protocol DAppChannelDelegate: AnyObject {

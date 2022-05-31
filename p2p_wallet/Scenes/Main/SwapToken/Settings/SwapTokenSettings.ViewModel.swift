@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 
@@ -55,9 +56,8 @@ extension SwapTokenSettings {
                             wallet: wallet,
                             tokenLabelText: wallet.token.symbol,
                             isSelected: feePayingToken == wallet,
-                            onTapHandler: {
-                                [weak self] in
-                                    self?.swapViewModel.changeFeePayingToken(to: wallet)
+                            onTapHandler: { [weak self] in
+                                self?.swapViewModel.changeFeePayingToken(to: wallet)
                             }
                         )
                     )

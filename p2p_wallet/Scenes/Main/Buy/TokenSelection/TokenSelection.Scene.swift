@@ -3,6 +3,8 @@
 //
 
 import BEPureLayout
+import Resolver
+import SolanaSwift
 import UIKit
 
 extension BuyTokenSelection {

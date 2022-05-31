@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 struct PendingTransaction {
     enum TransactionStatus {

@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 extension SendService {
     func sendToSolanaBCViaRewardMethod(

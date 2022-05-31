@@ -7,6 +7,7 @@
 
 import AVFoundation
 import Foundation
+import Resolver
 import UIKit
 
 class QrCodeScannerVC: BaseVC {

@@ -8,6 +8,7 @@
 import FeeRelayerSwift
 import Foundation
 import RxSwift
+import SolanaSwift
 
 extension SendService {
     func getFeeViaRelayMethod(

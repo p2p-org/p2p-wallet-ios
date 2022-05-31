@@ -7,8 +7,10 @@
 
 import Foundation
 import LocalAuthentication
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol ChangeLanguageResponder {
     func languageDidChange(to: LocalizedLanguage)

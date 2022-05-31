@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
+import SolanaSwift
 
 extension KeychainStorage: AccountStorageType {
     func save(phrases: [String]) throws {

@@ -3,8 +3,10 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 extension ReceiveToken {
     class QrCodeCard: BECompositionView {

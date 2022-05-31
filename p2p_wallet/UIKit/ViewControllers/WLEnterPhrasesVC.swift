@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import SubviewAttachingTextView
 
 class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {

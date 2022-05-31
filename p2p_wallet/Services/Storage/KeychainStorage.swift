@@ -6,6 +6,7 @@ import Foundation
 import KeychainSwift
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 class KeychainStorage {
     // MARK: - Constants

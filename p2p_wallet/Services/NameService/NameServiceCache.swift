@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Resolver
 
 protocol NameServiceCacheType {
     func save(_ name: String?, for owner: String)

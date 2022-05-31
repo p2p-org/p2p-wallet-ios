@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import SolanaSwift
 import UIKit
 
 class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {

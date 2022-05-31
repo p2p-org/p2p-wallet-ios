@@ -7,7 +7,9 @@
 
 import FeeRelayerSwift
 import OrcaSwapSwift
+import Resolver
 import RxSwift
+import SolanaSwift
 
 class SendService: SendServiceType {
     private let locker = NSLock()

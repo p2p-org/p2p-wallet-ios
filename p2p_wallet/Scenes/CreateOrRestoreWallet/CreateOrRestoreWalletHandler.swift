@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 protocol CreateOrRestoreWalletHandler {
     func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?)

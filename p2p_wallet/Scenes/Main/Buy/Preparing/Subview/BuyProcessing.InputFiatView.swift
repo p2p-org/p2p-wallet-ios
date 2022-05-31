@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import Resolver
 import RxSwift
 
 extension BuyPreparing {

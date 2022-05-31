@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import SolanaSwift
 
 extension DerivablePaths {
     typealias Callback = (SolanaSDK.DerivablePath) -> Void

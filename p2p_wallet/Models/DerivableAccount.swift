@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 struct DerivableAccount: Hashable {
     let info: SolanaSwift.Account

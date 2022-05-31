@@ -5,6 +5,7 @@
 import BEPureLayout
 import Foundation
 import RxSwift
+import SolanaSwift
 
 protocol QrCodeImageRender {
     func render(username: String?, address: String?, token: SolanaSDK.Token?, showTokenIcon: Bool) -> Single<UIImage>

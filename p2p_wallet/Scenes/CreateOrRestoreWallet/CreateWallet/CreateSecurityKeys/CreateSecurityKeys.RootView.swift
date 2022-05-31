@@ -6,6 +6,7 @@
 //
 
 import Action
+import Resolver
 import RxCocoa
 import RxSwift
 import TagListView

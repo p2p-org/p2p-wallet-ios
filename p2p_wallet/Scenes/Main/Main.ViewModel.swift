@@ -9,6 +9,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol MainViewModelType {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get

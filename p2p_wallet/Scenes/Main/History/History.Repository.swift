@@ -3,6 +3,8 @@
 //
 
 import Foundation
+import Resolver
+import SolanaSwift
 
 /// The repository that works with transactions.
 protocol HistoryTransactionRepository {

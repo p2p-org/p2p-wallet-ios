@@ -8,6 +8,7 @@
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandler {

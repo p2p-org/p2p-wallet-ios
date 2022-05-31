@@ -7,6 +7,7 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 protocol SwapProviderType {
     /// Price loading for a single pair of token

@@ -9,8 +9,8 @@ import Action
 import BECollectionView
 @_exported import BEPureLayout
 import Firebase
-@_exported import Resolver
-@_exported import SolanaSwift
+import Resolver
+import SolanaSwift
 @_exported import SwiftyUserDefaults
 import UIKit
 
