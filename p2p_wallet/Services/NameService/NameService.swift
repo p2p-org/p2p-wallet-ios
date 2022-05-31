@@ -72,7 +72,7 @@ class NameService: NameServiceType {
         let urlString = "\(endpoint)/\(name)"
         let url = URL(string: urlString)!
 
-        return Task {
+        return Single.async {
             var urlRequest = URLRequest(url: url)
             urlRequest.httpMethod = "POST"
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -80,7 +80,6 @@ class NameService: NameServiceType {
             let (data, _) = try await URLSession.shared.data(from: urlRequest)
             return try JSONDecoder().decode(PostResponse.self, from: data)
         }
-        .asSingle()
     }
 
     private func getOwner(_ name: String) -> Single<Owner?> {
@@ -105,7 +104,7 @@ class NameService: NameServiceType {
     }
 
     private func request<T: Decodable>(url: String) -> Single<T> {
-        Task {
+        Single.async {
             guard let url = URL(string: url) else {
                 throw NameService.Error.invalidURL
             }
@@ -120,7 +119,6 @@ class NameService: NameServiceType {
                 throw NameService.Error.invalidStatusCode(response.statusCode)
             }
         }
-        .asSingle()
     }
 }
 

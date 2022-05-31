@@ -26,7 +26,7 @@ extension Buy {
             let baseAmount = input.currency is FiatCurrency ? input.amount : nil
             let quoteAmount = input.currency is CryptoCurrency ? input.amount : nil
 
-            return Task {
+            return Single.async {
                 try await provider
                     .getBuyQuote(
                         baseCurrencyCode: base.moonpayCode,
@@ -35,7 +35,6 @@ extension Buy {
                         quoteCurrencyAmount: quoteAmount
                     )
             }
-            .asSingle()
             .map { quote in
                 .init(
                     amount: currency is CryptoCurrency ? quote.quoteCurrencyAmount : quote.totalAmount,
@@ -60,11 +59,10 @@ extension Buy {
             from fiatCurrency: FiatCurrency,
             to cryptoCurrency: CryptoCurrency
         ) -> Single<ExchangeRate> {
-            Task {
+            Single.async {
                 try await provider
                     .getPrice(for: cryptoCurrency.moonpayCode, as: fiatCurrency.moonpayCode.uppercased())
             }
-            .asSingle()
             .map { exchangeRate in
                 .init(amount: exchangeRate, cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency)
             }
@@ -76,19 +74,17 @@ extension Buy {
         }
 
         func getMinAmount(currency: Currency) -> Single<Double> {
-            Task {
+            Single.async {
                 try await provider
                     .getAllSupportedCurrencies()
             }
-            .asSingle()
             .map { _getMinAmount(currencies: $0, for: currency) }
         }
 
         func getMinAmounts(_ currency1: Currency, _ currency2: Currency) -> Single<(Double, Double)> {
-            Task {
+            Single.async {
                 try await provider.getAllSupportedCurrencies()
             }
-            .asSingle()
             .map { currencies in
                 (
                     _getMinAmount(currencies: currencies, for: currency1),

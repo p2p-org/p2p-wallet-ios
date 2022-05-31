@@ -211,35 +211,34 @@ extension RenVM.LockAndMint {
             url += "/api/address/\(address)/utxo"
             let request = URLRequest(url: .init(string: url)!)
 
-            return Task<TxDetails, Error> {
+            return Single<TxDetails>.async {
                 let (data, _) = try await URLSession.shared.data(from: request)
                 return try JSONDecoder().decode(TxDetails.self, from: data)
             }
-            .asSingle()
             // merge result to storage
-            .subscribe(onSuccess: { [weak self] txs in
-                guard let self = self else { return }
+                .subscribe(onSuccess: { [weak self] txs in
+                    guard let self = self else { return }
 
-                // filter out processing txs
-                let txs = txs.filter { !self.processingTxs.contains($0.txid) }
+                    // filter out processing txs
+                    let txs = txs.filter { !self.processingTxs.contains($0.txid) }
 
-                // save processing txs to storage and process confirmed transactions
-                for tx in txs {
-                    var date = Date()
-                    if let blocktime = tx.status.blockTime {
-                        date = Date(timeIntervalSince1970: TimeInterval(blocktime))
+                    // save processing txs to storage and process confirmed transactions
+                    for tx in txs {
+                        var date = Date()
+                        if let blocktime = tx.status.blockTime {
+                            date = Date(timeIntervalSince1970: TimeInterval(blocktime))
+                        }
+
+                        if tx.status.confirmed {
+                            self.sessionStorage.processingTx(tx: tx, didConfirmAt: date)
+                        } else {
+                            self.sessionStorage.processingTx(tx: tx, didReceiveAt: date)
+                        }
+
+                        self.mintStoredTxs(response: response)
                     }
-
-                    if tx.status.confirmed {
-                        self.sessionStorage.processingTx(tx: tx, didConfirmAt: date)
-                    } else {
-                        self.sessionStorage.processingTx(tx: tx, didReceiveAt: date)
-                    }
-
-                    self.mintStoredTxs(response: response)
-                }
-            })
-            .disposed(by: disposeBag)
+                })
+                .disposed(by: disposeBag)
         }
 
         private func processConfirmedAndSubmitedTransaction(
