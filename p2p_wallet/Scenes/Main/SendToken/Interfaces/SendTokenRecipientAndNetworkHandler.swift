@@ -121,7 +121,7 @@ extension SendTokenRecipientAndNetworkHandler {
                         )
                         .flatMap { [weak self] feeAmountInSOL in
                             guard let self = self else {
-                                throw SolanaSDK.Error.unknown
+                                throw SolanaError.unknown
                             }
 
                             // if fee is nil, no need to check for available wallets to pay fee

@@ -27,7 +27,7 @@ extension SolanaSDK: AssociatedTokenAccountHandler {
 
     func createAssociatedTokenAccount(tokenMint: PublicKey, isSimulation: Bool) -> Single<TransactionID> {
         guard let account = accountStorage.account
-        else { return .error(SolanaSDK.Error.unauthorized) }
+        else { return .error(SolanaError.unauthorized) }
 
         return createAssociatedTokenAccount(
             for: account.publicKey,

@@ -62,7 +62,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
         return networkFeesRequest
             .map { [weak self] networkFees in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
+                guard let self = self else { throw SolanaError.unknown }
 
                 // Liquidity provider fee
                 let liquidityProviderFees = try self.getLiquidityProviderFees(
@@ -207,7 +207,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         //     destinationAddress: destinationAddress
         // )
         //     .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
-        //         guard let self = self else { throw SolanaSDK.Error.unknown }
+        //         guard let self = self else { throw SolanaError.unknown }
         //
         //         // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
         //         if self.isSwappingNatively(
@@ -226,7 +226,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         //         )
         //     }
         //     .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
-        //         guard let self = self else { throw SolanaSDK.Error.unknown }
+        //         guard let self = self else { throw SolanaError.unknown }
         //         if payingWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
         //             return .just(feeAmount)
         //         }
@@ -339,7 +339,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         //     inputAmount: amount,
         //     slippage: slippage
         // ).flatMap { [weak self] preparedTransactions in
-        //     guard let feeRelay = self?.relayService else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
+        //     guard let feeRelay = self?.relayService else { throw SolanaError.other("Fee relay is deallocated") }
         //     return feeRelay.topUpAndRelayTransactions(
         //         preparedTransactions: preparedTransactions.transactions,
         //         payingFeeToken: payingFeeToken,
