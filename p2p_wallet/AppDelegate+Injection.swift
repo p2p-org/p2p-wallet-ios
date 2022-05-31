@@ -16,6 +16,7 @@ extension Resolver: ResolverRegistering {
         // MARK: - Deprecated (REMOVE LATER)
 
         register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
+            .implements(FeeAPIClient.self)
             .scope(.session)
 
         register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
@@ -127,10 +128,22 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - FeeRelayer
 
-//        register { FeeRelayer.APIClient(version: 1) }
-//            .implements(FeeRelayerAPIClientType.self)
-//            .scope(.session)
-//
+        register { FeeRelayerSwift.APIClient(version: 1) }
+            .implements(FeeRelayerAPIClient.self)
+            .scope(.session)
+
+        register { FeeRelayerService(
+            orcaSwap: resolve(),
+            accountStorage: resolve(),
+            solanaApiClient: resolve(),
+            feeCalculator: DefaultFreeRelayerCalculator(),
+            feeRelayerAPIClient: resolve(),
+            deviceType: .iOS,
+            buildNumber: Bundle.main.fullVersionNumber
+        ) }
+        .implements(FeeRelayer.self)
+        .scope(.session)
+
 //        register { try! FeeRelayer.Relay(
 //            apiClient: resolve(),
 //            solanaClient: resolve(),
