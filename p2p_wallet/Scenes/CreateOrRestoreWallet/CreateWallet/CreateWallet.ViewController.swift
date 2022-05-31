@@ -18,7 +18,6 @@ extension CreateWallet {
         // MARK: - Dependencies
 
         private let viewModel: CreateWalletViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
 
         // MARK: - Properties
 
@@ -36,7 +35,6 @@ extension CreateWallet {
         override func viewDidLoad() {
             super.viewDidLoad()
             viewModel.kickOff()
-            analyticsManager.log(event: .createWalletOpen)
         }
 
         override func setUp() {

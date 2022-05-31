@@ -54,6 +54,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     // MARK: - Actions
 
     func kickOff() {
+        analyticsManager.log(event: .createWalletOpen)
         navigateToExplanation()
     }
 
