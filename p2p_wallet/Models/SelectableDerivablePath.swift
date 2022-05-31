@@ -9,6 +9,6 @@ import Foundation
 import SolanaSwift
 
 struct SelectableDerivablePath: Hashable {
-    let path: SolanaSDK.DerivablePath
+    let path: DerivablePath
     var isSelected: Bool
 }

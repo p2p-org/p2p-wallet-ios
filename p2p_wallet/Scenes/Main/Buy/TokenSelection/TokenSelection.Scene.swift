@@ -109,7 +109,7 @@ extension BuyTokenSelection {
             }
 
             @discardableResult
-            func setUp(token: SolanaSDK.Token, amount: Double?, amountInFiat: Double?) -> Self {
+            func setUp(token: Token, amount: Double?, amountInFiat: Double?) -> Self {
                 iconRef.view?.setUp(token: token)
                 coinNameRef.view?.text = token.name
                 amountRef.view?.text = "\(amount.toString(maximumFractionDigits: 9)) \(token.symbol)"

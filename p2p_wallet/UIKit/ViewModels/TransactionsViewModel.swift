@@ -13,7 +13,7 @@ import RxCocoa
 import RxSwift
 import SolanaSwift
 
-class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
+class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     // MARK: - Dependencies
 
     private let account: String
@@ -74,7 +74,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             .disposed(by: disposeBag)
     }
 
-    override func createRequest() -> Single<[SolanaSDK.ParsedTransaction]> {
+    override func createRequest() -> Single<[ParsedTransaction]> {
         fatalError("Method has not been implemented")
 
         // let fetchPubkeys: Single<[String]>
@@ -92,8 +92,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         // }
         //
         // return fetchPubkeys
-        //     .flatMap { [weak self] pubkeys -> Single<[SolanaSDK.ParsedTransaction]> in
-        //         guard let self = self else { return .error(SolanaSDK.Error.unknown) }
+        //     .flatMap { [weak self] pubkeys -> Single<[ParsedTransaction]> in
+        //         guard let self = self else { return .error(SolanaError.unknown) }
         //         return self.repository.getTransactionsHistory(
         //             account: self.account,
         //             accountSymbol: self.accountSymbol,
@@ -109,7 +109,7 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
         //     )
     }
 
-    override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+    override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
         var transactions = insertProcessingTransaction(intoCurrentData: newData)
         transactions = updatedTransactionsWithPrices(transactions: transactions)
         return transactions
@@ -129,20 +129,20 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
             limit: 3,
             p2pFeePayerPubkeys: Defaults.p2pFeePayerPubkeys
         )
-            .map { [weak self] transactions -> [SolanaSDK.ParsedTransaction] in
+            .map { [weak self] transactions -> [ParsedTransaction] in
                 // find receipt
                 let newTransactions = transactions
                     .filter { newTx in self?.data.contains(where: { $0.signature == newTx.signature }) == false }
 
                 // receive
                 if newTransactions
-                    .contains(where: { ($0.value as? SolanaSDK.TransferTransaction)?.transferType == .receive })
+                    .contains(where: { ($0.value as? TransferTransaction)?.transferType == .receive })
                 {
                     return newTransactions
                 }
 
                 // throw
-                throw SolanaSDK.Error.notFound
+                throw SolanaError.notFound
             }
             .retry(maxAttempts: 3, delayInSeconds: 2)
             .subscribe(onSuccess: { [weak self] newTransactions in
@@ -162,8 +162,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
 
     // MARK: - Helpers
 
-    private func updatedTransactionsWithPrices(transactions: [SolanaSDK.ParsedTransaction])
-        -> [SolanaSDK.ParsedTransaction]
+    private func updatedTransactionsWithPrices(transactions: [ParsedTransaction])
+        -> [ParsedTransaction]
     {
         var transactions = transactions
         for index in 0 ..< transactions.count {
@@ -173,8 +173,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     }
 
     private func updatedTransactionWithPrice(
-        transaction: SolanaSDK.ParsedTransaction
-    ) -> SolanaSDK.ParsedTransaction {
+        transaction: ParsedTransaction
+    ) -> ParsedTransaction {
         guard let price = pricesService.currentPrice(for: transaction.symbol)
         else { return transaction }
 
@@ -186,8 +186,8 @@ class TransactionsViewModel: BEListViewModel<SolanaSDK.ParsedTransaction> {
     }
 
     private func insertProcessingTransaction(
-        intoCurrentData currentData: [SolanaSDK.ParsedTransaction]
-    ) -> [SolanaSDK.ParsedTransaction] {
+        intoCurrentData currentData: [ParsedTransaction]
+    ) -> [ParsedTransaction] {
         let transactions = transactionHandler.getProccessingTransactions(of: account)
             .filter { !$0.isFailure }
             .sorted(by: { $0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970 })

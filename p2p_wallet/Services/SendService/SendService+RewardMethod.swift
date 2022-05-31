@@ -13,16 +13,16 @@ extension SendService {
     func sendToSolanaBCViaRewardMethod(
         from _: Wallet,
         receiver _: String,
-        amount _: SolanaSDK.Lamports
+        amount _: Lamports
     ) -> Single<String> {
         fatalError("Method has not been implemented")
 
         // guard let owner = solanaSDK.accountStorage.account,
         //       let sender = wallet.pubkey
-        // else { return .error(SolanaSDK.Error.unauthorized) }
+        // else { return .error(SolanaError.unauthorized) }
         // return solanaSDK.getRecentBlockhash(commitment: nil)
-        //     .flatMap { [weak self] recentBlockhash -> Single<((SolanaSDK.PreparedTransaction, String?), String)> in
-        //         guard let self = self else { throw SolanaSDK.Error.unknown }
+        //     .flatMap { [weak self] recentBlockhash -> Single<((PreparedTransaction, String?), String)> in
+        //         guard let self = self else { throw SolanaError.unknown }
         //         return self.prepareForSendingToSolanaNetworkViaRewardMethod(
         //             from: wallet,
         //             receiver: receiver,
@@ -32,10 +32,10 @@ extension SendService {
         //             .map { ($0, recentBlockhash) }
         //     }
         //     .flatMap { [weak self] params, recentBlockhash in
-        //         guard let self = self else { throw SolanaSDK.Error.unknown }
+        //         guard let self = self else { throw SolanaError.unknown }
         //         // get signature
         //         guard let data = params.0.transaction.findSignature(pubkey: owner.publicKey)?.signature
-        //         else { throw SolanaSDK.Error.other("Signature not found") }
+        //         else { throw SolanaError.other("Signature not found") }
         //
         //         let authoritySignature = Base58.encode(data.bytes)
         //
@@ -88,17 +88,17 @@ extension SendService {
         receiver _: String,
         amount _: Double,
         recentBlockhash _: String? = nil,
-        lamportsPerSignature _: SolanaSDK.Lamports? = nil,
-        minRentExemption _: SolanaSDK.Lamports? = nil,
+        lamportsPerSignature _: Lamports? = nil,
+        minRentExemption _: Lamports? = nil,
         usingCachedFeePayerPubkey _: Bool = false
-    ) -> Single<(SolanaSDK.PreparedTransaction, String?)> {
+    ) -> Single<(PreparedTransaction, String?)> {
         fatalError("Method has not been implemented")
 
         // let amount = amount.toLamport(decimals: wallet.token.decimals)
-        // guard let sender = wallet.pubkey else { return .error(SolanaSDK.Error.other("Source wallet is not valid")) }
+        // guard let sender = wallet.pubkey else { return .error(SolanaError.other("Source wallet is not valid")) }
         // // form request
         // if receiver == sender {
-        //     return .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
+        //     return .error(SolanaError.other(L10n.youCanNotSendTokensToYourself))
         // }
         //
         // // prepare fee payer
@@ -113,8 +113,8 @@ extension SendService {
         //
         // return feePayerRequest
         //     .flatMap { [weak self] feePayer in
-        //         guard let self = self else { return .error(SolanaSDK.Error.unknown) }
-        //         let feePayer = feePayer == nil ? nil : try SolanaSDK.PublicKey(string: feePayer)
+        //         guard let self = self else { return .error(SolanaError.unknown) }
+        //         let feePayer = feePayer == nil ? nil : try PublicKey(string: feePayer)
         //
         //         if wallet.isNativeSOL {
         //             return self.solanaSDK.prepareSendingNativeSOL(

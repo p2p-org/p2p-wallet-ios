@@ -62,7 +62,7 @@ extension ReceiveToken {
         private let screenCanHaveHint: Bool
 
         init(
-            solanaPubkey: SolanaSDK.PublicKey,
+            solanaPubkey: PublicKey,
             solanaTokenWallet: Wallet? = nil,
             isOpeningFromToken: Bool = false
         ) {

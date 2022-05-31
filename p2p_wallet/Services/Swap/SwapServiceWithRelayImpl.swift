@@ -62,7 +62,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
 
         return networkFeesRequest
             .map { [weak self] networkFees in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
+                guard let self = self else { throw SolanaError.unknown }
 
                 // Liquidity provider fee
                 let liquidityProviderFees = try self.getLiquidityProviderFees(
@@ -82,12 +82,12 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
 
     func calculateNetworkFeeInPayingToken(
-        networkFee _: SolanaSDK.FeeAmount,
+        networkFee _: FeeAmount,
         payingTokenMint _: String
-    ) -> Single<SolanaSDK.FeeAmount?> {
+    ) -> Single<FeeAmount?> {
         fatalError("Method has not been implemented")
 
-        // if payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+        // if payingTokenMint == PublicKey.wrappedSOLMint.base58EncodedString {
         //     return .just(networkFee)
         // }
         // return relayService.calculateFeeInPayingToken(feeInSOL: networkFee, payingFeeTokenMint: payingTokenMint)
@@ -145,7 +145,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     private func getLiquidityProviderFees(
         poolsPair: OrcaSwapSwift.PoolsPair?,
         destinationAddress: String?,
-        destinationToken: SolanaSDK.Token?,
+        destinationToken: Token?,
         inputAmount: Double?,
         slippage: Double
     ) throws -> [PayingFee] {
@@ -195,7 +195,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         swapPools _: OrcaSwapSwift.PoolsPair?,
         sourceMint _: String,
         destinationAddress _: String?,
-        destinationToken _: SolanaSDK.Token,
+        destinationToken _: Token,
         payingWallet _: Wallet
     ) -> Single<[PayingFee]> {
         fatalError("Method has not been implemented")
@@ -206,8 +206,8 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         //     destinationTokenMint: destinationToken.address,
         //     destinationAddress: destinationAddress
         // )
-        //     .flatMap { [weak self] networkFee -> Single<SolanaSDK.FeeAmount> in
-        //         guard let self = self else { throw SolanaSDK.Error.unknown }
+        //     .flatMap { [weak self] networkFee -> Single<FeeAmount> in
+        //         guard let self = self else { throw SolanaError.unknown }
         //
         //         // when free transaction is not available and user is paying with sol, let him do this the normal way (don't use fee relayer)
         //         if self.isSwappingNatively(
@@ -225,9 +225,9 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         //             payingTokenMint: payingWallet.mintAddress
         //         )
         //     }
-        //     .flatMap { [weak self] feeAmount -> Single<SolanaSDK.FeeAmount> in
-        //         guard let self = self else { throw SolanaSDK.Error.unknown }
-        //         if payingWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+        //     .flatMap { [weak self] feeAmount -> Single<FeeAmount> in
+        //         guard let self = self else { throw SolanaError.unknown }
+        //         if payingWallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
         //             return .just(feeAmount)
         //         }
         //         return self.relayService.calculateFeeInPayingToken(
@@ -266,7 +266,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         //         }
         //
         //         if self.isSwappingNatively(
-        //             payingTokenMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+        //             payingTokenMint: PublicKey.wrappedSOLMint.base58EncodedString
         //         ) {
         //             allFees.append(
         //                 .init(
@@ -339,7 +339,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         //     inputAmount: amount,
         //     slippage: slippage
         // ).flatMap { [weak self] preparedTransactions in
-        //     guard let feeRelay = self?.relayService else { throw SolanaSDK.Error.other("Fee relay is deallocated") }
+        //     guard let feeRelay = self?.relayService else { throw SolanaError.other("Fee relay is deallocated") }
         //     return feeRelay.topUpAndRelayTransactions(
         //         preparedTransactions: preparedTransactions.transactions,
         //         payingFeeToken: payingFeeToken,
@@ -358,7 +358,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         fatalError("Method has not been implemented")
 
         // let expectedTransactionFee = expectedTransactionFee ?? (relayService.cache.lamportsPerSignature ?? 5000) * 2
-        // return payingTokenMint == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString &&
+        // return payingTokenMint == PublicKey.wrappedSOLMint.base58EncodedString &&
         //     relayService.cache.freeTransactionFeeLimit?
         //     .isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }

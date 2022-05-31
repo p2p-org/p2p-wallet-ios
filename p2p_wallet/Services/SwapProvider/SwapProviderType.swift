@@ -27,8 +27,8 @@ protocol SwapProviderType {
     func calculateFees(
         sourceWallet: Wallet?,
         destinationWallet: Wallet?,
-        lamportsPerSignature: SolanaSDK.Lamports?,
-        creatingAccountFee: SolanaSDK.Lamports?
+        lamportsPerSignature: Lamports?,
+        creatingAccountFee: Lamports?
     ) -> Single<[PayingFee]>
 
     func calculateMinOrderSize(
@@ -61,10 +61,10 @@ protocol SwapProviderType {
 
     /// Main function
     func swap(
-        fromWallet: SolanaSDK.Wallet,
-        toWallet: SolanaSDK.Wallet,
+        fromWallet: Wallet,
+        toWallet: Wallet,
         amount: Double,
         slippage: Double,
         isSimulation: Bool
-    ) -> Single<SolanaSDK.TransactionID>
+    ) -> Single<TransactionID>
 }

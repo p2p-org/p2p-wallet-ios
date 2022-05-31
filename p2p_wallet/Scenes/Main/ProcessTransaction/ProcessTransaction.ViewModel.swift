@@ -99,7 +99,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             transactionId: nil,
             sentAt: Date(),
             rawTransaction: rawTransaction,
-            status: .error(SolanaSDK.Error.unknown)
+            status: .error(SolanaError.unknown)
         )
 
         // observe transaction based on transaction index

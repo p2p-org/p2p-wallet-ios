@@ -15,7 +15,7 @@ protocol HistoryTransactionRepository {
     ///   - limit: the number of transactions that will be fetched.
     ///   - before: the transaction signature, that indicates the offset of fetching.
     /// - Returns: the list of `SignatureInfo`
-    func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo]
+    func getSignatures(address: String, limit: Int, before: String?) async throws -> [SignatureInfo]
 
     /// Fetch all data of the transaction
     ///
@@ -28,7 +28,7 @@ extension History {
     class SolanaTransactionRepository: HistoryTransactionRepository {
         @Injected private var solanaSDK: SolanaSDK
 
-        func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo] {
+        func getSignatures(address: String, limit: Int, before: String?) async throws -> [SignatureInfo] {
             try await solanaSDK
                 .getSignaturesForAddress(address: address, configs: .init(limit: limit, before: before))
                 .value
@@ -44,7 +44,7 @@ extension History {
 
         let delegate: HistoryTransactionRepository
 
-        private let signaturesCache = Utils.InMemoryCache<[SolanaSDK.SignatureInfo]>(maxSize: 50)
+        private let signaturesCache = Utils.InMemoryCache<[SignatureInfo]>(maxSize: 50)
         private let transactionCache = Utils.InMemoryCache<TransactionInfo>(maxSize: 50)
 
         init(delegate: HistoryTransactionRepository) { self.delegate = delegate }
@@ -61,7 +61,7 @@ extension History {
             return transaction!
         }
 
-        func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo] {
+        func getSignatures(address: String, limit: Int, before: String?) async throws -> [SignatureInfo] {
             let cacheKey = "\(address)-\(limit)-\(before ?? "nil")"
 
             var signatures = await signaturesCache.read(key: cacheKey)

@@ -11,13 +11,13 @@ import SolanaSwift
 
 protocol AssociatedTokenAccountHandler {
     func hasAssociatedTokenAccountBeenCreated(
-        tokenMint: SolanaSDK.PublicKey
+        tokenMint: PublicKey
     ) -> Single<Bool>
 
     func createAssociatedTokenAccount(
-        tokenMint: SolanaSDK.PublicKey,
+        tokenMint: PublicKey,
         isSimulation: Bool
-    ) -> Single<SolanaSDK.TransactionID>
+    ) -> Single<TransactionID>
 }
 
 extension SolanaSDK: AssociatedTokenAccountHandler {
@@ -27,7 +27,7 @@ extension SolanaSDK: AssociatedTokenAccountHandler {
 
     func createAssociatedTokenAccount(tokenMint: PublicKey, isSimulation: Bool) -> Single<TransactionID> {
         guard let account = accountStorage.account
-        else { return .error(SolanaSDK.Error.unauthorized) }
+        else { return .error(SolanaError.unauthorized) }
 
         return createAssociatedTokenAccount(
             for: account.publicKey,

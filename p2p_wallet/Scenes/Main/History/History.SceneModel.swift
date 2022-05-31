@@ -12,7 +12,7 @@ import RxSwift
 import SolanaSwift
 
 extension History {
-    class SceneModel: BEStreamListViewModel<SolanaSDK.ParsedTransaction> {
+    class SceneModel: BEStreamListViewModel<ParsedTransaction> {
         private let disposeBag = DisposeBag()
 
         private let solanaSDK: SolanaSDK
@@ -124,7 +124,7 @@ extension History {
             super.clear()
         }
 
-        override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
+        override func next() -> Observable<[ParsedTransaction]> {
             AsyncThrowingStream<[HistoryStreamSource.Result], Error> { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
@@ -175,7 +175,7 @@ extension History {
             .asObservable()
             .flatMap { results in Observable.from(results) }
             .concatMap { result in
-                Observable.async { () -> [SolanaSDK.ParsedTransaction] in
+                Observable.async { () -> [ParsedTransaction] in
                     let transactionInfo = try await self.transactionRepository
                         .getTransaction(signature: result.0.signature)
                     let transaction = try await self.transactionParser.parse(
@@ -196,8 +196,8 @@ extension History {
             })
         }
 
-        override func join(_ newItems: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
-            var filteredNewData: [SolanaSDK.ParsedTransaction] = []
+        override func join(_ newItems: [ParsedTransaction]) -> [ParsedTransaction] {
+            var filteredNewData: [ParsedTransaction] = []
             for trx in newItems {
                 if data.contains(where: { $0.signature == trx.signature }) { continue }
                 filteredNewData.append(trx)
@@ -205,7 +205,7 @@ extension History {
             return data + filteredNewData
         }
 
-        override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+        override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
             // Apply output transformation
             var data = newData
             for output in outputs { data = output.process(newData: data) }

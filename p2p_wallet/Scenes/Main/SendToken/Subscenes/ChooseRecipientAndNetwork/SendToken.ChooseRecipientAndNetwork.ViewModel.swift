@@ -91,7 +91,7 @@ extension SendToken.ChooseRecipientAndNetwork {
 
             // Smart select fee token
             recipientSubject
-                .flatMapLatest { [weak self] _ -> Single<SolanaSDK.FeeAmount?> in
+                .flatMapLatest { [weak self] _ -> Single<FeeAmount?> in
                     guard
                         let self = self,
                         let wallet = self.sendTokenViewModel.walletSubject.value,
@@ -104,7 +104,7 @@ extension SendToken.ChooseRecipientAndNetwork {
                         network: self.networkSubject.value,
                         payingTokenMint: wallet.mintAddress
                     )
-                        .flatMap { [weak self] fee -> Single<SolanaSDK.FeeAmount?> in
+                        .flatMap { [weak self] fee -> Single<FeeAmount?> in
                             guard let self = self, let fee = fee else { return .just(.zero) }
 
                             return self.sendService.getFeesInPayingToken(

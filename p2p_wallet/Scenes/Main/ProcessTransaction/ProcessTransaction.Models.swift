@@ -14,7 +14,7 @@ import SolanaSwift
 protocol RawTransactionType {
     func createRequest() -> Single<String>
     var mainDescription: String { get }
-    var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? { get }
+    var networkFees: (total: Lamports, token: Token)? { get }
 }
 
 extension RawTransactionType {
@@ -64,7 +64,7 @@ extension ProcessTransaction {
                let currentAmount = payingWallet.lamports,
                fees.total > currentAmount
             {
-                return .error(SolanaSDK.Error.other(
+                return .error(SolanaError.other(
                     L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
                         + ". "
                         + L10n
@@ -89,7 +89,7 @@ extension ProcessTransaction {
             ).map { $0.first ?? "" }
         }
 
-        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+        var networkFees: (total: Lamports, token: Token)? {
             guard let networkFees = fees.networkFees?.total,
                   let payingFeeToken = payingWallet?.token
             else {
@@ -110,12 +110,12 @@ extension ProcessTransaction {
 
         func createRequest() -> Single<String> {
             guard let pubkey = closingWallet.pubkey else {
-                return .error(SolanaSDK.Error.unknown)
+                return .error(SolanaError.unknown)
             }
             return solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
         }
 
-        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+        var networkFees: (total: Lamports, token: Token)? {
             (total: 5000, token: .nativeSolana) // TODO: Fix later
         }
     }
@@ -126,10 +126,10 @@ extension ProcessTransaction {
         let sender: Wallet
         let receiver: SendToken.Recipient
         let authority: String?
-        let amount: SolanaSDK.Lamports
+        let amount: Lamports
         let payingFeeWallet: Wallet?
         let feeInSOL: UInt64
-        let feeInToken: SolanaSDK.FeeAmount?
+        let feeInToken: FeeAmount?
         let isSimulation: Bool
 
         var mainDescription: String {
@@ -150,7 +150,7 @@ extension ProcessTransaction {
             )
         }
 
-        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+        var networkFees: (total: Lamports, token: Token)? {
             guard let feeInToken = feeInToken, let token = payingFeeWallet?.token else {
                 return nil
             }

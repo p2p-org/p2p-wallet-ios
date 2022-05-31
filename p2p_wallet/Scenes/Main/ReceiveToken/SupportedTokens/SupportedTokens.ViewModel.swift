@@ -18,7 +18,7 @@ protocol SupportedTokensViewModelType: BEListViewModelType {
 }
 
 extension SupportedTokens {
-    final class ViewModel: BEListViewModel<SolanaSDK.Token> {
+    final class ViewModel: BEListViewModel<Token> {
         // MARK: - Dependencies
 
         private let tokensRepository: TokensRepository
@@ -45,18 +45,18 @@ extension SupportedTokens {
                 .disposed(by: disposeBag)
         }
 
-        override func createRequest() -> Single<[SolanaSDK.Token]> {
+        override func createRequest() -> Single<[Token]> {
             var existingSymbols: Set<String> = []
 
             return tokensRepository.getTokensList()
-                .map { tokens -> [SolanaSDK.Token] in
+                .map { tokens -> [Token] in
                     tokens
                         .excludingSpecialTokens()
                         .filter { existingSymbols.insert($0.symbol).inserted }
                 }
         }
 
-        override func map(newData: [SolanaSDK.Token]) -> [SolanaSDK.Token] {
+        override func map(newData: [Token]) -> [Token] {
             var data = super.map(newData: newData)
                 .sorted { firstToken, secondToken in
                     let firstTokenPriority = getTokenPriority(firstToken)
@@ -74,7 +74,7 @@ extension SupportedTokens {
             return data
         }
 
-        private func getTokenPriority(_ token: SolanaSDK.Token) -> Int {
+        private func getTokenPriority(_ token: Token) -> Int {
             switch token.symbol {
             case "SOL":
                 return .max
@@ -101,7 +101,7 @@ extension SupportedTokens.ViewModel: SupportedTokensViewModelType {
     var keyword: String { keywordSubject.value ?? "" }
 }
 
-private extension SolanaSDK.Token {
+private extension Token {
     func hasKeyword(_ keyword: String) -> Bool {
         symbol.lowercased().contains(keyword.lowercased())
             || name.lowercased().contains(keyword.lowercased())

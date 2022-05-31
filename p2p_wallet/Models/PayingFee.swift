@@ -37,16 +37,16 @@ struct PayingFee {
     }
 
     let type: FeeType
-    let lamports: SolanaSDK.Lamports
-    let token: SolanaSDK.Token
+    let lamports: Lamports
+    let token: Token
 
     let isFree: Bool
     let info: Info?
 
     init(
         type: FeeType,
-        lamports: SolanaSDK.Lamports,
-        token: SolanaSDK.Token
+        lamports: Lamports,
+        token: Token
     ) {
         self.type = type
         self.lamports = lamports
@@ -57,8 +57,8 @@ struct PayingFee {
 
     init(
         type: FeeType,
-        lamports: SolanaSDK.Lamports,
-        token: SolanaSDK.Token,
+        lamports: Lamports,
+        token: Token,
         isFree: Bool,
         info: Info?
     ) {
@@ -77,7 +77,7 @@ struct PayingFee {
 }
 
 extension Array where Element == PayingFee {
-    var networkFees: SolanaSDK.FeeAmount? {
+    var networkFees: FeeAmount? {
         var transactionFee: UInt64?
         var accountCreationFee: UInt64?
         var depositFee: UInt64?
@@ -100,7 +100,7 @@ extension Array where Element == PayingFee {
         return nil
     }
 
-    func networkFees(of token: String) -> SolanaSDK.FeeAmount? {
+    func networkFees(of token: String) -> FeeAmount? {
         let fees = filter { $0.token.symbol == token }
 
         var transactionFee: UInt64?
@@ -126,8 +126,8 @@ extension Array where Element == PayingFee {
         )
     }
 
-    func transactionFees(of token: String) -> SolanaSDK.Lamports {
+    func transactionFees(of token: String) -> Lamports {
         filter { $0.type == .transactionFee && $0.token.symbol == token }
-            .reduce(SolanaSDK.Lamports(0)) { $0 + $1.lamports }
+            .reduce(Lamports(0)) { $0 + $1.lamports }
     }
 }

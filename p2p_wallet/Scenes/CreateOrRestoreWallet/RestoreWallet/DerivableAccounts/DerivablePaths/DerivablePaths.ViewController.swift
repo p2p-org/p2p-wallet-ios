@@ -10,12 +10,12 @@ import Foundation
 import SolanaSwift
 
 extension DerivablePaths {
-    typealias Callback = (SolanaSDK.DerivablePath) -> Void
+    typealias Callback = (DerivablePath) -> Void
 
     class ViewController: WLBottomSheet, BECollectionViewDelegate {
         // MARK: - Properties
 
-        private let initPath: SolanaSDK.DerivablePath
+        private let initPath: DerivablePath
         private let viewModel: ViewModel
         private let onSelect: Callback?
 
@@ -25,7 +25,7 @@ extension DerivablePaths {
 
         // MARK: - Initializers
 
-        init(currentPath: SolanaSDK.DerivablePath, onSelect: Callback?) {
+        init(currentPath: DerivablePath, onSelect: Callback?) {
             initPath = currentPath
             viewModel = ViewModel(currentPath: currentPath)
             self.onSelect = onSelect
@@ -59,9 +59,9 @@ extension DerivablePaths {
                     UIView.defaultSeparator()
 
                     // Derivable paths
-                    SolanaSDK.DerivablePath.DerivableType
+                    DerivablePath.DerivableType
                         .allCases
-                        .map { SolanaSDK.DerivablePath(type: $0, walletIndex: 0, accountIndex: 0) }
+                        .map { DerivablePath(type: $0, walletIndex: 0, accountIndex: 0) }
                         .enumerated()
                         .map { index, path -> UIView in
                             let selected = path == initPath
@@ -89,7 +89,7 @@ extension DerivablePaths {
             dismiss(animated: true)
 
             guard let tag = gesture.view?.tag else { return }
-            let pathType = SolanaSDK.DerivablePath.DerivableType.allCases[tag]
+            let pathType = DerivablePath.DerivableType.allCases[tag]
             onSelect?(.init(type: pathType, walletIndex: 0, accountIndex: 0))
         }
     }

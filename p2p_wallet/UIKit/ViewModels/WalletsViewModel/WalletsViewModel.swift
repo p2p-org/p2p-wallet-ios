@@ -283,7 +283,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     // MARK: - Account notifications
 
-    private func handleAccountNotification(_ notification: (pubkey: String, lamports: SolanaSDK.Lamports)) {
+    private func handleAccountNotification(_ notification: (pubkey: String, lamports: Lamports)) {
         // notify changes
         let oldLamportsValue = data.first(where: { $0.pubkey == notification.pubkey })?.lamports
         let newLamportsValue = notification.lamports

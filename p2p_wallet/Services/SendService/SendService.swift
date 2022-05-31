@@ -48,7 +48,7 @@ class SendService: SendServiceType {
         //                         .map { wallet in
         //                             orcaSwap.getTradablePoolsPairs(
         //                                 fromMint: wallet.mintAddress,
-        //                                 toMint: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString
+        //                                 toMint: PublicKey.wrappedSOLMint.base58EncodedString
         //                             )
         //                                 .do(onSuccess: { [weak self] poolsPair in
         //                                     self?.locker.lock()
@@ -81,7 +81,7 @@ class SendService: SendServiceType {
         receiver: String?,
         network: SendToken.Network,
         payingTokenMint: String?
-    ) -> Single<SolanaSDK.FeeAmount?> {
+    ) -> Single<FeeAmount?> {
         switch network {
         case .bitcoin:
             return .just(
@@ -111,14 +111,14 @@ class SendService: SendServiceType {
         }
     }
 
-    func getAvailableWalletsToPayFee(feeInSOL _: SolanaSDK.FeeAmount) -> Single<[Wallet]> {
+    func getAvailableWalletsToPayFee(feeInSOL _: FeeAmount) -> Single<[Wallet]> {
         fatalError("Method has not been implemented")
 
         // Single.zip(
         //     walletsRepository.getWallets()
         //         .filter { ($0.lamports ?? 0) > 0 }
         //         .map { wallet -> Single<Wallet?> in
-        //             if wallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString {
+        //             if wallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
         //                 return (wallet.lamports ?? 0) >= feeInSOL.total ? .just(wallet) : .just(nil)
         //             }
         //             return relayService.calculateFeeInPayingToken(
@@ -134,13 +134,13 @@ class SendService: SendServiceType {
     }
 
     func getFeesInPayingToken(
-        feeInSOL _: SolanaSDK.FeeAmount,
+        feeInSOL _: FeeAmount,
         payingFeeWallet _: Wallet
-    ) -> Single<SolanaSDK.FeeAmount?> {
+    ) -> Single<FeeAmount?> {
         fatalError("Method has not been implemented")
 
         // guard relayMethod == .relay else { return .just(nil) }
-        // if payingFeeWallet.mintAddress == SolanaSDK.PublicKey.wrappedSOLMint
+        // if payingFeeWallet.mintAddress == PublicKey.wrappedSOLMint
         //     .base58EncodedString { return .just(feeInSOL) }
         // return relayService.calculateFeeInPayingToken(
         //     feeInSOL: feeInSOL,
@@ -163,10 +163,10 @@ class SendService: SendServiceType {
         payingFeeWallet: Wallet? // nil for relayMethod == .reward
     ) -> Single<String> {
         let amount = amount.toLamport(decimals: wallet.token.decimals)
-        guard let sender = wallet.pubkey else { return .error(SolanaSDK.Error.other("Source wallet is not valid")) }
+        guard let sender = wallet.pubkey else { return .error(SolanaError.other("Source wallet is not valid")) }
         // form request
         if receiver == sender {
-            return .error(SolanaSDK.Error.other(L10n.youCanNotSendTokensToYourself))
+            return .error(SolanaError.other(L10n.youCanNotSendTokensToYourself))
         }
 
         // detect network

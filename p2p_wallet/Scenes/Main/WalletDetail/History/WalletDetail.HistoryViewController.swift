@@ -49,7 +49,7 @@ extension WalletDetail {
 
 extension WalletDetail.HistoryViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
+        guard let transaction = item as? ParsedTransaction else { return }
         viewModel.showTransaction(transaction)
     }
 }
