@@ -26,16 +26,15 @@ protocol HistoryTransactionRepository {
 
 extension History {
     class SolanaTransactionRepository: HistoryTransactionRepository {
-        @Injected private var solanaSDK: SolanaSDK
+        @Injected private var solanaAPIClient: SolanaAPIClient
 
         func getSignatures(address: String, limit: Int, before: String?) async throws -> [SignatureInfo] {
-            try await solanaSDK
+            try await solanaAPIClient
                 .getSignaturesForAddress(address: address, configs: .init(limit: limit, before: before))
-                .value
         }
 
         func getTransaction(signature: String) async throws -> TransactionInfo {
-            try await solanaSDK.getTransaction(transactionSignature: signature).value
+            try await solanaAPIClient.getTransaction(signature: signature, commitment: "recent")
         }
     }
 
