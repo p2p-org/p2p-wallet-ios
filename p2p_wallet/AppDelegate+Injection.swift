@@ -26,7 +26,6 @@ extension Resolver: ResolverRegistering {
         // MARK: - Lifetime app's services
 
         register { KeychainStorage() }
-            .implements(SolanaSDKAccountStorage.self) // Deprecated
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
             .implements(SolanaAccountStorage.self)
