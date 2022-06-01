@@ -9,19 +9,19 @@ import Foundation
 import RenVMSwift
 import RxCocoa
 
-extension LockAndMint {
+public extension LockAndMint {
     struct ProcessingTx: Codable, Hashable {
-        static let maxVote: UInt64 = 3
-        var tx: TxDetail
-        var receivedAt: Date?
-        var oneVoteAt: Date?
-        var twoVoteAt: Date?
-        var threeVoteAt: Date?
-        var confirmedAt: Date?
-        var submittedAt: Date?
-        var mintedAt: Date?
+        public static let maxVote: UInt64 = 3
+        public var tx: IncomingTransaction
+        public var receivedAt: Date?
+        public var oneVoteAt: Date?
+        public var twoVoteAt: Date?
+        public var threeVoteAt: Date?
+        public var confirmedAt: Date?
+        public var submittedAt: Date?
+        public var mintedAt: Date?
 
-        var statusString: String? {
+        public var statusString: String? {
             if mintedAt != nil {
                 return L10n.successfullyMintedRenBTC(
                     tx.value.convertToBalance(decimals: 8)
@@ -44,7 +44,7 @@ extension LockAndMint {
             return nil
         }
 
-        var value: Double {
+        public var value: Double {
             tx.value.convertToBalance(decimals: 8)
         }
     }
@@ -57,10 +57,10 @@ protocol RenVMLockAndMintSessionStorageType {
     func saveSession(_ session: RenVMSwift.Session)
     func expireCurrentSession()
 
-    func processingTx(tx: LockAndMint.TxDetail, didReceiveAt receivedAt: Date)
-    func processingTx(tx: LockAndMint.TxDetail, didConfirmAt confirmedAt: Date)
-    func processingTx(tx: LockAndMint.TxDetail, didSubmitAt submittedAt: Date)
-    func processingTx(tx: LockAndMint.TxDetail, didMintAt mintedAt: Date)
+    func processingTx(tx: IncomingTransaction, didReceiveAt receivedAt: Date)
+    func processingTx(tx: IncomingTransaction, didConfirmAt confirmedAt: Date)
+    func processingTx(tx: IncomingTransaction, didSubmitAt submittedAt: Date)
+    func processingTx(tx: IncomingTransaction, didMintAt mintedAt: Date)
 
     func isMinted(txid: String) -> Bool
     func getProcessingTx(txid: String) -> LockAndMint.ProcessingTx?
@@ -97,7 +97,7 @@ extension LockAndMint {
             Defaults.renVMProcessingTxs = []
         }
 
-        func processingTx(tx: LockAndMint.TxDetail, didReceiveAt receivedAt: Date) {
+        func processingTx(tx: IncomingTransaction, didReceiveAt receivedAt: Date) {
             save { current in
                 guard let index = current.indexOf(tx) else {
                     current.append(.init(tx: tx, receivedAt: receivedAt))
@@ -121,7 +121,7 @@ extension LockAndMint {
             }
         }
 
-        func processingTx(tx: LockAndMint.TxDetail, didConfirmAt confirmedAt: Date) {
+        func processingTx(tx: IncomingTransaction, didConfirmAt confirmedAt: Date) {
             save { current in
                 guard let index = current.indexOf(tx) else {
                     current.append(.init(tx: tx, confirmedAt: confirmedAt))
@@ -132,7 +132,7 @@ extension LockAndMint {
             }
         }
 
-        func processingTx(tx: LockAndMint.TxDetail, didSubmitAt submittedAt: Date) {
+        func processingTx(tx: IncomingTransaction, didSubmitAt submittedAt: Date) {
             save { current in
                 guard let index = current.indexOf(tx) else {
                     current.append(.init(tx: tx, submittedAt: submittedAt))
@@ -143,7 +143,7 @@ extension LockAndMint {
             }
         }
 
-        func processingTx(tx: LockAndMint.TxDetail, didMintAt mintedAt: Date) {
+        func processingTx(tx: IncomingTransaction, didMintAt mintedAt: Date) {
             save { current in
                 guard let index = current.indexOf(tx) else {
                     current.append(.init(tx: tx, mintedAt: mintedAt))
@@ -189,11 +189,11 @@ extension LockAndMint {
 }
 
 private extension Array where Element == LockAndMint.ProcessingTx {
-    func hasTx(_ tx: LockAndMint.TxDetail) -> Bool {
+    func hasTx(_ tx: IncomingTransaction) -> Bool {
         contains(where: { $0.tx.txid == tx.txid })
     }
 
-    func indexOf(_ tx: LockAndMint.TxDetail) -> Int? {
+    func indexOf(_ tx: IncomingTransaction) -> Int? {
         firstIndex(where: { $0.tx.txid == tx.txid })
     }
 }

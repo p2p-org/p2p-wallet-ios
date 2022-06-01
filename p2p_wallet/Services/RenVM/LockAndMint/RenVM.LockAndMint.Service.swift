@@ -211,9 +211,9 @@ extension LockAndMint {
             url += "/api/address/\(address)/utxo"
             let request = URLRequest(url: .init(string: url)!)
 
-            return Single<TxDetails>.async {
+            return Single<[IncomingTransaction]>.async {
                 let (data, _) = try await URLSession.shared.data(from: request)
-                return try JSONDecoder().decode(TxDetails.self, from: data)
+                return try JSONDecoder().decode([IncomingTransaction].self, from: data)
             }
             // merge result to storage
                 .subscribe(onSuccess: { [weak self] txs in
@@ -394,31 +394,4 @@ extension LockAndMint.Service: RenVMLockAndMintServiceType {
     func getCurrentAddress() -> String? {
         addressSubject.value
     }
-}
-
-extension LockAndMint {
-    // MARK: - TxDetailElement
-
-    struct TxDetail: Codable, Hashable {
-        let txid: String
-        let vout: UInt64
-        let status: Status
-        let value: UInt64
-
-        struct Status: Codable, Hashable {
-            let confirmed: Bool
-            let blockHeight: Int?
-            let blockHash: String?
-            let blockTime: Int?
-
-            enum CodingKeys: String, CodingKey {
-                case confirmed
-                case blockHeight = "block_height"
-                case blockHash = "block_hash"
-                case blockTime = "block_time"
-            }
-        }
-    }
-
-    typealias TxDetails = [TxDetail]
 }
