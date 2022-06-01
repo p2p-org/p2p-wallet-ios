@@ -110,9 +110,9 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Socket
 
-//        register { SolanaSD.Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!,enableDebugLogs: true) }
-//            .implements(SocketType.self)
-//            .scope(.session)
+        register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!, enableDebugLogs: true) }
+            .implements(SocketType.self)
+            .scope(.session)
 
         // MARK: - TransactionHandler (new)
 
