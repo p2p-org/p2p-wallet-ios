@@ -195,6 +195,20 @@ extension Resolver: ResolverRegistering {
             .implements(RenVMRpcClientType.self)
             .scope(.session)
 
+        register { RenVMSolanaChainProvider() }
+            .implements(RenVMSwift.ChainProvider.self)
+
+        register {
+            BurnAndReleaseServiceImpl(
+                rpcClient: resolve(),
+                chainProvider: resolve(),
+                destinationChain: .bitcoin,
+                persistentStore: RenVMBurnAndReleasePersistentStore(),
+                version: "1"
+            )
+        }
+        .implements(BurnAndReleaseService.self)
+
         register {
             LockAndMint.Service(
                 rpcClient: resolve(),
@@ -205,10 +219,6 @@ extension Resolver: ResolverRegistering {
         }
         .implements(RenVMLockAndMintServiceType.self)
         .scope(.session)
-
-        register { BurnAndRelease.Service() }
-            .implements(RenVMBurnAndReleaseServiceType.self)
-            .scope(.session)
 
         // MARK: - Others
 

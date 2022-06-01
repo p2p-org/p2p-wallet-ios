@@ -19,7 +19,7 @@ class SendService: SendServiceType {
     @Injected private var orcaSwap: OrcaSwapType
     @Injected var feeRelayerAPIClient: FeeRelayerAPIClient
     @Injected var relayService: FeeRelayer
-    @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+    @Injected private var renVMBurnAndReleaseService: BurnAndReleaseService
     @Injected private var feeService: FeeServiceType
     @Injected private var walletsRepository: WalletsRepository
     var cachedFeePayerPubkey: String?
@@ -192,7 +192,7 @@ class SendService: SendServiceType {
         case .bitcoin:
             request = Single.async { [weak self] in
                 guard let self = self else { throw RenVMError.unknown }
-                return try await self.renVMBurnAndReleaseService.burn(
+                return try await self.renVMBurnAndReleaseService.burnAndRelease(
                     recipient: receiver,
                     amount: amount
                 )
