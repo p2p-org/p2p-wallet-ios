@@ -10,8 +10,8 @@ import RxSwift
 import SolanaSwift
 
 enum WLNotification: Equatable {
-    case sent(account: String, lamports: SolanaSDK.Lamports)
-    case received(account: String, lamports: SolanaSDK.Lamports)
+    case sent(account: String, lamports: Lamports)
+    case received(account: String, lamports: Lamports)
 }
 
 protocol WLNotificationsRepository {

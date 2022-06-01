@@ -130,7 +130,7 @@ protocol SwapServiceType {
         sourceMint: String,
         availableSourceMintAddresses: [String],
         destinationAddress: String?,
-        destinationToken: SolanaSDK.Token,
+        destinationToken: Token,
         bestPoolsPair: Swap.PoolsPair?,
         payingWallet: Wallet?,
         inputAmount: Double?,
@@ -153,9 +153,9 @@ protocol SwapServiceType {
      Calculate amount needed for paying fee in paying token
      */
     func calculateNetworkFeeInPayingToken(
-        networkFee: SolanaSDK.FeeAmount,
+        networkFee: FeeAmount,
         payingTokenMint: String
-    ) -> Single<SolanaSDK.FeeAmount?>
+    ) -> Single<FeeAmount?>
 }
 
 enum SwapError: Error {
@@ -167,7 +167,7 @@ extension Array where Element == PayingFee {
     /**
      Get current token, that will be used as fee paying.
      */
-    var totalToken: SolanaSDK.Token? {
+    var totalToken: Token? {
         first(where: { $0.type == .transactionFee })?.token
     }
 

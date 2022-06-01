@@ -12,15 +12,17 @@ import RxSwift
 import SolanaSwift
 
 extension History {
-    class SceneModel: BEStreamListViewModel<SolanaSDK.ParsedTransaction> {
-        private let disposeBag = DisposeBag()
+    class SceneModel: BEStreamListViewModel<ParsedTransaction> {
+        // MARK: - Dependencies
 
-        private let solanaSDK: SolanaSDK
-        private let walletsRepository: WalletsRepository
+        @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
-
         let transactionRepository = SolanaTransactionRepository()
         let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+
+        // MARK: - Properties
+
+        private let disposeBag = DisposeBag()
 
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
@@ -69,13 +71,7 @@ extension History {
         let tryAgain = PublishRelay<Void>()
         private let errorRelay = PublishRelay<Bool>()
 
-        init(
-            solanaSDK: SolanaSDK = Resolver.resolve(),
-            walletsRepository: WalletsRepository = Resolver.resolve()
-        ) {
-            self.solanaSDK = solanaSDK
-            self.walletsRepository = walletsRepository
-
+        init() {
             super.init(isPaginationEnabled: true, limit: 10)
 
             // Register all refresh triggers
@@ -124,7 +120,7 @@ extension History {
             super.clear()
         }
 
-        override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
+        override func next() -> Observable<[ParsedTransaction]> {
             AsyncThrowingStream<[HistoryStreamSource.Result], Error> { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
@@ -175,7 +171,7 @@ extension History {
             .asObservable()
             .flatMap { results in Observable.from(results) }
             .concatMap { result in
-                Observable.async { () -> [SolanaSDK.ParsedTransaction] in
+                Observable.async { () -> [ParsedTransaction] in
                     let transactionInfo = try await self.transactionRepository
                         .getTransaction(signature: result.0.signature)
                     let transaction = try await self.transactionParser.parse(
@@ -196,8 +192,8 @@ extension History {
             })
         }
 
-        override func join(_ newItems: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
-            var filteredNewData: [SolanaSDK.ParsedTransaction] = []
+        override func join(_ newItems: [ParsedTransaction]) -> [ParsedTransaction] {
+            var filteredNewData: [ParsedTransaction] = []
             for trx in newItems {
                 if data.contains(where: { $0.signature == trx.signature }) { continue }
                 filteredNewData.append(trx)
@@ -205,7 +201,7 @@ extension History {
             return data + filteredNewData
         }
 
-        override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+        override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
             // Apply output transformation
             var data = newData
             for output in outputs { data = output.process(newData: data) }

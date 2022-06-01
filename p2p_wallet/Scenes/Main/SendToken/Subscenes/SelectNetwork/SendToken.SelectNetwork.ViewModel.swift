@@ -9,6 +9,7 @@ import FeeRelayerSwift
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol SendTokenSelectNetworkViewModelType {
     var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> { get }

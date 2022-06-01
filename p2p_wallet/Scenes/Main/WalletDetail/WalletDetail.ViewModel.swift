@@ -21,7 +21,7 @@ protocol WalletDetailViewModelType {
 
     func showWalletSettings()
     func start(action: WalletActionType)
-    func showTransaction(_ transaction: SolanaSDK.ParsedTransaction)
+    func showTransaction(_ transaction: ParsedTransaction)
 }
 
 extension WalletDetail {
@@ -165,7 +165,7 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
         }
     }
 
-    func showTransaction(_ transaction: SolanaSDK.ParsedTransaction) {
+    func showTransaction(_ transaction: ParsedTransaction) {
         analyticsManager.log(event: .tokenDetailsDetailsOpen)
         navigatableSceneSubject.accept(.transactionInfo(transaction))
     }

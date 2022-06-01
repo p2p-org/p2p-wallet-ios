@@ -23,7 +23,6 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     // MARK: - Dependencies
 
     @Injected private var walletsRepository: WalletsRepository
-    @Injected private var solanaSDK: SolanaSDK
 
     // MARK: - Properties
 
@@ -83,9 +82,9 @@ class TokenSettingsViewModel: BEListViewModel<TokenSettings> {
     }
 
     @objc func closeAccount() {
-        guard let wallet = wallet else { return }
-        navigationSubject
-            .onNext(.processTransaction(ProcessTransaction
-                    .CloseTransaction(solanaSDK: solanaSDK, closingWallet: wallet, reimbursedAmount: 2_039_280)))
+//        guard let wallet = wallet else { return }
+//        navigationSubject
+//            .onNext(.processTransaction(ProcessTransaction
+//                    .CloseTransaction(solanaSDK: solanaSDK, closingWallet: wallet, reimbursedAmount: 2_039_280)))
     }
 }

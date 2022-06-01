@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {

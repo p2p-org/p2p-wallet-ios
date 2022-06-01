@@ -38,7 +38,7 @@ final class AppEventHandler {
             case .mainnetBeta:
                 break
             case .devnet, .testnet:
-                if let definedEndpoint = (SolanaSDK.APIEndPoint.definedEndpoints
+                if let definedEndpoint = (APIEndPoint.definedEndpoints
                     .first { $0.network != .devnet && $0.network != .testnet })
                 {
                     changeAPIEndpoint(to: definedEndpoint)
@@ -57,7 +57,7 @@ extension AppEventHandler: AppEventHandlerType {
 // MARK: - ChangeNetworkResponder
 
 extension AppEventHandler: ChangeNetworkResponder {
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
+    func changeAPIEndpoint(to endpoint: APIEndPoint) {
         Defaults.apiEndPoint = endpoint
         ResolverScope.session.reset()
         delegate?.userDidChangeAPIEndpoint(to: endpoint)
@@ -100,13 +100,13 @@ extension AppEventHandler: LogoutResponder {
 // MARK: - CreateOrRestoreWalletHandler
 
 extension AppEventHandler: CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+    func creatingWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
         delegate?.createWalletDidComplete()
         saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
         resolvedName = name
     }
 
-    func restoringWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+    func restoringWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
         delegate?.restoreWalletDidComplete()
         saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
         resolvedName = name
@@ -117,7 +117,7 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
         delegate?.userDidLogout()
     }
 
-    private func saveAccountToStorage(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+    private func saveAccountToStorage(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
         guard let phrases = phrases, let derivablePath = derivablePath else {
             creatingOrRestoringWalletDidCancel()
             return

@@ -1,5 +1,5 @@
 //
-//  SolanaSDK.Token+Extensions.swift
+//  Token+Extensions.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 23/04/2021.
@@ -8,7 +8,7 @@
 import Foundation
 import SolanaSwift
 
-extension SolanaSDK.Token {
+extension Token {
     var image: UIImage? {
         // swiftlint:disable swiftgen_assets
         var imageName = symbol

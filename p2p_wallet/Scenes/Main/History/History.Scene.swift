@@ -55,8 +55,8 @@ extension History {
                 mapDataToSections: { viewModel in
                     CollectionViewMappingStrategy.byData(
                         viewModel: viewModel,
-                        forType: SolanaSDK.ParsedTransaction.self,
-                        where: \SolanaSDK.ParsedTransaction.blockTime
+                        forType: ParsedTransaction.self,
+                        where: \ParsedTransaction.blockTime
                     ).reversed()
                 },
                 layout: .init(
@@ -86,7 +86,7 @@ extension History {
 
 extension History.Scene: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let item = item as? SolanaSDK.ParsedTransaction else { return }
+        guard let item = item as? ParsedTransaction else { return }
 
         let viewController = History.TransactionViewController(
             viewModel: .init(

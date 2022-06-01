@@ -11,6 +11,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 extension OrcaSwapV2 {

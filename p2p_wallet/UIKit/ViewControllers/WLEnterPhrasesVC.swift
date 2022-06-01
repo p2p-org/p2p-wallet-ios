@@ -180,7 +180,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         do {
             let phrases = textView.getPhrases()
             if phrases.count < 12 {
-                throw SolanaSDK.Error.other(L10n.seedPhraseMustHaveAtLeast12Words)
+                throw SolanaError.other(L10n.seedPhraseMustHaveAtLeast12Words)
             }
             _ = try Mnemonic(phrase: phrases.filter { !$0.isEmpty })
             if dismissAfterCompletion {

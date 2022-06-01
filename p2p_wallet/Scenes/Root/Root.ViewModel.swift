@@ -133,7 +133,7 @@ extension Root.ViewModel: AppEventHandlerDelegate {
         navigationSubject.accept(.onboardingDone(isRestoration: isRestoration, name: resolvedName))
     }
 
-    func userDidChangeAPIEndpoint(to _: SolanaSDK.APIEndPoint) {
+    func userDidChangeAPIEndpoint(to _: APIEndPoint) {
         showAuthenticationOnMainOnAppear = false
         reload()
 
