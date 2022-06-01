@@ -100,7 +100,7 @@ extension ProcessTransaction {
     }
 
     struct CloseTransaction: RawTransactionType {
-        let solanaSDK: SolanaSDK
+        let blockchainClient: SolanaBlockchainClient
         let closingWallet: Wallet
         let reimbursedAmount: UInt64
 
@@ -109,10 +109,23 @@ extension ProcessTransaction {
         }
 
         func createRequest() -> Single<String> {
-            guard let pubkey = closingWallet.pubkey else {
-                return .error(SolanaError.unknown)
-            }
-            return solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
+            fatalError("Implementing")
+//            guard let pubkey = closingWallet.pubkey else {
+//                return .error(SolanaError.unknown)
+//            }
+//            let preparedTransaction = blockchainClient.prepareTransaction(
+//                instructions: [
+//                    TokenProgram.closeAccountInstruction(
+//                        account: <#T##PublicKey#>,
+//                        destination: <#T##PublicKey#>,
+//                        owner: <#T##PublicKey#>
+//                    )
+//                ],
+//                signers: <#T##[Account]#>,
+//                feePayer: <#T##PublicKey#>,
+//                feeCalculator: <#T##FeeCalculator?#>
+//            )
+//            blockchainClient.sendTransaction(preparedTransaction: <#T##PreparedTransaction#>)
         }
 
         var networkFees: (total: Lamports, token: Token)? {
