@@ -18,7 +18,7 @@ protocol TransactionsRepository {
         before: String?,
         limit: Int,
         p2pFeePayerPubkeys: [String]
-    ) -> Single<[SolanaSDK.ParsedTransaction]>
+    ) -> Single<[ParsedTransaction]>
 }
 
 @available(*, deprecated, message: "Migrate to AccountStream")
@@ -32,7 +32,7 @@ class TransactionsRepositoryImpl: TransactionsRepository {
         before _: String?,
         limit _: Int,
         p2pFeePayerPubkeys _: [String]
-    ) -> Single<[SolanaSDK.ParsedTransaction]> {
+    ) -> Single<[ParsedTransaction]> {
         .just([])
     }
 }

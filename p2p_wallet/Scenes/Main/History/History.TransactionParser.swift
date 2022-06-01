@@ -5,6 +5,7 @@
 import Foundation
 import Resolver
 import SolanaSwift
+import TransactionParser
 
 protocol HistoryTransactionParser {
     ///  Parse transaction.
@@ -29,11 +30,11 @@ extension History {
     /// The default transaction parser.
     class DefaultTransactionParser: TransactionParser {
         private let p2pFeePayers: [String]
-        private let parser: SolanaSDKTransactionParserType
+        private let parser: TransactionParserService
 
         init(p2pFeePayers: [String]) {
             self.p2pFeePayers = p2pFeePayers
-            parser = SolanaSDK.TransactionParser(solanaSDK: Resolver.resolve())
+            parser = TransactionParserServiceImpl.default(apiClient: Resolver.resolve())
         }
 
         func parse(
@@ -43,11 +44,9 @@ extension History {
             symbol: String?
         ) async throws -> ParsedTransaction {
             let parsedTrx = try await parser.parse(
-                transactionInfo: transactionInfo,
-                myAccount: account,
-                myAccountSymbol: symbol,
-                p2pFeePayerPubkeys: p2pFeePayers
-            ).value
+                transactionInfo,
+                config: .init(accountView: account, symbolView: symbol, feePayers: p2pFeePayers)
+            )
 
             let time = transactionInfo
                 .blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(transactionInfo.blockTime!)) : nil
@@ -55,7 +54,7 @@ extension History {
             return .init(
                 status: parsedTrx.status,
                 signature: signatureInfo.signature,
-                value: parsedTrx.value,
+                info: parsedTrx.info,
                 slot: transactionInfo.slot,
                 blockTime: time,
                 fee: parsedTrx.fee,

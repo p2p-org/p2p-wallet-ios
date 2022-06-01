@@ -65,7 +65,7 @@ extension ProcessTransaction {
                let currentAmount = payingWallet.lamports,
                fees.total > currentAmount
             {
-                return .error(SolanaSDK.Error.other(
+                return .error(SolanaError.other(
                     L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
                         + ". "
                         + L10n
@@ -90,7 +90,7 @@ extension ProcessTransaction {
             ).map { $0.first ?? "" }
         }
 
-        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+        var networkFees: (total: Lamports, token: Token)? {
             guard let networkFees = fees.networkFees?.total,
                   let payingFeeToken = payingWallet?.token
             else {
@@ -101,7 +101,6 @@ extension ProcessTransaction {
     }
 
     struct CloseTransaction: RawTransactionType {
-        let solanaSDK: SolanaSDK
         let closingWallet: Wallet
         let reimbursedAmount: UInt64
 
@@ -110,13 +109,14 @@ extension ProcessTransaction {
         }
 
         func createRequest() -> Single<String> {
-            guard let pubkey = closingWallet.pubkey else {
-                return .error(SolanaSDK.Error.unknown)
-            }
-            return solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
+            fatalError("Not implemented")
+            // guard let pubkey = closingWallet.pubkey else {
+            //     return .error(Error.unknown)
+            // }
+            // return closeTokenAccount(tokenPubkey: pubkey)
         }
 
-        var networkFees: (total: SolanaSDK.Lamports, token: SolanaSDK.Token)? {
+        var networkFees: (total: Lamports, token: Token)? {
             (total: 5000, token: .nativeSolana) // TODO: Fix later
         }
     }

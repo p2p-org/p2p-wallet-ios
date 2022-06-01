@@ -4,6 +4,7 @@
 
 import Foundation
 import SolanaSwift
+import TransactionParser
 
 /// This protocol that maps, updates, filters and forms the output of transactions.
 protocol HistoryOutput {
