@@ -7,6 +7,7 @@
 
 import FeeRelayerSwift
 import OrcaSwapSwift
+import RenVMSwift
 import Resolver
 import RxSwift
 import SolanaSwift
@@ -189,10 +190,13 @@ class SendService: SendServiceType {
                 )
             }
         case .bitcoin:
-            request = renVMBurnAndReleaseService.burn(
-                recipient: receiver,
-                amount: amount
-            )
+            request = Single.async { [weak self] in
+                guard let self = self else { throw RenVMError.unknown }
+                return try await self.renVMBurnAndReleaseService.burn(
+                    recipient: receiver,
+                    amount: amount
+                )
+            }
         }
         return request
     }
