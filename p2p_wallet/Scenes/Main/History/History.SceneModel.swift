@@ -98,7 +98,6 @@ extension History {
                 delegate: SolanaTransactionRepository()
             )
             let cachedTransactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
-            print("HEREEE:::", Defaults.p2pFeePayerPubkeys)
 
             let accountStreamSources = walletsRepository
                 .getWallets()

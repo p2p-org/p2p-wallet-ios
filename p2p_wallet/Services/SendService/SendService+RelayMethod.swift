@@ -71,13 +71,14 @@ extension SendService {
 
         let currency = wallet.mintAddress
 
-        let (preparedTransaction, useFeeRelayer) = try await prepareForSendingToSolanaNetworkViaRelayMethod(
+        var (preparedTransaction, useFeeRelayer) = try await prepareForSendingToSolanaNetworkViaRelayMethod(
             context,
             from: wallet,
             receiver: receiver,
             amount: amount.convertToBalance(decimals: wallet.token.decimals),
             payingFeeToken: payingFeeToken
         )
+        preparedTransaction.transaction.recentBlockhash = try await solanaAPIClient.getRecentBlockhash(commitment: nil)
 
         if useFeeRelayer {
             return try await feeRelayer.topUpAndRelayTransaction(

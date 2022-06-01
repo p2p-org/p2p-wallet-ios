@@ -137,6 +137,8 @@ class SendService: SendServiceType {
         network: SendToken.Network,
         payingFeeWallet: Wallet? // nil for relayMethod == .reward
     ) async throws -> String {
+        try await contextManager.update()
+
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         guard let sender = wallet.pubkey else { throw Error.invalidSourceWallet }
         // form request
