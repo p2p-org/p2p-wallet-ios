@@ -25,7 +25,7 @@ extension DAppContainer {
         // MARK: - Dependencies
 
         @Injected private var dAppChannel: DAppChannel
-        @Injected private var accountStorage: SolanaSDKAccountStorage
+        @Injected private var accountStorage: SolanaAccountStorage
         @Injected private var walletsRepository: WalletsRepository
 
         // MARK: - Properties
