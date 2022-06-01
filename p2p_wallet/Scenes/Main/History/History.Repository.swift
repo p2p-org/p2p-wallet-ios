@@ -35,7 +35,7 @@ extension History {
         }
 
         func getTransaction(signature: String) async throws -> TransactionInfo {
-            try await solanaAPIClient.getTransaction(signature: signature, commitment: "recent")!
+            try await solanaAPIClient.getTransaction(signature: signature, commitment: nil)!
         }
     }
 
