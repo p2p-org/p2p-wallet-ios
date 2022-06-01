@@ -16,7 +16,6 @@ extension Resolver: ResolverRegistering {
         // MARK: - Deprecated (REMOVE LATER)
 
         register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
-            .implements(FeeAPIClient.self)
             .scope(.session)
 
         register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
