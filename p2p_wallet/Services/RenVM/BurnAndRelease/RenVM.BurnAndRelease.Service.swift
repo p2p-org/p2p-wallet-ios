@@ -1,5 +1,5 @@
 //
-//  RenVM.BurnAndRelease.Service.swift
+//  BurnAndRelease.Service.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 22/09/2021.
@@ -16,7 +16,7 @@ protocol RenVMBurnAndReleaseServiceType {
     func burn(recipient: String, amount: UInt64) -> Single<String>
 }
 
-extension RenVM.BurnAndRelease {
+extension BurnAndRelease {
     class Service: RenVMBurnAndReleaseServiceType {
         func isTestNet() -> Bool { true }
 
@@ -48,7 +48,7 @@ extension RenVM.BurnAndRelease {
 //
 //        // MARK: - Subjects
 //
-//        private var burnAndReleaseSubject: LoadableRelay<RenVM.BurnAndRelease>
+//        private var burnAndReleaseSubject: LoadableRelay<BurnAndRelease>
 //
 //        init(
 //            rpcClient: RenVMRpcClientType,
@@ -61,7 +61,7 @@ extension RenVM.BurnAndRelease {
 //            self.account = account
 //            self.transactionStorage = transactionStorage
 //            burnAndReleaseSubject = .init(
-//                request: .error(RenVM.Error.unknown)
+//                request: .error(RenVMError.unknown)
 //            )
 //
 //            bind()
@@ -75,7 +75,7 @@ extension RenVM.BurnAndRelease {
 //            )
 //                .observe(on: scheduler)
 //                .map { [weak self] solanaChain in
-//                    guard let self = self else { throw RenVM.Error.unknown }
+//                    guard let self = self else { throw RenVMError.unknown }
 //                    return .init(
 //                        rpcClient: self.rpcClient,
 //                        chain: solanaChain,
@@ -109,7 +109,7 @@ extension RenVM.BurnAndRelease {
 //        func burn(recipient: String, amount: UInt64) -> Single<String> {
 //            getBurnAndRelease()
 //                .flatMap { [weak self] burnAndRelease -> Single<BurnDetails> in
-//                    guard let self = self else { throw RenVM.Error.unknown }
+//                    guard let self = self else { throw RenVMError.unknown }
 //                    return burnAndRelease.submitBurnTransaction(
 //                        account: self.account.publicKey.data,
 //                        amount: String(amount),
@@ -118,7 +118,7 @@ extension RenVM.BurnAndRelease {
 //                    )
 //                }
 //                .map { [weak self] burnDetails in
-//                    guard let self = self else { throw RenVM.Error.unknown }
+//                    guard let self = self else { throw RenVMError.unknown }
 //                    self.transactionStorage.setSubmitedBurnTransaction(burnDetails)
 //                    return burnDetails.confirmedSignature
 //                }
@@ -148,18 +148,18 @@ extension RenVM.BurnAndRelease {
 //                    return burnAndRelease.release(state: state, details: detail)
 //                }
 //                .catch { [weak self] _ in
-//                    guard let self = self else { throw RenVM.Error.unknown }
+//                    guard let self = self else { throw RenVMError.unknown }
 //                    // retry after 3 sec
 //                    return Single<Void>.just(())
 //                        .delay(.seconds(3), scheduler: self.scheduler)
 //                        .flatMap { [weak self] in
-//                            guard let self = self else { throw RenVM.Error.unknown }
+//                            guard let self = self else { throw RenVMError.unknown }
 //                            return self.requestReleasing(detail)
 //                        }
 //                }
 //        }
 //
-//        private func getBurnAndRelease() -> Single<RenVM.BurnAndRelease> {
+//        private func getBurnAndRelease() -> Single<BurnAndRelease> {
 //            if burnAndReleaseSubject.state != .loaded || burnAndReleaseSubject.state != .loading {
 //                burnAndReleaseSubject.reload()
 //            }
@@ -169,14 +169,14 @@ extension RenVM.BurnAndRelease {
 //                .filter { state in
 //                    switch state {
 //                    case .error:
-//                        throw RenVM.Error("Could not initialize burn and release service")
+//                        throw RenVMError("Could not initialize burn and release service")
 //                    default:
 //                        return true
 //                    }
 //                }
-//                .map { [weak self] _ -> RenVM.BurnAndRelease in
+//                .map { [weak self] _ -> BurnAndRelease in
 //                    guard let self = self, let value = self.burnAndReleaseSubject.value
-//                    else { throw RenVM.Error.unknown }
+//                    else { throw RenVMError.unknown }
 //                    return value
 //                }
 //                .take(1)

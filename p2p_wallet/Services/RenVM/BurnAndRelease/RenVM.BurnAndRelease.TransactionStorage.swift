@@ -1,5 +1,5 @@
 //
-//  RenVM.BurnAndRelease.TransactionStorage.swift
+//  BurnAndRelease.TransactionStorage.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 22/09/2021.
@@ -11,15 +11,15 @@ import RxCocoa
 import RxSwift
 
 protocol RenVMBurnAndReleaseTransactionStorageType {
-//    func burnTransactionObservable() -> Observable<[RenVM.BurnAndRelease.BurnDetails]> // MEMORY LEAK
-    var newSubmittedBurnTxDetailsHandler: (([RenVM.BurnAndRelease.BurnDetails]) -> Void)? { get set }
-    func setSubmitedBurnTransaction(_ details: RenVM.BurnAndRelease.BurnDetails)
-    func releaseSubmitedBurnTransaction(_ details: RenVM.BurnAndRelease.BurnDetails)
+//    func burnTransactionObservable() -> Observable<[BurnAndRelease.BurnDetails]> // MEMORY LEAK
+    var newSubmittedBurnTxDetailsHandler: (([BurnAndRelease.BurnDetails]) -> Void)? { get set }
+    func setSubmitedBurnTransaction(_ details: BurnAndRelease.BurnDetails)
+    func releaseSubmitedBurnTransaction(_ details: BurnAndRelease.BurnDetails)
 }
 
-extension RenVM.BurnAndRelease {
+extension BurnAndRelease {
     class TransactionStorage: RenVMBurnAndReleaseTransactionStorageType {
-        var newSubmittedBurnTxDetailsHandler: (([RenVM.BurnAndRelease.BurnDetails]) -> Void)?
+        var newSubmittedBurnTxDetailsHandler: (([BurnAndRelease.BurnDetails]) -> Void)?
         var disposable: DefaultsDisposable?
 
         init() {
@@ -28,14 +28,14 @@ extension RenVM.BurnAndRelease {
             }
         }
 
-        func setSubmitedBurnTransaction(_ details: RenVM.BurnAndRelease.BurnDetails) {
+        func setSubmitedBurnTransaction(_ details: BurnAndRelease.BurnDetails) {
             var currentValue = Defaults.renVMSubmitedBurnTxDetails
             currentValue.removeAll(where: { $0.confirmedSignature == details.confirmedSignature })
             currentValue.append(details)
             Defaults.renVMSubmitedBurnTxDetails = currentValue
         }
 
-        func releaseSubmitedBurnTransaction(_ details: RenVM.BurnAndRelease.BurnDetails) {
+        func releaseSubmitedBurnTransaction(_ details: BurnAndRelease.BurnDetails) {
             var currentValue = Defaults.renVMSubmitedBurnTxDetails
             currentValue.removeAll(where: { $0.confirmedSignature == details.confirmedSignature })
             Defaults.renVMSubmitedBurnTxDetails = currentValue

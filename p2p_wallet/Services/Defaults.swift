@@ -16,11 +16,11 @@ extension Fiat: DefaultsSerializable {}
 
 extension APIEndPoint: DefaultsSerializable {}
 
-extension RenVM.Session: DefaultsSerializable {}
+extension RenVMSwift.Session: DefaultsSerializable {}
 
-extension RenVM.LockAndMint.ProcessingTx: DefaultsSerializable {}
+extension LockAndMint.ProcessingTx: DefaultsSerializable {}
 
-extension RenVM.BurnAndRelease.BurnDetails: DefaultsSerializable {}
+extension BurnAndRelease.BurnDetails: DefaultsSerializable {}
 
 extension DefaultsKeys {
     // Keychain-keys
@@ -60,9 +60,9 @@ extension DefaultsKeys {
         .init(#function, defaultValue: PublicKey.wrappedSOLMint.base58EncodedString)
     }
 
-    var renVMSession: DefaultsKey<RenVM.Session?> { .init(#function, defaultValue: nil) }
-    var renVMProcessingTxs: DefaultsKey<[RenVM.LockAndMint.ProcessingTx]> { .init(#function, defaultValue: []) }
-    var renVMSubmitedBurnTxDetails: DefaultsKey<[RenVM.BurnAndRelease.BurnDetails]> {
+    var renVMSession: DefaultsKey<RenVMSwift.Session?> { .init(#function, defaultValue: nil) }
+    var renVMProcessingTxs: DefaultsKey<[LockAndMint.ProcessingTx]> { .init(#function, defaultValue: []) }
+    var renVMSubmitedBurnTxDetails: DefaultsKey<[BurnAndRelease.BurnDetails]> {
         .init(#function, defaultValue: [])
     }
 
