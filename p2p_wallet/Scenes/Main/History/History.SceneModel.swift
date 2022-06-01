@@ -13,14 +13,16 @@ import SolanaSwift
 
 extension History {
     class SceneModel: BEStreamListViewModel<ParsedTransaction> {
-        private let disposeBag = DisposeBag()
+        // MARK: - Dependencies
 
-        private let solanaSDK: SolanaSDK
-        private let walletsRepository: WalletsRepository
+        @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
-
         let transactionRepository = SolanaTransactionRepository()
         let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+
+        // MARK: - Properties
+
+        private let disposeBag = DisposeBag()
 
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
@@ -69,13 +71,7 @@ extension History {
         let tryAgain = PublishRelay<Void>()
         private let errorRelay = PublishRelay<Bool>()
 
-        init(
-            solanaSDK: SolanaSDK = Resolver.resolve(),
-            walletsRepository: WalletsRepository = Resolver.resolve()
-        ) {
-            self.solanaSDK = solanaSDK
-            self.walletsRepository = walletsRepository
-
+        init() {
             super.init(isPaginationEnabled: true, limit: 10)
 
             // Register all refresh triggers
