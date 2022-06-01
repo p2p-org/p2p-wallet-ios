@@ -206,16 +206,9 @@ extension Resolver: ResolverRegistering {
         .implements(RenVMLockAndMintServiceType.self)
         .scope(.session)
 
-        register {
-            BurnAndRelease.Service(
-                //                rpcClient: resolve(),
-//                solanaClient: resolve(),
-//                account: resolve(SolanaSDK.self).accountStorage.account!,
-//                transactionStorage: BurnAndRelease.TransactionStorage()
-            )
-        }
-        .implements(RenVMBurnAndReleaseServiceType.self)
-        .scope(.session)
+        register { BurnAndRelease.Service() }
+            .implements(RenVMBurnAndReleaseServiceType.self)
+            .scope(.session)
 
         // MARK: - Others
 
