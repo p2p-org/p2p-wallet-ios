@@ -7,180 +7,170 @@
 
 import Foundation
 import RenVMSwift
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol RenVMBurnAndReleaseServiceType {
     func isTestNet() -> Bool
-    func getFee() -> Single<Double>
-    func burn(recipient: String, amount: UInt64) -> Single<String>
+    func getFee() async throws -> Double
+    func burn(recipient: String, amount: UInt64) async throws -> String
 }
 
 extension BurnAndRelease {
     class Service: RenVMBurnAndReleaseServiceType {
-        func isTestNet() -> Bool { true }
+        // MARK: - Nested type
 
-        func getFee() -> Single<Double> { .just(0.0) }
+        actor Cache {
+            var burnAndRelease: BurnAndRelease?
+            var releasingTxs = [BurnDetails]()
 
-        func burn(recipient _: String, amount _: UInt64) -> Single<String> { .just("") }
+            func save(burnAndRelease: BurnAndRelease) {
+                self.burnAndRelease = burnAndRelease
+            }
+
+            func save(releasingTx: BurnDetails) {
+                releasingTxs.appendIfNotExist(releasingTx)
+            }
+
+            func markAsReleased(signature: String) {
+                releasingTxs.removeAll(where: { $0.confirmedSignature == signature })
+            }
+        }
+
+        // MARK: - Constants
+
+        private let mintTokenSymbol = "BTC"
+        private let version = "1"
+        private let disposeBag = DisposeBag()
+
+        // MARK: - Dependencies
+
+        @Injected private var rpcClient: RenVMRpcClientType
+        @Injected private var solanaAPIClient: SolanaAPIClient
+        @Injected private var solanaBlockchainClient: SolanaBlockchainClient
+        @Injected private var accountStorage: SolanaAccountStorage
+        private var transactionStorage: RenVMBurnAndReleaseTransactionStorageType
+
+        // MARK: - Properties
+
+        private let cache = Cache()
+
+        // MARK: - Initializer
+
+        init(
+            transactionStorage: RenVMBurnAndReleaseTransactionStorageType = TransactionStorage()
+        ) {
+            self.transactionStorage = transactionStorage
+
+            bind()
+
+            Task {
+                try await reload()
+            }
+        }
+
+        private func bind() {
+            transactionStorage.newSubmittedBurnTxDetailsHandler = { burnDetails in
+                Task { [weak self] in
+                    guard let self = self else { return }
+                    let releasingTxs = await self.cache.releasingTxs
+                    let notYetBurnedTx = burnDetails.filter { !releasingTxs.contains($0) }
+
+                    try await withThrowingTaskGroup(of: Void.self) { group in
+                        for detail in notYetBurnedTx {
+                            group.addTask { [weak self] in
+                                guard let self = self else { throw RenVMError.unknown }
+                                do {
+                                    try await self.release(detail)
+                                } catch {
+                                    debugPrint(error)
+                                }
+                            }
+
+                            for try await _ in group {}
+                        }
+                    }
+                }
+            }
+        }
+
+        private func reload() async throws {
+            let solanaChain = try await SolanaChain.load(
+                client: rpcClient,
+                apiClient: solanaAPIClient,
+                blockchainClient: solanaBlockchainClient
+            )
+            let burnAndRelease = BurnAndRelease(
+                rpcClient: rpcClient,
+                chain: solanaChain,
+                mintTokenSymbol: mintTokenSymbol,
+                version: version,
+                burnTo: "Bitcoin"
+            )
+            await cache.save(burnAndRelease: burnAndRelease)
+        }
+
+        func isTestNet() -> Bool {
+            rpcClient.network.isTestnet
+        }
+
+        func getFee() async throws -> Double {
+            let lamports = try await rpcClient.getTransactionFee(mintTokenSymbol: mintTokenSymbol)
+            return lamports.convertToBalance(decimals: 8)
+        }
+
+        func burn(recipient: String, amount: UInt64) async throws -> String {
+            guard let account = accountStorage.account else {
+                throw SolanaError.unauthorized
+            }
+            let burnAndRelease = try await getBurnAndRelease()
+            let burnDetails = try await burnAndRelease.submitBurnTransaction(
+                account: account.publicKey.data,
+                amount: String(amount),
+                recipient: recipient,
+                signer: account.secretKey
+            )
+            transactionStorage.setSubmitedBurnTransaction(burnDetails)
+            return burnDetails.confirmedSignature
+        }
+
+        private func release(_ detail: BurnDetails) async throws {
+            // assertion
+            if await cache.releasingTxs.contains(detail) { return }
+
+            // mark as releasing
+            await cache.save(releasingTx: detail)
+
+            let burnAndRelease = try await getBurnAndRelease()
+            let state = try burnAndRelease.getBurnState(burnDetails: detail)
+
+            do {
+                _ = try await Task.retrying(
+                    where: { _ in true },
+                    maxRetryCount: .max,
+                    retryDelay: 3
+                ) { () -> String in
+                    try Task.checkCancellation()
+                    return try await burnAndRelease.release(state: state, details: detail)
+                }.value
+
+                await cache.markAsReleased(signature: detail.confirmedSignature)
+                transactionStorage.releaseSubmitedBurnTransaction(detail)
+            } catch {
+                await cache.markAsReleased(signature: detail.confirmedSignature)
+            }
+        }
+
+        private func getBurnAndRelease() async throws -> BurnAndRelease {
+            if await cache.burnAndRelease == nil {
+                try await reload()
+            }
+            if let burnAndRelease = await cache.burnAndRelease {
+                return burnAndRelease
+            }
+            throw RenVMError("Could not initialize burn and release service")
+        }
     }
-
-    // TODO: Implement RenVMBurnAndReleaseServiceType
-//    class Service: RenVMBurnAndReleaseServiceType {
-//        // MARK: - Constants
-//
-//        private let mintTokenSymbol = "BTC"
-//        private let version = "1"
-//        private let disposeBag = DisposeBag()
-//
-//        // MARK: - Dependencies
-//
-//        private let rpcClient: RenVMRpcClientType
-//        private let solanaClient: RenVMSolanaAPIClientType
-//        private let account: Account
-//        private var transactionStorage: RenVMBurnAndReleaseTransactionStorageType
-//
-//        // MARK: - Properties
-//
-//        private var releasingTxs = [BurnDetails]()
-//        private let burnQueue = DispatchQueue(label: "burnQueue", qos: .background)
-//        private lazy var scheduler = ConcurrentDispatchQueueScheduler(queue: burnQueue)
-//
-//        // MARK: - Subjects
-//
-//        private var burnAndReleaseSubject: LoadableRelay<BurnAndRelease>
-//
-//        init(
-//            rpcClient: RenVMRpcClientType,
-//            solanaClient: RenVMSolanaAPIClientType,
-//            account: Account,
-//            transactionStorage: RenVMBurnAndReleaseTransactionStorageType
-//        ) {
-//            self.rpcClient = rpcClient
-//            self.solanaClient = solanaClient
-//            self.account = account
-//            self.transactionStorage = transactionStorage
-//            burnAndReleaseSubject = .init(
-//                request: .error(RenVMError.unknown)
-//            )
-//
-//            bind()
-//            reload()
-//        }
-//
-//        func bind() {
-//            burnAndReleaseSubject.request = RenVM.SolanaChain.load(
-//                client: rpcClient,
-//                solanaClient: solanaClient
-//            )
-//                .observe(on: scheduler)
-//                .map { [weak self] solanaChain in
-//                    guard let self = self else { throw RenVMError.unknown }
-//                    return .init(
-//                        rpcClient: self.rpcClient,
-//                        chain: solanaChain,
-//                        mintTokenSymbol: self.mintTokenSymbol,
-//                        version: self.version,
-//                        burnTo: "Bitcoin"
-//                    )
-//                }
-//
-//            transactionStorage.newSubmittedBurnTxDetailsHandler = { [weak self] burnDetails in
-//                let burnDetails = burnDetails.filter { self?.releasingTxs.contains($0) == false }
-//                for detail in burnDetails {
-//                    self?.release(detail)
-//                }
-//            }
-//        }
-//
-//        func reload() {
-//            burnAndReleaseSubject.reload()
-//        }
-//
-//        func isTestNet() -> Bool {
-//            rpcClient.network.isTestnet
-//        }
-//
-//        func getFee() -> Single<Double> {
-//            rpcClient.getTransactionFee(mintTokenSymbol: mintTokenSymbol)
-//                .map { $0.convertToBalance(decimals: 8) }
-//        }
-//
-//        func burn(recipient: String, amount: UInt64) -> Single<String> {
-//            getBurnAndRelease()
-//                .flatMap { [weak self] burnAndRelease -> Single<BurnDetails> in
-//                    guard let self = self else { throw RenVMError.unknown }
-//                    return burnAndRelease.submitBurnTransaction(
-//                        account: self.account.publicKey.data,
-//                        amount: String(amount),
-//                        recipient: recipient,
-//                        signer: self.account.secretKey
-//                    )
-//                }
-//                .map { [weak self] burnDetails in
-//                    guard let self = self else { throw RenVMError.unknown }
-//                    self.transactionStorage.setSubmitedBurnTransaction(burnDetails)
-//                    return burnDetails.confirmedSignature
-//                }
-//        }
-//
-//        private func release(_ detail: BurnDetails) {
-//            if !releasingTxs.contains(detail) {
-//                releasingTxs.append(detail)
-//            }
-//
-//            requestReleasing(detail)
-//                .subscribe(onSuccess: { [weak self] _ in
-//                    guard let self = self else { return }
-//                    self.releasingTxs.removeAll(where: { $0.confirmedSignature == detail.confirmedSignature })
-//                    self.transactionStorage.releaseSubmitedBurnTransaction(detail)
-//                }, onFailure: { [weak self] _ in
-//                    guard let self = self else { return }
-//                    self.releasingTxs.removeAll(where: { $0.confirmedSignature == detail.confirmedSignature })
-//                })
-//                .disposed(by: disposeBag)
-//        }
-//
-//        private func requestReleasing(_ detail: BurnDetails) -> Single<String> {
-//            getBurnAndRelease()
-//                .flatMap { burnAndRelease -> Single<String> in
-//                    let state = try burnAndRelease.getBurnState(burnDetails: detail)
-//                    return burnAndRelease.release(state: state, details: detail)
-//                }
-//                .catch { [weak self] _ in
-//                    guard let self = self else { throw RenVMError.unknown }
-//                    // retry after 3 sec
-//                    return Single<Void>.just(())
-//                        .delay(.seconds(3), scheduler: self.scheduler)
-//                        .flatMap { [weak self] in
-//                            guard let self = self else { throw RenVMError.unknown }
-//                            return self.requestReleasing(detail)
-//                        }
-//                }
-//        }
-//
-//        private func getBurnAndRelease() -> Single<BurnAndRelease> {
-//            if burnAndReleaseSubject.state != .loaded || burnAndReleaseSubject.state != .loading {
-//                burnAndReleaseSubject.reload()
-//            }
-//
-//            return burnAndReleaseSubject.stateObservable
-//                .skip(while: { $0 != .loaded && !$0.isError })
-//                .filter { state in
-//                    switch state {
-//                    case .error:
-//                        throw RenVMError("Could not initialize burn and release service")
-//                    default:
-//                        return true
-//                    }
-//                }
-//                .map { [weak self] _ -> BurnAndRelease in
-//                    guard let self = self, let value = self.burnAndReleaseSubject.value
-//                    else { throw RenVMError.unknown }
-//                    return value
-//                }
-//                .take(1)
-//                .asSingle()
-//        }
-//    }
 }
