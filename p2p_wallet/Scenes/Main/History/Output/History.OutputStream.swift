@@ -11,5 +11,5 @@ protocol HistoryOutput {
     ///
     /// - Parameter newData: incoming data
     /// - Returns: transformed data
-    func process(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction]
+    func process(newData: [ParsedTransaction]) -> [ParsedTransaction]
 }

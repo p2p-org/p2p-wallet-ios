@@ -36,7 +36,6 @@ protocol ReceiveSceneModel: BESceneModel {
 
 extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
-        @Injected private var handler: AssociatedTokenAccountHandler
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
         @Injected private var walletsRepository: WalletsRepository
@@ -62,7 +61,7 @@ extension ReceiveToken {
         private let screenCanHaveHint: Bool
 
         init(
-            solanaPubkey: SolanaSDK.PublicKey,
+            solanaPubkey: PublicKey,
             solanaTokenWallet: Wallet? = nil,
             isOpeningFromToken: Bool = false
         ) {

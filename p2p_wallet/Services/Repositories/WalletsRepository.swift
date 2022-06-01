@@ -9,6 +9,7 @@ import BECollectionView
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol WalletsRepository: BEListViewModelType {
     var nativeWallet: Wallet? { get }

@@ -13,7 +13,7 @@ extension History {
     class ProcessingTransactionsOutput: HistoryOutput {
         @Injected private var repository: TransactionHandlerType
 
-        func process(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+        func process(newData: [ParsedTransaction]) -> [ParsedTransaction] {
             let transactions = repository.getProcessingTransaction()
                 .sorted(by: { $0.blockTime?.timeIntervalSince1970 > $1.blockTime?.timeIntervalSince1970 })
 

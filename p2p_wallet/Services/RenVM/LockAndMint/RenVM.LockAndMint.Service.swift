@@ -41,7 +41,7 @@ extension RenVM.LockAndMint {
 
         private let rpcClient: RenVMRpcClientType
         private let solanaClient: SolanaAPIClient
-        private let account: SolanaSDK.Account
+        private let account: Account
         private let sessionStorage: RenVMLockAndMintSessionStorageType
         @Injected private var notificationsService: NotificationService
 
@@ -69,7 +69,7 @@ extension RenVM.LockAndMint {
         init(
             rpcClient: RenVMRpcClientType,
             solanaClient: SolanaAPIClient,
-            account: SolanaSDK.Account,
+            account: Account,
             sessionStorage: RenVMLockAndMintSessionStorageType
         ) {
             self.rpcClient = rpcClient

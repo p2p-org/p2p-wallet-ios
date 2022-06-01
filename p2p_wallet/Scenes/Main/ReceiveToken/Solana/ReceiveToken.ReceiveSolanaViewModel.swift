@@ -8,6 +8,7 @@
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol ReceiveTokenSolanaViewModelType: BESceneModel {
     var pubkey: String { get }

@@ -33,7 +33,7 @@ extension RestoreICloud {
 
             return accountsRequest
                 .flatMap { [weak self] accounts in
-                    guard let self = self else { throw SolanaSDK.Error.unknown }
+                    guard let self = self else { throw SolanaError.unknown }
                     return Single
                         .zip(
                             accounts
@@ -76,7 +76,7 @@ extension RestoreICloud {
         }
 
         private func createParsedAccountSingle(account: RawAccount) -> Single<ParsedAccount> {
-            Single<SolanaSDK.Account>.create { observer in
+            Single<Account>.create { observer in
                 DispatchQueue(label: "createAccount#\(account.phrase)", qos: .userInitiated)
                     .async {
                         do {

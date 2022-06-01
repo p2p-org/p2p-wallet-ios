@@ -8,7 +8,7 @@ import RxSwift
 import SolanaSwift
 
 protocol QrCodeImageRender {
-    func render(username: String?, address: String?, token: SolanaSDK.Token?, showTokenIcon: Bool) -> Single<UIImage>
+    func render(username: String?, address: String?, token: Token?, showTokenIcon: Bool) -> Single<UIImage>
 }
 
 extension ReceiveToken {
@@ -131,7 +131,7 @@ extension ReceiveToken {
                 .backgroundColor(color: theme.backgroundColor)
         }
 
-        func render(username: String?, address: String?, token: SolanaSDK.Token?,
+        func render(username: String?, address: String?, token: Token?,
                     showTokenIcon: Bool) -> Single<UIImage>
         {
             guard let address = address else {
@@ -142,7 +142,7 @@ extension ReceiveToken {
                 return .just(renderAsView(username: username, address: address, tokenImage: nil).asImageInBackground())
             }
 
-            return tokenIcon(urlString: token?.logoURI ?? SolanaSDK.Token.nativeSolana.logoURI)
+            return tokenIcon(urlString: token?.logoURI ?? Token.nativeSolana.logoURI)
                 .map { [unowned self] image in
                     renderAsView(username: username, address: address, tokenImage: image).asImageInBackground()
                 }

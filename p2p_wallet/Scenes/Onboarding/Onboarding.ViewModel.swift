@@ -92,7 +92,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
                     if success {
                         self?.setEnableBiometry(true)
                     } else {
-                        errorHandler?(authenticationError ?? SolanaSDK.Error.unknown)
+                        errorHandler?(authenticationError ?? SolanaError.unknown)
                         self?.enableBiometryLater()
                     }
                 }

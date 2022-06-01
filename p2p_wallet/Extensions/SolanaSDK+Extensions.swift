@@ -8,7 +8,7 @@
 import Foundation
 import SolanaSwift
 
-extension SolanaSDK.APIEndPoint {
+extension APIEndPoint {
     static var definedEndpoints: [Self] {
         var endpoints = defaultEndpoints
         endpoints.insert(

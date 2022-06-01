@@ -1,5 +1,5 @@
 //
-//  SolanaSDK.DerivablePath+Extensions.swift
+//  DerivablePath+Extensions.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 14/07/2021.
@@ -8,7 +8,7 @@
 import Foundation
 import SolanaSwift
 
-extension SolanaSDK.DerivablePath {
+extension DerivablePath {
     var title: String {
         var title = rawValue
         switch type {

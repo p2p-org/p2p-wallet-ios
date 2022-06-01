@@ -25,7 +25,7 @@ extension DAppContainer {
         // MARK: - Dependencies
 
         @Injected private var dAppChannel: DAppChannel
-        @Injected private var accountStorage: SolanaSDKAccountStorage
+        @Injected private var accountStorage: SolanaAccountStorage
         @Injected private var walletsRepository: WalletsRepository
 
         // MARK: - Properties
@@ -77,7 +77,7 @@ extension DAppContainer.ViewModel: DAppChannelDelegate {
         return .just(pubKey)
     }
 
-    func signTransaction(transaction: SolanaSDK.Transaction) -> Single<SolanaSDK.Transaction> {
+    func signTransaction(transaction: Transaction) -> Single<Transaction> {
         do {
             var transaction = transaction
             guard let signer = accountStorage.account
@@ -90,7 +90,7 @@ extension DAppContainer.ViewModel: DAppChannelDelegate {
         }
     }
 
-    func signTransactions(transactions: [SolanaSDK.Transaction]) -> Single<[SolanaSDK.Transaction]> {
+    func signTransactions(transactions: [Transaction]) -> Single<[Transaction]> {
         do {
             return .just(try transactions.map { transaction in
                 var transaction = transaction

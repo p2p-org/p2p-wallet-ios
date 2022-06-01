@@ -98,7 +98,7 @@ extension Home {
                     animated: true
                 )
             case .receiveToken:
-                if let pubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
+                if let pubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let vm = ReceiveToken.SceneModel(
                         solanaPubkey: pubkey,
                         solanaTokenWallet: nil

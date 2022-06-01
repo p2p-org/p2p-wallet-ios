@@ -21,8 +21,8 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     @Injected private var walletsRepository: WalletsRepository
     @Injected private var feeRelayer: FeeRelayer
 
-    private var minRenExemption: SolanaSDK.Lamports?
-    private var lamportsPerSignature: SolanaSDK.Lamports?
+    private var minRenExemption: Lamports?
+    private var lamportsPerSignature: Lamports?
 
     func load() -> Completable {
         Completable.async {
@@ -57,33 +57,33 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     func createAccount(payingFeeAddress _: String, payingFeeMintAddress _: String) -> Completable {
         fatalError("Method has not been implemented")
 
-        // guard let account = accountStorage.account else { return .error(SolanaSDK.Error.unauthorized) }
+        // guard let account = accountStorage.account else { return .error(SolanaError.unauthorized) }
         //
         // return Single.zip(
         //     solanaSDK
-        //         .getMinimumBalanceForRentExemption(span: SolanaSDK.AccountInfo.span),
+        //         .getMinimumBalanceForRentExemption(span: AccountInfo.span),
         //     solanaSDK.getLamportsPerSignature(),
         //     feeRelayerAPIClient.getFeePayerPubkey(),
         //     solanaSDK.getRecentBlockhash()
         // )
         //     .flatMap { [weak self] accountCreationFee, lamportPerSignature, feePayerAccount, recentBlockHash -> Single<String?> in
-        //         guard let self = self else { return .error(SolanaSDK.Error.unknown) }
+        //         guard let self = self else { return .error(SolanaError.unknown) }
         //         return self.solanaSDK.prepareTransaction(
         //             instructions: [
         //                 try self.solanaSDK.createAssociatedTokenAccountInstruction(
         //                     for: account.publicKey,
         //                     tokenMint: .renBTCMint,
-        //                     payer: try SolanaSDK.PublicKey(string: feePayerAccount)
+        //                     payer: try PublicKey(string: feePayerAccount)
         //                 ),
         //             ],
         //             signers: [account],
-        //             feePayer: try SolanaSDK.PublicKey(string: feePayerAccount),
+        //             feePayer: try PublicKey(string: feePayerAccount),
         //             accountsCreationFee: accountCreationFee,
         //             recentBlockhash: recentBlockHash,
         //             lamportsPerSignature: lamportPerSignature
         //         )
         //             .flatMap { [weak self] preparedTransaction in
-        //                 guard let self = self else { return .error(SolanaSDK.Error.unknown) }
+        //                 guard let self = self else { return .error(SolanaError.unknown) }
         //                 return self.feeRelayer
         //                     .topUpAndRelayTransaction(
         //                         preparedTransaction: preparedTransaction,
@@ -92,14 +92,14 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         //                             mint: payingFeeMintAddress
         //                         ),
         //                         operationType: .other,
-        //                         currency: SolanaSDK.PublicKey.renBTCMint.base58EncodedString
+        //                         currency: PublicKey.renBTCMint.base58EncodedString
         //                     )
         //                     .map(\.first)
         //             }
         //     }
         //     .flatMapCompletable { [weak self] in
-        //         guard let self = self else { throw SolanaSDK.Error.unknown }
-        //         guard let signature = $0 else { throw SolanaSDK.Error.other("Could not get transaction id") }
+        //         guard let self = self else { throw SolanaError.unknown }
+        //         guard let signature = $0 else { throw SolanaError.other("Could not get transaction id") }
         //         return self.solanaSDK.waitForConfirmation(signature: signature)
         //     }
         //     .do(onCompleted: { [weak self] in
@@ -107,8 +107,8 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         //             guard let self = self else { return }
         //             self.walletsRepository.batchUpdate { wallets in
         //                 guard let string = wallets.first(where: { $0.isNativeSOL })?.pubkey,
-        //                       let nativeWalletAddress = try? SolanaSDK.PublicKey(string: string),
-        //                       let renBTCAddress = try? SolanaSDK.PublicKey.associatedTokenAddress(
+        //                       let nativeWalletAddress = try? PublicKey(string: string),
+        //                       let renBTCAddress = try? PublicKey.associatedTokenAddress(
         //                           walletAddress: nativeWalletAddress,
         //                           tokenMintAddress: .renBTCMint
         //                       )
@@ -132,10 +132,10 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         //     })
     }
 
-    func getCreationFee(payingFeeMintAddress _: String) -> Single<SolanaSDK.Lamports> {
+    func getCreationFee(payingFeeMintAddress _: String) -> Single<Lamports> {
         fatalError("Method has not been implemented")
 
-        // let feeAmount = SolanaSDK.FeeAmount(
+        // let feeAmount = FeeAmount(
         //     transaction: lamportsPerSignature ?? 5000,
         //     accountBalances: minRenExemption ?? 2_039_280
         // )
@@ -143,8 +143,8 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         //     expectedFee: feeAmount,
         //     payingTokenMint: payingFeeMintAddress
         // )
-        //     .flatMap { [weak self] feeInSol -> Single<SolanaSDK.FeeAmount?> in
-        //         guard let self = self else { throw SolanaSDK.Error.unknown }
+        //     .flatMap { [weak self] feeInSol -> Single<FeeAmount?> in
+        //         guard let self = self else { throw SolanaError.unknown }
         //         return self.feeRelayer.calculateFeeInPayingToken(
         //             feeInSOL: feeInSol,
         //             payingFeeTokenMint: payingFeeMintAddress
@@ -154,7 +154,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         //         if let fees = $0?.total {
         //             return fees
         //         }
-        //         throw SolanaSDK.Error.other("Could not calculate fee")
+        //         throw SolanaError.other("Could not calculate fee")
         //     }
     }
 }

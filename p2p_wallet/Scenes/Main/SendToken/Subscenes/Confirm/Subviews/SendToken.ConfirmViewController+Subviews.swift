@@ -304,7 +304,7 @@ extension SendToken.ConfirmViewController {
     }
 }
 
-private extension SolanaSDK.FeeAmount {
+private extension FeeAmount {
     func attributedStringForTransactionFee(prices: [String: Double], symbol: String,
                                            decimals: UInt8?) -> NSMutableAttributedString
     {

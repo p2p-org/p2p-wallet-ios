@@ -16,7 +16,6 @@ extension Resolver: ResolverRegistering {
         // MARK: - Deprecated (REMOVE LATER)
 
         register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
-            .implements(FeeAPIClient.self)
             .scope(.session)
 
         register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
@@ -26,7 +25,6 @@ extension Resolver: ResolverRegistering {
         // MARK: - Lifetime app's services
 
         register { KeychainStorage() }
-            .implements(SolanaSDKAccountStorage.self) // Deprecated
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
             .implements(SolanaAccountStorage.self)

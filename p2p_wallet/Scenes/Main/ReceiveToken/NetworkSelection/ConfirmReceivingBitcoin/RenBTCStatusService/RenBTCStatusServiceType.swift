@@ -48,5 +48,5 @@ protocol RenBTCStatusServiceType {
     /// - Returns: the amount of fee
     func getCreationFee(
         payingFeeMintAddress: String
-    ) -> Single<SolanaSDK.Lamports>
+    ) -> Single<Lamports>
 }

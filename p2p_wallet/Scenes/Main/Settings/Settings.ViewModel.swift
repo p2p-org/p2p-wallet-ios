@@ -17,7 +17,7 @@ protocol ChangeLanguageResponder {
 }
 
 protocol ChangeNetworkResponder {
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
+    func changeAPIEndpoint(to endpoint: APIEndPoint)
 }
 
 protocol LogoutResponder {
@@ -44,7 +44,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
     func showOrReserveUsername()
     func setDidBackup(_ didBackup: Bool)
     func setFiat(_ fiat: Fiat)
-    func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
+    func setApiEndpoint(_ endpoint: APIEndPoint)
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void)
     func changePincode()
     func savePincode(_ pincode: String)
@@ -89,7 +89,7 @@ extension Settings {
         private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
             .didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
-        private let endpointSubject = BehaviorRelay<SolanaSDK.APIEndPoint>(value: Defaults.apiEndPoint)
+        private let endpointSubject = BehaviorRelay<APIEndPoint>(value: Defaults.apiEndPoint)
         private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?
             .overrideUserInterfaceStyle)
@@ -224,7 +224,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         notificationsService.showInAppNotification(.done(L10n.currencyChanged))
     }
 
-    func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {
+    func setApiEndpoint(_ endpoint: APIEndPoint) {
         endpointSubject.accept(endpoint)
 
         analyticsManager.log(event: .networkChanging(networkName: endpoint.address))

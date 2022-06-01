@@ -14,7 +14,7 @@ extension UIUserInterfaceStyle: DefaultsSerializable {}
 
 extension Fiat: DefaultsSerializable {}
 
-extension SolanaSDK.APIEndPoint: DefaultsSerializable {}
+extension APIEndPoint: DefaultsSerializable {}
 
 extension RenVM.Session: DefaultsSerializable {}
 
@@ -35,7 +35,7 @@ extension DefaultsKeys {
     var didSetEnableNotifications: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var wasFirstAttemptForSendingToken: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var lastDeviceToken: DefaultsKey<Data?> { .init(#function, defaultValue: nil) }
-    var apiEndPoint: DefaultsKey<SolanaSDK.APIEndPoint> {
+    var apiEndPoint: DefaultsKey<APIEndPoint> {
         .init(
             #function,
             defaultValue: .definedEndpoints.first!
@@ -57,7 +57,7 @@ extension DefaultsKeys {
     var p2pFeePayerPubkeys: DefaultsKey<[String]> { .init(#function, defaultValue: []) }
     var prices: DefaultsKey<Data> { .init(#function, defaultValue: Data()) }
     var payingTokenMint: DefaultsKey<String> {
-        .init(#function, defaultValue: SolanaSDK.PublicKey.wrappedSOLMint.base58EncodedString)
+        .init(#function, defaultValue: PublicKey.wrappedSOLMint.base58EncodedString)
     }
 
     var renVMSession: DefaultsKey<RenVM.Session?> { .init(#function, defaultValue: nil) }
