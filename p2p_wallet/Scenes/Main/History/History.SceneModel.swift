@@ -10,6 +10,7 @@ import RxCocoa
 import RxConcurrency
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 extension History {
     class SceneModel: BEStreamListViewModel<ParsedTransaction> {

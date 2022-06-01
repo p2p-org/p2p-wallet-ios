@@ -13,15 +13,6 @@ import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
-        // MARK: - Deprecated (REMOVE LATER)
-
-        register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
-            .scope(.session)
-
-        register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
-            .implements(SocketType.self)
-            .scope(.session)
-
         // MARK: - Lifetime app's services
 
         register { KeychainStorage() }
@@ -216,7 +207,7 @@ extension Resolver: ResolverRegistering {
             RenVM.BurnAndRelease.Service(
                 //                rpcClient: resolve(),
 //                solanaClient: resolve(),
-//                account: resolve(SolanaSDK.self).accountStorage.account!,
+//                account: resolve(self).accountStorage.account!,
 //                transactionStorage: RenVM.BurnAndRelease.TransactionStorage()
             )
         }

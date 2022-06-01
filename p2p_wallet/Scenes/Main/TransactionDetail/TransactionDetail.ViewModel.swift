@@ -10,6 +10,7 @@ import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 protocol TransactionDetailViewModelType: AnyObject {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> { get }

@@ -7,6 +7,7 @@
 
 import Foundation
 import SolanaSwift
+import TransactionParser
 
 enum WalletDetail {
     enum NavigatableScene {

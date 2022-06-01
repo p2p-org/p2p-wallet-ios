@@ -9,6 +9,7 @@ import Foundation
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension History {

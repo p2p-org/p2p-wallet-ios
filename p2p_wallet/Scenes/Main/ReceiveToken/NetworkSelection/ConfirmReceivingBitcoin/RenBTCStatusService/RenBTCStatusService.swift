@@ -62,15 +62,15 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         // return Single.zip(
         //     solanaSDK
         //         .getMinimumBalanceForRentExemption(span: AccountInfo.span),
-        //     solanaSDK.getLamportsPerSignature(),
+        //     getLamportsPerSignature(),
         //     feeRelayerAPIClient.getFeePayerPubkey(),
-        //     solanaSDK.getRecentBlockhash()
+        //     getRecentBlockhash()
         // )
         //     .flatMap { [weak self] accountCreationFee, lamportPerSignature, feePayerAccount, recentBlockHash -> Single<String?> in
         //         guard let self = self else { return .error(SolanaError.unknown) }
-        //         return self.solanaSDK.prepareTransaction(
+        //         return self.prepareTransaction(
         //             instructions: [
-        //                 try self.solanaSDK.createAssociatedTokenAccountInstruction(
+        //                 try self.createAssociatedTokenAccountInstruction(
         //                     for: account.publicKey,
         //                     tokenMint: .renBTCMint,
         //                     payer: try PublicKey(string: feePayerAccount)
@@ -100,7 +100,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         //     .flatMapCompletable { [weak self] in
         //         guard let self = self else { throw SolanaError.unknown }
         //         guard let signature = $0 else { throw SolanaError.other("Could not get transaction id") }
-        //         return self.solanaSDK.waitForConfirmation(signature: signature)
+        //         return self.waitForConfirmation(signature: signature)
         //     }
         //     .do(onCompleted: { [weak self] in
         //         DispatchQueue.main.async { [weak self] in

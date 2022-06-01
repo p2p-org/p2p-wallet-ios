@@ -58,7 +58,7 @@ extension SupportedTokens {
             }
         }
 
-        override func map(newData: [SolanaSDK.Token]) -> [SolanaSDK.Token] {
+        override func map(newData: [Token]) -> [Token] {
             var data = super.map(newData: newData)
                 .sorted { firstToken, secondToken in
                     let firstTokenPriority = getTokenPriority(firstToken)
@@ -76,7 +76,7 @@ extension SupportedTokens {
             return data
         }
 
-        private func getTokenPriority(_ token: SolanaSDK.Token) -> Int {
+        private func getTokenPriority(_ token: Token) -> Int {
             switch token.symbol {
             case "SOL":
                 return .max
@@ -103,7 +103,7 @@ extension SupportedTokens.ViewModel: SupportedTokensViewModelType {
     var keyword: String { keywordSubject.value ?? "" }
 }
 
-private extension SolanaSDK.Token {
+private extension Token {
     func hasKeyword(_ keyword: String) -> Bool {
         symbol.lowercased().contains(keyword.lowercased())
             || name.lowercased().contains(keyword.lowercased())
