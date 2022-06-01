@@ -127,9 +127,7 @@ extension WalletDetail {
                 vc.doneHandler = processingTransactionDoneHandler
                 show(vc, sender: nil)
             case let .receive(pubkey):
-                if let solanaPubkey = try? SolanaSDK
-                    .PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey)
-                {
+                if let solanaPubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })
 
                     let vm = ReceiveToken.SceneModel(
