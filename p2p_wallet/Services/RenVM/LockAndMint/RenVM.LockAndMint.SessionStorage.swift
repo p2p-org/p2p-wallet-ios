@@ -1,5 +1,5 @@
 //
-//  RenVM.LockAndMint.SessionStorage.swift
+//  LockAndMint.SessionStorage.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 16/09/2021.
@@ -9,19 +9,19 @@ import Foundation
 import RenVMSwift
 import RxCocoa
 
-extension RenVM.LockAndMint {
+public extension LockAndMint {
     struct ProcessingTx: Codable, Hashable {
-        static let maxVote: UInt64 = 3
-        var tx: TxDetail
-        var receivedAt: Date?
-        var oneVoteAt: Date?
-        var twoVoteAt: Date?
-        var threeVoteAt: Date?
-        var confirmedAt: Date?
-        var submittedAt: Date?
-        var mintedAt: Date?
+        public static let maxVote: UInt64 = 3
+        public var tx: IncomingTransaction
+        public var receivedAt: Date?
+        public var oneVoteAt: Date?
+        public var twoVoteAt: Date?
+        public var threeVoteAt: Date?
+        public var confirmedAt: Date?
+        public var submittedAt: Date?
+        public var mintedAt: Date?
 
-        var statusString: String? {
+        public var statusString: String? {
             if mintedAt != nil {
                 return L10n.successfullyMintedRenBTC(
                     tx.value.convertToBalance(decimals: 8)
@@ -44,31 +44,31 @@ extension RenVM.LockAndMint {
             return nil
         }
 
-        var value: Double {
+        public var value: Double {
             tx.value.convertToBalance(decimals: 8)
         }
     }
 }
 
 protocol RenVMLockAndMintSessionStorageType {
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
+    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
 
-    func loadSession() -> RenVM.Session?
-    func saveSession(_ session: RenVM.Session)
+    func loadSession() -> RenVMSwift.Session?
+    func saveSession(_ session: RenVMSwift.Session)
     func expireCurrentSession()
 
-    func processingTx(tx: RenVM.LockAndMint.TxDetail, didReceiveAt receivedAt: Date)
-    func processingTx(tx: RenVM.LockAndMint.TxDetail, didConfirmAt confirmedAt: Date)
-    func processingTx(tx: RenVM.LockAndMint.TxDetail, didSubmitAt submittedAt: Date)
-    func processingTx(tx: RenVM.LockAndMint.TxDetail, didMintAt mintedAt: Date)
+    func processingTx(tx: IncomingTransaction, didReceiveAt receivedAt: Date)
+    func processingTx(tx: IncomingTransaction, didConfirmAt confirmedAt: Date)
+    func processingTx(tx: IncomingTransaction, didSubmitAt submittedAt: Date)
+    func processingTx(tx: IncomingTransaction, didMintAt mintedAt: Date)
 
     func isMinted(txid: String) -> Bool
-    func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx?
-    func getAllProcessingTx() -> [RenVM.LockAndMint.ProcessingTx]
+    func getProcessingTx(txid: String) -> LockAndMint.ProcessingTx?
+    func getAllProcessingTx() -> [LockAndMint.ProcessingTx]
     func removeMintedTx(txid: String)
 }
 
-extension RenVM.LockAndMint {
+extension LockAndMint {
     class SessionStorage: RenVMLockAndMintSessionStorageType {
         private let processingTxsSubject = BehaviorRelay<[ProcessingTx]>(value: Defaults.renVMProcessingTxs)
         private var disposable: DefaultsDisposable!
@@ -80,15 +80,15 @@ extension RenVM.LockAndMint {
             })
         }
 
-        var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
+        var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
             processingTxsSubject.asDriver()
         }
 
-        func loadSession() -> RenVM.Session? {
+        func loadSession() -> RenVMSwift.Session? {
             Defaults.renVMSession
         }
 
-        func saveSession(_ session: RenVM.Session) {
+        func saveSession(_ session: RenVMSwift.Session) {
             Defaults.renVMSession = session
         }
 
@@ -97,7 +97,7 @@ extension RenVM.LockAndMint {
             Defaults.renVMProcessingTxs = []
         }
 
-        func processingTx(tx: RenVM.LockAndMint.TxDetail, didReceiveAt receivedAt: Date) {
+        func processingTx(tx: IncomingTransaction, didReceiveAt receivedAt: Date) {
             save { current in
                 guard let index = current.indexOf(tx) else {
                     current.append(.init(tx: tx, receivedAt: receivedAt))
@@ -121,7 +121,7 @@ extension RenVM.LockAndMint {
             }
         }
 
-        func processingTx(tx: RenVM.LockAndMint.TxDetail, didConfirmAt confirmedAt: Date) {
+        func processingTx(tx: IncomingTransaction, didConfirmAt confirmedAt: Date) {
             save { current in
                 guard let index = current.indexOf(tx) else {
                     current.append(.init(tx: tx, confirmedAt: confirmedAt))
@@ -132,7 +132,7 @@ extension RenVM.LockAndMint {
             }
         }
 
-        func processingTx(tx: RenVM.LockAndMint.TxDetail, didSubmitAt submittedAt: Date) {
+        func processingTx(tx: IncomingTransaction, didSubmitAt submittedAt: Date) {
             save { current in
                 guard let index = current.indexOf(tx) else {
                     current.append(.init(tx: tx, submittedAt: submittedAt))
@@ -143,7 +143,7 @@ extension RenVM.LockAndMint {
             }
         }
 
-        func processingTx(tx: RenVM.LockAndMint.TxDetail, didMintAt mintedAt: Date) {
+        func processingTx(tx: IncomingTransaction, didMintAt mintedAt: Date) {
             save { current in
                 guard let index = current.indexOf(tx) else {
                     current.append(.init(tx: tx, mintedAt: mintedAt))
@@ -158,11 +158,11 @@ extension RenVM.LockAndMint {
             getAllProcessingTx().contains(where: { $0.tx.txid == txid && $0.mintedAt != nil })
         }
 
-        func getProcessingTx(txid: String) -> RenVM.LockAndMint.ProcessingTx? {
+        func getProcessingTx(txid: String) -> LockAndMint.ProcessingTx? {
             Defaults.renVMProcessingTxs.first(where: { $0.tx.txid == txid })
         }
 
-        func getAllProcessingTx() -> [RenVM.LockAndMint.ProcessingTx] {
+        func getAllProcessingTx() -> [LockAndMint.ProcessingTx] {
             Defaults.renVMProcessingTxs
         }
 
@@ -175,7 +175,7 @@ extension RenVM.LockAndMint {
             Defaults.renVMProcessingTxs = current
         }
 
-        private func save(_ modify: @escaping (inout [RenVM.LockAndMint.ProcessingTx]) -> Bool) {
+        private func save(_ modify: @escaping (inout [LockAndMint.ProcessingTx]) -> Bool) {
             lock.lock()
             defer { lock.unlock() }
 
@@ -188,12 +188,12 @@ extension RenVM.LockAndMint {
     }
 }
 
-private extension Array where Element == RenVM.LockAndMint.ProcessingTx {
-    func hasTx(_ tx: RenVM.LockAndMint.TxDetail) -> Bool {
+private extension Array where Element == LockAndMint.ProcessingTx {
+    func hasTx(_ tx: IncomingTransaction) -> Bool {
         contains(where: { $0.tx.txid == tx.txid })
     }
 
-    func indexOf(_ tx: RenVM.LockAndMint.TxDetail) -> Int? {
+    func indexOf(_ tx: IncomingTransaction) -> Int? {
         firstIndex(where: { $0.tx.txid == tx.txid })
     }
 }

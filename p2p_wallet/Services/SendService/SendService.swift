@@ -7,6 +7,7 @@
 
 import FeeRelayerSwift
 import OrcaSwapSwift
+import RenVMSwift
 import Resolver
 import RxSwift
 import SolanaSwift
@@ -22,7 +23,8 @@ class SendService: SendServiceType {
     @Injected var feeRelayerAPIClient: FeeRelayerAPIClient
     @Injected var contextManager: FeeRelayerContextManager
 
-    @Injected private var renVMBurnAndReleaseService: RenVMBurnAndReleaseServiceType
+    @Injected private var renVMBurnAndReleaseService: BurnAndReleaseService
+    @Injected private var feeService: FeeServiceType
     @Injected private var walletsRepository: WalletsRepository
 
     init(relayMethod: SendTokenRelayMethod) {
@@ -103,8 +105,8 @@ class SendService: SendServiceType {
                     .catchAndReturn(nil)
                 }
         )
-            .map { $0.compactMap { $0 }}
-            .value
+        .map { $0.compactMap { $0 }}
+        .value
     }
 
     func getFeesInPayingToken(
@@ -167,10 +169,10 @@ class SendService: SendServiceType {
                 )
             }
         case .bitcoin:
-            return try await renVMBurnAndReleaseService.burn(
+            return try await renVMBurnAndReleaseService.burnAndRelease(
                 recipient: receiver,
                 amount: amount
-            ).value
+            )
         }
     }
 }

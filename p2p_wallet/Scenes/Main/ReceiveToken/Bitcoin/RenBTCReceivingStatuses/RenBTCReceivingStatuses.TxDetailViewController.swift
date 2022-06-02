@@ -85,7 +85,7 @@ extension RenBTCReceivingStatuses {
     class TxDetailViewModel: BEListViewModelType {
         // MARK: - Dependencies
 
-        let processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]>
+        let processingTxsDriver: Driver<[LockAndMint.ProcessingTx]>
         let txid: String
 
         // MARK: - Properties
@@ -95,13 +95,13 @@ extension RenBTCReceivingStatuses {
 
         // MARK: - Initializer
 
-        init(processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]>, txid: String) {
+        init(processingTxsDriver: Driver<[LockAndMint.ProcessingTx]>, txid: String) {
             self.processingTxsDriver = processingTxsDriver
             self.txid = txid
             bind()
         }
 
-        var currentTx: Driver<RenVM.LockAndMint.ProcessingTx?> {
+        var currentTx: Driver<LockAndMint.ProcessingTx?> {
             processingTxsDriver.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
         }
 

@@ -1,5 +1,5 @@
 //
-//  RenVM.LockAndMint.Service.swift
+//  LockAndMint.Service.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 17/09/2021.
@@ -17,7 +17,7 @@ protocol RenVMLockAndMintServiceType {
     var errorDriver: Driver<String?> { get }
     var addressDriver: Driver<String?> { get }
     var minimumTransactionAmountDriver: Driver<Loadable<Double>> { get }
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
+    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
 
     func reload()
     func reloadMinimumTransactionAmount()
@@ -27,7 +27,7 @@ protocol RenVMLockAndMintServiceType {
     func getCurrentAddress() -> String?
 }
 
-extension RenVM.LockAndMint {
+extension LockAndMint {
     class Service {
         // MARK: - Constants
 
@@ -48,7 +48,7 @@ extension RenVM.LockAndMint {
         // MARK: - Properties
 
         private var loadingDisposable: Disposable?
-        private var lockAndMint: RenVM.LockAndMint?
+        private var lockAndMint: LockAndMint?
         private let mintQueue = DispatchQueue(label: "mintQueue", qos: .background)
         private lazy var scheduler = SerialDispatchQueueScheduler(
             queue: mintQueue,
@@ -117,7 +117,7 @@ extension RenVM.LockAndMint {
             loadSession(savedSession: sessionStorage.loadSession())
         }
 
-        private func loadSession(savedSession _: RenVM.Session?) {
+        private func loadSession(savedSession _: RenVMSwift.Session?) {
             fatalError("Method has not been implemented")
 
             // // set loading
@@ -131,8 +131,8 @@ extension RenVM.LockAndMint {
             //     solanaClient: solanaClient
             // )
             //     .observe(on: MainScheduler.instance)
-            //     .flatMap { [weak self] solanaChain -> Single<RenVM.LockAndMint.GatewayAddressResponse> in
-            //         guard let self = self else { throw RenVM.Error.unknown }
+            //     .flatMap { [weak self] solanaChain -> Single<LockAndMint.GatewayAddressResponse> in
+            //         guard let self = self else { throw RenVMError.unknown }
             //
             //         // create lock and mint
             //         self.lockAndMint = try .init(
@@ -169,7 +169,7 @@ extension RenVM.LockAndMint {
             reload()
         }
 
-        private func mintStoredTxs(response: RenVM.LockAndMint.GatewayAddressResponse) {
+        private func mintStoredTxs(response: LockAndMint.GatewayAddressResponse) {
             // get all confirmed and submited txs in storage
             let txs = sessionStorage.getAllProcessingTx()
                 .filter { $0.mintedAt == nil && ($0.confirmedAt != nil || $0.submittedAt != nil) }
@@ -180,7 +180,7 @@ extension RenVM.LockAndMint {
             }
         }
 
-        private func observeTxStreamAndMint(response: RenVM.LockAndMint.GatewayAddressResponse) {
+        private func observeTxStreamAndMint(response: LockAndMint.GatewayAddressResponse) {
             // cancel previous observing
             observingTxStreamDisposable?.dispose()
 
@@ -195,7 +195,7 @@ extension RenVM.LockAndMint {
                 })
         }
 
-        private func observeTxStatusAndMint(response: RenVM.LockAndMint.GatewayAddressResponse) throws {
+        private func observeTxStatusAndMint(response: LockAndMint.GatewayAddressResponse) throws {
             guard let endAt = getSessionEndDate(), Date() < endAt
             else {
                 expireCurrentSession()
@@ -211,9 +211,9 @@ extension RenVM.LockAndMint {
             url += "/api/address/\(address)/utxo"
             let request = URLRequest(url: .init(string: url)!)
 
-            return Single<TxDetails>.async {
+            return Single<[IncomingTransaction]>.async {
                 let (data, _) = try await URLSession.shared.data(from: request)
-                return try JSONDecoder().decode(TxDetails.self, from: data)
+                return try JSONDecoder().decode([IncomingTransaction].self, from: data)
             }
             // merge result to storage
                 .subscribe(onSuccess: { [weak self] txs in
@@ -243,7 +243,7 @@ extension RenVM.LockAndMint {
 
         private func processConfirmedAndSubmitedTransaction(
             _: ProcessingTx,
-            response _: RenVM.LockAndMint.GatewayAddressResponse
+            response _: LockAndMint.GatewayAddressResponse
         ) {
             fatalError("Method has not been implemented")
 
@@ -254,7 +254,7 @@ extension RenVM.LockAndMint {
             // // request
             // return prepareRequest(response: response, tx: tx)
             //     .flatMap { [weak self] response -> Single<(amountOut: String?, signature: String)> in
-            //         guard let self = self else { throw RenVM.Error.unknown }
+            //         guard let self = self else { throw RenVMError.unknown }
             //         Logger.log(message: "renBTC event mint response: \(response)", event: .info)
             //         return self.solanaClient.waitForConfirmation(signature: response.signature)
             //             .andThen(.just(response))
@@ -278,11 +278,11 @@ extension RenVM.LockAndMint {
                                     tx: ProcessingTx) -> Single<(amountOut: String?, signature: String)>
         {
             guard let lockAndMint = lockAndMint else {
-                return .error(RenVM.Error.unknown)
+                return .error(RenVMError.unknown)
             }
 
             // get state
-            let state: RenVM.State
+            let state: RenVMSwift.State
 
             do {
                 state = try lockAndMint.getDepositState(
@@ -313,14 +313,14 @@ extension RenVM.LockAndMint {
             return submitMintRequest
                 .andThen(mint(lockAndMint: lockAndMint, state: state, tx: tx))
                 .catch { [weak self] error in
-                    guard let self = self else { throw RenVM.Error.unknown }
-                    if let error = error as? RenVM.Error,
+                    guard let self = self else { throw RenVMError.unknown }
+                    if let error = error as? RenVMError,
                        error == .paramsMissing
                     {
                         return Single<Void>.just(())
                             .delay(.seconds(self.mintingRate), scheduler: self.scheduler)
                             .flatMap { [weak self] in
-                                guard let self = self else { throw RenVM.Error.unknown }
+                                guard let self = self else { throw RenVMError.unknown }
                                 return self.prepareRequest(response: response, tx: tx)
                             }
                     }
@@ -330,8 +330,8 @@ extension RenVM.LockAndMint {
         }
 
         private func submitTransaction(
-            lockAndMint _: RenVM.LockAndMint,
-            state _: RenVM.State,
+            lockAndMint _: LockAndMint,
+            state _: RenVMSwift.State,
             tx _: ProcessingTx
         ) -> Completable {
             fatalError("Method has not been implemented")
@@ -347,8 +347,8 @@ extension RenVM.LockAndMint {
         }
 
         private func mint(
-            lockAndMint _: RenVM.LockAndMint,
-            state _: RenVM.State,
+            lockAndMint _: LockAndMint,
+            state _: RenVMSwift.State,
             tx _: ProcessingTx
         ) -> Single<(amountOut: String?, signature: String)> {
             fatalError("Method has not been implemented")
@@ -366,7 +366,7 @@ extension RenVM.LockAndMint {
     }
 }
 
-extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
+extension LockAndMint.Service: RenVMLockAndMintServiceType {
     var isLoadingDriver: Driver<Bool> {
         isLoadingSubject.asDriver()
     }
@@ -383,7 +383,7 @@ extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
         minimumTransactionAmountSubject.asDriver()
     }
 
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
+    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
         sessionStorage.processingTxsDriver
     }
 
@@ -394,31 +394,4 @@ extension RenVM.LockAndMint.Service: RenVMLockAndMintServiceType {
     func getCurrentAddress() -> String? {
         addressSubject.value
     }
-}
-
-extension RenVM.LockAndMint {
-    // MARK: - TxDetailElement
-
-    struct TxDetail: Codable, Hashable {
-        let txid: String
-        let vout: UInt64
-        let status: Status
-        let value: UInt64
-
-        struct Status: Codable, Hashable {
-            let confirmed: Bool
-            let blockHeight: Int?
-            let blockHash: String?
-            let blockTime: Int?
-
-            enum CodingKeys: String, CodingKey {
-                case confirmed
-                case blockHeight = "block_height"
-                case blockHash = "block_hash"
-                case blockTime = "block_time"
-            }
-        }
-    }
-
-    typealias TxDetails = [TxDetail]
 }
