@@ -98,20 +98,24 @@ extension SendToken.ChooseRecipientAndNetwork {
                         let receiver = self.recipientSubject.value
                     else { return .just(.zero) }
 
-                    return self.sendService.getFees(
-                        from: wallet,
-                        receiver: receiver.address,
-                        network: self.networkSubject.value,
-                        payingTokenMint: wallet.mintAddress
-                    )
-                        .flatMap { [weak self] fee -> Single<FeeAmount?> in
-                            guard let self = self, let fee = fee else { return .just(.zero) }
+                    return Single.async {
+                        try await self.sendService.getFees(
+                            from: wallet,
+                            receiver: receiver.address,
+                            network: self.networkSubject.value,
+                            payingTokenMint: wallet.mintAddress
+                        )
+                    }
+                    .flatMap { [weak self] fee -> Single<FeeAmount?> in
+                        guard let self = self, let fee = fee else { return .just(.zero) }
 
-                            return self.sendService.getFeesInPayingToken(
+                        return Single.async {
+                            try await self.sendService.getFeesInPayingToken(
                                 feeInSOL: fee,
                                 payingFeeWallet: wallet
                             )
                         }
+                    }
                 }
                 .subscribe(onNext: { [weak self] fee in
                     guard

@@ -10,6 +10,7 @@ import RxCocoa
 import RxConcurrency
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 extension History {
     class SceneModel: BEStreamListViewModel<ParsedTransaction> {
@@ -170,8 +171,10 @@ extension History {
             }
             .asObservable()
             .flatMap { results in Observable.from(results) }
-            .concatMap { result in
-                Observable.async { () -> [ParsedTransaction] in
+            .flatMap { result in
+                // TODO: FIX
+                Single.async { () -> [ParsedTransaction] in
+                    print(Date())
                     let transactionInfo = try await self.transactionRepository
                         .getTransaction(signature: result.0.signature)
                     let transaction = try await self.transactionParser.parse(

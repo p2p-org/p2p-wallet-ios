@@ -1,5 +1,5 @@
 //
-//  SolanaSDK.WrappingToken+Extensions.swift
+//  WrappingToken+Extensions.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 23/04/2021.

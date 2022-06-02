@@ -12,6 +12,7 @@ import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     // MARK: - Dependencies
@@ -75,7 +76,8 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     }
 
     override func createRequest() -> Single<[ParsedTransaction]> {
-        fatalError("Method has not been implemented")
+        .just([])
+        // fatalError("Method has not been implemented")
 
         // let fetchPubkeys: Single<[String]>
         // if fetchedFeePayer {
@@ -93,7 +95,7 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
         //
         // return fetchPubkeys
         //     .flatMap { [weak self] pubkeys -> Single<[ParsedTransaction]> in
-        //         guard let self = self else { return .error(SolanaError.unknown) }
+        //         guard let self = self else { return .error(Error.unknown) }
         //         return self.repository.getTransactionsHistory(
         //             account: self.account,
         //             accountSymbol: self.accountSymbol,

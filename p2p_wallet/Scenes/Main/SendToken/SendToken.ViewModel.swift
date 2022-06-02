@@ -121,7 +121,7 @@ extension SendToken {
             loadingStateSubject.accept(.loading)
 
             Completable.zip(
-                sendService.load(),
+                Completable.async { try await self.sendService.load() },
                 walletsRepository.stateObservable
                     .filter { $0 == .loaded }
                     .take(1)
@@ -221,8 +221,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
 
     func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
-        fatalError("Method has not been implemented")
-        // sendService.getFreeTransactionFeeLimit()
+        Single.async { try await self.sendService.getFreeTransactionFeeLimit() }
     }
 
     func navigate(to scene: SendToken.NavigatableScene) {

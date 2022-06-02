@@ -67,7 +67,8 @@ extension Home {
                 .asDriver(onErrorJustReturn: .initializing)
                 .map { $0 == .error }
                 .drive(onNext: { [weak self] hasError in
-                    if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil {
+                    // TODO: catch network error!
+                    if hasError, self?.viewModel.walletsRepository.getError() != nil {
                         self?.view.showConnectionErrorView(refreshAction: CocoaAction { [weak self] in
                             self?.viewModel.walletsRepository.reload()
                             return .just(())

@@ -5,6 +5,7 @@
 import Foundation
 import Resolver
 import SolanaSwift
+import TransactionParser
 
 /// The repository that works with transactions.
 protocol HistoryTransactionRepository {
@@ -34,7 +35,7 @@ extension History {
         }
 
         func getTransaction(signature: String) async throws -> TransactionInfo {
-            try await solanaAPIClient.getTransaction(signature: signature, commitment: "recent")
+            try await solanaAPIClient.getTransaction(signature: signature, commitment: nil)!
         }
     }
 

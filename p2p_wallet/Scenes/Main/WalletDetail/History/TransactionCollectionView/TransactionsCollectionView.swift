@@ -11,6 +11,7 @@ import Foundation
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 class TransactionsCollectionView: BEDynamicSectionsCollectionView {
     let graphViewModel: WalletGraphViewModel

@@ -7,6 +7,7 @@
 
 import BEPureLayout
 import Foundation
+import TransactionParser
 import UIKit
 
 extension TransactionDetail {

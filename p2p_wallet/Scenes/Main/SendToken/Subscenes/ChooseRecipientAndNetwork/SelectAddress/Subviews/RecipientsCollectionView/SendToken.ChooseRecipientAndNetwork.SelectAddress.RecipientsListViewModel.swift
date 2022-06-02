@@ -82,9 +82,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .flatMap { [weak self] name -> Single<(String?, Bool)> in
                     guard let self = self, name == nil else { return .just((name, false)) }
                     // check funds
-                    return self.solanaAPIClient.checkAccountValidation(account: address)
-                        .catchAndReturn(false)
-                        .map { (name, !$0) }
+                    return Single.async {
+                        try await self.solanaAPIClient.checkAccountValidation(account: address)
+                    }
+                    .catchAndReturn(false)
+                    .map { (name, !$0) }
                 }
                 .map {
                     [

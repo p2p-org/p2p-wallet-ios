@@ -8,6 +8,7 @@
 import Foundation
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 struct PendingTransaction {
     enum TransactionStatus {
@@ -114,7 +115,7 @@ extension PendingTransaction {
                 authority: authority,
                 destinationAuthority: nil,
                 amount: amount,
-                myAccount: transaction.sender.pubkey
+                account: transaction.sender.pubkey
             )
             amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
             fee = transaction.feeInToken
@@ -134,7 +135,7 @@ extension PendingTransaction {
                 sourceAmount: transaction.amount,
                 destination: destinationWallet,
                 destinationAmount: transaction.estimatedAmount,
-                myAccountSymbol: nil
+                accountSymbol: nil
             )
             amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?
                 .value
@@ -146,7 +147,7 @@ extension PendingTransaction {
         return .init(
             status: status,
             signature: signature,
-            value: value,
+            info: value,
             amountInFiat: amountInFiat,
             slot: slot,
             blockTime: sentAt,

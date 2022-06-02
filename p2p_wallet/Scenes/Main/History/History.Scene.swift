@@ -7,6 +7,7 @@ import BEPureLayout
 import Foundation
 import Resolver
 import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension History {
