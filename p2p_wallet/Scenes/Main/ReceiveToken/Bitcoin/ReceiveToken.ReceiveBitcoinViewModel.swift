@@ -13,7 +13,7 @@ import RxSwift
 protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     var addressDriver: Driver<String?> { get }
     var timerSignal: Signal<Void> { get }
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
+    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
     var hasExplorerButton: Bool { get }
 
     func getSessionEndDate() -> Date?
@@ -91,7 +91,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         timerSubject.asSignal()
     }
 
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
+    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
         renVMService.processingTxsDriver
     }
 

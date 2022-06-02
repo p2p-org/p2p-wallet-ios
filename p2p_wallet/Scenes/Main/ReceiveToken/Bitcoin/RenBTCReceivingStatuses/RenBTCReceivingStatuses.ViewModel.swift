@@ -13,7 +13,7 @@ import RxSwift
 
 protocol RenBTCReceivingStatusesViewModelType: BEListViewModelType {
     var navigationDriver: Driver<RenBTCReceivingStatuses.NavigatableScene?> { get }
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> { get }
+    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
     func showDetail(txid: String)
 }
 
@@ -26,7 +26,7 @@ extension RenBTCReceivingStatuses {
         // MARK: - Properties
 
         let disposeBag = DisposeBag()
-        var data = [RenVM.LockAndMint.ProcessingTx]()
+        var data = [LockAndMint.ProcessingTx]()
 
         // MARK: - Subject
 
@@ -93,7 +93,7 @@ extension RenBTCReceivingStatuses.ViewModel: RenBTCReceivingStatusesViewModelTyp
         navigationSubject.asDriver()
     }
 
-    var processingTxsDriver: Driver<[RenVM.LockAndMint.ProcessingTx]> {
+    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
         receiveBitcoinViewModel.processingTxsDriver
     }
 
