@@ -139,13 +139,12 @@ extension OrcaSwapV2 {
                         return
                     }
 
-                    self.tradablePoolsPairsSubject.request = self.swapService.getPoolPair(
-                        from: sourceWallet.token.address,
-                        to: destinationWallet.token.address,
-                        amount: 1000, // TODO: fix me
-                        as: .source
-                    )
-
+                    self.tradablePoolsPairsSubject.request = Single.async(with: self) { `self` in
+                        try await self.swapService.getPoolPair(
+                            from: sourceWallet.token.address,
+                            to: destinationWallet.token.address
+                        )
+                    }
                     self.tradablePoolsPairsSubject.reload()
                 })
                 .disposed(by: disposeBag)

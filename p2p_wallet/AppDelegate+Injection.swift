@@ -63,6 +63,7 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Solana
 
+        print("HERE", Defaults.apiEndPoint)
         register { JSONRPCAPIClient(endpoint: Defaults.apiEndPoint) }
             .implements(SolanaAPIClient.self)
             .scope(.application)
@@ -140,6 +141,15 @@ extension Resolver: ResolverRegistering {
         ) }
         .implements(FeeRelayer.self)
         .scope(.session)
+
+        register {
+            SwapFeeRelayerImpl(
+                accountStorage: resolve(),
+                feeRelayerAPIClient: resolve(),
+                solanaApiClient: resolve(),
+                orcaSwap: resolve()
+            )
+        }.implements(SwapFeeRelayer.self)
 
         register {
             FeeRelayerContextManagerImpl(
