@@ -33,6 +33,9 @@ targets:
           - script: |
                   "$SRCROOT"/Scripts/formatAndLint.sh
             name: "Format and lint Run Script"
+          - script: |
+                  "$SRCROOT"/Scripts/removeLocalization.sh
+            name: "Remove Localization Run Script"
         postBuildScripts:
           - script: |
                   "${PODS_ROOT}/FirebaseCrashlytics/run"
