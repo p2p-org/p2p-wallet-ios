@@ -5,6 +5,7 @@
 import Foundation
 import Resolver
 import SolanaSwift
+import TransactionParser
 
 extension History {
     /// Update apply exchange rate to transaction to show price information

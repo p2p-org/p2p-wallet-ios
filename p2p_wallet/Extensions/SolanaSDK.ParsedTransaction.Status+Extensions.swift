@@ -7,6 +7,7 @@
 
 import Foundation
 import SolanaSwift
+import TransactionParser
 
 extension ParsedTransaction.Status {
     var label: String {

@@ -9,6 +9,7 @@ import Foundation
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 extension TransactionDetail {
     final class NavigationBar: NewWLNavigationBar {

@@ -7,6 +7,7 @@
 
 import Foundation
 import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension History {

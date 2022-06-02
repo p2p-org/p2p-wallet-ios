@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RxConcurrency
 import RxSwift
 import SolanaSwift
 
@@ -14,7 +15,7 @@ import SolanaSwift
 protocol RawTransactionType {
     func createRequest() -> Single<String>
     var mainDescription: String { get }
-    var networkFees: (total: Lamports, token: Token)? { get }
+    var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? { get }
 }
 
 extension RawTransactionType {
@@ -76,17 +77,19 @@ extension ProcessTransaction {
                 ))
             }
 
-            return swapService.swap(
-                sourceAddress: sourceWallet.pubkey!,
-                sourceTokenMint: sourceWallet.mintAddress,
-                destinationAddress: destinationWallet.pubkey,
-                destinationTokenMint: destinationWallet.mintAddress,
-                payingTokenAddress: payingWallet?.pubkey,
-                payingTokenMint: payingWallet?.mintAddress,
-                poolsPair: poolsPair,
-                amount: amount.toLamport(decimals: sourceWallet.token.decimals),
-                slippage: slippage
-            ).map { $0.first ?? "" }
+            return Single.async {
+                try await swapService.swap(
+                    sourceAddress: sourceWallet.pubkey!,
+                    sourceTokenMint: sourceWallet.mintAddress,
+                    destinationAddress: destinationWallet.pubkey,
+                    destinationTokenMint: destinationWallet.mintAddress,
+                    payingTokenAddress: payingWallet?.pubkey,
+                    payingTokenMint: payingWallet?.mintAddress,
+                    poolsPair: poolsPair,
+                    amount: amount.toLamport(decimals: sourceWallet.token.decimals),
+                    slippage: slippage
+                )
+            }.map { $0.first ?? "" }
         }
 
         var networkFees: (total: Lamports, token: Token)? {
@@ -100,7 +103,6 @@ extension ProcessTransaction {
     }
 
     struct CloseTransaction: RawTransactionType {
-        let blockchainClient: SolanaBlockchainClient
         let closingWallet: Wallet
         let reimbursedAmount: UInt64
 
@@ -109,23 +111,11 @@ extension ProcessTransaction {
         }
 
         func createRequest() -> Single<String> {
-            fatalError("Implementing")
-//            guard let pubkey = closingWallet.pubkey else {
-//                return .error(SolanaError.unknown)
-//            }
-//            let preparedTransaction = blockchainClient.prepareTransaction(
-//                instructions: [
-//                    TokenProgram.closeAccountInstruction(
-//                        account: <#T##PublicKey#>,
-//                        destination: <#T##PublicKey#>,
-//                        owner: <#T##PublicKey#>
-//                    )
-//                ],
-//                signers: <#T##[Account]#>,
-//                feePayer: <#T##PublicKey#>,
-//                feeCalculator: <#T##FeeCalculator?#>
-//            )
-//            blockchainClient.sendTransaction(preparedTransaction: <#T##PreparedTransaction#>)
+            fatalError("Not implemented")
+            // guard let pubkey = closingWallet.pubkey else {
+            //     return .error(Error.unknown)
+            // }
+            // return closeTokenAccount(tokenPubkey: pubkey)
         }
 
         var networkFees: (total: Lamports, token: Token)? {
@@ -139,10 +129,10 @@ extension ProcessTransaction {
         let sender: Wallet
         let receiver: SendToken.Recipient
         let authority: String?
-        let amount: Lamports
+        let amount: SolanaSwift.Lamports
         let payingFeeWallet: Wallet?
         let feeInSOL: UInt64
-        let feeInToken: FeeAmount?
+        let feeInToken: SolanaSwift.FeeAmount?
         let isSimulation: Bool
 
         var mainDescription: String {
@@ -154,16 +144,18 @@ extension ProcessTransaction {
         }
 
         func createRequest() -> Single<String> {
-            sendService.send(
-                from: sender,
-                receiver: receiver.address,
-                amount: amount.convertToBalance(decimals: sender.token.decimals),
-                network: network,
-                payingFeeWallet: payingFeeWallet
-            )
+            Single.async { () -> String in
+                try await sendService.send(
+                    from: sender,
+                    receiver: receiver.address,
+                    amount: amount.convertToBalance(decimals: sender.token.decimals),
+                    network: network,
+                    payingFeeWallet: payingFeeWallet
+                )
+            }
         }
 
-        var networkFees: (total: Lamports, token: Token)? {
+        var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? {
             guard let feeInToken = feeInToken, let token = payingFeeWallet?.token else {
                 return nil
             }

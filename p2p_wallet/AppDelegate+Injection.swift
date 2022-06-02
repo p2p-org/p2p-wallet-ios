@@ -13,15 +13,6 @@ import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
-        // MARK: - Deprecated (REMOVE LATER)
-
-        register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
-            .scope(.session)
-
-        register { SolanaSDK.Socket(endpoint: Defaults.apiEndPoint.socketUrl) }
-            .implements(SocketType.self)
-            .scope(.session)
-
         // MARK: - Lifetime app's services
 
         register { KeychainStorage() }
@@ -72,12 +63,18 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Solana
 
+        print("HERE", Defaults.apiEndPoint)
         register { JSONRPCAPIClient(endpoint: Defaults.apiEndPoint) }
             .implements(SolanaAPIClient.self)
             .scope(.application)
 
         register { BlockchainClient(apiClient: resolve()) }
             .implements(SolanaBlockchainClient.self)
+
+        register { SolanaSwift.TokensRepository(endpoint: resolve(SolanaAPIClient.self).endpoint) }
+            .implements(SolanaTokensRepository.self)
+
+        register { CachedTokensRepository() }
 
         // register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
         //     .implements(TokensRepository.self)
@@ -97,6 +94,9 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Send service
 
+        register { TransactionsRepositoryImpl() }
+            .implements(TransactionsRepository.self)
+
         register { _, args in
             SendService(relayMethod: args())
         }
@@ -111,9 +111,9 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Socket
 
-//        register { SolanaSD.Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!,enableDebugLogs: true) }
-//            .implements(SocketType.self)
-//            .scope(.session)
+        register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!, enableDebugLogs: true) }
+            .implements(SocketType.self)
+            .scope(.session)
 
         // MARK: - TransactionHandler (new)
 
@@ -142,16 +142,23 @@ extension Resolver: ResolverRegistering {
         .implements(FeeRelayer.self)
         .scope(.session)
 
-//        register { try! FeeRelayer.Relay(
-//            apiClient: resolve(),
-//            solanaClient: resolve(),
-//            accountStorage: resolve(SolanaSDK.self).accountStorage,
-//            orcaSwapClient: resolve(),
-//            deviceType: .iOS,
-//            buildNumber: Bundle.main.fullVersionNumber
-//        ) }
-//        .implements(FeeRelayerRelayType.self)
-//        .scope(.session)
+        register {
+            SwapFeeRelayerImpl(
+                accountStorage: resolve(),
+                feeRelayerAPIClient: resolve(),
+                solanaApiClient: resolve(),
+                orcaSwap: resolve()
+            )
+        }.implements(SwapFeeRelayer.self)
+
+        register {
+            FeeRelayerContextManagerImpl(
+                accountStorage: resolve(),
+                solanaAPIClient: resolve(),
+                feeRelayerAPIClient: resolve()
+            )
+        }
+        .implements(FeeRelayerContextManager.self)
 
         // MARK: - PricesService
 

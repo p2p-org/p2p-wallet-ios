@@ -10,6 +10,7 @@ import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int

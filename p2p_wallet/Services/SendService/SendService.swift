@@ -13,17 +13,19 @@ import RxSwift
 import SolanaSwift
 
 class SendService: SendServiceType {
-    private let locker = NSLock()
     let relayMethod: SendTokenRelayMethod
+
+    @Injected var accountStorage: SolanaAccountStorage
     @Injected var solanaAPIClient: SolanaAPIClient
-    @Injected private var orcaSwap: OrcaSwapType
+    @Injected var blockchainClient: BlockchainClient
+    @Injected var orcaSwap: OrcaSwapType
+    @Injected var feeRelayer: FeeRelayer
     @Injected var feeRelayerAPIClient: FeeRelayerAPIClient
-    @Injected var relayService: FeeRelayer
+    @Injected var contextManager: FeeRelayerContextManager
+
     @Injected private var renVMBurnAndReleaseService: BurnAndReleaseService
     @Injected private var feeService: FeeServiceType
     @Injected private var walletsRepository: WalletsRepository
-    var cachedFeePayerPubkey: String?
-    private var cachedPoolsSPLToSOL = [String: [PoolsPair]]()
 
     init(relayMethod: SendTokenRelayMethod) {
         self.relayMethod = relayMethod
@@ -31,44 +33,15 @@ class SendService: SendServiceType {
 
     // MARK: - Methods
 
-    func load() -> Completable {
-        fatalError("Method has not been implemented")
-
-        // TODO: fix
-        // var completables = [feeService.load()]
-        //
-        // if relayMethod == .relay {
-        //     completables.append(
-        //         orcaSwap.load()
-        //             .andThen(relayService.load())
-        //             .andThen(
-        //                 // load all pools
-        //                 Single.zip(
-        //                     walletsRepository.getWallets()
-        //                         .filter { ($0.lamports ?? 0) > 0 }
-        //                         .map { wallet in
-        //                             orcaSwap.getTradablePoolsPairs(
-        //                                 fromMint: wallet.mintAddress,
-        //                                 toMint: PublicKey.wrappedSOLMint.base58EncodedString
-        //                             )
-        //                                 .do(onSuccess: { [weak self] poolsPair in
-        //                                     self?.locker.lock()
-        //                                     self?.cachedPoolsSPLToSOL[wallet.mintAddress] = poolsPair
-        //                                     self?.locker.unlock()
-        //                                 })
-        //                         }
-        //                 )
-        //                     .asCompletable()
-        //             )
-        //     )
-        // }
-        //
-        // return .zip(completables)
+    func load() async throws {
+        let _ = try await(
+            orcaSwap.load(),
+            contextManager.update()
+        )
     }
 
-    func checkAccountValidation(account _: String) -> Single<Bool> {
-        fatalError("Method has not been implemented")
-        // solanaAPIClient.checkAccountValidation(account: account)
+    func checkAccountValidation(account: String) async throws -> Bool {
+        try await solanaAPIClient.checkAccountValidation(account: account)
     }
 
     func isTestNet() -> Bool {
@@ -82,76 +55,79 @@ class SendService: SendServiceType {
         receiver: String?,
         network: SendToken.Network,
         payingTokenMint: String?
-    ) -> Single<FeeAmount?> {
+    ) async throws -> FeeAmount? {
         switch network {
         case .bitcoin:
-            return .just(
-                .init(
-                    transaction: 20000,
-                    accountBalances: 0,
-                    others: [
-                        .init(amount: 0.0002, unit: "renBTC"),
-                    ]
-                )
+            return FeeAmount(
+                transaction: 20000,
+                accountBalances: 0,
+                others: [
+                    .init(amount: 0.0002, unit: "renBTC"),
+                ]
             )
         case .solana:
             guard let receiver = receiver else {
-                return .just(nil)
+                return nil
             }
 
             switch relayMethod {
             case .relay:
-                return getFeeViaRelayMethod(
+                return try await getFeeViaRelayMethod(
+                    try await contextManager.getCurrentContext(),
                     from: wallet,
                     receiver: receiver,
                     payingTokenMint: payingTokenMint
                 )
             case .reward:
-                return .just(.zero)
+                return FeeAmount.zero
             }
         }
     }
 
-    func getAvailableWalletsToPayFee(feeInSOL _: FeeAmount) -> Single<[Wallet]> {
-        fatalError("Method has not been implemented")
+    func getAvailableWalletsToPayFee(feeInSOL: FeeAmount) async throws -> [Wallet] {
+        try await Single.zip(
+            walletsRepository.getWallets()
+                .filter { ($0.lamports ?? 0) > 0 }
+                .map { wallet -> Single<Wallet?> in
+                    if wallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
+                        return (wallet.lamports ?? 0) >= feeInSOL.total ? .just(wallet) : .just(nil)
+                    }
 
-        // Single.zip(
-        //     walletsRepository.getWallets()
-        //         .filter { ($0.lamports ?? 0) > 0 }
-        //         .map { wallet -> Single<Wallet?> in
-        //             if wallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
-        //                 return (wallet.lamports ?? 0) >= feeInSOL.total ? .just(wallet) : .just(nil)
-        //             }
-        //             return relayService.calculateFeeInPayingToken(
-        //                 feeInSOL: feeInSOL,
-        //                 payingFeeTokenMint: wallet.mintAddress
-        //             )
-        //                 .map { ($0?.total ?? 0) <= (wallet.lamports ?? 0) }
-        //                 .map { $0 ? wallet : nil }
-        //                 .catchAndReturn(nil)
-        //         }
-        // )
-        //     .map { $0.compactMap { $0 }}
+                    return Single.async {
+                        try await self.feeRelayer.feeCalculator.calculateFeeInPayingToken(
+                            orcaSwap: self.orcaSwap,
+                            feeInSOL: feeInSOL,
+                            payingFeeTokenMint: try PublicKey(string: wallet.mintAddress)
+                        )
+                    }
+                    .map { ($0?.total ?? 0) <= (wallet.lamports ?? 0) }
+                    .map { $0 ? wallet : nil }
+                    .catchAndReturn(nil)
+                }
+        )
+        .map { $0.compactMap { $0 }}
+        .value
     }
 
     func getFeesInPayingToken(
-        feeInSOL _: FeeAmount,
-        payingFeeWallet _: Wallet
-    ) -> Single<FeeAmount?> {
-        fatalError("Method has not been implemented")
+        feeInSOL: FeeAmount,
+        payingFeeWallet: Wallet
+    ) async throws -> FeeAmount? {
+        guard relayMethod == .relay else { return nil }
 
-        // guard relayMethod == .relay else { return .just(nil) }
-        // if payingFeeWallet.mintAddress == PublicKey.wrappedSOLMint
-        //     .base58EncodedString { return .just(feeInSOL) }
-        // return relayService.calculateFeeInPayingToken(
-        //     feeInSOL: feeInSOL,
-        //     payingFeeTokenMint: payingFeeWallet.mintAddress
-        // )
+        if payingFeeWallet.mintAddress == PublicKey.wrappedSOLMint.base58EncodedString {
+            return feeInSOL
+        }
+
+        return try await feeRelayer.feeCalculator.calculateFeeInPayingToken(
+            orcaSwap: orcaSwap,
+            feeInSOL: feeInSOL,
+            payingFeeTokenMint: try PublicKey(string: payingFeeWallet.mintAddress)
+        )
     }
 
-    func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
-        fatalError("Method has not been implemented")
-        // relayService.getFreeTransactionFeeLimit()
+    func getFreeTransactionFeeLimit() async throws -> UsageStatus {
+        try await contextManager.getCurrentContext().usageStatus
     }
 
     // MARK: - Send method
@@ -162,42 +138,41 @@ class SendService: SendServiceType {
         amount: Double,
         network: SendToken.Network,
         payingFeeWallet: Wallet? // nil for relayMethod == .reward
-    ) -> Single<String> {
+    ) async throws -> String {
+        try await contextManager.update()
+
         let amount = amount.toLamport(decimals: wallet.token.decimals)
-        guard let sender = wallet.pubkey else { return .error(SolanaError.other("Source wallet is not valid")) }
+        guard let sender = wallet.pubkey else { throw Error.invalidSourceWallet }
         // form request
         if receiver == sender {
-            return .error(SolanaError.other(L10n.youCanNotSendTokensToYourself))
+            throw Error.sendToYourself
         }
 
         // detect network
-        let request: Single<String>
         switch network {
         case .solana:
             switch relayMethod {
             case .relay:
-                request = sendToSolanaBCViaRelayMethod(
+                return try await sendToSolanaBCViaRelayMethod(
+                    try await contextManager.getCurrentContext(),
                     from: wallet,
                     receiver: receiver,
                     amount: amount,
                     payingFeeWallet: payingFeeWallet
                 )
             case .reward:
-                request = sendToSolanaBCViaRewardMethod(
+                return try await sendToSolanaBCViaRewardMethod(
+                    try await contextManager.getCurrentContext(),
                     from: wallet,
                     receiver: receiver,
                     amount: amount
                 )
             }
         case .bitcoin:
-            request = Single.async { [weak self] in
-                guard let self = self else { throw RenVMError.unknown }
-                return try await self.renVMBurnAndReleaseService.burnAndRelease(
-                    recipient: receiver,
-                    amount: amount
-                )
-            }
+            return try await renVMBurnAndReleaseService.burnAndRelease(
+                recipient: receiver,
+                amount: amount
+            )
         }
-        return request
     }
 }

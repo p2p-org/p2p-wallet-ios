@@ -209,7 +209,9 @@ extension RestoreWallet.ViewModel {
                 derivablePath: derivablePath
             )
         )
-        notificationsService.showInAppNotification(.done(L10n.savedToICloud))
+        DispatchQueue.main.async {
+            self.notificationsService.showInAppNotification(.done(L10n.savedToICloud))
+        }
     }
 }
 

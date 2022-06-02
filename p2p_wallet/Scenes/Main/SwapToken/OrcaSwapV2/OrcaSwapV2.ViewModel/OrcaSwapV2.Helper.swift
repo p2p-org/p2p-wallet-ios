@@ -138,20 +138,22 @@ extension OrcaSwapV2.ViewModel {
         let myWalletsMints = walletsRepository.getWallets().map(\.token.address)
         let slippage = slippageSubject.value
 
-        return swapService.getFees(
-            sourceAddress: sourceWalletPubkey,
-            sourceMint: sourceWallet.mintAddress,
-            availableSourceMintAddresses: myWalletsMints,
-            destinationAddress: destinationWallet.pubkey,
-            destinationToken: destinationWallet.token,
-            bestPoolsPair: bestPoolsPair,
-            payingWallet: payingWalletSubject.value,
-            inputAmount: inputAmount,
-            slippage: slippage,
-            lamportsPerSignature: lamportsPerSignature,
-            minRentExempt: minRenExempt
-        )
-            .map { info in info.fees }
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+        return Single.async {
+            try await self.swapService.getFees(
+                sourceAddress: sourceWalletPubkey,
+                sourceMint: sourceWallet.mintAddress,
+                availableSourceMintAddresses: myWalletsMints,
+                destinationAddress: destinationWallet.pubkey,
+                destinationToken: destinationWallet.token,
+                bestPoolsPair: bestPoolsPair,
+                payingWallet: self.payingWalletSubject.value,
+                inputAmount: inputAmount,
+                slippage: slippage,
+                lamportsPerSignature: lamportsPerSignature,
+                minRentExempt: minRenExempt
+            )
+        }
+        .map { info in info.fees }
+        .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
     }
 }

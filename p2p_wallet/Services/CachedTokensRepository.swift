@@ -9,21 +9,15 @@ import Resolver
 import RxSwift
 import SolanaSwift
 
-final class CachedTokensRepository: TokensRepository {
+actor CachedTokensRepository: SolanaTokensRepository {
     @Injected private var tokensRepository: TokensRepository
 
-    private var cache: [Token]?
+    private var cache: Set<Token>?
 
-    func getTokensList() -> Single<[Token]> {
+    func getTokensList(useCache _: Bool) async throws -> Set<Token> {
         guard let cache = cache else {
-            return tokensRepository.getTokensList()
-                .do(onSuccess: { [weak self] in
-                    self?.cache = $0
-                })
+            return try await tokensRepository.getTokensList()
         }
-
-        return .just(cache)
-            .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+        return cache
     }
 }

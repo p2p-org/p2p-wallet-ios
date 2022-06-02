@@ -4,6 +4,8 @@
 
 import BEPureLayout
 import Resolver
+import RxConcurrency
+import RxSwift
 import SolanaSwift
 import UIKit
 
@@ -47,17 +49,18 @@ extension BuyTokenSelection {
                     }) {
                         cell.setup(wallet: wallet)
                     } else {
-                        tokenRepository
-                            .getTokensList()
-                            .asDriver(onErrorJustReturn: [])
-                            .drive(onNext: { [weak cell] tokens in
-                                guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
-                                    cell?.isHidden = true
-                                    return
-                                }
-                                cell?.setUp(token: token, amount: 0, amountInFiat: 0)
-                            })
-                            .disposed(by: disposeBag)
+                        Single<[Token]>.async {
+                            Array(try await self.tokenRepository.getTokensList())
+                        }
+                        .asDriver(onErrorJustReturn: [])
+                        .drive(onNext: { [weak cell] tokens in
+                            guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
+                                cell?.isHidden = true
+                                return
+                            }
+                            cell?.setUp(token: token, amount: 0, amountInFiat: 0)
+                        })
+                        .disposed(by: disposeBag)
                     }
                 }
         }

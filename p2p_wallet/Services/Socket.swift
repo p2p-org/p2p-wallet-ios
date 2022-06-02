@@ -15,8 +15,11 @@ protocol SocketType {
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: Lamports)>
 }
 
-extension SolanaSDK.Socket: SocketType {
+extension Socket: SocketType {
+    func subscribeAccountNotification(account _: String, isNative _: Bool) {}
+
     func observeAllAccountsNotifications() -> Observable<(pubkey: String, lamports: Lamports)> {
-        observeAccountNotifications()
+        // observeAccountNotifications()
+        .empty()
     }
 }

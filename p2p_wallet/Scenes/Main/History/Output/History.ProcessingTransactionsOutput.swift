@@ -5,6 +5,7 @@
 import Foundation
 import Resolver
 import SolanaSwift
+import TransactionParser
 
 extension History {
     /// Combine final list with processing transactions.

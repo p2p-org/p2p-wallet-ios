@@ -38,7 +38,5 @@ extension KeychainStorage: PincodeStorageType {
 }
 
 extension KeychainStorage: PincodeSeedPhrasesStorage {
-    var phrases: [String]? {
-        fatalError("Method has not been implemented")
-    }
+    var phrases: [String]? { account?.phrase }
 }

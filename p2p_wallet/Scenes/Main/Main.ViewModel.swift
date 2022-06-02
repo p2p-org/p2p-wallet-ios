@@ -26,7 +26,7 @@ extension Main {
     final class ViewModel {
         // MARK: - Dependencies
 
-        @Injected private var socket: SolanaSDK.Socket
+        @Injected private var socket: Socket
         @Injected private var pricesService: PricesServiceType
         @Injected private var lockAndMint: RenVMLockAndMintServiceType // start service right here by triggering resolver
         @Injected private var burnAndRelease: BurnAndReleaseService

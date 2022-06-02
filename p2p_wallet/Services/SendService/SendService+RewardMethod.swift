@@ -5,142 +5,117 @@
 //  Created by Chung Tran on 18/05/2022.
 //
 
+import FeeRelayerSwift
 import Foundation
 import RxSwift
 import SolanaSwift
 
 extension SendService {
     func sendToSolanaBCViaRewardMethod(
-        from _: Wallet,
-        receiver _: String,
-        amount _: Lamports
-    ) -> Single<String> {
-        fatalError("Method has not been implemented")
+        _ context: FeeRelayerContext,
+        from wallet: Wallet,
+        receiver: String,
+        amount: Lamports
+    ) async throws -> String {
+        guard
+            let owner = accountStorage.account,
+            let sender = wallet.pubkey
+        else {
+            throw SolanaError.unauthorized
+        }
 
-        // guard let owner = solanaSDK.accountStorage.account,
-        //       let sender = wallet.pubkey
-        // else { return .error(SolanaError.unauthorized) }
-        // return solanaSDK.getRecentBlockhash(commitment: nil)
-        //     .flatMap { [weak self] recentBlockhash -> Single<((PreparedTransaction, String?), String)> in
-        //         guard let self = self else { throw SolanaError.unknown }
-        //         return self.prepareForSendingToSolanaNetworkViaRewardMethod(
-        //             from: wallet,
-        //             receiver: receiver,
-        //             amount: amount.convertToBalance(decimals: wallet.token.decimals),
-        //             recentBlockhash: recentBlockhash
-        //         )
-        //             .map { ($0, recentBlockhash) }
-        //     }
-        //     .flatMap { [weak self] params, recentBlockhash in
-        //         guard let self = self else { throw SolanaError.unknown }
-        //         // get signature
-        //         guard let data = params.0.transaction.findSignature(pubkey: owner.publicKey)?.signature
-        //         else { throw SolanaError.other("Signature not found") }
-        //
-        //         let authoritySignature = Base58.encode(data.bytes)
-        //
-        //         let request: Single<String>
-        //         if wallet.isNativeSOL {
-        //             request = self.feeRelayerAPIClient.sendTransaction(
-        //                 .rewardTransferSOL(
-        //                     .init(
-        //                         sender: sender,
-        //                         recipient: receiver,
-        //                         amount: amount,
-        //                         signature: authoritySignature,
-        //                         blockhash: recentBlockhash,
-        //                         deviceType: .iOS,
-        //                         buildNumber: Bundle.main.fullVersionNumber
-        //                     )
-        //                 )
-        //             )
-        //         } else {
-        //             request = self.feeRelayerAPIClient.sendTransaction(
-        //                 .rewardTransferSPLToken(
-        //                     .init(
-        //                         sender: sender,
-        //                         recipient: params.1!,
-        //                         mintAddress: wallet.mintAddress,
-        //                         authority: owner.publicKey.base58EncodedString,
-        //                         amount: amount,
-        //                         decimals: wallet.token.decimals,
-        //                         signature: authoritySignature,
-        //                         blockhash: recentBlockhash,
-        //                         deviceType: .iOS,
-        //                         buildNumber: Bundle.main.fullVersionNumber
-        //                     )
-        //                 )
-        //             )
-        //         }
-        //
-        //         return request
-        //             .map { $0.replacingOccurrences(of: "\"", with: "") }
-        //             .do(onSuccess: {
-        //                 Logger.log(message: "\($0)", event: .response)
-        //             }, onError: {
-        //                 Logger.log(message: "\($0)", event: .error)
-        //             })
-        //     }
+        let recentBlockhash: String = try await solanaAPIClient.getRecentBlockhash(commitment: nil)
+
+        let info = try await prepareForSendingToSolanaNetworkViaRewardMethod(
+            context,
+            from: wallet,
+            receiver: receiver,
+            amount: amount.convertToBalance(decimals: wallet.token.decimals),
+            recentBlockhash: recentBlockhash
+        )
+
+        guard let data = info.0.transaction.findSignature(pubkey: owner.publicKey)?.signature else {
+            throw SolanaError.other("Signature not found")
+        }
+
+        let authoritySignature = Base58.encode(data.bytes)
+
+        let id: String
+        if wallet.isNativeSOL {
+            id = try await feeRelayerAPIClient.sendTransaction(
+                .rewardTransferSOL(
+                    .init(
+                        sender: sender,
+                        recipient: receiver,
+                        amount: amount,
+                        signature: authoritySignature,
+                        blockhash: recentBlockhash,
+                        deviceType: .iOS,
+                        buildNumber: Bundle.main.fullVersionNumber
+                    )
+                )
+            )
+        } else {
+            id = try await feeRelayerAPIClient.sendTransaction(
+                .rewardTransferSPLToken(
+                    .init(
+                        sender: sender,
+                        recipient: info.1!,
+                        mintAddress: wallet.mintAddress,
+                        authority: owner.publicKey.base58EncodedString,
+                        amount: amount,
+                        decimals: wallet.token.decimals,
+                        signature: authoritySignature,
+                        blockhash: recentBlockhash,
+                        deviceType: .iOS,
+                        buildNumber: Bundle.main.fullVersionNumber
+                    )
+                )
+            )
+        }
+
+        return id.replacingOccurrences(of: "\"", with: "")
     }
 
     private func prepareForSendingToSolanaNetworkViaRewardMethod(
-        from _: Wallet,
-        receiver _: String,
-        amount _: Double,
-        recentBlockhash _: String? = nil,
-        lamportsPerSignature _: Lamports? = nil,
-        minRentExemption _: Lamports? = nil,
-        usingCachedFeePayerPubkey _: Bool = false
-    ) -> Single<(PreparedTransaction, String?)> {
-        fatalError("Method has not been implemented")
+        _ context: FeeRelayerContext,
+        from wallet: Wallet,
+        receiver: String,
+        amount: Double,
+        recentBlockhash: String? = nil
+    ) async throws -> (PreparedTransaction, String?) {
+        let amount = amount.toLamport(decimals: wallet.token.decimals)
+        guard let sender = wallet.pubkey else { throw SolanaError.other("Source wallet is not valid") }
 
-        // let amount = amount.toLamport(decimals: wallet.token.decimals)
-        // guard let sender = wallet.pubkey else { return .error(SolanaError.other("Source wallet is not valid")) }
-        // // form request
-        // if receiver == sender {
-        //     return .error(SolanaError.other(L10n.youCanNotSendTokensToYourself))
-        // }
-        //
-        // // prepare fee payer
-        // let feePayerRequest: Single<String?>
-        // if usingCachedFeePayerPubkey, let pubkey = cachedFeePayerPubkey {
-        //     feePayerRequest = .just(pubkey)
-        // } else {
-        //     feePayerRequest = feeRelayerAPIClient.getFeePayerPubkey()
-        //         .map(Optional.init)
-        //         .do(onSuccess: { [weak self] in self?.cachedFeePayerPubkey = $0 })
-        // }
-        //
-        // return feePayerRequest
-        //     .flatMap { [weak self] feePayer in
-        //         guard let self = self else { return .error(SolanaError.unknown) }
-        //         let feePayer = feePayer == nil ? nil : try PublicKey(string: feePayer)
-        //
-        //         if wallet.isNativeSOL {
-        //             return self.solanaSDK.prepareSendingNativeSOL(
-        //                 to: receiver,
-        //                 amount: amount,
-        //                 feePayer: feePayer,
-        //                 recentBlockhash: recentBlockhash,
-        //                 lamportsPerSignature: lamportsPerSignature
-        //             ).map { ($0, nil) }
-        //         }
-        //
-        //         // other tokens
-        //         else {
-        //             return self.solanaSDK.prepareSendingSPLTokens(
-        //                 mintAddress: wallet.mintAddress,
-        //                 decimals: wallet.token.decimals,
-        //                 from: sender,
-        //                 to: receiver,
-        //                 amount: amount,
-        //                 feePayer: feePayer,
-        //                 transferChecked: true, // create transferChecked instruction when using fee relayer
-        //                 recentBlockhash: recentBlockhash,
-        //                 lamportsPerSignature: lamportsPerSignature,
-        //                 minRentExemption: minRentExemption
-        //             ).map { ($0.preparedTransaction, $0.realDestination) }
-        //         }
-        //     }
+        // form request
+        if receiver == sender {
+            throw SolanaError.other(L10n.youCanNotSendTokensToYourself)
+        }
+
+        // prepare fee payer
+        let feePayer = context.feePayerAddress
+
+        if wallet.isNativeSOL {
+            let preparedTrx = try await blockchainClient.prepareSendingNativeSOL(
+                from: accountStorage.account!,
+                to: receiver,
+                amount: amount,
+                feePayer: feePayer
+            )
+            return (preparedTrx, nil)
+        } else {
+            var info = try await blockchainClient.prepareSendingSPLTokens(
+                account: accountStorage.account!,
+                mintAddress: wallet.mintAddress,
+                decimals: wallet.token.decimals,
+                from: sender,
+                to: receiver,
+                amount: amount,
+                feePayer: feePayer,
+                transferChecked: true // create transferChecked instruction when using fee relayer
+            )
+            info.preparedTransaction.transaction.recentBlockhash = recentBlockhash
+            return info
+        }
     }
 }
