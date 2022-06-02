@@ -130,7 +130,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
         Completable.zip(
             feeService.load(),
-            swapService.load()
+            Completable.async { try await self.swapService.load() }
         )
             .subscribe(
                 onCompleted: { [weak self] in

@@ -77,17 +77,19 @@ extension ProcessTransaction {
                 ))
             }
 
-            return swapService.swap(
-                sourceAddress: sourceWallet.pubkey!,
-                sourceTokenMint: sourceWallet.mintAddress,
-                destinationAddress: destinationWallet.pubkey,
-                destinationTokenMint: destinationWallet.mintAddress,
-                payingTokenAddress: payingWallet?.pubkey,
-                payingTokenMint: payingWallet?.mintAddress,
-                poolsPair: poolsPair,
-                amount: amount.toLamport(decimals: sourceWallet.token.decimals),
-                slippage: slippage
-            ).map { $0.first ?? "" }
+            return Single.async {
+                try await swapService.swap(
+                    sourceAddress: sourceWallet.pubkey!,
+                    sourceTokenMint: sourceWallet.mintAddress,
+                    destinationAddress: destinationWallet.pubkey,
+                    destinationTokenMint: destinationWallet.mintAddress,
+                    payingTokenAddress: payingWallet?.pubkey,
+                    payingTokenMint: payingWallet?.mintAddress,
+                    poolsPair: poolsPair,
+                    amount: amount.toLamport(decimals: sourceWallet.token.decimals),
+                    slippage: slippage
+                )
+            }.map { $0.first ?? "" }
         }
 
         var networkFees: (total: Lamports, token: Token)? {

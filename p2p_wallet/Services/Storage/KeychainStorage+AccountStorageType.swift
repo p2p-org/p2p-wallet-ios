@@ -28,7 +28,10 @@ extension KeychainStorage: AccountStorageType {
         return .init(type: derivableType, walletIndex: walletIndex ?? 0)
     }
 
-    func save(derivableType _: DerivablePath.DerivableType) throws { fatalError("Method has not been implemented") }
+    func save(derivableType: DerivablePath.DerivableType) throws {
+        keychain.set(derivableType.rawValue, forKey: derivableTypeKey)
+        _account = nil
+    }
 
     public var account: SolanaSwift.Account? {
         if let account = _account { return account }
