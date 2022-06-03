@@ -105,8 +105,8 @@ class SendService: SendServiceType {
                     .catchAndReturn(nil)
                 }
         )
-        .map { $0.compactMap { $0 }}
-        .value
+            .map { $0.compactMap { $0 }}
+            .value
     }
 
     func getFeesInPayingToken(

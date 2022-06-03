@@ -28,7 +28,7 @@ extension Main {
 
         @Injected private var socket: Socket
         @Injected private var pricesService: PricesServiceType
-        @Injected private var lockAndMint: RenVMLockAndMintServiceType // start service right here by triggering resolver
+        @Injected private var lockAndMint: LockAndMintService
         @Injected private var burnAndRelease: BurnAndReleaseService
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var notificationService: NotificationService
@@ -45,6 +45,9 @@ extension Main {
             socket.connect()
             pricesService.startObserving()
             burnAndRelease.resume()
+            Task {
+                try await lockAndMint.resume()
+            }
         }
 
         deinit {

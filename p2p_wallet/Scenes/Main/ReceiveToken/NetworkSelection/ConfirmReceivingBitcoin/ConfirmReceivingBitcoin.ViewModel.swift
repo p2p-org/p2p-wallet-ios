@@ -85,33 +85,35 @@ extension ConfirmReceivingBitcoin {
             payableWalletsSubject.accept([])
             payingWalletSubject.accept(nil)
 
-            renBTCStatusService.load()
-                .andThen(renBTCStatusService.getPayableWallets())
-                .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { [weak self] payableWallets in
-                    guard let self = self else { return }
-                    self.isLoadingSubject.accept(false)
-                    self.errorSubject.accept(nil)
-                    self.accountStatusSubject.accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
-                    self.payableWalletsSubject.accept(payableWallets)
-                    self.payingWalletSubject.accept(payableWallets.first)
-                }, onFailure: { [weak self] error in
-                    guard let self = self else { return }
-                    self.isLoadingSubject.accept(false)
-                    self.errorSubject.accept(error.readableDescription)
-                    self.accountStatusSubject.accept(nil)
-                    self.payableWalletsSubject.accept([])
-                    self.payingWalletSubject.accept(nil)
-                })
-                .disposed(by: disposeBag)
+            Task {
+                do {
+                    try await renBTCStatusService.load()
+                    let payableWallets = try await renBTCStatusService.getPayableWallets()
+
+                    errorSubject.accept(nil)
+                    accountStatusSubject
+                        .accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
+                    payableWalletsSubject.accept(payableWallets)
+                    payingWalletSubject.accept(payableWallets.first)
+                } catch {
+                    errorSubject.accept(error.readableDescription)
+                    accountStatusSubject.accept(nil)
+                    payableWalletsSubject.accept([])
+                    payingWalletSubject.accept(nil)
+                }
+                isLoadingSubject.accept(false)
+            }
         }
 
         private func bind() {
             payingWalletSubject
-                .flatMapLatest { [weak self] wallet -> Single<Double?> in
-                    guard let self = self, let wallet = wallet else { return .just(nil) }
-                    return self.renBTCStatusService.getCreationFee(payingFeeMintAddress: wallet.mintAddress)
-                        .map { $0.convertToBalance(decimals: wallet.token.decimals) }
+                .flatMapLatest { wallet -> Single<Double?> in
+                    Single.async { [weak self] in
+                        guard let self = self, let wallet = wallet else { return nil }
+                        let fee = try await self.renBTCStatusService
+                            .getCreationFee(payingFeeMintAddress: wallet.mintAddress)
+                        return fee.convertToBalance(decimals: wallet.token.decimals)
+                    }
                 }
                 .catchAndReturn(nil)
                 .bind(to: totalFeeSubject)
@@ -183,22 +185,23 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
         isLoadingSubject.accept(true)
         errorSubject.accept(nil)
 
-        renBTCStatusService.createAccount(
-            payingFeeAddress: address,
-            payingFeeMintAddress: mintAddress
-        )
-            .subscribe(on: MainScheduler.instance)
-            .subscribe(onCompleted: { [weak self] in
-                guard let self = self else { return }
-                self.isLoadingSubject.accept(false)
-                self.errorSubject.accept(nil)
-                self.completion?()
-            }, onError: { [weak self] error in
-                guard let self = self else { return }
-                self.isLoadingSubject.accept(false)
-                self.errorSubject.accept(error.readableDescription)
-            })
-            .disposed(by: disposeBag)
+        Task {
+            do {
+                try await renBTCStatusService.createAccount(
+                    payingFeeAddress: address,
+                    payingFeeMintAddress: mintAddress
+                )
+                errorSubject.accept(nil)
+
+                await MainActor.run { [weak self] in
+                    self?.completion?()
+                }
+            } catch {
+                errorSubject.accept(error.readableDescription)
+            }
+
+            isLoadingSubject.accept(false)
+        }
     }
 
     func dismissAndTopUp() {

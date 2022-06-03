@@ -7,6 +7,7 @@
 
 import Foundation
 import LocalAuthentication
+import RenVMSwift
 import Resolver
 import RxCocoa
 import SolanaSwift
@@ -77,6 +78,7 @@ extension AppEventHandler: ChangeLanguageResponder {
 
 extension AppEventHandler: LogoutResponder {
     func logout() {
+        ResolverScope.session.reset()
         notificationsService.unregisterForRemoteNotifications()
         Task {
             await notificationsService.deleteDeviceToken()
@@ -87,8 +89,10 @@ extension AppEventHandler: LogoutResponder {
             Defaults.didSetEnableBiometry = false
             Defaults.didSetEnableNotifications = false
             Defaults.didBackupOffline = false
-            Defaults.renVMSession = nil
-            Defaults.renVMProcessingTxs = []
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForSession)
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForGatewayAddress)
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForProcessingTransactions)
+            UserDefaults.standard.removeObject(forKey: BurnAndRelease.keyForSubmitedBurnTransaction)
             Defaults.forceCloseNameServiceBanner = false
             Defaults.shouldShowConfirmAlertOnSend = true
             Defaults.shouldShowConfirmAlertOnSwap = true
