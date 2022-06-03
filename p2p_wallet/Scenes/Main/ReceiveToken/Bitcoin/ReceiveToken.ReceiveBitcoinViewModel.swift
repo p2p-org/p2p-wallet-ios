@@ -34,16 +34,16 @@ extension ReceiveToken {
 
         // MARK: - Dependencies
 
-        @Injected private var renVMService: RenVMLockAndMintServiceType
+        @Injected private var renVMService: LockAndMintService
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var imageSaver: ImageSaverType
         @Injected var notificationsService: NotificationService
-        private let navigationSubject: PublishRelay<NavigatableScene?>
 
         // MARK: - Subjects
 
         private let timerSubject = PublishRelay<Void>()
+        private let navigationSubject: PublishRelay<NavigatableScene?>
 
         // MARK: - Initializers
 
@@ -62,7 +62,9 @@ extension ReceiveToken {
         }
 
         func acceptConditionAndLoadAddress() {
-            renVMService.loadSession()
+            Task {
+                try await renVMService.createSession()
+            }
         }
 
         private func bind() {

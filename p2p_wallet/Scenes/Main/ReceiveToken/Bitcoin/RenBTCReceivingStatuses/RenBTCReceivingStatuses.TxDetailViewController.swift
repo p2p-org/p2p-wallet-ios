@@ -118,7 +118,7 @@ extension RenBTCReceivingStatuses {
                         records.append(.init(txid: tx.tx.txid, status: .minted, time: mintedAt, amount: tx.tx.value))
                     }
 
-                    if let submittedAt = tx.submittedAt {
+                    if let submittedAt = tx.submitedAt {
                         records.append(.init(txid: tx.tx.txid, status: .submitted, time: submittedAt))
                     }
 

@@ -63,7 +63,6 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Solana
 
-        print("HERE", Defaults.apiEndPoint)
         register { JSONRPCAPIClient(endpoint: Defaults.apiEndPoint) }
             .implements(SolanaAPIClient.self)
             .scope(.application)
@@ -206,25 +205,43 @@ extension Resolver: ResolverRegistering {
             .implements(RenVMSwift.ChainProvider.self)
 
         register {
+            UserDefaultsBurnAndReleasePersistentStore(
+                userDefaultKeyForSubmitedBurnTransactions: BurnAndRelease.keyForSubmitedBurnTransaction
+            )
+        }
+        .implements(BurnAndReleasePersistentStore.self)
+
+        register {
             BurnAndReleaseServiceImpl(
                 rpcClient: resolve(),
                 chainProvider: resolve(),
                 destinationChain: .bitcoin,
-                persistentStore: RenVMBurnAndReleasePersistentStore(),
+                persistentStore: resolve(),
                 version: "1"
             )
         }
         .implements(BurnAndReleaseService.self)
 
         register {
-            LockAndMint.Service(
-                rpcClient: resolve(),
-                solanaClient: resolve(),
-                account: resolve(SolanaAccountStorage.self).account!,
-                sessionStorage: LockAndMint.SessionStorage()
+            UserDefaultLockAndMintServicePersistentStore(
+                userDefaultKeyForSession: LockAndMint.keyForSession,
+                userDefaultKeyForGatewayAddress: LockAndMint.keyForGatewayAddress,
+                userDefaultKeyForProcessingTransactions: LockAndMint.keyForProcessingTransactions,
+                showLog: true
             )
         }
-        .implements(RenVMLockAndMintServiceType.self)
+        .implements(LockAndMintServicePersistentStore.self)
+
+        register {
+            LockAndMintServiceImpl(
+                persistentStore: resolve(),
+                chainProvider: resolve(),
+                rpcClient: resolve(),
+                mintToken: .bitcoin,
+                showLog: true
+            )
+        }
+        .implements(LockAndMintService.self)
         .scope(.session)
 
         // MARK: - Others

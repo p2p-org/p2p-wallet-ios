@@ -116,7 +116,7 @@ private extension ReceiveTokenBitcoinViewModelType {
         processingTxsDriver
             .map { trx in
                 guard let lastTrx = trx.first,
-                      let receiveAt = lastTrx.submittedAt else { return L10n.none }
+                      let receiveAt = lastTrx.submitedAt else { return L10n.none }
 
                 // Time formatter
                 let formatter = RelativeDateTimeFormatter()

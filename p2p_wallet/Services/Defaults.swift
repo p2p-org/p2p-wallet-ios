@@ -16,12 +16,6 @@ extension Fiat: DefaultsSerializable {}
 
 extension APIEndPoint: DefaultsSerializable {}
 
-extension RenVMSwift.Session: DefaultsSerializable {}
-
-extension LockAndMint.ProcessingTx: DefaultsSerializable {}
-
-extension BurnAndRelease.BurnDetails: DefaultsSerializable {}
-
 extension DefaultsKeys {
     // Keychain-keys
     var keychainPincodeKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
@@ -58,12 +52,6 @@ extension DefaultsKeys {
     var prices: DefaultsKey<Data> { .init(#function, defaultValue: Data()) }
     var payingTokenMint: DefaultsKey<String> {
         .init(#function, defaultValue: PublicKey.wrappedSOLMint.base58EncodedString)
-    }
-
-    var renVMSession: DefaultsKey<RenVMSwift.Session?> { .init(#function, defaultValue: nil) }
-    var renVMProcessingTxs: DefaultsKey<[LockAndMint.ProcessingTx]> { .init(#function, defaultValue: []) }
-    var renVMSubmitedBurnTxDetails: DefaultsKey<[BurnAndRelease.BurnDetails]> {
-        .init(#function, defaultValue: [])
     }
 
     var forceCloseNameServiceBanner: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
