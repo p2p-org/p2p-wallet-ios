@@ -64,7 +64,7 @@ extension DerivableAccounts {
                 throw SolanaError.unknown
             }
             return try await withThrowingTaskGroup(of: (Int, SolanaSwift.Account).self) { group in
-                var accounts = [DerivableAccount]()
+                var accounts = [(Int, DerivableAccount)]()
 
                 for i in 0 ..< 5 {
                     group.addTask(priority: .userInitiated) {
@@ -78,16 +78,16 @@ extension DerivableAccounts {
 
                 for try await(index, account) in group {
                     accounts.append(
-                        .init(
+                        (index, .init(
                             info: account,
                             amount: await self.cache.balanceCache[account.publicKey.base58EncodedString],
                             price: await self.cache.solPriceCache,
                             isBlured: index > 2
-                        )
+                        ))
                     )
                 }
 
-                return accounts
+                return accounts.sorted(by: { $0.0 < $1.0 }).map(\.1)
             }
         }
 
