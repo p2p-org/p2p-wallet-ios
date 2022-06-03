@@ -71,7 +71,10 @@ extension ReceiveToken {
 
         func acceptConditionAndLoadAddress() {
             Task {
-                try await lockAndMintService.createSession()
+                let session = await persistentStore.session
+                if session == nil || session?.isValid == false {
+                    try await lockAndMintService.createSession()
+                }
             }
         }
 

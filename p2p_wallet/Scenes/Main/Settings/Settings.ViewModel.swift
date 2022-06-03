@@ -232,10 +232,11 @@ extension Settings.ViewModel: SettingsViewModelType {
         if Defaults.apiEndPoint.network != endpoint.network {
             Task {
                 try await renVMService.expireCurrentSession()
+                await MainActor.run {
+                    changeNetworkResponder.changeAPIEndpoint(to: endpoint)
+                }
             }
         }
-
-        changeNetworkResponder.changeAPIEndpoint(to: endpoint)
     }
 
     var isBiometryEnabledDriver: Driver<Bool> { isBiometryEnabledSubject.asDriver() }

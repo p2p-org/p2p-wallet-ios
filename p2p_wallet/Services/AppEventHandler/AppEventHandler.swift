@@ -89,10 +89,10 @@ extension AppEventHandler: LogoutResponder {
             Defaults.didSetEnableBiometry = false
             Defaults.didSetEnableNotifications = false
             Defaults.didBackupOffline = false
-            UserDefaults.standard.setNilValueForKey(LockAndMint.keyForSession)
-            UserDefaults.standard.setNilValueForKey(LockAndMint.keyForGatewayAddress)
-            UserDefaults.standard.setNilValueForKey(LockAndMint.keyForProcessingTransactions)
-            UserDefaults.standard.setNilValueForKey(BurnAndRelease.keyForSubmitedBurnTransaction)
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForSession)
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForGatewayAddress)
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForProcessingTransactions)
+            UserDefaults.standard.removeObject(forKey: BurnAndRelease.keyForSubmitedBurnTransaction)
             Defaults.forceCloseNameServiceBanner = false
             Defaults.shouldShowConfirmAlertOnSend = true
             Defaults.shouldShowConfirmAlertOnSwap = true
