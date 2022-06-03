@@ -33,7 +33,7 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var apiClient: SolanaAPIClient
     @Injected var walletsRepository: WalletsRepository
     @Injected var pricesService: PricesServiceType
-    @Injected var socket: SocketType
+    @Injected var socket: AccountObservableService
 
     let disposeBag = DisposeBag()
     let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
