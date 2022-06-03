@@ -34,7 +34,8 @@ extension ReceiveToken {
 
         // MARK: - Dependencies
 
-        @Injected private var renVMService: LockAndMintService
+        @Injected private var persistentStore: LockAndMintServicePersistentStore
+        @Injected private var lockAndMintService: LockAndMintService
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var imageSaver: ImageSaverType
@@ -42,8 +43,11 @@ extension ReceiveToken {
 
         // MARK: - Subjects
 
+        private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
         private let timerSubject = PublishRelay<Void>()
         private let navigationSubject: PublishRelay<NavigatableScene?>
+        private let addressSubject = BehaviorRelay<String?>(value: nil)
+        private let processingTransactionsSubject = BehaviorRelay<[LockAndMint.ProcessingTx]>(value: [])
 
         // MARK: - Initializers
 
@@ -63,11 +67,12 @@ extension ReceiveToken {
 
         func acceptConditionAndLoadAddress() {
             Task {
-                try await renVMService.createSession()
+                try await lockAndMintService.createSession()
             }
         }
 
         private func bind() {
+            // timer
             Timer.observable(seconds: 1)
                 .bind(to: timerSubject)
                 .disposed(by: disposeBag)
@@ -80,13 +85,45 @@ extension ReceiveToken {
                     }
                 })
                 .disposed(by: disposeBag)
+
+            lockAndMintService.delegate = self
+
+            if lockAndMintService.isLoading {
+                isLoadingSubject.accept(true)
+            }
+
+            Task {
+                guard let address = await persistentStore.gatewayAddress else { return }
+                await MainActor.run { [weak self] in
+                    self?.addressSubject.accept(address)
+                }
+            }
         }
+    }
+}
+
+extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
+    func lockAndMintServiceWillStartLoading(_: LockAndMintService) {
+        isLoadingSubject.accept(true)
+    }
+
+    func lockAndMintService(_: LockAndMintService, didLoadWithGatewayAddress gatewayAddress: String) {
+        addressSubject.accept(gatewayAddress)
+    }
+
+    func lockAndMintService(_: LockAndMintService, didFailToLoadWithError _: Error) {}
+
+    func lockAndMintService(
+        _: LockAndMintService,
+        didUpdateTransactions processingTransactions: [LockAndMint.ProcessingTx]
+    ) {
+        processingTransactionsSubject.accept(processingTransactions)
     }
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
     var addressDriver: Driver<String?> {
-        renVMService.addressDriver
+        addressSubject.asDriver()
     }
 
     var timerSignal: Signal<Void> {
@@ -94,7 +131,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
 
     var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
-        renVMService.processingTxsDriver
+        processingTransactionsSubject.asDriver()
     }
 
     func getSessionEndDate() -> Date? {
@@ -102,17 +139,26 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
 
     func copyToClipboard() {
-        guard let address = renVMService.getCurrentAddress() else { return }
-        clipboardManager.copyToClipboard(address)
-        notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-        analyticsManager.log(event: .receiveAddressCopied)
+        Task {
+            guard let address = await persistentStore.gatewayAddress else { return }
+            await MainActor.run {
+                clipboardManager.copyToClipboard(address)
+                notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
+                analyticsManager.log(event: .receiveAddressCopied)
+            }
+        }
     }
 
     func share(image: UIImage) {
-        analyticsManager.log(event: .receiveAddressShare)
-        navigationSubject.accept(
-            .share(address: renVMService.getCurrentAddress() ?? "", qrCode: image)
-        )
+        Task {
+            guard let address = await persistentStore.gatewayAddress else { return }
+            await MainActor.run {
+                analyticsManager.log(event: .receiveAddressShare)
+                navigationSubject.accept(
+                    .share(address: address, qrCode: image)
+                )
+            }
+        }
     }
 
     func saveAction(image: UIImage) {
@@ -135,9 +181,13 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
 
     func showBTCAddressInExplorer() {
-        guard let address = renVMService.getCurrentAddress() else { return }
-        analyticsManager.log(event: .receiveViewingExplorer)
-        navigationSubject.accept(.showBTCExplorer(address: address))
+        Task {
+            guard let address = await persistentStore.gatewayAddress else { return }
+            await MainActor.run {
+                analyticsManager.log(event: .receiveViewingExplorer)
+                navigationSubject.accept(.showBTCExplorer(address: address))
+            }
+        }
     }
 
     func showReceivingStatuses() {
