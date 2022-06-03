@@ -15,6 +15,8 @@ import SolanaSwift
 
 class RenBTCStatusService: RenBTCStatusServiceType {
     @Injected private var solanaAPIClient: SolanaAPIClient
+    @Injected private var blockchainClient: SolanaBlockchainClient
+    @Injected private var feeRelayerContextManager: FeeRelayerContextManager
     @Injected private var feeRelayerAPIClient: FeeRelayerAPIClient
     @Injected private var accountStorage: AccountStorageType
     @Injected private var orcaSwap: OrcaSwapType
@@ -24,137 +26,124 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     private var minRenExemption: Lamports?
     private var lamportsPerSignature: Lamports?
 
-    func load() -> Completable {
-        Completable.async {
-            try await self.orcaSwap.load()
+    func load() async throws {
+        try await orcaSwap.load()
 
-            self.minRenExemption = try await self.solanaAPIClient
-                .getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
-            self.lamportsPerSignature = try await self.solanaAPIClient.getFees(commitment: nil).feeCalculator?
-                .lamportsPerSignature
-        }
+        minRenExemption = try await solanaAPIClient
+            .getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
+        lamportsPerSignature = try await solanaAPIClient.getLamportsPerSignature()
     }
 
     func hasRenBTCAccountBeenCreated() -> Bool {
         walletsRepository.getWallets().contains(where: \.token.isRenBTC)
     }
 
-    func getPayableWallets() -> Single<[Wallet]> {
+    func getPayableWallets() async throws -> [Wallet] {
         let wallets = walletsRepository
             .getWallets()
             .filter { ($0.lamports ?? 0) > 0 }
 
         // At lease one wallet is payable
-        return Single
-            .zip(wallets.map { w -> Single<Wallet?> in
-                getCreationFee(payingFeeMintAddress: w.mintAddress)
-                    .map { $0 <= (w.lamports ?? 0) ? w : nil }
-                    .catchAndReturn(nil)
-            })
-            .map { $0.compactMap { $0 } }
+        return await withTaskGroup(of: (Wallet, Lamports?).self) { group -> [Wallet] in
+            for w in wallets {
+                group.addTask { [weak self] in
+                    (w, try? await self?.getCreationFee(payingFeeMintAddress: w.mintAddress))
+                }
+            }
+
+            var wallets = [Wallet]()
+            for await result in group where result.1 != nil && result.1! <= (result.0.lamports ?? 0) {
+                wallets.append(result.0)
+            }
+            return wallets
+        }
     }
 
-    func createAccount(payingFeeAddress _: String, payingFeeMintAddress _: String) -> Completable {
-        fatalError("Method has not been implemented")
+    func createAccount(payingFeeAddress address: String, payingFeeMintAddress mint: String) async throws {
+        guard let address = try? PublicKey(string: address),
+              let mint = try? PublicKey(string: mint) else { throw SolanaError.unknown }
+        guard let account = accountStorage.account else { throw SolanaError.unauthorized }
 
-        // guard let account = accountStorage.account else { return .error(SolanaError.unauthorized) }
-        //
-        // return Single.zip(
-        //     solanaSDK
-        //         .getMinimumBalanceForRentExemption(span: AccountInfo.span),
-        //     getLamportsPerSignature(),
-        //     feeRelayerAPIClient.getFeePayerPubkey(),
-        //     getRecentBlockhash()
-        // )
-        //     .flatMap { [weak self] accountCreationFee, lamportPerSignature, feePayerAccount, recentBlockHash -> Single<String?> in
-        //         guard let self = self else { return .error(SolanaError.unknown) }
-        //         return self.prepareTransaction(
-        //             instructions: [
-        //                 try self.createAssociatedTokenAccountInstruction(
-        //                     for: account.publicKey,
-        //                     tokenMint: .renBTCMint,
-        //                     payer: try PublicKey(string: feePayerAccount)
-        //                 ),
-        //             ],
-        //             signers: [account],
-        //             feePayer: try PublicKey(string: feePayerAccount),
-        //             accountsCreationFee: accountCreationFee,
-        //             recentBlockhash: recentBlockHash,
-        //             lamportsPerSignature: lamportPerSignature
-        //         )
-        //             .flatMap { [weak self] preparedTransaction in
-        //                 guard let self = self else { return .error(SolanaError.unknown) }
-        //                 return self.feeRelayer
-        //                     .topUpAndRelayTransaction(
-        //                         preparedTransaction: preparedTransaction,
-        //                         payingFeeToken: .init(
-        //                             address: payingFeeAddress,
-        //                             mint: payingFeeMintAddress
-        //                         ),
-        //                         operationType: .other,
-        //                         currency: PublicKey.renBTCMint.base58EncodedString
-        //                     )
-        //                     .map(\.first)
-        //             }
-        //     }
-        //     .flatMapCompletable { [weak self] in
-        //         guard let self = self else { throw SolanaError.unknown }
-        //         guard let signature = $0 else { throw SolanaError.other("Could not get transaction id") }
-        //         return self.waitForConfirmation(signature: signature)
-        //     }
-        //     .do(onCompleted: { [weak self] in
-        //         DispatchQueue.main.async { [weak self] in
-        //             guard let self = self else { return }
-        //             self.walletsRepository.batchUpdate { wallets in
-        //                 guard let string = wallets.first(where: { $0.isNativeSOL })?.pubkey,
-        //                       let nativeWalletAddress = try? PublicKey(string: string),
-        //                       let renBTCAddress = try? PublicKey.associatedTokenAddress(
-        //                           walletAddress: nativeWalletAddress,
-        //                           tokenMintAddress: .renBTCMint
-        //                       )
-        //                 else { return wallets }
-        //
-        //                 var wallets = wallets
-        //
-        //                 if !wallets.contains(where: { $0.pubkey == renBTCAddress.base58EncodedString }) {
-        //                     wallets.append(
-        //                         .init(
-        //                             pubkey: renBTCAddress.base58EncodedString,
-        //                             lamports: 0,
-        //                             token: .renBTC
-        //                         )
-        //                     )
-        //                 }
-        //
-        //                 return wallets
-        //             }
-        //         }
-        //     })
+        // prepare transaction
+        async let preparing = blockchainClient.prepareTransaction(
+            instructions: [
+                AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
+                    mint: .renBTCMint,
+                    owner: account.publicKey,
+                    payer: account.publicKey
+                ),
+            ],
+            signers: [account],
+            feePayer: account.publicKey,
+            feeCalculator: nil
+        )
+
+        async let updating: () = feeRelayerContextManager.update()
+
+        let (preparedTransaction, _) = try await(preparing, updating)
+
+        let context = try await feeRelayerContextManager.getCurrentContext()
+        let tx = try await feeRelayer.topUpAndRelayTransaction(
+            context,
+            preparedTransaction,
+            fee: .init(address: address, mint: mint),
+            config: .init(
+                operationType: .transfer,
+                currency: mint.base58EncodedString
+            )
+        )
+
+        try await solanaAPIClient.waitForConfirmation(signature: tx, ignoreStatus: true)
+
+        walletsRepository.batchUpdate { wallets in
+            guard let string = wallets.first(where: { $0.isNativeSOL })?.pubkey,
+                  let nativeWalletAddress = try? PublicKey(string: string),
+                  let renBTCAddress = try? PublicKey.associatedTokenAddress(
+                      walletAddress: nativeWalletAddress,
+                      tokenMintAddress: .renBTCMint
+                  )
+            else { return wallets }
+
+            var wallets = wallets
+
+            if !wallets.contains(where: { $0.pubkey == renBTCAddress.base58EncodedString }) {
+                wallets.append(
+                    .init(
+                        pubkey: renBTCAddress.base58EncodedString,
+                        lamports: 0,
+                        token: .renBTC
+                    )
+                )
+            }
+
+            return wallets
+        }
     }
 
-    func getCreationFee(payingFeeMintAddress _: String) -> Single<Lamports> {
-        fatalError("Method has not been implemented")
+    func getCreationFee(payingFeeMintAddress mintAddress: String) async throws -> Lamports {
+        let mintAddress = try PublicKey(string: mintAddress)
 
-        // let feeAmount = FeeAmount(
-        //     transaction: lamportsPerSignature ?? 5000,
-        //     accountBalances: minRenExemption ?? 2_039_280
-        // )
-        // return feeRelayer.calculateNeededTopUpAmount(
-        //     expectedFee: feeAmount,
-        //     payingTokenMint: payingFeeMintAddress
-        // )
-        //     .flatMap { [weak self] feeInSol -> Single<FeeAmount?> in
-        //         guard let self = self else { throw SolanaError.unknown }
-        //         return self.feeRelayer.calculateFeeInPayingToken(
-        //             feeInSOL: feeInSol,
-        //             payingFeeTokenMint: payingFeeMintAddress
-        //         )
-        //     }
-        //     .map {
-        //         if let fees = $0?.total {
-        //             return fees
-        //         }
-        //         throw SolanaError.other("Could not calculate fee")
-        //     }
+        let feeAmount = FeeAmount(
+            transaction: lamportsPerSignature ?? 5000,
+            accountBalances: minRenExemption ?? 2_039_280
+        )
+
+        let feeInSOL = try await feeRelayer.feeCalculator.calculateNeededTopUpAmount(
+            try await feeRelayerContextManager.getCurrentContext(),
+            expectedFee: feeAmount,
+            payingTokenMint: mintAddress
+        )
+
+        let feeInToken = try await feeRelayer.feeCalculator.calculateFeeInPayingToken(
+            orcaSwap: orcaSwap,
+            feeInSOL: feeInSOL,
+            payingFeeTokenMint: mintAddress
+        )
+
+        guard let fees = feeInToken?.total else {
+            throw SolanaError.other("Could not calculating fees")
+        }
+
+        return fees
     }
 }
