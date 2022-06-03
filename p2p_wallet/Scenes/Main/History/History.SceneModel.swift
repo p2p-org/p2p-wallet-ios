@@ -14,6 +14,8 @@ import TransactionParser
 
 extension History {
     class SceneModel: BEStreamListViewModel<ParsedTransaction> {
+        typealias AccountSymbol = (account: String, symbol: String)
+
         // MARK: - Dependencies
 
         @Injected private var walletsRepository: WalletsRepository
@@ -24,6 +26,9 @@ extension History {
         // MARK: - Properties
 
         private let disposeBag = DisposeBag()
+
+        /// Symbol to filter coins
+        private(set) var accountSymbol: AccountSymbol?
 
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
@@ -93,6 +98,11 @@ extension History {
                 .disposed(by: disposeBag)
         }
 
+        convenience init(accountSymbol: AccountSymbol) {
+            self.init()
+            self.accountSymbol = accountSymbol
+        }
+
         func buildSource() {
             let cachedTransactionRepository: CachingTransactionRepository = .init(
                 delegate: SolanaTransactionRepository()
@@ -102,6 +112,14 @@ extension History {
             let accountStreamSources = walletsRepository
                 .getWallets()
                 .reversed()
+                .filter { [weak self] in
+                    if self?.accountSymbol != nil {
+                        return $0.pubkey == self?.accountSymbol?.account && $0.token.symbol == self?.accountSymbol?
+                            .symbol
+                    } else {
+                        return true
+                    }
+                }
                 .map { wallet in
                     AccountStreamSource(
                         account: wallet.pubkey ?? "",

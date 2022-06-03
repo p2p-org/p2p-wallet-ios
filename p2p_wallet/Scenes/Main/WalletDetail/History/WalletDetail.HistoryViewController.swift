@@ -23,12 +23,13 @@ extension WalletDetail {
         // MARK: - Subviews
 
         private lazy var collectionView: TransactionsCollectionView = {
-            let collectionView = TransactionsCollectionView(
-                transactionViewModel: viewModel.transactionsViewModel,
-                graphViewModel: viewModel.graphViewModel
-            )
-            collectionView.delegate = self
-            return collectionView
+            fatalError()
+//            let collectionView = TransactionsCollectionView(
+//                transactionViewModel: viewModel.transactionsViewModel,
+//                graphViewModel: viewModel.graphViewModel
+//            )
+//            collectionView.delegate = self
+//            return collectionView
         }()
 
         // MARK: - Initializers
