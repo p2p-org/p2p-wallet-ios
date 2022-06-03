@@ -61,6 +61,8 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
     var isConnected: Bool { solanaSocket.isConnected }
 
     func subscribeAccountNotification(account: String) async throws {
+        if !isConnected { solanaSocket.connect() }
+
         let id = try await solanaSocket.accountSubscribe(publickey: account)
         await subscribesManager.accept(account: account, id: id)
     }
