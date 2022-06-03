@@ -25,6 +25,7 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     @Injected private var transactionHandler: TransactionHandlerType
     @Injected private var feeRelayer: FeeRelayerSwift.APIClient
     @Injected private var notificationsRepository: WLNotificationsRepository
+    private var source: HistoryStreamSource = History.EmptyStreamSource()
 
     // MARK: - Properties
 
@@ -41,6 +42,7 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
         self.account = account
         self.accountSymbol = accountSymbol
         super.init(isPaginationEnabled: true, limit: 10)
+        buildSource()
     }
 
     override func bind() {
@@ -76,8 +78,9 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
     }
 
     override func createRequest() -> Single<[ParsedTransaction]> {
-        .just([])
-        // fatalError("Method has not been implemented")
+//        next().asSingle()
+
+        fatalError("Method has not been implemented")
 
         // let fetchPubkeys: Single<[String]>
         // if fetchedFeePayer {
@@ -109,6 +112,95 @@ class TransactionsViewModel: BEListViewModel<ParsedTransaction> {
         //             self?.before = transactions.last?.signature
         //         }
         //     )
+    }
+
+//    func next() -> Observable<[ParsedTransaction]> {
+//        AsyncThrowingStream<[HistoryStreamSource.Result], Error> { stream in
+//            Task {
+//                defer { stream.finish(throwing: nil) }
+//
+//                var results: [HistoryStreamSource.Result] = []
+//                do {
+//                    while true {
+//                        let firstTrx = try await source.first()
+//                        guard
+//                            let firstTrx = firstTrx,
+//                            let rawTime = firstTrx.0.blockTime
+//                        else {
+//                            stream.yield(results)
+//                            return
+//                        }
+//
+//                        // Fetch next 1 days
+//                        var timeEndFilter = Date(timeIntervalSince1970: TimeInterval(rawTime))
+//                        timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 1)
+//
+//                        if Task.isCancelled { return }
+//                        for try await result in source.next(
+//                            configuration: .init(timestampEnd: timeEndFilter)
+//                        ) {
+//                            if Task.isCancelled { return }
+//
+//                            let (signatureInfo, _, _) = result
+//
+//                            // Skip duplicated transaction
+//                            if data.contains(where: { $0.signature == signatureInfo.signature }) { continue }
+//                            if results
+//                                .contains(where: { $0.0.signature == signatureInfo.signature }) { continue }
+//
+//                            results.append(result)
+//
+//                            if results.count > 15 {
+//                                stream.yield(results)
+//                                return
+//                            }
+//                        }
+//                    }
+//                } catch {
+//                    stream.yield(results)
+//                    stream.finish(throwing: error)
+//                }
+//            }
+//        }
+//        .asObservable()
+//        .flatMap { results in Observable.from(results) }
+//        .flatMap { result in
+//            // TODO: FIX
+//            Single.async { () -> [ParsedTransaction] in
+//                print(Date())
+//                let transactionInfo = try await self.transactionRepository
+//                    .getTransaction(signature: result.0.signature)
+//                let transaction = try await self.transactionParser.parse(
+//                    signatureInfo: result.0,
+//                    transactionInfo: transactionInfo,
+//                    account: result.1,
+//                    symbol: result.2
+//                )
+//
+//                return [transaction]
+//            }
+//        }
+//        .do(onError: { [weak self] error in
+//            DispatchQueue.main.async { [weak self] in
+//                self?.errorRelay.accept(true)
+//                self?.notificationService.showInAppNotification(.error(error))
+//            }
+//        })
+//    }
+
+    func buildSource() {
+        let cachedTransactionRepository: History.CachingTransactionRepository = .init(
+            delegate: History.SolanaTransactionRepository()
+        )
+        let cachedTransactionParser = History.DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+        let accountStreamSource = History.AccountStreamSource(
+            account: account,
+            symbol: accountSymbol,
+            transactionRepository: cachedTransactionRepository,
+            transactionParser: cachedTransactionParser
+        )
+
+        source = History.MultipleStreamSource(sources: [accountStreamSource])
     }
 
     override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
