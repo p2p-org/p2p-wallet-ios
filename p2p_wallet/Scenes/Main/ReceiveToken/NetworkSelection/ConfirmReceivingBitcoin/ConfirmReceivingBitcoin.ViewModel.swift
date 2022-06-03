@@ -89,25 +89,19 @@ extension ConfirmReceivingBitcoin {
                 do {
                     try await renBTCStatusService.load()
                     let payableWallets = try await renBTCStatusService.getPayableWallets()
-                    await MainActor.run { [weak self] in
-                        guard let self = self else { return }
-                        self.isLoadingSubject.accept(false)
-                        self.errorSubject.accept(nil)
-                        self.accountStatusSubject
-                            .accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
-                        self.payableWalletsSubject.accept(payableWallets)
-                        self.payingWalletSubject.accept(payableWallets.first)
-                    }
+
+                    errorSubject.accept(nil)
+                    accountStatusSubject
+                        .accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
+                    payableWalletsSubject.accept(payableWallets)
+                    payingWalletSubject.accept(payableWallets.first)
                 } catch {
-                    await MainActor.run { [weak self] in
-                        guard let self = self else { return }
-                        self.isLoadingSubject.accept(false)
-                        self.errorSubject.accept(error.readableDescription)
-                        self.accountStatusSubject.accept(nil)
-                        self.payableWalletsSubject.accept([])
-                        self.payingWalletSubject.accept(nil)
-                    }
+                    errorSubject.accept(error.readableDescription)
+                    accountStatusSubject.accept(nil)
+                    payableWalletsSubject.accept([])
+                    payingWalletSubject.accept(nil)
                 }
+                isLoadingSubject.accept(false)
             }
         }
 
@@ -197,19 +191,16 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                     payingFeeAddress: address,
                     payingFeeMintAddress: mintAddress
                 )
+                errorSubject.accept(nil)
+
                 await MainActor.run { [weak self] in
-                    guard let self = self else { return }
-                    self.isLoadingSubject.accept(false)
-                    self.errorSubject.accept(nil)
-                    self.completion?()
+                    self?.completion?()
                 }
             } catch {
-                await MainActor.run { [weak self] in
-                    guard let self = self else { return }
-                    self.isLoadingSubject.accept(false)
-                    self.errorSubject.accept(error.readableDescription)
-                }
+                errorSubject.accept(error.readableDescription)
             }
+
+            isLoadingSubject.accept(false)
         }
     }
 
