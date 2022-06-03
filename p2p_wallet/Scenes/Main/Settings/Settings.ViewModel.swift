@@ -230,7 +230,9 @@ extension Settings.ViewModel: SettingsViewModelType {
 
         analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
         if Defaults.apiEndPoint.network != endpoint.network {
-            renVMService.expireCurrentSession()
+            Task {
+                try await renVMService.expireCurrentSession()
+            }
         }
 
         changeNetworkResponder.changeAPIEndpoint(to: endpoint)

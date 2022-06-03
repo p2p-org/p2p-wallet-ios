@@ -90,7 +90,9 @@ extension ReceiveToken {
                 .subscribe(onNext: { [weak self] endAt in
                     guard let endAt = endAt else { return }
                     if Date() >= endAt {
-                        self?.renVMService.expireCurrentSession()
+                        Task { [weak self] in
+                            try await self?.lockAndMintService.expireCurrentSession()
+                        }
                     }
                 })
                 .disposed(by: disposeBag)
