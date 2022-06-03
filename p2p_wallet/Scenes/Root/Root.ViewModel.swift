@@ -72,23 +72,23 @@ extension Root {
             isLoadingSubject.accept(true)
 
             // try to retrieve account from seed
-            DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-                let account = self?.storage.account
-                DispatchQueue.main.async { [weak self] in
-                    if account == nil {
-                        self?.showAuthenticationOnMainOnAppear = false
-                        self?.navigationSubject.accept(.createOrRestoreWallet)
-                    } else if self?.storage.pinCode == nil ||
-                        !Defaults.didSetEnableBiometry ||
-                        !Defaults.didSetEnableNotifications
-                    {
-                        self?.showAuthenticationOnMainOnAppear = false
-                        self?.navigationSubject.accept(.onboarding)
-                    } else {
-                        self?.navigationSubject
-                            .accept(.main(showAuthenticationWhenAppears: self?
-                                    .showAuthenticationOnMainOnAppear ?? false))
-                    }
+            Task {
+                // reload solana account
+                try await storage.reloadSolanaAccount()
+                let account = storage.account
+
+                if account == nil {
+                    showAuthenticationOnMainOnAppear = false
+                    navigationSubject.accept(.createOrRestoreWallet)
+                } else if storage.pinCode == nil ||
+                    !Defaults.didSetEnableBiometry ||
+                    !Defaults.didSetEnableNotifications
+                {
+                    showAuthenticationOnMainOnAppear = false
+                    navigationSubject.accept(.onboarding)
+                } else {
+                    navigationSubject
+                        .accept(.main(showAuthenticationWhenAppears: showAuthenticationOnMainOnAppear))
                 }
             }
         }

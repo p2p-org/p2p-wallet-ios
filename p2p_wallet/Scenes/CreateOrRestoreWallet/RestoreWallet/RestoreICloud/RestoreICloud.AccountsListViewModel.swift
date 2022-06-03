@@ -76,21 +76,12 @@ extension RestoreICloud {
         }
 
         private func createParsedAccountSingle(account: RawAccount) -> Single<ParsedAccount> {
-            Single<Account>.create { observer in
-                DispatchQueue(label: "createAccount#\(account.phrase)", qos: .userInitiated)
-                    .async {
-                        do {
-                            let account = try Account(
-                                phrase: account.phrase.components(separatedBy: " "),
-                                network: Defaults.apiEndPoint.network,
-                                derivablePath: account.derivablePath
-                            )
-                            observer(.success(account))
-                        } catch {
-                            observer(.failure(error))
-                        }
-                    }
-                return Disposables.create()
+            Single<Account>.async {
+                try await Account(
+                    phrase: account.phrase.components(separatedBy: " "),
+                    network: Defaults.apiEndPoint.network,
+                    derivablePath: account.derivablePath
+                )
             }
             .map {
                 .init(account: account, parsedAccount: $0)
