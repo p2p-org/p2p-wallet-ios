@@ -124,21 +124,19 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         } else {
             // create account
             isLoadingSubject.accept(true)
-            DispatchQueue(label: "Create account", qos: .userInteractive).async { [unowned self] in
-                guard let phrases = self.phrases else { return }
+            guard let phrases = phrases else { return }
+            Task {
                 do {
-                    let account = try Account(
+                    let account = try await Account(
                         phrase: phrases,
                         network: Defaults.apiEndPoint.network,
                         derivablePath: derivablePath
                     )
-                    DispatchQueue.main.async { [weak self] in
-                        // reserve name
-                        self?.isLoadingSubject.accept(false)
-                        self?.navigationSubject.accept(.reserveName(owner: account.publicKey.base58EncodedString))
-                    }
+                    // reserve name
+                    isLoadingSubject.accept(false)
+                    navigationSubject.accept(.reserveName(owner: account.publicKey.base58EncodedString))
                 } catch {
-                    self.errorSubject.accept(error.readableDescription)
+                    errorSubject.accept(error.readableDescription)
                 }
             }
         }
@@ -155,9 +153,10 @@ extension RestoreWallet.ViewModel {
 
         // create account
         isLoadingSubject.accept(true)
-        DispatchQueue(label: "Create account", qos: .userInteractive).async {
+
+        Task {
             do {
-                let account = try Account(
+                let account = try await Account(
                     phrase: phrases,
                     network: Defaults.apiEndPoint.network,
                     derivablePath: derivablePath
@@ -166,39 +165,36 @@ extension RestoreWallet.ViewModel {
                 let owner = account.publicKey.base58EncodedString
 
                 // check if name available
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    self.nameService.getName(owner)
-                        .subscribe(on: MainScheduler.instance)
-                        .subscribe(onSuccess: { [weak self] name in
-                            guard let self = self else { return }
-                            self.isLoadingSubject.accept(false)
+                nameService.getName(owner)
+                    .subscribe(on: MainScheduler.instance)
+                    .subscribe(onSuccess: { [weak self] name in
+                        guard let self = self else { return }
+                        self.isLoadingSubject.accept(false)
 
-                            // save to icloud
-                            self.saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
+                        // save to icloud
+                        self.saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
 
-                            if let name = name {
-                                self.handleName(name)
-                            } else {
-                                self.navigationSubject.accept(.reserveName(owner: owner))
-                            }
-                        }, onFailure: { [weak self] _ in
-                            guard let self = self else { return }
-                            self.isLoadingSubject.accept(false)
+                        if let name = name {
+                            self.handleName(name)
+                        } else {
+                            self.navigationSubject.accept(.reserveName(owner: owner))
+                        }
+                    }, onFailure: { [weak self] _ in
+                        guard let self = self else { return }
+                        self.isLoadingSubject.accept(false)
 
-                            // save to icloud
-                            self.saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+                        // save to icloud
+                        self.saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
 
-                            self.finish()
-                        })
-                        .disposed(by: self.disposeBag)
-                }
+                        self.finish()
+                    })
+                    .disposed(by: self.disposeBag)
             } catch {
-                DispatchQueue.main.async { [weak self] in
-                    self?.errorSubject.accept(error.readableDescription)
-                }
+                errorSubject.accept(error.readableDescription)
             }
         }
+
+        DispatchQueue(label: "Create account", qos: .userInteractive).async {}
     }
 
     private func saveToICloud(name: String?, phrase: [String], derivablePath: DerivablePath) {
