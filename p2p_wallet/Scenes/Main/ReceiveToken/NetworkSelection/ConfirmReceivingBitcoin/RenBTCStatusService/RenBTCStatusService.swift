@@ -65,16 +65,17 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         guard let account = accountStorage.account else { throw SolanaError.unauthorized }
 
         // prepare transaction
+        let feePayer = try await feeRelayerContextManager.getCurrentContext().feePayerAddress
         async let preparing = blockchainClient.prepareTransaction(
             instructions: [
                 AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
                     mint: .renBTCMint,
                     owner: account.publicKey,
-                    payer: account.publicKey
+                    payer: feePayer
                 ),
             ],
             signers: [account],
-            feePayer: account.publicKey,
+            feePayer: feePayer,
             feeCalculator: nil
         )
 
