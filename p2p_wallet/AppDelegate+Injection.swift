@@ -111,7 +111,11 @@ extension Resolver: ResolverRegistering {
         // MARK: - Socket
 
         register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!, enableDebugLogs: true) }
-            .implements(SocketType.self)
+            .implements(SolanaSocket.self)
+            .scope(.session)
+
+        register { AccountsObservableServiceImpl(solanaSocket: resolve()) }
+            .implements(AccountObservableService.self)
             .scope(.session)
 
         // MARK: - TransactionHandler (new)
