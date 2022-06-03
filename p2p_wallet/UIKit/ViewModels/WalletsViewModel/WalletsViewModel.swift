@@ -19,7 +19,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     @Injected private var accountStorage: SolanaAccountStorage
     @Injected private var solanaAPIClient: SolanaAPIClient
     @Injected private var pricesService: PricesServiceType
-    @Injected private var socket: SocketType
+    @Injected private var socket: AccountObservableService
     @WeakLazyInjected private var transactionHandler: TransactionHandlerType?
 
     // MARK: - Properties
@@ -80,7 +80,9 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .map { [weak self] _ in self?.getWallets() ?? [] }
             .subscribe(onNext: { [weak self] wallets in
                 for wallet in wallets where wallet.pubkey != nil {
-                    self?.socket.subscribeAccountNotification(account: wallet.pubkey!, isNative: wallet.isNativeSOL)
+                    Task { [weak self] in
+                        try await self?.socket.subscribeAccountNotification(account: wallet.pubkey!)
+                    }
                 }
             })
             .disposed(by: disposeBag)
@@ -294,7 +296,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     // MARK: - Account notifications
 
-    private func handleAccountNotification(_ notification: (pubkey: String, lamports: Lamports)) {
+    private func handleAccountNotification(_ notification: AccountsObservableEvent) {
         // notify changes
         let oldLamportsValue = data.first(where: { $0.pubkey == notification.pubkey })?.lamports
         let newLamportsValue = notification.lamports
