@@ -7,6 +7,7 @@
 
 import Foundation
 import LocalAuthentication
+import RenVMSwift
 import Resolver
 import RxCocoa
 import RxSwift
@@ -73,7 +74,7 @@ extension Settings {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationService
         @Injected private var pricesService: PricesServiceType
-        @Injected private var renVMService: RenVMLockAndMintServiceType
+        @Injected private var renVMService: LockAndMintService
         @Injected private var imageSaver: ImageSaverType
 
         // MARK: - Properties
@@ -229,10 +230,13 @@ extension Settings.ViewModel: SettingsViewModelType {
 
         analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
         if Defaults.apiEndPoint.network != endpoint.network {
-            renVMService.expireCurrentSession()
+            Task {
+                try await renVMService.expireCurrentSession()
+                await MainActor.run {
+                    changeNetworkResponder.changeAPIEndpoint(to: endpoint)
+                }
+            }
         }
-
-        changeNetworkResponder.changeAPIEndpoint(to: endpoint)
     }
 
     var isBiometryEnabledDriver: Driver<Bool> { isBiometryEnabledSubject.asDriver() }

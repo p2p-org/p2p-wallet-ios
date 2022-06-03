@@ -46,7 +46,7 @@ extension RenBTCReceivingStatuses {
                             CollectionViewMappingStrategy.byData(
                                 viewModel: viewModel,
                                 forType: LockAndMint.ProcessingTx.self,
-                                where: \LockAndMint.ProcessingTx.submittedAt
+                                where: \LockAndMint.ProcessingTx.submitedAt
                             )
                         },
                         layout: .init(
