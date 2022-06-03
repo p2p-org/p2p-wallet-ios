@@ -15,8 +15,8 @@ protocol ReceiveTokenBitcoinViewModelType: AnyObject {
     var timerSignal: Signal<Void> { get }
     var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
     var hasExplorerButton: Bool { get }
+    var sessionEndDate: Date? { get }
 
-    func getSessionEndDate() -> Date?
     func acceptConditionAndLoadAddress()
     func showReceivingStatuses()
     func copyToClipboard()
@@ -49,6 +49,10 @@ extension ReceiveToken {
         private let addressSubject = BehaviorRelay<String?>(value: nil)
         private let processingTransactionsSubject = BehaviorRelay<[LockAndMint.ProcessingTx]>(value: [])
 
+        // MARK: - Properties
+
+        private(set) var sessionEndDate: Date?
+
         // MARK: - Initializers
 
         init(
@@ -78,14 +82,20 @@ extension ReceiveToken {
                 .disposed(by: disposeBag)
 
             timerSubject
-                .subscribe(onNext: { [weak self] in
-                    guard let endAt = self?.getSessionEndDate() else { return }
+                .withLatestFrom(
+                    Single.async {
+                        await self.persistentStore.session?.endAt
+                    }
+                )
+                .subscribe(onNext: { [weak self] endAt in
+                    guard let endAt = endAt else { return }
                     if Date() >= endAt {
                         self?.renVMService.expireCurrentSession()
                     }
                 })
                 .disposed(by: disposeBag)
 
+            // listen to lockAndMintService
             lockAndMintService.delegate = self
 
             if lockAndMintService.isLoading {
@@ -109,9 +119,17 @@ extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
 
     func lockAndMintService(_: LockAndMintService, didLoadWithGatewayAddress gatewayAddress: String) {
         addressSubject.accept(gatewayAddress)
+        Task {
+            let endAt = await persistentStore.session?.endAt
+            await MainActor.run {
+                sessionEndDate = endAt
+            }
+        }
     }
 
-    func lockAndMintService(_: LockAndMintService, didFailToLoadWithError _: Error) {}
+    func lockAndMintService(_: LockAndMintService, didFailToLoadWithError _: Error) {
+        sessionEndDate = nil
+    }
 
     func lockAndMintService(
         _: LockAndMintService,
@@ -132,10 +150,6 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
     var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
         processingTransactionsSubject.asDriver()
-    }
-
-    func getSessionEndDate() -> Date? {
-        renVMService.getSessionEndDate()
     }
 
     func copyToClipboard() {
