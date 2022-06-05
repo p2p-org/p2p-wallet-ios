@@ -1,5 +1,19 @@
 name: p2p_wallet
 
+# how to add localization back:
+# 1. remove scripts in preGenCommand+postGenCommand
+# 2. repace in project.yml:
+
+#- path: p2p_wallet
+#          name: p2p_wallet
+#          excludes:
+#            - "*.lproj-backup/*"
+
+# to
+#- p2p_wallet
+
+# 3. Remove these comment when done
+
 options:
     deploymentTarget: 
         iOS: 13.0
