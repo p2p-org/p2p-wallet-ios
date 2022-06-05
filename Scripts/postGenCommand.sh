@@ -1,15 +1,15 @@
 echo "Temporarily ignore localization using preGenCommand.sh and postGenCommand.sh, please remove this script later"
-rm -rf p2p_wallet/Base.lproj
-rm -rf p2p_wallet/en.lproj
-rm -rf p2p_wallet/ru.lproj
-rm -rf p2p_wallet/fr.lproj
-rm -rf p2p_wallet/vi.lproj
+rm -rf p2p_wallet/Resources/Base.lproj
+rm -rf p2p_wallet/Resources/en.lproj
+rm -rf p2p_wallet/Resources/ru.lproj
+rm -rf p2p_wallet/Resources/fr.lproj
+rm -rf p2p_wallet/Resources/vi.lproj
 
-mv p2p_wallet/Base.lproj-backup p2p_wallet/Base.lproj
-mv p2p_wallet/en.lproj-backup p2p_wallet/en.lproj
-mv p2p_wallet/ru.lproj-backup p2p_wallet/ru.lproj
-mv p2p_wallet/fr.lproj-backup p2p_wallet/fr.lproj
-mv p2p_wallet/vi.lproj-backup p2p_wallet/vi.lproj
+mv p2p_wallet/Resources/Base.lproj-backup p2p_wallet/Resources/Base.lproj
+mv p2p_wallet/Resources/en.lproj-backup p2p_wallet/Resources/en.lproj
+mv p2p_wallet/Resources/ru.lproj-backup p2p_wallet/Resources/ru.lproj
+mv p2p_wallet/Resources/fr.lproj-backup p2p_wallet/Resources/fr.lproj
+mv p2p_wallet/Resources/vi.lproj-backup p2p_wallet/Resources/vi.lproj
 
 # install dependency
 pod install
