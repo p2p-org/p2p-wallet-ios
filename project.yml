@@ -5,6 +5,8 @@ options:
         iOS: 13.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
+    preGenCommand: Scripts/preGenCommand.sh
+    postGenCommand: Scripts/postGenCommand.sh
 
 configs:
   Debug: debug
@@ -20,7 +22,10 @@ targets:
         platform: iOS
         deploymentTarget: 13.0
         sources:
-        - p2p_wallet
+        - path: p2p_wallet
+          name: p2p_wallet
+          excludes:
+            - "*.lproj-backup/*"
         - path: README.MD
         preBuildScripts:
           - script: |
