@@ -7,7 +7,7 @@ name: p2p_wallet
 #- path: p2p_wallet
 #          name: p2p_wallet
 #          excludes:
-#            - "*.lproj-backup/*"
+#            - "Resources/*.lproj-backup/*"
 
 # to
 #- p2p_wallet
@@ -39,7 +39,7 @@ targets:
         - path: p2p_wallet
           name: p2p_wallet
           excludes:
-            - "*.lproj-backup/*"
+            - "Resources/*.lproj-backup/*"
         - path: README.MD
         preBuildScripts:
           - script: |
