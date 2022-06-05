@@ -18,7 +18,6 @@ protocol WalletDetailViewModelType {
     var walletDriver: Driver<Wallet?> { get }
     var walletActionsDriver: Driver<[WalletActionType]> { get }
     var graphViewModel: WalletGraphViewModel { get }
-//    var transactionsViewModel: TransactionsViewModel { get }
 
     func showWalletSettings()
     func start(action: WalletActionType)
@@ -40,11 +39,6 @@ extension WalletDetail {
 
         private let disposeBag = DisposeBag()
         lazy var graphViewModel = WalletGraphViewModel(symbol: symbol)
-
-//        lazy var transactionsViewModel = TransactionsViewModel(
-//            account: pubkey,
-//            accountSymbol: symbol
-//        )
 
         // MARK: - Subject
 
