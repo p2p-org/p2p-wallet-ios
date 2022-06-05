@@ -10,3 +10,6 @@ mv p2p_wallet/en.lproj-backup p2p_wallet/en.lproj
 mv p2p_wallet/ru.lproj-backup p2p_wallet/ru.lproj
 mv p2p_wallet/fr.lproj-backup p2p_wallet/fr.lproj
 mv p2p_wallet/vi.lproj-backup p2p_wallet/vi.lproj
+
+# install dependency
+pod install
