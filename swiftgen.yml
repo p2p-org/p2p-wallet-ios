@@ -12,7 +12,7 @@ output_dir: p2p_wallet/Resources
 ##   SwiftGen will parse all `.strings` files found in that folder.
 strings:
   inputs:
-    - en.lproj
+    - ../en.lproj
   outputs:
     - templatePath: strings_custom.stencil
       output: Strings+Generated.swift
