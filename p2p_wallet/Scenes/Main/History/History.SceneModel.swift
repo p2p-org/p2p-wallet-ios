@@ -109,27 +109,28 @@ extension History {
             )
             let cachedTransactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
 
-            let accountStreamSources = walletsRepository
-                .getWallets()
-                .reversed()
-                .filter { [weak self] in
-                    if self?.accountSymbol != nil {
-                        return $0.pubkey == self?.accountSymbol?.account && $0.token.symbol == self?.accountSymbol?
-                            .symbol
-                    } else {
-                        return true
+            if let accountSymbol = accountSymbol {
+                source = AccountStreamSource(
+                    account: accountSymbol.account,
+                    symbol: accountSymbol.symbol,
+                    transactionRepository: cachedTransactionRepository,
+                    transactionParser: cachedTransactionParser
+                )
+            } else {
+                let accountStreamSources = walletsRepository
+                    .getWallets()
+                    .reversed()
+                    .map { wallet in
+                        AccountStreamSource(
+                            account: wallet.pubkey ?? "",
+                            symbol: wallet.token.symbol,
+                            transactionRepository: cachedTransactionRepository,
+                            transactionParser: cachedTransactionParser
+                        )
                     }
-                }
-                .map { wallet in
-                    AccountStreamSource(
-                        account: wallet.pubkey ?? "",
-                        symbol: wallet.token.symbol,
-                        transactionRepository: cachedTransactionRepository,
-                        transactionParser: cachedTransactionParser
-                    )
-                }
 
-            source = MultipleStreamSource(sources: accountStreamSources)
+                source = MultipleStreamSource(sources: accountStreamSources)
+            }
         }
 
         override func clear() {

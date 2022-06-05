@@ -32,8 +32,8 @@ extension History {
                 .disposed(by: disposeBag)
         }
 
-        init(account _: String, symbol _: String, isEmbeded: Bool = true) {
-            viewModel = SceneModel()
+        init(account: String, symbol: String, isEmbeded: Bool = true) {
+            viewModel = SceneModel(accountSymbol: (account, symbol))
 
             super.init()
             isEmbedded = isEmbeded
