@@ -33,6 +33,13 @@ enum AnalyticsEvent: MirrorableEnum {
     case backingUpIcloud
     case backingUpManually
     case backingUpError
+
+    /// Event 49: The wallet was successfully created
+    case walletCreated(lastScreen: String)
+
+    /// Event 50: The wallet was successfully created
+    case walletRestored(lastScreen: String)
+
     // setup
     case setupOpen(fromPage: String)
     case setupPinKeydown1
@@ -196,7 +203,7 @@ extension AnalyticsEvent {
     }
 }
 
-private extension String {
+extension String {
     func snakeCased() -> String? {
         let pattern = "([a-z0-9])([A-Z])"
 

@@ -44,11 +44,13 @@ extension CreateOrRestoreWallet.ViewModel: CreateOrRestoreWalletViewModelType {
     func navigateToCreateWalletScene() {
         analyticsManager.log(event: .splashCreating)
         navigatableSceneSubject.accept(.createWallet)
+        OnboardingTracking.currentFlow = .create
     }
 
     func navigateToRestoreWalletScene() {
         analyticsManager.log(event: .splashRestoring)
         analyticsManager.log(event: .recoveryOpen(fromPage: "first_in"))
         navigatableSceneSubject.accept(.restoreWallet)
+        OnboardingTracking.currentFlow = .restore
     }
 }

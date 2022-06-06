@@ -12,7 +12,7 @@ import RxSwift
 import UIKit
 
 extension ReceiveToken {
-    class NetworkSelectionScene: BEScene {
+    class NetworkSelectionScene: BaseViewController {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
 
         private let viewModel: ReceiveSceneModel
