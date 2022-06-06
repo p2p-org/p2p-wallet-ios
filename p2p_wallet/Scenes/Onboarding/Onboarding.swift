@@ -8,7 +8,7 @@
 import Foundation
 
 enum Onboarding {
-    enum NavigatableScene {
+    enum NavigatableScene: ScreenEvents {
         case createPincode
         case setUpBiometryAuthentication
         case setUpNotifications
