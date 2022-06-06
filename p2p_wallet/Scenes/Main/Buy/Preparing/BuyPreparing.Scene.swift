@@ -24,6 +24,11 @@ extension BuyPreparing {
             navigationItem.title = L10n.buying(viewModel.crypto.fullname)
         }
 
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            view.endEditing(true)
+        }
+
         // MARK: - Navigation
 
         private func navigateToWeb() {

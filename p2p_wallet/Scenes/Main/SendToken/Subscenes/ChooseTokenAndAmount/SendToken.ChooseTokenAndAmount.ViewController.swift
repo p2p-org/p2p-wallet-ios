@@ -41,6 +41,11 @@ extension SendToken.ChooseTokenAndAmount {
             super.init()
         }
 
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            view.endEditing(true)
+        }
+
         // MARK: - Methods
 
         override func setUp() {
