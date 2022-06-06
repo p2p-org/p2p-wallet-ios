@@ -174,7 +174,7 @@ extension SendService {
         _ context: FeeRelayerContext,
         payingTokenMint: String?
     ) -> Bool {
-        let expectedTransactionFee = (context.lamportsPerSignature ?? 5000) * 2
+        let expectedTransactionFee = context.lamportsPerSignature * 2
         return payingTokenMint == PublicKey.wrappedSOLMint.base58EncodedString &&
             context.usageStatus.isFreeTransactionFeeAvailable(transactionFee: expectedTransactionFee) == false
     }
