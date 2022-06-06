@@ -1,3 +1,22 @@
 #!/bin/sh
 
+# fix: global script (xcodegen not found)
+if [[ $(echo $SHELL) == '/bin/bash' ]]; then
+  if [ -e ~/.bash_profile ]; then
+    source ~/.bash_profile
+  fi
+else
+  if [ -e ~/.zprofile ]; then
+    source ~/.zprofile
+  fi
+fi
+
+# Run swiftgen
+pwd
 Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
+
+# Regenerate project
+xcodegen
+
+# Pod install
+pod install
