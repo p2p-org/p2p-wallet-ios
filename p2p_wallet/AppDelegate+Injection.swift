@@ -65,7 +65,6 @@ extension Resolver: ResolverRegistering {
         register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
             .implements(TokensRepository.self)
             .implements(TransactionsRepository.self)
-            .implements(AssociatedTokenAccountHandler.self)
             .implements(RenVMSolanaAPIClientType.self)
             .implements(FeeAPIClient.self)
             .implements(OrcaSwapSolanaClient.self)
@@ -114,7 +113,9 @@ extension Resolver: ResolverRegistering {
             apiClient: resolve(),
             solanaClient: resolve(),
             accountStorage: resolve(SolanaSDK.self).accountStorage,
-            orcaSwapClient: resolve()
+            orcaSwapClient: resolve(),
+            deviceType: .iOS,
+            buildNumber: Bundle.main.fullVersionNumber
         ) }
         .implements(FeeRelayerRelayType.self)
         .scope(.session)
@@ -134,20 +135,13 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Swap
 
-        register {
-            SwapServiceWithRelayImpl(
-                solanaClient: Resolver.resolve(),
-                accountStorage: Resolver.resolve(),
-                feeRelay: Resolver.resolve(),
-                orcaSwap: Resolver.resolve()
-            )
-        }
-        .implements(Swap.Service.self)
-        .scope(.session)
+        register { SwapServiceWithRelayImpl() }
+            .implements(Swap.Service.self)
+            .scope(.session)
 
         register {
             OrcaSwap(
-                apiClient: OrcaSwap.APIClient(
+                apiClient: OrcaSwapSwift.APIClient(
                     network: Defaults.apiEndPoint.network.cluster
                 ),
                 solanaClient: resolve(),
