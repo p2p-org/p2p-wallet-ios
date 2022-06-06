@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>%d hidden wallet</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d скрытых кошельков</string>
+			<key>one</key>
+			<string>%d скрытый кошелек</string>
+			<key>few</key>
+			<string>%d скрытых кошелька</string>
+			<key>many</key>
+			<string>%d скрытых кошельков</string>
+			<key>other</key>
+			<string>%d скрытых кошелька</string>
+		</dict>
+	</dict>
+	<key>%d day ago</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d дней назад</string>
+			<key>one</key>
+			<string>%d день назад</string>
+			<key>few</key>
+			<string>%d дня назад</string>
+			<key>many</key>
+			<string>%d дней назад</string>
+			<key>other</key>
+			<string>%d дня назад</string>
+		</dict>
+	</dict>
+	<key>Wrong Pin-code, %d attempt(s) left</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Неверный PIN-код, осталось %d попыток</string>
+			<key>one</key>
+			<string>Неверный PIN-код, осталась %d попытка</string>
+			<key>few</key>
+			<string>Неверный PIN-код, осталось %d попытки</string>
+			<key>many</key>
+			<string>Неверный PIN-код, осталось %d попыток</string>
+			<key>other</key>
+			<string>Неверный PIN-код, осталось %d попытки</string>
+		</dict>
+	</dict>
+</dict>
+</plist>
