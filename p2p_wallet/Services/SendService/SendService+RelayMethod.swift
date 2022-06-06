@@ -102,9 +102,11 @@ extension SendService {
         amount: Double,
         payingFeeToken: FeeRelayerSwift.TokenAccount?,
         recentBlockhash: String? = nil,
-        lamportsPerSignature: Lamports? = nil,
+        lamportsPerSignature _: Lamports? = nil,
         minRentExemption: Lamports? = nil
     ) async throws -> (preparedTransaction: PreparedTransaction, useFeeRelayer: Bool) {
+        guard let account = accountStorage.account else { throw SolanaError.unauthorized }
+
         let amount = amount.toLamport(decimals: wallet.token.decimals)
         guard let sender = wallet.pubkey else { throw SolanaError.other("Source wallet is not valid") }
         // form request
@@ -131,14 +133,14 @@ extension SendService {
         var preparedTransaction: PreparedTransaction
         if wallet.isNativeSOL {
             preparedTransaction = try await blockchainClient.prepareSendingNativeSOL(
-                from: try accountStorage.account!,
+                from: account,
                 to: receiver,
                 amount: amount,
                 feePayer: feePayer
             )
         } else {
             preparedTransaction = try await blockchainClient.prepareSendingSPLTokens(
-                account: accountStorage.account!,
+                account: account,
                 mintAddress: wallet.mintAddress,
                 decimals: wallet.token.decimals,
                 from: sender,
@@ -146,7 +148,6 @@ extension SendService {
                 amount: amount,
                 feePayer: feePayer,
                 transferChecked: useFeeRelayer, // create transferChecked instruction when using fee relayer
-                lamportsPerSignature: lamportsPerSignature,
                 minRentExemption: minRentExemption
             ).preparedTransaction
         }
