@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import NameService
 import Resolver
 import RxSwift
 
@@ -14,7 +15,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RecipientsListViewModel: BEListViewModel<SendToken.Recipient> {
         // MARK: - Dependencies
 
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
         var solanaAPIClient: SendServiceType!
         var preSelectedNetwork: SendToken.Network!
 
@@ -41,7 +42,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private func findRecipientsBy(name: String) -> Single<[SendToken.Recipient]> {
             Single.async { [weak self] in
-                guard let self = self else { throw NameService.Error.unknown }
+                guard let self = self else { throw NameServiceError.unknown }
                 let owners = try await self.nameService.getOwners(name)
                 return owners.map {
                     .init(
@@ -78,7 +79,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private func findAddressInSolanaNetwork(address: String) -> Single<[SendToken.Recipient]> {
             Single<String?>.async { [weak self] in
-                guard let self = self else { throw NameService.Error.unknown }
+                guard let self = self else { throw NameServiceError.unknown }
                 return try await self.nameService
                     .getName(address)
             }

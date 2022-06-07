@@ -7,6 +7,7 @@
 
 import Foundation
 import GT3Captcha
+import NameService
 import Resolver
 import RxCocoa
 import RxSwift
@@ -34,12 +35,12 @@ extension ReserveName {
 
         @Injected private var notificationsService: NotificationService
         @Injected private var analyticsManager: AnalyticsManagerType
-        private let nameService: NameServiceType = Resolver.resolve()
+        private let nameService: NameService = Resolver.resolve()
         private let owner: String
         private let reserveNameHandler: ReserveNameHandler?
         private lazy var manager: GT3CaptchaManager = {
             let manager = GT3CaptchaManager(
-                api1: nameService.captchaAPI1Url,
+                api1: NameServiceImpl.captchaAPI1Url,
                 api2: nil,
                 timeout: 10
             )
@@ -170,7 +171,7 @@ extension ReserveName {
                     await nameDidReserve(name)
                 } catch {
                     isLoadingSubject.accept(false)
-                    if let error = error as? NameService.Error,
+                    if let error = error as? NameServiceError,
                        error == .invalidStatusCode(500)
                     {
                         notificationsService
