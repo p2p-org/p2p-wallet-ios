@@ -36,6 +36,7 @@ target 'p2p_wallet' do
   pod 'Intercom'
   pod 'SwiftFormat/CLI', '0.49.6'
   pod 'Periphery'
+  pod 'TrustKit' 
   
   # Firebase
   pod 'Firebase/Analytics'

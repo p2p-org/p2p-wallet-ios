@@ -12,6 +12,7 @@ import Firebase
 @_exported import Resolver
 @_exported import SolanaSwift
 @_exported import SwiftyUserDefaults
+import TrustKit
 import UIKit
 
 @main
@@ -35,6 +36,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // TODO: Needs a remote to config to turn off remotely if something goes wrong
+        configureSSLPinning()
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
 //        Bundle.swizzleLocalization()
@@ -94,5 +97,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+    }
+
+    // MARK: - SSL Pinning
+
+    func configureSSLPinning() {
+        let trustKitConfig = [
+            kTSKEnforcePinning: true,
+            kTSKSwizzleNetworkDelegates: true,
+            kTSKPinnedDomains: [
+                "p2p.rpcpool.com": [
+                    kTSKPublicKeyHashes: [
+                        "4tENtRMJ8xlPlTvOnNPsoJoaZYs6NvKIB+2RvjHTV5c=",
+                        // Needs to add an additional pubkey
+                        "1tENtRMJ8xlPlTvOnNPsoJoaZYs6NvKIB+2RvjHTV5c=",
+                    ],
+                ],
+                "fee-relayer.solana.p2p.org": [
+                    kTSKPublicKeyHashes: [
+                        "2WYrJfkTWXCoYZl/g65hBQ6Xy27KxhDQyyQgS1JWxDI=",
+                        // Needs to add an additional pubkey
+                        "1WYrJfkTWXCoYZl/g65hBQ6Xy27KxhDQyyQgS1JWxDI=",
+                    ],
+                ],
+            ],
+        ] as [String: Any]
+
+        TrustKit.initSharedInstance(withConfiguration: trustKitConfig)
     }
 }

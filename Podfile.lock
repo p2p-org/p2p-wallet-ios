@@ -2,7 +2,7 @@ PODS:
   - Action (5.0.0):
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
-  - Alamofire (5.5.0)
+  - Alamofire (5.6.1)
   - Amplitude (8.3.1)
   - BECollectionView (0.1.0):
     - PureLayout (~> 3.1.9)
@@ -168,6 +168,7 @@ PODS:
   - SwiftLint (0.47.0)
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
+  - TrustKit (2.0.0)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
 
@@ -202,6 +203,7 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
+  - TrustKit
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -247,6 +249,7 @@ SPEC REPOS:
     - SwiftLint
     - SwiftyUserDefaults
     - TagListView
+    - TrustKit
     - TweetNacl
     - "UITextView+Placeholder"
 
@@ -279,7 +282,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
-  Alamofire: 1c4fb5369c3fe93d2857c780d8bbe09f06f97e7c
+  Alamofire: 87bd8c952f9a4454320fce00d9cc3de57bcadaf5
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   BECollectionView: df50e80ef1aeeaab1d77620d84e63265a9e7f380
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
@@ -327,9 +330,10 @@ SPEC CHECKSUMS:
   SwiftLint: d41cc46a2ae58ac6d9f26954bc89f1d72e71fdef
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
+  TrustKit: 610b8c71c07914756dd74c380040a3408a747798
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: e0038e4c54169265d62dfc874df184f0f996261f
+PODFILE CHECKSUM: 930ca56c1c6e52562a2ffbd10695e172ea108db5
 
 COCOAPODS: 1.11.3
