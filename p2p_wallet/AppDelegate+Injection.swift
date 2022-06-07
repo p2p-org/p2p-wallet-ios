@@ -93,9 +93,6 @@ extension Resolver: ResolverRegistering {
 
         // MARK: - Send service
 
-        register { TransactionsRepositoryImpl() }
-            .implements(TransactionsRepository.self)
-
         register { _, args in
             SendService(relayMethod: args())
         }

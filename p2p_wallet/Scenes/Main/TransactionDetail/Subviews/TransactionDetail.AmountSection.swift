@@ -31,13 +31,13 @@ extension TransactionDetail {
                     // Swap
                     swapSection()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: SwapTransaction.self)
+                            showView(view, onlyWhenTransactionIs: SwapInfo.self)
                         }
 
                     // Transfer
                     transferSection()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: TransferTransaction.self)
+                            showView(view, onlyWhenTransactionIs: TransferInfo.self)
                         }
 
                     // Fee
@@ -46,7 +46,7 @@ extension TransactionDetail {
                     // Total
                     totalSectionForTransfer()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: TransferTransaction.self)
+                            showView(view, onlyWhenTransactionIs: TransferInfo.self)
                         }
                 }
             }
@@ -59,7 +59,7 @@ extension TransactionDetail {
 
         private func swapSection() -> BEVStack {
             let swapTransactionDriver = viewModel.parsedTransactionDriver
-                .map { $0?.value as? SwapTransaction }
+                .map { $0?.info as? SwapInfo }
 
             return BEVStack(spacing: 8) {
                 BEHStack(spacing: 12) {
@@ -127,7 +127,7 @@ extension TransactionDetail {
                     .withContentHuggingPriority(.required, for: .horizontal)
                     .setup { label in
                         viewModel.parsedTransactionDriver
-                            .map { $0?.value is SwapTransaction }
+                            .map { $0?.info is SwapInfo }
                             .map { $0 ? L10n.swapFees : L10n.transferFee }
                             .drive(label.rx.text)
                             .disposed(by: disposeBag)
@@ -263,7 +263,7 @@ extension TransactionDetail {
                             }
                     }
                     .setup { view in
-                        showView(view, onlyWhenTransactionIs: SwapTransaction.self)
+                        showView(view, onlyWhenTransactionIs: SwapInfo.self)
                     }
                 }
             }
@@ -359,7 +359,7 @@ extension TransactionDetail {
 
         private func showView<T: Hashable>(_ view: UIView, onlyWhenTransactionIs _: T.Type) {
             viewModel.parsedTransactionDriver
-                .map { $0?.value is T }
+                .map { $0?.info is T }
                 .map { !$0 }
                 .drive(view.rx.isHidden)
                 .disposed(by: disposeBag)

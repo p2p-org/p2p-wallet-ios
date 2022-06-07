@@ -109,7 +109,7 @@ extension PendingTransaction {
         switch rawTransaction {
         case let transaction as ProcessTransaction.SendTransaction:
             let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
-            value = TransferTransaction(
+            value = TransferInfo(
                 source: transaction.sender,
                 destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
                 authority: authority,
@@ -130,7 +130,7 @@ extension PendingTransaction {
                 ).base58EncodedString
             }
 
-            value = SwapTransaction(
+            value = SwapInfo(
                 source: transaction.sourceWallet,
                 sourceAmount: transaction.amount,
                 destination: destinationWallet,

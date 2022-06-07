@@ -102,8 +102,8 @@ extension TransactionDetail {
         func mapNames(parsedTransaction: ParsedTransaction?) {
             var fromAddress: String?
             var toAddress: String?
-            switch parsedTransaction?.value {
-            case let transaction as TransferTransaction:
+            switch parsedTransaction?.info {
+            case let transaction as TransferInfo:
                 fromAddress = transaction.authority ?? transaction.source?.pubkey
                 toAddress = transaction.destinationAuthority ?? transaction.destination?.pubkey
             default:
@@ -166,16 +166,16 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         parsedTransationSubject
             .asDriver()
             .map { parsedTransaction in
-                switch parsedTransaction?.value {
-                case _ as CreateAccountTransaction:
+                switch parsedTransaction?.info {
+                case _ as CreateAccountInfo:
                     return false
-                case _ as CloseAccountTransaction:
+                case _ as CloseAccountInfo:
                     return false
 
-                case _ as TransferTransaction:
+                case _ as TransferInfo:
                     return true
 
-                case _ as SwapTransaction:
+                case _ as SwapInfo:
                     return true
                 default:
                     return false
@@ -197,10 +197,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func getCreatedAccountSymbol() -> String? {
         let createdWallet: String?
-        switch parsedTransationSubject.value?.value {
-        case let transaction as TransferTransaction:
+        switch parsedTransationSubject.value?.info {
+        case let transaction as TransferInfo:
             createdWallet = transaction.destination?.token.symbol
-        case let transaction as SwapTransaction:
+        case let transaction as SwapInfo:
             createdWallet = transaction.destination?.token.symbol
         default:
             return nil
@@ -233,10 +233,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func copySourceAddressToClipboard() {
         let sourceAddress: String?
-        switch parsedTransationSubject.value?.value {
-        case let transaction as TransferTransaction:
+        switch parsedTransationSubject.value?.info {
+        case let transaction as TransferInfo:
             sourceAddress = transaction.source?.pubkey
-        case let transaction as SwapTransaction:
+        case let transaction as SwapInfo:
             sourceAddress = transaction.source?.pubkey
         default:
             return
@@ -250,10 +250,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func copyDestinationAddressToClipboard() {
         let destinationAddress: String?
-        switch parsedTransationSubject.value?.value {
-        case let transaction as TransferTransaction:
+        switch parsedTransationSubject.value?.info {
+        case let transaction as TransferInfo:
             destinationAddress = transaction.destination?.pubkey
-        case let transaction as SwapTransaction:
+        case let transaction as SwapInfo:
             destinationAddress = transaction.destination?.pubkey
         default:
             return
