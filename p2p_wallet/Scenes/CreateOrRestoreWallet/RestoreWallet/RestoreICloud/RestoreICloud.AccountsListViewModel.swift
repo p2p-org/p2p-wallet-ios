@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import NameService
 import Resolver
 import RxSwift
 import SolanaSwift
@@ -16,7 +17,7 @@ extension RestoreICloud {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
 
         // MARK: - Methods
 

@@ -6,6 +6,7 @@
 //
 
 import FeeRelayerSwift
+import NameService
 import OrcaSwapSwift
 import RenVMSwift
 import Resolver
@@ -39,9 +40,12 @@ extension Resolver: ResolverRegistering {
         register { CryptoComparePricesFetcher() }
             .implements(PricesFetcher.self)
             .scope(.application)
-        register { NameService(cache: NameServiceUserDefaultCache()) }
-            .implements(NameServiceType.self)
-            .scope(.application)
+        register { NameServiceImpl(
+            endpoint: NameServiceImpl.endpoint,
+            cache: NameServiceUserDefaultCache()
+        ) }
+        .implements(NameService.self)
+        .scope(.application)
         register { LocalizationManager() }
             .implements(LocalizationManagerType.self)
 

@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import NameService
 import Resolver
 import RxCocoa
 import RxSwift
@@ -29,7 +30,7 @@ extension RestoreWallet {
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var handler: CreateOrRestoreWalletHandler
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var notificationsService: NotificationService
 

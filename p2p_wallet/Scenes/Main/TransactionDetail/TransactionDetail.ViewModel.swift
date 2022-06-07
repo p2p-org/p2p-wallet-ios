@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NameService
 import Resolver
 import RxCocoa
 import RxSwift
@@ -39,7 +40,7 @@ extension TransactionDetail {
         @Injected private var transactionHandler: TransactionHandlerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationService: NotificationService
 
