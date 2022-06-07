@@ -8,7 +8,7 @@ import Resolver
 import UIKit
 
 extension ReceiveToken {
-    final class ViewController: BEScene {
+    final class ViewController: BaseViewController {
         private var viewModel: ReceiveSceneModel
         private let isOpeningFromToken: Bool
 

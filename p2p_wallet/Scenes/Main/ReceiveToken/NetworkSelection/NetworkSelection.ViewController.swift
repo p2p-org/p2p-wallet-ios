@@ -12,7 +12,7 @@ import RxSwift
 import UIKit
 
 extension ReceiveToken {
-    class NetworkSelectionScene: BEScene {
+    class NetworkSelectionScene: BaseViewController {
         private let viewModel: ReceiveSceneModel
 
         init(viewModel: ReceiveSceneModel) {

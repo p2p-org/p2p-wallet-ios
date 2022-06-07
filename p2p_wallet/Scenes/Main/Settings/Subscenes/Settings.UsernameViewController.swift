@@ -8,7 +8,7 @@
 import Foundation
 
 extension Settings {
-    class NewUsernameViewController: BEScene {
+    class NewUsernameViewController: p2p_wallet.BaseViewController {
         let viewModel: SettingsViewModelType
 
         init(viewModel: SettingsViewModelType) {

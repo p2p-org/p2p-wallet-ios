@@ -9,7 +9,7 @@ import Foundation
 import RxCocoa
 
 extension SendToken.SelectNetwork {
-    final class ViewController: BEScene {
+    final class ViewController: BaseViewController {
         private let viewModel: SendTokenSelectNetworkViewModelType
 
         // Internal state

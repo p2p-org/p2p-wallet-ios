@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 extension Settings {
-    class ViewController: BEScene {
+    class ViewController: p2p_wallet.BaseViewController {
         let viewModel: SettingsViewModelType
 
         init(viewModel: SettingsViewModelType) {

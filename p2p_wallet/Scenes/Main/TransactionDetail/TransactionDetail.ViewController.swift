@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 extension TransactionDetail {
-    class ViewController: BEScene {
+    class ViewController: BaseViewController {
         // MARK: - Dependencies
 
         private let viewModel: TransactionDetailViewModelType

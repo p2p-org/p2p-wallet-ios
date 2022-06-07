@@ -12,7 +12,7 @@ import RxCocoa
 import RxSwift
 
 extension RenBTCReceivingStatuses {
-    class TxDetailViewController: BEScene {
+    class TxDetailViewController: BaseViewController {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
