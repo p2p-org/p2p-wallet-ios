@@ -11,12 +11,12 @@ import TransactionParser
 
 extension ParsedTransaction {
     var label: String {
-        switch value {
-        case is CreateAccountTransaction:
+        switch info {
+        case is CreateAccountInfo:
             return L10n.createAccount
-        case is CloseAccountTransaction:
+        case is CloseAccountInfo:
             return L10n.closeAccount
-        case let transaction as TransferTransaction:
+        case let transaction as TransferInfo:
             switch transaction.transferType {
             case .send:
                 return L10n.transfer
@@ -26,7 +26,7 @@ extension ParsedTransaction {
                 return L10n.transfer
             }
 
-        case is SwapTransaction:
+        case is SwapInfo:
             return L10n.swap
         default:
             break
@@ -36,12 +36,12 @@ extension ParsedTransaction {
     }
 
     var icon: UIImage {
-        switch value {
-        case is CreateAccountTransaction:
+        switch info {
+        case is CreateAccountInfo:
             return .transactionCreateAccount
-        case is CloseAccountTransaction:
+        case is CloseAccountInfo:
             return .transactionCloseAccount
-        case let transaction as TransferTransaction:
+        case let transaction as TransferInfo:
             switch transaction.transferType {
             case .send:
                 return .transactionSend
@@ -50,7 +50,7 @@ extension ParsedTransaction {
             default:
                 break
             }
-        case is SwapTransaction:
+        case is SwapInfo:
             return .transactionSwap
         default:
             break
