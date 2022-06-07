@@ -83,4 +83,3 @@ fastlane/test_output
 # Project files
 *.xcodeproj
 *.xcworkspace
-*.pbxproj
