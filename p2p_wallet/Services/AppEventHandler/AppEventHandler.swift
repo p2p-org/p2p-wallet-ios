@@ -129,24 +129,26 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
 
         isLoadingSubject.accept(true)
 
-        Task { [weak self] in
+        Task {
             do {
-                try self?.storage.save(phrases: phrases)
-                try self?.storage.save(derivableType: derivablePath.type)
-                try self?.storage.save(walletIndex: derivablePath.walletIndex)
+                try storage.save(phrases: phrases)
+                try storage.save(derivableType: derivablePath.type)
+                try storage.save(walletIndex: derivablePath.walletIndex)
 
-                try await self?.storage.reloadSolanaAccount()
+                try await storage.reloadSolanaAccount()
 
                 if let name = name {
-                    self?.storage.save(name: name)
+                    storage.save(name: name)
                 }
 
-                self?.notificationsService.registerForRemoteNotifications()
+                notificationsService.registerForRemoteNotifications()
             } catch {
-                self?.notificationsService.showInAppNotification(.error(error))
-                self?.creatingOrRestoringWalletDidCancel()
+                notificationsService.showInAppNotification(.error(error))
+                await MainActor.run {
+                    creatingOrRestoringWalletDidCancel()
+                }
             }
-            self?.isLoadingSubject.accept(false)
+            isLoadingSubject.accept(false)
         }
     }
 }
