@@ -79,22 +79,6 @@ extension Resolver: ResolverRegistering {
 
         register { CachedTokensRepository() }
 
-        // register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
-        //     .implements(TokensRepository.self)
-        //     .implements(TransactionsRepository.self)
-        //     .implements(AssociatedTokenAccountHandler.self)
-        //    .implements(RenVMSolanaAPIClientType.self)
-        //     .implements(FeeAPIClient.self)
-        //     .implements(OrcaSwapAccountProvider.self)
-        //    .implements(OrcaSwapSignatureConfirmationHandler.self)
-        //     .implements(ProcessTransactionAPIClient.self)
-        //    .implements(FeeRelayerRelaySolanaClient.self)
-        //     .scope(.session)
-
-        // register { OrcaSwapSwift.APIClient(configsProvider: .init("mainnet")) }
-        //     .implements(OrcaSwapSwift.OrcaSwapAPIClient.self)
-        //     .scope(.session)
-
         // MARK: - Send service
 
         register { _, args in
