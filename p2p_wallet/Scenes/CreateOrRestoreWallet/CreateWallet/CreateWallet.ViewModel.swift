@@ -74,16 +74,11 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
                     derivablePath: .default
                 )
 
-                await MainActor.run { [weak self] in
-                    UIApplication.shared.hideHud()
-                    self?.navigateToReserveName(owner: account.publicKey.base58EncodedString)
-                }
+                navigateToReserveName(owner: account.publicKey.base58EncodedString)
             } catch {
-                await MainActor.run { [weak self] in
-                    UIApplication.shared.hideHud()
-                    self?.notificationsService.showInAppNotification(.error(error))
-                }
+                notificationsService.showInAppNotification(.error(error))
             }
+            await UIApplication.shared.hideHud()
         }
     }
 
