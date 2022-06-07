@@ -11,7 +11,7 @@ import RxSwift
 import UIKit
 
 extension OrcaSwapV2 {
-    class ViewController: BEScene {
+    class ViewController: BaseViewController {
         private let settingButton = UIBarButtonItem(
             image: .settings,
             style: .plain,
