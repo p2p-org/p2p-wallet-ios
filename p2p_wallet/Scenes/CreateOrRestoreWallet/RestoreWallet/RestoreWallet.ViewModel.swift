@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import NameService
 import Resolver
 import RxCocoa
 import RxSwift
@@ -29,13 +30,12 @@ extension RestoreWallet {
         @Injected private var iCloudStorage: ICloudStorageType
         @Injected private var analyticsManager: AnalyticsManagerType
         @Injected private var handler: CreateOrRestoreWalletHandler
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var notificationsService: NotificationService
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
         private var phrases: [String]?
         private var derivablePath: DerivablePath?
         private var name: String?
@@ -115,6 +115,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         }
     }
 
+    @MainActor
     func handleICloudAccount(_ account: RawAccount) {
         phrases = account.phrase.components(separatedBy: " ")
         derivablePath = account.derivablePath
@@ -165,30 +166,27 @@ extension RestoreWallet.ViewModel {
                 let owner = account.publicKey.base58EncodedString
 
                 // check if name available
-                nameService.getName(owner)
-                    .subscribe(on: MainScheduler.instance)
-                    .subscribe(onSuccess: { [weak self] name in
-                        guard let self = self else { return }
-                        self.isLoadingSubject.accept(false)
+                do {
+                    let name = try await nameService.getName(owner)
 
-                        // save to icloud
-                        self.saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
+                    isLoadingSubject.accept(false)
 
-                        if let name = name {
-                            self.handleName(name)
-                        } else {
-                            self.navigationSubject.accept(.reserveName(owner: owner))
-                        }
-                    }, onFailure: { [weak self] _ in
-                        guard let self = self else { return }
-                        self.isLoadingSubject.accept(false)
+                    // save to icloud
+                    await saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
 
-                        // save to icloud
-                        self.saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+                    if let name = name {
+                        await handleName(name)
+                    } else {
+                        navigationSubject.accept(.reserveName(owner: owner))
+                    }
+                } catch {
+                    isLoadingSubject.accept(false)
 
-                        self.finish()
-                    })
-                    .disposed(by: self.disposeBag)
+                    // save to icloud
+                    await saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+
+                    await finish()
+                }
             } catch {
                 errorSubject.accept(error.readableDescription)
             }
@@ -197,6 +195,7 @@ extension RestoreWallet.ViewModel {
         DispatchQueue(label: "Create account", qos: .userInteractive).async {}
     }
 
+    @MainActor
     private func saveToICloud(name: String?, phrase: [String], derivablePath: DerivablePath) {
         _ = iCloudStorage.saveToICloud(
             account: .init(
@@ -210,6 +209,7 @@ extension RestoreWallet.ViewModel {
 }
 
 extension RestoreWallet.ViewModel: ReserveNameHandler {
+    @MainActor
     func handleName(_ name: String?) {
         self.name = name
         finish()
@@ -217,6 +217,7 @@ extension RestoreWallet.ViewModel: ReserveNameHandler {
 }
 
 private extension RestoreWallet.ViewModel {
+    @MainActor
     func finish() {
         finishedSubject.accept(())
         handler.restoringWalletDidComplete(

@@ -118,6 +118,7 @@ PODS:
   - Kingfisher (7.2.2)
   - ListPlaceholder (1.5)
   - LoggerSwift (1.0.2)
+  - NameService (1.0.0)
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -180,6 +181,7 @@ DEPENDENCIES:
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
+  - NameService (from `SolanaSwiftMagic`)
   - OrcaSwapSwift (from `OrcaSwapSwift`)
   - Periphery
   - RenVMSwift (from `RenVMSwift`)
@@ -254,6 +256,8 @@ EXTERNAL SOURCES:
   ListPlaceholder:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
+  NameService:
+    :path: SolanaSwiftMagic
   OrcaSwapSwift:
     :path: OrcaSwapSwift
   RenVMSwift:
@@ -302,6 +306,7 @@ SPEC CHECKSUMS:
   Kingfisher: 184d4d1a8c36666e663caf8e08abe87898595c53
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
+  NameService: cd569b1ef4d5b4fa8510bf92799085aa3dcebce3
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   OrcaSwapSwift: cd07886983423020aafa063c851ba7e0306171bf
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
@@ -329,6 +334,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 7cd632e142f3bdd074bfb4ba819380ac37467789
+PODFILE CHECKSUM: 3fac3df5f49c4530b50b0c445f150bf3ff3b2353
 
 COCOAPODS: 1.11.3

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import NameService
 import Resolver
 import RxCocoa
 import RxSwift
@@ -39,7 +40,7 @@ extension TransactionDetail {
         @Injected private var transactionHandler: TransactionHandlerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationService: NotificationService
 
@@ -100,8 +101,8 @@ extension TransactionDetail {
         }
 
         func mapNames(parsedTransaction: ParsedTransaction?) {
-            var fromAddress: String?
-            var toAddress: String?
+            let fromAddress: String?
+            let toAddress: String?
             switch parsedTransaction?.info {
             case let transaction as TransferInfo:
                 fromAddress = transaction.authority ?? transaction.source?.pubkey
@@ -114,33 +115,13 @@ extension TransactionDetail {
                 return
             }
 
-            let fromNameRequest: Single<String?>
-            if let fromAddress = fromAddress {
-                fromNameRequest = nameService.getName(fromAddress)
-            } else {
-                fromNameRequest = .just(nil)
+            Task {
+                async let fromName: String? = fromAddress != nil ? nameService.getName(fromAddress!) : nil
+                async let toName: String? = toAddress != nil ? nameService.getName(toAddress!) : nil
+
+                await senderNameSubject.accept(try? fromName?.withNameServiceDomain())
+                await receiverNameSubject.accept(try? toName?.withNameServiceDomain())
             }
-
-            fromNameRequest
-                .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { [weak self] fromName in
-                    self?.senderNameSubject.accept(fromName?.withNameServiceDomain())
-                })
-                .disposed(by: disposeBag)
-
-            let toNameRequest: Single<String?>
-            if let toAddress = toAddress {
-                toNameRequest = nameService.getName(toAddress)
-            } else {
-                toNameRequest = .just(nil)
-            }
-
-            toNameRequest
-                .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { [weak self] toName in
-                    self?.receiverNameSubject.accept(toName?.withNameServiceDomain())
-                })
-                .disposed(by: disposeBag)
         }
     }
 }
