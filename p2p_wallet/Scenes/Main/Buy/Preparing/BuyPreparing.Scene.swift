@@ -13,10 +13,9 @@ import SafariServices
 import WebKit
 
 extension BuyPreparing {
-    final class Scene: BEScene {
+    final class Scene: BaseViewController {
         private let viewModel: BuyPreparingSceneModel
         private let infoToggle = BehaviorRelay<Bool>(value: false)
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
 
         init(viewModel: BuyPreparingSceneModel) {
             self.viewModel = viewModel
