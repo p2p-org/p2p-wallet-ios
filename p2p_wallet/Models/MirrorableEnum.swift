@@ -8,6 +8,7 @@
 import Foundation
 
 protocol MirrorableEnum {}
+
 extension MirrorableEnum {
     var mirror: (label: String, params: [String: Any]) {
         let reflection = Mirror(reflecting: self)
