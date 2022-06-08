@@ -65,7 +65,6 @@ extension Resolver: ResolverRegistering {
         register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
             .implements(TokensRepository.self)
             .implements(TransactionsRepository.self)
-            .implements(AssociatedTokenAccountHandler.self)
             .implements(RenVMSolanaAPIClientType.self)
             .implements(FeeAPIClient.self)
             .implements(OrcaSwapSolanaClient.self)
