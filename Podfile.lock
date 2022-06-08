@@ -3,6 +3,8 @@ PODS:
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
   - Amplitude (8.3.1)
+  - AnalyticsManager (1.0.0):
+    - Amplitude (~> 8.3.0)
   - BECollectionView (0.1.0):
     - PureLayout (~> 3.1.8)
     - RxCocoa (~> 6.5.0)
@@ -167,7 +169,7 @@ PODS:
 
 DEPENDENCIES:
   - Action
-  - Amplitude (~> 8.3.0)
+  - AnalyticsManager (from `SolanaSwiftMagic`)
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
@@ -245,6 +247,8 @@ SPEC REPOS:
     - "UITextView+Placeholder"
 
 EXTERNAL SOURCES:
+  AnalyticsManager:
+    :path: SolanaSwiftMagic
   BECollectionView:
     :path: BECollectionView
   BEPureLayout:
@@ -284,6 +288,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
+  AnalyticsManager: 1a49cba2e3f44e4d3bbff2f3b1b2d5e5cb14810f
   BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
@@ -334,6 +339,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 3fac3df5f49c4530b50b0c445f150bf3ff3b2353
+PODFILE CHECKSUM: 3e502d616b129f653d29645eefd7081cc7c655f5
 
 COCOAPODS: 1.11.3

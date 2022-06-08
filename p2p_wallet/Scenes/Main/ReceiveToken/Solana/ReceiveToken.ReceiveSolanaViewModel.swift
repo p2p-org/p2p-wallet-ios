@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
+import AnalyticsManager
 import Resolver
 import RxCocoa
 import RxSwift
@@ -25,7 +26,7 @@ protocol ReceiveTokenSolanaViewModelType: BESceneModel {
 extension ReceiveToken {
     class SolanaViewModel: ReceiveTokenSolanaViewModelType {
         @Injected private var nameStorage: NameStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
         @Injected private var imageSaver: ImageSaverType

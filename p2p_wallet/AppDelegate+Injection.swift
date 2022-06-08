@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 23/09/2021.
 //
 
+import AnalyticsManager
 import FeeRelayerSwift
 import NameService
 import OrcaSwapSwift
@@ -28,8 +29,8 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
-        register { AnalyticsManager() }
-            .implements(AnalyticsManagerType.self)
+        register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
+            .implements(AnalyticsManager.self)
             .scope(.application)
         register { IntercomMessengerLauncher() }
             .implements(HelpCenterLauncher.self)

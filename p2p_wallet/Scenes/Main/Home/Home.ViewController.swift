@@ -6,6 +6,7 @@
 //
 
 import Action
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
@@ -20,7 +21,7 @@ extension Home {
 
         // MARK: - Dependencies
 
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         private let viewModel: HomeViewModelType
 
         // MARK: - Properties

@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 08/06/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
@@ -33,7 +34,7 @@ extension WalletDetail {
         @Injected var walletsRepository: WalletsRepository
         let pubkey: String
         let symbol: String
-        @Injected var analyticsManager: AnalyticsManagerType
+        @Injected var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 

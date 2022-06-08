@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 23/11/2021.
 //
 
+import AnalyticsManager
 import FeeRelayerSwift
 import Foundation
 import Resolver
@@ -44,7 +45,7 @@ extension SendToken {
         // MARK: - Dependencies
 
         @Injected private var authenticationHandler: AuthenticationHandlerType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
         let sendService: SendServiceType
