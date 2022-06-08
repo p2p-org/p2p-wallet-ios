@@ -5,6 +5,7 @@
 //  Created by Andrew Vasiliev on 26.11.2021.
 //
 
+import AnalyticsManager
 import Foundation
 import GT3Captcha
 import NameService
@@ -34,7 +35,7 @@ extension ReserveName {
         // MARK: - Dependencies
 
         @Injected private var notificationsService: NotificationService
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         private let nameService: NameService = Resolver.resolve()
         private let owner: String
         private let reserveNameHandler: ReserveNameHandler?

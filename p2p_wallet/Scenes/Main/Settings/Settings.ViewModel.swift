@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 11/10/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import LocalAuthentication
 import RenVMSwift
@@ -65,7 +66,7 @@ extension Settings {
         // MARK: - Dependencies
 
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var logoutResponder: LogoutResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var changeNetworkResponder: ChangeNetworkResponder

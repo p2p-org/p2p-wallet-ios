@@ -20,6 +20,7 @@ target 'p2p_wallet' do
   pod 'RenVMSwift', :path => 'RenVMSwift' 
   pod 'TransactionParser', :path => 'SolanaSwiftMagic'
   pod 'NameService', :path => 'SolanaSwiftMagic'
+  pod 'AnalyticsManager', :path => 'SolanaSwiftMagic'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
@@ -32,7 +33,6 @@ target 'p2p_wallet' do
   pod "RxAppState"
   pod "RxGesture"
   pod 'JazziconSwift'
-  pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'Intercom'

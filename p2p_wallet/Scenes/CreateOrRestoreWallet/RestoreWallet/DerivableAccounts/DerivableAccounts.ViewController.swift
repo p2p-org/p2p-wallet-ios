@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 18/05/2021.
 //
 
+import AnalyticsManager
 import BECollectionView
 import Foundation
 import Resolver
@@ -19,7 +20,7 @@ extension DerivableAccounts {
         // MARK: - Properties
 
         private let viewModel: DrivableAccountsViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Subviews
 

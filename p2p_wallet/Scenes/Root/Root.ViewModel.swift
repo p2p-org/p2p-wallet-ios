@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 08/06/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import LocalAuthentication
 import Resolver
@@ -27,7 +28,7 @@ extension Root {
 
         private var appEventHandler: AppEventHandlerType = Resolver.resolve()
         private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-        private let analyticsManager: AnalyticsManagerType = Resolver.resolve()
+        private let analyticsManager: AnalyticsManager = Resolver.resolve()
         private let notificationsService: NotificationService = Resolver.resolve()
 
         // MARK: - Properties

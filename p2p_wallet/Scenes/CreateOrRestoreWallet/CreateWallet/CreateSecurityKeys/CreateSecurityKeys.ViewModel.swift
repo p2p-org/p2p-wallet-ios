@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 22/02/2021.
 //
 
+import AnalyticsManager
 import Resolver
 import RxCocoa
 import RxSwift
@@ -32,7 +33,7 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         private let createWalletViewModel: CreateWalletViewModelType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var clipboardManager: ClipboardManagerType
