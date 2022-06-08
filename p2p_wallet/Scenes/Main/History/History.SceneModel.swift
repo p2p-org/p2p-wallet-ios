@@ -193,7 +193,6 @@ extension History {
             .flatMap { result in
                 // TODO: FIX
                 Single.async { () -> [ParsedTransaction] in
-                    print(Date())
                     let transactionInfo = try await self.transactionRepository
                         .getTransaction(signature: result.0.signature)
                     let transaction = try await self.transactionParser.parse(
