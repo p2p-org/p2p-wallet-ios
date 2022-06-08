@@ -11,7 +11,7 @@ import RxCocoa
 import RxSwift
 
 extension BuyPreparing {
-    class Scene: BEScene {
+    class Scene: BaseViewController {
         private let viewModel: BuyPreparingSceneModel
         private let infoToggle = BehaviorRelay<Bool>(value: false)
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
