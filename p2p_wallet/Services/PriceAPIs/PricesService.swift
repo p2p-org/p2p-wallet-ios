@@ -63,7 +63,7 @@ class PricesService {
 
     private var watchList = [String]()
     private var timer: Timer?
-    private lazy var currentPricesSubject = PricesLoadableRelay(request: .just(storage.retrievePrices()))
+    private lazy var currentPricesSubject = PricesLoadableRelay(request: .just([:]))
 
     // MARK: - Initializer
 
@@ -71,8 +71,14 @@ class PricesService {
         // reload to get cached prices
         currentPricesSubject.reload()
 
-        // change request
-        currentPricesSubject.request = getCurrentPricesRequest()
+        // get current price
+        Task {
+            let initialValue = await storage.retrievePrices()
+            currentPricesSubject.accept(initialValue, state: .loaded)
+
+            // change request
+            currentPricesSubject.request = getCurrentPricesRequest()
+        }
     }
 
     deinit {
@@ -103,12 +109,9 @@ class PricesService {
             for newPrice in newPrices {
                 prices[newPrice.key] = newPrice.value
             }
+            await self.storage.savePrices(prices)
             return prices
         }
-        .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-        .do(onSuccess: { [weak self] newPrices in
-            self?.storage.savePrices(newPrices)
-        })
     }
 }
 
@@ -127,7 +130,10 @@ extension PricesService: PricesServiceType {
 
     func clearCurrentPrices() {
         currentPricesSubject.flush()
-        storage.savePrices([:])
+
+        Task {
+            await storage.savePrices([:])
+        }
     }
 
     func addToWatchList(_ tokens: [String]) {

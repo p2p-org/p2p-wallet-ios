@@ -9,11 +9,11 @@ import Foundation
 import SolanaPricesAPIs
 
 protocol PricesStorage {
-    func retrievePrices() -> [String: CurrentPrice]
-    func savePrices(_ prices: [String: CurrentPrice])
+    func retrievePrices() async -> [String: CurrentPrice]
+    func savePrices(_ prices: [String: CurrentPrice]) async
 }
 
-class UserDefaultsPricesStorage: PricesStorage {
+actor UserDefaultsPricesStorage: PricesStorage {
     func retrievePrices() -> [String: CurrentPrice] {
         var prices = [String: CurrentPrice]()
         let data = Defaults.prices
