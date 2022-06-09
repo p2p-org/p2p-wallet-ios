@@ -10,6 +10,7 @@ import Foundation
 import Resolver
 import RxConcurrency
 import RxSwift
+import SolanaPricesAPIs
 import SolanaSwift
 
 protocol DerivableAccountsListViewModelType: BEListViewModelType {
@@ -22,7 +23,7 @@ extension DerivableAccounts {
     class ListViewModel: BEListViewModel<DerivableAccount> {
         // MARK: - Dependencies
 
-        @Injected private var pricesFetcher: PricesFetcher
+        @Injected private var pricesFetcher: SolanaPricesAPI
         @Injected private var solanaAPIClient: SolanaAPIClient
 
         // MARK: - Properties
@@ -97,8 +98,7 @@ extension DerivableAccounts {
             try Task.checkCancellation()
 
             let solPrice = try await pricesFetcher.getCurrentPrices(coins: ["SOL"], toFiat: Defaults.fiat.code)
-                .map { $0.first?.value?.value ?? 0 }
-                .value
+                .first?.value?.value ?? 0
             await cache.save(solPrice: solPrice)
 
             try Task.checkCancellation()

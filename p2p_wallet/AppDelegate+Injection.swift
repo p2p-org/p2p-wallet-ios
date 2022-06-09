@@ -11,6 +11,7 @@ import NameService
 import OrcaSwapSwift
 import RenVMSwift
 import Resolver
+import SolanaPricesAPIs
 import SolanaSwift
 
 extension Resolver: ResolverRegistering {
@@ -38,9 +39,6 @@ extension Resolver: ResolverRegistering {
         register { ImageSaver() }
             .implements(ImageSaverType.self)
             .scope(.unique)
-        register { CryptoComparePricesFetcher() }
-            .implements(PricesFetcher.self)
-            .scope(.application)
         register { NameServiceImpl(
             endpoint: NameServiceImpl.endpoint,
             cache: NameServiceUserDefaultCache()
@@ -53,8 +51,8 @@ extension Resolver: ResolverRegistering {
         register { UserDefaultsPricesStorage() }
             .implements(PricesStorage.self)
             .scope(.application)
-        register { CryptoComparePricesFetcher() }
-            .implements(PricesFetcher.self)
+        register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
+            .implements(SolanaPricesAPI.self)
             .scope(.application)
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)

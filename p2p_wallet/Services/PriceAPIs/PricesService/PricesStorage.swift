@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaPricesAPIs
 
 protocol PricesStorage {
     func retrievePrices() -> [String: CurrentPrice]
