@@ -10,7 +10,7 @@ import Resolver
 import UIKit
 
 extension Settings {
-    class ViewController: BEScene {
+    class ViewController: p2p_wallet.BaseViewController {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         let viewModel: SettingsViewModelType
 

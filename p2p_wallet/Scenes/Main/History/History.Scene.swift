@@ -11,7 +11,7 @@ import TransactionParser
 import UIKit
 
 extension History {
-    final class Scene: BEScene {
+    final class Scene: BaseViewController {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var pricesService: PricesServiceType
 
