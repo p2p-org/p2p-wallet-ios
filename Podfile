@@ -21,6 +21,7 @@ target 'p2p_wallet' do
   pod 'TransactionParser', :path => 'SolanaSwiftMagic'
   pod 'NameService', :path => 'SolanaSwiftMagic'
   pod 'AnalyticsManager', :path => 'SolanaSwiftMagic'
+  pod 'SolanaPricesAPIs', :path => 'SolanaSwiftMagic'
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
   pod 'Action'
