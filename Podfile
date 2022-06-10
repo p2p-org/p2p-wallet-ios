@@ -40,6 +40,7 @@ target 'p2p_wallet' do
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
+  pod 'Firebase/RemoteConfig'
   pod 'Resolver'
   
   pod 'GT3Captcha-iOS'
@@ -65,4 +66,3 @@ post_install do |installer|
     end
   end
 end
-

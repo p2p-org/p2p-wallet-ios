@@ -50,3 +50,15 @@ fonts:
 ##
 ## For more info, use `swiftgen config doc` to open the full documentation on GitHub.
 ## https://github.com/SwiftGen/SwiftGen/tree/6.4.0/Documentation/
+
+input_dir: p2p_wallet
+output_dir: p2p_wallet/Resources
+
+plist:
+  - inputs: Info.plist
+    outputs:
+      templateName: runtime-swift5
+      output: Plist-Generated.swift
+      params:
+        enumName: PlistFiles
+        publicAccess: 1
