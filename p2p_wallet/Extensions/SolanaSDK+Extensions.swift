@@ -5,16 +5,21 @@
 //  Created by Chung Tran on 16/10/2021.
 //
 
-import Foundation
+import FirebaseRemoteConfig
 
 extension SolanaSDK.APIEndPoint {
     static var definedEndpoints: [Self] {
-        var endpoints = defaultEndpoints
-        endpoints.insert(
-            .init(address: "https://p2p.rpcpool.com", network: .mainnetBeta,
-                  additionalQuery: .secretConfig("RPCPOOL_API_KEY")),
-            at: 0
-        )
+        let remoteEndpoints = RemoteConfig.remoteConfig()
+            .definedEndpoints
+            .map { SolanaSDK.APIEndPoint(address: $0, network: .mainnetBeta) }
+        var endpoints = remoteEndpoints.isEmpty ? defaultEndpoints : remoteEndpoints
+        if remoteEndpoints.isEmpty {
+            endpoints.insert(
+                .init(address: "https://p2p.rpcpool.com", network: .mainnetBeta,
+                      additionalQuery: .secretConfig("RPCPOOL_API_KEY")),
+                at: 0
+            )
+        }
         #if !DEBUG
             endpoints.removeAll { $0.network == .testnet || $0.network == .devnet }
         #endif
