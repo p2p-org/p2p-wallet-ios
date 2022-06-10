@@ -16,6 +16,6 @@
 [submodule "RenVMSwift"]
 	path = RenVMSwift
 	url = git@github.com:p2p-org/RenVMSwift.git
-[submodule "SolanaSwiftMagic"]
-	path = SolanaSwiftMagic
-	url = git@github.com:p2p-org/solana-swift-magic.git
+[submodule "KeyAppKit"]
+	path = KeyAppKit
+	url = git@github.com:p2p-org/key-app-kit-swift.git

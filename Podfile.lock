@@ -170,7 +170,7 @@ PODS:
 
 DEPENDENCIES:
   - Action
-  - AnalyticsManager (from `SolanaSwiftMagic`)
+  - AnalyticsManager (from `KeyAppKit`)
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
   - Charts
@@ -184,7 +184,7 @@ DEPENDENCIES:
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
-  - NameService (from `SolanaSwiftMagic`)
+  - NameService (from `KeyAppKit`)
   - OrcaSwapSwift (from `OrcaSwapSwift`)
   - Periphery
   - RenVMSwift (from `RenVMSwift`)
@@ -194,7 +194,7 @@ DEPENDENCIES:
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture
   - RxSwift (= 6.5.0)
-  - SolanaPricesAPIs (from `SolanaSwiftMagic`)
+  - SolanaPricesAPIs (from `KeyAppKit`)
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
   - SwiftFormat/CLI (= 0.49.6)
@@ -202,7 +202,7 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
-  - TransactionParser (from `SolanaSwiftMagic`)
+  - TransactionParser (from `KeyAppKit`)
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -250,7 +250,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   AnalyticsManager:
-    :path: SolanaSwiftMagic
+    :path: KeyAppKit
   BECollectionView:
     :path: BECollectionView
   BEPureLayout:
@@ -263,7 +263,7 @@ EXTERNAL SOURCES:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :path: SolanaSwiftMagic
+    :path: KeyAppKit
   OrcaSwapSwift:
     :path: OrcaSwapSwift
   RenVMSwift:
@@ -272,11 +272,11 @@ EXTERNAL SOURCES:
     :branch: main
     :git: https://github.com/TrGiLong/RxConcurrency.git
   SolanaPricesAPIs:
-    :path: SolanaSwiftMagic
+    :path: KeyAppKit
   SolanaSwift:
     :path: SolanaSwift
   TransactionParser:
-    :path: SolanaSwiftMagic
+    :path: KeyAppKit
 
 CHECKOUT OPTIONS:
   Down:
@@ -292,7 +292,7 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
-  AnalyticsManager: 1a49cba2e3f44e4d3bbff2f3b1b2d5e5cb14810f
+  AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
@@ -315,7 +315,7 @@ SPEC CHECKSUMS:
   Kingfisher: 184d4d1a8c36666e663caf8e08abe87898595c53
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
-  NameService: cd569b1ef4d5b4fa8510bf92799085aa3dcebce3
+  NameService: 768d79c57b8ac401fdf69128f03754195b8fd63f
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   OrcaSwapSwift: cd07886983423020aafa063c851ba7e0306171bf
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
@@ -330,7 +330,7 @@ SPEC CHECKSUMS:
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaPricesAPIs: 3924a5106a472210ef144baaaf3c52b284f1292e
+  SolanaPricesAPIs: 9875d707ba8f10751078ff613adac94e5679020f
   SolanaSwift: debc910b3227ee33ab5229e32e79df0810db1ce4
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
@@ -340,10 +340,10 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
-  TransactionParser: 22eed15594da856381dda584d585ba5912a7280b
+  TransactionParser: e39ccd48944e81445cd0ab68d924624f7d184527
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 64c5116b86b5ddfefb182845aaeae4d31d2648e0
+PODFILE CHECKSUM: 586cf93c627de0ec71eb0b3447cd632bc0a93240
 
 COCOAPODS: 1.11.3
