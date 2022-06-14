@@ -114,7 +114,7 @@ extension PendingTransaction {
                 destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
                 authority: authority,
                 destinationAuthority: nil,
-                amount: amount,
+                rawAmount: amount,
                 account: transaction.sender.pubkey
             )
             amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value

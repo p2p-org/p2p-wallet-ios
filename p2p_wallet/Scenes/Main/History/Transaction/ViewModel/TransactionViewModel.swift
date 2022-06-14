@@ -91,11 +91,11 @@ private extension ParsedTransaction {
     func mapAmounts(pricesService: PricesServiceType) -> (tokens: String?, usd: String?) {
         switch info {
         case let transaction as TransferInfo:
-            let fromAmount = transaction.amount?
+            let fromAmount = transaction.rawAmount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
             let usd = "~ " + Defaults.fiat.symbol + getAmountInCurrentFiat(
                 pricesService: pricesService,
-                amountInToken: transaction.amount,
+                amountInToken: transaction.rawAmount,
                 symbol: transaction.source?.token.symbol
             ).toString(maximumFractionDigits: 2)
             return (tokens: fromAmount, usd: usd)
