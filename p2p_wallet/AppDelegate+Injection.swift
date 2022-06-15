@@ -5,10 +5,13 @@
 //  Created by Chung Tran on 23/09/2021.
 //
 
+import AnalyticsManager
 import FeeRelayerSwift
+import NameService
 import OrcaSwapSwift
 import RenVMSwift
 import Resolver
+import SolanaPricesAPIs
 import SolanaSwift
 
 extension Resolver: ResolverRegistering {
@@ -27,8 +30,8 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
-        register { AnalyticsManager() }
-            .implements(AnalyticsManagerType.self)
+        register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
+            .implements(AnalyticsManager.self)
             .scope(.application)
         register { IntercomMessengerLauncher() }
             .implements(HelpCenterLauncher.self)
@@ -36,20 +39,20 @@ extension Resolver: ResolverRegistering {
         register { ImageSaver() }
             .implements(ImageSaverType.self)
             .scope(.unique)
-        register { CryptoComparePricesFetcher() }
-            .implements(PricesFetcher.self)
-            .scope(.application)
-        register { NameService(cache: NameServiceUserDefaultCache()) }
-            .implements(NameServiceType.self)
-            .scope(.application)
+        register { NameServiceImpl(
+            endpoint: NameServiceImpl.endpoint,
+            cache: NameServiceUserDefaultCache()
+        ) }
+        .implements(NameService.self)
+        .scope(.application)
         register { LocalizationManager() }
             .implements(LocalizationManagerType.self)
 
         register { UserDefaultsPricesStorage() }
             .implements(PricesStorage.self)
             .scope(.application)
-        register { CryptoComparePricesFetcher() }
-            .implements(PricesFetcher.self)
+        register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
+            .implements(SolanaPricesAPI.self)
             .scope(.application)
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
@@ -75,26 +78,7 @@ extension Resolver: ResolverRegistering {
 
         register { CachedTokensRepository() }
 
-        // register { SolanaSDK(endpoint: Defaults.apiEndPoint, accountStorage: Resolver.resolve()) }
-        //     .implements(TokensRepository.self)
-        //     .implements(TransactionsRepository.self)
-        //     .implements(AssociatedTokenAccountHandler.self)
-        //    .implements(RenVMSolanaAPIClientType.self)
-        //     .implements(FeeAPIClient.self)
-        //     .implements(OrcaSwapAccountProvider.self)
-        //    .implements(OrcaSwapSignatureConfirmationHandler.self)
-        //     .implements(ProcessTransactionAPIClient.self)
-        //    .implements(FeeRelayerRelaySolanaClient.self)
-        //     .scope(.session)
-
-        // register { OrcaSwapSwift.APIClient(configsProvider: .init("mainnet")) }
-        //     .implements(OrcaSwapSwift.OrcaSwapAPIClient.self)
-        //     .scope(.session)
-
         // MARK: - Send service
-
-        register { TransactionsRepositoryImpl() }
-            .implements(TransactionsRepository.self)
 
         register { _, args in
             SendService(relayMethod: args())

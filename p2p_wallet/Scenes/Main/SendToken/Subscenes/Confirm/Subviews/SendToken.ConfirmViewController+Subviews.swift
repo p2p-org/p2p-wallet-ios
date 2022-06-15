@@ -288,6 +288,7 @@ extension SendToken.ConfirmViewController {
             case .relay:
                 showIndetermineHud()
                 viewModel.getFreeTransactionFeeLimit()
+                    .observe(on: MainScheduler.instance)
                     .subscribe(onSuccess: { [weak self] limit in
                         self?.hideHud()
                         guard let self = self else { return }

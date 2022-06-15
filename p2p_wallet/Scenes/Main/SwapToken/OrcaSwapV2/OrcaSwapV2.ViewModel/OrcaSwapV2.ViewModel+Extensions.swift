@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 14/12/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import RxCocoa
 import RxSwift

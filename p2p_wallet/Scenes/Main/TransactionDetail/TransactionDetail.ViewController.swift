@@ -11,7 +11,7 @@ import TransactionParser
 import UIKit
 
 extension TransactionDetail {
-    class ViewController: BEScene {
+    class ViewController: BaseViewController {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }

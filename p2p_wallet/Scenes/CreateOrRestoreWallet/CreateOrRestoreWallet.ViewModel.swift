@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import AnalyticsManager
 import Resolver
 import RxCocoa
 import RxSwift
@@ -21,7 +22,7 @@ extension CreateOrRestoreWallet {
     class ViewModel {
         // MARK: - Dependencies
 
-        @Injected var analyticsManager: AnalyticsManagerType
+        @Injected var analyticsManager: AnalyticsManager
 
         // MARK: - Initializer
 
@@ -45,11 +46,13 @@ extension CreateOrRestoreWallet.ViewModel: CreateOrRestoreWalletViewModelType {
     func navigateToCreateWalletScene() {
         analyticsManager.log(event: .splashCreating)
         navigatableSceneSubject.accept(.createWallet)
+        OnboardingTracking.currentFlow = .create
     }
 
     func navigateToRestoreWalletScene() {
         analyticsManager.log(event: .splashRestoring)
         analyticsManager.log(event: .recoveryOpen(fromPage: "first_in"))
         navigatableSceneSubject.accept(.restoreWallet)
+        OnboardingTracking.currentFlow = .restore
     }
 }

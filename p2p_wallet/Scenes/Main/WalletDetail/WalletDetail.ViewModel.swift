@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 08/06/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
@@ -18,11 +19,12 @@ protocol WalletDetailViewModelType {
     var walletDriver: Driver<Wallet?> { get }
     var walletActionsDriver: Driver<[WalletActionType]> { get }
     var graphViewModel: WalletGraphViewModel { get }
-    var transactionsViewModel: TransactionsViewModel { get }
 
     func showWalletSettings()
     func start(action: WalletActionType)
     func showTransaction(_ transaction: ParsedTransaction)
+    var pubkey: String { get }
+    var symbol: String { get }
 }
 
 extension WalletDetail {
@@ -30,19 +32,14 @@ extension WalletDetail {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
-        private let pubkey: String
-        private let symbol: String
-        @Injected var analyticsManager: AnalyticsManagerType
+        let pubkey: String
+        let symbol: String
+        @Injected var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 
         private let disposeBag = DisposeBag()
         lazy var graphViewModel = WalletGraphViewModel(symbol: symbol)
-
-        lazy var transactionsViewModel = TransactionsViewModel(
-            account: pubkey,
-            accountSymbol: symbol
-        )
 
         // MARK: - Subject
 

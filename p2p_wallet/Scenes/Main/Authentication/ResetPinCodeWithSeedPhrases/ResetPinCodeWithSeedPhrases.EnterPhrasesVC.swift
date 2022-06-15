@@ -12,7 +12,7 @@ import RxSwift
 import UIKit
 
 extension ResetPinCodeWithSeedPhrases {
-    class EnterPhrasesVC: BEScene {
+    class EnterPhrasesVC: BaseViewController {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         private let completion: ([String]) -> Void
         private let validate: (_ keyPhrase: [String]) -> (status: Bool, error: String?)

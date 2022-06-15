@@ -92,16 +92,16 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
         // description texts
         var isUndefinedTransaction = false
-        switch transaction.value {
-        case let transaction as CreateAccountTransaction:
+        switch transaction.info {
+        case let transaction as CreateAccountInfo:
             if let newWallet = transaction.newWallet {
                 descriptionLabel.text = L10n.created(newWallet.token.symbol)
             }
-        case let transaction as CloseAccountTransaction:
+        case let transaction as CloseAccountInfo:
             if let closedWallet = transaction.closedWallet {
                 descriptionLabel.text = L10n.closed(closedWallet.token.symbol)
             }
-        case let transaction as TransferTransaction:
+        case let transaction as TransferInfo:
             switch transaction.transferType {
             case .send:
                 if let destination = transaction.destination {
@@ -114,7 +114,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             default:
                 break
             }
-        case let transaction as SwapTransaction:
+        case let transaction as SwapInfo:
             if let source = transaction.source,
                let destination = transaction.destination
             {
@@ -129,8 +129,8 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         }
 
         // set up icon
-        switch transaction.value {
-        case let transaction as SwapTransaction:
+        switch transaction.info {
+        case let transaction as SwapInfo:
             imageView.setUp(imageType: .fromOneToOne(
                 from: transaction.source?.token,
                 to: transaction.destination?.token
