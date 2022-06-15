@@ -17,7 +17,7 @@ final class DebugMenuViewModel: ObservableObject {
                 FeatureItem(
                     title: $0.title,
                     feature: $0.feature,
-                    isOn: $0.feature != nil ? available($0.feature!) : false
+                    isOn: available($0.feature)
                 )
             }
     }
@@ -39,29 +39,24 @@ final class DebugMenuViewModel: ObservableObject {
 extension DebugMenuViewModel {
     struct FeatureItem {
         let title: String
-        let feature: Feature?
+        let feature: Feature
         var isOn: Bool
     }
 }
 
 extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
-        case settingsNetworkValues
         case sslPinning
 
         var title: String {
             switch self {
-            case .settingsNetworkValues:
-                return "Network API domain"
             case .sslPinning:
                 return "SSL Pinning"
             }
         }
 
-        var feature: Feature? {
+        var feature: Feature {
             switch self {
-            case .settingsNetworkValues:
-                return nil
             case .sslPinning:
                 return .sslPinning
             }
