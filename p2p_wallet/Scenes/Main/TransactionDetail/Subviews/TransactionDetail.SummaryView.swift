@@ -30,11 +30,11 @@ extension TransactionDetail {
                             switch parsedTransaction?.info {
                             case let transaction as TransferInfo:
                                 view?.logoImageView.setUp(wallet: transaction.source)
-                                view?.titleLabel.text = transaction.amount?
+                                view?.titleLabel.text = transaction.rawAmount?
                                     .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
                                 view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol + viewModel
                                     .getAmountInCurrentFiat(
-                                        amountInToken: transaction.amount,
+                                        amountInToken: transaction.rawAmount,
                                         symbol: transaction.source?.token.symbol
                                     ).toString(maximumFractionDigits: 2)
                             case let transaction as SwapInfo:
