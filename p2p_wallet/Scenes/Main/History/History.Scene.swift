@@ -11,16 +11,33 @@ import TransactionParser
 import UIKit
 
 extension History {
-    final class Scene: BEScene {
+    final class Scene: BaseViewController {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var pricesService: PricesServiceType
 
-        let viewModel = SceneModel()
+        let viewModel: SceneModel
 
         override init() {
+            viewModel = SceneModel()
             super.init()
 
             navigationItem.title = L10n.history
+            // Start loading when wallets are ready.
+            Resolver.resolve(WalletsRepository.self)
+                .dataObservable
+                .compactMap { $0 }
+                .filter { $0?.count ?? 0 > 0 }
+                .first()
+                .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
+                .disposed(by: disposeBag)
+        }
+
+        init(account: String, symbol: String, isEmbeded: Bool = true) {
+            viewModel = SceneModel(accountSymbol: (account, symbol))
+
+            super.init()
+            isEmbedded = isEmbeded
+
             // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
                 .dataObservable
@@ -80,6 +97,14 @@ extension History {
                 }
             ).withDelegate(self)
         }
+
+        // MARK: - Navigation bar appearance
+
+        private var isEmbedded = false
+
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            isEmbedded ? .embeded : super.preferredNavigationBarStype
+        }
     }
 }
 
@@ -88,7 +113,6 @@ extension History {
 extension History.Scene: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let item = item as? ParsedTransaction else { return }
-
         let viewController = History.TransactionViewController(
             viewModel: .init(
                 transaction: item,

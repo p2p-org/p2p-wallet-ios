@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 26/07/2021.
 //
 
+import AnalyticsManager
 import BECollectionView
 import Foundation
 import Resolver
@@ -21,7 +22,7 @@ extension ChooseWallet {
         let handler: WalletDidSelectHandler!
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var tokensRepository: TokensRepository
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var pricesService: PricesServiceType
         let showOtherWallets: Bool!
         private var keyword: String?

@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
+import AnalyticsManager
 import RenVMSwift
 import Resolver
 import RxCocoa
@@ -36,7 +37,7 @@ extension ReceiveToken {
 
         @Injected private var persistentStore: LockAndMintServicePersistentStore
         @Injected private var lockAndMintService: LockAndMintService
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var imageSaver: ImageSaverType
         @Injected var notificationsService: NotificationService

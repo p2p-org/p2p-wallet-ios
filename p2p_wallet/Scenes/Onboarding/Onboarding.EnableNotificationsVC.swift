@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 10/30/20.
 //
 
+import AnalyticsManager
 import BEPureLayout
 import Foundation
 import Resolver
@@ -12,7 +13,7 @@ import UIKit
 
 extension Onboarding {
     class EnableNotificationsVC: BaseVC {
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden

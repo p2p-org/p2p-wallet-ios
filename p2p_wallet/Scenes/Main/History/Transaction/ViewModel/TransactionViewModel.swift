@@ -77,8 +77,8 @@ private extension ParsedTransaction {
             break
         }
 
-        switch value {
-        case let transaction as SwapTransaction:
+        switch info {
+        case let transaction as SwapInfo:
             return (
                 imageType: .fromOneToOne(from: transaction.source?.token, to: transaction.destination?.token),
                 statusImage: statusImage
@@ -89,17 +89,17 @@ private extension ParsedTransaction {
     }
 
     func mapAmounts(pricesService: PricesServiceType) -> (tokens: String?, usd: String?) {
-        switch value {
-        case let transaction as TransferTransaction:
-            let fromAmount = transaction.amount?
+        switch info {
+        case let transaction as TransferInfo:
+            let fromAmount = transaction.rawAmount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
             let usd = "~ " + Defaults.fiat.symbol + getAmountInCurrentFiat(
                 pricesService: pricesService,
-                amountInToken: transaction.amount,
+                amountInToken: transaction.rawAmount,
                 symbol: transaction.source?.token.symbol
             ).toString(maximumFractionDigits: 2)
             return (tokens: fromAmount, usd: usd)
-        case let transaction as SwapTransaction:
+        case let transaction as SwapInfo:
             let fromAmount = transaction.sourceAmount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
             let toAmount = transaction.destinationAmount?
@@ -138,13 +138,13 @@ private extension ParsedTransaction {
     }
 
     func getAddresses() -> (from: String?, to: String?) {
-        let transaction = value
+        let transaction = info
 
         let from: String?
         switch transaction {
-        case let transaction as SwapTransaction:
+        case let transaction as SwapInfo:
             from = transaction.source?.pubkey
-        case let transaction as TransferTransaction:
+        case let transaction as TransferInfo:
             from = transaction.source?.pubkey
         default:
             from = nil
@@ -152,9 +152,9 @@ private extension ParsedTransaction {
 
         let to: String?
         switch transaction {
-        case let transaction as SwapTransaction:
+        case let transaction as SwapInfo:
             to = transaction.destination?.pubkey
-        case let transaction as TransferTransaction:
+        case let transaction as TransferInfo:
             to = transaction.destination?.pubkey
         default:
             to = nil
