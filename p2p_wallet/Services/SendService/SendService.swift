@@ -34,7 +34,7 @@ class SendService: SendServiceType {
     // MARK: - Methods
 
     func load() async throws {
-        let _ = try await(
+        _ = try await(
             orcaSwap.load(),
             contextManager.update()
         )
