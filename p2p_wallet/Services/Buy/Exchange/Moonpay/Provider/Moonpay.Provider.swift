@@ -34,10 +34,14 @@ extension Moonpay {
             }
 
             var components = URLComponents(string: api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote")!
-            components.queryItems = params.compactMap { key, value in
-                guard let value = value as? String else { return nil }
-                return URLQueryItem(name: key, value: value)
-            }
+            components.queryItems = params
+                .mapValues { value -> Any in
+                    value is Double ? String(value as! Double) : value
+                }
+                .compactMap { key, value in
+                    guard let value = value as? String else { return nil }
+                    return URLQueryItem(name: key, value: value)
+                }
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
             let urlRequest = URLRequest(url: components.url!)
 
