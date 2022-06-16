@@ -68,7 +68,6 @@ extension Resolver: ResolverRegistering {
 
         register { JSONRPCAPIClient(endpoint: Defaults.apiEndPoint) }
             .implements(SolanaAPIClient.self)
-            .scope(.application)
 
         register { BlockchainClient(apiClient: resolve()) }
             .implements(SolanaBlockchainClient.self)
