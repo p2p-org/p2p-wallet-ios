@@ -15,9 +15,9 @@ PODS:
   - Charts/Core (4.0.3):
     - SwiftAlgorithms (~> 1.0)
   - Down (0.11.0)
-  - FeeRelayerSwift (3.0.1):
-    - OrcaSwapSwift (~> 2.0.1)
-    - SolanaSwift (~> 2.0.1)
+  - FeeRelayerSwift (3.1.1):
+    - OrcaSwapSwift (~> 2.1.1)
+    - SolanaSwift (~> 2.1.1)
   - Firebase/Analytics (9.1.0):
     - Firebase/Core
   - Firebase/Core (9.1.0):
@@ -126,13 +126,13 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
-  - OrcaSwapSwift (2.0.1):
-    - SolanaSwift (~> 2.0.1)
+  - OrcaSwapSwift (2.1.1):
+    - SolanaSwift (~> 2.1.1)
   - Periphery (2.9.0)
   - PromisesObjC (2.1.0)
   - PureLayout (3.1.9)
   - RenVMSwift (2.0.1):
-    - SolanaSwift (~> 2.0.1)
+    - SolanaSwift (~> 2.1.1)
   - Resolver (1.5.0)
   - RxAppState (1.7.1):
     - RxCocoa (~> 6.2)
@@ -150,7 +150,7 @@ PODS:
   - RxSwift (6.5.0)
   - secp256k1.swift (0.1.4)
   - SolanaPricesAPIs (1.0.0)
-  - SolanaSwift (2.0.1):
+  - SolanaSwift (2.1.1):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -164,7 +164,7 @@ PODS:
   - TagListView (1.4.1)
   - Task_retrying (1.0.3)
   - TransactionParser (1.0.0):
-    - SolanaSwift (~> 2.0.1)
+    - SolanaSwift (~> 2.1.1)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
 
@@ -297,7 +297,7 @@ SPEC CHECKSUMS:
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
-  FeeRelayerSwift: 41ee489ddcc6e149c4c2d01e6866363d55c68de6
+  FeeRelayerSwift: c13238a1d97e1b854ecd4e8ddf0d84c1f4db0f77
   Firebase: 91c243d75573ac6e7c9735ec859b72bffb61347d
   FirebaseAnalytics: bf11064790ac96804df1df9ddc0ae45af950d9fc
   FirebaseCore: b7bfc258e996eada23b3666bd6b9a22ca092acb8
@@ -317,11 +317,11 @@ SPEC CHECKSUMS:
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
   NameService: 768d79c57b8ac401fdf69128f03754195b8fd63f
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  OrcaSwapSwift: cd07886983423020aafa063c851ba7e0306171bf
+  OrcaSwapSwift: 25e596af00692f4a0388a245402c45317526818d
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
   PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
-  RenVMSwift: 2cc4f974cb946431bcae96bd58d16ce949ca01a2
+  RenVMSwift: df3d062188b0db2dfdfdbda05fa2058eb2bf37e1
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
@@ -331,7 +331,7 @@ SPEC CHECKSUMS:
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   SolanaPricesAPIs: 9875d707ba8f10751078ff613adac94e5679020f
-  SolanaSwift: debc910b3227ee33ab5229e32e79df0810db1ce4
+  SolanaSwift: a21629834053d312cd79348dcf84afcb6bc0123d
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
@@ -340,7 +340,7 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
-  TransactionParser: e39ccd48944e81445cd0ab68d924624f7d184527
+  TransactionParser: 4c4fbb5794a508e3b1294877c5a8f81ba0e042b6
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
