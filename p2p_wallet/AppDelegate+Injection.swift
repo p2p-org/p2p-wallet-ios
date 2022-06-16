@@ -16,8 +16,9 @@ import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
-        // MARK: - Lifetime app's services
+        // MARK: - Application scope: Lifetime app's services
 
+        // Storages
         register { KeychainStorage() }
             .implements(ICloudStorageType.self)
             .implements(NameStorageType.self)
@@ -30,66 +31,78 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
+
+        // AnalyticsManager
         register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
             .implements(AnalyticsManager.self)
             .scope(.application)
+
+        // NotificationManager
+        register { NotificationServiceImpl() }
+            .implements(NotificationService.self)
+            .scope(.application)
+
+        register { NotificationRepositoryImpl() }
+            .implements(NotificationRepository.self)
+            .scope(.application)
+
+        // PricesService
+        register { UserDefaultsPricesStorage() }
+            .implements(PricesStorage.self)
+            .scope(.application)
+
+        register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
+            .implements(SolanaPricesAPI.self)
+            .scope(.application)
+
+        register { InMemoryTokensRepositoryCache() }
+            .implements(SolanaTokensRepositoryCache.self)
+            .scope(.application)
+
+        // MARK: - Graph scope: Recreate and reuse dependencies
+
+        // Intercom
         register { IntercomMessengerLauncher() }
             .implements(HelpCenterLauncher.self)
-            .scope(.session)
+
+        // ImageSaver
         register { ImageSaver() }
             .implements(ImageSaverType.self)
-            .scope(.unique)
+
+        // NameService
         register { NameServiceImpl(
             endpoint: NameServiceImpl.endpoint,
             cache: NameServiceUserDefaultCache()
         ) }
         .implements(NameService.self)
-        .scope(.application)
+
+        // ClipboardManager
+        register { ClipboardManager() }
+            .implements(ClipboardManagerType.self)
+
+        // LocalizationManager
         register { LocalizationManager() }
             .implements(LocalizationManagerType.self)
 
-        register { UserDefaultsPricesStorage() }
-            .implements(PricesStorage.self)
-            .scope(.application)
-        register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
-            .implements(SolanaPricesAPI.self)
-            .scope(.application)
-        register { NotificationServiceImpl() }
-            .implements(NotificationService.self)
-            .scope(.application)
-        register { NotificationRepositoryImpl() }
-            .implements(NotificationRepository.self)
-            .scope(.application)
-        register { ClipboardManager() }
-            .implements(ClipboardManagerType.self)
-            .scope(.application)
-
-        // MARK: - Solana
-
+        // SolanaAPIClient
         register { JSONRPCAPIClient(endpoint: Defaults.apiEndPoint) }
             .implements(SolanaAPIClient.self)
 
+        // SolanaBlockchainClient
         register { BlockchainClient(apiClient: resolve()) }
             .implements(SolanaBlockchainClient.self)
 
-        register { SolanaSwift.TokensRepository(endpoint: resolve(SolanaAPIClient.self).endpoint) }
+        register { TokensRepository(endpoint: Defaults.apiEndPoint, cache: resolve()) }
             .implements(SolanaTokensRepository.self)
 
-        register { CachedTokensRepository() }
+        // MARK: - Session scope: Live when user is authenticated
 
-        // MARK: - Send service
-
+        // SendService
         register { _, args in
             SendService(relayMethod: args())
         }
         .implements(SendServiceType.self)
         .scope(.session)
-
-        // MARK: - Fee service
-
-        register { FeeService() }
-            .implements(FeeServiceType.self)
-            .scope(.session)
 
         // MARK: - Socket
 

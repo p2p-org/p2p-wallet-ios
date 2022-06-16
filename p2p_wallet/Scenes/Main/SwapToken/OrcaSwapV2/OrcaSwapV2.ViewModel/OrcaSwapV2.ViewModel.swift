@@ -18,7 +18,6 @@ extension OrcaSwapV2 {
 
         @Injected var authenticationHandler: AuthenticationHandlerType
         @Injected var analyticsManager: AnalyticsManager
-        @Injected var feeService: FeeServiceType
         @Injected var swapService: Swap.Service
         @Injected var walletsRepository: WalletsRepository
         @Injected var notificationsService: NotificationService

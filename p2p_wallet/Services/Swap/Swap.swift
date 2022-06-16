@@ -83,9 +83,7 @@ protocol SwapServiceType {
         bestPoolsPair: Swap.PoolsPair?,
         payingWallet: Wallet?,
         inputAmount: Double?,
-        slippage: Double,
-        lamportsPerSignature: UInt64,
-        minRentExempt: UInt64
+        slippage: Double
     ) async throws -> Swap.FeeInfo
 
     /// Calculate fee for swapping

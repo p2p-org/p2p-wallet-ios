@@ -24,7 +24,6 @@ class SendService: SendServiceType {
     @Injected var contextManager: FeeRelayerContextManager
 
     @Injected private var renVMBurnAndReleaseService: BurnAndReleaseService
-    @Injected private var feeService: FeeServiceType
     @Injected private var walletsRepository: WalletsRepository
 
     init(relayMethod: SendTokenRelayMethod) {
