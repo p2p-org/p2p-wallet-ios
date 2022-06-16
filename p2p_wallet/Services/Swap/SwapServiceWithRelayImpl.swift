@@ -37,9 +37,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
         bestPoolsPair: Swap.PoolsPair?,
         payingWallet: Wallet?,
         inputAmount: Double?,
-        slippage: Double,
-        lamportsPerSignature _: UInt64,
-        minRentExempt _: UInt64
+        slippage: Double
     ) async throws -> Swap.FeeInfo {
         let bestPoolsPair = bestPoolsPair as? PoolsPair
         // Network fees

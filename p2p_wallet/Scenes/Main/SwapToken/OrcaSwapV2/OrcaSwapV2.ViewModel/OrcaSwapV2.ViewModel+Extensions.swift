@@ -129,10 +129,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func reload() {
         loadingStateSubject.accept(.loading)
 
-        Completable.zip(
-            feeService.load(),
-            Completable.async { try await self.swapService.load() }
-        )
+        Completable.async { try await self.swapService.load() }
             .subscribe(
                 onCompleted: { [weak self] in
                     self?.loadingStateSubject.accept(.loaded)

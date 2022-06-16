@@ -126,9 +126,7 @@ extension OrcaSwapV2.ViewModel {
         guard
             let sourceWallet = sourceWalletSubject.value,
             let sourceWalletPubkey = sourceWallet.pubkey,
-            let destinationWallet = destinationWalletSubject.value,
-            let lamportsPerSignature = feeService.lamportsPerSignature,
-            let minRenExempt = feeService.minimumBalanceForRenExemption
+            let destinationWallet = destinationWalletSubject.value
         else {
             return .just([])
         }
@@ -148,9 +146,7 @@ extension OrcaSwapV2.ViewModel {
                 bestPoolsPair: bestPoolsPair,
                 payingWallet: self.payingWalletSubject.value,
                 inputAmount: inputAmount,
-                slippage: slippage,
-                lamportsPerSignature: lamportsPerSignature,
-                minRentExempt: minRenExempt
+                slippage: slippage
             )
         }
         .map { info in info.fees }

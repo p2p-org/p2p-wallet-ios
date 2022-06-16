@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
@@ -21,7 +22,7 @@ extension SupportedTokens {
     final class ViewModel: BEListViewModel<Token> {
         // MARK: - Dependencies
 
-        private let tokensRepository: SolanaTokensRepository
+        @Injected private var tokensRepository: SolanaTokensRepository
 
         // MARK: - Properties
 
@@ -31,9 +32,7 @@ extension SupportedTokens {
 
         private var keywordSubject = BehaviorRelay<String?>(value: nil)
 
-        init(tokensRepository: SolanaTokensRepository) {
-            self.tokensRepository = tokensRepository
-
+        init() {
             super.init()
 
             keywordSubject
