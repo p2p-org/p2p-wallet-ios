@@ -39,7 +39,7 @@ extension Buy {
                 .init(
                     amount: currency is CryptoCurrency ? quote.quoteCurrencyAmount : quote.totalAmount,
                     currency: currency,
-                    processingFee: quote.extraFeeAmount,
+                    processingFee: quote.feeAmount,
                     networkFee: quote.networkFeeAmount,
                     purchaseCost: quote.baseCurrencyAmount,
                     total: quote.totalAmount
