@@ -27,17 +27,17 @@ extension TransactionDetail {
                 .setup { view in
                     viewModel.parsedTransactionDriver
                         .drive(onNext: { [weak view] parsedTransaction in
-                            switch parsedTransaction?.value {
-                            case let transaction as TransferTransaction:
+                            switch parsedTransaction?.info {
+                            case let transaction as TransferInfo:
                                 view?.logoImageView.setUp(wallet: transaction.source)
-                                view?.titleLabel.text = transaction.amount?
+                                view?.titleLabel.text = transaction.rawAmount?
                                     .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
                                 view?.subtitleLabel.text = "~ " + Defaults.fiat.symbol + viewModel
                                     .getAmountInCurrentFiat(
-                                        amountInToken: transaction.amount,
+                                        amountInToken: transaction.rawAmount,
                                         symbol: transaction.source?.token.symbol
                                     ).toString(maximumFractionDigits: 2)
-                            case let transaction as SwapTransaction:
+                            case let transaction as SwapInfo:
                                 view?.logoImageView.setUp(wallet: transaction.source)
                                 view?.titleLabel.text = transaction.sourceAmount?
                                     .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
@@ -59,12 +59,12 @@ extension TransactionDetail {
                         viewModel.receiverNameDriver
                     )
                         .drive(onNext: { [weak view] parsedTransaction, receiverName in
-                            switch parsedTransaction?.value {
-                            case let transaction as TransferTransaction:
+                            switch parsedTransaction?.info {
+                            case let transaction as TransferInfo:
                                 view?.logoImageView.setUp(token: nil, placeholder: .squircleWallet)
                                 view?.titleLabel.text = transaction.destination?.pubkey?.truncatingMiddle()
                                 view?.subtitleLabel.text = receiverName ?? " "
-                            case let transaction as SwapTransaction:
+                            case let transaction as SwapInfo:
                                 view?.logoImageView.setUp(wallet: transaction.destination)
                                 view?.titleLabel.text = transaction.destinationAmount?
                                     .toString(maximumFractionDigits: 9) + " " + transaction.destination?.token.symbol

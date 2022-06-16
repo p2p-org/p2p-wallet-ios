@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 24/12/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
@@ -30,7 +31,7 @@ extension ProcessTransaction {
     class ViewModel {
         // MARK: - Dependencies
 
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var transactionHandler: TransactionHandlerType
 
         // MARK: - Properties

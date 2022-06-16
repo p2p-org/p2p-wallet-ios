@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import NameService
 import Resolver
 import RxSwift
 import SolanaSwift
@@ -16,11 +17,7 @@ extension RestoreICloud {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
-        @Injected private var nameService: NameServiceType
-
-        // MARK: - Properties
-
-        private let disposeBag = DisposeBag()
+        @Injected private var nameService: NameService
 
         // MARK: - Methods
 
@@ -49,29 +46,31 @@ extension RestoreICloud {
 
         private func updateNames(for neededNameAccounts: [RestoreICloud.ParsedAccount]) {
             for account in neededNameAccounts {
-                nameService.getName(account.parsedAccount.publicKey.base58EncodedString)
-                    .map {
-                        RawAccount(
-                            name: $0,
-                            phrase: account.parsedAccount.phrase.joined(separator: " "),
-                            derivablePath: account.account.derivablePath
-                        )
+                Task {
+                    let name = try await nameService.getName(account.parsedAccount.publicKey.base58EncodedString)
+                    let newAccountWithName = RawAccount(
+                        name: name,
+                        phrase: account.parsedAccount.phrase.joined(separator: " "),
+                        derivablePath: account.account.derivablePath
+                    )
+
+                    await MainActor.run { [weak iCloudStorage] in
+                        _ = iCloudStorage?.saveToICloud(account: newAccountWithName)
                     }
-                    .do(onSuccess: { [weak iCloudStorage] account in
-                        _ = iCloudStorage?.saveToICloud(account: account)
-                    })
-                    .map { newAccountWithName -> RestoreICloud.ParsedAccount in
-                        .init(account: newAccountWithName, parsedAccount: account.parsedAccount)
-                    }
-                    .subscribe(onSuccess: { [weak self] updatedAccount in
-                        guard let self = self else { return }
-                        self.updateItem { item in
+
+                    let updatedAccount = RestoreICloud.ParsedAccount(
+                        account: newAccountWithName,
+                        parsedAccount: account.parsedAccount
+                    )
+
+                    await MainActor.run { [weak self] in
+                        _ = self?.updateItem { item in
                             item.parsedAccount.publicKey == updatedAccount.parsedAccount.publicKey
                         } transform: { _ in
                             updatedAccount
                         }
-                    })
-                    .disposed(by: disposeBag)
+                    }
+                }
             }
         }
 

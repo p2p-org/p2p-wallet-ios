@@ -6,7 +6,7 @@ import BEPureLayout
 import RxSwift
 import UIKit
 
-class BEScene: BaseVC {
+class BaseViewController: BaseVC {
     override func setUp() {
         super.setUp()
 

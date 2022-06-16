@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 23/11/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
@@ -41,7 +42,7 @@ extension SendToken.ChooseTokenAndAmount {
     class ViewModel {
         // MARK: - Dependencies
 
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         private let sendTokenViewModel: SendTokenViewModelType
 
         // MARK: - Properties

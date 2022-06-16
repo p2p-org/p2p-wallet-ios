@@ -14,6 +14,8 @@ import TransactionParser
 
 extension History {
     class SceneModel: BEStreamListViewModel<ParsedTransaction> {
+        typealias AccountSymbol = (account: String, symbol: String)
+
         // MARK: - Dependencies
 
         @Injected private var walletsRepository: WalletsRepository
@@ -24,6 +26,9 @@ extension History {
         // MARK: - Properties
 
         private let disposeBag = DisposeBag()
+
+        /// Symbol to filter coins
+        private(set) var accountSymbol: AccountSymbol?
 
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
@@ -93,25 +98,39 @@ extension History {
                 .disposed(by: disposeBag)
         }
 
+        convenience init(accountSymbol: AccountSymbol) {
+            self.init()
+            self.accountSymbol = accountSymbol
+        }
+
         func buildSource() {
             let cachedTransactionRepository: CachingTransactionRepository = .init(
                 delegate: SolanaTransactionRepository()
             )
             let cachedTransactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
 
-            let accountStreamSources = walletsRepository
-                .getWallets()
-                .reversed()
-                .map { wallet in
-                    AccountStreamSource(
-                        account: wallet.pubkey ?? "",
-                        symbol: wallet.token.symbol,
-                        transactionRepository: cachedTransactionRepository,
-                        transactionParser: cachedTransactionParser
-                    )
-                }
+            if let accountSymbol = accountSymbol {
+                source = AccountStreamSource(
+                    account: accountSymbol.account,
+                    symbol: accountSymbol.symbol,
+                    transactionRepository: cachedTransactionRepository,
+                    transactionParser: cachedTransactionParser
+                )
+            } else {
+                let accountStreamSources = walletsRepository
+                    .getWallets()
+                    .reversed()
+                    .map { wallet in
+                        AccountStreamSource(
+                            account: wallet.pubkey ?? "",
+                            symbol: wallet.token.symbol,
+                            transactionRepository: cachedTransactionRepository,
+                            transactionParser: cachedTransactionParser
+                        )
+                    }
 
-            source = MultipleStreamSource(sources: accountStreamSources)
+                source = MultipleStreamSource(sources: accountStreamSources)
+            }
         }
 
         override func clear() {
@@ -174,7 +193,6 @@ extension History {
             .flatMap { result in
                 // TODO: FIX
                 Single.async { () -> [ParsedTransaction] in
-                    debugPrint(Date())
                     let transactionInfo = try await self.transactionRepository
                         .getTransaction(signature: result.0.signature)
                     let transaction = try await self.transactionParser.parse(

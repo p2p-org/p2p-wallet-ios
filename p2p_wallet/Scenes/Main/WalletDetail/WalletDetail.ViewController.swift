@@ -46,7 +46,8 @@ extension WalletDetail {
 
         // MARK: - Subscene
 
-        private lazy var historyVC = HistoryViewController(viewModel: viewModel)
+        private lazy var historyVC = History
+            .Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
 
         // MARK: - Initializer
 

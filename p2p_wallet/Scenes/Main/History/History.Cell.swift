@@ -28,8 +28,8 @@ extension History {
             super.setUp(with: item)
             guard let transaction = item as? ParsedTransaction else { return }
 
-            switch transaction.value {
-            case _ as SwapTransaction:
+            switch transaction.info {
+            case _ as SwapInfo:
                 amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "+", with: "")
                 amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "-", with: "")
                 amountInFiatLabel.textColor = .textBlack

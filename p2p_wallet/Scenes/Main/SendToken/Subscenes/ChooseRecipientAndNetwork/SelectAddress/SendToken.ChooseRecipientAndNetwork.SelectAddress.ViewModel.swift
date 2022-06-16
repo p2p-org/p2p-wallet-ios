@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 29/11/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
@@ -56,7 +57,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var solanaAPIClient: SolanaAPIClient
 
         let minSolForSending = 0.0009
