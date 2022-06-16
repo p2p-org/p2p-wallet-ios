@@ -18,6 +18,17 @@ extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
         // MARK: - Application scope: Lifetime app's services
 
+        // AppEventHandler
+        register { AppEventHandler() }
+            .implements(AppEventHandlerType.self)
+            .implements(DeviceOwnerAuthenticationHandler.self)
+            .implements(ChangeNetworkResponder.self)
+            .implements(ChangeLanguageResponder.self)
+            .implements(LogoutResponder.self)
+            .implements(CreateOrRestoreWalletHandler.self)
+            .implements(OnboardingHandler.self)
+            .scope(.application)
+
         // Storages
         register { KeychainStorage() }
             .implements(ICloudStorageType.self)
@@ -95,7 +106,20 @@ extension Resolver: ResolverRegistering {
         register { TokensRepository(endpoint: Defaults.apiEndPoint, cache: resolve()) }
             .implements(SolanaTokensRepository.self)
 
+        // DAppChannnel
+        register { DAppChannel() }
+            .implements(DAppChannelType.self)
+
+        // QrCodeImageRender
+        register { ReceiveToken.QrCodeImageRenderImpl() }
+            .implements(QrCodeImageRender.self)
+
         // MARK: - Session scope: Live when user is authenticated
+
+        // AuthenticationHandler
+        register { AuthenticationHandler() }
+            .implements(AuthenticationHandlerType.self)
+            .scope(.session)
 
         // SendService
         register { _, args in
@@ -104,27 +128,26 @@ extension Resolver: ResolverRegistering {
         .implements(SendServiceType.self)
         .scope(.session)
 
-        // MARK: - Socket
-
+        // SolanaSocket
         register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!, enableDebugLogs: true) }
             .implements(SolanaSocket.self)
             .scope(.session)
 
+        // AccountObservableService
         register { AccountsObservableServiceImpl(solanaSocket: resolve()) }
             .implements(AccountObservableService.self)
             .scope(.session)
 
-        // MARK: - TransactionHandler (new)
-
+        // TransactionHandler (new)
         register { TransactionHandler() }
             .implements(TransactionHandlerType.self)
             .scope(.session)
 
+        // SwapTransactionAnalytics
         register { SwapTransactionAnalytics(analyticsManager: resolve(), transactionHandler: resolve()) }
             .scope(.session)
 
-        // MARK: - FeeRelayer
-
+        // FeeRelayer
         register { FeeRelayerSwift.APIClient(version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
@@ -148,7 +171,8 @@ extension Resolver: ResolverRegistering {
                 solanaApiClient: resolve(),
                 orcaSwap: resolve()
             )
-        }.implements(SwapFeeRelayer.self)
+        }
+        .implements(SwapFeeRelayer.self)
 
         register {
             FeeRelayerContextManagerImpl(
@@ -159,25 +183,23 @@ extension Resolver: ResolverRegistering {
         }
         .implements(FeeRelayerContextManager.self)
 
-        // MARK: - PricesService
-
+        // PricesService
         register { PricesService() }
             .implements(PricesServiceType.self)
             .scope(.session)
 
-        // MARK: - WalletsViewModel
-
+        // WalletsViewModel
         register { WalletsViewModel() }
             .implements(WalletsRepository.self)
             .implements(WLNotificationsRepository.self)
             .scope(.session)
 
-        // MARK: - Swap
-
+        // SwapService
         register { SwapServiceWithRelayImpl() }
             .implements(Swap.Service.self)
             .scope(.session)
 
+        // OrcaSwapSwift
         register { OrcaSwapSwift.NetworkConfigsProvider(network: Defaults.apiEndPoint.network.cluster) }
             .implements(OrcaSwapConfigsProvider.self)
 
@@ -195,9 +217,8 @@ extension Resolver: ResolverRegistering {
         .implements(OrcaSwapType.self)
         .scope(.session)
 
-        // MARK: - RenVM
-
-        register { RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
+        // RenVMSwift
+        register { RenVMSwift.RpcClient(network: Defaults.apiEndPoint.network == .mainnetBeta ? .mainnet : .testnet) }
             .implements(RenVMRpcClientType.self)
             .scope(.session)
 
@@ -244,10 +265,15 @@ extension Resolver: ResolverRegistering {
         .implements(LockAndMintService.self)
         .scope(.session)
 
-        // MARK: - Others
+        // RenBTCStatusService
+        register { RenBTCStatusService() }
+            .implements(RenBTCStatusServiceType.self)
+            .scope(.session)
 
-        register { DAppChannel() }
-            .implements(DAppChannelType.self)
+        // HttpClient
+        register { HttpClientImpl() }
+            .implements(HttpClient.self)
+            .scope(.session)
 
         // MARK: - Moonpay
 
@@ -264,28 +290,6 @@ extension Resolver: ResolverRegistering {
             .implements(Buy.ExchangeService.self)
             .scope(.session)
 
-        // MARK: - AppEventHandler
-
-        register { AppEventHandler() }
-            .implements(AppEventHandlerType.self)
-            .implements(DeviceOwnerAuthenticationHandler.self)
-            .implements(ChangeNetworkResponder.self)
-            .implements(ChangeLanguageResponder.self)
-            .implements(LogoutResponder.self)
-            .implements(CreateOrRestoreWalletHandler.self)
-            .implements(OnboardingHandler.self)
-            .scope(.application)
-
-        // MARK: - AuthenticationHandler
-
-        register { AuthenticationHandler() }
-            .implements(AuthenticationHandlerType.self)
-            .scope(.session)
-
-        register { ReceiveToken.QrCodeImageRenderImpl() }
-            .implements(QrCodeImageRender.self)
-            .scope(.application)
-
         // MARK: - Banner
 
         register {
@@ -298,18 +302,6 @@ extension Resolver: ResolverRegistering {
         }
         .implements(Banners.Service.self)
         .scope(.shared)
-
-        // MARK: - RenBTCStatusService
-
-        register { RenBTCStatusService() }
-            .implements(RenBTCStatusServiceType.self)
-            .scope(.session)
-
-        // MARK: - HttpClient
-
-        register { HttpClientImpl() }
-            .implements(HttpClient.self)
-            .scope(.session)
     }
 }
 
