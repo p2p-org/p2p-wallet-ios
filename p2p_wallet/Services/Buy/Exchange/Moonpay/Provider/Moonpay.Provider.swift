@@ -24,7 +24,7 @@ extension Moonpay {
                 "apiKey": api.apiKey,
                 "baseCurrencyCode": baseCurrencyCode,
                 "areFeesIncluded": "true",
-                /// Undocumented params which makes results euqal to web
+                // Undocumented params which makes results euqal to web
                 "fixed": "true",
                 "regionalPricing": "true",
             ] as [String: Any]
