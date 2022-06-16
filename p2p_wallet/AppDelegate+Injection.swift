@@ -16,8 +16,19 @@ import SolanaSwift
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
-        // MARK: - Application scope: Lifetime app's services
+        registerForApplicationScope()
 
+        registerForGraphScope()
+
+        registerForSessionScope()
+
+        registerForSharedScope()
+    }
+
+    // MARK: - Helpers
+
+    /// Application scope: Lifetime app's services
+    private static func registerForApplicationScope() {
         // AppEventHandler
         register { AppEventHandler() }
             .implements(AppEventHandlerType.self)
@@ -69,9 +80,10 @@ extension Resolver: ResolverRegistering {
         register { InMemoryTokensRepositoryCache() }
             .implements(SolanaTokensRepositoryCache.self)
             .scope(.application)
+    }
 
-        // MARK: - Graph scope: Recreate and reuse dependencies
-
+    /// Graph scope: Recreate and reuse dependencies
+    private static func registerForGraphScope() {
         // Intercom
         register { IntercomMessengerLauncher() }
             .implements(HelpCenterLauncher.self)
@@ -113,9 +125,10 @@ extension Resolver: ResolverRegistering {
         // QrCodeImageRender
         register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
+    }
 
-        // MARK: - Session scope: Live when user is authenticated
-
+    /// Session scope: Live when user is authenticated
+    private static func registerForSessionScope() {
         // AuthenticationHandler
         register { AuthenticationHandler() }
             .implements(AuthenticationHandlerType.self)
@@ -274,13 +287,13 @@ extension Resolver: ResolverRegistering {
         register { HttpClientImpl() }
             .implements(HttpClient.self)
             .scope(.session)
+    }
 
-        // MARK: - Moonpay
-
+    /// Shared scope: share between screens
+    private static func registerForSharedScope() {
+        // BuyServices
         register { Moonpay.Provider(api: Moonpay.API.fromEnvironment()) }
             .scope(.shared)
-
-        // MARK: - BuyProvider
 
         register { Buy.MoonpayBuyProcessingFactory() }
             .implements(BuyProcessingFactory.self)
@@ -290,8 +303,7 @@ extension Resolver: ResolverRegistering {
             .implements(Buy.ExchangeService.self)
             .scope(.session)
 
-        // MARK: - Banner
-
+        // Banner
         register {
             BannerServiceImpl(handlers: [
                 ReserveNameBannerHandler(nameStorage: resolve()),
