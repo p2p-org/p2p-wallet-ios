@@ -67,8 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
 
-        setupDefaultFlags()
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig())
+        setupRemoteConfig()
 
         return true
     }
@@ -95,5 +94,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+    }
+
+    func setupRemoteConfig() {
+        #if DEBUG
+            let settings = RemoteConfigSettings()
+            // WARNING: Don't actually do this in production!
+            settings.minimumFetchInterval = 0
+            RemoteConfig.remoteConfig().configSettings = settings
+        #endif
+        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig())
     }
 }

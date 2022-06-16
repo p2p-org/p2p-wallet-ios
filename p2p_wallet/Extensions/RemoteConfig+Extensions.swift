@@ -6,9 +6,18 @@
 //
 
 import FirebaseRemoteConfig
+import OrcaSwapSwift
 
 extension RemoteConfig {
-    var definedEndpoints: [String] {
-        configValue(forKey: "settings_network_values").jsonValue as? [String] ?? []
+    var definedEndpoints: [NetworkValue] {
+        let jsonData = configValue(forKey: "settings_network_values").dataValue
+        let decoded = (try? JSONDecoder().decode([NetworkValue].self, from: jsonData)) ?? []
+        debugPrint("---", decoded)
+        return decoded
+    }
+
+    struct NetworkValue: Codable {
+        let urlString: String?
+        let network: Network?
     }
 }
