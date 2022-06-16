@@ -147,9 +147,15 @@ We would love you for the contribution to **P2P Wallet**, check the ``LICENSE`` 
 
 ### Add feature flag steps
 
-- Add title of feature flag to config: DEFAULT_FF = $(inherited),settings_network_values,ssl_pinning
-- Add feature flag with the same title to Firebase Remote Config
-- Add feature flag with the same title to `Feature` struct
+- Add feature flag to Firebase Remote Config
+- Add feature flag with the same title to `public extension Feature` struct
+
+```
+public extension Feature {
+    static let sslPinning = Feature(rawValue: "ssl_pinning")
+    static let sslPinning = Feature(rawValue: "new_feature_flag")
+}
+```
 
 ### Feature flag using example
 
