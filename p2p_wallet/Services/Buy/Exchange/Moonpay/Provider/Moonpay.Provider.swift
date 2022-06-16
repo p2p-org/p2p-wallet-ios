@@ -59,11 +59,15 @@ extension Moonpay {
         }
 
         func getPrice(for crypto: String, as currency: String) async throws -> Double {
-            guard let url = URL(string: api.endpoint + "/currencies/\(crypto)/ask_price")
-            else {
-                throw MoonpayProviderError.unknown
+            var components = URLComponents(string: api.endpoint + "/currencies/\(crypto)/ask_price")!
+            let params = ["apiKey": api.apiKey]
+            components.queryItems = params.map { key, value in
+                URLQueryItem(name: key, value: value)
             }
-            let (data, _) = try await URLSession.shared.data(from: url)
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
             guard let json = try? JSONDecoder().decode([String: Double].self, from: data)
             else { return 0 }
             return json[currency] ?? 0
