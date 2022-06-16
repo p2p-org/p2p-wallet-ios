@@ -11,7 +11,7 @@ extension SolanaSDK.APIEndPoint {
     static var definedEndpoints: [Self] {
         let remoteEndpoints = RemoteConfig.remoteConfig()
             .definedEndpoints
-            .map { SolanaSDK.APIEndPoint(address: $0, network: .mainnetBeta) }
+            .map { SolanaSDK.APIEndPoint(address: $0.urlString ?? "", network: $0.network ?? .mainnetBeta) }
         var endpoints = remoteEndpoints.isEmpty ? defaultEndpoints : remoteEndpoints
         if remoteEndpoints.isEmpty {
             endpoints.insert(

@@ -141,3 +141,28 @@ cp -R Templates/BEScene2.xctemplate ~/Library/Developer/Xcode/Templates
 ## Contribute
 
 We would love you for the contribution to **P2P Wallet**, check the ``LICENSE`` file for more info.
+
+
+## Feature Flags
+
+### Add feature flag steps
+
+- Add title of feature flag to config: DEFAULT_FF = $(inherited),settings_network_values,ssl_pinning
+- Add feature flag with the same title to Firebase Remote Config
+- Add feature flag with the same title to `Feature` struct
+
+### Feature flag using example
+
+```
+if available(.sslPinning) {
+    showSslPinningScreen(
+        input: input,
+        state: status.creditState
+    )
+} else {
+    showAppStatus(
+        input: input,
+        status: status
+    )
+}
+```
