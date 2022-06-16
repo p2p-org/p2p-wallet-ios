@@ -227,15 +227,13 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func setApiEndpoint(_ endpoint: APIEndPoint) {
+        guard Defaults.apiEndPoint != endpoint else { return }
         endpointSubject.accept(endpoint)
-
         analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
-        if Defaults.apiEndPoint.network != endpoint.network {
-            Task {
-                try await renVMService.expireCurrentSession()
-                await MainActor.run {
-                    changeNetworkResponder.changeAPIEndpoint(to: endpoint)
-                }
+        Task {
+            try await renVMService.expireCurrentSession()
+            await MainActor.run {
+                changeNetworkResponder.changeAPIEndpoint(to: endpoint)
             }
         }
     }
