@@ -30,21 +30,27 @@ actor AccountObservableSubscribesManager {
     private var data: [AccountObservableSubscribes] = []
 
     func accept(account: String, id: String) {
-        if var subscribe = data.first(where: { $0.requestID == id }) {
-            subscribe.accountAddress = account
+        if let subscribeIndex = data.firstIndex(where: { $0.requestID == id }) {
+            data[subscribeIndex].accountAddress = account
+            return
         }
         data.append(.init(requestID: id, accountAddress: account))
     }
 
     func accept(socketId: UInt64, id: String) {
-        if var subscribe = data.first(where: { $0.requestID == id }) {
-            subscribe.subscribeID = socketId
+        if let subscribeIndex = data.firstIndex(where: { $0.requestID == id }) {
+            data[subscribeIndex].subscribeID = socketId
+            return
         }
         data.append(.init(requestID: id, subscribeID: socketId))
     }
 
     subscript(socketId: UInt64?) -> String? {
         data.first { $0.subscribeID == socketId }?.accountAddress
+    }
+
+    func contains(account: String) -> Bool {
+        data.contains { subscribe in subscribe.accountAddress == account }
     }
 }
 
@@ -62,6 +68,7 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
 
     func subscribeAccountNotification(account: String) async throws {
         if !isConnected { solanaSocket.connect() }
+        if await subscribesManager.contains(account: account) { return }
 
         let id = try await solanaSocket.accountSubscribe(publickey: account)
         await subscribesManager.accept(account: account, id: id)
@@ -95,5 +102,10 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
 
     func subscribed(socketId: UInt64, id: String) {
         Task { await subscribesManager.accept(socketId: socketId, id: id) }
+    }
+
+    func error(error _: Error?) {
+        solanaSocket.disconnect()
+        solanaSocket.connect()
     }
 }

@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import AnalyticsManager
 import Resolver
 import RxCocoa
 import RxSwift
@@ -28,7 +29,7 @@ extension CreateWallet {
         // MARK: - Dependencies
 
         @Injected private var handler: CreateOrRestoreWalletHandler
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var notificationsService: NotificationService
 
         // MARK: - Properties
@@ -74,16 +75,11 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
                     derivablePath: .default
                 )
 
-                await MainActor.run { [weak self] in
-                    UIApplication.shared.hideHud()
-                    self?.navigateToReserveName(owner: account.publicKey.base58EncodedString)
-                }
+                navigateToReserveName(owner: account.publicKey.base58EncodedString)
             } catch {
-                await MainActor.run { [weak self] in
-                    UIApplication.shared.hideHud()
-                    self?.notificationsService.showInAppNotification(.error(error))
-                }
+                notificationsService.showInAppNotification(.error(error))
             }
+            await UIApplication.shared.hideHud()
         }
     }
 

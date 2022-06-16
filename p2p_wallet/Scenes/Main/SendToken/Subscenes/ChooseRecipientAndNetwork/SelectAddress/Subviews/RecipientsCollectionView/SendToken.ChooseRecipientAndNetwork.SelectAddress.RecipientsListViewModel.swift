@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import NameService
 import Resolver
 import RxSwift
 
@@ -14,7 +15,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RecipientsListViewModel: BEListViewModel<SendToken.Recipient> {
         // MARK: - Dependencies
 
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
         var solanaAPIClient: SendServiceType!
         var preSelectedNetwork: SendToken.Network!
 
@@ -40,17 +41,17 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func findRecipientsBy(name: String) -> Single<[SendToken.Recipient]> {
-            nameService
-                .getOwners(name)
-                .map {
-                    $0.map {
-                        .init(
-                            address: $0.owner,
-                            name: $0.name,
-                            hasNoFunds: false
-                        )
-                    }
+            Single.async { [weak self] in
+                guard let self = self else { throw NameServiceError.unknown }
+                let owners = try await self.nameService.getOwners(name)
+                return owners.map {
+                    .init(
+                        address: $0.owner,
+                        name: $0.name,
+                        hasNoFunds: false
+                    )
                 }
+            }
         }
 
         private func findRecipientBy(address: String) -> Single<[SendToken.Recipient]> {
@@ -77,34 +78,37 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func findAddressInSolanaNetwork(address: String) -> Single<[SendToken.Recipient]> {
-            nameService
-                .getName(address)
-                .flatMap { [weak self] name -> Single<(String?, Bool)> in
-                    guard let self = self, name == nil else { return .just((name, false)) }
-                    // check funds
-                    return Single.async {
-                        try await self.solanaAPIClient.checkAccountValidation(account: address)
-                    }
-                    .catchAndReturn(false)
-                    .map { (name, !$0) }
+            Single<String?>.async { [weak self] in
+                guard let self = self else { throw NameServiceError.unknown }
+                return try await self.nameService
+                    .getName(address)
+            }
+            .flatMap { [weak self] name -> Single<(String?, Bool)> in
+                guard let self = self, name == nil else { return .just((name, false)) }
+                // check funds
+                return Single.async {
+                    try await self.solanaAPIClient.checkAccountValidation(account: address)
                 }
-                .map {
-                    [
-                        .init(
-                            address: address,
-                            name: $0.0?.withNameServiceDomain(),
-                            hasNoFunds: $0.1
-                        ),
-                    ]
-                }
-                .catchAndReturn([
+                .catchAndReturn(false)
+                .map { (name, !$0) }
+            }
+            .map {
+                [
                     .init(
                         address: address,
-                        name: nil,
-                        hasNoFunds: false,
-                        hasNoInfo: true
+                        name: $0.0?.withNameServiceDomain(),
+                        hasNoFunds: $0.1
                     ),
-                ])
+                ]
+            }
+            .catchAndReturn([
+                .init(
+                    address: address,
+                    name: nil,
+                    hasNoFunds: false,
+                    hasNoInfo: true
+                ),
+            ])
         }
     }
 }

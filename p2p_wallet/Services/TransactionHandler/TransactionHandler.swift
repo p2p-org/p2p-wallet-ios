@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 05/03/2022.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa

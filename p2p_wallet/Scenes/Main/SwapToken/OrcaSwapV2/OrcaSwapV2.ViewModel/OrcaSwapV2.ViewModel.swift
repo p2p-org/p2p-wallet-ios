@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 15/10/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
@@ -16,7 +17,7 @@ extension OrcaSwapV2 {
         // MARK: - Dependencies
 
         @Injected var authenticationHandler: AuthenticationHandlerType
-        @Injected var analyticsManager: AnalyticsManagerType
+        @Injected var analyticsManager: AnalyticsManager
         @Injected var feeService: FeeServiceType
         @Injected var swapService: Swap.Service
         @Injected var walletsRepository: WalletsRepository

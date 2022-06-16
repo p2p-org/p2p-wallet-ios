@@ -6,6 +6,7 @@
 //
 
 import Action
+import AnalyticsManager
 import BEPureLayout
 import Foundation
 import Resolver
@@ -23,7 +24,7 @@ extension OrcaSwapV2 {
         private let disposeBag = DisposeBag()
         private let viewModel: OrcaSwapV2ViewModelType
         private let type: WalletType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         private lazy var balanceView = BalanceView(forAutoLayout: ())
         private lazy var iconImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
