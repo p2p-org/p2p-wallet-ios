@@ -8,6 +8,8 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension TransactionDetail {
@@ -16,7 +18,7 @@ extension TransactionDetail {
         private let viewModel: TransactionDetailViewModelType
         var isSwapDriver: Driver<Bool> {
             viewModel.parsedTransactionDriver
-                .map { $0?.value is SolanaSDK.SwapTransaction }
+                .map { $0?.info is SwapInfo }
         }
 
         init(viewModel: TransactionDetailViewModelType) {
@@ -41,12 +43,12 @@ extension TransactionDetail {
                         addressLabel()
                             .setup { fromAddressLabel in
                                 viewModel.parsedTransactionDriver
-                                    .map { $0?.value }
+                                    .map { $0?.info }
                                     .map { transaction -> String? in
                                         switch transaction {
-                                        case let transaction as SolanaSDK.SwapTransaction:
+                                        case let transaction as SwapInfo:
                                             return transaction.source?.pubkey
-                                        case let transaction as SolanaSDK.TransferTransaction:
+                                        case let transaction as TransferInfo:
                                             return transaction.source?.pubkey
                                         default:
                                             return nil
@@ -89,12 +91,12 @@ extension TransactionDetail {
                         addressLabel()
                             .setup { toAddressLabel in
                                 viewModel.parsedTransactionDriver
-                                    .map { $0?.value }
+                                    .map { $0?.info }
                                     .map { transaction -> String? in
                                         switch transaction {
-                                        case let transaction as SolanaSDK.SwapTransaction:
+                                        case let transaction as SwapInfo:
                                             return transaction.destination?.pubkey
-                                        case let transaction as SolanaSDK.TransferTransaction:
+                                        case let transaction as TransferInfo:
                                             return transaction.destination?.pubkey
                                         default:
                                             return nil

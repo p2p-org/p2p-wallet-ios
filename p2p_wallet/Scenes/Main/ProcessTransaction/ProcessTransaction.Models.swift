@@ -6,23 +6,16 @@
 //
 
 import Foundation
+import RxConcurrency
 import RxSwift
 import SolanaSwift
-
-// MARK: - APIClient
-
-protocol ProcessTransactionAPIClient {
-    func getSignatureStatus(signature: String, configs: SolanaSDK.RequestConfiguration?)
-        -> Single<SolanaSDK.SignatureStatus>
-}
-
-extension SolanaSDK: ProcessTransactionAPIClient {}
 
 // MARK: - Transaction type
 
 protocol RawTransactionType {
     func createRequest() -> Single<String>
     var mainDescription: String { get }
+    var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? { get }
 }
 
 extension RawTransactionType {
@@ -72,7 +65,7 @@ extension ProcessTransaction {
                let currentAmount = payingWallet.lamports,
                fees.total > currentAmount
             {
-                return .error(SolanaSDK.Error.other(
+                return .error(SolanaError.other(
                     L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
                         + ". "
                         + L10n
@@ -84,22 +77,32 @@ extension ProcessTransaction {
                 ))
             }
 
-            return swapService.swap(
-                sourceAddress: sourceWallet.pubkey!,
-                sourceTokenMint: sourceWallet.mintAddress,
-                destinationAddress: destinationWallet.pubkey,
-                destinationTokenMint: destinationWallet.mintAddress,
-                payingTokenAddress: payingWallet?.pubkey,
-                payingTokenMint: payingWallet?.mintAddress,
-                poolsPair: poolsPair,
-                amount: amount.toLamport(decimals: sourceWallet.token.decimals),
-                slippage: slippage
-            ).map { $0.first ?? "" }
+            return Single.async {
+                try await swapService.swap(
+                    sourceAddress: sourceWallet.pubkey!,
+                    sourceTokenMint: sourceWallet.mintAddress,
+                    destinationAddress: destinationWallet.pubkey,
+                    destinationTokenMint: destinationWallet.mintAddress,
+                    payingTokenAddress: payingWallet?.pubkey,
+                    payingTokenMint: payingWallet?.mintAddress,
+                    poolsPair: poolsPair,
+                    amount: amount.toLamport(decimals: sourceWallet.token.decimals),
+                    slippage: slippage
+                )
+            }.map { $0.first ?? "" }
+        }
+
+        var networkFees: (total: Lamports, token: Token)? {
+            guard let networkFees = fees.networkFees?.total,
+                  let payingFeeToken = payingWallet?.token
+            else {
+                return nil
+            }
+            return (total: networkFees, payingFeeToken)
         }
     }
 
     struct CloseTransaction: RawTransactionType {
-        let solanaSDK: SolanaSDK
         let closingWallet: Wallet
         let reimbursedAmount: UInt64
 
@@ -108,10 +111,15 @@ extension ProcessTransaction {
         }
 
         func createRequest() -> Single<String> {
-            guard let pubkey = closingWallet.pubkey else {
-                return .error(SolanaSDK.Error.unknown)
-            }
-            return solanaSDK.closeTokenAccount(tokenPubkey: pubkey)
+            fatalError("Not implemented")
+            // guard let pubkey = closingWallet.pubkey else {
+            //     return .error(Error.unknown)
+            // }
+            // return closeTokenAccount(tokenPubkey: pubkey)
+        }
+
+        var networkFees: (total: Lamports, token: Token)? {
+            (total: 5000, token: .nativeSolana) // TODO: Fix later
         }
     }
 
@@ -121,10 +129,10 @@ extension ProcessTransaction {
         let sender: Wallet
         let receiver: SendToken.Recipient
         let authority: String?
-        let amount: SolanaSDK.Lamports
+        let amount: SolanaSwift.Lamports
         let payingFeeWallet: Wallet?
         let feeInSOL: UInt64
-        let feeInToken: SolanaSDK.FeeAmount?
+        let feeInToken: SolanaSwift.FeeAmount?
         let isSimulation: Bool
 
         var mainDescription: String {
@@ -136,13 +144,22 @@ extension ProcessTransaction {
         }
 
         func createRequest() -> Single<String> {
-            sendService.send(
-                from: sender,
-                receiver: receiver.address,
-                amount: amount.convertToBalance(decimals: sender.token.decimals),
-                network: network,
-                payingFeeWallet: payingFeeWallet
-            )
+            Single.async { () -> String in
+                try await sendService.send(
+                    from: sender,
+                    receiver: receiver.address,
+                    amount: amount.convertToBalance(decimals: sender.token.decimals),
+                    network: network,
+                    payingFeeWallet: payingFeeWallet
+                )
+            }
+        }
+
+        var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? {
+            guard let feeInToken = feeInToken, let token = payingFeeWallet?.token else {
+                return nil
+            }
+            return (total: feeInToken.total, token: token)
         }
     }
 }

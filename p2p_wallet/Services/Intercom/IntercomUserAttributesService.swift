@@ -11,10 +11,10 @@ import SolanaSwift
 
 final class IntercomUserAttributesService {
     @Injected private var nameStorage: NameStorageType
-    @Injected private var walletsRepository: SolanaSDKAccountStorage
+    @Injected private var accountStorage: SolanaAccountStorage
 
     func setParameters() {
-        let userAddress = walletsRepository.account?.publicKey.base58EncodedString
+        let userAddress = accountStorage.account?.publicKey.base58EncodedString
         let name = nameStorage.getName()
 
         let userAttributes = ICMUserAttributes()

@@ -5,11 +5,11 @@
 //  Created by Ivan on 17.04.2022.
 //
 
-import Alamofire
 import Foundation
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension History {
@@ -18,7 +18,7 @@ extension History {
         let output: Output
 
         init(
-            transaction: SolanaSDK.ParsedTransaction,
+            transaction: ParsedTransaction,
             clipboardManager: ClipboardManagerType,
             pricesService: PricesServiceType
         ) {
@@ -47,7 +47,7 @@ extension History {
 
 // MARK: - Mappers
 
-private extension SolanaSDK.ParsedTransaction {
+private extension ParsedTransaction {
     func mapTransaction(
         pricesService: PricesServiceType
     ) -> History.TransactionView.Model {
@@ -77,8 +77,8 @@ private extension SolanaSDK.ParsedTransaction {
             break
         }
 
-        switch value {
-        case let transaction as SolanaSDK.SwapTransaction:
+        switch info {
+        case let transaction as SwapInfo:
             return (
                 imageType: .fromOneToOne(from: transaction.source?.token, to: transaction.destination?.token),
                 statusImage: statusImage
@@ -89,17 +89,17 @@ private extension SolanaSDK.ParsedTransaction {
     }
 
     func mapAmounts(pricesService: PricesServiceType) -> (tokens: String?, usd: String?) {
-        switch value {
-        case let transaction as SolanaSDK.TransferTransaction:
-            let fromAmount = transaction.amount?
+        switch info {
+        case let transaction as TransferInfo:
+            let fromAmount = transaction.rawAmount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
             let usd = "~ " + Defaults.fiat.symbol + getAmountInCurrentFiat(
                 pricesService: pricesService,
-                amountInToken: transaction.amount,
+                amountInToken: transaction.rawAmount,
                 symbol: transaction.source?.token.symbol
             ).toString(maximumFractionDigits: 2)
             return (tokens: fromAmount, usd: usd)
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapInfo:
             let fromAmount = transaction.sourceAmount?
                 .toString(maximumFractionDigits: 9) + " " + transaction.source?.token.symbol
             let toAmount = transaction.destinationAmount?
@@ -138,13 +138,13 @@ private extension SolanaSDK.ParsedTransaction {
     }
 
     func getAddresses() -> (from: String?, to: String?) {
-        let transaction = value
+        let transaction = info
 
         let from: String?
         switch transaction {
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapInfo:
             from = transaction.source?.pubkey
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferInfo:
             from = transaction.source?.pubkey
         default:
             from = nil
@@ -152,9 +152,9 @@ private extension SolanaSDK.ParsedTransaction {
 
         let to: String?
         switch transaction {
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapInfo:
             to = transaction.destination?.pubkey
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferInfo:
             to = transaction.destination?.pubkey
         default:
             to = nil

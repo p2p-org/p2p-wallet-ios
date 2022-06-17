@@ -6,6 +6,7 @@ import BECollectionView
 import BEPureLayout
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 class BaseWalletCell: BECompositionView {
     private let leadingActions: UIView?
