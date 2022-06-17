@@ -24,6 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
 
+    private lazy var proxyAppDelegate = AppDelegateProxyService()
+
     func changeThemeTo(_ style: UIUserInterfaceStyle) {
         Defaults.appearance = style
         if #available(iOS 13.0, *) {
@@ -32,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
@@ -69,31 +71,38 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupRemoteConfig()
 
-        return true
+        return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Task.detached(priority: .background) { [unowned self] in
             await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
+        proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         debugPrint("Failed to register: \(error)")
+        proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+        proxyAppDelegate.application(
+            application,
+            didReceiveRemoteNotification: userInfo,
+            fetchCompletionHandler: completionHandler
+        )
     }
 
     func setupRemoteConfig() {
