@@ -6,6 +6,8 @@
 //
 
 import Action
+import AnalyticsManager
+import Resolver
 import RxCocoa
 import RxSwift
 import TagListView
@@ -16,7 +18,7 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
 
         private let viewModel: CreateSecurityKeysViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 

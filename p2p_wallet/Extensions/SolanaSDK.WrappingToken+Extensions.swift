@@ -1,13 +1,14 @@
 //
-//  SolanaSDK.WrappingToken+Extensions.swift
+//  WrappingToken+Extensions.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 23/04/2021.
 //
 
 import Foundation
+import SolanaSwift
 
-extension SolanaSDK.WrappingToken {
+extension WrappingToken {
     var image: UIImage? {
         // swiftlint:disable swiftgen_assets
 //        UIImage(named: "wrapped-by-" + rawValue)

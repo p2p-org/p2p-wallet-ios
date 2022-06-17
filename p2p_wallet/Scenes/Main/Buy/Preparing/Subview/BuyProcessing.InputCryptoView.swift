@@ -3,7 +3,9 @@
 //
 
 import Foundation
+import Resolver
 import RxSwift
+import SolanaSwift
 
 extension BuyPreparing {
     class InputCryptoView: BECompositionView {
@@ -26,19 +28,20 @@ extension BuyPreparing {
                         // Amount
                         CoinLogoImageView(size: 24, cornerRadius: 8)
                             .setup { view in
-                                Resolver
-                                    .resolve(TokensRepository.self)
-                                    .getTokensList()
-                                    .asDriver(onErrorJustReturn: [])
-                                    .drive(onNext: { [weak self, weak view] tokens in
-                                        if let token = tokens.first(where: { token in
-                                            self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
-                                                .symbol == self?.viewModel.crypto.solanaCode
-                                        }) {
-                                            view?.setUp(token: token)
-                                        }
-                                    })
-                                    .disposed(by: disposeBag)
+                                Single<[Token]>.async {
+                                    Array(try await Resolver.resolve(SolanaTokensRepository.self).getTokensList())
+                                }
+                                .asDriver(onErrorJustReturn: [])
+                                .drive(onNext: { [weak self, weak view] tokens in
+                                    if let token = tokens.first(where: { token in
+                                        self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
+                                            .symbol.lowercased() == self?.viewModel.crypto.solanaCode
+                                            .lowercased() && token.address == self?.viewModel.crypto.mintAddress
+                                    }) {
+                                        view?.setUp(token: token)
+                                    }
+                                })
+                                .disposed(by: disposeBag)
                             }
                         UIView(width: 8)
 

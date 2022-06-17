@@ -6,48 +6,33 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
-
-// MARK: - FeeAPIClient
-
-protocol FeeAPIClient {
-    func getLamportsPerSignature() -> Single<SolanaSDK.Lamports>
-    func getCreatingTokenAccountFee() -> Single<UInt64>
-}
-
-extension SolanaSDK: FeeAPIClient {
-    func getLamportsPerSignature() -> Single<Lamports> {
-        getFees().map { $0.feeCalculator?.lamportsPerSignature }.map { $0 ?? 0 }
-    }
-}
-
-// MARK: - FeeService
+import SolanaSwift
 
 protocol FeeServiceType: AnyObject {
-    var apiClient: FeeAPIClient { get }
-    var lamportsPerSignature: SolanaSDK.Lamports? { get set }
-    var minimumBalanceForRenExemption: SolanaSDK.Lamports? { get set }
+    var apiClient: SolanaAPIClient { get }
+    var lamportsPerSignature: Lamports? { get set }
+    var minimumBalanceForRenExemption: Lamports? { get set }
 }
 
 extension FeeServiceType {
     func load() -> Completable {
-        Single.zip(
-            apiClient.getLamportsPerSignature(),
-            apiClient.getCreatingTokenAccountFee()
-        )
-            .do(onSuccess: { [weak self] lps, mbr in
-                self?.lamportsPerSignature = lps
-                self?.minimumBalanceForRenExemption = mbr
-            })
-            .flatMapCompletable { _ in
-                .empty()
-            }
+        Completable.async { [weak self] in
+            guard let self = self else { return }
+            let (lps, mbr) = try await(
+                self.apiClient.getFees(commitment: nil).feeCalculator?.lamportsPerSignature,
+                self.apiClient.getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
+            )
+            self.lamportsPerSignature = lps
+            self.minimumBalanceForRenExemption = mbr
+        }
     }
 }
 
 class FeeService: FeeServiceType {
-    @Injected var apiClient: FeeAPIClient
-    var lamportsPerSignature: SolanaSDK.Lamports?
-    var minimumBalanceForRenExemption: SolanaSDK.Lamports?
+    @Injected var apiClient: SolanaAPIClient
+    var lamportsPerSignature: Lamports?
+    var minimumBalanceForRenExemption: Lamports?
 }

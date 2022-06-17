@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaPricesAPIs
+import SolanaSwift
 
 protocol PricesServiceType {
     // Observables
@@ -54,13 +57,13 @@ class PricesService {
     // MARK: - Dependencies
 
     @Injected private var storage: PricesStorage
-    @Injected private var fetcher: PricesFetcher
+    @Injected private var api: SolanaPricesAPI
 
     // MARK: - Properties
 
     private var watchList = [String]()
     private var timer: Timer?
-    private lazy var currentPricesSubject = PricesLoadableRelay(request: .just(storage.retrievePrices()))
+    private lazy var currentPricesSubject = PricesLoadableRelay(request: .just([:]))
 
     // MARK: - Initializer
 
@@ -68,8 +71,14 @@ class PricesService {
         // reload to get cached prices
         currentPricesSubject.reload()
 
-        // change request
-        currentPricesSubject.request = getCurrentPricesRequest()
+        // get current price
+        Task {
+            let initialValue = await storage.retrievePrices()
+            currentPricesSubject.accept(initialValue, state: .loaded)
+
+            // change request
+            currentPricesSubject.request = getCurrentPricesRequest()
+        }
     }
 
     deinit {
@@ -92,25 +101,17 @@ class PricesService {
             return .just([:])
         }
 
-        return fetcher.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
-            .map { prices -> [String: CurrentPrice?] in
-                var prices = prices
-                prices["renBTC"] = prices["BTC"]
-                return prices
+        return Single.async { [weak self] in
+            guard let self = self else { throw Error.unknown }
+            var newPrices = try await self.api.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+            newPrices["renBTC"] = newPrices["BTC"]
+            var prices = self.currentPricesSubject.value ?? [:]
+            for newPrice in newPrices {
+                prices[newPrice.key] = newPrice.value
             }
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .map { [weak self] newPrices in
-                guard let self = self else { throw Error.unknown }
-                var prices = self.currentPricesSubject.value ?? [:]
-                for newPrice in newPrices {
-                    prices[newPrice.key] = newPrice.value
-                }
-                return prices
-            }
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .do(onSuccess: { [weak self] newPrices in
-                self?.storage.savePrices(newPrices)
-            })
+            await self.storage.savePrices(prices)
+            return prices
+        }
     }
 }
 
@@ -129,7 +130,10 @@ extension PricesService: PricesServiceType {
 
     func clearCurrentPrices() {
         currentPricesSubject.flush()
-        storage.savePrices([:])
+
+        Task {
+            await storage.savePrices([:])
+        }
     }
 
     func addToWatchList(_ tokens: [String]) {
@@ -150,30 +154,33 @@ extension PricesService: PricesServiceType {
     }
 
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]> {
-        fetcher.getHistoricalPrice(of: coinName, fiat: Defaults.fiat.code, period: period)
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .map { prices in
+        Single.async { [weak self] in
+            guard let self = self else { throw Error.unknown }
+            do {
+                let prices = try await self.api.getHistoricalPrice(
+                    of: coinName,
+                    fiat: Defaults.fiat.code,
+                    period: period
+                )
                 if prices.isEmpty { throw Error.notFound }
                 return prices
-            }
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .catch { [weak self] _ in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
-                return Single.zip(
-                    self.fetcher.getHistoricalPrice(of: coinName, fiat: "USD", period: period),
-                    self.fetcher.getValueInUSD(fiat: Defaults.fiat.code)
-                )
-                    .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-                    .map { records, rate in
-                        guard let rate = rate else { return [] }
-                        var records = records
-                        for i in 0 ..< records.count {
-                            records[i] = records[i].converting(exchangeRate: rate)
-                        }
-                        return records
+            } catch {
+                if Defaults.fiat.code.uppercased() != "USD" {
+                    // retry with different fiat
+                    async let pricesInUSD = self.api.getHistoricalPrice(of: coinName, fiat: "USD", period: period)
+                    async let valueInUSD = self.api.getValueInUSD(fiat: Defaults.fiat.code)
+
+                    guard let rate = try await valueInUSD else { return [] }
+                    var records = try await pricesInUSD
+                    for i in 0 ..< records.count {
+                        records[i] = records[i].converting(exchangeRate: rate)
                     }
+                    return records
+                }
+                throw error
             }
-            .observe(on: MainScheduler.instance)
+        }
+        .observe(on: MainScheduler.instance)
     }
 
     func startObserving() {

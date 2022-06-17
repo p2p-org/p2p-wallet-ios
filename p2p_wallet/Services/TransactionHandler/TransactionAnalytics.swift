@@ -2,6 +2,7 @@
 // Created by Giang Long Tran on 24.03.2022.
 //
 
+import AnalyticsManager
 import Foundation
 import RxSwift
 
