@@ -8,6 +8,7 @@
 import BECollectionView
 import BEPureLayout
 import ListPlaceholder
+import SolanaSwift
 
 class WalletCell: BaseCollectionViewCell {
     override var padding: UIEdgeInsets { .zero }

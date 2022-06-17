@@ -3,10 +3,12 @@
 //
 
 import Foundation
-import RxAlamofire
-import RxSwift
 
 extension Moonpay {
+    enum MoonpayProviderError: Swift.Error {
+        case unknown
+    }
+
     class Provider {
         private let api: API
 
@@ -17,56 +19,83 @@ extension Moonpay {
             quoteCurrencyCode: String,
             baseCurrencyAmount: Double?,
             quoteCurrencyAmount: Double?
-        ) -> Single<BuyQuote> {
+        ) async throws -> BuyQuote {
             var params = [
                 "apiKey": api.apiKey,
                 "baseCurrencyCode": baseCurrencyCode,
                 "areFeesIncluded": "true",
+                // Undocumented params which makes results equal to web
+                "fixed": "true",
+                "regionalPricing": "true",
             ] as [String: Any]
 
-            if let baseCurrencyAmount = baseCurrencyAmount { params["baseCurrencyAmount"] = baseCurrencyAmount }
-            if let quoteCurrencyAmount = quoteCurrencyAmount { params["quoteCurrencyAmount"] = quoteCurrencyAmount }
+            if let baseCurrencyAmount = baseCurrencyAmount {
+                params["baseCurrencyAmount"] = baseCurrencyAmount
+            }
+            if let quoteCurrencyAmount = quoteCurrencyAmount {
+                params["quoteCurrencyAmount"] = quoteCurrencyAmount
+            }
 
-            return request(.get, api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote", parameters: params)
-                .responseData()
-                .map { response, data in
-                    switch response.statusCode {
-                    case 200 ... 299:
-                        return try JSONDecoder().decode(BuyQuote.self, from: data)
-                    default:
-                        let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
-                        throw Error.message(message: data.message)
-                    }
+            var components = URLComponents(string: api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote")!
+            components.queryItems = params
+                .mapValues { value -> Any in
+                    value is Double ? String(value as! Double) : value
                 }
-                .take(1)
-                .asSingle()
+                .compactMap { key, value in
+                    guard let value = value as? String else { return nil }
+                    return URLQueryItem(name: key, value: value)
+                }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, response) = try await URLSession.shared.data(from: urlRequest)
+            guard let response = response as? HTTPURLResponse else {
+                throw MoonpayProviderError.unknown
+            }
+            switch response.statusCode {
+            case 200 ... 299:
+                return try JSONDecoder().decode(BuyQuote.self, from: data)
+            default:
+                let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
+                throw Error.message(message: data.message)
+            }
         }
 
-        func getPrice(for crypto: String, as currency: String) -> Single<Double> {
-            request(.get, api.endpoint + "/currencies/\(crypto)/ask_price", parameters: ["apiKey": api.apiKey])
-                .responseJSON()
-                .take(1)
-                .asSingle()
-                .map { response -> Double in
-                    guard let json = response.value as? [String: Double] else { return 0 }
-                    return json[currency] ?? 0
-                }
+        func getPrice(for crypto: String, as currency: String) async throws -> Double {
+            var components = URLComponents(string: api.endpoint + "/currencies/\(crypto)/ask_price")!
+            let params = ["apiKey": api.apiKey]
+            components.queryItems = params.map { key, value in
+                URLQueryItem(name: key, value: value)
+            }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
+            guard let json = try? JSONDecoder().decode([String: Double].self, from: data)
+            else { return 0 }
+            return json[currency] ?? 0
         }
 
-        func getAllSupportedCurrencies() -> Single<Currencies> {
-            request(.get, api.endpoint + "/currencies", parameters: ["apiKey": api.apiKey])
-                .responseData()
-                .map { response, data in
-                    switch response.statusCode {
-                    case 200 ... 299:
-                        return try JSONDecoder().decode(Currencies.self, from: data)
-                    default:
-                        let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
-                        throw Error.message(message: data.message)
-                    }
-                }
-                .take(1)
-                .asSingle()
+        func getAllSupportedCurrencies() async throws -> Currencies {
+            var components = URLComponents(string: api.endpoint + "/currencies")!
+            let params = ["apiKey": api.apiKey]
+            components.queryItems = params.map { key, value in
+                URLQueryItem(name: key, value: value)
+            }
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, response) = try await URLSession.shared.data(from: urlRequest)
+            guard let response = response as? HTTPURLResponse else {
+                throw MoonpayProviderError.unknown
+            }
+            switch response.statusCode {
+            case 200 ... 299:
+                return try JSONDecoder().decode(Currencies.self, from: data)
+            default:
+                let data = try JSONDecoder().decode(API.ErrorResponse.self, from: data)
+                throw Error.message(message: data.message)
+            }
         }
     }
 }

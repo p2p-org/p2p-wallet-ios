@@ -7,11 +7,12 @@
 
 import BEPureLayout
 import Foundation
+import Resolver
 import RxSwift
 import UIKit
 
 extension OrcaSwapV2 {
-    class ViewController: BEScene {
+    class ViewController: BaseViewController {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }

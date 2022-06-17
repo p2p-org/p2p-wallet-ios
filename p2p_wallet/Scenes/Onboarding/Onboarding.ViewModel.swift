@@ -5,9 +5,12 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import AnalyticsManager
 import LocalAuthentication
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 import UserNotifications
 
@@ -38,7 +41,7 @@ extension Onboarding {
 
         @Injected private var handler: OnboardingHandler
         @Injected private var pinCodeStorage: PincodeStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 
@@ -90,7 +93,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
                     if success {
                         self?.setEnableBiometry(true)
                     } else {
-                        errorHandler?(authenticationError ?? SolanaSDK.Error.unknown)
+                        errorHandler?(authenticationError ?? SolanaError.unknown)
                         self?.enableBiometryLater()
                     }
                 }
@@ -190,6 +193,16 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     }
 
     func endOnboarding() {
+        switch OnboardingTracking.currentFlow {
+        case .create:
+            analyticsManager
+                .log(event: .walletCreated(lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"))
+        case .restore:
+            analyticsManager
+                .log(event: .walletRestored(lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"))
+        case .none: break
+        }
+
         navigationSubject.accept(.dismiss)
         handler.onboardingDidComplete()
     }

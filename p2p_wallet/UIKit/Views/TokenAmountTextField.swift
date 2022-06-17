@@ -7,9 +7,14 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
 
 final class TokenAmountTextField: BEDecimalTextField {
-    private var decimals: SolanaSDK.Decimals?
+    private var decimals: Decimals?
+
+    var value: Double {
+        text.map { $0.double ?? 0 } ?? 0
+    }
 
     private let disposeBag = DisposeBag()
 
@@ -38,7 +43,7 @@ final class TokenAmountTextField: BEDecimalTextField {
             .disposed(by: disposeBag)
     }
 
-    func setUp(decimals: SolanaSDK.Decimals?) {
+    func setUp(decimals: Decimals?) {
         self.decimals = decimals
         if let currentValue = text?.double?.toLamport(decimals: decimals ?? 9),
            currentValue == 0

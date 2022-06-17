@@ -5,7 +5,9 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import AnalyticsManager
 import Foundation
+import Resolver
 import UIKit
 
 extension CreateOrRestoreWallet {
@@ -17,7 +19,7 @@ extension CreateOrRestoreWallet {
         // MARK: - Dependencies
 
         private let viewModel: CreateOrRestoreWalletViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Subviews
 
