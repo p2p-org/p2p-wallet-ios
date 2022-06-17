@@ -17,3 +17,6 @@ Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
 
 # Regenerate project
 xcodegen
+
+# Pod install
+pod install

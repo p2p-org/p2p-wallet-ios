@@ -5,9 +5,12 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import AnalyticsManager
+import NameService
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandler {
@@ -16,7 +19,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandl
     var isRestorableUsingIcloud: Driver<Bool> { get }
     var errorSignal: Signal<String> { get }
 
-    func handleICloudAccount(_ account: Account)
+    func handleICloudAccount(_ account: RawAccount)
     func restoreFromICloud()
     func restoreManually()
 }
@@ -26,17 +29,16 @@ extension RestoreWallet {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var handler: CreateOrRestoreWalletHandler
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var notificationsService: NotificationService
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
         private var phrases: [String]?
-        private var derivablePath: SolanaSDK.DerivablePath?
+        private var derivablePath: DerivablePath?
         private var name: String?
 
         // MARK: - Subjects
@@ -105,7 +107,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         navigationSubject.accept(.enterPhrases)
     }
 
-    func handlePhrases(_ phrases: [String], derivablePath: SolanaSDK.DerivablePath?) {
+    func handlePhrases(_ phrases: [String], derivablePath: DerivablePath?) {
         self.phrases = phrases
         if let derivablePath = derivablePath {
             derivablePathDidSelect(derivablePath, phrases: phrases)
@@ -114,7 +116,8 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         }
     }
 
-    func handleICloudAccount(_ account: Account) {
+    @MainActor
+    func handleICloudAccount(_ account: RawAccount) {
         phrases = account.phrase.components(separatedBy: " ")
         derivablePath = account.derivablePath
         if let name = account.name {
@@ -123,21 +126,19 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         } else {
             // create account
             isLoadingSubject.accept(true)
-            DispatchQueue(label: "Create account", qos: .userInteractive).async { [unowned self] in
-                guard let phrases = self.phrases else { return }
+            guard let phrases = phrases else { return }
+            Task {
                 do {
-                    let account = try SolanaSDK.Account(
+                    let account = try await Account(
                         phrase: phrases,
                         network: Defaults.apiEndPoint.network,
                         derivablePath: derivablePath
                     )
-                    DispatchQueue.main.async { [weak self] in
-                        // reserve name
-                        self?.isLoadingSubject.accept(false)
-                        self?.navigationSubject.accept(.reserveName(owner: account.publicKey.base58EncodedString))
-                    }
+                    // reserve name
+                    isLoadingSubject.accept(false)
+                    navigationSubject.accept(.reserveName(owner: account.publicKey.base58EncodedString))
                 } catch {
-                    self.errorSubject.accept(error.readableDescription)
+                    errorSubject.accept(error.readableDescription)
                 }
             }
         }
@@ -147,16 +148,17 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
 // MARK: - AccountRestorationHandler
 
 extension RestoreWallet.ViewModel {
-    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath, phrases: [String]) {
+    func derivablePathDidSelect(_ derivablePath: DerivablePath, phrases: [String]) {
         analyticsManager.log(event: .recoveryRestoreClick)
         self.derivablePath = derivablePath
         self.phrases = phrases
 
         // create account
         isLoadingSubject.accept(true)
-        DispatchQueue(label: "Create account", qos: .userInteractive).async {
+
+        Task {
             do {
-                let account = try SolanaSDK.Account(
+                let account = try await Account(
                     phrase: phrases,
                     network: Defaults.apiEndPoint.network,
                     derivablePath: derivablePath
@@ -165,42 +167,37 @@ extension RestoreWallet.ViewModel {
                 let owner = account.publicKey.base58EncodedString
 
                 // check if name available
-                DispatchQueue.main.async { [weak self] in
-                    guard let self = self else { return }
-                    self.nameService.getName(owner)
-                        .subscribe(on: MainScheduler.instance)
-                        .subscribe(onSuccess: { [weak self] name in
-                            guard let self = self else { return }
-                            self.isLoadingSubject.accept(false)
+                do {
+                    let name = try await nameService.getName(owner)
 
-                            // save to icloud
-                            self.saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
+                    isLoadingSubject.accept(false)
 
-                            if let name = name {
-                                self.handleName(name)
-                            } else {
-                                self.navigationSubject.accept(.reserveName(owner: owner))
-                            }
-                        }, onFailure: { [weak self] _ in
-                            guard let self = self else { return }
-                            self.isLoadingSubject.accept(false)
+                    // save to icloud
+                    await saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
 
-                            // save to icloud
-                            self.saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+                    if let name = name {
+                        await handleName(name)
+                    } else {
+                        navigationSubject.accept(.reserveName(owner: owner))
+                    }
+                } catch {
+                    isLoadingSubject.accept(false)
 
-                            self.finish()
-                        })
-                        .disposed(by: self.disposeBag)
+                    // save to icloud
+                    await saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+
+                    await finish()
                 }
             } catch {
-                DispatchQueue.main.async { [weak self] in
-                    self?.errorSubject.accept(error.readableDescription)
-                }
+                errorSubject.accept(error.readableDescription)
             }
         }
+
+        DispatchQueue(label: "Create account", qos: .userInteractive).async {}
     }
 
-    private func saveToICloud(name: String?, phrase: [String], derivablePath: SolanaSDK.DerivablePath) {
+    @MainActor
+    private func saveToICloud(name: String?, phrase: [String], derivablePath: DerivablePath) {
         _ = iCloudStorage.saveToICloud(
             account: .init(
                 name: name,
@@ -213,6 +210,7 @@ extension RestoreWallet.ViewModel {
 }
 
 extension RestoreWallet.ViewModel: ReserveNameHandler {
+    @MainActor
     func handleName(_ name: String?) {
         self.name = name
         finish()
@@ -220,6 +218,7 @@ extension RestoreWallet.ViewModel: ReserveNameHandler {
 }
 
 private extension RestoreWallet.ViewModel {
+    @MainActor
     func finish() {
         finishedSubject.accept(())
         handler.restoringWalletDidComplete(

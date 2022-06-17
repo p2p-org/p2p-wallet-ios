@@ -9,7 +9,7 @@ import Foundation
 import RxCocoa
 
 extension SendToken.SelectNetwork {
-    final class ViewController: BEScene {
+    final class ViewController: BaseViewController {
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
 
         private let viewModel: SendTokenSelectNetworkViewModelType

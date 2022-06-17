@@ -3,8 +3,10 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 extension ReceiveToken {
     class QrCodeCard: BECompositionView {
@@ -25,7 +27,7 @@ extension ReceiveToken {
             }
         }
 
-        var token: SolanaSDK.Token? {
+        var token: Token? {
             didSet { qrView.with(string: pubKey, token: token) }
         }
 
@@ -42,7 +44,7 @@ extension ReceiveToken {
         init(
             username: String? = nil,
             pubKey: String? = nil,
-            token: SolanaSDK.Token? = nil,
+            token: Token? = nil,
             showCoinLogo: Bool = true
         ) {
             self.username = username
