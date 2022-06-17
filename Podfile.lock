@@ -114,10 +114,10 @@ PODS:
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
   - GT3Captcha-iOS (0.15.2)
-  - Intercom (12.4.0)
+  - Intercom (12.4.1)
   - JazziconSwift (1.0.1)
   - KeychainSwift (19.0.0)
-  - Kingfisher (7.2.2)
+  - Kingfisher (7.2.4)
   - ListPlaceholder (1.5)
   - LoggerSwift (1.0.2)
   - NameService (1.0.0)
@@ -309,10 +309,10 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   GT3Captcha-iOS: 7ae08a5421c8e40463ec84ae807e82c19be3929a
-  Intercom: 43bbc1feee8192066601fd414d5e8ff381d8a4c8
+  Intercom: aea29d38ff141f4a6c7707b34b5090983b8bc09b
   JazziconSwift: e5a81c974aca2376857712fcdf605b763d593b68
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
-  Kingfisher: 184d4d1a8c36666e663caf8e08abe87898595c53
+  Kingfisher: 2457be2121734e69e54a2312ecc0150eb9ae70b3
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
   NameService: 768d79c57b8ac401fdf69128f03754195b8fd63f

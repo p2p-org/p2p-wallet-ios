@@ -29,7 +29,7 @@ extension WalletDetail {
 
         // MARK: - Subscene
 
-        private lazy var historyVC = HistoryViewController(viewModel: viewModel)
+        private lazy var historyVC = History.Scene()
         private var coordinator: SendToken.Coordinator?
 
         // MARK: - Initializer
