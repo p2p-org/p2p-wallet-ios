@@ -11,7 +11,7 @@ import SolanaSwift
 
 protocol HistoryStreamSource {
     /// The result that contains signatureInfo, account and symbol.
-    typealias Result = (signatureInfo: SolanaSDK.SignatureInfo, account: String, symbol: String)
+    typealias Result = (signatureInfo: SignatureInfo, account: String, symbol: String)
 
     /// Fetches new transaction signatures sequencely.
     ///

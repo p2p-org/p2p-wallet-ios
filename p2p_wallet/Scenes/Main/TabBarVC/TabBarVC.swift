@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Intercom
 import Resolver
 import RxSwift
 import UIKit
