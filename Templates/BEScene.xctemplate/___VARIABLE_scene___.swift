@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxCocoa
 
 enum ___VARIABLE_scene___ {
     enum NavigatableScene {

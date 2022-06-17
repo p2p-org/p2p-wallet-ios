@@ -3,7 +3,9 @@
 //
 
 import Foundation
+import Resolver
 import RxSwift
+import SolanaSwift
 
 extension BuyPreparing {
     class InputFiatView: BECompositionView {
@@ -29,8 +31,7 @@ extension BuyPreparing {
                             font: .systemFont(ofSize: 27, weight: .semibold),
                             textColor: .textBlack
                         ).padding(.init(x: 4, y: 0))
-
-                        TokenAmountTextField(
+                        UITextField(
                             font: .systemFont(ofSize: 27, weight: .semibold),
                             textColor: .textBlack,
                             textAlignment: .right,
@@ -39,14 +40,18 @@ extension BuyPreparing {
                             autocorrectionType: .no
                         ).setup { [weak self] view in
                             view.becomeFirstResponder()
-                            view.delegate = self
                             view.text = viewModel.input.amount.toString()
                             view.rx.text
-                                .map { $0?.double }
-                                .distinctUntilChanged()
-                                .subscribe(onNext: { [weak self] amount in
-                                    guard let amount = amount else { return }
-                                    self?.viewModel.setAmount(value: amount)
+                                .map { $0?.fiatFormat }
+                                .subscribe(onNext: { [weak self, weak view] text in
+                                    view?.text = text
+                                    self?.viewModel.setAmount(value: Double(text ?? "") ?? 0)
+                                })
+                                .disposed(by: disposeBag)
+                            view.rx.controlEvent(.editingDidEnd)
+                                .asObservable()
+                                .subscribe(onNext: { [weak view] in
+                                    view?.text = view?.text?.withoutLastZeros
                                 })
                                 .disposed(by: disposeBag)
                         }
@@ -64,19 +69,20 @@ extension BuyPreparing {
                     UIStackView(axis: .horizontal) {
                         CoinLogoImageView(size: 20, cornerRadius: 9)
                             .setup { view in
-                                Resolver
-                                    .resolve(TokensRepository.self)
-                                    .getTokensList()
-                                    .asDriver(onErrorJustReturn: [])
-                                    .drive(onNext: { [weak self, weak view] tokens in
-                                        if let token = tokens.first(where: { token in
-                                            self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
-                                                .symbol == self?.viewModel.crypto.solanaCode
-                                        }) {
-                                            view?.setUp(token: token)
-                                        }
-                                    })
-                                    .disposed(by: disposeBag)
+                                Single<[Token]>.async {
+                                    Array(try await Resolver.resolve(SolanaTokensRepository.self).getTokensList())
+                                }
+                                .asDriver(onErrorJustReturn: [])
+                                .drive(onNext: { [weak self, weak view] tokens in
+                                    if let token = tokens.first(where: { token in
+                                        self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
+                                            .symbol.lowercased() == self?.viewModel.crypto.solanaCode
+                                            .lowercased() && token.address == self?.viewModel.crypto.mintAddress
+                                    }) {
+                                        view?.setUp(token: token)
+                                    }
+                                })
+                                .disposed(by: disposeBag)
                             }
                         UIView(width: 4)
                         UILabel(text: "0.00 \(viewModel.crypto)").setup { view in
@@ -94,21 +100,6 @@ extension BuyPreparing {
                         .box(cornerRadius: 12)
                 }
             }
-        }
-    }
-}
-
-extension BuyPreparing.InputFiatView: UITextFieldDelegate {
-    func textField(
-        _ textField: UITextField,
-        shouldChangeCharactersIn range: NSRange,
-        replacementString string: String
-    ) -> Bool {
-        switch textField {
-        case let amountTextField as TokenAmountTextField:
-            return amountTextField.shouldChangeCharactersInRange(range, replacementString: string)
-        default:
-            return true
         }
     }
 }

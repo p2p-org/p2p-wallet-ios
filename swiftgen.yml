@@ -3,8 +3,8 @@
 ## In case your config entries all use a common input/output parent directory, you can specify those here.
 ##   Every input/output paths in the rest of the config will then be expressed relative to these.
 ##   Those two top-level keys are optional and default to "." (the directory of the config file).
-input_dir: p2p_wallet/
-output_dir: p2p_wallet/
+input_dir: p2p_wallet/Resources
+output_dir: p2p_wallet/Resources
 
 
 ## Generate constants for your localized strings.

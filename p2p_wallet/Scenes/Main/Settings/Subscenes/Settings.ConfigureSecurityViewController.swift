@@ -7,6 +7,7 @@
 
 import Foundation
 import LocalAuthentication
+import SolanaSwift
 
 extension Settings {
     class ConfigureSecurityViewController: BaseViewController {
@@ -82,7 +83,7 @@ extension Settings {
 
         @objc func switcherDidChange(_ switcher: UISwitch) {
             viewModel.setEnabledBiometry(switcher.isOn) { [weak self] error in
-                self?.showError(error ?? SolanaSDK.Error.unknown)
+                self?.showError(error ?? SolanaError.unknown)
                 self?.biometrySwitcher.isOn.toggle()
             }
         }

@@ -112,46 +112,45 @@ extension SendTokenRecipientAndNetworkHandler {
 
                 guard let self = self else { return }
                 if let wallet = self.getSelectedWallet() {
-                    self.feeInfoSubject.request = self.sendService
-                        .getFees(
+                    self.feeInfoSubject.request = Single.async(with: self) { `self` -> SendToken.FeeInfo in
+                        let feeAmountInSol = try await self.sendService.getFees(
                             from: wallet,
                             receiver: recipient?.address,
                             network: network,
                             payingTokenMint: payingWallet?.mintAddress
                         )
-                        .flatMap { [weak self] feeAmountInSOL in
-                            guard let self = self else {
-                                throw SolanaSDK.Error.unknown
-                            }
 
-                            // if fee is nil, no need to check for available wallets to pay fee
-                            let feeAmountInSOL = feeAmountInSOL ?? .zero
+                        let feeAmountInSOL = feeAmountInSol ?? .zero
 
-                            if feeAmountInSOL.total == 0 {
-                                return .just(.init(
-                                    feeAmount: .zero,
-                                    feeAmountInSOL: .zero,
-                                    hasAvailableWalletToPayFee: true
-                                ))
-                            }
-
-                            // else, check available wallets to pay fee
-                            guard let payingFeeWallet = payingWallet else {
-                                return .just(.init(feeAmount: .zero, feeAmountInSOL: .zero,
-                                                   hasAvailableWalletToPayFee: nil))
-                            }
-                            return Single.zip(
-                                self.sendService.getAvailableWalletsToPayFee(feeInSOL: feeAmountInSOL),
-                                self.sendService.getFeesInPayingToken(
-                                    feeInSOL: feeAmountInSOL,
-                                    payingFeeWallet: payingFeeWallet
-                                )
+                        if feeAmountInSOL.total == 0 {
+                            return .init(
+                                feeAmount: .zero,
+                                feeAmountInSOL: .zero,
+                                hasAvailableWalletToPayFee: true
                             )
-                                .map {
-                                    .init(feeAmount: $1 ?? .zero, feeAmountInSOL: feeAmountInSOL,
-                                          hasAvailableWalletToPayFee: $0.isEmpty == false)
-                                }
                         }
+                        // else, check available wallets to pay fee
+                        guard let payingFeeWallet = payingWallet else {
+                            return .init(
+                                feeAmount: .zero,
+                                feeAmountInSOL: .zero,
+                                hasAvailableWalletToPayFee: nil
+                            )
+                        }
+
+                        let (availableWallets, feeInSPL) = try await(
+                            self.sendService.getAvailableWalletsToPayFee(feeInSOL: feeAmountInSOL),
+                            self.sendService.getFeesInPayingToken(
+                                feeInSOL: feeAmountInSOL,
+                                payingFeeWallet: payingFeeWallet
+                            )
+                        )
+
+                        return .init(
+                            feeAmount: feeInSPL ?? .zero, feeAmountInSOL: feeAmountInSOL,
+                            hasAvailableWalletToPayFee: availableWallets.isEmpty == false
+                        )
+                    }
                 } else {
                     self.feeInfoSubject
                         .request =
