@@ -29,7 +29,7 @@ extension WalletDetail {
 
         // MARK: - Subscene
 
-        private lazy var historyVC = History.Scene()
+        private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
         private var coordinator: SendToken.Coordinator?
 
         // MARK: - Initializer
