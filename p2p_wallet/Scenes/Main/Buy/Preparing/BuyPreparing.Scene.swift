@@ -6,6 +6,7 @@
 //
 //
 
+import BEPureLayout
 import Foundation
 import RxCocoa
 import RxSwift
@@ -141,25 +142,25 @@ extension BuyPreparing {
                 descriptionRow(
                     label: L10n.purchaseCost("\(viewModel.crypto.name)"),
                     initial: "$ 0.00",
-                    viewModel.purchaseCost.map { "$ \($0.fixedDecimal(2))" }
+                    viewModel.purchaseCost
                 )
                 UIView(height: 8)
                 descriptionRow(
                     label: L10n.processingFee,
                     initial: "$ 0.00",
-                    viewModel.feeAmount.map { "$ \($0.fixedDecimal(2))" }
+                    viewModel.feeAmount
                 )
                 UIView(height: 8)
                 descriptionRow(
                     label: L10n.networkFee,
                     initial: "$ 0.00",
-                    viewModel.networkFee.map { "$ \($0.fixedDecimal(2))" }
+                    viewModel.networkFee
                 )
                 UIView(height: 8)
 
                 UIView.defaultSeparator()
                 UIView(height: 8)
-                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total.map { "$ \($0.fixedDecimal(2))" })
+                totalRow(label: L10n.total, initial: "$ 0.00", viewModel.total)
             }
         }
 
@@ -210,29 +211,30 @@ private extension BuyPreparingSceneModel {
 
     var exchangeRateStringDriver: Driver<String> {
         exchangeRateDriver
-            .map { rate in
+            .map { rate -> String in
                 if let rate = rate {
                     return "$ \(rate.amount)"
                 } else {
                     return ""
                 }
             }
+            .map { "$ \($0.fiatFormat)" }
     }
 
-    var feeAmount: Driver<Double> {
-        outputDriver.map(\.processingFee)
+    var feeAmount: Driver<String> {
+        outputDriver.map(\.processingFee.convertedFiat)
     }
 
-    var networkFee: Driver<Double> {
-        outputDriver.map(\.networkFee)
+    var networkFee: Driver<String> {
+        outputDriver.map(\.networkFee.convertedFiat)
     }
 
-    var total: Driver<Double> {
-        outputDriver.map(\.total)
+    var total: Driver<String> {
+        outputDriver.map(\.total.convertedFiat)
     }
 
-    var purchaseCost: Driver<Double> {
-        outputDriver.map(\.purchaseCost)
+    var purchaseCost: Driver<String> {
+        outputDriver.map(\.purchaseCost.convertedFiat)
     }
 
     var nextStatus: Driver<NextStatus> {
@@ -262,5 +264,11 @@ private extension BuyPreparingSceneModel {
                     return NextStatus(text: L10n.continue, isEnable: true)
                 }
             }
+    }
+}
+
+private extension Double {
+    var convertedFiat: String {
+        "$ \(toString(maximumFractionDigits: 2, groupingSeparator: " "))"
     }
 }

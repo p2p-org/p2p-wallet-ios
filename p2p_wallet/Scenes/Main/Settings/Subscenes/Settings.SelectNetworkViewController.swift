@@ -6,13 +6,14 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension Settings {
-    class SelectNetworkViewController: SingleSelectionViewController<SolanaSDK.APIEndPoint> {
+    class SelectNetworkViewController: SingleSelectionViewController<APIEndPoint> {
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)
             // initial data
-            SolanaSDK.APIEndPoint.definedEndpoints
+            APIEndPoint.definedEndpoints
                 .forEach {
                     data[$0] = ($0 == Defaults.apiEndPoint)
                 }
@@ -23,13 +24,13 @@ extension Settings {
             navigationItem.title = L10n.network
         }
 
-        override func createCell(item: SolanaSDK.APIEndPoint) -> Cell<SolanaSDK.APIEndPoint> {
+        override func createCell(item: APIEndPoint) -> Cell<APIEndPoint> {
             let cell = super.createCell(item: item)
             cell.label.text = item.address
             return cell
         }
 
-        override func itemDidSelect(_ item: SolanaSDK.APIEndPoint) {
+        override func itemDidSelect(_ item: APIEndPoint) {
             let originalSelectedItem = selectedItem
             super.itemDidSelect(item)
             showAlert(
@@ -52,7 +53,7 @@ extension Settings {
             viewModel.setApiEndpoint(endpoint)
         }
 
-        private func reverseChange(originalSelectedItem: SolanaSDK.APIEndPoint?) {
+        private func reverseChange(originalSelectedItem: APIEndPoint?) {
             guard let item = originalSelectedItem else { return }
             super.itemDidSelect(item)
         }

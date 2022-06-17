@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import RxConcurrency
 import RxSwift
+import SolanaSwift
 
 extension TransactionHandler {
     /// Send and observe transaction
@@ -56,46 +58,49 @@ extension TransactionHandler {
     private func observe(index: TransactionIndex, transactionId: String) {
         let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
 
-        apiClient.getSignatureStatus(signature: transactionId, configs: nil)
-            .subscribe(on: scheduler)
-            .observe(on: MainScheduler.instance)
-            .do(onSuccess: { [weak self] status in
-                guard let self = self else { throw SolanaSDK.Error.unknown }
-                let txStatus: PendingTransaction.TransactionStatus
+        Single.async { [weak self] () -> SignatureStatus in
+            guard let self = self else { throw SolanaError.unknown }
+            return try await self.apiClient.getSignatureStatus(signature: transactionId, configs: nil)
+        }
+        .subscribe(on: scheduler)
+        .observe(on: MainScheduler.instance)
+        .do(onSuccess: { [weak self] status in
+            guard let self = self else { throw SolanaError.unknown }
+            let txStatus: PendingTransaction.TransactionStatus
 
-                if status.confirmations == nil || status.confirmationStatus == "finalized" {
-                    txStatus = .finalized
-                } else {
-                    txStatus = .confirmed(Int(status.confirmations ?? 0))
-                }
-
-                self.updateTransactionAtIndex(index) { currentValue in
-                    var value = currentValue
-                    value.status = txStatus
-                    value.slot = status.slot
-                    return value
-                }
-            })
-            .observe(on: scheduler)
-            .map { $0.confirmations == nil || $0.confirmationStatus == "finalized" }
-            .flatMapCompletable { confirmed in
-                if confirmed { return .empty() }
-                throw ProcessTransaction.Error.notEnoughNumberOfConfirmations
+            if status.confirmations == nil || status.confirmationStatus == "finalized" {
+                txStatus = .finalized
+            } else {
+                txStatus = .confirmed(Int(status.confirmations ?? 0))
             }
-            .retry(maxAttempts: .max, delayInSeconds: 1)
-            .timeout(.seconds(60), scheduler: scheduler)
-            .observe(on: MainScheduler.instance)
-            .subscribe(onCompleted: { // [weak self] in
+
+            self.updateTransactionAtIndex(index) { currentValue in
+                var value = currentValue
+                value.status = txStatus
+                value.slot = status.slot
+                return value
+            }
+        })
+        .observe(on: scheduler)
+        .map { $0.confirmations == nil || $0.confirmationStatus == "finalized" }
+        .flatMapCompletable { confirmed in
+            if confirmed { return .empty() }
+            throw ProcessTransaction.Error.notEnoughNumberOfConfirmations
+        }
+        .retry(maxAttempts: .max, delayInSeconds: 1)
+        .timeout(.seconds(60), scheduler: scheduler)
+        .observe(on: MainScheduler.instance)
+        .subscribe(onCompleted: { // [weak self] in
 //                self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
-            }, onError: { [weak self] error in
-                debugPrint(error)
-                self?.updateTransactionAtIndex(index) { currentValue in
-                    var value = currentValue
-                    value.status = .finalized
-                    return value
-                }
-            })
-            .disposed(by: disposeBag)
+        }, onError: { [weak self] error in
+            debugPrint(error)
+            self?.updateTransactionAtIndex(index) { currentValue in
+                var value = currentValue
+                value.status = .finalized
+                return value
+            }
+        })
+        .disposed(by: disposeBag)
     }
 
     /// Update transaction
@@ -205,9 +210,9 @@ extension TransactionHandler {
                 }
 
                 // add destination wallet if not exists, event when socket is connected, because socket doesn't handle new wallet
-                else if let publicKey = try? SolanaSDK.PublicKey.associatedTokenAddress(
-                    walletAddress: try SolanaSDK.PublicKey(string: transaction.authority),
-                    tokenMintAddress: try SolanaSDK.PublicKey(string: transaction.destinationWallet.mintAddress)
+                else if let publicKey = try? PublicKey.associatedTokenAddress(
+                    walletAddress: try PublicKey(string: transaction.authority),
+                    tokenMintAddress: try PublicKey(string: transaction.destinationWallet.mintAddress)
                 ) {
                     var destinationWallet = transaction.destinationWallet
                     destinationWallet.pubkey = publicKey.base58EncodedString

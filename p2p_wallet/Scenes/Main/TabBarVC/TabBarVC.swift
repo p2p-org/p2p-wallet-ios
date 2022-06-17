@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Intercom
 import Resolver
 import RxSwift
 import UIKit
@@ -101,9 +100,11 @@ final class TabBarVC: BEPagesVC {
     }
 
     private func hideTabBar(_ shouldHide: Bool) {
-        tabBarTopConstraint.isActive = shouldHide
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
+        DispatchQueue.main.async {
+            self.tabBarTopConstraint.isActive = shouldHide
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
         }
     }
 
@@ -157,9 +158,10 @@ final class TabBarVC: BEPagesVC {
 extension TabBarVC: UINavigationControllerDelegate {
     func navigationController(
         _ navigationController: UINavigationController,
-        didShow _: UIViewController,
+        didShow viewController: UIViewController,
         animated _: Bool
     ) {
+        guard viewController.viewIfLoaded?.window != nil else { return }
         let hide = navigationController.viewControllers.count > 1
         guard hide != tabBarIsHidden else { return }
         hideTabBar(hide)
