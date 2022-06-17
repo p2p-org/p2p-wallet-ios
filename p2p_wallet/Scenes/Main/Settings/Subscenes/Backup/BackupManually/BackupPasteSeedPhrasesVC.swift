@@ -12,7 +12,7 @@ class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
     private let rightBarButton = UIBarButtonItem(
         title: L10n.done,
         style: .done,
-        target: self,
+        target: BackupPasteSeedPhrasesVC.self,
         action: #selector(buttonNextDidTouch)
     )
 
