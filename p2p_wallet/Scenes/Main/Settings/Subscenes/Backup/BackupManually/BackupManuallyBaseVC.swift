@@ -55,7 +55,7 @@ class BackupManuallyBaseVC: BaseVC {
 
     @Injected var storage: ICloudStorageType & AccountStorageType & NameStorageType
     @Injected private var clipboardManager: ClipboardManagerType
-    @Injected private var notificationsManager: NotificationsServiceType
+    @Injected private var notificationsManager: NotificationService
 
     override func setUp() {
         super.setUp()

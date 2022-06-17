@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol NewSwapTokenSettingsViewModelType: AnyObject {
     var navigationDriver: Driver<SwapTokenSettings.NavigatableScene?> { get }
@@ -31,7 +33,7 @@ extension SwapTokenSettings {
 
         private let swapViewModel: OrcaSwapV2ViewModelType
         @Injected private var walletRepository: WalletsRepository
-        @Injected private var notificationService: NotificationsService
+        @Injected private var notificationService: NotificationService
 
         // MARK: - Subject
 
@@ -55,9 +57,8 @@ extension SwapTokenSettings {
                             wallet: wallet,
                             tokenLabelText: wallet.token.symbol,
                             isSelected: feePayingToken == wallet,
-                            onTapHandler: {
-                                [weak self] in
-                                    self?.swapViewModel.changeFeePayingToken(to: wallet)
+                            onTapHandler: { [weak self] in
+                                self?.swapViewModel.changeFeePayingToken(to: wallet)
                             }
                         )
                     )

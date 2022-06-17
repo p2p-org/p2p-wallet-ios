@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
@@ -35,9 +36,8 @@ protocol ReceiveSceneModel: BESceneModel {
 
 extension ReceiveToken {
     class SceneModel: NSObject, ReceiveSceneModel {
-        @Injected private var handler: AssociatedTokenAccountHandler
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
         @Injected private var walletsRepository: WalletsRepository
 
         // MARK: - Properties
@@ -61,7 +61,7 @@ extension ReceiveToken {
         private let screenCanHaveHint: Bool
 
         init(
-            solanaPubkey: SolanaSDK.PublicKey,
+            solanaPubkey: PublicKey,
             solanaTokenWallet: Wallet? = nil,
             isOpeningFromToken: Bool = false
         ) {

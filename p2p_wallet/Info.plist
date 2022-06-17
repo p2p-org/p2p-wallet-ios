@@ -30,6 +30,19 @@
 	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
 	<key>MOONPAY_STAGING_API_KEY</key>
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>35.234.120.240:9090</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This is required for the app to read wallet addresses from QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>

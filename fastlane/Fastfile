@@ -23,6 +23,9 @@ IS_CI = ENV["IS_CI"] == "true"
 APP_STORE_CONNECT_TEAM_ID = ENV["APP_STORE_CONNECT_TEAM_ID"]
 DEVELOPER_PORTAL_TEAM_ID = ENV["DEVELOPER_PORTAL_TEAM_ID"]
 
+SLACK_API_TOKEN = ENV["SLACK_API_TOKEN"]
+JIRA_BASE_URL = ENV["JIRA_BASE_URL"]
+
 def delete_temp_keychain(name)
   delete_keychain(
     name: name
@@ -93,7 +96,7 @@ def create_release_build(match_type)
   )
 end
 
-def upload_to_firebase_and_browserstack
+def upload_build(version, is_feature_build, link)
   # upload to firebase
   firebase_app_distribution(
     app: FIREBASE_APP_ID,
@@ -105,6 +108,19 @@ def upload_to_firebase_and_browserstack
   upload_to_browserstack_app_live(
     browserstack_username: BROWSERSTACK_USERNAME,
     browserstack_access_key: BROWSERSTACK_ACCESS_KEY
+  )
+
+  # upload to slack
+  message = "New version #{version} for regression is available"
+  if is_feature_build
+    message = "A build #{version} was uploaded for testing this feature. Link to issue: #{link}"
+  end
+  slack_upload(
+    slack_api_token: SLACK_API_TOKEN,
+    title: "p2p_wallet.ipa",
+    channel: "#p2p-wallet-builds-ios",
+    file_path: "./p2p_wallet.ipa",
+    initial_comment: message
   )
 end 
 
@@ -164,7 +180,7 @@ platform :ios do
     create_release_build('ad-hoc')
 
     # upload to firebase and browser stack
-    upload_to_firebase_and_browserstack
+    upload_build(current_build, true, "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}")
 
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
@@ -174,14 +190,6 @@ platform :ios do
     add_git_tag(tag: tag_name)
     push_git_tags(tag: tag_name)
 
-    # reset file
-    reset_git_repo(
-      force: true,
-      files: [
-        "p2p_wallet.xcodeproj/project.pbxproj"
-      ]
-    )
-
     # output
     if IS_CI
       sh("echo BRANCH_NAME=#{branch} >> $GITHUB_ENV")
@@ -190,9 +198,24 @@ platform :ios do
   end
 
   lane :beta do
-    # increment build number
+    # get version
+    version = get_version_number(target: "p2p_wallet")
+
+    # prepare for tagging
+    tag_prefix = "v"
+
+    # find available build number via tags
+    build_number = 1
+    tag = "#{tag_prefix}#{version}(#{build_number})"
+    while git_tag_exists(tag: tag, remote: true)
+      build_number += 1
+      tag = "#{tag_prefix}#{version}(#{build_number})"
+    end
+
+    # set build number
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
+      build_number: build_number,
       skip_info_plist: true
     )
 
@@ -200,46 +223,58 @@ platform :ios do
     create_release_build('ad-hoc')
 
     # upload to firebase
-    firebase_app_distribution(
-      app: FIREBASE_APP_ID,
-      groups: "dev_team",
-      firebase_cli_token: FIREBASE_CLI_TOKEN
-    )
-
-    # upload to browserstack
-    upload_to_browserstack_app_live(
-      browserstack_username: BROWSERSTACK_USERNAME,
-      browserstack_access_key: BROWSERSTACK_ACCESS_KEY,
-    )
+    upload_build("#{version} (#{build_number})", false, "")
 
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
 
-    # commit
-    commit_changes
+    # tag
+    add_git_tag(tag: tag)
+    push_git_tags(tag: tag)
   end
 
   lane :release do
+    # REQUIREMENT: THERE IS AT LEAST 1 TAG LIKE v1.0.0(1234) THAT HAS ALREADY BEEN PASSED REGRESSION
+
+    # get current build number. Ex. get 1234 from tag v1.0.0(1234)
+    sh('git fetch --tags --no-recurse-submodules')
+    version = get_version_number(target: "p2p_wallet")
+    lt = last_git_tag
+    puts "last_git_tag #{lt}"
+    tag = last_git_tag(pattern: "v#{version}(*")
+    puts "matched tag #{tag}"
+    build_number = tag.sub("v#{version}(", '').sub(")", '')
+
+    # set build number
     increment_build_number(
       xcodeproj: "p2p_wallet.xcodeproj",
+      build_number: build_number,
       skip_info_plist: true
     )
 
+    # create release build
     create_release_build('app-store')
 
+    # upload to testflight
     pilot(
       apple_id: "#{DEVELOPER_APP_ID}",
       app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
-      skip_waiting_for_build_processing: IS_CI,
+      skip_waiting_for_build_processing: true,
       skip_submission: true,
       distribute_external: false,
       notify_external_testers: false,
       ipa: "./p2p_wallet.ipa"
     )
 
-    delete_temp_keychain(TEMP_KEYCHAIN_USER)
+    # post to slack
+    full_version = "#{version} (#{build_number})"
+    post_to_slack(
+      api_token: SLACK_API_TOKEN,
+      message: "Version #{full_version} was uploaded to Testflight and will be available for updating test after a few minutes!",
+      channel: "#p2p-wallet-builds-ios"
+    )
 
-    # commit
-    commit_changes
+    # clean
+    delete_temp_keychain(TEMP_KEYCHAIN_USER)
   end
 end

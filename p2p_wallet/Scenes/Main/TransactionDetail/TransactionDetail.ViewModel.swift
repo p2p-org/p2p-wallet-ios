@@ -6,14 +6,16 @@
 //
 
 import Foundation
+import NameService
 import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 protocol TransactionDetailViewModelType: AnyObject {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> { get }
-    var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> { get }
+    var parsedTransactionDriver: Driver<ParsedTransaction?> { get }
     var senderNameDriver: Driver<String?> { get }
     var receiverNameDriver: Driver<String?> { get }
     var isSummaryAvailableDriver: Driver<Bool> { get }
@@ -38,9 +40,9 @@ extension TransactionDetail {
         @Injected private var transactionHandler: TransactionHandlerType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
-        @Injected private var nameService: NameServiceType
+        @Injected private var nameService: NameService
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected private var notificationService: NotificationsServiceType
+        @Injected private var notificationService: NotificationService
 
         // MARK: - Properties
 
@@ -51,13 +53,13 @@ extension TransactionDetail {
         // MARK: - Subject
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let parsedTransationSubject: BehaviorRelay<SolanaSDK.ParsedTransaction?>
+        private let parsedTransationSubject: BehaviorRelay<ParsedTransaction?>
         private let senderNameSubject = BehaviorRelay<String?>(value: nil)
         private let receiverNameSubject = BehaviorRelay<String?>(value: nil)
 
         // MARK: - Initializers
 
-        init(parsedTransaction: SolanaSDK.ParsedTransaction) {
+        init(parsedTransaction: ParsedTransaction) {
             observingTransactionIndex = nil
             parsedTransationSubject = .init(value: parsedTransaction)
 
@@ -83,7 +85,7 @@ extension TransactionDetail {
                     guard let self = self else { return }
                     self.payingFeeWallet = pendingTransaction?.rawTransaction.payingWallet
                 })
-                .map { [weak self] pendingTransaction -> SolanaSDK.ParsedTransaction? in
+                .map { [weak self] pendingTransaction -> ParsedTransaction? in
                     guard let self = self else { return nil }
                     return pendingTransaction?.parse(
                         pricesService: self.pricesService,
@@ -98,11 +100,11 @@ extension TransactionDetail {
                 .disposed(by: disposeBag)
         }
 
-        func mapNames(parsedTransaction: SolanaSDK.ParsedTransaction?) {
-            var fromAddress: String?
-            var toAddress: String?
-            switch parsedTransaction?.value {
-            case let transaction as SolanaSDK.TransferTransaction:
+        func mapNames(parsedTransaction: ParsedTransaction?) {
+            let fromAddress: String?
+            let toAddress: String?
+            switch parsedTransaction?.info {
+            case let transaction as TransferInfo:
                 fromAddress = transaction.authority ?? transaction.source?.pubkey
                 toAddress = transaction.destinationAuthority ?? transaction.destination?.pubkey
             default:
@@ -113,33 +115,13 @@ extension TransactionDetail {
                 return
             }
 
-            let fromNameRequest: Single<String?>
-            if let fromAddress = fromAddress {
-                fromNameRequest = nameService.getName(fromAddress)
-            } else {
-                fromNameRequest = .just(nil)
+            Task {
+                async let fromName: String? = fromAddress != nil ? nameService.getName(fromAddress!) : nil
+                async let toName: String? = toAddress != nil ? nameService.getName(toAddress!) : nil
+
+                await senderNameSubject.accept(try? fromName?.withNameServiceDomain())
+                await receiverNameSubject.accept(try? toName?.withNameServiceDomain())
             }
-
-            fromNameRequest
-                .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { [weak self] fromName in
-                    self?.senderNameSubject.accept(fromName?.withNameServiceDomain())
-                })
-                .disposed(by: disposeBag)
-
-            let toNameRequest: Single<String?>
-            if let toAddress = toAddress {
-                toNameRequest = nameService.getName(toAddress)
-            } else {
-                toNameRequest = .just(nil)
-            }
-
-            toNameRequest
-                .observe(on: MainScheduler.instance)
-                .subscribe(onSuccess: { [weak self] toName in
-                    self?.receiverNameSubject.accept(toName?.withNameServiceDomain())
-                })
-                .disposed(by: disposeBag)
         }
     }
 }
@@ -149,7 +131,7 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         navigationSubject.asDriver()
     }
 
-    var parsedTransactionDriver: Driver<SolanaSDK.ParsedTransaction?> {
+    var parsedTransactionDriver: Driver<ParsedTransaction?> {
         parsedTransationSubject.asDriver()
     }
 
@@ -165,16 +147,16 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
         parsedTransationSubject
             .asDriver()
             .map { parsedTransaction in
-                switch parsedTransaction?.value {
-                case _ as SolanaSDK.CreateAccountTransaction:
+                switch parsedTransaction?.info {
+                case _ as CreateAccountInfo:
                     return false
-                case _ as SolanaSDK.CloseAccountTransaction:
+                case _ as CloseAccountInfo:
                     return false
 
-                case _ as SolanaSDK.TransferTransaction:
+                case _ as TransferInfo:
                     return true
 
-                case _ as SolanaSDK.SwapTransaction:
+                case _ as SwapInfo:
                     return true
                 default:
                     return false
@@ -196,10 +178,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func getCreatedAccountSymbol() -> String? {
         let createdWallet: String?
-        switch parsedTransationSubject.value?.value {
-        case let transaction as SolanaSDK.TransferTransaction:
+        switch parsedTransationSubject.value?.info {
+        case let transaction as TransferInfo:
             createdWallet = transaction.destination?.token.symbol
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapInfo:
             createdWallet = transaction.destination?.token.symbol
         default:
             return nil
@@ -232,10 +214,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func copySourceAddressToClipboard() {
         let sourceAddress: String?
-        switch parsedTransationSubject.value?.value {
-        case let transaction as SolanaSDK.TransferTransaction:
+        switch parsedTransationSubject.value?.info {
+        case let transaction as TransferInfo:
             sourceAddress = transaction.source?.pubkey
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapInfo:
             sourceAddress = transaction.source?.pubkey
         default:
             return
@@ -249,10 +231,10 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func copyDestinationAddressToClipboard() {
         let destinationAddress: String?
-        switch parsedTransationSubject.value?.value {
-        case let transaction as SolanaSDK.TransferTransaction:
+        switch parsedTransationSubject.value?.info {
+        case let transaction as TransferInfo:
             destinationAddress = transaction.destination?.pubkey
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapInfo:
             destinationAddress = transaction.destination?.pubkey
         default:
             return

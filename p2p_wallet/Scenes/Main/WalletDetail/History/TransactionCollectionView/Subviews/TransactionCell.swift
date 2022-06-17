@@ -7,6 +7,8 @@
 
 import BECollectionView
 import Foundation
+import SolanaSwift
+import TransactionParser
 import UIKit
 
 class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
@@ -80,7 +82,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
     // MARK: - BECollectionViewCell
 
     func setUp(with item: AnyHashable?) {
-        guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
+        guard let transaction = item as? ParsedTransaction else { return }
 
         // clear
         descriptionLabel.text = nil
@@ -90,16 +92,16 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
 
         // description texts
         var isUndefinedTransaction = false
-        switch transaction.value {
-        case let transaction as SolanaSDK.CreateAccountTransaction:
+        switch transaction.info {
+        case let transaction as CreateAccountInfo:
             if let newWallet = transaction.newWallet {
                 descriptionLabel.text = L10n.created(newWallet.token.symbol)
             }
-        case let transaction as SolanaSDK.CloseAccountTransaction:
+        case let transaction as CloseAccountInfo:
             if let closedWallet = transaction.closedWallet {
                 descriptionLabel.text = L10n.closed(closedWallet.token.symbol)
             }
-        case let transaction as SolanaSDK.TransferTransaction:
+        case let transaction as TransferInfo:
             switch transaction.transferType {
             case .send:
                 if let destination = transaction.destination {
@@ -112,7 +114,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
             default:
                 break
             }
-        case let transaction as SolanaSDK.SwapTransaction:
+        case let transaction as SwapInfo:
             if let source = transaction.source,
                let destination = transaction.destination
             {
@@ -127,8 +129,8 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         }
 
         // set up icon
-        switch transaction.value {
-        case let transaction as SolanaSDK.SwapTransaction:
+        switch transaction.info {
+        case let transaction as SwapInfo:
             imageView.setUp(imageType: .fromOneToOne(
                 from: transaction.source?.token,
                 to: transaction.destination?.token
@@ -154,7 +156,7 @@ class TransactionCell: BaseCollectionViewCell, BECollectionViewCell {
         amountInFiatLabel.textColor = .textBlack
         if let amountInFiat = transaction.amountInFiat {
             var amountText =
-                "\(Defaults.fiat.symbol)\(abs(amountInFiat).toString(showMinus: false, autoSetMaximumFractionDigits: true))"
+                "\(Defaults.fiat.symbol)\(abs(amountInFiat).toString(maximumFractionDigits: 2, showMinus: false))"
             var textColor = UIColor.textBlack
             if transaction.amount < 0 {
                 amountText = "- " + amountText

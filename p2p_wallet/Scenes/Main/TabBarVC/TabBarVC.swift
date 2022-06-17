@@ -6,18 +6,19 @@
 //
 
 import Foundation
-import Intercom
 import Resolver
 import RxSwift
 import UIKit
 
 protocol TabBarNeededViewController: UIViewController {}
 
-class TabBarVC: BEPagesVC {
+final class TabBarVC: BEPagesVC {
     lazy var tabBar = NewTabBar()
     @Injected private var helpCenterLauncher: HelpCenterLauncher
     @Injected private var clipboardManager: ClipboardManagerType
     private var tabBarTopConstraint: NSLayoutConstraint!
+
+    fileprivate var tabBarIsHidden: Bool { tabBarTopConstraint.isActive }
 
     deinit {
         debugPrint("\(String(describing: self)) deinited")
@@ -40,12 +41,14 @@ class TabBarVC: BEPagesVC {
         )
         sendTokenVC.doneHandler = { [weak sendTokenVC, weak self] in
             sendTokenVC?.popToRootViewController(animated: false)
-            CATransaction.begin()
-            CATransaction.setCompletionBlock { [weak homeViewModel] in
-                homeViewModel?.scrollToTop()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                CATransaction.begin()
+                CATransaction.setCompletionBlock { [weak homeViewModel] in
+                    homeViewModel?.scrollToTop()
+                }
+                self?.moveToPage(0)
+                CATransaction.commit()
             }
-            self?.moveToPage(0)
-            CATransaction.commit()
         }
 
         let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
@@ -54,7 +57,7 @@ class TabBarVC: BEPagesVC {
             createNavigationController(rootVC: homeVC),
             createNavigationController(rootVC: historyVC),
             createNavigationController(rootVC: sendTokenVC),
-            createNavigationController(rootVC: settingsVC),
+            UINavigationController(rootViewController: settingsVC),
         ]
 
         // disable scrolling
@@ -89,45 +92,48 @@ class TabBarVC: BEPagesVC {
     // MARK: - Helpers
 
     private func createNavigationController(rootVC: UIViewController) -> UINavigationController {
-        let nc = NavigationController(rootViewController: rootVC)
-        nc.hideTabBarHandler = { [weak self] shouldHide in
-            self?.hideTabBar(shouldHide)
-        }
+        let nc = UINavigationController(rootViewController: rootVC)
+        nc.delegate = self
         return nc
     }
 
     private func hideTabBar(_ shouldHide: Bool) {
-        tabBarTopConstraint.isActive = shouldHide
-        containerView.setNeedsLayout()
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
+        DispatchQueue.main.async {
+            self.tabBarTopConstraint.isActive = shouldHide
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
         }
     }
 
     private func configureTabBar() {
         tabBar.stackView.addArrangedSubviews([
-            buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, tag: 0),
-            buttonTabBarItem(image: .tabbarHistory, title: L10n.history, tag: 1),
-            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, tag: 2),
-            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, tag: 10),
-            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, tag: 3),
+            buttonTabBarItem(image: .tabbarWallet, title: L10n.wallet, item: .wallet),
+            buttonTabBarItem(image: .tabbarHistory, title: L10n.history, item: .history),
+            buttonTabBarItem(image: .buttonSend.withRenderingMode(.alwaysTemplate), title: L10n.send, item: .send),
+            buttonTabBarItem(image: .tabbarFeedback, title: L10n.feedback, item: .feedback),
+            buttonTabBarItem(image: .tabbarSettings, title: L10n.settings, item: .settings),
         ])
     }
 
-    private func buttonTabBarItem(image: UIImage, title: String, tag: Int) -> UIView {
-        let item = TabBarItemView(forAutoLayout: ())
-        item.tintColor = .tabbarUnselected
-        item.imageView.image = image
-        item.titleLabel.text = title
-        return item
+    private func buttonTabBarItem(image: UIImage, title: String, item: Item) -> UIView {
+        let itemView = TabBarItemView(forAutoLayout: ())
+        itemView.tintColor = .tabbarUnselected
+        itemView.imageView.image = image
+        itemView.titleLabel.text = title
+        return itemView
             .padding(.init(x: 0, y: 16))
-            .withTag(tag)
+            .withTag(item.rawValue)
             .onTap(self, action: #selector(switchTab(_:)))
     }
 
     @objc func switchTab(_ gesture: UIGestureRecognizer) {
-        let tag = gesture.view!.tag
-        moveToPage(tag)
+        guard let tag = gesture.view?.tag, let item = Item(rawValue: tag) else { return }
+        moveToItem(item)
+    }
+
+    func moveToItem(_ item: Item) {
+        moveToPage(item.rawValue)
     }
 
     override func moveToPage(_ index: Int) {
@@ -145,62 +151,16 @@ class TabBarVC: BEPagesVC {
     }
 }
 
-private final class NavigationController: UINavigationController {
-    var hideTabBarHandler: ((Bool) -> Void)?
-
-    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        guard viewControllers.count >= 1 else {
-            super.pushViewController(viewController, animated: animated)
-            return
-        }
-
-        // check current view controller and pushing view controller
-        let currentVC = viewControllers.last!
-        let pushingVC = viewController
-
-        handleShowHideTabBar(previousVC: currentVC, nextVC: pushingVC)
-
-        super.pushViewController(viewController, animated: animated)
-    }
-
-    override func popViewController(animated: Bool) -> UIViewController? {
-        guard viewControllers.count >= 2 else {
-            return super.popViewController(animated: animated)
-        }
-        // check previous view controller and popping view controller
-        let poppingVC = viewControllers.last!
-        let parentVC = viewControllers[viewControllers.count - 2]
-
-        handleShowHideTabBar(previousVC: poppingVC, nextVC: parentVC)
-
-        return super.popViewController(animated: animated)
-    }
-
-    override func popToRootViewController(animated: Bool) -> [UIViewController]? {
-        guard viewControllers.count >= 2 else {
-            return super.popToRootViewController(animated: animated)
-        }
-        handleShowHideTabBar(previousVC: viewControllers.last!, nextVC: viewControllers.first!)
-        return super.popToRootViewController(animated: animated)
-    }
-
-    private func handleShowHideTabBar(previousVC: UIViewController, nextVC: UIViewController) {
-        // if previous view controller is already TabBarNeededViewController
-        if previousVC is TabBarNeededViewController {
-            // if next VC is not TabBarNeededViewController, hide the tabBar
-            if !(nextVC is TabBarNeededViewController) {
-                hideTabBarHandler?(true)
-            }
-            // else (next VC is also TabBarNeededViewController) do nothing, as showing has already been done in previous step
-        }
-        // if current view controller is not TabBarNeededViewController
-        else {
-            // if next VC is TabBarNeededViewController, show the tabBar
-            if nextVC is TabBarNeededViewController {
-                hideTabBarHandler?(false)
-            }
-            // else (next VC is also not TabBarNeededViewController) do nothing, as hiding has already been done in previous step
-        }
+extension TabBarVC: UINavigationControllerDelegate {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated _: Bool
+    ) {
+        guard viewController.viewIfLoaded?.window != nil else { return }
+        let hide = navigationController.viewControllers.count > 1
+        guard hide != tabBarIsHidden else { return }
+        hideTabBar(hide)
     }
 }
 
@@ -208,5 +168,15 @@ extension UIViewController {
     func tabBar() -> TabBarVC? {
         guard let vc = self as? TabBarVC else { return parent?.tabBar() }
         return vc
+    }
+}
+
+extension TabBarVC {
+    enum Item: Int {
+        case wallet = 0
+        case history = 1
+        case send = 2
+        case feedback = 10
+        case settings = 3
     }
 }

@@ -5,6 +5,8 @@
 //  Created by Chung Tran on 23/11/2021.
 //
 
+import AnalyticsManager
+import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
@@ -17,7 +19,7 @@ extension SendToken.ChooseTokenAndAmount {
 
         // MARK: - Properties
 
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
 
         // MARK: - Subviews
@@ -161,31 +163,32 @@ extension SendToken.ChooseTokenAndAmount {
                 viewModel.amountDriver,
                 viewModel.walletDriver,
                 viewModel.currencyModeDriver
-            )
-                .map { amount, wallet, currencyMode -> String in
-                    guard let wallet = wallet else { return "" }
-                    var equityValue = amount * wallet.priceInCurrentFiat
-                    var equityValueSymbol = Defaults.fiat.code
-                    if currencyMode == .fiat {
-                        if wallet.priceInCurrentFiat > 0 {
-                            equityValue = amount / wallet.priceInCurrentFiat
-                        } else {
-                            equityValue = 0
-                        }
-                        equityValueSymbol = wallet.token.symbol
+            ).map { amount, wallet, currencyMode -> String in
+                guard let wallet = wallet else { return "" }
+
+                var equityValue = amount * wallet.priceInCurrentFiat
+                var equityValueSymbol = Defaults.fiat.code
+                if currencyMode == .fiat {
+                    if wallet.priceInCurrentFiat > 0 {
+                        equityValue = amount / wallet.priceInCurrentFiat
+                    } else {
+                        equityValue = 0
                     }
-                    return equityValueSymbol + " " + equityValue.toString(maximumFractionDigits: 9)
+                    equityValueSymbol = wallet.token.symbol
                 }
-                .asDriver(onErrorJustReturn: nil)
-                .drive(equityValueLabel.rx.text)
-                .disposed(by: disposeBag)
+                let value = currencyMode != .fiat
+                    ? equityValue.toString(maximumFractionDigits: 2, groupingSeparator: " ")
+                    : equityValue.toString(maximumFractionDigits: 9, groupingSeparator: "")
+                return equityValueSymbol + " " + value
+            }
+            .asDriver()
+            .drive(equityValueLabel.rx.text)
+            .disposed(by: disposeBag)
 
             // amount
             amountTextField.rx.text
-                .map { $0?.double }
-                .distinctUntilChanged()
-                .subscribe(onNext: { [weak self] amount in
-                    self?.viewModel.enterAmount(amount)
+                .subscribe(onNext: { [weak self] text in
+                    self?.viewModel.enterAmount(Double(text ?? "") ?? 0)
                 })
                 .disposed(by: disposeBag)
 
@@ -211,15 +214,13 @@ extension SendToken.ChooseTokenAndAmount {
                 viewModel.currencyModeDriver
             )
                 .map { [weak self] wallet, mode -> String? in
-                    guard let wallet = wallet,
-                          let amount = self?.viewModel.calculateAvailableAmount() else { return nil }
-                    var string = amount.toString(maximumFractionDigits: 9)
-                    string += " "
-                    if mode == .fiat {
-                        string += Defaults.fiat.code
-                    } else {
-                        string += wallet.token.symbol
-                    }
+                    guard
+                        let wallet = wallet,
+                        let amount = self?.viewModel.calculateAvailableAmount()
+                    else { return nil }
+
+                    var string = amount.toString(maximumFractionDigits: mode == .fiat ? 2 : 9) + " "
+                    string += mode == .fiat ? Defaults.fiat.code : wallet.token.symbol
                     return string
                 }
 
@@ -301,13 +302,12 @@ extension SendToken.ChooseTokenAndAmount {
         }
 
         @objc private func actionButtonDidTouch() {
-            if viewModel.isTokenValidForSelectedNetwork() {
-                viewModel.save()
-                if viewModel.showAfterConfirmation {
-                    viewModel.navigate(to: .backToConfirmation)
-                } else {
-                    viewModel.navigateNext()
-                }
+            guard viewModel.isTokenValidForSelectedNetwork() else { return }
+            viewModel.save()
+            if viewModel.showAfterConfirmation {
+                viewModel.navigate(to: .backToConfirmation)
+            } else {
+                viewModel.navigateNext()
             }
         }
     }

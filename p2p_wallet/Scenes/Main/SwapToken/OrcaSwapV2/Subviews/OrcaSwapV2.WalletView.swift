@@ -6,10 +6,13 @@
 //
 
 import Action
+import AnalyticsManager
 import BEPureLayout
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 extension OrcaSwapV2 {
@@ -21,7 +24,7 @@ extension OrcaSwapV2 {
         private let disposeBag = DisposeBag()
         private let viewModel: OrcaSwapV2ViewModelType
         private let type: WalletType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         private lazy var balanceView = BalanceView(forAutoLayout: ())
         private lazy var iconImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
@@ -209,20 +212,16 @@ extension OrcaSwapV2 {
                 })
                 .disposed(by: disposeBag)
 
-            // equity value label
-//            equityValueLabelDriver
-//                .drive(equityValueLabel.rx.text)
-//                .disposed(by: disposeBag)
-
-            amountTextField.rx.text
+            amountTextField.rx.controlEvent(.editingChanged)
                 .filter { [weak self] _ in self?.amountTextField.isFirstResponder == true }
-                .distinctUntilChanged()
-                .map { $0?.double }
-                .subscribe(onNext: { [weak self] double in
-                    if self?.type == .source {
-                        self?.viewModel.enterInputAmount(double)
-                    } else if self?.type == .destination {
-                        self?.viewModel.enterEstimatedAmount(double)
+                .subscribe(onNext: { [weak self] _ in
+                    guard let self = self else { return }
+                    let amount = self.amountTextField.text?.double
+
+                    if self.type == .source {
+                        self.viewModel.enterInputAmount(amount)
+                    } else if self.type == .destination {
+                        self.viewModel.enterEstimatedAmount(amount)
                     }
                 })
                 .disposed(by: disposeBag)

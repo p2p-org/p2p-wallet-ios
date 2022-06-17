@@ -5,9 +5,13 @@
 //  Created by Chung Tran on 05/03/2022.
 //
 
+import AnalyticsManager
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
+import TransactionParser
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
@@ -15,22 +19,22 @@ protocol TransactionHandlerType {
     func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PendingTransaction?>
     func areSomeTransactionsInProgress() -> Bool
 
-    func observeProcessingTransactions(forAccount account: String) -> Observable<[SolanaSDK.ParsedTransaction]>
-    func observeProcessingTransactions() -> Observable<[SolanaSDK.ParsedTransaction]>
+    func observeProcessingTransactions(forAccount account: String) -> Observable<[ParsedTransaction]>
+    func observeProcessingTransactions() -> Observable<[ParsedTransaction]>
 
-    func getProccessingTransactions(of account: String) -> [SolanaSDK.ParsedTransaction]
-    func getProcessingTransaction() -> [SolanaSDK.ParsedTransaction]
+    func getProccessingTransactions(of account: String) -> [ParsedTransaction]
+    func getProcessingTransaction() -> [ParsedTransaction]
 
     var onNewTransaction: Observable<(trx: PendingTransaction, index: Int)> { get }
 }
 
 class TransactionHandler: TransactionHandlerType {
-    @Injected var notificationsService: NotificationsServiceType
+    @Injected var notificationsService: NotificationService
     @Injected var analyticsManager: AnalyticsManager
-    @Injected var apiClient: ProcessTransactionAPIClient
+    @Injected var apiClient: SolanaAPIClient
     @Injected var walletsRepository: WalletsRepository
     @Injected var pricesService: PricesServiceType
-    @Injected var socket: SocketType
+    @Injected var socket: AccountObservableService
 
     let disposeBag = DisposeBag()
     let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
@@ -75,13 +79,13 @@ class TransactionHandler: TransactionHandlerType {
 
     func observeProcessingTransactions(
         forAccount account: String
-    ) -> Observable<[SolanaSDK.ParsedTransaction]> {
+    ) -> Observable<[ParsedTransaction]> {
         transactionsSubject
             .map { [weak self] _ in self?.getProccessingTransactions(of: account) ?? [] }
             .asObservable()
     }
 
-    func observeProcessingTransactions() -> Observable<[SolanaSDK.ParsedTransaction]> {
+    func observeProcessingTransactions() -> Observable<[ParsedTransaction]> {
         transactionsSubject
             .map { [weak self] _ in self?.getProcessingTransaction() ?? [] }
             .asObservable()
@@ -89,7 +93,7 @@ class TransactionHandler: TransactionHandlerType {
 
     func getProccessingTransactions(
         of account: String
-    ) -> [SolanaSDK.ParsedTransaction] {
+    ) -> [ParsedTransaction] {
         transactionsSubject.value
             .filter { pt in
                 switch pt.rawTransaction {
@@ -112,14 +116,14 @@ class TransactionHandler: TransactionHandlerType {
                 }
                 return false
             }
-            .compactMap { pt -> SolanaSDK.ParsedTransaction? in
+            .compactMap { pt -> ParsedTransaction? in
                 pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
             }
     }
 
-    func getProcessingTransaction() -> [SolanaSDK.ParsedTransaction] {
+    func getProcessingTransaction() -> [ParsedTransaction] {
         transactionsSubject.value
-            .compactMap { pt -> SolanaSDK.ParsedTransaction? in
+            .compactMap { pt -> ParsedTransaction? in
                 pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
             }
     }

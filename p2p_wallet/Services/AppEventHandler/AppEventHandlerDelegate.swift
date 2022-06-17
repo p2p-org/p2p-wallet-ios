@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 protocol AppEventHandlerDelegate: AnyObject {
     func createWalletDidComplete()
@@ -13,7 +14,7 @@ protocol AppEventHandlerDelegate: AnyObject {
 
     func onboardingDidFinish(resolvedName: String?)
 
-    func userDidChangeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
+    func userDidChangeAPIEndpoint(to endpoint: APIEndPoint)
     func userDidChangeLanguage(to language: LocalizedLanguage)
     func userDidLogout()
 }

@@ -14,8 +14,8 @@ import SolanaSwift
 /// The ``Result`` type is temporary solution, since the caller need to know more information about transaction (account address or symbol).
 /// TODO: Make result more abstract
 protocol HistoryStreamSource {
-    /// The result that contains ``SignatureInfo``, account and symbol.
-    typealias Result = (signatureInfo: SolanaSDK.SignatureInfo, account: String, symbol: String)
+    /// The result that contains signatureInfo, account and symbol.
+    typealias Result = (signatureInfo: SignatureInfo, account: String, symbol: String)
 
     /// Fetches next single transaction that satisfies the configuration.
     ///
