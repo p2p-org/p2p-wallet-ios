@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import SolanaSwift
 
 class TokenAmountTextField: BEDecimalTextField {
-    private var decimals: SolanaSDK.Decimals?
+    private var decimals: Decimals?
     var value: Double {
         text.map { $0.double ?? 0 } ?? 0
     }
 
-    func setUp(decimals: SolanaSDK.Decimals?) {
+    func setUp(decimals: Decimals?) {
         self.decimals = decimals
         if let currentValue = text?.double?.toLamport(decimals: decimals ?? 9),
            currentValue == 0

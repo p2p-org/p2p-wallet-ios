@@ -5,14 +5,16 @@
 //  Created by Chung Tran on 11/4/20.
 //
 
+import AnalyticsManager
 import AVFoundation
 import Foundation
+import Resolver
 import UIKit
 
 class QrCodeScannerVC: BaseVC {
     // MARK: - Dependencies
 
-    @Injected var analyticsManager: AnalyticsManagerType
+    @Injected var analyticsManager: AnalyticsManager
 
     // MARK: - Properties
 
