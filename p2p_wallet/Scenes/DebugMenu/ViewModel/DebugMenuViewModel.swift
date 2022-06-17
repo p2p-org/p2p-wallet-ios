@@ -7,8 +7,15 @@
 
 import Combine
 import FirebaseRemoteConfig
+import SwiftyUserDefaults
 
 final class DebugMenuViewModel: ObservableObject {
+    @Published var networkLoggerVisible = isShown {
+        didSet {
+            updateNetworkLoggerState()
+        }
+    }
+
     @Published var features: [FeatureItem]
 
     init() {
@@ -33,6 +40,10 @@ final class DebugMenuViewModel: ObservableObject {
                 )
             )
         )
+    }
+
+    private func updateNetworkLoggerState() {
+        showDebugger(networkLoggerVisible)
     }
 }
 

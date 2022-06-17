@@ -12,7 +12,7 @@ target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
   common_pods
-#  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
+  pod 'CocoaDebug', :configurations => ['Debug']
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
