@@ -7,6 +7,7 @@
 
 import Foundation
 import RxCocoa
+import SolanaSwift
 
 protocol OrcaSwapV2ConfirmSwappingViewModelType: DetailFeesViewModelType {
     var sourceWalletDriver: Driver<Wallet?> { get }

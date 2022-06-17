@@ -9,6 +9,8 @@ import BEPureLayout
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension TransactionDetail {
@@ -29,13 +31,13 @@ extension TransactionDetail {
                     // Swap
                     swapSection()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: SolanaSDK.SwapTransaction.self)
+                            showView(view, onlyWhenTransactionIs: SwapInfo.self)
                         }
 
                     // Transfer
                     transferSection()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: SolanaSDK.TransferTransaction.self)
+                            showView(view, onlyWhenTransactionIs: TransferInfo.self)
                         }
 
                     // Fee
@@ -44,7 +46,7 @@ extension TransactionDetail {
                     // Total
                     totalSectionForTransfer()
                         .setup { view in
-                            showView(view, onlyWhenTransactionIs: SolanaSDK.TransferTransaction.self)
+                            showView(view, onlyWhenTransactionIs: TransferInfo.self)
                         }
                 }
             }
@@ -57,7 +59,7 @@ extension TransactionDetail {
 
         private func swapSection() -> BEVStack {
             let swapTransactionDriver = viewModel.parsedTransactionDriver
-                .map { $0?.value as? SolanaSDK.SwapTransaction }
+                .map { $0?.info as? SwapInfo }
 
             return BEVStack(spacing: 8) {
                 BEHStack(spacing: 12) {
@@ -125,7 +127,7 @@ extension TransactionDetail {
                     .withContentHuggingPriority(.required, for: .horizontal)
                     .setup { label in
                         viewModel.parsedTransactionDriver
-                            .map { $0?.value is SolanaSDK.SwapTransaction }
+                            .map { $0?.info is SwapInfo }
                             .map { $0 ? L10n.swapFees : L10n.transferFee }
                             .drive(label.rx.text)
                             .disposed(by: disposeBag)
@@ -261,7 +263,7 @@ extension TransactionDetail {
                             }
                     }
                     .setup { view in
-                        showView(view, onlyWhenTransactionIs: SolanaSDK.SwapTransaction.self)
+                        showView(view, onlyWhenTransactionIs: SwapInfo.self)
                     }
                 }
             }
@@ -343,7 +345,7 @@ extension TransactionDetail {
             if withFiatValue {
                 attStr.text(" ")
                     .text(
-                        "(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol)?.toString(maximumFractionDigits: 9) ?? "0"))",
+                        "(~\(Defaults.fiat.symbol)\(viewModel.getAmountInCurrentFiat(amountInToken: amount, symbol: symbol)?.toString(maximumFractionDigits: 2) ?? "0"))",
                         size: 15,
                         color: .textSecondary
                     )
@@ -357,7 +359,7 @@ extension TransactionDetail {
 
         private func showView<T: Hashable>(_ view: UIView, onlyWhenTransactionIs _: T.Type) {
             viewModel.parsedTransactionDriver
-                .map { $0?.value is T }
+                .map { $0?.info is T }
                 .map { !$0 }
                 .drive(view.rx.isHidden)
                 .disposed(by: disposeBag)

@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import RxConcurrency
 import RxSwift
 
 extension History {
@@ -24,7 +25,7 @@ extension History {
             try await Observable
                 .from(sources)
                 .flatMap { source -> Observable<HistoryStreamSource.Result?> in
-                    Observable.asyncThrowing { () -> HistoryStreamSource.Result? in try await source.currentItem() }
+                    Observable.async { () -> HistoryStreamSource.Result? in try await source.first() }
                 }
                 .reduce(nil) { (mostFirst: HistoryStreamSource.Result?, trx: HistoryStreamSource.Result?) -> HistoryStreamSource.Result? in
                     guard let t1 = trx?.0.blockTime else { return mostFirst }

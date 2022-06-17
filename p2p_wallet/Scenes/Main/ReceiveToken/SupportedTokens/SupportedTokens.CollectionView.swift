@@ -18,7 +18,7 @@ extension SupportedTokens {
                 ),
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
-                    let tokens = viewModel.getData(type: SolanaSDK.Token.self)
+                    let tokens = viewModel.getData(type: Token.self)
                     let sections: [SectionInfo] = [
                         .init(userInfo: 0, items: tokens),
                     ]

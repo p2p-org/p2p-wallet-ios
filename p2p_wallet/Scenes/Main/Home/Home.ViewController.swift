@@ -6,8 +6,11 @@
 //
 
 import Action
+import AnalyticsManager
 import Foundation
+import Resolver
 import RxCocoa
+import SolanaSwift
 import UIKit
 
 extension Home {
@@ -18,7 +21,7 @@ extension Home {
 
         // MARK: - Dependencies
 
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         private let viewModel: HomeViewModelType
 
         // MARK: - Properties
@@ -65,7 +68,8 @@ extension Home {
                 .asDriver(onErrorJustReturn: .initializing)
                 .map { $0 == .error }
                 .drive(onNext: { [weak self] hasError in
-                    if hasError, self?.viewModel.walletsRepository.getError()?.asAFError != nil {
+                    // TODO: catch network error!
+                    if hasError, self?.viewModel.walletsRepository.getError() != nil {
                         self?.view.showConnectionErrorView(refreshAction: CocoaAction { [weak self] in
                             self?.viewModel.walletsRepository.reload()
                             return .just(())
@@ -96,7 +100,7 @@ extension Home {
                     animated: true
                 )
             case .receiveToken:
-                if let pubkey = try? SolanaSDK.PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
+                if let pubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let vm = ReceiveToken.SceneModel(
                         solanaPubkey: pubkey,
                         solanaTokenWallet: nil

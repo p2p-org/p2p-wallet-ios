@@ -49,7 +49,7 @@ extension DerivableAccounts {
             addressLabel.text = account.info.publicKey.short()
 
             balanceInFiatLabel.text = (account.amount * account.price)
-                .toString(maximumFractionDigits: 4, groupingSeparator: " ")
+                .toString(maximumFractionDigits: 2, groupingSeparator: " ")
                 + Defaults.fiat.symbol
             balanceLabel.text = account.amount?.toString(maximumFractionDigits: 9) + " " + "SOL"
         }

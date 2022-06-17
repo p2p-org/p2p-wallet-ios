@@ -91,7 +91,7 @@ extension SendToken {
     }
 }
 
-private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPrice: Double?) -> NSAttributedString {
+private func feeAmountToAttributedString(feeAmount: FeeAmount?, solPrice: Double?) -> NSAttributedString {
     guard let feeAmount = feeAmount else {
         return NSAttributedString()
     }
@@ -111,7 +111,7 @@ private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPri
     if let solPrice = solPrice {
         amount *= solPrice
         amountString = "~\(Defaults.fiat.symbol)" + amount
-            .toString(maximumFractionDigits: 9, autoSetMaximumFractionDigits: true)
+            .toString(maximumFractionDigits: 2)
     }
 
     let attrString = NSMutableAttributedString()

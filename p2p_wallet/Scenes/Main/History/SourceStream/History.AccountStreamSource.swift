@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension History {
     /// The class that retrieves all sequential transactions as stream from defined account.
@@ -29,7 +30,7 @@ extension History {
         private let bufferSize: Int = 15
 
         /// A stream's buffer
-        private var buffer: [SolanaSDK.SignatureInfo] = []
+        private var buffer: [SignatureInfo] = []
 
         /// A indicator that shows emptiness of transaction.
         private(set) var isEmpty: Bool = false

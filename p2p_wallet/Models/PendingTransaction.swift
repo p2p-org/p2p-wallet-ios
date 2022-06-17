@@ -7,6 +7,8 @@
 
 import Foundation
 import RxSwift
+import SolanaSwift
+import TransactionParser
 
 struct PendingTransaction {
     enum TransactionStatus {
@@ -83,9 +85,9 @@ struct PendingTransaction {
 }
 
 extension PendingTransaction {
-    func parse(pricesService: PricesServiceType, authority: String? = nil) -> SolanaSDK.ParsedTransaction? {
+    func parse(pricesService: PricesServiceType, authority: String? = nil) -> ParsedTransaction? {
         // status
-        let status: SolanaSDK.ParsedTransaction.Status
+        let status: ParsedTransaction.Status
 
         switch self.status {
         case .sending:
@@ -102,38 +104,38 @@ extension PendingTransaction {
 
         var value: AnyHashable?
         let amountInFiat: Double?
-        let fee: SolanaSDK.FeeAmount?
+        let fee: FeeAmount?
 
         switch rawTransaction {
         case let transaction as ProcessTransaction.SendTransaction:
             let amount = transaction.amount.convertToBalance(decimals: transaction.sender.token.decimals)
-            value = SolanaSDK.TransferTransaction(
+            value = TransferInfo(
                 source: transaction.sender,
                 destination: Wallet(pubkey: transaction.receiver.address, lamports: 0, token: transaction.sender.token),
                 authority: authority,
                 destinationAuthority: nil,
-                amount: amount,
-                myAccount: transaction.sender.pubkey
+                rawAmount: amount,
+                account: transaction.sender.pubkey
             )
             amountInFiat = amount * pricesService.currentPrice(for: transaction.sender.token.symbol)?.value
             fee = transaction.feeInToken
         case let transaction as ProcessTransaction.SwapTransaction:
             var destinationWallet = transaction.destinationWallet
-            if let authority = try? SolanaSDK.PublicKey(string: authority),
-               let mintAddress = try? SolanaSDK.PublicKey(string: destinationWallet.mintAddress)
+            if let authority = try? PublicKey(string: authority),
+               let mintAddress = try? PublicKey(string: destinationWallet.mintAddress)
             {
-                destinationWallet.pubkey = try? SolanaSDK.PublicKey.associatedTokenAddress(
+                destinationWallet.pubkey = try? PublicKey.associatedTokenAddress(
                     walletAddress: authority,
                     tokenMintAddress: mintAddress
                 ).base58EncodedString
             }
 
-            value = SolanaSDK.SwapTransaction(
+            value = SwapInfo(
                 source: transaction.sourceWallet,
                 sourceAmount: transaction.amount,
                 destination: destinationWallet,
                 destinationAmount: transaction.estimatedAmount,
-                myAccountSymbol: nil
+                accountSymbol: nil
             )
             amountInFiat = transaction.amount * pricesService.currentPrice(for: transaction.sourceWallet.token.symbol)?
                 .value
@@ -145,7 +147,7 @@ extension PendingTransaction {
         return .init(
             status: status,
             signature: signature,
-            value: value,
+            info: value,
             amountInFiat: amountInFiat,
             slot: slot,
             blockTime: sentAt,

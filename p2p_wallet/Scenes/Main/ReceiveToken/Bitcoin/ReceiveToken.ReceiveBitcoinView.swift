@@ -116,7 +116,7 @@ private extension ReceiveTokenBitcoinViewModelType {
         processingTxsDriver
             .map { trx in
                 guard let lastTrx = trx.first,
-                      let receiveAt = lastTrx.submittedAt else { return L10n.none }
+                      let receiveAt = lastTrx.submitedAt else { return L10n.none }
 
                 // Time formatter
                 let formatter = RelativeDateTimeFormatter()
@@ -130,7 +130,7 @@ private extension ReceiveTokenBitcoinViewModelType {
     func timeRemainsDriver() -> Driver<NSAttributedString?> {
         timerSignal.map { [weak self] in
             guard let self = self else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
-            guard let endAt = self.getSessionEndDate()
+            guard let endAt = self.sessionEndDate
             else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
             let currentDate = Date()
             let calendar = Calendar.current

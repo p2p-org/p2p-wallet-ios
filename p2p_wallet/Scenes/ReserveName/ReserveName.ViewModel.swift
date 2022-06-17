@@ -5,8 +5,10 @@
 //  Created by Andrew Vasiliev on 26.11.2021.
 //
 
+import AnalyticsManager
 import Foundation
 import GT3Captcha
+import NameService
 import Resolver
 import RxCocoa
 import RxSwift
@@ -32,14 +34,14 @@ extension ReserveName {
     class ViewModel: NSObject {
         // MARK: - Dependencies
 
-        @Injected private var notificationsService: NotificationsServiceType
-        @Injected private var analyticsManager: AnalyticsManagerType
-        private let nameService: NameServiceType = Resolver.resolve()
+        @Injected private var notificationsService: NotificationService
+        @Injected private var analyticsManager: AnalyticsManager
+        private let nameService: NameService = Resolver.resolve()
         private let owner: String
         private let reserveNameHandler: ReserveNameHandler?
         private lazy var manager: GT3CaptchaManager = {
             let manager = GT3CaptchaManager(
-                api1: nameService.captchaAPI1Url,
+                api1: NameServiceImpl.captchaAPI1Url,
                 api2: nil,
                 timeout: 10
             )
@@ -108,29 +110,33 @@ extension ReserveName {
 
             usernameValidationLoadingSubject.accept(true)
 
-            nameAvailabilityDisposable = nameService.isNameAvailable(string)
-                .subscribe(
-                    onSuccess: { [weak self] in
-                        let state: TextFieldState = $0 ? .available(name: string) : .unavailable(name: string)
-                        self?.textFieldStateSubject.accept(state)
-                        self?.mainButtonStateSubject.accept($0 ? .canContinue : .unavailableUsername)
-                        self?.usernameValidationLoadingSubject.accept(false)
-                    }
-                )
+            nameAvailabilityDisposable = Single.async { [weak self] in
+                try await self?.nameService.isNameAvailable(string) ?? false
+            }
+            .subscribe(
+                onSuccess: { [weak self] in
+                    let state: TextFieldState = $0 ? .available(name: string) : .unavailable(name: string)
+                    self?.textFieldStateSubject.accept(state)
+                    self?.mainButtonStateSubject.accept($0 ? .canContinue : .unavailableUsername)
+                    self?.usernameValidationLoadingSubject.accept(false)
+                }
+            )
         }
 
         private func checkIfUsernameHasAlreadyBeenRegistered() {
             isLoadingSubject.accept(true)
-            nameService.getName(owner)
-                .subscribe(onSuccess: { [weak self] name in
-                    self?.isLoadingSubject.accept(false)
+
+            Task {
+                do {
+                    let name = try await nameService.getName(owner)
+                    isLoadingSubject.accept(false)
                     if let name = name {
-                        self?.nameDidReserve(name)
+                        await nameDidReserve(name)
                     }
-                }, onFailure: { [weak self] _ in
-                    self?.isLoadingSubject.accept(false)
-                })
-                .disposed(by: disposeBag)
+                } catch {
+                    isLoadingSubject.accept(false)
+                }
+            }
         }
 
         private func setEmptyState() {
@@ -147,28 +153,39 @@ extension ReserveName {
             analyticsManager.log(event: .usernameSaved(lastScreen: "Onboarding"))
 
             isLoadingSubject.accept(true)
-            nameService
-                .post(
-                    name: name,
-                    params: .init(
-                        owner: owner,
-                        credentials: .init(
-                            geetest_validate: geetest_validate,
-                            geetest_seccode: geetest_seccode,
-                            geetest_challenge: geetest_challenge
+
+            Task {
+                do {
+                    _ = try await nameService
+                        .post(
+                            name: name,
+                            params: .init(
+                                owner: owner,
+                                credentials: .init(
+                                    geetest_validate: geetest_validate,
+                                    geetest_seccode: geetest_seccode,
+                                    geetest_challenge: geetest_challenge
+                                )
+                            )
                         )
-                    )
-                )
-                .subscribe(onSuccess: { [weak self] _ in
-                    self?.isLoadingSubject.accept(false)
-                    self?.nameDidReserve(name)
-                }, onFailure: { [weak self] error in
-                    self?.isLoadingSubject.accept(false)
-                    self?.notificationsService.showInAppNotification(.error(error))
-                })
-                .disposed(by: disposeBag)
+                    isLoadingSubject.accept(false)
+                    await nameDidReserve(name)
+                } catch {
+                    isLoadingSubject.accept(false)
+                    if let error = error as? NameServiceError,
+                       error == .invalidStatusCode(500)
+                    {
+                        notificationsService
+                            .showInAppNotification(.error(L10n
+                                    .theNameServiceIsExperiencingSomeIssuesPleaseTryAgainLater))
+                        return
+                    }
+                    notificationsService.showInAppNotification(.error(error))
+                }
+            }
         }
 
+        @MainActor
         private func nameDidReserve(_ name: String) {
             reserveNameHandler?.handleName(name)
             analyticsManager.log(event: .usernameReserved)
@@ -244,7 +261,11 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
 
 extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
     func gtCaptcha(_: GT3CaptchaManager, errorHandler error: GT3Error) {
-        notificationsService.showInAppNotification(.error(error))
+        if error.isNameServiceUnavailable {
+            mainButtonStateSubject.accept(.unavailableNameService)
+        }
+        notificationsService
+            .showInAppNotification(.message(error.readableDescription))
     }
 
     func gtCaptcha(

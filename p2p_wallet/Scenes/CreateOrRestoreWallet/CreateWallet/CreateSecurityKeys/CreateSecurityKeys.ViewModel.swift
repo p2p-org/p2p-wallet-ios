@@ -5,9 +5,11 @@
 //  Created by Chung Tran on 22/02/2021.
 //
 
+import AnalyticsManager
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
@@ -31,11 +33,11 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         private let createWalletViewModel: CreateWalletViewModelType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected private var notificationsService: NotificationsServiceType
+        @Injected private var notificationsService: NotificationService
         @Injected var imageSaver: ImageSaverType
 
         // MARK: - Subjects
