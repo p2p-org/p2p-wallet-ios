@@ -73,7 +73,8 @@ extension BuyPreparing {
                                 .drive(onNext: { [weak self, weak view] tokens in
                                     if let token = tokens.first(where: { token in
                                         self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
-                                            .symbol == self?.viewModel.crypto.solanaCode
+                                            .symbol.lowercased() == self?.viewModel.crypto.solanaCode
+                                            .lowercased() && token.address == self?.viewModel.crypto.mintAddress
                                     }) {
                                         view?.setUp(token: token)
                                     }
