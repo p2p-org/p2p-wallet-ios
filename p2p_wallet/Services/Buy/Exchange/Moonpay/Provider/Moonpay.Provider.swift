@@ -24,6 +24,9 @@ extension Moonpay {
                 "apiKey": api.apiKey,
                 "baseCurrencyCode": baseCurrencyCode,
                 "areFeesIncluded": "true",
+                // Undocumented params which makes results equal to web
+                "fixed": "true",
+                "regionalPricing": "true",
             ] as [String: Any]
 
             if let baseCurrencyAmount = baseCurrencyAmount {
@@ -34,10 +37,14 @@ extension Moonpay {
             }
 
             var components = URLComponents(string: api.endpoint + "/currencies/\(quoteCurrencyCode)/buy_quote")!
-            components.queryItems = params.compactMap { key, value in
-                guard let value = value as? String else { return nil }
-                return URLQueryItem(name: key, value: value)
-            }
+            components.queryItems = params
+                .mapValues { value -> Any in
+                    value is Double ? String(value as! Double) : value
+                }
+                .compactMap { key, value in
+                    guard let value = value as? String else { return nil }
+                    return URLQueryItem(name: key, value: value)
+                }
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
             let urlRequest = URLRequest(url: components.url!)
 
@@ -55,11 +62,15 @@ extension Moonpay {
         }
 
         func getPrice(for crypto: String, as currency: String) async throws -> Double {
-            guard let url = URL(string: api.endpoint + "/currencies/\(crypto)/ask_price")
-            else {
-                throw MoonpayProviderError.unknown
+            var components = URLComponents(string: api.endpoint + "/currencies/\(crypto)/ask_price")!
+            let params = ["apiKey": api.apiKey]
+            components.queryItems = params.map { key, value in
+                URLQueryItem(name: key, value: value)
             }
-            let (data, _) = try await URLSession.shared.data(from: url)
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+            let urlRequest = URLRequest(url: components.url!)
+
+            let (data, _) = try await URLSession.shared.data(from: urlRequest)
             guard let json = try? JSONDecoder().decode([String: Double].self, from: data)
             else { return 0 }
             return json[currency] ?? 0
