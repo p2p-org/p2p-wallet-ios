@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 enum ConfirmReceivingBitcoin {
     enum NavigatableScene {

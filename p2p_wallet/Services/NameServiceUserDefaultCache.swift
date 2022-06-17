@@ -1,30 +1,13 @@
 //
-//  NameServiceCache.swift
+//  NameServiceUserDefaultCache.swift
 //  p2p_wallet
 //
-//  Created by Chung Tran on 10/03/2022.
+//  Created by Chung Tran on 07/06/2022.
 //
 
 import Foundation
-
-protocol NameServiceCacheType {
-    func save(_ name: String?, for owner: String)
-    func getName(for owner: String) -> NameServiceSearchResult?
-}
-
-enum NameServiceSearchResult {
-    case notRegisteredYet
-    case registered(String)
-
-    var name: String? {
-        switch self {
-        case .notRegisteredYet:
-            return nil
-        case let .registered(string):
-            return string
-        }
-    }
-}
+import NameService
+import Resolver
 
 class NameServiceUserDefaultCache: NameServiceCacheType {
     @Injected private var walletsRepository: WalletsRepository

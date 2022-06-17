@@ -114,7 +114,7 @@ extension ProcessTransaction.Status {
                     .padding(.init(top: 0, left: 18, bottom: 14, right: 18))
                     .setup { view in
                         viewModel.pendingTransactionDriver
-                            .map { $0.status.error as? FeeRelayer.Error != .topUpSuccessButTransactionThrows }
+                            .map { $0.status.error as? FeeRelayerError != .topUpSuccessButTransactionThrows }
                             .drive(view.rx.isHidden)
                             .disposed(by: disposeBag)
                     }
