@@ -45,7 +45,7 @@ extension BuyTokenSelection {
             Cell()
                 .setup { cell in
                     if let wallet = walletRepository.getWallets().first(where: {
-                        $0.token.symbol == cryptoCurrency.name
+                        $0.token.symbol == cryptoCurrency.name && $0.token.address == cryptoCurrency.mintAddress
                     }) {
                         cell.setup(wallet: wallet)
                     } else {
