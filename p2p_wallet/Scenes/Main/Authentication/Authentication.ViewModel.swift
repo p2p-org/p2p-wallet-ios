@@ -7,6 +7,7 @@
 
 import Foundation
 import LocalAuthentication
+import Resolver
 import RxCocoa
 import RxSwift
 

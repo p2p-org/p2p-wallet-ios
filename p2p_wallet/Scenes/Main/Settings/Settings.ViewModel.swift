@@ -5,17 +5,21 @@
 //  Created by Chung Tran on 11/10/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import LocalAuthentication
+import RenVMSwift
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol ChangeLanguageResponder {
     func languageDidChange(to: LocalizedLanguage)
 }
 
 protocol ChangeNetworkResponder {
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint)
+    func changeAPIEndpoint(to endpoint: APIEndPoint)
 }
 
 protocol LogoutResponder {
@@ -41,7 +45,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
     func showOrReserveUsername()
     func setDidBackup(_ didBackup: Bool)
     func setFiat(_ fiat: Fiat)
-    func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint)
+    func setApiEndpoint(_ endpoint: APIEndPoint)
     func setEnabledBiometry(_ enabledBiometry: Bool, onError: @escaping (Error?) -> Void)
     func changePincode()
     func savePincode(_ pincode: String)
@@ -61,7 +65,7 @@ extension Settings {
         // MARK: - Dependencies
 
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var logoutResponder: LogoutResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
@@ -70,7 +74,7 @@ extension Settings {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected var notificationsService: NotificationService
         @Injected private var pricesService: PricesServiceType
-        @Injected private var renVMService: RenVMLockAndMintServiceType
+        @Injected private var renVMService: LockAndMintService
         @Injected private var imageSaver: ImageSaverType
 
         // MARK: - Properties
@@ -85,7 +89,7 @@ extension Settings {
         private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
             .didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
-        private let endpointSubject = BehaviorRelay<SolanaSDK.APIEndPoint>(value: Defaults.apiEndPoint)
+        private let endpointSubject = BehaviorRelay<APIEndPoint>(value: Defaults.apiEndPoint)
         private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?
             .overrideUserInterfaceStyle)
@@ -219,15 +223,16 @@ extension Settings.ViewModel: SettingsViewModelType {
         notificationsService.showInAppNotification(.done(L10n.currencyChanged))
     }
 
-    func setApiEndpoint(_ endpoint: SolanaSDK.APIEndPoint) {
+    func setApiEndpoint(_ endpoint: APIEndPoint) {
+        guard Defaults.apiEndPoint != endpoint else { return }
         endpointSubject.accept(endpoint)
-
         analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
-        if Defaults.apiEndPoint.network != endpoint.network {
-            renVMService.expireCurrentSession()
+        Task {
+            try await renVMService.expireCurrentSession()
+            await MainActor.run {
+                changeNetworkResponder.changeAPIEndpoint(to: endpoint)
+            }
         }
-
-        changeNetworkResponder.changeAPIEndpoint(to: endpoint)
     }
 
     var isBiometryEnabledDriver: Driver<Bool> { isBiometryEnabledSubject.asDriver() }

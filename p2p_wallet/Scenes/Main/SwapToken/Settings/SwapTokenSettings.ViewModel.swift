@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol NewSwapTokenSettingsViewModelType: AnyObject {
     var navigationDriver: Driver<SwapTokenSettings.NavigatableScene?> { get }
@@ -55,9 +57,8 @@ extension SwapTokenSettings {
                             wallet: wallet,
                             tokenLabelText: wallet.token.symbol,
                             isSelected: feePayingToken == wallet,
-                            onTapHandler: {
-                                [weak self] in
-                                    self?.swapViewModel.changeFeePayingToken(to: wallet)
+                            onTapHandler: { [weak self] in
+                                self?.swapViewModel.changeFeePayingToken(to: wallet)
                             }
                         )
                     )

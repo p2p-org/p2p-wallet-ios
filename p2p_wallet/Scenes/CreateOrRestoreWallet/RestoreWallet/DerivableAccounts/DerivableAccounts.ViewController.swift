@@ -5,15 +5,18 @@
 //  Created by Chung Tran on 18/05/2021.
 //
 
+import AnalyticsManager
 import BECollectionView
 import Foundation
+import Resolver
+import SolanaSwift
 
 extension DerivableAccounts {
     class ViewController: BaseVC {
         // MARK: - Properties
 
         private let viewModel: DrivableAccountsViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Subviews
 
@@ -126,7 +129,7 @@ extension DerivableAccounts {
             }
         }
 
-        func derivablePathsVC(didSelectPath path: SolanaSDK.DerivablePath) {
+        func derivablePathsVC(didSelectPath path: DerivablePath) {
             viewModel.selectDerivationPath(path)
             analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: path.rawValue))
         }
