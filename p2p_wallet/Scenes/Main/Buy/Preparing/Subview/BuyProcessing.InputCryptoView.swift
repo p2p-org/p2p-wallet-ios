@@ -52,7 +52,7 @@ extension BuyPreparing {
                             keyboardType: .decimalPad,
                             placeholder: "0",
                             autocorrectionType: .no
-                        ).setup { [weak self] view in
+                        ).setup { view in
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
                                 view.becomeFirstResponder()
                             }
