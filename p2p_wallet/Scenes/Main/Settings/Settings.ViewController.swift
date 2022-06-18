@@ -11,7 +11,6 @@ import UIKit
 
 extension Settings {
     class ViewController: p2p_wallet.BaseViewController {
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         let viewModel: SettingsViewModelType
 
         init(viewModel: SettingsViewModelType) {
@@ -22,14 +21,11 @@ extension Settings {
         override func setUp() {
             super.setUp()
             view.backgroundColor = .settingsBackground
+            navigationItem.title = L10n.settings
         }
 
         override func build() -> UIView {
             BEVStack {
-                NewWLNavigationBar(initialTitle: L10n.settings, separatorEnable: false)
-                    .onBack { [unowned self] in self.back() }
-                    .backIsHidden(!viewModel.canGoBack)
-
                 BEScrollView(contentInsets: .init(x: 18, y: 18), spacing: 36) {
                     // Acount section
                     SectionView(title: L10n.profile) {

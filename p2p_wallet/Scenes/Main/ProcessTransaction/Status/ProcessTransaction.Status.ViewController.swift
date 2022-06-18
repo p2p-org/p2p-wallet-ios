@@ -172,25 +172,11 @@ extension ProcessTransaction.Status {
                         WLStepButton.main(
                             image: .buttonCheckSmall,
                             text: L10n.done
-                        )
-                            .onTap { [weak self] in
-                                self?.dismiss(animated: true) { [weak self] in
-                                    self?.doneHandler?()
-                                }
+                        ).onTap { [weak self] in
+                            self?.dismiss(animated: true) { [weak self] in
+                                self?.doneHandler?()
                             }
-//                        WLStepButton.sub(text: L10n.increaseMaximumPriceSlippage)
-//                            .setup { subButton in
-//                                viewModel.pendingTransactionDriver
-//                                    .map {
-//                                        $0.status.error?.readableDescription != L10n
-//                                            .swapInstructionExceedsDesiredSlippageLimit
-//                                    }
-//                                    .drive(subButton.rx.isHidden)
-//                                    .disposed(by: disposeBag)
-//                            }
-//                            .onTap { [weak self] in
-//                                self?.viewModel.handleErrorRetryOrMakeAnotherTransaction()
-//                            }
+                        }
                     }
                     .padding(.init(x: 18, y: 0))
                 }

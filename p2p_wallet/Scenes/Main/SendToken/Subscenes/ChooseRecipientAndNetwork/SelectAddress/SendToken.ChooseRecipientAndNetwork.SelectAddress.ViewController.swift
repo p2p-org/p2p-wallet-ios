@@ -10,27 +10,37 @@ import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
 
-        // MARK: - Properties
+        var customView: RootView {
+            guard let customView = view as? RootView else {
+                preconditionFailure("A custom view should be of type \(RootView.self)")
+            }
+            return customView
+        }
 
         // MARK: - Inititalizer
 
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
             self.viewModel = viewModel
             super.init()
+            navigationItem.title = L10n.address
         }
 
         // MARK: - Methods
 
         override func loadView() {
             view = RootView(viewModel: viewModel)
+        }
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            DispatchQueue.main.async {
+                guard !self.customView.addressInputView.isHidden else { return }
+                self.customView.addressTextField.becomeFirstResponder()
+            }
         }
 
         override func bind() {
@@ -55,7 +65,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     return false
                 }
                 vc.modalPresentationStyle = .custom
-                present(vc, animated: true, completion: nil)
+                present(vc, animated: true)
             case .selectPayingWallet:
                 let vm = ChooseWallet.ViewModel(selectedWallet: nil, handler: viewModel, showOtherWallets: false)
                 vm.customFilter = { $0.amount > 0 }
@@ -63,7 +73,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     title: L10n.payTheFeeWith(viewModel.getFeeInCurrentFiat()),
                     viewModel: vm
                 )
-                present(vc, animated: true, completion: nil)
+                present(vc, animated: true)
             }
         }
     }
