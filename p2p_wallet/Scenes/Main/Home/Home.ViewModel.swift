@@ -9,6 +9,7 @@ import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaPricesAPIs
 
 protocol HomeViewModelType: ReserveNameHandler {
     var navigationDriver: Driver<Home.NavigatableScene?> { get }

@@ -5,17 +5,21 @@
 //  Created by Chung Tran on 23/11/2021.
 //
 
+import AnalyticsManager
 import FeeRelayerSwift
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler,
     SendTokenSelectNetworkViewModelType
 {
+    var navigationSubject: BehaviorRelay<SendToken.NavigatableScene?> { get }
     var relayMethod: SendTokenRelayMethod { get }
     var canGoBack: Bool { get }
-    var navigationDriver: Driver<SendToken.NavigatableScene> { get }
+    var navigationDriver: Driver<SendToken.NavigatableScene?> { get }
     var loadingStateDriver: Driver<LoadableState> { get }
 
     func getPrice(for symbol: String) -> Double
@@ -24,7 +28,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func getSelectedRecipient() -> SendToken.Recipient?
     func getSelectedNetwork() -> SendToken.Network
     func getSelectedAmount() -> Double?
-    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
+    func getFreeTransactionFeeLimit() -> Single<UsageStatus>
 
     func reload()
     func navigate(to scene: SendToken.NavigatableScene)
@@ -42,7 +46,7 @@ extension SendToken {
         // MARK: - Dependencies
 
         @Injected private var authenticationHandler: AuthenticationHandlerType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
         let sendService: SendServiceType
@@ -55,8 +59,7 @@ extension SendToken {
 
         // MARK: - Subject
 
-        private let navigationSubject =
-            BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(showAfterConfirmation: false))
+        let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         let amountSubject = BehaviorRelay<Double?>(value: nil)
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
@@ -119,7 +122,7 @@ extension SendToken {
             loadingStateSubject.accept(.loading)
 
             Completable.zip(
-                sendService.load(),
+                Completable.async { try await self.sendService.load() },
                 walletsRepository.stateObservable
                     .filter { $0 == .loaded }
                     .take(1)
@@ -190,7 +193,7 @@ extension SendToken {
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
-    var navigationDriver: Driver<SendToken.NavigatableScene> {
+    var navigationDriver: Driver<SendToken.NavigatableScene?> {
         navigationSubject.asDriver()
     }
 
@@ -218,8 +221,8 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         sendService
     }
 
-    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
-        sendService.getFreeTransactionFeeLimit()
+    func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
+        Single.async { try await self.sendService.getFreeTransactionFeeLimit() }
     }
 
     func navigate(to scene: SendToken.NavigatableScene) {

@@ -11,10 +11,6 @@ import UIKit
 
 extension EnterSeed {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: EnterSeedViewModelType
@@ -38,6 +34,13 @@ extension EnterSeed {
 
         override func setUp() {
             super.setUp()
+            navigationItem.title = L10n.enterYourSecurityKey
+            navigationItem.rightBarButtonItem = UIBarButtonItem(
+                image: .info,
+                style: .plain,
+                target: self,
+                action: #selector(info)
+            )
         }
 
         override func bind() {
@@ -76,6 +79,10 @@ extension EnterSeed {
                 )
                 present(vc, interactiveDismissalType: .standard, completion: nil)
             }
+        }
+
+        @objc func info() {
+            viewModel.showInfo()
         }
     }
 }

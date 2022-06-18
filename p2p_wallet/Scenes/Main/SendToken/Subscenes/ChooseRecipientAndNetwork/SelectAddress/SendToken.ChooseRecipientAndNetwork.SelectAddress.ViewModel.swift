@@ -5,7 +5,9 @@
 //  Created by Chung Tran on 29/11/2021.
 //
 
+import AnalyticsManager
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
@@ -55,8 +57,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
         @Injected private var clipboardManager: ClipboardManagerType
-        @Injected private var analyticsManager: AnalyticsManagerType
-        @Injected private var solanaSDK: SolanaSDK
+        @Injected private var analyticsManager: AnalyticsManager
+        @Injected private var solanaAPIClient: SolanaAPIClient
 
         let minSolForSending = 0.0009
         private let amount: Double
@@ -141,18 +143,19 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
         recipientDriver
             .withLatestFrom(walletDriver) { ($0, $1) }
             .asObservable()
-            .flatMapLatest { [weak self] recipient, wallet -> Observable<String?> in
-                guard let self = self,
-                      let wallet = wallet,
-                      wallet.isNativeSOL,
-                      self.amount < self.minSolForSending
-                else { return .just(nil) }
-                return self.solanaSDK.getBalance(account: recipient?.address, commitment: nil)
-                    .map { [weak self] balance in
-                        guard let self = self, balance == 0 else { return nil }
-                        return L10n.youCanTSendLessThan("\(self.minSolForSending) SOL")
-                    }
-                    .asObservable()
+            .flatMapLatest { recipient, wallet -> Observable<String?> in
+                Single<String?>.async { [weak self] in
+                    guard let self = self,
+                          let wallet = wallet,
+                          wallet.isNativeSOL,
+                          self.amount < self.minSolForSending,
+                          let address = recipient?.address
+                    else { return nil }
+                    let balance = try await self.solanaAPIClient.getBalance(account: address, commitment: nil)
+                    guard balance == 0 else { return nil }
+                    return L10n.youCanTSendLessThan("\(self.minSolForSending) SOL")
+                }
+                .asObservable()
             }
             .asDriver()
     }
