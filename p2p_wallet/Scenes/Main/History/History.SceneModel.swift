@@ -191,18 +191,35 @@ extension History {
             .asObservable()
             .flatMap { results in Observable.from(results) }
             .flatMap { result in
-                // TODO: FIX
-                Single.async { () -> [ParsedTransaction] in
-                    let transactionInfo = try await self.transactionRepository
-                        .getTransaction(signature: result.0.signature)
-                    let transaction = try await self.transactionParser.parse(
-                        signatureInfo: result.0,
-                        transactionInfo: transactionInfo,
-                        account: result.1,
-                        symbol: result.2
-                    )
+                Single.async {
+                    do {
+                        let transactionInfo = try await self.transactionRepository
+                            .getTransaction(signature: result.0.signature)
+                        let transaction = try await self.transactionParser.parse(
+                            signatureInfo: result.0,
+                            transactionInfo: transactionInfo,
+                            account: result.1,
+                            symbol: result.2
+                        )
+                        return [transaction]
+                    } catch {
+                        var blockTime: Date?
+                        if let time = result.0.blockTime {
+                            blockTime = Date(timeIntervalSince1970: TimeInterval(time))
+                        }
 
-                    return [transaction]
+                        let trx = ParsedTransaction(
+                            status: .confirmed,
+                            signature: result.0.signature,
+                            info: nil,
+                            slot: result.0.slot,
+                            blockTime: blockTime,
+                            fee: nil,
+                            blockhash: nil
+                        )
+
+                        return [trx]
+                    }
                 }
             }
             .do(onError: { [weak self] error in
