@@ -6,11 +6,9 @@ import Foundation
 
 extension History {
     class EmptyStreamSource: HistoryStreamSource {
-        func next(configuration _: FetchingConfiguration) -> AsyncThrowingStream<HistoryStreamSource.Result, Error> {
-            AsyncThrowingStream<HistoryStreamSource.Result, Error> { stream in stream.finish() }
-        }
+        func next(configuration _: FetchingConfiguration) async throws -> HistoryStreamSource.Result? { nil }
 
-        func first() async throws -> HistoryStreamSource.Result? { nil }
+        func currentItem() async throws -> HistoryStreamSource.Result? { nil }
 
         func reset() {}
     }
