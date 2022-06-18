@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 import SolanaSwift
@@ -60,7 +61,7 @@ extension ReceiveToken {
         private let screenCanHaveHint: Bool
 
         init(
-            solanaPubkey: SolanaSDK.PublicKey,
+            solanaPubkey: PublicKey,
             solanaTokenWallet: Wallet? = nil,
             isOpeningFromToken: Bool = false
         ) {

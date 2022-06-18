@@ -26,10 +26,6 @@ extension EnterSeedInfo {
             view = RootView(viewModel: viewModel)
         }
 
-        override func setUp() {
-            super.setUp()
-        }
-
         override func bind() {
             super.bind()
             viewModel.navigationDriver

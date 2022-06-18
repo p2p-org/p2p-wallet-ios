@@ -5,6 +5,7 @@
 //  Created by Andrew Vasiliev on 27.12.2021.
 //
 
+import SolanaSwift
 import UIKit
 
 extension SwapTokenSettings {

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Intercom
 import Resolver
 import RxSwift
 import UIKit
@@ -19,6 +18,10 @@ final class TabBarVC: BEPagesVC {
     @Injected private var clipboardManager: ClipboardManagerType
     private var tabBarTopConstraint: NSLayoutConstraint!
 
+    private var coordinator: SendToken.Coordinator?
+
+    fileprivate var tabBarIsHidden: Bool { tabBarTopConstraint.isActive }
+
     deinit {
         debugPrint("\(String(describing: self)) deinited")
     }
@@ -30,17 +33,15 @@ final class TabBarVC: BEPagesVC {
         let homeViewModel = Home.ViewModel()
         let homeVC = Home.ViewController(viewModel: homeViewModel)
         let historyVC = History.Scene()
-        let sendTokenVC = SendToken.ViewController(
-            viewModel: SendToken.ViewModel(
+        if coordinator == nil {
+            let vm = SendToken.ViewModel(
                 walletPubkey: nil,
                 destinationAddress: nil,
                 relayMethod: .default,
                 canGoBack: false
             )
-        )
-        sendTokenVC.doneHandler = { [weak sendTokenVC, weak self] in
-            sendTokenVC?.popToRootViewController(animated: false)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            coordinator = SendToken.Coordinator(viewModel: vm, navigationController: nil)
+            coordinator?.doneHandler = { [weak self] in
                 CATransaction.begin()
                 CATransaction.setCompletionBlock { [weak homeViewModel] in
                     homeViewModel?.scrollToTop()
@@ -49,14 +50,16 @@ final class TabBarVC: BEPagesVC {
                 CATransaction.commit()
             }
         }
+        let sendTokenNavigationVC = coordinator?.start() as! UINavigationController
+        sendTokenNavigationVC.delegate = self
 
-        let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
+        let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel())
 
         viewControllers = [
             createNavigationController(rootVC: homeVC),
             createNavigationController(rootVC: historyVC),
-            createNavigationController(rootVC: sendTokenVC),
-            createNavigationController(rootVC: settingsVC),
+            sendTokenNavigationVC,
+            UINavigationController(rootViewController: settingsVC),
         ]
 
         // disable scrolling
@@ -91,18 +94,17 @@ final class TabBarVC: BEPagesVC {
     // MARK: - Helpers
 
     private func createNavigationController(rootVC: UIViewController) -> UINavigationController {
-        let nc = NavigationController(rootViewController: rootVC)
-        nc.hideTabBarHandler = { [weak self] shouldHide in
-            self?.hideTabBar(shouldHide)
-        }
+        let nc = UINavigationController(rootViewController: rootVC)
+        nc.delegate = self
         return nc
     }
 
     private func hideTabBar(_ shouldHide: Bool) {
-        tabBarTopConstraint.isActive = shouldHide
-        containerView.setNeedsLayout()
-        UIView.animate(withDuration: 0.3) {
-            self.view.layoutIfNeeded()
+        DispatchQueue.main.async {
+            self.tabBarTopConstraint.isActive = shouldHide
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
         }
     }
 
@@ -151,62 +153,18 @@ final class TabBarVC: BEPagesVC {
     }
 }
 
-private final class NavigationController: UINavigationController {
-    var hideTabBarHandler: ((Bool) -> Void)?
+// MARK: - UINavigationControllerDelegate
 
-    override func pushViewController(_ viewController: UIViewController, animated: Bool) {
-        guard viewControllers.count >= 1 else {
-            super.pushViewController(viewController, animated: animated)
-            return
-        }
-
-        // check current view controller and pushing view controller
-        let currentVC = viewControllers.last!
-        let pushingVC = viewController
-
-        handleShowHideTabBar(previousVC: currentVC, nextVC: pushingVC)
-
-        super.pushViewController(viewController, animated: animated)
-    }
-
-    override func popViewController(animated: Bool) -> UIViewController? {
-        guard viewControllers.count >= 2 else {
-            return super.popViewController(animated: animated)
-        }
-        // check previous view controller and popping view controller
-        let poppingVC = viewControllers.last!
-        let parentVC = viewControllers[viewControllers.count - 2]
-
-        handleShowHideTabBar(previousVC: poppingVC, nextVC: parentVC)
-
-        return super.popViewController(animated: animated)
-    }
-
-    override func popToRootViewController(animated: Bool) -> [UIViewController]? {
-        guard viewControllers.count >= 2 else {
-            return super.popToRootViewController(animated: animated)
-        }
-        handleShowHideTabBar(previousVC: viewControllers.last!, nextVC: viewControllers.first!)
-        return super.popToRootViewController(animated: animated)
-    }
-
-    private func handleShowHideTabBar(previousVC: UIViewController, nextVC: UIViewController) {
-        // if previous view controller is already TabBarNeededViewController
-        if previousVC is TabBarNeededViewController {
-            // if next VC is not TabBarNeededViewController, hide the tabBar
-            if !(nextVC is TabBarNeededViewController) {
-                hideTabBarHandler?(true)
-            }
-            // else (next VC is also TabBarNeededViewController) do nothing, as showing has already been done in previous step
-        }
-        // if current view controller is not TabBarNeededViewController
-        else {
-            // if next VC is TabBarNeededViewController, show the tabBar
-            if nextVC is TabBarNeededViewController {
-                hideTabBarHandler?(false)
-            }
-            // else (next VC is also not TabBarNeededViewController) do nothing, as hiding has already been done in previous step
-        }
+extension TabBarVC: UINavigationControllerDelegate {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated _: Bool
+    ) {
+        guard viewController.viewIfLoaded?.window != nil else { return }
+        let hide = navigationController.viewControllers.count > 1
+        guard hide != tabBarIsHidden else { return }
+        hideTabBar(hide)
     }
 }
 

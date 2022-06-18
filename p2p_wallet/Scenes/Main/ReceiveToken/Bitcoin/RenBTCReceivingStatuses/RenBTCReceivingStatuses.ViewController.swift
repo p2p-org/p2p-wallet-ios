@@ -11,7 +11,7 @@ import RenVMSwift
 import UIKit
 
 extension RenBTCReceivingStatuses {
-    class ViewController: BEScene {
+    class ViewController: BaseViewController {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
@@ -45,8 +45,8 @@ extension RenBTCReceivingStatuses {
                         mapDataToSections: { viewModel in
                             CollectionViewMappingStrategy.byData(
                                 viewModel: viewModel,
-                                forType: RenVM.LockAndMint.ProcessingTx.self,
-                                where: \RenVM.LockAndMint.ProcessingTx.submittedAt
+                                forType: LockAndMint.ProcessingTx.self,
+                                where: \LockAndMint.ProcessingTx.submitedAt
                             )
                         },
                         layout: .init(
@@ -87,7 +87,7 @@ extension RenBTCReceivingStatuses {
 
 extension RenBTCReceivingStatuses.ViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let tx = item as? RenVM.LockAndMint.ProcessingTx else { return }
+        guard let tx = item as? LockAndMint.ProcessingTx else { return }
         viewModel.showDetail(txid: tx.tx.txid)
     }
 

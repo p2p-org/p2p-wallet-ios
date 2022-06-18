@@ -16,3 +16,6 @@
 [submodule "RenVMSwift"]
 	path = RenVMSwift
 	url = git@github.com:p2p-org/RenVMSwift.git
+[submodule "KeyAppKit"]
+	path = KeyAppKit
+	url = git@github.com:p2p-org/key-app-kit-swift.git
