@@ -104,9 +104,7 @@ extension History {
         }
 
         func buildSource() {
-            let cachedTransactionRepository: CachingTransactionRepository = .init(
-                delegate: SolanaTransactionRepository()
-            )
+            let cachedTransactionRepository = SolanaTransactionRepository()
             let cachedTransactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
 
             if let accountSymbol = accountSymbol {
@@ -148,7 +146,7 @@ extension History {
                     var results: [HistoryStreamSource.Result] = []
                     do {
                         while true {
-                            let firstTrx = try await source.first()
+                            let firstTrx = try await source.currentItem()
                             guard
                                 let firstTrx = firstTrx,
                                 let rawTime = firstTrx.0.blockTime
@@ -162,11 +160,10 @@ extension History {
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 1)
 
                             if Task.isCancelled { return }
-                            for try await result in source.next(
-                                configuration: .init(timestampEnd: timeEndFilter)
-                            ) {
-                                if Task.isCancelled { return }
-
+                            while
+                                let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter)),
+                                Task.isNotCancelled
+                            {
                                 let (signatureInfo, _, _) = result
 
                                 // Skip duplicated transaction
