@@ -33,7 +33,7 @@ extension SendToken.ChooseTokenAndAmount {
         private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium, textColor: .textSecondary)
         private let coinLogoImageView = CoinLogoImageView(size: 44, cornerRadius: 12)
         private let coinSymbolLabel = UILabel(text: "SOL", textSize: 20, weight: .semibold)
-        private lazy var amountTextField: TokenAmountTextField = {
+        lazy var amountTextField: TokenAmountTextField = {
             let tf = TokenAmountTextField(
                 font: .systemFont(ofSize: 27, weight: .semibold),
                 textColor: .textBlack,
@@ -77,7 +77,6 @@ extension SendToken.ChooseTokenAndAmount {
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) { [weak self] in
-                self?.amountTextField.becomeFirstResponder()
                 #if DEBUG
                     if self?.viewModel.showAfterConfirmation == false {
                         self?.amountTextField.text = 0.0001.toString(maximumFractionDigits: 9, groupingSeparator: "")

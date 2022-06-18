@@ -8,33 +8,58 @@
 
 import BEPureLayout
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SafariServices
+import WebKit
 
 extension BuyPreparing {
-    class Scene: BaseViewController {
+    final class Scene: BaseViewController {
         private let viewModel: BuyPreparingSceneModel
         private let infoToggle = BehaviorRelay<Bool>(value: false)
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
 
         init(viewModel: BuyPreparingSceneModel) {
             self.viewModel = viewModel
             super.init()
+            navigationItem.title = L10n.buying(viewModel.crypto.fullname)
         }
 
-        override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            view.endEditing(true)
+        }
+
+        // MARK: - Navigation
+
+        private func navigateToWeb() {
+            do {
+                let factory: BuyProcessingFactory = Resolver.resolve()
+                let provider = try factory.create(
+                    walletRepository: viewModel.walletsRepository,
+                    crypto: viewModel.crypto,
+                    initialAmount: viewModel.amount,
+                    currency: .usd
+                )
+                let dataTypes = Set([WKWebsiteDataTypeCookies,
+                                     WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeSessionStorage,
+                                     WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeIndexedDBDatabases])
+                WKWebsiteDataStore.default()
+                    .removeData(ofTypes: dataTypes, modifiedSince: Date.distantPast) { [weak self] in
+                        let vc = SFSafariViewController(url: URL(string: provider.getUrl())!)
+                        vc.modalPresentationStyle = .automatic
+                        self?.present(vc, animated: true)
+                    }
+            } catch let e {
+                debugPrint(e)
+            }
         }
 
         override func build() -> UIView {
             BEZStack {
                 // Content
                 BEZStackPosition(mode: .fill) {
-                    BEVStack {
-                        NewWLNavigationBar(initialTitle: L10n.buying(viewModel.crypto.fullname))
-                            .onBack { [unowned self] in self.viewModel.back() }
-                        content()
-                    }
+                    content()
                 }
                 BEZStackPosition(mode: .pinEdges([.left, .bottom, .right], avoidKeyboard: true)) {
                     // Bottom Button
@@ -44,7 +69,7 @@ extension BuyPreparing {
                                 viewModel.nextStatus.map(\.text).drive(view.rx.text).disposed(by: disposeBag)
                                 viewModel.nextStatus.map(\.isEnable).drive(view.rx.isEnabled).disposed(by: disposeBag)
                             }
-                            .onTap { [unowned self] in self.viewModel.next() }
+                            .onTap { [unowned self] in navigateToWeb() }
                             .padding(.init(all: 18))
                     }
                 }
@@ -80,8 +105,7 @@ extension BuyPreparing {
                             BEHStack(alignment: .center) {
                                 UILabel(text: L10n.hideFees)
                                     .setup { view in
-                                        self
-                                            .infoToggle
+                                        self.infoToggle
                                             .asDriver()
                                             .drive(onNext: { [weak view] value in
                                                 view?.text = value ? L10n.hideFees : L10n.showFees
@@ -90,8 +114,7 @@ extension BuyPreparing {
                                     }
                                 UIImageView(image: .chevronDown, tintColor: .black)
                                     .setup { view in
-                                        self
-                                            .infoToggle
+                                        self.infoToggle
                                             .asDriver()
                                             .drive(onNext: { [weak view] value in
                                                 view?.image = value ? .chevronUp : .chevronDown

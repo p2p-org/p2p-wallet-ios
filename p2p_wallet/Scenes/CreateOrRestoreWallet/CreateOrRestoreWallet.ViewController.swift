@@ -12,10 +12,6 @@ import UIKit
 
 extension CreateOrRestoreWallet {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: CreateOrRestoreWalletViewModelType
@@ -111,7 +107,7 @@ extension CreateOrRestoreWallet {
             switch scene {
             case .createWallet:
                 let vm = CreateWallet.ViewModel()
-                let vc = CreateWallet.ViewController(viewModel: vm)
+                let vc = CreateWallet.ExplanationVC(viewModel: vm)
                 show(vc, sender: nil)
             case .restoreWallet:
                 let vm = RestoreWallet.ViewModel()

@@ -16,6 +16,7 @@ import TransactionParser
 protocol TransactionDetailViewModelType: AnyObject {
     var navigationDriver: Driver<TransactionDetail.NavigatableScene?> { get }
     var parsedTransactionDriver: Driver<ParsedTransaction?> { get }
+    var navigationTitle: Driver<String> { get }
     var senderNameDriver: Driver<String?> { get }
     var receiverNameDriver: Driver<String?> { get }
     var isSummaryAvailableDriver: Driver<Bool> { get }
@@ -133,6 +134,50 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     var parsedTransactionDriver: Driver<ParsedTransaction?> {
         parsedTransationSubject.asDriver()
+    }
+
+    var navigationTitle: Driver<String> {
+        parsedTransactionDriver
+            .map { parsedTransaction -> String in
+                var text = L10n.transaction
+
+                switch parsedTransaction?.info {
+                case let createAccountTransaction as CreateAccountInfo:
+                    if let createdToken = createAccountTransaction.newWallet?.token.symbol {
+                        text = L10n.created(createdToken)
+                    }
+                case let closedAccountTransaction as CloseAccountInfo:
+                    if let closedToken = closedAccountTransaction.closedWallet?.token.symbol {
+                        text = L10n.closed(closedToken)
+                    }
+
+                case let transferTransaction as TransferInfo:
+                    if let symbol = transferTransaction.source?.token.symbol,
+                       let receiverPubkey = transferTransaction.destination?.pubkey
+                    {
+                        text = symbol + " → " + receiverPubkey
+                            .truncatingMiddle(numOfSymbolsRevealed: 4, numOfSymbolsRevealedInSuffix: 4)
+                    }
+
+                case let swapTransaction as SwapInfo:
+                    if let sourceSymbol = swapTransaction.source?.token.symbol ?? swapTransaction.source?
+                        .mintAddress.truncatingMiddle(
+                            numOfSymbolsRevealed: 4,
+                            numOfSymbolsRevealedInSuffix: 4
+                        ),
+                        let destinationSymbol = swapTransaction.destination?.token.symbol ?? swapTransaction
+                            .destination?.mintAddress.truncatingMiddle(
+                                numOfSymbolsRevealed: 4,
+                                numOfSymbolsRevealedInSuffix: 4
+                            )
+                    {
+                        text = sourceSymbol + " → " + destinationSymbol
+                    }
+                default:
+                    break
+                }
+                return text
+            }
     }
 
     var senderNameDriver: Driver<String?> {

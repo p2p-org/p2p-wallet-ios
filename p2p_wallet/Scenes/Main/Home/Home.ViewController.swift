@@ -15,10 +15,6 @@ import UIKit
 
 extension Home {
     class ViewController: BaseVC, TabBarNeededViewController {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
@@ -27,12 +23,14 @@ extension Home {
         // MARK: - Properties
 
         fileprivate let interactor = MenuInteractor()
+        private var coordinator: SendToken.Coordinator?
 
         // MARK: - Initializer
 
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
             super.init()
+            navigationItem.title = L10n.p2PWallet
         }
 
         // MARK: - Methods
@@ -44,6 +42,11 @@ extension Home {
         override func viewDidLoad() {
             super.viewDidLoad()
             analyticsManager.log(event: .mainScreenWalletsOpen)
+        }
+
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            navigationController?.setNavigationBarHidden(false, animated: true)
         }
 
         override func bind() {
@@ -93,8 +96,12 @@ extension Home {
             case .buyToken:
                 present(
                     BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
-                        let vm = BuyRoot.ViewModel()
-                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
+                        let vc = BuyPreparing.Scene(
+                            viewModel: BuyPreparing.SceneModel(
+                                crypto: crypto,
+                                exchangeService: Resolver.resolve()
+                            )
+                        )
                         show(vc, sender: nil)
                     }),
                     animated: true
@@ -130,7 +137,7 @@ extension Home {
                     vc.callback = qrCodeScannerHandler(code:)
                     vc.transitioningDelegate = self
                     vc.modalPresentationStyle = .custom
-                    self.present(vc, animated: true, completion: nil)
+                    self.present(vc, animated: true)
                 }
             case let .sendToken(fromAddress, toAddress):
                 let vm = SendToken.ViewModel(
@@ -138,11 +145,17 @@ extension Home {
                     destinationAddress: toAddress,
                     relayMethod: .default
                 )
-                let vc = SendToken.ViewController(viewModel: vm)
-                vc.doneHandler = { [weak self] in
-                    self?.popToThisViewControllerAndScrollToTop()
+
+                if coordinator == nil, let navigationController = navigationController {
+                    coordinator = SendToken.Coordinator(
+                        viewModel: vm,
+                        navigationController: navigationController
+                    )
+                    coordinator?.doneHandler = { [weak self] in
+                        self?.popToThisViewControllerAndScrollToTop()
+                    }
                 }
-                show(vc, sender: nil)
+                coordinator?.start()
 
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))

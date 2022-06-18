@@ -37,7 +37,6 @@ protocol SettingsViewModelType: ReserveNameHandler {
     var biometryTypeDriver: Driver<Settings.BiometryType> { get }
     var isBiometryEnabledDriver: Driver<Bool> { get }
     var isBiometryAvailableDriver: Driver<Bool> { get }
-    var canGoBack: Bool { get }
 
     func getUserAddress() -> String?
     func getUsername() -> String?
@@ -82,7 +81,6 @@ extension Settings {
 
         private var disposables = [DefaultsDisposable]()
         private let disposeBag = DisposeBag()
-        let canGoBack: Bool
 
         // MARK: - Subject
 
@@ -103,8 +101,7 @@ extension Settings {
 
         // MARK: - Initializer
 
-        init(canGoBack: Bool = true) {
-            self.canGoBack = canGoBack
+        init() {
             setUp()
             bind()
         }

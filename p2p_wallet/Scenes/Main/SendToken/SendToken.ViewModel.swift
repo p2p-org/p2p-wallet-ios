@@ -16,9 +16,10 @@ import SolanaSwift
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler,
     SendTokenSelectNetworkViewModelType
 {
+    var navigationSubject: BehaviorRelay<SendToken.NavigatableScene?> { get }
     var relayMethod: SendTokenRelayMethod { get }
     var canGoBack: Bool { get }
-    var navigationDriver: Driver<SendToken.NavigatableScene> { get }
+    var navigationDriver: Driver<SendToken.NavigatableScene?> { get }
     var loadingStateDriver: Driver<LoadableState> { get }
 
     func getPrice(for symbol: String) -> Double
@@ -58,8 +59,7 @@ extension SendToken {
 
         // MARK: - Subject
 
-        private let navigationSubject =
-            BehaviorRelay<NavigatableScene>(value: .chooseTokenAndAmount(showAfterConfirmation: false))
+        let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         let amountSubject = BehaviorRelay<Double?>(value: nil)
         let recipientSubject = BehaviorRelay<Recipient?>(value: nil)
@@ -193,7 +193,7 @@ extension SendToken {
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
-    var navigationDriver: Driver<SendToken.NavigatableScene> {
+    var navigationDriver: Driver<SendToken.NavigatableScene?> {
         navigationSubject.asDriver()
     }
 

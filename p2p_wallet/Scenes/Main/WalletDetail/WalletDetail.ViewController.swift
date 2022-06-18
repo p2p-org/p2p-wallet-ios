@@ -7,16 +7,13 @@
 
 import BEPureLayout
 import Foundation
+import Resolver
 import RxSwift
 import SolanaSwift
 import UIKit
 
 extension WalletDetail {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: WalletDetailViewModelType
@@ -27,27 +24,13 @@ extension WalletDetail {
 
         // MARK: - Subviews
 
-        private lazy var navigationBar: WLNavigationBar = {
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.backButton.onTap(self, action: #selector(back))
-            #if DEBUG
-                navigationBar.rightItems.addArrangedSubview(
-                    UIButton(label: "Settings", textColor: .red)
-                        .onTap { [weak self] in
-                            self?.viewModel.showWalletSettings()
-                        }
-                )
-            #endif
-            return navigationBar
-        }()
-
         private lazy var balanceView = BalanceView(viewModel: viewModel)
         private let actionsView = ColorfulHorizontalView()
 
         // MARK: - Subscene
 
-        private lazy var historyVC = History
-            .Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
+        private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
+        private var coordinator: SendToken.Coordinator?
 
         // MARK: - Initializer
 
@@ -60,8 +43,17 @@ extension WalletDetail {
 
         override func setUp() {
             super.setUp()
-            view.addSubview(navigationBar)
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+
+            #if DEBUG
+                let rightButton = UIBarButtonItem(
+                    title: "Settings",
+                    style: .plain,
+                    target: self,
+                    action: #selector(showWalletSettings)
+                )
+                rightButton.setTitleTextAttributes([.foregroundColor: UIColor.red], for: .normal)
+                navigationItem.rightBarButtonItem = rightButton
+            #endif
 
             let containerView = UIView(forAutoLayout: ())
 
@@ -79,15 +71,18 @@ extension WalletDetail {
 
             view.addSubview(stackView)
             stackView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            stackView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            stackView.autoPinEdge(toSuperviewSafeArea: .top)
 
             add(child: historyVC, to: containerView)
         }
 
         override func bind() {
             super.bind()
-            viewModel.walletDriver.map { $0?.token.name }
-                .drive(navigationBar.titleLabel.rx.text)
+            viewModel.walletDriver
+                .map { $0?.token.name }
+                .drive(onNext: { [weak self] in
+                    self?.navigationItem.title = $0
+                })
                 .disposed(by: disposeBag)
 
             viewModel.navigatableSceneDriver
@@ -110,9 +105,14 @@ extension WalletDetail {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
-                let vm = BuyRoot.ViewModel()
-                let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
-                present(vc, animated: true, completion: nil)
+                let vc = BuyPreparing.Scene(
+                    viewModel: BuyPreparing.SceneModel(
+                        crypto: crypto,
+                        exchangeService: Resolver.resolve()
+                    )
+                )
+                let navigation = UINavigationController(rootViewController: vc)
+                present(navigation, animated: true)
             case let .settings(pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
@@ -124,9 +124,14 @@ extension WalletDetail {
                     destinationAddress: nil,
                     relayMethod: .default
                 )
-                let vc = SendToken.ViewController(viewModel: vm)
-                vc.doneHandler = processingTransactionDoneHandler
-                show(vc, sender: nil)
+                if coordinator == nil, let navigationController = navigationController {
+                    coordinator = SendToken.Coordinator(
+                        viewModel: vm,
+                        navigationController: navigationController
+                    )
+                    coordinator?.doneHandler = processingTransactionDoneHandler
+                }
+                coordinator?.start()
             case let .receive(pubkey):
                 if let solanaPubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })
@@ -137,7 +142,8 @@ extension WalletDetail {
                         isOpeningFromToken: true
                     )
                     let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: true)
-                    present(vc, animated: true)
+                    let navigation = UINavigationController(rootViewController: vc)
+                    present(navigation, animated: true)
                 }
             case let .swap(wallet):
                 let vm = OrcaSwapV2.ViewModel(initialWallet: wallet)
