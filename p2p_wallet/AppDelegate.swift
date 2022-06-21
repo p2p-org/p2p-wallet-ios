@@ -112,6 +112,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             settings.minimumFetchInterval = 0
             RemoteConfig.remoteConfig().configSettings = settings
         #endif
+        setupDefaultFlags()
+        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
         FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig())
     }
 }
