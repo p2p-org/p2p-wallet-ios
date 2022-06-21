@@ -59,7 +59,17 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         return Single
             .zip(wallets.map { w -> Single<Wallet?> in
                 getCreationFee(payingFeeMintAddress: w.mintAddress)
-                    .map { $0 <= (w.lamports ?? 0) ? w : nil }
+                    .map { fee in
+                        guard (w.lamports ?? 0) >= fee else { return nil }
+
+                        // special case where wallet is native sol, needs to keeps 890880 lamports in account to prevent error
+                        // Transaction leaves an account with a lower balance than rent-exempt minimum
+                        if w.isNativeSOL, (w.lamports ?? 0) - fee < 890_880 {
+                            return nil
+                        }
+
+                        return w
+                    }
                     .catchAndReturn(nil)
             })
             .map { $0.compactMap { $0 } }
