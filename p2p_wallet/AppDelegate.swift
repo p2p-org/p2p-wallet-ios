@@ -97,12 +97,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func setupRemoteConfig() {
-        #if DEBUG
+//        #if DEBUG
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
             settings.minimumFetchInterval = 0
             RemoteConfig.remoteConfig().configSettings = settings
-        #endif
+//        #endif
         FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig())
     }
 }
