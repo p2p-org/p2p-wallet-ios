@@ -29,7 +29,7 @@ target 'p2p_wallet' do
   pod 'Charts'
   pod "RxAppState"
   pod "RxGesture"
-  pod 'JazziconSwift'
+  pod 'JazziconSwift', '~> 1.1.0'
   pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'

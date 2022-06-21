@@ -115,7 +115,7 @@ PODS:
     - GoogleUtilities/Logger
   - GT3Captcha-iOS (0.15.0)
   - Intercom (12.1.0)
-  - JazziconSwift (1.0.0)
+  - JazziconSwift (1.1.0)
   - KeychainSwift (19.0.0)
   - Kingfisher (7.2.0)
   - ListPlaceholder (1.5)
@@ -183,7 +183,7 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - GT3Captcha-iOS
   - Intercom
-  - JazziconSwift
+  - JazziconSwift (~> 1.1.0)
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
@@ -299,7 +299,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   GT3Captcha-iOS: fe69a3b8bbaf014c1c654103b5ac9ed668ceafa0
   Intercom: a843608adc0311ab19228f4655d0d28cdeb38302
-  JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
+  JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 3ac0b75b155cabc0e544877d1a4deea29feece92
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
@@ -330,6 +330,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: e0038e4c54169265d62dfc874df184f0f996261f
+PODFILE CHECKSUM: 92e8edd26b6845e94bc6d4be016f3da59256ca5d
 
 COCOAPODS: 1.11.3
