@@ -10,6 +10,7 @@ PODS:
     - RxCocoa (~> 6.5.0)
   - BEPureLayout (0.4.0):
     - PureLayout
+  - Cache (1.0.0)
   - Charts (4.0.3):
     - Charts/Core (= 4.0.3)
   - Charts/Core (4.0.3):
@@ -149,7 +150,8 @@ PODS:
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
   - secp256k1.swift (0.1.4)
-  - SolanaPricesAPIs (1.0.0)
+  - SolanaPricesAPIs (1.0.0):
+    - Cache
   - SolanaSwift (2.1.1):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
@@ -164,6 +166,7 @@ PODS:
   - TagListView (1.4.1)
   - Task_retrying (1.0.3)
   - TransactionParser (1.0.0):
+    - Cache
     - SolanaSwift (~> 2.1.1)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
@@ -173,6 +176,7 @@ DEPENDENCIES:
   - AnalyticsManager (from `KeyAppKit`)
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
+  - Cache (from `KeyAppKit`)
   - Charts
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `FeeRelayerSwift`)
@@ -255,6 +259,8 @@ EXTERNAL SOURCES:
     :path: BECollectionView
   BEPureLayout:
     :path: BEPureLayout
+  Cache:
+    :path: KeyAppKit
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
@@ -295,6 +301,7 @@ SPEC CHECKSUMS:
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
+  Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: c13238a1d97e1b854ecd4e8ddf0d84c1f4db0f77
@@ -330,7 +337,7 @@ SPEC CHECKSUMS:
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaPricesAPIs: 9875d707ba8f10751078ff613adac94e5679020f
+  SolanaPricesAPIs: 358ca651c6085891c85f3766fab50a71abda8281
   SolanaSwift: a21629834053d312cd79348dcf84afcb6bc0123d
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
@@ -340,10 +347,10 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
-  TransactionParser: 4c4fbb5794a508e3b1294877c5a8f81ba0e042b6
+  TransactionParser: 74eac62feacb53652161f9983e12ca8713a6a62e
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: a7e305241e9f153483ea03176070d858ead892fa
+PODFILE CHECKSUM: 2effdf9cd5aed7999736e8ee8e4ee302284da1b0
 
 COCOAPODS: 1.11.3
