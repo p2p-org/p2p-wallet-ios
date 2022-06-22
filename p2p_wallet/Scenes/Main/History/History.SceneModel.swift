@@ -28,7 +28,7 @@ extension History {
         private let disposeBag = DisposeBag()
 
         /// Symbol to filter coins
-        private(set) var accountSymbol: AccountSymbol?
+        let accountSymbol: AccountSymbol?
 
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
@@ -41,10 +41,7 @@ extension History {
 
         /// A list of output objects, that builds, forms, maps, filters and updates a final list.
         /// This list will be delivered to UI layer.
-        private let outputs: [HistoryOutput] = [
-            ProcessingTransactionsOutput(),
-            PriceUpdatingOutput(),
-        ]
+        private let outputs: [HistoryOutput]
 
         enum State {
             case items
@@ -77,7 +74,13 @@ extension History {
         let tryAgain = PublishRelay<Void>()
         private let errorRelay = PublishRelay<Bool>()
 
-        init() {
+        init(accountSymbol: AccountSymbol? = nil) {
+            self.accountSymbol = accountSymbol
+            outputs = [
+                ProcessingTransactionsOutput(accountFilter: accountSymbol?.account),
+                PriceUpdatingOutput(),
+            ]
+
             super.init(isPaginationEnabled: true, limit: 10)
 
             // Register all refresh triggers
@@ -96,11 +99,6 @@ extension History {
                     self?.errorRelay.accept(false)
                 })
                 .disposed(by: disposeBag)
-        }
-
-        convenience init(accountSymbol: AccountSymbol) {
-            self.init()
-            self.accountSymbol = accountSymbol
         }
 
         func buildSource() {
