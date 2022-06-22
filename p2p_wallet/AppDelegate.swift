@@ -69,6 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
 
+        setupDefaultFlags()
+        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
         setupRemoteConfig()
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
@@ -106,24 +108,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func setupRemoteConfig() {
-        #if DEBUG
-            let settings = RemoteConfigSettings()
-            // WARNING: Don't actually do this in production!
-            settings.minimumFetchInterval = 0
-            RemoteConfig.remoteConfig().configSettings = settings
-        #endif
-        setupDefaultFlags()
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig())
-    }
-
-    func setupRemoteConfig() {
         //        #if DEBUG
         let settings = RemoteConfigSettings()
         // WARNING: Don't actually do this in production!
         settings.minimumFetchInterval = 0
         RemoteConfig.remoteConfig().configSettings = settings
         //        #endif
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig())
+        #if DEBUG
+            FeatureFlagProvider.shared.fetchFeatureFlags(
+                mainFetcher: MergingFlagsFetcher(
+                    primaryFetcher: DebugMenuFeaturesProvider.shared,
+                    secondaryFetcher: MergingFlagsFetcher(
+                        primaryFetcher: defaultFlags,
+                        secondaryFetcher: RemoteConfig.remoteConfig()
+                    )
+                )
+            )
+        #else
+            FeatureFlagProvider.shared.fetchFeatureFlags(
+                mainFetcher: MergingFlagsFetcher(
+                    primaryFetcher: RemoteConfig.remoteConfig(),
+                    secondaryFetcher: defaultFlags
+                )
+            )
+        #endif
     }
 }
