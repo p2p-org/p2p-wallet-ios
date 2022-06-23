@@ -34,6 +34,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
     var isBiometryEnabledDriver: Driver<Bool> { get }
     var isBiometryAvailableDriver: Driver<Bool> { get }
     var canGoBack: Bool { get }
+    var appVersion: String { get }
 
     func getUserAddress() -> String?
     func getUsername() -> String?
@@ -238,6 +239,8 @@ extension Settings.ViewModel: SettingsViewModelType {
     var isBiometryAvailableDriver: Driver<Bool> { isBiometryAvailableSubject.asDriver() }
 
     var biometryTypeDriver: Driver<Settings.BiometryType> { biometryTypeSubject.asDriver() }
+
+    var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
 
     func handleName(_ name: String?) {
         guard let name = name else { return }
