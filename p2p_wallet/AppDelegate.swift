@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     @Injected private var notificationService: NotificationService
+    @Injected private var changeNetworkResponder: ChangeNetworkResponder
 
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -107,13 +108,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    func setupRemoteConfig() {
+    private func setupRemoteConfig() {
         //        #if DEBUG
         let settings = RemoteConfigSettings()
         // WARNING: Don't actually do this in production!
         settings.minimumFetchInterval = 0
         RemoteConfig.remoteConfig().configSettings = settings
         //        #endif
+
+        let currentEndpoints = SolanaSDK.APIEndPoint.definedEndpoints
         #if DEBUG
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
@@ -123,14 +126,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         secondaryFetcher: RemoteConfig.remoteConfig()
                     )
                 )
-            )
+            ) { _ in
+                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
+            }
         #else
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
                     primaryFetcher: RemoteConfig.remoteConfig(),
                     secondaryFetcher: defaultFlags
                 )
-            )
+            ) { _ in
+                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
+            }
         #endif
+    }
+
+    private func changeEndpointIfNeeded(currentEndpoints: [SolanaSDK.APIEndPoint]) {
+        let newEndpoints = SolanaSDK.APIEndPoint.definedEndpoints
+        guard currentEndpoints != newEndpoints else { return }
+        if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
+           let firstEndpoint = newEndpoints.first
+        {
+            changeNetworkResponder.changeAPIEndpoint(to: firstEndpoint)
+        }
     }
 }
