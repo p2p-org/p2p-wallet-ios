@@ -11,6 +11,8 @@ import SwiftyUserDefaults
 
 extension Settings {
     class SelectNetworkViewController: SingleSelectionViewController<SolanaSDK.APIEndPoint> {
+        override var sort: Bool { false }
+
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)
             // initial data
@@ -18,9 +20,6 @@ extension Settings {
                 .forEach {
                     data[$0] = ($0 == Defaults.apiEndPoint)
                 }
-            if !(SolanaSDK.APIEndPoint.definedEndpoints.contains { $0 == Defaults.apiEndPoint }) {
-                Defaults.apiEndPoint = SolanaSDK.APIEndPoint.definedEndpoints.first!
-            }
         }
 
         override func setUp() {
