@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     @Injected private var notificationService: NotificationService
+    @Injected private var changeNetworkResponder: ChangeNetworkResponder
 
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -96,13 +97,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationService.didReceivePush(userInfo: userInfo)
     }
 
-    func setupRemoteConfig() {
+    private func setupRemoteConfig() {
         //        #if DEBUG
         let settings = RemoteConfigSettings()
         // WARNING: Don't actually do this in production!
         settings.minimumFetchInterval = 0
         RemoteConfig.remoteConfig().configSettings = settings
         //        #endif
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig())
+        let currentEndpoints = SolanaSDK.APIEndPoint.definedEndpoints
+        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig()) { _ in
+            let newEndpoints = SolanaSDK.APIEndPoint.definedEndpoints
+            debugPrint("---newEndpoints", newEndpoints)
+            guard currentEndpoints != newEndpoints else { return }
+            if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
+               let firstEndpoint = newEndpoints.first
+            {
+                self.changeNetworkResponder.changeAPIEndpoint(to: firstEndpoint)
+            }
+        }
     }
 }
