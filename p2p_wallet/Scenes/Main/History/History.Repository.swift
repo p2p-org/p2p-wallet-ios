@@ -29,6 +29,9 @@ extension History {
     class SolanaTransactionRepository: HistoryTransactionRepository {
         @Injected private var solanaAPIClient: SolanaAPIClient
 
+        private let encoder = JSONEncoder()
+        private let decoder = JSONDecoder()
+
         func getSignatures(address: String, limit: Int, before: String?) async throws -> [SignatureInfo] {
             try await solanaAPIClient
                 .getSignaturesForAddress(address: address, configs: .init(limit: limit, before: before))
@@ -36,6 +39,14 @@ extension History {
 
         func getTransaction(signature: String) async throws -> TransactionInfo {
             try await solanaAPIClient.getTransaction(signature: signature, commitment: nil)!
+        }
+
+        func getTransactions(signatures: [String]) async throws -> [TransactionInfo?] {
+            let results: [TransactionInfo?] = try await solanaAPIClient.batchRequest(
+                method: "getTransaction",
+                params: signatures.map { [$0, RequestConfiguration(encoding: "jsonParsed")] }
+            )
+            return results
         }
     }
 
