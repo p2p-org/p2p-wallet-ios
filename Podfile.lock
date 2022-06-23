@@ -10,6 +10,7 @@ PODS:
     - RxCocoa (~> 6.5.0)
   - BEPureLayout (0.4.0):
     - PureLayout
+  - Cache (6.0.0)
   - Charts (4.0.3):
     - Charts/Core (= 4.0.3)
   - Charts/Core (4.0.3):
@@ -164,6 +165,7 @@ PODS:
   - TagListView (1.4.1)
   - Task_retrying (1.0.3)
   - TransactionParser (1.0.0):
+    - Cache
     - SolanaSwift (~> 2.1.1)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
@@ -209,6 +211,7 @@ SPEC REPOS:
   trunk:
     - Action
     - Amplitude
+    - Cache
     - Charts
     - Firebase
     - FirebaseAnalytics
@@ -295,6 +298,7 @@ SPEC CHECKSUMS:
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
+  Cache: 4ca7e00363fca5455f26534e5607634c820ffc2d
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: c13238a1d97e1b854ecd4e8ddf0d84c1f4db0f77
@@ -340,7 +344,7 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
-  TransactionParser: 4c4fbb5794a508e3b1294877c5a8f81ba0e042b6
+  TransactionParser: 74eac62feacb53652161f9983e12ca8713a6a62e
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
