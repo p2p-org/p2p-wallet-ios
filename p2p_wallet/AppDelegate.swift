@@ -107,7 +107,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let currentEndpoints = SolanaSDK.APIEndPoint.definedEndpoints
         FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig()) { _ in
             let newEndpoints = SolanaSDK.APIEndPoint.definedEndpoints
-            debugPrint("---newEndpoints", newEndpoints)
             guard currentEndpoints != newEndpoints else { return }
             if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
                let firstEndpoint = newEndpoints.first
