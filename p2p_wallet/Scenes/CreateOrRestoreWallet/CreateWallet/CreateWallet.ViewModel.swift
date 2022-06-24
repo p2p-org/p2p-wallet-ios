@@ -5,8 +5,11 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import AnalyticsManager
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 protocol CreateWalletViewModelType: ReserveNameHandler {
@@ -26,7 +29,7 @@ extension CreateWallet {
         // MARK: - Dependencies
 
         @Injected private var handler: CreateOrRestoreWalletHandler
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var notificationsService: NotificationService
 
         // MARK: - Properties
@@ -63,25 +66,20 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
         self.phrases = phrases
 
         UIApplication.shared.showIndetermineHud()
-        DispatchQueue.global().async { [weak self] in
+
+        Task {
             do {
-                // create wallet
-                let account = try SolanaSDK.Account(
+                let account = try await Account(
                     phrase: phrases,
                     network: Defaults.apiEndPoint.network,
                     derivablePath: .default
                 )
 
-                DispatchQueue.main.async { [weak self] in
-                    UIApplication.shared.hideHud()
-                    self?.navigateToReserveName(owner: account.publicKey.base58EncodedString)
-                }
+                navigateToReserveName(owner: account.publicKey.base58EncodedString)
             } catch {
-                DispatchQueue.main.async { [weak self] in
-                    UIApplication.shared.hideHud()
-                    self?.notificationsService.showInAppNotification(.error(error))
-                }
+                notificationsService.showInAppNotification(.error(error))
             }
+            await UIApplication.shared.hideHud()
         }
     }
 

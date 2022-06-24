@@ -3,10 +3,11 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension History {
-    /// The class helps to retrieves all transactions as stream from defined account.
-    class AccountStreamSource: HistoryStreamSource {
+    /// The class that retrieves all sequential transactions as stream from defined account.
+    actor AccountStreamSource: HistoryStreamSource {
         let transactionRepository: HistoryTransactionRepository
 
         /// The object that is responsible for parsing transactions
@@ -23,7 +24,16 @@ extension History {
         private var latestFetchedSignature: String?
 
         /// Fixed number of transactions that will be requested each time.
-        private let batchSize: Int = 10
+        private let batchSize: Int = 15
+
+        /// A stream's buffer size
+        private let bufferSize: Int = 15
+
+        /// A stream's buffer
+        private var buffer: [SignatureInfo] = []
+
+        /// A indicator that shows emptiness of transaction.
+        private(set) var isEmpty: Bool = false
 
         init(
             account: String,
@@ -37,59 +47,55 @@ extension History {
             self.transactionParser = transactionParser
         }
 
-        func first() async throws -> HistoryStreamSource.Result? {
-            guard let signatureInfo = try await transactionRepository.getSignatures(
-                address: account,
-                limit: batchSize,
-                before: latestFetchedSignature
-            ).first else { return nil }
+        func currentItem() async throws -> HistoryStreamSource.Result? {
+            if buffer.isEmpty { try await fillBuffer() }
 
+            guard let signatureInfo = buffer.first else { return nil }
             return (signatureInfo, account, symbol)
         }
 
-        func next(configuration: FetchingConfiguration) -> AsyncThrowingStream<HistoryStreamSource.Result, Error> {
-            AsyncThrowingStream<HistoryStreamSource.Result, Error> { stream in
-                Task {
-                    do {
-                        while true {
-                            // Fetch transaction signatures
-                            let signatureInfos = try await transactionRepository.getSignatures(
-                                address: account,
-                                limit: batchSize,
-                                before: latestFetchedSignature
-                            )
+        func next(configuration: FetchingConfiguration) async throws -> HistoryStreamSource.Result? {
+            // Fetch transaction signatures
+            if buffer.isEmpty { try await fillBuffer() }
 
-                            if signatureInfos.isEmpty {
-                                stream.finish(throwing: nil)
-                                return
-                            }
+            // Fetch transaction and parse it
+            guard let signatureInfo = buffer.first else { return nil }
 
-                            // Fetch transaction and parse it
-                            for signatureInfo in signatureInfos {
-                                // Calculate time
-                                var transactionTime = Date()
-                                if let time = signatureInfo.blockTime {
-                                    transactionTime = Date(timeIntervalSince1970: TimeInterval(time))
-                                }
-
-                                if transactionTime >= configuration.timestampEnd {
-                                    // Emit transaction
-                                    latestFetchedSignature = signatureInfo.signature
-                                    stream.yield((signatureInfo, account, symbol))
-                                } else {
-                                    // Break stream and return
-                                    stream.finish(throwing: nil)
-                                    return
-                                }
-                            }
-                        }
-                    } catch {
-                        stream.finish(throwing: error)
-                    }
-                }
+            // Setup transaction timestamp
+            var transactionTime = Date()
+            if let time = signatureInfo.blockTime {
+                transactionTime = Date(timeIntervalSince1970: TimeInterval(time))
             }
+
+            // Check transaction timestamp
+            if transactionTime >= configuration.timestampEnd, Task.isNotCancelled {
+                buffer.remove(at: 0)
+                return (signatureInfo, account, symbol)
+            }
+
+            return nil
         }
 
-        func reset() { latestFetchedSignature = nil }
+        /// This method fills buffer of transaction.
+        private func fillBuffer() async throws {
+            if isEmpty { return }
+
+            let newSignatures = try await transactionRepository.getSignatures(
+                address: account,
+                limit: batchSize,
+                before: latestFetchedSignature
+            )
+
+            try Task.checkCancellation()
+
+            isEmpty = newSignatures.isEmpty
+            latestFetchedSignature = newSignatures.last?.signature
+            buffer.append(contentsOf: newSignatures)
+        }
+
+        func reset() async {
+            buffer = []
+            latestFetchedSignature = nil
+        }
     }
 }

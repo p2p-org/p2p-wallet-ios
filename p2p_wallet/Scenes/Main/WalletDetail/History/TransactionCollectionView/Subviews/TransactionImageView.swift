@@ -97,7 +97,7 @@ final class TransactionImageView: BEView {
 extension TransactionImageView {
     enum ImageType {
         case oneImage(image: UIImage)
-        case fromOneToOne(from: SolanaSDK.Token?, to: SolanaSDK.Token?)
+        case fromOneToOne(from: Token?, to: Token?)
     }
 }
 

@@ -5,6 +5,8 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import AnalyticsManager
+import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
@@ -20,7 +22,7 @@ extension CreateOrRestoreWallet {
     class ViewModel {
         // MARK: - Dependencies
 
-        @Injected var analyticsManager: AnalyticsManagerType
+        @Injected var analyticsManager: AnalyticsManager
 
         // MARK: - Initializer
 

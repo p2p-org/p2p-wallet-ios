@@ -12,10 +12,6 @@ import UIKit
 
 extension RestoreWallet {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: RestoreWalletViewModelType
@@ -50,13 +46,10 @@ extension RestoreWallet {
             patternView.autoPinEdgesToSuperviewEdges()
 
             // navigation bar
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.backButton.onTap(self, action: #selector(back))
-            navigationBar.titleLabel.text = L10n.iAlreadyHaveAWallet.uppercaseFirst
+            navigationItem.title = L10n.iAlreadyHaveAWallet.uppercaseFirst
 
             // content
             let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
-                navigationBar
                 UIView.ilustrationView(
                     image: .introImportAWallet,
                     title: L10n.importAWallet,

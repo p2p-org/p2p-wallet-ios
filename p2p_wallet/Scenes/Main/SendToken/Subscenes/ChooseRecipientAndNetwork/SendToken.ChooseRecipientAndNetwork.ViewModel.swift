@@ -7,8 +7,10 @@
 
 import FeeRelayerSwift
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler,
     SendTokenSelectNetworkViewModelType
@@ -89,27 +91,31 @@ extension SendToken.ChooseRecipientAndNetwork {
 
             // Smart select fee token
             recipientSubject
-                .flatMapLatest { [weak self] _ -> Single<SolanaSDK.FeeAmount?> in
+                .flatMapLatest { [weak self] _ -> Single<FeeAmount?> in
                     guard
                         let self = self,
                         let wallet = self.sendTokenViewModel.walletSubject.value,
                         let receiver = self.recipientSubject.value
                     else { return .just(.zero) }
 
-                    return self.sendService.getFees(
-                        from: wallet,
-                        receiver: receiver.address,
-                        network: self.networkSubject.value,
-                        payingTokenMint: wallet.mintAddress
-                    )
-                        .flatMap { [weak self] fee -> Single<SolanaSDK.FeeAmount?> in
-                            guard let self = self, let fee = fee else { return .just(.zero) }
+                    return Single.async {
+                        try await self.sendService.getFees(
+                            from: wallet,
+                            receiver: receiver.address,
+                            network: self.networkSubject.value,
+                            payingTokenMint: wallet.mintAddress
+                        )
+                    }
+                    .flatMap { [weak self] fee -> Single<FeeAmount?> in
+                        guard let self = self, let fee = fee else { return .just(.zero) }
 
-                            return self.sendService.getFeesInPayingToken(
+                        return Single.async {
+                            try await self.sendService.getFeesInPayingToken(
                                 feeInSOL: fee,
                                 payingFeeWallet: wallet
                             )
                         }
+                    }
                 }
                 .subscribe(onNext: { [weak self] fee in
                     guard
@@ -175,7 +181,7 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.getPrices(for: symbols)
     }
 
-    func getFreeTransactionFeeLimit() -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit> {
+    func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
         sendTokenViewModel.getFreeTransactionFeeLimit()
     }
 
