@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension History {
@@ -24,10 +26,10 @@ extension History {
 
         override func setUp(with item: AnyHashable?) {
             super.setUp(with: item)
-            guard let transaction = item as? SolanaSDK.ParsedTransaction else { return }
+            guard let transaction = item as? ParsedTransaction else { return }
 
-            switch transaction.value {
-            case _ as SolanaSDK.SwapTransaction:
+            switch transaction.info {
+            case _ as SwapInfo:
                 amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "+", with: "")
                 amountInFiatLabel.text = amountInFiatLabel.text?.replacingOccurrences(of: "-", with: "")
                 amountInFiatLabel.textColor = .textBlack

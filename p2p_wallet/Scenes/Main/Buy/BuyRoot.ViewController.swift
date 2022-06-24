@@ -28,7 +28,6 @@ extension BuyRoot {
                 rootViewController: BuyPreparing.Scene(
                     viewModel: BuyPreparing.SceneModel(
                         crypto: crypto,
-                        buyViewModel: viewModel,
                         exchangeService: Resolver.resolve()
                     )
                 )

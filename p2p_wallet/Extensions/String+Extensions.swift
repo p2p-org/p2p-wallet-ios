@@ -60,12 +60,9 @@ extension String {
 }
 
 extension String {
+    // TODO: Deprecate this getter. Use directly Double(string).
     var double: Double? {
-        let formatter = NumberFormatter()
-        formatter.locale = Locale.current // USA: Locale(identifier: "en_US")
-        formatter.numberStyle = .decimal
-        formatter.locale = Locale.current
-        return formatter.number(from: self)?.doubleValue
+        Double(self)
     }
 }
 
@@ -96,4 +93,78 @@ extension String {
             )
         ))) ?? NSAttributedString()
     }
+}
+
+extension Collection {
+    func unfoldSubSequences(limitedTo maxLength: Int) -> UnfoldSequence<SubSequence, Index> {
+        sequence(state: startIndex) { start in
+            guard start < endIndex else { return nil }
+            let end = index(start, offsetBy: maxLength, limitedBy: endIndex) ?? endIndex
+            defer { start = end }
+            return self[start ..< end]
+        }
+    }
+
+    func every(n: Int) -> UnfoldSequence<Element, Index> {
+        sequence(state: startIndex) { index in
+            guard index < endIndex else { return nil }
+            defer { _ = formIndex(&index, offsetBy: n, limitedBy: endIndex) }
+            return self[index]
+        }
+    }
+
+    var pairs: [SubSequence] { .init(unfoldSubSequences(limitedTo: 2)) }
+}
+
+extension StringProtocol where Self: RangeReplaceableCollection {
+    mutating func insert<S: StringProtocol>(separator: S, every n: Int) {
+        for index in indices.every(n: n).dropFirst().reversed() {
+            insert(contentsOf: separator, at: index)
+        }
+    }
+
+    func inserting<S: StringProtocol>(separator: S, every n: Int) -> Self {
+        .init(unfoldSubSequences(limitedTo: n).joined(separator: separator))
+    }
+}
+
+// MARK: - Amount formatting
+
+extension String {
+    var fiatFormat: String {
+        formatToMoneyFormat(decimalSeparator: ".", maxDecimals: 2)
+    }
+
+    var cryptoCurrencyFormat: String {
+        formatToMoneyFormat(decimalSeparator: ".", maxDecimals: 9)
+    }
+
+    var withoutLastZeros: String {
+        var formatted = self
+        while formatted.last == "." || formatted.last == "," || formatted.last == "0" {
+            if !formatted.contains(","), !formatted.contains(".") {
+                return formatted
+            }
+            formatted.removeLast()
+        }
+        return formatted
+    }
+
+    private func formatToMoneyFormat(decimalSeparator: String, maxDecimals: UInt) -> String {
+        var formatted = replacingOccurrences(of: ",", with: decimalSeparator)
+            .replacingOccurrences(of: ".", with: decimalSeparator)
+            .nonLetters(decimalSeparator: decimalSeparator)
+        let components = formatted.components(separatedBy: decimalSeparator)
+        let intPart = components[0]
+        let withoutFirstZeros = intPart.count > 1 || intPart.isEmpty ? "\(Int(intPart) ?? 0)" : intPart
+        if components.count >= 2 {
+            let maxFormatted = components[1].prefix(Int(maxDecimals))
+            formatted = "\(withoutFirstZeros)\(decimalSeparator)\(maxFormatted)"
+            return formatted
+        } else {
+            return withoutFirstZeros
+        }
+    }
+
+    private func nonLetters(decimalSeparator: String) -> String { filter("0123456789\(decimalSeparator)".contains) }
 }

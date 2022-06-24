@@ -11,10 +11,6 @@ import UIKit
 
 extension RestoreICloud {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: RestoreWalletViewModelType
@@ -24,12 +20,6 @@ extension RestoreICloud {
         private let accountsListViewModel = AccountsListViewModel()
 
         // MARK: - Subviews
-
-        lazy var navigationBar: WLNavigationBar = {
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.titleLabel.text = L10n.chooseYourWallet
-            return navigationBar
-        }()
 
         private lazy var walletsCollectionView: BEStaticSectionsCollectionView = .init(
             sections: [
@@ -46,6 +36,7 @@ extension RestoreICloud {
         init(viewModel: RestoreWalletViewModelType) {
             self.viewModel = viewModel
             super.init()
+            navigationItem.title = L10n.chooseYourWallet
         }
 
         // MARK: - Methods
@@ -58,26 +49,18 @@ extension RestoreICloud {
         override func setUp() {
             super.setUp()
 
-            view.addSubview(navigationBar)
-            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
-            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
-            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
-
             view.addSubview(walletsCollectionView)
-            walletsCollectionView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 0)
+            walletsCollectionView.autoPinEdge(toSuperviewSafeArea: .top)
             walletsCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
             walletsCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
             walletsCollectionView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 30)
 
             walletsCollectionView.delegate = self
         }
-
-        override func bind() {
-            super.bind()
-            navigationBar.backButton.onTap(self, action: #selector(back))
-        }
     }
 }
+
+// MARK: - BECollectionViewDelegate
 
 extension RestoreICloud.ViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {

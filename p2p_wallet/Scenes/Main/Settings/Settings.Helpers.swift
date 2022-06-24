@@ -9,23 +9,11 @@ import Foundation
 
 extension Settings {
     class BaseViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Subviews
 
         lazy var stackView = UIStackView(axis: .vertical, spacing: 0, alignment: .fill, distribution: .fill) {
-            navigationBar
             UIView.defaultSeparator()
         }
-
-        lazy var navigationBar: WLNavigationBar = {
-            let navigationBar = WLNavigationBar(backgroundColor: .contentBackground)
-            navigationBar.backButton
-                .onTap(self, action: #selector(back))
-            return navigationBar
-        }()
 
         override func setUp() {
             super.setUp()
@@ -65,7 +53,7 @@ extension Settings {
 
         override func setUp() {
             super.setUp()
-            stackView.setCustomSpacing(10, after: stackView.arrangedSubviews[1]) // after separator
+            stackView.setCustomSpacing(10, after: stackView.arrangedSubviews[0]) // after separator
             stackView.addArrangedSubview(scrollView)
 
             // stackView
