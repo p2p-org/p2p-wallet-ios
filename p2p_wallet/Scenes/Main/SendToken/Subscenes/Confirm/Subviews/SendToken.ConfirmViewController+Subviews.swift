@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 extension SendToken.ConfirmViewController {
@@ -287,6 +288,7 @@ extension SendToken.ConfirmViewController {
             case .relay:
                 showIndetermineHud()
                 viewModel.getFreeTransactionFeeLimit()
+                    .observe(on: MainScheduler.instance)
                     .subscribe(onSuccess: { [weak self] limit in
                         self?.hideHud()
                         guard let self = self else { return }
@@ -303,7 +305,7 @@ extension SendToken.ConfirmViewController {
     }
 }
 
-private extension SolanaSDK.FeeAmount {
+private extension FeeAmount {
     func attributedStringForTransactionFee(prices: [String: Double], symbol: String,
                                            decimals: UInt8?) -> NSMutableAttributedString
     {

@@ -5,19 +5,17 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import AnalyticsManager
 import Foundation
+import Resolver
 import UIKit
 
 extension CreateOrRestoreWallet {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: CreateOrRestoreWalletViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Subviews
 
@@ -109,7 +107,7 @@ extension CreateOrRestoreWallet {
             switch scene {
             case .createWallet:
                 let vm = CreateWallet.ViewModel()
-                let vc = CreateWallet.ViewController(viewModel: vm)
+                let vc = CreateWallet.ExplanationVC(viewModel: vm)
                 show(vc, sender: nil)
             case .restoreWallet:
                 let vm = RestoreWallet.ViewModel()

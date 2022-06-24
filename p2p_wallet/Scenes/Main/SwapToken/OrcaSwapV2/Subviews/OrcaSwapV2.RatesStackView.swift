@@ -8,6 +8,7 @@
 import BEPureLayout
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 extension OrcaSwapV2 {
