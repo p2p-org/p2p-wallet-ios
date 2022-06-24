@@ -8,13 +8,10 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import SubviewAttachingTextView
 
 class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-        .hidden
-    }
-
     // MARK: - Properties
 
     var completion: (([String]) -> Void)?
@@ -179,7 +176,7 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         do {
             let phrases = textView.getPhrases()
             if phrases.count < 12 {
-                throw SolanaSDK.Error.other(L10n.seedPhraseMustHaveAtLeast12Words)
+                throw SolanaError.other(L10n.seedPhraseMustHaveAtLeast12Words)
             }
             _ = try Mnemonic(phrase: phrases.filter { !$0.isEmpty })
             if dismissAfterCompletion {

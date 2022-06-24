@@ -26,7 +26,7 @@ extension Buy {
             currency: FiatCurrency
         ) throws -> BuyProcessingServiceType {
 //            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
-//                throw SolanaSDK.Error.other(L10n.thereIsNoWalletInYourAccount("ETH"))
+//                throw SolanaError.other(L10n.thereIsNoWalletInYourAccount("ETH"))
 //            }
 
             MoonpayBuyProcessing(

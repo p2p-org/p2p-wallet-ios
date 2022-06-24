@@ -8,10 +8,6 @@
 import Foundation
 
 class WLPincodeVC: BaseVC {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-        .hidden
-    }
-
     // MARK: - Properties
 
     /// current pin code for confirming, if nil, the scene is create pincode
@@ -38,6 +34,11 @@ class WLPincodeVC: BaseVC {
     init(currentPincode: String? = nil) {
         self.currentPincode = currentPincode
         super.init()
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationController?.setNavigationBarHidden(true, animated: true)
     }
 
     // MARK: - Methods

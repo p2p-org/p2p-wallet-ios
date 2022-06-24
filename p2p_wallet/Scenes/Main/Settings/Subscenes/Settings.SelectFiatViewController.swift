@@ -21,7 +21,7 @@ extension Settings {
 
         override func setUp() {
             super.setUp()
-            navigationBar.titleLabel.text = L10n.currency
+            navigationItem.title = L10n.currency
         }
 
         override func createCell(item: Fiat) -> Cell<Fiat> {

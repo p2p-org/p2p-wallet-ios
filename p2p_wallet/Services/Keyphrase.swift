@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 enum KeyPhrase {
     static func checkPhrase(in words: [String]) -> (status: Bool, error: String?) {

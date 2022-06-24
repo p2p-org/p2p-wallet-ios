@@ -3,7 +3,7 @@
 	url = git@github.com:p2p-org/solana-swift.git
 [submodule "BEPureLayout"]
 	path = BEPureLayout
-	url = git@github.com:bigearsenal/BEPureLayout.git
+	url = git@github.com:p2p-org/BEPureLayout
 [submodule "BECollectionView"]
 	path = BECollectionView
 	url = git@github.com:bigearsenal/BECollectionView.git
@@ -16,3 +16,6 @@
 [submodule "RenVMSwift"]
 	path = RenVMSwift
 	url = git@github.com:p2p-org/RenVMSwift.git
+[submodule "KeyAppKit"]
+	path = KeyAppKit
+	url = git@github.com:p2p-org/key-app-kit-swift.git
