@@ -15,7 +15,7 @@ extension Settings {
 
         override func setUp() {
             super.setUp()
-            navigationBar.titleLabel.text = L10n.language
+            navigationItem.title = L10n.language
         }
 
         override func createCell(item: LocalizedLanguage) -> Cell<LocalizedLanguage> {

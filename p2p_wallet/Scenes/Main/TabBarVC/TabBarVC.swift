@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Intercom
 import Resolver
 import RxSwift
 import UIKit
@@ -18,6 +17,8 @@ final class TabBarVC: BEPagesVC {
     @Injected private var helpCenterLauncher: HelpCenterLauncher
     @Injected private var clipboardManager: ClipboardManagerType
     private var tabBarTopConstraint: NSLayoutConstraint!
+
+    private var coordinator: SendToken.Coordinator?
 
     fileprivate var tabBarIsHidden: Bool { tabBarTopConstraint.isActive }
 
@@ -32,17 +33,15 @@ final class TabBarVC: BEPagesVC {
         let homeViewModel = Home.ViewModel()
         let homeVC = Home.ViewController(viewModel: homeViewModel)
         let historyVC = History.Scene()
-        let sendTokenVC = SendToken.ViewController(
-            viewModel: SendToken.ViewModel(
+        if coordinator == nil {
+            let vm = SendToken.ViewModel(
                 walletPubkey: nil,
                 destinationAddress: nil,
                 relayMethod: .default,
                 canGoBack: false
             )
-        )
-        sendTokenVC.doneHandler = { [weak sendTokenVC, weak self] in
-            sendTokenVC?.popToRootViewController(animated: false)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            coordinator = SendToken.Coordinator(viewModel: vm, navigationController: nil)
+            coordinator?.doneHandler = { [weak self] in
                 CATransaction.begin()
                 CATransaction.setCompletionBlock { [weak homeViewModel] in
                     homeViewModel?.scrollToTop()
@@ -51,13 +50,15 @@ final class TabBarVC: BEPagesVC {
                 CATransaction.commit()
             }
         }
+        let sendTokenNavigationVC = coordinator?.start() as! UINavigationController
+        sendTokenNavigationVC.delegate = self
 
-        let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel(canGoBack: false))
+        let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel())
 
         viewControllers = [
             createNavigationController(rootVC: homeVC),
             createNavigationController(rootVC: historyVC),
-            createNavigationController(rootVC: sendTokenVC),
+            sendTokenNavigationVC,
             UINavigationController(rootViewController: settingsVC),
         ]
 
@@ -151,6 +152,8 @@ final class TabBarVC: BEPagesVC {
         setNeedsStatusBarAppearanceUpdate()
     }
 }
+
+// MARK: - UINavigationControllerDelegate
 
 extension TabBarVC: UINavigationControllerDelegate {
     func navigationController(

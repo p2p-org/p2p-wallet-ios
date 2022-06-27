@@ -53,7 +53,7 @@ extension SupportedTokens.CollectionView {
             coinLogoImageView.tokenIcon.image = nil
         }
 
-        func setUp(with item: SolanaSDK.Token) {
+        func setUp(with item: Token) {
             coinLogoImageView.setUp(token: item)
             coinSymbolLabel.text = item.symbol.isEmpty
                 ? item.address.prefix(4) + "..." + item.address.suffix(4)
@@ -62,7 +62,7 @@ extension SupportedTokens.CollectionView {
         }
 
         func setUp(with item: AnyHashable?) {
-            guard let item = item as? SolanaSDK.Token else { return }
+            guard let item = item as? Token else { return }
             setUp(with: item)
         }
     }

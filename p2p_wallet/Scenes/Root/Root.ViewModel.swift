@@ -5,11 +5,13 @@
 //  Created by Chung Tran on 08/06/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import LocalAuthentication
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol RootViewModelType {
     var navigationSceneDriver: Driver<Root.NavigatableScene?> { get }
@@ -26,7 +28,7 @@ extension Root {
 
         private var appEventHandler: AppEventHandlerType = Resolver.resolve()
         private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-        private let analyticsManager: AnalyticsManagerType = Resolver.resolve()
+        private let analyticsManager: AnalyticsManager = Resolver.resolve()
         private let notificationsService: NotificationService = Resolver.resolve()
 
         // MARK: - Properties
@@ -71,23 +73,23 @@ extension Root {
             isLoadingSubject.accept(true)
 
             // try to retrieve account from seed
-            DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-                let account = self?.storage.account
-                DispatchQueue.main.async { [weak self] in
-                    if account == nil {
-                        self?.showAuthenticationOnMainOnAppear = false
-                        self?.navigationSubject.accept(.createOrRestoreWallet)
-                    } else if self?.storage.pinCode == nil ||
-                        !Defaults.didSetEnableBiometry ||
-                        !Defaults.didSetEnableNotifications
-                    {
-                        self?.showAuthenticationOnMainOnAppear = false
-                        self?.navigationSubject.accept(.onboarding)
-                    } else {
-                        self?.navigationSubject
-                            .accept(.main(showAuthenticationWhenAppears: self?
-                                    .showAuthenticationOnMainOnAppear ?? false))
-                    }
+            Task {
+                // reload solana account
+                try await storage.reloadSolanaAccount()
+                let account = storage.account
+
+                if account == nil {
+                    showAuthenticationOnMainOnAppear = false
+                    navigationSubject.accept(.createOrRestoreWallet)
+                } else if storage.pinCode == nil ||
+                    !Defaults.didSetEnableBiometry ||
+                    !Defaults.didSetEnableNotifications
+                {
+                    showAuthenticationOnMainOnAppear = false
+                    navigationSubject.accept(.onboarding)
+                } else {
+                    navigationSubject
+                        .accept(.main(showAuthenticationWhenAppears: showAuthenticationOnMainOnAppear))
                 }
             }
         }
@@ -132,7 +134,7 @@ extension Root.ViewModel: AppEventHandlerDelegate {
         navigationSubject.accept(.onboardingDone(isRestoration: isRestoration, name: resolvedName))
     }
 
-    func userDidChangeAPIEndpoint(to _: SolanaSDK.APIEndPoint) {
+    func userDidChangeAPIEndpoint(to _: APIEndPoint) {
         showAuthenticationOnMainOnAppear = false
         reload()
 

@@ -5,28 +5,20 @@
 //  Created by Chung Tran on 18/05/2021.
 //
 
+import AnalyticsManager
 import BECollectionView
 import Foundation
+import Resolver
+import SolanaSwift
 
 extension DerivableAccounts {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Properties
 
         private let viewModel: DrivableAccountsViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Subviews
-
-        lazy var navigationBar: WLNavigationBar = {
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.backgroundColor = .clear
-            navigationBar.titleLabel.text = L10n.derivableAccounts
-            return navigationBar
-        }()
 
         private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
             WLCard {
@@ -81,14 +73,10 @@ extension DerivableAccounts {
             super.setUp()
 
             // navigation bar
-            view.addSubview(navigationBar)
-            navigationBar.backButton.onTap(self, action: #selector(back))
-            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
-            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
-            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
+            navigationItem.title = L10n.derivableAccounts
 
             view.addSubview(headerView)
-            headerView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 4)
+            headerView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 4)
             headerView.autoPinEdge(toSuperviewEdge: .left, withInset: 20)
             headerView.autoPinEdge(toSuperviewEdge: .right, withInset: 20)
 
@@ -135,13 +123,13 @@ extension DerivableAccounts {
                     .ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath()) { [weak self] path in
                         self?.derivablePathsVC(didSelectPath: path)
                     }
-                present(vc, animated: true, completion: nil)
+                present(vc, animated: true)
             default:
                 break
             }
         }
 
-        func derivablePathsVC(didSelectPath path: SolanaSDK.DerivablePath) {
+        func derivablePathsVC(didSelectPath path: DerivablePath) {
             viewModel.selectDerivationPath(path)
             analyticsManager.log(event: .recoveryDerivableAccountsPathSelected(path: path.rawValue))
         }
