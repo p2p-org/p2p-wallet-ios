@@ -4,10 +4,13 @@ platform :ios, '13.0'
 inhibit_all_warnings!
 
 def key_app_kit
-  pod 'TransactionParser', :path => 'KeyAppKit'
-  pod 'NameService', :path => 'KeyAppKit'
-  pod 'AnalyticsManager', :path => 'KeyAppKit'
-  pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
+  $keyAppKitGit = 'git@github.com:p2p-org/key-app-kit-swift.git'
+  $keyAppKitBranch = 'feature/pod'
+
+  pod 'TransactionParser', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'NameService', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'AnalyticsManager', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'SolanaPricesAPIs', :git => $keyAppKitGit, :branch => $keyAppKitBranch
 end
 
 target 'p2p_wallet' do
@@ -16,12 +19,13 @@ target 'p2p_wallet' do
 
   # development pods
   key_app_kit
-  pod 'SolanaSwift', :path => 'SolanaSwift'
-  pod 'BEPureLayout', :path => 'BEPureLayout'
-  pod 'BECollectionView', :path => 'BECollectionView'
-  pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
-  pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
-  pod 'RenVMSwift', :path => 'RenVMSwift'
+
+  pod 'SolanaSwift', :git => 'git@github.com:p2p-org/solana-swift.git'
+  pod 'BEPureLayout', :git => 'git@github.com:bigearsenal/BEPureLayout.git'
+  pod 'BECollectionView', :git => 'git@github.com:bigearsenal/BECollectionView.git'
+  pod 'FeeRelayerSwift', :git => 'git@github.com:p2p-org/FeeRelayerSwift.git', :branch => 'refactoring/PWN-3573-podspec'
+  pod 'OrcaSwapSwift', :git => 'git@github.com:p2p-org/OrcaSwapSwift.git', :branch => 'refactor/swift-concurency-pod'
+  pod 'RenVMSwift', :git => 'git@github.com:p2p-org/RenVMSwift.git', :branch => 'feature/pod'
 
   # debuging
   #  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
