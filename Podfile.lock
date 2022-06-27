@@ -10,7 +10,6 @@ PODS:
     - RxCocoa (~> 6.5.0)
   - BEPureLayout (0.4.0):
     - PureLayout
-  - Cache (6.0.0)
   - Charts (4.0.3):
     - Charts/Core (= 4.0.3)
   - Charts/Core (4.0.3):
@@ -19,18 +18,18 @@ PODS:
   - FeeRelayerSwift (3.1.1):
     - OrcaSwapSwift (~> 2)
     - SolanaSwift (~> 2)
-  - Firebase/Analytics (9.1.0):
+  - Firebase/Analytics (9.2.0):
     - Firebase/Core
-  - Firebase/Core (9.1.0):
+  - Firebase/Core (9.2.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (~> 9.1.0)
-  - Firebase/CoreOnly (9.1.0):
-    - FirebaseCore (= 9.1.0)
-  - Firebase/Crashlytics (9.1.0):
+    - FirebaseAnalytics (~> 9.2.0)
+  - Firebase/CoreOnly (9.2.0):
+    - FirebaseCore (= 9.2.0)
+  - Firebase/Crashlytics (9.2.0):
     - Firebase/CoreOnly
-    - FirebaseCrashlytics (~> 9.1.0)
-  - FirebaseAnalytics (9.1.0):
-    - FirebaseAnalytics/AdIdSupport (= 9.1.0)
+    - FirebaseCrashlytics (~> 9.2.0)
+  - FirebaseAnalytics (9.2.0):
+    - FirebaseAnalytics/AdIdSupport (= 9.2.0)
     - FirebaseCore (~> 9.0)
     - FirebaseInstallations (~> 9.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
@@ -38,54 +37,54 @@ PODS:
     - GoogleUtilities/Network (~> 7.7)
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseAnalytics/AdIdSupport (9.1.0):
+  - FirebaseAnalytics/AdIdSupport (9.2.0):
     - FirebaseCore (~> 9.0)
     - FirebaseInstallations (~> 9.0)
-    - GoogleAppMeasurement (= 9.1.0)
+    - GoogleAppMeasurement (= 9.2.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
     - GoogleUtilities/MethodSwizzler (~> 7.7)
     - GoogleUtilities/Network (~> 7.7)
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseCore (9.1.0):
+  - FirebaseCore (9.2.0):
     - FirebaseCoreDiagnostics (~> 9.0)
     - FirebaseCoreInternal (~> 9.0)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
-  - FirebaseCoreDiagnostics (9.1.0):
+  - FirebaseCoreDiagnostics (9.2.0):
     - GoogleDataTransport (< 10.0.0, >= 9.1.4)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/Logger (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - FirebaseCoreInternal (9.1.0):
+  - FirebaseCoreInternal (9.2.0):
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
-  - FirebaseCrashlytics (9.1.0):
+  - FirebaseCrashlytics (9.2.0):
     - FirebaseCore (~> 9.0)
     - FirebaseInstallations (~> 9.0)
     - GoogleDataTransport (< 10.0.0, >= 9.1.4)
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (~> 2.1)
-  - FirebaseInstallations (9.1.0):
+  - FirebaseInstallations (9.2.0):
     - FirebaseCore (~> 9.0)
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (~> 2.1)
-  - GoogleAppMeasurement (9.1.0):
-    - GoogleAppMeasurement/AdIdSupport (= 9.1.0)
+  - GoogleAppMeasurement (9.2.0):
+    - GoogleAppMeasurement/AdIdSupport (= 9.2.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
     - GoogleUtilities/MethodSwizzler (~> 7.7)
     - GoogleUtilities/Network (~> 7.7)
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - GoogleAppMeasurement/AdIdSupport (9.1.0):
-    - GoogleAppMeasurement/WithoutAdIdSupport (= 9.1.0)
+  - GoogleAppMeasurement/AdIdSupport (9.2.0):
+    - GoogleAppMeasurement/WithoutAdIdSupport (= 9.2.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
     - GoogleUtilities/MethodSwizzler (~> 7.7)
     - GoogleUtilities/Network (~> 7.7)
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - GoogleAppMeasurement/WithoutAdIdSupport (9.1.0):
+  - GoogleAppMeasurement/WithoutAdIdSupport (9.2.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
     - GoogleUtilities/MethodSwizzler (~> 7.7)
     - GoogleUtilities/Network (~> 7.7)
@@ -115,8 +114,8 @@ PODS:
   - GoogleUtilities/UserDefaults (7.7.0):
     - GoogleUtilities/Logger
   - GT3Captcha-iOS (0.15.2)
-  - Intercom (12.4.1)
-  - JazziconSwift (1.0.1)
+  - Intercom (12.4.3)
+  - JazziconSwift (1.0.0)
   - KeychainSwift (19.0.0)
   - Kingfisher (7.2.4)
   - ListPlaceholder (1.5)
@@ -130,7 +129,7 @@ PODS:
   - OrcaSwapSwift (2.1.1):
     - SolanaSwift (~> 2)
   - Periphery (2.9.0)
-  - PromisesObjC (2.1.0)
+  - PromisesObjC (2.1.1)
   - PureLayout (3.1.9)
   - RenVMSwift (2.0.1):
     - SolanaSwift (~> 2)
@@ -150,9 +149,7 @@ PODS:
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
   - secp256k1.swift (0.1.4)
-  - SolanaPricesAPIs (1.0.0):
-    - Cache
-    - SolanaSwift (~> 2)
+  - SolanaPricesAPIs (1.0.0)
   - SolanaSwift (2.2.0):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
@@ -167,53 +164,51 @@ PODS:
   - TagListView (1.4.1)
   - Task_retrying (1.0.3)
   - TransactionParser (1.0.0):
-    - Cache
     - SolanaSwift (~> 2)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
   - Action
-  - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod`)
-  - "BECollectionView (from `git@github.com:bigearsenal/BECollectionView.git`)"
-  - "BEPureLayout (from `git@github.com:bigearsenal/BEPureLayout.git`)"
+  - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod-2`)
+  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`)
+  - BEPureLayout (from `https://github.com/bigearsenal/BEPureLayout.git`)
   - Charts
   - Down (from `https://github.com/p2p-org/Down.git`)
-  - "FeeRelayerSwift (from `git@github.com:p2p-org/FeeRelayerSwift.git`, branch `refactoring/PWN-3573-podspec`)"
+  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `refactoring/PWN-3573-podspec`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - GT3Captcha-iOS
   - Intercom
-  - JazziconSwift
+  - JazziconSwift (= 1.0.0)
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
-  - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod`)
-  - "OrcaSwapSwift (from `git@github.com:p2p-org/OrcaSwapSwift.git`, branch `refactor/swift-concurency-pod`)"
+  - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod-2`)
+  - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `refactor/swift-concurency-pod`)
   - Periphery
-  - "RenVMSwift (from `git@github.com:p2p-org/RenVMSwift.git`, branch `feature/pod`)"
+  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `feature/pod`)
   - Resolver
   - RxAppState
   - RxCocoa (= 6.5.0)
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture
   - RxSwift (= 6.5.0)
-  - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod`)
-  - "SolanaSwift (from `git@github.com:p2p-org/solana-swift.git`)"
+  - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod-2`)
+  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`)
   - SubviewAttachingTextView
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
-  - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod`)
+  - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod-2`)
   - "UITextView+Placeholder"
 
 SPEC REPOS:
   trunk:
     - Action
     - Amplitude
-    - Cache
     - Charts
     - Firebase
     - FirebaseAnalytics
@@ -255,80 +250,80 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   AnalyticsManager:
-    :branch: feature/pod
+    :branch: feature/pod-2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
-    :git: "git@github.com:bigearsenal/BECollectionView.git"
+    :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
-    :git: "git@github.com:bigearsenal/BEPureLayout.git"
+    :git: https://github.com/bigearsenal/BEPureLayout.git
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
     :branch: refactoring/PWN-3573-podspec
-    :git: "git@github.com:p2p-org/FeeRelayerSwift.git"
+    :git: https://github.com/p2p-org/FeeRelayerSwift.git
   ListPlaceholder:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :branch: feature/pod
+    :branch: feature/pod-2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :branch: refactor/swift-concurency-pod
-    :git: "git@github.com:p2p-org/OrcaSwapSwift.git"
+    :git: https://github.com/p2p-org/OrcaSwapSwift.git
   RenVMSwift:
     :branch: feature/pod
-    :git: "git@github.com:p2p-org/RenVMSwift.git"
+    :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :branch: main
     :git: https://github.com/TrGiLong/RxConcurrency.git
   SolanaPricesAPIs:
-    :branch: feature/pod
+    :branch: feature/pod-2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :git: "git@github.com:p2p-org/solana-swift.git"
+    :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :branch: feature/pod
+    :branch: feature/pod-2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: d6367924b9c9dac7ed4a5fdf11a24fb73b05347a
+    :commit: d178d1f9f65a804ac8c277e30d5fd2a168eaa110
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: 346c0ac6cd52d362ae7e2de59d2647500dc6c7a1
-    :git: "git@github.com:bigearsenal/BECollectionView.git"
+    :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
     :commit: 86d5da429618239f388566f8480c3b2cf046c1c4
-    :git: "git@github.com:bigearsenal/BEPureLayout.git"
+    :git: https://github.com/bigearsenal/BEPureLayout.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
     :commit: d73f30dca18f55a94c45234a0d1895547204cef4
-    :git: "git@github.com:p2p-org/FeeRelayerSwift.git"
+    :git: https://github.com/p2p-org/FeeRelayerSwift.git
   ListPlaceholder:
     :commit: a729fd45aa22b9d087477d1ccedb9f4292762a58
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: d6367924b9c9dac7ed4a5fdf11a24fb73b05347a
+    :commit: d178d1f9f65a804ac8c277e30d5fd2a168eaa110
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: bea990346ee01494838ac737f4fecd1e52ad0214
-    :git: "git@github.com:p2p-org/OrcaSwapSwift.git"
+    :git: https://github.com/p2p-org/OrcaSwapSwift.git
   RenVMSwift:
     :commit: dfd1ffd909c344dd92db94addf12591e392a9e38
-    :git: "git@github.com:p2p-org/RenVMSwift.git"
+    :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   SolanaPricesAPIs:
-    :commit: d6367924b9c9dac7ed4a5fdf11a24fb73b05347a
+    :commit: d178d1f9f65a804ac8c277e30d5fd2a168eaa110
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: e3ab7c9441c4acc708294f8bc9e3bfb3bb15fc05
-    :git: "git@github.com:p2p-org/solana-swift.git"
+    :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: d6367924b9c9dac7ed4a5fdf11a24fb73b05347a
+    :commit: d178d1f9f65a804ac8c277e30d5fd2a168eaa110
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -337,23 +332,22 @@ SPEC CHECKSUMS:
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
-  Cache: 4ca7e00363fca5455f26534e5607634c820ffc2d
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 4ad1bd4cfd8c51d3a731ab74e4c798e99fcc677a
-  Firebase: 91c243d75573ac6e7c9735ec859b72bffb61347d
-  FirebaseAnalytics: bf11064790ac96804df1df9ddc0ae45af950d9fc
-  FirebaseCore: b7bfc258e996eada23b3666bd6b9a22ca092acb8
-  FirebaseCoreDiagnostics: 2dabba3412b23b524823325739f45e520f67d1e7
-  FirebaseCoreInternal: f3c838ae0b41cd840bbf34f90debfede78d352e5
-  FirebaseCrashlytics: 8e21736dcf15d814b79229eb7e79ba3a5eec5f30
-  FirebaseInstallations: a91c74276b544524ce144c8315d8cdbce2dbe30b
-  GoogleAppMeasurement: 8ecc717f2abe3f9ee95a5d38db08827852894acc
+  Firebase: 4ba896cb8e5105d4b9e247e1c1b6222b548df55a
+  FirebaseAnalytics: af5a03a8dff7648c7b8486f6a78b1368e0268dd3
+  FirebaseCore: 0e27f2a15d8f7b7ef11e7d93e23b1cbab55d748c
+  FirebaseCoreDiagnostics: ad3f6c68b7c5b63b7cf15b0785d7137f05f32268
+  FirebaseCoreInternal: cb966328b6985dbd6f535e1461291063e1c4a00f
+  FirebaseCrashlytics: 9fff819edb2bfc9d3eff612225b207d41945a935
+  FirebaseInstallations: 21186f0ca7849f90f4a3219fa31a5eca2e30f113
+  GoogleAppMeasurement: 7a33224321f975d58c166657260526775d9c6b1a
   GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   GT3Captcha-iOS: 7ae08a5421c8e40463ec84ae807e82c19be3929a
-  Intercom: aea29d38ff141f4a6c7707b34b5090983b8bc09b
-  JazziconSwift: e5a81c974aca2376857712fcdf605b763d593b68
+  Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
+  JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 2457be2121734e69e54a2312ecc0150eb9ae70b3
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
@@ -362,7 +356,7 @@ SPEC CHECKSUMS:
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   OrcaSwapSwift: 8184e41e83f5349b38cc229532331064f8ed1fe8
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
-  PromisesObjC: 99b6f43f9e1044bd87a95a60beff28c2c44ddb72
+  PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
   RenVMSwift: 9cfd6610adc9c74a6e761c615cd30a31129e79c6
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
@@ -373,7 +367,7 @@ SPEC CHECKSUMS:
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
+  SolanaPricesAPIs: 9875d707ba8f10751078ff613adac94e5679020f
   SolanaSwift: 4e4520963f2d64d7702001a385b7e0f92fc17763
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
@@ -383,10 +377,10 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
-  TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
+  TransactionParser: a58bbdf814b33e9aede10e56f8d1c6969beb745b
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 56f00e5f6a2fa45fed8cdfb892235eb2267623f8
+PODFILE CHECKSUM: 8becf7bd4ce59becc75e77fb3e1c7bbc5e615f66
 
 COCOAPODS: 1.11.3
