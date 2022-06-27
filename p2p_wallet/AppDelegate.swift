@@ -19,7 +19,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     @Injected private var notificationService: NotificationService
-    @Injected private var changeNetworkResponder: ChangeNetworkResponder
 
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -113,7 +112,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
                let firstEndpoint = newEndpoints.first
             {
-                self.changeNetworkResponder.changeAPIEndpoint(to: firstEndpoint)
+                Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
             }
         }
     }
