@@ -11,8 +11,6 @@ import SwiftyUserDefaults
 
 extension Settings {
     class SelectNetworkViewController: SingleSelectionViewController<APIEndPoint> {
-        override var sort: Bool { false }
-
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)
             // initial data

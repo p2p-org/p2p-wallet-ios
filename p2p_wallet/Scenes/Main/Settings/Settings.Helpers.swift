@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OrderedCollections
 
 extension Settings {
     class BaseViewController: BaseVC {
@@ -26,7 +27,7 @@ extension Settings {
     class SingleSelectionViewController<T: Hashable>: BaseViewController {
         // MARK: - Data
 
-        var data: [T: Bool] = .init()
+        var data = OrderedDictionary<T, Bool>()
         var cells: [Cell<T>] { innerStackView.arrangedSubviews.filter { $0 is Cell<T> } as! [Cell<T>] }
         var selectedItem: T? { data.first(where: { $0.value })?.key }
         var sort: Bool { true }
@@ -63,8 +64,8 @@ extension Settings {
 
             // views
             let subviews = !sort
-                ? data.keys.map { self.createCell(item: $0) }
-                : data.keys.sorted { data[$0] ?? data[$1] ?? false }.map { self.createCell(item: $0) }
+                ? data.map { self.createCell(item: $0.0) }
+                : data.map(\.0).map { self.createCell(item: $0) }
             innerStackView.addArrangedSubviews(subviews)
 
             // reload
