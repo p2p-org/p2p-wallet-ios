@@ -30,7 +30,6 @@ extension SendToken.ChooseTokenAndAmount {
                 target: self,
                 action: #selector(buttonNextDidTouch)
             )
-            nextButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
             return nextButton
         }()
 
