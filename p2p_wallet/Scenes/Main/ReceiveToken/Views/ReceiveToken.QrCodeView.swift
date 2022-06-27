@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 extension ReceiveToken {
     class QrCodeView: BEView {
@@ -45,13 +46,13 @@ extension ReceiveToken {
             }
         }
 
-        func setUp(string: String?, token: SolanaSDK.Token? = nil) {
+        func setUp(string: String?, token: Token? = nil) {
             qrCodeImageView.setQrCode(string: string)
             logoImageView.setUp(token: token ?? .nativeSolana)
         }
 
         @discardableResult
-        func with(string: String?, token: SolanaSDK.Token? = nil) -> Self {
+        func with(string: String?, token: Token? = nil) -> Self {
             setUp(string: string, token: token)
             return self
         }

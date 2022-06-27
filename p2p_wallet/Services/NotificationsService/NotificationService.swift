@@ -107,7 +107,9 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     }
 
     func showInAppNotification(_ notification: InAppNotification) {
-        UIApplication.shared.showToast(message: createTextFromNotification(notification))
+        DispatchQueue.main.async {
+            UIApplication.shared.showToast(message: self.createTextFromNotification(notification))
+        }
     }
 
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {

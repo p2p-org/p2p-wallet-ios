@@ -1,13 +1,14 @@
 //
-//  SolanaSDK+Extensions.swift
+//  APIEndPoint+Extensions.swift
 //  p2p_wallet
 //
 //  Created by Chung Tran on 16/10/2021.
 //
 
 import FirebaseRemoteConfig
+import SolanaSwift
 
-extension SolanaSDK.APIEndPoint {
+extension APIEndPoint {
     static var definedEndpoints: [Self] {
         let remoteEndpoints = RemoteConfig.remoteConfig()
             .definedEndpoints

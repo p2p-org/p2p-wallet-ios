@@ -24,7 +24,7 @@ extension Settings {
 
         override func setUp() {
             super.setUp()
-            navigationBar.titleLabel.text = L10n.appearance
+            navigationItem.title = L10n.appearance
         }
 
         override func createCell(item: UIUserInterfaceStyle) -> Cell<UIUserInterfaceStyle> {

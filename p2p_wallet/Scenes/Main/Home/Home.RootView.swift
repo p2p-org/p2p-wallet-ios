@@ -11,6 +11,7 @@ import BEPureLayout
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 extension Home {
@@ -31,16 +32,6 @@ extension Home {
         override func build() -> UIView {
             BESafeArea {
                 BEVStack {
-                    // Title
-                    BEHStack {
-                        UILabel(textAlignment: .center)
-                            .setup { label in
-                                let p2pWallet = NSMutableAttributedString()
-                                    .text(L10n.p2PWallet, size: 17, weight: .semibold)
-                                label.attributedText = p2pWallet
-                            }
-                    }.padding(.init(x: 0, y: 12))
-
                     // Indicator
                     WLStatusIndicatorView(forAutoLayout: ()).setup { view in
                         viewModel.currentPricesDriver

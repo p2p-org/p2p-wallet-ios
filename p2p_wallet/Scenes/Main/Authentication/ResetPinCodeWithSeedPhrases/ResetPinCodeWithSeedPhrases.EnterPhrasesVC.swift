@@ -6,16 +6,15 @@
 //
 
 import BEPureLayout
+import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
 
 extension ResetPinCodeWithSeedPhrases {
     class EnterPhrasesVC: BaseViewController {
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
         private let completion: ([String]) -> Void
         private let validate: (_ keyPhrase: [String]) -> (status: Bool, error: String?)
-        var dismissAfterCompletion = true
 
         private let pastButton = BERef<UIButton>()
         private let inputTextField = BERef<ExpandableTextView>()
@@ -35,6 +34,22 @@ extension ResetPinCodeWithSeedPhrases {
             self.completion = completion
             self.validate = validate
             super.init()
+
+            navigationItem.title = L10n.resettingYourPIN
+            navigationItem.leftBarButtonItem = UIBarButtonItem(
+                title: L10n.cancel,
+                style: .plain,
+                target: self,
+                action: #selector(back)
+            )
+        }
+
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            let appearance = UINavigationBarAppearance()
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.compactAppearance = appearance
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance
         }
 
         override func build() -> UIView {
@@ -43,27 +58,8 @@ extension ResetPinCodeWithSeedPhrases {
                     // Content
                     BEZStackPosition(mode: .fill) {
                         BEVStack {
-                            BEHStack(distribution: .equalCentering) {
-                                UIButton.text(text: L10n.cancel, fontSize: 17, weight: .regular, tintColor: .h5887ff)
-                                    .setTarget(target: self, action: #selector(back), for: .touchUpInside)
-
-                                UILabel(
-                                    text: L10n.resettingYourPIN,
-                                    textSize: 17,
-                                    weight: .semibold,
-                                    textAlignment: .center
-                                )
-
-                                UIView(width: 24)
-                            }
-                            .backgroundColor(color: .fafafc)
-                            .frame(height: 58)
-
-                            // Separator
-                            UIView.separator(height: 1, color: .separator)
-
                             // Input
-                            BEHStack {
+                            BEHStack(alignment: .center) {
                                 ExpandableTextView()
                                     .setup { textField in
                                         textField.placeholder = L10n.yourSecurityKey
@@ -91,7 +87,7 @@ extension ResetPinCodeWithSeedPhrases {
                                     .withTag(1)
                                 UIButton(
                                     label: L10n.paste,
-                                    labelFont: .systemFont(ofSize: 17, weight: .medium),
+                                    labelFont: .systemFont(ofSize: 17),
                                     textColor: .h5887ff
                                 ).bind(pastButton)
                                     .setTarget(target: self, action: #selector(past), for: .touchUpInside)
@@ -106,7 +102,7 @@ extension ResetPinCodeWithSeedPhrases {
 
                                 v2.autoMatch(.height, to: .height, of: v1)
                             }
-                            .padding(.init(top: 8, left: 18, bottom: 8, right: 18))
+                            .padding(.init(top: 29, left: 18, bottom: 8, right: 18))
 
                             // Separator
                             UIView
