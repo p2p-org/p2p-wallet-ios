@@ -174,7 +174,7 @@ PODS:
 
 DEPENDENCIES:
   - Action
-  - "AnalyticsManager (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `feature/pod`)"
+  - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod`)
   - "BECollectionView (from `git@github.com:bigearsenal/BECollectionView.git`)"
   - "BEPureLayout (from `git@github.com:bigearsenal/BEPureLayout.git`)"
   - Charts
@@ -188,7 +188,7 @@ DEPENDENCIES:
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
-  - "NameService (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `feature/pod`)"
+  - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod`)
   - "OrcaSwapSwift (from `git@github.com:p2p-org/OrcaSwapSwift.git`, branch `refactor/swift-concurency-pod`)"
   - Periphery
   - "RenVMSwift (from `git@github.com:p2p-org/RenVMSwift.git`, branch `feature/pod`)"
@@ -198,7 +198,7 @@ DEPENDENCIES:
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture
   - RxSwift (= 6.5.0)
-  - "SolanaPricesAPIs (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `feature/pod`)"
+  - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod`)
   - "SolanaSwift (from `git@github.com:p2p-org/solana-swift.git`)"
   - SubviewAttachingTextView
   - SwiftFormat/CLI (= 0.49.6)
@@ -206,7 +206,7 @@ DEPENDENCIES:
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
-  - "TransactionParser (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `feature/pod`)"
+  - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `feature/pod`)
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -256,7 +256,7 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   AnalyticsManager:
     :branch: feature/pod
-    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :git: "git@github.com:bigearsenal/BECollectionView.git"
   BEPureLayout:
@@ -271,7 +271,7 @@ EXTERNAL SOURCES:
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
     :branch: feature/pod
-    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :branch: refactor/swift-concurency-pod
     :git: "git@github.com:p2p-org/OrcaSwapSwift.git"
@@ -283,17 +283,17 @@ EXTERNAL SOURCES:
     :git: https://github.com/TrGiLong/RxConcurrency.git
   SolanaPricesAPIs:
     :branch: feature/pod
-    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :git: "git@github.com:p2p-org/solana-swift.git"
   TransactionParser:
     :branch: feature/pod
-    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
     :commit: d6367924b9c9dac7ed4a5fdf11a24fb73b05347a
-    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: 346c0ac6cd52d362ae7e2de59d2647500dc6c7a1
     :git: "git@github.com:bigearsenal/BECollectionView.git"
@@ -311,7 +311,7 @@ CHECKOUT OPTIONS:
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
     :commit: d6367924b9c9dac7ed4a5fdf11a24fb73b05347a
-    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: bea990346ee01494838ac737f4fecd1e52ad0214
     :git: "git@github.com:p2p-org/OrcaSwapSwift.git"
@@ -323,13 +323,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/TrGiLong/RxConcurrency.git
   SolanaPricesAPIs:
     :commit: d6367924b9c9dac7ed4a5fdf11a24fb73b05347a
-    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: e3ab7c9441c4acc708294f8bc9e3bfb3bb15fc05
     :git: "git@github.com:p2p-org/solana-swift.git"
   TransactionParser:
     :commit: d6367924b9c9dac7ed4a5fdf11a24fb73b05347a
-    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
@@ -387,6 +387,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 752a56abd73e101dfee6280edb165d4adca4a644
+PODFILE CHECKSUM: 56f00e5f6a2fa45fed8cdfb892235eb2267623f8
 
 COCOAPODS: 1.11.3

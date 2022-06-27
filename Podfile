@@ -4,7 +4,7 @@ platform :ios, '13.0'
 inhibit_all_warnings!
 
 def key_app_kit
-  $keyAppKitGit = 'git@github.com:p2p-org/key-app-kit-swift.git'
+  $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
   $keyAppKitBranch = 'feature/pod'
 
   pod 'TransactionParser', :git => $keyAppKitGit, :branch => $keyAppKitBranch
