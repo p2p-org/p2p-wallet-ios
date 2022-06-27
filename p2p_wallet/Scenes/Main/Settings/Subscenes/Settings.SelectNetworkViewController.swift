@@ -15,6 +15,14 @@ extension Settings {
             super.init(viewModel: viewModel)
             // initial data
             APIEndPoint.definedEndpoints
+                .sorted {
+                    if $0 == Defaults.apiEndPoint {
+                        return true
+                    } else if $1 != Defaults.apiEndPoint {
+                        return false
+                    }
+                    return false
+                }
                 .forEach {
                     data[$0] = ($0 == Defaults.apiEndPoint)
                 }
