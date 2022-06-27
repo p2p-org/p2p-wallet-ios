@@ -1,4 +1,3 @@
-import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
