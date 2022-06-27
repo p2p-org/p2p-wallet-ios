@@ -28,6 +28,11 @@ PODS:
   - Firebase/Crashlytics (9.1.0):
     - Firebase/CoreOnly
     - FirebaseCrashlytics (~> 9.1.0)
+  - Firebase/RemoteConfig (9.1.0):
+    - Firebase/CoreOnly
+    - FirebaseRemoteConfig (~> 9.1.0)
+  - FirebaseABTesting (9.2.0):
+    - FirebaseCore (~> 9.0)
   - FirebaseAnalytics (9.1.0):
     - FirebaseAnalytics/AdIdSupport (= 9.1.0)
     - FirebaseCore (~> 9.0)
@@ -70,6 +75,12 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - GoogleUtilities/UserDefaults (~> 7.7)
     - PromisesObjC (~> 2.1)
+  - FirebaseRemoteConfig (9.1.0):
+    - FirebaseABTesting (~> 9.0)
+    - FirebaseCore (~> 9.0)
+    - FirebaseInstallations (~> 9.0)
+    - GoogleUtilities/Environment (~> 7.7)
+    - "GoogleUtilities/NSData+zlib (~> 7.7)"
   - GoogleAppMeasurement (9.1.0):
     - GoogleAppMeasurement/AdIdSupport (= 9.1.0)
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
@@ -178,6 +189,7 @@ DEPENDENCIES:
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
   - Firebase/Crashlytics
+  - Firebase/RemoteConfig
   - GT3Captcha-iOS
   - Intercom
   - JazziconSwift
@@ -211,12 +223,14 @@ SPEC REPOS:
     - Amplitude
     - Charts
     - Firebase
+    - FirebaseABTesting
     - FirebaseAnalytics
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCoreInternal
     - FirebaseCrashlytics
     - FirebaseInstallations
+    - FirebaseRemoteConfig
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
@@ -299,12 +313,14 @@ SPEC CHECKSUMS:
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: c13238a1d97e1b854ecd4e8ddf0d84c1f4db0f77
   Firebase: 91c243d75573ac6e7c9735ec859b72bffb61347d
+  FirebaseABTesting: cd1ec762a0078b46a7ce91dfe5b7b8991c2dff8f
   FirebaseAnalytics: bf11064790ac96804df1df9ddc0ae45af950d9fc
   FirebaseCore: b7bfc258e996eada23b3666bd6b9a22ca092acb8
   FirebaseCoreDiagnostics: 2dabba3412b23b524823325739f45e520f67d1e7
   FirebaseCoreInternal: f3c838ae0b41cd840bbf34f90debfede78d352e5
   FirebaseCrashlytics: 8e21736dcf15d814b79229eb7e79ba3a5eec5f30
   FirebaseInstallations: a91c74276b544524ce144c8315d8cdbce2dbe30b
+  FirebaseRemoteConfig: ebd0eb74b9a0593ab2a3f0788a5be5595b46a05c
   GoogleAppMeasurement: 8ecc717f2abe3f9ee95a5d38db08827852894acc
   GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
@@ -344,6 +360,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: a7e305241e9f153483ea03176070d858ead892fa
+PODFILE CHECKSUM: c6a1b09480adb4c268e6fc019c3e5e9ff85a6e34
 
 COCOAPODS: 1.11.3
