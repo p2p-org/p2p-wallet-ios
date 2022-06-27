@@ -1,7 +1,9 @@
 name: Pull request review submitted
 on:
-  pull_request_review:
-    types: [submitted]
+  pull_request:
+#  pull_request_review:
+#    types: [submitted]
+
 jobs:
   # Return task back to In Progress if pull request is changes requested
   return_task_to_in_progress:
