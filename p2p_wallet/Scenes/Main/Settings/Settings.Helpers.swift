@@ -30,7 +30,6 @@ extension Settings {
         var data = OrderedDictionary<T, Bool>()
         var cells: [Cell<T>] { innerStackView.arrangedSubviews.filter { $0 is Cell<T> } as! [Cell<T>] }
         var selectedItem: T? { data.first(where: { $0.value })?.key }
-        var sort: Bool { true }
 
         // MARK: - Subviews
 
@@ -63,9 +62,7 @@ extension Settings {
             innerStackView.autoPinEdgesToSuperviewEdges()
 
             // views
-            let subviews = !sort
-                ? data.map { self.createCell(item: $0.0) }
-                : data.map(\.0).map { self.createCell(item: $0) }
+            let subviews = data.map(\.0).map { self.createCell(item: $0) }
             innerStackView.addArrangedSubviews(subviews)
 
             // reload
