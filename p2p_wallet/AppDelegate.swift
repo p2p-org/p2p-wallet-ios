@@ -39,17 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
-        let barButtonAppearance = UIBarButtonItem.appearance()
-        UINavigationBar.appearance().backIndicatorImage = .navigationBack
-            .withRenderingMode(.alwaysOriginal)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
-        UINavigationBar.appearance().backIndicatorTransitionMaskImage = .navigationBack
-            .withRenderingMode(.alwaysOriginal)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
-        barButtonAppearance.setBackButtonTitlePositionAdjustment(
-            .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
-            for: .default
-        )
+        setupNavigationAppearance()
 
         // Use Firebase library to configure APIs
 //        #if DEBUG
@@ -95,5 +85,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+    }
+
+    private func setupNavigationAppearance() {
+        let barButtonAppearance = UIBarButtonItem.appearance()
+        let navBarAppearence = UINavigationBar.appearance()
+        navBarAppearence.backIndicatorImage = .navigationBack
+            .withRenderingMode(.alwaysTemplate)
+            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+        navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
+            .withRenderingMode(.alwaysTemplate)
+            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+        barButtonAppearance.setBackButtonTitlePositionAdjustment(
+            .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
+            for: .default
+        )
+        navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearence.tintColor = .black
+        barButtonAppearance.tintColor = .black
     }
 }
