@@ -57,10 +57,7 @@ extension History {
                 stateObservable.startWith(.loading),
                 errorRelay.startWith(false)
             ).map { change, state, error in
-                print(["here", state, change, error])
-                if error {
-                    return .error
-                }
+                if error { return .error }
 
                 if state == .loading || state == .initializing {
                     return .items
