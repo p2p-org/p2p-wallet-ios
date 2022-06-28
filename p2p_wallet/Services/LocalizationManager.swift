@@ -5,23 +5,18 @@
 //  Created by Andrew Vasiliev on 28.10.2021.
 //
 
-import OrderedCollections
-
 protocol LocalizationManagerType: AnyObject {
-    func selectableLanguages() -> OrderedDictionary<LocalizedLanguage, Bool>
+    func selectableLanguages() -> [(LocalizedLanguage, Bool)]
     func changeCurrentLanguage(_: LocalizedLanguage)
 }
 
 final class LocalizationManager: LocalizationManagerType {
     private let notSelectableLanguageCodes: Set = ["Base", "ru", "fr"]
 
-    func selectableLanguages() -> OrderedDictionary<LocalizedLanguage, Bool> {
+    func selectableLanguages() -> [(LocalizedLanguage, Bool)] {
         let currentLanguageCode = currentLanguage().code
-
-        let languages = availableLanguageCodes
+        return availableLanguageCodes
             .map { (LocalizedLanguage(code: $0), $0 == currentLanguageCode) }
-
-        return OrderedDictionary(uniqueKeysWithValues: languages)
     }
 
     func currentLanguage() -> LocalizedLanguage {
