@@ -3,7 +3,7 @@ on: workflow_dispatch
 jobs:
   upload_build_for_regression:
     name: Upload build for regression
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
       - name: Check out current branch

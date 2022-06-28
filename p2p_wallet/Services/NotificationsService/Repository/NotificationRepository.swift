@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Resolver
 
 protocol NotificationRepository {
     typealias DeviceTokenResponse = JsonRpcResponseDto<DeviceTokenResponseDto>

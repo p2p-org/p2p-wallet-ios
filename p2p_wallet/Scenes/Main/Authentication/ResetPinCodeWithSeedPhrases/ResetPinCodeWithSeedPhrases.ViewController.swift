@@ -27,8 +27,6 @@ extension ResetPinCodeWithSeedPhrases {
             } validate: { [weak self] phrase in
                 self?.viewModel.validatePhrases(phrase) ?? (false, L10n.error)
             }
-
-            vc.dismissAfterCompletion = false
             return vc
         }()
 
@@ -72,7 +70,7 @@ extension ResetPinCodeWithSeedPhrases {
                     }
                 }
                 createPincodeVC.onCancel = { [weak createPincodeVC] in
-                    createPincodeVC?.dismiss(animated: true, completion: nil)
+                    createPincodeVC?.dismiss(animated: true)
                 }
                 childNavigationController.pushViewController(createPincodeVC, animated: true)
             }

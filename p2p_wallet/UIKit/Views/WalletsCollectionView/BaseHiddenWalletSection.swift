@@ -8,6 +8,7 @@
 import Action
 import BECollectionView
 import Foundation
+import SolanaSwift
 
 class HiddenWalletsSectionHeaderView: BECollectionCell {
     var showHideHiddenWalletsAction: CocoaAction?

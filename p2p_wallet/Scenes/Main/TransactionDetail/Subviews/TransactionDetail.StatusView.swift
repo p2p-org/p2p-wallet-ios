@@ -10,6 +10,7 @@ import Foundation
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension TransactionDetail {
@@ -42,7 +43,7 @@ extension TransactionDetail {
             }
         }
 
-        func driven(with driver: Driver<SolanaSDK.ParsedTransaction?>) -> TransactionDetail.StatusView {
+        func driven(with driver: Driver<ParsedTransaction?>) -> TransactionDetail.StatusView {
             driver
                 .map { $0?.status.label }
                 .drive(statusLabel.rx.text)

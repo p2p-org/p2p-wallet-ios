@@ -8,11 +8,12 @@
 import BECollectionView
 import Foundation
 import RxSwift
+import SolanaSwift
 
 extension DerivablePaths {
     class ViewModel: BEListViewModel<SelectableDerivablePath> {
-        private let currentPath: SolanaSDK.DerivablePath
-        init(currentPath: SolanaSDK.DerivablePath) {
+        private let currentPath: DerivablePath
+        init(currentPath: DerivablePath) {
             self.currentPath = currentPath
         }
 
@@ -21,9 +22,9 @@ extension DerivablePaths {
         }
 
         override func createRequest() -> Single<[SelectableDerivablePath]> {
-            let paths = SolanaSDK.DerivablePath.DerivableType
+            let paths = DerivablePath.DerivableType
                 .allCases
-                .map { SolanaSDK.DerivablePath(type: $0, walletIndex: 0, accountIndex: 0) }
+                .map { DerivablePath(type: $0, walletIndex: 0, accountIndex: 0) }
                 .map {
                     SelectableDerivablePath(
                         path: $0,
