@@ -10,6 +10,7 @@ import BECollectionView
 @_exported import BEPureLayout
 import Firebase
 import Resolver
+import SolanaSwift
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -18,7 +19,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     @Injected private var notificationService: NotificationService
-    @Injected private var changeNetworkResponder: ChangeNetworkResponder
 
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
@@ -117,7 +117,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         RemoteConfig.remoteConfig().configSettings = settings
         //        #endif
 
-        let currentEndpoints = SolanaSDK.APIEndPoint.definedEndpoints
+        let currentEndpoints = APIEndPoint.definedEndpoints
         #if DEBUG
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
@@ -142,13 +142,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #endif
     }
 
-    private func changeEndpointIfNeeded(currentEndpoints: [SolanaSDK.APIEndPoint]) {
-        let newEndpoints = SolanaSDK.APIEndPoint.definedEndpoints
+    private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {
+        let newEndpoints = APIEndPoint.definedEndpoints
         guard currentEndpoints != newEndpoints else { return }
         if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
            let firstEndpoint = newEndpoints.first
         {
-            changeNetworkResponder.changeAPIEndpoint(to: firstEndpoint)
+            Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
         }
     }
 }

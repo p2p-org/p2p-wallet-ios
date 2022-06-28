@@ -6,7 +6,7 @@
 //
 
 import FirebaseRemoteConfig
-import OrcaSwapSwift
+import SolanaSwift
 
 extension RemoteConfig {
     var definedEndpoints: [NetworkValue] {
