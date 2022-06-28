@@ -52,7 +52,7 @@ target 'p2p_wallet' do
   pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
   pod 'Charts'
-  pod 'JazziconSwift'
+  pod 'JazziconSwift', '1.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'GT3Captcha-iOS'
