@@ -51,12 +51,13 @@ extension History {
 
         var stateDriver: Driver<State> {
             Observable.combineLatest(
-                stateObservable.startWith(.loading),
                 dataObservable.startWith([])
                     .filter { $0 != nil }
                     .withPrevious(),
+                stateObservable.startWith(.loading),
                 errorRelay.startWith(false)
-            ).map { state, change, error in
+            ).map { change, state, error in
+                print(["here", state, change, error])
                 if error {
                     return .error
                 }
