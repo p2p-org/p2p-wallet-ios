@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import OrderedCollections
 
 extension Settings {
     class BaseViewController: BaseVC {
@@ -27,9 +26,9 @@ extension Settings {
     class SingleSelectionViewController<T: Hashable>: BaseViewController {
         // MARK: - Data
 
-        var data = OrderedDictionary<T, Bool>()
+        var data = [(item: T, selected: Bool)]()
         var cells: [Cell<T>] { innerStackView.arrangedSubviews.filter { $0 is Cell<T> } as! [Cell<T>] }
-        var selectedItem: T? { data.first(where: { $0.value })?.key }
+        var selectedItem: T? { data.first { $0.selected }?.item }
 
         // MARK: - Subviews
 
@@ -70,9 +69,8 @@ extension Settings {
         }
 
         func reloadData() {
-            for cell in cells {
-                guard let item = cell.item else { continue }
-                cell.radioButton.isSelected = data[item] ?? false
+            cells.enumerated().forEach { index, cell in
+                cell.radioButton.isSelected = data[index].selected
             }
         }
 
@@ -84,19 +82,20 @@ extension Settings {
         }
 
         @objc private func rowDidSelect(_ gesture: UIGestureRecognizer) {
-            guard let cell = gesture.view as? Cell<T>,
-                  let item = cell.item,
-                  let isCellSelected = data[item],
-                  isCellSelected == false
+            guard
+                let cell = gesture.view as? Cell<T>,
+                let index = cells.firstIndex(of: cell),
+                !data[index].selected
             else { return }
-            itemDidSelect(item)
+            itemDidSelect(at: index)
         }
 
-        func itemDidSelect(_ item: T) {
-            data[item] = true
+        func itemDidSelect(at index: Int) {
+            data[index].selected = true
 
-            // deselect all other networks
-            data.keys.filter { $0 != item }.forEach { data[$0] = false }
+            data.indices
+                .filter { $0 != index }
+                .forEach { data[$0].selected = false }
 
             reloadData()
         }
