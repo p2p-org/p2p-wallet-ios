@@ -5,20 +5,30 @@
 import BECollectionView
 import FeeRelayerSwift
 import Foundation
+import Resolver
 import RxCocoa
+import RxConcurrency
 import RxSwift
 import SolanaSwift
+import TransactionParser
 
 extension History {
-    class SceneModel: BEStreamListViewModel<SolanaSDK.ParsedTransaction> {
-        private let disposeBag = DisposeBag()
+    class SceneModel: BEStreamListViewModel<ParsedTransaction> {
+        typealias AccountSymbol = (account: String, symbol: String)
 
-        private let solanaSDK: SolanaSDK
-        private let walletsRepository: WalletsRepository
+        // MARK: - Dependencies
+
+        @Injected private var walletsRepository: WalletsRepository
         @Injected private var notificationService: NotificationService
-
         let transactionRepository = SolanaTransactionRepository()
         let transactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
+
+        // MARK: - Properties
+
+        private let disposeBag = DisposeBag()
+
+        /// Symbol to filter coins
+        let accountSymbol: AccountSymbol?
 
         /// Refresh handling
         private let refreshTriggers: [HistoryRefreshTrigger] = [
@@ -31,10 +41,7 @@ extension History {
 
         /// A list of output objects, that builds, forms, maps, filters and updates a final list.
         /// This list will be delivered to UI layer.
-        private let outputs: [HistoryOutput] = [
-            ProcessingTransactionsOutput(),
-            PriceUpdatingOutput(),
-        ]
+        private let outputs: [HistoryOutput]
 
         enum State {
             case items
@@ -67,12 +74,12 @@ extension History {
         let tryAgain = PublishRelay<Void>()
         private let errorRelay = PublishRelay<Bool>()
 
-        init(
-            solanaSDK: SolanaSDK = Resolver.resolve(),
-            walletsRepository: WalletsRepository = Resolver.resolve()
-        ) {
-            self.solanaSDK = solanaSDK
-            self.walletsRepository = walletsRepository
+        init(accountSymbol: AccountSymbol? = nil) {
+            self.accountSymbol = accountSymbol
+            outputs = [
+                ProcessingTransactionsOutput(accountFilter: accountSymbol?.account),
+                PriceUpdatingOutput(),
+            ]
 
             super.init(isPaginationEnabled: true, limit: 10)
 
@@ -95,24 +102,31 @@ extension History {
         }
 
         func buildSource() {
-            let cachedTransactionRepository: CachingTransactionRepository = .init(
-                delegate: SolanaTransactionRepository()
-            )
+            let cachedTransactionRepository = SolanaTransactionRepository()
             let cachedTransactionParser = DefaultTransactionParser(p2pFeePayers: Defaults.p2pFeePayerPubkeys)
 
-            let accountStreamSources = walletsRepository
-                .getWallets()
-                .reversed()
-                .map { wallet in
-                    AccountStreamSource(
-                        account: wallet.pubkey ?? "",
-                        symbol: wallet.token.symbol,
-                        transactionRepository: cachedTransactionRepository,
-                        transactionParser: cachedTransactionParser
-                    )
-                }
+            if let accountSymbol = accountSymbol {
+                source = AccountStreamSource(
+                    account: accountSymbol.account,
+                    symbol: accountSymbol.symbol,
+                    transactionRepository: cachedTransactionRepository,
+                    transactionParser: cachedTransactionParser
+                )
+            } else {
+                let accountStreamSources = walletsRepository
+                    .getWallets()
+                    .reversed()
+                    .map { wallet in
+                        AccountStreamSource(
+                            account: wallet.pubkey ?? "",
+                            symbol: wallet.token.symbol,
+                            transactionRepository: cachedTransactionRepository,
+                            transactionParser: cachedTransactionParser
+                        )
+                    }
 
-            source = MultipleStreamSource(sources: accountStreamSources)
+                source = MultipleStreamSource(sources: accountStreamSources)
+            }
         }
 
         override func clear() {
@@ -122,7 +136,7 @@ extension History {
             super.clear()
         }
 
-        override func next() -> Observable<[SolanaSDK.ParsedTransaction]> {
+        override func next() -> Observable<[ParsedTransaction]> {
             AsyncThrowingStream<[HistoryStreamSource.Result], Error> { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
@@ -130,7 +144,7 @@ extension History {
                     var results: [HistoryStreamSource.Result] = []
                     do {
                         while true {
-                            let firstTrx = try await source.first()
+                            let firstTrx = try await source.currentItem()
                             guard
                                 let firstTrx = firstTrx,
                                 let rawTime = firstTrx.0.blockTime
@@ -144,11 +158,10 @@ extension History {
                             timeEndFilter = timeEndFilter.addingTimeInterval(-1 * 60 * 60 * 24 * 1)
 
                             if Task.isCancelled { return }
-                            for try await result in source.next(
-                                configuration: .init(timestampEnd: timeEndFilter)
-                            ) {
-                                if Task.isCancelled { return }
-
+                            while
+                                let result = try await source.next(configuration: .init(timestampEnd: timeEndFilter)),
+                                Task.isNotCancelled
+                            {
                                 let (signatureInfo, _, _) = result
 
                                 // Skip duplicated transaction
@@ -172,18 +185,36 @@ extension History {
             }
             .asObservable()
             .flatMap { results in Observable.from(results) }
-            .concatMap { result in
-                Observable.asyncThrowing { () -> [SolanaSDK.ParsedTransaction] in
-                    let transactionInfo = try await self.transactionRepository
-                        .getTransaction(signature: result.0.signature)
-                    let transaction = try await self.transactionParser.parse(
-                        signatureInfo: result.0,
-                        transactionInfo: transactionInfo,
-                        account: result.1,
-                        symbol: result.2
-                    )
+            .flatMap { result in
+                Single.async {
+                    do {
+                        let transactionInfo = try await self.transactionRepository
+                            .getTransaction(signature: result.0.signature)
+                        let transaction = try await self.transactionParser.parse(
+                            signatureInfo: result.0,
+                            transactionInfo: transactionInfo,
+                            account: result.1,
+                            symbol: result.2
+                        )
+                        return [transaction]
+                    } catch {
+                        var blockTime: Date?
+                        if let time = result.0.blockTime {
+                            blockTime = Date(timeIntervalSince1970: TimeInterval(time))
+                        }
 
-                    return [transaction]
+                        let trx = ParsedTransaction(
+                            status: .confirmed,
+                            signature: result.0.signature,
+                            info: nil,
+                            slot: result.0.slot,
+                            blockTime: blockTime,
+                            fee: nil,
+                            blockhash: nil
+                        )
+
+                        return [trx]
+                    }
                 }
             }
             .do(onError: { [weak self] error in
@@ -194,8 +225,8 @@ extension History {
             })
         }
 
-        override func join(_ newItems: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
-            var filteredNewData: [SolanaSDK.ParsedTransaction] = []
+        override func join(_ newItems: [ParsedTransaction]) -> [ParsedTransaction] {
+            var filteredNewData: [ParsedTransaction] = []
             for trx in newItems {
                 if data.contains(where: { $0.signature == trx.signature }) { continue }
                 filteredNewData.append(trx)
@@ -203,7 +234,7 @@ extension History {
             return data + filteredNewData
         }
 
-        override func map(newData: [SolanaSDK.ParsedTransaction]) -> [SolanaSDK.ParsedTransaction] {
+        override func map(newData: [ParsedTransaction]) -> [ParsedTransaction] {
             // Apply output transformation
             var data = newData
             for output in outputs { data = output.process(newData: data) }

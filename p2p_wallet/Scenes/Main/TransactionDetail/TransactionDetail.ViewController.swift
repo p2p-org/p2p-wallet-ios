@@ -7,21 +7,14 @@
 
 import BEPureLayout
 import Foundation
+import TransactionParser
 import UIKit
 
 extension TransactionDetail {
     class ViewController: BaseViewController {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: TransactionDetailViewModelType
-
-        // MARK: - Properties
-
-        var backCompletion: (() -> Void)?
 
         // MARK: - Initializer
 
@@ -34,17 +27,6 @@ extension TransactionDetail {
 
         override func build() -> UIView {
             BEVStack {
-                // Navigation Bar
-                NavigationBar()
-                    .onBack { [unowned self] in
-                        if let backCompletion = backCompletion {
-                            backCompletion()
-                        } else {
-                            self.back()
-                        }
-                    }
-                    .driven(with: viewModel.parsedTransactionDriver)
-
                 // Scrollable View
                 BEScrollView(
                     axis: .vertical,
@@ -153,8 +135,16 @@ extension TransactionDetail {
 
         override func bind() {
             super.bind()
+
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
+                .disposed(by: disposeBag)
+            viewModel.navigationTitle
+                .drive(onNext: { [weak self] title in
+                    DispatchQueue.main.async { [weak self] in
+                        self?.navigationController?.navigationBar.topItem?.title = title
+                    }
+                })
                 .disposed(by: disposeBag)
         }
 

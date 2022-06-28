@@ -6,7 +6,9 @@
 //
 
 import Foundation
+import Resolver
 import RxCocoa
+import SolanaSwift
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewModel {

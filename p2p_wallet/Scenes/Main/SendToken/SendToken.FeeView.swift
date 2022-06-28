@@ -91,7 +91,7 @@ extension SendToken {
     }
 }
 
-private func feeAmountToAttributedString(feeAmount: SolanaSDK.FeeAmount?, solPrice: Double?) -> NSAttributedString {
+private func feeAmountToAttributedString(feeAmount: FeeAmount?, solPrice: Double?) -> NSAttributedString {
     guard let feeAmount = feeAmount else {
         return NSAttributedString()
     }

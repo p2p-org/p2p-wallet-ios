@@ -99,7 +99,9 @@ extension OrcaSwapV2.ConfirmSwapping {
             }
 
             addSubview(actionButton)
-            actionButton.autoPinEdgesToSuperviewEdges(with: .init(all: 18), excludingEdge: .top)
+            actionButton.autoPinEdge(.leading, to: .leading, of: self, withOffset: 18)
+            actionButton.autoPinEdge(.trailing, to: .trailing, of: self, withOffset: -18)
+            actionButton.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 18)
 
             scrollViewBottomConstraint.isActive = false
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 18)
