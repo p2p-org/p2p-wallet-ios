@@ -13,7 +13,7 @@ extension APIEndPoint {
         let remoteEndpoints = RemoteConfig.remoteConfig()
             .definedEndpoints
             .map {
-                SolanaSDK.APIEndPoint(
+                APIEndPoint(
                     address: $0.urlString ?? "",
                     network: $0.network ?? .mainnetBeta,
                     additionalQuery: .secretConfig($0.additionalQuery ?? "")
