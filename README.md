@@ -48,8 +48,8 @@ MOONPAY_PRODUCTION_API_KEY = fake_api_key
 AMPLITUDE_API_KEY = fake_api_key
 
 // MARK: - FeeRelayer
-FEE_RELAYER_STAGING_ENDPOINT = test.fee-relayer.solana.p2p.org
-FEE_RELAYER_PRODUCTION_ENDPOINT = fee-relayer.solana.p2p.org
+FEE_RELAYER_STAGING_ENDPOINT = test-solana-fee-relayer.wallet.p2p.org
+FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 ```
 - Run install.sh
