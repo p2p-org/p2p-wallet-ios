@@ -27,7 +27,7 @@ protocol LogoutResponder {
 }
 
 protocol SettingsViewModelType: ReserveNameHandler {
-    var selectableLanguages: [LocalizedLanguage: Bool] { get }
+    var selectableLanguages: [(LocalizedLanguage, Bool)] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
     var usernameDriver: Driver<String?> { get }
     var didBackupDriver: Driver<Bool> { get }
@@ -157,7 +157,7 @@ extension Settings {
 }
 
 extension Settings.ViewModel: SettingsViewModelType {
-    var selectableLanguages: [LocalizedLanguage: Bool] {
+    var selectableLanguages: [(LocalizedLanguage, Bool)] {
         localizationManager.selectableLanguages()
     }
 
