@@ -80,7 +80,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .take(1)
                 .mapToVoid()
                 .subscribe(onNext: { [weak self] in
-                    DispatchQueue.main.async { [weak self] in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                         self?.customView.amountTextField.becomeFirstResponder()
                     }
                 })
