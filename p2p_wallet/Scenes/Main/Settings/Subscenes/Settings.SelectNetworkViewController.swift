@@ -11,15 +11,19 @@ import SwiftyUserDefaults
 
 extension Settings {
     class SelectNetworkViewController: SingleSelectionViewController<APIEndPoint> {
-        override var sort: Bool { false }
-
         override init(viewModel: SettingsViewModelType) {
             super.init(viewModel: viewModel)
             // initial data
-            APIEndPoint.definedEndpoints
-                .forEach {
-                    data[$0] = ($0 == Defaults.apiEndPoint)
+            data = APIEndPoint.definedEndpoints
+                .sorted {
+                    if $0 == Defaults.apiEndPoint {
+                        return true
+                    } else if $1 != Defaults.apiEndPoint {
+                        return false
+                    }
+                    return false
                 }
+                .map { ($0, $0 == Defaults.apiEndPoint) }
         }
 
         override func setUp() {
@@ -33,9 +37,9 @@ extension Settings {
             return cell
         }
 
-        override func itemDidSelect(_ item: APIEndPoint) {
+        override func itemDidSelect(at index: Int) {
             let originalSelectedItem = selectedItem
-            super.itemDidSelect(item)
+            super.itemDidSelect(at: index)
             showAlert(
                 title: L10n.switchNetwork,
                 message: L10n.doYouReallyWantToSwitchTo + " \"" + selectedItem?.address + "\"",
@@ -57,8 +61,11 @@ extension Settings {
         }
 
         private func reverseChange(originalSelectedItem: APIEndPoint?) {
-            guard let item = originalSelectedItem else { return }
-            super.itemDidSelect(item)
+            guard
+                let item = originalSelectedItem,
+                let index = (data.firstIndex { $0.item == item })
+            else { return }
+            super.itemDidSelect(at: index)
         }
     }
 }
