@@ -11,11 +11,11 @@ import Resolver
 
 extension NameServiceImpl {
     static var endpoint: String {
-        let config: String
+        var config = String.secretConfig("FEE_RELAYER_ENDPOINT")!
         #if DEBUG
-            config = String.secretConfig("FEE_RELAYER_STAGING_ENDPOINT")!
-        #else
-            config = String.secretConfig("FEE_RELAYER_PRODUCTION_ENDPOINT")!
+            if let stagingEndpoint = String.secretConfig("FEE_RELAYER_STAGING_ENDPOINT"), !stagingEndpoint.isEmpty {
+                config = stagingEndpoint
+            }
         #endif
         return "https://\(config)/name_register"
     }
