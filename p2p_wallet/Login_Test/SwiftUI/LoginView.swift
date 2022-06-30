@@ -7,7 +7,7 @@ struct LoginView: View {
 
     var body: some View {
         VStack {
-            Text("Welcome!")
+            Text("Welcome from SwiftUI!")
                 .font(.largeTitle)
                 .fontWeight(.semibold)
                 .padding([.top, .bottom], 20)
