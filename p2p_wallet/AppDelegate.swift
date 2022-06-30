@@ -10,6 +10,7 @@ import BECollectionView
 @_exported import BEPureLayout
 import Firebase
 import Resolver
+import Sentry
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -56,6 +57,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        #else
         FirebaseApp.configure()
 //        #endif
+
+        // Sentry
+        SentrySDK.start { options in
+            options
+                .dsn = .secretConfig("SENTRY_DSN")
+            #if DEBUG
+                options.debug = true
+            #endif
+            options.tracesSampleRate = 1.0
+            options.enableNetworkTracking = true
+            options.enableOutOfMemoryTracking = true
+        }
 
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
