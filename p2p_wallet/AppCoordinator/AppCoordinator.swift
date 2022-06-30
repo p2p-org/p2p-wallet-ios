@@ -60,9 +60,8 @@ class AppCoordinator {
         ResolverScope.session.reset()
 
         // try to retrieve account from seed
-        let account = await Task<Account?, Never> {
-            storage.account
-        }.value
+        try? await storage.reloadSolanaAccount()
+        let account = storage.account
 
         // show scene
         if account == nil {
