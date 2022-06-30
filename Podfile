@@ -39,6 +39,7 @@ target 'p2p_wallet' do
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
+  pod 'CombineCocoa'
 
   # kits
   pod 'KeychainSwift', '~> 19.0'

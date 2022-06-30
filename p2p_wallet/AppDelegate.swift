@@ -67,7 +67,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
         // set rootVC
-        let vc = UIHostingController(rootView: LoginView(viewModel: .init()))
+//        let vc = UIHostingController(rootView: LoginView(viewModel: .init()))
+        let vc = LoginViewController(viewModel: .init())
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
         return true
