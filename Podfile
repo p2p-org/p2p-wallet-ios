@@ -16,16 +16,13 @@ target 'p2p_wallet' do
 
   # development pods
   key_app_kit
-  pod 'CocoaDebug', :configurations => ['Debug']
+  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
   pod 'SolanaSwift', :path => 'SolanaSwift'
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
   pod 'RenVMSwift', :path => 'RenVMSwift'
-
-  # debuging
-  #  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
 
   # tools
   pod 'SwiftGen', '~> 6.0'
