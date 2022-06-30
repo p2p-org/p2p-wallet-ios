@@ -10,6 +10,7 @@ import BECollectionView
 @_exported import BEPureLayout
 import Firebase
 import Resolver
+import SwiftUI
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -66,8 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
         // set rootVC
-        let vm = Root.ViewModel()
-        let vc = Root.ViewController(viewModel: vm)
+        let vc = UIHostingController(rootView: LoginView(viewModel: .init()))
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
         return true
