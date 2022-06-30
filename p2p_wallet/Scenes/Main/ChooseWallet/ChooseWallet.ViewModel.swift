@@ -5,10 +5,13 @@
 //  Created by Chung Tran on 26/07/2021.
 //
 
+import AnalyticsManager
 import BECollectionView
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 extension ChooseWallet {
     class ViewModel: BEListViewModel<Wallet> {
@@ -19,7 +22,7 @@ extension ChooseWallet {
         let handler: WalletDidSelectHandler!
         @Injected private var walletsRepository: WalletsRepository
         @Injected private var tokensRepository: TokensRepository
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var pricesService: PricesServiceType
         let showOtherWallets: Bool!
         private var keyword: String?
@@ -45,26 +48,28 @@ extension ChooseWallet {
 
         override func createRequest() -> Single<[Wallet]> {
             if showOtherWallets {
-                return tokensRepository.getTokensList()
-                    .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-                    .map { $0.excludingSpecialTokens() }
-                    .map {
-                        $0
-                            .filter {
-                                $0.symbol != "SOL"
-                            }
-                            .map {
-                                Wallet(pubkey: nil, lamports: nil, token: $0)
-                            }
-                    }
-                    .map { [weak self] in
-                        guard let self = self else { return [] }
-                        return self.myWallets + $0
-                            .filter { otherWallet in
-                                !self.myWallets.contains(where: { $0.token.symbol == otherWallet.token.symbol })
-                            }
-                    }
-                    .observe(on: MainScheduler.instance)
+                return Single<[Token]>.async {
+                    Array(try await self.tokensRepository.getTokensList())
+                }
+                .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
+                .map { $0.excludingSpecialTokens() }
+                .map {
+                    $0
+                        .filter {
+                            $0.symbol != "SOL"
+                        }
+                        .map {
+                            Wallet(pubkey: nil, lamports: nil, token: $0)
+                        }
+                }
+                .map { [weak self] in
+                    guard let self = self else { return [] }
+                    return self.myWallets + $0
+                        .filter { otherWallet in
+                            !self.myWallets.contains(where: { $0.token.symbol == otherWallet.token.symbol })
+                        }
+                }
+                .observe(on: MainScheduler.instance)
             }
             return .just(myWallets)
         }

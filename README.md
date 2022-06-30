@@ -20,21 +20,18 @@ P2P Wallet on Solana blockchain
 
 ## Installation
 
-- Clone project and retrieve all submodules
-```zsh
-git clone git@github.com:p2p-org/p2p-wallet-ios.git
-cd p2p-wallet-ios
+- Clone project and move to folder
+```shell
+git clone git@github.com:p2p-org/p2p-wallet-ios.git && cd p2p-wallet-ios
+```
+- Get submodules
+```shell
 git submodule update --init --recursive
 ```
-- Override `githook` directory:
-```zsh
+- Set git hooks (Optional)
+```shell
 git config core.hooksPath .githooks
 chmod -R +x .githooks
-```
-- Run `pod install`
-- Run `swiftgen` for the first time
-```zsh
-Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml
 ```
 - Add `Config.xcconfig` to `p2p-wallet-ios/p2p-wallet` contains following content
 ```
@@ -54,13 +51,35 @@ AMPLITUDE_API_KEY = fake_api_key
 FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 ```
+- Run install.sh
+```shell
+chmod u+x Scripts/install.sh && Scripts/install.sh
+```
+
+- Select target `p2p_wallet` (if `Detect Unused Code` is selected by default after xcodegen)
 
 ## Localization
 
 - Download [LocalizationHelper app](https://github.com/bigearsenal/XCodeLocalizationHelper/raw/main/release/LocalizationHelper.zip)
 - Copy `LocalizationHelper` to `Applications`
-- Open `.xcproj` file from `LocalizationHelper`
-- Add key and setup automation
+- After xcodegen, the LocalizationHelper stopped working, so here is the solution:
+1. Click "Open..."
+2. Choose `Tuist project` instead of `Default project`
+   
+<img width="686" alt="image" src="https://user-images.githubusercontent.com/6975538/172043618-f945c283-ad36-4030-ab3f-4cfd6a2a3660.png">
+
+3. Choose project root folder (p2p-wallet-ios)
+4. Resouces folder must be p2p-wallet-ios/p2p_wallet
+
+<img width="673" alt="image" src="https://user-images.githubusercontent.com/6975538/172043669-84883ac3-a35f-4ce4-b576-3a25564bed30.png">
+
+5. Click open project.
+
+<img width="673" alt="image" src="https://user-images.githubusercontent.com/6975538/172043669-84883ac3-a35f-4ce4-b576-3a25564bed30.png">
+
+6. Change "Run automation" to "Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml"
+
+<img width="682" alt="image" src="https://user-images.githubusercontent.com/6975538/172043833-ebb5b808-3b11-4e2a-a46e-727503b61e03.png">
 
 ## CI/CD
 
@@ -125,10 +144,10 @@ Result
 
 ## UI Templates
 
-- Copy template `BEScene.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/File\ Templates/Templates/BEScene.xctemplate`
+- Copy template `BEScene2.xctemplate` that is located under `Templates` folder to  `~/Library/Developer/Xcode/Templates/`
 ```zsh
-mkdir -p ~/Library/Developer/Xcode/Templates/File\ Templates/BEScene.xctemplate
-cp -R Templates/BEScene.xctemplate ~/Library/Developer/Xcode/Templates/File\ Templates/BEScene.xctemplate
+mkdir -p ~/Library/Developer/Xcode/Templates/BEScene2.xctemplate
+cp -R Templates/BEScene2.xctemplate ~/Library/Developer/Xcode/Templates
 ```
 
 ## Dependency Injection

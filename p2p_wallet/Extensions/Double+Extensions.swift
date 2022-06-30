@@ -92,6 +92,7 @@ extension Double {
         let formatter = NumberFormatter()
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
+        formatter.decimalSeparator = "."
         if let groupingSeparator = groupingSeparator {
             formatter.groupingSeparator = groupingSeparator
         }
@@ -114,8 +115,7 @@ extension Double {
         }
 
         let number = showMinus ? self : abs(self)
-
-        return (formatter.string(from: number as NSNumber) ?? "0")
+        return formatter.string(from: number as NSNumber) ?? "0"
     }
 
     func rounded(decimals: Int?) -> Double {

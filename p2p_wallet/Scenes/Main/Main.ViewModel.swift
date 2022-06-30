@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import RenVMSwift
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol MainViewModelType {
     var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get
@@ -24,10 +26,10 @@ extension Main {
     final class ViewModel {
         // MARK: - Dependencies
 
-        @Injected private var socket: SolanaSDK.Socket
+        @Injected private var socket: Socket
         @Injected private var pricesService: PricesServiceType
-        @Injected private var lockAndMint: RenVMLockAndMintServiceType // start service right here by triggering resolver
-        @Injected private var burnAndRelease: RenVMBurnAndReleaseServiceType // start service right here by triggering resolver
+        @Injected private var lockAndMint: LockAndMintService
+        @Injected private var burnAndRelease: BurnAndReleaseService
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var notificationService: NotificationService
 
@@ -42,6 +44,10 @@ extension Main {
         init() {
             socket.connect()
             pricesService.startObserving()
+            burnAndRelease.resume()
+            Task {
+                try await lockAndMint.resume()
+            }
         }
 
         deinit {

@@ -39,7 +39,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             if viewModel.getCurrentInputState() == .searching {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                     guard let self = self else { return }
-                    self.textField.becomeFirstResponder()
                     #if DEBUG
                         var didTake = false
                         self.viewModel.walletDriver

@@ -12,22 +12,19 @@ import RxSwift
 import UIKit
 
 extension ReceiveToken {
-    class NetworkSelectionScene: BEScene {
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-
+    class NetworkSelectionScene: BaseViewController {
         private let viewModel: ReceiveSceneModel
 
         init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
             super.init()
+
+            navigationItem.title = L10n.chooseTheNetwork
         }
 
         override func build() -> UIView {
             BESafeArea {
                 UIStackView(axis: .vertical, alignment: .fill) {
-                    NewWLNavigationBar(initialTitle: L10n.chooseTheNetwork, separatorEnable: false)
-                        .onBack { [unowned self] in self.back() }
-
                     BEScrollView(contentInsets: .init(all: 18)) {
                         // Solana network
                         NetworkCell(

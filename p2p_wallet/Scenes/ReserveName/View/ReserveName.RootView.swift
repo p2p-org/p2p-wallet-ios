@@ -85,7 +85,7 @@ extension ReserveName {
         }
 
         private func configureDescription() {
-            descriptionLabel.font = UIFont.systemFont(ofSize: 15, weight: .regular)
+            descriptionLabel.font = .systemFont(ofSize: 15, weight: .regular)
             descriptionLabel.numberOfLines = 0
             descriptionLabel.lineBreakMode = NSLineBreakMode.byWordWrapping
 
@@ -97,8 +97,8 @@ extension ReserveName {
                     .P2PUsernameIsYourPublicAddressWhichAllowsYouToReceiveAnyTokenEvenIfYouDonTHaveItInTheWalletList
                     .itIsVitalYouSelectTheExactUsernameYouWantAsOnceSetYouCannotChangeIt,
                 attributes: [
-                    NSAttributedString.Key.kern: -0.24,
-                    NSAttributedString.Key.paragraphStyle: paragraphStyle,
+                    .kern: -0.24,
+                    .paragraphStyle: paragraphStyle,
                 ]
             )
         }
@@ -107,37 +107,16 @@ extension ReserveName {
             let separatorView = UIView()
             separatorView.backgroundColor = .c7c7cc
 
-            let canSkip: Bool
-
-            switch viewModel.kind {
-            case .reserveCreateWalletPart:
-                canSkip = true
-            case .independent:
-                canSkip = false
-            }
-
-            let navigationBar = NavigationBar(
-                canSkip: canSkip,
-                backHandler: { [weak viewModel] in
-                    viewModel?.goBack()
-                },
-                skipHandler: { [weak viewModel] in
-                    viewModel?.skipButtonPressed()
-                }
-            )
-
             let mainButtonView = BottomFixedView(content: nextButton)
 
-            addSubview(navigationBar)
             addSubview(scrollView)
             addSubview(mainButtonView)
             scrollView.contentView.addSubview(stackView)
 
             mainButtonView.setConstraints()
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
 
             // scroll view for flexible height
-            scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 18)
+            scrollView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 18)
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
             scrollView.autoPinEdge(.bottom, to: .top, of: mainButtonView)
@@ -197,6 +176,16 @@ extension ReserveName {
                     self?.setHintIsLoading(isLoading)
                 }
                 .disposed(by: disposeBag)
+
+            viewModel.mainButtonStateDriver
+                .map { $0 == .unavailableNameService }
+                .drive(onNext: { [weak self] isNameServiceUnavailable in
+                    if isNameServiceUnavailable {
+                        self?.endEditing(true)
+                        self?.textView.isUserInteractionEnabled = false
+                    }
+                })
+                .disposed(by: disposeBag)
         }
 
         private func setHintIsLoading(_ isLoading: Bool) {
@@ -248,6 +237,10 @@ extension ReserveName {
                 image = .check
                 isEnabled = true
                 title = L10n.saveContinue
+            case .unavailableNameService:
+                image = nil
+                isEnabled = false
+                title = L10n.tryAgainLater
             }
 
             nextButton.isEnabled = isEnabled

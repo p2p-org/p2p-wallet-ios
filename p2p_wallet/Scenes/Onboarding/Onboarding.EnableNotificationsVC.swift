@@ -5,17 +5,15 @@
 //  Created by Chung Tran on 10/30/20.
 //
 
+import AnalyticsManager
 import BEPureLayout
 import Foundation
+import Resolver
 import UIKit
 
 extension Onboarding {
     class EnableNotificationsVC: BaseVC {
-        @Injected private var analyticsManager: AnalyticsManagerType
-
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Dependencies
 
@@ -33,16 +31,16 @@ extension Onboarding {
         override func setUp() {
             super.setUp()
             // navigation bar
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.backButton.isHidden = true
-            navigationBar.titleLabel.text = L10n.letSStayInTouch
-
-            let skipButton = UIButton(label: L10n.skip.uppercaseFirst, textColor: .h5887ff)
-                .onTap(self, action: #selector(buttonSkipDidTouch))
-            navigationBar.rightItems.addArrangedSubview(skipButton)
-
-            view.addSubview(navigationBar)
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
+            navigationItem.hidesBackButton = true
+            navigationItem.title = L10n.letSStayInTouch
+            let skipButton = UIBarButtonItem(
+                title: L10n.skip.uppercaseFirst,
+                style: .plain,
+                target: self,
+                action: #selector(buttonSkipDidTouch)
+            )
+            navigationItem.rightBarButtonItem = skipButton
+            skipButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
 
             // explanation view
             let explanationView = UILabel(
@@ -53,7 +51,7 @@ extension Onboarding {
             )
                 .padding(.init(all: 18), backgroundColor: .fafafc, cornerRadius: 12)
             view.addSubview(explanationView)
-            explanationView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 18)
+            explanationView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 18)
             explanationView.autoPinEdge(toSuperviewSafeArea: .leading, withInset: 18)
             explanationView.autoPinEdge(toSuperviewSafeArea: .trailing, withInset: 18)
 
