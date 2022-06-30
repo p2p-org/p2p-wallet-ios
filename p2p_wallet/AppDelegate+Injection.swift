@@ -80,6 +80,9 @@ extension Resolver: ResolverRegistering {
         register { InMemoryTokensRepositoryCache() }
             .implements(SolanaTokensRepositoryCache.self)
             .scope(.application)
+
+        register { MockLoginService() }
+            .implements(LoginService.self)
     }
 
     /// Graph scope: Recreate and reuse dependencies
