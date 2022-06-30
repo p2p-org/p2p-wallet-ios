@@ -5,8 +5,10 @@
 //  Created by Chung Tran on 16/04/2021.
 //
 
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 protocol ResetPinCodeWithSeedPhrasesViewModelType {
@@ -52,7 +54,7 @@ extension ResetPinCodeWithSeedPhrases.ViewModel: ResetPinCodeWithSeedPhrasesView
 
     func handlePhrases(_ phrases: [String]) {
         guard storage.phrases == phrases else {
-            errorSubject.accept(SolanaSDK.Error.other("Seed phrases is not correct"))
+            errorSubject.accept(SolanaError.other("Seed phrases is not correct"))
             return
         }
         navigationSubject.accept(.createNewPasscode)

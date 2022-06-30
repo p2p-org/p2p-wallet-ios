@@ -9,9 +9,7 @@ import Foundation
 import RxCocoa
 
 extension SendToken.SelectNetwork {
-    final class ViewController: BEScene {
-        override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
-
+    final class ViewController: BaseViewController {
         private let viewModel: SendTokenSelectNetworkViewModelType
 
         // Internal state
@@ -21,13 +19,11 @@ extension SendToken.SelectNetwork {
             self.viewModel = viewModel
             selectedNetwork = BehaviorRelay(value: viewModel.getSelectedNetwork())
             super.init()
+            navigationItem.title = L10n.chooseTheNetwork
         }
 
         override func build() -> UIView {
             UIStackView(axis: .vertical, alignment: .fill) {
-                NewWLNavigationBar(initialTitle: L10n.chooseTheNetwork, separatorEnable: false)
-                    .onBack { [unowned self] in self.back() }
-
                 BEScrollView(contentInsets: .init(x: 18, y: 4)) {
                     // Description
                     UIView.greyBannerView {

@@ -8,6 +8,7 @@
 import Foundation
 import JazziconSwift
 import RxSwift
+import SolanaSwift
 import UIKit
 
 class CoinLogoImageView: BEView {
@@ -66,7 +67,7 @@ class CoinLogoImageView: BEView {
         setUp(token: wallet?.token)
     }
 
-    func setUp(token: SolanaSDK.Token? = nil, placeholder: UIImage? = nil) {
+    func setUp(token: Token? = nil, placeholder: UIImage? = nil) {
         // default
         wrappingView.alpha = 0
         backgroundColor = .clear

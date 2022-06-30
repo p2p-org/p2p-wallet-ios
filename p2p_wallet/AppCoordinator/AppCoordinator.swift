@@ -5,7 +5,10 @@
 //  Created by Chung Tran on 23/05/2022.
 //
 
+import AnalyticsManager
 import Foundation
+import Resolver
+import SolanaSwift
 import UIKit
 
 class AppCoordinator {
@@ -13,7 +16,7 @@ class AppCoordinator {
 
     private var appEventHandler: AppEventHandlerType = Resolver.resolve()
     private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
-    let analyticsManager: AnalyticsManagerType = Resolver.resolve()
+    let analyticsManager: AnalyticsManager = Resolver.resolve()
     let notificationsService: NotificationService = Resolver.resolve()
 
     // MARK: - Properties
@@ -57,7 +60,7 @@ class AppCoordinator {
         ResolverScope.session.reset()
 
         // try to retrieve account from seed
-        let account = await Task<SolanaSDK.Account?, Never> {
+        let account = await Task<Account?, Never> {
             storage.account
         }.value
 

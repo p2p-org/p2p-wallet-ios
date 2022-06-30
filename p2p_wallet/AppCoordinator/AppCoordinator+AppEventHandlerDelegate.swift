@@ -5,7 +5,9 @@
 //  Created by Chung Tran on 23/05/2022.
 //
 
+import AnalyticsManager
 import Foundation
+import SolanaSwift
 
 extension AppCoordinator: AppEventHandlerDelegate {
     func didStartLoading() {
@@ -35,7 +37,7 @@ extension AppCoordinator: AppEventHandlerDelegate {
         navigateToOnboardingDone()
     }
 
-    func userDidChangeAPIEndpoint(to _: SolanaSDK.APIEndPoint) {
+    func userDidChangeAPIEndpoint(to _: APIEndPoint) {
         showAuthenticationOnMainOnAppear = false
         Task {
             await reload()

@@ -7,7 +7,10 @@
 
 import Foundation
 import LocalAuthentication
+import RenVMSwift
+import Resolver
 import RxCocoa
+import SolanaSwift
 
 protocol AppEventHandlerType {
     var delegate: AppEventHandlerDelegate? { get set }
@@ -34,7 +37,7 @@ final class AppEventHandler: AppEventHandlerType {
             case .mainnetBeta:
                 break
             case .devnet, .testnet:
-                if let definedEndpoint = (SolanaSDK.APIEndPoint.definedEndpoints
+                if let definedEndpoint = (APIEndPoint.definedEndpoints
                     .first { $0.network != .devnet && $0.network != .testnet })
                 {
                     changeAPIEndpoint(to: definedEndpoint)
@@ -47,7 +50,7 @@ final class AppEventHandler: AppEventHandlerType {
 // MARK: - ChangeNetworkResponder
 
 extension AppEventHandler: ChangeNetworkResponder {
-    func changeAPIEndpoint(to endpoint: SolanaSDK.APIEndPoint) {
+    func changeAPIEndpoint(to endpoint: APIEndPoint) {
         Defaults.apiEndPoint = endpoint
         ResolverScope.session.reset()
         delegate?.userDidChangeAPIEndpoint(to: endpoint)
@@ -67,6 +70,7 @@ extension AppEventHandler: ChangeLanguageResponder {
 
 extension AppEventHandler: LogoutResponder {
     func logout() {
+        ResolverScope.session.reset()
         notificationsService.unregisterForRemoteNotifications()
         Task {
             await notificationsService.deleteDeviceToken()
@@ -77,8 +81,10 @@ extension AppEventHandler: LogoutResponder {
             Defaults.didSetEnableBiometry = false
             Defaults.didSetEnableNotifications = false
             Defaults.didBackupOffline = false
-            Defaults.renVMSession = nil
-            Defaults.renVMProcessingTxs = []
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForSession)
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForGatewayAddress)
+            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForProcessingTransactions)
+            UserDefaults.standard.removeObject(forKey: BurnAndRelease.keyForSubmitedBurnTransaction)
             Defaults.forceCloseNameServiceBanner = false
             Defaults.shouldShowConfirmAlertOnSend = true
             Defaults.shouldShowConfirmAlertOnSwap = true
@@ -90,13 +96,13 @@ extension AppEventHandler: LogoutResponder {
 // MARK: - CreateOrRestoreWalletHandler
 
 extension AppEventHandler: CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+    func creatingWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
         delegate?.createWalletDidComplete()
         saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
         resolvedName = name
     }
 
-    func restoringWalletDidComplete(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+    func restoringWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
         delegate?.restoreWalletDidComplete()
         saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
         resolvedName = name
@@ -107,7 +113,7 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
         delegate?.userDidLogout()
     }
 
-    private func saveAccountToStorage(phrases: [String]?, derivablePath: SolanaSDK.DerivablePath?, name: String?) {
+    private func saveAccountToStorage(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
         guard let phrases = phrases, let derivablePath = derivablePath else {
             creatingOrRestoringWalletDidCancel()
             return
@@ -115,25 +121,28 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
 
         delegate?.didStartLoading()
 
-        DispatchQueue.global().async { [weak self] in
+        Task {
             do {
-                try self?.storage.save(phrases: phrases)
-                try self?.storage.save(derivableType: derivablePath.type)
-                try self?.storage.save(walletIndex: derivablePath.walletIndex)
+                try storage.save(phrases: phrases)
+                try storage.save(derivableType: derivablePath.type)
+                try storage.save(walletIndex: derivablePath.walletIndex)
+
+                try await storage.reloadSolanaAccount()
 
                 if let name = name {
-                    self?.storage.save(name: name)
+                    storage.save(name: name)
                 }
 
-                DispatchQueue.main.async { [weak self] in
-                    self?.delegate?.didStopLoading()
+                await MainActor.run {
+                    delegate?.didStopLoading()
                 }
-                self?.notificationsService.registerForRemoteNotifications()
+
+                notificationsService.registerForRemoteNotifications()
             } catch {
-                self?.delegate?.didStopLoading()
-                DispatchQueue.main.async { [weak self] in
-                    self?.notificationsService.showInAppNotification(.error(error))
-                    self?.creatingOrRestoringWalletDidCancel()
+                await MainActor.run {
+                    delegate?.didStopLoading()
+                    notificationsService.showInAppNotification(.error(error))
+                    creatingOrRestoringWalletDidCancel()
                 }
             }
         }

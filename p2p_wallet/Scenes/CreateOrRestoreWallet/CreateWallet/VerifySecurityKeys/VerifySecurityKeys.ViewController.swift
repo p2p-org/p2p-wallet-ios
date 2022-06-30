@@ -10,10 +10,6 @@ import UIKit
 
 extension VerifySecurityKeys {
     class ViewController: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Dependencies
 
         private let viewModel: VerifySecurityKeysViewModelType
@@ -25,14 +21,12 @@ extension VerifySecurityKeys {
         init(viewModel: VerifySecurityKeysViewModelType) {
             self.viewModel = viewModel
             viewModel.generate()
+            super.init()
+            navigationItem.title = L10n.verifyYourSecurityKey
         }
 
         override func loadView() {
             view = RootView(viewModel: viewModel)
-        }
-
-        override func setUp() {
-            super.setUp()
         }
 
         override func bind() {

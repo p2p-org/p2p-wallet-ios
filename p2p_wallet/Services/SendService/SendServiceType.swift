@@ -8,10 +8,11 @@
 import FeeRelayerSwift
 import Foundation
 import RxSwift
+import SolanaSwift
 
-protocol SendServiceType {
-    func load() -> Completable
-    func checkAccountValidation(account: String) -> Single<Bool>
+protocol SendServiceType: AnyObject {
+    func load() async throws
+    func checkAccountValidation(account: String) async throws -> Bool
     func isTestNet() -> Bool
 
     func getFees(
@@ -19,18 +20,17 @@ protocol SendServiceType {
         receiver: String?,
         network: SendToken.Network,
         payingTokenMint: String?
-    ) -> Single<SolanaSDK.FeeAmount?>
+    ) async throws -> FeeAmount?
+
     func getFeesInPayingToken(
-        feeInSOL: SolanaSDK.FeeAmount,
+        feeInSOL: FeeAmount,
         payingFeeWallet: Wallet
-    ) -> Single<SolanaSDK.FeeAmount?>
+    ) async throws -> FeeAmount?
 
-    func getFreeTransactionFeeLimit(
-    ) -> Single<FeeRelayer.Relay.FreeTransactionFeeLimit>
+    // TODO: hide direct usage of ``UsageStatus``
+    func getFreeTransactionFeeLimit() async throws -> UsageStatus
 
-    func getAvailableWalletsToPayFee(
-        feeInSOL: SolanaSDK.FeeAmount
-    ) -> Single<[Wallet]>
+    func getAvailableWalletsToPayFee(feeInSOL: FeeAmount) async throws -> [Wallet]
 
     func send(
         from wallet: Wallet,
@@ -38,5 +38,5 @@ protocol SendServiceType {
         amount: Double,
         network: SendToken.Network,
         payingFeeWallet: Wallet?
-    ) -> Single<String>
+    ) async throws -> String
 }

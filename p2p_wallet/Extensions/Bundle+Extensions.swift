@@ -10,6 +10,8 @@ import Foundation
 extension Bundle {
     fileprivate static var current: Bundle = valueForCurrentBundle()
 
+    // MARK: - Localization swizzle
+
     static func swizzleLocalization() {
         swizzle(
             originalSelector: #selector(localizedString(forKey:value:table:)),
@@ -27,6 +29,25 @@ extension Bundle {
 
         return main.path(forResource: currentLanguage.code, ofType: "lproj")
             .flatMap(Bundle.init(path:)) ?? main
+    }
+
+    // MARK: - Build number, marketing number
+
+    var releaseVersionNumber: String? {
+        infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+
+    var buildVersionNumber: String? {
+        infoDictionary?["CFBundleVersion"] as? String
+    }
+
+    var fullVersionNumber: String? {
+        guard let releaseVersionNumber = releaseVersionNumber,
+              let buildVersionNumber = buildVersionNumber
+        else {
+            return nil
+        }
+        return releaseVersionNumber + "(" + buildVersionNumber + ")"
     }
 }
 

@@ -20,12 +20,6 @@ extension VerifySecurityKeys {
 
         // MARK: - Subviews
 
-        private let navigationBar: WLNavigationBar = {
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.titleLabel.text = L10n.verifyYourSecurityKey
-            return navigationBar
-        }()
-
         private let questionsView: QuestionsView = .init()
         private let nextButton: NextButton = .init()
 
@@ -55,14 +49,9 @@ extension VerifySecurityKeys {
         // MARK: - Layout
 
         private func layout() {
-            addSubview(navigationBar)
-            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
-            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
-            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
-
             addSubview(questionsView)
             questionsView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets.zero, excludingEdge: .top)
-            questionsView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            questionsView.autoPinEdge(toSuperviewSafeArea: .top)
 
             addSubview(nextButton)
             nextButton.autoPinEdgesToSuperviewSafeArea(
@@ -72,7 +61,6 @@ extension VerifySecurityKeys {
         }
 
         private func bind() {
-            navigationBar.backButton.onTap(self, action: #selector(back))
             viewModel.questionsDriver.drive(questionsView.rx.questions).disposed(by: disposeBag)
             viewModel.validationDriver.drive(nextButton.rx.ready).disposed(by: disposeBag)
             viewModel.validationDriver.map {
@@ -89,10 +77,6 @@ extension VerifySecurityKeys {
 
         @objc func verify() {
             viewModel.verify()
-        }
-
-        @objc func back() {
-            viewModel.back()
         }
     }
 }
