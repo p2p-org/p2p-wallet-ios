@@ -2,10 +2,6 @@ import Combine
 import Foundation
 import Resolver
 
-protocol LoginService {
-    func login(username: String, password: String) async throws
-}
-
 class LoginViewModel: BaseViewModel {
     // MARK: - Dependencies
 
