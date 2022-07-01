@@ -5,61 +5,69 @@
 //  Created by Babich Ivan on 16.06.2022.
 //
 
-#if DEBUG
-
-    /* script_delete_flag_start */
-    import CocoaDebug
-    /* script_delete_flag_end */
-
-    final class DebugAppDelegateService: NSObject,
-    AppDelegateService {
-        func applicationDidFinishLaunching(_: UIApplication) {
-            /* script_delete_flag_start */
-            CocoaDebugSettings.shared.responseShake = false
-            /* script_delete_flag_end */
-            showDebugger(isShown)
-        }
-    }
-#endif
-
-#if DEBUG
-    var isShown = CocoaDebugSettings.shared.showBubbleAndWindow
-#endif
+// #if DEBUG
 
 /* script_delete_flag_start */
-#if DEBUG
-    var isShaken = false
-
-    extension UIWindow {
-        override open func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-            super.motionBegan(motion, with: event)
-            isShaken = true
-        }
-
-        override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-            super.motionEnded(motion, with: event)
-            guard isShaken else {
-                isShaken.toggle()
-                return
-            }
-            guard motion == .motionShake else { return }
-            isShown.toggle()
-            showDebugger(isShown)
-        }
-    }
-#endif
+import CocoaDebug
 /* script_delete_flag_end */
 
-#if DEBUG
-    func showDebugger(_ isShown: Bool) {
-        DispatchQueue.main.async {
-            /* script_delete_flag_start */
-            if isShown {
-                CocoaDebug.showBubble()
-            } else {
-                CocoaDebug.hideBubble()
-            }
-            /* script_delete_flag_end */
-        }
+final class DebugAppDelegateService: NSObject, AppDelegateService {
+    func applicationDidFinishLaunching(_: UIApplication) {
+        /* script_delete_flag_start */
+        CocoaDebugSettings.shared.responseShake = false
+        /* script_delete_flag_end */
+        showDebugger(isShown)
     }
-#endif
+}
+
+// #endif
+
+// #if DEBUG
+
+var isShown = CocoaDebugSettings.shared.showBubbleAndWindow
+
+// #endif
+
+/* script_delete_flag_start */
+// #if DEBUG
+
+var isShaken = false
+
+extension UIWindow {
+    override open func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        super.motionBegan(motion, with: event)
+        isShaken = true
+    }
+
+    override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        super.motionEnded(motion, with: event)
+        guard isShaken else {
+            isShaken.toggle()
+            return
+        }
+
+        guard motion == .motionShake else { return }
+
+        isShown.toggle()
+        showDebugger(isShown)
+    }
+}
+
+// #endif
+/* script_delete_flag_end */
+
+// #if DEBUG
+
+func showDebugger(_ isShown: Bool) {
+    DispatchQueue.main.async {
+        /* script_delete_flag_start */
+        if isShown {
+            CocoaDebug.showBubble()
+        } else {
+            CocoaDebug.hideBubble()
+        }
+        /* script_delete_flag_end */
+    }
+}
+
+// #endif
