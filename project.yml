@@ -30,6 +30,10 @@ configFiles:
   Debug: p2p_wallet/Config.xcconfig
   Release: p2p_wallet/Config.xcconfig
 
+settings:
+    base:
+        ENABLE_BITCODE: false
+
 targets:
     p2p_wallet:
         type: application
@@ -90,7 +94,6 @@ targets:
                 - "-framework"
                 - "\"SolanaSwift\""
                 PRODUCT_NAME: "$(TARGET_NAME)"
-                ENABLE_BITCODE: false
                 DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
 
     Detect Unused Code:
