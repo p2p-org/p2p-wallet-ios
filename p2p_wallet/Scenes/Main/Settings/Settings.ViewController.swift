@@ -146,17 +146,17 @@ extension Settings {
                             nextArrowEnable: false
                         )
                     }
-                    #if DEBUG
-                        SectionView(title: "Debug") {
-                            CellView(
-                                icon: UIImage(),
-                                title: UILabel(text: "Debug Menu")
-                            ).onTap { [unowned self] in
-                                let view = DebugMenuView(viewModel: .init())
-                                present(view.asViewController(), animated: true)
-                            }
+//                    #if DEBUG
+                    SectionView(title: "Debug") {
+                        CellView(
+                            icon: UIImage(),
+                            title: UILabel(text: "Debug Menu")
+                        ).onTap { [unowned self] in
+                            let view = DebugMenuView(viewModel: .init())
+                            present(view.asViewController(), animated: true)
                         }
-                    #endif
+                    }
+//                    #endif
                 }
             }
         }
