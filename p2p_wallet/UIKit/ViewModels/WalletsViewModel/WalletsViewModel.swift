@@ -153,7 +153,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         .observe(on: MainScheduler.instance)
         .do(onSuccess: { [weak self] wallets in
             guard let self = self else { return }
-            let newTokens = wallets.map(\.token.symbol)
+            let newTokens = wallets.map(\.token)
                 .filter { !self.pricesService.getWatchList().contains($0) }
             self.pricesService.addToWatchList(newTokens)
             self.pricesService.fetchPrices(tokens: newTokens)
@@ -200,8 +200,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         Observable.combineLatest(
             super.dataDidChange,
             isHiddenWalletsShown.distinctUntilChanged()
-        )
-            .map { _ in () }
+        ).map { _ in () }
     }
 
     // MARK: - getters
