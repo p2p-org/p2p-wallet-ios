@@ -61,6 +61,7 @@ target 'p2p_wallet' do
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
+  pod 'Firebase/RemoteConfig'
   
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
