@@ -20,9 +20,7 @@ final class LoginViewController: BaseViewController {
                 .setup { view in
                     view.textPublisher
                         .map { $0 ?? "" }
-                        .sink { [weak self] value in
-                            self?.viewModel.username = value
-                        }
+                        .assign(to: \.username, on: viewModel)
                         .store(in: &subscriptions)
                 }
                 .padding(.init(x: 0, y: 16))
@@ -36,18 +34,14 @@ final class LoginViewController: BaseViewController {
                 .setup { view in
                     view.textPublisher
                         .map { $0 ?? "" }
-                        .sink { [weak self] value in
-                            self?.viewModel.password = value
-                        }
+                        .assign(to: \.password, on: viewModel)
                         .store(in: &subscriptions)
                 }
                 .padding(.init(x: 0, y: 16))
             UILabel(text: nil, textColor: .red, numberOfLines: 0)
-                .setup { view in
+                .setup { label in
                     viewModel.recommendation
-                        .sink { [weak view] recommendation in
-                            view?.text = recommendation
-                        }
+                        .assign(to: \.text, on: label)
                         .store(in: &subscriptions)
                 }
                 .padding(.init(all: 16))
@@ -56,9 +50,7 @@ final class LoginViewController: BaseViewController {
                     button.setTitleColor(.blue, for: .normal)
                     button.setTitleColor(.gray, for: .disabled)
                     viewModel.isCredenticalsValid
-                        .sink { [weak button] isCredenticalsValid in
-                            button?.isEnabled = isCredenticalsValid
-                        }
+                        .assign(to: \.isEnabled, on: button)
                         .store(in: &subscriptions)
                 }
                 .onTap {
