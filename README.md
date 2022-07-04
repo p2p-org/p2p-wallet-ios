@@ -48,8 +48,12 @@ MOONPAY_PRODUCTION_API_KEY = fake_api_key
 AMPLITUDE_API_KEY = fake_api_key
 
 // MARK: - FeeRelayer
+FEE_RELAYER_STAGING_ENDPOINT = test-solana-fee-relayer.wallet.p2p.org
 FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
+
+// MARK: - NameService
+NAME_SERVICE_ENDPOINT = name_service.org
 ```
 - Run install.sh
 ```shell
@@ -62,8 +66,24 @@ chmod u+x Scripts/install.sh && Scripts/install.sh
 
 - Download [LocalizationHelper app](https://github.com/bigearsenal/XCodeLocalizationHelper/raw/main/release/LocalizationHelper.zip)
 - Copy `LocalizationHelper` to `Applications`
-- Open `.xcproj` file from `LocalizationHelper`
-- Add key and setup automation
+- After xcodegen, the LocalizationHelper stopped working, so here is the solution:
+1. Click "Open..."
+2. Choose `Tuist project` instead of `Default project`
+   
+<img width="686" alt="image" src="https://user-images.githubusercontent.com/6975538/172043618-f945c283-ad36-4030-ab3f-4cfd6a2a3660.png">
+
+3. Choose project root folder (p2p-wallet-ios)
+4. Resouces folder must be p2p-wallet-ios/p2p_wallet
+
+<img width="673" alt="image" src="https://user-images.githubusercontent.com/6975538/172043669-84883ac3-a35f-4ce4-b576-3a25564bed30.png">
+
+5. Click open project.
+
+<img width="673" alt="image" src="https://user-images.githubusercontent.com/6975538/172043669-84883ac3-a35f-4ce4-b576-3a25564bed30.png">
+
+6. Change "Run automation" to "Pods/swiftgen/bin/swiftgen config run --config swiftgen.yml"
+
+<img width="682" alt="image" src="https://user-images.githubusercontent.com/6975538/172043833-ebb5b808-3b11-4e2a-a46e-727503b61e03.png">
 
 ## CI/CD
 
