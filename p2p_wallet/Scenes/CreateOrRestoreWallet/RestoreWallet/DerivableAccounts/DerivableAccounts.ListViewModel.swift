@@ -97,7 +97,7 @@ extension DerivableAccounts {
 
             try Task.checkCancellation()
 
-            let solPrice = try await pricesFetcher.getCurrentPrices(coins: ["SOL"], toFiat: Defaults.fiat.code)
+            let solPrice = try await pricesFetcher.getCurrentPrices(coins: [.nativeSolana], toFiat: Defaults.fiat.code)
                 .first?.value?.value ?? 0
             await cache.save(solPrice: solPrice)
 

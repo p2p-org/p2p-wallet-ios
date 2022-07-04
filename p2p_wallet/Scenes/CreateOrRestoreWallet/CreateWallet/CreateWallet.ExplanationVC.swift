@@ -90,7 +90,7 @@ extension CreateWallet {
                 let vm = VerifySecurityKeys.ViewModel(keyPhrase: phrase, createWalletViewModel: viewModel)
                 let vc = VerifySecurityKeys.ViewController(viewModel: vm)
                 navigationController?.pushViewController(vc, animated: true)
-            case .dismiss:
+            case .dismiss, .back:
                 navigationController?.popViewController(animated: true)
             default:
                 break

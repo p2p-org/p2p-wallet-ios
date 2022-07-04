@@ -17,13 +17,13 @@ protocol PricesServiceType {
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> { get }
 
     // Getters
-    func getWatchList() -> [String]
+    func getWatchList() -> [Token]
     func currentPrice(for coinName: String) -> CurrentPrice?
 
     // Actions
     func clearCurrentPrices()
-    func addToWatchList(_ tokens: [String])
-    func fetchPrices(tokens: [String])
+    func addToWatchList(_ tokens: [Token])
+    func fetchPrices(tokens: [Token])
     func fetchAllTokensPriceInWatchList()
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
 
@@ -61,7 +61,7 @@ class PricesService {
 
     // MARK: - Properties
 
-    private var watchList = [String]()
+    private var watchList = [Token]()
     private var timer: Timer?
     private lazy var currentPricesSubject = PricesLoadableRelay(request: .just([:]))
 
@@ -87,16 +87,15 @@ class PricesService {
 
     // MARK: - Helpers
 
-    private func getCurrentPricesRequest(tokens: [String]? = nil) -> Single<[String: CurrentPrice]> {
-        let coins = (tokens ?? watchList).map { token -> String in
-            if token == "renBTC" {
-                return "BTC"
+    private func getCurrentPricesRequest(tokens: [Token]? = nil) -> Single<[String: CurrentPrice]> {
+        let coins = (tokens ?? watchList).filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
+            .map { token -> Token in
+                if token.symbol == "renBTC" {
+                    return Token(token, customSymbol: "BTC")
+                }
+                return token
             }
-            return token
-        }
-        .unique
-        .filter { !$0.contains("-") && !$0.contains("/") }
-
+            .unique
         guard !coins.isEmpty else {
             return .just([:])
         }
@@ -120,7 +119,7 @@ extension PricesService: PricesServiceType {
         currentPricesSubject.asDriver()
     }
 
-    func getWatchList() -> [String] {
+    func getWatchList() -> [Token] {
         watchList
     }
 
@@ -136,13 +135,13 @@ extension PricesService: PricesServiceType {
         }
     }
 
-    func addToWatchList(_ tokens: [String]) {
+    func addToWatchList(_ tokens: [Token]) {
         for token in tokens {
             watchList.appendIfNotExist(token)
         }
     }
 
-    func fetchPrices(tokens: [String]) {
+    func fetchPrices(tokens: [Token]) {
         guard !tokens.isEmpty else { return }
         currentPricesSubject.request = getCurrentPricesRequest(tokens: tokens)
         currentPricesSubject.refresh()
@@ -203,5 +202,20 @@ private extension Array where Element: Equatable {
             uniqueValues.append(item)
         }
         return uniqueValues
+    }
+}
+
+extension Token {
+    init(_ token: Token, customSymbol: String? = nil) {
+        self = Token(
+            _tags: nil,
+            chainId: token.chainId,
+            address: token.address,
+            symbol: customSymbol ?? token.symbol,
+            name: token.name,
+            decimals: token.decimals,
+            logoURI: token.logoURI,
+            extensions: token.extensions
+        )
     }
 }
