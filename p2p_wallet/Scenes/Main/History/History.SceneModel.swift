@@ -51,15 +51,13 @@ extension History {
 
         var stateDriver: Driver<State> {
             Observable.combineLatest(
-                stateObservable.startWith(.loading),
                 dataObservable.startWith([])
                     .filter { $0 != nil }
                     .withPrevious(),
+                stateObservable.startWith(.loading),
                 errorRelay.startWith(false)
-            ).map { state, change, error in
-                if error {
-                    return .error
-                }
+            ).map { change, state, error in
+                if error { return .error }
 
                 if state == .loading || state == .initializing {
                     return .items
@@ -184,38 +182,24 @@ extension History {
                 }
             }
             .asObservable()
-            .flatMap { results in Observable.from(results) }
-            .flatMap { result in
-                Single.async {
-                    do {
-                        let transactionInfo = try await self.transactionRepository
-                            .getTransaction(signature: result.0.signature)
-                        let transaction = try await self.transactionParser.parse(
-                            signatureInfo: result.0,
-                            transactionInfo: transactionInfo,
-                            account: result.1,
-                            symbol: result.2
-                        )
-                        return [transaction]
-                    } catch {
-                        var blockTime: Date?
-                        if let time = result.0.blockTime {
-                            blockTime = Date(timeIntervalSince1970: TimeInterval(time))
-                        }
+            .flatMap { (signatures: [HistoryStreamSource.Result]) in
+                let transactions = try await self.transactionRepository
+                    .getTransactions(signatures: signatures.map(\.signatureInfo.signature))
+                var parsedTransactions: [ParsedTransaction] = []
 
-                        let trx = ParsedTransaction(
-                            status: .confirmed,
-                            signature: result.0.signature,
-                            info: nil,
-                            slot: result.0.slot,
-                            blockTime: blockTime,
-                            fee: nil,
-                            blockhash: nil
+                for (i, trxInfo) in transactions.enumerated() {
+                    let (signature, account, symbol) = signatures[i]
+                    parsedTransactions.append(
+                        await self.transactionParser.parse(
+                            signatureInfo: signature,
+                            transactionInfo: trxInfo,
+                            account: account,
+                            symbol: symbol
                         )
-
-                        return [trx]
-                    }
+                    )
                 }
+
+                return parsedTransactions
             }
             .do(onError: { [weak self] error in
                 DispatchQueue.main.async { [weak self] in
