@@ -10,6 +10,7 @@ PODS:
     - RxCocoa (~> 6.5.0)
   - BEPureLayout (0.4.0):
     - PureLayout
+  - Cache (1.0.0)
   - Charts (4.0.3):
     - Charts/Core (= 4.0.3)
   - Charts/Core (4.0.3):
@@ -115,7 +116,7 @@ PODS:
     - GoogleUtilities/Logger
   - GT3Captcha-iOS (0.15.2)
   - Intercom (12.4.3)
-  - JazziconSwift (1.0.0)
+  - JazziconSwift (1.1.0)
   - KeychainSwift (19.0.0)
   - Kingfisher (7.2.4)
   - ListPlaceholder (1.5)
@@ -149,7 +150,12 @@ PODS:
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
   - secp256k1.swift (0.1.4)
-  - SolanaPricesAPIs (1.0.0)
+  - Sentry (7.18.1):
+    - Sentry/Core (= 7.18.1)
+  - Sentry/Core (7.18.1)
+  - SolanaPricesAPIs (1.0.0):
+    - Cache
+    - SolanaSwift (~> 2)
   - SolanaSwift (2.2.1):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
@@ -164,6 +170,7 @@ PODS:
   - TagListView (1.4.1)
   - Task_retrying (1.0.3)
   - TransactionParser (1.0.0):
+    - Cache
     - SolanaSwift (~> 2)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
@@ -173,6 +180,7 @@ DEPENDENCIES:
   - AnalyticsManager (from `KeyAppKit`)
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
+  - Cache (from `KeyAppKit`)
   - Charts
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `FeeRelayerSwift`)
@@ -180,7 +188,7 @@ DEPENDENCIES:
   - Firebase/Crashlytics
   - GT3Captcha-iOS
   - Intercom
-  - JazziconSwift (= 1.0)
+  - JazziconSwift (~> 1.1.0)
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
@@ -194,6 +202,7 @@ DEPENDENCIES:
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture
   - RxSwift (= 6.5.0)
+  - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SolanaPricesAPIs (from `KeyAppKit`)
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
@@ -255,6 +264,8 @@ EXTERNAL SOURCES:
     :path: BECollectionView
   BEPureLayout:
     :path: BEPureLayout
+  Cache:
+    :path: KeyAppKit
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
@@ -271,6 +282,9 @@ EXTERNAL SOURCES:
   RxConcurrency:
     :branch: main
     :git: https://github.com/TrGiLong/RxConcurrency.git
+  Sentry:
+    :git: https://github.com/getsentry/sentry-cocoa.git
+    :tag: 7.18.1
   SolanaPricesAPIs:
     :path: KeyAppKit
   SolanaSwift:
@@ -288,6 +302,9 @@ CHECKOUT OPTIONS:
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
+  Sentry:
+    :git: https://github.com/getsentry/sentry-cocoa.git
+    :tag: 7.18.1
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
@@ -295,6 +312,7 @@ SPEC CHECKSUMS:
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
+  Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 4ad1bd4cfd8c51d3a731ab74e4c798e99fcc677a
@@ -310,7 +328,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   GT3Captcha-iOS: 7ae08a5421c8e40463ec84ae807e82c19be3929a
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
-  JazziconSwift: 0e92431adad8e4d0a8dcb50fd82c414784c86afe
+  JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 2457be2121734e69e54a2312ecc0150eb9ae70b3
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
@@ -330,7 +348,8 @@ SPEC CHECKSUMS:
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
-  SolanaPricesAPIs: 9875d707ba8f10751078ff613adac94e5679020f
+  Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
+  SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 9d5f921a53fdb46b131a98ccc7e33a273c2938bf
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
@@ -340,10 +359,10 @@ SPEC CHECKSUMS:
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
-  TransactionParser: a58bbdf814b33e9aede10e56f8d1c6969beb745b
+  TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: ac99a9abcdd772f835cb8b4cebb080e85a85f870
+PODFILE CHECKSUM: 157fa67cded20b7b224047519d550ea9450fb0f9
 
 COCOAPODS: 1.11.3
