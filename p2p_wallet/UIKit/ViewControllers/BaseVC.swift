@@ -20,4 +20,7 @@ class BaseVC: BEViewController {
         super.setUp()
         view.backgroundColor = .background
     }
+
+    // TODO: - For re-overriding navigationController settings
+    override func viewWillAppear(_: Bool) {}
 }

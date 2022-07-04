@@ -6,6 +6,8 @@ import BECollectionView
 import BEPureLayout
 import Foundation
 import Resolver
+import SolanaSwift
+import TransactionParser
 import UIKit
 
 extension History {
@@ -13,12 +15,29 @@ extension History {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var pricesService: PricesServiceType
 
-        let viewModel = SceneModel()
+        let viewModel: SceneModel
 
         override init() {
+            viewModel = SceneModel()
             super.init()
 
             navigationItem.title = L10n.history
+            // Start loading when wallets are ready.
+            Resolver.resolve(WalletsRepository.self)
+                .dataObservable
+                .compactMap { $0 }
+                .filter { $0?.count ?? 0 > 0 }
+                .first()
+                .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
+                .disposed(by: disposeBag)
+        }
+
+        init(account: String, symbol: String, isEmbeded: Bool = true) {
+            viewModel = SceneModel(accountSymbol: (account, symbol))
+
+            super.init()
+            isEmbedded = isEmbeded
+
             // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
                 .dataObservable
@@ -54,8 +73,8 @@ extension History {
                 mapDataToSections: { viewModel in
                     CollectionViewMappingStrategy.byData(
                         viewModel: viewModel,
-                        forType: SolanaSDK.ParsedTransaction.self,
-                        where: \SolanaSDK.ParsedTransaction.blockTime
+                        forType: ParsedTransaction.self,
+                        where: \ParsedTransaction.blockTime
                     ).reversed()
                 },
                 layout: .init(
@@ -78,6 +97,14 @@ extension History {
                 }
             ).withDelegate(self)
         }
+
+        // MARK: - Navigation bar appearance
+
+        private var isEmbedded = false
+
+        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
+            isEmbedded ? .embeded : super.preferredNavigationBarStype
+        }
     }
 }
 
@@ -85,8 +112,7 @@ extension History {
 
 extension History.Scene: BECollectionViewDelegate {
     func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let item = item as? SolanaSDK.ParsedTransaction else { return }
-
+        guard let item = item as? ParsedTransaction else { return }
         let viewController = History.TransactionViewController(
             viewModel: .init(
                 transaction: item,

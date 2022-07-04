@@ -36,7 +36,7 @@ jobs:
   upload_build_for_testing:
     name: Upload build for testing when pull request is approved
     if: github.event.review.state == 'approved'
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
       - name: Check out current branch

@@ -9,10 +9,6 @@ import BEPureLayout
 import Foundation
 
 class WLCreatePincodeVC: BaseVC {
-    override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-        .hidden
-    }
-
     // MARK: - Properties
 
     private let createPincodeTitle: String?
@@ -34,6 +30,11 @@ class WLCreatePincodeVC: BaseVC {
         self.createPincodeTitle = createPincodeTitle
         self.confirmPincodeTitle = confirmPincodeTitle
         super.init()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: true)
     }
 
     // MARK: - Methods
