@@ -10,7 +10,8 @@ import NameService
 import Resolver
 
 extension NameServiceImpl {
-    static let endpoint = "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)/name_register"
+    static let endpoint = "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT")!)"
+
     static var captchaAPI1Url: String {
         NameServiceImpl.endpoint + "/auth/gt/register"
     }
