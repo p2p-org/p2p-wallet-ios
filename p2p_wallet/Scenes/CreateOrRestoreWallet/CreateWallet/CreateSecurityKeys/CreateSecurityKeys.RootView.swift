@@ -6,6 +6,8 @@
 //
 
 import Action
+import AnalyticsManager
+import Resolver
 import RxCocoa
 import RxSwift
 import TagListView
@@ -16,19 +18,13 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
 
         private let viewModel: CreateSecurityKeysViewModelType
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 
         private let disposeBag = DisposeBag()
 
         // MARK: - Subviews
-
-        private let navigationBar: WLNavigationBar = {
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.titleLabel.text = L10n.yourSecurityKey
-            return navigationBar
-        }()
 
         private let saveToICloudButton: WLStepButton = WLStepButton.main(image: .appleLogo, text: L10n.backupToICloud)
 
@@ -60,12 +56,6 @@ extension CreateSecurityKeys {
         // MARK: - Layout
 
         private func layout() {
-            // navigation bar
-            addSubview(navigationBar)
-            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
-            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
-            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
-
             // content
             scrollView.contentInset.top = 56
             scrollView.contentInset.bottom = 120
@@ -106,7 +96,6 @@ extension CreateSecurityKeys {
 
             verifyManualButton.onTap(self, action: #selector(verifyPhrase))
             saveToICloudButton.onTap(self, action: #selector(saveToICloud))
-            navigationBar.backButton.onTap(self, action: #selector(back))
         }
 
         // MARK: - Actions
@@ -117,10 +106,6 @@ extension CreateSecurityKeys {
 
         @objc func verifyPhrase() {
             viewModel.verifyPhrase()
-        }
-
-        @objc func back() {
-            viewModel.back()
         }
 
         func saveToPhoto() {

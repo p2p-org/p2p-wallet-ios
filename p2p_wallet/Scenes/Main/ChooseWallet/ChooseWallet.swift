@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SolanaSwift
 
 protocol WalletDidSelectHandler {
     func walletDidSelect(_ wallet: Wallet)

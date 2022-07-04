@@ -2,48 +2,68 @@
 platform :ios, '13.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
-def common_pods
-  pod 'RxSwift', '6.5.0'
-  pod 'RxCocoa', '6.5.0'
-  pod 'SolanaSwift', :path => 'SolanaSwift'
+
+def key_app_kit
+  pod 'TransactionParser', :path => 'KeyAppKit'
+  pod 'NameService', :path => 'KeyAppKit'
+  pod 'AnalyticsManager', :path => 'KeyAppKit'
+  pod 'Cache', :path => 'KeyAppKit'
+  pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
 end
 
 target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
-  common_pods
-#  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
+
+  # development pods
+  key_app_kit
+  pod 'SolanaSwift', :path => 'SolanaSwift'
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'BECollectionView', :path => 'BECollectionView'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
-  pod 'RenVMSwift', :path => 'RenVMSwift' 
+  pod 'RenVMSwift', :path => 'RenVMSwift'
+
+  # debuging
+  #  pod 'CocoaDebug', :configurations => ['Debug', 'Release']
+
+  # tools
   pod 'SwiftGen', '~> 6.0'
   pod 'SwiftLint'
+  pod 'Periphery'
+  pod 'SwiftFormat/CLI', '0.49.6'
+
+  # reactive
   pod 'Action'
+  pod "RxAppState"
+  pod "RxGesture"
+  pod 'RxSwift', '6.5.0'
+  pod 'RxCocoa', '6.5.0'
+  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
+
+  # kits
   pod 'KeychainSwift', '~> 19.0'
-  pod 'TagListView', '~> 1.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
+  pod 'Intercom'
+  pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
+
+  # ui
+  pod 'Resolver'
+  pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
   pod 'Charts'
-  pod "RxAppState"
-  pod "RxGesture"
   pod 'JazziconSwift'
-  pod 'Amplitude', '~> 8.3.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
-  pod 'Intercom'
-  pod 'SwiftFormat/CLI', '0.49.6'
-  pod 'Periphery'
-  
+  pod 'GT3Captcha-iOS'
+
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
-  pod 'Resolver'
   
-  pod 'GT3Captcha-iOS'
-  pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
+  # Sentry
+  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths

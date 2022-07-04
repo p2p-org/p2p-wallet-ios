@@ -36,7 +36,7 @@ extension RenBTCReceivingStatuses {
         }
 
         func setUp(with item: AnyHashable?) {
-            guard let tx = item as? RenVM.LockAndMint.ProcessingTx else { return }
+            guard let tx = item as? LockAndMint.ProcessingTx else { return }
             titleLabel.text = "\(tx.value.toString(maximumFractionDigits: 9)) renBTC"
             descriptionLabel.text = tx.statusString
 

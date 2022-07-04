@@ -7,6 +7,7 @@
 
 import Action
 import Foundation
+import SolanaSwift
 
 class EditableWalletCell: WalletCell {
     private let scrollView: UIScrollView = {
