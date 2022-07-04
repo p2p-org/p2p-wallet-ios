@@ -7,6 +7,7 @@ def key_app_kit
   pod 'TransactionParser', :path => 'KeyAppKit'
   pod 'NameService', :path => 'KeyAppKit'
   pod 'AnalyticsManager', :path => 'KeyAppKit'
+  pod 'Cache', :path => 'KeyAppKit'
   pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
 end
 
