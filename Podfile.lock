@@ -17,8 +17,8 @@ PODS:
     - SwiftAlgorithms (~> 1.0)
   - Down (0.11.0)
   - FeeRelayerSwift (3.1.1):
-    - OrcaSwapSwift (~> 2.1.1)
-    - SolanaSwift (~> 2.1.1)
+    - OrcaSwapSwift (~> 2)
+    - SolanaSwift (~> 2)
   - Firebase/Analytics (9.1.0):
     - Firebase/Core
   - Firebase/Core (9.1.0):
@@ -315,7 +315,7 @@ SPEC CHECKSUMS:
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
-  FeeRelayerSwift: c13238a1d97e1b854ecd4e8ddf0d84c1f4db0f77
+  FeeRelayerSwift: 4ad1bd4cfd8c51d3a731ab74e4c798e99fcc677a
   Firebase: 91c243d75573ac6e7c9735ec859b72bffb61347d
   FirebaseAnalytics: bf11064790ac96804df1df9ddc0ae45af950d9fc
   FirebaseCore: b7bfc258e996eada23b3666bd6b9a22ca092acb8
