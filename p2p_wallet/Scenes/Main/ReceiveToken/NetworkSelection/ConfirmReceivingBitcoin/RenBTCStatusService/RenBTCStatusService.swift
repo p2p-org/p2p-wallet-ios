@@ -25,6 +25,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
 
     private var minRenExemption: Lamports?
     private var lamportsPerSignature: Lamports?
+    private var rentExemptMinimum: Lamports?
 
     func load() async throws {
         try await orcaSwap.load()
@@ -32,6 +33,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         minRenExemption = try await solanaAPIClient
             .getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
         lamportsPerSignature = try await solanaAPIClient.getLamportsPerSignature()
+        rentExemptMinimum = try await solanaAPIClient.getMinimumBalanceForRentExemption(span: 0)
     }
 
     func hasRenBTCAccountBeenCreated() -> Bool {
@@ -52,8 +54,14 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             }
 
             var wallets = [Wallet]()
-            for await result in group where result.1 != nil && result.1! <= (result.0.lamports ?? 0) {
-                wallets.append(result.0)
+            for await(w, fee) in group where fee != nil && fee! <= (w.lamports ?? 0) {
+                // special case where wallet is native sol, needs to keeps rentExemptMinimum lamports in account to prevent error
+                // Transaction leaves an account with a lower balance than rent-exempt minimum
+                if w.isNativeSOL, (w.lamports ?? 0) - fee! < (rentExemptMinimum ?? 0) {
+                    continue
+                } else {
+                    wallets.append(w)
+                }
             }
             return wallets
         }
