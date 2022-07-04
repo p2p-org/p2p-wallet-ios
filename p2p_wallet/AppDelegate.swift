@@ -11,6 +11,7 @@ import BECollectionView
 import Firebase
 import Resolver
 import Sentry
+import SolanaSwift
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -43,10 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupNavigationAppearance()
 
         // Use Firebase library to configure APIs
-//        #if DEBUG
-//        #else
         FirebaseApp.configure()
-//        #endif
 
         // Sentry
         SentrySDK.start { options in
@@ -73,6 +71,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let vc = Root.ViewController(viewModel: vm)
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
+
+        setupRemoteConfig()
+
         return true
     }
 
@@ -98,6 +99,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+    }
+
+    private func setupRemoteConfig() {
+        #if DEBUG
+            let settings = RemoteConfigSettings()
+            // WARNING: Don't actually do this in production!
+            settings.minimumFetchInterval = 0
+            RemoteConfig.remoteConfig().configSettings = settings
+        #endif
+        let currentEndpoints = APIEndPoint.definedEndpoints
+        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig()) { _ in
+            let newEndpoints = APIEndPoint.definedEndpoints
+            guard currentEndpoints != newEndpoints else { return }
+            if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
+               let firstEndpoint = newEndpoints.first
+            {
+                Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
+            }
+        }
     }
 
     private func setupNavigationAppearance() {
