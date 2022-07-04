@@ -8,19 +8,20 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol AccountRestorationHandler {
-    func derivablePathDidSelect(_ derivablePath: SolanaSDK.DerivablePath, phrases: [String])
+    func derivablePathDidSelect(_ derivablePath: DerivablePath, phrases: [String])
 }
 
 protocol DrivableAccountsViewModelType {
     var accountsListViewModel: DerivableAccountsListViewModelType { get }
     var navigatableSceneDriver: Driver<DerivableAccounts.NavigatableScene?> { get }
-    var selectedDerivablePathDriver: Driver<SolanaSDK.DerivablePath> { get }
+    var selectedDerivablePathDriver: Driver<DerivablePath> { get }
 
-    func getCurrentSelectedDerivablePath() -> SolanaSDK.DerivablePath
+    func getCurrentSelectedDerivablePath() -> DerivablePath
     func chooseDerivationPath()
-    func selectDerivationPath(_ path: SolanaSDK.DerivablePath)
+    func selectDerivationPath(_ path: DerivablePath)
     func restoreAccount()
 }
 
@@ -38,7 +39,7 @@ extension DerivableAccounts {
         // MARK: - Subjects
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let selectedDerivablePathSubject = BehaviorRelay<SolanaSDK.DerivablePath>(value: .default)
+        private let selectedDerivablePathSubject = BehaviorRelay<DerivablePath>(value: .default)
 
         // MARK: - Initializer
 
@@ -59,13 +60,13 @@ extension DerivableAccounts.ViewModel: DrivableAccountsViewModelType {
         navigationSubject.asDriver()
     }
 
-    var selectedDerivablePathDriver: Driver<SolanaSDK.DerivablePath> {
+    var selectedDerivablePathDriver: Driver<DerivablePath> {
         selectedDerivablePathSubject.asDriver()
     }
 
     // MARK: - Actions
 
-    func getCurrentSelectedDerivablePath() -> SolanaSDK.DerivablePath {
+    func getCurrentSelectedDerivablePath() -> DerivablePath {
         selectedDerivablePathSubject.value
     }
 
@@ -73,7 +74,7 @@ extension DerivableAccounts.ViewModel: DrivableAccountsViewModelType {
         navigationSubject.accept(.selectDerivationPath)
     }
 
-    func selectDerivationPath(_ path: SolanaSDK.DerivablePath) {
+    func selectDerivationPath(_ path: DerivablePath) {
         selectedDerivablePathSubject.accept(path)
     }
 

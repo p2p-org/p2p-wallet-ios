@@ -3,7 +3,9 @@
 //
 
 import Foundation
+import Resolver
 import SolanaSwift
+import TransactionParser
 
 protocol HistoryTransactionParser {
     ///  Parse transaction.
@@ -15,11 +17,11 @@ protocol HistoryTransactionParser {
     ///   - symbol: the token symbol that the transaction has to do.
     /// - Returns: parsed transaction
     func parse(
-        signatureInfo: SolanaSDK.SignatureInfo,
-        transactionInfo: SolanaSDK.TransactionInfo,
+        signatureInfo: SignatureInfo,
+        transactionInfo: TransactionInfo?,
         account: String?,
         symbol: String?
-    ) async throws -> SolanaSDK.ParsedTransaction
+    ) async -> ParsedTransaction
 }
 
 extension History {
@@ -28,58 +30,72 @@ extension History {
     /// The default transaction parser.
     class DefaultTransactionParser: TransactionParser {
         private let p2pFeePayers: [String]
-        private let parser: SolanaSDKTransactionParserType
+        private let parser: TransactionParserService
 
         init(p2pFeePayers: [String]) {
             self.p2pFeePayers = p2pFeePayers
-            parser = SolanaSDK.TransactionParser(solanaSDK: Resolver.resolve())
+            parser = TransactionParserServiceImpl.default(apiClient: Resolver.resolve())
         }
 
         func parse(
-            signatureInfo: SolanaSDK.SignatureInfo,
-            transactionInfo: SolanaSDK.TransactionInfo,
+            signatureInfo: SignatureInfo,
+            transactionInfo: TransactionInfo?,
             account: String?,
             symbol: String?
-        ) async throws -> SolanaSDK.ParsedTransaction {
-            let parsedTrx = try await parser.parse(
-                transactionInfo: transactionInfo,
-                myAccount: account,
-                myAccountSymbol: symbol,
-                p2pFeePayerPubkeys: p2pFeePayers
-            ).value
+        ) async -> ParsedTransaction {
+            do {
+                guard let transactionInfo = transactionInfo else { throw SolanaError.other("TransactionInfo is nil") }
 
-            let time = transactionInfo
-                .blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(transactionInfo.blockTime!)) : nil
+                let parsedTrx = try await parser.parse(
+                    transactionInfo,
+                    config: .init(accountView: account, symbolView: symbol, feePayers: p2pFeePayers)
+                )
 
-            return .init(
-                status: parsedTrx.status,
-                signature: signatureInfo.signature,
-                value: parsedTrx.value,
-                slot: transactionInfo.slot,
-                blockTime: time,
-                fee: parsedTrx.fee,
-                blockhash: parsedTrx.blockhash
-            )
+                let time = transactionInfo
+                    .blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(transactionInfo.blockTime!)) : nil
+
+                return .init(
+                    status: parsedTrx.status,
+                    signature: signatureInfo.signature,
+                    info: parsedTrx.info,
+                    slot: transactionInfo.slot,
+                    blockTime: time,
+                    fee: parsedTrx.fee,
+                    blockhash: parsedTrx.blockhash
+                )
+            } catch {
+                var blockTime: Date?
+                if let time = signatureInfo.blockTime { blockTime = Date(timeIntervalSince1970: TimeInterval(time)) }
+                return ParsedTransaction(
+                    status: .confirmed,
+                    signature: signatureInfo.signature,
+                    info: nil,
+                    slot: signatureInfo.slot,
+                    blockTime: blockTime,
+                    fee: nil,
+                    blockhash: nil
+                )
+            }
         }
     }
 
     class CachingTransactionParsing: TransactionParser {
         private let delegate: TransactionParser
-        private let cache = Utils.InMemoryCache<SolanaSDK.ParsedTransaction>(maxSize: 50)
+        private let cache = Utils.InMemoryCache<ParsedTransaction>(maxSize: 50)
 
         init(delegate: TransactionParser) { self.delegate = delegate }
 
         func parse(
-            signatureInfo: SolanaSDK.SignatureInfo,
-            transactionInfo: SolanaSDK.TransactionInfo,
+            signatureInfo: SignatureInfo,
+            transactionInfo: TransactionInfo?,
             account: String?,
             symbol: String?
-        ) async throws -> SolanaSDK.ParsedTransaction {
+        ) async -> ParsedTransaction {
             // Read from cache
             if let parsedTransaction = await cache.read(key: signatureInfo.signature) { return parsedTransaction }
 
             // Parse
-            let parsedTransaction = try await delegate.parse(
+            let parsedTransaction = await delegate.parse(
                 signatureInfo: signatureInfo,
                 transactionInfo: transactionInfo,
                 account: account,

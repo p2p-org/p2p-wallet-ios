@@ -3,6 +3,9 @@
 //
 
 import Foundation
+import Resolver
+import SolanaSwift
+import TransactionParser
 
 /// The repository that works with transactions.
 protocol HistoryTransactionRepository {
@@ -13,27 +16,34 @@ protocol HistoryTransactionRepository {
     ///   - limit: the number of transactions that will be fetched.
     ///   - before: the transaction signature, that indicates the offset of fetching.
     /// - Returns: the list of `SignatureInfo`
-    func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo]
+    func getSignatures(address: String, limit: Int, before: String?) async throws -> [SignatureInfo]
 
     /// Fetch all data of the transaction
     ///
     /// - Parameter signature: The transaction signature
     /// - Returns: `TransactionInfo`, that can be parsed later.
-    func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo
+    func getTransaction(signature: String) async throws -> TransactionInfo
 }
 
 extension History {
     class SolanaTransactionRepository: HistoryTransactionRepository {
-        @Injected private var solanaSDK: SolanaSDK
+        @Injected private var solanaAPIClient: SolanaAPIClient
 
-        func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo] {
-            try await solanaSDK
+        func getSignatures(address: String, limit: Int, before: String?) async throws -> [SignatureInfo] {
+            try await solanaAPIClient
                 .getSignaturesForAddress(address: address, configs: .init(limit: limit, before: before))
-                .value
         }
 
-        func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo {
-            try await solanaSDK.getTransaction(transactionSignature: signature).value
+        func getTransaction(signature: String) async throws -> TransactionInfo {
+            try await solanaAPIClient.getTransaction(signature: signature, commitment: nil)!
+        }
+
+        func getTransactions(signatures: [String]) async throws -> [TransactionInfo?] {
+            let results: [TransactionInfo?] = try await solanaAPIClient.batchRequest(
+                method: "getTransaction",
+                params: signatures.map { [$0, RequestConfiguration(encoding: "jsonParsed")] }
+            )
+            return results
         }
     }
 
@@ -42,14 +52,14 @@ extension History {
 
         let delegate: HistoryTransactionRepository
 
-        private let signaturesCache = Utils.InMemoryCache<[SolanaSDK.SignatureInfo]>(maxSize: 50)
-        private let transactionCache = Utils.InMemoryCache<SolanaSDK.TransactionInfo>(maxSize: 50)
+        private let signaturesCache = Utils.InMemoryCache<[SignatureInfo]>(maxSize: 50)
+        private let transactionCache = Utils.InMemoryCache<TransactionInfo>(maxSize: 50)
 
         init(delegate: HistoryTransactionRepository) { self.delegate = delegate }
 
-        func getTransaction(signature: String) async throws -> SolanaSDK.TransactionInfo {
+        func getTransaction(signature: String) async throws -> TransactionInfo {
             // Return from cache
-            var transaction: SolanaSDK.TransactionInfo? = await transactionCache.read(key: signature)
+            var transaction: TransactionInfo? = await transactionCache.read(key: signature)
             if let transaction = transaction { return transaction }
 
             // Fetch and store in cache
@@ -59,7 +69,7 @@ extension History {
             return transaction!
         }
 
-        func getSignatures(address: String, limit: Int, before: String?) async throws -> [SolanaSDK.SignatureInfo] {
+        func getSignatures(address: String, limit: Int, before: String?) async throws -> [SignatureInfo] {
             let cacheKey = "\(address)-\(limit)-\(before ?? "nil")"
 
             var signatures = await signaturesCache.read(key: cacheKey)

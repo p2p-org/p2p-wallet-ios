@@ -9,8 +9,8 @@ import Action
 import BECollectionView
 @_exported import BEPureLayout
 import Firebase
-@_exported import Resolver
-@_exported import SolanaSwift
+import Resolver
+import Sentry
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -40,21 +40,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
-        // BEPureLayoutConfiguration
-        BEPureLayoutConfigs.defaultBackgroundColor = .background
-        BEPureLayoutConfigs.defaultTextColor = .textBlack
-        BEPureLayoutConfigs.defaultNavigationBarColor = .textWhite
-        BEPureLayoutConfigs.defaultNavigationBarTextFont = .systemFont(ofSize: 17, weight: .semibold)
-        BEPureLayoutConfigs.defaultShadowColor = .textBlack
-//        let image = UIImage.backButton.withRenderingMode(.alwaysOriginal)
-//        BEPureLayoutConfigs.defaultBackButton = UIBarButtonItem(image: image, style: .plain, target: nil, action: nil)
-        BEPureLayoutConfigs.defaultCheckBoxActiveColor = .h5887ff
+        setupNavigationAppearance()
 
         // Use Firebase library to configure APIs
 //        #if DEBUG
 //        #else
         FirebaseApp.configure()
 //        #endif
+
+        // Sentry
+        SentrySDK.start { options in
+            options
+                .dsn = .secretConfig("SENTRY_DSN")
+            #if DEBUG
+                options.debug = true
+            #endif
+            options.tracesSampleRate = 1.0
+            options.enableNetworkTracking = true
+            options.enableOutOfMemoryTracking = true
+        }
 
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -94,5 +98,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+    }
+
+    private func setupNavigationAppearance() {
+        let barButtonAppearance = UIBarButtonItem.appearance()
+        let navBarAppearence = UINavigationBar.appearance()
+        navBarAppearence.backIndicatorImage = .navigationBack
+            .withRenderingMode(.alwaysTemplate)
+            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+        navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
+            .withRenderingMode(.alwaysTemplate)
+            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+        barButtonAppearance.setBackButtonTitlePositionAdjustment(
+            .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
+            for: .default
+        )
+        navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearence.tintColor = .black
+        barButtonAppearance.tintColor = .black
     }
 }

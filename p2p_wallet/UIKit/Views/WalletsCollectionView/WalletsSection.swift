@@ -9,6 +9,7 @@ import Action
 import BECollectionView
 import Foundation
 import RxSwift
+import SolanaSwift
 
 class WalletsSection: BEStaticSectionsCollectionView.Section {
     class Header: BECollectionCell {

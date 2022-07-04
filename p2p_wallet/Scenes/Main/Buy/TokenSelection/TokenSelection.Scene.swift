@@ -3,6 +3,10 @@
 //
 
 import BEPureLayout
+import Resolver
+import RxConcurrency
+import RxSwift
+import SolanaSwift
 import UIKit
 
 extension BuyTokenSelection {
@@ -41,21 +45,22 @@ extension BuyTokenSelection {
             Cell()
                 .setup { cell in
                     if let wallet = walletRepository.getWallets().first(where: {
-                        $0.token.symbol == cryptoCurrency.name
+                        $0.token.symbol == cryptoCurrency.name && $0.token.address == cryptoCurrency.mintAddress
                     }) {
                         cell.setup(wallet: wallet)
                     } else {
-                        tokenRepository
-                            .getTokensList()
-                            .asDriver(onErrorJustReturn: [])
-                            .drive(onNext: { [weak cell] tokens in
-                                guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
-                                    cell?.isHidden = true
-                                    return
-                                }
-                                cell?.setUp(token: token, amount: 0, amountInFiat: 0)
-                            })
-                            .disposed(by: disposeBag)
+                        Single<[Token]>.async {
+                            Array(try await self.tokenRepository.getTokensList())
+                        }
+                        .asDriver(onErrorJustReturn: [])
+                        .drive(onNext: { [weak cell] tokens in
+                            guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
+                                cell?.isHidden = true
+                                return
+                            }
+                            cell?.setUp(token: token, amount: 0, amountInFiat: 0)
+                        })
+                        .disposed(by: disposeBag)
                     }
                 }
         }
@@ -107,7 +112,7 @@ extension BuyTokenSelection {
             }
 
             @discardableResult
-            func setUp(token: SolanaSDK.Token, amount: Double?, amountInFiat: Double?) -> Self {
+            func setUp(token: Token, amount: Double?, amountInFiat: Double?) -> Self {
                 iconRef.view?.setUp(token: token)
                 coinNameRef.view?.text = token.name
                 amountRef.view?.text = "\(amount.toString(maximumFractionDigits: 9)) \(token.symbol)"

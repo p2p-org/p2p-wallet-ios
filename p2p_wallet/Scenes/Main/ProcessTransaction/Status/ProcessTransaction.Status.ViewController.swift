@@ -114,7 +114,7 @@ extension ProcessTransaction.Status {
                     .padding(.init(top: 0, left: 18, bottom: 14, right: 18))
                     .setup { view in
                         viewModel.pendingTransactionDriver
-                            .map { $0.status.error as? FeeRelayer.Error != .topUpSuccessButTransactionThrows }
+                            .map { $0.status.error as? FeeRelayerError != .topUpSuccessButTransactionThrows }
                             .drive(view.rx.isHidden)
                             .disposed(by: disposeBag)
                     }
@@ -172,25 +172,11 @@ extension ProcessTransaction.Status {
                         WLStepButton.main(
                             image: .buttonCheckSmall,
                             text: L10n.done
-                        )
-                            .onTap { [weak self] in
-                                self?.dismiss(animated: true) { [weak self] in
-                                    self?.doneHandler?()
-                                }
+                        ).onTap { [weak self] in
+                            self?.dismiss(animated: true) { [weak self] in
+                                self?.doneHandler?()
                             }
-//                        WLStepButton.sub(text: L10n.increaseMaximumPriceSlippage)
-//                            .setup { subButton in
-//                                viewModel.pendingTransactionDriver
-//                                    .map {
-//                                        $0.status.error?.readableDescription != L10n
-//                                            .swapInstructionExceedsDesiredSlippageLimit
-//                                    }
-//                                    .drive(subButton.rx.isHidden)
-//                                    .disposed(by: disposeBag)
-//                            }
-//                            .onTap { [weak self] in
-//                                self?.viewModel.handleErrorRetryOrMakeAnotherTransaction()
-//                            }
+                        }
                     }
                     .padding(.init(x: 18, y: 0))
                 }
