@@ -5,14 +5,16 @@
 //  Created by Chung Tran on 11/4/20.
 //
 
+import AnalyticsManager
 import AVFoundation
 import Foundation
+import Resolver
 import UIKit
 
 class QrCodeScannerVC: BaseVC {
     // MARK: - Dependencies
 
-    @Injected var analyticsManager: AnalyticsManagerType
+    @Injected var analyticsManager: AnalyticsManager
 
     // MARK: - Properties
 
@@ -58,7 +60,10 @@ class QrCodeScannerVC: BaseVC {
 
         view.layoutIfNeeded()
 
-        setUpCamera()
+        Task {
+            await requestPermission()
+            setupCamera()
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -119,7 +124,7 @@ extension QrCodeScannerVC: AVCaptureMetadataOutputObjectsDelegate {
 }
 
 extension QrCodeScannerVC {
-    func setUpCamera() {
+    func requestPermission() async {
         // camera unavailable
         guard UIImagePickerController.isSourceTypeAvailable(.camera) else {
             handleCameraUnavailable()
@@ -128,14 +133,38 @@ extension QrCodeScannerVC {
 
         // request camera authorization
         if AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
-            AVCaptureDevice.requestAccess(for: .video, completionHandler: { [weak self] (granted: Bool) in
-                DispatchQueue.main.async { [weak self] in
-                    self?.handleCameraAuthrizationGranted(granted)
-                }
-            })
-            return
+            let status = await AVCaptureDevice.requestAccess(for: .video)
+            if !status { showPermissionErrorDialog() }
         }
+    }
 
+    private func handleCameraUnavailable() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+            self?.captureSession = nil
+            self?.showAlert(
+                title: L10n.scanningQrCodeNotSupported,
+                message: L10n.YourDeviceDoesNotSupportScanningACodeFromAnItem.pleaseUseADeviceWithACamera,
+                buttonTitles: [L10n.ok]
+            ) { [weak self] _ in
+                self?.back()
+            }
+        }
+    }
+
+    private func handleCaptureSessionFailed() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+            self?.captureSession = nil
+            self?.showAlert(
+                title: L10n.couldNotCreateCaptureSession,
+                message: L10n.thereIsSomethingWrongWithYourCameraPleaseTryAgainLater,
+                buttonTitles: [L10n.ok]
+            ) { [weak self] _ in
+                self?.back()
+            }
+        }
+    }
+
+    private func setupCamera() {
         // camera is authorized
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
             handleCaptureSessionFailed()
@@ -143,7 +172,6 @@ extension QrCodeScannerVC {
         }
 
         captureSession = AVCaptureSession()
-
         let videoInput: AVCaptureDeviceInput
 
         do {
@@ -193,6 +221,7 @@ extension QrCodeScannerVC {
 
         // create new layer
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+        previewLayer.frame = cameraContainerView.layer.bounds
         previewLayer.videoGravity = .resizeAspectFill
 
         cameraContainerView.layer.addSublayer(previewLayer)
@@ -204,55 +233,25 @@ extension QrCodeScannerVC {
         cameraContainerView.bringSubviewToFront(closeButton)
     }
 
-    private func handleCameraUnavailable() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
-            self?.captureSession = nil
-            self?.showAlert(
-                title: L10n.scanningQrCodeNotSupported,
-                message: L10n.YourDeviceDoesNotSupportScanningACodeFromAnItem.pleaseUseADeviceWithACamera,
-                buttonTitles: [L10n.ok]
-            ) { [weak self] _ in
-                self?.back()
-            }
-        }
-    }
-
-    private func handleCaptureSessionFailed() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
-            self?.captureSession = nil
-            self?.showAlert(
-                title: L10n.couldNotCreateCaptureSession,
-                message: L10n.thereIsSomethingWrongWithYourCameraPleaseTryAgainLater,
-                buttonTitles: [L10n.ok]
-            ) { [weak self] _ in
-                self?.back()
-            }
-        }
-    }
-
-    private func handleCameraAuthrizationGranted(_ granted: Bool) {
-        if granted {
-            setUpCamera()
-        } else {
-            showAlert(
-                title: L10n.changeYourSettingsToUseCameraForScanningQrCode,
-                message: L10n.ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode.pleaseEnableItInSettings,
-                buttonTitles: [L10n.ok, L10n.cancel],
-                highlightedButtonIndex: 0
-            ) { [weak self] index in
-                if index == 0 {
-                    guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-                        return
-                    }
-
-                    if UIApplication.shared.canOpenURL(settingsUrl) {
-                        UIApplication.shared.open(settingsUrl, completionHandler: { success in
-                            debugPrint("Settings opened: \(success)") // Prints true
-                        })
-                    }
-                } else {
-                    self?.back()
+    private func showPermissionErrorDialog() {
+        showAlert(
+            title: L10n.changeYourSettingsToUseCameraForScanningQrCode,
+            message: L10n.ThisAppDoesNotHavePermissionToUseYourCameraForScanningQrCode.pleaseEnableItInSettings,
+            buttonTitles: [L10n.ok, L10n.cancel],
+            highlightedButtonIndex: 0
+        ) { [weak self] index in
+            if index == 0 {
+                guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                    return
                 }
+
+                if UIApplication.shared.canOpenURL(settingsUrl) {
+                    UIApplication.shared.open(settingsUrl, completionHandler: { success in
+                        debugPrint("Settings opened: \(success)") // Prints true
+                    })
+                }
+            } else {
+                self?.back()
             }
         }
     }

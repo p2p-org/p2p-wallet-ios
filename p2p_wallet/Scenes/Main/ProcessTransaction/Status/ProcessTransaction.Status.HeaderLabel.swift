@@ -47,7 +47,7 @@ extension ProcessTransaction.Status {
                         case let error
                             where error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit:
                             return L10n.lowSlippageCausedTheSwapToFail
-                        case let error where error as? FeeRelayer.Error == .topUpSuccessButTransactionThrows:
+                        case let error where error as? FeeRelayerError == .topUpSuccessButTransactionThrows:
                             return L10n.theTransactionFailedDueToABlockchainError
                         default:
                             return L10n.theTransactionHasBeenRejected

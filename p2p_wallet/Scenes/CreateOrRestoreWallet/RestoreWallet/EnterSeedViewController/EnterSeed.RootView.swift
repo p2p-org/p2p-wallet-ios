@@ -93,24 +93,12 @@ extension EnterSeed {
             let separatorView = UIView()
             separatorView.backgroundColor = .c7c7cc
 
-            let navigationBar = EnterSeed.NavigationBar(
-                backHandler: { [weak viewModel] in
-                    viewModel?.goBack()
-                },
-                infoHandler: { [weak viewModel] in
-                    viewModel?.showInfo()
-                }
-            )
-
-            addSubview(navigationBar)
             addSubview(scrollView)
             addSubview(nextButton)
             scrollView.contentView.addSubview(stackView)
 
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-
             // scroll view for flexible height
-            scrollView.autoPinEdge(.top, to: .bottom, of: navigationBar, withOffset: 18)
+            scrollView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 18)
             scrollView.autoPinEdge(toSuperviewEdge: .leading)
             scrollView.autoPinEdge(toSuperviewEdge: .trailing)
             scrollView.autoPinEdge(.bottom, to: .top, of: nextButton)

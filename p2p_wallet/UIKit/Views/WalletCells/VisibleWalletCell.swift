@@ -6,8 +6,9 @@ import BECollectionView
 import BEPureLayout
 import RxCocoa
 import RxSwift
+import UIKit
 
-class VisibleWalletCell: BECollectionCell, BECollectionViewCell {
+class VisibleWalletCell: BECollectionCell, BECollectionViewCell, UIGestureRecognizerDelegate {
     var onSend: BEVoidCallback?
     var onHide: BEVoidCallback?
 
@@ -18,16 +19,16 @@ class VisibleWalletCell: BECollectionCell, BECollectionViewCell {
             leadingActions: BECenter { UIImageView(image: .buttonSendSmall, tintColor: .h5887ff) }
                 .frame(width: 70)
                 .backgroundColor(color: .ebf0fc)
-                .onTap { [unowned self] in
+                .onTap(with: gesture { [unowned self] in
                     onSend?()
                     baseWalletRef.view?.swipeableCellRef.view?.centralize()
-                },
+                }),
             trailingActions: BECenter { UIImageView(image: .eyeHide) }
                 .frame(width: 70)
-                .onTap { [unowned self] in
+                .onTap(with: gesture { [unowned self] in
                     onHide?()
                     baseWalletRef.view?.swipeableCellRef.view?.centralize()
-                }
+                })
         ).bind(baseWalletRef)
     }
 
@@ -48,5 +49,21 @@ class VisibleWalletCell: BECollectionCell, BECollectionViewCell {
 
     func hideLoading() {
         baseWalletRef.view?.hideLoading()
+    }
+
+    // MARK: - Gesture
+
+    /// Allow leading and trailing action to be recognized during scrolling.
+    func gestureRecognizer(
+        _ gesture: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith another: UIGestureRecognizer
+    ) -> Bool {
+        gesture is UIPanGestureRecognizer || another is UIPanGestureRecognizer
+    }
+
+    func gesture(_ action: @escaping () -> Void) -> BETapGestureRecognizer {
+        let gesture = BETapGestureRecognizer(action)
+        gesture.delegate = self
+        return gesture
     }
 }

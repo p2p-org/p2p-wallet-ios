@@ -7,18 +7,7 @@ import UIKit
 
 extension CreateWallet {
     class ExplanationVC: BaseVC {
-        override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
-            .hidden
-        }
-
         // MARK: - Subviews
-
-        lazy var navigationBar: WLNavigationBar = {
-            let navigationBar = WLNavigationBar(forAutoLayout: ())
-            navigationBar.backgroundColor = .clear
-            navigationBar.titleLabel.text = L10n.createANewWallet
-            return navigationBar
-        }()
 
         private let createWalletButton: WLStepButton = WLStepButton.main(
             image: .key,
@@ -48,12 +37,7 @@ extension CreateWallet {
             patternView.autoPinEdgesToSuperviewEdges()
 
             // navigation bar
-            view.addSubview(navigationBar)
-            navigationBar.titleLabel.text = L10n.createANewWallet
-            navigationBar.backButton.onTap(self, action: #selector(_back))
-            navigationBar.autoPinEdge(toSuperviewSafeArea: .top)
-            navigationBar.autoPinEdge(toSuperviewEdge: .leading)
-            navigationBar.autoPinEdge(toSuperviewEdge: .trailing)
+            navigationItem.title = L10n.createANewWallet
 
             // content
             let illustration = UIView.ilustrationView(
@@ -65,7 +49,7 @@ extension CreateWallet {
             )
 
             view.addSubview(illustration)
-            illustration.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            illustration.autoPinEdge(toSuperviewSafeArea: .top)
             illustration.autoPinEdge(toSuperviewSafeArea: .left, withInset: 18)
             illustration.autoPinEdge(toSuperviewSafeArea: .right, withInset: 18)
 
@@ -74,6 +58,43 @@ extension CreateWallet {
             createWalletButton.autoPinEdgesToSuperviewSafeArea(with: .init(x: 18, y: 20), excludingEdge: .top)
             createWalletButton.autoPinEdge(.top, to: .bottom, of: illustration, withOffset: 10)
             createWalletButton.onTap(self, action: #selector(navigateToCreateWalletScene))
+        }
+
+        override func bind() {
+            super.bind()
+            viewModel.navigatableSceneDriver
+                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
+                .disposed(by: disposeBag)
+        }
+
+        // MARK: - Navigation
+
+        private func navigate(to scene: CreateWallet.NavigatableScene?) {
+            guard let scene = scene else { return }
+
+            switch scene {
+            case .createPhrases:
+                let vm = CreateSecurityKeys.ViewModel(createWalletViewModel: viewModel)
+                let vc = CreateSecurityKeys.ViewController(viewModel: vm)
+                navigationController?.pushViewController(vc, animated: true)
+            case let .reserveName(owner):
+                let viewModel = ReserveName.ViewModel(
+                    kind: .reserveCreateWalletPart,
+                    owner: owner,
+                    reserveNameHandler: viewModel,
+                    checkBeforeReserving: false
+                )
+                let viewController = ReserveName.ViewController(viewModel: viewModel)
+                navigationController?.pushViewController(viewController, animated: true)
+            case let .verifyPhrase(phrase):
+                let vm = VerifySecurityKeys.ViewModel(keyPhrase: phrase, createWalletViewModel: viewModel)
+                let vc = VerifySecurityKeys.ViewController(viewModel: vm)
+                navigationController?.pushViewController(vc, animated: true)
+            case .dismiss, .back:
+                navigationController?.popViewController(animated: true)
+            default:
+                break
+            }
         }
 
         // MARK: - Navigation
