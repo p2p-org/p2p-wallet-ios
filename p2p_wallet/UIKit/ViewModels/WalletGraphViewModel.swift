@@ -7,7 +7,9 @@
 
 import BECollectionView
 import Foundation
+import Resolver
 import RxSwift
+import SolanaPricesAPIs
 
 class WalletGraphViewModel: BEListViewModel<PriceRecord> {
     let symbol: String

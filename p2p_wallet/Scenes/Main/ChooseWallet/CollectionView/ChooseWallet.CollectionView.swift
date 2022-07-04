@@ -7,6 +7,7 @@
 
 import BECollectionView
 import Foundation
+import SolanaSwift
 
 extension ChooseWallet {
     class CollectionView: BEDynamicSectionsCollectionView {

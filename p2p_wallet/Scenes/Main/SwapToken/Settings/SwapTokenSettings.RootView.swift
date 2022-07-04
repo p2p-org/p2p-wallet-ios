@@ -12,17 +12,10 @@ extension SwapTokenSettings {
     final class RootView: BEView {
         // MARK: - Subviews
 
-        private let navigationBar: NavigationBar
         private let significantView: SignificantView
 
         init(viewModel: NewSwapTokenSettingsViewModelType) {
-            navigationBar = NavigationBar(
-                backHandler: { [weak viewModel] in
-                    viewModel?.goBack()
-                }
-            )
             significantView = SignificantView(viewModel: viewModel)
-
             super.init(frame: .zero)
         }
 
@@ -37,13 +30,10 @@ extension SwapTokenSettings {
         // MARK: - Layout
 
         private func layout() {
-            addSubview(navigationBar)
             addSubview(significantView)
 
-            navigationBar.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
-
             significantView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
-            significantView.autoPinEdge(.top, to: .bottom, of: navigationBar)
+            significantView.autoPinEdge(toSuperviewSafeArea: .top)
         }
     }
 }

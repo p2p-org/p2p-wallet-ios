@@ -5,9 +5,11 @@
 //  Created by Chung Tran on 14/12/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {
@@ -127,10 +129,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func reload() {
         loadingStateSubject.accept(.loading)
 
-        Completable.zip(
-            feeService.load(),
-            swapService.load()
-        )
+        Completable.async { try await self.swapService.load() }
             .subscribe(
                 onCompleted: { [weak self] in
                     self?.loadingStateSubject.accept(.loaded)

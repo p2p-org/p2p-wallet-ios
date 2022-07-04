@@ -5,10 +5,12 @@
 //  Created by Chung Tran on 24/12/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 protocol ProcessTransactionViewModelType {
     var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> { get }
@@ -29,7 +31,7 @@ extension ProcessTransaction {
     class ViewModel {
         // MARK: - Dependencies
 
-        @Injected private var analyticsManager: AnalyticsManagerType
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var transactionHandler: TransactionHandlerType
 
         // MARK: - Properties
@@ -98,7 +100,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             transactionId: nil,
             sentAt: Date(),
             rawTransaction: rawTransaction,
-            status: .error(SolanaSDK.Error.unknown)
+            status: .error(SolanaError.unknown)
         )
 
         // observe transaction based on transaction index
