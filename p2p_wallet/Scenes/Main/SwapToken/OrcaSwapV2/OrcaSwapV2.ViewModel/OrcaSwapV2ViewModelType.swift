@@ -7,6 +7,7 @@
 
 import Foundation
 import RxCocoa
+import SolanaSwift
 
 protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesViewModelType {
     var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> { get }

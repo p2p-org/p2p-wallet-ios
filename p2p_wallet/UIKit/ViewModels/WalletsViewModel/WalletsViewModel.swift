@@ -11,13 +11,15 @@ import Resolver
 import RxAppState
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Dependencies
 
-    @Injected private var solanaSDK: SolanaSDK
+    @Injected private var accountStorage: SolanaAccountStorage
+    @Injected private var solanaAPIClient: SolanaAPIClient
     @Injected private var pricesService: PricesServiceType
-    @Injected private var socket: SocketType
+    @Injected private var socket: AccountObservableService
     @WeakLazyInjected private var transactionHandler: TransactionHandlerType?
 
     // MARK: - Properties
@@ -78,7 +80,9 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             .map { [weak self] _ in self?.getWallets() ?? [] }
             .subscribe(onNext: { [weak self] wallets in
                 for wallet in wallets where wallet.pubkey != nil {
-                    self?.socket.subscribeAccountNotification(account: wallet.pubkey!, isNative: wallet.isNativeSOL)
+                    Task { [weak self] in
+                        try await self?.socket.subscribeAccountNotification(account: wallet.pubkey!)
+                    }
                 }
             })
             .disposed(by: disposeBag)
@@ -114,41 +118,46 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Methods
 
     override func createRequest() -> Single<[Wallet]> {
-        Single.zip(
-            solanaSDK.getBalance(),
-            solanaSDK.getTokenWallets()
-        )
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-            .map { [weak self] balance, wallets in
-                guard let self = self else { return [] }
-                var wallets = wallets
+        Single<(Lamports, [Wallet])>.async { [weak self] in
+            guard let self = self,
+                  let account = self.accountStorage.account?.publicKey.base58EncodedString
+            else { throw SolanaError.unknown }
+            return try await(
+                self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
+                self.solanaAPIClient.getTokenWallets(account: account)
+            )
+        }
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+        .map { [weak self] balance, wallets in
+            guard let self = self else { return [] }
+            var wallets = wallets
 
-                // add sol wallet on top
-                let solWallet = Wallet.nativeSolana(
-                    pubkey: self.solanaSDK.accountStorage.account?.publicKey.base58EncodedString,
-                    lamport: balance
-                )
-                wallets.insert(solWallet, at: 0)
+            // add sol wallet on top
+            let solWallet = Wallet.nativeSolana(
+                pubkey: self.accountStorage.account?.publicKey.base58EncodedString,
+                lamport: balance
+            )
+            wallets.insert(solWallet, at: 0)
 
-                // update visibility
-                wallets = self.mapVisibility(wallets: wallets)
+            // update visibility
+            wallets = self.mapVisibility(wallets: wallets)
 
-                // map prices
-                wallets = self.mapPrices(wallets: wallets)
+            // map prices
+            wallets = self.mapPrices(wallets: wallets)
 
-                // sort
-                wallets.sort(by: Wallet.defaultSorter)
+            // sort
+            wallets.sort(by: Wallet.defaultSorter)
 
-                return wallets
-            }
-            .observe(on: MainScheduler.instance)
-            .do(onSuccess: { [weak self] wallets in
-                guard let self = self else { return }
-                let newTokens = wallets.map(\.token.symbol)
-                    .filter { !self.pricesService.getWatchList().contains($0) }
-                self.pricesService.addToWatchList(newTokens)
-                self.pricesService.fetchPrices(tokens: newTokens)
-            })
+            return wallets
+        }
+        .observe(on: MainScheduler.instance)
+        .do(onSuccess: { [weak self] wallets in
+            guard let self = self else { return }
+            let newTokens = wallets.map(\.token)
+                .filter { !self.pricesService.getWatchList().contains($0) }
+            self.pricesService.addToWatchList(newTokens)
+            self.pricesService.fetchPrices(tokens: newTokens)
+        })
     }
 
     override func reload() {
@@ -161,33 +170,37 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     }
 
     @objc private func getNewWallet() {
-        solanaSDK.getTokenWallets(log: false)
-            .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-            .map { [weak self] newData -> [Wallet] in
-                guard let self = self else { return [] }
-                var data = self.data
-                var newWallets = newData
-                    .filter { wl in !data.contains(where: { $0.pubkey == wl.pubkey }) }
-                    .filter { $0.lamports != 0 }
-                newWallets = self.mapPrices(wallets: newWallets)
-                newWallets = self.mapVisibility(wallets: newWallets)
-                data.append(contentsOf: newWallets)
-                data.sort(by: Wallet.defaultSorter)
-                return data
-            }
-            .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] data in
-                self?.overrideData(by: data)
-            })
-            .disposed(by: disposeBag)
+        Single<[Wallet]>.async { [weak self] in
+            guard let self = self,
+                  let account = self.accountStorage.account?.publicKey.base58EncodedString
+            else { throw SolanaError.unknown }
+            return try await self.solanaAPIClient.getTokenWallets(account: account)
+        }
+        .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+        .map { [weak self] newData -> [Wallet] in
+            guard let self = self else { return [] }
+            var data = self.data
+            var newWallets = newData
+                .filter { wl in !data.contains(where: { $0.pubkey == wl.pubkey }) }
+                .filter { $0.lamports != 0 }
+            newWallets = self.mapPrices(wallets: newWallets)
+            newWallets = self.mapVisibility(wallets: newWallets)
+            data.append(contentsOf: newWallets)
+            data.sort(by: Wallet.defaultSorter)
+            return data
+        }
+        .observe(on: MainScheduler.instance)
+        .subscribe(onSuccess: { [weak self] data in
+            self?.overrideData(by: data)
+        })
+        .disposed(by: disposeBag)
     }
 
     override var dataDidChange: Observable<Void> {
         Observable.combineLatest(
             super.dataDidChange,
             isHiddenWalletsShown.distinctUntilChanged()
-        )
-            .map { _ in () }
+        ).map { _ in () }
     }
 
     // MARK: - getters
@@ -282,7 +295,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     // MARK: - Account notifications
 
-    private func handleAccountNotification(_ notification: (pubkey: String, lamports: SolanaSDK.Lamports)) {
+    private func handleAccountNotification(_ notification: AccountsObservableEvent) {
         // notify changes
         let oldLamportsValue = data.first(where: { $0.pubkey == notification.pubkey })?.lamports
         let newLamportsValue = notification.lamports

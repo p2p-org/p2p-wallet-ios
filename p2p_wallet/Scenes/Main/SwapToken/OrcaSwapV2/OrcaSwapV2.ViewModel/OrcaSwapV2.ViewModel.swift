@@ -5,17 +5,19 @@
 //  Created by Chung Tran on 15/10/2021.
 //
 
+import AnalyticsManager
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
+import SolanaSwift
 
 extension OrcaSwapV2 {
     class ViewModel {
         // MARK: - Dependencies
 
         @Injected var authenticationHandler: AuthenticationHandlerType
-        @Injected var analyticsManager: AnalyticsManagerType
-        @Injected var feeService: FeeServiceType
+        @Injected var analyticsManager: AnalyticsManager
         @Injected var swapService: Swap.Service
         @Injected var walletsRepository: WalletsRepository
         @Injected var notificationsService: NotificationService
@@ -137,13 +139,12 @@ extension OrcaSwapV2 {
                         return
                     }
 
-                    self.tradablePoolsPairsSubject.request = self.swapService.getPoolPair(
-                        from: sourceWallet.token.address,
-                        to: destinationWallet.token.address,
-                        amount: 1000, // TODO: fix me
-                        as: .source
-                    )
-
+                    self.tradablePoolsPairsSubject.request = Single.async(with: self) { `self` in
+                        try await self.swapService.getPoolPair(
+                            from: sourceWallet.token.address,
+                            to: destinationWallet.token.address
+                        )
+                    }
                     self.tradablePoolsPairsSubject.reload()
                 })
                 .disposed(by: disposeBag)

@@ -6,6 +6,7 @@ import BECollectionView
 import BEPureLayout
 import RxCocoa
 import RxSwift
+import UIKit
 
 /// This class is responsible for left and right swipe to show extra actions.
 class SwipeableCell: BECompositionView {
@@ -128,6 +129,11 @@ class SwipeableCell: BECompositionView {
             scrollViewRef.view?.scrollView.setContentOffset(.zero, animated: animated)
             return
         }
+        // Stops the animation if exists
+        scrollViewRef.view?.scrollView.setContentOffset(
+            .zero,
+            animated: false
+        )
         scrollViewRef.view?.scrollView.setContentOffset(.init(x: leadingActions.frame.width, y: 0), animated: animated)
     }
 }

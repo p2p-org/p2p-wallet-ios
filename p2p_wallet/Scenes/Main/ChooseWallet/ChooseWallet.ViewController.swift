@@ -8,6 +8,7 @@
 import BECollectionView
 import BEPureLayout
 import Foundation
+import SolanaSwift
 import UIKit
 
 extension ChooseWallet {

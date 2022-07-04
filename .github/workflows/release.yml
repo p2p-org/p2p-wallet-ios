@@ -3,7 +3,7 @@ on: workflow_dispatch
 jobs:
   deploy:
     name: Deploying to Testflight
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
       - name: Check out repository

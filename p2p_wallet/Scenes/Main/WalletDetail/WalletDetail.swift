@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import SolanaSwift
+import TransactionParser
 
 enum WalletDetail {
     enum NavigatableScene {
@@ -14,6 +16,6 @@ enum WalletDetail {
         case send(wallet: Wallet)
         case receive(walletPubkey: String)
         case swap(fromWallet: Wallet)
-        case transactionInfo(_ transaction: SolanaSDK.ParsedTransaction)
+        case transactionInfo(_ transaction: ParsedTransaction)
     }
 }
