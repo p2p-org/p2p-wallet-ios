@@ -73,7 +73,11 @@ extension Resolver: ResolverRegistering {
             .implements(PricesStorage.self)
             .scope(.application)
 
-        register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
+//        register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
+//            .implements(SolanaPricesAPI.self)
+//            .scope(.application)
+
+        register { CoinGeckoPricesAPI() }
             .implements(SolanaPricesAPI.self)
             .scope(.application)
 
@@ -161,7 +165,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // FeeRelayer
-        register { FeeRelayerSwift.APIClient(version: 1) }
+        register { FeeRelayerSwift.APIClient(baseUrlString: FeeRelayerEndpoint.baseUrl, version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
 

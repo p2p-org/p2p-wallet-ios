@@ -10,6 +10,7 @@ import BECollectionView
 @_exported import BEPureLayout
 import Firebase
 import Resolver
+import Sentry
 import SolanaSwift
 @_exported import SwiftyUserDefaults
 import UIKit
@@ -40,20 +41,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
-        let barButtonAppearance = UIBarButtonItem.appearance()
-        UINavigationBar.appearance().backIndicatorImage = .navigationBack
-            .withRenderingMode(.alwaysOriginal)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
-        UINavigationBar.appearance().backIndicatorTransitionMaskImage = .navigationBack
-            .withRenderingMode(.alwaysOriginal)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
-        barButtonAppearance.setBackButtonTitlePositionAdjustment(
-            .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
-            for: .default
-        )
+        setupNavigationAppearance()
 
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
+
+        // Sentry
+        SentrySDK.start { options in
+            options
+                .dsn = .secretConfig("SENTRY_DSN")
+            #if DEBUG
+                options.debug = true
+            #endif
+            options.tracesSampleRate = 1.0
+            options.enableNetworkTracking = true
+            options.enableOutOfMemoryTracking = true
+        }
 
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -115,5 +118,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
             }
         }
+    }
+
+    private func setupNavigationAppearance() {
+        let barButtonAppearance = UIBarButtonItem.appearance()
+        let navBarAppearence = UINavigationBar.appearance()
+        navBarAppearence.backIndicatorImage = .navigationBack
+            .withRenderingMode(.alwaysTemplate)
+            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+        navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
+            .withRenderingMode(.alwaysTemplate)
+            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+        barButtonAppearance.setBackButtonTitlePositionAdjustment(
+            .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
+            for: .default
+        )
+        navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearence.tintColor = .black
+        barButtonAppearance.tintColor = .black
     }
 }
