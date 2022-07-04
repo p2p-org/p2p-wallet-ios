@@ -23,6 +23,7 @@ extension Home {
         // MARK: - Properties
 
         fileprivate let interactor = MenuInteractor()
+        private var sendCoordinator: SendToken.Coordinator?
 
         // MARK: - Initializer
 
@@ -145,12 +146,15 @@ extension Home {
                     relayMethod: .default
                 )
 
-                let coordinator = SendToken.Coordinator(
+                sendCoordinator = SendToken.Coordinator(
                     viewModel: vm,
                     navigationController: navigationController
                 )
-                coordinator.doneHandler = { [weak self] in self?.popToThisViewControllerAndScrollToTop() }
-                coordinator.start()
+                sendCoordinator?.doneHandler = { [weak self] in
+                    self?.popToThisViewControllerAndScrollToTop()
+                    self?.sendCoordinator = nil
+                }
+                sendCoordinator?.start()
 
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
