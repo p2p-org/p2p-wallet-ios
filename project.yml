@@ -19,16 +19,16 @@ options:
         iOS: 13.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
-    preGenCommand: Scripts/preGenCommand.sh
-    postGenCommand: Scripts/postGenCommand.sh
+    preGenCommand: sh Scripts/preGenCommand.sh
+    postGenCommand: sh Scripts/postGenCommand.sh
 
 configs:
-  Debug: debug
-  Release: release
+    Debug: debug
+    Release: release
 
 configFiles:
-  Debug: p2p_wallet/Config.xcconfig
-  Release: p2p_wallet/Config.xcconfig
+    Debug: p2p_wallet/Config.xcconfig
+    Release: p2p_wallet/Config.xcconfig
 
 targets:
     p2p_wallet:
@@ -96,7 +96,6 @@ targets:
     Detect Unused Code:
         type: app-extension.intents-service
         platform: iOS
-        name: "Detect Unused Code"
         preBuildScripts:
           - script: |
                   "${PWD}/Pods/SwiftGen/bin/swiftgen config run --config ${PWD}/swiftgen.yml"
