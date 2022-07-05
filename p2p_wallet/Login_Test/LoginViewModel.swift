@@ -14,7 +14,7 @@ class LoginViewModel: BaseViewModel {
 
     // MARK: - Output
 
-    @Published private(set) var recommendation: String? = nil
+    @Published private(set) var recommendation: String?
     @Published private(set) var isCredentialValid: Bool = false
 
     // MARK: - Initializers
