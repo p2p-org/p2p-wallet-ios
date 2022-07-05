@@ -2,8 +2,6 @@ import SwiftUI
 
 struct LoginView: View {
     @ObservedObject var viewModel: LoginViewModel
-    @State var recommendation: String = "Enter credential"
-    @State var isCredenticalsValid: Bool = false
 
     var body: some View {
         VStack {
@@ -16,7 +14,7 @@ struct LoginView: View {
             SecureField("Password", text: $viewModel.password)
                 .textContentType(.password)
                 .padding([.leading, .trailing, .bottom])
-            Text(recommendation)
+            Text(viewModel.recommendation ?? "")
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .foregroundColor(.red)
                 .padding([.leading, .trailing, .bottom])
@@ -25,14 +23,8 @@ struct LoginView: View {
                     try await viewModel.login()
                 }
             }
-            .disabled(!isCredenticalsValid)
+            .disabled(!viewModel.isCredentialValid)
             Spacer()
-        }
-        .onReceive(viewModel.recommendation) { recommendation in
-            self.recommendation = recommendation ?? ""
-        }
-        .onReceive(viewModel.isCredenticalsValid) { isCredenticalsValid in
-            self.isCredenticalsValid = isCredenticalsValid
         }
     }
 }

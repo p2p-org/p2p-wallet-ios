@@ -9,6 +9,12 @@ import Combine
 import Foundation
 
 class BaseViewModel: ObservableObject {
+    // MARK: - Properties
+
+    var subscriptions = [AnyCancellable]()
+
+    // MARK: - Deinitializer
+
     deinit {
         debugPrint("\(String(describing: self)) deinited")
     }
