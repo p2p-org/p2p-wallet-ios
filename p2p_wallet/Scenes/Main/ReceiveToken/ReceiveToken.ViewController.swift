@@ -28,6 +28,7 @@ extension ReceiveToken {
                     action: #selector(goBack)
                 )
                 navigationItem.rightBarButtonItem = closeButton
+                navigationItem.rightBarButtonItem?.tintColor = UIColor.h5887ff
             } else {
                 navigationItem.title = L10n.receive
             }

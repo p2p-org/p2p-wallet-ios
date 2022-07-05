@@ -33,6 +33,7 @@ extension ReserveName {
                     action: #selector(skip)
                 )
                 navigationItem.rightBarButtonItem = rightButton
+                navigationItem.rightBarButtonItem?.tintColor = UIColor.h5887ff
             }
         }
 
