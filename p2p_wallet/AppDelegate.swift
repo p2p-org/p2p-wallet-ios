@@ -118,6 +118,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
             }
         }
+        Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
+            .configValue(forKey: "coinGeckoPriceProvider").boolValue
     }
 
     private func setupNavigationAppearance() {

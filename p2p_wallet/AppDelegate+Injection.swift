@@ -13,6 +13,7 @@ import RenVMSwift
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
+@_exported import SwiftyUserDefaults
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -73,7 +74,7 @@ extension Resolver: ResolverRegistering {
             .implements(PricesStorage.self)
             .scope(.application)
 
-        if available(.coinGeckoPriceProvider) {
+        if !Defaults.isCoingeckoProviderDisabled {
             register { CoinGeckoPricesAPI() }
                 .implements(SolanaPricesAPI.self)
                 .scope(.application)
