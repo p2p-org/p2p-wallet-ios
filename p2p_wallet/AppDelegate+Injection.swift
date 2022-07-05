@@ -73,13 +73,15 @@ extension Resolver: ResolverRegistering {
             .implements(PricesStorage.self)
             .scope(.application)
 
-//        register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
-//            .implements(SolanaPricesAPI.self)
-//            .scope(.application)
-
-        register { CoinGeckoPricesAPI() }
-            .implements(SolanaPricesAPI.self)
-            .scope(.application)
+        if available(.coinGeckoPriceProvider) {
+            register { CoinGeckoPricesAPI() }
+                .implements(SolanaPricesAPI.self)
+                .scope(.application)
+        } else {
+            register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
+                .implements(SolanaPricesAPI.self)
+                .scope(.application)
+        }
 
         register { InMemoryTokensRepositoryCache() }
             .implements(SolanaTokensRepositoryCache.self)
