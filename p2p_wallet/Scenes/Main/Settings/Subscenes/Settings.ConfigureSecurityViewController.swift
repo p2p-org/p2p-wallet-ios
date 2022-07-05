@@ -82,8 +82,7 @@ extension Settings {
         }
 
         @objc func switcherDidChange(_ switcher: UISwitch) {
-            viewModel.setEnabledBiometry(switcher.isOn) { [weak self] error in
-                self?.showError(error ?? SolanaError.unknown)
+            viewModel.setEnabledBiometry(switcher.isOn) { [weak self] _ in
                 self?.biometrySwitcher.isOn.toggle()
             }
         }
