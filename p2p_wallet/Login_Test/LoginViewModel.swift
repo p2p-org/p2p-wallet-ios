@@ -32,6 +32,7 @@ class LoginViewModel: BaseViewModel {
                 }
                 return nil // all good!
             }
+            .dropFirst()
             .assign(to: \.recommendation, on: self)
             .store(in: &subscriptions)
 
@@ -39,6 +40,7 @@ class LoginViewModel: BaseViewModel {
             .map { name, password -> Bool in
                 name.count >= 8 && password.count >= 8
             }
+            .dropFirst()
             .assign(to: \.isCredentialValid, on: self)
             .store(in: &subscriptions)
     }
