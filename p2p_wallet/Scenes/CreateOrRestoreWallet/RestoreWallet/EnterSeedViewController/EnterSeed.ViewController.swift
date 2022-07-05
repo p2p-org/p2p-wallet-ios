@@ -41,6 +41,7 @@ extension EnterSeed {
                 target: self,
                 action: #selector(info)
             )
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.h5887ff
         }
 
         override func bind() {

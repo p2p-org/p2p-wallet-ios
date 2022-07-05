@@ -30,6 +30,7 @@ extension SendToken.ChooseTokenAndAmount {
                 target: self,
                 action: #selector(buttonNextDidTouch)
             )
+            nextButton.tintColor = UIColor.h5887ff
             return nextButton
         }()
 

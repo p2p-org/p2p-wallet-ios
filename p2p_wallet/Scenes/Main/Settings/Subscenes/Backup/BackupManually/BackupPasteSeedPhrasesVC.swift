@@ -20,6 +20,7 @@ class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
         super.setUp()
 
         navigationItem.rightBarButtonItem = rightBarButton
+        navigationItem.rightBarButtonItem?.tintColor = UIColor.h5887ff
         navigationItem.title = L10n.backingUp
 
         let separator = UIView.defaultSeparator()

@@ -40,6 +40,7 @@ extension Onboarding {
                 action: #selector(buttonSkipDidTouch)
             )
             navigationItem.rightBarButtonItem = skipButton
+            navigationItem.rightBarButtonItem?.tintColor = UIColor.h5887ff
 
             // explanation view
             let explanationView = UILabel(
