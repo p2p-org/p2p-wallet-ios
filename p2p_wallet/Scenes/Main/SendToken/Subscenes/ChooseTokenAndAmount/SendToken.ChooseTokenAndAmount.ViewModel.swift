@@ -108,8 +108,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
             walletDriver,
             amountDriver,
             currencyModeDriver
-        )
-        .map { [weak self] wallet, amount, _ in
+        ).map { [weak self] wallet, amount, _ in
             if wallet == nil { return .destinationWalletIsMissing }
             if amount == nil || (amount ?? 0) <= 0 { return .invalidAmount }
             if (amount ?? 0) > (self?.calculateAvailableAmount() ?? 0) { return .insufficientFunds }
