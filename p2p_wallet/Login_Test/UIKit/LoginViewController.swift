@@ -41,6 +41,7 @@ final class LoginViewController: BaseViewController {
             UILabel(text: nil, textColor: .red, numberOfLines: 0)
                 .setup { label in
                     viewModel.recommendation
+                        .dropFirst()
                         .assign(to: \.text, on: label)
                         .store(in: &subscriptions)
                 }
@@ -50,6 +51,7 @@ final class LoginViewController: BaseViewController {
                     button.setTitleColor(.blue, for: .normal)
                     button.setTitleColor(.gray, for: .disabled)
                     viewModel.isCredenticalsValid
+                        .dropFirst()
                         .assign(to: \.isEnabled, on: button)
                         .store(in: &subscriptions)
                 }
