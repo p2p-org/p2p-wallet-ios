@@ -269,7 +269,11 @@ extension Settings.ViewModel: SettingsViewModelType {
                         self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                         self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
                     } else {
-                        onError(authenticationError)
+                        if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
+                            onError(nil)
+                        } else {
+                            onError(authenticationError)
+                        }
                     }
                 }
 
