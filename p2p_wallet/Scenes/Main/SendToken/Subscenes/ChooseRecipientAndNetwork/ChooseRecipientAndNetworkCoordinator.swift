@@ -36,13 +36,16 @@ extension SendToken.ChooseRecipientAndNetwork {
             Driver.combineLatest(
                 viewModel.walletDriver,
                 viewModel.amountDriver
-            ).map { wallet, amount -> String in
-                let amount = amount ?? 0
-                let symbol = wallet?.token.symbol ?? ""
-                return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
-            }.drive(onNext: { [weak self] in
-                self?.addressVC.navigationItem.title = $0
-            }).disposed(by: disposeBag)
+            )
+                .map { wallet, amount -> String in
+                    let amount = amount ?? 0
+                    let symbol = wallet?.token.symbol ?? ""
+                    return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
+                }
+                .drive(onNext: { [weak self] in
+                    self?.addressVC.navigationItem.title = $0
+                })
+                .disposed(by: disposeBag)
 
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
