@@ -166,6 +166,12 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .map { $0 == .searching }
                 .distinctUntilChanged()
 
+            // enable scrolling only when scrollView is not visible
+            isSearchingDriver
+                .map { !$0 }
+                .drive(scrollView.rx.isScrollEnabled)
+                .disposed(by: disposeBag)
+
             // address input view
             isSearchingDriver.map { !$0 }
                 .drive(addressInputView.rx.isHidden)
