@@ -82,7 +82,10 @@ extension Settings {
         }
 
         @objc func switcherDidChange(_ switcher: UISwitch) {
-            viewModel.setEnabledBiometry(switcher.isOn) { [weak self] _ in
+            viewModel.setEnabledBiometry(switcher.isOn) { [weak self] error in
+                if let error = error {
+                    self?.showError(error)
+                }
                 self?.biometrySwitcher.isOn.toggle()
             }
         }
