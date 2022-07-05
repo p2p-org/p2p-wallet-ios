@@ -79,17 +79,18 @@ extension SendToken {
                 pushChooseToken(showAfterConfirmation: showAfterConfirmation)
             case let .chooseRecipientAndNetwork(showAfterConfirmation, preSelectedNetwork):
                 guard let navigationController = navigationController else { return }
-
-                let vm = ChooseRecipientAndNetwork.ViewModel(
-                    showAfterConfirmation: showAfterConfirmation,
-                    preSelectedNetwork: preSelectedNetwork,
-                    sendTokenViewModel: viewModel,
-                    relayMethod: viewModel.relayMethod
-                )
-                coordinator = ChooseRecipientAndNetwork.Coordinator(
-                    viewModel: vm,
-                    navigationController: navigationController
-                )
+                if coordinator == nil {
+                    let vm = ChooseRecipientAndNetwork.ViewModel(
+                        showAfterConfirmation: showAfterConfirmation,
+                        preSelectedNetwork: preSelectedNetwork,
+                        sendTokenViewModel: viewModel,
+                        relayMethod: viewModel.relayMethod
+                    )
+                    coordinator = ChooseRecipientAndNetwork.Coordinator(
+                        viewModel: vm,
+                        navigationController: navigationController
+                    )
+                }
                 coordinator?.start()
             case .confirmation:
                 let vc = ConfirmViewController(viewModel: viewModel)
