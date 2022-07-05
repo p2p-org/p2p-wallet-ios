@@ -16,7 +16,7 @@ PODS:
   - Charts/Core (4.0.3):
     - SwiftAlgorithms (~> 1.0)
   - Down (0.11.0)
-  - FeeRelayerSwift (3.1.1):
+  - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
     - SolanaSwift (~> 2)
   - Firebase/Analytics (9.2.0):
@@ -167,7 +167,7 @@ PODS:
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
-  - SolanaSwift (2.2.1):
+  - SolanaSwift (2.2.2):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -329,7 +329,7 @@ SPEC CHECKSUMS:
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
-  FeeRelayerSwift: 4ad1bd4cfd8c51d3a731ab74e4c798e99fcc677a
+  FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
   Firebase: 4ba896cb8e5105d4b9e247e1c1b6222b548df55a
   FirebaseABTesting: cd1ec762a0078b46a7ce91dfe5b7b8991c2dff8f
   FirebaseAnalytics: af5a03a8dff7648c7b8486f6a78b1368e0268dd3
@@ -366,7 +366,7 @@ SPEC CHECKSUMS:
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: 9d5f921a53fdb46b131a98ccc7e33a273c2938bf
+  SolanaSwift: b2f19ae6cc7f779394709569a52c61b31715a991
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
