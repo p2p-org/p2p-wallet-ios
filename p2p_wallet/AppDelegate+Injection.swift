@@ -13,7 +13,7 @@ import RenVMSwift
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
-@_exported import SwiftyUserDefaults
+import SwiftyUserDefaults
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {

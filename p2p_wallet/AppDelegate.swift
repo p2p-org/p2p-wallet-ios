@@ -119,7 +119,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
-            .configValue(forKey: "coinGeckoPriceProvider").boolValue
+            .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
     }
 
     private func setupNavigationAppearance() {
