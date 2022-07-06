@@ -274,6 +274,8 @@ extension Settings.ViewModel: SettingsViewModelType {
                         } else {
                             onError(authenticationError)
                         }
+                        // Setting actual value of biometry to the view
+                        self?.isBiometryEnabledSubject.accept(self?.isBiometryEnabledSubject.value ?? false)
                     }
                 }
 
