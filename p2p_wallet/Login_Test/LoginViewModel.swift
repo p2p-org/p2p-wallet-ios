@@ -14,7 +14,14 @@ class LoginViewModel: BaseViewModel {
 
     // MARK: - Output
 
-    var recommendation: AnyPublisher<String?, Never> {
+    @Published private(set) var recommendation: String?
+    @Published private(set) var isCredentialValid: Bool = false
+
+    // MARK: - Initializers
+
+    override init() {
+        super.init()
+
         credential
             .map { name, password -> String? in
                 guard !name.isEmpty, !password.isEmpty else {
@@ -25,15 +32,17 @@ class LoginViewModel: BaseViewModel {
                 }
                 return nil // all good!
             }
-            .eraseToAnyPublisher()
-    }
+            .dropFirst()
+            .assign(to: \.recommendation, on: self)
+            .store(in: &subscriptions)
 
-    var isCredenticalsValid: AnyPublisher<Bool, Never> {
         credential
             .map { name, password -> Bool in
                 name.count >= 8 && password.count >= 8
             }
-            .eraseToAnyPublisher()
+            .dropFirst()
+            .assign(to: \.isCredentialValid, on: self)
+            .store(in: &subscriptions)
     }
 
     // MARK: - Action
