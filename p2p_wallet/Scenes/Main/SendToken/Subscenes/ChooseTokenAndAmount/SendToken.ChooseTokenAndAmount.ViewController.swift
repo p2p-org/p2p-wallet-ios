@@ -84,6 +84,10 @@ extension SendToken.ChooseTokenAndAmount {
                     }
                 })
                 .disposed(by: disposeBag)
+
+            rx.viewWillAppear.mapToVoid()
+                .subscribe(viewModel.viewWillAppear)
+                .disposed(by: disposeBag)
         }
 
         // MARK: - Navigation
