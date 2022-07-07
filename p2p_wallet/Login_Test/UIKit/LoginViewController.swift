@@ -40,8 +40,7 @@ final class LoginViewController: BaseViewController {
                 .padding(.init(x: 0, y: 16))
             UILabel(text: nil, textColor: .red, numberOfLines: 0)
                 .setup { label in
-                    viewModel.recommendation
-                        .dropFirst()
+                    viewModel.$recommendation
                         .assign(to: \.text, on: label)
                         .store(in: &subscriptions)
                 }
@@ -50,8 +49,7 @@ final class LoginViewController: BaseViewController {
                 .setup { button in
                     button.setTitleColor(.blue, for: .normal)
                     button.setTitleColor(.gray, for: .disabled)
-                    viewModel.isCredenticalsValid
-                        .dropFirst()
+                    viewModel.$isCredentialValid
                         .assign(to: \.isEnabled, on: button)
                         .store(in: &subscriptions)
                 }
