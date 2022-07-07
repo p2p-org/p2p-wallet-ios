@@ -10,7 +10,8 @@ import BECollectionView
 @_exported import BEPureLayout
 import Firebase
 import Resolver
-import SwiftUI
+import Sentry
+import SolanaSwift
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -40,23 +41,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
-        let barButtonAppearance = UIBarButtonItem.appearance()
-        UINavigationBar.appearance().backIndicatorImage = .navigationBack
-            .withRenderingMode(.alwaysOriginal)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
-        UINavigationBar.appearance().backIndicatorTransitionMaskImage = .navigationBack
-            .withRenderingMode(.alwaysOriginal)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
-        barButtonAppearance.setBackButtonTitlePositionAdjustment(
-            .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
-            for: .default
-        )
+        setupNavigationAppearance()
 
         // Use Firebase library to configure APIs
-//        #if DEBUG
-//        #else
         FirebaseApp.configure()
-//        #endif
+
+        // Sentry
+        SentrySDK.start { options in
+            options
+                .dsn = .secretConfig("SENTRY_DSN")
+            #if DEBUG
+                options.debug = true
+            #endif
+            options.tracesSampleRate = 1.0
+            options.enableNetworkTracking = true
+            options.enableOutOfMemoryTracking = true
+        }
 
         // set window
         window = UIWindow(frame: UIScreen.main.bounds)
@@ -71,6 +71,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let vc = LoginViewController(viewModel: .init())
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
+
+        setupRemoteConfig()
+
         return true
     }
 
@@ -96,5 +99,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+    }
+
+    private func setupRemoteConfig() {
+        #if DEBUG
+            let settings = RemoteConfigSettings()
+            // WARNING: Don't actually do this in production!
+            settings.minimumFetchInterval = 0
+            RemoteConfig.remoteConfig().configSettings = settings
+        #endif
+        let currentEndpoints = APIEndPoint.definedEndpoints
+        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig()) { _ in
+            let newEndpoints = APIEndPoint.definedEndpoints
+            guard currentEndpoints != newEndpoints else { return }
+            if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
+               let firstEndpoint = newEndpoints.first
+            {
+                Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
+            }
+        }
+        Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
+            .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
+    }
+
+    private func setupNavigationAppearance() {
+        let barButtonAppearance = UIBarButtonItem.appearance()
+        let navBarAppearence = UINavigationBar.appearance()
+        navBarAppearence.backIndicatorImage = .navigationBack
+            .withRenderingMode(.alwaysTemplate)
+            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+        navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
+            .withRenderingMode(.alwaysTemplate)
+            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+        barButtonAppearance.setBackButtonTitlePositionAdjustment(
+            .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
+            for: .default
+        )
+        navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearence.tintColor = .black
+        barButtonAppearance.tintColor = .black
     }
 }
