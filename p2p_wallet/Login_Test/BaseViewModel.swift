@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 
+@MainActor
 class BaseViewModel: ObservableObject {
     // MARK: - Properties
 
