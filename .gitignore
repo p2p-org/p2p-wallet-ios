@@ -81,5 +81,5 @@ fastlane/test_output
 *.xcconfig
 
 # Project files
-*.xcodeproj
-*.xcworkspace
+p2p_wallet.xcodeproj/
+p2p_wallet.xcworkspace/
