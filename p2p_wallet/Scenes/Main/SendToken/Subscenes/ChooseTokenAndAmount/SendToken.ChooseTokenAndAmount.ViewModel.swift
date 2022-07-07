@@ -18,6 +18,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> { get }
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> { get }
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> { get }
+    var viewWillAppear: PublishSubject<Void> { get }
     var showAfterConfirmation: Bool { get }
     var canGoBack: Bool { get }
 
@@ -58,6 +59,7 @@ extension SendToken.ChooseTokenAndAmount {
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         let amountSubject = BehaviorRelay<Double?>(value: nil)
+        let viewWillAppear = PublishSubject<Void>()
 
         // MARK: - Initializer
 
@@ -86,6 +88,10 @@ extension SendToken.ChooseTokenAndAmount {
             sendTokenViewModel.amountDriver
                 .drive(amountSubject)
                 .disposed(by: disposeBag)
+
+            viewWillAppear
+                .subscribe(onNext: { _ in self.clear() })
+                .disposed(by: disposeBag)
         }
     }
 }
@@ -109,12 +115,12 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
             amountDriver,
             currencyModeDriver
         )
-            .map { [weak self] wallet, amount, _ in
-                if wallet == nil { return .destinationWalletIsMissing }
-                if amount == nil || (amount ?? 0) <= 0 { return .invalidAmount }
-                if (amount ?? 0) > (self?.calculateAvailableAmount() ?? 0) { return .insufficientFunds }
-                return nil
-            }
+        .map { [weak self] wallet, amount, _ in
+            if wallet == nil { return .destinationWalletIsMissing }
+            if amount == nil || (amount ?? 0) <= 0 { return .invalidAmount }
+            if (amount ?? 0) > (self?.calculateAvailableAmount() ?? 0) { return .insufficientFunds }
+            return nil
+        }
     }
 
     // MARK: - Actions
@@ -185,9 +191,15 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         sendTokenViewModel.enterAmount(lamports.convertToBalance(decimals: wallet.token.decimals))
     }
 
+    func clear() {
+        walletSubject.accept(nil)
+        amountSubject.accept(nil)
+    }
+
     func navigateNext() {
         sendTokenViewModel
             .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: showAfterConfirmation,
                                                      preSelectedNetwork: nil))
+        clear()
     }
 }
