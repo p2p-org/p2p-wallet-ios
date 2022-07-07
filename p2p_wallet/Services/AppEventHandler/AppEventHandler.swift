@@ -140,8 +140,6 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
                 if let name = name {
                     storage.save(name: name)
                 }
-
-                notificationsService.registerForRemoteNotifications()
             } catch {
                 notificationsService.showInAppNotification(.error(error))
                 await MainActor.run {
