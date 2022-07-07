@@ -7,6 +7,7 @@ def key_app_kit
   pod 'TransactionParser', :path => 'KeyAppKit'
   pod 'NameService', :path => 'KeyAppKit'
   pod 'AnalyticsManager', :path => 'KeyAppKit'
+  pod 'Cache', :path => 'KeyAppKit'
   pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
 end
 
@@ -52,7 +53,7 @@ target 'p2p_wallet' do
   pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
   pod 'Charts'
-  pod 'JazziconSwift'
+  pod 'JazziconSwift', '~> 1.1.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'GT3Captcha-iOS'
@@ -60,6 +61,10 @@ target 'p2p_wallet' do
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
+  pod 'Firebase/RemoteConfig'
+  
+  # Sentry
+  pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths

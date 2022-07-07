@@ -32,7 +32,6 @@ extension ReserveName {
                     target: self,
                     action: #selector(skip)
                 )
-                rightButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
                 navigationItem.rightBarButtonItem = rightButton
             }
         }

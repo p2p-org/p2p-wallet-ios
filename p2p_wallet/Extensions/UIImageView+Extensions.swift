@@ -17,14 +17,23 @@ extension UIImageView {
         kf.setImage(with: URL(string: "")) // second, prevent kingfisher from setting previous image
     }
 
-    func setImage(urlString: String?, placeholder: UIImage? = nil) {
+    func setImage(
+        urlString: String?,
+        placeholder: UIImage? = nil,
+        completionHandler: ((Result<RetrieveImageResult, KingfisherError>) -> Void)? = nil
+    ) {
         let placeholder = placeholder ?? UIColor.gray.image(frame.size)
 
         guard let urlString = urlString, let url = URL(string: urlString) else {
             image = placeholder
             return
         }
-        kf.setImage(with: url, placeholder: placeholder, options: [.processor(ImgProcessor())])
+        kf.setImage(
+            with: url,
+            placeholder: placeholder,
+            options: [.processor(ImgProcessor())],
+            completionHandler: completionHandler
+        )
     }
 }
 

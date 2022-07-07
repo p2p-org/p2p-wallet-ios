@@ -18,10 +18,10 @@ protocol HistoryTransactionParser {
     /// - Returns: parsed transaction
     func parse(
         signatureInfo: SignatureInfo,
-        transactionInfo: TransactionInfo,
+        transactionInfo: TransactionInfo?,
         account: String?,
         symbol: String?
-    ) async throws -> ParsedTransaction
+    ) async -> ParsedTransaction
 }
 
 extension History {
@@ -39,27 +39,43 @@ extension History {
 
         func parse(
             signatureInfo: SignatureInfo,
-            transactionInfo: TransactionInfo,
+            transactionInfo: TransactionInfo?,
             account: String?,
             symbol: String?
-        ) async throws -> ParsedTransaction {
-            let parsedTrx = try await parser.parse(
-                transactionInfo,
-                config: .init(accountView: account, symbolView: symbol, feePayers: p2pFeePayers)
-            )
+        ) async -> ParsedTransaction {
+            do {
+                guard let transactionInfo = transactionInfo else { throw SolanaError.other("TransactionInfo is nil") }
 
-            let time = transactionInfo
-                .blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(transactionInfo.blockTime!)) : nil
+                let parsedTrx = try await parser.parse(
+                    transactionInfo,
+                    config: .init(accountView: account, symbolView: symbol, feePayers: p2pFeePayers)
+                )
 
-            return .init(
-                status: parsedTrx.status,
-                signature: signatureInfo.signature,
-                info: parsedTrx.info,
-                slot: transactionInfo.slot,
-                blockTime: time,
-                fee: parsedTrx.fee,
-                blockhash: parsedTrx.blockhash
-            )
+                let time = transactionInfo
+                    .blockTime != nil ? Date(timeIntervalSince1970: TimeInterval(transactionInfo.blockTime!)) : nil
+
+                return .init(
+                    status: parsedTrx.status,
+                    signature: signatureInfo.signature,
+                    info: parsedTrx.info,
+                    slot: transactionInfo.slot,
+                    blockTime: time,
+                    fee: parsedTrx.fee,
+                    blockhash: parsedTrx.blockhash
+                )
+            } catch {
+                var blockTime: Date?
+                if let time = signatureInfo.blockTime { blockTime = Date(timeIntervalSince1970: TimeInterval(time)) }
+                return ParsedTransaction(
+                    status: .confirmed,
+                    signature: signatureInfo.signature,
+                    info: nil,
+                    slot: signatureInfo.slot,
+                    blockTime: blockTime,
+                    fee: nil,
+                    blockhash: nil
+                )
+            }
         }
     }
 
@@ -71,15 +87,15 @@ extension History {
 
         func parse(
             signatureInfo: SignatureInfo,
-            transactionInfo: TransactionInfo,
+            transactionInfo: TransactionInfo?,
             account: String?,
             symbol: String?
-        ) async throws -> ParsedTransaction {
+        ) async -> ParsedTransaction {
             // Read from cache
             if let parsedTransaction = await cache.read(key: signatureInfo.signature) { return parsedTransaction }
 
             // Parse
-            let parsedTransaction = try await delegate.parse(
+            let parsedTransaction = await delegate.parse(
                 signatureInfo: signatureInfo,
                 transactionInfo: transactionInfo,
                 account: account,
