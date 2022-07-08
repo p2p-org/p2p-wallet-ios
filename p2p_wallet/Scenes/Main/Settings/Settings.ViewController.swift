@@ -213,17 +213,7 @@ extension Settings {
                          )
                          */
                     }
-
-                    /*
-                     // Appearance section
-                     SectionView {
-                         // Ask
-                         CellView(icon: .askIcon, title: L10n.askAQuestionRequestAFeature)
-
-                         // Version
-                         CellView(icon: .appVersionIcon, title: L10n.appVersion, dividerEnable: false)
-                     }
-                     */
+                    SectionView(title: "\(L10n.appVersion): \(viewModel.appVersion)") {}
                 }
             }
         }
