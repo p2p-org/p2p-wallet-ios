@@ -27,7 +27,7 @@ protocol LogoutResponder {
 }
 
 protocol SettingsViewModelType: ReserveNameHandler {
-    var selectableLanguages: [LocalizedLanguage: Bool] { get }
+    var selectableLanguages: [(LocalizedLanguage, Bool)] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
     var usernameDriver: Driver<String?> { get }
     var didBackupDriver: Driver<Bool> { get }
@@ -37,6 +37,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
     var biometryTypeDriver: Driver<Settings.BiometryType> { get }
     var isBiometryEnabledDriver: Driver<Bool> { get }
     var isBiometryAvailableDriver: Driver<Bool> { get }
+    var appVersion: String { get }
 
     func getUserAddress() -> String?
     func getUsername() -> String?
@@ -157,7 +158,7 @@ extension Settings {
 }
 
 extension Settings.ViewModel: SettingsViewModelType {
-    var selectableLanguages: [LocalizedLanguage: Bool] {
+    var selectableLanguages: [(LocalizedLanguage, Bool)] {
         localizationManager.selectableLanguages()
     }
 
@@ -240,6 +241,8 @@ extension Settings.ViewModel: SettingsViewModelType {
     var isBiometryAvailableDriver: Driver<Bool> { isBiometryAvailableSubject.asDriver() }
 
     var biometryTypeDriver: Driver<Settings.BiometryType> { biometryTypeSubject.asDriver() }
+
+    var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
 
     func handleName(_ name: String?) {
         guard let name = name else { return }

@@ -48,8 +48,12 @@ MOONPAY_PRODUCTION_API_KEY = fake_api_key
 AMPLITUDE_API_KEY = fake_api_key
 
 // MARK: - FeeRelayer
+FEE_RELAYER_STAGING_ENDPOINT = test-solana-fee-relayer.wallet.p2p.org
 FEE_RELAYER_ENDPOINT = fee-relayer.solana.p2p.org
 TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
+
+// MARK: - NameService
+NAME_SERVICE_ENDPOINT = name_service.org
 ```
 - Run install.sh
 ```shell
@@ -157,3 +161,34 @@ cp -R Templates/BEScene2.xctemplate ~/Library/Developer/Xcode/Templates
 ## Contribute
 
 We would love you for the contribution to **P2P Wallet**, check the ``LICENSE`` file for more info.
+
+
+## Feature Flags
+
+### Add feature flag steps
+
+- Add feature flag to Firebase Remote Config
+- Add feature flag with the same title to `public extension Feature` struct
+
+```
+public extension Feature {
+    static let sslPinning = Feature(rawValue: "ssl_pinning")
+    static let sslPinning = Feature(rawValue: "new_feature_flag")
+}
+```
+
+### Feature flag using example
+
+```
+if available(.sslPinning) {
+    showSslPinningScreen(
+        input: input,
+        state: status.creditState
+    )
+} else {
+    showAppStatus(
+        input: input,
+        status: status
+    )
+}
+```
