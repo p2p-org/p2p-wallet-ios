@@ -25,6 +25,7 @@ extension Authentication {
         private var biometryButton = BERef<UIButton>()
         private var pincodeView = BERef<WLPinCodeView>()
         private var logoView = BERef<UIImageView>()
+        private var lockingTimer: Timer?
 
         override var title: String? { didSet { navigationBar.view?.titleLabel.text = title } }
         var isIgnorable: Bool = false { didSet { navigationBar.view?.backIsHidden(!isIgnorable) } }
@@ -52,6 +53,10 @@ extension Authentication {
             self.viewModel = viewModel
             self.extraAction = extraAction
             super.init()
+        }
+
+        deinit {
+            invalidateTimer()
         }
 
         override func build() -> UIView {
@@ -185,7 +190,7 @@ extension Authentication {
             let lockingTimeInSeconds = lockingTimeInSeconds
 
             // Count down to next
-            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] timer in
+            lockingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
                 // get current date
                 let now = Date()
 
@@ -206,9 +211,14 @@ extension Authentication {
                 if secondsPassed >= lockingTimeInSeconds {
                     self?.viewModel.setBlockedTime(nil)
                     self?.reset()
-                    timer.invalidate()
+                    self?.invalidateTimer()
                 }
             }
+        }
+
+        private func invalidateTimer() {
+            lockingTimer?.invalidate()
+            lockingTimer = nil
         }
     }
 }
