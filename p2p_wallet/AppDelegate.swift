@@ -43,7 +43,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupNavigationAppearance()
 
-        // Use Firebase library to configure APIs
         FirebaseApp.configure()
 
         // Sentry

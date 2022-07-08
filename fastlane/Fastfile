@@ -177,7 +177,7 @@ platform :ios do
     )
 
     # create release build for this feature
-    create_release_build('ad-hoc')
+    create_release_build('test')
 
     # upload to firebase and browser stack
     upload_build(current_build, true, "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}")

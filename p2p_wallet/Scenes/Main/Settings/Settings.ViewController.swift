@@ -213,7 +213,9 @@ extension Settings {
                          )
                          */
                     }
-                    SectionView(title: "\(L10n.appVersion): \(viewModel.appVersion)") {}
+                    SectionView(
+                        title: "\(L10n.appVersion): \(viewModel.appVersion)\(Environment.current != .release ? ("(" + Bundle.main.buildVersionNumber + ")" + " " + Environment.current.description) : "")"
+                    ) {}
                 }
             }
         }
@@ -345,5 +347,18 @@ private class PinCodeChangedVC: FlexibleHeightVC {
         pc.roundedCorner = .allCorners
         pc.cornerRadius = 24
         return pc
+    }
+}
+
+private extension Environment {
+    var description: String {
+        switch self {
+        case .debug:
+            return "Debug"
+        case .test:
+            return "Test"
+        case .release:
+            return "Release"
+        }
     }
 }
