@@ -46,7 +46,7 @@ def ensure_temp_keychain(name, password)
   create_temp_keychain(name, password)
 end
 
-def create_release_build(match_type)
+def create_release_build(match_type, configuration)
   ensure_temp_keychain(TEMP_KEYCHAIN_USER, TEMP_KEYCHAIN_PASSWORD)
 
   profileSpecifier = PROVISIONING_PROFILE_SPECIFIER_ADHOC
@@ -85,6 +85,7 @@ def create_release_build(match_type)
 
   gym(
     scheme: 'p2p_wallet',
+    configuration: configuration,
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
     silent: true,
@@ -177,7 +178,7 @@ platform :ios do
     )
 
     # create release build for this feature
-    create_release_build('test')
+    create_release_build('ad-hoc', 'Test')
 
     # upload to firebase and browser stack
     upload_build(current_build, true, "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}")
@@ -220,7 +221,7 @@ platform :ios do
     )
 
     # create release build
-    create_release_build('ad-hoc')
+    create_release_build('ad-hoc', 'Release')
 
     # upload to firebase
     upload_build("#{version} (#{build_number})", false, "")
@@ -253,7 +254,7 @@ platform :ios do
     )
 
     # create release build
-    create_release_build('app-store')
+    create_release_build('app-store', 'Release')
 
     # upload to testflight
     pilot(
