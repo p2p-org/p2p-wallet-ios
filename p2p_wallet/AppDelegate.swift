@@ -124,6 +124,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupNavigationAppearance() {
         let barButtonAppearance = UIBarButtonItem.appearance()
+        let tabBarItemAppearance = UITabBarItem.appearance()
+        tabBarItemAppearance.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12)], for: .normal)
+
         let navBarAppearence = UINavigationBar.appearance()
         navBarAppearence.backIndicatorImage = .navigationBack
             .withRenderingMode(.alwaysTemplate)

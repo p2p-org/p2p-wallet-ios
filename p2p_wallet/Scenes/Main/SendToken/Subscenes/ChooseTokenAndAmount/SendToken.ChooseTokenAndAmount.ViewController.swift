@@ -35,9 +35,13 @@ extension SendToken.ChooseTokenAndAmount {
 
         // MARK: - Initializer
 
-        init(viewModel: SendTokenChooseTokenAndAmountViewModelType) {
+        init(
+            viewModel: SendTokenChooseTokenAndAmountViewModelType,
+            hidesBottomBarWhenPushed: Bool
+        ) {
             self.viewModel = viewModel
             super.init()
+            self.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
         }
 
         override func viewWillDisappear(_ animated: Bool) {
