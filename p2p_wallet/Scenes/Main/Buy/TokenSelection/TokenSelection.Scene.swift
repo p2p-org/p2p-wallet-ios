@@ -42,27 +42,26 @@ extension BuyTokenSelection {
         }
 
         private func cell(cryptoCurrency: Buy.CryptoCurrency) -> UIView {
-            Cell()
-                .setup { cell in
-                    if let wallet = walletRepository.getWallets().first(where: {
-                        $0.token.symbol == cryptoCurrency.name && $0.token.address == cryptoCurrency.mintAddress
-                    }) {
-                        cell.setup(wallet: wallet)
-                    } else {
-                        Single<[Token]>.async {
-                            Array(try await self.tokenRepository.getTokensList())
-                        }
-                        .asDriver(onErrorJustReturn: [])
-                        .drive(onNext: { [weak cell] tokens in
-                            guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
-                                cell?.isHidden = true
-                                return
-                            }
-                            cell?.setUp(token: token, amount: 0, amountInFiat: 0)
-                        })
-                        .disposed(by: disposeBag)
+            Cell().setup { cell in
+                if let wallet = walletRepository.getWallets().first(where: {
+                    $0.token.symbol == cryptoCurrency.name && $0.token.address == cryptoCurrency.mintAddress
+                }) {
+                    cell.setup(wallet: wallet)
+                } else {
+                    Single<[Token]>.async {
+                        Array(try await self.tokenRepository.getTokensList())
                     }
+                    .asDriver(onErrorJustReturn: [])
+                    .drive(onNext: { [weak cell] tokens in
+                        guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
+                            cell?.isHidden = true
+                            return
+                        }
+                        cell?.setUp(token: token, amount: 0, amountInFiat: 0)
+                    })
+                    .disposed(by: disposeBag)
                 }
+            }
         }
 
         class Cell: BECompositionView {
