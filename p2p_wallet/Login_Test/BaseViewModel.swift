@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 @MainActor
-class BaseViewModel: ObservableObject {
+open class BaseViewModel: ObservableObject {
     // MARK: - Properties
 
     var subscriptions = [AnyCancellable]()
