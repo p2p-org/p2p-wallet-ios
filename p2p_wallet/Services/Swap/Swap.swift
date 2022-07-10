@@ -75,9 +75,7 @@ protocol SwapServiceType {
 
     /// Calculate fee for swapping
     func getFees(
-        sourceAddress: String,
         sourceMint: String,
-        availableSourceMintAddresses: [String],
         destinationAddress: String?,
         destinationToken: Token,
         bestPoolsPair: Swap.PoolsPair?,
