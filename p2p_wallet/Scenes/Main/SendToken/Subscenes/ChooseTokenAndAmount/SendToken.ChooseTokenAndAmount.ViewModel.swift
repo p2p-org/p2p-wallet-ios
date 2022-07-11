@@ -44,6 +44,7 @@ extension SendToken.ChooseTokenAndAmount {
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
+        @Injected private var walletsRepository: WalletsRepository
         private let sendTokenViewModel: SendTokenViewModelType
 
         // MARK: - Properties
@@ -192,7 +193,9 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
 
     func clear() {
-        walletSubject.accept(nil)
+        // Put Sol as default wallet by default
+        let defaultWallet = walletsRepository.getWallets().first { $0.token == Token.nativeSolana }
+        walletSubject.accept(defaultWallet)
         amountSubject.accept(nil)
     }
 
