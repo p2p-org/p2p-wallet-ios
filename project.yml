@@ -140,7 +140,7 @@ targets:
                     PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber
                     SWIFT_ACTIVE_COMPILATION_CONDITIONS: TEST
                 Release:
-                    PRODUCT_BUNDLE_IDENTIFIER: org.p2p.wallet
+                    PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber
                     SWIFT_ACTIVE_COMPILATION_CONDITIONS: RELEASE
 
     Detect Unused Code:
