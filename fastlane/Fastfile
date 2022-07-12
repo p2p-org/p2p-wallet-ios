@@ -70,14 +70,14 @@ def create_release_build(match_type, configuration)
     appIdentifier += ".test"
   end
 
-  if IS_CI
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      profile_name: profileSpecifier,
-      team_id: DEVELOPER_PORTAL_TEAM_ID,
-      code_sign_identity: "Apple Distribution"
-    )
-  end
+#   if IS_CI
+#     update_code_signing_settings(
+#       use_automatic_signing: false,
+#       profile_name: profileSpecifier,
+#       team_id: DEVELOPER_PORTAL_TEAM_ID,
+#       code_sign_identity: "Apple Distribution"
+#     )
+#   end
 
   api_key = app_store_connect_api_key(
     key_id: APPLE_KEY_ID,
@@ -104,7 +104,7 @@ def create_release_build(match_type, configuration)
     configuration: configuration,
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
-    silent: false,
+    silent: true,
     export_options: {
       provisioningProfiles: {
         appId => profileSpecifier
