@@ -18,7 +18,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> { get }
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> { get }
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> { get }
-    var viewWillAppear: PublishSubject<Void> { get }
+    var clearForm: PublishSubject<Void> { get }
     var showAfterConfirmation: Bool { get }
     var canGoBack: Bool { get }
 
@@ -60,7 +60,7 @@ extension SendToken.ChooseTokenAndAmount {
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         let amountSubject = BehaviorRelay<Double?>(value: nil)
-        let viewWillAppear = PublishSubject<Void>()
+        let clearForm = PublishSubject<Void>()
 
         // MARK: - Initializer
 
@@ -90,7 +90,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .drive(amountSubject)
                 .disposed(by: disposeBag)
 
-            viewWillAppear
+            clearForm
                 .subscribe(onNext: { _ in self.clear() })
                 .disposed(by: disposeBag)
         }
@@ -193,9 +193,8 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
 
     func clear() {
-        // Put Sol as default wallet by default
-        let defaultWallet = walletsRepository.getWallets().first { $0.token == Token.nativeSolana }
-        walletSubject.accept(defaultWallet)
+        // Set Sol as a default wallet by default
+        walletSubject.accept(walletsRepository.nativeWallet)
         amountSubject.accept(nil)
     }
 
