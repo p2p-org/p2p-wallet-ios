@@ -83,20 +83,6 @@ targets:
         - path: README.MD
         preBuildScripts:
           - script: |
-                  PATH_TO_GOOGLE_PLISTS="${SRCROOT}/p2p_wallet"
-                  case "${CONFIGURATION}" in
-                
-                    "Debug" | "Test" )
-                      cp -r "$PATH_TO_GOOGLE_PLISTS/GoogleService-Info-Test.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist" ;;
-                
-                    "Release" )
-                      cp -r "$PATH_TO_GOOGLE_PLISTS/GoogleService-Info.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist" ;;
-                
-                    *)
-                      ;;
-                  esac
-            name: "[SCRIPT] Copy GoogleService-Info.plist"
-          - script: |
                   if [ "${CONFIGURATION}" = "Release" ]; then
                     echo "Swiftgen is disabled in Release mode"
                     exit 0
