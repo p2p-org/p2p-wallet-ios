@@ -1,6 +1,7 @@
 default_platform(:ios)
 
 DEVELOPER_APP_ID = ENV["DEVELOPER_APP_ID"]
+DEVELOPER_APP_ID_TEST = ENV["DEVELOPER_APP_ID_TEST"]
 DEVELOPER_APP_IDENTIFIER = ENV["DEVELOPER_APP_IDENTIFIER"]
 PROVISIONING_PROFILE_SPECIFIER_ADHOC = ENV["PROVISIONING_PROFILE_SPECIFIER_ADHOC"]
 PROVISIONING_PROFILE_SPECIFIER_APPSTORE = ENV["PROVISIONING_PROFILE_SPECIFIER_APPSTORE"]
@@ -54,6 +55,20 @@ def create_release_build(match_type, configuration)
     profileSpecifier = PROVISIONING_PROFILE_SPECIFIER_APPSTORE
   end
 
+  if configuration == "Test"
+    profileSpecifier += ".test"
+  end
+
+  appId = DEVELOPER_APP_ID
+  if configuration == "Test"
+    appId = DEVELOPER_APP_ID_TEST
+  end
+
+  appIdentifier = DEVELOPER_APP_IDENTIFIER
+  if configuration == "Test"
+    appIdentifier += ".test"
+  end
+
   if IS_CI
     update_code_signing_settings(
       use_automatic_signing: false,
@@ -75,7 +90,7 @@ def create_release_build(match_type, configuration)
   match(
     type: match_type.gsub("-", ""),
     git_url: PROVISIONING_REPO,
-    app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
+    app_identifier: "#{appIdentifier}",
     git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
     readonly: true,
     keychain_name: TEMP_KEYCHAIN_USER,
@@ -91,7 +106,7 @@ def create_release_build(match_type, configuration)
     silent: true,
     export_options: {
       provisioningProfiles: {
-        DEVELOPER_APP_ID => profileSpecifier
+        appId => profileSpecifier
       }
     }
   )

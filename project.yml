@@ -86,10 +86,10 @@ targets:
                   PATH_TO_GOOGLE_PLISTS="${SRCROOT}/p2p_wallet"
                   case "${CONFIGURATION}" in
                 
-                    "DEBUG" | "TEST" )
+                    "Debug" | "Test" )
                       cp -r "$PATH_TO_GOOGLE_PLISTS/GoogleService-Info-Test.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist" ;;
                 
-                    "RELEASE" )
+                    "Release" )
                       cp -r "$PATH_TO_GOOGLE_PLISTS/GoogleService-Info.plist" "${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist" ;;
                 
                     *)
