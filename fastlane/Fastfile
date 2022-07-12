@@ -97,7 +97,7 @@ def create_release_build(match_type, configuration)
   )
 end
 
-def upload_build(version, is_feature_build, link)
+def upload_build(version, link)
   # upload to firebase
   firebase_app_distribution(
     app: FIREBASE_APP_ID,
@@ -112,10 +112,7 @@ def upload_build(version, is_feature_build, link)
   )
 
   # upload to slack
-  message = "New version #{version} for regression is available"
-  if is_feature_build
-    message = "A build #{version} was uploaded for testing this feature. Link to issue: #{link}"
-  end
+  message = "A build #{version} was uploaded for testing this feature. Link to issue: #{link}"
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
     title: "p2p_wallet.ipa",
@@ -181,7 +178,7 @@ platform :ios do
     create_release_build('ad-hoc', 'Test')
 
     # upload to firebase and browser stack
-    upload_build(current_build, true, "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}")
+    upload_build(current_build, "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}")
 
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
