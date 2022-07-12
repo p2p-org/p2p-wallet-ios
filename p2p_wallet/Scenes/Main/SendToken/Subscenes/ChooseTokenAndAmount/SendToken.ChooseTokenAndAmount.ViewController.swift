@@ -45,6 +45,10 @@ extension SendToken.ChooseTokenAndAmount {
             view.endEditing(true)
         }
 
+        func clearForm() {
+            viewModel.clearForm.onNext(())
+        }
+
         // MARK: - Methods
 
         override func setUp() {
@@ -83,10 +87,6 @@ extension SendToken.ChooseTokenAndAmount {
                         self?.customView.amountTextField.becomeFirstResponder()
                     }
                 })
-                .disposed(by: disposeBag)
-
-            rx.viewWillAppear.mapToVoid()
-                .subscribe(viewModel.viewWillAppear)
                 .disposed(by: disposeBag)
         }
 
