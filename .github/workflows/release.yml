@@ -15,6 +15,8 @@ jobs:
       - name: Copy xcconfig file
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+          rm ./p2p_wallet/GoogleService-Info.plist
+          curl -o ./p2p_wallet/GoogleService-Info.plist ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}
         shell: bash
 
       - name: Install project
