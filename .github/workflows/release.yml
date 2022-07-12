@@ -12,7 +12,7 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
-      - name: Copy xcconfig file
+      - name: Copy secret files
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
           rm ./p2p_wallet/GoogleService-Info.plist
