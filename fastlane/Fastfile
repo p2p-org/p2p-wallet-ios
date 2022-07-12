@@ -13,6 +13,7 @@ APPLE_KEY_CONTENT = ENV["APPLE_KEY_CONTENT"]
 GIT_AUTHORIZATION = ENV["GIT_AUTHORIZATION"]
 
 FIREBASE_APP_ID = ENV["FIREBASE_APP_ID"]
+FIREBASE_APP_ID_TEST = ENV["FIREBASE_APP_ID_TEST"]
 FIREBASE_CLI_TOKEN = ENV["FIREBASE_CLI_TOKEN"]
 
 BROWSERSTACK_USERNAME = ENV["BROWSERSTACK_USERNAME"]
@@ -92,7 +93,7 @@ def create_release_build(match_type, configuration)
     git_url: PROVISIONING_REPO,
     app_identifier: "#{appIdentifier}",
     git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
-    readonly: true,
+    readonly: false,
     keychain_name: TEMP_KEYCHAIN_USER,
     keychain_password: TEMP_KEYCHAIN_PASSWORD,
     api_key: api_key
@@ -112,10 +113,14 @@ def create_release_build(match_type, configuration)
   )
 end
 
-def upload_build(version, link)
+def upload_build(version, link, configuration)
   # upload to firebase
+  firebaseAppId = FIREBASE_APP_ID
+  if configuration == "Test"
+    firebaseAppId = FIREBASE_APP_ID_TEST
+  end
   firebase_app_distribution(
-    app: FIREBASE_APP_ID,
+    app: firebaseAppId,
     groups: "dev_team",
     firebase_cli_token: FIREBASE_CLI_TOKEN
   )
@@ -193,7 +198,11 @@ platform :ios do
     create_release_build('ad-hoc', 'Test')
 
     # upload to firebase and browser stack
-    upload_build(current_build, "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}")
+    upload_build(
+      current_build,
+      "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}",
+      "Test"
+    )
 
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
@@ -256,5 +265,9 @@ platform :ios do
 
     # clean
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
+
+    # tag
+    add_git_tag(tag: tag)
+    push_git_tags(tag: tag)
   end
 end
