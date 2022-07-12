@@ -41,10 +41,9 @@ extension AppCoordinator: AppEventHandlerDelegate {
         showAuthenticationOnMainOnAppear = false
         Task {
             await reload()
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            self?.notificationsService.showInAppNotification(.done(L10n.networkChanged))
+            await MainActor.run {
+                notificationsService.showInAppNotification(.done(L10n.networkChanged))
+            }
         }
     }
 
@@ -53,11 +52,11 @@ extension AppCoordinator: AppEventHandlerDelegate {
 
         Task {
             await reload()
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-            let languageChangedText = language.originalName.map(L10n.changedLanguageTo) ?? L10n.interfaceLanguageChanged
-            self?.notificationsService.showInAppNotification(.done(languageChangedText))
+            await MainActor.run {
+                let languageChangedText = language.originalName.map(L10n.changedLanguageTo) ?? L10n
+                    .interfaceLanguageChanged
+                notificationsService.showInAppNotification(.done(languageChangedText))
+            }
         }
     }
 

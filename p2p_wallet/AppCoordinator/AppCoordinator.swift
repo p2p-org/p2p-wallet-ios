@@ -44,16 +44,7 @@ class AppCoordinator {
     func reload() async {
         // remove rootvc, show loading
         await MainActor.run {
-            window.rootViewController = nil
-            // add lockview
-            lockView.removeFromSuperview()
-            window.addSubview(lockView)
-            lockView.autoPinEdgesToSuperviewEdges()
-
-            // show loading
-            indicator.removeFromSuperview()
-            window.addSubview(indicator)
-            indicator.autoPinEdgesToSuperviewEdges()
+            removeRootViewControllerAndShowLoading()
         }
 
         // reload session
@@ -90,7 +81,7 @@ class AppCoordinator {
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - Navigation
 
     func navigateToCreateOrRestoreWallet() {
         // TODO: - Change to CreateOrRestoreWallet.Coordinator.start()
@@ -127,6 +118,21 @@ class AppCoordinator {
     func finishSetUp() {
         analyticsManager.log(event: .setupFinishClick)
         Task { await reload() }
+    }
+
+    // MARK: - Helper
+
+    private func removeRootViewControllerAndShowLoading() {
+        window.rootViewController = nil
+        // add lockview
+        lockView.removeFromSuperview()
+        window.addSubview(lockView)
+        lockView.autoPinEdgesToSuperviewEdges()
+
+        // show loading
+        indicator.removeFromSuperview()
+        window.addSubview(indicator)
+        indicator.autoPinEdgesToSuperviewEdges()
     }
 
     private func transition(to vc: UIViewController) {
