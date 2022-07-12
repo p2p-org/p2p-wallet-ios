@@ -198,7 +198,7 @@ platform :ios do
     end
   end
 
-  lane :beta do
+  lane :release do
     # get version
     version = get_version_number(target: "p2p_wallet")
 
@@ -212,39 +212,6 @@ platform :ios do
       build_number += 1
       tag = "#{tag_prefix}#{version}(#{build_number})"
     end
-
-    # set build number
-    increment_build_number(
-      xcodeproj: "p2p_wallet.xcodeproj",
-      build_number: build_number,
-      skip_info_plist: true
-    )
-
-    # create release build
-    create_release_build('ad-hoc', 'Release')
-
-    # upload to firebase
-    upload_build("#{version} (#{build_number})", false, "")
-
-    # delete temp keychain
-    delete_temp_keychain(TEMP_KEYCHAIN_USER)
-
-    # tag
-    add_git_tag(tag: tag)
-    push_git_tags(tag: tag)
-  end
-
-  lane :release do
-    # REQUIREMENT: THERE IS AT LEAST 1 TAG LIKE v1.0.0(1234) THAT HAS ALREADY BEEN PASSED REGRESSION
-
-    # get current build number. Ex. get 1234 from tag v1.0.0(1234)
-    sh('git fetch --tags --no-recurse-submodules')
-    version = get_version_number(target: "p2p_wallet")
-    lt = last_git_tag
-    puts "last_git_tag #{lt}"
-    tag = last_git_tag(pattern: "v#{version}(*")
-    puts "matched tag #{tag}"
-    build_number = tag.sub("v#{version}(", '').sub(")", '')
 
     # set build number
     increment_build_number(
@@ -271,7 +238,7 @@ platform :ios do
     full_version = "#{version} (#{build_number})"
     post_to_slack(
       api_token: SLACK_API_TOKEN,
-      message: "Version #{full_version} was uploaded to Testflight and will be available for updating test after a few minutes!",
+      message: "Version #{full_version} was uploaded to Testflight and will be available after a few minutes!",
       channel: "#p2p-wallet-builds-ios"
     )
 
