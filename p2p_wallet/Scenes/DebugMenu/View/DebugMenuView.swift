@@ -4,35 +4,34 @@
 //
 //  Created by Ivan on 14.06.2022.
 //
-#if !RELEASE
-    import SwiftUI
 
-    struct DebugMenuView: View {
-        @ObservedObject private var viewModel: DebugMenuViewModel
+import SwiftUI
 
-        init(viewModel: DebugMenuViewModel) {
-            self.viewModel = viewModel
-        }
+struct DebugMenuView: View {
+    @ObservedObject private var viewModel: DebugMenuViewModel
 
-        var body: some View {
-            NavigationView {
-                List {
-                    Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
-                    Section(header: Text("Feature Toggles")) {
-                        ForEach(0 ..< viewModel.features.count, id: \.self) { index in
-                            if let feature = viewModel.features[index].feature {
-                                Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
-                                    .valueChanged(value: viewModel.features[index].isOn) { newValue in
-                                        viewModel.setFeature(feature, isOn: newValue)
-                                    }
-                            } else {
-                                Text(viewModel.features[index].title)
-                            }
+    init(viewModel: DebugMenuViewModel) {
+        self.viewModel = viewModel
+    }
+
+    var body: some View {
+        NavigationView {
+            List {
+                Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
+                Section(header: Text("Feature Toggles")) {
+                    ForEach(0 ..< viewModel.features.count, id: \.self) { index in
+                        if let feature = viewModel.features[index].feature {
+                            Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
+                                .valueChanged(value: viewModel.features[index].isOn) { newValue in
+                                    viewModel.setFeature(feature, isOn: newValue)
+                                }
+                        } else {
+                            Text(viewModel.features[index].title)
                         }
                     }
                 }
-                .navigationBarTitle("Debug Menu", displayMode: .inline)
             }
+            .navigationBarTitle("Debug Menu", displayMode: .inline)
         }
     }
-#endif
+}
