@@ -17,7 +17,9 @@ struct DebugMenuView: View {
     var body: some View {
         NavigationView {
             List {
-                Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
+                #if !RELEASE
+                    Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
+                #endif
                 Section(header: Text("Feature Toggles")) {
                     ForEach(0 ..< viewModel.features.count, id: \.self) { index in
                         if let feature = viewModel.features[index].feature {

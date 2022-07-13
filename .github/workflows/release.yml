@@ -25,7 +25,7 @@ jobs:
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
-      - name: Upload to test
+      - name: Upload to TestFlight
         uses: maierj/fastlane-action@v2.2.0
         with:
           lane: release
