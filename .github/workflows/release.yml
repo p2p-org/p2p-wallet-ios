@@ -22,6 +22,7 @@ jobs:
       - name: Install project
         run: |
           chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
+          rm -rf p2p_wallet/Scenes/DebugMenu
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
