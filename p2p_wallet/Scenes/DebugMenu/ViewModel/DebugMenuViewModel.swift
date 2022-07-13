@@ -10,13 +10,11 @@ import FirebaseRemoteConfig
 import SwiftyUserDefaults
 
 final class DebugMenuViewModel: ObservableObject {
-    #if !RELEASE
-        @Published var networkLoggerVisible = isShown {
-            didSet {
-                updateNetworkLoggerState()
-            }
+    @Published var networkLoggerVisible = isShown {
+        didSet {
+            updateNetworkLoggerState()
         }
-    #endif
+    }
 
     @Published var features: [FeatureItem]
 
