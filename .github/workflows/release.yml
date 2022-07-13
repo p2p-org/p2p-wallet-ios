@@ -21,6 +21,7 @@ jobs:
 
       - name: Install project
         run: |
+          chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
