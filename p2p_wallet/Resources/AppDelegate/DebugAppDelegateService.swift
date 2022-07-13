@@ -5,69 +5,69 @@
 //  Created by Babich Ivan on 16.06.2022.
 //
 
-// #if DEBUG
+#if !RELEASE
+
+    /* script_delete_flag_start */
+    import CocoaDebug
+    /* script_delete_flag_end */
+
+    final class DebugAppDelegateService: NSObject, AppDelegateService {
+        func applicationDidFinishLaunching(_: UIApplication) {
+            /* script_delete_flag_start */
+            CocoaDebugSettings.shared.responseShake = false
+            /* script_delete_flag_end */
+            showDebugger(isShown)
+        }
+    }
+
+#endif
+
+#if !RELEASE
+
+    var isShown = CocoaDebugSettings.shared.showBubbleAndWindow
+
+#endif
 
 /* script_delete_flag_start */
-import CocoaDebug
-/* script_delete_flag_end */
+#if !RELEASE
 
-final class DebugAppDelegateService: NSObject, AppDelegateService {
-    func applicationDidFinishLaunching(_: UIApplication) {
-        /* script_delete_flag_start */
-        CocoaDebugSettings.shared.responseShake = false
-        /* script_delete_flag_end */
-        showDebugger(isShown)
-    }
-}
+    var isShaken = false
 
-// #endif
-
-// #if DEBUG
-
-var isShown = CocoaDebugSettings.shared.showBubbleAndWindow
-
-// #endif
-
-/* script_delete_flag_start */
-// #if DEBUG
-
-var isShaken = false
-
-extension UIWindow {
-    override open func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        super.motionBegan(motion, with: event)
-        isShaken = true
-    }
-
-    override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        super.motionEnded(motion, with: event)
-        guard isShaken else {
-            isShaken.toggle()
-            return
+    extension UIWindow {
+        override open func motionBegan(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+            super.motionBegan(motion, with: event)
+            isShaken = true
         }
 
-        guard motion == .motionShake else { return }
+        override open func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+            super.motionEnded(motion, with: event)
+            guard isShaken else {
+                isShaken.toggle()
+                return
+            }
 
-        isShown.toggle()
-        showDebugger(isShown)
+            guard motion == .motionShake else { return }
+
+            isShown.toggle()
+            showDebugger(isShown)
+        }
     }
-}
 
-// #endif
+#endif
 /* script_delete_flag_end */
 
-// #if DEBUG
+#if !RELEASE
 
-func showDebugger(_ isShown: Bool) {
-    DispatchQueue.main.async {
-        /* script_delete_flag_start */
-        if isShown {
-            CocoaDebug.showBubble()
-        } else {
-            CocoaDebug.hideBubble()
+    func showDebugger(_ isShown: Bool) {
+        DispatchQueue.main.async {
+            /* script_delete_flag_start */
+            if isShown {
+                CocoaDebug.showBubble()
+            } else {
+                CocoaDebug.hideBubble()
+            }
+            /* script_delete_flag_end */
         }
-        /* script_delete_flag_end */
     }
-}
 
-// #endif
+#endif
