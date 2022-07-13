@@ -1,5 +1,7 @@
 name: Pull request review submitted
-on: push
+on:
+  pull_request_review:
+    types: [submitted]
 jobs:
   # Return task back to In Progress if pull request is changes requested
   return_task_to_in_progress:
@@ -33,7 +35,7 @@ jobs:
   # Upload build for testing when pull request is approved
   upload_build_for_testing:
     name: Upload build for testing when pull request is approved
-#    if: github.event.review.state == 'approved'
+    if: github.event.review.state == 'approved'
     runs-on: macos-12
 
     steps:
