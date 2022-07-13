@@ -43,11 +43,11 @@ final class DebugMenuViewModel: ObservableObject {
     }
 
     private func updateNetworkLoggerState() {
-        // #if DEBUG
+        #if !RELEASE
 
-        showDebugger(networkLoggerVisible)
+            showDebugger(networkLoggerVisible)
 
-        // #endif
+        #endif
     }
 }
 

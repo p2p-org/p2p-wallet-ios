@@ -13,7 +13,7 @@ final class AppDelegateProxyService: NSObject, UIApplicationDelegate {
 
     override init() {
         var services = [AppDelegateService?]()
-        #if DEBUG
+        #if !RELEASE
             services.append(contentsOf: [
                 DebugAppDelegateService(),
             ])
