@@ -194,6 +194,12 @@ platform :ios do
       skip_info_plist: true
     )
 
+    # change app name
+    update_info_plist( # Change the Display Name of your app
+      plist_path: "./p2p_wallet/Info.plist",
+      display_name: "P2P Wallet #{current_build}"
+    )
+
     # create release build for this feature
     create_release_build('ad-hoc', 'Test')
 
