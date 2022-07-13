@@ -12,10 +12,17 @@ import SolanaSwift
 import UIKit
 
 class CoinLogoImageView: BEView {
+    static var cachedJazziconSeeds = [String: UInt32]()
+
     // MARK: - Properties
 
     private let size: CGFloat
-    static var cachedJazziconSeeds = [String: UInt64]()
+
+    private var seed: UInt32? {
+        willSet {
+            setNeedsDisplay()
+        }
+    }
 
     // MARK: - Subviews
 
@@ -45,10 +52,21 @@ class CoinLogoImageView: BEView {
         configureForAutoLayout()
         autoSetDimensions(to: .init(width: size, height: size))
 
-        tokenIcon.layer.cornerRadius = cornerRadius
-        tokenIcon.layer.masksToBounds = true
+        layer.cornerRadius = cornerRadius
+        layer.masksToBounds = true
 
         self.backgroundColor = backgroundColor ?? .gray
+    }
+
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+
+        guard let seed = seed, let context = UIGraphicsGetCurrentContext() else {
+            return
+        }
+
+        let jazzicon = Jazzicon(seed: seed)
+        jazzicon.draw(with: context, in: rect)
     }
 
     override func commonInit() {
@@ -72,6 +90,7 @@ class CoinLogoImageView: BEView {
         wrappingView.alpha = 0
         backgroundColor = .clear
         tokenIcon.isHidden = false
+        seed = nil
 
         // with token
         if let token = token {
@@ -81,14 +100,22 @@ class CoinLogoImageView: BEView {
                 let key = token.symbol.isEmpty ? token.address : token.symbol
                 var seed = Self.cachedJazziconSeeds[key]
                 if seed == nil {
-                    seed = UInt64.random(in: 0 ..< 10_000_000)
+                    seed = UInt32.random(in: 0 ..< 10_000_000)
                     Self.cachedJazziconSeeds[key] = seed
                 }
 
-                let jazzicon = Jazzicon(seed: seed!)
-                let jazziconImage = jazzicon.generateImage(size: size)
+                tokenIcon.isHidden = true
+                self.seed = seed
 
-                tokenIcon.setImage(urlString: token.logoURI, placeholder: jazziconImage)
+                tokenIcon.setImage(urlString: token.logoURI) { [weak self] result in
+                    switch result {
+                    case .success:
+                        self?.tokenIcon.isHidden = false
+                        self?.seed = nil
+                    case .failure:
+                        self?.tokenIcon.isHidden = true
+                    }
+                }
             }
         } else {
             tokenIcon.image = placeholder

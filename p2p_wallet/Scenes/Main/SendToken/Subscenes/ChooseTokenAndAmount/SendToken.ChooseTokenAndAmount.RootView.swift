@@ -86,10 +86,6 @@ extension SendToken.ChooseTokenAndAmount {
             }
         }
 
-        override func didMoveToWindow() {
-            super.didMoveToWindow()
-        }
-
         // MARK: - Layout
 
         private func layout() {

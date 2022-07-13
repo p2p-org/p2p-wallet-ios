@@ -13,6 +13,7 @@ import RenVMSwift
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
+import SwiftyUserDefaults
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -73,9 +74,15 @@ extension Resolver: ResolverRegistering {
             .implements(PricesStorage.self)
             .scope(.application)
 
-        register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
-            .implements(SolanaPricesAPI.self)
-            .scope(.application)
+        if !Defaults.isCoingeckoProviderDisabled {
+            register { CoinGeckoPricesAPI() }
+                .implements(SolanaPricesAPI.self)
+                .scope(.application)
+        } else {
+            register { CryptoComparePricesAPI(apikey: .secretConfig("CRYPTO_COMPARE_API_KEY")) }
+                .implements(SolanaPricesAPI.self)
+                .scope(.application)
+        }
 
         register { InMemoryTokensRepositoryCache() }
             .implements(SolanaTokensRepositoryCache.self)
@@ -161,7 +168,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // FeeRelayer
-        register { FeeRelayerSwift.APIClient(version: 1) }
+        register { FeeRelayerSwift.APIClient(baseUrlString: FeeRelayerEndpoint.baseUrl, version: 1) }
             .implements(FeeRelayerAPIClient.self)
             .scope(.session)
 

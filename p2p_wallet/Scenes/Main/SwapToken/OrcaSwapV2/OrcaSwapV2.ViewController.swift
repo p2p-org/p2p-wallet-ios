@@ -35,7 +35,6 @@ extension OrcaSwapV2 {
             super.init()
 
             navigationItem.title = L10n.swap
-            settingButton.setTitleTextAttributes([.foregroundColor: UIColor.h5887ff], for: .normal)
             navigationItem.rightBarButtonItem = settingButton
         }
 

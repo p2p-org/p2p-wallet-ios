@@ -146,17 +146,20 @@ extension Settings {
                             nextArrowEnable: false
                         )
                     }
-//                    #if DEBUG
-                    SectionView(title: "Debug") {
-                        CellView(
-                            icon: UIImage(),
-                            title: UILabel(text: "Debug Menu")
-                        ).onTap { [unowned self] in
-                            let view = DebugMenuView(viewModel: .init())
-                            present(view.asViewController(), animated: true)
+                    #if !RELEASE
+                        SectionView(title: "Debug") {
+                            CellView(
+                                icon: UIImage(),
+                                title: UILabel(text: "Debug Menu")
+                            ).onTap { [unowned self] in
+                                let view = DebugMenuView(viewModel: .init())
+                                present(view.asViewController(), animated: true)
+                            }
                         }
-                    }
-//                    #endif
+                    #endif
+                    SectionView(
+                        title: "\(L10n.appVersion): \(viewModel.appVersion)\(Environment.current != .release ? ("(" + Bundle.main.buildVersionNumber + ")" + " " + Environment.current.description) : "")"
+                    ) {}
                 }
             }
         }
@@ -288,5 +291,18 @@ private class PinCodeChangedVC: FlexibleHeightVC {
         pc.roundedCorner = .allCorners
         pc.cornerRadius = 24
         return pc
+    }
+}
+
+private extension Environment {
+    var description: String {
+        switch self {
+        case .debug:
+            return "Debug"
+        case .test:
+            return "Test"
+        case .release:
+            return "Release"
+        }
     }
 }

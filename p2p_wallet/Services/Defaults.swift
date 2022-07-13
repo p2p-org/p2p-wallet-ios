@@ -36,6 +36,7 @@ extension DefaultsKeys {
         )
     }
 
+    var isCoingeckoProviderDisabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var walletName: DefaultsKey<[String: String]> { .init(#function, defaultValue: [:]) }
     var localizedLanguage: DefaultsKey<LocalizedLanguage> {
