@@ -53,8 +53,12 @@ class VisibleWalletCell: BECollectionCell, BECollectionViewCell, UIGestureRecogn
 
     // MARK: - Gesture
 
-    func gestureRecognizer(_: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer) -> Bool {
-        true
+    /// Allow leading and trailing action to be recognized during scrolling.
+    func gestureRecognizer(
+        _ gesture: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith another: UIGestureRecognizer
+    ) -> Bool {
+        gesture is UIPanGestureRecognizer || another is UIPanGestureRecognizer
     }
 
     func gesture(_ action: @escaping () -> Void) -> BETapGestureRecognizer {
