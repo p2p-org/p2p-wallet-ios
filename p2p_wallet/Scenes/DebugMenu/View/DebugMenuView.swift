@@ -19,7 +19,7 @@ struct DebugMenuView: View {
             List {
                 Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
                 Section(header: Text("Feature Toggles")) {
-                    ForEach(viewModel.features.indices) { index in
+                    ForEach(0 ..< viewModel.features.count, id: \.self) { index in
                         if let feature = viewModel.features[index].feature {
                             Toggle(viewModel.features[index].title, isOn: $viewModel.features[index].isOn)
                                 .valueChanged(value: viewModel.features[index].isOn) { newValue in
