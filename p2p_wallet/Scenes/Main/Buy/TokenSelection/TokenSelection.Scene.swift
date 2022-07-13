@@ -49,6 +49,7 @@ extension BuyTokenSelection {
                     }) {
                         cell.setup(wallet: wallet)
                     } else {
+                        cell.showLoader()
                         Single<[Token]>.async {
                             Array(try await self.tokenRepository.getTokensList())
                         }
@@ -59,6 +60,7 @@ extension BuyTokenSelection {
                                 return
                             }
                             cell?.setUp(token: token, amount: 0, amountInFiat: 0)
+                            cell?.hideLoader()
                         })
                         .disposed(by: disposeBag)
                     }
