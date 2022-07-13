@@ -135,7 +135,7 @@ def upload_build(version, link, configuration)
   message = "A build #{version} was uploaded for testing this feature. Link to issue: #{link}"
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
-    title: "p2p_wallet.ipa",
+    title: "PWN-#{version}.ipa",
     channel: "#p2p-wallet-builds-ios",
     file_path: "./p2p_wallet.ipa",
     initial_comment: message
