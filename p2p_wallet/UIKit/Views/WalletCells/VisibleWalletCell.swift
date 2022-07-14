@@ -11,7 +11,6 @@ import UIKit
 class VisibleWalletCell: BECollectionCell, BECollectionViewCell, UIGestureRecognizerDelegate {
     var onSend: BEVoidCallback?
     var onHide: BEVoidCallback?
-    private var isLoading: Bool = false
 
     private let baseWalletRef = BERef<BaseWalletCell>()
 
