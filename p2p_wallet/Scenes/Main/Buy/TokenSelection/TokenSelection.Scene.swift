@@ -68,19 +68,18 @@ extension BuyTokenSelection {
         }
 
         class Cell: BECompositionView {
+            private var hStackRef = BERef<BEHStack>()
             private var iconRef = BERef<CoinLogoImageView>()
             private var coinNameRef = BERef<UILabel>()
             private var amountRef = BERef<UILabel>()
             private var amountInFiatRef = BERef<UILabel>()
 
             override func build() -> UIView {
-                BEHStack {
+                BEHStack(spacing: 12) {
                     // Icon
                     CoinLogoImageView(size: 44, cornerRadius: 12)
                         .bind(iconRef)
                         .centered(.vertical)
-
-                    UIView(width: 12)
 
                     // Title
                     BEVStack {
@@ -89,14 +88,15 @@ extension BuyTokenSelection {
                         UILabel(text: "<Amount>", textSize: 13, textColor: .secondaryLabel)
                             .bind(amountRef)
                     }
-                    UIView.spacer
 
                     // Trailing
                     BEVStack(alignment: .trailing) {
                         UILabel(text: "<Amount in fiat>", textSize: 17, weight: .medium)
                             .bind(amountInFiatRef)
                     }
-                }.padding(.init(x: 18, y: 12))
+                }
+                .bind(hStackRef)
+                .padding(.init(x: 18, y: 12))
             }
 
             @discardableResult
@@ -121,6 +121,14 @@ extension BuyTokenSelection {
                 amountInFiatRef.view?
                     .text = "\(Defaults.fiat.symbol) \(amountInFiat.toString(maximumFractionDigits: 2))"
                 return self
+            }
+
+            override func showLoader(customGradientColor: [UIColor]? = nil) {
+                hStackRef.view?.showLoader(customGradientColor: customGradientColor)
+            }
+
+            override func hideLoader() {
+                hStackRef.view?.hideLoader()
             }
         }
     }
