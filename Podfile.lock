@@ -131,8 +131,10 @@ PODS:
   - KeychainSwift (19.0.0)
   - Kingfisher (7.2.4)
   - ListPlaceholder (1.5)
+  - LoggerService (1.0.7)
   - LoggerSwift (1.0.2)
-  - NameService (1.0.0)
+  - NameService (1.0.0):
+    - LoggerService
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -167,7 +169,7 @@ PODS:
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
-  - SolanaSwift (2.2.2):
+  - SolanaSwift (2.3.0):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -204,6 +206,7 @@ DEPENDENCIES:
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
+  - LoggerService (from `KeyAppKit`)
   - NameService (from `KeyAppKit`)
   - OrcaSwapSwift (from `OrcaSwapSwift`)
   - Periphery
@@ -287,6 +290,8 @@ EXTERNAL SOURCES:
   ListPlaceholder:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
+  LoggerService:
+    :path: KeyAppKit
   NameService:
     :path: KeyAppKit
   OrcaSwapSwift:
@@ -348,8 +353,9 @@ SPEC CHECKSUMS:
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 2457be2121734e69e54a2312ecc0150eb9ae70b3
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
+  LoggerService: 8f0a41a5829d0ac0f0d264e6f34bc501527bd0f5
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
-  NameService: 768d79c57b8ac401fdf69128f03754195b8fd63f
+  NameService: d82b7f1704297eb25bd5a0ee266bd767e4a484a7
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   OrcaSwapSwift: 8184e41e83f5349b38cc229532331064f8ed1fe8
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
@@ -366,7 +372,7 @@ SPEC CHECKSUMS:
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: b2f19ae6cc7f779394709569a52c61b31715a991
+  SolanaSwift: e0eb2b253d7ea92b5048ec55f31dd0447478c003
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
@@ -379,6 +385,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c0a9506cd9c486e85657ed9dcc8ca715ba856cad
+PODFILE CHECKSUM: 32296c50c3328e2762ddbc56b1b38142f92b5e7a
 
 COCOAPODS: 1.11.3
