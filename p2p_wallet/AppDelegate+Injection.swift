@@ -149,7 +149,7 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         // SolanaSocket
-        register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!, enableDebugLogs: true) }
+        register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!) }
             .implements(SolanaSocket.self)
             .scope(.session)
 
