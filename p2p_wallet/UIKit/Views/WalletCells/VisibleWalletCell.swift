@@ -11,6 +11,7 @@ import UIKit
 class VisibleWalletCell: BECollectionCell, BECollectionViewCell, UIGestureRecognizerDelegate {
     var onSend: BEVoidCallback?
     var onHide: BEVoidCallback?
+    private var isLoading: Bool = false
 
     private let baseWalletRef = BERef<BaseWalletCell>()
 
@@ -44,10 +45,12 @@ class VisibleWalletCell: BECollectionCell, BECollectionViewCell, UIGestureRecogn
     }
 
     func showLoading() {
+        contentView.setUserInteractionEnabled(false)
         baseWalletRef.view?.showLoading()
     }
 
     func hideLoading() {
+        contentView.setUserInteractionEnabled(true)
         baseWalletRef.view?.hideLoading()
     }
 
