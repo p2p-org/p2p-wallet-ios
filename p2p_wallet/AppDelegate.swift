@@ -42,6 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IntercomStartingConfigurator().configure()
 
         setupNavigationAppearance()
+        setupTabBarAppearance()
 
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
@@ -122,11 +123,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
     }
 
+    private func setupTabBarAppearance() {
+        let standardAppearance = UITabBarAppearance()
+        standardAppearance.backgroundColor = .clear
+        standardAppearance.backgroundEffect = UIBlurEffect(style: .regular)
+        standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .medium),
+            .foregroundColor: UIColor.h6f7d8d,
+        ]
+        standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .medium),
+            .foregroundColor: UIColor.h2b2b2b,
+        ]
+        standardAppearance.stackedItemPositioning = .automatic
+        standardAppearance.shadowImage = nil
+        standardAppearance.shadowColor = nil
+        UITabBar.appearance().standardAppearance = standardAppearance
+        UITabBar.appearance().tintColor = .h2b2b2b
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = standardAppearance
+        }
+    }
+
     private func setupNavigationAppearance() {
         let barButtonAppearance = UIBarButtonItem.appearance()
-        let tabBarItemAppearance = UITabBarItem.appearance()
-        tabBarItemAppearance.setTitleTextAttributes([.font: UIFont.systemFont(ofSize: 12)], for: .normal)
-
         let navBarAppearence = UINavigationBar.appearance()
         navBarAppearence.backIndicatorImage = .navigationBack
             .withRenderingMode(.alwaysTemplate)
