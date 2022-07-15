@@ -30,13 +30,17 @@ final class TabBarController: UITabBarController {
 
         setupViewControllers()
         setupTabs()
+    }
 
-        tabBar.tintColor = .black
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            let appearance = self.tabBar.standardAppearance
-            appearance.shadowImage = nil
-            appearance.shadowColor = nil
-            self.tabBar.standardAppearance = appearance
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        // Seems to be a bug in iOS 13 with stackedLayoutAppearance (set in AppDelegate), label is shrinked so we need to update its size
+        if #available(iOS 13, *) {
+            tabBar.subviews.forEach { bar in
+                bar.subviews.compactMap { $0 as? UILabel }.forEach {
+                    $0.sizeToFit()
+                }
+            }
         }
     }
 
