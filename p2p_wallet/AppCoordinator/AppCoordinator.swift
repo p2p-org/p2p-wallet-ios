@@ -22,8 +22,6 @@ class AppCoordinator {
     // MARK: - Properties
 
     var window: UIWindow?
-    let lockView = LockView()
-    let indicator = WLLoadingIndicatorView(isBlocking: true)
     var isRestoration = false
     var showAuthenticationOnMainOnAppear = true
     var resolvedName: String?
@@ -44,7 +42,11 @@ class AppCoordinator {
         }
 
         // add placeholder
-        window?.rootViewController = BaseVC()
+        let vc = BaseVC()
+        let lockView = LockView()
+        vc.view.addSubview(lockView)
+        lockView.autoPinEdgesToSuperviewEdges()
+        window?.rootViewController = vc
         window?.makeKeyAndVisible()
 
         Task { await reload() }
@@ -81,12 +83,6 @@ class AppCoordinator {
             await MainActor.run {
                 navigateToMain()
             }
-        }
-
-        // remove lockview
-        await MainActor.run {
-            lockView.removeFromSuperview()
-            indicator.removeFromSuperview()
         }
     }
 
@@ -132,19 +128,12 @@ class AppCoordinator {
     // MARK: - Helper
 
     private func removeRootViewControllerAndShowLoading() {
-        window?.rootViewController = nil
-        // add lockview
-        lockView.removeFromSuperview()
-        window?.addSubview(lockView)
-        lockView.autoPinEdgesToSuperviewEdges()
-
         // show loading
-        indicator.removeFromSuperview()
-        window?.addSubview(indicator)
-        indicator.autoPinEdgesToSuperviewEdges()
+        window?.rootViewController?.view.showLoadingIndicatorView()
     }
 
     private func transition(to vc: UIViewController) {
+        window?.rootViewController?.view.hideLoadingIndicatorView()
         window?.rootViewController = vc
     }
 }
