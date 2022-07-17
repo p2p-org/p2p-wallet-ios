@@ -66,6 +66,15 @@ extension AppEventHandler: ChangeLanguageResponder {
     }
 }
 
+// MARK: - ChangeThemeResponder
+
+extension AppEventHandler: ChangeThemeResponder {
+    func changeThemeTo(_ style: UIUserInterfaceStyle) {
+        Defaults.appearance = style
+        delegate?.userDidChangeTheme(to: style)
+    }
+}
+
 // MARK: - LogoutResponder
 
 extension AppEventHandler: LogoutResponder {

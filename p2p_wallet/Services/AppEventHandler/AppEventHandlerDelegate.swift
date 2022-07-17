@@ -19,5 +19,6 @@ protocol AppEventHandlerDelegate: AnyObject {
 
     func userDidChangeAPIEndpoint(to endpoint: APIEndPoint)
     func userDidChangeLanguage(to language: LocalizedLanguage)
+    func userDidChangeTheme(to theme: UIUserInterfaceStyle)
     func userDidLogout()
 }

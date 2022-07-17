@@ -11,11 +11,11 @@ import SolanaSwift
 
 extension AppCoordinator: AppEventHandlerDelegate {
     func didStartLoading() {
-        window.showLoadingIndicatorView()
+        window?.showLoadingIndicatorView()
     }
 
     func didStopLoading() {
-        window.hideLoadingIndicatorView()
+        window?.hideLoadingIndicatorView()
     }
 
     func createWalletDidComplete() {
@@ -57,6 +57,12 @@ extension AppCoordinator: AppEventHandlerDelegate {
                     .interfaceLanguageChanged
                 notificationsService.showInAppNotification(.done(languageChangedText))
             }
+        }
+    }
+
+    func userDidChangeTheme(to style: UIUserInterfaceStyle) {
+        if #available(iOS 13.0, *) {
+            window?.overrideUserInterfaceStyle = style
         }
     }
 
