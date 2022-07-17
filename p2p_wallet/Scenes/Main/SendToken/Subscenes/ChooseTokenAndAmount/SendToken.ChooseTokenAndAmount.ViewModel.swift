@@ -18,6 +18,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
     var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> { get }
     var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> { get }
     var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> { get }
+    var clearForm: PublishSubject<Void> { get }
     var showAfterConfirmation: Bool { get }
     var canGoBack: Bool { get }
 
@@ -43,6 +44,7 @@ extension SendToken.ChooseTokenAndAmount {
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
+        @Injected private var walletsRepository: WalletsRepository
         private let sendTokenViewModel: SendTokenViewModelType
 
         // MARK: - Properties
@@ -58,6 +60,7 @@ extension SendToken.ChooseTokenAndAmount {
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         let amountSubject = BehaviorRelay<Double?>(value: nil)
+        let clearForm = PublishSubject<Void>()
 
         // MARK: - Initializer
 
@@ -85,6 +88,10 @@ extension SendToken.ChooseTokenAndAmount {
 
             sendTokenViewModel.amountDriver
                 .drive(amountSubject)
+                .disposed(by: disposeBag)
+
+            clearForm
+                .subscribe(onNext: { _ in self.clear() })
                 .disposed(by: disposeBag)
         }
     }
@@ -183,6 +190,12 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
 
         sendTokenViewModel.chooseWallet(wallet)
         sendTokenViewModel.enterAmount(lamports.convertToBalance(decimals: wallet.token.decimals))
+    }
+
+    func clear() {
+        // Set Sol as a default wallet by default
+        walletSubject.accept(walletsRepository.nativeWallet)
+        amountSubject.accept(nil)
     }
 
     func navigateNext() {
