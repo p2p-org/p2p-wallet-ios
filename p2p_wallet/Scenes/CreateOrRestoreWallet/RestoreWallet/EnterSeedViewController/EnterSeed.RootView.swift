@@ -158,6 +158,15 @@ extension EnterSeed {
                     self?.viewModel.seedTextSubject.accept($0)
                 }
                 .disposed(by: disposeBag)
+            textView.rxText
+                .scan("") { [weak viewModel] previous, new -> String? in
+                    guard
+                        let maxWordsCount = viewModel?.maxWordsCount,
+                        let newWordsCount = new?.split(separator: " ").count else { return new }
+                    return newWordsCount <= maxWordsCount ? new : previous
+                }
+                .bind(to: textView.rxText)
+                .disposed(by: disposeBag)
             viewModel.mainButtonContentDriver
                 .drive(onNext: { [weak self] in
                     self?.setMainButtonContent(type: $0)

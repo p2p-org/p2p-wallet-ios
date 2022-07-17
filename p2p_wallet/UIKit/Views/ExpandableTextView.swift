@@ -6,6 +6,7 @@
 //
 
 import PureLayout
+import RxCocoa
 import RxSwift
 import UIKit
 
@@ -30,8 +31,8 @@ final class ExpandableTextView: UIView {
 
     private let changesFilter: TextChangesFilter?
 
-    var rxText: Observable<String?> {
-        textView.rx.text.asObservable()
+    var rxText: ControlProperty<String?> {
+        textView.rx.text
     }
 
     private var didTouchView: (() -> Void)?
