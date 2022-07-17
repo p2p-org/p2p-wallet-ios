@@ -9,6 +9,9 @@ import Foundation
 import SolanaSwift
 
 protocol AppEventHandlerDelegate: AnyObject {
+    func didStartLoading()
+    func didStopLoading()
+
     func createWalletDidComplete()
     func restoreWalletDidComplete()
 
@@ -16,5 +19,6 @@ protocol AppEventHandlerDelegate: AnyObject {
 
     func userDidChangeAPIEndpoint(to endpoint: APIEndPoint)
     func userDidChangeLanguage(to language: LocalizedLanguage)
+    func userDidChangeTheme(to theme: UIUserInterfaceStyle)
     func userDidLogout()
 }

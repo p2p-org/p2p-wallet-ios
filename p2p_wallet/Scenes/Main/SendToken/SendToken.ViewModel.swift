@@ -90,6 +90,8 @@ extension SendToken {
                    .first(where: { $0.pubkey == pubkey }) ?? walletsRepository.nativeWallet
             {
                 walletSubject.accept(selectableWallet)
+            } else {
+                walletSubject.accept(walletsRepository.nativeWallet)
             }
 
             bind()

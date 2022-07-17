@@ -11,6 +11,7 @@ import RxSwift
 import SolanaSwift
 
 protocol EnterSeedViewModelType: AnyObject {
+    var maxWordsCount: Int { get }
     var navigationDriver: Driver<EnterSeed.NavigatableScene?> { get }
     var errorDriver: Driver<String?> { get }
     var seedTextSubject: BehaviorRelay<String?> { get }
@@ -20,6 +21,10 @@ protocol EnterSeedViewModelType: AnyObject {
     func showInfo()
     func goForth()
     func showTermsAndConditions()
+}
+
+private enum Constants {
+    static let maxWordsCount = 24
 }
 
 extension EnterSeed {
@@ -37,6 +42,7 @@ extension EnterSeed {
         private let mainButtonContentSubject = BehaviorRelay<EnterSeed.MainButtonContent>(value: .invalid(.empty))
 
         let seedTextSubject = BehaviorRelay<String?>(value: nil)
+        let maxWordsCount = Constants.maxWordsCount
 
         init() {
             bind()
