@@ -53,9 +53,9 @@ class AppCoordinator {
     }
 
     func reload() async {
-        // remove rootvc, show loading
+        // show loading
         await MainActor.run {
-            removeRootViewControllerAndShowLoading()
+            _ = window?.rootViewController?.view.showLoadingIndicatorView()
         }
 
         // reload session
@@ -93,14 +93,14 @@ class AppCoordinator {
         let vm = CreateOrRestoreWallet.ViewModel()
         let vc = CreateOrRestoreWallet.ViewController(viewModel: vm)
         let nc = UINavigationController(rootViewController: vc)
-        transition(to: nc)
+        hideLoadingAndTransitionTo(nc)
     }
 
     func navigateToOnboarding() {
         // TODO: - Change to Onboarding.Coordinator.start()
         let vm = Onboarding.ViewModel()
         let vc = Onboarding.ViewController(viewModel: vm)
-        transition(to: vc)
+        hideLoadingAndTransitionTo(vc)
     }
 
     func navigateToOnboardingDone() {
@@ -109,7 +109,7 @@ class AppCoordinator {
         vc.finishSetupHandler = { [weak self] in
             self?.finishSetUp()
         }
-        transition(to: vc)
+        hideLoadingAndTransitionTo(vc)
     }
 
     func navigateToMain() {
@@ -117,7 +117,7 @@ class AppCoordinator {
         let vm = Main.ViewModel()
         let vc = Main.ViewController(viewModel: vm)
         vc.authenticateWhenAppears = showAuthenticationOnMainOnAppear
-        transition(to: vc)
+        hideLoadingAndTransitionTo(vc)
     }
 
     func finishSetUp() {
@@ -127,12 +127,7 @@ class AppCoordinator {
 
     // MARK: - Helper
 
-    private func removeRootViewControllerAndShowLoading() {
-        // show loading
-        window?.rootViewController?.view.showLoadingIndicatorView()
-    }
-
-    private func transition(to vc: UIViewController) {
+    private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
         window?.rootViewController?.view.hideLoadingIndicatorView()
         window?.rootViewController = vc
     }
