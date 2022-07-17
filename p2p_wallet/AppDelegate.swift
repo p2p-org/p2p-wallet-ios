@@ -18,6 +18,7 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    private var appCoordinator: AppCoordinator?
 
     @Injected private var notificationService: NotificationService
 
@@ -26,13 +27,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private lazy var proxyAppDelegate = AppDelegateProxyService()
-
-    func changeThemeTo(_ style: UIUserInterfaceStyle) {
-        Defaults.appearance = style
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = style
-        }
-    }
 
     func application(
         _ application: UIApplication,
@@ -59,19 +53,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
 
-        // set window
-        window = UIWindow(frame: UIScreen.main.bounds)
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = Defaults.appearance
-        }
+        // set app coordinator
+        appCoordinator = AppCoordinator()
+        appCoordinator!.start()
+        window = appCoordinator?.window
 
+        // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
-
-        // set rootVC
-        let vm = Root.ViewModel()
-        let vc = Root.ViewController(viewModel: vm)
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
 
         setupDefaultFlags()
         FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
@@ -171,7 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navBarAppearence.tintColor = .black
-        barButtonAppearance.tintColor = .black
+        navBarAppearence.tintColor = .h5887ff
+        barButtonAppearance.tintColor = .h5887ff
     }
 }
