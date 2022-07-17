@@ -18,18 +18,12 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    private var appCoordinator: AppCoordinator?
 
     @Injected private var notificationService: NotificationService
 
     static var shared: AppDelegate {
         UIApplication.shared.delegate as! AppDelegate
-    }
-
-    func changeThemeTo(_ style: UIUserInterfaceStyle) {
-        Defaults.appearance = style
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = style
-        }
     }
 
     func application(
@@ -58,22 +52,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
 
-        // set window
-        window = UIWindow(frame: UIScreen.main.bounds)
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = Defaults.appearance
-        }
+        // set app coordinator
+        appCoordinator = AppCoordinator()
+        appCoordinator!.start()
+        window = appCoordinator?.window
 
+        // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
-        // set rootVC
-        let vm = Root.ViewModel()
-        let vc = Root.ViewController(viewModel: vm)
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
-
         setupRemoteConfig()
-
         return true
     }
 
