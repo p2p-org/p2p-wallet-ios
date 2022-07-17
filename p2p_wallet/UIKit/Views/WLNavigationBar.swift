@@ -53,7 +53,7 @@ class WLNavigationBar: BEView {
 
     lazy var backButton = UIImageView(
         image: .navigationBack,
-        tintColor: .black
+        tintColor: .h5887ff
     ).padding(.init(x: 6, y: 4))
 
     lazy var titleLabel = UILabel(textSize: 17, weight: .semibold, numberOfLines: 1, textAlignment: .center)
@@ -125,7 +125,7 @@ class NewWLNavigationBar: BECompositionView {
                     UIStackView(axis: .horizontal) {
                         UIImageView(
                             image: .navigationBack,
-                            tintColor: .black
+                            tintColor: .h5887ff
                         ).padding(.init(x: 6, y: 4)).setup { view in
                             self.backButton = view
                             self.backButton.isUserInteractionEnabled = true

@@ -36,6 +36,7 @@ extension Resolver: ResolverRegistering {
             .implements(DeviceOwnerAuthenticationHandler.self)
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
+            .implements(ChangeThemeResponder.self)
             .implements(LogoutResponder.self)
             .implements(CreateOrRestoreWalletHandler.self)
             .implements(OnboardingHandler.self)

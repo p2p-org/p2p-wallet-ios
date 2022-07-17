@@ -22,6 +22,10 @@ protocol ChangeNetworkResponder {
     func changeAPIEndpoint(to endpoint: APIEndPoint)
 }
 
+protocol ChangeThemeResponder {
+    func changeThemeTo(_ style: UIUserInterfaceStyle)
+}
+
 protocol LogoutResponder {
     func logout()
 }
@@ -68,6 +72,7 @@ extension Settings {
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManager
         @Injected private var logoutResponder: LogoutResponder
+        @Injected private var changeThemeResponder: ChangeThemeResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
         @Injected private var changeLanguageResponder: ChangeLanguageResponder
@@ -269,7 +274,13 @@ extension Settings.ViewModel: SettingsViewModelType {
                         self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                         self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
                     } else {
-                        onError(authenticationError)
+                        if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
+                            onError(nil)
+                        } else {
+                            onError(authenticationError)
+                        }
+                        // Setting actual value of biometry to the view
+                        self?.isBiometryEnabledSubject.accept(self?.isBiometryEnabledSubject.value ?? false)
                     }
                 }
 
@@ -309,7 +320,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     func setTheme(_ theme: UIUserInterfaceStyle) {
         themeSubject.accept(theme)
         analyticsManager.log(event: .settingsAppearanceSelected(appearance: theme.name))
-        AppDelegate.shared.changeThemeTo(theme)
+        changeThemeResponder.changeThemeTo(theme)
     }
 
     func setHideZeroBalances(_ hideZeroBalances: Bool) {
