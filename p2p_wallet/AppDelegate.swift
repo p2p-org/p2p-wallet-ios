@@ -8,7 +8,9 @@
 import Action
 import BECollectionView
 @_exported import BEPureLayout
+import FeeRelayerSwift
 import Firebase
+import LoggerService
 import Resolver
 import Sentry
 import SolanaSwift
@@ -40,6 +42,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupNavigationAppearance()
 
         FirebaseApp.configure()
+
+        setupLoggers()
 
         // Sentry
         SentrySDK.start { options in
@@ -133,6 +137,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
             .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
+    }
+
+    func setupLoggers() {
+        var loggers: [LogManagerLogger] = [
+            SentryLogger(),
+        ]
+        #if DEBUG
+            loggers.append(LoggerSwiftLogger())
+        #endif
+
+        SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
+        FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
+        LoggerService.Logger.setLoggers(loggers as! [KeyAppKitLogger])
     }
 
     private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {
