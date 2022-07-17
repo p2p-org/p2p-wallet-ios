@@ -26,13 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
 
-    func changeThemeTo(_ style: UIUserInterfaceStyle) {
-        Defaults.appearance = style
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = style
-        }
-    }
-
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
