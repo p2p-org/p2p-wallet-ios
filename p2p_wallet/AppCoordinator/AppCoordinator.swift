@@ -21,7 +21,7 @@ class AppCoordinator {
 
     // MARK: - Properties
 
-    let window: UIWindow
+    var window: UIWindow?
     let lockView = LockView()
     let indicator = WLLoadingIndicatorView(isBlocking: true)
     var isRestoration = false
@@ -30,14 +30,23 @@ class AppCoordinator {
 
     // MARK: - Initializers
 
-    init(window: UIWindow) {
-        self.window = window
+    init() {
         defer { appEventHandler.delegate = self }
     }
 
     // MARK: - Methods
 
     func start() {
+        // set window
+        window = UIWindow(frame: UIScreen.main.bounds)
+        if #available(iOS 13.0, *) {
+            window?.overrideUserInterfaceStyle = Defaults.appearance
+        }
+
+        // add placeholder
+        window?.rootViewController = BaseVC()
+        window?.makeKeyAndVisible()
+
         Task { await reload() }
     }
 
@@ -123,19 +132,19 @@ class AppCoordinator {
     // MARK: - Helper
 
     private func removeRootViewControllerAndShowLoading() {
-        window.rootViewController = nil
+        window?.rootViewController = nil
         // add lockview
         lockView.removeFromSuperview()
-        window.addSubview(lockView)
+        window?.addSubview(lockView)
         lockView.autoPinEdgesToSuperviewEdges()
 
         // show loading
         indicator.removeFromSuperview()
-        window.addSubview(indicator)
+        window?.addSubview(indicator)
         indicator.autoPinEdgesToSuperviewEdges()
     }
 
     private func transition(to vc: UIViewController) {
-        window.rootViewController = vc
+        window?.rootViewController = vc
     }
 }

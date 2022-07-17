@@ -52,19 +52,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
 
-        // set window
-        window = UIWindow(frame: UIScreen.main.bounds)
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = Defaults.appearance
-        }
-
-        // add placeholder
-        window?.rootViewController = BaseVC()
-        window?.makeKeyAndVisible()
-
         // set app coordinator
-        appCoordinator = AppCoordinator(window: window!)
+        appCoordinator = AppCoordinator()
         appCoordinator!.start()
+        window = appCoordinator?.window
 
         // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
