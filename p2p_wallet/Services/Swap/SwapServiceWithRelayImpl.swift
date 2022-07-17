@@ -29,9 +29,7 @@ class SwapServiceWithRelayImpl: SwapServiceType {
     }
 
     func getFees(
-        sourceAddress _: String,
         sourceMint: String,
-        availableSourceMintAddresses _: [String],
         destinationAddress: String?,
         destinationToken: Token,
         bestPoolsPair: Swap.PoolsPair?,
