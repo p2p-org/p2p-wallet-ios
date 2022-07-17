@@ -274,7 +274,13 @@ extension Settings.ViewModel: SettingsViewModelType {
                         self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
                         self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
                     } else {
-                        onError(authenticationError)
+                        if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
+                            onError(nil)
+                        } else {
+                            onError(authenticationError)
+                        }
+                        // Setting actual value of biometry to the view
+                        self?.isBiometryEnabledSubject.accept(self?.isBiometryEnabledSubject.value ?? false)
                     }
                 }
 
