@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navBarAppearence.tintColor = .black
-        barButtonAppearance.tintColor = .black
+        navBarAppearence.tintColor = .h5887ff
+        barButtonAppearance.tintColor = .h5887ff
     }
 }
