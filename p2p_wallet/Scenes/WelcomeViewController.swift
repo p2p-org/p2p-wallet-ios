@@ -6,19 +6,17 @@
 //
 
 import Foundation
-import SwiftUI
 
 class WelcomeViewController: BaseVC {
     // MARK: - Dependencies
 
-    private let viewModel: RootViewModelType
+    var finishSetupHandler: (() -> Void)?
     private let name: String?
     private let isReturned: Bool
 
-    init(isReturned: Bool, name: String?, viewModel: RootViewModelType) {
+    init(isReturned: Bool, name: String?) {
         self.isReturned = isReturned
         self.name = name
-        self.viewModel = viewModel
         super.init()
     }
 
@@ -49,15 +47,13 @@ class WelcomeViewController: BaseVC {
                 image: .lightningButton,
                 text: L10n.startUsingP2PWallet
             )
-                .onTap(self, action: #selector(finishSetup))
+                .onTap { [weak self] in
+                    self?.finishSetupHandler?()
+                }
                 .padding(.init(x: 20, y: 0))
         }
         view.addSubview(stackView)
         stackView.autoPinEdgesToSuperviewSafeArea(with: .zero, excludingEdge: .bottom)
         stackView.autoPinEdge(toSuperviewSafeArea: .bottom, withInset: 20)
-    }
-
-    @objc func finishSetup() {
-        viewModel.finishSetup()
     }
 }

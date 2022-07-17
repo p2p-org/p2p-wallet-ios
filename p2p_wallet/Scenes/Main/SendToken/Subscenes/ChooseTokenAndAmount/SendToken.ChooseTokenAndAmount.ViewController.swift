@@ -45,6 +45,10 @@ extension SendToken.ChooseTokenAndAmount {
             view.endEditing(true)
         }
 
+        func clearForm() {
+            viewModel.clearForm.onNext(())
+        }
+
         // MARK: - Methods
 
         override func setUp() {

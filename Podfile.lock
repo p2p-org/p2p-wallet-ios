@@ -15,6 +15,7 @@ PODS:
     - Charts/Core (= 4.0.3)
   - Charts/Core (4.0.3):
     - SwiftAlgorithms (~> 1.0)
+  - CocoaDebug (1.7.2)
   - Down (0.11.0)
   - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
@@ -169,7 +170,7 @@ PODS:
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
-  - SolanaSwift (2.3.0):
+  - SolanaSwift (2.4.0):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -195,6 +196,7 @@ DEPENDENCIES:
   - BEPureLayout (from `BEPureLayout`)
   - Cache (from `KeyAppKit`)
   - Charts
+  - CocoaDebug
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
@@ -234,6 +236,7 @@ SPEC REPOS:
     - Action
     - Amplitude
     - Charts
+    - CocoaDebug
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -316,7 +319,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   ListPlaceholder:
-    :commit: a729fd45aa22b9d087477d1ccedb9f4292762a58
+    :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
@@ -333,6 +336,7 @@ SPEC CHECKSUMS:
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
+  CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
   Firebase: 4ba896cb8e5105d4b9e247e1c1b6222b548df55a
@@ -372,7 +376,7 @@ SPEC CHECKSUMS:
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: e0eb2b253d7ea92b5048ec55f31dd0447478c003
+  SolanaSwift: 6ba5043ed04055eb874085d2f96499022ddcd6e8
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftAlgorithms: 38dda4731d19027fdeee1125f973111bf3386b53
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
@@ -385,6 +389,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 32296c50c3328e2762ddbc56b1b38142f92b5e7a
+PODFILE CHECKSUM: 21a4c36271dc69ef7e1b346cdd8078e2f73ebe01
 
 COCOAPODS: 1.11.3

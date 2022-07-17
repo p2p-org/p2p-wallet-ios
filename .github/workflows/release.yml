@@ -12,13 +12,17 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
-      - name: Copy xcconfig file
+      - name: Copy secret files
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+          rm ./p2p_wallet/GoogleService-Info.plist
+          curl -o ./p2p_wallet/GoogleService-Info.plist ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}
         shell: bash
 
       - name: Install project
         run: |
+          chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
+          rm -rf p2p_wallet/Scenes/DebugMenu
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
@@ -31,11 +35,13 @@ jobs:
           APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
           DEVELOPER_PORTAL_TEAM_ID: '${{ secrets.DEVELOPER_PORTAL_TEAM_ID }}'
           DEVELOPER_APP_ID: '${{ secrets.DEVELOPER_APP_ID }}'
+          DEVELOPER_APP_ID_TEST: '${{ secrets.DEVELOPER_APP_ID_TEST }}'
           PROVISIONING_PROFILE_SPECIFIER_ADHOC: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER_ADHOC }}'
           PROVISIONING_PROFILE_SPECIFIER_APPSTORE: '${{ secrets.PROVISIONING_PROFILE_SPECIFIER_APPSTORE }}'
           APPLE_ISSUER_ID: '${{ secrets.APPLE_ISSUER_ID }}'
           PROVISIONING_REPO: '${{ secrets.PROVISIONING_REPO }}'
           FIREBASE_APP_ID: '${{ secrets.FIREBASE_APP_ID }}'
+          FIREBASE_APP_ID_TEST: '${{ secrets.FIREBASE_APP_ID_TEST }}'
           FIREBASE_CLI_TOKEN: '${{ secrets.FIREBASE_CLI_TOKEN }}'
           BROWSERSTACK_USERNAME: '${{ secrets.BROWSERSTACK_USERNAME }}'
           BROWSERSTACK_ACCESS_KEY: '${{ secrets.BROWSERSTACK_ACCESS_KEY }}'

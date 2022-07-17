@@ -70,6 +70,7 @@ extension History {
         }
 
         let tryAgain = PublishRelay<Void>()
+        let refreshPage = PublishRelay<Void>()
         private let errorRelay = PublishRelay<Bool>()
 
         init(accountSymbol: AccountSymbol? = nil) {
@@ -95,6 +96,11 @@ extension History {
                 .subscribe(onNext: { [weak self] in
                     self?.reload()
                     self?.errorRelay.accept(false)
+                })
+                .disposed(by: disposeBag)
+            refreshPage
+                .subscribe(onNext: { [weak self] in
+                    self?.reload()
                 })
                 .disposed(by: disposeBag)
         }
