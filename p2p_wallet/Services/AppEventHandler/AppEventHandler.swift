@@ -13,11 +13,10 @@ import RxCocoa
 import SolanaSwift
 
 protocol AppEventHandlerType {
-    var isLoadingDriver: Driver<Bool> { get }
     var delegate: AppEventHandlerDelegate? { get set }
 }
 
-final class AppEventHandler {
+final class AppEventHandler: AppEventHandlerType {
     // MARK: - Dependencies
 
     private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
@@ -25,7 +24,6 @@ final class AppEventHandler {
 
     // MARK: - Properties
 
-    private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
     weak var delegate: AppEventHandlerDelegate?
     private var resolvedName: String?
 
@@ -49,12 +47,6 @@ final class AppEventHandler {
     }
 }
 
-extension AppEventHandler: AppEventHandlerType {
-    var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
-    }
-}
-
 // MARK: - ChangeNetworkResponder
 
 extension AppEventHandler: ChangeNetworkResponder {
@@ -71,6 +63,15 @@ extension AppEventHandler: ChangeLanguageResponder {
     func languageDidChange(to: LocalizedLanguage) {
         UIApplication.languageChanged()
         delegate?.userDidChangeLanguage(to: to)
+    }
+}
+
+// MARK: - ChangeThemeResponder
+
+extension AppEventHandler: ChangeThemeResponder {
+    func changeThemeTo(_ style: UIUserInterfaceStyle) {
+        Defaults.appearance = style
+        delegate?.userDidChangeTheme(to: style)
     }
 }
 
@@ -127,7 +128,7 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
             return
         }
 
-        isLoadingSubject.accept(true)
+        delegate?.didStartLoading()
 
         Task {
             do {
@@ -140,13 +141,19 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
                 if let name = name {
                     storage.save(name: name)
                 }
-            } catch {
-                notificationsService.showInAppNotification(.error(error))
+
                 await MainActor.run {
+                    delegate?.didStopLoading()
+                }
+
+                notificationsService.registerForRemoteNotifications()
+            } catch {
+                await MainActor.run {
+                    delegate?.didStopLoading()
+                    notificationsService.showInAppNotification(.error(error))
                     creatingOrRestoringWalletDidCancel()
                 }
             }
-            isLoadingSubject.accept(false)
         }
     }
 }
