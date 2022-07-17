@@ -26,8 +26,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
 
+    private lazy var proxyAppDelegate = AppDelegateProxyService()
+
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
@@ -37,7 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupNavigationAppearance()
 
-        // Use Firebase library to configure APIs
         FirebaseApp.configure()
 
         // Sentry
@@ -60,53 +61,88 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
+        setupDefaultFlags()
+        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
         setupRemoteConfig()
-        return true
+
+        return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Task.detached(priority: .background) { [unowned self] in
             await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
+        proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         debugPrint("Failed to register: \(error)")
+        proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+        proxyAppDelegate.application(
+            application,
+            didReceiveRemoteNotification: userInfo,
+            fetchCompletionHandler: completionHandler
+        )
     }
 
     private func setupRemoteConfig() {
-        #if DEBUG
+        #if !RELEASE
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
             settings.minimumFetchInterval = 0
             RemoteConfig.remoteConfig().configSettings = settings
         #endif
+
         let currentEndpoints = APIEndPoint.definedEndpoints
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig()) { _ in
-            let newEndpoints = APIEndPoint.definedEndpoints
-            guard currentEndpoints != newEndpoints else { return }
-            if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
-               let firstEndpoint = newEndpoints.first
-            {
-                Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
+        #if !RELEASE
+            FeatureFlagProvider.shared.fetchFeatureFlags(
+                mainFetcher: MergingFlagsFetcher(
+                    primaryFetcher: DebugMenuFeaturesProvider.shared,
+                    secondaryFetcher: MergingFlagsFetcher(
+                        primaryFetcher: defaultFlags,
+                        secondaryFetcher: RemoteConfig.remoteConfig()
+                    )
+                )
+            ) { _ in
+                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
             }
-        }
+        #else
+            FeatureFlagProvider.shared.fetchFeatureFlags(
+                mainFetcher: MergingFlagsFetcher(
+                    primaryFetcher: RemoteConfig.remoteConfig(),
+                    secondaryFetcher: defaultFlags
+                )
+            ) { _ in
+                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
+            }
+        #endif
+
         Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
             .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
+    }
+
+    private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {
+        let newEndpoints = APIEndPoint.definedEndpoints
+        guard currentEndpoints != newEndpoints else { return }
+        if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
+           let firstEndpoint = newEndpoints.first
+        {
+            Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
+        }
     }
 
     private func setupNavigationAppearance() {

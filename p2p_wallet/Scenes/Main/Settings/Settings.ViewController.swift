@@ -42,21 +42,13 @@ extension Settings {
                                     .drive(label.rx.textColor)
                                     .disposed(by: disposeBag)
                             }
-                        )
-                            .onTap { [unowned self] in
-                                if self.viewModel.getUsername() == nil {
-                                    viewModel.showOrReserveUsername()
-                                } else {
-                                    viewModel.navigate(to: .username)
-                                }
+                        ).onTap { [unowned self] in
+                            if self.viewModel.getUsername() == nil {
+                                viewModel.showOrReserveUsername()
+                            } else {
+                                viewModel.navigate(to: .username)
                             }
-
-                        // Contact
-                        // CellView(icon: .contactIcon, title: L10n.contact.onlyUppercaseFirst())
-
-                        // History
-                        // CellView(icon: .historyIcon, title: L10n.history.onlyUppercaseFirst())
-
+                        }
                         // Sign out button
                         BECenter {
                             UILabel(text: L10n.signOut, textColor: .ff3b30)
@@ -122,44 +114,12 @@ extension Settings {
                             },
                             nextArrowEnable: false
                         )
-
-                        // Transaction
-                        /*
-                         CellView(
-                             icon: .securityIcon,
-                             title: L10n.confirmTransactions.onlyUppercaseFirst(),
-                             trailing: UISwitch(),
-                             nextArrowEnable: false
-                         )
-                         */
-
                         // Network
                         CellView(icon: .networkIcon, title: UILabel(text: L10n.network.onlyUppercaseFirst()))
                             .onTap { [unowned self] in viewModel.navigate(to: .network) }
-
-                        /*
-                         // Fee
-                         CellView(
-                             icon: .payFeeIcon,
-                             title: L10n.payFeesWith.onlyUppercaseFirst(),
-                             trailing: UILabel(text: "SOL"),
-                             dividerEnable: false
-                         )
-                         */
                     }
-
                     // Appearance section
                     SectionView(title: L10n.appearance) {
-                        /*
-                         // Notification
-                         CellView(
-                             icon: .notification,
-                             title: L10n.notifications.onlyUppercaseFirst(),
-                             trailing: UISwitch(),
-                             nextArrowEnable: false
-                         )
-                         */
-
                         // Currency
                         CellView(
                             icon: .currency,
@@ -171,19 +131,8 @@ extension Settings {
                                         .drive(label.rx.text)
                                         .disposed(by: disposeBag)
                                 }
-                        )
-                            .onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
-
-                        // Appearance
-
-//                        CellView(
-//                            icon: .appearanceIcon,
-//                            title: UILabel(text: L10n.appearance.onlyUppercaseFirst()),
-//                            trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
-//                        ).onTap { [unowned self] in viewModel.navigate(to: .appearance) }
-
+                        ).onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
                         // Hide zero balance
-
                         CellView(
                             icon: .hideZeroBalance,
                             title: UILabel(text: L10n.hideZeroBalances.onlyUppercaseFirst()),
@@ -196,24 +145,21 @@ extension Settings {
                             },
                             nextArrowEnable: false
                         )
-
-                        /*
-                         // App icon
-                         CellView(
-                             icon: .appIcon,
-                             title: L10n.appIcon,
-                             trailing: UILabel(text: L10n.classic.onlyUppercaseFirst(), textColor: .secondaryLabel)
-                         )
-
-                         // Swipes
-                         CellView(
-                             icon: .swipesIcon,
-                             title: L10n.swapping.onlyUppercaseFirst(),
-                             dividerEnable: false
-                         )
-                         */
                     }
-                    SectionView(title: "\(L10n.appVersion): \(viewModel.appVersion)") {}
+                    #if !RELEASE
+                        SectionView(title: "Debug") {
+                            CellView(
+                                icon: UIImage(),
+                                title: UILabel(text: "Debug Menu")
+                            ).onTap { [unowned self] in
+                                let view = DebugMenuView(viewModel: .init())
+                                present(view.asViewController(), animated: true)
+                            }
+                        }
+                    #endif
+                    SectionView(
+                        title: "\(L10n.appVersion): \(viewModel.appVersion)\(Environment.current != .release ? ("(" + Bundle.main.buildVersionNumber + ")" + " " + Environment.current.description) : "")"
+                    ) {}
                 }
             }
         }
@@ -345,5 +291,18 @@ private class PinCodeChangedVC: FlexibleHeightVC {
         pc.roundedCorner = .allCorners
         pc.cornerRadius = 24
         return pc
+    }
+}
+
+private extension Environment {
+    var description: String {
+        switch self {
+        case .debug:
+            return "Debug"
+        case .test:
+            return "Test"
+        case .release:
+            return "Release"
+        }
     }
 }
