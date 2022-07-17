@@ -15,6 +15,7 @@ PODS:
     - Charts/Core (= 4.0.3)
   - Charts/Core (4.0.3):
     - SwiftAlgorithms (~> 1.0)
+  - CocoaDebug (1.7.2)
   - Down (0.11.0)
   - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
@@ -193,6 +194,7 @@ DEPENDENCIES:
   - BEPureLayout (from `BEPureLayout`)
   - Cache (from `KeyAppKit`)
   - Charts
+  - CocoaDebug
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
@@ -231,6 +233,7 @@ SPEC REPOS:
     - Action
     - Amplitude
     - Charts
+    - CocoaDebug
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -328,6 +331,7 @@ SPEC CHECKSUMS:
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
+  CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
   Firebase: 4ba896cb8e5105d4b9e247e1c1b6222b548df55a
@@ -379,6 +383,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c0a9506cd9c486e85657ed9dcc8ca715ba856cad
+PODFILE CHECKSUM: ca679292d31439ac5eedcc43058a29b3dae8bff4
 
 COCOAPODS: 1.11.3
