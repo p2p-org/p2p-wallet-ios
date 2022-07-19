@@ -145,8 +145,6 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
                 await MainActor.run {
                     delegate?.didStopLoading()
                 }
-
-                notificationsService.registerForRemoteNotifications()
             } catch {
                 await MainActor.run {
                     delegate?.didStopLoading()
