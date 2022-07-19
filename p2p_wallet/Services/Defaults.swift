@@ -36,6 +36,11 @@ extension DefaultsKeys {
         )
     }
 
+    var feeRelayerConfigPath: DefaultsKey<String> { .init(#function, defaultValue: "FEE_RELAYER_ENDPOINT") }
+    var notificationServiceConfigPath: DefaultsKey<String> {
+        .init(#function, defaultValue: "NOTIFICATION_SERVICE_ENDPOINT_RELEASE")
+    }
+
     var isCoingeckoProviderDisabled: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var didBackupOffline: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
     var walletName: DefaultsKey<[String: String]> { .init(#function, defaultValue: [:]) }

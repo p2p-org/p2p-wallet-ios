@@ -196,7 +196,7 @@ DEPENDENCIES:
   - BEPureLayout (from `BEPureLayout`)
   - Cache (from `KeyAppKit`)
   - Charts
-  - CocoaDebug
+  - CocoaDebug (~> 1.7.2)
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `FeeRelayerSwift`)
   - Firebase/Analytics
@@ -389,6 +389,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 21a4c36271dc69ef7e1b346cdd8078e2f73ebe01
+PODFILE CHECKSUM: ffaac8500aeb29dd965f878f6984e95102312c1a
 
 COCOAPODS: 1.11.3

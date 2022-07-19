@@ -18,6 +18,21 @@ struct DebugMenuView: View {
         NavigationView {
             List {
                 Toggle("Network Logger", isOn: $viewModel.networkLoggerVisible)
+                Section(header: Text("Url Toggles")) {
+                    ForEach(0 ..< viewModel.urlToggles.count, id: \.self) { index in
+                        Picker(
+                            viewModel.urlToggles[index].title,
+                            selection: $viewModel.urlToggles[index].currentConfigPart
+                        ) {
+                            ForEach(viewModel.urlToggles[index].configParts, id: \.self) { configPath in
+                                Text(configPath)
+                            }
+                        }
+                        .valueChanged(value: viewModel.urlToggles[index].currentConfigPart) { newValue in
+                            viewModel.setCurrentConfigPath(newValue, for: viewModel.urlToggles[index])
+                        }
+                    }
+                }
                 Section(header: Text("Feature Toggles")) {
                     ForEach(0 ..< viewModel.features.count, id: \.self) { index in
                         if let feature = viewModel.features[index].feature {
