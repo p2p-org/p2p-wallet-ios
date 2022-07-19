@@ -5,9 +5,13 @@ PODS:
   - Amplitude (8.3.1)
   - AnalyticsManager (1.0.0):
     - Amplitude (~> 8.3.0)
-  - BECollectionView (0.1.0):
-    - PureLayout (~> 3.1.8)
+  - BECollectionView (1.0.0):
+    - BECollectionView_Core
     - RxCocoa (~> 6.5.0)
+  - BECollectionView_Combine (1.0.0):
+    - BECollectionView_Core
+    - CombineCocoa (~> 0.4.0)
+  - BECollectionView_Core (1.0.0)
   - BEPureLayout (0.4.0):
     - PureLayout
   - Cache (1.0.0)
@@ -196,7 +200,9 @@ PODS:
 DEPENDENCIES:
   - Action
   - AnalyticsManager (from `KeyAppKit`)
-  - BECollectionView (from `BECollectionView`)
+  - BECollectionView (from `https://github.com/bigearsenal/becollectionview.git`, branch `master`)
+  - BECollectionView_Combine (from `https://github.com/bigearsenal/becollectionview.git`, branch `master`)
+  - BECollectionView_Core (from `https://github.com/bigearsenal/becollectionview.git`, branch `master`)
   - BEPureLayout (from `BEPureLayout`)
   - Cache (from `KeyAppKit`)
   - Charts
@@ -289,7 +295,14 @@ EXTERNAL SOURCES:
   AnalyticsManager:
     :path: KeyAppKit
   BECollectionView:
-    :path: BECollectionView
+    :branch: master
+    :git: https://github.com/bigearsenal/becollectionview.git
+  BECollectionView_Combine:
+    :branch: master
+    :git: https://github.com/bigearsenal/becollectionview.git
+  BECollectionView_Core:
+    :branch: master
+    :git: https://github.com/bigearsenal/becollectionview.git
   BEPureLayout:
     :path: BEPureLayout
   Cache:
@@ -327,6 +340,15 @@ EXTERNAL SOURCES:
     :path: KeyAppKit
 
 CHECKOUT OPTIONS:
+  BECollectionView:
+    :commit: e3b924179840670ab570fed630cf5b3c3b1fec87
+    :git: https://github.com/bigearsenal/becollectionview.git
+  BECollectionView_Combine:
+    :commit: e3b924179840670ab570fed630cf5b3c3b1fec87
+    :git: https://github.com/bigearsenal/becollectionview.git
+  BECollectionView_Core:
+    :commit: e3b924179840670ab570fed630cf5b3c3b1fec87
+    :git: https://github.com/bigearsenal/becollectionview.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
@@ -344,7 +366,9 @@ SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
-  BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
+  BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
+  BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
+  BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
@@ -404,6 +428,5 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: d4e1d7bca1477b04e926781eae5d82f86c8a413f
-
+PODFILE CHECKSUM: 0ad5338c4ef12ac0fb85d0ae0f0306c3ab497263
 COCOAPODS: 1.11.3
