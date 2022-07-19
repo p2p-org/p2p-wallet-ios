@@ -18,7 +18,7 @@ target 'p2p_wallet' do
 
   # development pods
   key_app_kit
-  pod 'CocoaDebug', :configurations => ['Debug', 'Test']
+  pod 'CocoaDebug', '~> 1.7.2', :configurations => ['Debug', 'Test']
   pod 'SolanaSwift', :path => 'SolanaSwift'
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'BECollectionView', :path => 'BECollectionView'

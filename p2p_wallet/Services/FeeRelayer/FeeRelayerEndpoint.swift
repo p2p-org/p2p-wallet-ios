@@ -1,3 +1,5 @@
+import SwiftyUserDefaults
+
 enum FeeRelayerEndpoint {
-    static let baseUrl = "https://\(String.secretConfig("FEE_RELAYER_ENDPOINT")!)"
+    static let baseUrl = "https://\(String.secretConfig(Defaults.feeRelayerConfigPath)!)"
 }

@@ -54,6 +54,10 @@ TEST_ACCOUNT_SEED_PHRASE = account-test-seed-phrase-separated-by-hyphens
 
 // MARK: - NameService
 NAME_SERVICE_ENDPOINT = name_service.org
+
+// MARK: - Push Notifications
+NOTIFICATION_SERVICE_ENDPOINT = http://35.234.120.240:9090/
+NOTIFICATION_SERVICE_ENDPOINT_RELEASE = https://push-service.wallet.p2p.org/
 ```
 - Run install.sh
 ```shell

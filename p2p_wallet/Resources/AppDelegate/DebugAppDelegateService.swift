@@ -6,31 +6,40 @@
 //
 
 #if !RELEASE
-
-    /* script_delete_flag_start */
     import CocoaDebug
-    /* script_delete_flag_end */
+    import UIKit
 
-    final class DebugAppDelegateService: NSObject, AppDelegateService {
-        func applicationDidFinishLaunching(_: UIApplication) {
-            /* script_delete_flag_start */
-            CocoaDebugSettings.shared.responseShake = false
-            /* script_delete_flag_end */
-            showDebugger(isShown)
+    private class DebugVC: UIViewController {
+        override func viewDidLoad() {
+            super.viewDidLoad()
+            view.backgroundColor = .yellow
         }
     }
 
+    final class DebugAppDelegateService: NSObject, AppDelegateService {
+        func application(
+            _: UIApplication,
+            didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
+        ) -> Bool {
+            CocoaDebugSettings.shared.responseShake = false
+            CocoaDebugSettings.shared.enableLogMonitoring = true
+            CocoaDebugSettings.shared.enableWKWebViewMonitoring = true
+            CocoaDebugSettings.shared.additionalViewController = DebugVC()
+            CocoaDebug.enable()
+
+            showDebugger(isShown)
+            return true
+        }
+    }
 #endif
 
 #if !RELEASE
-
-    var isShown = CocoaDebugSettings.shared.showBubbleAndWindow
-
+    var isShown: Bool {
+        CocoaDebugSettings.shared.showBubbleAndWindow
+    }
 #endif
 
-/* script_delete_flag_start */
 #if !RELEASE
-
     var isShaken = false
 
     extension UIWindow {
@@ -48,26 +57,21 @@
 
             guard motion == .motionShake else { return }
 
-            isShown.toggle()
+            CocoaDebugSettings.shared.showBubbleAndWindow = !CocoaDebugSettings.shared.showBubbleAndWindow
             showDebugger(isShown)
         }
     }
-
 #endif
-/* script_delete_flag_end */
 
 #if !RELEASE
-
     func showDebugger(_ isShown: Bool) {
         DispatchQueue.main.async {
-            /* script_delete_flag_start */
             if isShown {
                 CocoaDebug.showBubble()
             } else {
                 CocoaDebug.hideBubble()
             }
-            /* script_delete_flag_end */
         }
+        CocoaDebugSettings.shared.showBubbleAndWindow = isShown
     }
-
 #endif
