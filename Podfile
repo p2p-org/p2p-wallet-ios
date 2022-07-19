@@ -14,16 +14,31 @@ def key_app_kit
   pod 'JSBridge', :path => 'KeyAppKit'
 end
 
+def deprecated_soon
+  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/becollectionview.git', :branch => 'master'
+  
+  # reactive
+  pod 'Action'
+  pod "RxAppState"
+  pod "RxGesture"
+  pod 'RxSwift', '6.5.0'
+  pod 'RxCocoa', '6.5.0'
+  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
+end
+
 target 'p2p_wallet' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
   # development pods
   key_app_kit
+  deprecated_soon
+  
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
   pod 'SolanaSwift', :path => 'SolanaSwift'
   pod 'BEPureLayout', :path => 'BEPureLayout'
-  pod 'BECollectionView', :path => 'BECollectionView'
+  pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/becollectionview.git', :branch => 'master'
+  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/becollectionview.git', :branch => 'master'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
   pod 'RenVMSwift', :path => 'RenVMSwift'
@@ -35,12 +50,6 @@ target 'p2p_wallet' do
   pod 'SwiftFormat/CLI', '0.49.6'
 
   # reactive
-  pod 'Action'
-  pod "RxAppState"
-  pod "RxGesture"
-  pod 'RxSwift', '6.5.0'
-  pod 'RxCocoa', '6.5.0'
-  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
   pod 'CombineCocoa'
 
   # kits
