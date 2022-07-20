@@ -33,6 +33,7 @@ extension CreateOrRestoreWallet {
 
         private lazy var placeholderImageView = UIImageView(image: .onboardingLastFrame)
 
+        public var skip: Bool = false
         private let theme: String
         private var step = 1
         private var movingToNextStep = false
@@ -122,6 +123,11 @@ extension CreateOrRestoreWallet {
         }
 
         func playNext() {
+            if skip {
+                completion?()
+                return
+            }
+
             guard !isAnimating else { return }
             guard step < 2 else {
                 completion?()
