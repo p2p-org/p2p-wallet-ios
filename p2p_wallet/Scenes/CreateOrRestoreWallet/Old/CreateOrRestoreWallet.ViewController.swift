@@ -7,6 +7,7 @@
 
 import AnalyticsManager
 import Foundation
+import Onboarding
 import Resolver
 import UIKit
 
@@ -16,6 +17,8 @@ extension CreateOrRestoreWallet {
 
         private let viewModel: CreateOrRestoreWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManager
+
+        private var currentChildCoordinator: AbstractCoordinator?
 
         // MARK: - Subviews
 
@@ -71,6 +74,7 @@ extension CreateOrRestoreWallet {
 //            add(child: WelcomeVC(), to: containerView)
 
             videoPlayerView = IntroPlayerView(userInterfaceStyle: traitCollection.userInterfaceStyle)
+            videoPlayerView.skip = true
             videoPlayerView.autoAdjustWidthHeightRatio(1080 / 1130)
             videoPlayerView.autoSetDimension(.height, toSize: 349.adaptiveHeight)
 
@@ -102,13 +106,33 @@ extension CreateOrRestoreWallet {
 
         // MARK: - Navigation
 
-        private func navigate(to scene: NavigatableScene?) {
+        @MainActor private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else { return }
             switch scene {
             case .createWallet:
-                let vm = CreateWallet.ViewModel()
-                let vc = CreateWallet.ExplanationVC(viewModel: vm)
-                show(vc, sender: nil)
+                // let vm = CreateWallet.ViewModel()
+                // let vc = CreateWallet.ExplanationVC(viewModel: vm)
+                // show(vc, sender: nil)
+
+                guard currentChildCoordinator == nil else { return }
+
+                Task {
+                    let webView = GlobalWebView.requestWebView()
+                    do {
+                        let tKeyFacade = TKeyJSFacade(wkWebView: webView)
+                        try await tKeyFacade.initialize()
+
+                        let vm = NewCreateWallet.ViewModel(tKeyFacade: tKeyFacade)
+                        currentChildCoordinator = NewCreateWallet.Coordinator(viewModel: vm)
+                        let vc = try? currentChildCoordinator?.start { _ in
+                            webView.removeFromSuperview()
+                        }
+                        guard let vc = vc else { return }
+                        show(vc, sender: nil)
+                    } catch {
+                        webView.removeFromSuperview()
+                    }
+                }
             case .restoreWallet:
                 let vm = RestoreWallet.ViewModel()
                 let vc = RestoreWallet.ViewController(viewModel: vm)

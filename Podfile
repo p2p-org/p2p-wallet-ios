@@ -10,6 +10,8 @@ def key_app_kit
   pod 'Cache', :path => 'KeyAppKit'
   pod 'LoggerService', :path => 'KeyAppKit'
   pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
+  pod 'Onboarding', :path => 'KeyAppKit'
+  pod 'JSBridge', :path => 'KeyAppKit'
 end
 
 target 'p2p_wallet' do
