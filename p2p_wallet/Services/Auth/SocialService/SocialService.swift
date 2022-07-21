@@ -18,7 +18,9 @@ extension SocialType {
             return nil
         case .google:
             return GoogleSocialService(
-                clientId: "553127941597-0p8uojdah9afr4ugfdqm47fvlskp3ejk.apps.googleusercontent.com"
+                clientId: Environment.current == .release
+                    ? "553127941597-0p8uojdah9afr4ugfdqm47fvlskp3ejk.apps.googleusercontent.com"
+                    : "553127941597-nme6s6lf62oubsqut4dmlk1v2p4p0om0.apps.googleusercontent.com"
             )
         }
     }
