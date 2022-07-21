@@ -27,7 +27,7 @@ extension SendToken.ChooseTokenAndAmount {
         private let walletImageView = UIImageView(
             width: 20,
             height: 20,
-            image: .tabbarWallet,
+            image: .tabBarWallet,
             tintColor: .textSecondary
         )
         private let balanceLabel = UILabel(text: "0.0", textSize: 15, weight: .medium, textColor: .textSecondary)

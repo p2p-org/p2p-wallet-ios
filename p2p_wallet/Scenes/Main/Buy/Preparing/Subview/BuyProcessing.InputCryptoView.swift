@@ -53,9 +53,7 @@ extension BuyPreparing {
                             placeholder: "0",
                             autocorrectionType: .no
                         ).setup { view in
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-                                view.becomeFirstResponder()
-                            }
+                            view.becomeFirstResponder()
                             view.text = viewModel.input.amount.toString()
                             view.rx.text
                                 .subscribe(onNext: { [weak viewModel] text in
