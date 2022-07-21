@@ -355,9 +355,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         @objc private func clearRecipientButtonDidTouch() {
             viewModel.clearRecipient()
             viewModel.clearSearching()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                self?.addressInputView.textField.becomeFirstResponder()
-            }
+            addressInputView.textField.becomeFirstResponder()
         }
 
         @objc private func networkViewDidTouch() {

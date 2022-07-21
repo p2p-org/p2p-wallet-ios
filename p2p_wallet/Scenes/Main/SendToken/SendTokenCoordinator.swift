@@ -42,8 +42,8 @@ extension SendToken {
         // MARK: - Navigation
 
         @discardableResult
-        func start() -> UIViewController {
-            pushChooseToken(showAfterConfirmation: false)
+        func start(hidesBottomBarWhenPushed: Bool) -> UIViewController {
+            pushChooseToken(showAfterConfirmation: false, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
         }
 
         func popToRootViewController(animated: Bool) {
@@ -51,7 +51,7 @@ extension SendToken {
         }
 
         @discardableResult
-        private func pushChooseToken(showAfterConfirmation: Bool) -> UIViewController {
+        private func pushChooseToken(showAfterConfirmation: Bool, hidesBottomBarWhenPushed: Bool) -> UIViewController {
             let amount = viewModel.getSelectedAmount()
             let vm = ChooseTokenAndAmount.ViewModel(
                 initialAmount: amount,
@@ -59,7 +59,10 @@ extension SendToken {
                 selectedNetwork: viewModel.getSelectedNetwork(),
                 sendTokenViewModel: viewModel
             )
-            let vc = ChooseTokenAndAmount.ViewController(viewModel: vm)
+            let vc = ChooseTokenAndAmount.ViewController(
+                viewModel: vm,
+                hidesBottomBarWhenPushed: hidesBottomBarWhenPushed
+            )
             if let navigationController = navigationController {
                 navigationController.pushViewController(vc, animated: true)
                 return vc
@@ -76,7 +79,7 @@ extension SendToken {
             case .back:
                 navigationController?.popViewController(animated: true)
             case let .chooseTokenAndAmount(showAfterConfirmation):
-                pushChooseToken(showAfterConfirmation: showAfterConfirmation)
+                pushChooseToken(showAfterConfirmation: showAfterConfirmation, hidesBottomBarWhenPushed: true)
             case let .chooseRecipientAndNetwork(showAfterConfirmation, preSelectedNetwork):
                 guard let navigationController = navigationController else { return }
 
