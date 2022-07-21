@@ -31,22 +31,16 @@ open class Coordinator<ResultType>: NSObject {
     }
 
     @discardableResult
-    open func coordinate<T>(to coordinator: Coordinator<T>) -> AnyPublisher<T, Error> {
+    open func coordinate<T>(to coordinator: Coordinator<T>) -> AnyPublisher<T, Never> {
         store(coordinator: coordinator)
         return coordinator.start()
-            .handleEvents(receiveCompletion: { [weak self] completion in
-                switch completion {
-                case let .failure(error):
-                    self?.release(coordinator: coordinator)
-                // TODO: - Handle error
-                case .finished:
-                    self?.release(coordinator: coordinator)
-                }
+            .handleEvents(receiveCompletion: { [weak self] _ in
+                self?.release(coordinator: coordinator)
             })
             .eraseToAnyPublisher()
     }
 
-    open func start() -> AnyPublisher<ResultType, Error> {
+    open func start() -> AnyPublisher<ResultType, Never> {
         fatalError("start() method must be implemented")
     }
 }
