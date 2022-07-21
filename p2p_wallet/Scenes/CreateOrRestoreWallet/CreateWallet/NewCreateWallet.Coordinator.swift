@@ -7,38 +7,40 @@ import Foundation
 import Onboarding
 
 extension NewCreateWallet {
-    final class Coordinator: AbstractCoordinator {
-        private var navigationController: UINavigationController?
-        public let viewModel: ViewModel
+    final class Coordinator: p2p_wallet.Coordinator<Void> {
+        // MARK: - NavigationController
 
-        private var disposeBag: Set<AnyCancellable> = .init()
+        private(set) var navigationController: UINavigationController?
+        private let viewModel: NewCreateWallet.ViewModel
 
-        init(viewModel: ViewModel) {
+        // MARK: - Initializer
+
+        init(viewModel: NewCreateWallet.ViewModel) {
             self.viewModel = viewModel
         }
 
-        func submitEvent(event: CreateWalletState.Event) async throws -> CreateWalletState {
-            try await viewModel.onboardingStateMachine.accept(event: event)
-        }
+        // MARK: - Methods
 
-        func start(_: ((Any) -> Void)?) throws -> UIViewController {
-            guard navigationController == nil else { throw CoordinatorError.isAlreadyStarted }
+        override func start() -> AnyPublisher<Void, Error> {
+            guard navigationController == nil else {
+                return Fail(error: CoordinatorError.isAlreadyStarted)
+                    .eraseToAnyPublisher()
+            }
 
             // Create root view controller
             let viewController = buildViewController(state: viewModel.onboardingStateMachine.currentState)
             navigationController = UINavigationController(rootViewController: viewController)
             navigationController?.modalPresentationStyle = .fullScreen
 
-            // Subscribe to state changing
-            viewModel
-                .onboardingStateMachine
+            viewModel.onboardingStateMachine
                 .stateStream
                 .dropFirst()
                 .receive(on: RunLoop.main)
                 .sink { [weak self] state in self?.navigate(to: state) }
-                .store(in: &disposeBag)
+                .store(in: &subscriptions)
 
-            return navigationController!
+            return Empty()
+                .eraseToAnyPublisher()
         }
 
         // MARK: Navigation
@@ -52,7 +54,7 @@ extension NewCreateWallet {
         private func buildViewController(state: CreateWalletState) -> UIViewController {
             switch state {
             case .socialSignIn:
-                return SocialSignIn.ViewController(coordinator: self)
+                return SocialSignIn.ViewController(viewModel: viewModel)
             case .socialSignInUnhandleableError:
                 return UIViewController()
             case let .enterPhoneNumber(solPrivateKey, ethPublicKey, deviceShare):
