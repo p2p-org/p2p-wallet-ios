@@ -13,9 +13,9 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     // MARK: - Methods
 
-    override func start() -> AnyPublisher<Void, Error> {
+    override func start() -> AnyPublisher<Void, Never> {
         guard navigationController == nil else {
-            return Fail(error: CoordinatorError.isAlreadyStarted)
+            return Empty()
                 .eraseToAnyPublisher()
         }
 
