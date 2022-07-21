@@ -70,10 +70,10 @@ extension SocialSignIn.ViewController: ASAuthorizationControllerDelegate {
         case let appleIDCredential as ASAuthorizationAppleIDCredential:
             guard let idToken = appleIDCredential.identityToken else { return }
             let idTokenStr = String(data: idToken, encoding: .utf8)!
-            
+
             // TODO: remove
             print(idTokenStr)
-            
+
             Task {
                 do {
                     let state = try await coordinator?
