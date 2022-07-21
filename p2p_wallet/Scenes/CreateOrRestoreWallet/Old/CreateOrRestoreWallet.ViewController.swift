@@ -21,7 +21,7 @@ extension CreateOrRestoreWallet {
         private let viewModel: CreateOrRestoreWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManager
 
-        private var currentChildCoordinator: NewCreateWallet.Coordinator?
+        private var currentChildCoordinator: CreateWalletCoordinator?
 
         // MARK: - Subviews
 
@@ -125,9 +125,8 @@ extension CreateOrRestoreWallet {
                         let tKeyFacade = TKeyJSFacade(wkWebView: webView)
                         try await tKeyFacade.initialize()
 
-                        let vm = NewCreateWallet.ViewModel(tKeyFacade: tKeyFacade)
-                        currentChildCoordinator = NewCreateWallet
-                            .Coordinator(viewModel: vm)
+                        let vm = CreateWalletViewModel(tKeyFacade: tKeyFacade)
+                        currentChildCoordinator = CreateWalletCoordinator(viewModel: vm)
                         currentChildCoordinator?.start()
                             .sink(receiveCompletion: { [weak self, weak currentChildCoordinator] completion in
                                 switch completion {
