@@ -55,13 +55,12 @@ final class AuthServiceImpl: AuthService {
         case .phone:
             break
         case let .social(type):
-            return try await socialLogin(type: type)
+            try await socialLogin(type: type)
         }
     }
 
-    private func socialLogin(type _: SocialType) async throws {
-        throw SocialServiceError.unknown
-//        guard let service = type.authObject() else { throw SocialServiceError.unknown }
-//        return try await service.auth()
+    private func socialLogin(type: SocialType) async throws {
+        guard let service = type.authObject() else { throw SocialServiceError.unknown }
+        try await service.auth()
     }
 }
