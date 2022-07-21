@@ -5,60 +5,110 @@
 import Combine
 import Foundation
 import Onboarding
+import XCoordinator
 
-final class CreateWalletCoordinator: Coordinator<Void> {
-    // MARK: - NavigationController
+extension CreateWalletState: Route {}
 
-    private(set) var navigationController: UINavigationController?
+final class CreateWalletCoordinator: NavigationCoordinator<CreateWalletState> {
+    let viewModel: CreateWalletViewModel
 
-    // MARK: - Methods
+    private var disposeBag: Set<AnyCancellable> = .init()
 
-    override func start() -> AnyPublisher<Void, Never> {
-        guard navigationController == nil else {
-            return Empty()
-                .eraseToAnyPublisher()
-        }
+    init(viewModel: CreateWalletViewModel) {
+        self.viewModel = viewModel
+        super.init(initialRoute: viewModel.onboardingStateMachine.currentState)
 
-        // Create root view controller
-        let viewModel = CreateWalletViewModel()
-        let viewController = buildViewController(viewModel: viewModel)
-        navigationController = UINavigationController(rootViewController: viewController)
-        navigationController?.modalPresentationStyle = .fullScreen
-
-        viewModel.onboardingStateMachine
+        // Listen state machine
+        viewModel
+            .onboardingStateMachine
             .stateStream
             .dropFirst()
             .receive(on: RunLoop.main)
-            .sink { [weak self, unowned viewModel] _ in self?.navigate(viewModel: viewModel) }
-            .store(in: &subscriptions)
-
-        return Empty()
-            .eraseToAnyPublisher()
+            .sink { [weak self] state in self?.trigger(state) }
+            .store(in: &disposeBag)
     }
 
-    // MARK: Navigation
-
-    private func navigate(viewModel: CreateWalletViewModel) {
-        guard let navigationController = navigationController else { return }
-        let vc = buildViewController(viewModel: viewModel)
-        navigationController.setViewControllers([vc], animated: true)
-    }
-
-    private func buildViewController(viewModel: CreateWalletViewModel) -> UIViewController {
-        let state = viewModel.onboardingStateMachine.currentState
-        switch state {
+    override func prepareTransition(for route: CreateWalletState) -> NavigationTransition {
+        switch route {
         case .socialSignIn:
-            return SocialSignInViewController(viewModel: viewModel)
-        case .socialSignInUnhandleableError:
-            return UIViewController()
-        case let .enterPhoneNumber(solPrivateKey, ethPublicKey, deviceShare):
-            return EnterPhoneNumberViewController(sol: solPrivateKey, eth: ethPublicKey, deviceShare: deviceShare)
-        case let .verifyPhoneNumber(solPrivateKey, ethPublicKey, deviceShare, phoneNumber):
-            return UIViewController()
-        case let .enterPincode(solPrivateKey, ethPublicKey, deviceShare, phoneNumberShare: phoneNumberShare):
-            return UIViewController()
-        case let .finish(solPrivateKey, ethPublicKey, deviceShare, phoneNumberShare, pincode):
-            return UIViewController()
+            return .set([SocialSignInViewController(viewModel: viewModel)])
+        // case .socialSignInUnhandleableError:
+        case let .enterPhoneNumber(
+            solPrivateKey: solPrivateKey,
+            ethPublicKey: ethPublicKey,
+            deviceShare: deviceShare
+        ):
+            return .set([
+                EnterPhoneNumberViewController(
+                    sol: solPrivateKey,
+                    eth: ethPublicKey,
+                    deviceShare: deviceShare
+                ),
+            ])
+        // case .verifyPhoneNumber(solPrivateKey: let solPrivateKey, ethPublicKey: let ethPublicKey, deviceShare: let deviceShare, phoneNumber: let phoneNumber):
+        // case .enterPincode(solPrivateKey: let solPrivateKey, ethPublicKey: let ethPublicKey, deviceShare: let deviceShare, phoneNumberShare: let phoneNumberShare):
+        // case .finish(solPrivateKey: let solPrivateKey, ethPublicKey: let ethPublicKey, deviceShare: let deviceShare, phoneNumberShare: let phoneNumberShare, pincode: let pincode):
+        default: return .set([UIViewController()])
         }
     }
 }
+
+// final class Coordinator: AbstractCoordinator {
+//     private var navigationController: UINavigationController?
+//     public let viewModel: ViewModel
+//
+//     private var disposeBag: Set<AnyCancellable> = .init()
+//
+//     init(viewModel: ViewModel) {
+//         self.viewModel = viewModel
+//     }
+//
+//     func submitEvent(event: CreateWalletState.Event) async throws -> CreateWalletState {
+//         try await viewModel.onboardingStateMachine.accept(event: event)
+//     }
+//
+//     func start(_: ((Any) -> Void)?) throws -> UIViewController {
+//         guard navigationController == nil else { throw CoordinatorError.isAlreadyStarted }
+//
+//         // Create root view controller
+//         let viewController = buildViewController(state: viewModel.onboardingStateMachine.currentState)
+//         navigationController = UINavigationController(rootViewController: viewController)
+//         navigationController?.modalPresentationStyle = .fullScreen
+//
+//         // Subscribe to state changing
+//         viewModel
+//             .onboardingStateMachine
+//             .stateStream
+//             .dropFirst()
+//             .receive(on: RunLoop.main)
+//             .sink { [weak self] state in self?.navigate(to: state) }
+//             .store(in: &disposeBag)
+//
+//         return navigationController!
+//     }
+//
+//     // MARK: Navigation
+//
+//     private func navigate(to state: CreateWalletState) {
+//         guard let navigationController = navigationController else { return }
+//         let vc = buildViewController(state: state)
+//         navigationController.setViewControllers([vc], animated: true)
+//     }
+//
+//     private func buildViewController(state: CreateWalletState) -> UIViewController {
+//         switch state {
+//         case .socialSignIn:
+//             return SocialSignIn.ViewController(coordinator: self)
+//         case .socialSignInUnhandleableError:
+//             return UIViewController()
+//         case let .enterPhoneNumber(solPrivateKey, ethPublicKey, deviceShare):
+//             return EnterPhoneNumber.ViewController(sol: solPrivateKey, eth: ethPublicKey, deviceShare: deviceShare)
+//         case let .verifyPhoneNumber(solPrivateKey, ethPublicKey, deviceShare, phoneNumber):
+//             return UIViewController()
+//         case let .enterPincode(solPrivateKey, ethPublicKey, deviceShare, phoneNumberShare: phoneNumberShare):
+//             return UIViewController()
+//         case let .finish(solPrivateKey, ethPublicKey, deviceShare, phoneNumberShare, pincode):
+//             return UIViewController()
+//         }
+//     }
+// }

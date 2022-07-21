@@ -19,7 +19,7 @@ extension CreateOrRestoreWallet {
         private let viewModel: CreateOrRestoreWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManager
 
-        private var createWalletCoordinator: NewCreateWallet.Coordinator?
+        private var createWalletCoordinator: CreateWalletCoordinator?
 
         // MARK: - Subviews
 
@@ -123,8 +123,8 @@ extension CreateOrRestoreWallet {
                     // let tKeyFacade = TKeyJSFacade(wkWebView: webView)
                     // try await tKeyFacade.initialize()
 
-                    let vm = NewCreateWallet.ViewModel(tKeyFacade: nil)
-                    createWalletCoordinator = NewCreateWallet.Coordinator(viewModel: vm)
+                    let vm = CreateWalletViewModel(tKeyFacade: nil)
+                    createWalletCoordinator = CreateWalletCoordinator(viewModel: vm)
                     guard let vc = createWalletCoordinator?.viewController else { return }
                     vc.modalPresentationStyle = .fullScreen
                     show(vc, sender: nil)
