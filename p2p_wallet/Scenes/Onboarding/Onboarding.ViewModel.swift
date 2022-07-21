@@ -128,7 +128,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
                         UIApplication.shared.openAppSettings()
                         return
                     }
-                    UIApplication.shared.registerForRemoteNotifications()
+                    self?.notificationService.registerForRemoteNotifications()
                     self?.markNotificationsAsSet()
                 }
             }

@@ -106,7 +106,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Observing
 
     func startObserving() {
-        timer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true, block: { [weak self] _ in
             self?.getNewWallet()
         })
     }
