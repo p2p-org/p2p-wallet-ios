@@ -10,13 +10,6 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
     private(set) var navigationController: UINavigationController?
-    private let viewModel: CreateWalletViewModel
-
-    // MARK: - Initializer
-
-    init(viewModel: CreateWalletViewModel) {
-        self.viewModel = viewModel
-    }
 
     // MARK: - Methods
 
@@ -27,7 +20,8 @@ final class CreateWalletCoordinator: Coordinator<Void> {
         }
 
         // Create root view controller
-        let viewController = buildViewController(state: viewModel.onboardingStateMachine.currentState)
+        let viewModel = CreateWalletViewModel()
+        let viewController = buildViewController(viewModel: viewModel)
         navigationController = UINavigationController(rootViewController: viewController)
         navigationController?.modalPresentationStyle = .fullScreen
 
@@ -35,7 +29,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             .stateStream
             .dropFirst()
             .receive(on: RunLoop.main)
-            .sink { [weak self] state in self?.navigate(to: state) }
+            .sink { [weak self, unowned viewModel] _ in self?.navigate(viewModel: viewModel) }
             .store(in: &subscriptions)
 
         return Empty()
@@ -44,13 +38,14 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     // MARK: Navigation
 
-    private func navigate(to state: CreateWalletState) {
+    private func navigate(viewModel: CreateWalletViewModel) {
         guard let navigationController = navigationController else { return }
-        let vc = buildViewController(state: state)
+        let vc = buildViewController(viewModel: viewModel)
         navigationController.setViewControllers([vc], animated: true)
     }
 
-    private func buildViewController(state: CreateWalletState) -> UIViewController {
+    private func buildViewController(viewModel: CreateWalletViewModel) -> UIViewController {
+        let state = viewModel.onboardingStateMachine.currentState
         switch state {
         case .socialSignIn:
             return SocialSignInViewController(viewModel: viewModel)

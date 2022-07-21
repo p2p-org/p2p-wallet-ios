@@ -125,8 +125,7 @@ extension CreateOrRestoreWallet {
                         let tKeyFacade = TKeyJSFacade(wkWebView: webView)
                         try await tKeyFacade.initialize()
 
-                        let vm = CreateWalletViewModel(tKeyFacade: tKeyFacade)
-                        currentChildCoordinator = CreateWalletCoordinator(viewModel: vm)
+                        currentChildCoordinator = CreateWalletCoordinator()
                         currentChildCoordinator?.start()
                             .sink(receiveCompletion: { [weak self, weak currentChildCoordinator] completion in
                                 switch completion {
