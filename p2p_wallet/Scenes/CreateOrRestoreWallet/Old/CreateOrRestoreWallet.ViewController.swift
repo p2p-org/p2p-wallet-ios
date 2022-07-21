@@ -122,8 +122,8 @@ extension CreateOrRestoreWallet {
                         let tKeyFacade = TKeyJSFacade(wkWebView: webView)
                         try await tKeyFacade.initialize()
 
-                        let vm = NewCreateWallet.ViewModel(tKeyFacade: tKeyFacade)
-                        currentChildCoordinator = NewCreateWallet.Coordinator(viewModel: vm)
+                        let vm = CreateWalletViewModel(tKeyFacade: tKeyFacade)
+                        currentChildCoordinator = CreateWalletCoordinator(viewModel: vm)
                         let vc = try? currentChildCoordinator?.start { _ in
                             webView.removeFromSuperview()
                         }
