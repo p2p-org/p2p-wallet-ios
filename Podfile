@@ -59,6 +59,7 @@ target 'p2p_wallet' do
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'GT3Captcha-iOS'
+  pod 'XCoordinator', '~> 2.0'
 
   # Firebase
   pod 'Firebase/Analytics'

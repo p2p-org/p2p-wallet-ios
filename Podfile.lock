@@ -192,6 +192,9 @@ PODS:
     - SolanaSwift (~> 2)
   - TweetNacl (1.0.2)
   - "UITextView+Placeholder (1.4.0)"
+  - XCoordinator (2.2.0):
+    - XCoordinator/Core (= 2.2.0)
+  - XCoordinator/Core (2.2.0)
 
 DEPENDENCIES:
   - Action
@@ -237,6 +240,7 @@ DEPENDENCIES:
   - TagListView (~> 1.0)
   - TransactionParser (from `KeyAppKit`)
   - "UITextView+Placeholder"
+  - XCoordinator (~> 2.0)
 
 SPEC REPOS:
   trunk:
@@ -284,6 +288,7 @@ SPEC REPOS:
     - Task_retrying
     - TweetNacl
     - "UITextView+Placeholder"
+    - XCoordinator
 
 EXTERNAL SOURCES:
   AnalyticsManager:
@@ -403,7 +408,8 @@ SPEC CHECKSUMS:
   TransactionParser: 3004420d52e7b1277dbcfd20b995a5de707705f3
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
+  XCoordinator: a5f91e43ee944f508529763921165697d3211629
 
-PODFILE CHECKSUM: d4e1d7bca1477b04e926781eae5d82f86c8a413f
+PODFILE CHECKSUM: cda9c266ef1eab6873daf44fae0ebf5b0f93a40d
 
 COCOAPODS: 1.11.3
