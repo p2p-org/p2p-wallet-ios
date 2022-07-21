@@ -1,21 +1,51 @@
-// Copyright 2022 P2P Validator Authors. All rights reserved.
-// Use of this source code is governed by a MIT-style license that can be
-// found in the LICENSE file.
+//
+//  Coordinator.swift
+//  p2p_wallet
+//
+//  Created by Chung Tran on 21/07/2022.
+//
 
+import Combine
 import Foundation
 
 enum CoordinatorError: Error {
     case isAlreadyStarted
 }
 
-protocol AbstractCoordinator {
-    @discardableResult
-    func start() throws -> UIViewController
+open class Coordinator<ResultType>: NSObject {
+    // MARK: - Properties
+
+    public var subscriptions = [AnyCancellable]()
+    private let identifier = UUID()
+    private var childCoordinators = [UUID: Any]()
+
+    // MARK: - Methods
+
+    private func store<T>(coordinator: Coordinator<T>) {
+        childCoordinators[coordinator.identifier] = coordinator
+    }
+
+    private func release<T>(coordinator: Coordinator<T>) {
+        childCoordinators[coordinator.identifier] = nil
+    }
 
     @discardableResult
-    func start(_ completion: ((Any) -> Void)?) throws -> UIViewController
-}
+    open func coordinate<T>(to coordinator: Coordinator<T>) -> AnyPublisher<T, Error> {
+        store(coordinator: coordinator)
+        return coordinator.start()
+            .handleEvents(receiveCompletion: { [weak self] completion in
+                switch completion {
+                case let .failure(error):
+                    self?.release(coordinator: coordinator)
+                // TODO: - Handle error
+                case .finished:
+                    self?.release(coordinator: coordinator)
+                }
+            })
+            .eraseToAnyPublisher()
+    }
 
-extension AbstractCoordinator {
-    func start() throws -> UIViewController { try start(nil) }
+    open func start() -> AnyPublisher<ResultType, Error> {
+        fatalError("start() method must be implemented")
+    }
 }
