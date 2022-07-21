@@ -130,6 +130,7 @@ PODS:
   - GT3Captcha-iOS (0.15.2)
   - Intercom (12.4.3)
   - JazziconSwift (1.1.0)
+  - JSBridge (1.0.0)
   - KeychainSwift (19.0.0)
   - Kingfisher (7.2.4)
   - ListPlaceholder (1.5)
@@ -142,6 +143,8 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
+  - Onboarding (1.0.0):
+    - JSBridge
   - OrcaSwapSwift (2.1.1):
     - SolanaSwift (~> 2)
   - Periphery (2.9.0)
@@ -207,11 +210,13 @@ DEPENDENCIES:
   - GT3Captcha-iOS
   - Intercom
   - JazziconSwift (~> 1.1.0)
+  - JSBridge (from `KeyAppKit`)
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
   - LoggerService (from `KeyAppKit`)
   - NameService (from `KeyAppKit`)
+  - Onboarding (from `KeyAppKit`)
   - OrcaSwapSwift (from `OrcaSwapSwift`)
   - Periphery
   - RenVMSwift (from `RenVMSwift`)
@@ -293,12 +298,16 @@ EXTERNAL SOURCES:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
     :path: FeeRelayerSwift
+  JSBridge:
+    :path: KeyAppKit
   ListPlaceholder:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
   LoggerService:
     :path: KeyAppKit
   NameService:
+    :path: KeyAppKit
+  Onboarding:
     :path: KeyAppKit
   OrcaSwapSwift:
     :path: OrcaSwapSwift
@@ -358,6 +367,7 @@ SPEC CHECKSUMS:
   GT3Captcha-iOS: 7ae08a5421c8e40463ec84ae807e82c19be3929a
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
+  JSBridge: 5a257c92ad65fb16b255480cb3b2b867cc6ee39c
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 2457be2121734e69e54a2312ecc0150eb9ae70b3
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
@@ -365,6 +375,7 @@ SPEC CHECKSUMS:
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
   NameService: d82b7f1704297eb25bd5a0ee266bd767e4a484a7
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  Onboarding: 847f0fac8a0b2413dd88b4a288ad8c36fa3f2c60
   OrcaSwapSwift: 8184e41e83f5349b38cc229532331064f8ed1fe8
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
@@ -393,6 +404,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 12c518fe394b300abbf74ec01551b20428c79c37
+PODFILE CHECKSUM: d4e1d7bca1477b04e926781eae5d82f86c8a413f
 
 COCOAPODS: 1.11.3
