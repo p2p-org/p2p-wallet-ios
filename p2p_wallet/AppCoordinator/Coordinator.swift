@@ -12,6 +12,7 @@ enum CoordinatorError: Error {
     case isAlreadyStarted
 }
 
+@MainActor
 open class Coordinator<ResultType>: NSObject {
     // MARK: - Properties
 
