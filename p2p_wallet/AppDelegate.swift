@@ -8,7 +8,9 @@
 import Action
 import BECollectionView
 @_exported import BEPureLayout
+import FeeRelayerSwift
 import Firebase
+import LoggerService
 import Resolver
 import Sentry
 import SolanaSwift
@@ -18,6 +20,7 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
+    private var appCoordinator: AppCoordinator?
 
     @Injected private var notificationService: NotificationService
 
@@ -25,15 +28,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UIApplication.shared.delegate as! AppDelegate
     }
 
-    func changeThemeTo(_ style: UIUserInterfaceStyle) {
-        Defaults.appearance = style
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = style
-        }
-    }
+    private lazy var proxyAppDelegate = AppDelegateProxyService()
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
@@ -43,8 +41,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupNavigationAppearance()
 
-        // Use Firebase library to configure APIs
         FirebaseApp.configure()
+
+        setupLoggers()
 
         // Sentry
         SentrySDK.start { options in
@@ -58,68 +57,109 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
 
-        // set window
-        window = UIWindow(frame: UIScreen.main.bounds)
-        if #available(iOS 13.0, *) {
-            window?.overrideUserInterfaceStyle = Defaults.appearance
-        }
+        // set app coordinator
+        appCoordinator = AppCoordinator()
+        appCoordinator!.start()
+        window = appCoordinator?.window
 
+        // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
-        // set rootVC
-        let vm = Root.ViewModel()
-        let vc = Root.ViewController(viewModel: vm)
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
-
+        setupDefaultFlags()
+        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
         setupRemoteConfig()
 
-        return true
+        return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         Task.detached(priority: .background) { [unowned self] in
             await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
+        proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
         debugPrint("Failed to register: \(error)")
+        proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
     func application(
-        _: UIApplication,
+        _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-        fetchCompletionHandler _: @escaping (UIBackgroundFetchResult) -> Void
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         notificationService.didReceivePush(userInfo: userInfo)
+        proxyAppDelegate.application(
+            application,
+            didReceiveRemoteNotification: userInfo,
+            fetchCompletionHandler: completionHandler
+        )
     }
 
     private func setupRemoteConfig() {
-        #if DEBUG
+        #if !RELEASE
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
             settings.minimumFetchInterval = 0
             RemoteConfig.remoteConfig().configSettings = settings
         #endif
+
         let currentEndpoints = APIEndPoint.definedEndpoints
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: RemoteConfig.remoteConfig()) { _ in
-            let newEndpoints = APIEndPoint.definedEndpoints
-            guard currentEndpoints != newEndpoints else { return }
-            if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
-               let firstEndpoint = newEndpoints.first
-            {
-                Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
+        #if !RELEASE
+            FeatureFlagProvider.shared.fetchFeatureFlags(
+                mainFetcher: MergingFlagsFetcher(
+                    primaryFetcher: DebugMenuFeaturesProvider.shared,
+                    secondaryFetcher: MergingFlagsFetcher(
+                        primaryFetcher: defaultFlags,
+                        secondaryFetcher: RemoteConfig.remoteConfig()
+                    )
+                )
+            ) { _ in
+                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
             }
-        }
+        #else
+            FeatureFlagProvider.shared.fetchFeatureFlags(
+                mainFetcher: MergingFlagsFetcher(
+                    primaryFetcher: RemoteConfig.remoteConfig(),
+                    secondaryFetcher: defaultFlags
+                )
+            ) { _ in
+                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
+            }
+        #endif
+
         Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
             .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
+    }
+
+    func setupLoggers() {
+        var loggers: [LogManagerLogger] = [
+            SentryLogger(),
+        ]
+        #if DEBUG
+            loggers.append(LoggerSwiftLogger())
+        #endif
+
+        SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
+        FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
+        LoggerService.Logger.setLoggers(loggers as! [KeyAppKitLogger])
+    }
+
+    private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {
+        let newEndpoints = APIEndPoint.definedEndpoints
+        guard currentEndpoints != newEndpoints else { return }
+        if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
+           let firstEndpoint = newEndpoints.first
+        {
+            Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
+        }
     }
 
     private func setupNavigationAppearance() {
@@ -136,7 +176,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navBarAppearence.tintColor = .black
-        barButtonAppearance.tintColor = .black
+        navBarAppearence.tintColor = .h5887ff
+        barButtonAppearance.tintColor = .h5887ff
     }
 }

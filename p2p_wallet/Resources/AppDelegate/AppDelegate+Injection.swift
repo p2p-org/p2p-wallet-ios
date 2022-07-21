@@ -36,6 +36,7 @@ extension Resolver: ResolverRegistering {
             .implements(DeviceOwnerAuthenticationHandler.self)
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
+            .implements(ChangeThemeResponder.self)
             .implements(LogoutResponder.self)
             .implements(CreateOrRestoreWalletHandler.self)
             .implements(OnboardingHandler.self)
@@ -149,7 +150,7 @@ extension Resolver: ResolverRegistering {
         .scope(.session)
 
         // SolanaSocket
-        register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!, enableDebugLogs: true) }
+        register { Socket(url: URL(string: Defaults.apiEndPoint.socketUrl)!) }
             .implements(SolanaSocket.self)
             .scope(.session)
 

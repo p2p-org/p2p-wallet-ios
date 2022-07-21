@@ -8,3 +8,11 @@
 import Foundation
 
 public var defaultFlags = StaticFlagsFetcher(featureFlags: [])
+
+func setupDefaultFlags() {
+    defaultFlags = StaticFlagsFetcher(
+        featureFlags: [
+            FeatureFlag(feature: .sslPinning, enabled: true),
+        ]
+    )
+}

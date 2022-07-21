@@ -149,6 +149,14 @@ final class TabBarVC: BEPagesVC {
             .filter { $0.tag != index }
             .forEach { $0.subviews.first?.tintColor = .tabbarUnselected }
 
+        // Hack to clear input form on Tab leave
+        if let vc = (viewControllers[TabBarVC.Item.send.rawValue] as? UINavigationController)?
+            .visibleViewController as? SendToken.ChooseTokenAndAmount.ViewController,
+            index == TabBarVC.Item.send.rawValue
+        {
+            vc.clearForm()
+        }
+
         setNeedsStatusBarAppearanceUpdate()
     }
 }
