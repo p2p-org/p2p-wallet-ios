@@ -18,7 +18,9 @@ extension SocialType {
             return nil
         case .google:
             return GoogleSocialService(
-                clientId: "553127941597-0p8uojdah9afr4ugfdqm47fvlskp3ejk.apps.googleusercontent.com"
+                clientId: Environment.current == .release
+                    ? String.secretConfig("GOOGLE_SIGN_IN_ID_RELEASE")!
+                    : String.secretConfig("GOOGLE_SIGN_IN_ID_DEBUG")!
             )
         }
     }

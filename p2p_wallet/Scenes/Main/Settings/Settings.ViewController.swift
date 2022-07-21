@@ -12,6 +12,7 @@ import UIKit
 extension Settings {
     class ViewController: p2p_wallet.BaseViewController {
         let viewModel: SettingsViewModelType
+        @Injected var authService: AuthService
 
         init(viewModel: SettingsViewModelType) {
             self.viewModel = viewModel
