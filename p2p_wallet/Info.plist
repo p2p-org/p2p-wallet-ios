@@ -24,7 +24,21 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>553127941597-0p8uojdah9afr4ugfdqm47fvlskp3ejk.apps.googleusercontent.com</string>
+			<string>GoogleSignInTest</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.553127941597-nme6s6lf62oubsqut4dmlk1v2p4p0om0</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>GoogleSignInProd</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.553127941597-0p8uojdah9afr4ugfdqm47fvlskp3ejk</string>
+			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
@@ -35,6 +49,10 @@
 	<string>$(FEE_RELAYER_ENDPOINT)</string>
 	<key>FEE_RELAYER_STAGING_ENDPOINT</key>
 	<string>$(FEE_RELAYER_STAGING_ENDPOINT)</string>
+	<key>GOOGLE_SIGN_IN_ID_RELEASE</key>
+	<string>$(GOOGLE_SIGN_IN_ID_RELEASE)</string>
+	<key>GOOGLE_SIGN_IN_ID_DEBUG</key>
+	<string>$(GOOGLE_SIGN_IN_ID_DEBUG)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
