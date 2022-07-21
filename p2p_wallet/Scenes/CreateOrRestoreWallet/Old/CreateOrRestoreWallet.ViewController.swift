@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Onboarding
 import Resolver
@@ -13,12 +14,14 @@ import UIKit
 
 extension CreateOrRestoreWallet {
     class ViewController: BaseVC {
+        private var subscriptions = [AnyCancellable]()
+
         // MARK: - Dependencies
 
         private let viewModel: CreateOrRestoreWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManager
 
-        private var currentChildCoordinator: AbstractCoordinator?
+        private var currentChildCoordinator: CreateWalletCoordinator?
 
         // MARK: - Subviews
 
@@ -124,11 +127,20 @@ extension CreateOrRestoreWallet {
 
                         let vm = CreateWalletViewModel(tKeyFacade: tKeyFacade)
                         currentChildCoordinator = CreateWalletCoordinator(viewModel: vm)
-                        let vc = try? currentChildCoordinator?.start { _ in
-                            webView.removeFromSuperview()
-                        }
-                        guard let vc = vc else { return }
-                        show(vc, sender: nil)
+                        currentChildCoordinator?.start()
+                            .sink(receiveCompletion: { [weak self, weak currentChildCoordinator] completion in
+                                switch completion {
+                                case .finished:
+                                    guard let vc = currentChildCoordinator?.navigationController else {
+                                        return
+                                    }
+                                    self?.show(vc, sender: nil)
+                                case .failure:
+                                    break
+                                }
+
+                            }, receiveValue: { _ in })
+                            .store(in: &subscriptions)
                     } catch {
                         webView.removeFromSuperview()
                     }

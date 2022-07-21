@@ -7,10 +7,10 @@ import BEPureLayout
 import Foundation
 
 class SocialSignInViewController: BaseViewController {
-    private weak var coordinator: CreateWalletCoordinator?
+    private let viewModel: CreateWalletViewModel
 
-    init(coordinator: CreateWalletCoordinator) {
-        self.coordinator = coordinator
+    init(viewModel: CreateWalletViewModel) {
+        self.viewModel = viewModel
         super.init()
     }
 
@@ -45,7 +45,8 @@ class SocialSignInViewController: BaseViewController {
     @objc func signInWithGoogle() {
         Task {
             do {
-                try await coordinator?.submitEvent(event: .signIn(tokenID: "Token", authProvider: .google))
+                try await viewModel.onboardingStateMachine
+                    .accept(event: .signIn(tokenID: "Token", authProvider: .google))
             } catch {
                 print(error)
             }
@@ -74,8 +75,8 @@ extension SocialSignInViewController: ASAuthorizationControllerDelegate {
 
             Task {
                 do {
-                    let state = try await coordinator?
-                        .submitEvent(event: .signIn(tokenID: idTokenStr, authProvider: .apple))
+                    let state = try await viewModel.onboardingStateMachine
+                        .accept(event: .signIn(tokenID: idTokenStr, authProvider: .apple))
                     print(state as Any)
                 } catch {
                     print(error)
