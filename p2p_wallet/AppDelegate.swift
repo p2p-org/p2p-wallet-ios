@@ -10,7 +10,7 @@ import BECollectionView
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
-import LoggerService
+import KeyAppKitLogger
 import Resolver
 import Sentry
 import SolanaSwift
@@ -149,7 +149,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
         FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
-        LoggerService.Logger.setLoggers(loggers as! [KeyAppKitLogger])
+        KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
     }
 
     private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {
