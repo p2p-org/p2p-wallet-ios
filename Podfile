@@ -8,7 +8,7 @@ def key_app_kit
   pod 'NameService', :path => 'KeyAppKit'
   pod 'AnalyticsManager', :path => 'KeyAppKit'
   pod 'Cache', :path => 'KeyAppKit'
-  pod 'LoggerService', :path => 'KeyAppKit'
+  pod 'KeyAppKitLogger', :path => 'KeyAppKit'
   pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
   pod 'Onboarding', :path => 'KeyAppKit'
   pod 'JSBridge', :path => 'KeyAppKit'
