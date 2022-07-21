@@ -42,6 +42,7 @@ extension Onboarding {
         @Injected private var handler: OnboardingHandler
         @Injected private var pinCodeStorage: PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManager
+        @Injected private var notificationService: NotificationService
 
         // MARK: - Properties
 
@@ -127,7 +128,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
                         UIApplication.shared.openAppSettings()
                         return
                     }
-                    UIApplication.shared.registerForRemoteNotifications()
+                    self?.notificationService.registerForRemoteNotifications()
                     self?.markNotificationsAsSet()
                 }
             }
@@ -177,7 +178,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
 
                 // authorized
                 DispatchQueue.main.async { [weak self] in
-                    UIApplication.shared.registerForRemoteNotifications()
+                    self?.notificationService.registerForRemoteNotifications()
                     self?.markNotificationsAsSet()
                 }
             }

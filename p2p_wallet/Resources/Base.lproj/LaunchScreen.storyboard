@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -34,8 +34,8 @@
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="UTc-Is-59k" secondAttribute="trailing" id="9UR-b1-fIu"/>
                             <constraint firstItem="UTc-Is-59k" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="KSc-Ht-Q6k"/>
-                            <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" constant="-5" id="Ni6-Cj-jnS"/>
-                            <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="WSK-ck-VNb"/>
+                            <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Ni6-Cj-jnS"/>
+                            <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="WSK-ck-VNb"/>
                             <constraint firstItem="UTc-Is-59k" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="lOe-Ff-IwN"/>
                             <constraint firstAttribute="bottom" secondItem="UTc-Is-59k" secondAttribute="bottom" id="rQd-Kr-hOy"/>
                         </constraints>

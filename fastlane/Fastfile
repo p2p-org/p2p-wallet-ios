@@ -1,6 +1,7 @@
 default_platform(:ios)
 
 DEVELOPER_APP_ID = ENV["DEVELOPER_APP_ID"]
+DEVELOPER_APP_ID_TEST = ENV["DEVELOPER_APP_ID_TEST"]
 DEVELOPER_APP_IDENTIFIER = ENV["DEVELOPER_APP_IDENTIFIER"]
 PROVISIONING_PROFILE_SPECIFIER_ADHOC = ENV["PROVISIONING_PROFILE_SPECIFIER_ADHOC"]
 PROVISIONING_PROFILE_SPECIFIER_APPSTORE = ENV["PROVISIONING_PROFILE_SPECIFIER_APPSTORE"]
@@ -12,6 +13,7 @@ APPLE_KEY_CONTENT = ENV["APPLE_KEY_CONTENT"]
 GIT_AUTHORIZATION = ENV["GIT_AUTHORIZATION"]
 
 FIREBASE_APP_ID = ENV["FIREBASE_APP_ID"]
+FIREBASE_APP_ID_TEST = ENV["FIREBASE_APP_ID_TEST"]
 FIREBASE_CLI_TOKEN = ENV["FIREBASE_CLI_TOKEN"]
 
 BROWSERSTACK_USERNAME = ENV["BROWSERSTACK_USERNAME"]
@@ -46,12 +48,26 @@ def ensure_temp_keychain(name, password)
   create_temp_keychain(name, password)
 end
 
-def create_release_build(match_type)
+def create_release_build(match_type, configuration)
   ensure_temp_keychain(TEMP_KEYCHAIN_USER, TEMP_KEYCHAIN_PASSWORD)
 
   profileSpecifier = PROVISIONING_PROFILE_SPECIFIER_ADHOC
   if match_type == "app-store"
     profileSpecifier = PROVISIONING_PROFILE_SPECIFIER_APPSTORE
+  end
+
+  if configuration == "Test"
+    profileSpecifier += ".test"
+  end
+
+  appId = DEVELOPER_APP_ID
+  if configuration == "Test"
+    appId = DEVELOPER_APP_ID_TEST
+  end
+
+  appIdentifier = DEVELOPER_APP_IDENTIFIER
+  if configuration == "Test"
+    appIdentifier += ".test"
   end
 
   if IS_CI
@@ -75,9 +91,9 @@ def create_release_build(match_type)
   match(
     type: match_type.gsub("-", ""),
     git_url: PROVISIONING_REPO,
-    app_identifier: "#{DEVELOPER_APP_IDENTIFIER}",
+    app_identifier: "#{appIdentifier}",
     git_basic_authorization: Base64.strict_encode64(GIT_AUTHORIZATION),
-    readonly: true,
+    readonly: false,
     keychain_name: TEMP_KEYCHAIN_USER,
     keychain_password: TEMP_KEYCHAIN_PASSWORD,
     api_key: api_key
@@ -85,21 +101,26 @@ def create_release_build(match_type)
 
   gym(
     scheme: 'p2p_wallet',
+    configuration: configuration,
     export_method: match_type,
     export_xcargs: '-allowProvisioningUpdates',
     silent: true,
     export_options: {
       provisioningProfiles: {
-        DEVELOPER_APP_ID => profileSpecifier
+        appId => profileSpecifier
       }
     }
   )
 end
 
-def upload_build(version, is_feature_build, link)
+def upload_build(version, link, configuration)
   # upload to firebase
+  firebaseAppId = FIREBASE_APP_ID
+  if configuration == "Test"
+    firebaseAppId = FIREBASE_APP_ID_TEST
+  end
   firebase_app_distribution(
-    app: FIREBASE_APP_ID,
+    app: firebaseAppId,
     groups: "dev_team",
     firebase_cli_token: FIREBASE_CLI_TOKEN
   )
@@ -111,13 +132,10 @@ def upload_build(version, is_feature_build, link)
   )
 
   # upload to slack
-  message = "New version #{version} for regression is available"
-  if is_feature_build
-    message = "A build #{version} was uploaded for testing this feature. Link to issue: #{link}"
-  end
+  message = "A build #{version} was uploaded for testing this feature. Link to issue: #{link}"
   slack_upload(
     slack_api_token: SLACK_API_TOKEN,
-    title: "p2p_wallet.ipa",
+    title: "PWN-#{version}.ipa",
     channel: "#p2p-wallet-builds-ios",
     file_path: "./p2p_wallet.ipa",
     initial_comment: message
@@ -176,11 +194,21 @@ platform :ios do
       skip_info_plist: true
     )
 
+    # change app name
+    update_info_plist( # Change the Display Name of your app
+      plist_path: "./p2p_wallet/Info.plist",
+      display_name: "PW #{current_build}"
+    )
+
     # create release build for this feature
-    create_release_build('ad-hoc')
+    create_release_build('ad-hoc', 'Test')
 
     # upload to firebase and browser stack
-    upload_build(current_build, true, "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}")
+    upload_build(
+      current_build,
+      "#{JIRA_BASE_URL}/browse/PWN-#{feature_number.to_s}",
+      "Test"
+    )
 
     # delete temp keychain
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
@@ -197,7 +225,7 @@ platform :ios do
     end
   end
 
-  lane :beta do
+  lane :release do
     # get version
     version = get_version_number(target: "p2p_wallet")
 
@@ -220,40 +248,7 @@ platform :ios do
     )
 
     # create release build
-    create_release_build('ad-hoc')
-
-    # upload to firebase
-    upload_build("#{version} (#{build_number})", false, "")
-
-    # delete temp keychain
-    delete_temp_keychain(TEMP_KEYCHAIN_USER)
-
-    # tag
-    add_git_tag(tag: tag)
-    push_git_tags(tag: tag)
-  end
-
-  lane :release do
-    # REQUIREMENT: THERE IS AT LEAST 1 TAG LIKE v1.0.0(1234) THAT HAS ALREADY BEEN PASSED REGRESSION
-
-    # get current build number. Ex. get 1234 from tag v1.0.0(1234)
-    sh('git fetch --tags --no-recurse-submodules')
-    version = get_version_number(target: "p2p_wallet")
-    lt = last_git_tag
-    puts "last_git_tag #{lt}"
-    tag = last_git_tag(pattern: "v#{version}(*")
-    puts "matched tag #{tag}"
-    build_number = tag.sub("v#{version}(", '').sub(")", '')
-
-    # set build number
-    increment_build_number(
-      xcodeproj: "p2p_wallet.xcodeproj",
-      build_number: build_number,
-      skip_info_plist: true
-    )
-
-    # create release build
-    create_release_build('app-store')
+    create_release_build('app-store', 'Release')
 
     # upload to testflight
     pilot(
@@ -270,11 +265,15 @@ platform :ios do
     full_version = "#{version} (#{build_number})"
     post_to_slack(
       api_token: SLACK_API_TOKEN,
-      message: "Version #{full_version} was uploaded to Testflight and will be available for updating test after a few minutes!",
+      message: "Version #{full_version} was uploaded to Testflight and will be available after a few minutes!",
       channel: "#p2p-wallet-builds-ios"
     )
 
     # clean
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
+
+    # tag
+    add_git_tag(tag: tag)
+    push_git_tags(tag: tag)
   end
 end

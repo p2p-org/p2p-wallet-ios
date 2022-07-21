@@ -96,6 +96,7 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
     }
 
     func signOut() {
+        setBlockedTime(nil)
         navigationSubject.accept(.signOutAlert { [weak self] in self?.logoutResponder.logout() })
     }
 }

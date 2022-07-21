@@ -24,11 +24,51 @@ options:
 
 configs:
     Debug: debug
+    Test: release
     Release: release
 
 configFiles:
     Debug: p2p_wallet/Config.xcconfig
+    Test: p2p_wallet/Config.xcconfig
     Release: p2p_wallet/Config.xcconfig
+
+settings:
+    base:
+        MARKETING_VERSION: 1.9.0
+    configs:
+        Debug:
+            VALIDATE_PRODUCT: false
+            SWIFT_COMPILATION_MODE: singlefile
+            SWIFT_OPTIMIZATION_LEVEL: "-Onone"
+            ENABLE_TESTABILITY: true
+            ENABLE_BITCODE: false
+            DEBUG_INFORMATION_FORMAT: dwarf
+            ONLY_ACTIVE_ARCH: true
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+            GCC_PREPROCESSOR_DEFINITIONS:
+            - DEBUG=1
+        Test:
+            VALIDATE_PRODUCT: true
+            SWIFT_COMPILATION_MODE: wholemodule
+            SWIFT_OPTIMIZATION_LEVEL: "-O"
+            ENABLE_TESTABILITY: false
+            ENABLE_BITCODE: false
+            DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+            ONLY_ACTIVE_ARCH: false
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS: TEST
+            GCC_PREPROCESSOR_DEFINITIONS:
+            - TEST=1
+        Release:
+            VALIDATE_PRODUCT: true
+            SWIFT_COMPILATION_MODE: wholemodule
+            SWIFT_OPTIMIZATION_LEVEL: "-O"
+            ENABLE_TESTABILITY: true
+            ENABLE_BITCODE: true
+            DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+            ONLY_ACTIVE_ARCH: false
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS: RELEASE
+            GCC_PREPROCESSOR_DEFINITIONS:
+            - RELEASE=1
 
 targets:
     p2p_wallet:
@@ -48,24 +88,23 @@ targets:
                     exit 0
                   fi
                   "$PODS_ROOT/SwiftGen/bin/swiftgen"
-            name: "Swiftgen Run Script"
+            name: "[SCRIPT] Swiftgen Run"
           - script: |
                   "$SRCROOT"/Scripts/formatAndLint.sh
-            name: "Format and lint Run Script"
+            name: "[SCRIPT] Format and lint"
         postBuildScripts:
           - script: |
-                  "${PODS_ROOT}/FirebaseCrashlytics/run"
-            name: "Crashlytics Run Script"
+                  if [ "${CONFIGURATION}" != "Debug" ]; then
+                      ${PODS_ROOT}/FirebaseCrashlytics/run -gsp ${SRCROOT}/p2p_wallet/GoogleService-Info.plist
+                  fi
+            name: "[SCRIPT] Crashlytics Run"
             inputFiles:
-              - "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}"
-              - "$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)"
+              - "${SRCROOT}/${BUILD_PRODUCTS_DIR}/${INFOPLIST_PATH}"
         settings:
             base:
                 TARGETED_DEVICE_FAMILY: 1
                 PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber
                 DEVELOPMENT_TEAM: A72KN37UN2
-                MARKETING_VERSION: 1.8.0
-                ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
                 ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
                 CODE_SIGN_IDENTITY: 'Apple Development'
                 CODE_SIGN_ENTITLEMENTS: p2p_wallet/p2p_wallet.entitlements
@@ -90,8 +129,20 @@ targets:
                 - "-framework"
                 - "\"SolanaSwift\""
                 PRODUCT_NAME: "$(TARGET_NAME)"
-                ENABLE_BITCODE: false
                 DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
+            configs:
+                Debug:
+                    PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber.test
+                    SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+                    ASSETCATALOG_COMPILER_APPICON_NAME: AppIconTest
+                Test:
+                    PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber.test
+                    SWIFT_ACTIVE_COMPILATION_CONDITIONS: TEST
+                    ASSETCATALOG_COMPILER_APPICON_NAME: AppIconTest
+                Release:
+                    PRODUCT_BUNDLE_IDENTIFIER: org.p2p.cyber
+                    SWIFT_ACTIVE_COMPILATION_CONDITIONS: RELEASE
+                    ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
     Detect Unused Code:
         type: app-extension.intents-service
