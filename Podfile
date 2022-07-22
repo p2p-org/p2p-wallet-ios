@@ -12,6 +12,7 @@ def key_app_kit
   pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
   pod 'Onboarding', :path => 'KeyAppKit'
   pod 'JSBridge', :path => 'KeyAppKit'
+  pod 'CountriesAPI', :path => 'KeyAppKit'
 end
 
 def deprecated_soon
@@ -94,6 +95,12 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
+    
+    if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_INSTALL_OBJC_HEADER'] = 'No'
+        end
     end
   end
 end
