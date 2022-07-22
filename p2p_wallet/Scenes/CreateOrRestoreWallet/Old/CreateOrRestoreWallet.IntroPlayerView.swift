@@ -109,7 +109,7 @@ extension CreateOrRestoreWallet {
             )
             NotificationCenter.default.addObserver(
                 self,
-                selector: #selector(appDidBecomeActive),
+                selector: #selector(_appDidBecomeActive),
                 name: UIApplication.didBecomeActiveNotification,
                 object: nil
             )
@@ -140,11 +140,11 @@ extension CreateOrRestoreWallet {
             movingToNextStep = true
         }
 
-        @objc func appWillResignActive() {
+        @objc private func appWillResignActive() {
             activeResigned = true
         }
 
-        @objc func appDidBecomeActive() {
+        @objc private func _appDidBecomeActive() {
             guard activeResigned, !isFinished else { return }
             player.play()
         }

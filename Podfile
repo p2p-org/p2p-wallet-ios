@@ -37,7 +37,7 @@ target 'p2p_wallet' do
   
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
   pod 'SolanaSwift', :path => 'SolanaSwift'
-  pod 'BEPureLayout', :path => 'BEPureLayout'
+  pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
   pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/becollectionview.git', :branch => 'master'
   pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/becollectionview.git', :branch => 'master'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
@@ -60,6 +60,7 @@ target 'p2p_wallet' do
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
+  pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   pod 'Resolver'
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'
