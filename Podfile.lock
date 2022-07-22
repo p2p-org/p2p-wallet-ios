@@ -371,13 +371,13 @@ CHECKOUT OPTIONS:
     :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   BECollectionView:
-    :commit: 8227c46666b6d890b68f2983d40e1f253c4a564a
+    :commit: 3c41963abada58b3bb437fa9032f5ecd70b11834
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
-    :commit: 8227c46666b6d890b68f2983d40e1f253c4a564a
+    :commit: 3c41963abada58b3bb437fa9032f5ecd70b11834
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
-    :commit: 8227c46666b6d890b68f2983d40e1f253c4a564a
+    :commit: 3c41963abada58b3bb437fa9032f5ecd70b11834
     :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
     :commit: 3d05b30cf677fe514c808240a7668cb5d1d8d00d
