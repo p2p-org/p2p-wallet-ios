@@ -1,6 +1,6 @@
 import FeeRelayerSwift
 import Foundation
-import LoggerService
+import KeyAppKitLogger
 import LoggerSwift
 import Sentry
 import SolanaSwift
@@ -83,7 +83,7 @@ extension SentryLogger: FeeRelayerSwiftLogger {
     }
 }
 
-extension SentryLogger: KeyAppKitLogger {
+extension SentryLogger: KeyAppKitLoggerType {
     func log(event: String, data: String?, logLevel: KeyAppKitLoggerLogLevel) {
         var newLogLevel: LogLevel = .info
         switch logLevel {
@@ -177,7 +177,7 @@ extension LoggerSwiftLogger: FeeRelayerSwiftLogger {
     }
 }
 
-extension LoggerSwiftLogger: KeyAppKitLogger {
+extension LoggerSwiftLogger: KeyAppKitLoggerType {
     func log(event: String, data: String?, logLevel: KeyAppKitLoggerLogLevel) {
         var newLogLevel: LogLevel = .info
         switch logLevel {

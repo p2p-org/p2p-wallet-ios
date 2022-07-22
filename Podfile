@@ -8,10 +8,23 @@ def key_app_kit
   pod 'NameService', :path => 'KeyAppKit'
   pod 'AnalyticsManager', :path => 'KeyAppKit'
   pod 'Cache', :path => 'KeyAppKit'
-  pod 'LoggerService', :path => 'KeyAppKit'
+  pod 'KeyAppKitLogger', :path => 'KeyAppKit'
   pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
   pod 'Onboarding', :path => 'KeyAppKit'
   pod 'JSBridge', :path => 'KeyAppKit'
+  pod 'CountriesAPI', :path => 'KeyAppKit'
+end
+
+def deprecated_soon
+  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/becollectionview.git', :branch => 'master'
+  
+  # reactive
+  pod 'Action'
+  pod "RxAppState"
+  pod "RxGesture"
+  pod 'RxSwift', '6.5.0'
+  pod 'RxCocoa', '6.5.0'
+  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
 end
 
 target 'p2p_wallet' do
@@ -20,10 +33,13 @@ target 'p2p_wallet' do
 
   # development pods
   key_app_kit
+  deprecated_soon
+  
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
   pod 'SolanaSwift', :path => 'SolanaSwift'
   pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
-  pod 'BECollectionView', :path => 'BECollectionView'
+  pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/becollectionview.git', :branch => 'master'
+  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/becollectionview.git', :branch => 'master'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
   pod 'RenVMSwift', :path => 'RenVMSwift'
@@ -35,12 +51,6 @@ target 'p2p_wallet' do
   pod 'SwiftFormat/CLI', '0.49.6'
 
   # reactive
-  pod 'Action'
-  pod "RxAppState"
-  pod "RxGesture"
-  pod 'RxSwift', '6.5.0'
-  pod 'RxCocoa', '6.5.0'
-  pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
   pod 'CombineCocoa'
 
   # kits
@@ -86,6 +96,12 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
+    
+    if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_INSTALL_OBJC_HEADER'] = 'No'
+        end
     end
   end
 end
