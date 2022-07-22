@@ -5,6 +5,7 @@
 import AuthenticationServices
 import BEPureLayout
 import Foundation
+import KeyAppUI
 
 class SocialSignInViewController: BaseViewController {
     private let viewModel: CreateWalletViewModel
@@ -23,6 +24,7 @@ class SocialSignInViewController: BaseViewController {
             //         button.setTitleColor(.blue, for: .normal)
             //         button.addTarget(self, action: #selector(signInWithGoogle), for: .touchUpInside)
             //     }
+            TextButton(title: "Sign in with Google", style: .primary, size: .medium)
             ASAuthorizationAppleIDButton()
                 .setup { button in
                     button.addTarget(self, action: #selector(signInWithApple), for: .touchUpInside)
