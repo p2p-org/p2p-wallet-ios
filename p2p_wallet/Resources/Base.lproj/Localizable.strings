@@ -816,3 +816,4 @@ Reset the PIN or wait for %@.";
 "Pay %@ and Continue" = "Pay %@ & Continue";
 "You can’t send less than %@" = "You can’t send less than %@";
 "Refresh page" = "Refresh page";
+"Country code" = "Country code";
