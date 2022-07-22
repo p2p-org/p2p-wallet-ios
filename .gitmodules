@@ -4,9 +4,6 @@
 [submodule "BEPureLayout"]
 	path = BEPureLayout
 	url = git@github.com:p2p-org/BEPureLayout
-[submodule "BECollectionView"]
-	path = BECollectionView
-	url = git@github.com:bigearsenal/BECollectionView.git
 [submodule "FeeRelayerSwift"]
 	path = FeeRelayerSwift
 	url = git@github.com:p2p-org/FeeRelayerSwift.git

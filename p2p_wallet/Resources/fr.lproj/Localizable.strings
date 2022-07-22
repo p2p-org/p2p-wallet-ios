@@ -820,3 +820,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Pay %@ and Continue" = "Payez %@ & continuez";
 "You can’t send less than %@" = "Vous ne pouvez pas envoyer moins de %@";
 "Refresh page" = "Rafraîchir la page";
+"Country code" = "Code postal";
