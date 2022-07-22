@@ -8,9 +8,6 @@ PODS:
   - BECollectionView (1.0.0):
     - BECollectionView_Core
     - RxCocoa (~> 6.5.0)
-  - BECollectionView_Combine (1.0.0):
-    - BECollectionView_Core
-    - CombineCocoa (~> 0.4.0)
   - BECollectionView_Core (1.0.0)
   - BEPureLayout (0.4.0):
     - PureLayout
@@ -21,7 +18,6 @@ PODS:
     - SwiftAlgorithms (~> 1.0)
   - CocoaDebug (1.7.2)
   - CombineCocoa (0.4.0)
-  - CountriesAPI (1.0.0)
   - Down (0.11.0)
   - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
@@ -204,35 +200,33 @@ PODS:
 
 DEPENDENCIES:
   - Action
-  - AnalyticsManager (from `KeyAppKit`)
-  - BECollectionView (from `https://github.com/bigearsenal/becollectionview.git`, branch `master`)
-  - BECollectionView_Combine (from `https://github.com/bigearsenal/becollectionview.git`, branch `master`)
-  - BECollectionView_Core (from `https://github.com/bigearsenal/becollectionview.git`, branch `master`)
+  - "AnalyticsManager (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `master`)"
+  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
+  - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
-  - Cache (from `KeyAppKit`)
+  - "Cache (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `master`)"
   - Charts
   - CocoaDebug
   - CombineCocoa
-  - CountriesAPI (from `KeyAppKit`)
   - Down (from `https://github.com/p2p-org/Down.git`)
-  - FeeRelayerSwift (from `FeeRelayerSwift`)
+  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
   - GT3Captcha-iOS
   - Intercom
   - JazziconSwift (~> 1.1.0)
-  - JSBridge (from `KeyAppKit`)
-  - KeyAppKitLogger (from `KeyAppKit`)
+  - "JSBridge (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `master`)"
+  - "KeyAppKitLogger (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `master`)"
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `develop`)"
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
-  - NameService (from `KeyAppKit`)
-  - Onboarding (from `KeyAppKit`)
-  - OrcaSwapSwift (from `OrcaSwapSwift`)
+  - "NameService (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `master`)"
+  - "Onboarding (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `master`)"
+  - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
   - Periphery
-  - RenVMSwift (from `RenVMSwift`)
+  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
   - Resolver
   - RxAppState
   - RxCocoa (= 6.5.0)
@@ -240,15 +234,15 @@ DEPENDENCIES:
   - RxGesture
   - RxSwift (= 6.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
-  - SolanaPricesAPIs (from `KeyAppKit`)
-  - SolanaSwift (from `SolanaSwift`)
+  - "SolanaPricesAPIs (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `master`)"
+  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
   - SubviewAttachingTextView
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
-  - TransactionParser (from `KeyAppKit`)
+  - "TransactionParser (from `git@github.com:p2p-org/key-app-kit-swift.git`, branch `master`)"
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -301,31 +295,31 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   AnalyticsManager:
-    :path: KeyAppKit
+    :branch: master
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   BECollectionView:
     :branch: master
-    :git: https://github.com/bigearsenal/becollectionview.git
-  BECollectionView_Combine:
-    :branch: master
-    :git: https://github.com/bigearsenal/becollectionview.git
+    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
     :branch: master
-    :git: https://github.com/bigearsenal/becollectionview.git
+    :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
     :branch: master
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :path: KeyAppKit
-  CountriesAPI:
-    :path: KeyAppKit
+    :branch: master
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :path: FeeRelayerSwift
+    :branch: master
+    :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :path: KeyAppKit
+    :branch: master
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   KeyAppKitLogger:
-    :path: KeyAppKit
+    :branch: master
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   KeyAppUI:
     :branch: develop
     :git: "git@github.com:p2p-org/KeyAppUI.git"
@@ -333,13 +327,17 @@ EXTERNAL SOURCES:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :path: KeyAppKit
+    :branch: master
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   Onboarding:
-    :path: KeyAppKit
+    :branch: master
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   OrcaSwapSwift:
-    :path: OrcaSwapSwift
+    :branch: main
+    :git: https://github.com/p2p-org/OrcaSwapSwift.git
   RenVMSwift:
-    :path: RenVMSwift
+    :branch: master
+    :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :branch: main
     :git: https://github.com/TrGiLong/RxConcurrency.git
@@ -347,54 +345,88 @@ EXTERNAL SOURCES:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :path: KeyAppKit
+    :branch: master
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   SolanaSwift:
-    :path: SolanaSwift
+    :branch: main
+    :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :path: KeyAppKit
+    :branch: master
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
 
 CHECKOUT OPTIONS:
+  AnalyticsManager:
+    :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   BECollectionView:
     :commit: 8227c46666b6d890b68f2983d40e1f253c4a564a
-    :git: https://github.com/bigearsenal/becollectionview.git
-  BECollectionView_Combine:
-    :commit: 8227c46666b6d890b68f2983d40e1f253c4a564a
-    :git: https://github.com/bigearsenal/becollectionview.git
+    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
     :commit: 8227c46666b6d890b68f2983d40e1f253c4a564a
-    :git: https://github.com/bigearsenal/becollectionview.git
+    :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
     :commit: 3d05b30cf677fe514c808240a7668cb5d1d8d00d
     :git: https://github.com/p2p-org/BEPureLayout.git
+  Cache:
+    :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
+  FeeRelayerSwift:
+    :commit: 145b589ae5ed31c72dc51959bc7f782d69b07cc6
+    :git: https://github.com/p2p-org/FeeRelayerSwift.git
+  JSBridge:
+    :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+  KeyAppKitLogger:
+    :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   KeyAppUI:
     :commit: c3d48f3725083ed2dd99f1c631499d260c75bfd3
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
+  NameService:
+    :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+  Onboarding:
+    :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+  OrcaSwapSwift:
+    :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
+    :git: https://github.com/p2p-org/OrcaSwapSwift.git
+  RenVMSwift:
+    :commit: dfd1ffd909c344dd92db94addf12591e392a9e38
+    :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
+  SolanaPricesAPIs:
+    :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
+  SolanaSwift:
+    :commit: aeb3ec10d84bd8bd5441deb6abac5f829ccd9261
+    :git: https://github.com/p2p-org/solana-swift.git
+  TransactionParser:
+    :commit: 496f00afc7d3392e78817e20b9398bac45b0ebaa
+    :git: "git@github.com:p2p-org/key-app-kit-swift.git"
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
-  BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
-  CountriesAPI: 26d03b67fb2fd4ff26111b71ed3d492a3babb592
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
   Firebase: ef75abb1cdbc746d5a38f4e26c422c807b189b8c
@@ -451,6 +483,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c4af42ab51a9e5be871acc791c5dca99377f42cf
+PODFILE CHECKSUM: 498036cb83cca49597cbf62c4946b79fdcdfb811
 
 COCOAPODS: 1.11.3
