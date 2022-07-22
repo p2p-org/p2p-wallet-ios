@@ -20,7 +20,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
 
     // MARK: - Input
 
-    @Published var selectedCountry: Country?
+    var initialSelectedCountry: Country?
     let didClose = PassthroughSubject<Void, Never>()
 
     // MARK: - Output
@@ -32,8 +32,11 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     // MARK: - Methods
 
     override func createRequest() async throws -> [SelectableCountry] {
-        let currentSelectedCountry = data.first(where: { $0.isSelected == true })
+        let initialSelectedCountry = initialSelectedCountry
+        if self.initialSelectedCountry != nil {
+            self.initialSelectedCountry = nil
+        }
         return try await CountriesAPIImpl().fetchCountries()
-            .map { .init(country: $0, isSelected: $0.code == currentSelectedCountry?.country.code) }
+            .map { .init(country: $0, isSelected: $0.code == initialSelectedCountry?.code) }
     }
 }

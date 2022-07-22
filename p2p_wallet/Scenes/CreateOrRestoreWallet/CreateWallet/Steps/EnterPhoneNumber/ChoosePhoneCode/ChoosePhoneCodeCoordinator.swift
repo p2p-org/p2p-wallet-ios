@@ -24,13 +24,14 @@ final class ChoosePhoneCodeCoordinator: Coordinator<Country?> {
 
     override func start() -> AnyPublisher<Country?, Never> {
         let vm = ChoosePhoneCodeViewModel()
-        vm.selectedCountry = selectedCountry
+        vm.initialSelectedCountry = selectedCountry
         let vc = ChoosePhoneCodeViewController(viewModel: vm)
         vc.isModalInPresentation = true
         let nc = UINavigationController(rootViewController: vc)
         presentingViewController.present(nc, animated: true)
 
-        return vm.didClose.withLatestFrom(vm.$selectedCountry)
+        return vm.didClose.withLatestFrom(vm.$data)
+            .map { $0.first(where: { $0.isSelected })?.country }
             .eraseToAnyPublisher()
     }
 }
