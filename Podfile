@@ -15,6 +15,7 @@ def key_app_kit
   pod 'SolanaPricesAPIs', :git => $keyAppKitGit, :branch => $keyAppKitBranch
   pod 'Onboarding', :git => $keyAppKitGit, :branch => $keyAppKitBranch
   pod 'JSBridge', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'CountriesAPI', :git => $keyAppKitGit, :branch => $keyAppKitBranch
 end
 
 target 'p2p_wallet' do
@@ -28,6 +29,7 @@ target 'p2p_wallet' do
   pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
   pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
   pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
@@ -90,6 +92,12 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
+    
+    if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_INSTALL_OBJC_HEADER'] = 'No'
+        end
     end
   end
 end
