@@ -36,6 +36,7 @@ extension OrcaSwapV2 {
 
             navigationItem.title = L10n.swap
             navigationItem.rightBarButtonItem = settingButton
+            hidesBottomBarWhenPushed = true
         }
 
         // MARK: - Methods
