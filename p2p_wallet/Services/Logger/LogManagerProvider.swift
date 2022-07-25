@@ -108,9 +108,9 @@ class LoggerSwiftLogger: LogManagerLogger {
     var supportedLogLevels: [LogLevel] = [.error, .info, .request, .response, .event, .warning, .debug]
 
     func log(event: String, logLevel: LogLevel, data: String?) {
-        queue.sync {
+        queue.async { [unowned self] in
             KeyAppKitLogger.Logger.log(
-                event: loglevel(logLevel),
+                event: self.loglevel(logLevel),
                 message: event + " " + (data ?? "")
             )
         }

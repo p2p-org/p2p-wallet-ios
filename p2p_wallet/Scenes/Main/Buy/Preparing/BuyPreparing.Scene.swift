@@ -23,6 +23,7 @@ extension BuyPreparing {
             self.viewModel = viewModel
             super.init()
             navigationItem.title = L10n.buying(viewModel.crypto.fullname)
+            hidesBottomBarWhenPushed = true
         }
 
         override func viewWillDisappear(_ animated: Bool) {

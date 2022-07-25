@@ -24,7 +24,7 @@ extension Main {
         private lazy var blurEffectView: UIView = LockView()
         private var localAuthVC: Authentication.ViewController?
 
-        private lazy var tabBar = TabBarVC()
+        private lazy var tabBar = TabBarController()
 
         // MARK: - Initializer
 
@@ -67,7 +67,7 @@ extension Main {
 
             viewModel.moveToHistory
                 .drive(onNext: { [unowned self] in
-                    tabBar.moveToItem(.history)
+                    tabBar.changeItem(to: .history)
                 })
                 .disposed(by: disposeBag)
             // locking status
