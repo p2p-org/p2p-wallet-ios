@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 22/11/2021.
 //
 
-import BECollectionView
 import Charts
 import Foundation
 import RxCocoa

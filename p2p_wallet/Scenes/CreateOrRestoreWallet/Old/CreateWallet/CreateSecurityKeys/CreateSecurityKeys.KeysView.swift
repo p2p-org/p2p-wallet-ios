@@ -2,7 +2,6 @@
 // Created by Giang Long Tran on 04.11.21.
 //
 
-import BECollectionView
 import Foundation
 import RxCocoa
 import RxSwift

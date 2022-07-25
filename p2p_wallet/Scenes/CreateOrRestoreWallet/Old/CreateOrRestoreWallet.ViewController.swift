@@ -6,16 +6,22 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
+import Onboarding
 import Resolver
 import UIKit
 
 extension CreateOrRestoreWallet {
     class ViewController: BaseVC {
+        private var subscriptions = [AnyCancellable]()
+
         // MARK: - Dependencies
 
         private let viewModel: CreateOrRestoreWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManager
+
+        private var currentChildCoordinator: CreateWalletCoordinator?
 
         // MARK: - Subviews
 
@@ -71,6 +77,7 @@ extension CreateOrRestoreWallet {
 //            add(child: WelcomeVC(), to: containerView)
 
             videoPlayerView = IntroPlayerView(userInterfaceStyle: traitCollection.userInterfaceStyle)
+            videoPlayerView.skip = true
             videoPlayerView.autoAdjustWidthHeightRatio(1080 / 1130)
             videoPlayerView.autoSetDimension(.height, toSize: 349.adaptiveHeight)
 
@@ -102,13 +109,41 @@ extension CreateOrRestoreWallet {
 
         // MARK: - Navigation
 
-        private func navigate(to scene: NavigatableScene?) {
+        @MainActor private func navigate(to scene: NavigatableScene?) {
             guard let scene = scene else { return }
             switch scene {
             case .createWallet:
-                let vm = CreateWallet.ViewModel()
-                let vc = CreateWallet.ExplanationVC(viewModel: vm)
-                show(vc, sender: nil)
+                // let vm = CreateWallet.ViewModel()
+                // let vc = CreateWallet.ExplanationVC(viewModel: vm)
+                // show(vc, sender: nil)
+
+                guard currentChildCoordinator == nil else { return }
+
+                Task {
+                    let webView = GlobalWebView.requestWebView()
+                    do {
+                        let tKeyFacade = TKeyJSFacade(wkWebView: webView)
+                        try await tKeyFacade.initialize()
+
+                        currentChildCoordinator = CreateWalletCoordinator()
+                        currentChildCoordinator?.start()
+                            .sink(receiveCompletion: { [weak self, weak currentChildCoordinator] completion in
+                                switch completion {
+                                case .finished:
+                                    guard let vc = currentChildCoordinator?.navigationController else {
+                                        return
+                                    }
+                                    self?.show(vc, sender: nil)
+                                case .failure:
+                                    break
+                                }
+
+                            }, receiveValue: { _ in })
+                            .store(in: &subscriptions)
+                    } catch {
+                        webView.removeFromSuperview()
+                    }
+                }
             case .restoreWallet:
                 let vm = RestoreWallet.ViewModel()
                 let vc = RestoreWallet.ViewController(viewModel: vm)
