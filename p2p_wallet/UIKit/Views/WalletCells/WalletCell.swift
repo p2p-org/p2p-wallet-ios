@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 24/11/2020.
 //
 
-import BECollectionView
 import BEPureLayout
 import ListPlaceholder
 import SolanaSwift
