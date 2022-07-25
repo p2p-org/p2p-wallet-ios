@@ -10,24 +10,40 @@ import Combine
 import CountriesAPI
 import Foundation
 
-struct SelectableCountry: Hashable {
-    let country: Country
-    var isSelected: Bool = false
-}
-
 final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     // MARK: - Dependencies
+
+    // MARK: - Properties
+
+    private var subscriptions = [AnyCancellable]()
+    private var cachedResult = [SelectableCountry]()
 
     // MARK: - Input
 
     var initialSelectedCountry: Country?
     let didClose = PassthroughSubject<Void, Never>()
+    @Published var keyword: String = ""
 
     // MARK: - Output
 
 //    @Published public private(set) var recommendation: String?
 
     // MARK: - Initializers
+
+    init() {
+        super.init()
+        $keyword
+            .sink { [weak self] keyword in
+                guard let self = self else { return }
+                if keyword.isEmpty {
+                    self.overrideData(by: self.cachedResult)
+                    return
+                }
+                let newData = self.data.filteredByKeyword(keyword: keyword)
+                self.overrideData(by: newData)
+            }
+            .store(in: &subscriptions)
+    }
 
     // MARK: - Methods
 
@@ -36,7 +52,9 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         if self.initialSelectedCountry != nil {
             self.initialSelectedCountry = nil
         }
-        return try await CountriesAPIImpl().fetchCountries()
-            .map { .init(country: $0, isSelected: $0.code == initialSelectedCountry?.code) }
+        cachedResult = try await CountriesAPIImpl().fetchCountries()
+            .map { .init(value: $0, isSelected: $0.code == initialSelectedCountry?.code) }
+        return cachedResult
+            .filteredByKeyword(keyword: keyword)
     }
 }

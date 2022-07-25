@@ -33,7 +33,7 @@ final class ChoosePhoneCodeCoordinator: Coordinator<Country?> {
         presentingViewController.present(nc, animated: true)
 
         return vm.didClose.withLatestFrom(vm.$data)
-            .map { $0.first(where: { $0.isSelected })?.country }
+            .map { $0.first(where: { $0.isSelected })?.value }
             .eraseToAnyPublisher()
     }
 }
