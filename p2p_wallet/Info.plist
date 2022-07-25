@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NAME_SERVICE_ENDPOINT</key>
+	<string>$(NAME_SERVICE_ENDPOINT)</string>
+	<key>SENTRY_DSN</key>
+	<string>$(SENTRY_DSN)</string>
 	<key>AMPLITUDE_API_KEY</key>
 	<string>$(AMPLITUDE_API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -24,13 +28,29 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>553127941597-0p8uojdah9afr4ugfdqm47fvlskp3ejk.apps.googleusercontent.com</string>
+			<string>GoogleSignInTest</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.553127941597-nme6s6lf62oubsqut4dmlk1v2p4p0om0</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>GoogleSignInProd</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.553127941597-0p8uojdah9afr4ugfdqm47fvlskp3ejk</string>
+			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CRYPTO_COMPARE_API_KEY</key>
 	<string>$(CRYPTO_COMPARE_API_KEY)</string>
+	<key>FEE_RELAYER_STAGING_ENDPOINT</key>
+	<string>$(FEE_RELAYER_STAGING_ENDPOINT)</string>
 	<key>FEE_RELAYER_ENDPOINT</key>
 	<string>$(FEE_RELAYER_ENDPOINT)</string>
 	<key>FEE_RELAYER_STAGING_ENDPOINT</key>

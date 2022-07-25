@@ -295,6 +295,11 @@ extension Resolver: ResolverRegistering {
         register { HttpClientImpl() }
             .implements(HttpClient.self)
             .scope(.session)
+
+        // Auth
+        register { AuthServiceImpl() }
+            .implements(AuthService.self)
+            .scope(.session)
     }
 
     /// Shared scope: share between screens
