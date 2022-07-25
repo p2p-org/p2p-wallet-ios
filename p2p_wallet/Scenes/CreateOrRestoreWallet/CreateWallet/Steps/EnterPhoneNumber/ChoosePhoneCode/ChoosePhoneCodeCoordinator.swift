@@ -28,10 +28,12 @@ final class ChoosePhoneCodeCoordinator: Coordinator<Country?> {
         let vc = ChoosePhoneCodeViewController(viewModel: vm)
         vc.isModalInPresentation = true
         let nc = UINavigationController(rootViewController: vc)
+        nc.navigationBar.isTranslucent = false
+        nc.view.backgroundColor = vc.view.backgroundColor
         presentingViewController.present(nc, animated: true)
 
         return vm.didClose.withLatestFrom(vm.$data)
-            .map { $0.first(where: { $0.isSelected })?.country }
+            .map { $0.first(where: { $0.isSelected })?.value }
             .eraseToAnyPublisher()
     }
 }

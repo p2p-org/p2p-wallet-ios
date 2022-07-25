@@ -1,6 +1,7 @@
 import BECollectionView_Combine
 import BEPureLayout
 import Foundation
+import KeyAppUI
 import UIKit
 
 final class PhoneCodeCell: BaseCollectionViewCell, BECollectionViewCell {
@@ -19,26 +20,31 @@ final class PhoneCodeCell: BaseCollectionViewCell, BECollectionViewCell {
         super.commonInit()
         stackView.axis = .horizontal
         stackView.spacing = 12
+        stackView.alignment = .center
         stackView.addArrangedSubviews {
             UILabel(text: "<placeholder>", textSize: 28, weight: .bold)
                 .bind(flagEmojiLabel)
                 .frame(width: 28, height: 32)
             BEVStack(spacing: 4) {
-                UILabel(text: "<placeholder>", textSize: 16)
+                UILabel(text: "<placeholder>", textSize: 16, numberOfLines: 2)
                     .bind(countryNameLabel)
                 UILabel(text: "<placeholder>", textSize: 12, textColor: .textSecondary)
                     .bind(phoneCodeLabel)
             }
-            UIImageView(width: 14.3, height: 14.19, image: .checkMark, tintColor: .h5887ff)
+            UIImageView(
+                width: 14.3,
+                height: 14.19,
+                image: Asset.MaterialIcon.checkmark.image.withRenderingMode(.alwaysOriginal)
+            )
                 .bind(checkMark)
         }
     }
 
     func setUp(with item: AnyHashable?) {
         guard let item = item as? SelectableCountry else { return }
-        flagEmojiLabel.text = item.country.emoji
-        countryNameLabel.text = item.country.name
-        phoneCodeLabel.text = item.country.dialCode
+        flagEmojiLabel.text = item.value.emoji
+        countryNameLabel.text = item.value.name
+        phoneCodeLabel.text = item.value.dialCode
         checkMark.isHidden = !item.isSelected
     }
 }
