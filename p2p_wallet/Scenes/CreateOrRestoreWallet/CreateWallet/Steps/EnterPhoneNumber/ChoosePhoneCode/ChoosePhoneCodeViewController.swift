@@ -36,7 +36,11 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                         index: 0,
                         layout: .init(
                             cellType: PhoneCodeCell.self,
-                            numberOfLoadingCells: 2
+                            numberOfLoadingCells: 2,
+                            separator: .init(
+                                viewClass: PhoneCodeCellSeparatorView.self,
+                                heightDimension: .absolute(1)
+                            )
                         ),
                         viewModel: viewModel
                     ),
@@ -56,18 +60,20 @@ final class ChoosePhoneCodeViewController: BaseViewController {
 }
 
 extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
-    func beCollectionView(collectionView _: BECollectionViewBase, didSelect item: AnyHashable) {
+    func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let selectedCountry = item as? SelectableCountry, !selectedCountry.isSelected else { return }
-        viewModel.batchUpdate { countries in
-            var countries = countries
-            for i in 0 ..< countries.count {
-                if countries[i].country.code == selectedCountry.country.code {
-                    countries[i].isSelected = true
-                } else {
-                    countries[i].isSelected = false
+        collectionView.updateWithoutAnimations {
+            viewModel.batchUpdate { countries in
+                var countries = countries
+                for i in 0 ..< countries.count {
+                    if countries[i].country.code == selectedCountry.country.code {
+                        countries[i].isSelected = true
+                    } else {
+                        countries[i].isSelected = false
+                    }
                 }
+                return countries
             }
-            return countries
         }
     }
 }
