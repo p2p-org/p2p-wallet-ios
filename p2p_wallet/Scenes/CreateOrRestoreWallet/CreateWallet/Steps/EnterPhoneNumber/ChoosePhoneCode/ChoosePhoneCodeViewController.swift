@@ -5,6 +5,7 @@
 import BECollectionView_Combine
 import BEPureLayout
 import Foundation
+import KeyAppUI
 
 final class ChoosePhoneCodeViewController: BaseViewController {
     // MARK: - Properties
@@ -30,6 +31,15 @@ final class ChoosePhoneCodeViewController: BaseViewController {
 
     override func build() -> UIView {
         BEVStack {
+            BESearchBar(fixedHeight: 38, cornerRadius: 10)
+                .setup { searchBar in
+                    searchBar.textFieldBgColor = Asset.Colors.searchBarBgColor.color
+                    searchBar.cancelButton.setTitleColor(.h5887ff, for: .normal)
+                    searchBar.magnifyingIconImageView.image = Asset.MaterialIcon.magnifyingGlass.image
+                        .withRenderingMode(.alwaysOriginal)
+                    searchBar.magnifyingIconSize = 15.63
+                }
+                .padding(.init(top: 0, left: 16, bottom: 12, right: 16))
             BEStaticSectionsCollectionView(
                 sections: [
                     .init(
