@@ -38,6 +38,7 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                     searchBar.magnifyingIconImageView.image = Asset.MaterialIcon.magnifyingGlass.image
                         .withRenderingMode(.alwaysOriginal)
                     searchBar.magnifyingIconSize = 15.63
+                    searchBar.delegate = self
                 }
                 .padding(.init(top: 0, left: 16, bottom: 12, right: 16))
             BEStaticSectionsCollectionView(
@@ -76,7 +77,7 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
             viewModel.batchUpdate { countries in
                 var countries = countries
                 for i in 0 ..< countries.count {
-                    if countries[i].country.code == selectedCountry.country.code {
+                    if countries[i].value.code == selectedCountry.value.code {
                         countries[i].isSelected = true
                     } else {
                         countries[i].isSelected = false
@@ -86,4 +87,16 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
             }
         }
     }
+}
+
+extension ChoosePhoneCodeViewController: BESearchBarDelegate {
+    func beSearchBar(_: BESearchBar, searchWithKeyword keyword: String) {
+        viewModel.keyword = keyword
+    }
+
+    func beSearchBarDidBeginSearching(_: BESearchBar) {}
+
+    func beSearchBarDidEndSearching(_: BESearchBar) {}
+
+    func beSearchBarDidCancelSearching(_: BESearchBar) {}
 }

@@ -42,9 +42,9 @@ final class PhoneCodeCell: BaseCollectionViewCell, BECollectionViewCell {
 
     func setUp(with item: AnyHashable?) {
         guard let item = item as? SelectableCountry else { return }
-        flagEmojiLabel.text = item.country.emoji
-        countryNameLabel.text = item.country.name
-        phoneCodeLabel.text = item.country.dialCode
+        flagEmojiLabel.text = item.value.emoji
+        countryNameLabel.text = item.value.name
+        phoneCodeLabel.text = item.value.dialCode
         checkMark.isHidden = !item.isSelected
     }
 }
