@@ -37,6 +37,7 @@ extension WalletDetail {
         init(viewModel: WalletDetailViewModelType) {
             self.viewModel = viewModel
             super.init()
+            hidesBottomBarWhenPushed = true
         }
 
         // MARK: - Methods
@@ -46,7 +47,7 @@ extension WalletDetail {
 
             #if DEBUG
                 let rightButton = UIBarButtonItem(
-                    title: "Settings",
+                    title: L10n.settings,
                     style: .plain,
                     target: self,
                     action: #selector(showWalletSettings)
@@ -117,7 +118,7 @@ extension WalletDetail {
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
                 vc.delegate = self
-                present(vc, animated: true, completion: nil)
+                present(vc, animated: true)
             case let .send(wallet):
                 let vm = SendToken.ViewModel(
                     walletPubkey: wallet.pubkey,
@@ -131,7 +132,7 @@ extension WalletDetail {
                     )
                     coordinator?.doneHandler = processingTransactionDoneHandler
                 }
-                coordinator?.start()
+                coordinator?.start(hidesBottomBarWhenPushed: true)
             case let .receive(pubkey):
                 if let solanaPubkey = try? PublicKey(string: viewModel.walletsRepository.nativeWallet?.pubkey) {
                     let tokenWallet = viewModel.walletsRepository.getWallets().first(where: { $0.pubkey == pubkey })

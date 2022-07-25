@@ -30,17 +30,6 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
 
     lazy var errorLabel = UILabel(textColor: .alert, numberOfLines: 0, textAlignment: .center)
 
-    lazy var tabBar: TabBar = {
-        let tabBar = TabBar(cornerRadius: 20, contentInset: .init(x: 20, y: 10))
-        tabBar.backgroundColor = .h2f2f2f
-        tabBar.stackView.addArrangedSubviews([
-            pasteButton,
-            UIView.spacer,
-            nextButton,
-        ])
-        return tabBar
-    }()
-
     lazy var nextButton = WLButton(
         backgroundColor: .h5887ff,
         cornerRadius: 12,
@@ -95,16 +84,10 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
                 .padding(.init(x: 20, y: 0))
         }
 
-        // tabBar
-        view.addSubview(tabBar)
-        tabBar.autoPinEdge(toSuperviewEdge: .leading)
-        tabBar.autoPinEdge(toSuperviewEdge: .trailing)
-        tabBar.autoPinBottomToSuperViewAvoidKeyboard()
-
         view.addSubview(descriptionLabel)
         descriptionLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         descriptionLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-        descriptionLabel.autoPinEdge(.bottom, to: .bottom, of: tabBar, withOffset: -20)
+        retryButton.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
 
         view.addSubview(retryButton)
         retryButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
@@ -146,11 +129,6 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         errorDriver
             .map { $0 == nil }
             .drive(descriptionLabel.rx.isHidden)
-            .disposed(by: disposeBag)
-
-        errorDriver
-            .map { $0 != nil }
-            .drive(tabBar.rx.isHidden)
             .disposed(by: disposeBag)
     }
 
