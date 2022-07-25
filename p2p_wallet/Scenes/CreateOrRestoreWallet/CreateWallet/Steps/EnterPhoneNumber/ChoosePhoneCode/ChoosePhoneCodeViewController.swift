@@ -47,7 +47,6 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                         index: 0,
                         layout: .init(
                             cellType: PhoneCodeCell.self,
-                            numberOfLoadingCells: 2,
                             separator: .init(
                                 viewClass: PhoneCodeCellSeparatorView.self,
                                 heightDimension: .absolute(1)
