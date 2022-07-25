@@ -1,6 +1,7 @@
 import BECollectionView_Combine
 import BEPureLayout
 import Foundation
+import KeyAppUI
 import UIKit
 
 final class PhoneCodeCell: BaseCollectionViewCell, BECollectionViewCell {
@@ -30,7 +31,11 @@ final class PhoneCodeCell: BaseCollectionViewCell, BECollectionViewCell {
                 UILabel(text: "<placeholder>", textSize: 12, textColor: .textSecondary)
                     .bind(phoneCodeLabel)
             }
-            UIImageView(width: 14.3, height: 14.19, image: .checkMark, tintColor: .h5887ff)
+            UIImageView(
+                width: 14.3,
+                height: 14.19,
+                image: Asset.MaterialIcon.checkmark.image.withRenderingMode(.alwaysOriginal)
+            )
                 .bind(checkMark)
         }
     }
