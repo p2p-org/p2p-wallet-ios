@@ -30,7 +30,7 @@ extension Home {
         }
 
         override func build() -> UIView {
-            BESafeArea {
+            BESafeArea(bottom: false) {
                 BEVStack {
                     // Indicator
                     WLStatusIndicatorView(forAutoLayout: ()).setup { view in
@@ -123,7 +123,8 @@ extension Home {
                                 collectionView?.collectionView.setContentOffset(.init(x: 0, y: -190), animated: true)
                             })
                             .disposed(by: disposeBag)
-                    }.padding(.init(only: .top, inset: 12))
+                    }
+                    .padding(.init(only: .top, inset: 12))
                 }
 
                 // Action bar

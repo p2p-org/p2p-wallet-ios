@@ -14,7 +14,7 @@ import SolanaSwift
 import UIKit
 
 extension Home {
-    class ViewController: BaseVC, TabBarNeededViewController {
+    class ViewController: BaseVC {
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
@@ -154,7 +154,7 @@ extension Home {
                     self?.popToThisViewControllerAndScrollToTop()
                     self?.sendCoordinator = nil
                 }
-                sendCoordinator?.start()
+                sendCoordinator?.start(hidesBottomBarWhenPushed: true)
 
                 analyticsManager.log(event: .mainScreenSendOpen)
                 analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
@@ -219,7 +219,7 @@ extension Home {
                     }
                 )
             case .feedback:
-                tabBar()?.moveToPage(10)
+                break
             case .backup:
                 let vm = Settings.Backup.ViewModel()
                 let vc = Settings.Backup.ViewController(viewModel: vm, dismissAfterBackup: true)
@@ -250,6 +250,8 @@ extension Home {
     }
 }
 
+// MARK: - UIViewControllerTransitioningDelegate
+
 extension Home.ViewController: UIViewControllerTransitioningDelegate {
     func animationController(
         forPresented _: UIViewController,
@@ -258,10 +260,6 @@ extension Home.ViewController: UIViewControllerTransitioningDelegate {
     ) -> UIViewControllerAnimatedTransitioning? {
         PresentMenuAnimator()
     }
-
-//    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//        DismissMenuAnimator()
-//    }
 
     func interactionControllerForPresentation(using _: UIViewControllerAnimatedTransitioning)
         -> UIViewControllerInteractiveTransitioning?
