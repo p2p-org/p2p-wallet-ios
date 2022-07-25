@@ -39,7 +39,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
                     self.overrideData(by: self.cachedResult)
                     return
                 }
-                let newData = self.cachedResult.filteredByKeyword(keyword: keyword)
+                let newData = self.cachedResult.filteredAndSorted(byKeyword: keyword)
                 self.overrideData(by: newData)
             }
             .store(in: &subscriptions)
@@ -55,6 +55,6 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         cachedResult = try await CountriesAPIImpl().fetchCountries()
             .map { .init(value: $0, isSelected: $0.code == initialSelectedCountry?.code) }
         return cachedResult
-            .filteredByKeyword(keyword: keyword)
+            .filteredAndSorted(byKeyword: keyword)
     }
 }
