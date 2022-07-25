@@ -13,8 +13,9 @@ extension Array where Element == SelectableCountry {
             let searchText = keyword.lowercased()
             countries = countries.filter { country in
                 country.value.name.lowercased().contains(searchText) ||
-                    country.value.code.contains(searchText) ||
-                    searchText.contains(country.value.emoji ?? "")
+                    country.value.code.lowercased().contains(searchText) ||
+                    searchText.contains(country.value.emoji ?? "") ||
+                    country.value.dialCode.contains(searchText)
             }
         }
         return countries

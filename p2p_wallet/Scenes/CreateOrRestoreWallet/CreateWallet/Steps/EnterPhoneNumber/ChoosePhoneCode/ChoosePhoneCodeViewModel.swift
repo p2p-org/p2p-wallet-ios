@@ -39,7 +39,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
                     self.overrideData(by: self.cachedResult)
                     return
                 }
-                let newData = self.data.filteredByKeyword(keyword: keyword)
+                let newData = self.cachedResult.filteredByKeyword(keyword: keyword)
                 self.overrideData(by: newData)
             }
             .store(in: &subscriptions)
