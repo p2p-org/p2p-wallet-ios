@@ -19,12 +19,13 @@ final class PhoneCodeCell: BaseCollectionViewCell, BECollectionViewCell {
         super.commonInit()
         stackView.axis = .horizontal
         stackView.spacing = 12
+        stackView.alignment = .center
         stackView.addArrangedSubviews {
             UILabel(text: "<placeholder>", textSize: 28, weight: .bold)
                 .bind(flagEmojiLabel)
                 .frame(width: 28, height: 32)
             BEVStack(spacing: 4) {
-                UILabel(text: "<placeholder>", textSize: 16)
+                UILabel(text: "<placeholder>", textSize: 16, numberOfLines: 2)
                     .bind(countryNameLabel)
                 UILabel(text: "<placeholder>", textSize: 12, textColor: .textSecondary)
                     .bind(phoneCodeLabel)

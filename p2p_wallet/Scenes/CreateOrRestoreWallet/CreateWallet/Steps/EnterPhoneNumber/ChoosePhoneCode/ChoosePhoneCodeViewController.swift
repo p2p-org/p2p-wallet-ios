@@ -36,8 +36,7 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                         index: 0,
                         layout: .init(
                             cellType: PhoneCodeCell.self,
-                            numberOfLoadingCells: 2,
-                            itemHeight: .absolute(68)
+                            numberOfLoadingCells: 2
                         ),
                         viewModel: viewModel
                     ),
