@@ -6,11 +6,10 @@
 //
 
 import Action
-import BECollectionView
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
-import LoggerService
+import KeyAppKitLogger
 import Resolver
 import Sentry
 import SolanaSwift
@@ -41,6 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IntercomStartingConfigurator().configure()
 
         setupNavigationAppearance()
+        setupTabBarAppearance()
 
         FirebaseApp.configure()
 
@@ -146,17 +146,39 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
     }
 
+    private func setupTabBarAppearance() {
+        let standardAppearance = UITabBarAppearance()
+        standardAppearance.backgroundColor = .clear
+        standardAppearance.backgroundEffect = UIBlurEffect(style: .regular)
+        standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .medium),
+            .foregroundColor: UIColor.h6f7d8d,
+        ]
+        standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .medium),
+            .foregroundColor: UIColor.h2b2b2b,
+        ]
+        standardAppearance.stackedItemPositioning = .automatic
+        standardAppearance.shadowImage = nil
+        standardAppearance.shadowColor = nil
+        UITabBar.appearance().standardAppearance = standardAppearance
+        UITabBar.appearance().tintColor = .h2b2b2b
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = standardAppearance
+        }
+    }
+
     func setupLoggers() {
         var loggers: [LogManagerLogger] = [
             SentryLogger(),
         ]
-        #if DEBUG
+        if Environment.current == .debug {
             loggers.append(LoggerSwiftLogger())
-        #endif
+        }
 
         SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
         FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
-        LoggerService.Logger.setLoggers(loggers as! [KeyAppKitLogger])
+        KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
     }
 
     private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {

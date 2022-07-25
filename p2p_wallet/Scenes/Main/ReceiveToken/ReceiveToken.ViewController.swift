@@ -31,6 +31,7 @@ extension ReceiveToken {
             } else {
                 navigationItem.title = L10n.receive
             }
+            hidesBottomBarWhenPushed = true
         }
 
         @objc func goBack() {
@@ -151,16 +152,6 @@ extension ReceiveToken {
                     }
                 }
             }
-        }
-
-        override func viewWillAppear(_ animated: Bool) {
-            super.viewWillAppear(animated)
-            tabBarController?.tabBar.isHidden = false
-        }
-
-        override func viewWillDisappear(_: Bool) { // As soon as vc disappears
-            super.viewWillDisappear(true)
-            tabBarController?.tabBar.isHidden = true
         }
 
         private func createQRHint() -> UILabel {

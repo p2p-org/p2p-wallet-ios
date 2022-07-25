@@ -11,6 +11,7 @@ import Resolver
 import SolanaSwift
 import UIKit
 
+@MainActor
 class AppCoordinator {
     // MARK: - Dependencies
 
@@ -54,9 +55,7 @@ class AppCoordinator {
 
     func reload() async {
         // show loading
-        await MainActor.run {
-            _ = window?.rootViewController?.view.showLoadingIndicatorView()
-        }
+        _ = window?.rootViewController?.view.showLoadingIndicatorView()
 
         // reload session
         ResolverScope.session.reset()
@@ -68,21 +67,15 @@ class AppCoordinator {
         // show scene
         if account == nil {
             showAuthenticationOnMainOnAppear = false
-            await MainActor.run {
-                navigateToCreateOrRestoreWallet()
-            }
+            navigateToCreateOrRestoreWallet()
         } else if storage.pinCode == nil ||
             !Defaults.didSetEnableBiometry ||
             !Defaults.didSetEnableNotifications
         {
             showAuthenticationOnMainOnAppear = false
-            await MainActor.run {
-                navigateToOnboarding()
-            }
+            navigateToOnboarding()
         } else {
-            await MainActor.run {
-                navigateToMain()
-            }
+            navigateToMain()
         }
     }
 
