@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NAME_SERVICE_ENDPOINT</key>
-	<string>$(NAME_SERVICE_ENDPOINT)</string>
-	<key>SENTRY_DSN</key>
-	<string>$(SENTRY_DSN)</string>
 	<key>AMPLITUDE_API_KEY</key>
 	<string>$(AMPLITUDE_API_KEY)</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -22,20 +18,31 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>553127941597-0p8uojdah9afr4ugfdqm47fvlskp3ejk.apps.googleusercontent.com</string>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CRYPTO_COMPARE_API_KEY</key>
 	<string>$(CRYPTO_COMPARE_API_KEY)</string>
-	<key>FEE_RELAYER_STAGING_ENDPOINT</key>
-	<string>$(FEE_RELAYER_STAGING_ENDPOINT)</string>
 	<key>FEE_RELAYER_ENDPOINT</key>
 	<string>$(FEE_RELAYER_ENDPOINT)</string>
+	<key>FEE_RELAYER_STAGING_ENDPOINT</key>
+	<string>$(FEE_RELAYER_STAGING_ENDPOINT)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
 	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
 	<key>MOONPAY_STAGING_API_KEY</key>
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
+	<key>NAME_SERVICE_ENDPOINT</key>
+	<string>$(NAME_SERVICE_ENDPOINT)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -59,6 +66,8 @@
 	<string>This is required for the app to send photos</string>
 	<key>RPCPOOL_API_KEY</key>
 	<string>$(RPCPOOL_API_KEY)</string>
+	<key>SENTRY_DSN</key>
+	<string>$(SENTRY_DSN)</string>
 	<key>TEST_ACCOUNT_SEED_PHRASE</key>
 	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
 	<key>TRANSAK_HOST_URL</key>
