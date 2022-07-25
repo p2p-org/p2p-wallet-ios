@@ -1,7 +1,6 @@
 import FeeRelayerSwift
 import Foundation
-import LoggerService
-import LoggerSwift
+import KeyAppKitLogger
 import Sentry
 import SolanaSwift
 
@@ -83,7 +82,7 @@ extension SentryLogger: FeeRelayerSwiftLogger {
     }
 }
 
-extension SentryLogger: KeyAppKitLogger {
+extension SentryLogger: KeyAppKitLoggerType {
     func log(event: String, data: String?, logLevel: KeyAppKitLoggerLogLevel) {
         var newLogLevel: LogLevel = .info
         switch logLevel {
@@ -109,9 +108,9 @@ class LoggerSwiftLogger: LogManagerLogger {
     var supportedLogLevels: [LogLevel] = [.error, .info, .request, .response, .event, .warning, .debug]
 
     func log(event: String, logLevel: LogLevel, data: String?) {
-        queue.sync {
-            LoggerSwift.Logger.log(
-                event: loglevel(logLevel),
+        queue.async { [unowned self] in
+            KeyAppKitLogger.Logger.log(
+                event: self.loglevel(logLevel),
                 message: event + " " + (data ?? "")
             )
         }
@@ -119,20 +118,20 @@ class LoggerSwiftLogger: LogManagerLogger {
 
     // MARK: -
 
-    private func loglevel(_ logLevel: LogLevel) -> LoggerSwift.LoggerEvent {
+    private func loglevel(_ logLevel: LogLevel) -> String {
         switch logLevel {
         case .info:
-            return LoggerEvent.info
+            return KeyAppKitLoggerLogLevel.info.rawValue
         case .error:
-            return LoggerEvent.error
+            return KeyAppKitLoggerLogLevel.error.rawValue
         case .request, .response:
-            return LoggerEvent.info
+            return KeyAppKitLoggerLogLevel.info.rawValue
         case .event:
-            return LoggerEvent.info
+            return KeyAppKitLoggerLogLevel.info.rawValue
         case .warning:
-            return LoggerEvent.warning
+            return KeyAppKitLoggerLogLevel.warning.rawValue
         case .debug:
-            return LoggerEvent.debug
+            return KeyAppKitLoggerLogLevel.debug.rawValue
         }
     }
 }
@@ -177,7 +176,7 @@ extension LoggerSwiftLogger: FeeRelayerSwiftLogger {
     }
 }
 
-extension LoggerSwiftLogger: KeyAppKitLogger {
+extension LoggerSwiftLogger: KeyAppKitLoggerType {
     func log(event: String, data: String?, logLevel: KeyAppKitLoggerLogLevel) {
         var newLogLevel: LogLevel = .info
         switch logLevel {

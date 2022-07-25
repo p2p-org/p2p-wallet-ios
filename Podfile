@@ -4,12 +4,18 @@ platform :ios, '13.0'
 inhibit_all_warnings!
 
 def key_app_kit
-  pod 'TransactionParser', :path => 'KeyAppKit'
-  pod 'NameService', :path => 'KeyAppKit'
-  pod 'AnalyticsManager', :path => 'KeyAppKit'
-  pod 'Cache', :path => 'KeyAppKit'
-  pod 'LoggerService', :path => 'KeyAppKit'
-  pod 'SolanaPricesAPIs', :path => 'KeyAppKit'
+  $keyAppKitGit = 'git@github.com:p2p-org/key-app-kit-swift.git'
+  $keyAppKitBranch = 'master'
+
+  pod 'TransactionParser', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'NameService', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'AnalyticsManager', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'Cache', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'KeyAppKitLogger', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'SolanaPricesAPIs', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'Onboarding', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'JSBridge', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+  pod 'CountriesAPI', :git => $keyAppKitGit, :branch => $keyAppKitBranch
 end
 
 target 'p2p_wallet' do
@@ -19,12 +25,14 @@ target 'p2p_wallet' do
   # development pods
   key_app_kit
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
-  pod 'SolanaSwift', :path => 'SolanaSwift'
-  pod 'BEPureLayout', :path => 'BEPureLayout'
-  pod 'BECollectionView', :path => 'BECollectionView'
-  pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
-  pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
-  pod 'RenVMSwift', :path => 'RenVMSwift'
+  pod 'SolanaSwift', :git => 'https://github.com/p2p-org/solana-swift.git', :branch => 'main'
+  pod 'BEPureLayout', :git => 'https://github.com/p2p-org/BEPureLayout.git', :branch => 'master'
+  pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
+  pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
+  pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
 
   # tools
   pod 'SwiftGen', '~> 6.0'
@@ -39,6 +47,7 @@ target 'p2p_wallet' do
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
+  pod 'CombineCocoa'
 
   # kits
   pod 'KeychainSwift', '~> 19.0'
@@ -47,6 +56,7 @@ target 'p2p_wallet' do
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
+  pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   pod 'Resolver'
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'
@@ -85,6 +95,12 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
+    
+    if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_INSTALL_OBJC_HEADER'] = 'No'
+        end
     end
   end
 end
