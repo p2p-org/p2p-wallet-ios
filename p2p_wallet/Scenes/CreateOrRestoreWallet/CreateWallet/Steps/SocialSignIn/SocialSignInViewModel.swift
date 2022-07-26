@@ -14,7 +14,9 @@ struct SocialSignInInput {
     let onSignInWithGoogle: PassthroughSubject<Void, Never> = .init()
 }
 
-struct SocialSignInOutput {}
+struct SocialSignInOutput {
+    let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
+}
 
 class SocialSignInViewModel: ViewModelType {
     private(set) var input: SocialSignInInput = .init()
@@ -48,8 +50,12 @@ class SocialSignInViewModel: ViewModelType {
 
     func signIn(type: SocialType) {
         Task {
+            output.isLoading.send(true)
+            defer { output.isLoading.send(false) }
+
             do {
                 // TODO: pass token id to state machine
+                try await Task.sleep(nanoseconds: 1_000_000_000)
                 try await authService.auth(with: .social(type))
                 try await createWalletViewModel.onboardingStateMachine.accept(
                     event: .signIn(tokenID: "", authProvider: .apple)
