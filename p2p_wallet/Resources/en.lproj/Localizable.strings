@@ -817,3 +817,8 @@ Reset the PIN or wait for %@.";
 "You can’t send less than %@" = "You can’t send less than %@";
 "Refresh page" = "Refresh page";
 "Country code" = "Country code";
+"Protecting the funds" = "Protecting the funds";
+"We use multi-factor authentication. You can easily regain access to the wallet using social accounts" = "We use multi-factor authentication. You can easily regain access to the wallet using social accounts";
+"By continuing, you agree to Key App’s" = "By continuing, you agree to Key App’s";
+"Sign in with Apple" = "Sign in with Apple";
+"Sign in with Google" = "Sign in with Google";
