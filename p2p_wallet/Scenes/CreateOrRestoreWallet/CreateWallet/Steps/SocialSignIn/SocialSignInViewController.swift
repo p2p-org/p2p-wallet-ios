@@ -4,12 +4,13 @@
 
 import AuthenticationServices
 import BEPureLayout
+import Combine
 import Foundation
 import KeyAppUI
 
 class SocialSignInViewController: BaseViewController {
     private let viewModel: SocialSignInViewModel
-    override var preferredNavigationBarStype: NavigationBarStyle { .normal(translucent: false) }
+    var subscriptions = [AnyCancellable]()
 
     init(viewModel: SocialSignInViewModel) {
         self.viewModel = viewModel
@@ -18,6 +19,13 @@ class SocialSignInViewController: BaseViewController {
 
     override func setUp() {
         super.setUp()
+
+        viewModel.output
+            .isLoading
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                isLoading ? self?.showIndetermineHud() : self?.hideHud()
+            }.store(in: &subscriptions)
 
         navigationItem.title = L10n.createANewWallet
 
