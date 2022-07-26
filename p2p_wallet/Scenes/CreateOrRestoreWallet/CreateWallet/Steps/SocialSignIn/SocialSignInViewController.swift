@@ -9,7 +9,7 @@ import Foundation
 import KeyAppUI
 
 class SocialSignInViewController: BaseViewController {
-    private let viewModel: SocialSignInViewModel
+    let viewModel: SocialSignInViewModel
     var subscriptions = [AnyCancellable]()
 
     init(viewModel: SocialSignInViewModel) {

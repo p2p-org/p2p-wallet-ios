@@ -48,6 +48,9 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     private func navigate(viewModel: CreateWalletViewModel) {
         // Handler final states
         switch viewModel.onboardingStateMachine.currentState {
+        case .socialSignIn:
+            coordinate(to: SocialSignInCoordinator(parent: navigationController!, createWalletViewModel: viewModel))
+            return
         case .finishWithoutResult:
             navigationController?.dismiss(animated: true)
             return
@@ -63,8 +66,6 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     private func buildViewController(viewModel: CreateWalletViewModel) -> UIViewController {
         let state = viewModel.onboardingStateMachine.currentState
         switch state {
-        case .socialSignIn:
-            return SocialSignInViewController(viewModel: .init(createWalletViewModel: viewModel))
         case .socialSignInUnhandleableError:
             return UIViewController()
         case let .enterPhoneNumber(solPrivateKey, ethPublicKey, deviceShare):
