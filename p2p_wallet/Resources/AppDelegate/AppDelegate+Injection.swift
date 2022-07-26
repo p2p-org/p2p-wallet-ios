@@ -133,6 +133,13 @@ extension Resolver: ResolverRegistering {
         // QrCodeImageRender
         register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
+
+        // Navigation provider
+        register { StartOnboardingNavigationProviderImpl() }
+            .implements(StartOnboardingNavigationProvider.self)
+
+        register { OnboardingServiceImpl() }
+            .implements(OnboardingService.self)
     }
 
     /// Session scope: Live when user is authenticated

@@ -3,26 +3,31 @@
 // found in the LICENSE file.
 
 import Combine
-import Foundation
 import Onboarding
+import UIKit
 
 final class CreateWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
-    private(set) var navigationController: UINavigationController?
+    var navigationController: UINavigationController?
+
+    private var subject = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
+
+    init(navigationController: UINavigationController? = nil) { // Fix navigation
+        self.navigationController = navigationController
+    }
 
     // MARK: - Methods
 
     override func start() -> AnyPublisher<Void, Never> {
-        guard navigationController == nil else {
-            return Empty()
-                .eraseToAnyPublisher()
-        }
-
         // Create root view controller
         let viewModel = CreateWalletViewModel()
         let viewController = buildViewController(viewModel: viewModel)
-        navigationController = UINavigationController(rootViewController: viewController)
+        if navigationController == nil {
+            navigationController = UINavigationController(rootViewController: viewController)
+        } else {
+            navigationController?.pushViewController(viewController, animated: true)
+        }
         navigationController?.modalPresentationStyle = .fullScreen
 
         viewModel.onboardingStateMachine
@@ -32,7 +37,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             .sink { [weak self, unowned viewModel] _ in self?.navigate(viewModel: viewModel) }
             .store(in: &subscriptions)
 
-        return Empty()
+        return subject
             .eraseToAnyPublisher()
     }
 
