@@ -98,6 +98,11 @@ extension SendToken {
                 let vc = ConfirmViewController(viewModel: viewModel)
                 navigationController?.pushViewController(vc, animated: true)
             case let .processTransaction(transaction):
+                navigationController?.popToViewController(
+                    ofClass: ChooseTokenAndAmount.ViewController.self,
+                    animated: false
+                )
+
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)
                 vc.doneHandler = { [weak self] in
