@@ -6,7 +6,7 @@ import Combine
 import Foundation
 import Onboarding
 
-final class CreateWalletCoordinator: Coordinator<Void> {
+final class RestoreWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
     let tKeyFacade: TKeyJSFacade
@@ -27,12 +27,12 @@ final class CreateWalletCoordinator: Coordinator<Void> {
         }
 
         // Create root view controller
-        let viewModel = CreateWalletViewModel(tKeyFacade: nil)
+        let viewModel = RestoreWalletViewModel(tKeyFacade: tKeyFacade)
         let viewController = buildViewController(viewModel: viewModel)
         navigationController = UINavigationController(rootViewController: viewController)
         navigationController?.modalPresentationStyle = .fullScreen
 
-        viewModel.onboardingStateMachine
+        viewModel.stateMachine
             .stateStream
             .dropFirst()
             .receive(on: RunLoop.main)
@@ -45,37 +45,19 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     // MARK: Navigation
 
-    private func navigate(viewModel: CreateWalletViewModel) {
-        // Handler final states
-        switch viewModel.onboardingStateMachine.currentState {
-        case .finishWithoutResult:
-            navigationController?.dismiss(animated: true)
-            return
-        default:
-            break
-        }
-
+    private func navigate(viewModel: RestoreWalletViewModel) {
         guard let navigationController = navigationController else { return }
         let vc = buildViewController(viewModel: viewModel)
         navigationController.setViewControllers([vc], animated: true)
     }
 
-    private func buildViewController(viewModel: CreateWalletViewModel) -> UIViewController {
-        let state = viewModel.onboardingStateMachine.currentState
+    private func buildViewController(viewModel: RestoreWalletViewModel) -> UIViewController {
+        let state = viewModel.stateMachine.currentState
         switch state {
-        case .socialSignIn:
-            return SocialSignInViewController(viewModel: .init(createWalletViewModel: viewModel))
-        case .socialSignInUnhandleableError:
-            return UIViewController()
-        case let .enterPhoneNumber(solPrivateKey, ethPublicKey, deviceShare):
-            UserDefaults.standard.set(deviceShare, forKey: "deviceShare")
-            return EnterPhoneNumberViewController(sol: solPrivateKey, eth: ethPublicKey, deviceShare: deviceShare)
-        case let .verifyPhoneNumber(solPrivateKey, ethPublicKey, deviceShare, phoneNumber):
-            return UIViewController()
-        case let .enterPincode(solPrivateKey, ethPublicKey, deviceShare, phoneNumberShare: phoneNumberShare):
-            return UIViewController()
-        default:
-            return UIViewController()
+        case .signIn:
+            return RestoreFlowsViewController(viewModel: viewModel)
+        case let .restoredData(solPrivateKey: solPrivateKey, ethPublicKey: ethPublicKey):
+            return RestoreResultViewController(sol: solPrivateKey, eth: ethPublicKey)
         }
     }
 }
