@@ -15,7 +15,7 @@ extension SocialType {
     func authObject() -> SocialService? {
         switch self {
         case .apple:
-            return nil
+            return AppleSocialService()
         case .google:
             return GoogleSocialService(
                 clientId: Environment.current == .release
