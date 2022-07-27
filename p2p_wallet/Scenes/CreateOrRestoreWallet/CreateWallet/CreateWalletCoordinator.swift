@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import Combine
+import CountriesAPI
+import Foundation
 import Onboarding
 import UIKit
 
@@ -66,18 +68,36 @@ final class CreateWalletCoordinator: Coordinator<Void> {
         let state = viewModel.onboardingStateMachine.currentState
         switch state {
         case .socialSignIn:
-            return SocialSignInViewController(viewModel: .init(createWalletViewModel: viewModel))
-        case .socialSignInUnhandleableError:
-            return UIViewController()
+            let vc = SocialSignInViewController(viewModel: .init(createWalletViewModel: viewModel))
+            vc.viewModel.output.onInfo.sink { [weak self] in self?.showInfo() }.store(in: &subscriptions)
+            return vc
         case let .enterPhoneNumber(solPrivateKey, ethPublicKey, deviceShare):
             UserDefaults.standard.set(deviceShare, forKey: "deviceShare")
-            return EnterPhoneNumberViewController(sol: solPrivateKey, eth: ethPublicKey, deviceShare: deviceShare)
-        case let .verifyPhoneNumber(solPrivateKey, ethPublicKey, deviceShare, phoneNumber):
-            return UIViewController()
-        case let .enterPincode(solPrivateKey, ethPublicKey, deviceShare, phoneNumberShare: phoneNumberShare):
-            return UIViewController()
+
+            let vc = EnterPhoneNumberViewController(sol: solPrivateKey, eth: ethPublicKey, deviceShare: deviceShare)
+            vc.onFlagSelection.sinkAsync { [weak self, weak vc] in
+                guard let result = try await self?.selectCountry() else { return }
+                vc?.currentFlag.send(result)
+            }.store(in: &subscriptions)
+            return vc
         default:
             return UIViewController()
         }
+    }
+
+    public func showInfo() {
+        let vc = WLMarkdownVC(
+            title: L10n.termsOfUse.uppercaseFirst,
+            bundledMarkdownTxtFileName: "Terms_of_service"
+        )
+        navigationController?.present(vc, animated: true)
+    }
+
+    public func selectCountry() async throws -> Country? {
+        let coordinator = ChoosePhoneCodeCoordinator(
+            selectedCountry: nil,
+            presentingViewController: navigationController!
+        )
+        return try await coordinator.start().async()
     }
 }

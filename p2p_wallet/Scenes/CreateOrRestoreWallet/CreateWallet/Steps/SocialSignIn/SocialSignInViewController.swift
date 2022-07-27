@@ -9,7 +9,7 @@ import Foundation
 import KeyAppUI
 
 class SocialSignInViewController: BaseViewController {
-    private let viewModel: SocialSignInViewModel
+    let viewModel: SocialSignInViewModel
     var subscriptions = [AnyCancellable]()
 
     init(viewModel: SocialSignInViewModel) {
@@ -45,6 +45,7 @@ class SocialSignInViewController: BaseViewController {
 
         // Right button
         let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
         infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
         infoButton.contentMode = .scaleAspectFill
         infoButton.tintColor = Asset.Colors.night.color
@@ -112,6 +113,10 @@ class SocialSignInViewController: BaseViewController {
 
     @objc func onBack() {
         viewModel.input.onBack.send()
+    }
+
+    @objc func onInfo() {
+        viewModel.input.onInfo.send()
     }
 
     @objc func signInWithApple() {

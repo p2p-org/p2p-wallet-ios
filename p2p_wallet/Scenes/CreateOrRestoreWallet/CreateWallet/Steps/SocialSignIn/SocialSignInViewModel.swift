@@ -12,15 +12,18 @@ struct SocialSignInInput {
     let onInfo: PassthroughSubject<Void, Never> = .init()
     let onSignInWithApple: PassthroughSubject<Void, Never> = .init()
     let onSignInWithGoogle: PassthroughSubject<Void, Never> = .init()
+
+    fileprivate let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
 }
 
 struct SocialSignInOutput {
-    let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
+    let isLoading: AnyPublisher<Bool, Never>
+    let onInfo: AnyPublisher<Void, Never>
 }
 
-class SocialSignInViewModel: ViewModelType {
+class SocialSignInViewModel: NSObject, ViewModelType {
     private(set) var input: SocialSignInInput = .init()
-    private(set) var output: SocialSignInOutput = .init()
+    private(set) var output: SocialSignInOutput
 
     @Injected var authService: AuthService
 
@@ -29,6 +32,13 @@ class SocialSignInViewModel: ViewModelType {
 
     init(createWalletViewModel: CreateWalletViewModel) {
         self.createWalletViewModel = createWalletViewModel
+
+        output = .init(
+            isLoading: input.isLoading.eraseToAnyPublisher(),
+            onInfo: input.onTermAndCondition.eraseToAnyPublisher()
+        )
+
+        super.init()
 
         // Listen back event
         input.onBack.sink {
@@ -39,10 +49,12 @@ class SocialSignInViewModel: ViewModelType {
             }
         }.store(in: &subscriptions)
 
+        // Sign in with apple event
         input.onSignInWithApple.sink { [weak self] in
             self?.signIn(type: .apple)
         }.store(in: &subscriptions)
 
+        // Sign in with google event
         input.onSignInWithGoogle.sink { [weak self] in
             self?.signIn(type: .google)
         }.store(in: &subscriptions)
@@ -50,8 +62,8 @@ class SocialSignInViewModel: ViewModelType {
 
     func signIn(type: SocialType) {
         Task {
-            output.isLoading.send(true)
-            defer { output.isLoading.send(false) }
+            input.isLoading.send(true)
+            defer { input.isLoading.send(false) }
 
             do {
                 // TODO: pass token id to state machine
