@@ -33,7 +33,7 @@ final class StartCoordinator: Coordinator<Void> {
             nc.pushViewController(viewController, animated: true)
         }
 
-        viewModel.output.navigateAction.sink { [weak self] scene in
+        viewModel.navigation.action.sink { [weak self] scene in
             guard let self = self else { return }
             switch scene {
             case .openTerms:

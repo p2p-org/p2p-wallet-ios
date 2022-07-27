@@ -22,7 +22,7 @@ final class ContinueCoordinator: Coordinator<Void> {
 
         window.rootViewController = navigationController
 
-        viewModel.output.navigateAction.sink { [weak self] scene in
+        viewModel.navigation.action.sink { [weak self] scene in
             guard let self = self else { return }
             switch scene {
             case .continue:
