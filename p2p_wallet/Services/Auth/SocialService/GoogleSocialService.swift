@@ -35,8 +35,13 @@ final class GoogleSocialService: NSObject, SocialService {
                     guard let user = user else {
                         return continuation.resume(with: .failure(SocialServiceError.unknown))
                     }
+                    guard let tokenID = user.authentication.idToken else {
+                        return continuation.resume(with: .failure(SocialServiceError.tokenIDIsNil))
+                    }
+
                     continuation.resume(with: .success(SocialAuthResponse(
-                        accessToken: user.authentication.accessToken
+                        accessToken: user.authentication.accessToken,
+                        tokenID: tokenID
                     )))
                 }
             }

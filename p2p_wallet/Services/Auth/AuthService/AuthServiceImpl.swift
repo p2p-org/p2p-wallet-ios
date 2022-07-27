@@ -9,17 +9,10 @@ import Foundation
 import KeychainSwift
 
 final class AuthServiceImpl: AuthService {
-    func auth(with userCredentials: AuthUserCredentials) async throws {
-        switch userCredentials {
-        case .phone:
-            break
-        case let .social(type):
-            try await socialLogin(type: type)
-        }
+    func socialSignIn(_ type: SocialType) async throws -> SocialAuthResponse {
+        guard let service = type.authObject() else { throw SocialServiceError.invalidSocialType }
+        return try await service.auth()
     }
 
-    private func socialLogin(type: SocialType) async throws {
-        guard let service = type.authObject() else { throw SocialServiceError.invalidSocialType }
-        try await service.auth()
-    }
+    func phoneSignIn(_: String) async throws {}
 }
