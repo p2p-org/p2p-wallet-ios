@@ -6,32 +6,32 @@ import Combine
 import CountriesAPI
 import Foundation
 import Onboarding
+import UIKit
 
 final class CreateWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
-    let tKeyFacade: TKeyJSFacade
-
+    private let parentViewController: UIViewController
     private(set) var navigationController: UINavigationController?
 
-    init(tKeyFacade: TKeyJSFacade) {
+    let tKeyFacade: TKeyJSFacade?
+
+    private var subject = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
+
+    init(tKeyFacade: TKeyJSFacade?, navigationController: UINavigationController? = nil) {
         self.tKeyFacade = tKeyFacade
+        parentViewController = navigationController!
         super.init()
     }
 
     // MARK: - Methods
 
     override func start() -> AnyPublisher<Void, Never> {
-        guard navigationController == nil else {
-            return Empty()
-                .eraseToAnyPublisher()
-        }
-
         // Create root view controller
         let viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
         let viewController = buildViewController(viewModel: viewModel)
-        navigationController = UINavigationController(rootViewController: viewController)
-        navigationController?.modalPresentationStyle = .fullScreen
+        navigationController = navigationController ?? UINavigationController(rootViewController: viewController)
+        navigationController!.modalPresentationStyle = .fullScreen
 
         viewModel.onboardingStateMachine
             .stateStream
@@ -41,7 +41,9 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             .sink { [weak self, unowned viewModel] _ in self?.navigate(viewModel: viewModel) }
             .store(in: &subscriptions)
 
-        return Empty()
+        parentViewController.present(navigationController!, animated: true)
+
+        return subject
             .eraseToAnyPublisher()
     }
 
