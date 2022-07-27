@@ -20,7 +20,7 @@ final class AppleSocialService: NSObject, SocialService {
             let request = appleIDProvider.createRequest()
             let authorizationController = ASAuthorizationController(authorizationRequests: [request])
             authorizationController.delegate = self
-            request.requestedScopes = [.fullName, .email]
+            request.requestedScopes = [.email]
             authorizationController.performRequests()
         }
     }
