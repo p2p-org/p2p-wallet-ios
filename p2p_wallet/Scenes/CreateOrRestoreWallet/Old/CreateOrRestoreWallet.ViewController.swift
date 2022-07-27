@@ -114,72 +114,13 @@ extension CreateOrRestoreWallet {
             guard let scene = scene else { return }
             switch scene {
             case .createWallet:
-                // let vm = CreateWallet.ViewModel()
-                // let vc = CreateWallet.ExplanationVC(viewModel: vm)
-                // show(vc, sender: nil)
-
-                // TODO: Refactor
-                guard createWalletCoordinator == nil else { return }
-
-                Task {
-                    let webView = GlobalWebView.requestWebView()
-                    do {
-                        let tKeyFacade = TKeyJSFacade(wkWebView: webView)
-                        try await tKeyFacade.initialize()
-
-                        createWalletCoordinator = CreateWalletCoordinator(tKeyFacade: tKeyFacade)
-                        createWalletCoordinator?.start()
-                            .sink(receiveCompletion: { [weak self, weak createWalletCoordinator] completion in
-                                switch completion {
-                                case .finished:
-                                    guard let vc = createWalletCoordinator?.navigationController else {
-                                        return
-                                    }
-                                    self?.show(vc, sender: nil)
-                                case .failure:
-                                    break
-                                }
-                            }, receiveValue: { [weak self] _ in
-                                print("Finish")
-                                self?.createWalletCoordinator = nil
-                                webView.removeFromSuperview()
-                            })
-                            .store(in: &subscriptions)
-                    } catch {
-                        webView.removeFromSuperview()
-                    }
-                }
+                let vm = CreateWallet.ViewModel()
+                let vc = CreateWallet.ExplanationVC(viewModel: vm)
+                show(vc, sender: nil)
             case .restoreWallet:
-                guard restoreWalletCoordinator == nil else { return }
-
-                Task {
-                    let webView = GlobalWebView.requestWebView()
-                    do {
-                        let tKeyFacade = TKeyJSFacade(wkWebView: webView)
-                        try await tKeyFacade.initialize()
-
-                        restoreWalletCoordinator = RestoreWalletCoordinator(tKeyFacade: tKeyFacade)
-                        restoreWalletCoordinator?.start()
-                            .sink(receiveCompletion: { [weak self, weak restoreWalletCoordinator] completion in
-                                switch completion {
-                                case .finished:
-                                    guard let vc = restoreWalletCoordinator?.navigationController else {
-                                        return
-                                    }
-                                    self?.show(vc, sender: nil)
-                                case .failure:
-                                    break
-                                }
-                            }, receiveValue: { [weak self] _ in
-                                print("Finish")
-                                self?.createWalletCoordinator = nil
-                                webView.removeFromSuperview()
-                            })
-                            .store(in: &subscriptions)
-                    } catch {
-                        webView.removeFromSuperview()
-                    }
-                }
+                let vm = RestoreWallet.ViewModel()
+                let vc = RestoreWallet.ViewController(viewModel: vm)
+                show(vc, sender: nil)
             }
         }
 

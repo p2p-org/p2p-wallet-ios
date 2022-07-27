@@ -74,6 +74,9 @@ target 'p2p_wallet' do
   
   pod 'SwiftNotificationCenter'
   pod 'GoogleSignIn'
+
+  # Others
+  pod 'SwiftJWT'
   
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'

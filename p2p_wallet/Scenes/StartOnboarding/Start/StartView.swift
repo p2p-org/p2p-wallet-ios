@@ -47,17 +47,7 @@ extension StartView {
             }
             .styled()
             .padding(.top, 12)
-
-            VStack(spacing: 2) {
-                Text(L10n.byContinuingYouAgreeToKeyAppS)
-                    .styled(color: Asset.Colors.mountain, font: .label1)
-                Text(L10n.capitalizedTermsAndConditions)
-                    .styled(color: Asset.Colors.snow, font: .label1)
-                    .onTapGesture(perform: { [weak viewModel] in
-                        viewModel?.input.openTermsDidTap.send()
-                    })
-            }
-            .padding(.vertical, 24)
+            .padding(.bottom, 24)
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 10)

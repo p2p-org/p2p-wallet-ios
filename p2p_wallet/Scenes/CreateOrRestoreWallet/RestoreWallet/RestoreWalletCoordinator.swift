@@ -9,28 +9,35 @@ import Onboarding
 final class RestoreWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
-    let tKeyFacade: TKeyJSFacade
+    let parent: UIViewController
+    let webView = GlobalWebView.requestWebView()
+    lazy var tKeyFacade: TKeyJSFacade = .init(wkWebView: webView)
 
     private(set) var navigationController: UINavigationController?
 
-    init(tKeyFacade: TKeyJSFacade) {
-        self.tKeyFacade = tKeyFacade
+    init(parent: UIViewController) {
+        self.parent = parent
         super.init()
     }
 
     // MARK: - Methods
 
-    override func start() -> AnyPublisher<Void, Never> {
-        guard navigationController == nil else {
-            return Empty()
-                .eraseToAnyPublisher()
-        }
+    func initializeTkey() async throws {
+        try await tKeyFacade.initialize()
+        DispatchQueue.main.async { self.navigationController?.hideHud() }
+    }
 
+    override func start() -> AnyPublisher<Void, Never> {
         // Create root view controller
         let viewModel = RestoreWalletViewModel(tKeyFacade: tKeyFacade)
         let viewController = buildViewController(viewModel: viewModel)
         navigationController = UINavigationController(rootViewController: viewController)
         navigationController?.modalPresentationStyle = .fullScreen
+
+        Task {
+            DispatchQueue.main.async { self.navigationController?.showIndetermineHud() }
+            try await initializeTkey()
+        }
 
         viewModel.stateMachine
             .stateStream
@@ -38,6 +45,8 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
             .receive(on: RunLoop.main)
             .sink { [weak self, unowned viewModel] _ in self?.navigate(viewModel: viewModel) }
             .store(in: &subscriptions)
+
+        parent.present(navigationController!, animated: true)
 
         return Empty()
             .eraseToAnyPublisher()

@@ -152,7 +152,10 @@ extension SocialSignInViewController: ASAuthorizationControllerDelegate {
                     let state = try await viewModel
                         .createWalletViewModel
                         .onboardingStateMachine
-                        .accept(event: .signIn(tokenID: idTokenStr, authProvider: .apple))
+                        .accept(event: .signIn(
+                            tokenID: idTokenStr, authProvider: .apple,
+                            email: appleIDCredential.email ?? "?"
+                        ))
                     print(state as Any)
                 } catch {
                     print(error)

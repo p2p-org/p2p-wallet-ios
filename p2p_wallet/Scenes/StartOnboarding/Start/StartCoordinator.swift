@@ -39,10 +39,9 @@ final class StartCoordinator: Coordinator<Void> {
             case .openTerms:
                 self.openTerms(on: viewController)
             case .restoreWallet:
-                // TODO: - Add restoration handler
-                self.temproraryOpenContinueForTesting()
+                self.openRestoreWallet(vc: viewController)
             case .createWallet:
-                self.openCreateWallet(nc: viewController.navigationController)
+                self.openCreateWallet(vc: viewController)
             }
         }.store(in: &subscriptions)
 
@@ -57,8 +56,13 @@ final class StartCoordinator: Coordinator<Void> {
         vc.present(termsVC, animated: true)
     }
 
-    private func openCreateWallet(nc: UINavigationController?) {
-        coordinate(to: CreateWalletCoordinator(tKeyFacade: nil, navigationController: nc))
+    private func openCreateWallet(vc: UIViewController) {
+        coordinate(to: CreateWalletCoordinator(parent: vc))
+            .sink { _ in }.store(in: &subscriptions)
+    }
+
+    private func openRestoreWallet(vc: UIViewController) {
+        coordinate(to: RestoreWalletCoordinator(parent: vc))
             .sink { _ in }.store(in: &subscriptions)
     }
 

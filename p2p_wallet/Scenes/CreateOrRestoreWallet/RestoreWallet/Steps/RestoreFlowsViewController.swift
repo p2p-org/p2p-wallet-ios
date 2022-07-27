@@ -27,7 +27,7 @@ class RestoreFlowsViewController: BaseViewController {
     override func build() -> UIView {
         BEContainer {
             BECenter {
-                UILabel(text: "Device share: \(deviceShare)")
+                UILabel(text: "Device share: \(deviceShare)", numberOfLines: 4)
                 TextButton(title: "Sign in with device share", style: .primary, size: .medium)
                     .onTap { [weak self] in
                         self?.flow = .withDeviceShare
