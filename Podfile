@@ -5,7 +5,7 @@ inhibit_all_warnings!
 
 def key_app_kit
   $keyAppKitGit = 'git@github.com:p2p-org/key-app-kit-swift.git'
-  $keyAppKitBranch = 'master'
+  $keyAppKitBranch = 'develop'
 
   pod 'TransactionParser', :git => $keyAppKitGit, :branch => $keyAppKitBranch
   pod 'NameService', :git => $keyAppKitGit, :branch => $keyAppKitBranch
