@@ -111,10 +111,14 @@ class AppCoordinator: Coordinator<Void> {
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
         vc.completionHandler = { [weak self] in
-            Task {
-                let account = await self?.reloadData()
-                self?.navigate(account: account)
-            }
+            self?.warmup()
+        }
+    }
+
+    func warmup() {
+        Task {
+            let account = await self.reloadData()
+            self.navigate(account: account)
         }
     }
 
