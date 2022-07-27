@@ -9,19 +9,23 @@ import UIKit
 final class CreateWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
-    var navigationController: UINavigationController?
+    private(set) var navigationController: UINavigationController?
+
+    let tKeyFacade: TKeyJSFacade
 
     private var subject = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
 
-    init(navigationController: UINavigationController? = nil) { // Fix navigation
+    init(tKeyFacade: TKeyJSFacade, navigationController: UINavigationController? = nil) {
+        self.tKeyFacade = tKeyFacade
         self.navigationController = navigationController
+        super.init()
     }
 
     // MARK: - Methods
 
     override func start() -> AnyPublisher<Void, Never> {
         // Create root view controller
-        let viewModel = CreateWalletViewModel()
+        let viewModel = CreateWalletViewModel(tKeyFacade: nil)
         let viewController = buildViewController(viewModel: viewModel)
         if navigationController == nil {
             navigationController = UINavigationController(rootViewController: viewController)
@@ -44,6 +48,15 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     // MARK: Navigation
 
     private func navigate(viewModel: CreateWalletViewModel) {
+        // Handler final states
+        switch viewModel.onboardingStateMachine.currentState {
+        case .finishWithoutResult:
+            navigationController?.dismiss(animated: true)
+            return
+        default:
+            break
+        }
+
         guard let navigationController = navigationController else { return }
         let vc = buildViewController(viewModel: viewModel)
         navigationController.setViewControllers([vc], animated: true)
@@ -53,16 +66,17 @@ final class CreateWalletCoordinator: Coordinator<Void> {
         let state = viewModel.onboardingStateMachine.currentState
         switch state {
         case .socialSignIn:
-            return SocialSignInViewController(viewModel: viewModel)
+            return SocialSignInViewController(viewModel: .init(createWalletViewModel: viewModel))
         case .socialSignInUnhandleableError:
             return UIViewController()
         case let .enterPhoneNumber(solPrivateKey, ethPublicKey, deviceShare):
+            UserDefaults.standard.set(deviceShare, forKey: "deviceShare")
             return EnterPhoneNumberViewController(sol: solPrivateKey, eth: ethPublicKey, deviceShare: deviceShare)
         case let .verifyPhoneNumber(solPrivateKey, ethPublicKey, deviceShare, phoneNumber):
             return UIViewController()
         case let .enterPincode(solPrivateKey, ethPublicKey, deviceShare, phoneNumberShare: phoneNumberShare):
             return UIViewController()
-        case let .finish(solPrivateKey, ethPublicKey, deviceShare, phoneNumberShare, pincode):
+        default:
             return UIViewController()
         }
     }

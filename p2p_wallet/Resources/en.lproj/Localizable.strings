@@ -824,3 +824,8 @@ Reset the PIN or wait for %@.";
 "Let’s continue" = "Let’s continue";
 "You have a great start with %@. It’s only a phone number needed  to create a new wallet";
 "Starting screen" = "Starting screen";
+"Protecting the funds" = "Protecting the funds";
+"We use multi-factor authentication. You can easily regain access to the wallet using social accounts" = "We use multi-factor authentication. You can easily regain access to the wallet using social accounts";
+"By continuing, you agree to Key App’s" = "By continuing, you agree to Key App’s";
+"Sign in with Apple" = "Sign in with Apple";
+"Sign in with Google" = "Sign in with Google";
