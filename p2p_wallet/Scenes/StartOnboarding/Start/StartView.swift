@@ -39,19 +39,17 @@ extension StartView {
                 .styled()
                 .padding(.top, 12)
                 .onTapGesture(perform: viewModel.alreadyHaveAWalletPressed)
-            Group {
+            VStack(spacing: 2) {
                 Text(L10n.byContinuingYouAgreeToKeyAppS)
-                    .styled(color: Asset.Colors.mountain, font: .label1) +
-                    Text(L10n.capitalizedTermsAndConditions)
+                    .styled(color: Asset.Colors.mountain, font: .label1)
+                Text(L10n.capitalizedTermsAndConditions)
                     .styled(color: Asset.Colors.snow, font: .label1)
+                    .onTapGesture(perform: viewModel.termsPressed)
             }
-            .lineLimit(.none)
-            .multilineTextAlignment(.center)
-            .padding(.top, 24)
-            .padding(.bottom, 34)
-            .onTapGesture(perform: viewModel.termsPressed)
+            .padding(.vertical, 24)
         }
         .padding(.horizontal, 20)
+        .padding(.bottom, 10)
         .bottomActionsStyle()
     }
 }
@@ -59,9 +57,11 @@ extension StartView {
 // MARK: - Style Helpers
 
 private extension Text {
-    func styled(color: ColorAsset, font: UIFont.Style) -> Text {
+    func styled(color: ColorAsset, font: UIFont.Style) -> some View {
         foregroundColor(Color(color.color))
             .font(.system(size: UIFont.fontSize(of: font)))
+            .lineLimit(.none)
+            .multilineTextAlignment(.center)
     }
 }
 

@@ -40,10 +40,7 @@ final class StartCoordinator: Coordinator<Void> {
             case .restoreWallet: // TODO: - Add restoration handler
                 self.temproraryOpenContinueForTesting()
             case .createWallet:
-                self
-                    .coordinate(to: CreateWalletCoordinator(tKeyFacade: nil,
-                                                            navigationController: viewController.navigationController))
-                    .sink { _ in }.store(in: &self.subscriptions)
+                self.openCreateWallet(nc: viewController.navigationController)
             case .none:
                 break
             }
@@ -58,6 +55,11 @@ final class StartCoordinator: Coordinator<Void> {
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
         vc.present(termsVC, animated: true)
+    }
+
+    private func openCreateWallet(nc: UINavigationController?) {
+        coordinate(to: CreateWalletCoordinator(tKeyFacade: nil, navigationController: nc))
+            .sink { _ in }.store(in: &subscriptions)
     }
 
     private func temproraryOpenContinueForTesting() {
