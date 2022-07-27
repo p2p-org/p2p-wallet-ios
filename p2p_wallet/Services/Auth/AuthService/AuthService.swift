@@ -8,5 +8,6 @@
 import Foundation
 
 protocol AuthService {
-    func auth(with userCredentials: AuthUserCredentials) async throws
+    func socialSignIn(_ socialType: SocialType) async throws -> SocialAuthResponse
+    func phoneSignIn(_ phoneNumber: String) async throws
 }
