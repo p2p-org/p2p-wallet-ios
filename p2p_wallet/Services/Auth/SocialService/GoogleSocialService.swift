@@ -41,7 +41,8 @@ final class GoogleSocialService: NSObject, SocialService {
 
                     continuation.resume(with: .success(SocialAuthResponse(
                         accessToken: user.authentication.accessToken,
-                        tokenID: tokenID
+                        tokenID: tokenID,
+                        email: user.profile?.email ?? "?"
                     )))
                 }
             }
