@@ -46,7 +46,7 @@ extension RestoreWallet {
             patternView.autoPinEdgesToSuperviewEdges()
 
             // navigation bar
-            navigationItem.title = L10n.iAlreadyHaveAWallet.uppercaseFirst
+            navigationItem.title = L10n.iAlreadyHaveAWallet
 
             // content
             let stackView = UIStackView(axis: .vertical, spacing: 10, alignment: .fill, distribution: .fill) {
