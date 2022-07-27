@@ -28,13 +28,14 @@ final class CreateWalletCoordinator: Coordinator<Void> {
         }
 
         // Create root view controller
-        let viewModel = CreateWalletViewModel(tKeyFacade: nil)
+        let viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
         let viewController = buildViewController(viewModel: viewModel)
         navigationController = UINavigationController(rootViewController: viewController)
         navigationController?.modalPresentationStyle = .fullScreen
 
         viewModel.onboardingStateMachine
             .stateStream
+            .removeDuplicates()
             .dropFirst()
             .receive(on: RunLoop.main)
             .sink { [weak self, unowned viewModel] _ in self?.navigate(viewModel: viewModel) }

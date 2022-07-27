@@ -26,6 +26,7 @@ class SocialSignInViewModel: NSObject, ViewModelType {
     private(set) var output: SocialSignInOutput
 
     @Injected var authService: AuthService
+    @Injected var notificationService: NotificationService
 
     let createWalletViewModel: CreateWalletViewModel
     var subscriptions = [AnyCancellable]()
@@ -73,7 +74,9 @@ class SocialSignInViewModel: NSObject, ViewModelType {
                     event: .signIn(tokenID: signInResult.tokenID, authProvider: .apple)
                 )
             } catch let e {
-                print(e)
+                DispatchQueue.main.async {
+                    self.notificationService.showInAppNotification(.error(e))
+                }
             }
         }
     }
