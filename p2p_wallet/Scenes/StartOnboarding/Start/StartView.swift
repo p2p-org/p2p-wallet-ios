@@ -37,24 +37,25 @@ extension StartView {
                 style: .inverted,
                 size: .large,
                 trailing: UIImage.arrowForward
-            ) { [weak viewModel] in viewModel?.createWalletPressed() }
+            ) { [weak viewModel] in viewModel?.input.createWalletDidTap.send() }
                 .styled()
                 .padding(.top, 20)
 
             // Restore a wallet
             TextButtonView(title: L10n.iAlreadyHaveAWallet, style: .ghostLime, size: .large) { [weak viewModel] in
-                viewModel?.alreadyHaveAWalletPressed()
+                viewModel?.input.restoreWalletDidTap.send()
             }
             .styled()
             .padding(.top, 12)
-            .onTapGesture(perform: viewModel.alreadyHaveAWalletPressed)
 
             VStack(spacing: 2) {
                 Text(L10n.byContinuingYouAgreeToKeyAppS)
                     .styled(color: Asset.Colors.mountain, font: .label1)
                 Text(L10n.capitalizedTermsAndConditions)
                     .styled(color: Asset.Colors.snow, font: .label1)
-                    .onTapGesture(perform: viewModel.termsPressed)
+                    .onTapGesture(perform: { [weak viewModel] in
+                        viewModel?.input.openTermsDidTap.send()
+                    })
             }
             .padding(.vertical, 24)
         }

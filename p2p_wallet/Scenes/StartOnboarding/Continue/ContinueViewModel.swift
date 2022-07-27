@@ -2,25 +2,41 @@ import Combine
 import SwiftUI
 import UIKit
 
-enum ContinueViewModelOut {
-    case `continue`
-    case start
+extension ContinueViewModel: ViewModelType {
+    struct Input {
+        let continueDidTap = PassthroughSubject<Void, Never>()
+        let startDidTap = PassthroughSubject<Void, Never>()
+    }
+
+    enum NavigatableScene {
+        case `continue`
+        case start
+    }
+
+    struct Output {
+        let navigateAction: AnyPublisher<NavigatableScene, Never>
+    }
 }
 
 final class ContinueViewModel: BaseViewModel {
     @Published var data: StartPageData = .init(
-        image: .tokens,
+        image: .safe,
         title: L10n.letSContinue,
         subtitle: L10n.YouHaveAGreatStartWith.itSOnlyAPhoneNumberNeededToCreateANewWallet("test@test.ru")
     )
 
-    @Published var result: ContinueViewModelOut = .continue
+    let input: Input
+    let output: Output
 
-    func continuePressed() {
-        result = .continue
-    }
+    override init() {
+        input = Input()
 
-    func startPressed() {
-        result = .start
+        let action = Publishers.Merge(
+            input.continueDidTap.map { NavigatableScene.continue },
+            input.startDidTap.map { NavigatableScene.start }
+        )
+        output = Output(navigateAction: action.eraseToAnyPublisher())
+
+        super.init()
     }
 }

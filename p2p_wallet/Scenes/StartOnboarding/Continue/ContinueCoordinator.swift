@@ -16,13 +16,15 @@ final class ContinueCoordinator: Coordinator<Void> {
         let viewModel = ContinueViewModel()
         let view = ContinueView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)
+
         let navigationController = UINavigationController(rootViewController: viewController)
+        style(nc: navigationController)
 
         window.rootViewController = navigationController
 
-        viewModel.$result.sink { [weak self] value in
+        viewModel.output.navigateAction.sink { [weak self] scene in
             guard let self = self else { return }
-            switch value {
+            switch scene {
             case .continue:
                 break
             case .start:
@@ -37,5 +39,12 @@ final class ContinueCoordinator: Coordinator<Void> {
         coordinate(to: StartCoordinator(navigation: .push(nc: navigationController)))
             .sink(receiveValue: { _ in })
             .store(in: &subscriptions)
+    }
+
+    private func style(nc: UINavigationController) {
+        nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        nc.navigationBar.shadowImage = UIImage()
+        nc.navigationBar.isTranslucent = true
+        nc.navigationBar.tintColor = .h5887ff
     }
 }
