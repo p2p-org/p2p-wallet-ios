@@ -75,7 +75,6 @@ final class StartCoordinator: Coordinator<Void> {
         nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
         nc.navigationBar.shadowImage = UIImage()
         nc.navigationBar.isTranslucent = true
-        nc.navigationBar.tintColor = .h5887ff
     }
 }
 
