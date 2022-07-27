@@ -40,7 +40,9 @@ final class StartCoordinator: Coordinator<Void> {
             case .restoreWallet: // TODO: - Add restoration handler
                 self.temproraryOpenContinueForTesting()
             case .createWallet:
-                self.coordinate(to: CreateWalletCoordinator(navigationController: viewController.navigationController))
+                self
+                    .coordinate(to: CreateWalletCoordinator(tKeyFacade: nil,
+                                                            navigationController: viewController.navigationController))
                     .sink { _ in }.store(in: &self.subscriptions)
             case .none:
                 break
