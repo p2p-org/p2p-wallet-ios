@@ -33,9 +33,24 @@ extension AppleSocialService: ASAuthorizationControllerDelegate {
         controller _: ASAuthorizationController,
         didCompleteWithAuthorization authorization: ASAuthorization
     ) {
-        guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
+        guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+            authContinuation?.resume(with: .failure(SocialServiceError.unknown))
+            return
+        }
+        guard
+            let tokenIDRaw = appleIDCredential.identityToken,
+            let tokenID = String(data: tokenIDRaw, encoding: .utf8)
+        else {
+            authContinuation?.resume(with: .failure(SocialServiceError.tokenIDIsNil))
+            return
+        }
 
-        authContinuation?.resume(with: .success(SocialAuthResponse(accessToken: appleIDCredential.user)))
+        authContinuation?.resume(with: .success(
+            SocialAuthResponse(
+                accessToken: appleIDCredential.user,
+                tokenID: tokenID
+            )
+        ))
         authContinuation = nil
     }
 
