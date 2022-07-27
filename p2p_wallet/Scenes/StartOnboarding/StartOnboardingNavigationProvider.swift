@@ -11,9 +11,9 @@ final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProv
     @MainActor func startCoordinator(for window: UIWindow) -> Coordinator<Void> {
         switch service.lastState {
         case .enterPhoneNumber, .verifyPhoneNumber:
-            return StartCoordinator(navigation: .root(window: window))
-        case .enterPincode, .socialSignIn, .socialSignInUnhandleableError, .finish:
             return ContinueCoordinator(window: window)
+        case .enterPincode, .socialSignIn, .socialSignInUnhandleableError, .finish, .finishWithoutResult:
+            return StartCoordinator(navigation: .root(window: window))
         case .none:
             return StartCoordinator(navigation: .root(window: window))
         }

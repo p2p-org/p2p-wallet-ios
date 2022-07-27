@@ -13,11 +13,11 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     private(set) var navigationController: UINavigationController?
 
-    let tKeyFacade: TKeyJSFacade
+    let tKeyFacade: TKeyJSFacade?
 
     private var subject = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
 
-    init(tKeyFacade: TKeyJSFacade, navigationController: UINavigationController? = nil) {
+    init(tKeyFacade: TKeyJSFacade?, navigationController: UINavigationController? = nil) {
         self.tKeyFacade = tKeyFacade
         self.navigationController = navigationController
         super.init()
