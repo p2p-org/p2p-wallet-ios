@@ -31,14 +31,24 @@ struct StartView: View {
 extension StartView {
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
-            TextButtonView(title: L10n.createANewWallet, style: .inverted, size: .large, trailing: UIImage.arrowForward)
+            // Create a wallet
+            TextButtonView(
+                title: L10n.createANewWallet,
+                style: .inverted,
+                size: .large,
+                trailing: UIImage.arrowForward
+            ) { [weak viewModel] in viewModel?.createWalletPressed() }
                 .styled()
                 .padding(.top, 20)
-                .onTapGesture(perform: viewModel.createWalletPressed)
-            TextButtonView(title: L10n.iAlreadyHaveAWallet, style: .ghostLime, size: .large)
-                .styled()
-                .padding(.top, 12)
-                .onTapGesture(perform: viewModel.alreadyHaveAWalletPressed)
+
+            // Restore a wallet
+            TextButtonView(title: L10n.iAlreadyHaveAWallet, style: .ghostLime, size: .large) { [weak viewModel] in
+                viewModel?.alreadyHaveAWalletPressed()
+            }
+            .styled()
+            .padding(.top, 12)
+            .onTapGesture(perform: viewModel.alreadyHaveAWalletPressed)
+
             VStack(spacing: 2) {
                 Text(L10n.byContinuingYouAgreeToKeyAppS)
                     .styled(color: Asset.Colors.mountain, font: .label1)

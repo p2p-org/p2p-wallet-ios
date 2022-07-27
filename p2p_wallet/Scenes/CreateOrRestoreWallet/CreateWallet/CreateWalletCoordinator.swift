@@ -11,6 +11,7 @@ import UIKit
 final class CreateWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
+    private let parentViewController: UIViewController
     private(set) var navigationController: UINavigationController?
 
     let tKeyFacade: TKeyJSFacade?
@@ -19,7 +20,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     init(tKeyFacade: TKeyJSFacade?, navigationController: UINavigationController? = nil) {
         self.tKeyFacade = tKeyFacade
-        self.navigationController = navigationController
+        parentViewController = navigationController!
         super.init()
     }
 
@@ -29,12 +30,8 @@ final class CreateWalletCoordinator: Coordinator<Void> {
         // Create root view controller
         let viewModel = CreateWalletViewModel(tKeyFacade: nil)
         let viewController = buildViewController(viewModel: viewModel)
-        if navigationController == nil {
-            navigationController = UINavigationController(rootViewController: viewController)
-        } else {
-            navigationController?.pushViewController(viewController, animated: true)
-        }
-        navigationController?.modalPresentationStyle = .fullScreen
+        navigationController = navigationController ?? UINavigationController(rootViewController: viewController)
+        navigationController!.modalPresentationStyle = .fullScreen
 
         viewModel.onboardingStateMachine
             .stateStream
@@ -42,6 +39,8 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             .receive(on: RunLoop.main)
             .sink { [weak self, unowned viewModel] _ in self?.navigate(viewModel: viewModel) }
             .store(in: &subscriptions)
+
+        parentViewController.present(navigationController!, animated: true)
 
         return subject
             .eraseToAnyPublisher()
