@@ -13,7 +13,7 @@ struct ContinueView: View {
             VStack(spacing: .zero) {
                 Spacer()
 
-                StartPageView(data: viewModel.data, subtitleFontWeight: .regular)
+                StartPageView(data: viewModel.output.data.value, subtitleFontWeight: .regular)
                     .padding(.horizontal, 40)
 
                 Spacer()

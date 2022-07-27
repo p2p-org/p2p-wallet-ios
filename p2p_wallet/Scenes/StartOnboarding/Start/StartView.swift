@@ -12,11 +12,11 @@ struct StartView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 PagingView(
-                    index: $viewModel.currentIndex.animation(),
-                    maxIndex: viewModel.data.count - 1,
+                    index: $viewModel.input.currentDataIndex.value.animation(),
+                    maxIndex: viewModel.output.data.value.count - 1,
                     fillColor: Color(Asset.Colors.night.color)
                 ) {
-                    ForEach(viewModel.data, id: \.id) {
+                    ForEach(viewModel.output.data.value, id: \.id) {
                         StartPageView(data: $0, subtitleFontWeight: .medium)
                     }
                 }
