@@ -28,14 +28,16 @@ struct ContinueView: View {
 extension ContinueView {
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
-            TextButtonView(title: L10n.continue, style: .inverted, size: .large)
+            TextButtonView(title: L10n.continue, style: .inverted, size: .large, onPressed: { [weak viewModel] in
+                viewModel?.input.continueDidTap.send()
+            })
                 .styled()
                 .padding(.top, 20)
-                .onTapGesture(perform: viewModel.continuePressed)
-            TextButtonView(title: L10n.startingScreen, style: .ghostLime, size: .large)
+            TextButtonView(title: L10n.startingScreen, style: .ghostLime, size: .large, onPressed: { [weak viewModel] in
+                viewModel?.input.startDidTap.send()
+            })
                 .styled()
                 .padding(.top, 12)
-                .onTapGesture(perform: viewModel.startPressed)
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 34)

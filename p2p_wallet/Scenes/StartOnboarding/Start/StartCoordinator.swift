@@ -8,6 +8,7 @@ enum StartCoordinatorNavigation {
 
 final class StartCoordinator: Coordinator<Void> {
     private let navigation: StartCoordinatorNavigation
+    private weak var viewController: UIViewController?
 
     private var subject = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
 
@@ -19,30 +20,29 @@ final class StartCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = StartViewModel()
-
-        let view = StartView(viewModel: viewModel)
-        let viewController = UIHostingController(rootView: view)
+        let viewController = UIHostingController(rootView: StartView(viewModel: viewModel))
+        self.viewController = viewController
 
         switch navigation {
         case let .root(window):
             let navigationController = UINavigationController(rootViewController: viewController)
+            style(nc: navigationController)
             window.rootViewController = navigationController
         case let .push(nc):
+            nc.delegate = self
             nc.pushViewController(viewController, animated: true)
         }
 
-        viewModel.$result.sink { [weak self] value in
+        viewModel.output.navigateAction.sink { [weak self] scene in
             guard let self = self else { return }
-
-            switch value {
+            switch scene {
             case .openTerms:
                 self.openTerms(on: viewController)
-            case .restoreWallet: // TODO: - Add restoration handler
+            case .restoreWallet:
+                // TODO: - Add restoration handler
                 self.temproraryOpenContinueForTesting()
             case .createWallet:
                 self.openCreateWallet(nc: viewController.navigationController)
-            case .none:
-                break
             }
         }.store(in: &subscriptions)
 
@@ -62,12 +62,34 @@ final class StartCoordinator: Coordinator<Void> {
             .sink { _ in }.store(in: &subscriptions)
     }
 
-    private func temproraryOpenContinueForTesting() {
+    private func temproraryOpenContinueForTesting() { // must be deleted after wallet restoration is done
         switch navigation {
         case let .root(window):
             coordinate(to: ContinueCoordinator(window: window)).sink { _ in }.store(in: &subscriptions)
         case let .push(nc):
             break
+        }
+    }
+
+    private func style(nc: UINavigationController) {
+        nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        nc.navigationBar.shadowImage = UIImage()
+        nc.navigationBar.isTranslucent = true
+        nc.navigationBar.tintColor = .h5887ff
+    }
+}
+
+// MARK: - UINavigationControllerDelegate
+
+extension StartCoordinator: UINavigationControllerDelegate {
+    func navigationController(
+        _ navigationController: UINavigationController,
+        didShow viewController: UIViewController,
+        animated _: Bool
+    ) {
+        guard let currentVC = self.viewController, viewController != currentVC else { return }
+        if navigationController.viewControllers.contains(where: { $0 == currentVC }) == false {
+            subject.send(completion: .finished)
         }
     }
 }
