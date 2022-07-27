@@ -19,7 +19,7 @@ final class AuthServiceImpl: AuthService {
     }
 
     private func socialLogin(type: SocialType) async throws {
-        guard let service = type.authObject() else { throw SocialServiceError.unknown }
+        guard let service = type.authObject() else { throw SocialServiceError.invalidSocialType }
         try await service.auth()
     }
 }
