@@ -10,6 +10,15 @@ import Combine
 import CountriesAPI
 import Foundation
 
+extension ChoosePhoneCodeViewModel: ViewModelType {
+    struct Input {
+        let didClose = PassthroughSubject<Void, Never>()
+        let keyword = CurrentValueSubject<String, Never>("")
+    }
+
+    struct Output {}
+}
+
 final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     // MARK: - Dependencies
 
@@ -17,29 +26,29 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
 
     private var subscriptions = [AnyCancellable]()
     private var cachedResult = [SelectableCountry]()
+    private var initialSelectedCountry: Country?
 
-    // MARK: - Input
-
-    var initialSelectedCountry: Country?
-    let didClose = PassthroughSubject<Void, Never>()
-    @Published var keyword: String = ""
-
-    // MARK: - Output
-
-//    @Published public private(set) var recommendation: String?
+    let input: Input
+    let output: Output
 
     // MARK: - Initializers
 
-    init() {
+    init(selectedCountry: Country? = nil) {
+        initialSelectedCountry = selectedCountry
+        input = Input()
+        output = Output()
         super.init()
-        $keyword
+        input.keyword
             .sink { [weak self] keyword in
                 guard let self = self else { return }
                 if keyword.isEmpty {
                     self.overrideData(by: self.cachedResult)
                     return
                 }
-                let newData = self.cachedResult.filteredByKeyword(keyword: keyword)
+                var newData = self.cachedResult.filteredByKeyword(keyword: keyword)
+                if newData.isEmpty {
+                    newData.append(self.emptyCountryModel())
+                }
                 self.overrideData(by: newData)
             }
             .store(in: &subscriptions)
@@ -55,6 +64,14 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         cachedResult = try await CountriesAPIImpl().fetchCountries()
             .map { .init(value: $0, isSelected: $0.code == initialSelectedCountry?.code) }
         return cachedResult
-            .filteredByKeyword(keyword: keyword)
+            .filteredByKeyword(keyword: input.keyword.value)
+    }
+
+    private func emptyCountryModel() -> SelectableCountry {
+        SelectableCountry(
+            value: Country(name: L10n.sorryWeDonTKnowASuchCountry, dialCode: "", code: "", emoji: "🏴"),
+            isSelected: false,
+            isEmpty: true
+        )
     }
 }

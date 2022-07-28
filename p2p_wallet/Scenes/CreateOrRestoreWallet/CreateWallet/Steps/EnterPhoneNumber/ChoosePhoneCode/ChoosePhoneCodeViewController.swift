@@ -65,24 +65,30 @@ final class ChoosePhoneCodeViewController: BaseViewController {
 
     @objc private func doneButtonDidTouch() {
         dismiss(animated: true) { [unowned self] in
-            self.viewModel.didClose.send()
+            self.viewModel.input.didClose.send()
         }
     }
 }
 
 extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
-        guard let selectedCountry = item as? SelectableCountry, !selectedCountry.isSelected else { return }
+        guard let selectedCountry = item as? SelectableCountry, !selectedCountry.isSelected,
+              !selectedCountry.isEmpty else { return }
         collectionView.updateWithoutAnimations {
             viewModel.batchUpdate { countries in
                 var countries = countries
+                var selectedIndex: Int = .zero
                 for i in 0 ..< countries.count {
                     if countries[i].value.code == selectedCountry.value.code {
+                        selectedIndex = i
                         countries[i].isSelected = true
                     } else {
                         countries[i].isSelected = false
                     }
                 }
+                let selectedCountry = countries.remove(at: selectedIndex)
+                countries = countries.sorted(by: { $0.value.name < $1.value.name })
+                countries.insert(selectedCountry, at: .zero)
                 return countries
             }
         }
@@ -91,7 +97,7 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
 
 extension ChoosePhoneCodeViewController: BESearchBarDelegate {
     func beSearchBar(_: BESearchBar, searchWithKeyword keyword: String) {
-        viewModel.keyword = keyword
+        viewModel.input.keyword.send(keyword)
     }
 
     func beSearchBarDidBeginSearching(_: BESearchBar) {}

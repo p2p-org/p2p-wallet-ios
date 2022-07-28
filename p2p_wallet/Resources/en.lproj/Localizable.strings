@@ -816,6 +816,7 @@ Reset the PIN or wait for %@.";
 "You can’t send less than %@" = "You can’t send less than %@";
 "Refresh page" = "Refresh page";
 "Country code" = "Country code";
+"Sorry, we don’t know a such country" = "Sorry, we don’t know a such country";
 "Welcome to Key App" = "Welcome\nto Key App";
 "Use our advanced security to buy, sell and hold cryptos" = "Use our advanced security to buy,\nsell and hold cryptos";
 "Create a new wallet" = "Create a new wallet";

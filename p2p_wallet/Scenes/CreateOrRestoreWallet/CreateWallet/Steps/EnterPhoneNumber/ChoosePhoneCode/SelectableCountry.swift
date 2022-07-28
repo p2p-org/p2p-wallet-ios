@@ -4,6 +4,7 @@ import Foundation
 struct SelectableCountry: Hashable {
     let value: Country
     var isSelected: Bool = false
+    var isEmpty: Bool = false
 }
 
 extension Array where Element == SelectableCountry {
