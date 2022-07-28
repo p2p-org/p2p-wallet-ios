@@ -35,7 +35,7 @@ jobs:
   # Upload build for testing when pull request is approved
   upload_build_for_testing:
     name: Upload build for testing when pull request is approved
-    if: github.event.review.state == 'approved'
+    if: github.event.review.state == 'approved' || github.event.label.name == 'auto-deploy-to-qa'
     runs-on: macos-12
 
     steps:
