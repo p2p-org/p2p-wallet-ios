@@ -10,6 +10,7 @@ import Action
 import FeeRelayerSwift
 import Firebase
 import KeyAppKitLogger
+import KeyAppUI
 import Resolver
 import Sentry
 import SolanaSwift
@@ -205,7 +206,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navBarAppearence.tintColor = .h5887ff
-        barButtonAppearance.tintColor = .h5887ff
+        navBarAppearence.tintColor = Asset.Colors.night.color
+        barButtonAppearance.tintColor = Asset.Colors.night.color
     }
 }
