@@ -23,8 +23,7 @@ final class ChoosePhoneCodeCoordinator: Coordinator<Country?> {
     }
 
     override func start() -> AnyPublisher<Country?, Never> {
-        let vm = ChoosePhoneCodeViewModel()
-        vm.initialSelectedCountry = selectedCountry
+        let vm = ChoosePhoneCodeViewModel(selectedCountry: selectedCountry)
         let vc = ChoosePhoneCodeViewController(viewModel: vm)
         vc.isModalInPresentation = true
         let nc = UINavigationController(rootViewController: vc)
@@ -32,7 +31,7 @@ final class ChoosePhoneCodeCoordinator: Coordinator<Country?> {
         nc.view.backgroundColor = vc.view.backgroundColor
         presentingViewController.present(nc, animated: true)
 
-        return vm.didClose.withLatestFrom(vm.$data)
+        return vm.input.didClose.withLatestFrom(vm.$data)
             .map { $0.first(where: { $0.isSelected })?.value }
             .eraseToAnyPublisher()
     }
