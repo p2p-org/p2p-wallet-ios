@@ -94,18 +94,10 @@ class SocialSignInAccountHasBeenUsedViewController: BaseViewController {
                                 title: L10n.useAnotherAccount,
                                 style: .inverted,
                                 size: .large,
-                                leading: .appleLogo
+                                leading: .google
                             )
-                                .setup { button in
-                                    viewModel.output.signInProvider.sink { provider in
-                                        switch provider {
-                                        case .apple: button.leadingImage = .appleLogo
-                                        case .google: button.leadingImage = .google
-                                        }
-                                    }
-                                    .store(in: &subscriptions)
-                                }
                                 .onPressed { [weak viewModel] _ in viewModel?.input.useAnotherAccount.send() }
+
                             UIView().frame(height: 16)
 
                             // Restore button
