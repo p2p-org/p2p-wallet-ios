@@ -20,7 +20,7 @@ final class ContinueCoordinator: Coordinator<Void> {
         let navigationController = UINavigationController(rootViewController: viewController)
         style(nc: navigationController)
 
-        window.rootViewController = navigationController
+        window.animate(newRootViewController: navigationController)
 
         viewModel.navigation.action.sink { [weak self] scene in
             guard let self = self else { return }
