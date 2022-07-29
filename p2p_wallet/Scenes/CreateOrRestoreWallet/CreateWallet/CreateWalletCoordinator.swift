@@ -23,7 +23,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     init(parent: UIViewController) {
         parentViewController = parent
         tKeyFacade = TKeyJSFacade(wkWebView: webView)
-        viewModel = CreateWalletViewModel(tKeyFacade: nil)
+        viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
 
         super.init()
     }
@@ -113,6 +113,37 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             )
             let vc = SocialSignInAccountHasBeenUsedViewController(viewModel: vm)
             return vc
+        case let .socialSignInTryAgain(signInProvider, usedEmail):
+            let vm = SocialSignInTryAgainViewModel(signInProvider: signInProvider)
+
+            vm.coordinator.startScreen.sinkAsync { [weak viewModel] in
+                vm.input.isLoading.send(true)
+                defer { vm.input.isLoading.send(false) }
+                do {
+                    try await viewModel?.onboardingStateMachine.accept(event: .signInBack)
+                } catch {
+                    vm.input.onError.send(error)
+                }
+            }.store(in: &subscriptions)
+
+            vm.coordinator.tryAgain.sinkAsync { [weak viewModel] authResult in
+                vm.input.isLoading.send(true)
+                defer { vm.input.isLoading.send(false) }
+
+                do {
+                    try await viewModel?.onboardingStateMachine
+                        .accept(event: .signIn(
+                            tokenID: authResult.tokenID,
+                            authProvider: signInProvider,
+                            email: authResult.email
+                        ))
+                } catch {
+                    vm.input.onError.send(error)
+                }
+            }.store(in: &subscriptions)
+
+            let vc = SocialSignInTryAgainViewController(viewModel: vm)
+            return vc
         case let .enterPhoneNumber(_, _, deviceShare):
             UserDefaults.standard.set(deviceShare, forKey: "deviceShare")
 
@@ -133,7 +164,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             let vc = EnterSMSCodeViewController(viewModel: vm)
 
             vm.coordinatorIO.goBack.sink { _ in
-//                self.viewModel.onboardingStateMachine.accept(event: .back)
+            // self.viewModel.onboardingStateMachine.accept(event: .back)
             }.store(in: &subscriptions)
 
             return vc

@@ -55,35 +55,32 @@ class SocialSignInAccountHasBeenUsedViewController: BaseViewController {
         BEContainer {
             BEVStack {
                 // Logo and description
-                UIView.spacer
 
                 BESafeArea {
-                    UIImageView(image: .introWelcomeToP2pFamily, contentMode: .scaleAspectFill)
-                        .frame(width: 220, height: 280)
-                        .centered(.horizontal)
-                }
+                    BEVStack {
+                        UIImageView(image: .introWelcomeToP2pFamily, contentMode: .scaleAspectFill)
+                            .frame(width: 220, height: 280)
+                            .centered(.horizontal)
 
-                BEVStack {
-                    UILabel(
-                        text: L10n.aWalletFound,
-                        font: UIFont.font(of: .largeTitle, weight: .bold),
-                        textAlignment: .center
-                    )
-                        .padding(.init(only: .top, inset: 10))
-                    UILabel(
-                        text: L10n.looksLikeYouAlreadyHaveAWalletWith("?"),
-                        font: UIFont.font(of: .title3, weight: .regular),
-                        numberOfLines: 3,
-                        textAlignment: .center
-                    ).setup { label in
-                        viewModel.output.emailAddress.sink { [weak label] email in
-                            label?.text = L10n.looksLikeYouAlreadyHaveAWalletWith(email)
-                        }.store(in: &subscriptions)
+                        UILabel(
+                            text: L10n.aWalletFound,
+                            font: UIFont.font(of: .largeTitle, weight: .bold),
+                            textAlignment: .center
+                        )
+                            .padding(.init(only: .top, inset: 10))
+                        UILabel(
+                            text: L10n.looksLikeYouAlreadyHaveAWalletWith("?"),
+                            font: UIFont.font(of: .title3, weight: .regular),
+                            numberOfLines: 3,
+                            textAlignment: .center
+                        ).setup { label in
+                            viewModel.output.emailAddress.sink { [weak label] email in
+                                label?.text = L10n.looksLikeYouAlreadyHaveAWalletWith(email)
+                            }.store(in: &subscriptions)
+                        }
+                        .padding(.init(only: .top, inset: 16))
                     }
-                    .padding(.init(only: .top, inset: 16))
-                }.padding(.init(x: 16, y: 0))
-
-                UIView(height: 48)
+                }.centered(.vertical)
 
                 // Bottom panel
                 BottomPanel {
@@ -94,18 +91,10 @@ class SocialSignInAccountHasBeenUsedViewController: BaseViewController {
                                 title: L10n.useAnotherAccount,
                                 style: .inverted,
                                 size: .large,
-                                leading: .appleLogo
+                                leading: .google
                             )
-                                .setup { button in
-                                    viewModel.output.signInProvider.sink { provider in
-                                        switch provider {
-                                        case .apple: button.leadingImage = .appleLogo
-                                        case .google: button.leadingImage = .google
-                                        }
-                                    }
-                                    .store(in: &subscriptions)
-                                }
                                 .onPressed { [weak viewModel] _ in viewModel?.input.useAnotherAccount.send() }
+
                             UIView().frame(height: 16)
 
                             // Restore button
