@@ -154,7 +154,7 @@ PODS:
   - JazziconSwift (1.1.0)
   - JSBridge (1.0.0)
   - KeyAppKitLogger (1.0.7)
-  - KeyAppUI (0.1.1):
+  - KeyAppUI (0.1.2):
     - BEPureLayout
     - SkeletonView (~> 1.7)
   - KeychainSwift (19.0.0)
@@ -453,7 +453,7 @@ CHECKOUT OPTIONS:
     :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   KeyAppUI:
-    :commit: ec62696df542229452fea2943b6605be1dcfcafb
+    :commit: ce107f5c1eb6f9475329b46bef531b6709be4010
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
@@ -525,7 +525,7 @@ SPEC CHECKSUMS:
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
   JSBridge: 5a257c92ad65fb16b255480cb3b2b867cc6ee39c
   KeyAppKitLogger: 1db675b452a0faa4bd0097f5c88fcc635ed67205
-  KeyAppUI: dd2108b4c79eba5748353bb0c1a7671d1d0b7294
+  KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: cdb1189a9223b1bc028816bd47c8b8101a58831c
   KituraContracts: e845e60dc8627ad0a76fa55ef20a45451d8f830b
