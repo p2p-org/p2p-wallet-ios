@@ -57,28 +57,26 @@ class SocialSignInViewController: BaseViewController {
             // Logo and description
             BEVStack {
                 BESafeArea {
-                    UIImageView(image: .introWelcomeToP2pFamily, contentMode: .scaleAspectFill)
-                        .frame(width: 220, height: 280)
-                        .centered(.horizontal)
-                }
+                    BEVStack {
+                        UIImageView(image: .introWelcomeToP2pFamily, contentMode: .scaleAspectFill)
+                            .frame(width: 220, height: 280)
+                            .centered(.horizontal)
 
-                BEVStack {
-                    UILabel(
-                        text: L10n.protectingTheFunds,
-                        font: UIFont.font(of: .largeTitle, weight: .bold),
-                        textAlignment: .center
-                    )
-                        .padding(.init(only: .top, inset: 10))
-                    UILabel(
-                        text: L10n.WeUseMultiFactorAuthentication
-                            .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts,
-                        font: UIFont.font(of: .title3, weight: .regular),
-                        numberOfLines: 3,
-                        textAlignment: .center
-                    ).padding(.init(only: .top, inset: 16))
-                }.padding(.init(x: 16, y: 0))
-
-                UIView.spacer
+                        UILabel(
+                            text: L10n.protectingTheFunds,
+                            font: UIFont.font(of: .largeTitle, weight: .bold),
+                            textAlignment: .center
+                        )
+                            .padding(.init(only: .top, inset: 10))
+                        UILabel(
+                            text: L10n.WeUseMultiFactorAuthentication
+                                .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts,
+                            font: UIFont.font(of: .title3, weight: .regular),
+                            numberOfLines: 3,
+                            textAlignment: .center
+                        ).padding(.init(only: .top, inset: 16))
+                    }.padding(.init(x: 16, y: 0))
+                }.centered(.vertical)
 
                 BottomPanel {
                     BESafeArea {

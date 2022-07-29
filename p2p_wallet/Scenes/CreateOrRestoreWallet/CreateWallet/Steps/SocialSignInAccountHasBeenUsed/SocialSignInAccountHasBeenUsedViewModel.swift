@@ -53,7 +53,7 @@ class SocialSignInAccountHasBeenUsedViewModel: NSObject, ViewModelType {
             }
         }.store(in: &subscriptions)
 
-        input.useAnotherAccount.sink { [weak self] in self?.useAnotherWallet(signInProvider: signInProvider) }
+        input.useAnotherAccount.sink { [weak self] in self?.userAnotherGoogleAccount(signInProvider: signInProvider) }
             .store(in: &subscriptions)
 
         input.restoreThisWallet
@@ -61,17 +61,17 @@ class SocialSignInAccountHasBeenUsedViewModel: NSObject, ViewModelType {
             .store(in: &subscriptions)
     }
 
-    func useAnotherWallet(signInProvider: SignInProvider) {
+    func userAnotherGoogleAccount(signInProvider _: SignInProvider) {
         Task {
             input.isLoading.send(true)
             defer { input.isLoading.send(false) }
 
             do {
-                let signInResult = try await authService.socialSignIn(signInProvider.socialType)
+                let signInResult = try await authService.socialSignIn(.google)
                 try await createWalletViewModel.onboardingStateMachine
                     .accept(
                         event: .signIn(
-                            tokenID: signInResult.tokenID, authProvider: signInProvider,
+                            tokenID: signInResult.tokenID, authProvider: .google,
                             email: signInResult.email
                         )
                     )
@@ -98,17 +98,6 @@ class SocialSignInAccountHasBeenUsedViewModel: NSObject, ViewModelType {
                     self.notificationService.showInAppNotification(.error(error))
                 }
             }
-        }
-    }
-}
-
-private extension SignInProvider {
-    var socialType: SocialType {
-        switch self {
-        case .apple:
-            return .apple
-        case .google:
-            return .google
         }
     }
 }
