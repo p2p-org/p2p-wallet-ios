@@ -69,7 +69,7 @@ final class EnterPhoneNumberViewController: BaseViewController {
                     self.viewModel.input.selectCountryTapped.send()
                 },
                 constantPlaceholder: "+44 7400 123456"
-            ).bind(phoneInputRef) // .padding(.init(only: .top, inset: 32))
+            ).bind(phoneInputRef)
         }
     }
 
