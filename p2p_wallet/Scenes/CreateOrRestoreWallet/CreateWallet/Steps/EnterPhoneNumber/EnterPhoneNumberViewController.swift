@@ -33,6 +33,10 @@ final class EnterPhoneNumberViewController: BaseViewController {
         button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
 
         configureNavBar()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.phoneInputRef.view?.textField?.becomeFirstResponder()
+        }
     }
 
     override func build() -> UIView {
