@@ -150,3 +150,10 @@ class AppCoordinator: Coordinator<Void> {
         return storage.account
     }
 }
+
+extension UIWindow {
+    func animate(newRootViewController: UIViewController) {
+        rootViewController = newRootViewController
+        UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve, animations: {}, completion: nil)
+    }
+}

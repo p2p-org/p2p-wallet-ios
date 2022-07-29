@@ -9,8 +9,7 @@ enum StartCoordinatorNavigation {
 final class StartCoordinator: Coordinator<Void> {
     private let navigation: StartCoordinatorNavigation
     private weak var viewController: UIViewController?
-
-    private var subject = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
+    private var subject = PassthroughSubject<Void, Never>()
 
     // MARK: - Initializer
 
@@ -27,7 +26,7 @@ final class StartCoordinator: Coordinator<Void> {
         case let .root(window):
             let navigationController = UINavigationController(rootViewController: viewController)
             style(nc: navigationController)
-            window.rootViewController = navigationController
+            window.animate(newRootViewController: navigationController)
         case let .push(nc):
             nc.delegate = self
             nc.pushViewController(viewController, animated: true)
@@ -64,15 +63,6 @@ final class StartCoordinator: Coordinator<Void> {
     private func openRestoreWallet(vc: UIViewController) {
         coordinate(to: RestoreWalletCoordinator(parent: vc))
             .sink { _ in }.store(in: &subscriptions)
-    }
-
-    private func temproraryOpenContinueForTesting() { // must be deleted after wallet restoration is done
-        switch navigation {
-        case let .root(window):
-            coordinate(to: ContinueCoordinator(window: window)).sink { _ in }.store(in: &subscriptions)
-        case let .push(nc):
-            break
-        }
     }
 
     private func style(nc: UINavigationController) {

@@ -67,7 +67,6 @@ class SocialSignInViewModel: NSObject, ViewModelType {
             defer { input.isLoading.send(false) }
 
             do {
-                // TODO: pass token id to state machine
                 let signInResult = try await authService.socialSignIn(type)
                 try await createWalletViewModel.onboardingStateMachine.accept(
                     event: .signIn(tokenID: signInResult.tokenID, authProvider: .apple, email: signInResult.email)
