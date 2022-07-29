@@ -77,15 +77,6 @@ extension CreateWallet {
                 let vm = CreateSecurityKeys.ViewModel(createWalletViewModel: viewModel)
                 let vc = CreateSecurityKeys.ViewController(viewModel: vm)
                 navigationController?.pushViewController(vc, animated: true)
-            case let .reserveName(owner):
-                let viewModel = ReserveName.ViewModel(
-                    kind: .reserveCreateWalletPart,
-                    owner: owner,
-                    reserveNameHandler: viewModel,
-                    checkBeforeReserving: false
-                )
-                let viewController = ReserveName.ViewController(viewModel: viewModel)
-                navigationController?.pushViewController(viewController, animated: true)
             case let .verifyPhrase(phrase):
                 let vm = VerifySecurityKeys.ViewModel(keyPhrase: phrase, createWalletViewModel: viewModel)
                 let vc = VerifySecurityKeys.ViewController(viewModel: vm)

@@ -12,7 +12,6 @@ enum CreateWallet {
         case explanation
         case createPhrases
         case verifyPhrase(_ phrase: [String])
-        case reserveName(owner: String)
         case dismiss
         case back
     }
