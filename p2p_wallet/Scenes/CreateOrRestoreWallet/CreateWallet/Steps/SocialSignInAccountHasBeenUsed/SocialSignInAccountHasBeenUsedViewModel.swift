@@ -101,14 +101,3 @@ class SocialSignInAccountHasBeenUsedViewModel: NSObject, ViewModelType {
         }
     }
 }
-
-private extension SignInProvider {
-    var socialType: SocialType {
-        switch self {
-        case .apple:
-            return .apple
-        case .google:
-            return .google
-        }
-    }
-}
