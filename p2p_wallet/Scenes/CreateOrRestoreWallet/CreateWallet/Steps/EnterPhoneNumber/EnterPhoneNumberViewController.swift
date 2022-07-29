@@ -37,7 +37,7 @@ final class EnterPhoneNumberViewController: BaseViewController {
         BEScrollView(contentInsets: .init(top: 119, left: 18, bottom: 18, right: 18)) {
             UILabel().withAttributedText(
                 .attributedString(
-                    with: "What’s your number? 🤙",
+                    with: L10n.whatSYourNumber🤙,
                     of: .title1,
                     weight: .bold,
                     alignment: .center
@@ -46,7 +46,7 @@ final class EnterPhoneNumberViewController: BaseViewController {
 
             UILabel().withAttributedText(
                 .attributedString(
-                    with: "Add a phone to protect your account",
+                    with: L10n.addAPhoneToProtectYourAccount,
                     of: .text1,
                     weight: .regular,
                     alignment: .center
@@ -65,7 +65,7 @@ final class EnterPhoneNumberViewController: BaseViewController {
 
     func bottomView() -> UIView {
         BEContainer {
-            TextButton(title: "Enter the number to continue", style: .primary, size: .large).setup { button in
+            TextButton(title: L10n.enterTheNumberToContinue, style: .primary, size: .large).setup { button in
                 button.isEnabled = false
             }.bind(continueButtonRef)
         }.padding(.init(only: .bottom, inset: 18))
