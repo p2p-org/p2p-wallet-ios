@@ -39,7 +39,7 @@ final class EnterSMSCodeViewController: BaseViewController {
             BEContainer {
                 UILabel(numberOfLines: 0).withAttributedText(
                     .attributedString(
-                        with: "Please enter the code we sent you",
+                        with: L10n.pleaseEnterTheCodeWeSentYou,
                         of: .title1,
                         weight: .bold,
                         alignment: .center
@@ -54,7 +54,7 @@ final class EnterSMSCodeViewController: BaseViewController {
 
                 BEHStack {
                     UILabel().withAttributedText(
-                        .attributedString(with: "Didn't get it?", of: .text1)
+                        .attributedString(with: L10n.didnTGetIt, of: .text1)
                             .withForegroundColor(Asset.Colors.night.color)
                     )
                     UIButton().bind(resendButtonRef).setup { _ in }
