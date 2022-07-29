@@ -40,7 +40,7 @@ final class EnterPhoneNumberViewController: BaseViewController {
     }
 
     private var topContentInset = {
-        UIScreen.main.bounds.height / 812.0 * 84
+        UIScreen.main.bounds.height / 812.0 * 36
     }
 
     override func build() -> UIView {
@@ -61,15 +61,15 @@ final class EnterPhoneNumberViewController: BaseViewController {
                     weight: .regular,
                     alignment: .center
                 )
-            ).padding(.init(only: .top, inset: 8))
-
+            ).padding(.init(only: .top, inset: 19))
+            UIView(height: 32)
             PhoneTextField(
                 leftText: "🇦🇷",
                 onLeftTap: {
                     self.viewModel.input.selectCountryTapped.send()
                 },
                 constantPlaceholder: "+44 7400 123456"
-            ).bind(phoneInputRef).padding(.init(only: .top, inset: 32))
+            ).bind(phoneInputRef) // .padding(.init(only: .top, inset: 32))
         }
     }
 
@@ -105,6 +105,8 @@ final class EnterPhoneNumberViewController: BaseViewController {
 
         viewModel.output.isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
+            self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterTheNumberToContinue
+            self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
         }.store(in: &store)
     }
 
