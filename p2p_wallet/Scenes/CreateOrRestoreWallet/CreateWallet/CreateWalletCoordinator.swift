@@ -23,7 +23,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     init(parent: UIViewController) {
         parentViewController = parent
         tKeyFacade = TKeyJSFacade(wkWebView: webView)
-        viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
+        viewModel = CreateWalletViewModel(tKeyFacade: nil)
 
         super.init()
     }

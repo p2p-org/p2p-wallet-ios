@@ -39,8 +39,12 @@ final class EnterPhoneNumberViewController: BaseViewController {
         }
     }
 
+    private var topContentInset = {
+        UIScreen.main.bounds.height / 812.0 * 84
+    }
+
     override func build() -> UIView {
-        BEScrollView(contentInsets: .init(top: 119, left: 18, bottom: 18, right: 18)) {
+        BEScrollView(contentInsets: .init(top: topContentInset(), left: 18, bottom: 18, right: 18)) {
             UILabel().withAttributedText(
                 .attributedString(
                     with: L10n.whatSYourNumber🤙,
