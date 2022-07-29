@@ -16,8 +16,6 @@ def key_app_kit
   pod 'Onboarding', :git => $keyAppKitGit, :branch => $keyAppKitBranch
   pod 'JSBridge', :git => $keyAppKitGit, :branch => $keyAppKitBranch
   pod 'CountriesAPI', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'KeyAppUI', :path => '../p2p/KeyAppUI'
-  #pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
 end
 
 target 'p2p_wallet' do
@@ -58,7 +56,7 @@ target 'p2p_wallet' do
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
-#pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
+  pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   pod 'Resolver'
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'

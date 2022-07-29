@@ -24,7 +24,8 @@ final class EnterPhoneNumberViewModel: BaseViewModel, ViewModelType {
 
     struct CoordinatorIO {
         var selectFlag: PassthroughSubject<Void, Never> = .init()
-        var flagSelected: PassthroughSubject<Country?, Never> = .init()
+        var countrySelected: PassthroughSubject<Country?, Never> = .init()
+        var phoneEntered: PassthroughSubject<String, Never> = .init()
     }
 
     // MARK: -
@@ -49,21 +50,21 @@ final class EnterPhoneNumberViewModel: BaseViewModel, ViewModelType {
                     phoneNumberKit: phoneNumberKit,
                     partialFormatter: partialFormatter
                 ),
-                coordinatorIO.flagSelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
+                coordinatorIO.countrySelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
             ).eraseToAnyPublisher(),
             flag: Publishers.MergeMany(
                 Self.flag(
                     phone: input.phone,
                     partialFormatter: partialFormatter
                 ),
-                Self.flag(country: coordinatorIO.flagSelected)
+                Self.flag(country: coordinatorIO.countrySelected)
             ).eraseToAnyPublisher(),
             isButtonEnabled: input.phone
                 .map { $0?.split(separator: " ").map(String.init).joined(separator: "").isPhoneNumber ?? false }
                 .eraseToAnyPublisher(),
             phonePlaceholder: Self.placeholder(
                 phone: input.phone,
-                country: coordinatorIO.flagSelected,
+                country: coordinatorIO.countrySelected,
                 phoneNumberKit: phoneNumberKit,
                 partialFormatter: partialFormatter
             )
@@ -76,6 +77,10 @@ final class EnterPhoneNumberViewModel: BaseViewModel, ViewModelType {
     func bind() {
         input.selectCountryTapped.sink { [weak self] _ in
             self?.coordinatorIO.selectFlag.send()
+        }.store(in: &cancellable)
+
+        input.button.withLatestFrom(input.phone).filter { !($0 ?? "").isEmpty }.sink { phone in
+            self.coordinatorIO.phoneEntered.send(phone ?? "")
         }.store(in: &cancellable)
     }
 

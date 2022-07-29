@@ -32,6 +32,8 @@ final class EnterSMSCodeViewController: BaseViewController {
         button.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 0)
         button.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
         button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
+
+        configureNavBar()
     }
 
     override func build() -> UIView {
@@ -153,6 +155,6 @@ final class EnterSMSCodeViewController: BaseViewController {
     }
 
     @objc func onInfo() {
-        viewModel.input.onInfo.send()
+//        viewModel.input.onInfo.send()
     }
 }

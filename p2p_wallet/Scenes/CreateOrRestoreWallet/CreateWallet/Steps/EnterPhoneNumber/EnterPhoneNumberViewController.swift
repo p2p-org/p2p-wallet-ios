@@ -31,6 +31,8 @@ final class EnterPhoneNumberViewController: BaseViewController {
         button.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 0)
         button.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
         button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
+
+        configureNavBar()
     }
 
     override func build() -> UIView {
@@ -67,7 +69,9 @@ final class EnterPhoneNumberViewController: BaseViewController {
         BEContainer {
             TextButton(title: L10n.enterTheNumberToContinue, style: .primary, size: .large).setup { button in
                 button.isEnabled = false
-            }.bind(continueButtonRef)
+            }.bind(continueButtonRef).onPressed { [weak self] _ in
+                self?.viewModel.input.button.send()
+            }
         }.padding(.init(only: .bottom, inset: 18))
     }
 
@@ -95,6 +99,27 @@ final class EnterPhoneNumberViewController: BaseViewController {
             self?.continueButtonRef.view?.isEnabled = isEnabled
         }.store(in: &store)
     }
+
+    // MARK: -
+
+    func configureNavBar() {
+        navigationItem.title = L10n.stepOf("2", "3")
+
+        let spacing = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        spacing.width = 8
+
+        navigationItem.setLeftBarButtonItems([spacing], animated: false)
+
+        // Right button
+        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
+        infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
+        infoButton.contentMode = .scaleAspectFill
+        infoButton.tintColor = Asset.Colors.night.color
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+    }
+
+    @objc func onInfo() {}
 }
 
 class PhoneTextField: BaseTextFieldView {
