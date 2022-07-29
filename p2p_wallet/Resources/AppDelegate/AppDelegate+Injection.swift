@@ -140,6 +140,9 @@ extension Resolver: ResolverRegistering {
 
         register { OnboardingServiceImpl() }
             .implements(OnboardingService.self)
+
+        register { SMSServiceImplMock() }
+            .implements(SMSService.self)
     }
 
     /// Session scope: Live when user is authenticated
