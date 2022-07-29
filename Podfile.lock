@@ -118,7 +118,7 @@ PODS:
     - GoogleUtilities/Network (~> 7.7)
     - "GoogleUtilities/NSData+zlib (~> 7.7)"
     - nanopb (< 2.30910.0, >= 2.30908.0)
-  - GoogleDataTransport (9.1.4):
+  - GoogleDataTransport (9.2.0):
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
@@ -226,7 +226,7 @@ PODS:
     - BlueRSA (~> 1.0)
     - KituraContracts (~> 1.2)
     - LoggerAPI (~> 1.7)
-  - SwiftLint (0.47.1)
+  - SwiftLint (0.48.0)
   - SwiftNotificationCenter (1.0.4)
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
@@ -420,7 +420,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   BECollectionView:
     :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
@@ -435,10 +435,10 @@ CHECKOUT OPTIONS:
     :commit: f0e06d38ab5f4a4854ed9b674a518708951e53ef
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   CountriesAPI:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -447,22 +447,22 @@ CHECKOUT OPTIONS:
     :commit: 145b589ae5ed31c72dc51959bc7f782d69b07cc6
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   KeyAppKitLogger:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   KeyAppUI:
-    :commit: ce107f5c1eb6f9475329b46bef531b6709be4010
+    :commit: ad2593f84c14720f16e2c481fbf3e60817638945
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   Onboarding:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -477,13 +477,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
   SolanaSwift:
     :commit: aeb3ec10d84bd8bd5441deb6abac5f829ccd9261
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: 299577f7aea3ca78411b2a68fdfdae5e3e7fcea8
+    :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: "git@github.com:p2p-org/key-app-kit-swift.git"
 
 SPEC CHECKSUMS:
@@ -515,7 +515,7 @@ SPEC CHECKSUMS:
   FirebaseInstallations: 54b40022cb06e462740c9f2b9fbe38b5e78a825a
   FirebaseRemoteConfig: 0a644c924b3339bcf3bc3ea253206f171672308e
   GoogleAppMeasurement: b907bdad775b6975a8108762345b2cfbf1a93c37
-  GoogleDataTransport: 5fffe35792f8b96ec8d6775f5eccd83c998d5a3b
+  GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
   GoogleSignIn: 3c68388ac221f379676e8f1cb115df3aaf73b93f
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   GT3Captcha-iOS: 7ae08a5421c8e40463ec84ae807e82c19be3929a
@@ -559,7 +559,7 @@ SPEC CHECKSUMS:
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
   SwiftJWT: 88c412708f58c169d431d344c87bc79a87c830ae
-  SwiftLint: f80f1be7fa96d30e0aa68e58d45d4ea1ccaac519
+  SwiftLint: 284cea64b6187c5d6bd83e9a548a64104d546447
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
@@ -568,6 +568,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 913f8aebfebb37a2d16e79ab4e9a5f06267c2e2d
+PODFILE CHECKSUM: 5e77728906c1944bc64406d75f8ee62d93ab2d63
 
 COCOAPODS: 1.11.3
