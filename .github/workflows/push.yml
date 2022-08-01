@@ -1,7 +1,16 @@
 name: Push
 on:
-  push:
+  pull_request:
 jobs:
+  check-tags:
+    runs-on: macos-12
+    steps:
+      - name: test
+        run: |
+          x=${{ toJson(github.event.pull_request.labels.*.name) }}
+          echo $x
+        
+
   upload_build_for_testing:
     name: Upload build for testing when pull request is approved
     if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
