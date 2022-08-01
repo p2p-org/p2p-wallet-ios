@@ -4,7 +4,7 @@ on:
 jobs:
   upload_build_for_testing:
     name: Upload build for testing when pull request is approved
-    if: contains(github.event.pull_request.labels.*.name, 'auto-deploy-to-qa')
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
     runs-on: macos-12
 
     steps:
@@ -14,6 +14,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
+
+      - name: Grant access to KeyAppUI
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
 
       - name: Copy xcconfig file
         run: |
