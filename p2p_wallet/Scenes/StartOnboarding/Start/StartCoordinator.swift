@@ -53,7 +53,7 @@ final class StartCoordinator: Coordinator<Void> {
     }
 
     private func openRestoreWallet(vc: UIViewController) {
-        coordinate(to: ChoosePhoneCodeCoordinator(presentingViewController: vc))
+        coordinate(to: RestoreWalletCoordinator(parent: vc))
             .sink { _ in }.store(in: &subscriptions)
     }
 
