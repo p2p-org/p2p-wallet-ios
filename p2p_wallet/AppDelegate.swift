@@ -10,9 +10,11 @@ import Action
 import FeeRelayerSwift
 import Firebase
 import KeyAppKitLogger
+import KeyAppUI
 import Resolver
 import Sentry
 import SolanaSwift
+import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -88,6 +90,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         debugPrint("Failed to register: \(error)")
         proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
+    }
+
+    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        var result = false
+        Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
+        return result
     }
 
     func application(
@@ -198,7 +206,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navBarAppearence.tintColor = .h5887ff
-        barButtonAppearance.tintColor = .h5887ff
+        navBarAppearence.tintColor = Asset.Colors.night.color
+        barButtonAppearance.tintColor = Asset.Colors.night.color
     }
 }

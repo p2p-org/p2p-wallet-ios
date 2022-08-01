@@ -5,7 +5,7 @@ inhibit_all_warnings!
 
 def key_app_kit
   $keyAppKitGit = 'git@github.com:p2p-org/key-app-kit-swift.git'
-  $keyAppKitBranch = 'master'
+  $keyAppKitBranch = 'develop'
 
   pod 'TransactionParser', :git => $keyAppKitGit, :branch => $keyAppKitBranch
   pod 'NameService', :git => $keyAppKitGit, :branch => $keyAppKitBranch
@@ -66,11 +66,18 @@ target 'p2p_wallet' do
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'GT3Captcha-iOS'
+  pod 'PhoneNumberKit', '~> 3.3.4'
 
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
   pod 'Firebase/RemoteConfig'
+  
+  pod 'SwiftNotificationCenter'
+  pod 'GoogleSignIn'
+
+  # Others
+  pod 'SwiftJWT'
   
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'

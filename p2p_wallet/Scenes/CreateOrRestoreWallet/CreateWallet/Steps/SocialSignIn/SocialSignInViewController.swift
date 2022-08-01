@@ -4,33 +4,117 @@
 
 import AuthenticationServices
 import BEPureLayout
+import Combine
 import Foundation
 import KeyAppUI
 
 class SocialSignInViewController: BaseViewController {
-    private let viewModel: CreateWalletViewModel
+    let viewModel: SocialSignInViewModel
+    var subscriptions = [AnyCancellable]()
 
-    init(viewModel: CreateWalletViewModel) {
+    init(viewModel: SocialSignInViewModel) {
         self.viewModel = viewModel
         super.init()
     }
 
+    override func setUp() {
+        super.setUp()
+
+        viewModel.output
+            .isLoading
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isLoading in
+                isLoading ? self?.showIndetermineHud() : self?.hideHud()
+            }.store(in: &subscriptions)
+
+        navigationItem.title = L10n.createANewWallet
+
+        // Left button
+        let backButton = UIBarButtonItem(
+            image: UINavigationBar.appearance().backIndicatorImage,
+            style: .plain,
+            target: self,
+            action: #selector(onBack)
+        )
+        backButton.tintColor = Asset.Colors.night.color
+
+        let spacing = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        spacing.width = 8
+
+        navigationItem.setLeftBarButtonItems([spacing, backButton], animated: false)
+
+        // Right button
+        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
+        infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
+        infoButton.contentMode = .scaleAspectFill
+        infoButton.tintColor = Asset.Colors.night.color
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+    }
+
     override func build() -> UIView {
-        BECenter {
-            UILabel(text: "Sign in screen")
-            // UIButton(type: .system)
-            //     .setup { button in
-            //         button.setTitle("Sign in with apple", for: .normal)
-            //         button.setTitleColor(.blue, for: .normal)
-            //         button.addTarget(self, action: #selector(signInWithGoogle), for: .touchUpInside)
-            //     }
-            TextButton(title: "Sign in with Google", style: .primary, size: .medium)
-            ASAuthorizationAppleIDButton()
-                .setup { button in
-                    button.addTarget(self, action: #selector(signInWithApple), for: .touchUpInside)
+        BEContainer {
+            // Logo and description
+            BEVStack {
+                BESafeArea {
+                    BEVStack {
+                        UIImageView(image: .introWelcomeToP2pFamily, contentMode: .scaleAspectFill)
+                            .frame(width: 220, height: 280)
+                            .centered(.horizontal)
+
+                        UILabel(
+                            text: L10n.protectingTheFunds,
+                            font: UIFont.font(of: .largeTitle, weight: .bold),
+                            textAlignment: .center
+                        )
+                            .padding(.init(only: .top, inset: 10))
+                        UILabel(
+                            text: L10n.WeUseMultiFactorAuthentication
+                                .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts,
+                            font: UIFont.font(of: .title3, weight: .regular),
+                            numberOfLines: 3,
+                            textAlignment: .center
+                        ).padding(.init(only: .top, inset: 16))
+                    }.padding(.init(x: 16, y: 0))
+                }.centered(.vertical)
+
+                BottomPanel {
+                    BESafeArea {
+                        BEVStack(alignment: .fill) {
+                            // Buttons
+                            TextButton(title: "Sign in with Apple", style: .inverted, size: .large, leading: .appleLogo)
+                                .onPressed { [weak viewModel] _ in viewModel?.input.onSignInWithApple.send() }
+                            UIView().frame(height: 16)
+                            TextButton(title: "Sign in with Google", style: .inverted, size: .large, leading: .google)
+                                .onPressed { [weak viewModel] _ in viewModel?.input.onSignInWithGoogle.send() }
+
+                            UIView().frame(height: 24)
+
+                            // Term and conditions
+                            UILabel(
+                                text: L10n.byContinuingYouAgreeToKeyAppS,
+                                textColor: .white.withAlphaComponent(0.65),
+                                textAlignment: .center
+                            )
+                            BECenter {
+                                TextButton(title: L10n.termsAndConditions, style: .ghostWhite, size: .small)
+                                    .onPressed { [weak viewModel] _ in
+                                        viewModel?.input.onTermAndCondition.send()
+                                    }
+                            }.frame(height: 30)
+                        }.padding(.init(top: 32, left: 24, bottom: 0, right: 24))
+                    }
                 }
-            UILabel(text: ":)")
-        }
+            }
+        }.backgroundColor(color: Asset.Colors.lime.color)
+    }
+
+    @objc func onBack() {
+        viewModel.input.onBack.send()
+    }
+
+    @objc func onInfo() {
+        viewModel.input.onInfo.send()
     }
 
     @objc func signInWithApple() {
@@ -42,17 +126,6 @@ class SocialSignInViewController: BaseViewController {
         authorizationController.delegate = self
         authorizationController.presentationContextProvider = self
         authorizationController.performRequests()
-    }
-
-    @objc func signInWithGoogle() {
-        Task {
-            do {
-                try await viewModel.onboardingStateMachine
-                    .accept(event: .signIn(tokenID: "Token", authProvider: .google))
-            } catch {
-                print(error)
-            }
-        }
     }
 }
 
@@ -72,19 +145,21 @@ extension SocialSignInViewController: ASAuthorizationControllerDelegate {
             guard let idToken = appleIDCredential.identityToken else { return }
             let idTokenStr = String(data: idToken, encoding: .utf8)!
 
-            // TODO: remove
-            print(idTokenStr)
-
             Task {
                 do {
-                    let state = try await viewModel.onboardingStateMachine
-                        .accept(event: .signIn(tokenID: idTokenStr, authProvider: .apple))
+                    let state = try await viewModel
+                        .createWalletViewModel
+                        .onboardingStateMachine
+                        .accept(event: .signIn(
+                            tokenID: idTokenStr, authProvider: .apple,
+                            email: appleIDCredential.email ?? "?"
+                        ))
                     print(state as Any)
                 } catch {
                     print(error)
                 }
             }
-        case let passwordCredential as ASPasswordCredential:
+        case _ as ASPasswordCredential:
             break
         default:
             break

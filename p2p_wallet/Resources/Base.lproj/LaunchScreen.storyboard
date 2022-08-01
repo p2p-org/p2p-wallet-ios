@@ -16,29 +16,8 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lock-background" translatesAutoresizingMaskIntoConstraints="NO" id="UTc-Is-59k">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                            </imageView>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="p-logo" translatesAutoresizingMaskIntoConstraints="NO" id="xqn-Zd-f0w">
-                                <rect key="frame" x="98.5" y="366" width="217" height="164"/>
-                                <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="217" id="jiE-Kz-bbm"/>
-                                    <constraint firstAttribute="height" constant="164" id="va9-KN-nUZ"/>
-                                </constraints>
-                            </imageView>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" name="h5887ff"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="UTc-Is-59k" secondAttribute="trailing" id="9UR-b1-fIu"/>
-                            <constraint firstItem="UTc-Is-59k" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="KSc-Ht-Q6k"/>
-                            <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Ni6-Cj-jnS"/>
-                            <constraint firstItem="xqn-Zd-f0w" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="WSK-ck-VNb"/>
-                            <constraint firstItem="UTc-Is-59k" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="lOe-Ff-IwN"/>
-                            <constraint firstAttribute="bottom" secondItem="UTc-Is-59k" secondAttribute="bottom" id="rQd-Kr-hOy"/>
-                        </constraints>
+                        <color key="backgroundColor" name="Lime"/>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -47,10 +26,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="lock-background" width="375" height="812"/>
-        <image name="p-logo" width="217" height="164"/>
-        <namedColor name="h5887ff">
-            <color red="0.34509803921568627" green="0.52941176470588236" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        <namedColor name="Lime">
+            <color red="0.89399999380111694" green="0.95300000905990601" blue="0.071000002324581146" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
     </resources>
 </document>

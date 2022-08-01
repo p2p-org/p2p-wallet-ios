@@ -7,12 +7,13 @@
 
 import AnalyticsManager
 import Foundation
+import KeyAppUI
 import Resolver
 import SolanaSwift
 import UIKit
 
 @MainActor
-class AppCoordinator {
+class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
     private var appEventHandler: AppEventHandlerType = Resolver.resolve()
@@ -29,8 +30,9 @@ class AppCoordinator {
 
     // MARK: - Initializers
 
-    init() {
-        defer { appEventHandler.delegate = self }
+    override init() {
+        super.init()
+        defer { Task { await appEventHandler.delegate = self } }
     }
 
     // MARK: - Methods
@@ -42,41 +44,12 @@ class AppCoordinator {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
 
-        // add placeholder
-        let vc = BaseVC()
-        let lockView = LockView()
-        vc.view.addSubview(lockView)
-        lockView.autoPinEdgesToSuperviewEdges()
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
-
-        Task { await reload() }
+        openSplash()
     }
 
     func reload() async {
-        // show loading
-        _ = window?.rootViewController?.view.showLoadingIndicatorView()
-
-        // reload session
-        ResolverScope.session.reset()
-
-        // try to retrieve account from seed
-        try? await storage.reloadSolanaAccount()
-        let account = storage.account
-
-        // show scene
-        if account == nil {
-            showAuthenticationOnMainOnAppear = false
-            navigateToCreateOrRestoreWallet()
-        } else if storage.pinCode == nil ||
-            !Defaults.didSetEnableBiometry ||
-            !Defaults.didSetEnableNotifications
-        {
-            showAuthenticationOnMainOnAppear = false
-            navigateToOnboarding()
-        } else {
-            navigateToMain()
-        }
+        let account = await reloadData()
+        navigate(account: account)
     }
 
     // MARK: - Navigation
@@ -118,10 +91,69 @@ class AppCoordinator {
         Task { await reload() }
     }
 
+    private func navigate(account: Account?) {
+        if account == nil {
+            showAuthenticationOnMainOnAppear = false
+            openOnboardingStart()
+        } else if storage.pinCode == nil ||
+            !Defaults.didSetEnableBiometry ||
+            !Defaults.didSetEnableNotifications
+        {
+            showAuthenticationOnMainOnAppear = false
+            navigateToOnboarding()
+        } else {
+            navigateToMain()
+        }
+    }
+
+    private func openSplash() {
+        let vc = SplashViewController()
+        window?.rootViewController = vc
+        window?.makeKeyAndVisible()
+        vc.completionHandler = { [weak self] in
+            self?.warmup()
+        }
+    }
+
+    func warmup() {
+        Task {
+            let account = await self.reloadData()
+            self.navigate(account: account)
+        }
+    }
+
+    private func openOnboardingStart() {
+        guard let window = window else { return }
+        let provider = Resolver.resolve(StartOnboardingNavigationProvider.self)
+        let startCoordinator = provider.startCoordinator(for: window)
+
+        coordinate(to: startCoordinator)
+            .sink(receiveValue: { value in
+                debugPrint(value)
+            })
+            .store(in: &subscriptions)
+    }
+
     // MARK: - Helper
 
     private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
         window?.rootViewController?.view.hideLoadingIndicatorView()
         window?.rootViewController = vc
+    }
+
+    private func reloadData() async -> Account? {
+        // reload session
+        ResolverScope.session.reset()
+
+        // try to retrieve account from seed
+        try? await storage.reloadSolanaAccount()
+        return storage.account
+    }
+}
+
+extension UIWindow {
+    func animate(newRootViewController: UIViewController) {
+        rootViewController = newRootViewController
+        UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve, animations: {}, completion: nil)
     }
 }

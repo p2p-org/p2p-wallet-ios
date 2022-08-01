@@ -21,7 +21,8 @@ extension CreateOrRestoreWallet {
         private let viewModel: CreateOrRestoreWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManager
 
-        private var currentChildCoordinator: CreateWalletCoordinator?
+        private var createWalletCoordinator: CreateWalletCoordinator?
+        private var restoreWalletCoordinator: RestoreWalletCoordinator?
 
         // MARK: - Subviews
 
@@ -33,7 +34,7 @@ extension CreateOrRestoreWallet {
         )
             .onTap(self, action: #selector(navigateToCreateWalletScene))
         private lazy var restoreWalletButton = WLStepButton.sub(
-            text: L10n.iAlreadyHaveAWallet.uppercaseFirst
+            text: L10n.iAlreadyHaveAWallet
         )
             .onTap(self, action: #selector(navigateToRestoreWalletScene))
 
@@ -113,37 +114,9 @@ extension CreateOrRestoreWallet {
             guard let scene = scene else { return }
             switch scene {
             case .createWallet:
-                // let vm = CreateWallet.ViewModel()
-                // let vc = CreateWallet.ExplanationVC(viewModel: vm)
-                // show(vc, sender: nil)
-
-                guard currentChildCoordinator == nil else { return }
-
-                Task {
-                    let webView = GlobalWebView.requestWebView()
-                    do {
-                        let tKeyFacade = TKeyJSFacade(wkWebView: webView)
-                        try await tKeyFacade.initialize()
-
-                        currentChildCoordinator = CreateWalletCoordinator()
-                        currentChildCoordinator?.start()
-                            .sink(receiveCompletion: { [weak self, weak currentChildCoordinator] completion in
-                                switch completion {
-                                case .finished:
-                                    guard let vc = currentChildCoordinator?.navigationController else {
-                                        return
-                                    }
-                                    self?.show(vc, sender: nil)
-                                case .failure:
-                                    break
-                                }
-
-                            }, receiveValue: { _ in })
-                            .store(in: &subscriptions)
-                    } catch {
-                        webView.removeFromSuperview()
-                    }
-                }
+                let vm = CreateWallet.ViewModel()
+                let vc = CreateWallet.ExplanationVC(viewModel: vm)
+                show(vc, sender: nil)
             case .restoreWallet:
                 let vm = RestoreWallet.ViewModel()
                 let vc = RestoreWallet.ViewController(viewModel: vm)
