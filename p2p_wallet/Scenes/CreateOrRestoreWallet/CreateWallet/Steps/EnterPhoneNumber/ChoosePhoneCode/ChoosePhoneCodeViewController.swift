@@ -47,7 +47,6 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                         index: 0,
                         layout: .init(
                             cellType: PhoneCodeCell.self,
-                            numberOfLoadingCells: 2,
                             separator: .init(
                                 viewClass: PhoneCodeCellSeparatorView.self,
                                 heightDimension: .absolute(1)
@@ -87,7 +86,7 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
                     }
                 }
                 let selectedCountry = countries.remove(at: selectedIndex)
-                countries = countries.sorted(by: { $0.value.name < $1.value.name })
+                countries = countries.filteredAndSorted()
                 countries.insert(selectedCountry, at: .zero)
                 return countries
             }
