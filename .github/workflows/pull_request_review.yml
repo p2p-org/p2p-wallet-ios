@@ -46,6 +46,11 @@ jobs:
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
+      - name: Grant access to KeyAppUI
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
+
       - name: Copy xcconfig file
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
