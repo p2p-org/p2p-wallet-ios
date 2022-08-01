@@ -32,27 +32,19 @@ final class StartCoordinator: Coordinator<Void> {
             nc.pushViewController(viewController, animated: true)
         }
 
-        viewModel.navigation.action.sink { [weak self] scene in
+        viewModel.$navigatableScene.sink { [weak self] scene in
             guard let self = self else { return }
             switch scene {
-            case .openTerms:
-                self.openTerms(on: viewController)
             case .restoreWallet:
                 self.openRestoreWallet(vc: viewController)
             case .createWallet:
                 self.openCreateWallet(vc: viewController)
+            case .none:
+                break
             }
         }.store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
-    }
-
-    private func openTerms(on vc: UIViewController) {
-        let termsVC = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        vc.present(termsVC, animated: true)
     }
 
     private func openCreateWallet(vc: UIViewController) {
@@ -61,7 +53,7 @@ final class StartCoordinator: Coordinator<Void> {
     }
 
     private func openRestoreWallet(vc: UIViewController) {
-        coordinate(to: RestoreWalletCoordinator(parent: vc))
+        coordinate(to: ChoosePhoneCodeCoordinator(presentingViewController: vc))
             .sink { _ in }.store(in: &subscriptions)
     }
 

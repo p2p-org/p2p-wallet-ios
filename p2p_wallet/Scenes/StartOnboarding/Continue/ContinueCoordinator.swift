@@ -22,13 +22,15 @@ final class ContinueCoordinator: Coordinator<Void> {
 
         window.animate(newRootViewController: navigationController)
 
-        viewModel.navigation.action.sink { [weak self] scene in
+        viewModel.$navigatableScene.sink { [weak self] scene in
             guard let self = self else { return }
             switch scene {
             case .continue:
                 break
             case .start:
                 self.openStart(navigationController: navigationController)
+            case .none:
+                break
             }
         }.store(in: &subscriptions)
 
