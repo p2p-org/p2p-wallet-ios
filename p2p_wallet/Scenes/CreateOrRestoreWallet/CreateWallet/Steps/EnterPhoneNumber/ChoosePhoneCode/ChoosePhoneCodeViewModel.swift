@@ -34,7 +34,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
                     self.overrideData(by: self.cachedResult)
                     return
                 }
-                var newData = self.cachedResult.filteredByKeyword(keyword: keyword)
+                var newData = self.cachedResult.filteredAndSorted(byKeyword: keyword)
                 if newData.isEmpty {
                     newData.append(self.emptyCountryModel())
                 }
@@ -53,7 +53,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         cachedResult = try await CountriesAPIImpl().fetchCountries()
             .map { .init(value: $0, isSelected: $0.code == initialSelectedCountry?.code) }
         return cachedResult
-            .filteredByKeyword(keyword: keyword.value)
+            .filteredAndSorted(byKeyword: keyword.value)
     }
 
     private func emptyCountryModel() -> SelectableCountry {

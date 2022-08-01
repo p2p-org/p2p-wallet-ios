@@ -12,7 +12,6 @@ import Resolver
 import SolanaSwift
 import UIKit
 
-@MainActor
 class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
@@ -110,15 +109,18 @@ class AppCoordinator: Coordinator<Void> {
         let vc = SplashViewController()
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
-        vc.completionHandler = { [weak self] in
-            self?.warmup()
-        }
+        Task { await warmup() }
     }
 
-    func warmup() {
-        Task {
-            let account = await self.reloadData()
-            self.navigate(account: account)
+    private func warmup() async {
+        let account = await reloadData()
+
+        if let splashVC = window?.rootViewController as? SplashViewController {
+            splashVC.completionHandler = { [weak self] in
+                self?.navigate(account: account)
+            }
+        } else {
+            navigate(account: account)
         }
     }
 
