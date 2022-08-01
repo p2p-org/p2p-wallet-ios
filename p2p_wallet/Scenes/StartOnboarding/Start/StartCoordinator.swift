@@ -39,6 +39,8 @@ final class StartCoordinator: Coordinator<Void> {
                 self.openRestoreWallet(vc: viewController)
             case .createWallet:
                 self.openCreateWallet(vc: viewController)
+            case .mockContinue:
+                self.openContinue(vc: viewController)
             case .none:
                 break
             }
@@ -55,6 +57,17 @@ final class StartCoordinator: Coordinator<Void> {
     private func openRestoreWallet(vc: UIViewController) {
         coordinate(to: RestoreWalletCoordinator(parent: vc))
             .sink { _ in }.store(in: &subscriptions)
+    }
+
+    // TODO: Mock method
+    private func openContinue(vc _: UIViewController) {
+        switch navigation {
+        case let .root(window):
+            coordinate(to: ContinueCoordinator(window: window))
+                .sink(receiveValue: {}).store(in: &subscriptions)
+        case let .push(nc):
+            break
+        }
     }
 
     private func style(nc: UINavigationController) {
