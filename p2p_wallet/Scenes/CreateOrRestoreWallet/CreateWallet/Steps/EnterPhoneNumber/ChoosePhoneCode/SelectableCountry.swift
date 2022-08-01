@@ -4,11 +4,15 @@ import Foundation
 struct SelectableCountry: Hashable {
     let value: Country
     var isSelected: Bool = false
+    var isEmpty: Bool = false
 }
 
 extension Array where Element == SelectableCountry {
-    func filteredAndSorted(byKeyword keyword: String) -> Self {
+    func filteredAndSorted(byKeyword keyword: String = "") -> Self {
         var countries = self
+        if keyword.isEmpty {
+            return countries.sorted(by: { $0.value.name < $1.value.name })
+        }
         if !keyword.isEmpty {
             let keyword = keyword.lowercased()
             countries = countries

@@ -133,6 +133,16 @@ extension Resolver: ResolverRegistering {
         // QrCodeImageRender
         register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
+
+        // Navigation provider
+        register { StartOnboardingNavigationProviderImpl() }
+            .implements(StartOnboardingNavigationProvider.self)
+
+        register { OnboardingServiceImpl() }
+            .implements(OnboardingService.self)
+
+        register { SMSServiceImplMock() }
+            .implements(SMSService.self)
     }
 
     /// Session scope: Live when user is authenticated
@@ -294,6 +304,11 @@ extension Resolver: ResolverRegistering {
         // HttpClient
         register { HttpClientImpl() }
             .implements(HttpClient.self)
+            .scope(.session)
+
+        // Auth
+        register { AuthServiceImpl() }
+            .implements(AuthService.self)
             .scope(.session)
     }
 
