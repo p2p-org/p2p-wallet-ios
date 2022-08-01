@@ -2,57 +2,32 @@ import Combine
 import SwiftUI
 import UIKit
 
-extension StartViewModel: ViewModelType {
-    struct Input {
-        let createWalletDidTap = PassthroughSubject<Void, Never>()
-        let restoreWalletDidTap = PassthroughSubject<Void, Never>()
-        let openTermsDidTap = PassthroughSubject<Void, Never>()
-        var currentDataIndex = CurrentValueSubject<Int, Never>(.zero)
-    }
-
-    struct Output {
-        let data = CurrentValueSubject<[StartPageData], Never>([])
-    }
-
+extension StartViewModel {
     enum NavigatableScene {
         case createWallet
         case restoreWallet
-        case openTerms
-    }
-
-    struct Navigation {
-        let action: AnyPublisher<NavigatableScene, Never>
     }
 }
 
 final class StartViewModel: BaseViewModel {
-    var input: Input
-    let output: Output
-    let navigation: Navigation
+    @Published var data: [StartPageData] = []
+    @Published var navigatableScene: NavigatableScene?
+    @Published var currentDataIndex: Int = .zero
 
-    @Published private var data: [StartPageData] = []
+    let createWalletDidTap = PassthroughSubject<Void, Never>()
+    let restoreWalletDidTap = PassthroughSubject<Void, Never>()
 
     override init() {
-        input = Input()
-        output = Output()
-
-        let action = Publishers.Merge3(
-            input.createWalletDidTap.map { NavigatableScene.createWallet },
-            input.restoreWalletDidTap.map { NavigatableScene.restoreWallet },
-            input.openTermsDidTap.map { NavigatableScene.openTerms }
-        )
-        navigation = Navigation(action: action.eraseToAnyPublisher())
-
         super.init()
 
-        bind()
-        setData()
-    }
-
-    private func bind() {
-        $data.sink { [weak self] value in
-            self?.output.data.send(value)
+        Publishers.Merge(
+            createWalletDidTap.map { NavigatableScene.createWallet },
+            restoreWalletDidTap.map { NavigatableScene.restoreWallet }
+        ).sink { [weak self] scene in
+            self?.navigatableScene = scene
         }.store(in: &subscriptions)
+
+        setData()
     }
 
     private func setData() {

@@ -65,7 +65,7 @@ final class ChoosePhoneCodeViewController: BaseViewController {
 
     @objc private func doneButtonDidTouch() {
         dismiss(animated: true) { [unowned self] in
-            self.viewModel.input.didClose.send()
+            self.viewModel.didClose.send()
         }
     }
 }
@@ -97,7 +97,7 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
 
 extension ChoosePhoneCodeViewController: BESearchBarDelegate {
     func beSearchBar(_: BESearchBar, searchWithKeyword keyword: String) {
-        viewModel.input.keyword.send(keyword)
+        viewModel.keyword = keyword
     }
 
     func beSearchBarDidBeginSearching(_: BESearchBar) {}
