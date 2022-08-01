@@ -1,6 +1,6 @@
-name: Push
+name: Auto deploy
 on:
-  push:
+  pull_request:
 jobs:
   upload_build_for_testing:
     name: Upload build for testing when pull request is approved
