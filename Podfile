@@ -21,7 +21,9 @@ target 'p2p_wallet' do
   pod 'CocoaDebug', :configurations => ['Debug', 'Test']
   pod 'SolanaSwift', :path => 'SolanaSwift'
   pod 'BEPureLayout', :path => 'BEPureLayout'
-  pod 'BECollectionView', :path => 'BECollectionView'
+  pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
+  pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
   pod 'RenVMSwift', :path => 'RenVMSwift'
@@ -82,6 +84,12 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+    end
+    
+    if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'
+        target.build_configurations.each do |config|
+          config.build_settings['SWIFT_INSTALL_OBJC_HEADER'] = 'No'
+        end
     end
   end
 end
