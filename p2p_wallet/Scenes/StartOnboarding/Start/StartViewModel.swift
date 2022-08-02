@@ -6,6 +6,7 @@ extension StartViewModel {
     enum NavigatableScene {
         case createWallet
         case restoreWallet
+        case mockContinue // TODO: Remove mock scene
     }
 }
 
@@ -16,13 +17,15 @@ final class StartViewModel: BaseViewModel {
 
     let createWalletDidTap = PassthroughSubject<Void, Never>()
     let restoreWalletDidTap = PassthroughSubject<Void, Never>()
+    let mockButtonDidTap = PassthroughSubject<Void, Never>()
 
     override init() {
         super.init()
 
-        Publishers.Merge(
+        Publishers.Merge3(
             createWalletDidTap.map { NavigatableScene.createWallet },
-            restoreWalletDidTap.map { NavigatableScene.restoreWallet }
+            restoreWalletDidTap.map { NavigatableScene.restoreWallet },
+            mockButtonDidTap.map { NavigatableScene.mockContinue }
         ).sink { [weak self] scene in
             self?.navigatableScene = scene
         }.store(in: &subscriptions)
