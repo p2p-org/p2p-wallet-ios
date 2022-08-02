@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 26/09/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import NameService
 import Resolver
@@ -13,7 +13,7 @@ import RxSwift
 import SolanaSwift
 
 extension RestoreICloud {
-    class AccountsListViewModel: BEListViewModel<ParsedAccount> {
+    class AccountsListViewModel: BECollectionViewModel<ParsedAccount> {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
@@ -25,18 +25,25 @@ extension RestoreICloud {
             debugPrint("\(String(describing: self)) deinited")
         }
 
-        override func createRequest() -> Single<[ParsedAccount]> {
-            let accountsRequest = Single<[RawAccount]>.just(iCloudStorage.accountFromICloud() ?? [])
+        override func createRequest() async throws -> [RestoreICloud.ParsedAccount] {
+            let accountsFromICloud = iCloudStorage.accountFromICloud() ?? []
+            return try await withThrowingTaskGroup(of: (Int, ParsedAccount).self) { group in
+                var accounts = [(Int, ParsedAccount)]()
 
-            return accountsRequest
-                .flatMap { [weak self] accounts in
-                    guard let self = self else { throw SolanaError.unknown }
-                    return Single
-                        .zip(
-                            accounts
-                                .map { self.createParsedAccountSingle(account: $0) }
-                        )
+                for i in 0 ..< accountsFromICloud.count {
+                    group.addTask(priority: .userInitiated) {
+                        (i, try await self.createParsedAccount(account: accountsFromICloud[i]))
+                    }
                 }
+
+                for try await(index, account) in group {
+                    accounts.append(
+                        (index, account)
+                    )
+                }
+
+                return accounts.sorted(by: { $0.0 < $1.0 }).map(\.1)
+            }
         }
 
         override func handleNewData(_ newItems: [RestoreICloud.ParsedAccount]) {
@@ -74,17 +81,13 @@ extension RestoreICloud {
             }
         }
 
-        private func createParsedAccountSingle(account: RawAccount) -> Single<ParsedAccount> {
-            Single<Account>.async {
-                try await Account(
-                    phrase: account.phrase.components(separatedBy: " "),
-                    network: Defaults.apiEndPoint.network,
-                    derivablePath: account.derivablePath
-                )
-            }
-            .map {
-                .init(account: account, parsedAccount: $0)
-            }
+        private func createParsedAccount(account: RawAccount) async throws -> ParsedAccount {
+            let parsedAccount = try await Account(
+                phrase: account.phrase.components(separatedBy: " "),
+                network: Defaults.apiEndPoint.network,
+                derivablePath: account.derivablePath
+            )
+            return .init(account: account, parsedAccount: parsedAccount)
         }
     }
 }
