@@ -12,12 +12,12 @@ struct StartView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 PagingView(
-                    index: $viewModel.input.currentDataIndex.value.animation(),
-                    maxIndex: viewModel.output.data.value.count - 1,
+                    index: $viewModel.currentDataIndex.animation(),
+                    maxIndex: viewModel.data.count - 1,
                     fillColor: Color(Asset.Colors.night.color)
                 ) {
-                    ForEach(viewModel.output.data.value, id: \.id) {
-                        StartPageView(data: $0, subtitleFontWeight: .medium)
+                    ForEach(viewModel.data, id: \.id) { data in
+                        StartPageView(data: data, subtitleFontWeight: .medium)
                     }
                 }
 
@@ -37,13 +37,13 @@ extension StartView {
                 style: .inverted,
                 size: .large,
                 trailing: UIImage.arrowForward
-            ) { [weak viewModel] in viewModel?.input.createWalletDidTap.send() }
+            ) { [weak viewModel] in viewModel?.createWalletDidTap.send() }
                 .styled()
                 .padding(.top, 20)
 
             // Restore a wallet
             TextButtonView(title: L10n.iAlreadyHaveAWallet, style: .ghostLime, size: .large) { [weak viewModel] in
-                viewModel?.input.restoreWalletDidTap.send()
+                viewModel?.restoreWalletDidTap.send()
             }
             .styled()
             .padding(.top, 12)
