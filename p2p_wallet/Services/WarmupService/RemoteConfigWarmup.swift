@@ -95,13 +95,9 @@ private class TimeoutHandler: NSObject {
     init(_ delaySeconds: TimeInterval, _ callback: @escaping () -> Void) {
         super.init()
         self.callback = callback
-        timer = Timer.scheduledTimer(
-            timeInterval: TimeInterval(delaySeconds),
-            target: self,
-            selector: #selector(invoke),
-            userInfo: nil,
-            repeats: false
-        )
+        timer = Timer.scheduledTimer(withTimeInterval: delaySeconds, repeats: false) { [weak self] _ in
+            self?.invoke()
+        }
     }
 
     @objc func invoke() {
