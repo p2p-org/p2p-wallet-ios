@@ -5,25 +5,37 @@ import SwiftUI
 
 struct StartView: View {
     @ObservedObject var viewModel: StartViewModel
+    @State private var isShowing = false
 
     var body: some View {
         ZStack {
             Color(Asset.Colors.lime.color)
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
-                PagingView(
-                    index: $viewModel.input.currentDataIndex.value.animation(),
-                    maxIndex: viewModel.output.data.value.count - 1,
-                    fillColor: Color(Asset.Colors.night.color)
-                ) {
-                    ForEach(viewModel.output.data.value, id: \.id) {
-                        StartPageView(data: $0, subtitleFontWeight: .medium)
+                if isShowing {
+                    PagingView(
+                        index: $viewModel.input.currentDataIndex.value.animation(),
+                        maxIndex: viewModel.output.data.value.count - 1,
+                        fillColor: Color(Asset.Colors.night.color)
+                    ) {
+                        ForEach(viewModel.output.data.value, id: \.id) {
+                            StartPageView(data: $0, subtitleFontWeight: .medium)
+                        }
                     }
-                }
+                    .transition(.move(edge: .top))
+                    .opacity(isShowing ? 1 : 0)
 
-                bottomActionsView
+                    bottomActionsView
+                        .transition(.move(edge: .bottom))
+                        .opacity(isShowing ? 1 : 0)
+                }
             }
             .edgesIgnoringSafeArea(.bottom)
+        }
+        .onAppear {
+            withAnimation {
+                isShowing = true
+            }
         }
     }
 }
