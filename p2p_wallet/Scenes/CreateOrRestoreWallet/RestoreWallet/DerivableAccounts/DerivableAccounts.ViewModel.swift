@@ -26,6 +26,7 @@ protocol DrivableAccountsViewModelType {
 }
 
 extension DerivableAccounts {
+    @MainActor
     class ViewModel {
         // MARK: - Dependencies
 
