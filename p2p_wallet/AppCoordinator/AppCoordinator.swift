@@ -12,7 +12,6 @@ import Resolver
 import SolanaSwift
 import UIKit
 
-@MainActor
 class AppCoordinator: Coordinator<Void> {
     // MARK: - Dependencies
 
@@ -54,7 +53,7 @@ class AppCoordinator: Coordinator<Void> {
 
     // MARK: - Navigation
 
-    func navigateToCreateOrRestoreWallet() {
+    func oldOnboardingFlow() {
         // TODO: - Change to CreateOrRestoreWallet.Coordinator.start()
         let vm = CreateOrRestoreWallet.ViewModel()
         let vc = CreateOrRestoreWallet.ViewController(viewModel: vm)
@@ -94,7 +93,11 @@ class AppCoordinator: Coordinator<Void> {
     private func navigate(account: Account?) {
         if account == nil {
             showAuthenticationOnMainOnAppear = false
-            openOnboardingStart()
+            if available(.newOnboardingFlow) {
+                newOnboardingFlow()
+            } else {
+                oldOnboardingFlow()
+            }
         } else if storage.pinCode == nil ||
             !Defaults.didSetEnableBiometry ||
             !Defaults.didSetEnableNotifications
@@ -110,19 +113,23 @@ class AppCoordinator: Coordinator<Void> {
         let vc = SplashViewController()
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
-        vc.completionHandler = { [weak self] in
-            self?.warmup()
+        Task { await warmup() }
+    }
+
+    private func warmup() async {
+        await Resolver.resolve(WarmupManager.self).start()
+        let account = await reloadData()
+
+        if let splashVC = window?.rootViewController as? SplashViewController {
+            splashVC.completionHandler = { [weak self] in
+                self?.navigate(account: account)
+            }
+        } else {
+            navigate(account: account)
         }
     }
 
-    func warmup() {
-        Task {
-            let account = await self.reloadData()
-            self.navigate(account: account)
-        }
-    }
-
-    private func openOnboardingStart() {
+    private func newOnboardingFlow() {
         guard let window = window else { return }
         let provider = Resolver.resolve(StartOnboardingNavigationProvider.self)
         let startCoordinator = provider.startCoordinator(for: window)

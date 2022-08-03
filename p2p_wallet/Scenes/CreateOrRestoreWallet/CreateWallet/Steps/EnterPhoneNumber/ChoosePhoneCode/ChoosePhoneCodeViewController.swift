@@ -47,7 +47,6 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                         index: 0,
                         layout: .init(
                             cellType: PhoneCodeCell.self,
-                            numberOfLoadingCells: 2,
                             separator: .init(
                                 viewClass: PhoneCodeCellSeparatorView.self,
                                 heightDimension: .absolute(1)
@@ -65,7 +64,7 @@ final class ChoosePhoneCodeViewController: BaseViewController {
 
     @objc private func doneButtonDidTouch() {
         dismiss(animated: true) { [unowned self] in
-            self.viewModel.input.didClose.send()
+            self.viewModel.didClose.send()
         }
     }
 }
@@ -87,7 +86,7 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
                     }
                 }
                 let selectedCountry = countries.remove(at: selectedIndex)
-                countries = countries.sorted(by: { $0.value.name < $1.value.name })
+                countries = countries.filteredAndSorted()
                 countries.insert(selectedCountry, at: .zero)
                 return countries
             }
@@ -97,7 +96,7 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
 
 extension ChoosePhoneCodeViewController: BESearchBarDelegate {
     func beSearchBar(_: BESearchBar, searchWithKeyword keyword: String) {
-        viewModel.input.keyword.send(keyword)
+        viewModel.keyword = keyword
     }
 
     func beSearchBarDidBeginSearching(_: BESearchBar) {}
