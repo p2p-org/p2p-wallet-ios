@@ -4,14 +4,15 @@ import Resolver
 
 extension ProtectionLevelViewModel {
     enum NavigatableScene {
-        case pin
+        case createPincode
+        case main
     }
 }
 
 final class ProtectionLevelViewModel: BaseViewModel {
     // MARK: - Dependencies
 
-    @Injected private var biometricsAuthProvider: BiometricsAuthenticationProvider
+    @Injected private var biometricsAuthProvider: LocalAuthProvider
 
     // MARK: - Properties
 
@@ -35,7 +36,7 @@ final class ProtectionLevelViewModel: BaseViewModel {
         super.init()
 
         setUpPinDidTap.sink { [weak self] _ in
-            self?.navigatableScene = .pin
+            self?.navigatableScene = .createPincode
         }.store(in: &subscriptions)
 
         useFaceIdDidTap.sink { [weak self] _ in
@@ -43,7 +44,11 @@ final class ProtectionLevelViewModel: BaseViewModel {
             let prompt = L10n
                 .insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
             self.biometricsAuthProvider.authenticate(authenticationPrompt: prompt, completion: { success in
-                debugPrint(success)
+                if success {
+                    self.navigatableScene = .main
+                } else {
+                    // TODO: handle error
+                }
             })
         }.store(in: &subscriptions)
 

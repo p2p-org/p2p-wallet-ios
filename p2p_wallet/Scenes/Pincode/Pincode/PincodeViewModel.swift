@@ -19,7 +19,7 @@ final class PincodeViewModel: BaseViewModel {
     // MARK: - Dependencies
 
     @Injected private var pincodeStorage: PincodeStorageType
-    @Injected private var biometricsAuthProvider: BiometricsAuthenticationProvider
+    @Injected private var biometricsAuthProvider: LocalAuthProvider
 
     // MARK: - Properties
 

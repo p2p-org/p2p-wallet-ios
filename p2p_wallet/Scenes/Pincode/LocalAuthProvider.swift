@@ -1,24 +1,25 @@
 import Foundation
 import LocalAuthentication
 
-protocol BiometricsAuthenticationProvider {
+protocol LocalAuthProvider {
     var availabilityStatus: LABiometryType { get }
 
     func authenticate(authenticationPrompt: String, completion: @escaping (Bool) -> Void)
 }
 
-final class BiometricsAuthenticationProviderImpl: BiometricsAuthenticationProvider {
+final class LocalAuthProviderImpl: LocalAuthProvider {
     var availabilityStatus: LABiometryType {
-        LABiometryType.current
+        let context = LAContext()
+        _ = context.canEvaluatePolicy(policy, error: nil)
+        return context.biometryType
     }
 
     private let context = LAContext()
+    private let policy = LAPolicy.deviceOwnerAuthentication
 
     func authenticate(authenticationPrompt: String, completion: @escaping (Bool) -> Void) {
         context
-            .evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
-                            localizedReason: authenticationPrompt)
-            { success, error in
+            .evaluatePolicy(policy, localizedReason: authenticationPrompt) { success, error in
                 DispatchQueue.main.async {
                     if let error = error {
                         debugPrint(error)
