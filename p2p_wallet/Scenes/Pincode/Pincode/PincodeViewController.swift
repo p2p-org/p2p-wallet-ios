@@ -92,7 +92,7 @@ final class PincodeViewController: BaseViewController {
     }
 
     private func makeBottomLeftButton() -> IconButton? {
-        guard let image = viewModel.bioAuthStatus.icon else { return nil }
+        guard let image = viewModel.bioAuthStatus.icon, viewModel.isBiometryAvailable else { return nil }
         let button = IconButton(image: image, style: .ghostBlack, size: .large)
         button.onPressed { [weak viewModel] _ in
             viewModel?.bioAuthDidTap.send()
