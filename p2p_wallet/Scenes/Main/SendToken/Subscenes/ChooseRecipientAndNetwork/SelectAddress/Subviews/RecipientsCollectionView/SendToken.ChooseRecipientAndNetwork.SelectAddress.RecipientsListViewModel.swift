@@ -80,7 +80,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private func findAddressInSolanaNetwork(address: String) -> Single<[SendToken.Recipient]> {
             Single<Bool>.async { [weak self] in
-                try? await self?.solanaAPIClient.checkAccountValidation(account: address) ?? false
+                (try? await self?.solanaAPIClient.checkAccountValidation(account: address)) ?? false
             }.map {
                 [
                     .init(
