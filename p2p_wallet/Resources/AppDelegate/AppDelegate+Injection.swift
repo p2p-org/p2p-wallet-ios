@@ -144,8 +144,8 @@ extension Resolver: ResolverRegistering {
         register { SMSServiceImplMock() }
             .implements(SMSService.self)
 
-        register { BiometricsAuthenticationProviderImpl() }
-            .implements(BiometricsAuthenticationProvider.self)
+        register { LocalAuthProviderImpl() }
+            .implements(LocalAuthProvider.self)
     }
 
     /// Session scope: Live when user is authenticated

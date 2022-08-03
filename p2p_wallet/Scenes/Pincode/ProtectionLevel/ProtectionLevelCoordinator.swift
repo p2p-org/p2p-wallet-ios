@@ -26,8 +26,10 @@ final class ProtectionLevelCoordinator: Coordinator<Void> {
         viewModel.$navigatableScene.sink { [weak self] scene in
             guard let self = self else { return }
             switch scene {
-            case .pin:
-                self.openPin()
+            case .createPincode:
+                self.openPincode()
+            case .main:
+                self.openMain()
             case .none:
                 break
             }
@@ -36,12 +38,14 @@ final class ProtectionLevelCoordinator: Coordinator<Void> {
         return subject.eraseToAnyPublisher()
     }
 
-    private func openPin() {
+    private func openPincode() {
         guard let nc = navigationController else { return }
         coordinate(to: PincodeCoordinator(navigationController: nc, state: .create))
             .sink(receiveValue: { _ in })
             .store(in: &subscriptions)
     }
+
+    private func openMain() {}
 
     @objc private func openInfo() {}
 
