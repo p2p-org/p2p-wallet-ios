@@ -13,7 +13,7 @@ struct ContinueView: View {
             VStack(spacing: .zero) {
                 Spacer()
 
-                StartPageView(data: viewModel.output.data.value, subtitleFontWeight: .regular)
+                StartPageView(data: viewModel.data, subtitleFontWeight: .regular)
                     .padding(.horizontal, 40)
 
                 Spacer()
@@ -29,12 +29,12 @@ extension ContinueView {
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
             TextButtonView(title: L10n.continue, style: .inverted, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.input.continueDidTap.send()
+                viewModel?.continueDidTap.send()
             })
                 .styled()
                 .padding(.top, 20)
             TextButtonView(title: L10n.startingScreen, style: .ghostLime, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.input.startDidTap.send()
+                viewModel?.startDidTap.send()
             })
                 .styled()
                 .padding(.top, 12)

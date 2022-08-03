@@ -11,15 +11,16 @@ struct StartView: View {
         ZStack {
             Color(Asset.Colors.lime.color)
                 .edgesIgnoringSafeArea(.all)
+            mockView
             VStack(spacing: .zero) {
                 if isShowing {
                     PagingView(
-                        index: $viewModel.input.currentDataIndex.value.animation(),
-                        maxIndex: viewModel.output.data.value.count - 1,
+                        index: $viewModel.currentDataIndex.animation(),
+                        maxIndex: viewModel.data.count - 1,
                         fillColor: Color(Asset.Colors.night.color)
                     ) {
-                        ForEach(viewModel.output.data.value, id: \.id) {
-                            StartPageView(data: $0, subtitleFontWeight: .medium)
+                        ForEach(viewModel.data, id: \.id) { data in
+                            StartPageView(data: data, subtitleFontWeight: .medium)
                         }
                     }
                     .transition(.move(edge: .top))
@@ -41,6 +42,18 @@ struct StartView: View {
 }
 
 extension StartView {
+    private var mockView: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button("Continue", action: viewModel.mockButtonDidTap.send)
+                    .foregroundColor(Color.blue)
+            }
+            .padding()
+            Spacer()
+        }
+    }
+
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
             // Create a wallet
@@ -49,13 +62,13 @@ extension StartView {
                 style: .inverted,
                 size: .large,
                 trailing: UIImage.arrowForward
-            ) { [weak viewModel] in viewModel?.input.createWalletDidTap.send() }
+            ) { [weak viewModel] in viewModel?.createWalletDidTap.send() }
                 .styled()
                 .padding(.top, 20)
 
             // Restore a wallet
             TextButtonView(title: L10n.iAlreadyHaveAWallet, style: .ghostLime, size: .large) { [weak viewModel] in
-                viewModel?.input.restoreWalletDidTap.send()
+                viewModel?.restoreWalletDidTap.send()
             }
             .styled()
             .padding(.top, 12)
