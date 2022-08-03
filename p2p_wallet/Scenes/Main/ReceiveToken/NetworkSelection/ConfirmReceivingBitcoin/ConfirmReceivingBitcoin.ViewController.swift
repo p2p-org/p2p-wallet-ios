@@ -7,7 +7,6 @@
 
 import BEPureLayout
 import Foundation
-import RxSwift
 import UIKit
 
 extension ConfirmReceivingBitcoin {

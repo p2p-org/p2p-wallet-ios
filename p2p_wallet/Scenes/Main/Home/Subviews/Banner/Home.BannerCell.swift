@@ -5,7 +5,6 @@
 import BECollectionView
 import BEPureLayout
 import Foundation
-import RxSwift
 
 extension Home {
     class BannerCell: BECollectionCell {

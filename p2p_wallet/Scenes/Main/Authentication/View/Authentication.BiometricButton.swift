@@ -4,8 +4,6 @@
 
 import Foundation
 import LocalAuthentication
-import RxCocoa
-import RxSwift
 
 extension Authentication {
     class BiometricButton: BECompositionView {

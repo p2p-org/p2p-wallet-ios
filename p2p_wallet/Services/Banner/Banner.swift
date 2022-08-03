@@ -4,7 +4,6 @@
 
 import Foundation
 import RxCocoa
-import RxSwift
 
 class Banners {
     typealias Service = BannerServiceType

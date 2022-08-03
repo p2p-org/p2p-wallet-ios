@@ -5,7 +5,6 @@
 //  Created by Andrew Vasiliev on 21.12.2021.
 //
 
-import RxSwift
 import UIKit
 
 extension SwapTokenSettings {

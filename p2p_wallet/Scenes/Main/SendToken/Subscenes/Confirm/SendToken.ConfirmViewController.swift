@@ -8,7 +8,6 @@
 import BEPureLayout
 import Foundation
 import RxCocoa
-import RxSwift
 import UIKit
 
 extension SendToken {

@@ -7,7 +7,6 @@
 
 import BEPureLayout
 import RxCocoa
-import RxSwift
 import UIKit
 
 protocol DetailFeesViewModelType {

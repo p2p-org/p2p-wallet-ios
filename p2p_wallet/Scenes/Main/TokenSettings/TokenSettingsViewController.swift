@@ -8,7 +8,6 @@
 import Action
 import Foundation
 import Resolver
-import RxSwift
 import UIKit
 
 @objc protocol TokenSettingsViewControllerDelegate: AnyObject {

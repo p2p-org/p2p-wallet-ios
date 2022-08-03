@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import RxSwift
 
 class FeedbackBanner: Banners.Banner {
     fileprivate static let id = "feedback-banner"

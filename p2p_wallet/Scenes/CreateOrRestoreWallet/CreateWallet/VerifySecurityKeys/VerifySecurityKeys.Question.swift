@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import RxSwift
 import UIKit
 
 protocol QuestionsDelegate: AnyObject {

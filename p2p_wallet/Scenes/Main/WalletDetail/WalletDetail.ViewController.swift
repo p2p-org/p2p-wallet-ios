@@ -8,7 +8,6 @@
 import BEPureLayout
 import Foundation
 import Resolver
-import RxSwift
 import SolanaSwift
 import UIKit
 
