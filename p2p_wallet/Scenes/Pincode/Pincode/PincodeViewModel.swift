@@ -7,7 +7,7 @@ extension PincodeViewModel {
     enum NavigatableScene {
         case confirm(pin: String)
         case openInfo
-        case openMain
+        case openMain(pin: String)
     }
 }
 
@@ -19,7 +19,7 @@ final class PincodeViewModel: BaseViewModel {
     // MARK: - Dependencies
 
     @Injected private var pincodeStorage: PincodeStorageType
-    @Injected private var biometricsAuthProvider: LocalAuthProvider
+    @Injected private var biometricsAuthProvider: BiometricsAuthProvider
 
     // MARK: - Properties
 
@@ -42,10 +42,17 @@ final class PincodeViewModel: BaseViewModel {
         }
     }
 
+    let isBiometryAvailable: Bool
+
     private let state: PincodeState
 
     init(state: PincodeState) {
         self.state = state
+        if case .confirm = state {
+            isBiometryAvailable = true
+        } else {
+            isBiometryAvailable = false
+        }
         super.init()
         title = title(for: state)
         bind()
@@ -74,7 +81,7 @@ private extension PincodeViewModel {
                 self.navigatableScene = .confirm(pin: pin)
             case .confirm:
                 self.snackbar = (image: .emojiVictoryHand, title: L10n.yeahYouVeCreatedThePINToKeyApp)
-                self.navigatableScene = .openMain
+                self.navigatableScene = .openMain(pin: pin)
                 self.pincodeStorage.save(pin)
             }
         }.store(in: &subscriptions)

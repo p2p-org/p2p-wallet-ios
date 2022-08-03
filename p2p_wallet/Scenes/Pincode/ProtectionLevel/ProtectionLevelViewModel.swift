@@ -1,6 +1,7 @@
 import Combine
 import LocalAuthentication
 import Resolver
+import UIKit
 
 extension ProtectionLevelViewModel {
     enum NavigatableScene {
@@ -12,20 +13,19 @@ extension ProtectionLevelViewModel {
 final class ProtectionLevelViewModel: BaseViewModel {
     // MARK: - Dependencies
 
-    @Injected private var biometricsAuthProvider: LocalAuthProvider
+    @Injected private var biometricsAuthProvider: BiometricsAuthProvider
 
     // MARK: - Properties
 
     @Published var data: OnboardingContentData
-    @Published var bioAuthButtonTitle: String = ""
+    @Published var localAuthTitle = ""
+    @Published var localAuthImage: UIImage?
     @Published var navigatableScene: NavigatableScene?
 
-    let useFaceIdDidTap = PassthroughSubject<Void, Never>()
+    let useLocalAuthDidTap = PassthroughSubject<Void, Never>()
     let setUpPinDidTap = PassthroughSubject<Void, Never>()
 
-    private var bioAuthStatus: LABiometryType {
-        biometricsAuthProvider.availabilityStatus
-    }
+    private var bioAuthStatus: LABiometryType { biometricsAuthProvider.availabilityStatus }
 
     override init() {
         data = OnboardingContentData(
@@ -35,14 +35,16 @@ final class ProtectionLevelViewModel: BaseViewModel {
         )
         super.init()
 
+        localAuthTitle = L10n.use(bioAuthStatus.stringValue)
+        localAuthImage = bioAuthStatus.icon
+
         setUpPinDidTap.sink { [weak self] _ in
             self?.navigatableScene = .createPincode
         }.store(in: &subscriptions)
 
-        useFaceIdDidTap.sink { [weak self] _ in
+        useLocalAuthDidTap.sink { [weak self] _ in
             guard let self = self else { return }
-            let prompt = L10n
-                .insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
+            let prompt = L10n.insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
             self.biometricsAuthProvider.authenticate(authenticationPrompt: prompt, completion: { success in
                 if success {
                     self.navigatableScene = .main
@@ -51,7 +53,5 @@ final class ProtectionLevelViewModel: BaseViewModel {
                 }
             })
         }.store(in: &subscriptions)
-
-        bioAuthButtonTitle = L10n.use(bioAuthStatus.stringValue)
     }
 }

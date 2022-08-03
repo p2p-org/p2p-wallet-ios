@@ -28,7 +28,7 @@ final class PincodeCoordinator: Coordinator<Void> {
                 self.openConfirm(pin: pin)
             case .openInfo:
                 self.openInfo()
-            case .openMain:
+            case let .openMain(pin):
                 break
             case .none:
                 break

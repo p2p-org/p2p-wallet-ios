@@ -27,12 +27,12 @@ extension ProtectionLevelView {
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
             TextButtonView(
-                title: viewModel.bioAuthButtonTitle,
+                title: viewModel.localAuthTitle,
                 style: .inverted,
                 size: .large,
-                trailing: .faceId,
+                trailing: viewModel.localAuthImage,
                 onPressed: { [weak viewModel] in
-                    viewModel?.useFaceIdDidTap.send()
+                    viewModel?.useLocalAuthDidTap.send()
                 }
             )
                 .styled()
