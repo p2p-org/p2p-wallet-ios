@@ -69,7 +69,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         setupDefaultFlags()
         FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
-        setupRemoteConfig()
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -111,42 +110,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    private func setupRemoteConfig() {
-        #if !RELEASE
-            let settings = RemoteConfigSettings()
-            // WARNING: Don't actually do this in production!
-            settings.minimumFetchInterval = 0
-            RemoteConfig.remoteConfig().configSettings = settings
-        #endif
-
-        let currentEndpoints = APIEndPoint.definedEndpoints
-        #if !RELEASE
-            FeatureFlagProvider.shared.fetchFeatureFlags(
-                mainFetcher: MergingFlagsFetcher(
-                    primaryFetcher: DebugMenuFeaturesProvider.shared,
-                    secondaryFetcher: MergingFlagsFetcher(
-                        primaryFetcher: defaultFlags,
-                        secondaryFetcher: RemoteConfig.remoteConfig()
-                    )
-                )
-            ) { _ in
-                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
-            }
-        #else
-            FeatureFlagProvider.shared.fetchFeatureFlags(
-                mainFetcher: MergingFlagsFetcher(
-                    primaryFetcher: RemoteConfig.remoteConfig(),
-                    secondaryFetcher: defaultFlags
-                )
-            ) { _ in
-                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
-            }
-        #endif
-
-        Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
-            .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
-    }
-
     private func setupTabBarAppearance() {
         let standardAppearance = UITabBarAppearance()
         standardAppearance.backgroundColor = .clear
@@ -180,16 +143,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
         FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
         KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
-    }
-
-    private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {
-        let newEndpoints = APIEndPoint.definedEndpoints
-        guard currentEndpoints != newEndpoints else { return }
-        if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
-           let firstEndpoint = newEndpoints.first
-        {
-            Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
-        }
     }
 
     private func setupNavigationAppearance() {
