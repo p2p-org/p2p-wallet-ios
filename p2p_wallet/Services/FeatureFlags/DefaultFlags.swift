@@ -13,6 +13,7 @@ func setupDefaultFlags() {
     defaultFlags = StaticFlagsFetcher(
         featureFlags: [
             FeatureFlag(feature: .sslPinning, enabled: true),
+            FeatureFlag(feature: .newOnboardingFlow, enabled: true),
         ]
     )
 }
