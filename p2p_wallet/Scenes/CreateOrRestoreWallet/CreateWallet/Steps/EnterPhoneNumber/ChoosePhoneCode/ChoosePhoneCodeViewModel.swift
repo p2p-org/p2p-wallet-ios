@@ -10,15 +10,6 @@ import Combine
 import CountriesAPI
 import Foundation
 
-extension ChoosePhoneCodeViewModel: ViewModelType {
-    struct Input {
-        let didClose = PassthroughSubject<Void, Never>()
-        let keyword = CurrentValueSubject<String, Never>("")
-    }
-
-    struct Output {}
-}
-
 final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     // MARK: - Dependencies
 
@@ -28,17 +19,15 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     private var cachedResult = [SelectableCountry]()
     private var initialSelectedCountry: Country?
 
-    let input: Input
-    let output: Output
+    @Published var keyword = ""
+    let didClose = PassthroughSubject<Void, Never>()
 
     // MARK: - Initializers
 
     init(selectedCountry: Country? = nil) {
         initialSelectedCountry = selectedCountry
-        input = Input()
-        output = Output()
         super.init()
-        input.keyword
+        $keyword
             .sink { [weak self] keyword in
                 guard let self = self else { return }
                 if keyword.isEmpty {
@@ -64,7 +53,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         cachedResult = try await CountriesAPIImpl().fetchCountries()
             .map { .init(value: $0, isSelected: $0.code == initialSelectedCountry?.code) }
         return cachedResult
-            .filteredAndSorted(byKeyword: input.keyword.value)
+            .filteredAndSorted(byKeyword: keyword.value)
     }
 
     private func emptyCountryModel() -> SelectableCountry {
