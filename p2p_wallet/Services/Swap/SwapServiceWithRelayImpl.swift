@@ -6,7 +6,6 @@ import FeeRelayerSwift
 import Foundation
 import OrcaSwapSwift
 import Resolver
-import RxSwift
 import SolanaSwift
 
 class SwapServiceWithRelayImpl: SwapServiceType {

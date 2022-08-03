@@ -4,8 +4,6 @@
 
 import BECollectionView
 import BEPureLayout
-import RxCocoa
-import RxSwift
 import UIKit
 
 class VisibleWalletCell: BECollectionCell, BECollectionViewCell, UIGestureRecognizerDelegate {

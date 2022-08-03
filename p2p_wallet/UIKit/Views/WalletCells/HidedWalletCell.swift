@@ -4,8 +4,6 @@
 
 import BECollectionView
 import BEPureLayout
-import RxCocoa
-import RxSwift
 
 class HidedWalletCell: BECollectionCell, BECollectionViewCell {
     var onSend: BEVoidCallback?

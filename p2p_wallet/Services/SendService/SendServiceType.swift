@@ -7,7 +7,6 @@
 
 import FeeRelayerSwift
 import Foundation
-import RxSwift
 import SolanaSwift
 
 protocol SendServiceType: AnyObject {
