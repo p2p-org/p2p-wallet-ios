@@ -10,7 +10,6 @@ import BEPureLayout
 import Foundation
 import Resolver
 import RxCocoa
-import RxSwift
 import SafariServices
 import WebKit
 
