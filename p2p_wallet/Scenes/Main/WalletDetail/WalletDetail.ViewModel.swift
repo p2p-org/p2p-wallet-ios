@@ -18,7 +18,6 @@ protocol WalletDetailViewModelType {
     var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> { get }
     var walletDriver: Driver<Wallet?> { get }
     var walletActionsDriver: Driver<[WalletActionType]> { get }
-    var graphViewModel: WalletGraphViewModel { get }
 
     func showWalletSettings()
     func start(action: WalletActionType)
@@ -39,7 +38,6 @@ extension WalletDetail {
         // MARK: - Properties
 
         private let disposeBag = DisposeBag()
-        lazy var graphViewModel = WalletGraphViewModel(symbol: symbol)
 
         // MARK: - Subject
 
