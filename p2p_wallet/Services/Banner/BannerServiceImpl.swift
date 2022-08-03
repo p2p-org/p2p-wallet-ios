@@ -4,7 +4,6 @@
 
 import Foundation
 import RxCocoa
-import RxSwift
 
 class BannerServiceImpl: Banners.Service {
     private var _banners: Set<Banners.Banner> = []

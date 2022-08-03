@@ -5,7 +5,6 @@
 //  Created by Andrew Vasiliev on 18.11.2021.
 //
 
-import RxSwift
 import UIKit
 
 extension EnterSeedInfo {

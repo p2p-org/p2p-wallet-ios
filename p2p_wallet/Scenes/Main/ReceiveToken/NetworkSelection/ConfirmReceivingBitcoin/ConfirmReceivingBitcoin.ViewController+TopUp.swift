@@ -7,7 +7,6 @@
 
 import Foundation
 import RxCocoa
-import RxSwift
 
 extension ConfirmReceivingBitcoin.ViewController {
     func topUpRequiredView() -> BEVStack {

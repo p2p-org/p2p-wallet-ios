@@ -6,7 +6,6 @@
 //
 
 import Resolver
-import RxSwift
 import UIKit
 
 extension EnterSeed {
