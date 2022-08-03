@@ -10,14 +10,14 @@ extension ContinueViewModel {
 }
 
 final class ContinueViewModel: BaseViewModel {
-    @Published var data: StartPageData
+    @Published var data: OnboardingContentData
     @Published var navigatableScene: NavigatableScene?
 
     let continueDidTap = PassthroughSubject<Void, Never>()
     let startDidTap = PassthroughSubject<Void, Never>()
 
     override init() {
-        data = StartPageData(
+        data = OnboardingContentData(
             image: .safe,
             title: L10n.letSContinue,
             subtitle: L10n.YouHaveAGreatStartWith.itSOnlyAPhoneNumberNeededToCreateANewWallet("test@test.ru")

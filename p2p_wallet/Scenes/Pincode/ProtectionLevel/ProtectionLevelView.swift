@@ -1,10 +1,8 @@
-import Combine
 import KeyAppUI
-import SolanaSwift
 import SwiftUI
 
-struct ContinueView: View {
-    @ObservedObject var viewModel: ContinueViewModel
+struct ProtectionLevelView: View {
+    @ObservedObject var viewModel: ProtectionLevelViewModel
 
     var body: some View {
         ZStack {
@@ -25,16 +23,22 @@ struct ContinueView: View {
     }
 }
 
-extension ContinueView {
+extension ProtectionLevelView {
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
-            TextButtonView(title: L10n.continue, style: .inverted, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.continueDidTap.send()
-            })
+            TextButtonView(
+                title: viewModel.bioAuthButtonTitle,
+                style: .inverted,
+                size: .large,
+                trailing: .faceId,
+                onPressed: { [weak viewModel] in
+                    viewModel?.useFaceIdDidTap.send()
+                }
+            )
                 .styled()
                 .padding(.top, 20)
-            TextButtonView(title: L10n.startingScreen, style: .ghostLime, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.startDidTap.send()
+            TextButtonView(title: L10n.setUpAPINCode, style: .ghostLime, size: .large, onPressed: { [weak viewModel] in
+                viewModel?.setUpPinDidTap.send()
             })
                 .styled()
                 .padding(.top, 12)

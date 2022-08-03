@@ -11,7 +11,7 @@ extension StartViewModel {
 }
 
 final class StartViewModel: BaseViewModel {
-    @Published var data: [StartPageData] = []
+    @Published var data: [OnboardingContentData] = []
     @Published var navigatableScene: NavigatableScene?
     @Published var currentDataIndex: Int = .zero
 
@@ -35,22 +35,22 @@ final class StartViewModel: BaseViewModel {
 
     private func setData() {
         data = [
-            StartPageData(
+            OnboardingContentData(
                 image: .coins,
                 title: L10n.welcomeToKeyApp,
                 subtitle: L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos
             ),
-            StartPageData(
+            OnboardingContentData(
                 image: .coins,
                 title: "\(L10n.welcomeToKeyApp) 2",
                 subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 2"
             ),
-            StartPageData(
+            OnboardingContentData(
                 image: .coins,
                 title: "\(L10n.welcomeToKeyApp) 3",
                 subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 3"
             ),
-            StartPageData(
+            OnboardingContentData(
                 image: .coins,
                 title: "\(L10n.welcomeToKeyApp) 4",
                 subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 4"
