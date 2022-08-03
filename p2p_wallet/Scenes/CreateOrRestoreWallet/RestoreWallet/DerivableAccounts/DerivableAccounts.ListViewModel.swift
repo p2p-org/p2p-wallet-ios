@@ -9,7 +9,6 @@ import BECollectionView_Combine
 import Foundation
 import Resolver
 import RxConcurrency
-import RxSwift
 import SolanaPricesAPIs
 import SolanaSwift
 
@@ -30,7 +29,6 @@ extension DerivableAccounts {
 
         private let phrases: [String]
         var derivablePath: DerivablePath?
-        let disposeBag = DisposeBag()
 
         fileprivate let cache = Cache()
 

@@ -6,7 +6,6 @@
 //
 
 import BECollectionView_Combine
-import RxSwift
 import UIKit
 
 extension ChooseWallet {
