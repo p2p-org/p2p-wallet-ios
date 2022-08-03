@@ -53,7 +53,7 @@ class AppCoordinator: Coordinator<Void> {
 
     // MARK: - Navigation
 
-    func navigateToCreateOrRestoreWallet() {
+    func oldOnboardingFlow() {
         // TODO: - Change to CreateOrRestoreWallet.Coordinator.start()
         let vm = CreateOrRestoreWallet.ViewModel()
         let vc = CreateOrRestoreWallet.ViewController(viewModel: vm)
@@ -93,7 +93,11 @@ class AppCoordinator: Coordinator<Void> {
     private func navigate(account: Account?) {
         if account == nil {
             showAuthenticationOnMainOnAppear = false
-            openOnboardingStart()
+            if available(.newOnboardingFlow) {
+                newOnboardingFlow()
+            } else {
+                oldOnboardingFlow()
+            }
         } else if storage.pinCode == nil ||
             !Defaults.didSetEnableBiometry ||
             !Defaults.didSetEnableNotifications
@@ -113,6 +117,7 @@ class AppCoordinator: Coordinator<Void> {
     }
 
     private func warmup() async {
+        await Resolver.resolve(WarmupManager.self).start()
         let account = await reloadData()
 
         if let splashVC = window?.rootViewController as? SplashViewController {
@@ -124,7 +129,7 @@ class AppCoordinator: Coordinator<Void> {
         }
     }
 
-    private func openOnboardingStart() {
+    private func newOnboardingFlow() {
         guard let window = window else { return }
         let provider = Resolver.resolve(StartOnboardingNavigationProvider.self)
         let startCoordinator = provider.startCoordinator(for: window)
