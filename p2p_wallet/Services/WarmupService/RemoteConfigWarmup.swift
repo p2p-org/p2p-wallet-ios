@@ -100,7 +100,7 @@ private class TimeoutHandler: NSObject {
         }
     }
 
-    @objc func invoke() {
+    func invoke() {
         callback?()
         callback = nil
         timer = nil
