@@ -5,6 +5,7 @@ import SwiftUI
 
 struct StartView: View {
     @ObservedObject var viewModel: StartViewModel
+    @State private var isShowing = false
 
     var body: some View {
         ZStack {
@@ -12,19 +13,30 @@ struct StartView: View {
                 .edgesIgnoringSafeArea(.all)
             mockView
             VStack(spacing: .zero) {
-                PagingView(
-                    index: $viewModel.currentDataIndex.animation(),
-                    maxIndex: viewModel.data.count - 1,
-                    fillColor: Color(Asset.Colors.night.color)
-                ) {
-                    ForEach(viewModel.data, id: \.id) { data in
-                        OnboardingContentView(data: data)
+                if isShowing {
+                    PagingView(
+                        index: $viewModel.currentDataIndex.animation(),
+                        maxIndex: viewModel.data.count - 1,
+                        fillColor: Color(Asset.Colors.night.color)
+                    ) {
+                        ForEach(viewModel.data, id: \.id) { data in
+                            OnboardingContentView(data: data)
+                        }
                     }
-                }
+                    .transition(.move(edge: .top))
+                    .opacity(isShowing ? 1 : 0)
 
-                bottomActionsView
+                    bottomActionsView
+                        .transition(.move(edge: .bottom))
+                        .opacity(isShowing ? 1 : 0)
+                }
             }
             .edgesIgnoringSafeArea(.bottom)
+        }
+        .onAppear {
+            withAnimation {
+                isShowing = true
+            }
         }
     }
 }

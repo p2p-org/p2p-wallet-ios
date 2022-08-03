@@ -30,6 +30,13 @@ extension Resolver: ResolverRegistering {
 
     /// Application scope: Lifetime app's services
     private static func registerForApplicationScope() {
+        // Application warmup manager
+        register {
+            WarmupManager(processes: [
+                RemoteConfigWarmupProcess(),
+            ])
+        }.scope(.application)
+
         // AppEventHandler
         register { AppEventHandler() }
             .implements(AppEventHandlerType.self)
