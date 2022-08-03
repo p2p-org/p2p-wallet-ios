@@ -9,7 +9,6 @@ import BECollectionView_Combine
 import Foundation
 import NameService
 import Resolver
-import RxSwift
 import SolanaSwift
 
 extension RestoreICloud {

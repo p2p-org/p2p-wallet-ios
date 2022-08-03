@@ -9,8 +9,6 @@ import AnalyticsManager
 import BECollectionView_Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension ChooseWallet {
