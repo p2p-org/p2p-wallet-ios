@@ -18,7 +18,7 @@ struct StartView: View {
                     fillColor: Color(Asset.Colors.night.color)
                 ) {
                     ForEach(viewModel.data, id: \.id) { data in
-                        StartPageView(data: data, subtitleFontWeight: .medium)
+                        OnboardingContentView(data: data)
                     }
                 }
 
@@ -60,10 +60,7 @@ extension StartView {
             }
             .styled()
             .padding(.top, 12)
-            .padding(.bottom, 24)
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 10)
         .bottomActionsStyle()
     }
 }
