@@ -5,30 +5,55 @@ import SwiftUI
 
 struct StartView: View {
     @ObservedObject var viewModel: StartViewModel
+    @State private var isShowing = false
 
     var body: some View {
         ZStack {
             Color(Asset.Colors.lime.color)
                 .edgesIgnoringSafeArea(.all)
+            mockView
             VStack(spacing: .zero) {
-                PagingView(
-                    index: $viewModel.input.currentDataIndex.value.animation(),
-                    maxIndex: viewModel.output.data.value.count - 1,
-                    fillColor: Color(Asset.Colors.night.color)
-                ) {
-                    ForEach(viewModel.output.data.value, id: \.id) {
-                        StartPageView(data: $0, subtitleFontWeight: .medium)
+                if isShowing {
+                    PagingView(
+                        index: $viewModel.currentDataIndex.animation(),
+                        maxIndex: viewModel.data.count - 1,
+                        fillColor: Color(Asset.Colors.night.color)
+                    ) {
+                        ForEach(viewModel.data, id: \.id) { data in
+                            StartPageView(data: data, subtitleFontWeight: .medium)
+                        }
                     }
-                }
+                    .transition(.move(edge: .top))
+                    .opacity(isShowing ? 1 : 0)
 
-                bottomActionsView
+                    bottomActionsView
+                        .transition(.move(edge: .bottom))
+                        .opacity(isShowing ? 1 : 0)
+                }
             }
             .edgesIgnoringSafeArea(.bottom)
+        }
+        .onAppear {
+            withAnimation {
+                isShowing = true
+            }
         }
     }
 }
 
 extension StartView {
+    private var mockView: some View {
+        VStack {
+            HStack {
+                Spacer()
+                Button("Continue", action: viewModel.mockButtonDidTap.send)
+                    .foregroundColor(Color.blue)
+            }
+            .padding()
+            Spacer()
+        }
+    }
+
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
             // Create a wallet
@@ -37,13 +62,13 @@ extension StartView {
                 style: .inverted,
                 size: .large,
                 trailing: UIImage.arrowForward
-            ) { [weak viewModel] in viewModel?.input.createWalletDidTap.send() }
+            ) { [weak viewModel] in viewModel?.createWalletDidTap.send() }
                 .styled()
                 .padding(.top, 20)
 
             // Restore a wallet
             TextButtonView(title: L10n.iAlreadyHaveAWallet, style: .ghostLime, size: .large) { [weak viewModel] in
-                viewModel?.input.restoreWalletDidTap.send()
+                viewModel?.restoreWalletDidTap.send()
             }
             .styled()
             .padding(.top, 12)

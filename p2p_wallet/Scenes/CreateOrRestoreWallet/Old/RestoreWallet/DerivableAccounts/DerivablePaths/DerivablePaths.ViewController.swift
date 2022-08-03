@@ -5,18 +5,16 @@
 //  Created by Chung Tran on 18/05/2021.
 //
 
-import BECollectionView
 import Foundation
 import SolanaSwift
 
 extension DerivablePaths {
     typealias Callback = (DerivablePath) -> Void
 
-    class ViewController: WLBottomSheet, BECollectionViewDelegate {
+    class ViewController: WLBottomSheet {
         // MARK: - Properties
 
         private let initPath: DerivablePath
-        private let viewModel: ViewModel
         private let onSelect: Callback?
 
         override var margin: UIEdgeInsets {
@@ -27,16 +25,10 @@ extension DerivablePaths {
 
         init(currentPath: DerivablePath, onSelect: Callback?) {
             initPath = currentPath
-            viewModel = ViewModel(currentPath: currentPath)
             self.onSelect = onSelect
             super.init()
             modalPresentationStyle = .custom
             transitioningDelegate = self
-        }
-
-        override func viewDidLoad() {
-            super.viewDidLoad()
-            viewModel.reload()
         }
 
         override func setUp() {

@@ -1,6 +1,6 @@
-name: Push
-on: push
-
+name: Auto deploy
+on:
+  pull_request:
 jobs:
 #  haslabel:
 #    name: "analyse labels"
@@ -21,6 +21,8 @@ jobs:
 
   upload_build_for_testing:
     name: Upload build for testing
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
+    
     runs-on: macos-12
 
     steps:
