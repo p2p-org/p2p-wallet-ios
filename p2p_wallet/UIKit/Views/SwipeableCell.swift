@@ -4,8 +4,6 @@
 
 import BECollectionView
 import BEPureLayout
-import RxCocoa
-import RxSwift
 import UIKit
 
 /// This class is responsible for left and right swipe to show extra actions.

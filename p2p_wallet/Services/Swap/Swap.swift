@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxSwift
 import SolanaSwift
 
 struct Swap {
