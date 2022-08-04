@@ -18,12 +18,17 @@ extension Home {
     class RootView: BECompositionView {
         private let disposeBag = DisposeBag()
         private let viewModel: HomeViewModelType
+        private let emptyViewModel: HomeEmptyViewModel
         // swiftlint:disable weak_delegate
         private var headerViewScrollDelegate = HeaderScrollDelegate()
         // swiftlint:enable weak_delegate
 
-        init(viewModel: HomeViewModelType) {
+        init(
+            viewModel: HomeViewModelType,
+            emptyViewModel: HomeEmptyViewModel
+        ) {
             self.viewModel = viewModel
+            self.emptyViewModel = emptyViewModel
             super.init(frame: .zero)
 
             viewModel.walletsRepository.reload()
@@ -60,7 +65,7 @@ extension Home {
         }
 
         func emptyScreen() -> UIView {
-            EmptyView(viewModel: viewModel)
+            HomeEmptyView(viewModel: emptyViewModel).uiView()
         }
 
         func content() -> UIView {
