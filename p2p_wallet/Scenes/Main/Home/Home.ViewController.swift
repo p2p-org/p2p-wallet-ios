@@ -19,6 +19,7 @@ extension Home {
 
         @Injected private var analyticsManager: AnalyticsManager
         private let viewModel: HomeViewModelType
+        private let emptyViewModel: HomeEmptyViewModel
 
         // MARK: - Properties
 
@@ -27,8 +28,12 @@ extension Home {
 
         // MARK: - Initializer
 
-        init(viewModel: HomeViewModelType) {
+        init(
+            viewModel: HomeViewModelType,
+            emptyViewModel: HomeEmptyViewModel
+        ) {
             self.viewModel = viewModel
+            self.emptyViewModel = emptyViewModel
             super.init()
             navigationItem.title = L10n.p2PWallet
         }
@@ -36,7 +41,10 @@ extension Home {
         // MARK: - Methods
 
         override func loadView() {
-            view = RootView(viewModel: viewModel)
+            view = RootView(
+                viewModel: viewModel,
+                emptyViewModel: emptyViewModel
+            )
         }
 
         override func viewDidLoad() {
