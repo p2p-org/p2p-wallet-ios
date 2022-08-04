@@ -32,19 +32,23 @@ final class StartCoordinator: Coordinator<Void> {
             nc.pushViewController(viewController, animated: true)
         }
 
-        viewModel.$navigatableScene.sink { [weak self] scene in
-            guard let self = self else { return }
-            switch scene {
-            case .restoreWallet:
-                self.openRestoreWallet(vc: viewController)
-            case .createWallet:
-                self.openCreateWallet(vc: viewController)
-            case .mockContinue:
-                self.openContinue(vc: viewController)
-            case .none:
-                break
+        viewModel.createWalletDidTap
+            .sink { [weak self] _ in
+                self?.openCreateWallet(vc: viewController)
             }
-        }.store(in: &subscriptions)
+            .store(in: &subscriptions)
+
+        viewModel.restoreWalletDidTap
+            .sink { [weak self] _ in
+                self?.openRestoreWallet(vc: viewController)
+            }
+            .store(in: &subscriptions)
+
+        viewModel.mockButtonDidTap
+            .sink { [weak self] _ in
+                self?.openContinue(vc: viewController)
+            }
+            .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
     }
