@@ -3,19 +3,35 @@ platform :ios, '13.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 
-def key_app_kit
-  $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-  $keyAppKitBranch = 'develop'
+# ENV Variables
+$keyAppKitPath = ENV['KEY_APP_KIT']
 
-  pod 'TransactionParser', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'NameService', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'AnalyticsManager', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'Cache', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'KeyAppKitLogger', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'SolanaPricesAPIs', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'Onboarding', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'JSBridge', :git => $keyAppKitGit, :branch => $keyAppKitBranch
-  pod 'CountriesAPI', :git => $keyAppKitGit, :branch => $keyAppKitBranch
+puts $keyAppKitPath
+
+def key_app_kit
+  $dependencies = [
+    "TransactionParser",
+    "NameService",
+    "AnalyticsManager",
+    "Cache",
+    "KeyAppKitLogger",
+    "SolanaPricesAPIs",
+    "Onboarding",
+    "JSBridge",
+    "CountriesAPI",
+  ]
+
+  if $keyAppKitPath
+    for $dependency in $dependencies do
+      pod $dependency, :path => $keyAppKitPath
+    end
+  else
+    $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
+    $keyAppKitBranch = 'develop'
+    for $dependency in $dependencies do
+      pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
+    end
+  end
 end
 
 target 'p2p_wallet' do

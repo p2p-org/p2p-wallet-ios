@@ -116,53 +116,10 @@ class SocialSignInViewController: BaseViewController {
     @objc func onInfo() {
         viewModel.input.onInfo.send()
     }
-
-    @objc func signInWithApple() {
-        let appleIDProvider = ASAuthorizationAppleIDProvider()
-        let request = appleIDProvider.createRequest()
-        request.requestedScopes = [.email]
-
-        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
-        authorizationController.delegate = self
-        authorizationController.presentationContextProvider = self
-        authorizationController.performRequests()
-    }
 }
 
 extension SocialSignInViewController: ASAuthorizationControllerPresentationContextProviding {
     func presentationAnchor(for _: ASAuthorizationController) -> ASPresentationAnchor {
         view.window!
-    }
-}
-
-extension SocialSignInViewController: ASAuthorizationControllerDelegate {
-    func authorizationController(
-        controller _: ASAuthorizationController,
-        didCompleteWithAuthorization authorization: ASAuthorization
-    ) {
-        switch authorization.credential {
-        case let appleIDCredential as ASAuthorizationAppleIDCredential:
-            guard let idToken = appleIDCredential.identityToken else { return }
-            let idTokenStr = String(data: idToken, encoding: .utf8)!
-
-            Task {
-                do {
-                    let state = try await viewModel
-                        .createWalletViewModel
-                        .onboardingStateMachine
-                        .accept(event: .signIn(
-                            tokenID: idTokenStr, authProvider: .apple,
-                            email: appleIDCredential.email ?? "?"
-                        ))
-                    print(state as Any)
-                } catch {
-                    print(error)
-                }
-            }
-        case _ as ASPasswordCredential:
-            break
-        default:
-            break
-        }
     }
 }
