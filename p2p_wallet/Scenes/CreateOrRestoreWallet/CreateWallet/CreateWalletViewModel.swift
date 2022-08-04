@@ -5,11 +5,26 @@
 import Combine
 import Foundation
 import Onboarding
+import Resolver
 
 final class CreateWalletViewModel: BaseViewModel {
     let onboardingStateMachine: CreateWalletStateMachine
 
     init(tKeyFacade: TKeyFacade? = nil) {
-        onboardingStateMachine = .init(provider: tKeyFacade ?? TKeyMockupFacade())
+        onboardingStateMachine = .init(
+            provider: .init(
+                authService: AuthServiceBridge(),
+                tkeyFacade: tKeyFacade ?? TKeyMockupFacade()
+            )
+        )
+    }
+}
+
+private struct AuthServiceBridge: SocialAuthService {
+    @Injected var authService: AuthService
+
+    func auth(type: SocialProvider) async throws -> (tokenID: String, email: String) {
+        let authResult = try await authService.socialSignIn(type.socialType)
+        return (tokenID: authResult.tokenID, email: authResult.email)
     }
 }

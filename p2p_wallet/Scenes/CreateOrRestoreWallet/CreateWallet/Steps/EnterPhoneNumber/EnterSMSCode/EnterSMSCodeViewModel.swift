@@ -42,7 +42,7 @@ final class EnterSMSCodeViewModel: BaseViewModel, ViewModelType {
     struct CoordinatorIO {
         var isConfirmed: PassthroughSubject<Bool, Never> = .init()
         var showInfo: PassthroughSubject<Void, Never> = .init()
-        var goBack: PassthroughSubject<Void, Never> = .init()
+        var goBack: AnyPublisher<Void, Never>
     }
 
     // MARK: -
@@ -55,7 +55,7 @@ final class EnterSMSCodeViewModel: BaseViewModel, ViewModelType {
 
     var input: Input
     var output: Output
-    var coordinatorIO: CoordinatorIO = .init()
+    var coordinatorIO: CoordinatorIO
 
     private var timer: Timer?
 
@@ -72,6 +72,10 @@ final class EnterSMSCodeViewModel: BaseViewModel, ViewModelType {
             error: errorSubject.eraseToAnyPublisher(),
             code: input.code.map { Self.format(code: $0) }.eraseToAnyPublisher(),
             isLoading: isLoadingSubject.eraseToAnyPublisher()
+        )
+
+        coordinatorIO = .init(
+            goBack: input.onBack.eraseToAnyPublisher()
         )
 
         self.phone = phone
