@@ -23,12 +23,10 @@ struct StartView: View {
                             StartPageView(data: data, subtitleFontWeight: .medium)
                         }
                     }
-                    .transition(.move(edge: .top))
-                    .opacity(isShowing ? 1 : 0)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
 
                     bottomActionsView
-                        .transition(.move(edge: .bottom))
-                        .opacity(isShowing ? 1 : 0)
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
             }
             .edgesIgnoringSafeArea(.bottom)
