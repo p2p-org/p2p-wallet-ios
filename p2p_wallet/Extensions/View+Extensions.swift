@@ -13,6 +13,10 @@ extension View {
         UIHostingController(rootView: self)
     }
 
+    func uiView() -> UIView {
+        asViewController().view
+    }
+
     /// A backwards compatible wrapper for iOS 14 `onChange`
     @ViewBuilder func valueChanged<T: Equatable>(value: T, onChange: @escaping (T) -> Void) -> some View {
         if #available(iOS 14.0, *) {
