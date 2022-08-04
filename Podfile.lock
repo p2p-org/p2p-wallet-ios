@@ -129,6 +129,9 @@ PODS:
   - GT3Captcha-iOS (0.15.2)
   - Intercom (12.4.3)
   - JazziconSwift (1.1.0)
+  - KeyAppUI (0.1.2):
+    - BEPureLayout
+    - SkeletonView (~> 1.7)
   - KeychainSwift (19.0.0)
   - Kingfisher (7.2.4)
   - ListPlaceholder (1.5)
@@ -155,6 +158,9 @@ PODS:
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
+  - RxCombine (2.0.1):
+    - RxRelay (~> 6)
+    - RxSwift (~> 6)
   - RxConcurrency (0.1.1):
     - RxSwift (~> 6.5.0)
   - RxGesture (4.0.4):
@@ -167,6 +173,7 @@ PODS:
   - Sentry (7.18.1):
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
+  - SkeletonView (1.29.2)
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -205,6 +212,7 @@ DEPENDENCIES:
   - GT3Captcha-iOS
   - Intercom
   - JazziconSwift (~> 1.1.0)
+  - KeyAppUI (from `https://github.com/p2p-org/KeyAppUI.git`, branch `develop`)
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
@@ -216,6 +224,7 @@ DEPENDENCIES:
   - Resolver
   - RxAppState
   - RxCocoa (= 6.5.0)
+  - RxCombine
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture
   - RxSwift (= 6.5.0)
@@ -262,10 +271,12 @@ SPEC REPOS:
     - Resolver
     - RxAppState
     - RxCocoa
+    - RxCombine
     - RxGesture
     - RxRelay
     - RxSwift
     - secp256k1.swift
+    - SkeletonView
     - SubviewAttachingTextView
     - SwiftAlgorithms
     - SwiftFormat
@@ -290,6 +301,9 @@ EXTERNAL SOURCES:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
     :path: FeeRelayerSwift
+  KeyAppUI:
+    :branch: develop
+    :git: https://github.com/p2p-org/KeyAppUI.git
   ListPlaceholder:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
@@ -318,6 +332,9 @@ CHECKOUT OPTIONS:
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
+  KeyAppUI:
+    :commit: 5c7ba13cf73d783f404daaed5eed0a9b52617d31
+    :git: https://github.com/p2p-org/KeyAppUI.git
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
@@ -354,6 +371,7 @@ SPEC CHECKSUMS:
   GT3Captcha-iOS: 7ae08a5421c8e40463ec84ae807e82c19be3929a
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
+  KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 2457be2121734e69e54a2312ecc0150eb9ae70b3
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
@@ -369,12 +387,14 @@ SPEC CHECKSUMS:
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxCombine: 74cd98f7bb1d908eff3758d13651917fc296adb3
   RxConcurrency: fde98edd4056a8f13ff293689a25a17563e3e843
   RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
+  SkeletonView: 915a80ecc2b6421ab7ac0f0212321c0cc1406472
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 6ba5043ed04055eb874085d2f96499022ddcd6e8
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
@@ -389,6 +409,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 21a4c36271dc69ef7e1b346cdd8078e2f73ebe01
+PODFILE CHECKSUM: 3339d5d64d3740cdeb272810145d6feecd82f0ce
 
 COCOAPODS: 1.11.3
