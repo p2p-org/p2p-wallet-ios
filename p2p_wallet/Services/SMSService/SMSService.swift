@@ -44,6 +44,14 @@ class SMSServiceImplMock: SMSService {
 
     func sendConfirmationCode(phone: String) async throws {
         debugPrint("SMSServiceImplMock code: \(code) for phone \(phone)")
+        sleep(4)
+
+        if let exep = SMSServiceError(rawValue: -(Int(String(phone.suffix(5))) ?? 0)),
+           exep.rawValue != SMSServiceError.invalidValue.rawValue
+        {
+            throw exep
+        }
+
         self.phone = phone
     }
 
