@@ -5,22 +5,20 @@
 //  Created by Chung Tran on 19/05/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import Resolver
-import RxConcurrency
-import RxSwift
 import SolanaPricesAPIs
 import SolanaSwift
 
-protocol DerivableAccountsListViewModelType: BEListViewModelType {
+protocol DerivableAccountsListViewModelType: BECollectionViewModelType {
     func cancelRequest()
     func reload()
     func setDerivablePath(_ derivablePath: DerivablePath)
 }
 
 extension DerivableAccounts {
-    class ListViewModel: BEListViewModel<DerivableAccount> {
+    class ListViewModel: BECollectionViewModel<DerivableAccount> {
         // MARK: - Dependencies
 
         @Injected private var pricesFetcher: SolanaPricesAPI
@@ -30,7 +28,6 @@ extension DerivableAccounts {
 
         private let phrases: [String]
         var derivablePath: DerivablePath?
-        let disposeBag = DisposeBag()
 
         fileprivate let cache = Cache()
 
@@ -43,20 +40,15 @@ extension DerivableAccounts {
             debugPrint("\(String(describing: self)) deinited")
         }
 
-        override func createRequest() -> Single<[DerivableAccount]> {
-            Single.async { [weak self] in
-                guard let self = self else { throw SolanaError.unknown }
-                let accounts = try await self.createDerivableAccounts()
-
-                Task {
-                    try? await(
-                        self.fetchSOLPrice(),
-                        self.fetchBalances(accounts: accounts.map(\.info.publicKey.base58EncodedString))
-                    )
-                }
-
-                return accounts
+        override func createRequest() async throws -> [DerivableAccount] {
+            let accounts = try await createDerivableAccounts()
+            Task {
+                try? await(
+                    self.fetchSOLPrice(),
+                    self.fetchBalances(accounts: accounts.map(\.info.publicKey.base58EncodedString))
+                )
             }
+            return accounts
         }
 
         private func createDerivableAccounts() async throws -> [DerivableAccount] {
@@ -103,7 +95,7 @@ extension DerivableAccounts {
 
             try Task.checkCancellation()
 
-            if currentState == .loaded {
+            if state == .loaded {
                 let data = data.map { account -> DerivableAccount in
                     var account = account
                     account.price = solPrice
@@ -139,7 +131,7 @@ extension DerivableAccounts {
             await cache.save(account: account, amount: amount)
 
             try Task.checkCancellation()
-            if currentState == .loaded {
+            if state == .loaded {
                 updateItem(
                     where: { $0.info.publicKey.base58EncodedString == account },
                     transform: { account in
@@ -154,6 +146,10 @@ extension DerivableAccounts {
 }
 
 extension DerivableAccounts.ListViewModel: DerivableAccountsListViewModelType {
+    func cancelRequest() {
+        task?.cancel()
+    }
+
     func setDerivablePath(_ derivablePath: DerivablePath) {
         self.derivablePath = derivablePath
     }

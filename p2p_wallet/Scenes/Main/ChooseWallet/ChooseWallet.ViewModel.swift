@@ -6,15 +6,13 @@
 //
 
 import AnalyticsManager
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension ChooseWallet {
-    class ViewModel: BEListViewModel<Wallet> {
+    class ViewModel: BECollectionViewModel<Wallet> {
         // MARK: - Dependencies
 
         let selectedWallet: Wallet?
@@ -46,32 +44,26 @@ extension ChooseWallet {
 
         // MARK: - Request
 
-        override func createRequest() -> Single<[Wallet]> {
-            if showOtherWallets {
-                return Single<[Token]>.async {
-                    Array(try await self.tokensRepository.getTokensList())
-                }
-                .observe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-                .map { $0.excludingSpecialTokens() }
-                .map {
-                    $0
-                        .filter {
-                            $0.symbol != "SOL"
-                        }
-                        .map {
-                            Wallet(pubkey: nil, lamports: nil, token: $0)
-                        }
-                }
-                .map { [weak self] in
-                    guard let self = self else { return [] }
-                    return self.myWallets + $0
-                        .filter { otherWallet in
-                            !self.myWallets.contains(where: { $0.token.symbol == otherWallet.token.symbol })
-                        }
-                }
-                .observe(on: MainScheduler.instance)
-            }
-            return .just(myWallets)
+        override func createRequest() async throws -> [Wallet] {
+            guard showOtherWallets else { return myWallets }
+
+            return try await Task<[Wallet], Error> { [weak self] in
+                guard let self = self else { return [] }
+                let tokens = Array(try await tokensRepository.getTokensList())
+                    .excludingSpecialTokens() // heavy method that needs to be called on different thread
+                    .filter {
+                        $0.symbol != "SOL"
+                    }
+
+                let wallets = tokens
+                    .map {
+                        Wallet(pubkey: nil, lamports: nil, token: $0)
+                    }
+                return self.myWallets + wallets
+                    .filter { otherWallet in
+                        !self.myWallets.contains(where: { $0.token.symbol == otherWallet.token.symbol })
+                    }
+            }.value
         }
 
         override func map(newData: [Wallet]) -> [Wallet] {
