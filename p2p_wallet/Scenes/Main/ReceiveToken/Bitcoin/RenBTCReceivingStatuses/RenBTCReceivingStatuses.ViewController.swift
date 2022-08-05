@@ -5,9 +5,10 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import RenVMSwift
+import RxCombine
 import UIKit
 
 extension RenBTCReceivingStatuses {
@@ -95,8 +96,10 @@ extension RenBTCReceivingStatuses.ViewController: BECollectionViewDelegate {
         switch scene {
         case let .detail(txid):
             let vc = RenBTCReceivingStatuses
-                .TxDetailViewController(viewModel: .init(processingTxsDriver: viewModel.processingTxsDriver,
-                                                         txid: txid))
+                .TxDetailViewController(viewModel: .init(processingTxsPublisher: viewModel.processingTxsDriver.publisher
+                        .replaceError(with: [])
+                        .eraseToAnyPublisher(),
+                    txid: txid))
             show(vc, sender: nil)
         case .none:
             break

@@ -5,13 +5,15 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import Foundation
 import RenVMSwift
 import RxCocoa
+import RxCombine
 import RxSwift
 
-protocol RenBTCReceivingStatusesViewModelType: BEListViewModelType {
+protocol RenBTCReceivingStatusesViewModelType: BECollectionViewModelType {
     var navigationDriver: Driver<RenBTCReceivingStatuses.NavigatableScene?> { get }
     var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
     func showDetail(txid: String)
@@ -50,12 +52,14 @@ extension RenBTCReceivingStatuses {
     }
 }
 
-extension RenBTCReceivingStatuses.ViewModel: BEListViewModelType {
-    var dataDidChange: Observable<Void> {
-        receiveBitcoinViewModel.processingTxsDriver.map { _ in () }.asObservable()
+extension RenBTCReceivingStatuses.ViewModel: BECollectionViewModelType {
+    var dataDidChange: AnyPublisher<Void, Never> {
+        receiveBitcoinViewModel.processingTxsDriver.map { _ in () }.publisher
+            .replaceError(with: ())
+            .eraseToAnyPublisher()
     }
 
-    var currentState: BEFetcherState {
+    var state: BEFetcherState {
         .loaded
     }
 

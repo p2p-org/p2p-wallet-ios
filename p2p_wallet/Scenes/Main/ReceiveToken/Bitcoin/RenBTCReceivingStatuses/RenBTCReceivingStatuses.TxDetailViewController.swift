@@ -5,11 +5,10 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import Foundation
 import RenVMSwift
-import RxCocoa
-import RxSwift
 
 extension RenBTCReceivingStatuses {
     class TxDetailViewController: BaseViewController {
@@ -18,6 +17,7 @@ extension RenBTCReceivingStatuses {
         }
 
         private var viewModel: TxDetailViewModel
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: TxDetailViewModel) {
             self.viewModel = viewModel
@@ -31,12 +31,13 @@ extension RenBTCReceivingStatuses {
                         .onBack { [unowned self] in self.back() }
                         .setup { view in
                             viewModel.currentTx
+                                .receive(on: RunLoop.main)
                                 .map { tx in
                                     guard let value = tx?.value else { return L10n.receivingStatus }
                                     return L10n.receivingRenBTC(value.toString(maximumFractionDigits: 10))
                                 }
-                                .drive(view.titleLabel.rx.text)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.text, on: view.titleLabel)
+                                .store(in: &subscriptions)
                         }
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
@@ -82,32 +83,33 @@ extension RenBTCReceivingStatuses {
         }
     }
 
-    class TxDetailViewModel: BEListViewModelType {
+    class TxDetailViewModel: BECollectionViewModelType {
         // MARK: - Dependencies
 
-        let processingTxsDriver: Driver<[LockAndMint.ProcessingTx]>
+        let processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never>
         let txid: String
 
         // MARK: - Properties
 
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
         var data = [Record]()
 
         // MARK: - Initializer
 
-        init(processingTxsDriver: Driver<[LockAndMint.ProcessingTx]>, txid: String) {
-            self.processingTxsDriver = processingTxsDriver
+        init(processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never>, txid: String) {
+            self.processingTxsPublisher = processingTxsPublisher
             self.txid = txid
             bind()
         }
 
-        var currentTx: Driver<LockAndMint.ProcessingTx?> {
-            processingTxsDriver.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
+        var currentTx: AnyPublisher<LockAndMint.ProcessingTx?, Never> {
+            processingTxsPublisher.map { [weak self] in $0.first { tx in tx.tx.txid == self?.txid } }
+                .eraseToAnyPublisher()
         }
 
         func bind() {
-            processingTxsDriver
-                .drive(onNext: { [weak self] in
+            processingTxsPublisher
+                .sink(receiveValue: { [weak self] in
                     let new = Array($0.reversed())
                     // transform processingTxs to records
                     let processingTxs = new
@@ -157,14 +159,14 @@ extension RenBTCReceivingStatuses {
 
                     self?.data = records
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
         }
 
-        var dataDidChange: Observable<Void> {
-            processingTxsDriver.map { _ in () }.asObservable()
+        var dataDidChange: AnyPublisher<Void, Never> {
+            processingTxsPublisher.map { _ in () }.eraseToAnyPublisher()
         }
 
-        var currentState: BEFetcherState {
+        var state: BEFetcherState {
             .loaded
         }
 

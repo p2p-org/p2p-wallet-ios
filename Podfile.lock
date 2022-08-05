@@ -160,6 +160,9 @@ PODS:
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
+  - RxCombine (2.0.1):
+    - RxRelay (~> 6)
+    - RxSwift (~> 6)
   - RxConcurrency (0.1.1):
     - RxSwift (~> 6.5.0)
   - RxGesture (4.0.4):
@@ -223,6 +226,7 @@ DEPENDENCIES:
   - Resolver
   - RxAppState
   - RxCocoa (= 6.5.0)
+  - RxCombine
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
   - RxGesture
   - RxSwift (= 6.5.0)
@@ -270,6 +274,7 @@ SPEC REPOS:
     - Resolver
     - RxAppState
     - RxCocoa
+    - RxCombine
     - RxGesture
     - RxRelay
     - RxSwift
@@ -331,13 +336,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   BECollectionView:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
     :git: https://github.com/bigearsenal/BECollectionView.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -396,6 +401,7 @@ SPEC CHECKSUMS:
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
+  RxCombine: 74cd98f7bb1d908eff3758d13651917fc296adb3
   RxConcurrency: fde98edd4056a8f13ff293689a25a17563e3e843
   RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
@@ -416,6 +422,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: fd116daf1e1b402b85633ebf64167b2c548999cf
+PODFILE CHECKSUM: 4d33d1ebc4c0a61e18822341f350709a1427b3ac
 
 COCOAPODS: 1.11.3
