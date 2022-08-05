@@ -118,6 +118,14 @@ extension Double {
         return formatter.string(from: number as NSNumber) ?? "0"
     }
 
+    func fiatAmount(maximumFractionDigits: Int = 2) -> String {
+        "\(Defaults.fiat.symbol) \(toString(maximumFractionDigits: maximumFractionDigits))"
+    }
+
+    func tokenAmount(symbol: String, maximumFractionDigits: Int = 9) -> String {
+        "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
+    }
+
     func rounded(decimals: Int?) -> Double {
         guard let decimals = decimals else { return self }
         let realAmount = toString(maximumFractionDigits: decimals, groupingSeparator: nil)

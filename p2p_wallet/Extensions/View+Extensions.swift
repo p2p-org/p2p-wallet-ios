@@ -28,3 +28,19 @@ extension View {
         }
     }
 }
+
+// MARK: - Font
+
+private struct TextModifier: ViewModifier {
+    let uiFont: UIFont
+
+    func body(content: Content) -> some View {
+        content.font(SwiftUI.Font(uiFont: uiFont))
+    }
+}
+
+extension View {
+    func font(uiFont: UIFont) -> some View {
+        modifier(TextModifier(uiFont: uiFont))
+    }
+}
