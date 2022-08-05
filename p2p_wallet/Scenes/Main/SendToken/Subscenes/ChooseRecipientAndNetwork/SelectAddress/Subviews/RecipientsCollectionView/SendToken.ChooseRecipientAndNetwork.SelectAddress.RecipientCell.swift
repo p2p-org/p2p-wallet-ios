@@ -5,7 +5,7 @@
 //  Created by Andrew Vasiliev on 24.10.2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {

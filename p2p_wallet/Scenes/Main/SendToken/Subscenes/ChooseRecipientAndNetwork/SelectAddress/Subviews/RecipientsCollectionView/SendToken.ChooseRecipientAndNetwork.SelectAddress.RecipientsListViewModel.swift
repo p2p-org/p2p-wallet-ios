@@ -5,14 +5,13 @@
 //  Created by Chung Tran on 27/10/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import NameService
 import Resolver
-import RxSwift
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
-    class RecipientsListViewModel: BEListViewModel<SendToken.Recipient> {
+    class RecipientsListViewModel: BECollectionViewModel<SendToken.Recipient> {
         // MARK: - Dependencies
 
         @Injected private var nameService: NameService
@@ -31,84 +30,77 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Methods
 
         /// The only methods that MUST be inheritted
-        override func createRequest() -> Single<[SendToken.Recipient]> {
-            guard let searchString = searchString, !searchString.isEmpty else { return .just([]) }
-
+        override func createRequest() async throws -> [SendToken.Recipient] {
+            guard let searchString = searchString, !searchString.isEmpty else { return [] }
             // force find by address when network is bitcoin
             return preSelectedNetwork == .bitcoin || isSearchingByAddress
-                ? findRecipientBy(address: searchString)
-                : findRecipientsBy(name: searchString)
+                ? (try await findRecipientBy(address: searchString))
+                : (try await findRecipientsBy(name: searchString))
         }
 
-        private func findRecipientsBy(name: String) -> Single<[SendToken.Recipient]> {
-            Single.async { [weak self] in
-                guard let self = self else { throw NameServiceError.unknown }
-                let owners = try await self.nameService.getOwners(name)
-                return owners.map {
-                    .init(
-                        address: $0.owner,
-                        name: $0.name,
-                        hasNoFunds: false
-                    )
-                }
+        private func findRecipientsBy(name: String) async throws -> [SendToken.Recipient] {
+            try await nameService.getOwners(name).map {
+                .init(
+                    address: $0.owner,
+                    name: $0.name,
+                    hasNoFunds: false
+                )
             }
         }
 
-        private func findRecipientBy(address: String) -> Single<[SendToken.Recipient]> {
+        private func findRecipientBy(address: String) async throws -> [SendToken.Recipient] {
             switch preSelectedNetwork {
             case .bitcoin:
-                return findAddressInBitcoinNetwork(address: address)
+                return try await findAddressInBitcoinNetwork(address: address)
             case .solana:
-                return findAddressInSolanaNetwork(address: address)
+                return try await findAddressInSolanaNetwork(address: address)
             case .none:
                 if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())) {
-                    return findAddressInBitcoinNetwork(address: address)
+                    return try await findAddressInBitcoinNetwork(address: address)
                 } else {
-                    return findAddressInSolanaNetwork(address: address)
+                    return try await findAddressInSolanaNetwork(address: address)
                 }
             }
         }
 
-        private func findAddressInBitcoinNetwork(address: String) -> Single<[SendToken.Recipient]> {
+        private func findAddressInBitcoinNetwork(address: String) async throws -> [SendToken.Recipient] {
             if address.matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet())) {
-                return .just([.init(address: address, name: nil, hasNoFunds: false)])
+                return [.init(address: address, name: nil, hasNoFunds: false)]
             } else {
-                return .just([])
+                return []
             }
         }
 
-        private func findAddressInSolanaNetwork(address: String) -> Single<[SendToken.Recipient]> {
-            Single<String?>.async { [weak self] in
-                guard let self = self else { throw NameServiceError.unknown }
-                return try await self.nameService
-                    .getName(address)
-            }
-            .flatMap { [weak self] name -> Single<(String?, Bool)> in
-                guard let self = self, name == nil else { return .just((name, false)) }
-                // check funds
-                return Single.async {
-                    try await self.solanaAPIClient.checkAccountValidation(account: address)
+        private func findAddressInSolanaNetwork(address: String) async throws -> [SendToken.Recipient] {
+            do {
+                let name = try await nameService.getName(address)
+
+                if let name = name {
+                    return [
+                        .init(
+                            address: address,
+                            name: name.withNameServiceDomain(),
+                            hasNoFunds: false
+                        ),
+                    ]
+                } else {
+                    let isValid = (try? await solanaAPIClient.checkAccountValidation(account: address)) ?? false
+                    return [
+                        .init(
+                            address: address,
+                            name: nil,
+                            hasNoFunds: !isValid
+                        ),
+                    ]
                 }
-                .catchAndReturn(false)
-                .map { (name, !$0) }
-            }
-            .map {
-                [
-                    .init(
-                        address: address,
-                        name: $0.0?.withNameServiceDomain(),
-                        hasNoFunds: $0.1
-                    ),
-                ]
-            }
-            .catchAndReturn([
-                .init(
+            } catch {
+                return [.init(
                     address: address,
                     name: nil,
                     hasNoFunds: false,
                     hasNoInfo: true
-                ),
-            ])
+                )]
+            }
         }
     }
 }
