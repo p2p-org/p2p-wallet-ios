@@ -333,7 +333,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   KeyAppUI:
-    :commit: 5c7ba13cf73d783f404daaed5eed0a9b52617d31
+    :commit: aa5550b6d5a8f78441b959e42a6608602fd6093d
     :git: https://github.com/p2p-org/KeyAppUI.git
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
