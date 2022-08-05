@@ -13,7 +13,7 @@ final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProv
         case .enterPhoneNumber, .verifyPhoneNumber, .enterPincode:
             return ContinueCoordinator(window: window)
         default:
-            return StartCoordinator(navigation: .root(window: window))
+            return StartCoordinator(window: window)
         }
     }
 }
