@@ -32,7 +32,11 @@ struct StartView: View {
             .edgesIgnoringSafeArea(.bottom)
         }
         .onAppear {
-            withAnimation {
+            if viewModel.isAnimatable {
+                withAnimation {
+                    isShowing = true
+                }
+            } else {
                 isShowing = true
             }
         }
@@ -59,7 +63,7 @@ extension StartView {
                 title: L10n.createANewWallet,
                 style: .inverted,
                 size: .large,
-                trailing: UIImage.arrowForward
+                trailing: Asset.MaterialIcon.arrowForward.image
             ) { [weak viewModel] in viewModel?.createWalletDidTap.send() }
                 .styled()
                 .padding(.top, 20)
@@ -70,7 +74,17 @@ extension StartView {
             }
             .styled()
             .padding(.top, 12)
-            .padding(.bottom, 24)
+
+            VStack(spacing: 2) {
+                Text(L10n.byContinuingYouAgreeToKeyAppS)
+                    .styled(color: Asset.Colors.mountain, font: .label1)
+                Text(L10n.capitalizedTermsAndConditions)
+                    .styled(color: Asset.Colors.snow, font: .label1)
+                    .onTapGesture(perform: { [weak viewModel] in
+                        viewModel?.termsDidTap.send()
+                    })
+            }
+            .padding(.vertical, 24)
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 10)
