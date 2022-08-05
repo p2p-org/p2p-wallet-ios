@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 29/11/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import BEPureLayout
 import RxCocoa
 import RxSwift
