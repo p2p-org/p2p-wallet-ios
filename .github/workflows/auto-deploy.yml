@@ -1,14 +1,17 @@
-name: Release application
-on: workflow_dispatch
+name: Auto deploy
+on:
+  pull_request:
 jobs:
-  deploy:
-    name: Deploying to Testflight
+  upload_build_for_testing:
+    name: Upload build for testing when pull request is approved
+    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
     runs-on: macos-12
 
     steps:
-      - name: Check out repository
+      - name: Check out current branch
         uses: actions/checkout@v3
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
@@ -17,24 +20,20 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
 
-      - name: Copy secret files
+      - name: Copy xcconfig file
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
-          rm ./p2p_wallet/GoogleService-Info.plist
-          curl -o ./p2p_wallet/GoogleService-Info.plist ${{ secrets.GOOGLE_SERVICE_INFO_PLIST_URL }}
         shell: bash
 
       - name: Install project
         run: |
-          chmod u+x Scripts/remove_cocoa_debug.rb && Scripts/remove_cocoa_debug.rb
-          rm -rf p2p_wallet/Scenes/DebugMenu
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
       - name: Upload to test
         uses: maierj/fastlane-action@v2.2.0
         with:
-          lane: release
+          lane: feature_test
         env:
           DEVELOPER_APP_IDENTIFIER: '${{ secrets.DEVELOPER_APP_IDENTIFIER }}'
           APP_STORE_CONNECT_TEAM_ID: '${{ secrets.APP_STORE_CONNECT_TEAM_ID }}'
