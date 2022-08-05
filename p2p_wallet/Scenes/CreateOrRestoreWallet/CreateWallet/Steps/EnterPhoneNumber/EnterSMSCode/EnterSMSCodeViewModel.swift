@@ -10,7 +10,7 @@ import Resolver
     let EnterSMSCodeCountdown = 60
 #endif
 
-final class EnterSMSCodeViewModel: BaseViewModel {
+final class EnterSMSCodeViewModel: BaseOTPViewModel {
     @Injected var smsService: SMSService
 
     // MARK: -
@@ -31,14 +31,13 @@ final class EnterSMSCodeViewModel: BaseViewModel {
     @Published public var code: String = ""
     /// Input error field
     @Published public var codeError: String?
-    /// Toaster error
-    @Published public var error: String?
     @Published public var isLoading: Bool = false
     @Published public var resendEnabled: Bool = false
     @Published public var resendText: String = ""
     @Published public var isButtonEnabled: Bool = false
 
     func buttonTaped() {
+        guard !isLoading else { return }
         setLoading(true)
         Task.detached { [weak self] in
             guard let self = self else { return }
@@ -90,15 +89,6 @@ final class EnterSMSCodeViewModel: BaseViewModel {
         super.init()
 
         bind()
-
-        Task {
-            do {
-                try await smsService.sendConfirmationCode(phone: phone)
-            } catch let err {
-                self.error = err.readableDescription
-            }
-        }
-
         startTimer()
         RunLoop.current.add(timer!, forMode: .common)
     }
@@ -125,54 +115,10 @@ final class EnterSMSCodeViewModel: BaseViewModel {
         if let error = error as? EnterSMSCodeViewModelError {
             switch error {
             case .incorrectCode:
-                errorText = "Incorrect SMS code 😬"
+                errorText = L10n.incorrectSMSCode😬
             }
         }
         codeError = errorText
-    }
-
-    @MainActor
-    private func showError(error: Error?) {
-        var errorText = error?.readableDescription
-        if let error = error as? SMSServiceError {
-            switch error {
-            case .wait10Min:
-                errorText = "Please wait 10 min and will ask for new OTP"
-            case .invalidSignature:
-                errorText = "Not valid signature"
-            case .parseError:
-                errorText = "Parse Error"
-            case .invalidRequest:
-                errorText = "Invalid Request"
-            case .methodNotFOund:
-                errorText = "Method not found"
-            case .invalidParams:
-                errorText = "Invalid params"
-            case .internalError:
-                errorText = "Internal Error"
-            case .everytingIsBroken:
-                errorText = "Everything is broken"
-            case .retry:
-                errorText = "Please retry operation"
-            case .changePhone:
-                errorText = "SMS will not be delivered. Please change phone number"
-            case .alreadyConfirmed:
-                errorText = "This phone has already been confirmed. Change phone number"
-            case .callNotPermit:
-                errorText = "Call not permit. Use sms. May be it helps"
-            case .pubkeyExists:
-                errorText = "Pubkey solana already exists"
-            case .pubkeyAndPhoneExists:
-                errorText = "Pubkey solana and phone number already exists"
-            case .invalidValue:
-                errorText = "Invalid value of OTP. Please try again to input correct value of OTP"
-            }
-        }
-        self.error = errorText
-
-        if let errorText = errorText {
-            DefaultLogManager.shared.log(event: "Enter SMS: \(errorText)", logLevel: .error, shouldLogEvent: { true })
-        }
     }
 
     @MainActor
@@ -217,14 +163,6 @@ final class EnterSMSCodeViewModel: BaseViewModel {
 
     static func prepareRawCode(code: String) -> String {
         code.replacingOccurrences(of: " ", with: "")
-    }
-}
-
-extension String {
-    func separate(every: Int, with separator: String) -> String {
-        String(stride(from: 0, to: Array(self).count, by: every).map {
-            Array(Array(self)[$0 ..< min($0 + every, Array(self).count)])
-        }.joined(separator: separator))
     }
 }
 

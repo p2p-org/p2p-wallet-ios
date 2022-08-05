@@ -8,7 +8,7 @@ import CombineCocoa
 import KeyAppUI
 import UIKit
 
-final class EnterPhoneNumberViewController: BaseViewController {
+final class EnterPhoneNumberViewController: BaseOTPViewController {
     private var viewModel: EnterPhoneNumberViewModel
 
     // MARK: -
@@ -102,12 +102,29 @@ final class EnterPhoneNumberViewController: BaseViewController {
             viewModel.$phonePlaceholder
                 .assign(to: \.constantPlaceholder, on: phone)
                 .store(in: &store)
+
+            viewModel.$inputError.sink { error in
+                phone.bottomTip(error ?? "")
+                phone.style = error == nil ? .default : .error
+                if error != nil {
+                    phone.shake()
+                }
+            }.store(in: &store)
         }
 
         viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
             self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterTheNumberToContinue
             self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
+        }.store(in: &store)
+
+        viewModel.$isLoading.sink { [weak self] isLoading in
+            self?.continueButtonRef.view?.isLoading = isLoading
+        }.store(in: &store)
+
+        viewModel.$error.sink { [weak self] error in
+            guard let error = error else { return }
+            self?.showError(error: error)
         }.store(in: &store)
     }
 

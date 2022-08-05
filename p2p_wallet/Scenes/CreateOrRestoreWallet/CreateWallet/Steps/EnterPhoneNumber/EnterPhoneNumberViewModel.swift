@@ -2,8 +2,9 @@ import Combine
 import CountriesAPI
 import Foundation
 import PhoneNumberKit
+import Resolver
 
-final class EnterPhoneNumberViewModel: BaseViewModel {
+final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     private static let defaultConstantPlaceholder = "+44 7400 123456"
     private var cancellable = Set<AnyCancellable>()
     private lazy var phoneNumberKit = PhoneNumberKit()
@@ -12,22 +13,47 @@ final class EnterPhoneNumberViewModel: BaseViewModel {
         withPrefix: true
     )
 
+    @Injected var smsService: SMSService
+
     // MARK: -
 
     @Published public var phone: String?
     @Published public var flag: String = ""
     @Published public var phonePlaceholder: String?
     @Published public var isButtonEnabled: Bool = false
+    @Published public var isLoading: Bool = false
+    @Published public var inputError: String?
 
     func buttonTaped() {
-        guard let phone = phone else {
+        guard let phone = phone, !isLoading else {
             return
         }
-        coordinatorIO.phoneEntered.send(phone)
+        isLoading = true
+        Task.detached {
+            do {
+                try await self.smsService.sendConfirmationCode(phone: phone)
+            } catch {
+                if let serviceError = error as? SMSServiceError, serviceError == .invalidValue {
+                    await self.showInputError(error: "")
+                } else {
+                    await self.showError(error: error)
+                }
+                return
+            }
+            await self.coordinatorIO.phoneEntered.send(phone)
+            await MainActor.run {
+                self.isLoading = false
+            }
+        }
     }
 
     func selectCountryTap() {
         coordinatorIO.selectFlag.send()
+    }
+
+    @MainActor
+    private func showInputError(error: String?) {
+        inputError = error
     }
 
     // MARK: -
@@ -50,9 +76,7 @@ final class EnterPhoneNumberViewModel: BaseViewModel {
     }
 
     func bind() {
-        $phone
-            .dropFirst()
-            .removeDuplicates()
+        $phone.dropFirst().removeDuplicates()
             .map {
                 ($0 ?? "")
                     .split(separator: " ")
@@ -140,21 +164,5 @@ final class EnterPhoneNumberViewModel: BaseViewModel {
             }
         }
         return result
-    }
-}
-
-extension String {
-    var isPhoneNumber: Bool {
-        do {
-            let detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.phoneNumber.rawValue)
-            let matches = detector.matches(in: self, options: [], range: NSRange(location: 0, length: count))
-            if let res = matches.first {
-                return res.resultType == .phoneNumber && res.range.location == 0 && res.range.length == count
-            } else {
-                return false
-            }
-        } catch {
-            return false
-        }
     }
 }

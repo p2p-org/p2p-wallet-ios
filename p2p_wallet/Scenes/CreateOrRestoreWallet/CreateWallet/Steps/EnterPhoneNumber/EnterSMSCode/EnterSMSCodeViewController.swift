@@ -8,7 +8,7 @@ import CombineCocoa
 import KeyAppUI
 import UIKit
 
-final class EnterSMSCodeViewController: BaseViewController {
+final class EnterSMSCodeViewController: BaseOTPViewController {
     private var viewModel: EnterSMSCodeViewModel
 
     // MARK: -
@@ -131,9 +131,7 @@ final class EnterSMSCodeViewController: BaseViewController {
         }.store(in: &store)
 
         viewModel.$error.filter { $0 != nil }.sink { [weak self] error in
-            guard let self = self else { return }
-            let bar = SnackBar(icon: UIImage(), text: error!)
-            bar.show(in: self)
+            self?.showError(error: error)
         }.store(in: &store)
 
         // Input
