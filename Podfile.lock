@@ -423,13 +423,13 @@ CHECKOUT OPTIONS:
     :commit: 44218698c2c9b1f748e9535768ad59c65de81302
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
     :commit: f0e06d38ab5f4a4854ed9b674a518708951e53ef
@@ -568,6 +568,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 5777c68a5e2e8a7b0cb1f54c7dabd640b677e200
+PODFILE CHECKSUM: f206873a658a2898adb4bfa1d861c356087b43c3
 
 COCOAPODS: 1.11.3

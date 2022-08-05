@@ -8,7 +8,7 @@ import CombineCocoa
 import KeyAppUI
 import UIKit
 
-final class EnterSMSCodeViewController: BaseViewController {
+final class EnterSMSCodeViewController: BaseOTPViewController {
     private var viewModel: EnterSMSCodeViewModel
 
     // MARK: -
@@ -34,6 +34,10 @@ final class EnterSMSCodeViewController: BaseViewController {
         button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
 
         configureNavBar()
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.smsInputRef.view?.textField?.becomeFirstResponder()
+        }
     }
 
     override func build() -> UIView {
@@ -47,18 +51,22 @@ final class EnterSMSCodeViewController: BaseViewController {
                         alignment: .center
                     )
                 )
+                UIView(height: 8)
+                UILabel().withAttributedText(
+                    .attributedString(
+                        with: "Check the number \(self.viewModel.phone)",
+                        of: .text1
+                    ).withForegroundColor(Asset.Colors.night.color)
+                )
 
                 BaseTextFieldView(leftView: BEView(width: 5), rightView: nil, isBig: true).bind(smsInputRef)
                     .setup { input in
                         input.textField?.keyboardType = .numberPad
                         input.constantPlaceholder = "••• •••"
+                        input.textField?.textContentType = .oneTimeCode
                     }.frame(width: 173).padding(.init(only: .top, inset: 42))
 
                 BEHStack {
-                    UILabel().withAttributedText(
-                        .attributedString(with: L10n.didnTGetIt, of: .text1)
-                            .withForegroundColor(Asset.Colors.night.color)
-                    )
                     UIButton().bind(resendButtonRef).setup { _ in }
                 }.padding(.init(only: .top, inset: 10))
             }
@@ -80,14 +88,13 @@ final class EnterSMSCodeViewController: BaseViewController {
         super.bind()
 
         // Output
-
-        Publishers.CombineLatest(viewModel.output.resendEnabled, viewModel.output.resendText)
+        Publishers.CombineLatest(viewModel.$resendEnabled, viewModel.$resendText)
             .sink { [weak self] isEnabled, title in
                 self?.resendButtonRef.view?.setAttributedTitle(
                     NSAttributedString.attributedString(
-                        with: title ?? "",
+                        with: title,
                         of: .text1,
-                        weight: .bold
+                        weight: .regular
                     ).withForegroundColor(
                         isEnabled ? Asset.Colors.sky.color : Asset.Colors.mountain.color
                     ),
@@ -96,32 +103,45 @@ final class EnterSMSCodeViewController: BaseViewController {
                 self?.resendButtonRef.view?.isEnabled = isEnabled
             }.store(in: &store)
 
-        viewModel.output.isButtonEnabled.sink { [weak self] isEnabled in
+        viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
         }.store(in: &store)
 
-        viewModel.output.code.removeDuplicates().sink { value in
-            self.smsInputRef.view?.textField?.text = value
+        if let textField = smsInputRef.view?.textField {
+            viewModel.$code.map { Optional($0) }
+                .assign(to: \.text, on: textField)
+                .store(in: &store)
+
+            textField.textPublisher.map { $0 ?? "" }
+                .assign(to: \.code, on: viewModel)
+                .store(in: &store)
+        }
+
+        viewModel.$isLoading.sink { [weak self] isLoading in
+            self?.continueButtonRef.view?.isLoading = isLoading
+            self?.smsInputRef.view?.textField?.isEnabled = !isLoading
         }.store(in: &store)
 
-        viewModel.output.isLoading.sink { [weak self] isLoading in
-            self?.continueButtonRef.view?.isLoading = isLoading
+        viewModel.$codeError.sink { [weak self] error in
+            self?.smsInputRef.view?.bottomTip(error ?? "")
+            self?.smsInputRef.view?.style = error == nil ? .default : .error
+            if error != nil {
+                self?.smsInputRef.view?.shake()
+            }
+        }.store(in: &store)
+
+        viewModel.$error.filter { $0 != nil }.sink { [weak self] error in
+            self?.showError(error: error)
         }.store(in: &store)
 
         // Input
-
         continueButtonRef.view?.onTap { [weak self] in
-            self?.viewModel.input.button.send()
+            self?.viewModel.buttonTaped()
         }
 
-        resendButtonRef.view?.onTap {
-            self.viewModel.input.resendButtonTapped.send()
+        resendButtonRef.view?.onTap { [weak self] in
+            self?.viewModel.resendButtonTapped()
         }
-
-        smsInputRef.view?.textField?.textPublisher.removeDuplicates()
-            .sink(receiveValue: { [weak self] value in
-                self?.viewModel.input.code.send(value ?? "")
-            }).store(in: &store)
     }
 
     func configureNavBar() {
@@ -151,10 +171,10 @@ final class EnterSMSCodeViewController: BaseViewController {
     }
 
     @objc func onBack() {
-        viewModel.input.onBack.send()
+        viewModel.backTapped()
     }
 
     @objc func onInfo() {
-//        viewModel.input.onInfo.send()
+        viewModel.infoTapped()
     }
 }

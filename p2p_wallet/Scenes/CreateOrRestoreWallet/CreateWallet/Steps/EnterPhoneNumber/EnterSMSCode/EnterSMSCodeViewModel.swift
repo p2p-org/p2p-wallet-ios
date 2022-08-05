@@ -10,143 +10,176 @@ import Resolver
     let EnterSMSCodeCountdown = 60
 #endif
 
-final class EnterSMSCodeViewModel: BaseViewModel, ViewModelType {
-    @Injected static var smsService: SMSService
-
-    // MARK: -
-
-    private let errorSubject: PassthroughSubject<String?, Never> = .init()
-    private let resendSubject: PassthroughSubject<String?, Never> = .init()
-    private let resendEnabledSubject: PassthroughSubject<Bool, Never> = .init()
-    private let isLoadingSubject: PassthroughSubject<Bool, Never> = .init()
-
-    // MARK: -
-
-    struct Input {
-        var code: CurrentValueSubject<String, Never> = .init("")
-        var button: PassthroughSubject<Void, Never> = .init()
-        var resendButtonTapped: PassthroughSubject<Void, Never> = .init()
-        var onBack: PassthroughSubject<Void, Never> = .init()
-        var onInfo: PassthroughSubject<Void, Never> = .init()
-    }
-
-    struct Output {
-        var resendText: AnyPublisher<String?, Never>
-        var resendEnabled: AnyPublisher<Bool, Never>
-        var isButtonEnabled: AnyPublisher<Bool, Never>
-        var error: AnyPublisher<String?, Never>
-        var code: AnyPublisher<String?, Never>
-        var isLoading: AnyPublisher<Bool, Never>
-    }
-
-    struct CoordinatorIO {
-        var isConfirmed: PassthroughSubject<Bool, Never> = .init()
-        var showInfo: PassthroughSubject<Void, Never> = .init()
-        var goBack: PassthroughSubject<Void, Never> = .init()
-    }
+final class EnterSMSCodeViewModel: BaseOTPViewModel {
+    @Injected var smsService: SMSService
 
     // MARK: -
 
     private var cancellable = Set<AnyCancellable>()
     private var countdown = EnterSMSCodeCountdown
-    private var phone: String
+    private static let codeLength = 6
 
     // MARK: -
 
-    var input: Input
-    var output: Output
+    private var rawCode: String = "" {
+        didSet {
+            isButtonEnabled = rawCode.count == Self.codeLength
+        }
+    }
+
+    @Published public var phone: String
+    @Published public var code: String = ""
+    /// Input error field
+    @Published public var codeError: String?
+    @Published public var isLoading: Bool = false
+    @Published public var resendEnabled: Bool = false
+    @Published public var resendText: String = ""
+    @Published public var isButtonEnabled: Bool = false
+
+    func buttonTaped() {
+        guard !isLoading else { return }
+        setLoading(true)
+        Task.detached { [weak self] in
+            guard let self = self else { return }
+
+            await self.showCodeError(error: nil)
+
+            do {
+                let result = try await self.smsService.confirm(phone: self.phone, code: self.rawCode)
+                if !result {
+                    await self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
+                } else {
+                    await self.codeConfirmed(code: self.rawCode)
+                }
+            } catch let err {
+                await self.showError(error: err)
+            }
+            await self.setLoading(false)
+            await self.updateResendEnabled()
+        }
+    }
+
+    func resendButtonTapped() {
+        countdown = EnterSMSCodeCountdown
+        timer?.invalidate()
+        startTimer()
+        setResendCountdown()
+        Task {
+            do {
+                try await self.smsService.sendConfirmationCode(phone: phone)
+            } catch let err {
+                self.showCodeError(error: err)
+            }
+        }
+    }
+
+    func backTapped() {}
+
+    func infoTapped() {}
+
+    // MARK: -
+
     var coordinatorIO: CoordinatorIO = .init()
 
     private var timer: Timer?
 
     init(phone: String) {
-        input = Input()
-        output = Output(
-            resendText: resendSubject.eraseToAnyPublisher(),
-            resendEnabled: resendEnabledSubject.eraseToAnyPublisher(),
-            isButtonEnabled: input.code
-                .map {
-                    Self.smsService.isValidCodeFormat(code: $0.replacingOccurrences(of: " ", with: ""))
-                }
-                .eraseToAnyPublisher(),
-            error: errorSubject.eraseToAnyPublisher(),
-            code: input.code.map { Self.format(code: $0) }.eraseToAnyPublisher(),
-            isLoading: isLoadingSubject.eraseToAnyPublisher()
-        )
-
         self.phone = phone
 
         super.init()
 
         bind()
-
-        Task {
-            do {
-                try await Self.smsService.sendConfirmationCode(phone: phone)
-            } catch let err {
-                errorSubject.send(err.readableDescription)
-            }
-        }
-
         startTimer()
         RunLoop.current.add(timer!, forMode: .common)
     }
 
     func bind() {
-        input.button
-            .withLatestFrom(input.code)
-            .handleEvents(receiveOutput: { _ in
-                self.isLoadingSubject.send(true)
-                self.timer?.invalidate()
+        $code.removeDuplicates()
+            .debounce(for: 0.0, scheduler: DispatchQueue.main)
+            .handleEvents(receiveOutput: { [weak self] aCode in
+                self?.showCodeError(error: nil)
+                self?.rawCode = Self.prepareRawCode(code: aCode)
             })
-            .flatMap { code in
-                Future { promise in
-                    Task {
-                        promise(.success(try await Self.smsService.confirm(phone: self.phone, code: code)))
-                    }
-                }
-            }
-            .subscribe(on: DispatchQueue.global())
-            .receive(on: DispatchQueue.main)
-            .sinkAsync(receiveValue: { [weak self] result in
-                guard let self = self else { return }
-                self.coordinatorIO.isConfirmed.send(result)
-                self.isLoadingSubject.send(false)
-            }).store(in: &cancellable)
-
-        input.resendButtonTapped.sinkAsync { _ in
-            self.countdown = EnterSMSCodeCountdown
-            self.resendEnabledSubject.send(false)
-            self.timer?.invalidate()
-            self.startTimer()
-            try await Self.smsService.sendConfirmationCode(phone: self.phone)
-        }.store(in: &cancellable)
+            .map { Self.format(code: $0) }
+            .assign(to: \.code, on: self)
+            .store(in: &cancellable)
     }
 
-    private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            self.countdown -= 1
-            let secs = self.countdown <= 0 ? "" : " (\(self.countdown)s)"
-            self.resendSubject.send(" Tap to resend\(secs)")
-            self.resendEnabledSubject.send(false)
+    private func codeConfirmed(code: String) {
+        coordinatorIO.isConfirmed.send(code)
+    }
 
-            if self.countdown == 0 {
-                self.timer?.invalidate()
-                self.resendEnabledSubject.send(true)
+    @MainActor
+    private func showCodeError(error: Error?) {
+        var errorText = error?.readableDescription
+        if let error = error as? EnterSMSCodeViewModelError {
+            switch error {
+            case .incorrectCode:
+                errorText = L10n.incorrectSMSCode😬
+            }
+        }
+        codeError = errorText
+    }
+
+    @MainActor
+    private func setLoading(_ isLoading: Bool) {
+        self.isLoading = isLoading
+        resendEnabled = !isLoading
+    }
+
+    // MARK: -
+
+    private func startTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
+            self?.countdown -= 1
+            self?.setResendCountdown()
+
+            if self?.countdown == 0 {
+                self?.timer?.invalidate()
+                self?.setResendCountdown()
                 return
             }
         }
     }
 
+    private func setResendCountdown() {
+        let secs = countdown <= 0 ? "" : " \(countdown) sec"
+        resendText = " Tap to resend\(secs)"
+        updateResendEnabled()
+    }
+
+    private func updateResendEnabled() {
+        resendEnabled = countdown <= 0 && !isLoading
+    }
+
+    // MARK: -
+
     static func format(code: String) -> String {
-        code.replacingOccurrences(of: " ", with: "").separate(every: 3, with: " ")
+        Self.prepareRawCode(code: code)
+            .prefix(Self.codeLength)
+            .asString()
+            .separate(every: 3, with: " ")
+    }
+
+    static func prepareRawCode(code: String) -> String {
+        code.replacingOccurrences(of: " ", with: "")
     }
 }
 
-extension String {
-    func separate(every: Int, with separator: String) -> String {
-        String(stride(from: 0, to: Array(self).count, by: every).map {
-            Array(Array(self)[$0 ..< min($0 + every, Array(self).count)])
-        }.joined(separator: separator))
+extension Substring {
+    func asString() -> String {
+        String(self)
+    }
+}
+
+extension EnterSMSCodeViewModel {
+    struct CoordinatorIO {
+        var isConfirmed: PassthroughSubject<String, Never> = .init()
+        var showInfo: PassthroughSubject<Void, Never> = .init()
+        var goBack: PassthroughSubject<Void, Never> = .init()
+    }
+
+    enum EnterSMSCodeViewModelError: Error {
+        case incorrectCode
     }
 }

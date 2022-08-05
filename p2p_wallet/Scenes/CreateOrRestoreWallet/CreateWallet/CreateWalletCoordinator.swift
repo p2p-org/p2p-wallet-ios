@@ -164,7 +164,12 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             let vc = EnterSMSCodeViewController(viewModel: vm)
 
             vm.coordinatorIO.goBack.sink { _ in
-                // self.viewModel.onboardingStateMachine.accept(event: .back)
+                self.viewModel.onboardingStateMachine.accept(event: .back)
+            }.store(in: &subscriptions)
+
+            vm.coordinatorIO.isConfirmed.sinkAsync { [weak self] code in
+                try await self?.viewModel.onboardingStateMachine
+                    .accept(event: .enterSmsConfirmationCode(code: code))
             }.store(in: &subscriptions)
 
             return vc
