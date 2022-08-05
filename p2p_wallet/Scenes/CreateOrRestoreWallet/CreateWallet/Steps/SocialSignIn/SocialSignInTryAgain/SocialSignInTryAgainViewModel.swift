@@ -22,7 +22,7 @@ class SocialSignInTryAgainViewModel: NSObject, ViewModelType {
     }
 
     struct CoordinatorIO {
-        let tryAgain: PassthroughSubject<SocialAuthResponse, Never> = .init()
+        let tryAgain: AnyPublisher<Void, Never>
         let startScreen: AnyPublisher<Void, Never>
     }
 
@@ -32,10 +32,10 @@ class SocialSignInTryAgainViewModel: NSObject, ViewModelType {
     private(set) var input: Input = .init()
     private(set) var output: Output
     private(set) var coordinator: CoordinatorIO
-    let signInProvider: SignInProvider
+    let signInProvider: SocialProvider
     var subscriptions = [AnyCancellable]()
 
-    init(signInProvider: SignInProvider) {
+    init(signInProvider: SocialProvider) {
         self.signInProvider = signInProvider
 
         output = .init(
@@ -43,28 +43,17 @@ class SocialSignInTryAgainViewModel: NSObject, ViewModelType {
         )
 
         coordinator = .init(
+            tryAgain: input.onTryAgain.eraseToAnyPublisher(),
             startScreen: input.onStartScreen.eraseToAnyPublisher()
         )
 
         super.init()
 
-        input.onTryAgain.sink { [weak self] in self?.tryAgain() }
-            .store(in: &subscriptions)
-    }
-
-    func tryAgain() {
-        Task {
-            input.isLoading.send(true)
-            defer { input.isLoading.send(false) }
-
-            do {
-                let authResult = try await authService.socialSignIn(signInProvider.socialType)
-                coordinator.tryAgain.send(authResult)
-            } catch let e {
-                DispatchQueue.main.async {
-                    self.notificationService.showInAppNotification(.error(e))
-                }
+        input.onError.sink { [weak self] error in
+            DispatchQueue.main.async {
+                self?.notificationService.showInAppNotification(.error(error))
             }
         }
+        .store(in: &subscriptions)
     }
 }

@@ -1,9 +1,9 @@
 import Onboarding
 
 protocol OnboardingService {
-    var lastState: CreateWalletState? { get }
+    var lastState: CreateWalletFlowState? { get }
 }
 
 final class OnboardingServiceImpl: OnboardingService {
-    var lastState: CreateWalletState?
+    var lastState: CreateWalletFlowState?
 }
