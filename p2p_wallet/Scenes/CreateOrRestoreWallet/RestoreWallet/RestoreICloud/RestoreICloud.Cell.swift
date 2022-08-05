@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 26/09/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 
 extension RestoreICloud {

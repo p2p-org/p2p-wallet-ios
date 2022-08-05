@@ -6,7 +6,7 @@
 //
 
 import AnalyticsManager
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import Resolver
 import SolanaSwift

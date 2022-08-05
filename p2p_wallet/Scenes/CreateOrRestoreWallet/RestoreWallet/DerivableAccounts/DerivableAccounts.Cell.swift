@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 19/05/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 
 extension DerivableAccounts {
