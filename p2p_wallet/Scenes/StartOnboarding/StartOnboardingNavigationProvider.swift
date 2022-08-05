@@ -12,7 +12,7 @@ final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProv
         if let lastState = service.lastState {
             return ContinueCoordinator(window: window)
         } else {
-            return StartCoordinator(navigation: .root(window: window))
+            return StartCoordinator(window: window)
         }
     }
 }

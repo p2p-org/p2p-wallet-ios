@@ -2,146 +2,138 @@ import Combine
 import CountriesAPI
 import Foundation
 import PhoneNumberKit
+import Resolver
 
-final class EnterPhoneNumberViewModel: BaseViewModel, ViewModelType {
+final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     private static let defaultConstantPlaceholder = "+44 7400 123456"
     private var cancellable = Set<AnyCancellable>()
+    private lazy var phoneNumberKit = PhoneNumberKit()
+    private lazy var partialFormatter: PartialFormatter = .init(
+        phoneNumberKit: self.phoneNumberKit,
+        withPrefix: true
+    )
+
+    @Injected var smsService: SMSService
 
     // MARK: -
 
-    struct Input {
-        var phone: CurrentValueSubject<String?, Never> = .init(nil)
-        var button: PassthroughSubject<Void, Never> = .init()
-        var selectCountryTapped: PassthroughSubject<Void, Never> = .init()
+    @Published public var phone: String?
+    @Published public var flag: String = ""
+    @Published public var phonePlaceholder: String?
+    @Published public var isButtonEnabled: Bool = false
+    @Published public var isLoading: Bool = false
+    @Published public var inputError: String?
+
+    func buttonTaped() {
+        guard let phone = phone, !isLoading else {
+            return
+        }
+        isLoading = true
+        Task.detached {
+            do {
+                try await self.smsService.sendConfirmationCode(phone: phone)
+            } catch {
+                if let serviceError = error as? SMSServiceError, serviceError == .invalidValue {
+                    await self.showInputError(error: "")
+                } else {
+                    await self.showError(error: error)
+                }
+                return
+            }
+            await self.coordinatorIO.phoneEntered.send(phone)
+            await MainActor.run {
+                self.isLoading = false
+            }
+        }
     }
 
-    struct Output {
-        let phone: AnyPublisher<String?, Never>
-        let flag: AnyPublisher<String, Never>
-        let isButtonEnabled: AnyPublisher<Bool, Never>
-        let phonePlaceholder: AnyPublisher<String, Never>
+    func selectCountryTap() {
+        coordinatorIO.selectFlag.send()
     }
+
+    @MainActor
+    private func showInputError(error: String?) {
+        inputError = error
+    }
+
+    // MARK: -
 
     struct CoordinatorIO {
-        var selectFlag: PassthroughSubject<Void, Never> = .init()
+        // Input
         var countrySelected: PassthroughSubject<Country?, Never> = .init()
+        // Output
+        var selectFlag: PassthroughSubject<Void, Never> = .init()
         var phoneEntered: PassthroughSubject<String, Never> = .init()
     }
 
     // MARK: -
 
-    var input: Input
-    var output: Output
     var coordinatorIO: CoordinatorIO = .init()
 
     override init() {
-        input = Input()
-
-        let phoneNumberKit = PhoneNumberKit()
-        let partialFormatter: PartialFormatter = .init(
-            phoneNumberKit: phoneNumberKit,
-            withPrefix: true
-        )
-
-        output = Output(
-            phone: Publishers.MergeMany(
-                Self.phone(
-                    phone: input.phone,
-                    phoneNumberKit: phoneNumberKit,
-                    partialFormatter: partialFormatter
-                ),
-                coordinatorIO.countrySelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
-            ).eraseToAnyPublisher(),
-            flag: Publishers.MergeMany(
-                Self.flag(
-                    phone: input.phone,
-                    partialFormatter: partialFormatter
-                ),
-                Self.flag(country: coordinatorIO.countrySelected)
-            ).eraseToAnyPublisher(),
-            isButtonEnabled: input.phone
-                .map { $0?.split(separator: " ").map(String.init).joined(separator: "").isPhoneNumber ?? false }
-                .eraseToAnyPublisher(),
-            phonePlaceholder: Self.placeholder(
-                phone: input.phone,
-                country: coordinatorIO.countrySelected,
-                phoneNumberKit: phoneNumberKit,
-                partialFormatter: partialFormatter
-            )
-        )
         super.init()
-
         bind()
     }
 
     func bind() {
-        input.selectCountryTapped.sink { [weak self] _ in
-            self?.coordinatorIO.selectFlag.send()
-        }.store(in: &cancellable)
+        $phone.dropFirst().removeDuplicates()
+            .map {
+                ($0 ?? "")
+                    .split(separator: " ")
+                    .map(String.init)
+                    .joined(separator: "")
+                    .isPhoneNumber
+            }
+            .assign(to: \.isButtonEnabled, on: self)
+            .store(in: &cancellable)
 
-        input.button.withLatestFrom(input.phone).filter { !($0 ?? "").isEmpty }.sink { phone in
-            self.coordinatorIO.phoneEntered.send(phone ?? "")
-        }.store(in: &cancellable)
+        Publishers.MergeMany(
+            $phone.removeDuplicates()
+                .debounce(for: 0.0, scheduler: DispatchQueue.main)
+                .map {
+                    _ = self.partialFormatter.nationalNumber(from: $0 ?? "")
+                    let country = self.partialFormatter.currentRegion
+                    guard let exampleNumber = self.phoneNumberKit.getExampleNumber(forCountry: country) else {
+                        return Self.defaultConstantPlaceholder
+                    }
+                    let formatted = self.phoneNumberKit.format(exampleNumber, toType: .international)
+                    var newFormatted = formatted
+                        .replacingOccurrences(of: "[0-9]", with: "X", options: .regularExpression)
+                        .replacingOccurrences(of: "-", with: " ")
+                    newFormatted.append("XXXXXX")
+                    return Self.format(with: newFormatted, phone: $0 ?? "")
+                }.eraseToAnyPublisher(),
+            coordinatorIO.countrySelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
+        )
+            .assign(to: \.phone, on: self)
+            .store(in: &cancellable)
+
+        Publishers.MergeMany(
+            coordinatorIO.countrySelected.map { $0?.dialCode }.eraseToAnyPublisher(),
+            $phone.removeDuplicates().eraseToAnyPublisher()
+        ).map { vv -> String in
+            _ = self.partialFormatter.nationalNumber(from: vv ?? "")
+            let country = self.partialFormatter.currentRegion
+            guard let number = self.phoneNumberKit.getExampleNumber(forCountry: country) else {
+                return Self.defaultConstantPlaceholder
+            }
+            return self.phoneNumberKit
+                .format(number, toType: .international)
+                .replacingOccurrences(of: "-", with: " ")
+        }
+        .assign(to: \.phonePlaceholder, on: self)
+        .store(in: &cancellable)
+
+        $phone.removeDuplicates().map {
+            _ = self.partialFormatter.nationalNumber(from: $0 ?? "")
+            let country = self.partialFormatter.currentRegion
+            return Self.getFlag(from: country)
+        }
+        .assign(to: \.flag, on: self)
+        .store(in: &cancellable)
     }
 
     // MARK: -
-
-    static func phone(
-        phone: CurrentValueSubject<String?, Never>,
-        phoneNumberKit: PhoneNumberKit,
-        partialFormatter: PartialFormatter
-    ) -> AnyPublisher<String?, Never> {
-        phone.map {
-            _ = partialFormatter.nationalNumber(from: $0 ?? "")
-            let country = partialFormatter.currentRegion
-            guard let exampleNumber = phoneNumberKit.getExampleNumber(forCountry: country) else {
-                return Self.defaultConstantPlaceholder
-            }
-            let formatted = phoneNumberKit.format(exampleNumber, toType: .international)
-            var newFormatted = formatted
-                .replacingOccurrences(of: "[0-9]", with: "X", options: .regularExpression)
-                .replacingOccurrences(of: "-", with: " ")
-            newFormatted.append("XXXXXX")
-            return Self.format(with: newFormatted, phone: $0 ?? "")
-        }.eraseToAnyPublisher()
-    }
-
-    static func placeholder(
-        phone: CurrentValueSubject<String?, Never>,
-        country: PassthroughSubject<Country?, Never>,
-        phoneNumberKit: PhoneNumberKit,
-        partialFormatter: PartialFormatter
-    ) -> AnyPublisher<String, Never> {
-        Publishers.MergeMany(
-            country.map { $0?.dialCode }.eraseToAnyPublisher(),
-            phone.eraseToAnyPublisher()
-        ).map {
-            _ = partialFormatter.nationalNumber(from: $0 ?? "")
-            let country = partialFormatter.currentRegion
-            guard let number = phoneNumberKit.getExampleNumber(forCountry: country) else {
-                return Self.defaultConstantPlaceholder
-            }
-            return phoneNumberKit.format(number, toType: .international)
-                .replacingOccurrences(of: "-", with: " ")
-        }.eraseToAnyPublisher()
-    }
-
-    static func flag(
-        phone: CurrentValueSubject<String?, Never>,
-        partialFormatter: PartialFormatter
-    ) -> AnyPublisher<String, Never> {
-        phone.map {
-            _ = partialFormatter.nationalNumber(from: $0 ?? "")
-            let country = partialFormatter.currentRegion
-            return Self.getFlag(from: country)
-        }.eraseToAnyPublisher()
-    }
-
-    static func flag(country: PassthroughSubject<Country?, Never>) -> AnyPublisher<String, Never> {
-        country.filter { $0 != nil }.compactMap { country in
-            Self.getFlag(from: country!.code)
-        }.eraseToAnyPublisher()
-    }
 
     static func getFlag(from countryCode: String) -> String {
         countryCode
@@ -172,21 +164,5 @@ final class EnterPhoneNumberViewModel: BaseViewModel, ViewModelType {
             }
         }
         return result
-    }
-}
-
-extension String {
-    var isPhoneNumber: Bool {
-        do {
-            let detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.phoneNumber.rawValue)
-            let matches = detector.matches(in: self, options: [], range: NSRange(location: 0, length: count))
-            if let res = matches.first {
-                return res.resultType == .phoneNumber && res.range.location == 0 && res.range.length == count
-            } else {
-                return false
-            }
-        } catch {
-            return false
-        }
     }
 }
