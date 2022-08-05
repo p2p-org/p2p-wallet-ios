@@ -5,56 +5,47 @@
 //  Created by Andrew Vasiliev on 30.01.2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
-protocol SupportedTokensViewModelType: BEListViewModelType {
+protocol SupportedTokensViewModelType: BECollectionViewModelType {
     func search(keyword: String)
 
-    var keyword: String { get }
+    var keyword: String? { get }
 }
 
 extension SupportedTokens {
-    final class ViewModel: BEListViewModel<Token> {
+    final class ViewModel: BECollectionViewModel<Token> {
         // MARK: - Dependencies
 
         @Injected private var tokensRepository: SolanaTokensRepository
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
-        // MARK: - Subject
-
-        private var keywordSubject = BehaviorRelay<String?>(value: nil)
+        @Published var keyword: String?
 
         init() {
             super.init()
 
-            keywordSubject
-                .distinctUntilChanged()
-                .throttle(.milliseconds(400), scheduler: MainScheduler.instance)
-                .subscribe(onNext: { [weak self] _ in
+            $keyword
+                .removeDuplicates()
+                .throttle(for: .milliseconds(400), scheduler: RunLoop.main, latest: true)
+                .sink { [weak self] _ in
                     self?.reload()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
-        override func createRequest() -> Single<[Token]> {
+        override func createRequest() async throws -> [Token] {
             var existingSymbols: Set<String> = []
-
-            return Single<[Token]>.async {
-                Array(try await self.tokensRepository.getTokensList())
-            }
-            .map { tokens -> [Token] in
-                tokens
-                    .excludingSpecialTokens()
-                    .filter { existingSymbols.insert($0.symbol).inserted }
-            }
+            return Array(try await tokensRepository.getTokensList())
+                .excludingSpecialTokens()
+                .filter { existingSymbols.insert($0.symbol).inserted }
         }
 
         override func map(newData: [Token]) -> [Token] {
@@ -69,7 +60,7 @@ extension SupportedTokens {
                         return firstTokenPriority > secondTokenPriority
                     }
                 }
-            if let keyword = keywordSubject.value, !keyword.isEmpty {
+            if let keyword = keyword, !keyword.isEmpty {
                 data = data.filter { $0.hasKeyword(keyword) }
             }
             return data
@@ -97,9 +88,7 @@ extension SupportedTokens {
 extension SupportedTokens.ViewModel: SupportedTokensViewModelType {
     // MARK: - Actions
 
-    func search(keyword: String) { keywordSubject.accept(keyword) }
-
-    var keyword: String { keywordSubject.value ?? "" }
+    func search(keyword: String) { self.keyword = keyword }
 }
 
 private extension Token {

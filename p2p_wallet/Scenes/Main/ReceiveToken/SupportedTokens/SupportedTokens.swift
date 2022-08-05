@@ -6,6 +6,5 @@
 //
 
 import Foundation
-import RxCocoa
 
-struct SupportedTokens {}
+enum SupportedTokens {}
