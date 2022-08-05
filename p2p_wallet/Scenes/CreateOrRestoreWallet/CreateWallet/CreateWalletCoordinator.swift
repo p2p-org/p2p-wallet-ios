@@ -23,7 +23,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     init(parent: UIViewController) {
         parentViewController = parent
         tKeyFacade = TKeyJSFacade(wkWebView: webView)
-        viewModel = CreateWalletViewModel(tKeyFacade: nil /* tKeyFacade */ )
+        viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
 
         super.init()
     }
@@ -164,7 +164,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             let vc = EnterSMSCodeViewController(viewModel: vm)
 
             vm.coordinatorIO.goBack.sink { _ in
-                // self.viewModel.onboardingStateMachine.accept(event: .back)
+                self.viewModel.onboardingStateMachine.accept(event: .back)
             }.store(in: &subscriptions)
 
             vm.coordinatorIO.isConfirmed.sinkAsync { [weak self] code in
