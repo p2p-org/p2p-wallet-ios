@@ -14,7 +14,8 @@ final class CreateWalletViewModel: BaseViewModel {
         onboardingStateMachine = .init(
             provider: .init(
                 authService: AuthServiceBridge(),
-                tkeyFacade: tKeyFacade ?? TKeyMockupFacade()
+                apiGatewayClient: APIGatewayClientImplMock(),
+                tKeyFacade: tKeyFacade ?? TKeyMockupFacade()
             )
         )
     }

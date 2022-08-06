@@ -25,15 +25,19 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     init(parent: UIViewController) {
         parentViewController = parent
         tKeyFacade = TKeyJSFacade(wkWebView: webView)
-        viewModel = CreateWalletViewModel(tKeyFacade: nil)
+        viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
 
-        socialSignInDelegatedCoordinator = .init { [weak viewModel] event in
-            try await viewModel?.onboardingStateMachine.accept(event: .socialSignInEvent(event))
-        }
+        socialSignInDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.onboardingStateMachine.accept(event: .socialSignInEvent(event))
+            }
+        )
 
-        bindingPhoneNumberDelegatedCoordinator = .init { [weak viewModel] event in
-            try await viewModel?.onboardingStateMachine.accept(event: .bindingPhoneNumberEvent(event))
-        }
+        bindingPhoneNumberDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.onboardingStateMachine.accept(event: .bindingPhoneNumberEvent(event))
+            }
+        )
 
         super.init()
     }
