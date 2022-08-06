@@ -6,16 +6,14 @@
 //
 
 import BEPureLayout
-import RxCocoa
-import RxRelay
-import RxSwift
+import Combine
 import UIKit
 
 extension History {
     class ErrorView: BEView {
-        fileprivate let tryAgainClicked = PublishRelay<Void>()
+        let tryAgainClicked = PassthroughSubject<Void, Never>()
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         private let imageView = UIImageView(
             width: 80,
@@ -65,16 +63,10 @@ extension History {
                 stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             ])
 
-            actionButton.rx
-                .controlEvent(.touchUpInside)
-                .bind(to: tryAgainClicked)
-                .disposed(by: disposeBag)
+            actionButton
+                .onTap { [weak self] in
+                    self?.tryAgainClicked.send()
+                }
         }
     }
-}
-
-// MARK: - Reactive
-
-extension Reactive where Base == History.ErrorView {
-    var tryAgainClicked: Observable<Void> { base.tryAgainClicked.asObservable() }
 }

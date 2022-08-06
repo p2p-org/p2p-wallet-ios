@@ -47,7 +47,7 @@ final class TabBarController: UITabBarController {
     private func setupViewControllers() {
         let homeViewModel = Home.ViewModel()
         let homeVC = Home.ViewController(viewModel: homeViewModel)
-        let historyVC = History.Scene()
+        let historyVC = History.Scene(account: nil, symbol: nil)
 
         let vm = SendToken.ViewModel(
             walletPubkey: nil,
