@@ -114,7 +114,7 @@ extension ResetPinCodeWithSeedPhrases {
 
                     // Button
                     BEZStackPosition(mode: .pinEdges([.bottom, .left, .right], avoidKeyboard: true)) {
-                        BEBuilder(driver: buttonState.asDriver(onErrorJustReturn: .enter)) { state in
+                        BEBuilderRxSwift(driver: buttonState.asDriver(onErrorJustReturn: .enter)) { state in
                             switch state {
                             case .enter:
                                 let button = WLStepButton.main(text: L10n.enterYourSecurityKey)

@@ -1,24 +1,23 @@
 //
-//  BEBuilder.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 06/08/2022.
+// Created by Giang Long Tran on 02.02.2022.
 //
 
-import Combine
+import BEPureLayout
 import Foundation
+import RxCocoa
+import RxSwift
 
-class BEBuilder<T>: UIView {
+class BEBuilderRxSwift<T>: UIView {
     typealias Build<T> = (T) -> UIView
     private let build: Build<T>
-    private var subscriptions = [AnyCancellable]()
+    private let disposeBag = DisposeBag()
     private var child: UIView?
-    init(publisher: AnyPublisher<T, Never>, build: @escaping Build<T>) {
+    init(driver: Driver<T>, build: @escaping Build<T>) {
         self.build = build
         super.init(frame: .zero)
 
-        publisher
-            .sink { [weak self] value in
+        driver
+            .drive { [weak self] (value: T) in
                 guard let self = self else { return }
                 self.child?.alpha = 0.0
                 let view = self.build(value)
@@ -27,7 +26,7 @@ class BEBuilder<T>: UIView {
                 self.child?.removeFromSuperview()
                 self.child = view
             }
-            .store(in: &subscriptions)
+            .disposed(by: disposeBag)
     }
 
     override func addSubview(_ view: UIView) {

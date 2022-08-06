@@ -2,17 +2,16 @@
 // Created by Giang Long Tran on 12.04.2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import FeeRelayerSwift
 import Foundation
 import Resolver
-import RxCocoa
-import RxConcurrency
-import RxSwift
 import SolanaSwift
 import TransactionParser
 
 extension History {
+    @MainActor
     class SceneModel: BEStreamListViewModel<ParsedTransaction> {
         typealias AccountSymbol = (account: String, symbol: String)
 
@@ -25,7 +24,7 @@ extension History {
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         /// Symbol to filter coins
         let accountSymbol: AccountSymbol?
@@ -49,29 +48,28 @@ extension History {
             case error
         }
 
-        var stateDriver: Driver<State> {
-            Observable.combineLatest(
-                dataObservable.startWith([])
-                    .filter { $0 != nil }
-                    .withPrevious(),
-                stateObservable.startWith(.loading),
-                errorRelay.startWith(false)
-            ).map { change, state, error in
-                if error { return .error }
+        var stateDriver: AnyPublisher<State, Never> {
+            Publishers.CombineLatest3(
+                $data.eraseToAnyPublisher(),
+                $state.eraseToAnyPublisher(),
+                errorRelay.eraseToAnyPublisher()
+            )
+                .map { data, state, error -> State in
+                    if error { return .error }
 
-                if state == .loading || state == .initializing {
-                    return .items
-                } else {
-                    return (change.1?.count ?? 0) > 0 ? .items : .empty
+                    if state == .loading || state == .initializing {
+                        return .items
+                    } else {
+                        return !data.isEmpty ? .items : .empty
+                    }
                 }
-            }
-            .distinctUntilChanged()
-            .asDriver()
+                .removeDuplicates()
+                .eraseToAnyPublisher()
         }
 
-        let tryAgain = PublishRelay<Void>()
-        let refreshPage = PublishRelay<Void>()
-        private let errorRelay = PublishRelay<Bool>()
+        let tryAgain = PassthroughSubject<Void, Never>()
+        let refreshPage = PassthroughSubject<Void, Never>()
+        private let errorRelay = PassthroughSubject<Bool, Never>()
 
         init(accountSymbol: AccountSymbol? = nil) {
             self.accountSymbol = accountSymbol
@@ -85,24 +83,27 @@ extension History {
             // Register all refresh triggers
             for trigger in refreshTriggers {
                 trigger.register()
-                    .emit(onNext: { [weak self] in self?.refreshUI() })
-                    .disposed(by: disposeBag)
+                    .sink { [weak self] in
+                        self?.refreshUI()
+                    }
+                    .store(in: &subscriptions)
             }
 
             // Build source
             buildSource()
 
             tryAgain
-                .subscribe(onNext: { [weak self] in
+                .sink(receiveValue: { [weak self] in
                     self?.reload()
-                    self?.errorRelay.accept(false)
+                    self?.errorRelay.send(false)
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
+
             refreshPage
-                .subscribe(onNext: { [weak self] in
+                .sink(receiveValue: { [weak self] in
                     self?.reload()
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
         }
 
         func buildSource() {
@@ -140,8 +141,8 @@ extension History {
             super.clear()
         }
 
-        override func next() -> Observable<[ParsedTransaction]> {
-            AsyncThrowingStream<[HistoryStreamSource.Result], Error> { stream in
+        override func next() -> AsyncThrowingStream<[ParsedTransaction], Error> {
+            .init { stream in
                 Task {
                     defer { stream.finish(throwing: nil) }
 
@@ -153,7 +154,7 @@ extension History {
                                 let firstTrx = firstTrx,
                                 let rawTime = firstTrx.0.blockTime
                             else {
-                                stream.yield(results)
+                                stream.yield(try await mapResultsToParsedTransactions(results))
                                 return
                             }
 
@@ -176,43 +177,42 @@ extension History {
                                 results.append(result)
 
                                 if results.count > 15 {
-                                    stream.yield(results)
+                                    stream.yield(try await mapResultsToParsedTransactions(results))
                                     return
                                 }
                             }
                         }
                     } catch {
-                        stream.yield(results)
+                        DispatchQueue.main.async { [weak self] in
+                            self?.errorRelay.send(true)
+                            self?.notificationService.showInAppNotification(.error(error))
+                        }
+                        stream.yield(try await mapResultsToParsedTransactions(results))
                         stream.finish(throwing: error)
                     }
                 }
             }
-            .asObservable()
-            .flatMap { (signatures: [HistoryStreamSource.Result]) in
-                let transactions = try await self.transactionRepository
-                    .getTransactions(signatures: signatures.map(\.signatureInfo.signature))
-                var parsedTransactions: [ParsedTransaction] = []
+        }
 
-                for (i, trxInfo) in transactions.enumerated() {
-                    let (signature, account, symbol) = signatures[i]
-                    parsedTransactions.append(
-                        await self.transactionParser.parse(
-                            signatureInfo: signature,
-                            transactionInfo: trxInfo,
-                            account: account,
-                            symbol: symbol
-                        )
+        private func mapResultsToParsedTransactions(_ signatures: [HistoryStreamSource.Result]) async throws
+        -> [ParsedTransaction] {
+            let transactions = try await transactionRepository
+                .getTransactions(signatures: signatures.map(\.signatureInfo.signature))
+            var parsedTransactions: [ParsedTransaction] = []
+
+            for (i, trxInfo) in transactions.enumerated() {
+                let (signature, account, symbol) = signatures[i]
+                parsedTransactions.append(
+                    await transactionParser.parse(
+                        signatureInfo: signature,
+                        transactionInfo: trxInfo,
+                        account: account,
+                        symbol: symbol
                     )
-                }
-
-                return parsedTransactions
+                )
             }
-            .do(onError: { [weak self] error in
-                DispatchQueue.main.async { [weak self] in
-                    self?.errorRelay.accept(true)
-                    self?.notificationService.showInAppNotification(.error(error))
-                }
-            })
+
+            return parsedTransactions
         }
 
         override func join(_ newItems: [ParsedTransaction]) -> [ParsedTransaction] {

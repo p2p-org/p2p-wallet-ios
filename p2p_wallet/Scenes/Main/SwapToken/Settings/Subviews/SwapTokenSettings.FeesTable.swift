@@ -19,7 +19,7 @@ extension SwapTokenSettings {
 
         override func build() -> UIView {
             WLCard {
-                BEBuilder(driver: cellsContentDriver) { cellsContent in
+                BEBuilderRxSwift(driver: cellsContentDriver) { cellsContent in
                     BEVStack {
                         for content in cellsContent {
                             FeeCell().setUp(content: content)
