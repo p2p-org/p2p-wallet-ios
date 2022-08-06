@@ -52,6 +52,7 @@ extension SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
 }
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
+    @MainActor
     class ViewModel {
         // MARK: - Dependencies
 

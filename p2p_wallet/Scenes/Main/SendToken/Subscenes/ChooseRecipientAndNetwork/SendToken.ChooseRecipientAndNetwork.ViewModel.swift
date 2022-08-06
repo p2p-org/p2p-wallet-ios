@@ -30,6 +30,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 }
 
 extension SendToken.ChooseRecipientAndNetwork {
+    @MainActor
     class ViewModel {
         // MARK: - Dependencies
 

@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 27/10/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxCocoa
 
 enum RenBTCReceivingStatuses {
     enum NavigatableScene {
