@@ -16,13 +16,24 @@ extension History {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var pricesService: PricesServiceType
 
-        let viewModel = SceneModel()
+        let viewModel: SceneModel
         private var subscriptions = [AnyCancellable]()
 
-        override init() {
+        @MainActor
+        init(account: String?, symbol: String?, isEmbeded: Bool = true) {
+            if let account = account, let symbol = symbol {
+                viewModel = SceneModel(accountSymbol: (account, symbol))
+                isEmbedded = isEmbeded
+            } else {
+                viewModel = SceneModel()
+            }
+
             super.init()
 
-            navigationItem.title = L10n.history
+            if account == nil || symbol == nil {
+                navigationItem.title = L10n.history
+            }
+
             // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
                 .dataObservable
@@ -32,28 +43,10 @@ extension History {
                 .publisher
                 .sink(receiveCompletion: { _ in
 
-                }, receiveValue: { _ in
-                    Task { [weak self] in
-                        await self?.viewModel.reload()
-                    }
+                }, receiveValue: { [weak self] _ in
+                    self?.viewModel.reload()
                 })
                 .store(in: &subscriptions)
-        }
-
-        init(account: String, symbol: String, isEmbeded: Bool = true) {
-            viewModel = SceneModel(accountSymbol: (account, symbol))
-
-            super.init()
-            isEmbedded = isEmbeded
-
-            // Start loading when wallets are ready.
-            Resolver.resolve(WalletsRepository.self)
-                .dataObservable
-                .compactMap { $0 }
-                .filter { $0?.count ?? 0 > 0 }
-                .first()
-                .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
-                .disposed(by: disposeBag)
         }
 
         override func build() -> UIView {
@@ -64,15 +57,19 @@ extension History {
                     return self.content
                 case .empty:
                     return EmptyTransactionsView().setup {
-                        $0.rx.refreshClicked
-                            .bind(to: self.viewModel.refreshPage)
-                            .disposed(by: self.disposeBag)
+                        $0.refreshClicked
+                            .sink { [weak self] in
+                                self?.viewModel.refreshPage.send()
+                            }
+                            .store(in: &self.subscriptions)
                     }
                 case .error:
                     return ErrorView().setup {
-                        $0.rx.tryAgainClicked
-                            .bind(to: self.viewModel.tryAgain)
-                            .disposed(by: self.disposeBag)
+                        $0.tryAgainClicked
+                            .sink { [weak self] in
+                                self?.viewModel.tryAgain.send()
+                            }
+                            .store(in: &self.subscriptions)
                     }
                 }
             }
