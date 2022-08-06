@@ -5,7 +5,7 @@
 //  Created by Andrew Vasiliev on 30.01.2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import UIKit
 
