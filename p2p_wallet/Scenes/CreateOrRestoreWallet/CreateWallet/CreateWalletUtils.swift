@@ -5,7 +5,7 @@
 import Foundation
 import Onboarding
 
-extension SignInProvider {
+extension SocialProvider {
     var socialType: SocialType {
         switch self {
         case .apple:

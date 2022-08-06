@@ -1,6 +1,7 @@
 import Combine
 import CountriesAPI
 import Foundation
+import Onboarding
 import PhoneNumberKit
 import Resolver
 
@@ -9,11 +10,9 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     private var cancellable = Set<AnyCancellable>()
     private lazy var phoneNumberKit = PhoneNumberKit()
     private lazy var partialFormatter: PartialFormatter = .init(
-        phoneNumberKit: self.phoneNumberKit,
+        phoneNumberKit: phoneNumberKit,
         withPrefix: true
     )
-
-    @Injected var smsService: SMSService
 
     // MARK: -
 
@@ -25,26 +24,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published public var inputError: String?
 
     func buttonTaped() {
-        guard let phone = phone, !isLoading else {
-            return
-        }
-        isLoading = true
-        Task.detached {
-            do {
-                try await self.smsService.sendConfirmationCode(phone: phone)
-            } catch {
-                if let serviceError = error as? SMSServiceError, serviceError == .invalidValue {
-                    await self.showInputError(error: "")
-                } else {
-                    await self.showError(error: error)
-                }
-                return
-            }
-            await self.coordinatorIO.phoneEntered.send(phone)
-            await MainActor.run {
-                self.isLoading = false
-            }
-        }
+        guard let phone = phone, !isLoading else { return }
+        coordinatorIO.phoneEntered.send(phone)
     }
 
     func selectCountryTap() {
@@ -60,6 +41,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     struct CoordinatorIO {
         // Input
+        var error: PassthroughSubject<Error?, Never> = .init()
         var countrySelected: PassthroughSubject<Country?, Never> = .init()
         // Output
         var selectFlag: PassthroughSubject<Void, Never> = .init()
@@ -76,6 +58,18 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     func bind() {
+        coordinatorIO
+            .error
+            .receive(on: RunLoop.main)
+            .sinkAsync { error in
+                if let serviceError = error as? APIGatewayError, serviceError == .invalidRequest {
+                    self.showInputError(error: "")
+                } else {
+                    self.showError(error: error)
+                }
+            }
+            .store(in: &subscriptions)
+
         $phone.dropFirst().removeDuplicates()
             .map {
                 ($0 ?? "")

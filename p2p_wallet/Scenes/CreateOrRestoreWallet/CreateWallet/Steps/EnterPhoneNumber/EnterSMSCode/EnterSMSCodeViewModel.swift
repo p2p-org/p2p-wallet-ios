@@ -1,6 +1,7 @@
 import Combine
 import CountriesAPI
 import Foundation
+import Onboarding
 import PhoneNumberKit
 import Resolver
 
@@ -11,8 +12,6 @@ import Resolver
 #endif
 
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
-    @Injected var smsService: SMSService
-
     // MARK: -
 
     private var cancellable = Set<AnyCancellable>()
@@ -38,39 +37,18 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     func buttonTaped() {
         guard !isLoading else { return }
-        setLoading(true)
-        Task.detached { [weak self] in
-            guard let self = self else { return }
-
-            await self.showCodeError(error: nil)
-
-            do {
-                let result = try await self.smsService.confirm(phone: self.phone, code: self.rawCode)
-                if !result {
-                    await self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
-                } else {
-                    await self.codeConfirmed(code: self.rawCode)
-                }
-            } catch let err {
-                await self.showError(error: err)
-            }
-            await self.setLoading(false)
-            await self.updateResendEnabled()
-        }
+        coordinatorIO.onConfirm.send(rawCode)
     }
 
     func resendButtonTapped() {
+        guard !isLoading else { return }
+        coordinatorIO.onResend.send()
+
+        // Setup timer
         countdown = EnterSMSCodeCountdown
         timer?.invalidate()
         startTimer()
         setResendCountdown()
-        Task {
-            do {
-                try await self.smsService.sendConfirmationCode(phone: phone)
-            } catch let err {
-                self.showCodeError(error: err)
-            }
-        }
     }
 
     func backTapped() {}
@@ -94,6 +72,18 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     }
 
     func bind() {
+        coordinatorIO
+            .error
+            .receive(on: RunLoop.main)
+            .sinkAsync { error in
+                if let serviceError = error as? APIGatewayError, serviceError == .invalidOTP {
+                    self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
+                } else {
+                    self.showError(error: error)
+                }
+            }
+            .store(in: &subscriptions)
+
         $code.removeDuplicates()
             .debounce(for: 0.0, scheduler: DispatchQueue.main)
             .handleEvents(receiveOutput: { [weak self] aCode in
@@ -106,7 +96,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     }
 
     private func codeConfirmed(code: String) {
-        coordinatorIO.isConfirmed.send(code)
+        guard !isLoading else { return }
+        coordinatorIO.onConfirm.send(code)
     }
 
     @MainActor
@@ -174,9 +165,11 @@ extension Substring {
 
 extension EnterSMSCodeViewModel {
     struct CoordinatorIO {
-        var isConfirmed: PassthroughSubject<String, Never> = .init()
-        var showInfo: PassthroughSubject<Void, Never> = .init()
-        var goBack: PassthroughSubject<Void, Never> = .init()
+        let error: PassthroughSubject<Error?, Never> = .init()
+        let onConfirm: PassthroughSubject<String, Never> = .init()
+        let onResend: PassthroughSubject<Void, Never> = .init()
+        let showInfo: PassthroughSubject<Void, Never> = .init()
+        let goBack: PassthroughSubject<Void, Never> = .init()
     }
 
     enum EnterSMSCodeViewModelError: Error {
