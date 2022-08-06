@@ -10,6 +10,7 @@ import RxSwift
 import UIKit
 
 extension SendToken {
+    @MainActor
     final class Coordinator {
         private let viewModel: SendTokenViewModelType
         private weak var navigationController: UINavigationController?

@@ -7,6 +7,7 @@
 
 import BECollectionView_Combine
 import BEPureLayout
+import Combine
 import RxCocoa
 import RxSwift
 import SolanaSwift
@@ -17,6 +18,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Constants
 
         let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -207,9 +209,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .disposed(by: disposeBag)
 
             viewModel.recipientsListViewModel
-                .stateObservable
-                .asDriver(onErrorJustReturn: .initializing)
-                .drive(onNext: { [weak self] state in
+                .$state
+                .receive(on: RunLoop.main)
+                .sink(receiveValue: { [weak self] state in
                     var shouldHideErrorView = true
                     var errorText = L10n.thereIsAnErrorOccurredPleaseTryAgain
                     switch state {
@@ -228,7 +230,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     self?.errorView.isHidden = shouldHideErrorView
                     self?.errorLabel.text = errorText
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             // fee view
             Driver.combineLatest(
