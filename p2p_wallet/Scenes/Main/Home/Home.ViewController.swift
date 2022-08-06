@@ -196,11 +196,12 @@ extension Home {
                     self?.popToThisViewControllerAndScrollToTop()
                 }
                 show(vc, sender: nil)
-            case let .walletSettings(wallet):
-                guard let pubkey = wallet.pubkey else { return }
-                let vm = TokenSettingsViewModel(pubkey: pubkey)
-                let vc = TokenSettingsViewController(viewModel: vm)
-                present(vc, animated: true, completion: nil)
+            case .walletSettings:
+                break
+//                guard let pubkey = wallet.pubkey else { return }
+//                let vm = TokenSettingsViewModel(pubkey: pubkey)
+//                let vc = TokenSettingsViewController(viewModel: vm)
+//                present(vc, animated: true, completion: nil)
             case let .closeReserveNameAlert(handler):
                 showAlert(
                     title: L10n.proceedWithoutAUsername,

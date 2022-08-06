@@ -113,11 +113,12 @@ extension WalletDetail {
                 )
                 let navigation = UINavigationController(rootViewController: vc)
                 present(navigation, animated: true)
-            case let .settings(pubkey):
-                let vm = TokenSettingsViewModel(pubkey: pubkey)
-                let vc = TokenSettingsViewController(viewModel: vm)
-                vc.delegate = self
-                present(vc, animated: true)
+            case .settings:
+                break
+//                let vm = TokenSettingsViewModel(pubkey: pubkey)
+//                let vc = TokenSettingsViewController(viewModel: vm)
+//                vc.delegate = self
+//                present(vc, animated: true)
             case let .send(wallet):
                 let vm = SendToken.ViewModel(
                     walletPubkey: wallet.pubkey,
@@ -170,11 +171,5 @@ extension WalletDetail {
         @objc func showWalletSettings() {
             viewModel.showWalletSettings()
         }
-    }
-}
-
-extension WalletDetail.ViewController: TokenSettingsViewControllerDelegate {
-    func tokenSettingsViewControllerDidCloseToken(_: TokenSettingsViewController) {
-        dismiss(animated: true, completion: nil)
     }
 }
