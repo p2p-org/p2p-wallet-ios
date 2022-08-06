@@ -2,8 +2,9 @@
 // Created by Giang Long Tran on 12.04.2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
 import SolanaSwift
@@ -15,10 +16,10 @@ extension History {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var pricesService: PricesServiceType
 
-        let viewModel: SceneModel
+        let viewModel = SceneModel()
+        private var subscriptions = [AnyCancellable]()
 
         override init() {
-            viewModel = SceneModel()
             super.init()
 
             navigationItem.title = L10n.history
@@ -28,8 +29,15 @@ extension History {
                 .compactMap { $0 }
                 .filter { $0?.count ?? 0 > 0 }
                 .first()
-                .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
-                .disposed(by: disposeBag)
+                .publisher
+                .sink(receiveCompletion: { _ in
+
+                }, receiveValue: { _ in
+                    Task { [weak self] in
+                        await self?.viewModel.reload()
+                    }
+                })
+                .store(in: &subscriptions)
         }
 
         init(account: String, symbol: String, isEmbeded: Bool = true) {
@@ -49,7 +57,7 @@ extension History {
         }
 
         override func build() -> UIView {
-            BEBuilder(driver: viewModel.stateDriver) { [weak self] state in
+            BEBuilder(publisher: viewModel.stateDriver) { [weak self] state in
                 guard let self = self else { return UIView() }
                 switch state {
                 case .items:
@@ -74,7 +82,7 @@ extension History {
             NBENewDynamicSectionsCollectionView(
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
-                    CollectionViewMappingStrategyRxDeprecated.byData(
+                    CollectionViewMappingStrategy.byData(
                         viewModel: viewModel,
                         forType: ParsedTransaction.self,
                         where: \ParsedTransaction.blockTime

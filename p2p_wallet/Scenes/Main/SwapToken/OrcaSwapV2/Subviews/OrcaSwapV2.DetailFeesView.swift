@@ -25,7 +25,7 @@ extension OrcaSwapV2 {
         }
 
         override func build() -> UIView {
-            BEBuilder(driver: viewModel.feesDriver) { [weak self] snapshot in
+            BEBuilderRxSwift(driver: viewModel.feesDriver) { [weak self] snapshot in
                 guard let self = self else { return UIView() }
 
                 switch snapshot.state {

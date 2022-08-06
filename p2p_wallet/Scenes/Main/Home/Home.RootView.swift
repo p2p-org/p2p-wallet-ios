@@ -51,7 +51,7 @@ extension Home {
                             .disposed(by: disposeBag)
                     }
 
-                    BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
+                    BEBuilderRxSwift(driver: viewModel.isWalletReadyDriver) { [weak self] state in
                         guard let self = self else { return UIView() }
                         return state ? self.content() : self.emptyScreen()
                     }
