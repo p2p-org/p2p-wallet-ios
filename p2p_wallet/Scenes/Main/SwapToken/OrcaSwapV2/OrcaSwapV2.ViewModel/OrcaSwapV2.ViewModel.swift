@@ -76,7 +76,8 @@ extension OrcaSwapV2 {
             }
 
             // update wallet after swapping
-            walletsRepository.dataObservable
+            walletsRepository.dataPublisher
+                .asObservable()
                 .skip(1)
                 .subscribe(onNext: { [weak self] wallets in
                     if self?.sourceWalletSubject.value?.pubkey != nil,

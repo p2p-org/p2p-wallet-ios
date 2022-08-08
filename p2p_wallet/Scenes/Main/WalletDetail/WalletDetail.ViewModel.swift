@@ -14,9 +14,9 @@ import TransactionParser
 
 protocol WalletDetailViewModelType {
     var walletsRepository: WalletsRepository { get }
-    var navigatableSceneDriver: AnyPublisher<WalletDetail.NavigatableScene?, Never> { get }
-    var walletDriver: AnyPublisher<Wallet?, Never> { get }
-    var walletActionsDriver: AnyPublisher<[WalletActionType], Never> { get }
+    var navigatableScenePublisher: AnyPublisher<WalletDetail.NavigatableScene?, Never> { get }
+    var walletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var walletActionsPublisher: AnyPublisher<[WalletActionType], Never> { get }
 
     func showWalletSettings()
     func start(action: WalletActionType)
@@ -43,16 +43,6 @@ extension WalletDetail {
 
         @Published private var navigatableSceneSubject: NavigatableScene?
         @Published private var walletSubject: Wallet?
-//        private lazy var walletActionsSubject = walletSubject
-//            .map { _ -> [WalletActionType] in
-//                guard let wallet = self.wallet else { return [] }
-//
-//                if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
-//                    return [.buy, .receive, .send, .swap]
-//                } else {
-//                    return [.receive, .send, .swap]
-//                }
-//            }
 
         // MARK: - Initializer
 
@@ -127,17 +117,26 @@ extension WalletDetail {
 }
 
 extension WalletDetail.ViewModel: WalletDetailViewModelType {
-    var walletActionsDriver: AnyPublisher<[WalletActionType], Never> {
-        walletActionsSubject
-            .asDriver(onErrorJustReturn: [])
+    var walletActionsPublisher: AnyPublisher<[WalletActionType], Never> {
+        $walletSubject
+            .map { wallet -> [WalletActionType] in
+                guard let wallet = wallet else { return [] }
+
+                if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
+                    return [.buy, .receive, .send, .swap]
+                } else {
+                    return [.receive, .send, .swap]
+                }
+            }
+            .eraseToAnyPublisher()
     }
 
-    var navigatableSceneDriver: AnyPublisher<WalletDetail.NavigatableScene?, Never> {
-        navigatableSceneSubject.eraseToAnyPublisher()
+    var navigatableScenePublisher: AnyPublisher<WalletDetail.NavigatableScene?, Never> {
+        $navigatableSceneSubject.eraseToAnyPublisher()
     }
 
-    var walletDriver: AnyPublisher<Wallet?, Never> {
-        walletSubject.eraseToAnyPublisher()
+    var walletPublisher: AnyPublisher<Wallet?, Never> {
+        $walletSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Actions

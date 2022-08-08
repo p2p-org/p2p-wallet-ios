@@ -5,7 +5,7 @@
 //  Created by Andrew Vasiliev on 18.01.2022.
 //
 
-import RxSwift
+import Combine
 import UIKit
 
 extension WalletDetail {
@@ -19,7 +19,7 @@ extension WalletDetail {
         )
 
         private let viewModel: WalletDetailViewModelType
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: WalletDetailViewModelType) {
             self.viewModel = viewModel
@@ -38,20 +38,20 @@ extension WalletDetail {
         }
 
         private func bind() {
-            viewModel.walletDriver.map {
+            viewModel.walletPublisher.map {
                 "\($0?.amount.toString(maximumFractionDigits: 9) ?? "") \($0?.token.symbol ?? "")"
             }
-            .drive(tokenBalanceTitle.rx.text)
-            .disposed(by: disposeBag)
+            .assign(to: \.text, on: tokenBalanceTitle)
+            .store(in: &subscriptions)
 
             // equityValue label
-            viewModel.walletDriver.map {
+            viewModel.walletPublisher.map {
                 $0?.amountInCurrentFiat
                     .toString(maximumFractionDigits: 2)
             }
             .map { Defaults.fiat.symbol + " " + ($0 ?? "0") }
-            .drive(fiatBalanceTitle.rx.text)
-            .disposed(by: disposeBag)
+            .assign(to: \.text, on: fiatBalanceTitle)
+            .store(in: &subscriptions)
         }
     }
 }
