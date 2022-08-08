@@ -145,6 +145,8 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
 
             // sort
             wallets.sort(by: Wallet.defaultSorter)
+
+            return wallets
         }.value
 
         let newTokens = wallets.map(\.token)
