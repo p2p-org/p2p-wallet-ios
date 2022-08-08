@@ -106,7 +106,8 @@ extension SendToken {
             bindFees(walletSubject: walletSubject)
 
             // update wallet after sending
-            walletsRepository.dataObservable
+            walletsRepository.dataPublisher
+                .asObservable()
                 .skip(1)
                 .withLatestFrom(walletSubject.asObservable(), resultSelector: { ($0, $1) })
                 .subscribe(onNext: { [weak self] wallets, myWallet in
@@ -125,7 +126,8 @@ extension SendToken {
 
             Completable.zip(
                 Completable.async { try await self.sendService.load() },
-                walletsRepository.stateObservable
+                walletsRepository.statePublisher
+                    .asObservable()
                     .filter { $0 == .loaded }
                     .take(1)
                     .asSingle()
