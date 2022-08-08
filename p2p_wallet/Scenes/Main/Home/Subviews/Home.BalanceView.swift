@@ -45,8 +45,6 @@ private extension HomeViewModelType {
             )
             .asDriver(onErrorJustReturn: ([], .loaded))
             .map { data, state in
-                let data = data ?? []
-
                 switch state {
                 case .initializing:
                     return ""

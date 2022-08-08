@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 import Resolver
-import RxCombine
 
 extension History {
     /// Updating price if exchange rate was change
@@ -13,8 +12,7 @@ extension History {
         @Injected private var pricesService: PricesServiceType
 
         func register() -> AnyPublisher<Void, Never> {
-            pricesService.currentPricesDriver
-                .publisher
+            pricesService.currentPricesPublisher
                 .receive(on: RunLoop.main)
                 .map { _ in () }
                 .replaceError(with: ())

@@ -5,9 +5,6 @@ PODS:
   - Amplitude (8.3.1)
   - AnalyticsManager (1.0.0):
     - Amplitude (~> 8.3.0)
-  - BECollectionView (1.0.0):
-    - BECollectionView_Core
-    - RxCocoa (~> 6.5.0)
   - BECollectionView_Combine (1.0.0):
     - BECollectionView_Core
     - CombineCocoa (~> 0.4.0)
@@ -197,7 +194,6 @@ PODS:
 DEPENDENCIES:
   - Action
   - AnalyticsManager (from `KeyAppKit`)
-  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `BEPureLayout`)
@@ -288,9 +284,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   AnalyticsManager:
     :path: KeyAppKit
-  BECollectionView:
-    :branch: master
-    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
     :branch: master
     :git: https://github.com/bigearsenal/BECollectionView.git
@@ -330,9 +323,6 @@ EXTERNAL SOURCES:
     :path: KeyAppKit
 
 CHECKOUT OPTIONS:
-  BECollectionView:
-    :commit: 700a8c06233a791fb9415af18326ea9d2d68bf8e
-    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
     :commit: 5271d68f69562ba05a553a70d1e76753c7be619d
     :git: https://github.com/bigearsenal/BECollectionView.git
@@ -356,7 +346,6 @@ SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
-  BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
@@ -416,6 +405,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 7bce415784b94deb9d131645897bc995355457c7
+PODFILE CHECKSUM: 697265c4afbd5ed7680de4b26992e4aa665ce045
 
 COCOAPODS: 1.11.3

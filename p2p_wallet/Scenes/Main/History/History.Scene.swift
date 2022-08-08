@@ -38,7 +38,7 @@ extension History {
             Resolver.resolve(WalletsRepository.self)
                 .dataObservable
                 .compactMap { $0 }
-                .filter { $0.count ?? 0 > 0 }
+                .filter { !$0.isEmpty }
                 .first()
                 .publisher
                 .sink(receiveCompletion: { _ in
