@@ -36,30 +36,9 @@ extension Home {
 
         override func build() -> UIView {
             BESafeArea(bottom: false) {
-                BEVStack {
-                    // Indicator
-                    WLStatusIndicatorView(forAutoLayout: ()).setup { view in
-                        viewModel.currentPricesDriver
-                            .map(\.state)
-                            .drive(onNext: { [weak view] state in
-                                switch state {
-                                case .notRequested:
-                                    view?.isHidden = true
-                                case .loading:
-                                    view?.setUp(state: .loading, text: L10n.updatingPrices)
-                                case .loaded:
-                                    view?.setUp(state: .success, text: L10n.pricesUpdated)
-                                case .error:
-                                    view?.setUp(state: .error, text: L10n.errorWhenUpdatingPrices)
-                                }
-                            })
-                            .disposed(by: disposeBag)
-                    }
-
-                    BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
-                        guard let self = self else { return UIView() }
-                        return state ? self.content() : self.emptyScreen()
-                    }
+                BEBuilder(driver: viewModel.isWalletReadyDriver) { [weak self] state in
+                    guard let self = self else { return UIView() }
+                    return state ? self.content() : self.emptyScreen()
                 }
             }
         }
