@@ -6,7 +6,6 @@
 //
 
 import BECollectionView_Combine
-import Combine
 import Foundation
 import SolanaSwift
 
@@ -19,7 +18,7 @@ protocol WalletsRepository: BECollectionViewModelType {
     func removeItem(where predicate: (Wallet) -> Bool) -> Wallet?
     func setState(_ state: BEFetcherState, withData data: [AnyHashable]?)
     func toggleIsHiddenWalletShown()
-    var isHiddenWalletsShown: CurrentValueSubject<Bool, Never> { get }
+    var isHiddenWalletsShown: Bool { get set }
     func hiddenWallets() -> [Wallet]
     func refreshUI()
 
@@ -33,10 +32,5 @@ extension WalletsViewModel: WalletsRepository {
 
     func getError() -> Error? {
         error
-    }
-
-    func batchUpdate(closure: ([Wallet]) -> [Wallet]) {
-        let wallets = closure(getWallets())
-        overrideData(by: wallets)
     }
 }
