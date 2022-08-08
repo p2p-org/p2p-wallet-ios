@@ -107,7 +107,9 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
 
     func startObserving() {
         timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true, block: { [weak self] _ in
-            self?.getNewWallet()
+            Task {
+                try? await self?.getNewWallet()
+            }
         })
     }
 
@@ -126,26 +128,30 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
             solanaAPIClient.getTokenWallets(account: account)
         )
 
-        // add sol wallet on top
-        let solWallet = Wallet.nativeSolana(
-            pubkey: accountStorage.account?.publicKey.base58EncodedString,
-            lamport: balance
-        )
-        wallets.insert(solWallet, at: 0)
+        // modify data on different thread
+        wallets = await Task {
+            // add sol wallet on top
+            let solWallet = Wallet.nativeSolana(
+                pubkey: accountStorage.account?.publicKey.base58EncodedString,
+                lamport: balance
+            )
+            wallets.insert(solWallet, at: 0)
 
-        // update visibility
-        wallets = mapVisibility(wallets: wallets)
+            // update visibility
+            wallets = mapVisibility(wallets: wallets)
 
-        // map prices
-        wallets = mapPrices(wallets: wallets)
+            // map prices
+            wallets = mapPrices(wallets: wallets)
 
-        // sort
-        wallets.sort(by: Wallet.defaultSorter)
+            // sort
+            wallets.sort(by: Wallet.defaultSorter)
+        }.value
 
         let newTokens = wallets.map(\.token)
             .filter { !self.pricesService.getWatchList().contains($0) }
         pricesService.addToWatchList(newTokens)
         pricesService.fetchPrices(tokens: newTokens)
+        return wallets
     }
 
     override func reload() {
@@ -223,13 +229,13 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Helpers
 
     private func updatePrices() {
-        guard currentState == .loaded else { return }
+        guard state == .loaded else { return }
         let wallets = mapPrices(wallets: data)
         overrideData(by: wallets)
     }
 
     private func updateWalletsVisibility() {
-        guard currentState == .loaded else { return }
+        guard state == .loaded else { return }
         let wallets = mapVisibility(wallets: data)
         overrideData(by: wallets)
     }
@@ -262,7 +268,9 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     private func appDidBecomeActive() {
         // update balance
         if shouldUpdateBalance {
-            getNewWallet()
+            Task {
+                try? await getNewWallet()
+            }
             shouldUpdateBalance = false
         }
     }
