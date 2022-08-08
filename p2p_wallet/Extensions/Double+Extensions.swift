@@ -83,6 +83,7 @@ extension Double {
     }
 
     public func toString(
+        minimumFractionDigits: Int = 0,
         maximumFractionDigits: Int = 3,
         showPlus: Bool = false,
         showMinus: Bool = true,
@@ -93,6 +94,9 @@ extension Double {
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
+        formatter.currencyDecimalSeparator = "."
+        formatter.groupingSeparator = " "
+        formatter.minimumFractionDigits = minimumFractionDigits
         if let groupingSeparator = groupingSeparator {
             formatter.groupingSeparator = groupingSeparator
         }
