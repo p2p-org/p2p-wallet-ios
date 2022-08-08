@@ -5,10 +5,9 @@
 //  Created by Chung Tran on 22/12/2021.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import UIKit
 
 protocol NotificationService {
@@ -23,7 +22,7 @@ protocol NotificationService {
     func unregisterForRemoteNotifications()
     func registerForRemoteNotifications()
 
-    var showNotification: Observable<NotificationType> { get }
+    var showNotification: AnyPublisher<NotificationType, Never> { get }
     var showFromLaunch: Bool { get }
 }
 
@@ -34,8 +33,8 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     private let deviceTokenKey = "deviceToken"
     private let openAfterPushKey = "openAfterPushKey"
 
-    private let showNotificationRelay = PublishRelay<NotificationType>()
-    var showNotification: Observable<NotificationType> { showNotificationRelay.asObservable() }
+    private let showNotificationSubject = PassthroughSubject<NotificationType, Never>()
+    var showNotification: AnyPublisher<NotificationType, Never> { showNotificationSubject.eraseToAnyPublisher() }
     var showFromLaunch: Bool { UserDefaults.standard.bool(forKey: openAfterPushKey) }
 
     override init() {
@@ -119,7 +118,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     }
 
     func didReceivePush(userInfo _: [AnyHashable: Any]) {
-        showNotificationRelay.accept(.history)
+        showNotificationSubject.send(.history)
     }
 
     func notificationWasOpened() {

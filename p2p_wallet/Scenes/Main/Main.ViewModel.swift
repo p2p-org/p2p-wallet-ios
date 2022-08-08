@@ -5,24 +5,24 @@
 //  Created by Chung Tran on 13/06/2021.
 //
 
+import Combine
 import Foundation
 import RenVMSwift
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol MainViewModelType {
-    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get
+    var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> { get
     } // nil if non authentication process is processing
-    var viewDidLoad: PublishRelay<Void> { get }
-    var moveToHistory: Driver<Void> { get }
-    var isLockedDriver: Driver<Bool> { get }
+    var viewDidLoad: PassthroughSubject<Void, Never> { get }
+    var moveToHistory: AnyPublisher<Void, Never> { get }
+    var isLockedPublisher: AnyPublisher<Bool, Never> { get }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
 }
 
 extension Main {
+    @MainActor
     final class ViewModel {
         // MARK: - Dependencies
 
@@ -37,7 +37,7 @@ extension Main {
             Resolver.resolve(SwapTransactionAnalytics.self),
         ]
 
-        let viewDidLoad = PublishRelay<Void>()
+        let viewDidLoad = PassthroughSubject<Void, Never>()
 
         // MARK: - Initializer
 
@@ -51,37 +51,40 @@ extension Main {
         }
 
         deinit {
-            socket.disconnect()
-            pricesService.stopObserving()
-            debugPrint("\(String(describing: self)) deinited")
+            Task {
+                await socket.disconnect()
+                await pricesService.stopObserving()
+                print("\(String(describing: self)) deinited")
+            }
         }
     }
 }
 
 extension Main.ViewModel: MainViewModelType {
-    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
-        authenticationHandler.authenticationStatusDriver
+    var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> {
+        authenticationHandler.authenticationStatusPublisher
     }
 
-    var moveToHistory: Driver<Void> {
-        Observable.merge(
+    var moveToHistory: AnyPublisher<Void, Never> {
+        Publishers.Merge(
             notificationService.showNotification
                 .filter { $0 == .history }
-                .mapToVoid(),
+                .map { _ in () },
             viewDidLoad
                 .filter { [weak self] in
                     self?.notificationService.showFromLaunch == true
                 }
-                .do(onNext: { [weak self] _ in
+                .handleEvents(receiveOutput: { [weak self] in
                     self?.notificationService.notificationWasOpened()
                 })
         )
-            .mapToVoid()
-            .asDriver()
+            .map { _ in () }
+            .replaceError(with: ())
+            .eraseToAnyPublisher()
     }
 
-    var isLockedDriver: Driver<Bool> {
-        authenticationHandler.isLockedDriver
+    var isLockedPublisher: AnyPublisher<Bool, Never> {
+        authenticationHandler.isLockedPublisher
     }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {

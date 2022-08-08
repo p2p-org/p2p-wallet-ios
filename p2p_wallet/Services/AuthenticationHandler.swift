@@ -13,7 +13,7 @@ protocol AuthenticationHandlerType {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
     func pauseAuthentication(_ isPaused: Bool)
     var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> { get }
-    var isLockedDriverPublisher: AnyPublisher<Bool, Never> { get }
+    var isLockedPublisher: AnyPublisher<Bool, Never> { get }
 }
 
 final class AuthenticationHandler: ObservableObject, AuthenticationHandlerType {
@@ -116,7 +116,7 @@ final class AuthenticationHandler: ObservableObject, AuthenticationHandlerType {
         $authenticationStatus.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var isLockedDriverPublisher: AnyPublisher<Bool, Never> {
+    var isLockedPublisher: AnyPublisher<Bool, Never> {
         $isLocked.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
