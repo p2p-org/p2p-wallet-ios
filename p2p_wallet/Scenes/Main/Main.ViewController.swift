@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 22/02/2021.
 //
 
-import Action
+import Combine
 import Foundation
 import UIKit
 
@@ -18,6 +18,8 @@ extension Main {
         // MARK: - Properties
 
         var authenticateWhenAppears: Bool!
+        var viewModelViewDidLoad: Bool = false
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -40,6 +42,14 @@ extension Main {
             }
         }
 
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            if !viewModelViewDidLoad {
+                viewModel.viewDidLoad.send()
+                viewModelViewDidLoad = true
+            }
+        }
+
         // MARK: - Methods
 
         override func setUp() {
@@ -52,36 +62,30 @@ extension Main {
         override func bind() {
             super.bind()
 
-            rx.viewWillAppear
-                .take(1)
-                .mapToVoid()
-                .bind(to: viewModel.viewDidLoad)
-                .disposed(by: disposeBag)
-
             // delay authentication status
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(300)) { [unowned self] in
-                self.viewModel.authenticationStatusDriver
-                    .drive(onNext: { [weak self] in self?.handleAuthenticationStatus($0) })
-                    .disposed(by: disposeBag)
+                self.viewModel.authenticationStatusPublisher
+                    .sink { [weak self] in self?.handleAuthenticationStatus($0) }
+                    .store(in: &self.subscriptions)
             }
 
             viewModel.moveToHistory
-                .drive(onNext: { [unowned self] in
-                    tabBar.changeItem(to: .history)
-                })
-                .disposed(by: disposeBag)
+                .sink { [weak self] in
+                    self?.tabBar.changeItem(to: .history)
+                }
+                .store(in: &subscriptions)
             // locking status
-            viewModel.isLockedDriver
-                .drive(onNext: { [weak self] isLocked in
+            viewModel.isLockedPublisher
+                .sink { [weak self] isLocked in
                     isLocked ? self?.showLockView() : self?.hideLockView()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // blurEffectView
-            viewModel.authenticationStatusDriver
+            viewModel.authenticationStatusPublisher
                 .map { $0 == nil }
-                .drive(blurEffectView.rx.isHidden)
-                .disposed(by: disposeBag)
+                .assign(to: \.isHidden, on: blurEffectView)
+                .store(in: &subscriptions)
         }
 
         // MARK: - Locking
