@@ -24,7 +24,6 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
 
     private var defaultsDisposables = [DefaultsDisposable]()
     private var subscriptions = [AnyCancellable]()
-    var notifications = [WLNotification]()
     private var timer: Timer?
 
     // MARK: - Getters
@@ -34,7 +33,6 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Subjects
 
     @Published var isHiddenWalletsShown = false
-    @Published var notificationsSubject: WLNotification?
 
     // MARK: - Initializer
 
@@ -284,25 +282,6 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Account notifications
 
     private func handleAccountNotification(_ notification: AccountsObservableEvent) {
-        // notify changes
-        let oldLamportsValue = data.first(where: { $0.pubkey == notification.pubkey })?.lamports
-        let newLamportsValue = notification.lamports
-
-        if let oldLamportsValue = oldLamportsValue {
-            var wlNoti: WLNotification?
-            if oldLamportsValue > newLamportsValue {
-                // sent
-                wlNoti = .sent(account: notification.pubkey, lamports: oldLamportsValue - newLamportsValue)
-            } else if oldLamportsValue < newLamportsValue {
-                // received
-                wlNoti = .received(account: notification.pubkey, lamports: newLamportsValue - oldLamportsValue)
-            }
-            if let wlNoti = wlNoti {
-                notificationsSubject = wlNoti
-                notifications.append(wlNoti)
-            }
-        }
-
         // update
         updateItem(where: { $0.pubkey == notification.pubkey }, transform: { wallet in
             var wallet = wallet
