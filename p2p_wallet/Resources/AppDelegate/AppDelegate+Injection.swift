@@ -16,7 +16,7 @@ import SolanaSwift
 import SwiftyUserDefaults
 
 extension Resolver: ResolverRegistering {
-    public static func registerAllServices() {
+    @MainActor public static func registerAllServices() {
         registerForApplicationScope()
 
         registerForGraphScope()

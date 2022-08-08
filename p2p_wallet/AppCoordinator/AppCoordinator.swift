@@ -11,6 +11,7 @@ import Resolver
 import SolanaSwift
 import UIKit
 
+@MainActor
 class AppCoordinator {
     // MARK: - Dependencies
 
