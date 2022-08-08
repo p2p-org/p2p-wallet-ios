@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 06/07/2021.
 //
 
+import Combine
 import Foundation
 import RxSwift
 import SolanaSwift
@@ -17,7 +18,7 @@ struct AccountsObservableEvent {
 protocol AccountObservableService {
     var isConnected: Bool { get }
     func subscribeAccountNotification(account: String) async throws
-    func observeAllAccountsNotifications() -> Observable<AccountsObservableEvent>
+    func observeAllAccountsNotifications() -> AnyPublisher<AccountsObservableEvent, Error>
 }
 
 private struct AccountObservableSubscribes {
@@ -74,8 +75,8 @@ class AccountsObservableServiceImpl: AccountObservableService, SolanaSocketEvent
         await subscribesManager.accept(account: account, id: id)
     }
 
-    func observeAllAccountsNotifications() -> Observable<AccountsObservableEvent> {
-        publisher.asObservable()
+    func observeAllAccountsNotifications() -> AnyPublisher<AccountsObservableEvent, Error> {
+        publisher.publisher
     }
 
     func nativeAccountNotification(notification: SocketNativeAccountNotification) {
