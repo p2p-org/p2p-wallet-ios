@@ -36,13 +36,11 @@ struct HomeEmptyView: View {
                             actionTitle: coin.actionTitle,
                             image: coin.image,
                             action: {
-                                if index == 2 {
-                                    viewModel.receiveRenBtcClicked()
-                                } else {
-                                    viewModel.topUpCoin.send(index == 0 ? .usdc : .sol)
-                                }
+                                coinTapped(at: index)
                             }
-                        )
+                        ).onTapGesture {
+                            coinTapped(at: index)
+                        }
                     }
                 }
             }
@@ -89,6 +87,14 @@ struct HomeEmptyView: View {
                 )
             }
             .padding(.bottom, 18)
+        }
+    }
+
+    private func coinTapped(at index: Int) {
+        if index == 2 {
+            viewModel.receiveRenBtcClicked()
+        } else {
+            viewModel.topUpCoin.send(index == 0 ? .usdc : .sol)
         }
     }
 }
