@@ -5,15 +5,13 @@
 //  Created by Chung Tran on 11/4/20.
 //
 
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import Foundation
 import Resolver
-import RxAppState
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
-class WalletsViewModel: BEListViewModel<Wallet> {
+class WalletsViewModel: BECollectionViewModel<Wallet> {
     // MARK: - Dependencies
 
     @Injected private var accountStorage: SolanaAccountStorage
@@ -25,8 +23,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Properties
 
     private var defaultsDisposables = [DefaultsDisposable]()
-    private var disposeBag = DisposeBag()
-    let notificationsSubject = BehaviorRelay<WLNotification?>(value: nil)
+    private var subscriptions = [AnyCancellable]()
     var notifications = [WLNotification]()
     private var timer: Timer?
 
@@ -36,7 +33,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     // MARK: - Subjects
 
-    let isHiddenWalletsShown = BehaviorRelay<Bool>(value: false)
+    @Published var isHiddenWalletsShown = false
+    @Published var notificationsSubject: WLNotification?
 
     // MARK: - Initializer
 
@@ -117,47 +115,35 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     // MARK: - Methods
 
-    override func createRequest() -> Single<[Wallet]> {
-        Single<(Lamports, [Wallet])>.async { [weak self] in
-            guard let self = self,
-                  let account = self.accountStorage.account?.publicKey.base58EncodedString
-            else { throw SolanaError.unknown }
-            return try await(
-                self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
-                self.solanaAPIClient.getTokenWallets(account: account)
-            )
+    override func createRequest() async throws -> [Wallet] {
+        guard let account = accountStorage.account?.publicKey.base58EncodedString else {
+            throw SolanaError.unknown
         }
-        .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-        .map { [weak self] balance, wallets in
-            guard let self = self else { return [] }
-            var wallets = wallets
+        var (balance, wallets) = try await(
+            solanaAPIClient.getBalance(account: account, commitment: "recent"),
+            solanaAPIClient.getTokenWallets(account: account)
+        )
 
-            // add sol wallet on top
-            let solWallet = Wallet.nativeSolana(
-                pubkey: self.accountStorage.account?.publicKey.base58EncodedString,
-                lamport: balance
-            )
-            wallets.insert(solWallet, at: 0)
+        // add sol wallet on top
+        let solWallet = Wallet.nativeSolana(
+            pubkey: accountStorage.account?.publicKey.base58EncodedString,
+            lamport: balance
+        )
+        wallets.insert(solWallet, at: 0)
 
-            // update visibility
-            wallets = self.mapVisibility(wallets: wallets)
+        // update visibility
+        wallets = mapVisibility(wallets: wallets)
 
-            // map prices
-            wallets = self.mapPrices(wallets: wallets)
+        // map prices
+        wallets = mapPrices(wallets: wallets)
 
-            // sort
-            wallets.sort(by: Wallet.defaultSorter)
+        // sort
+        wallets.sort(by: Wallet.defaultSorter)
 
-            return wallets
-        }
-        .observe(on: MainScheduler.instance)
-        .do(onSuccess: { [weak self] wallets in
-            guard let self = self else { return }
-            let newTokens = wallets.map(\.token)
-                .filter { !self.pricesService.getWatchList().contains($0) }
-            self.pricesService.addToWatchList(newTokens)
-            self.pricesService.fetchPrices(tokens: newTokens)
-        })
+        let newTokens = wallets.map(\.token)
+            .filter { !self.pricesService.getWatchList().contains($0) }
+        pricesService.addToWatchList(newTokens)
+        pricesService.fetchPrices(tokens: newTokens)
     }
 
     override func reload() {
@@ -169,37 +155,25 @@ class WalletsViewModel: BEListViewModel<Wallet> {
         super.reload()
     }
 
-    @objc private func getNewWallet() {
-        Single<[Wallet]>.async { [weak self] in
-            guard let self = self,
-                  let account = self.accountStorage.account?.publicKey.base58EncodedString
-            else { throw SolanaError.unknown }
-            return try await self.solanaAPIClient.getTokenWallets(account: account)
-        }
-        .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-        .map { [weak self] newData -> [Wallet] in
-            guard let self = self else { return [] }
-            var data = self.data
-            var newWallets = newData
-                .filter { wl in !data.contains(where: { $0.pubkey == wl.pubkey }) }
-                .filter { $0.lamports != 0 }
-            newWallets = self.mapPrices(wallets: newWallets)
-            newWallets = self.mapVisibility(wallets: newWallets)
-            data.append(contentsOf: newWallets)
-            data.sort(by: Wallet.defaultSorter)
-            return data
-        }
-        .observe(on: MainScheduler.instance)
-        .subscribe(onSuccess: { [weak self] data in
-            self?.overrideData(by: data)
-        })
-        .disposed(by: disposeBag)
+    @objc private func getNewWallet() async throws {
+        guard let account = accountStorage.account?.publicKey.base58EncodedString
+        else { throw SolanaError.unknown }
+        let newData = try await solanaAPIClient.getTokenWallets(account: account)
+        var data = self.data
+        var newWallets = newData
+            .filter { wl in !data.contains(where: { $0.pubkey == wl.pubkey }) }
+            .filter { $0.lamports != 0 }
+        newWallets = mapPrices(wallets: newWallets)
+        newWallets = mapVisibility(wallets: newWallets)
+        data.append(contentsOf: newWallets)
+        data.sort(by: Wallet.defaultSorter)
+        overrideData(by: data)
     }
 
-    override var dataDidChange: Observable<Void> {
-        Observable.combineLatest(
+    override var dataDidChange: AnyPublisher<Void, Never> {
+        Publishers.CombineLatest3(
             super.dataDidChange,
-            isHiddenWalletsShown.distinctUntilChanged()
+            isHiddenWalletsShown.eraseToAnyPublisher()
         ).map { _ in () }
     }
 
@@ -212,7 +186,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Actions
 
     @objc func toggleIsHiddenWalletShown() {
-        isHiddenWalletsShown.accept(!isHiddenWalletsShown.value)
+        isHiddenWalletsShown = !isHiddenWalletsShown
     }
 
     func toggleWalletVisibility(_ wallet: Wallet) {
@@ -310,7 +284,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
                 wlNoti = .received(account: notification.pubkey, lamports: newLamportsValue - oldLamportsValue)
             }
             if let wlNoti = wlNoti {
-                notificationsSubject.accept(wlNoti)
+                notificationsSubject.send(wlNoti)
                 notifications.append(wlNoti)
             }
         }
