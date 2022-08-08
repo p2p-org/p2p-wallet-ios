@@ -45,7 +45,9 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     }
 
     deinit {
-        stopObserving()
+        Task {
+            await stopObserving()
+        }
     }
 
     // MARK: - Binding
@@ -54,19 +56,19 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
         super.bind()
 
         // observe prices
-        pricesService.currentPricesDriver
-            .drive(onNext: { [weak self] _ in
+        pricesService.currentPricesPublisher
+            .sink { [weak self] _ in
                 self?.updatePrices()
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
         // observe tokens' balance
         socket.observeAllAccountsNotifications()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { [weak self] notification in
+            .replaceError(with: .init(pubkey: "", lamports: 0))
+            .sink { [weak self] notification in
                 self?.handleAccountNotification(notification)
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
         // observe hideZeroBalances settings
         defaultsDisposables.append(Defaults.observe(\.hideZeroBalances) { [weak self] _ in
@@ -74,16 +76,16 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
         })
 
         // observe account notification
-        dataObservable
+        $data
             .map { [weak self] _ in self?.getWallets() ?? [] }
-            .subscribe(onNext: { [weak self] wallets in
+            .sink { [weak self] wallets in
                 for wallet in wallets where wallet.pubkey != nil {
                     Task { [weak self] in
                         try await self?.socket.subscribeAccountNotification(account: wallet.pubkey!)
                     }
                 }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
         // observe app state
         UIApplication.shared.rx
@@ -171,10 +173,12 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     }
 
     override var dataDidChange: AnyPublisher<Void, Never> {
-        Publishers.CombineLatest3(
+        Publishers.CombineLatest(
             super.dataDidChange,
-            isHiddenWalletsShown.eraseToAnyPublisher()
-        ).map { _ in () }
+            $isHiddenWalletsShown.eraseToAnyPublisher()
+        )
+            .map { _ in () }
+            .eraseToAnyPublisher()
     }
 
     // MARK: - getters
@@ -284,7 +288,7 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
                 wlNoti = .received(account: notification.pubkey, lamports: newLamportsValue - oldLamportsValue)
             }
             if let wlNoti = wlNoti {
-                notificationsSubject.send(wlNoti)
+                notificationsSubject = wlNoti
                 notifications.append(wlNoti)
             }
         }

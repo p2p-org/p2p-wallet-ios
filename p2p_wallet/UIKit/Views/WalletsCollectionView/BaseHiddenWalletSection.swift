@@ -6,7 +6,7 @@
 //
 
 import Action
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import SolanaSwift
 

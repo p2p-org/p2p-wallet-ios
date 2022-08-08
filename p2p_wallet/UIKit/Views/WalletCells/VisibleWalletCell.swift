@@ -2,7 +2,7 @@
 // Created by Giang Long Tran on 16.02.2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import BEPureLayout
 import UIKit
 
