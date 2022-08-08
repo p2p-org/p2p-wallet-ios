@@ -70,37 +70,23 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             }
             .store(in: &subscriptions)
 
-        $phone.dropFirst().removeDuplicates()
-            .map {
-                ($0 ?? "")
-                    .split(separator: " ")
-                    .map(String.init)
-                    .joined(separator: "")
-                    .isPhoneNumber
-            }
-            .assign(to: \.isButtonEnabled, on: self)
-            .store(in: &cancellable)
-
         Publishers.MergeMany(
             $phone.removeDuplicates()
                 .debounce(for: 0.0, scheduler: DispatchQueue.main)
                 .map {
-                    _ = self.partialFormatter.nationalNumber(from: $0 ?? "")
-                    let country = self.partialFormatter.currentRegion
-                    guard let exampleNumber = self.phoneNumberKit.getExampleNumber(forCountry: country) else {
+                    guard let exampleNumber = self.exampleNumberWith(phone: $0 ?? "") else {
                         return Self.defaultConstantPlaceholder
                     }
                     let formatted = self.phoneNumberKit.format(exampleNumber, toType: .international)
-                    var newFormatted = formatted
+                    let newFormatted = formatted
                         .replacingOccurrences(of: "[0-9]", with: "X", options: .regularExpression)
                         .replacingOccurrences(of: "-", with: " ")
-                    newFormatted.append("XXXXXX")
                     return Self.format(with: newFormatted, phone: $0 ?? "")
                 }.eraseToAnyPublisher(),
             coordinatorIO.countrySelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
         )
-            .assign(to: \.phone, on: self)
-            .store(in: &cancellable)
+        .assign(to: \.phone, on: self)
+        .store(in: &cancellable)
 
         Publishers.MergeMany(
             coordinatorIO.countrySelected.map { $0?.dialCode }.eraseToAnyPublisher(),
@@ -125,6 +111,28 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         }
         .assign(to: \.flag, on: self)
         .store(in: &cancellable)
+
+        $phone.removeDuplicates().map { [weak self] in
+            guard let self = self, let phoneNumber = self.exampleNumberWith(phone: $0 ?? "") else {
+                return false
+            }
+            let formatted = self.phoneNumberKit.format(phoneNumber, toType: .international)
+            let newPhone = self.clearedPhoneString(phone: $0 ?? "")
+            let cleared = self.clearedPhoneString(phone: formatted)
+            return !cleared.isEmpty && cleared.count == newPhone.count
+        }
+        .assign(to: \.isButtonEnabled, on: self)
+        .store(in: &cancellable)
+    }
+
+    func exampleNumberWith(phone: String) -> PhoneNumber? {
+        _ = partialFormatter.nationalNumber(from: phone)
+        let country = partialFormatter.currentRegion
+        return phoneNumberKit.getExampleNumber(forCountry: country)
+    }
+
+    func clearedPhoneString(phone: String) -> String {
+        phone.filter("0123456789+".contains)
     }
 
     // MARK: -
