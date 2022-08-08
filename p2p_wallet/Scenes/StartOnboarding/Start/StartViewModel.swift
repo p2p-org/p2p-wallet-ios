@@ -6,11 +6,14 @@ final class StartViewModel: BaseViewModel {
     @Published var data: [StartPageData] = []
     @Published var currentDataIndex: Int = .zero
 
+    let isAnimatable: Bool
+    let termsDidTap = PassthroughSubject<Void, Never>()
     let createWalletDidTap = PassthroughSubject<Void, Never>()
     let restoreWalletDidTap = PassthroughSubject<Void, Never>()
     let mockButtonDidTap = PassthroughSubject<Void, Never>()
 
-    override init() {
+    init(isAnimatable: Bool) {
+        self.isAnimatable = isAnimatable
         super.init()
         setData()
     }
