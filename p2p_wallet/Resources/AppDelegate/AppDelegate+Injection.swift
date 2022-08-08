@@ -29,7 +29,7 @@ extension Resolver: ResolverRegistering {
     // MARK: - Helpers
 
     /// Application scope: Lifetime app's services
-    private static func registerForApplicationScope() {
+    @MainActor private static func registerForApplicationScope() {
         // AppEventHandler
         register { AppEventHandler() }
             .implements(AppEventHandlerType.self)
