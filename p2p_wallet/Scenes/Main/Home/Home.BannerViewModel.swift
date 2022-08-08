@@ -3,12 +3,12 @@
 //
 
 import BECollectionView_Combine
+import Combine
 import Foundation
-import RxSwift
 
 extension Home {
-    class BannerViewModel: BEListViewModel<Banners.Banner> {
-        let disposeBag = DisposeBag()
+    class BannerViewModel: BECollectionViewModel<Banners.Banner> {
+        var subscriptions = [AnyCancellable]()
         var bannerService: Banners.Service
 
         var banners: [Banners.Banner] = []
@@ -17,14 +17,14 @@ extension Home {
             bannerService = service
             super.init()
 
-            bannerService.banners.drive(onNext: { [weak self] banners in
+            bannerService.banners.sink { [weak self] banners in
                 self?.banners = banners
                 self?.reload()
-            }).disposed(by: disposeBag)
+            }.store(in: &subscriptions)
         }
 
-        override func createRequest() -> Single<[Banners.Banner]> {
-            .just(banners)
+        override func createRequest() async throws -> [Banners.Banner] {
+            banners
         }
     }
 }

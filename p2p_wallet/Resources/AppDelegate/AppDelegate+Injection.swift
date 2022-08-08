@@ -136,7 +136,7 @@ extension Resolver: ResolverRegistering {
     }
 
     /// Session scope: Live when user is authenticated
-    private static func registerForSessionScope() {
+    @MainActor private static func registerForSessionScope() {
         // AuthenticationHandler
         register { AuthenticationHandler() }
             .implements(AuthenticationHandlerType.self)

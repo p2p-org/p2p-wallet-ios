@@ -7,6 +7,7 @@
 
 import BECollectionView_Combine
 import Foundation
+import RxSwift // TODO: - Remove later
 import SolanaSwift
 
 protocol WalletsRepository: BECollectionViewModelType {
@@ -23,6 +24,12 @@ protocol WalletsRepository: BECollectionViewModelType {
     func refreshUI()
 
     func batchUpdate(closure: ([Wallet]) -> [Wallet])
+
+    @available(*, deprecated, message: "RxSwift will be removed soon")
+    var dataObservable: Observable<[Wallet]> { get }
+
+    @available(*, deprecated, message: "RxSwift will be removed soon")
+    var stateObservable: Observable<BEFetcherState> { get }
 }
 
 extension WalletsViewModel: WalletsRepository {
@@ -32,5 +39,15 @@ extension WalletsViewModel: WalletsRepository {
 
     func getError() -> Error? {
         error
+    }
+
+    @available(*, deprecated, message: "RxSwift will be removed soon")
+    var dataObservable: Observable<[Wallet]> {
+        $data.asObservable()
+    }
+
+    @available(*, deprecated, message: "RxSwift will be removed soon")
+    var stateObservable: Observable<BEFetcherState> {
+        $state.asObservable()
     }
 }
