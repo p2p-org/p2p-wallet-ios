@@ -88,19 +88,19 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
             .store(in: &subscriptions)
 
         // observe app state
-        UIApplication.shared.rx
-            .applicationDidBecomeActive
-            .subscribe(onNext: { [weak self] _ in
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink { [weak self] _ in
                 self?.appDidBecomeActive()
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
-        UIApplication.shared.rx
-            .applicationDidEnterBackground
-            .subscribe(onNext: { [weak self] _ in
+        NotificationCenter.default
+            .publisher(for: UIApplication.didEnterBackgroundNotification)
+            .sink { [weak self] _ in
                 self?.appDidEnterBackground()
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
     }
 
     // MARK: - Observing
