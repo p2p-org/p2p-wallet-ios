@@ -12,11 +12,11 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
     public typealias Action = () -> Void
     @Binding var refreshing: Bool
     let action: Action?
-    var content: UIView
+    let content: () -> Content
 
     init(refreshing: Binding<Bool>, action: Action? = nil, @ViewBuilder content: @escaping () -> Content) {
-        self.content = UIHostingController(rootView: content()).view
         self.action = action
+        self.content = content
         _refreshing = refreshing
     }
 
@@ -32,6 +32,25 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
             action: #selector(Coordinator.handleRefreshControl),
             for: .valueChanged
         )
+        updateView(scrollView: scrollView)
+        return scrollView
+    }
+
+    func updateUIView(_ uiView: UIScrollView, context _: Context) {
+        if !refreshing, uiView.refreshControl?.isRefreshing == true {
+            uiView.refreshControl?.endRefreshing()
+        }
+        updateView(scrollView: uiView)
+    }
+
+    private func updateView(scrollView: UIScrollView) {
+        scrollView.subviews.forEach {
+            if !($0 is UIRefreshControl) {
+                $0.removeFromSuperview()
+            }
+        }
+
+        let content = content().uiView()
         content.translatesAutoresizingMaskIntoConstraints = false
         scrollView.addSubview(content)
         let constraints = [
@@ -42,13 +61,6 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
             content.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
         ]
         scrollView.addConstraints(constraints)
-        return scrollView
-    }
-
-    func updateUIView(_ uiView: UIScrollView, context _: Context) {
-        if !refreshing, uiView.refreshControl?.isRefreshing == true {
-            uiView.refreshControl?.endRefreshing()
-        }
     }
 
     class Coordinator: NSObject {
