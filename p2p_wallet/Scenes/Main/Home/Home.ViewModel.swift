@@ -26,6 +26,7 @@ protocol HomeViewModelType: ReserveNameHandler {
 }
 
 extension Home {
+    @MainActor
     class ViewModel {
         // MARK: - Dependencies
 

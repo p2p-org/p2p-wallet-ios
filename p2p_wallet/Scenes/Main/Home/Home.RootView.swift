@@ -150,17 +150,16 @@ private extension HomeViewModelType {
         Observable.combineLatest(
             walletsRepository.stateObservable,
             walletsRepository.dataObservable
-                .filter { $0 != nil }
                 .withPrevious()
         )
             .map { state, change in
                 // if loaded
                 if let previous = change.0 {
                     if state == .loading || state == .initializing {
-                        let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
+                        let amount = previous.reduce(0) { $0 + $1.amount }
                         return amount > 0
                     } else {
-                        let amount = change.1?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
+                        let amount = change.1.reduce(0) { partialResult, wallet in partialResult + wallet.amount }
                         return amount > 0
                     }
                 }
