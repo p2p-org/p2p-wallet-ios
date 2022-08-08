@@ -17,23 +17,15 @@ final class HomeEmptyViewModel: ObservableObject {
     let output: Output
 
     private let walletsRepository: WalletsRepository
-
+    private let pricesService: PricesServiceType
     private var cancellables = Set<AnyCancellable>()
 
     let topUp = PassthroughSubject<Void, Never>()
     let topUpCoin = PassthroughSubject<Buy.CryptoCurrency, Never>()
     private let receiveRenBtc = PassthroughSubject<PublicKey, Never>()
 
-    var popularCoins: [PopularCoin]
-    @Published var pullToRefreshPending = false
-
-    init(
-        pricesService: PricesServiceType,
-        walletsRepository: WalletsRepository
-    ) {
-        self.walletsRepository = walletsRepository
-
-        popularCoins = [
+    var popularCoins: [PopularCoin] {
+        [
             PopularCoin(
                 title: L10n.usdc,
                 amount: pricesService.fiatAmount(for: Buy.CryptoCurrency.usdc.name),
@@ -53,6 +45,16 @@ final class HomeEmptyViewModel: ObservableObject {
                 image: .renBTC
             ),
         ]
+    }
+
+    @Published var pullToRefreshPending = false
+
+    init(
+        pricesService: PricesServiceType,
+        walletsRepository: WalletsRepository
+    ) {
+        self.pricesService = pricesService
+        self.walletsRepository = walletsRepository
 
         output = Output(
             view: .init(),
@@ -158,6 +160,6 @@ extension HomeEmptyViewModel {
 
 private extension PricesServiceType {
     func fiatAmount(for token: String) -> String {
-        "\(Defaults.fiat.symbol) \((currentPrice(for: token)?.value ?? 0).toString(maximumFractionDigits: 2))"
+        "\(Defaults.fiat.symbol) \((currentPrice(for: token)?.value ?? 0).toString(minimumFractionDigits: 2, maximumFractionDigits: 2))"
     }
 }
