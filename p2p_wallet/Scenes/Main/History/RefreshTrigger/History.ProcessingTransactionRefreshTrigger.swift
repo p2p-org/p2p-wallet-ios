@@ -2,10 +2,10 @@
 // Created by Giang Long Tran on 19.04.2022.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
+import RxCombine
 
 extension History {
     /// Refreshing history if processing transaction appears.
@@ -14,11 +14,14 @@ extension History {
     class ProcessingTransactionRefreshTrigger: HistoryRefreshTrigger {
         @Injected private var repository: TransactionHandlerType
 
-        func register() -> Signal<Void> {
+        func register() -> AnyPublisher<Void, Never> {
             repository
                 .observeProcessingTransactions()
-                .flatMap { _ in Observable<Void>.just(()) }
-                .asSignal(onErrorJustReturn: ())
+                .publisher
+                .map { _ in () }
+                .replaceError(with: ())
+                .receive(on: RunLoop.main)
+                .eraseToAnyPublisher()
         }
     }
 }

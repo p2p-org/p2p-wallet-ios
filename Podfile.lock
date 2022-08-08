@@ -200,9 +200,9 @@ PODS:
 DEPENDENCIES:
   - Action
   - AnalyticsManager (from `KeyAppKit`)
-  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
-  - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
-  - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
+  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `feature/swift_concurrency_stream`)
+  - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `feature/swift_concurrency_stream`)
+  - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `feature/swift_concurrency_stream`)
   - BEPureLayout (from `BEPureLayout`)
   - Cache (from `KeyAppKit`)
   - Charts
@@ -294,13 +294,13 @@ EXTERNAL SOURCES:
   AnalyticsManager:
     :path: KeyAppKit
   BECollectionView:
-    :branch: master
+    :branch: feature/swift_concurrency_stream
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
-    :branch: master
+    :branch: feature/swift_concurrency_stream
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
-    :branch: master
+    :branch: feature/swift_concurrency_stream
     :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
     :path: BEPureLayout
@@ -336,13 +336,13 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   BECollectionView:
-    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
+    :commit: e494ff23b6414a2585728958b17d83ac1f67f949
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
-    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
+    :commit: e494ff23b6414a2585728958b17d83ac1f67f949
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
-    :commit: 29dffd20f9598fc74268b084a0e82e439c27a20d
+    :commit: e494ff23b6414a2585728958b17d83ac1f67f949
     :git: https://github.com/bigearsenal/BECollectionView.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -422,6 +422,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 4d33d1ebc4c0a61e18822341f350709a1427b3ac
+PODFILE CHECKSUM: 39e758aa34669658d97e66e8765221bd4cab6093
 
 COCOAPODS: 1.11.3

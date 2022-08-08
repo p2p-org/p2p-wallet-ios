@@ -84,7 +84,7 @@ extension BuyPreparing {
                 // Exchange
                 WLCard {
                     BEVStack {
-                        BEBuilder(driver: viewModel.onInputMode) { [unowned self] input in
+                        BEBuilderRxSwift(driver: viewModel.onInputMode) { [unowned self] input in
                             switch input {
                             case .fiat:
                                 return InputFiatView(viewModel: viewModel)
@@ -126,7 +126,7 @@ extension BuyPreparing {
                             .padding(.init(only: .top, inset: 18))
                             .onTap { [unowned self] in infoToggle.accept(!infoToggle.value) }
 
-                            BEBuilder(driver: infoToggle.asDriver()) { [weak self] value in
+                            BEBuilderRxSwift(driver: infoToggle.asDriver()) { [weak self] value in
                                 guard let self = self else { return UIView() }
                                 return value ? self.feeInfo() : UIView()
                             }

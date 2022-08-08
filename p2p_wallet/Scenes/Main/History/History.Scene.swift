@@ -2,8 +2,9 @@
 // Created by Giang Long Tran on 12.04.2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
 import SolanaSwift
@@ -16,55 +17,59 @@ extension History {
         @Injected private var pricesService: PricesServiceType
 
         let viewModel: SceneModel
+        private var subscriptions = [AnyCancellable]()
 
-        override init() {
-            viewModel = SceneModel()
+        @MainActor
+        init(account: String?, symbol: String?, isEmbeded: Bool = true) {
+            if let account = account, let symbol = symbol {
+                viewModel = SceneModel(accountSymbol: (account, symbol))
+                isEmbedded = isEmbeded
+            } else {
+                viewModel = SceneModel()
+            }
+
             super.init()
 
-            navigationItem.title = L10n.history
+            if account == nil || symbol == nil {
+                navigationItem.title = L10n.history
+            }
+
             // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
                 .dataObservable
                 .compactMap { $0 }
                 .filter { $0?.count ?? 0 > 0 }
                 .first()
-                .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
-                .disposed(by: disposeBag)
-        }
+                .publisher
+                .sink(receiveCompletion: { _ in
 
-        init(account: String, symbol: String, isEmbeded: Bool = true) {
-            viewModel = SceneModel(accountSymbol: (account, symbol))
-
-            super.init()
-            isEmbedded = isEmbeded
-
-            // Start loading when wallets are ready.
-            Resolver.resolve(WalletsRepository.self)
-                .dataObservable
-                .compactMap { $0 }
-                .filter { $0?.count ?? 0 > 0 }
-                .first()
-                .subscribe(onSuccess: { [weak self] _ in self?.viewModel.reload() })
-                .disposed(by: disposeBag)
+                }, receiveValue: { [weak self] _ in
+                    self?.viewModel.reload()
+                })
+                .store(in: &subscriptions)
         }
 
         override func build() -> UIView {
-            BEBuilder(driver: viewModel.stateDriver) { [weak self] state in
+            BEBuilder(publisher: viewModel.stateDriver) { [weak self] state in
                 guard let self = self else { return UIView() }
                 switch state {
                 case .items:
                     return self.content
                 case .empty:
                     return EmptyTransactionsView().setup {
-                        $0.rx.refreshClicked
-                            .bind(to: self.viewModel.refreshPage)
-                            .disposed(by: self.disposeBag)
+                        $0.refreshClicked
+                            .sink { [weak self] in
+                                self?.viewModel.refreshPage.send()
+                            }
+                            .store(in: &self.subscriptions)
                     }
                 case .error:
                     return ErrorView().setup {
-                        $0.rx.tryAgainClicked
-                            .bind(to: self.viewModel.tryAgain)
-                            .disposed(by: self.disposeBag)
+                        $0.tryAgainClicked
+                            .sink { [weak self] in
+                                self?.viewModel.tryAgain.send()
+                            }
+                            .store(in: &self.subscriptions)
                     }
                 }
             }
@@ -74,7 +79,7 @@ extension History {
             NBENewDynamicSectionsCollectionView(
                 viewModel: viewModel,
                 mapDataToSections: { viewModel in
-                    CollectionViewMappingStrategyRxDeprecated.byData(
+                    CollectionViewMappingStrategy.byData(
                         viewModel: viewModel,
                         forType: ParsedTransaction.self,
                         where: \ParsedTransaction.blockTime

@@ -6,14 +6,13 @@
 //
 
 import BEPureLayout
-import RxCocoa
-import RxSwift
+import Combine
 import UIKit
 
 extension History {
     final class EmptyTransactionsView: BECompositionView {
-        fileprivate let refreshClicked = PublishRelay<Void>()
-        private let disposeBag = DisposeBag()
+        let refreshClicked = PassthroughSubject<Void, Never>()
+        private var subscriptions = [AnyCancellable]()
 
         override func build() -> UIView {
             BEVStack(alignment: .center, distribution: .equalCentering) {
@@ -48,10 +47,9 @@ extension History {
                             $0.setImage(.refreshPage, for: .normal)
                             $0.titleEdgeInsets = .init(top: 0, left: 0, bottom: 0, right: 40)
                             $0.imageEdgeInsets = .init(top: 0, left: 134, bottom: 0, right: 0)
-                            $0.rx
-                                .controlEvent(.touchUpInside)
-                                .bind(to: refreshClicked)
-                                .disposed(by: disposeBag)
+                        }
+                        .onTap { [weak self] in
+                            self?.refreshClicked.send()
                         }
                     }
                 }
@@ -59,8 +57,4 @@ extension History {
             }
         }
     }
-}
-
-extension Reactive where Base == History.EmptyTransactionsView {
-    var refreshClicked: Observable<Void> { base.refreshClicked.asObservable() }
 }
