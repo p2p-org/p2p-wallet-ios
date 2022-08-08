@@ -2,13 +2,13 @@
 // Created by Giang Long Tran on 18.02.2022.
 //
 
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import Foundation
-import RxSwift
 
 extension Home {
     class BannerSection: BEStaticSectionsCollectionView.Section {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         let onActionHandler: BECallback<Banners.Action>?
 
         init(index: Int, viewModel: BannerViewModel, onActionHandler: BECallback<Banners.Action>? = nil) {
@@ -32,10 +32,16 @@ extension Home {
                 viewModel: viewModel
             )
 
-            viewModel
-                .dataDidChange
-                .subscribe(onNext: { [weak self] in self?.collectionView?.reloadData(completion: {}) })
-                .disposed(by: disposeBag)
+            Task {
+                await viewModel
+                    .dataDidChange
+                    .sink {
+                        Task { [weak self] in
+                            await self?.collectionView?.reloadData(completion: {})
+                        }
+                    }
+                    .store(in: &subscriptions)
+            }
         }
 
         override func configureCell(collectionView: UICollectionView, indexPath: IndexPath,

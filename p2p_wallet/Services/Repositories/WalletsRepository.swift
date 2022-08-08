@@ -5,29 +5,28 @@
 //  Created by Chung Tran on 23/03/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
-protocol WalletsRepository: BEListViewModelType {
+protocol WalletsRepository: BECollectionViewModelType {
     var nativeWallet: Wallet? { get }
     func getWallets() -> [Wallet]
-    var stateObservable: Observable<BEFetcherState> { get }
-    var dataDidChange: Observable<Void> { get }
-    var dataObservable: Observable<[Wallet]?> { get }
     func getError() -> Error?
     func reload()
     func toggleWalletVisibility(_ wallet: Wallet)
     func removeItem(where predicate: (Wallet) -> Bool) -> Wallet?
     func setState(_ state: BEFetcherState, withData data: [AnyHashable]?)
     func toggleIsHiddenWalletShown()
-    var isHiddenWalletsShown: BehaviorRelay<Bool> { get }
+    var isHiddenWalletsShown: Bool { get set }
     func hiddenWallets() -> [Wallet]
     func refreshUI()
 
     func batchUpdate(closure: ([Wallet]) -> [Wallet])
+
+    var dataPublisher: AnyPublisher<[Wallet], Never> { get }
+    var statePublisher: AnyPublisher<BEFetcherState, Never> { get }
 }
 
 extension WalletsViewModel: WalletsRepository {
@@ -39,8 +38,11 @@ extension WalletsViewModel: WalletsRepository {
         error
     }
 
-    func batchUpdate(closure: ([Wallet]) -> [Wallet]) {
-        let wallets = closure(getWallets())
-        overrideData(by: wallets)
+    var dataPublisher: AnyPublisher<[Wallet], Never> {
+        $data.eraseToAnyPublisher()
+    }
+
+    var statePublisher: AnyPublisher<BEFetcherState, Never> {
+        $state.eraseToAnyPublisher()
     }
 }

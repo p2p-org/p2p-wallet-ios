@@ -5,29 +5,29 @@
 //  Created by Chung Tran on 10/01/2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
+import UIKit
 
 protocol AuthenticationHandlerType {
     func authenticate(presentationStyle: AuthenticationPresentationStyle?)
     func pauseAuthentication(_ isPaused: Bool)
-    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> { get }
-    var isLockedDriver: Driver<Bool> { get }
+    var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> { get }
+    var isLockedPublisher: AnyPublisher<Bool, Never> { get }
 }
 
-final class AuthenticationHandler: AuthenticationHandlerType {
+final class AuthenticationHandler: ObservableObject, AuthenticationHandlerType {
     // MARK: - Properties
 
-    private let disposeBag = DisposeBag()
+    private var subscriptions = [AnyCancellable]()
     private var timeRequiredForAuthentication = 10 // in seconds
     private var lastAuthenticationTimeStamp = 0
     private var isAuthenticationPaused = false
 
     // MARK: - Subjects
 
-    private let authenticationStatusSubject = BehaviorRelay<AuthenticationPresentationStyle?>(value: nil)
-    private let isLockedSubject = BehaviorRelay<Bool>(value: false)
+    @Published private var authenticationStatus: AuthenticationPresentationStyle?
+    @Published private var isLocked = false
 
     init() {
         bind()
@@ -35,38 +35,39 @@ final class AuthenticationHandler: AuthenticationHandlerType {
 
     /// Bind subjects
     private func bind() {
-        authenticationStatusSubject
-            .skip(while: { $0 == nil })
-            .subscribe(onNext: { [weak self] status in
+        $authenticationStatus
+            .drop(while: { $0 == nil })
+            .sink { [weak self] status in
                 if status == nil {
                     self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
                 }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
         observeAppNotifications()
 
-        authenticationStatusSubject
-            .skip(1)
+        $authenticationStatus
+            .dropFirst()
             .filter { $0 == nil }
             .map { _ in false }
-            .bind(to: isLockedSubject)
-            .disposed(by: disposeBag)
+            .assign(to: \.isLocked, on: self)
+            .store(in: &subscriptions)
     }
 
     private func observeAppNotifications() {
-        UIApplication.shared.rx
-            .applicationWillResignActive
-            .subscribe(onNext: { [weak self] _ in
-                if self?.authenticationStatusSubject.value == nil {
+        NotificationCenter.default
+            .publisher(for: UIApplication.willResignActiveNotification)
+            .sink { [weak self] _ in
+                if self?.authenticationStatus == nil {
                     self?.lastAuthenticationTimeStamp = Int(Date().timeIntervalSince1970)
-                    self?.isLockedSubject.accept(true)
+                    self?.isLocked = true
                 }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
-        UIApplication.shared.rx.applicationDidBecomeActive
-            .subscribe(onNext: { [weak self] _ in
+        NotificationCenter.default
+            .publisher(for: UIApplication.didBecomeActiveNotification)
+            .sink { [weak self] _ in
                 guard let self = self else { return }
                 if Int(Date().timeIntervalSince1970) >= self.lastAuthenticationTimeStamp + self
                     .timeRequiredForAuthentication
@@ -74,14 +75,14 @@ final class AuthenticationHandler: AuthenticationHandlerType {
                     self.authenticate(presentationStyle: .login())
                 }
 
-                self.isLockedSubject.accept(false)
-            })
-            .disposed(by: disposeBag)
+                self.isLocked = false
+            }
+            .store(in: &subscriptions)
     }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
         // check previous and current
-        let previous = authenticationStatusSubject.value
+        let previous = authenticationStatus
         let current = presentationStyle
 
         // prevent duplications
@@ -90,19 +91,19 @@ final class AuthenticationHandler: AuthenticationHandlerType {
 
         // accept current if nil
         if current == nil {
-            authenticationStatusSubject.accept(nil)
+            authenticationStatus = nil
             return
         }
 
         // show authentication if the condition has been met
         if canPerformAuthentication() {
-            authenticationStatusSubject.accept(presentationStyle)
+            authenticationStatus = presentationStyle
             return
         }
 
         // force a dissmision if not
         else {
-            authenticationStatusSubject.accept(nil)
+            authenticationStatus = nil
             return
         }
     }
@@ -111,12 +112,12 @@ final class AuthenticationHandler: AuthenticationHandlerType {
         isAuthenticationPaused = isPaused
     }
 
-    var authenticationStatusDriver: Driver<AuthenticationPresentationStyle?> {
-        authenticationStatusSubject.asDriver()
+    var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> {
+        $authenticationStatus.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var isLockedDriver: Driver<Bool> {
-        isLockedSubject.asDriver()
+    var isLockedPublisher: AnyPublisher<Bool, Never> {
+        $isLocked.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     // MARK: - Helpers

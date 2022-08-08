@@ -22,7 +22,6 @@ target 'p2p_wallet' do
   pod 'SolanaSwift', :path => 'SolanaSwift'
   pod 'BEPureLayout', :path => 'BEPureLayout'
   pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'FeeRelayerSwift', :path => 'FeeRelayerSwift'  
   pod 'OrcaSwapSwift', :path => 'OrcaSwapSwift'
@@ -36,7 +35,6 @@ target 'p2p_wallet' do
 
   # reactive
   pod 'Action'
-  pod "RxAppState"
   pod "RxGesture"
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'

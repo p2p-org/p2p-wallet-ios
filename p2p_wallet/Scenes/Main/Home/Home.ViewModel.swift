@@ -5,16 +5,15 @@
 //  Created by Chung Tran on 28/10/2021.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaPricesAPIs
 
 protocol HomeViewModelType: ReserveNameHandler {
-    var navigationDriver: Driver<Home.NavigatableScene?> { get }
-    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> { get }
-    var scrollToTopSignal: Signal<Void> { get }
+    var navigationPublisher: AnyPublisher<Home.NavigatableScene?, Never> { get }
+    var currentPricesPublisher: AnyPublisher<Loadable<[String: CurrentPrice]>, Never> { get }
+    var scrollToTopPublisher: AnyPublisher<Void, Never> { get }
 
     var walletsRepository: WalletsRepository { get }
     var bannerViewModel: Home.BannerViewModel { get }
@@ -26,7 +25,8 @@ protocol HomeViewModelType: ReserveNameHandler {
 }
 
 extension Home {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
@@ -36,8 +36,8 @@ extension Home {
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let scrollToTopSubject = PublishRelay<Void>()
+        @Published private var navigationSubject: NavigatableScene?
+        private let scrollToTopSubject = PassthroughSubject<Void, Never>()
 
         deinit {
             debugPrint("\(String(describing: self)) deinited")
@@ -46,8 +46,8 @@ extension Home {
 }
 
 extension Home.ViewModel: HomeViewModelType {
-    var scrollToTopSignal: Signal<Void> {
-        scrollToTopSubject.asSignal()
+    var scrollToTopPublisher: AnyPublisher<Void, Never> {
+        scrollToTopSubject.eraseToAnyPublisher()
     }
 
     func handleName(_ name: String?) {
@@ -59,21 +59,21 @@ extension Home.ViewModel: HomeViewModelType {
         walletsRepository.nativeWallet?.pubkey
     }
 
-    var navigationDriver: Driver<Home.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<Home.NavigatableScene?, Never> {
+        $navigationSubject.eraseToAnyPublisher()
     }
 
-    var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
-        pricesService.currentPricesDriver
+    var currentPricesPublisher: AnyPublisher<Loadable<[String: CurrentPrice]>, Never> {
+        pricesService.currentPricesPublisher
     }
 
     // MARK: - Actions
 
     func navigate(to scene: Home.NavigatableScene?) {
-        navigationSubject.accept(scene)
+        navigationSubject = scene
     }
 
     func scrollToTop() {
-        scrollToTopSubject.accept(())
+        scrollToTopSubject.send()
     }
 }

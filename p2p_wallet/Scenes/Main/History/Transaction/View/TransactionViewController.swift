@@ -7,7 +7,6 @@
 
 import BEPureLayout
 import Resolver
-import RxCocoa
 
 extension History {
     final class TransactionViewController: WLModalViewController {
@@ -16,6 +15,7 @@ extension History {
         private lazy var customView = TransactionView()
 
         private let viewModel: TransactionViewModel
+        private var viewAppeared: Bool = false
 
         init(viewModel: TransactionViewModel) {
             self.viewModel = viewModel
@@ -25,16 +25,19 @@ extension History {
             customView
         }
 
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            if !viewAppeared {
+                viewModel.viewIO.0.viewDidLoad.accept(())
+                viewAppeared = true
+            }
+        }
+
         override func bind() {
             super.bind()
 
             let (input, output) = viewModel.viewIO
 
-            rx.viewWillAppear
-                .take(1)
-                .mapTo(())
-                .bind(to: input.viewDidLoad)
-                .disposed(by: disposeBag)
             customView.rx
                 .transactionIdClicked
                 .bind(to: input.transactionIdClicked)

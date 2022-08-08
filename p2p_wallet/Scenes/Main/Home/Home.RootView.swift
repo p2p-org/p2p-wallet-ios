@@ -6,17 +6,16 @@
 //
 
 import Action
-import BECollectionView
+import BECollectionView_Combine
 import BEPureLayout
+import Combine
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 
 extension Home {
     class RootView: BECompositionView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: HomeViewModelType
         // swiftlint:disable weak_delegate
         private var headerViewScrollDelegate = HeaderScrollDelegate()
@@ -34,9 +33,9 @@ extension Home {
                 BEVStack {
                     // Indicator
                     WLStatusIndicatorView(forAutoLayout: ()).setup { view in
-                        viewModel.currentPricesDriver
+                        viewModel.currentPricesPublisher
                             .map(\.state)
-                            .drive(onNext: { [weak view] state in
+                            .sink { [weak view] state in
                                 switch state {
                                 case .notRequested:
                                     view?.isHidden = true
@@ -47,11 +46,11 @@ extension Home {
                                 case .error:
                                     view?.setUp(state: .error, text: L10n.errorWhenUpdatingPrices)
                                 }
-                            })
-                            .disposed(by: disposeBag)
+                            }
+                            .store(in: &subscriptions)
                     }
 
-                    BEBuilderRxSwift(driver: viewModel.isWalletReadyDriver) { [weak self] state in
+                    BEBuilder(publisher: viewModel.isWalletReadyPublisher) { [weak self] state in
                         guard let self = self else { return UIView() }
                         return state ? self.content() : self.emptyScreen()
                     }
@@ -112,17 +111,17 @@ extension Home {
                         collectionView.clipsToBounds = true
 
                         viewModel
-                            .isWalletReadyDriver
+                            .isWalletReadyPublisher
                             .map { !$0 }
-                            .drive(collectionView.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: collectionView)
+                            .store(in: &subscriptions)
 
                         viewModel
-                            .scrollToTopSignal
-                            .emit(onNext: { [weak collectionView] in
+                            .scrollToTopPublisher
+                            .sink { [weak collectionView] in
                                 collectionView?.collectionView.setContentOffset(.init(x: 0, y: -190), animated: true)
-                            })
-                            .disposed(by: disposeBag)
+                            }
+                            .store(in: &subscriptions)
                     }
                     .padding(.init(only: .top, inset: 12))
                 }
@@ -146,21 +145,20 @@ extension Home.RootView: BECollectionViewDelegate {
 }
 
 private extension HomeViewModelType {
-    var isWalletReadyDriver: Driver<Bool> {
-        Observable.combineLatest(
-            walletsRepository.stateObservable,
-            walletsRepository.dataObservable
-                .filter { $0 != nil }
+    var isWalletReadyPublisher: AnyPublisher<Bool, Never> {
+        Publishers.CombineLatest(
+            walletsRepository.statePublisher,
+            walletsRepository.dataPublisher
                 .withPrevious()
         )
             .map { state, change in
                 // if loaded
                 if let previous = change.0 {
                     if state == .loading || state == .initializing {
-                        let amount = previous?.reduce(0) { $0 + $1.amount } ?? 0
+                        let amount = previous.reduce(0) { $0 + $1.amount }
                         return amount > 0
                     } else {
-                        let amount = change.1?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
+                        let amount = change.1.reduce(0) { partialResult, wallet in partialResult + wallet.amount }
                         return amount > 0
                     }
                 }
@@ -168,7 +166,8 @@ private extension HomeViewModelType {
                 // Not loaded
                 return true
             }
-            .distinctUntilChanged { $0 }
-            .asDriver(onErrorJustReturn: true)
+            .removeDuplicates()
+            .replaceError(with: true)
+            .eraseToAnyPublisher()
     }
 }

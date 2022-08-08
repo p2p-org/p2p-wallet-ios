@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
 import SolanaSwift
@@ -20,6 +21,7 @@ extension WalletDetail {
         // MARK: - Handler
 
         var processingTransactionDoneHandler: (() -> Void)?
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -78,26 +80,24 @@ extension WalletDetail {
 
         override func bind() {
             super.bind()
-            viewModel.walletDriver
+            viewModel.walletPublisher
                 .map { $0?.token.name }
-                .drive(onNext: { [weak self] in
+                .sink(receiveValue: { [weak self] in
                     self?.navigationItem.title = $0
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.navigatableSceneDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigatableScenePublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
 
-            viewModel.walletActionsDriver
-                .drive(
-                    onNext: { [weak self] in
-                        guard let self = self else { return }
+            viewModel.walletActionsPublisher
+                .sink { [weak self] in
+                    guard let self = self else { return }
 
-                        self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
-                    }
-                )
-                .disposed(by: disposeBag)
+                    self.actionsView.setArrangedSubviews($0.map(self.createWalletActionView))
+                }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

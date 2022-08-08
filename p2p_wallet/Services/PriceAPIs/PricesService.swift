@@ -5,16 +5,21 @@
 //  Created by Chung Tran on 18/11/2021.
 //
 
+import Combine
 import Foundation
 import Resolver
 import RxCocoa
+import RxCombine
 import RxSwift
 import SolanaPricesAPIs
 import SolanaSwift
 
 protocol PricesServiceType {
     // Observables
+    @available(*, deprecated, renamed: "currentPricesPublisher")
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> { get }
+
+    var currentPricesPublisher: AnyPublisher<Loadable<[String: CurrentPrice]>, Never> { get }
 
     // Getters
     func getWatchList() -> [Token]
@@ -117,6 +122,10 @@ class PricesService {
 extension PricesService: PricesServiceType {
     var currentPricesDriver: Driver<Loadable<[String: CurrentPrice]>> {
         currentPricesSubject.asDriver()
+    }
+
+    var currentPricesPublisher: AnyPublisher<Loadable<[String: CurrentPrice]>, Never> {
+        currentPricesSubject.eraseToAnyPublisher()
     }
 
     func getWatchList() -> [Token] {
