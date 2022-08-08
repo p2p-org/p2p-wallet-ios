@@ -423,13 +423,13 @@ CHECKOUT OPTIONS:
     :commit: ab0dc9b0ebccec323ad75580d1d2793a110b6a17
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 5271d68f69562ba05a553a70d1e76753c7be619d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 5271d68f69562ba05a553a70d1e76753c7be619d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
-    :commit: 8f17c30369bcb81cfb12b08a5f2ef5d9d9cb5521
+    :commit: 5271d68f69562ba05a553a70d1e76753c7be619d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
     :commit: f0e06d38ab5f4a4854ed9b674a518708951e53ef
@@ -453,7 +453,7 @@ CHECKOUT OPTIONS:
     :commit: ab0dc9b0ebccec323ad75580d1d2793a110b6a17
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: be2fb107a3827aa402b965af09177de3d34d21de
+    :commit: 37eacc10101cd7414ff6dd5e2ac8d9ac0d98f386
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
@@ -462,7 +462,7 @@ CHECKOUT OPTIONS:
     :commit: ab0dc9b0ebccec323ad75580d1d2793a110b6a17
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: ab0dc9b0ebccec323ad75580d1d2793a110b6a17
+    :commit: 19f766b3a8deeb82243af86f88ab9e52480e5370
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
