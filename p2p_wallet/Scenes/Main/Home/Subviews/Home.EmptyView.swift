@@ -2,12 +2,12 @@
 // Created by Giang Long Tran on 15.02.2022.
 //
 
-import RxSwift
+import Combine
 import UIKit
 
 extension Home {
     class EmptyView: BECompositionView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: HomeViewModelType
         let refreshControl = UIRefreshControl()
 
@@ -18,11 +18,11 @@ extension Home {
             refreshControl.addTarget(self, action: #selector(reload), for: .valueChanged)
             viewModel
                 .walletsRepository
-                .stateObservable
-                .subscribe(onNext: { [weak self] state in
+                .statePublisher
+                .sink { [weak self] state in
                     if state == .loaded { self?.refreshControl.endRefreshing() }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         override func build() -> UIView {

@@ -7,9 +7,9 @@
 
 import Action
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
 import SolanaSwift
 import UIKit
 
@@ -24,6 +24,7 @@ extension Home {
 
         fileprivate let interactor = MenuInteractor()
         private var sendCoordinator: SendToken.Coordinator?
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Initializer
 
@@ -52,25 +53,30 @@ extension Home {
         override func bind() {
             super.bind()
 
-            let stateObservable = viewModel.walletsRepository
-                .stateObservable
-                .distinctUntilChanged()
+            let statePublisher = viewModel.walletsRepository
+                .statePublisher
+                .removeDuplicates()
 
-            stateObservable
-                .take(until: { $0 == .loaded })
-                .asDriver(onErrorJustReturn: .initializing)
+            statePublisher
+                .prefix(while: { $0 != .loaded })
+                .replaceError(with: .initializing)
                 .map { $0 == .loading }
-                .drive(onNext: { [weak self] _ in
+                .sink { [weak self] completion in
+                    switch completion {
+                    case .finished:
+                        self?.view.hideLoadingIndicatorView()
+                    case .failure:
+                        break
+                    }
+                } receiveValue: { [weak self] _ in
                     self?.view.showLoadingIndicatorView()
-                }, onCompleted: { [weak self] in
-                    self?.view.hideLoadingIndicatorView()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            stateObservable
-                .asDriver(onErrorJustReturn: .initializing)
+            statePublisher
+                .replaceError(with: .initializing)
                 .map { $0 == .error }
-                .drive(onNext: { [weak self] hasError in
+                .sink { [weak self] hasError in
                     // TODO: catch network error!
                     if hasError, self?.viewModel.walletsRepository.getError() != nil {
                         self?.view.showConnectionErrorView(refreshAction: CocoaAction { [weak self] in
@@ -80,12 +86,12 @@ extension Home {
                     } else {
                         self?.view.hideConnectionErrorView()
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

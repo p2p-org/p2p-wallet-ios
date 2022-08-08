@@ -36,11 +36,10 @@ extension History {
 
             // Start loading when wallets are ready.
             Resolver.resolve(WalletsRepository.self)
-                .dataObservable
+                .dataPublisher
                 .compactMap { $0 }
                 .filter { !$0.isEmpty }
                 .first()
-                .publisher
                 .sink(receiveCompletion: { _ in
 
                 }, receiveValue: { [weak self] _ in
