@@ -2,10 +2,10 @@
 // Created by Giang Long Tran on 18.02.2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 
-class BannerServiceImpl: Banners.Service {
+class BannerServiceImpl: ObservableObject, Banners.Service {
     private var _banners: Set<Banners.Banner> = []
     private var _handler: [Banners.Handler] = []
 
@@ -15,11 +15,12 @@ class BannerServiceImpl: Banners.Service {
         }
     }
 
-    private var bannersSubject = BehaviorRelay<Set<Banners.Banner>>(value: [])
-    var banners: Driver<[Banners.Banner]> {
-        bannersSubject
+    @Published private var bannersSubject: Set<Banners.Banner> = []
+    var banners: AnyPublisher<[Banners.Banner], Never> {
+        $bannersSubject
             .map { $0.sorted { a, b in a.priority.rawValue >= b.priority.rawValue } }
-            .asDriver(onErrorJustReturn: [])
+            .replaceError(with: [])
+            .eraseToAnyPublisher()
     }
 
     func register(handler: Banners.Handler) {
@@ -30,11 +31,11 @@ class BannerServiceImpl: Banners.Service {
     func update(banner: Banners.Banner) {
         debugPrint(banner)
         _banners.insert(banner)
-        bannersSubject.accept(_banners)
+        bannersSubject = _banners
     }
 
     func remove(bannerId: String) {
         _banners = _banners.filter { banner in banner.id != bannerId }
-        bannersSubject.accept(_banners)
+        bannersSubject = _banners
     }
 }

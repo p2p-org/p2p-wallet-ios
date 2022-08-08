@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 04/09/2021.
 //
 
+import Combine
 import Foundation
 import RxCocoa
 import RxSwift
@@ -172,6 +173,13 @@ public extension LoadableRelay {
     func asDriver() -> Driver<Loadable<T>> {
         stateObservable.asDriver(onErrorJustReturn: .notRequested)
             .map { [weak self] in (value: self?.value, state: $0, reloadAction: { [weak self] in self?.reload() }) }
+    }
+
+    /// Convert to publisher
+    func eraseToAnyPublisher() -> AnyPublisher<Loadable<T>, Never> {
+        stateObservable.publisher.replaceError(with: .notRequested)
+            .map { [weak self] in (value: self?.value, state: $0, reloadAction: { [weak self] in self?.reload() }) }
+            .eraseToAnyPublisher()
     }
 }
 

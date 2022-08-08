@@ -16,7 +16,7 @@ import SolanaSwift
 import SwiftyUserDefaults
 
 extension Resolver: ResolverRegistering {
-    public static func registerAllServices() {
+    @MainActor public static func registerAllServices() {
         registerForApplicationScope()
 
         registerForGraphScope()
@@ -29,7 +29,7 @@ extension Resolver: ResolverRegistering {
     // MARK: - Helpers
 
     /// Application scope: Lifetime app's services
-    private static func registerForApplicationScope() {
+    @MainActor private static func registerForApplicationScope() {
         // AppEventHandler
         register { AppEventHandler() }
             .implements(AppEventHandlerType.self)
@@ -136,7 +136,7 @@ extension Resolver: ResolverRegistering {
     }
 
     /// Session scope: Live when user is authenticated
-    private static func registerForSessionScope() {
+    @MainActor private static func registerForSessionScope() {
         // AuthenticationHandler
         register { AuthenticationHandler() }
             .implements(AuthenticationHandlerType.self)
@@ -212,7 +212,6 @@ extension Resolver: ResolverRegistering {
         // WalletsViewModel
         register { WalletsViewModel() }
             .implements(WalletsRepository.self)
-            .implements(WLNotificationsRepository.self)
             .scope(.session)
 
         // SwapService

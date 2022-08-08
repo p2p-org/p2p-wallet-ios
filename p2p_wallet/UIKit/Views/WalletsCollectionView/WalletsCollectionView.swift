@@ -5,10 +5,9 @@
 //  Created by Chung Tran on 26/03/2021.
 //
 
-import Action
-import BECollectionView
+import BECollectionView_Combine
+import Combine
 import Foundation
-import RxSwift
 
 class WalletsCollectionView: BEStaticSectionsCollectionView {
     let walletsRepository: WalletsRepository
@@ -27,7 +26,7 @@ class WalletsCollectionView: BEStaticSectionsCollectionView {
         )
     }
 
-    override func dataDidChangeObservable() -> Observable<Void> {
+    override func dataDidChangePublisher() -> AnyPublisher<Void, Never> {
         walletsRepository.dataDidChange
     }
 }

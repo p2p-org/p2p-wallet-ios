@@ -5,9 +5,6 @@ PODS:
   - Amplitude (8.3.1)
   - AnalyticsManager (1.0.0):
     - Amplitude (~> 8.3.0)
-  - BECollectionView (1.0.0):
-    - BECollectionView_Core
-    - RxCocoa (~> 6.5.0)
   - BECollectionView_Combine (1.0.0):
     - BECollectionView_Core
     - CombineCocoa (~> 0.4.0)
@@ -154,9 +151,6 @@ PODS:
   - RenVMSwift (2.0.1):
     - SolanaSwift (~> 2)
   - Resolver (1.5.0)
-  - RxAppState (1.7.1):
-    - RxCocoa (~> 6.2)
-    - RxSwift (~> 6.2)
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
@@ -200,7 +194,6 @@ PODS:
 DEPENDENCIES:
   - Action
   - AnalyticsManager (from `KeyAppKit`)
-  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `BEPureLayout`)
@@ -224,7 +217,6 @@ DEPENDENCIES:
   - Periphery
   - RenVMSwift (from `RenVMSwift`)
   - Resolver
-  - RxAppState
   - RxCocoa (= 6.5.0)
   - RxCombine
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
@@ -272,7 +264,6 @@ SPEC REPOS:
     - PromisesObjC
     - PureLayout
     - Resolver
-    - RxAppState
     - RxCocoa
     - RxCombine
     - RxGesture
@@ -293,9 +284,6 @@ SPEC REPOS:
 EXTERNAL SOURCES:
   AnalyticsManager:
     :path: KeyAppKit
-  BECollectionView:
-    :branch: master
-    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
     :branch: master
     :git: https://github.com/bigearsenal/BECollectionView.git
@@ -335,14 +323,11 @@ EXTERNAL SOURCES:
     :path: KeyAppKit
 
 CHECKOUT OPTIONS:
-  BECollectionView:
-    :commit: 700a8c06233a791fb9415af18326ea9d2d68bf8e
-    :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Combine:
-    :commit: 700a8c06233a791fb9415af18326ea9d2d68bf8e
+    :commit: 5271d68f69562ba05a553a70d1e76753c7be619d
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
-    :commit: 700a8c06233a791fb9415af18326ea9d2d68bf8e
+    :commit: 5271d68f69562ba05a553a70d1e76753c7be619d
     :git: https://github.com/bigearsenal/BECollectionView.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -361,7 +346,6 @@ SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
-  BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
@@ -399,7 +383,6 @@ SPEC CHECKSUMS:
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
   RenVMSwift: 9cfd6610adc9c74a6e761c615cd30a31129e79c6
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
-  RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxCombine: 74cd98f7bb1d908eff3758d13651917fc296adb3
   RxConcurrency: fde98edd4056a8f13ff293689a25a17563e3e843
@@ -422,6 +405,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 4d33d1ebc4c0a61e18822341f350709a1427b3ac
+PODFILE CHECKSUM: 697265c4afbd5ed7680de4b26992e4aa665ce045
 
 COCOAPODS: 1.11.3

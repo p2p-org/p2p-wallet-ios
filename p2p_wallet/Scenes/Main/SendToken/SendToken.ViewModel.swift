@@ -106,12 +106,13 @@ extension SendToken {
             bindFees(walletSubject: walletSubject)
 
             // update wallet after sending
-            walletsRepository.dataObservable
+            walletsRepository.dataPublisher
+                .asObservable()
                 .skip(1)
                 .withLatestFrom(walletSubject.asObservable(), resultSelector: { ($0, $1) })
                 .subscribe(onNext: { [weak self] wallets, myWallet in
                     guard let self = self else { return }
-                    if let wallet = wallets?.first(where: { $0.pubkey == myWallet?.pubkey }),
+                    if let wallet = wallets.first(where: { $0.pubkey == myWallet?.pubkey }),
                        wallet.lamports != myWallet?.lamports
                     {
                         self.walletSubject.accept(wallet)
@@ -125,7 +126,8 @@ extension SendToken {
 
             Completable.zip(
                 Completable.async { try await self.sendService.load() },
-                walletsRepository.stateObservable
+                walletsRepository.statePublisher
+                    .asObservable()
                     .filter { $0 == .loaded }
                     .take(1)
                     .asSingle()

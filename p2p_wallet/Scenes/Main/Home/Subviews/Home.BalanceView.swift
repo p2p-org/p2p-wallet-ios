@@ -5,16 +5,15 @@
 //  Created by Chung Tran on 22/11/2021.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Charts
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 
 extension Home {
     class BalanceView: BECompositionView {
         private let viewModel: HomeViewModelType
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: HomeViewModelType) {
             self.viewModel = viewModel
@@ -28,8 +27,8 @@ extension Home {
                 UILabel(text: "", textSize: 28, weight: .bold).setup { view in
                     viewModel
                         .balance
-                        .drive(view.rx.text)
-                        .disposed(by: disposeBag)
+                        .assign(to: \.text, on: view)
+                        .store(in: &subscriptions)
                 }
             }
         }
@@ -37,16 +36,13 @@ extension Home {
 }
 
 private extension HomeViewModelType {
-    var balance: Driver<String> {
-        Observable
-            .zip(
-                walletsRepository.dataObservable,
-                walletsRepository.stateObservable
-            )
-            .asDriver(onErrorJustReturn: ([], .loaded))
+    var balance: AnyPublisher<String?, Never> {
+        Publishers.Zip(
+            walletsRepository.dataPublisher,
+            walletsRepository.statePublisher
+        )
+            .replaceError(with: ([], .loaded))
             .map { data, state in
-                let data = data ?? []
-
                 switch state {
                 case .initializing:
                     return ""
@@ -59,6 +55,7 @@ private extension HomeViewModelType {
                     return L10n.error.uppercaseFirst
                 }
             }
-            .asDriver()
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 }

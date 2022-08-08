@@ -5,7 +5,7 @@
 //  Created by Chung Tran on 30/11/2020.
 //
 
-import BECollectionView
+import BECollectionView_Combine
 import Foundation
 import SolanaSwift
 import TransactionParser

@@ -2,8 +2,8 @@
 // Created by Giang Long Tran on 18.02.2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 
 class Banners {
     typealias Service = BannerServiceType
@@ -57,7 +57,7 @@ class Banners {
 }
 
 protocol BannerServiceType: AnyObject {
-    var banners: Driver<[Banners.Banner]> { get }
+    var banners: AnyPublisher<[Banners.Banner], Never> { get }
 
     func update(banner: Banners.Banner)
     func remove(bannerId: String)

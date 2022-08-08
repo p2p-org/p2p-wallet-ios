@@ -13,6 +13,7 @@ extension SendToken.ChooseTokenAndAmount {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
+        private var viewAppeared: Bool = false
 
         // MARK: - Properties
 
@@ -49,6 +50,14 @@ extension SendToken.ChooseTokenAndAmount {
             view.endEditing(true)
         }
 
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            if !viewAppeared {
+                customView.amountTextField.becomeFirstResponder()
+                viewAppeared = true
+            }
+        }
+
         func clearForm() {
             viewModel.clearForm.onNext(())
         }
@@ -81,14 +90,6 @@ extension SendToken.ChooseTokenAndAmount {
             viewModel.errorDriver
                 .map { $0 == nil }
                 .drive(nextButton.rx.isEnabled)
-                .disposed(by: disposeBag)
-
-            rx.viewDidAppear
-                .take(1)
-                .mapToVoid()
-                .subscribe(onNext: { [weak self] in
-                    self?.customView.amountTextField.becomeFirstResponder()
-                })
                 .disposed(by: disposeBag)
         }
 
