@@ -53,7 +53,15 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
                 } catch {
                     vm?.input.onError.send(error)
                 }
-            }
+            }.store(in: &subscriptions)
+
+            vm.coordinatorIO.back.sinkAsync { [weak vm, stateMachine] in
+                do {
+                    try await stateMachine <- .signInBack
+                } catch {
+                    vm?.input.onError.send(error)
+                }
+            }.store(in: &subscriptions)
 
             vm.coordinatorIO.switchToRestoreFlow.sinkAsync { [weak vm, stateMachine] in
                 if vm?.input.isLoading.value ?? false { return }
@@ -65,11 +73,11 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
                 } catch {
                     vm?.input.onError.send(error)
                 }
-            }
+            }.store(in: &subscriptions)
 
             let vc = SocialSignInAccountHasBeenUsedViewController(viewModel: vm)
             return vc
-        case let .socialSignInTryAgain(socialProvider, usedEmail):
+        case let .socialSignInTryAgain(socialProvider, _):
             let vm = SocialSignInTryAgainViewModel(signInProvider: socialProvider)
 
             vm.coordinator.startScreen.sinkAsync { [weak vm, stateMachine] in
