@@ -26,8 +26,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     private var defaultsDisposables = [DefaultsDisposable]()
     private var disposeBag = DisposeBag()
-    let notificationsSubject = BehaviorRelay<WLNotification?>(value: nil)
-    var notifications = [WLNotification]()
     private var timer: Timer?
 
     // MARK: - Getters
@@ -296,25 +294,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Account notifications
 
     private func handleAccountNotification(_ notification: AccountsObservableEvent) {
-        // notify changes
-        let oldLamportsValue = data.first(where: { $0.pubkey == notification.pubkey })?.lamports
-        let newLamportsValue = notification.lamports
-
-        if let oldLamportsValue = oldLamportsValue {
-            var wlNoti: WLNotification?
-            if oldLamportsValue > newLamportsValue {
-                // sent
-                wlNoti = .sent(account: notification.pubkey, lamports: oldLamportsValue - newLamportsValue)
-            } else if oldLamportsValue < newLamportsValue {
-                // received
-                wlNoti = .received(account: notification.pubkey, lamports: newLamportsValue - oldLamportsValue)
-            }
-            if let wlNoti = wlNoti {
-                notificationsSubject.accept(wlNoti)
-                notifications.append(wlNoti)
-            }
-        }
-
         // update
         updateItem(where: { $0.pubkey == notification.pubkey }, transform: { wallet in
             var wallet = wallet
