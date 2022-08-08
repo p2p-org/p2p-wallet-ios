@@ -89,7 +89,7 @@ class HiddenWalletsSection: WalletsSection {
 
     override func mapDataToCollectionViewItems() -> [BECollectionViewItem] {
         let viewModel = self.viewModel as? WalletsRepository
-        if viewModel?.isHiddenWalletsShown.value == true {
+        if viewModel?.isHiddenWalletsShown == true {
             return super.mapDataToCollectionViewItems()
         } else {
             return []
@@ -106,7 +106,7 @@ class HiddenWalletsSection: WalletsSection {
     private func updateHeader(headerView: HiddenWalletsSectionHeaderView) {
         let viewModel = self.viewModel as! WalletsRepository
         let shouldUpdateHeight = headerView.setUp(
-            isHiddenWalletsShown: viewModel.isHiddenWalletsShown.value,
+            isHiddenWalletsShown: viewModel.isHiddenWalletsShown,
             hiddenWalletList: viewModel.hiddenWallets()
         )
 
