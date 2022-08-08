@@ -8,7 +8,6 @@
 import BECollectionView_Combine
 import Combine
 import Foundation
-import RxSwift // TODO: - Remove later
 import SolanaSwift
 
 protocol WalletsRepository: BECollectionViewModelType {
@@ -28,12 +27,6 @@ protocol WalletsRepository: BECollectionViewModelType {
 
     var dataPublisher: AnyPublisher<[Wallet], Never> { get }
     var statePublisher: AnyPublisher<BEFetcherState, Never> { get }
-
-    @available(*, deprecated, message: "RxSwift will be removed soon")
-    var dataObservable: Observable<[Wallet]> { get }
-
-    @available(*, deprecated, message: "RxSwift will be removed soon")
-    var stateObservable: Observable<BEFetcherState> { get }
 }
 
 extension WalletsViewModel: WalletsRepository {
@@ -51,15 +44,5 @@ extension WalletsViewModel: WalletsRepository {
 
     var statePublisher: AnyPublisher<BEFetcherState, Never> {
         $state.eraseToAnyPublisher()
-    }
-
-    @available(*, deprecated, message: "RxSwift will be removed soon")
-    var dataObservable: Observable<[Wallet]> {
-        $data.asObservable()
-    }
-
-    @available(*, deprecated, message: "RxSwift will be removed soon")
-    var stateObservable: Observable<BEFetcherState> {
-        $state.asObservable()
     }
 }

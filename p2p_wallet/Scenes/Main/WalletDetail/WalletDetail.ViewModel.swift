@@ -6,18 +6,17 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import TransactionParser
 
 protocol WalletDetailViewModelType {
     var walletsRepository: WalletsRepository { get }
-    var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> { get }
-    var walletDriver: Driver<Wallet?> { get }
-    var walletActionsDriver: Driver<[WalletActionType]> { get }
+    var navigatableSceneDriver: AnyPublisher<WalletDetail.NavigatableScene?, Never> { get }
+    var walletDriver: AnyPublisher<Wallet?, Never> { get }
+    var walletActionsDriver: AnyPublisher<[WalletActionType], Never> { get }
 
     func showWalletSettings()
     func start(action: WalletActionType)
@@ -27,7 +26,8 @@ protocol WalletDetailViewModelType {
 }
 
 extension WalletDetail {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
@@ -37,22 +37,22 @@ extension WalletDetail {
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subject
 
-        private let navigatableSceneSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private lazy var walletActionsSubject = walletSubject
-            .map { wallet -> [WalletActionType] in
-                guard let wallet = wallet else { return [] }
-
-                if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
-                    return [.buy, .receive, .send, .swap]
-                } else {
-                    return [.receive, .send, .swap]
-                }
-            }
+        @Published private var navigatableSceneSubject: NavigatableScene?
+        @Published private var walletSubject: Wallet?
+//        private lazy var walletActionsSubject = walletSubject
+//            .map { _ -> [WalletActionType] in
+//                guard let wallet = self.wallet else { return [] }
+//
+//                if wallet.isNativeSOL || wallet.token.symbol == "USDC" {
+//                    return [.buy, .receive, .send, .swap]
+//                } else {
+//                    return [.receive, .send, .swap]
+//                }
+//            }
 
         // MARK: - Initializer
 
@@ -73,28 +73,27 @@ extension WalletDetail {
 
         private func bindSubjectsIntoSubjects() {
             walletsRepository
-                .dataObservable
+                .dataPublisher
                 .map { [weak self] in $0.first(where: { $0.pubkey == self?.pubkey }) }
                 .filter { $0 != nil }
-                .bind(to: walletSubject)
-                .disposed(by: disposeBag)
+                .assign(to: \.walletSubject, on: self)
+                .store(in: &subscriptions)
 
-            walletSubject
+            $walletSubject
                 .filter { $0 != nil }
                 .map { $0!.token.symbol }
-                .take(1)
-                .asSingle()
-                .subscribe(onSuccess: { [weak self] ticker in
+                .prefix(1)
+                .sink { [weak self] ticker in
                     self?.analyticsManager.log(event: .tokenDetailsOpen(tokenTicker: ticker))
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         private func sendTokens() {
-            guard let wallet = walletSubject.value else { return }
+            guard let wallet = walletSubject else { return }
             analyticsManager.log(event: .tokenDetailsSendClick)
             analyticsManager.log(event: .sendViewed(lastScreen: "token_details"))
-            navigatableSceneSubject.accept(.send(wallet: wallet))
+            navigatableSceneSubject = .send(wallet: wallet)
         }
 
         private func buyTokens() {
@@ -107,45 +106,45 @@ extension WalletDetail {
                 tokens = .usdc
             }
             analyticsManager.log(event: .tokenDetailsBuyClick)
-            navigatableSceneSubject.accept(.buy(tokens: tokens))
+            navigatableSceneSubject = .buy(tokens: tokens)
         }
 
         private func receiveTokens() {
-            guard let pubkey = walletSubject.value?.pubkey else { return }
+            guard let pubkey = walletSubject?.pubkey else { return }
             analyticsManager.log(event: .tokenDetailQrClick)
             analyticsManager.log(event: .tokenReceiveViewed)
             analyticsManager.log(event: .receiveViewed(fromPage: "token_details"))
-            navigatableSceneSubject.accept(.receive(walletPubkey: pubkey))
+            navigatableSceneSubject = .receive(walletPubkey: pubkey)
         }
 
         private func swapTokens() {
-            guard let wallet = walletSubject.value else { return }
+            guard let wallet = walletSubject else { return }
             analyticsManager.log(event: .tokenDetailsSwapClick)
             analyticsManager.log(event: .swapViewed(lastScreen: "token_details"))
-            navigatableSceneSubject.accept(.swap(fromWallet: wallet))
+            navigatableSceneSubject = .swap(fromWallet: wallet)
         }
     }
 }
 
 extension WalletDetail.ViewModel: WalletDetailViewModelType {
-    var walletActionsDriver: Driver<[WalletActionType]> {
+    var walletActionsDriver: AnyPublisher<[WalletActionType], Never> {
         walletActionsSubject
             .asDriver(onErrorJustReturn: [])
     }
 
-    var navigatableSceneDriver: Driver<WalletDetail.NavigatableScene?> {
-        navigatableSceneSubject.asDriver()
+    var navigatableSceneDriver: AnyPublisher<WalletDetail.NavigatableScene?, Never> {
+        navigatableSceneSubject.eraseToAnyPublisher()
     }
 
-    var walletDriver: Driver<Wallet?> {
-        walletSubject.asDriver()
+    var walletDriver: AnyPublisher<Wallet?, Never> {
+        walletSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func showWalletSettings() {
-        guard let pubkey = walletSubject.value?.pubkey else { return }
-        navigatableSceneSubject.accept(.settings(walletPubkey: pubkey))
+        guard let pubkey = walletSubject?.pubkey else { return }
+        navigatableSceneSubject = .settings(walletPubkey: pubkey)
     }
 
     func start(action: WalletActionType) {
@@ -163,6 +162,6 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
 
     func showTransaction(_ transaction: ParsedTransaction) {
         analyticsManager.log(event: .tokenDetailsDetailsOpen)
-        navigatableSceneSubject.accept(.transactionInfo(transaction))
+        navigatableSceneSubject = .transactionInfo(transaction)
     }
 }
