@@ -69,7 +69,7 @@ extension History {
 
         let tryAgain = PassthroughSubject<Void, Never>()
         let refreshPage = PassthroughSubject<Void, Never>()
-        private let errorRelay = PassthroughSubject<Bool, Never>()
+        private let errorRelay = CurrentValueSubject<Bool, Never>(false)
 
         init(accountSymbol: AccountSymbol? = nil) {
             self.accountSymbol = accountSymbol
