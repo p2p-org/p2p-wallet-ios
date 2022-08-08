@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import Combine
-import CountriesAPI
 import Foundation
 import Onboarding
 import UIKit
@@ -18,12 +17,27 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     let webView = GlobalWebView.requestWebView()
     let viewModel: CreateWalletViewModel
 
-    private var subject = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
+    private var result = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
+
+    let socialSignInDelegatedCoordinator: SocialSignInDelegatedCoordinator
+    let bindingPhoneNumberDelegatedCoordinator: BindingPhoneNumberDelegatedCoordinator
 
     init(parent: UIViewController) {
         parentViewController = parent
         tKeyFacade = TKeyJSFacade(wkWebView: webView)
         viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
+
+        socialSignInDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.onboardingStateMachine.accept(event: .socialSignInEvent(event))
+            }
+        )
+
+        bindingPhoneNumberDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.onboardingStateMachine.accept(event: .bindingPhoneNumberEvent(event))
+            }
+        )
 
         super.init()
     }
@@ -36,9 +50,15 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         // Create root view controller
-        let viewController = buildViewController(state: viewModel.onboardingStateMachine.currentState)
+        guard let viewController = buildViewController(state: viewModel.onboardingStateMachine.currentState) else {
+            return Empty().eraseToAnyPublisher()
+        }
+
         navigationController = navigationController ?? UINavigationController(rootViewController: viewController)
         navigationController!.modalPresentationStyle = .fullScreen
+
+        socialSignInDelegatedCoordinator.rootViewController = navigationController
+        bindingPhoneNumberDelegatedCoordinator.rootViewController = navigationController
 
         Task {
             DispatchQueue.main.async { self.navigationController?.showIndetermineHud() }
@@ -58,8 +78,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
         parentViewController.present(navigationController!, animated: true)
 
-        return subject
-            .eraseToAnyPublisher()
+        return result.eraseToAnyPublisher()
     }
 
     func initializeTkey() async throws {
@@ -69,123 +88,38 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     // MARK: Navigation
 
-    private func navigate(from: CreateWalletState?, to: CreateWalletState) {
+    private func navigate(from: CreateWalletFlowState?, to: CreateWalletFlowState) {
         // Handler final states
-        // TODO: return result
-        switch viewModel.onboardingStateMachine.currentState {
-        case .finishWithoutResult:
-            navigationController?.dismiss(animated: true)
-            return
-        case .finishWithRerouteToRestore:
-            navigationController?.dismiss(animated: true)
-            return
-        default:
-            break
+        // TODO: handle result
+        if case let .finish(result) = to {
+            switch result {
+            default:
+                self.result.send()
+                return
+            }
         }
 
         guard let navigationController = navigationController else { return }
-        let vc = buildViewController(state: to)
 
-        switch viewModel.onboardingStateMachine.currentState {
-        case .socialSignInAccountWasUsed:
-            navigationController.pushViewController(vc, animated: true)
-        default:
-            if to.step > (from?.step ?? 0) {
-                navigationController.setViewControllers([vc], animated: true)
-            } else {
-                navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
-                navigationController.popToViewController(vc, animated: true)
-            }
+        // TODO: Add empty screen
+        let vc = buildViewController(state: to) ?? UIViewController()
+
+        if to.step > (from?.step ?? -1) {
+            navigationController.setViewControllers([vc], animated: true)
+        } else {
+            navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
+            navigationController.popToViewController(vc, animated: true)
         }
     }
 
-    private func buildViewController(state: CreateWalletState) -> UIViewController {
+    private func buildViewController(state: CreateWalletFlowState) -> UIViewController? {
         switch state {
-        case .socialSignIn:
-            let vc = SocialSignInViewController(viewModel: .init(createWalletViewModel: viewModel))
-            vc.viewModel.output.onInfo.sink { [weak self] in self?.showInfo() }.store(in: &subscriptions)
-            return vc
-        case let .socialSignInAccountWasUsed(provider, usedEmail):
-            let vm = SocialSignInAccountHasBeenUsedViewModel(
-                createWalletViewModel: viewModel,
-                email: usedEmail,
-                signInProvider: provider
-            )
-            let vc = SocialSignInAccountHasBeenUsedViewController(viewModel: vm)
-            return vc
-        case let .socialSignInTryAgain(signInProvider, usedEmail):
-            let vm = SocialSignInTryAgainViewModel(signInProvider: signInProvider)
-
-            vm.coordinator.startScreen.sinkAsync { [weak viewModel] in
-                vm.input.isLoading.send(true)
-                defer { vm.input.isLoading.send(false) }
-                do {
-                    try await viewModel?.onboardingStateMachine.accept(event: .signInBack)
-                } catch {
-                    vm.input.onError.send(error)
-                }
-            }.store(in: &subscriptions)
-
-            vm.coordinator.tryAgain.sinkAsync { [weak viewModel] authResult in
-                vm.input.isLoading.send(true)
-                defer { vm.input.isLoading.send(false) }
-
-                do {
-                    try await viewModel?.onboardingStateMachine
-                        .accept(event: .signIn(
-                            tokenID: authResult.tokenID,
-                            authProvider: signInProvider,
-                            email: authResult.email
-                        ))
-                } catch {
-                    vm.input.onError.send(error)
-                }
-            }.store(in: &subscriptions)
-
-            let vc = SocialSignInTryAgainViewController(viewModel: vm)
-            return vc
-        case let .enterPhoneNumber(_, _, deviceShare):
-            UserDefaults.standard.set(deviceShare, forKey: "deviceShare")
-
-            let mv = EnterPhoneNumberViewModel()
-            let vc = EnterPhoneNumberViewController(viewModel: mv)
-
-            mv.coordinatorIO.selectFlag.sinkAsync { [weak self] in
-                guard let result = try await self?.selectCountry() else { return }
-                mv.coordinatorIO.countrySelected.send(result)
-            }.store(in: &subscriptions)
-
-            mv.coordinatorIO.phoneEntered.sinkAsync { [weak self] phone in
-                try await self?.viewModel.onboardingStateMachine.accept(event: .enterPhoneNumber(phoneNumber: phone))
-            }.store(in: &subscriptions)
-            return vc
-        case let .verifyPhoneNumber(_, _, _, phone):
-            let vm = EnterSMSCodeViewModel(phone: phone)
-            let vc = EnterSMSCodeViewController(viewModel: vm)
-
-            vm.coordinatorIO.goBack.sink { _ in
-                // self.viewModel.onboardingStateMachine.accept(event: .back)
-            }.store(in: &subscriptions)
-
-            return vc
+        case let .socialSignIn(innerState):
+            return socialSignInDelegatedCoordinator.buildViewController(for: innerState)
+        case let .bindingPhoneNumber(_, _, _, innerState):
+            return bindingPhoneNumberDelegatedCoordinator.buildViewController(for: innerState)
         default:
-            return UIViewController()
+            return nil
         }
-    }
-
-    public func showInfo() {
-        let vc = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        navigationController?.present(vc, animated: true)
-    }
-
-    public func selectCountry() async throws -> Country? {
-        let coordinator = ChoosePhoneCodeCoordinator(
-            selectedCountry: nil,
-            presentingViewController: navigationController!
-        )
-        return try await coordinator.start().async()
     }
 }

@@ -9,11 +9,10 @@ final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProv
     @Injected var service: OnboardingService
 
     @MainActor func startCoordinator(for window: UIWindow) -> Coordinator<Void> {
-        switch service.lastState {
-        case .enterPhoneNumber, .verifyPhoneNumber, .enterPincode:
+        if let lastState = service.lastState {
             return ContinueCoordinator(window: window)
-        default:
-            return StartCoordinator(navigation: .root(window: window))
+        } else {
+            return StartCoordinator(window: window)
         }
     }
 }

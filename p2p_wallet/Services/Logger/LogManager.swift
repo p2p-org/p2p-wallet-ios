@@ -17,7 +17,7 @@ protocol LogManagerLogger {
 
 protocol LogManager {
     func setProviders(_ providers: [LogManagerLogger])
-    func log(event: String, logLevel: LogLevel, data: String?, shouldLogEvent: () -> Bool)
+    func log(event: String, logLevel: LogLevel, data: String?, shouldLogEvent: (() -> Bool)?)
 }
 
 class DefaultLogManager: LogManager {
@@ -30,8 +30,8 @@ class DefaultLogManager: LogManager {
         self.providers = providers
     }
 
-    func log(event: String, logLevel: LogLevel, data: String? = nil, shouldLogEvent: () -> Bool) {
-        guard shouldLogEvent() else { return }
+    func log(event: String, logLevel: LogLevel, data: String? = nil, shouldLogEvent: (() -> Bool)? = nil) {
+        guard shouldLogEvent?() ?? true else { return }
         providers.forEach { provider in
             queue.async {
                 provider.log(event: event, logLevel: logLevel, data: data)
