@@ -36,7 +36,6 @@ target 'p2p_wallet' do
 
   # reactive
   pod 'Action'
-  pod "RxAppState"
   pod "RxGesture"
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
