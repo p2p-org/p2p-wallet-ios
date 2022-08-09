@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 22/02/2021.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -13,6 +14,7 @@ extension CreateSecurityKeys {
         // MARK: - Dependencies
 
         private let viewModel: CreateSecurityKeysViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Initializer
 
@@ -31,27 +33,27 @@ extension CreateSecurityKeys {
         override func bind() {
             super.bind()
             viewModel.showTermsAndConditionsSignal
-                .emit(onNext: { [weak self] in
+                .sink { [weak self] in
                     let vc = WLMarkdownVC(
                         title: L10n.termsOfUse.uppercaseFirst,
                         bundledMarkdownTxtFileName: "Terms_of_service"
                     )
                     self?.present(vc, interactiveDismissalType: .standard, completion: nil)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             viewModel.showPhotoLibraryUnavailableSignal
-                .emit(onNext: { [weak self] in
+                .sink { [weak self] in
                     guard let self = self else { return }
                     PhotoLibraryAlertPresenter().present(on: self)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             viewModel.errorSignal
-                .emit(onNext: { [weak self] error in
+                .sink { [weak self] error in
                     self?.showAlert(title: L10n.error.uppercaseFirst, message: error)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
     }
 }

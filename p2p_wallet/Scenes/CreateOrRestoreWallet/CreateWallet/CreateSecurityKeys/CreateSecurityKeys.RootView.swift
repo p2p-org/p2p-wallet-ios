@@ -80,8 +80,6 @@ extension CreateSecurityKeys {
 
         func bind() {
             viewModel.phrasesDriver
-                .publisher
-                .replaceError(with: [])
                 .assign(to: \.keys, on: keysView)
                 .store(in: &subscriptions)
 
