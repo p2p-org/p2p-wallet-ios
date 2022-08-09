@@ -5,18 +5,17 @@
 //  Created by Andrew Vasiliev on 11.11.2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol EnterSeedViewModelType: AnyObject {
     var maxWordsCount: Int { get }
-    var navigationDriver: Driver<EnterSeed.NavigatableScene?> { get }
-    var errorDriver: Driver<String?> { get }
-    var seedTextSubject: BehaviorRelay<String?> { get }
-    var seedTextDriver: Driver<String?> { get }
-    var mainButtonContentDriver: Driver<EnterSeed.MainButtonContent> { get }
+    var navigationPublisher: AnyPublisher<EnterSeed.NavigatableScene?, Never> { get }
+    var errorPublisher: AnyPublisher<String?, Never> { get }
+    var seedTextSubject: CurrentValueSubject<String?, Never> { get }
+    var seedTextPublisher: AnyPublisher<String?, Never> { get }
+    var mainButtonContentPublisher: AnyPublisher<EnterSeed.MainButtonContent, Never> { get }
 
     func showInfo()
     func goForth()
@@ -28,20 +27,21 @@ private enum Constants {
 }
 
 extension EnterSeed {
-    final class ViewModel {
+    @MainActor
+    final class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let errorSubject = BehaviorRelay<String?>(value: nil)
-        private let mainButtonContentSubject = BehaviorRelay<EnterSeed.MainButtonContent>(value: .invalid(.empty))
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var error: String?
+        @Published private var mainButtonContent = EnterSeed.MainButtonContent.invalid(.empty)
 
-        let seedTextSubject = BehaviorRelay<String?>(value: nil)
+        let seedTextSubject = CurrentValueSubject<String?, Never>(nil)
         let maxWordsCount = Constants.maxWordsCount
 
         init() {
@@ -59,16 +59,12 @@ extension EnterSeed {
                         ? .invalid(.empty)
                         : .valid
                 }
-                .bind { [weak self] in
-                    self?.mainButtonContentSubject.accept($0)
-                }
-                .disposed(by: disposeBag)
+                .assign(to: \.mainButtonContent, on: self)
+                .store(in: &subscriptions)
 
             seedTextSubject
-                .bind { [weak self] _ in
-                    self?.errorSubject.accept(nil)
-                }
-                .disposed(by: disposeBag)
+                .assign(to: \.error, on: self)
+                .store(in: &subscriptions)
         }
 
         private func phraseError(in words: [String]) -> String? {
@@ -95,16 +91,16 @@ extension EnterSeed {
 }
 
 extension EnterSeed.ViewModel: EnterSeedViewModelType {
-    var navigationDriver: Driver<EnterSeed.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<EnterSeed.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
-    var errorDriver: Driver<String?> {
-        errorSubject.asDriver()
+    var errorPublisher: AnyPublisher<String?, Never> {
+        $error.eraseToAnyPublisher()
     }
 
-    var mainButtonContentDriver: Driver<EnterSeed.MainButtonContent> {
-        mainButtonContentSubject.asDriver()
+    var mainButtonContentPublisher: AnyPublisher<EnterSeed.MainButtonContent, Never> {
+        $mainButtonContent.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -113,22 +109,23 @@ extension EnterSeed.ViewModel: EnterSeedViewModelType {
         let words = getSeedWords()
 
         if let error = phraseError(in: words) {
-            mainButtonContentSubject.accept(.invalid(.error))
-            return errorSubject.accept(error)
+            mainButtonContent = .invalid(.error)
+            self.error = error
+            return
         }
 
-        navigationSubject.accept(.success(words: words))
+        navigatableScene = .success(words: words)
     }
 
     func showInfo() {
-        navigationSubject.accept(.info)
+        navigatableScene = .info
     }
 
     func showTermsAndConditions() {
-        navigationSubject.accept(.termsAndConditions)
+        navigatableScene = .termsAndConditions
     }
 
-    var seedTextDriver: Driver<String?> {
-        seedTextSubject.asDriver()
+    var seedTextPublisher: AnyPublisher<String?, Never> {
+        seedTextSubject.eraseToAnyPublisher()
     }
 }

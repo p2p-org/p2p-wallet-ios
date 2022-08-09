@@ -5,6 +5,7 @@
 //  Created by Andrew Vasiliev on 11.11.2021.
 //
 
+import Combine
 import Resolver
 import UIKit
 
@@ -14,6 +15,7 @@ extension EnterSeed {
 
         private let viewModel: EnterSeedViewModelType
         private let accountRestorationHandler: AccountRestorationHandler
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -44,11 +46,11 @@ extension EnterSeed {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in
+            viewModel.navigationPublisher
+                .sink { [weak self] in
                     self?.navigate(to: $0)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         override func viewDidAppear(_: Bool) {
