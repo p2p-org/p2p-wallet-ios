@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import FeeRelayerSwift
 import Foundation
 import UIKit
@@ -15,6 +16,7 @@ extension ProcessTransaction.Status {
         // MARK: - Dependencies
 
         private let viewModel: ProcessTransactionViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Handlers
 
@@ -57,8 +59,9 @@ extension ProcessTransaction.Status {
                                 .setup { progressView in
                                     viewModel.pendingTransactionDriver
                                         .map(\.status)
-                                        .drive(progressView.rx.transactionStatus)
-                                        .disposed(by: disposeBag)
+                                        .map { Optional($0) }
+                                        .assign(to: \.transactionStatus, on: progressView)
+                                        .store(in: &subscriptions)
                                 }
                                 .centered(.vertical)
                         }
@@ -79,8 +82,8 @@ extension ProcessTransaction.Status {
                                                 return .squircleTransactionError
                                             }
                                         }
-                                        .drive(imageView.rx.image)
-                                        .disposed(by: disposeBag)
+                                        .assign(to: \.image, on: imageView)
+                                        .store(in: &subscriptions)
                                 }
                                 .centered(.horizontal)
                         }
@@ -107,16 +110,16 @@ extension ProcessTransaction.Status {
                                                 $0
                                             )
                                     }
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.text, on: label)
+                                    .store(in: &subscriptions)
                             }
                     }
                     .padding(.init(top: 0, left: 18, bottom: 14, right: 18))
                     .setup { view in
                         viewModel.pendingTransactionDriver
                             .map { $0.status.error as? FeeRelayerError != .topUpSuccessButTransactionThrows }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                     // Transaction ID
@@ -137,8 +140,8 @@ extension ProcessTransaction.Status {
                                                     .truncatingMiddle(numOfSymbolsRevealed: 9,
                                                                       numOfSymbolsRevealedInSuffix: 9)
                                             }
-                                            .drive(label.rx.text)
-                                            .disposed(by: disposeBag)
+                                            .assign(to: \.text, on: label)
+                                            .store(in: &subscriptions)
                                     }
                                 UIImageView(
                                     width: 16,
@@ -163,8 +166,8 @@ extension ProcessTransaction.Status {
                     .setup { view in
                         viewModel.pendingTransactionDriver
                             .map { $0.transactionId == nil }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                     // Buttons
@@ -187,17 +190,17 @@ extension ProcessTransaction.Status {
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
 
             viewModel.pendingTransactionDriver
                 .map { $0.transactionId == nil }
-                .drive(onNext: { [weak self] _ in
+                .sink { [weak self] _ in
                     UIView.animate(withDuration: 0.3) {
                         self?.updatePresentationLayout()
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         private func navigate(to scene: ProcessTransaction.NavigatableScene?) {

@@ -5,14 +5,13 @@
 //  Created by Chung Tran on 06/03/2022.
 //
 
+import Combine
 import FeeRelayerSwift
 import Foundation
-import RxCocoa
-import RxSwift
 
 extension ProcessTransaction.Status {
     final class HeaderLabel: UILabel {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: ProcessTransactionViewModelType
 
         init(viewModel: ProcessTransactionViewModelType) {
@@ -68,8 +67,8 @@ extension ProcessTransaction.Status {
                         }
                     }
                 }
-                .drive(rx.text)
-                .disposed(by: disposeBag)
+                .assign(to: \.text, on: self)
+                .store(in: &subscriptions)
         }
     }
 }

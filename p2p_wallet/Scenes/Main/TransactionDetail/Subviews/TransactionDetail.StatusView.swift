@@ -6,16 +6,15 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import TransactionParser
 import UIKit
 
 extension TransactionDetail {
     final class StatusView: UIStackView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let dotView = UIView(width: 8, height: 8, backgroundColor: .alertOrange, cornerRadius: 2)
         private let statusLabel = UILabel(
             text: L10n.pending.uppercaseFirst,
@@ -43,21 +42,21 @@ extension TransactionDetail {
             }
         }
 
-        func driven(with driver: Driver<ParsedTransaction?>) -> TransactionDetail.StatusView {
+        func driven(with driver: AnyPublisher<ParsedTransaction?, Never>) -> TransactionDetail.StatusView {
             driver
                 .map { $0?.status.label }
-                .drive(statusLabel.rx.text)
-                .disposed(by: disposeBag)
+                .assign(to: \.text, on: statusLabel)
+                .store(in: &subscriptions)
 
             driver
                 .map { $0?.status.indicatorColor }
-                .drive(dotView.rx.backgroundColor)
-                .disposed(by: disposeBag)
+                .assign(to: \.backgroundColor, on: dotView)
+                .store(in: &subscriptions)
 
             driver
                 .map { $0?.blockTime?.string(withFormat: "MMMM dd, yyyy @ HH:mm a") }
-                .drive(dateLabel.rx.text)
-                .disposed(by: disposeBag)
+                .assign(to: \.text, on: dateLabel)
+                .store(in: &subscriptions)
 
             return self
         }

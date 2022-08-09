@@ -6,8 +6,6 @@
 //
 
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 
@@ -20,6 +18,27 @@ extension ProcessTransaction.Status {
             didSet {
                 determinedProgressView.isHidden = isIndetermine
                 indeterminedProgressView.isHidden = !isIndetermine
+            }
+        }
+
+        var transactionStatus: TransactionStatus? {
+            didSet {
+                var isIndetermine = false
+
+                var progressTintColor = UIColor.h5887ff
+
+                switch transactionStatus {
+                case .sending:
+                    isIndetermine = true
+                case .error:
+                    progressTintColor = .alert
+                default:
+                    break
+                }
+
+                self.isIndetermine = isIndetermine
+                determinedProgressView.progressTintColor = progressTintColor
+                determinedProgressView.progress = transactionStatus?.progress ?? 0
             }
         }
 
@@ -82,29 +101,6 @@ extension ProcessTransaction.Status {
             animation.repeatCount = .infinity
             animation.duration = 3
             indicatorLayer.add(animation, forKey: "x")
-        }
-    }
-}
-
-extension Reactive where Base == ProcessTransaction.Status.ProgressView {
-    var transactionStatus: Binder<TransactionStatus> {
-        Binder(base) { view, status in
-            var isIndetermine = false
-
-            var progressTintColor = UIColor.h5887ff
-
-            switch status {
-            case .sending:
-                isIndetermine = true
-            case .error:
-                progressTintColor = .alert
-            default:
-                break
-            }
-
-            view.isIndetermine = isIndetermine
-            view.determinedProgressView.progressTintColor = progressTintColor
-            view.determinedProgressView.progress = status.progress
         }
     }
 }
