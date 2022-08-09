@@ -13,7 +13,7 @@ struct TokenCellView: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            TokenImageView(imageUrl: model.imageUrl, wrappedImage: model.wrappedImage)
+            TokenImageView(imageURL: model.imageUrl, wrappedImage: model.wrappedImage)
             VStack(spacing: 4) {
                 Text(model.title)
                     .font(uiFont: .font(of: .text2))
