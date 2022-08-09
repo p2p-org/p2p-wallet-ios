@@ -5,22 +5,21 @@
 //  Created by Chung Tran on 08/03/2022.
 //
 
+import Combine
 import Foundation
 import NameService
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import TransactionParser
 
 protocol TransactionDetailViewModelType: AnyObject {
-    var navigationDriver: Driver<TransactionDetail.NavigatableScene?> { get }
-    var parsedTransactionDriver: Driver<ParsedTransaction?> { get }
-    var navigationTitle: Driver<String> { get }
-    var senderNameDriver: Driver<String?> { get }
-    var receiverNameDriver: Driver<String?> { get }
-    var isSummaryAvailableDriver: Driver<Bool> { get }
-    var isFromToSectionAvailableDriver: Driver<Bool> { get }
+    var navigationDriver: AnyPublisher<TransactionDetail.NavigatableScene?, Never> { get }
+    var parsedTransactionDriver: AnyPublisher<ParsedTransaction?, Never> { get }
+    var navigationTitle: AnyPublisher<String, Never> { get }
+    var senderNameDriver: AnyPublisher<String?, Never> { get }
+    var receiverNameDriver: AnyPublisher<String?, Never> { get }
+    var isSummaryAvailableDriver: AnyPublisher<Bool, Never> { get }
+    var isFromToSectionAvailableDriver: AnyPublisher<Bool, Never> { get }
 
     func getTransactionId() -> String?
     func getPayingFeeWallet() -> Wallet?
@@ -35,7 +34,8 @@ protocol TransactionDetailViewModelType: AnyObject {
 }
 
 extension TransactionDetail {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var transactionHandler: TransactionHandlerType
@@ -47,44 +47,42 @@ extension TransactionDetail {
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let observingTransactionIndex: TransactionHandlerType.TransactionIndex?
         private var payingFeeWallet: Wallet?
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let parsedTransationSubject: BehaviorRelay<ParsedTransaction?>
-        private let senderNameSubject = BehaviorRelay<String?>(value: nil)
-        private let receiverNameSubject = BehaviorRelay<String?>(value: nil)
+        @Published private var navigationSubject: NavigatableScene?
+        @Published private var parsedTransationSubject: ParsedTransaction?
+        @Published private var senderNameSubject: String?
+        @Published private var receiverNameSubject: String?
 
         // MARK: - Initializers
 
         init(parsedTransaction: ParsedTransaction) {
             observingTransactionIndex = nil
-            parsedTransationSubject = .init(value: parsedTransaction)
+            parsedTransationSubject = parsedTransaction
 
             mapNames(parsedTransaction: parsedTransaction)
         }
 
         init(observingTransactionIndex: TransactionHandlerType.TransactionIndex) {
             self.observingTransactionIndex = observingTransactionIndex
-            parsedTransationSubject = .init(value: nil)
 
             bind()
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         func bind() {
             transactionHandler
                 .observeTransaction(transactionIndex: observingTransactionIndex!)
-                .observe(on: MainScheduler.instance)
-                .do(onNext: { [weak self] pendingTransaction in
-                    guard let self = self else { return }
-                    self.payingFeeWallet = pendingTransaction?.rawTransaction.payingWallet
+                .receive(on: RunLoop.main)
+                .handleEvents(receiveOutput: { [weak self] pendingTransaction in
+                    self?.payingFeeWallet = pendingTransaction?.rawTransaction.payingWallet
                 })
                 .map { [weak self] pendingTransaction -> ParsedTransaction? in
                     guard let self = self else { return nil }
@@ -93,12 +91,12 @@ extension TransactionDetail {
                         authority: self.walletsRepository.nativeWallet?.pubkey
                     )
                 }
-                .catchAndReturn(nil)
-                .do(onNext: { [weak self] parsedTransaction in
+                .replaceError(with: nil)
+                .handleEvents(receiveOutput: { [weak self] parsedTransaction in
                     self?.mapNames(parsedTransaction: parsedTransaction)
                 })
-                .bind(to: parsedTransationSubject)
-                .disposed(by: disposeBag)
+                .assign(to: \.parsedTransationSubject, on: self)
+                .store(in: &subscriptions)
         }
 
         func mapNames(parsedTransaction: ParsedTransaction?) {
@@ -120,23 +118,23 @@ extension TransactionDetail {
                 async let fromName: String? = fromAddress != nil ? nameService.getName(fromAddress!) : nil
                 async let toName: String? = toAddress != nil ? nameService.getName(toAddress!) : nil
 
-                await senderNameSubject.accept(try? fromName?.withNameServiceDomain())
-                await receiverNameSubject.accept(try? toName?.withNameServiceDomain())
+                await senderNameSubject = try? fromName?.withNameServiceDomain()
+                await receiverNameSubject = try? toName?.withNameServiceDomain()
             }
         }
     }
 }
 
 extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
-    var navigationDriver: Driver<TransactionDetail.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationDriver: AnyPublisher<TransactionDetail.NavigatableScene?, Never> {
+        $navigationSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var parsedTransactionDriver: Driver<ParsedTransaction?> {
-        parsedTransationSubject.asDriver()
+    var parsedTransactionDriver: AnyPublisher<ParsedTransaction?, Never> {
+        $parsedTransationSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var navigationTitle: Driver<String> {
+    var navigationTitle: AnyPublisher<String, Never> {
         parsedTransactionDriver
             .map { parsedTransaction -> String in
                 var text = L10n.transaction
@@ -178,19 +176,19 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
                 }
                 return text
             }
+            .eraseToAnyPublisher()
     }
 
-    var senderNameDriver: Driver<String?> {
-        senderNameSubject.asDriver()
+    var senderNameDriver: AnyPublisher<String?, Never> {
+        $senderNameSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var receiverNameDriver: Driver<String?> {
-        receiverNameSubject.asDriver()
+    var receiverNameDriver: AnyPublisher<String?, Never> {
+        $receiverNameSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var isSummaryAvailableDriver: Driver<Bool> {
-        parsedTransationSubject
-            .asDriver()
+    var isSummaryAvailableDriver: AnyPublisher<Bool, Never> {
+        $parsedTransationSubject
             .map { parsedTransaction in
                 switch parsedTransaction?.info {
                 case _ as CreateAccountInfo:
@@ -207,14 +205,16 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
                     return false
                 }
             }
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
-    var isFromToSectionAvailableDriver: Driver<Bool> {
+    var isFromToSectionAvailableDriver: AnyPublisher<Bool, Never> {
         isSummaryAvailableDriver
     }
 
     func getTransactionId() -> String? {
-        parsedTransationSubject.value?.signature
+        parsedTransationSubject?.signature
     }
 
     func getPayingFeeWallet() -> Wallet? {
@@ -223,7 +223,7 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func getCreatedAccountSymbol() -> String? {
         let createdWallet: String?
-        switch parsedTransationSubject.value?.info {
+        switch parsedTransationSubject?.info {
         case let transaction as TransferInfo:
             createdWallet = transaction.destination?.token.symbol
         case let transaction as SwapInfo:
@@ -248,18 +248,18 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     // MARK: - Actions
 
     func navigate(to scene: TransactionDetail.NavigatableScene) {
-        navigationSubject.accept(scene)
+        navigationSubject = scene
     }
 
     func copyTransactionIdToClipboard() {
-        guard let transactionId = parsedTransationSubject.value?.signature else { return }
+        guard let transactionId = parsedTransationSubject?.signature else { return }
         clipboardManager.copyToClipboard(transactionId)
         notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
     }
 
     func copySourceAddressToClipboard() {
         let sourceAddress: String?
-        switch parsedTransationSubject.value?.info {
+        switch parsedTransationSubject?.info {
         case let transaction as TransferInfo:
             sourceAddress = transaction.source?.pubkey
         case let transaction as SwapInfo:
@@ -276,7 +276,7 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
 
     func copyDestinationAddressToClipboard() {
         let destinationAddress: String?
-        switch parsedTransationSubject.value?.info {
+        switch parsedTransationSubject?.info {
         case let transaction as TransferInfo:
             destinationAddress = transaction.destination?.pubkey
         case let transaction as SwapInfo:

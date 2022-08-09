@@ -5,14 +5,13 @@
 //  Created by Chung Tran on 06/03/2022.
 //
 
+import Combine
 import FeeRelayerSwift
 import Foundation
-import RxCocoa
-import RxSwift
 
 extension ProcessTransaction.Status {
     final class HeaderLabel: UILabel {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: ProcessTransactionViewModelType
 
         init(viewModel: ProcessTransactionViewModelType) {
@@ -45,9 +44,11 @@ extension ProcessTransaction.Status {
                     case let .error(error):
                         switch error {
                         case let error
-                            where error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit:
+                            where error == L10n.swapInstructionExceedsDesiredSlippageLimit:
                             return L10n.lowSlippageCausedTheSwapToFail
-                        case let error where error as? FeeRelayerError == .topUpSuccessButTransactionThrows:
+                        case let error
+                            where error?.localized() == FeeRelayerError.topUpSuccessButTransactionThrows.message
+                            .localized():
                             return L10n.theTransactionFailedDueToABlockchainError
                         default:
                             return L10n.theTransactionHasBeenRejected
@@ -66,8 +67,8 @@ extension ProcessTransaction.Status {
                         }
                     }
                 }
-                .drive(rx.text)
-                .disposed(by: disposeBag)
+                .assign(to: \.text, on: self)
+                .store(in: &subscriptions)
         }
     }
 }

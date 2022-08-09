@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import UIKit
 
@@ -13,6 +14,7 @@ extension ProcessTransaction {
     final class ViewController: BaseVC {
         // MARK: - Properties
 
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: ProcessTransactionViewModelType
         private var detailViewController: TransactionDetail.ViewController!
         private var statusViewController: Status.ViewController!
@@ -33,7 +35,9 @@ extension ProcessTransaction {
 
         override func setUp() {
             super.setUp()
-            viewModel.sendAndObserveTransaction()
+            Task {
+                try? await viewModel.sendAndObserveTransaction()
+            }
             view.onTap { [weak view] in
                 view?.endEditing(true)
             }
@@ -45,19 +49,19 @@ extension ProcessTransaction {
             viewModel.observingTransactionIndexDriver
                 .filter { $0 != nil }
                 .map { $0! }
-                .distinctUntilChanged()
-                .drive(onNext: { [weak self] index in
+                .removeDuplicates()
+                .sink { [weak self] index in
                     guard let self = self else { return }
                     self.detailViewController?.removeFromParent()
                     let vm = TransactionDetail.ViewModel(observingTransactionIndex: index)
                     self.detailViewController = TransactionDetail.ViewController(viewModel: vm)
                     self.add(child: self.detailViewController)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         override func viewDidAppear(_ animated: Bool) {

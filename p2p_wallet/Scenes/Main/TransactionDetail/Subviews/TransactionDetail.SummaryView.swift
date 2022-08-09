@@ -6,16 +6,15 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import TransactionParser
 import UIKit
 
 extension TransactionDetail {
     final class SummaryView: UIStackView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: TransactionDetailViewModelType
 
         init(viewModel: TransactionDetailViewModelType) {
@@ -26,7 +25,7 @@ extension TransactionDetail {
             let leftView = SubView()
                 .setup { view in
                     viewModel.parsedTransactionDriver
-                        .drive(onNext: { [weak view] parsedTransaction in
+                        .sink { [weak view] parsedTransaction in
                             switch parsedTransaction?.info {
                             case let transaction as TransferInfo:
                                 view?.logoImageView.setUp(wallet: transaction.source)
@@ -49,16 +48,16 @@ extension TransactionDetail {
                             default:
                                 break
                             }
-                        })
-                        .disposed(by: disposeBag)
+                        }
+                        .store(in: &subscriptions)
                 }
             let rightView = SubView()
                 .setup { view in
-                    Driver.combineLatest(
+                    Publishers.CombineLatest(
                         viewModel.parsedTransactionDriver,
                         viewModel.receiverNameDriver
                     )
-                        .drive(onNext: { [weak view] parsedTransaction, receiverName in
+                        .sink { [weak view] parsedTransaction, receiverName in
                             switch parsedTransaction?.info {
                             case let transaction as TransferInfo:
                                 view?.logoImageView.setUp(token: nil, placeholder: .squircleWallet)
@@ -77,8 +76,8 @@ extension TransactionDetail {
                             default:
                                 break
                             }
-                        })
-                        .disposed(by: disposeBag)
+                        }
+                        .store(in: &subscriptions)
                 }
 
             addArrangedSubviews {

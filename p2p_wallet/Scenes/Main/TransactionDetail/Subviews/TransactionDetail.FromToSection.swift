@@ -5,20 +5,20 @@
 //  Created by Chung Tran on 09/03/2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import TransactionParser
 import UIKit
 
 extension TransactionDetail {
     final class FromToSection: UIStackView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: TransactionDetailViewModelType
-        var isSwapDriver: Driver<Bool> {
+        var isSwapDriver: AnyPublisher<Bool, Never> {
             viewModel.parsedTransactionDriver
                 .map { $0?.info is SwapInfo }
+                .eraseToAnyPublisher()
         }
 
         init(viewModel: TransactionDetailViewModelType) {
@@ -35,8 +35,8 @@ extension TransactionDetail {
                         .setup { fromTitleLabel in
                             isSwapDriver
                                 .map { $0 ? L10n.from : L10n.senderSAddress }
-                                .drive(fromTitleLabel.rx.text)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.text, on: fromTitleLabel)
+                                .store(in: &subscriptions)
                         }
 
                     BEVStack(spacing: 8) {
@@ -54,18 +54,18 @@ extension TransactionDetail {
                                             return nil
                                         }
                                     }
-                                    .drive(fromAddressLabel.rx.text)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.text, on: fromAddressLabel)
+                                    .store(in: &subscriptions)
                             }
                         nameLabel()
                             .setup { fromNameLabel in
                                 isSwapDriver
-                                    .drive(fromNameLabel.rx.isHidden)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.isHidden, on: fromNameLabel)
+                                    .store(in: &subscriptions)
 
                                 viewModel.senderNameDriver
-                                    .drive(fromNameLabel.rx.text)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.text, on: fromNameLabel)
+                                    .store(in: &subscriptions)
                             }
                     }
                     .onLongTap { [unowned self] gesture in
@@ -83,8 +83,8 @@ extension TransactionDetail {
                         .setup { toTitleLabel in
                             isSwapDriver
                                 .map { $0 ? L10n.to : L10n.recipientSAddress }
-                                .drive(toTitleLabel.rx.text)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.text, on: toTitleLabel)
+                                .store(in: &subscriptions)
                         }
 
                     BEVStack(spacing: 8) {
@@ -102,18 +102,18 @@ extension TransactionDetail {
                                             return nil
                                         }
                                     }
-                                    .drive(toAddressLabel.rx.text)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.text, on: toAddressLabel)
+                                    .store(in: &subscriptions)
                             }
                         nameLabel()
                             .setup { toNameLabel in
                                 isSwapDriver
-                                    .drive(toNameLabel.rx.isHidden)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.isHidden, on: toNameLabel)
+                                    .store(in: &subscriptions)
 
                                 viewModel.receiverNameDriver
-                                    .drive(toNameLabel.rx.text)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.text, on: toNameLabel)
+                                    .store(in: &subscriptions)
                             }
                     }
                     .onLongTap { [unowned self] gesture in

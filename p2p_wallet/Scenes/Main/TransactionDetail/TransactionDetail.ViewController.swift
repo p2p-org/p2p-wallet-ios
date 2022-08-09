@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import TransactionParser
 import UIKit
@@ -15,6 +16,7 @@ extension TransactionDetail {
         // MARK: - Dependencies
 
         private let viewModel: TransactionDetailViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Initializer
 
@@ -44,8 +46,8 @@ extension TransactionDetail {
                     .setup { view in
                         viewModel.isSummaryAvailableDriver
                             .map { !$0 }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                     // Tap and hold to copy
@@ -75,8 +77,8 @@ extension TransactionDetail {
                                                     .truncatingMiddle(numOfSymbolsRevealed: 9,
                                                                       numOfSymbolsRevealedInSuffix: 9)
                                             }
-                                            .drive(label.rx.text)
-                                            .disposed(by: disposeBag)
+                                            .assign(to: \.text, on: label)
+                                            .store(in: &subscriptions)
                                     }
                                 UIImageView(
                                     width: 16,
@@ -107,8 +109,8 @@ extension TransactionDetail {
                         .setup { section in
                             viewModel.isFromToSectionAvailableDriver
                                 .map { !$0 }
-                                .drive(section.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: section)
+                                .store(in: &subscriptions)
                         }
 
                     // Amount section
@@ -125,8 +127,8 @@ extension TransactionDetail {
                             .setup { label in
                                 viewModel.parsedTransactionDriver
                                     .map { "#\($0?.slot ?? 0)" }
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.text, on: label)
+                                    .store(in: &subscriptions)
                             }
                     }
                 }
@@ -137,15 +139,15 @@ extension TransactionDetail {
             super.bind()
 
             viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
             viewModel.navigationTitle
-                .drive(onNext: { [weak self] title in
+                .sink { [weak self] title in
                     DispatchQueue.main.async { [weak self] in
                         self?.navigationController?.navigationBar.topItem?.title = title
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

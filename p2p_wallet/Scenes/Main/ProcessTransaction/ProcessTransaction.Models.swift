@@ -6,14 +6,12 @@
 //
 
 import Foundation
-import RxConcurrency
-import RxSwift
 import SolanaSwift
 
 // MARK: - Transaction type
 
 protocol RawTransactionType {
-    func createRequest() -> Single<String>
+    func createRequest() async throws -> String
     var mainDescription: String { get }
     var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? { get }
 }
@@ -58,14 +56,14 @@ extension ProcessTransaction {
                 estimatedAmount.toString(maximumFractionDigits: 9) + " " + destinationWallet.token.symbol
         }
 
-        func createRequest() -> Single<String> {
+        func createRequest() async throws -> String {
             // check if payingWallet has enough balance to cover fee
             if let fees = fees.networkFees,
                let payingWallet = payingWallet,
                let currentAmount = payingWallet.lamports,
                fees.total > currentAmount
             {
-                return .error(SolanaError.other(
+                throw SolanaError.other(
                     L10n.yourAccountDoesNotHaveEnoughToCoverFees(payingWallet.token.symbol)
                         + ". "
                         + L10n
@@ -74,22 +72,20 @@ extension ProcessTransaction {
                         )
                         + ". "
                         + L10n.pleaseChooseAnotherTokenAndTryAgain
-                ))
+                )
             }
 
-            return Single.async {
-                try await swapService.swap(
-                    sourceAddress: sourceWallet.pubkey!,
-                    sourceTokenMint: sourceWallet.mintAddress,
-                    destinationAddress: destinationWallet.pubkey,
-                    destinationTokenMint: destinationWallet.mintAddress,
-                    payingTokenAddress: payingWallet?.pubkey,
-                    payingTokenMint: payingWallet?.mintAddress,
-                    poolsPair: poolsPair,
-                    amount: amount.toLamport(decimals: sourceWallet.token.decimals),
-                    slippage: slippage
-                )
-            }.map { $0.first ?? "" }
+            return try await swapService.swap(
+                sourceAddress: sourceWallet.pubkey!,
+                sourceTokenMint: sourceWallet.mintAddress,
+                destinationAddress: destinationWallet.pubkey,
+                destinationTokenMint: destinationWallet.mintAddress,
+                payingTokenAddress: payingWallet?.pubkey,
+                payingTokenMint: payingWallet?.mintAddress,
+                poolsPair: poolsPair,
+                amount: amount.toLamport(decimals: sourceWallet.token.decimals),
+                slippage: slippage
+            ).first ?? ""
         }
 
         var networkFees: (total: Lamports, token: Token)? {
@@ -110,7 +106,7 @@ extension ProcessTransaction {
             L10n.closeAccount(closingWallet.token.symbol)
         }
 
-        func createRequest() -> Single<String> {
+        func createRequest() async throws -> String {
             fatalError("Not implemented")
             // guard let pubkey = closingWallet.pubkey else {
             //     return .error(Error.unknown)
@@ -143,16 +139,14 @@ extension ProcessTransaction {
                 .symbol + " → " + (receiver.name ?? receiver.address.truncatingMiddle(numOfSymbolsRevealed: 4))
         }
 
-        func createRequest() -> Single<String> {
-            Single.async { () -> String in
-                try await sendService.send(
-                    from: sender,
-                    receiver: receiver.address,
-                    amount: amount.convertToBalance(decimals: sender.token.decimals),
-                    network: network,
-                    payingFeeWallet: payingFeeWallet
-                )
-            }
+        func createRequest() async throws -> String {
+            try await sendService.send(
+                from: sender,
+                receiver: receiver.address,
+                amount: amount.convertToBalance(decimals: sender.token.decimals),
+                network: network,
+                payingFeeWallet: payingFeeWallet
+            )
         }
 
         var networkFees: (total: SolanaSwift.Lamports, token: SolanaSwift.Token)? {

@@ -6,29 +6,29 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol ProcessTransactionViewModelType {
-    var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> { get }
-    var pendingTransactionDriver: Driver<PendingTransaction> { get }
-    var observingTransactionIndexDriver: Driver<Int?> { get }
+    var navigationDriver: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> { get }
+    var pendingTransactionDriver: AnyPublisher<PendingTransaction, Never> { get }
+    var observingTransactionIndexDriver: AnyPublisher<Int?, Never> { get }
 
     var isSwapping: Bool { get }
     var transactionID: String? { get }
 
     func getMainDescription() -> String
 
-    func sendAndObserveTransaction()
-    func handleErrorRetryOrMakeAnotherTransaction()
+    func sendAndObserveTransaction() async throws
+    func handleErrorRetryOrMakeAnotherTransaction() async throws
     func navigate(to scene: ProcessTransaction.NavigatableScene)
 }
 
 extension ProcessTransaction {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
@@ -36,40 +36,36 @@ extension ProcessTransaction {
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let rawTransaction: RawTransactionType
 
         // MARK: - Subjects
 
-        private let pendingTransactionSubject: BehaviorRelay<PendingTransaction>
-        private let observingTransactionIndexSubject = BehaviorRelay<Int?>(value: nil)
+        @Published private var pendingTransaction: PendingTransaction
+        @Published private var observingTransactionIndex: Int?
+        @Published private var navigatableScene: NavigatableScene?
 
         // MARK: - Initializer
 
         init(processingTransaction: RawTransactionType) {
             rawTransaction = processingTransaction
-            pendingTransactionSubject =
-                BehaviorRelay<PendingTransaction>(value: .init(transactionId: nil, sentAt: Date(),
-                                                               rawTransaction: processingTransaction, status: .sending))
+            pendingTransaction = .init(transactionId: nil, sentAt: Date(),
+                                       rawTransaction: processingTransaction, status: .sending)
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
-
-        // MARK: - Subject
-
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
     }
 }
 
 extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
-    var navigationDriver: Driver<ProcessTransaction.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationDriver: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> {
+        $navigatableScene.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var pendingTransactionDriver: Driver<PendingTransaction> {
-        pendingTransactionSubject.asDriver()
+    var pendingTransactionDriver: AnyPublisher<PendingTransaction, Never> {
+        $pendingTransaction.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     var isSwapping: Bool {
@@ -77,44 +73,44 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
     }
 
     var transactionID: String? {
-        pendingTransactionSubject.value.transactionId
+        pendingTransaction.transactionId
     }
 
     func getMainDescription() -> String {
         rawTransaction.mainDescription
     }
 
-    var observingTransactionIndexDriver: Driver<Int?> {
-        observingTransactionIndexSubject.asDriver()
+    var observingTransactionIndexDriver: AnyPublisher<Int?, Never> {
+        $observingTransactionIndex.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
-    func sendAndObserveTransaction() {
+    func sendAndObserveTransaction() async throws {
         // send transaction and get observation index
-        let index = transactionHandler.sendTransaction(rawTransaction)
-        observingTransactionIndexSubject.accept(index)
+        let index = try await transactionHandler.sendTransaction(rawTransaction)
+        observingTransactionIndex = index
 
         // send and catch error
         let unknownErrorInfo = PendingTransaction(
             transactionId: nil,
             sentAt: Date(),
             rawTransaction: rawTransaction,
-            status: .error(SolanaError.unknown)
+            status: .error(SolanaError.unknown.readableDescription)
         )
 
         // observe transaction based on transaction index
         transactionHandler.observeTransaction(transactionIndex: index)
             .map { $0 ?? unknownErrorInfo }
-            .catchAndReturn(unknownErrorInfo)
-            .bind(to: pendingTransactionSubject)
-            .disposed(by: disposeBag)
+            .replaceError(with: unknownErrorInfo)
+            .assign(to: \.pendingTransaction, on: self)
+            .store(in: &subscriptions)
     }
 
-    func handleErrorRetryOrMakeAnotherTransaction() {
-        if pendingTransactionSubject.value.status.error == nil {
+    func handleErrorRetryOrMakeAnotherTransaction() async throws {
+        if pendingTransaction.status.error == nil {
             // log
-            let status = pendingTransactionSubject.value.status.rawValue
+            let status = pendingTransaction.status.rawValue
             switch rawTransaction {
             case is ProcessTransaction.SendTransaction:
                 analyticsManager.log(event: .sendMakeAnotherTransactionClick(txStatus: status))
@@ -127,29 +123,29 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             navigate(to: .makeAnotherTransaction)
         } else {
             // log
-            if let error = pendingTransactionSubject.value.status.error {
+            if let error = pendingTransaction.status.error {
                 switch rawTransaction {
                 case is ProcessTransaction.SendTransaction:
-                    analyticsManager.log(event: .sendTryAgainClick(error: error.readableDescription))
+                    analyticsManager.log(event: .sendTryAgainClick(error: error))
                 case is ProcessTransaction.SwapTransaction:
-                    analyticsManager.log(event: .swapTryAgainClick(error: error.readableDescription))
+                    analyticsManager.log(event: .swapTryAgainClick(error: error))
                 default:
                     break
                 }
 
-                if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
-                    navigate(to: .specificErrorHandler(error))
+                if error == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                    navigate(to: .specificErrorHandler(SolanaError.other(error)))
                     return
                 }
             }
 
-            sendAndObserveTransaction()
+            try await sendAndObserveTransaction()
         }
     }
 
     func navigate(to scene: ProcessTransaction.NavigatableScene) {
         // log
-        let status = pendingTransactionSubject.value.status.rawValue
+        let status = pendingTransaction.status.rawValue
         switch scene {
         case .explorer:
             switch rawTransaction {
@@ -165,6 +161,6 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         }
 
         // navigate
-        navigationSubject.accept(scene)
+        navigatableScene = scene
     }
 }
