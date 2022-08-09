@@ -6,17 +6,16 @@
 //
 
 import AnalyticsManager
+import Combine
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
-    var showTermsAndConditionsSignal: Signal<Void> { get }
-    var showPhotoLibraryUnavailableSignal: Signal<Void> { get }
-    var phrasesDriver: Driver<[String]> { get }
-    var errorSignal: Signal<String> { get }
+    var showTermsAndConditionsSignal: AnyPublisher<Void, Never> { get }
+    var showPhotoLibraryUnavailableSignal: AnyPublisher<Void, Never> { get }
+    var phrasesDriver: AnyPublisher<[String], Never> { get }
+    var errorSignal: AnyPublisher<String, Never> { get }
 
     func copyToClipboard()
     func renewPhrases()
@@ -29,7 +28,8 @@ protocol CreateSecurityKeysViewModelType: AnyObject {
 }
 
 extension CreateSecurityKeys {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
@@ -42,10 +42,10 @@ extension CreateSecurityKeys {
 
         // MARK: - Subjects
 
-        private let showTermsAndConditionsSubject = PublishRelay<Void>()
-        private let showPhotoLibraryUnavailableSubject = PublishRelay<Void>()
-        private let phrasesSubject = BehaviorRelay<[String]>(value: [])
-        private let errorSubject = PublishRelay<String>()
+        private let showTermsAndConditionsSubject = PassthroughSubject<Void, Never>()
+        private let showPhotoLibraryUnavailableSubject = PassthroughSubject<Void, Never>()
+        @Published private var phrases = [String]()
+        private let errorSubject = PassthroughSubject<String, Never>()
 
         // MARK: - Initializer
 
@@ -60,26 +60,26 @@ extension CreateSecurityKeys {
 
         private func createPhrases() {
             let mnemonic = Mnemonic()
-            phrasesSubject.accept(mnemonic.phrase)
+            phrases = mnemonic.phrase
         }
     }
 }
 
 extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
-    var showPhotoLibraryUnavailableSignal: Signal<Void> {
-        showPhotoLibraryUnavailableSubject.asSignal()
+    var showPhotoLibraryUnavailableSignal: AnyPublisher<Void, Never> {
+        showPhotoLibraryUnavailableSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var showTermsAndConditionsSignal: Signal<Void> {
-        showTermsAndConditionsSubject.asSignal()
+    var showTermsAndConditionsSignal: AnyPublisher<Void, Never> {
+        showTermsAndConditionsSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var phrasesDriver: Driver<[String]> {
-        phrasesSubject.asDriver()
+    var phrasesDriver: AnyPublisher<[String], Never> {
+        $phrases.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var errorSignal: Signal<String> {
-        errorSubject.asSignal()
+    var errorSignal: AnyPublisher<String, Never> {
+        errorSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -91,7 +91,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
 
     func copyToClipboard() {
         analyticsManager.log(event: .backingUpCopying)
-        clipboardManager.copyToClipboard(phrasesSubject.value.joined(separator: " "))
+        clipboardManager.copyToClipboard(phrases.joined(separator: " "))
         notificationsService.showInAppNotification(.message(L10n.seedPhraseCopiedToClipboard))
     }
 
@@ -103,7 +103,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
             case let .failure(error):
                 switch error {
                 case .noAccess:
-                    self?.showPhotoLibraryUnavailableSubject.accept(())
+                    self?.showPhotoLibraryUnavailableSubject.send()
                 case .restrictedRightNow:
                     break
                 case let .unknown(error):
@@ -118,7 +118,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
             self._saveToIcloud()
         } onFailure: { error in
             guard let error = error else { return }
-            self.errorSubject.accept(error)
+            self.errorSubject.send(error)
         }
     }
 
@@ -126,7 +126,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         let result = iCloudStorage.saveToICloud(
             account: .init(
                 name: nil,
-                phrase: phrasesSubject.value.joined(separator: " "),
+                phrase: phrases.joined(separator: " "),
                 derivablePath: .default
             )
         )
@@ -134,20 +134,20 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         if result {
             analyticsManager.log(event: .backingUpIcloud)
             notificationsService.showInAppNotification(.done(L10n.savedToICloud))
-            createWalletViewModel.handlePhrases(phrasesSubject.value)
+            createWalletViewModel.handlePhrases(phrases)
         } else {
             analyticsManager.log(event: .backingUpError)
-            errorSubject.accept(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
+            errorSubject.send(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
         }
     }
 
     func termsAndConditions() {
-        showTermsAndConditionsSubject.accept(())
+        showTermsAndConditionsSubject.send()
     }
 
     func verifyPhrase() {
         analyticsManager.log(event: .backingUpManually)
-        createWalletViewModel.verifyPhrase(phrasesSubject.value)
+        createWalletViewModel.verifyPhrase(phrases)
     }
 
     @objc func back() {
