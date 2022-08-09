@@ -14,7 +14,7 @@ import TransactionParser
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
-    func sendTransaction(_ processingTransaction: RawTransactionType) -> TransactionIndex
+    func sendTransaction(_ processingTransaction: RawTransactionType) async throws -> TransactionIndex
     func observeTransaction(transactionIndex: TransactionIndex) -> AnyPublisher<PendingTransaction?, Never>
     func areSomeTransactionsInProgress() -> Bool
 
@@ -44,7 +44,7 @@ class TransactionHandler: ObservableObject, TransactionHandlerType {
 
     func sendTransaction(
         _ processingTransaction: RawTransactionType
-    ) -> TransactionIndex {
+    ) async throws -> TransactionIndex {
         // get index to return
         let txIndex = transactions.count
 
@@ -63,7 +63,7 @@ class TransactionHandler: ObservableObject, TransactionHandlerType {
         onNewTransactionPublish.send((trx, txIndex))
 
         // process
-        sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
+        try await sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
 
         return txIndex
     }
