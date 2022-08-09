@@ -5,14 +5,13 @@
 //  Created by Giang Long Tran on 11.11.21.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 
 protocol VerifySecurityKeysViewModelType {
-    var navigationDriver: Driver<VerifySecurityKeys.NavigatableScene?> { get }
-    var questionsDriver: Driver<[VerifySecurityKeys.Question]> { get }
-    var validationDriver: Driver<Bool> { get }
+    var navigationPublisher: AnyPublisher<VerifySecurityKeys.NavigatableScene?, Never> { get }
+    var questionsPublisher: AnyPublisher<[VerifySecurityKeys.Question], Never> { get }
+    var validationPublisher: AnyPublisher<Bool, Never> { get }
 
     func generate()
     func answer(question: VerifySecurityKeys.Question, answer: String)
@@ -25,7 +24,8 @@ protocol VerifySecurityKeysViewModelType {
 }
 
 extension VerifySecurityKeys {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         private let createWalletViewModel: CreateWalletViewModelType
@@ -36,8 +36,8 @@ extension VerifySecurityKeys {
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let questionsSubject = BehaviorRelay<[Question]>(value: [])
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var questions = [Question]()
 
         init(keyPhrase: [String], createWalletViewModel: CreateWalletViewModelType) {
             self.keyPhrase = keyPhrase
@@ -51,21 +51,23 @@ extension VerifySecurityKeys {
 }
 
 extension VerifySecurityKeys.ViewModel: VerifySecurityKeysViewModelType {
-    var validationDriver: Driver<Bool> {
-        questionsSubject.asDriver().map { questions -> Bool in
-            for question in questions where question.answer == nil {
-                return false
+    var validationPublisher: AnyPublisher<Bool, Never> {
+        $questions
+            .map { questions -> Bool in
+                for question in questions where question.answer == nil {
+                    return false
+                }
+                return true
             }
-            return true
-        }
+            .eraseToAnyPublisher()
     }
 
-    var navigationDriver: Driver<VerifySecurityKeys.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<VerifySecurityKeys.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
-    var questionsDriver: Driver<[VerifySecurityKeys.Question]> {
-        questionsSubject.asDriver()
+    var questionsPublisher: AnyPublisher<[VerifySecurityKeys.Question], Never> {
+        $questions.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -76,25 +78,25 @@ extension VerifySecurityKeys.ViewModel: VerifySecurityKeysViewModelType {
             return VerifySecurityKeys.Question(index: index, variants: answers.shuffled())
         }
 
-        questionsSubject.accept(questions)
+        self.questions = questions
     }
 
     func answer(question: VerifySecurityKeys.Question, answer: String) {
-        let index = questionsSubject.value.firstIndex(where: { $0 == question })
+        let index = questions.firstIndex(where: { $0 == question })
         guard let index = index else { return }
 
-        var questions = questionsSubject.value
+        var questions = questions
         questions[index] = question.give(answer: answer)
 
-        questionsSubject.accept(questions)
+        self.questions = questions
     }
 
     func verify() {
-        let questions = questionsSubject.value
+        let questions = questions
         for question in questions where question.answer == nil { return }
 
         for question in questions where question.answer != keyPhrase[question.index] {
-            navigationSubject.accept(.onMistake)
+            navigatableScene = .onMistake
             return
         }
 
@@ -107,7 +109,7 @@ extension VerifySecurityKeys.ViewModel: VerifySecurityKeysViewModelType {
 
     #if DEBUG
         func autoAnswerToAllQuestions() {
-            for question in questionsSubject.value {
+            for question in questions {
                 answer(question: question, answer: keyPhrase[question.index])
             }
         }

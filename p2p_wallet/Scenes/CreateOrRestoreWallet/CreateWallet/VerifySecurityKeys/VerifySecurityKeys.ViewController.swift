@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 11.11.21.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -13,6 +14,7 @@ extension VerifySecurityKeys {
         // MARK: - Dependencies
 
         private let viewModel: VerifySecurityKeysViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -31,9 +33,9 @@ extension VerifySecurityKeys {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

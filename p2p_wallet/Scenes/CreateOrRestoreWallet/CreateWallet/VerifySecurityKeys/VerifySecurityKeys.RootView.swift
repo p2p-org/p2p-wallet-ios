@@ -5,14 +5,14 @@
 //  Created by Giang Long Tran on 11.11.21.
 //
 
-import RxSwift
+import Combine
 import UIKit
 
 extension VerifySecurityKeys {
     class RootView: BEView {
         // MARK: - Constants
 
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -61,15 +61,24 @@ extension VerifySecurityKeys {
         }
 
         private func bind() {
-            viewModel.questionsDriver.drive(questionsView.rx.questions).disposed(by: disposeBag)
-            viewModel.validationDriver.drive(onNext: { [weak nextButton] in nextButton?.ready = $0 })
-                .disposed(by: disposeBag)
-            viewModel.validationDriver.map {
+            viewModel.questionsPublisher
+                .assign(to: \.questions, on: questionsView)
+                .store(in: &subscriptions)
+            viewModel.validationPublisher
+                .assign(to: \.ready, on: nextButton)
+                .store(in: &subscriptions)
+            viewModel.validationPublisher.map {
                 $0 == true ? L10n.saveContinue : L10n.chooseTheCorrectWords
-            }.drive(onNext: { [weak nextButton] in nextButton?.text = $0 }).disposed(by: disposeBag)
-            viewModel.validationDriver.map {
-                $0 == true ? UIImage.checkMark : nil
-            }.drive(onNext: { [weak nextButton] in nextButton?.image = $0 }).disposed(by: disposeBag)
+            }
+            .assign(to: \.text, on: nextButton)
+            .store(in: &subscriptions)
+
+            viewModel.validationPublisher
+                .map {
+                    $0 == true ? UIImage.checkMark : nil
+                }
+                .assign(to: \.image, on: nextButton)
+                .store(in: &subscriptions)
 
             nextButton.onTap(self, action: #selector(verify))
 
