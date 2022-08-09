@@ -5,8 +5,8 @@
 //  Created by Chung Tran on 23/11/2020.
 //
 
+import Combine
 import Foundation
-import RxSwift
 import SolanaSwift
 
 final class TokenAmountTextField: BEDecimalTextField {
@@ -16,7 +16,7 @@ final class TokenAmountTextField: BEDecimalTextField {
         text.map { $0.double ?? 0 } ?? 0
     }
 
-    private let disposeBag = DisposeBag()
+    private var subscriptions = [AnyCancellable]()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -29,18 +29,19 @@ final class TokenAmountTextField: BEDecimalTextField {
     }
 
     private func bind() {
-        rx.text
+        textPublisher
             .map { $0?.cryptoCurrencyFormat }
-            .subscribe(onNext: { [weak self] text in
+            .sink { [weak self] text in
                 self?.text = text
-            })
-            .disposed(by: disposeBag)
-        rx.controlEvent(.editingDidEnd)
-            .asObservable()
-            .subscribe(onNext: { [weak self] in
+            }
+            .store(in: &subscriptions)
+
+        NotificationCenter.default
+            .publisher(for: UITextField.textDidEndEditingNotification, object: self)
+            .sink { [weak self] _ in
                 self?.text = self?.text?.withoutLastZeros
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
     }
 
     func setUp(decimals: Decimals?) {
