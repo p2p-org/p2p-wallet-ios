@@ -10,71 +10,6 @@ import SolanaSwift
 import TransactionParser
 
 struct PendingTransaction {
-    enum TransactionStatus {
-        static let maxConfirmed = 31
-
-        case sending
-        case confirmed(_ numberOfConfirmed: Int)
-        case finalized
-        case error(_ error: Swift.Error)
-
-        var numberOfConfirmations: Int? {
-            switch self {
-            case let .confirmed(numberOfConfirmations):
-                return numberOfConfirmations
-            default:
-                return nil
-            }
-        }
-
-        var isProcessing: Bool {
-            switch self {
-            case .sending, .confirmed:
-                return true
-            default:
-                return false
-            }
-        }
-
-        var progress: Float {
-            switch self {
-            case .sending:
-                return 0
-            case var .confirmed(numberOfConfirmed):
-                // treat all number of confirmed as unfinalized
-                if numberOfConfirmed >= Self.maxConfirmed {
-                    numberOfConfirmed = Self.maxConfirmed - 1
-                }
-                // return
-                return Float(numberOfConfirmed) / Float(Self.maxConfirmed)
-            case .finalized, .error:
-                return 1
-            }
-        }
-
-        var error: Swift.Error? {
-            switch self {
-            case let .error(error):
-                return error
-            default:
-                return nil
-            }
-        }
-
-        public var rawValue: String {
-            switch self {
-            case .sending:
-                return "sending"
-            case let .confirmed(value):
-                return "processing(\(value))"
-            case .finalized:
-                return "finalized"
-            case .error:
-                return "error"
-            }
-        }
-    }
-
     var transactionId: String?
     let sentAt: Date
     var writtenToRepository: Bool = false
@@ -96,7 +31,10 @@ extension PendingTransaction {
         case .finalized:
             status = .confirmed
         case let .error(error):
-            status = .error(error.readableDescription)
+            // swiftlint:disable swiftgen_strings
+            let string = NSLocalizedString(error ?? "", comment: "")
+            // swiftlint:enable swiftgen_strings
+            status = .error(string)
         }
 
         let signature = transactionId

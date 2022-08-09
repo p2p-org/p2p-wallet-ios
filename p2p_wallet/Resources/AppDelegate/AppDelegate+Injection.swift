@@ -165,7 +165,7 @@ extension Resolver: ResolverRegistering {
             .scope(.session)
 
         // SwapTransactionAnalytics
-        register { SwapTransactionAnalytics(analyticsManager: resolve(), transactionHandler: resolve()) }
+        register { SwapTransactionAnalytics() }
             .scope(.session)
 
         // FeeRelayer
