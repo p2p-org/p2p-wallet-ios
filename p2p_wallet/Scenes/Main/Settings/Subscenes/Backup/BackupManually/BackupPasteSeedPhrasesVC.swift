@@ -5,8 +5,9 @@
 //  Created by Chung Tran on 28/06/2021.
 //
 
+import Combine
+import CombineCocoa
 import Foundation
-import RxSwift
 
 class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
     private let rightBarButton = UIBarButtonItem(
@@ -36,14 +37,15 @@ class BackupPasteSeedPhrasesVC: WLEnterPhrasesVC {
 
     override func bind() {
         super.bind()
-        Observable.combineLatest(
-            textView.rx.text
+        Publishers.CombineLatest(
+            textView.textPublisher
                 .map { [weak self] _ in self?.textView.getPhrases().isEmpty == false },
             error.map { $0 == nil }
         )
             .map { $0 && $1 }
-            .asDriver(onErrorJustReturn: false)
-            .drive(rightBarButton.rx.isEnabled)
-            .disposed(by: disposeBag)
+            .replaceError(with: false)
+            .receive(on: RunLoop.main)
+            .assign(to: \.isEnabled, on: rightBarButton)
+            .store(in: &subscriptions)
     }
 }

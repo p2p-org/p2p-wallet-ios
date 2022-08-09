@@ -6,13 +6,11 @@
 //
 
 import PureLayout
-import RxCocoa
-import RxSwift
 import UIKit
 
 final class ExpandableTextView: UIView {
     private let placeholderLabel = UILabel()
-    private let textView = UITextView()
+    let textView = UITextView()
     private let horizontalStackView = UIStackView(
         axis: .horizontal,
         spacing: 4,
@@ -30,10 +28,6 @@ final class ExpandableTextView: UIView {
     private let yMargin: CGFloat = 11
 
     private let changesFilter: TextChangesFilter?
-
-    var rxText: ControlProperty<String?> {
-        textView.rx.text
-    }
 
     private var didTouchView: (() -> Void)?
 

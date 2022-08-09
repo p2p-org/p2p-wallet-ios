@@ -153,19 +153,19 @@ extension EnterSeed {
                     self?.buttonPasteDidTouch()
                 }
                 .disposed(by: disposeBag)
-            textView.rxText
+            textView.textView.rx.text
                 .bind { [weak self] in
                     self?.viewModel.seedTextSubject.accept($0)
                 }
                 .disposed(by: disposeBag)
-            textView.rxText
+            textView.textView.rx.text
                 .scan("") { [weak viewModel] previous, new -> String? in
                     guard
                         let maxWordsCount = viewModel?.maxWordsCount,
                         let newWordsCount = new?.split(separator: " ").count else { return new }
                     return newWordsCount <= maxWordsCount ? new : previous
                 }
-                .bind(to: textView.rxText)
+                .bind(to: textView.textView.rx.text)
                 .disposed(by: disposeBag)
             viewModel.mainButtonContentDriver
                 .drive(onNext: { [weak self] in
