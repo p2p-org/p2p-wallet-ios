@@ -86,7 +86,9 @@ extension VerifySecurityKeys {
         }
 
         @objc func verify() {
-            viewModel.verify()
+            Task {
+                await viewModel.verify()
+            }
         }
     }
 }

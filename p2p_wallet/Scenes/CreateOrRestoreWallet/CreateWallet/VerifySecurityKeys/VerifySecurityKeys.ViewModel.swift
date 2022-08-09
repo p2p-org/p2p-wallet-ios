@@ -16,7 +16,7 @@ protocol VerifySecurityKeysViewModelType {
     func generate()
     func answer(question: VerifySecurityKeys.Question, answer: String)
     func back()
-    func verify()
+    func verify() async
 
     #if DEBUG
         func autoAnswerToAllQuestions()
@@ -91,7 +91,7 @@ extension VerifySecurityKeys.ViewModel: VerifySecurityKeysViewModelType {
         self.questions = questions
     }
 
-    func verify() {
+    func verify() async {
         let questions = questions
         for question in questions where question.answer == nil { return }
 
@@ -100,7 +100,7 @@ extension VerifySecurityKeys.ViewModel: VerifySecurityKeysViewModelType {
             return
         }
 
-        createWalletViewModel.handlePhrases(keyPhrase)
+        await createWalletViewModel.handlePhrases(keyPhrase)
     }
 
     func back() {

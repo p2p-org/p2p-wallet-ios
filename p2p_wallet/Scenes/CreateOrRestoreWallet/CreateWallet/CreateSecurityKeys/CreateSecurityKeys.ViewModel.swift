@@ -134,7 +134,9 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         if result {
             analyticsManager.log(event: .backingUpIcloud)
             notificationsService.showInAppNotification(.done(L10n.savedToICloud))
-            createWalletViewModel.handlePhrases(phrases)
+            Task {
+                await createWalletViewModel.handlePhrases(phrases)
+            }
         } else {
             analyticsManager.log(event: .backingUpError)
             errorSubject.send(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
