@@ -5,6 +5,7 @@
 //  Created by Andrew Vasiliev on 18.11.2021.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -13,6 +14,7 @@ extension EnterSeedInfo {
         // MARK: - Dependencies
 
         private let viewModel: EnterSeedInfoViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -29,8 +31,8 @@ extension EnterSeedInfo {
         override func bind() {
             super.bind()
             viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
