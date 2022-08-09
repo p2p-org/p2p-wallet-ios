@@ -12,6 +12,7 @@ import TransactionParser
 import UIKit
 
 extension History {
+    @MainActor
     final class Scene: BaseViewController {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var pricesService: PricesServiceType
@@ -19,7 +20,6 @@ extension History {
         let viewModel: SceneModel
         private var subscriptions = [AnyCancellable]()
 
-        @MainActor
         init(account: String?, symbol: String?, isEmbeded: Bool = true) {
             if let account = account, let symbol = symbol {
                 viewModel = SceneModel(accountSymbol: (account, symbol))
