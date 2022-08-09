@@ -248,7 +248,7 @@ extension SendToken {
                             let symbol = wallet?.token.symbol ?? ""
                             return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
                         }
-                        .drive(view.rx.text)
+                        .drive(onNext: { [weak view] in view?.text = $0 })
                         .disposed(by: disposeBag)
 
                     Driver.combineLatest([

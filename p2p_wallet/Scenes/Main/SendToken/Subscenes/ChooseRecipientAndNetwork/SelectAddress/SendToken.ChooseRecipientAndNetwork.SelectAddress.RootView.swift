@@ -276,7 +276,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
             viewModel.isValidDriver
                 .map { $0 ? UIImage.buttonCheckSmall : nil }
-                .drive(actionButton.rx.image)
+                .drive(onNext: { [weak actionButton] in actionButton?.image = $0 })
                 .disposed(by: disposeBag)
 
             Driver.combineLatest(
@@ -340,7 +340,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
                     return L10n.reviewAndConfirm
                 }
-                .drive(actionButton.rx.text)
+                .drive(onNext: { [weak actionButton] in actionButton?.text = $0 })
                 .disposed(by: disposeBag)
 
             viewModel.warningDriver
