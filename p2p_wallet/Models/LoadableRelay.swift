@@ -179,6 +179,7 @@ public extension LoadableRelay {
     func eraseToAnyPublisher() -> AnyPublisher<Loadable<T>, Never> {
         stateObservable.publisher.replaceError(with: .notRequested)
             .map { [weak self] in (value: self?.value, state: $0, reloadAction: { [weak self] in self?.reload() }) }
+            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 }
