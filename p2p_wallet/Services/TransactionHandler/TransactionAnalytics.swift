@@ -4,17 +4,15 @@
 
 import AnalyticsManager
 import Foundation
+import Resolver
 import RxSwift
 
 class SwapTransactionAnalytics {
     let disposeBag = DisposeBag()
-    let analyticsManager: AnalyticsManager
-    let transactionHandler: TransactionHandlerType
+    @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var transactionHandler: TransactionHandlerType
 
-    init(analyticsManager: AnalyticsManager, transactionHandler: TransactionHandlerType) {
-        self.analyticsManager = analyticsManager
-        self.transactionHandler = transactionHandler
-
+    init() {
         transactionHandler
             .onNewTransaction
             .subscribe(onNext: { [weak self] trx, index in
