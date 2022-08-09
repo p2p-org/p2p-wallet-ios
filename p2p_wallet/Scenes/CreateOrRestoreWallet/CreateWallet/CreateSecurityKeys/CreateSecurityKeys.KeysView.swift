@@ -2,9 +2,9 @@
 // Created by Giang Long Tran on 04.11.21.
 //
 
+import Combine
+import CombineCocoa
 import Foundation
-import RxCocoa
-import RxSwift
 
 extension CreateSecurityKeys {
     class KeysView: BEView {
@@ -62,6 +62,18 @@ extension CreateSecurityKeys {
             tintColor: .h5887ff
         )
 
+        var onCopy: AnyPublisher<Void, Never> {
+            copyButton.tapPublisher
+        }
+
+        var onSave: AnyPublisher<Void, Never> {
+            saveButton.tapPublisher
+        }
+
+        var onRefresh: AnyPublisher<Void, Never> {
+            refreshButton.tapPublisher
+        }
+
         override func commonInit() {
             super.commonInit()
             layout()
@@ -77,27 +89,5 @@ extension CreateSecurityKeys {
             content.autoPinEdgesToSuperviewEdges()
             content.heightAnchor.constraint(equalToConstant: 44).isActive = true
         }
-    }
-}
-
-extension Reactive where Base: CreateSecurityKeys.KeysView {
-    var keys: Binder<[String]> {
-        Binder(base) { view, keys in
-            view.keys = keys
-        }
-    }
-}
-
-extension Reactive where Base: CreateSecurityKeys.KeysViewActions {
-    var onCopy: ControlEvent<Void> {
-        base.copyButton.rx.tap
-    }
-
-    var onSave: ControlEvent<Void> {
-        base.saveButton.rx.tap
-    }
-
-    var onRefresh: ControlEvent<Void> {
-        base.refreshButton.rx.tap
     }
 }

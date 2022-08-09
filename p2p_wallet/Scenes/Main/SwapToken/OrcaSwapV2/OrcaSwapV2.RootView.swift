@@ -74,7 +74,7 @@ extension OrcaSwapV2 {
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver
-                .drive(showDetailsButton.rx.isOpened)
+                .drive(onNext: { [weak showDetailsButton] in showDetailsButton?.isOpened = $0 })
                 .disposed(by: disposeBag)
 
             viewModel.isShowingDetailsDriver

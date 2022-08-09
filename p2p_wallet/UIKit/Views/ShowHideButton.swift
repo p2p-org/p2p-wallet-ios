@@ -6,7 +6,6 @@
 //
 
 import PureLayout
-import RxSwift
 import UIKit
 
 final class ShowHideButton: UIButton {
@@ -15,6 +14,12 @@ final class ShowHideButton: UIButton {
 
     private let closedText: String
     private let openedText: String
+
+    var isOpened: Bool = false {
+        didSet {
+            setState(isShown: isShown)
+        }
+    }
 
     init(closedText: String, openedText: String) {
         self.closedText = closedText
@@ -47,13 +52,5 @@ final class ShowHideButton: UIButton {
 
         stackView.autoAlignAxis(toSuperviewAxis: .vertical)
         stackView.autoAlignAxis(toSuperviewAxis: .horizontal)
-    }
-}
-
-extension Reactive where Base == ShowHideButton {
-    var isOpened: Binder<Bool> {
-        Binder(base) { view, isShown in
-            view.setState(isShown: isShown)
-        }
     }
 }

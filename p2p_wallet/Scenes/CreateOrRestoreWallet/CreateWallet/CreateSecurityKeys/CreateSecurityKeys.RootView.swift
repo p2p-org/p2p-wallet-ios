@@ -7,9 +7,8 @@
 
 import Action
 import AnalyticsManager
+import Combine
 import Resolver
-import RxCocoa
-import RxSwift
 import TagListView
 import UIKit
 
@@ -22,7 +21,7 @@ extension CreateSecurityKeys {
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -81,18 +80,22 @@ extension CreateSecurityKeys {
 
         func bind() {
             viewModel.phrasesDriver
-                .drive(keysView.rx.keys)
-                .disposed(by: disposeBag)
+                .publisher
+                .replaceError(with: [])
+                .assign(to: \.keys, on: keysView)
+                .store(in: &subscriptions)
 
-            keysViewActions.rx.onCopy
-                .bind(onNext: { [weak self] in self?.viewModel.copyToClipboard() })
-                .disposed(by: disposeBag)
-            keysViewActions.rx.onRefresh
-                .bind(onNext: { [weak self] in self?.viewModel.renewPhrases() })
-                .disposed(by: disposeBag)
-            keysViewActions.rx.onSave
-                .bind(onNext: { [weak self] in self?.saveToPhoto() })
-                .disposed(by: disposeBag)
+            keysViewActions.onCopy
+                .sink { [weak self] in self?.viewModel.copyToClipboard() }
+                .store(in: &subscriptions)
+
+            keysViewActions.onRefresh
+                .sink { [weak self] in self?.viewModel.renewPhrases() }
+                .store(in: &subscriptions)
+
+            keysViewActions.onSave
+                .sink { [weak self] in self?.saveToPhoto() }
+                .store(in: &subscriptions)
 
             verifyManualButton.onTap(self, action: #selector(verifyPhrase))
             saveToICloudButton.onTap(self, action: #selector(saveToICloud))

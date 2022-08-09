@@ -8,7 +8,6 @@
 import Action
 import BECollectionView_Combine
 import Foundation
-import RxSwift
 import SolanaSwift
 
 class WalletsSection: BEStaticSectionsCollectionView.Section {

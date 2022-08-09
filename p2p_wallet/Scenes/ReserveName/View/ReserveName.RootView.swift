@@ -152,7 +152,7 @@ extension ReserveName {
                 }
                 .disposed(by: disposeBag)
 
-            textView.rxText
+            textView.textView.rx.text
                 .throttle(.milliseconds(200), scheduler: MainScheduler.instance)
                 .distinctUntilChanged()
                 .bind(to: viewModel.textFieldTextSubject)

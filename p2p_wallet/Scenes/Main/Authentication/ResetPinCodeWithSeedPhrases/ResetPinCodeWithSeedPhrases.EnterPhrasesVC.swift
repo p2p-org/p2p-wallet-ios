@@ -63,7 +63,7 @@ extension ResetPinCodeWithSeedPhrases {
                                     .setup { textField in
                                         textField.placeholder = L10n.yourSecurityKey
 
-                                        textField.rxText
+                                        textField.textView.rx.text
                                             .bind { [weak self] text in
                                                 guard let self = self else { return }
                                                 let text = text ?? ""

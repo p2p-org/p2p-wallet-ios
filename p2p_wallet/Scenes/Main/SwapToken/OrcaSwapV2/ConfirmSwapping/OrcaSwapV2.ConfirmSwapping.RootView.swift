@@ -234,7 +234,7 @@ extension OrcaSwapV2.ConfirmSwapping {
             let walletDriver = type == .source ? viewModel.sourceWalletDriver : viewModel.destinationWalletDriver
 
             walletDriver
-                .drive(coinLogoImageView.rx.wallet)
+                .drive(onNext: { [weak coinLogoImageView] in coinLogoImageView?.wallet = $0 })
                 .disposed(by: disposeBag)
 
             switch type {

@@ -5,9 +5,9 @@
 //  Created by Chung Tran on 16/04/2021.
 //
 
+import Combine
+import CombineCocoa
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import SubviewAttachingTextView
 
@@ -15,8 +15,9 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
     // MARK: - Properties
 
     var completion: (([String]) -> Void)?
-    let error = BehaviorRelay<Error?>(value: nil)
+    let error = CurrentValueSubject<Error?, Never>(nil)
     var dismissAfterCompletion = true
+    var subscriptions = [AnyCancellable]()
 
     // MARK: - Subviews
 
@@ -101,35 +102,39 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
 
     override func bind() {
         super.bind()
-        Observable.combineLatest(
-            textView.rx.text
+        Publishers.CombineLatest(
+            textView.textPublisher
                 .map { [weak self] _ in self?.textView.getPhrases().isEmpty == false },
             error.map { $0 == nil }
         )
             .map { $0 && $1 }
-            .asDriver(onErrorJustReturn: false)
-            .drive(nextButton.rx.isEnabled)
-            .disposed(by: disposeBag)
+            .replaceError(with: false)
+            .receive(on: RunLoop.main)
+            .assign(to: \.isEnabled, on: nextButton)
+            .store(in: &subscriptions)
 
-        let errorDriver = error.asDriver(onErrorJustReturn: nil)
+        let errorPublisher = error
+            .replaceError(with: nil)
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
 
-        errorDriver
+        errorPublisher
             .map { error -> String? in
                 if error == nil { return nil }
                 return L10n.wrongOrderOrSeedPhrasePleaseCheckItAndTryAgain
             }
-            .drive(errorLabel.rx.text)
-            .disposed(by: disposeBag)
+            .assign(to: \.text, on: errorLabel)
+            .store(in: &subscriptions)
 
-        errorDriver
+        errorPublisher
             .map { $0 == nil }
-            .drive(retryButton.rx.isHidden)
-            .disposed(by: disposeBag)
+            .assign(to: \.isHidden, on: retryButton)
+            .store(in: &subscriptions)
 
-        errorDriver
+        errorPublisher
             .map { $0 == nil }
-            .drive(descriptionLabel.rx.isHidden)
-            .disposed(by: disposeBag)
+            .assign(to: \.isHidden, on: descriptionLabel)
+            .store(in: &subscriptions)
     }
 
     @objc func buttonNextDidTouch() {
@@ -166,12 +171,12 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
             }
 
         } catch {
-            self.error.accept(error)
+            self.error.send(error)
         }
     }
 
     func wlPhrasesTextViewDidBeginEditing(_ textView: WLPhrasesTextView) {
-        error.accept(nil)
+        error.send(nil)
         textView.superview?.border(width: 1, color: .h5887ff)
     }
 
