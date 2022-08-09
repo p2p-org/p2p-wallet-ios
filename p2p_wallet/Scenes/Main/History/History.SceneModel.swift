@@ -11,7 +11,6 @@ import SolanaSwift
 import TransactionParser
 
 extension History {
-    @MainActor
     class SceneModel: BEStreamListViewModel<ParsedTransaction> {
         typealias AccountSymbol = (account: String, symbol: String)
 
