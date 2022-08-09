@@ -5,14 +5,15 @@
 //  Created by Andrew Vasiliev on 11.11.2021.
 //
 
-import RxSwift
+import Combine
+import CombineCocoa
 import UIKit
 
 extension EnterSeed {
     class RootView: BEView {
         // MARK: - Constants
 
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -63,7 +64,7 @@ extension EnterSeed {
                     .replacingOccurrences(of: "-", with: " ")
                 {
                     textView.set(text: testAccount)
-                    viewModel.seedTextSubject.accept(testAccount)
+                    viewModel.seedTextSubject.send(testAccount)
                 }
             #endif
         }
@@ -142,43 +143,43 @@ extension EnterSeed {
         }
 
         private func bind() {
-            viewModel.errorDriver
-                .drive(onNext: { [weak self] in
+            viewModel.errorPublisher
+                .sink { [weak self] in
                     self?.errorLabel.isHidden = $0?.isEmpty ?? true
                     self?.errorLabel.text = $0
-                })
-                .disposed(by: disposeBag)
-            pasteButton.rx.tap
-                .bind { [weak self] in
+                }
+                .store(in: &subscriptions)
+            pasteButton.tapPublisher
+                .sink { [weak self] in
                     self?.buttonPasteDidTouch()
                 }
-                .disposed(by: disposeBag)
-            textView.textView.rx.text
-                .bind { [weak self] in
-                    self?.viewModel.seedTextSubject.accept($0)
+                .store(in: &subscriptions)
+            textView.textView.textPublisher
+                .sink { [weak self] in
+                    self?.viewModel.seedTextSubject.send($0)
                 }
-                .disposed(by: disposeBag)
-            textView.textView.rx.text
+                .store(in: &subscriptions)
+            textView.textView.textPublisher
                 .scan("") { [weak viewModel] previous, new -> String? in
                     guard
                         let maxWordsCount = viewModel?.maxWordsCount,
                         let newWordsCount = new?.split(separator: " ").count else { return new }
                     return newWordsCount <= maxWordsCount ? new : previous
                 }
-                .bind(to: textView.textView.rx.text)
-                .disposed(by: disposeBag)
-            viewModel.mainButtonContentDriver
-                .drive(onNext: { [weak self] in
+                .assign(to: \.text, on: textView.textView)
+                .store(in: &subscriptions)
+            viewModel.mainButtonContentPublisher
+                .sink { [weak self] in
                     self?.setMainButtonContent(type: $0)
-                })
-                .disposed(by: disposeBag)
-            viewModel.seedTextDriver
+                }
+                .store(in: &subscriptions)
+            viewModel.seedTextPublisher
                 .map { $0?.isEmpty ?? true }
                 .map { !$0 }
-                .drive(onNext: { [weak self] in
+                .sink { [weak self] in
                     self?.pasteButton.isHidden = $0
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         private func configureDescription() {
