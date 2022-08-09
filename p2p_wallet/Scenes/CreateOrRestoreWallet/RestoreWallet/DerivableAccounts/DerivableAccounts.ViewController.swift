@@ -7,6 +7,7 @@
 
 import AnalyticsManager
 import BECollectionView_Combine
+import Combine
 import Foundation
 import Resolver
 import SolanaSwift
@@ -17,6 +18,7 @@ extension DerivableAccounts {
 
         private let viewModel: DrivableAccountsViewModelType
         @Injected private var analyticsManager: AnalyticsManager
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -97,23 +99,24 @@ extension DerivableAccounts {
         override func bind() {
             super.bind()
 
-            viewModel.navigatableSceneDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigatableScenePublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
 
-            viewModel.selectedDerivablePathDriver
+            viewModel.selectedDerivablePathPublisher
                 .map(\.title)
-                .drive(derivationPathLabel.rx.text)
-                .disposed(by: disposeBag)
+                .map { Optional($0) }
+                .assign(to: \.text, on: derivationPathLabel)
+                .store(in: &subscriptions)
 
-            viewModel.selectedDerivablePathDriver
-                .distinctUntilChanged()
-                .drive(onNext: { [weak self] path in
+            viewModel.selectedDerivablePathPublisher
+                .removeDuplicates()
+                .sink { [weak self] path in
                     self?.viewModel.accountsListViewModel.cancelRequest()
                     self?.viewModel.accountsListViewModel.setDerivablePath(path)
                     self?.viewModel.accountsListViewModel.reload()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         private func navigate(to scene: NavigatableScene?) {
