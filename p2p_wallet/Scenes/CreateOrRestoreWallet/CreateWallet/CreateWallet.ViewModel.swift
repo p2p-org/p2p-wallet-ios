@@ -6,18 +6,17 @@
 //
 
 import AnalyticsManager
+import Combine
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 
 protocol CreateWalletViewModelType: ReserveNameHandler {
-    var navigatableSceneDriver: Driver<CreateWallet.NavigatableScene?> { get }
+    var navigatableSceneDriver: AnyPublisher<CreateWallet.NavigatableScene?, Never> { get }
 
     func kickOff()
     func verifyPhrase(_ phrases: [String])
-    func handlePhrases(_ phrases: [String])
+    func handlePhrases(_ phrases: [String]) async
     func handleName(_ name: String?)
 
     func navigateToCreatePhrases()
@@ -25,7 +24,8 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
 }
 
 extension CreateWallet {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var handler: CreateOrRestoreWalletHandler
@@ -39,17 +39,17 @@ extension CreateWallet {
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<CreateWallet.NavigatableScene?>(value: nil)
+        @Published private var navigationSubject: CreateWallet.NavigatableScene?
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
     }
 }
 
 extension CreateWallet.ViewModel: CreateWalletViewModelType {
-    var navigatableSceneDriver: Driver<CreateWallet.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigatableSceneDriver: AnyPublisher<CreateWallet.NavigatableScene?, Never> {
+        $navigationSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -59,28 +59,26 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
 
     func verifyPhrase(_ phrases: [String]) {
-        navigationSubject.accept(.verifyPhrase(phrases))
+        navigationSubject = .verifyPhrase(phrases)
     }
 
-    func handlePhrases(_ phrases: [String]) {
+    func handlePhrases(_ phrases: [String]) async {
         self.phrases = phrases
 
         UIApplication.shared.showIndetermineHud()
 
-        Task {
-            do {
-                let account = try await Account(
-                    phrase: phrases,
-                    network: Defaults.apiEndPoint.network,
-                    derivablePath: .default
-                )
+        do {
+            let account = try await Account(
+                phrase: phrases,
+                network: Defaults.apiEndPoint.network,
+                derivablePath: .default
+            )
 
-                navigateToReserveName(owner: account.publicKey.base58EncodedString)
-            } catch {
-                notificationsService.showInAppNotification(.error(error))
-            }
-            await UIApplication.shared.hideHud()
+            navigateToReserveName(owner: account.publicKey.base58EncodedString)
+        } catch {
+            notificationsService.showInAppNotification(.error(error))
         }
+        UIApplication.shared.hideHud()
     }
 
     func handleName(_ name: String?) {
@@ -89,7 +87,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
 
     func finish() {
-        navigationSubject.accept(.dismiss)
+        navigationSubject = .dismiss
         handler.creatingWalletDidComplete(
             phrases: phrases,
             derivablePath: .default,
@@ -98,20 +96,20 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
 
     func navigateToExplanation() {
-        navigationSubject.accept(.explanation)
+        navigationSubject = .explanation
     }
 
     func back() {
-        navigationSubject.accept(.back)
-        navigationSubject.accept(.none)
+        navigationSubject = .back
+        navigationSubject = .none
     }
 
     func navigateToCreatePhrases() {
         analyticsManager.log(event: .createSeedInvoked)
-        navigationSubject.accept(.createPhrases)
+        navigationSubject = .createPhrases
     }
 
     func navigateToReserveName(owner: String) {
-        navigationSubject.accept(.reserveName(owner: owner))
+        navigationSubject = .reserveName(owner: owner)
     }
 }

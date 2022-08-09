@@ -2,6 +2,7 @@
 // Created by Giang Long Tran on 01.11.21.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -18,6 +19,7 @@ extension CreateWallet {
         // MARK: - Dependencies
 
         private let viewModel: CreateWalletViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Initializer
 
@@ -63,8 +65,8 @@ extension CreateWallet {
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
