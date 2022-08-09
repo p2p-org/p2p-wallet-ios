@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import RenVMSwift
 import Resolver
 import RxCocoa
@@ -31,6 +32,7 @@ extension ReceiveToken {
         // MARK: - Constants
 
         private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         let hasExplorerButton: Bool
 
         // MARK: - Dependencies
@@ -81,9 +83,11 @@ extension ReceiveToken {
 
         private func bind() {
             // timer
-            Timer.observable(seconds: 1)
-                .bind(to: timerSubject)
-                .disposed(by: disposeBag)
+            Timer.publish(every: 1_000_000, on: .main, in: .default)
+                .sink { [weak self] _ in
+                    self?.timerSubject.accept(())
+                }
+                .store(in: &subscriptions)
 
             timerSubject
                 .withLatestFrom(
