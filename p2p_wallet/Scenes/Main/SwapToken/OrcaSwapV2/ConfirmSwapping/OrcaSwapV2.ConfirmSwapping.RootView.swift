@@ -132,7 +132,7 @@ extension OrcaSwapV2.ConfirmSwapping {
                 viewModel.destinationWalletDriver.map { $0?.token.symbol }
             )
                 .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
-                .drive(actionButton.rx.text)
+                .drive(onNext: { [weak actionButton] in actionButton?.text = $0 })
                 .disposed(by: disposeBag)
 
             feesView.clickHandler = { [weak self] fee in

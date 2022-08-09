@@ -99,7 +99,7 @@ extension ConfirmReceivingBitcoin.ViewController {
                         }
                         return L10n.payAndContinue(fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol)
                     }
-                    .drive(button.rx.text)
+                    .drive(onNext: { [weak button] in button?.text = $0 })
                     .disposed(by: disposeBag)
             }
             .onTap { [unowned self] in

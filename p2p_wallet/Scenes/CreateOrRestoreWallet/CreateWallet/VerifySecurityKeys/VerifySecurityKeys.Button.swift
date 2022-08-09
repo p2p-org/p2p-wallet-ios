@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import RxSwift
 import UIKit
 
 extension VerifySecurityKeys {
@@ -16,6 +15,24 @@ extension VerifySecurityKeys {
         var style: Style = .choose {
             didSet {
                 update()
+            }
+        }
+
+        var text: String? {
+            didSet {
+                button.text = text
+            }
+        }
+
+        var image: UIImage? {
+            didSet {
+                button.image = image
+            }
+        }
+
+        var ready: Bool = false {
+            didSet {
+                style = ready ? .save : .choose
             }
         }
 
@@ -42,21 +59,5 @@ extension VerifySecurityKeys {
                 isUserInteractionEnabled = true
             }
         }
-    }
-}
-
-extension Reactive where Base: VerifySecurityKeys.NextButton {
-    var ready: Binder<Bool> {
-        Binder(base) { view, ready in
-            view.style = ready ? .save : .choose
-        }
-    }
-
-    var text: Binder<String?> {
-        base.button.rx.text
-    }
-
-    var image: Binder<UIImage?> {
-        base.button.rx.image
     }
 }

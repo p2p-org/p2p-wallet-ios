@@ -252,7 +252,7 @@ extension SendToken.ChooseTokenAndAmount {
                                 L10n.chooseTheRecipient
                         )
                 }
-                .drive(actionButton.rx.text)
+                .drive(onNext: { [weak actionButton] in actionButton?.text = $0 })
                 .disposed(by: disposeBag)
 
             viewModel.errorDriver
@@ -263,7 +263,7 @@ extension SendToken.ChooseTokenAndAmount {
                             .buttonChooseTheRecipient
                     )
                 }
-                .drive(actionButton.rx.image)
+                .drive(onNext: { [weak actionButton] in actionButton?.image = $0 })
                 .disposed(by: disposeBag)
 
             viewModel.errorDriver

@@ -62,13 +62,14 @@ extension VerifySecurityKeys {
 
         private func bind() {
             viewModel.questionsDriver.drive(questionsView.rx.questions).disposed(by: disposeBag)
-            viewModel.validationDriver.drive(nextButton.rx.ready).disposed(by: disposeBag)
+            viewModel.validationDriver.drive(onNext: { [weak nextButton] in nextButton?.ready = $0 })
+                .disposed(by: disposeBag)
             viewModel.validationDriver.map {
                 $0 == true ? L10n.saveContinue : L10n.chooseTheCorrectWords
-            }.drive(nextButton.rx.text).disposed(by: disposeBag)
+            }.drive(onNext: { [weak nextButton] in nextButton?.text = $0 }).disposed(by: disposeBag)
             viewModel.validationDriver.map {
                 $0 == true ? UIImage.checkMark : nil
-            }.drive(nextButton.rx.image).disposed(by: disposeBag)
+            }.drive(onNext: { [weak nextButton] in nextButton?.image = $0 }).disposed(by: disposeBag)
 
             nextButton.onTap(self, action: #selector(verify))
 

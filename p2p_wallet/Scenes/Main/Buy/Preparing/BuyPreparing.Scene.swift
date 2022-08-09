@@ -66,7 +66,8 @@ extension BuyPreparing {
                     BESafeArea {
                         WLStepButton.main(text: L10n.continue)
                             .setup { view in
-                                viewModel.nextStatus.map(\.text).drive(view.rx.text).disposed(by: disposeBag)
+                                viewModel.nextStatus.map(\.text).drive(onNext: { [weak view] in view?.text = $0 })
+                                    .disposed(by: disposeBag)
                                 viewModel.nextStatus.map(\.isEnable).drive(view.rx.isEnabled).disposed(by: disposeBag)
                             }
                             .onTap { [unowned self] in navigateToWeb() }

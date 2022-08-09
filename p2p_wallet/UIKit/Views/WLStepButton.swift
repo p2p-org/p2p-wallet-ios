@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxSwift
 import UIKit
 
 // MARK: - Builders
@@ -78,6 +77,18 @@ class WLStepButton: BEView {
     var isEnabled: Bool = true {
         didSet {
             setUp()
+        }
+    }
+
+    var text: String? {
+        didSet {
+            label.text = text
+        }
+    }
+
+    var image: UIImage? {
+        didSet {
+            setImage(image: image, imageSize: imageSize)
         }
     }
 
@@ -178,30 +189,4 @@ class WLStepButton: BEView {
         // imageView tintColor
         imageView.tintColor = isEnabled ? enabledTintColor : (disabledTintColor ?? enabledTintColor)
     }
-}
-
-extension Reactive where Base: WLStepButton {
-    var isEnabled: Binder<Bool> {
-        Binder(base) { view, isEnabled in
-            view.isEnabled = isEnabled
-        }
-    }
-
-    var text: Binder<String?> {
-        Binder(base) { view, text in
-            view.label.text = text
-        }
-    }
-
-    var image: Binder<UIImage?> {
-        Binder(base) { view, image in
-            view.setImage(image: image, imageSize: view.imageSize)
-        }
-    }
-
-//    var tapGesture: Any {
-//        base.rx.event.bind(onNext: { recognizer in
-//            debugPrint("touches: \(recognizer.numberOfTouches)") //or whatever you like
-//        })
-//    }
 }
