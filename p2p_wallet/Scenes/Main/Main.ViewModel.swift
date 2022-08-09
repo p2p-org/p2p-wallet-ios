@@ -43,9 +43,9 @@ extension Main {
 
         init() {
             socket.connect()
-            pricesService.startObserving()
             burnAndRelease.resume()
             Task {
+                await pricesService.startObserving()
                 try await lockAndMint.resume()
             }
         }
