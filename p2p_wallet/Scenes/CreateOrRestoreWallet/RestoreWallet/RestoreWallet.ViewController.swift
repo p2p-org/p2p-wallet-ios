@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
 import UIKit
@@ -15,6 +16,7 @@ extension RestoreWallet {
         // MARK: - Dependencies
 
         private let viewModel: RestoreWalletViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -68,21 +70,22 @@ extension RestoreWallet {
         override func bind() {
             super.bind()
             viewModel.navigatableSceneDriver
-                .drive(with: self) { $0.navigate(to: $1) }
-                .disposed(by: disposeBag)
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
 
             viewModel.isLoadingDriver
-                .drive(onNext: {
+                .sink {
                     $0 ? UIApplication.shared.showIndetermineHud() : UIApplication.shared.hideHud()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             viewModel.errorSignal
-                .emit(with: self) { $0.showAlert(title: L10n.error.uppercaseFirst, message: $1) }
-                .disposed(by: disposeBag)
+                .sink { [weak self] in self?.showAlert(title: L10n.error.uppercaseFirst, message: $0) }
+                .store(in: &subscriptions)
 
-            viewModel.isRestorableUsingIcloud.map { !$0 }.drive(iCloudRestoreButton.rx.isHidden)
-                .disposed(by: disposeBag)
+            viewModel.isRestorableUsingIcloud.map { !$0 }
+                .assign(to: \.isHidden, on: iCloudRestoreButton)
+                .store(in: &subscriptions)
         }
 
         override func present(
