@@ -173,6 +173,7 @@ PODS:
   - Sentry (7.18.1):
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
+  - SkeletonUI (1.0.8)
   - SkeletonView (1.29.2)
   - SolanaPricesAPIs (1.0.0):
     - Cache
@@ -187,6 +188,7 @@ PODS:
   - SwiftFormat/CLI (0.49.6)
   - SwiftGen (6.5.1)
   - SwiftLint (0.47.1)
+  - SwiftSVG (2.3.2)
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
   - Task_retrying (1.0.3)
@@ -229,12 +231,14 @@ DEPENDENCIES:
   - RxGesture
   - RxSwift (= 6.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
+  - SkeletonUI
   - SolanaPricesAPIs (from `KeyAppKit`)
   - SolanaSwift (from `SolanaSwift`)
   - SubviewAttachingTextView
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
   - SwiftLint
+  - SwiftSVG (~> 2.0)
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
   - TransactionParser (from `KeyAppKit`)
@@ -276,12 +280,14 @@ SPEC REPOS:
     - RxRelay
     - RxSwift
     - secp256k1.swift
+    - SkeletonUI
     - SkeletonView
     - SubviewAttachingTextView
     - SwiftAlgorithms
     - SwiftFormat
     - SwiftGen
     - SwiftLint
+    - SwiftSVG
     - SwiftyUserDefaults
     - TagListView
     - Task_retrying
@@ -394,6 +400,7 @@ SPEC CHECKSUMS:
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
+  SkeletonUI: 04bd73f70c0488eceed13eb13c731138c5636db8
   SkeletonView: 915a80ecc2b6421ab7ac0f0212321c0cc1406472
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 6ba5043ed04055eb874085d2f96499022ddcd6e8
@@ -402,6 +409,7 @@ SPEC CHECKSUMS:
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: a6d22010845f08fe18fbdf3a07a8e380fd22e0ea
   SwiftLint: f80f1be7fa96d30e0aa68e58d45d4ea1ccaac519
+  SwiftSVG: ca7f64e403b8ea7ea8eba8c823b83ba4a059834c
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
   Task_retrying: 9e19177e42b162d1d54317f9cfcbabc01d057c38
@@ -409,6 +417,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: ef85d49538dd5066982eba0195f843688b2a063f
+PODFILE CHECKSUM: c00aa16deed1916d305edfda7f9c61ee577dd128
 
 COCOAPODS: 1.11.3
