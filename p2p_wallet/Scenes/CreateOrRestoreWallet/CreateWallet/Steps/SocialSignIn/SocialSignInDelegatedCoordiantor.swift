@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 import Onboarding
+import SwiftUI
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
@@ -12,31 +13,19 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
         case .socialSelection:
             // TODO: rename class name
             let vm = SocialSignInViewModel()
-            let vc = SocialSignInViewController(viewModel: vm)
-            vc.viewModel.coordinatorIO.onTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }
+            let vc = SocialSignInView(viewModel: vm)
+            vc.viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }
                 .store(in: &subscriptions)
 
-            vc.viewModel.coordinatorIO.onBack.sinkAsync { [weak vm, stateMachine] in
-                vm?.input.isLoading.send(true)
-                do {
-                    try await stateMachine <- .signInBack
-                } catch {
-                    vc.viewModel.input.onError.send(error)
-                }
-                vm?.input.isLoading.send(false)
+            vc.viewModel.coordinatorIO.outBack.sinkAsync { [stateMachine] process in
+                process.start { try await stateMachine <- .signInBack }
             }.store(in: &subscriptions)
 
-            vc.viewModel.coordinatorIO.onLogin.sinkAsync { [weak vm, stateMachine] provider in
-                if vc.viewModel.input.isLoading.value { return }
-                vm?.input.isLoading.send(true)
-                do {
-                    try await stateMachine <- .signIn(socialProvider: provider)
-                } catch {
-                    vc.viewModel.input.onError.send(error)
-                }
-                vm?.input.isLoading.send(false)
+            vc.viewModel.coordinatorIO.outLogin.sinkAsync { [stateMachine] process in
+                process.start { try await stateMachine <- .signIn(socialProvider: process.data) }
             }.store(in: &subscriptions)
-            return vc
+
+            return UIHostingController(rootView: vc)
         case let .socialSignInAccountWasUsed(provider, usedEmail):
             let vm = SocialSignInAccountHasBeenUsedViewModel(
                 email: usedEmail,
