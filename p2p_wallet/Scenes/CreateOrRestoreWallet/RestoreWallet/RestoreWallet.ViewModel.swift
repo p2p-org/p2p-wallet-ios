@@ -6,18 +6,17 @@
 //
 
 import AnalyticsManager
+import Combine
 import NameService
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 
 protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandler {
-    var navigatableSceneDriver: Driver<RestoreWallet.NavigatableScene?> { get }
-    var isLoadingDriver: Driver<Bool> { get }
-    var isRestorableUsingIcloud: Driver<Bool> { get }
-    var errorSignal: Signal<String> { get }
+    var navigatableSceneDriver: AnyPublisher<RestoreWallet.NavigatableScene?, Never> { get }
+    var isLoadingDriver: AnyPublisher<Bool, Never> { get }
+    var isRestorableUsingIcloud: AnyPublisher<Bool, Never> { get }
+    var errorSignal: AnyPublisher<String, Never> { get }
 
     func handleICloudAccount(_ account: RawAccount)
     func restoreFromICloud()
@@ -25,7 +24,8 @@ protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandl
 }
 
 extension RestoreWallet {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
@@ -43,33 +43,33 @@ extension RestoreWallet {
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<RestoreWallet.NavigatableScene?>(value: nil)
-        private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
-        private let isRestorableUsingIcloudSubject = BehaviorRelay<Bool>(value: true)
-        private let errorSubject = PublishRelay<String>()
-        private let finishedSubject = PublishRelay<Void>()
+        @Published private var navigationSubject: RestoreWallet.NavigatableScene?
+        @Published private var isLoadingSubject = false
+        @Published private var isRestorableUsingIcloudSubject = false
+        private let errorSubject = PassthroughSubject<String, Never>()
+        private let finishedSubject = PassthroughSubject<Void, Never>()
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
     }
 }
 
 extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
-    var isRestorableUsingIcloud: Driver<Bool> {
-        isRestorableUsingIcloudSubject.asDriver()
+    var isRestorableUsingIcloud: AnyPublisher<Bool, Never> {
+        $isRestorableUsingIcloudSubject.eraseToAnyPublisher()
     }
 
-    var navigatableSceneDriver: Driver<RestoreWallet.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigatableSceneDriver: AnyPublisher<RestoreWallet.NavigatableScene?, Never> {
+        $navigationSubject.eraseToAnyPublisher()
     }
 
-    var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
+    var isLoadingDriver: AnyPublisher<Bool, Never> {
+        $isLoadingSubject.eraseToAnyPublisher()
     }
 
-    var errorSignal: Signal<String> {
-        errorSubject.asSignal()
+    var errorSignal: AnyPublisher<String, Never> {
+        errorSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -79,14 +79,14 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
             self._restoreFromIcloud()
         } onFailure: { error in
             guard let error = error else { return }
-            self.errorSubject.accept(error)
+            self.errorSubject.send(error)
         }
     }
 
     private func _restoreFromIcloud() {
         guard let accounts = iCloudStorage.accountFromICloud(), !accounts.isEmpty
         else {
-            isRestorableUsingIcloudSubject.accept(false)
+            isRestorableUsingIcloudSubject = false
             notificationsService.showInAppNotification(.message(L10n.thereIsNoP2PWalletSavedInYourICloud))
             return
         }
@@ -99,12 +99,12 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         }
 
         // if there are more than 1 account saved in iCloud
-        navigationSubject.accept(.restoreFromICloud)
+        navigationSubject = .restoreFromICloud
     }
 
     func restoreManually() {
         analyticsManager.log(event: .restoreManualInvoked)
-        navigationSubject.accept(.enterPhrases)
+        navigationSubject = .enterPhrases
     }
 
     func handlePhrases(_ phrases: [String], derivablePath: DerivablePath?) {
@@ -112,7 +112,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         if let derivablePath = derivablePath {
             derivablePathDidSelect(derivablePath, phrases: phrases)
         } else {
-            navigationSubject.accept(.derivableAccounts(phrases: phrases))
+            navigationSubject = .derivableAccounts(phrases: phrases)
         }
     }
 
@@ -125,7 +125,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
             finish()
         } else {
             // create account
-            isLoadingSubject.accept(true)
+            isLoadingSubject = true
             guard let phrases = phrases else { return }
             Task {
                 do {
@@ -135,10 +135,10 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
                         derivablePath: derivablePath
                     )
                     // reserve name
-                    isLoadingSubject.accept(false)
-                    navigationSubject.accept(.reserveName(owner: account.publicKey.base58EncodedString))
+                    isLoadingSubject = false
+                    navigationSubject = .reserveName(owner: account.publicKey.base58EncodedString)
                 } catch {
-                    errorSubject.accept(error.readableDescription)
+                    errorSubject.send(error.readableDescription)
                 }
             }
         }
@@ -154,7 +154,7 @@ extension RestoreWallet.ViewModel {
         self.phrases = phrases
 
         // create account
-        isLoadingSubject.accept(true)
+        isLoadingSubject = true
 
         Task {
             do {
@@ -170,26 +170,26 @@ extension RestoreWallet.ViewModel {
                 do {
                     let name = try await nameService.getName(owner)
 
-                    isLoadingSubject.accept(false)
+                    isLoadingSubject = false
 
                     // save to icloud
-                    await saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
+                    saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
 
                     if let name = name {
-                        await handleName(name)
+                        handleName(name)
                     } else {
-                        navigationSubject.accept(.reserveName(owner: owner))
+                        navigationSubject = .reserveName(owner: owner)
                     }
                 } catch {
-                    isLoadingSubject.accept(false)
+                    isLoadingSubject = false
 
                     // save to icloud
-                    await saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+                    saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
 
-                    await finish()
+                    finish()
                 }
             } catch {
-                errorSubject.accept(error.readableDescription)
+                errorSubject.send(error.readableDescription)
             }
         }
 
@@ -220,7 +220,7 @@ extension RestoreWallet.ViewModel: ReserveNameHandler {
 private extension RestoreWallet.ViewModel {
     @MainActor
     func finish() {
-        finishedSubject.accept(())
+        finishedSubject.send()
         handler.restoringWalletDidComplete(
             phrases: phrases,
             derivablePath: derivablePath,
