@@ -221,8 +221,10 @@ extension Settings.ViewModel: SettingsViewModelType {
         analyticsManager.log(event: .settingsСurrencySelected(сurrency: fiat.code))
         // set default fiat
         Defaults.fiat = fiat
-        pricesService.clearCurrentPrices()
-        pricesService.fetchAllTokensPriceInWatchList()
+        Task {
+            await pricesService.clearCurrentPrices()
+            try? await pricesService.fetchAllTokensPriceInWatchList()
+        }
 
         // accept new value
         fiatSubject.accept(fiat)

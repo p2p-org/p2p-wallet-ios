@@ -27,7 +27,7 @@ protocol PricesServiceType {
     func fetchAllTokensPriceInWatchList() async throws
     func fetchHistoricalPrice(for coinName: String, period: Period) async throws -> [PriceRecord]
 
-    func startObserving() async throws
+    func startObserving() async
     func stopObserving()
 }
 
@@ -130,9 +130,9 @@ extension PricesService: PricesServiceType {
         await storage.savePrices([:])
     }
 
-    func addToWatchList(_ tokens: [Token]) async {
+    @MainActor func addToWatchList(_ tokens: [Token]) {
         for token in tokens {
-            await watchList.appendIfNotExist(token)
+            watchList.appendIfNotExist(token)
         }
     }
 
@@ -173,11 +173,11 @@ extension PricesService: PricesServiceType {
         }
     }
 
-    func startObserving() async throws {
-        try await fetchAllTokensPriceInWatchList()
+    func startObserving() async {
+        try? await fetchAllTokensPriceInWatchList()
         timer = Timer.scheduledTimer(withTimeInterval: refreshInterval, repeats: true, block: { _ in
             Task { [weak self] in
-                try await self?.fetchAllTokensPriceInWatchList()
+                try? await self?.fetchAllTokensPriceInWatchList()
             }
         })
     }
