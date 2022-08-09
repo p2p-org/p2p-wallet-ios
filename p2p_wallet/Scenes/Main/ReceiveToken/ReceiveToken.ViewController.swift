@@ -48,11 +48,11 @@ extension ReceiveToken {
                                 UIStackView(axis: .horizontal) {
                                     // Wallet Icon
                                     UIImageView(width: 44, height: 44)
-                                        .with(
-                                            .image,
-                                            drivenBy: viewModel.tokenTypeDriver.map { type in type.icon },
-                                            disposedBy: disposeBag
-                                        )
+                                        .setup { imageView in
+                                            viewModel.tokenTypeDriver.map { type in type.icon }
+                                                .drive(imageView.rx.image)
+                                                .disposed(by: disposeBag)
+                                        }
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
                                         UILabel(
