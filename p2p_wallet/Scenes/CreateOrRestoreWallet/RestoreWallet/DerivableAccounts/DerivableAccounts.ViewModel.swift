@@ -5,9 +5,8 @@
 //  Created by Chung Tran on 18/05/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol AccountRestorationHandler {
@@ -16,8 +15,8 @@ protocol AccountRestorationHandler {
 
 protocol DrivableAccountsViewModelType {
     var accountsListViewModel: DerivableAccountsListViewModelType { get }
-    var navigatableSceneDriver: Driver<DerivableAccounts.NavigatableScene?> { get }
-    var selectedDerivablePathDriver: Driver<DerivablePath> { get }
+    var navigatableScenePublisher: AnyPublisher<DerivableAccounts.NavigatableScene?, Never> { get }
+    var selectedDerivablePathPublisher: AnyPublisher<DerivablePath, Never> { get }
 
     func getCurrentSelectedDerivablePath() -> DerivablePath
     func chooseDerivationPath()
@@ -27,7 +26,7 @@ protocol DrivableAccountsViewModelType {
 
 extension DerivableAccounts {
     @MainActor
-    class ViewModel {
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         private let handler: AccountRestorationHandler
@@ -39,8 +38,8 @@ extension DerivableAccounts {
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let selectedDerivablePathSubject = BehaviorRelay<DerivablePath>(value: .default)
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var selectedDerivablePath = DerivablePath.default
 
         // MARK: - Initializer
 
@@ -51,32 +50,32 @@ extension DerivableAccounts {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
     }
 }
 
 extension DerivableAccounts.ViewModel: DrivableAccountsViewModelType {
-    var navigatableSceneDriver: Driver<DerivableAccounts.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigatableScenePublisher: AnyPublisher<DerivableAccounts.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
-    var selectedDerivablePathDriver: Driver<DerivablePath> {
-        selectedDerivablePathSubject.asDriver()
+    var selectedDerivablePathPublisher: AnyPublisher<DerivablePath, Never> {
+        $selectedDerivablePath.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func getCurrentSelectedDerivablePath() -> DerivablePath {
-        selectedDerivablePathSubject.value
+        selectedDerivablePath
     }
 
     func chooseDerivationPath() {
-        navigationSubject.accept(.selectDerivationPath)
+        navigatableScene = .selectDerivationPath
     }
 
     func selectDerivationPath(_ path: DerivablePath) {
-        selectedDerivablePathSubject.accept(path)
+        selectedDerivablePath = path
     }
 
     func restoreAccount() {
@@ -84,6 +83,6 @@ extension DerivableAccounts.ViewModel: DrivableAccountsViewModelType {
         accountsListViewModel.cancelRequest()
 
         // send to handler
-        handler.derivablePathDidSelect(selectedDerivablePathSubject.value, phrases: phrases)
+        handler.derivablePathDidSelect(selectedDerivablePath, phrases: phrases)
     }
 }
