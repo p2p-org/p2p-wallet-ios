@@ -100,12 +100,13 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             transactionId: nil,
             sentAt: Date(),
             rawTransaction: rawTransaction,
-            status: .error(SolanaError.unknown)
+            status: .error(SolanaError.unknown.readableDescription)
         )
 
         // observe transaction based on transaction index
         transactionHandler.observeTransaction(transactionIndex: index)
             .map { $0 ?? unknownErrorInfo }
+            .asObservable()
             .catchAndReturn(unknownErrorInfo)
             .bind(to: pendingTransactionSubject)
             .disposed(by: disposeBag)
@@ -130,15 +131,15 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             if let error = pendingTransactionSubject.value.status.error {
                 switch rawTransaction {
                 case is ProcessTransaction.SendTransaction:
-                    analyticsManager.log(event: .sendTryAgainClick(error: error.readableDescription))
+                    analyticsManager.log(event: .sendTryAgainClick(error: error))
                 case is ProcessTransaction.SwapTransaction:
-                    analyticsManager.log(event: .swapTryAgainClick(error: error.readableDescription))
+                    analyticsManager.log(event: .swapTryAgainClick(error: error))
                 default:
                     break
                 }
 
-                if error.readableDescription == L10n.swapInstructionExceedsDesiredSlippageLimit {
-                    navigate(to: .specificErrorHandler(error))
+                if error == L10n.swapInstructionExceedsDesiredSlippageLimit {
+                    navigate(to: .specificErrorHandler(SolanaError.other(error)))
                     return
                 }
             }

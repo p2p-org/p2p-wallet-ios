@@ -6,29 +6,28 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import TransactionParser
 
 protocol TransactionHandlerType {
     typealias TransactionIndex = Int
     func sendTransaction(_ processingTransaction: RawTransactionType) -> TransactionIndex
-    func observeTransaction(transactionIndex: TransactionIndex) -> Observable<PendingTransaction?>
+    func observeTransaction(transactionIndex: TransactionIndex) -> AnyPublisher<PendingTransaction?, Never>
     func areSomeTransactionsInProgress() -> Bool
 
-    func observeProcessingTransactions(forAccount account: String) -> Observable<[ParsedTransaction]>
-    func observeProcessingTransactions() -> Observable<[ParsedTransaction]>
+    func observeProcessingTransactions(forAccount account: String) -> AnyPublisher<[ParsedTransaction], Never>
+    func observeProcessingTransactions() -> AnyPublisher<[ParsedTransaction], Never>
 
     func getProccessingTransactions(of account: String) -> [ParsedTransaction]
     func getProcessingTransaction() -> [ParsedTransaction]
 
-    var onNewTransaction: Observable<(trx: PendingTransaction, index: Int)> { get }
+    var onNewTransaction: AnyPublisher<(trx: PendingTransaction, index: Int), Never> { get }
 }
 
-class TransactionHandler: TransactionHandlerType {
+class TransactionHandler: ObservableObject, TransactionHandlerType {
     @Injected var notificationsService: NotificationService
     @Injected var analyticsManager: AnalyticsManager
     @Injected var apiClient: SolanaAPIClient
@@ -36,16 +35,18 @@ class TransactionHandler: TransactionHandlerType {
     @Injected var pricesService: PricesServiceType
     @Injected var socket: AccountObservableService
 
-    let disposeBag = DisposeBag()
-    let transactionsSubject = BehaviorRelay<[PendingTransaction]>(value: [])
-    let onNewTransactionPublish = PublishRelay<(trx: PendingTransaction, index: Int)>()
-    var onNewTransaction: Observable<(trx: PendingTransaction, index: Int)> { onNewTransactionPublish.asObservable() }
+    private var subscriptions = [AnyCancellable]()
+    @Published var transactions = [PendingTransaction]()
+    let onNewTransactionPublish = PassthroughSubject<(trx: PendingTransaction, index: Int), Never>()
+    var onNewTransaction: AnyPublisher<(trx: PendingTransaction, index: Int), Never> {
+        onNewTransactionPublish.receive(on: RunLoop.main).eraseToAnyPublisher()
+    }
 
     func sendTransaction(
         _ processingTransaction: RawTransactionType
     ) -> TransactionIndex {
         // get index to return
-        let txIndex = transactionsSubject.value.count
+        let txIndex = transactions.count
 
         // add to processing
         let trx = PendingTransaction(
@@ -55,11 +56,11 @@ class TransactionHandler: TransactionHandlerType {
             status: .sending
         )
 
-        var value = transactionsSubject.value
+        var value = transactions
         value.append(trx)
 
-        transactionsSubject.accept(value)
-        onNewTransactionPublish.accept((trx, txIndex))
+        transactions = value
+        onNewTransactionPublish.send((trx, txIndex))
 
         // process
         sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
@@ -69,32 +70,35 @@ class TransactionHandler: TransactionHandlerType {
 
     func observeTransaction(
         transactionIndex: TransactionIndex
-    ) -> Observable<PendingTransaction?> {
-        transactionsSubject.map { $0[safe: transactionIndex] }
+    ) -> AnyPublisher<PendingTransaction?, Never> {
+        $transactions.map { $0[safe: transactionIndex] }
+            .eraseToAnyPublisher()
     }
 
     func areSomeTransactionsInProgress() -> Bool {
-        transactionsSubject.value.contains(where: \.status.isProcessing)
+        transactions.contains(where: \.status.isProcessing)
     }
 
     func observeProcessingTransactions(
         forAccount account: String
-    ) -> Observable<[ParsedTransaction]> {
-        transactionsSubject
+    ) -> AnyPublisher<[ParsedTransaction], Never> {
+        $transactions
             .map { [weak self] _ in self?.getProccessingTransactions(of: account) ?? [] }
-            .asObservable()
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
-    func observeProcessingTransactions() -> Observable<[ParsedTransaction]> {
-        transactionsSubject
+    func observeProcessingTransactions() -> AnyPublisher<[ParsedTransaction], Never> {
+        $transactions
             .map { [weak self] _ in self?.getProcessingTransaction() ?? [] }
-            .asObservable()
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
     func getProccessingTransactions(
         of account: String
     ) -> [ParsedTransaction] {
-        transactionsSubject.value
+        transactions
             .filter { pt in
                 switch pt.rawTransaction {
                 case let transaction as ProcessTransaction.SendTransaction:
@@ -122,7 +126,7 @@ class TransactionHandler: TransactionHandlerType {
     }
 
     func getProcessingTransaction() -> [ParsedTransaction] {
-        transactionsSubject.value
+        transactions
             .compactMap { pt -> ParsedTransaction? in
                 pt.parse(pricesService: pricesService, authority: walletsRepository.nativeWallet?.pubkey)
             }

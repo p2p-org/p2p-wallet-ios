@@ -6,16 +6,15 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import TransactionParser
 import UIKit
 
 extension TransactionDetail {
     final class AmountSection: UIStackView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: TransactionDetailViewModelType
 
         init(viewModel: TransactionDetailViewModelType) {
@@ -73,8 +72,8 @@ extension TransactionDetail {
                                         symbol: swapTransaction?.source?.token.symbol
                                     )
                                 }
-                                .drive(label.rx.attributedText)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.attributedText, on: label)
+                                .store(in: &subscriptions)
                         }
                 }
 
@@ -89,8 +88,8 @@ extension TransactionDetail {
                                         symbol: swapTransaction?.destination?.token.symbol
                                     )
                                 }
-                                .drive(label.rx.attributedText)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.attributedText, on: label)
+                                .store(in: &subscriptions)
                         }
                 }
             }
@@ -103,8 +102,8 @@ extension TransactionDetail {
                         viewModel.parsedTransactionDriver
                             .map { $0?.amount ?? 0 }
                             .map { $0 > 0 ? L10n.received : L10n.spent }
-                            .drive(label.rx.text)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.text, on: label)
+                            .store(in: &subscriptions)
                     }
                 UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
                     .setup { label in
@@ -112,8 +111,8 @@ extension TransactionDetail {
                             .map { [weak self] in
                                 self?.getAttributedString(amount: abs($0?.amount ?? 0), symbol: $0?.symbol)
                             }
-                            .drive(label.rx.attributedText)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.attributedText, on: label)
+                            .store(in: &subscriptions)
                     }
             }
         }
@@ -129,8 +128,8 @@ extension TransactionDetail {
                         viewModel.parsedTransactionDriver
                             .map { $0?.info is SwapInfo }
                             .map { $0 ? L10n.swapFees : L10n.transferFee }
-                            .drive(label.rx.text)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.text, on: label)
+                            .store(in: &subscriptions)
                     }
 
                 BEVStack(spacing: 8) {
@@ -187,14 +186,14 @@ extension TransactionDetail {
                                             color: .textSecondary
                                         )
                                 }
-                                .drive(accountCreationLabel.rx.attributedText)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.attributedText, on: accountCreationLabel)
+                                .store(in: &subscriptions)
 
                             feesDriver
                                 .map { $0?.accountBalances ?? 0 }
                                 .map { $0 == 0 }
-                                .drive(accountCreationLabel.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: accountCreationLabel)
+                                .store(in: &subscriptions)
                         }
 
                     // transfer fee
@@ -221,15 +220,15 @@ extension TransactionDetail {
                                                 .text(" (\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
                                         }
                                     }
-                                    .drive(accountCreationLabel.rx.attributedText)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.attributedText, on: accountCreationLabel)
+                                    .store(in: &subscriptions)
                             }
                         UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
                             .setup { infoButton in
                                 feesDriver
                                     .map { $0?.transaction != 0 }
-                                    .drive(infoButton.rx.isHidden)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.isHidden, on: infoButton)
+                                    .store(in: &subscriptions)
                             }
                     }
                     .onTap { [weak self] in
@@ -258,8 +257,8 @@ extension TransactionDetail {
                                         )
                                             .text(" (\(L10n.totalFee))", size: 15, color: .textSecondary)
                                     }
-                                    .drive(totalFeeLabel.rx.attributedText)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.attributedText, on: totalFeeLabel)
+                                    .store(in: &subscriptions)
                             }
                     }
                     .setup { view in
@@ -331,8 +330,8 @@ extension TransactionDetail {
                                     }
                                 }
                             }
-                            .drive(label.rx.attributedText)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.attributedText, on: label)
+                            .store(in: &subscriptions)
                     }
             }
         }
@@ -361,8 +360,8 @@ extension TransactionDetail {
             viewModel.parsedTransactionDriver
                 .map { $0?.info is T }
                 .map { !$0 }
-                .drive(view.rx.isHidden)
-                .disposed(by: disposeBag)
+                .assign(to: \.isHidden, on: view)
+                .store(in: &subscriptions)
         }
     }
 }

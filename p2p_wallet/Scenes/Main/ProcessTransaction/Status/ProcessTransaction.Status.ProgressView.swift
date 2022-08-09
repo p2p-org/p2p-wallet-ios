@@ -8,6 +8,7 @@
 import Foundation
 import RxCocoa
 import RxSwift
+import SolanaSwift
 import UIKit
 
 extension ProcessTransaction.Status {
@@ -86,7 +87,7 @@ extension ProcessTransaction.Status {
 }
 
 extension Reactive where Base == ProcessTransaction.Status.ProgressView {
-    var transactionStatus: Binder<PendingTransaction.TransactionStatus> {
+    var transactionStatus: Binder<TransactionStatus> {
         Binder(base) { view, status in
             var isIndetermine = false
 

@@ -5,7 +5,6 @@
 import Combine
 import Foundation
 import Resolver
-import RxCombine
 
 extension History {
     /// Refreshing history if processing transaction appears.
@@ -17,7 +16,6 @@ extension History {
         func register() -> AnyPublisher<Void, Never> {
             repository
                 .observeProcessingTransactions()
-                .publisher
                 .map { _ in () }
                 .replaceError(with: ())
                 .receive(on: RunLoop.main)

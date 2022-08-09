@@ -5,9 +5,9 @@
 //  Created by Chung Tran on 06/03/2022.
 //
 
+import Combine
 import Foundation
-import RxConcurrency
-import RxSwift
+import RxCombine
 import SolanaSwift
 
 extension TransactionHandler {
@@ -15,92 +15,58 @@ extension TransactionHandler {
     func sendAndObserve(
         index: TransactionIndex,
         processingTransaction: RawTransactionType
-    ) {
-        processingTransaction.createRequest()
-            .observe(on: MainScheduler.instance)
-            .subscribe(onSuccess: { [weak self] transactionID in
-                guard let self = self else { return }
+    ) async throws {
+        do {
+            let transactionID = try await processingTransaction.createRequest()
+            // show notification
+            //                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
 
-                // show notification
-//                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
+            // update status
+            updateTransactionAtIndex(index) { _ in
+                .init(
+                    transactionId: transactionID,
+                    sentAt: Date(),
+                    rawTransaction: processingTransaction,
+                    status: .sending
+                )
+            }
 
-                // update status
-                self.updateTransactionAtIndex(index) { _ in
-                    .init(
-                        transactionId: transactionID,
-                        sentAt: Date(),
-                        rawTransaction: processingTransaction,
-                        status: .confirmed(0)
-                    )
-                }
+            // observe confirmations
+            try? await observe(index: index, transactionId: transactionID)
+        } catch {
+            // update status
+            notificationsService.showInAppNotification(.error(error))
 
-                // observe confirmations
-                self.observe(index: index, transactionId: transactionID)
-            }, onFailure: { [weak self] error in
-                guard let self = self else { return }
-
-                // update status
-                self.notificationsService.showInAppNotification(.error(error))
-
-                // mark transaction as failured
-                self.updateTransactionAtIndex(index) { currentValue in
-                    var info = currentValue
-                    info.status = .error(error)
-                    return info
-                }
-            })
-            .disposed(by: disposeBag)
+            // mark transaction as failured
+            updateTransactionAtIndex(index) { currentValue in
+                var info = currentValue
+                info.status = .error(error.readableDescription)
+                return info
+            }
+        }
     }
 
     // MARK: - Helpers
 
     /// Observe confirmation statuses of given transaction
-    private func observe(index: TransactionIndex, transactionId: String) {
-        let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
-
-        Single.async { [weak self] () -> SignatureStatus in
-            guard let self = self else { throw SolanaError.unknown }
-            return try await self.apiClient.getSignatureStatus(signature: transactionId, configs: nil)
-        }
-        .subscribe(on: scheduler)
-        .observe(on: MainScheduler.instance)
-        .do(onSuccess: { [weak self] status in
-            guard let self = self else { throw SolanaError.unknown }
-            let txStatus: PendingTransaction.TransactionStatus
-
-            if status.confirmations == nil || status.confirmationStatus == "finalized" {
-                txStatus = .finalized
-            } else {
-                txStatus = .confirmed(Int(status.confirmations ?? 0))
-            }
-
-            self.updateTransactionAtIndex(index) { currentValue in
+    private func observe(index: TransactionIndex, transactionId: String) async throws {
+        for await status in apiClient.observeSignatureStatus(signature: transactionId) {
+            updateTransactionAtIndex(index) { currentValue in
                 var value = currentValue
-                value.status = txStatus
-                value.slot = status.slot
+                value.status = status
+                if let slot = status.slot {
+                    value.slot = slot
+                }
                 return value
             }
-        })
-        .observe(on: scheduler)
-        .map { $0.confirmations == nil || $0.confirmationStatus == "finalized" }
-        .flatMapCompletable { confirmed in
-            if confirmed { return .empty() }
-            throw ProcessTransaction.Error.notEnoughNumberOfConfirmations
         }
-        .retry(maxAttempts: .max, delayInSeconds: 1)
-        .timeout(.seconds(60), scheduler: scheduler)
-        .observe(on: MainScheduler.instance)
-        .subscribe(onCompleted: { // [weak self] in
-//                self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
-        }, onError: { [weak self] error in
-            debugPrint(error)
-            self?.updateTransactionAtIndex(index) { currentValue in
-                var value = currentValue
-                value.status = .finalized
-                return value
-            }
-        })
-        .disposed(by: disposeBag)
+
+        // update one last time
+        updateTransactionAtIndex(index) { currentValue in
+            var value = currentValue
+            value.status = .finalized
+            return value
+        }
     }
 
     /// Update transaction
@@ -109,14 +75,14 @@ extension TransactionHandler {
         _ index: TransactionIndex,
         update: (PendingTransaction) -> PendingTransaction
     ) -> Bool {
-        var value = transactionsSubject.value
+        var value = transactions
 
         if let currentValue = value[safe: index] {
             var newValue = update(currentValue)
+            let numberOfConfirmations = newValue.status.numberOfConfirmations
 
             // write to repository if the transaction is not yet written and there is at least 1 confirmation
             if !newValue.writtenToRepository,
-               let numberOfConfirmations = newValue.status.numberOfConfirmations,
                numberOfConfirmations > 0
             {
                 // manually update balances if socket is not connected
@@ -128,7 +94,7 @@ extension TransactionHandler {
 
             // update
             value[index] = newValue
-            transactionsSubject.accept(value)
+            transactions = value
             return true
         }
 
