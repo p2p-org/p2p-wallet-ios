@@ -46,6 +46,7 @@ struct HomeEmptyView: View {
             }
         }
         .padding(.horizontal, 16)
+        .padding(.top, 16)
     }
 
     var banner: some View {

@@ -23,20 +23,29 @@ class HomeWithTokensViewModel: ObservableObject {
     private let receiveClicked = PassthroughSubject<Void, Never>()
     private let sendClicked = PassthroughSubject<Void, Never>()
     private let tradeClicked = PassthroughSubject<Void, Never>()
+    private let walletClicked = PassthroughSubject<(pubKey: String, tokenSymbol: String), Never>()
     let buyShow: AnyPublisher<Void, Never>
     let receiveShow: AnyPublisher<PublicKey, Never>
     let sendShow: AnyPublisher<Void, Never>
     let tradeShow: AnyPublisher<Void, Never>
+    let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
 
     @Published var balance = ""
     @Published var pullToRefreshPending = false
     @Published var scrollOnTheTop = true
+
+    private var wallets = [Wallet]()
     @Published var items = [Model]()
+    @Published var hiddenItems = [Model]()
+
+    @Published var tokensIsHidden: Bool
 
     private var cancellables = Set<AnyCancellable>()
 
     init(walletsRepository: WalletsRepository = Resolver.resolve()) {
         self.walletsRepository = walletsRepository
+
+        tokensIsHidden = !walletsRepository.isHiddenWalletsShown.value
 
         buyShow = buyClicked.eraseToAnyPublisher()
         receiveShow = receiveClicked
@@ -44,21 +53,14 @@ class HomeWithTokensViewModel: ObservableObject {
             .eraseToAnyPublisher()
         sendShow = sendClicked.eraseToAnyPublisher()
         tradeShow = tradeClicked.eraseToAnyPublisher()
+        walletShow = walletClicked.eraseToAnyPublisher()
 
         Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
-            .map { data, state in
+            .filter { $0.1 == .loaded }
+            .map { data, _ in
                 let data = data ?? []
-                switch state {
-                case .initializing:
-                    return ""
-                case .loading:
-                    return L10n.loading + "..."
-                case .loaded:
-                    let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
-                    return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
-                case .error:
-                    return L10n.error.uppercaseFirst
-                }
+                let equityValue = data.reduce(0) { $0 + $1.amountInCurrentFiat }
+                return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
             .asPublisher()
             .assertNoFailure()
@@ -73,10 +75,8 @@ class HomeWithTokensViewModel: ObservableObject {
                 switch $0 {
                 case .initializing, .loading:
                     break
-                case .loaded:
+                case .loaded, .error:
                     self?.pullToRefreshPending = false
-                case .error:
-                    break // Сделать отображение ошибки
                 }
             })
             .store(in: &cancellables)
@@ -85,46 +85,24 @@ class HomeWithTokensViewModel: ObservableObject {
             .assertNoFailure()
             .sink(receiveValue: { [weak self] wallets in
                 guard let self = self, let wallets = wallets else { return }
-                self.items = wallets.map {
-                    .init(
-                        imageUrl: $0.token.logoURI ?? "",
-                        title: $0.name,
-                        subtitle: $0.amount?.tokenAmount(symbol: $0.token.symbol) ?? "",
-                        amount: $0.amountInCurrentFiat.fiatAmount(),
-                        wrappedImage: $0.token.wrappedBy?.image
+                self.wallets = wallets
+                let items = wallets.map {
+                    (
+                        Model(
+                            imageUrl: $0.token.logoURI ?? "",
+                            title: $0.name,
+                            subtitle: $0.amount?.tokenAmount(symbol: $0.token.symbol) ?? "",
+                            amount: $0.amountInCurrentFiat.fiatAmount(),
+                            wrappedImage: $0.token.wrappedBy?.image
+                        ),
+                        $0.isHidden
                     )
                 }
+                self.items = items.filter { !$0.1 }.map(\.0)
+                self.hiddenItems = items.filter(\.1).map(\.0)
             })
             .store(in: &cancellables)
     }
-
-//    if let token = token {
-//        if let image = token.image {
-//            tokenIcon.image = image
-//        } else {
-//            let key = token.symbol.isEmpty ? token.address : token.symbol
-//            var seed = Self.cachedJazziconSeeds[key]
-//            if seed == nil {
-//                seed = UInt32.random(in: 0 ..< 10_000_000)
-//                Self.cachedJazziconSeeds[key] = seed
-//            }
-//
-//            tokenIcon.isHidden = true
-//            self.seed = seed
-//
-//            tokenIcon.setImage(urlString: token.logoURI) { [weak self] result in
-//                switch result {
-//                case .success:
-//                    self?.tokenIcon.isHidden = false
-//                    self?.seed = nil
-//                case .failure:
-//                    self?.tokenIcon.isHidden = true
-//                }
-//            }
-//        }
-//    } else {
-//        tokenIcon.image = placeholder
-//    }
 
     func reloadData() {
         walletsRepository.reload()
@@ -146,7 +124,25 @@ class HomeWithTokensViewModel: ObservableObject {
         tradeClicked.send()
     }
 
+    func tokenClicked(model: Model) {
+        guard
+            let wallet = (wallets.first { $0.name == model.title }),
+            let pubKey = wallet.pubkey
+        else { return }
+        walletClicked.send((pubKey: pubKey, tokenSymbol: wallet.token.symbol))
+    }
+
     func scrollToTop() {
         scrollOnTheTop = true
+    }
+
+    func toggleTokenVisibility(model: Model) {
+        guard let wallet = (wallets.first { $0.name == model.title }) else { return }
+        walletsRepository.toggleWalletVisibility(wallet)
+    }
+
+    func toggleHiddenTokensVisibility() {
+        walletsRepository.toggleIsHiddenWalletShown()
+        tokensIsHidden.toggle()
     }
 }

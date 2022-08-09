@@ -11,13 +11,20 @@ import UIKit
 struct RefreshableScrollView<Content: View>: UIViewRepresentable {
     public typealias Action = () -> Void
     @Binding var refreshing: Bool
+    @Binding var onTop: Bool
     let action: Action?
     let content: () -> Content
 
-    init(refreshing: Binding<Bool>, action: Action? = nil, @ViewBuilder content: @escaping () -> Content) {
+    init(
+        refreshing: Binding<Bool>,
+        onTop: Binding<Bool> = .constant(true),
+        action: Action? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) {
         self.action = action
         self.content = content
         _refreshing = refreshing
+        _onTop = onTop
     }
 
     func makeCoordinator() -> Coordinator {
@@ -39,6 +46,9 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
     func updateUIView(_ uiView: UIScrollView, context _: Context) {
         if !refreshing, uiView.refreshControl?.isRefreshing == true {
             uiView.refreshControl?.endRefreshing()
+        }
+        if onTop {
+            uiView.scrollTo(y: 0, animated: false)
         }
         updateView(scrollView: uiView)
     }
@@ -63,7 +73,7 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
         scrollView.addConstraints(constraints)
     }
 
-    class Coordinator: NSObject {
+    class Coordinator: NSObject, UIScrollViewDelegate {
         let control: RefreshableScrollView
 
         init(_ control: RefreshableScrollView) {
@@ -73,6 +83,10 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
         @objc func handleRefreshControl(sender _: UIRefreshControl) {
             control.action?()
             control.refreshing = true
+        }
+
+        func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            control.onTop = scrollView.contentOffset == .zero
         }
     }
 }

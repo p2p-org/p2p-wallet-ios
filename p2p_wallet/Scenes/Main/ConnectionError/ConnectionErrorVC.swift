@@ -16,7 +16,10 @@ extension UIView {
         let errorView = ConnectionErrorView()
         errorView.refreshAction = refreshAction
         addSubview(errorView)
-        errorView.autoPinEdgesToSuperviewEdges()
+        errorView.autoPinEdge(toSuperviewEdge: .top)
+        errorView.autoPinEdge(toSuperviewEdge: .leading)
+        errorView.autoPinEdge(toSuperviewEdge: .trailing)
+        errorView.autoPinEdge(toSuperviewSafeArea: .bottom)
         return errorView
     }
 

@@ -5,6 +5,7 @@
 //  Created by Ivan on 08.08.2022.
 //
 
+import KeyAppUI
 import SwiftUI
 
 struct HomeView: View {
@@ -19,9 +20,54 @@ struct HomeView: View {
                 $0.style = .large
             }
         case .withTokens:
-            HomeWithTokensView(viewModel: viewModelWithTokens)
+            navigation {
+                HomeWithTokensView(viewModel: viewModelWithTokens)
+            }
         case .empty:
-            HomeEmptyView(viewModel: emptyViewModel)
+            navigation {
+                HomeEmptyView(viewModel: emptyViewModel)
+            }
+        }
+    }
+
+    func navigation<Content: View>(@ViewBuilder content: @escaping () -> Content) -> some View {
+        NavigationView {
+            content()
+                .navigationBarTitleDisplayMode(.inline)
+                .navigationViewStyle(StackNavigationViewStyle())
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Button(
+                            action: {
+                                viewModel.copyToClipboard()
+                            },
+                            label: {
+                                ZStack {
+                                    Color(Asset.Colors.rain.color)
+                                        .cornerRadius(80)
+                                    HStack(spacing: 9) {
+                                        Image(uiImage: .walletNavigation)
+                                        Text(viewModel.address)
+                                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                                            .font(uiFont: .font(of: .text1, weight: .bold))
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                                }
+                            }
+                        )
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(
+                            action: {
+                                viewModel.scanQr()
+                            },
+                            label: {
+                                Image(uiImage: .scanQr)
+                            }
+                        )
+                    }
+                }
         }
     }
 }
