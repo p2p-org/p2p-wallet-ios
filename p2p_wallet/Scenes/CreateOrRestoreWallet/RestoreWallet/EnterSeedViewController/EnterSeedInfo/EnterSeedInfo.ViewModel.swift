@@ -5,24 +5,24 @@
 //  Created by Andrew Vasiliev on 18.11.2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 
 protocol EnterSeedInfoViewModelType {
-    var navigationDriver: Driver<EnterSeedInfo.NavigatableScene?> { get }
+    var navigationDriver: AnyPublisher<EnterSeedInfo.NavigatableScene?, Never> { get }
     func done()
 }
 
 extension EnterSeedInfo {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         // MARK: - Properties
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        @Published private var navigatableScene: NavigatableScene?
 
         deinit {
             debugPrint("\(String(describing: self)) deinited")
@@ -31,13 +31,13 @@ extension EnterSeedInfo {
 }
 
 extension EnterSeedInfo.ViewModel: EnterSeedInfoViewModelType {
-    var navigationDriver: Driver<EnterSeedInfo.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationDriver: AnyPublisher<EnterSeedInfo.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func done() {
-        navigationSubject.accept(.done)
+        navigatableScene = .done
     }
 }
