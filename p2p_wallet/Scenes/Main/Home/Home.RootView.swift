@@ -33,8 +33,7 @@ extension Home {
                 BEVStack {
                     // Indicator
                     WLStatusIndicatorView(forAutoLayout: ()).setup { view in
-                        viewModel.currentPricesPublisher
-                            .map(\.state)
+                        viewModel.pricesLoadingStatePublisher
                             .sink { [weak view] state in
                                 switch state {
                                 case .notRequested:

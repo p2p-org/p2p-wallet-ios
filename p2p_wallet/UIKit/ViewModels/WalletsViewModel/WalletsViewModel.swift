@@ -147,11 +147,17 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
             return wallets
         }.value
 
-        let newTokens = wallets.map(\.token)
-            .filter { !self.pricesService.getWatchList().contains($0) }
-        pricesService.addToWatchList(newTokens)
-        pricesService.fetchPrices(tokens: newTokens)
-        return wallets
+        // retrieve prices in separated task
+        let result = wallets
+        Task.detached { [weak self] in
+            let watchList = await self?.pricesService.getWatchList() ?? []
+            let newTokens = result.map(\.token)
+                .filter { !watchList.contains($0) }
+            await self?.pricesService.addToWatchList(newTokens)
+            try? await self?.pricesService.fetchPrices(tokens: newTokens)
+        }
+
+        return result
     }
 
     override func reload() {
