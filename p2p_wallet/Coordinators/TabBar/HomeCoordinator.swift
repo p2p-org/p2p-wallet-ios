@@ -5,6 +5,7 @@
 //  Created by Ivan on 02.08.2022.
 //
 
+import Action
 import AnalyticsManager
 import Combine
 import Foundation
@@ -32,17 +33,52 @@ final class HomeCoordinator: Coordinator<Void> {
             walletsRepository: Resolver.resolve()
         )
         let emptyVMOutput = emptyViewModel.output.coord
+        let homeView = HomeView(
+            viewModel: viewModel,
+            viewModelWithTokens: tokensViewModel,
+            emptyViewModel: emptyViewModel
+        ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
 
-        navigationController.setViewControllers(
-            [
-                HomeView(
-                    viewModel: viewModel,
-                    viewModelWithTokens: tokensViewModel,
-                    emptyViewModel: emptyViewModel
-                ).asViewController(),
-            ],
-            animated: false
-        )
+        navigationController.setViewControllers([homeView], animated: false)
+
+        homeView.viewWillAppear
+            .sink(receiveValue: { [unowned homeView] in
+                homeView.navigationIsHidden = true
+            })
+            .store(in: &subscriptions)
+        homeView.viewDidAppear
+            .sink(receiveValue: {})
+            .store(in: &subscriptions)
+        homeView.viewWillDisappear
+            .sink(receiveValue: { [unowned homeView] in
+                homeView.navigationIsHidden = false
+            })
+            .store(in: &subscriptions)
+        viewModel.scanQrShow
+            .sink(receiveValue: { [unowned self] in
+                let coordinator = ScanQrCoordinator(navigationController: navigationController)
+                coordinate(to: coordinator)
+                    .sink(receiveValue: { [weak self] in
+                        guard let code = $0 else { return }
+                        self?.qrCodeScannerHandler(code: code, tokensViewModel: tokensViewModel)
+                    })
+                    .store(in: &subscriptions)
+                analyticsManager.log(event: .mainScreenQrOpen)
+                analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
+            })
+            .store(in: &subscriptions)
+        viewModel.errorShow
+            .sink(receiveValue: { show in
+                let walletsRepository = Resolver.resolve(WalletsRepository.self)
+                if show {
+                    homeView.view.showConnectionErrorView(refreshAction: CocoaAction {
+                        homeView.view.hideConnectionErrorView()
+                        walletsRepository.reload()
+                        return .just(())
+                    })
+                }
+            })
+            .store(in: &subscriptions)
 
         emptyVMOutput.topUpShow
             .sink(receiveValue: { [unowned self] in
@@ -75,24 +111,37 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
         tokensViewModel.sendShow
-            .sink(receiveValue: { [unowned self] in
+            .sink(receiveValue: { [unowned self, weak tokensViewModel] in
                 Task {
                     do {
                         let done = await sendToken()
                         if done {
-                            tokensViewModel.scrollToTop()
+                            tokensViewModel?.scrollToTop()
                         }
+                        sendCoordinator = nil
                     }
                 }
             })
             .store(in: &subscriptions)
         tokensViewModel.tradeShow
-            .sink(receiveValue: { [unowned self] in
+            .sink(receiveValue: { [unowned self, weak tokensViewModel] in
                 Task {
                     do {
                         let done = await showTrade()
                         if done {
-                            tokensViewModel.scrollToTop()
+                            tokensViewModel?.scrollToTop()
+                        }
+                    }
+                }
+            })
+            .store(in: &subscriptions)
+        tokensViewModel.walletShow
+            .sink(receiveValue: { [unowned self, weak tokensViewModel] pubKey, tokenSymbol in
+                Task {
+                    do {
+                        let done = await walletDetail(pubKey: pubKey, tokenSymbol: tokenSymbol)
+                        if done {
+                            tokensViewModel?.scrollToTop()
                         }
                     }
                 }
@@ -127,9 +176,9 @@ final class HomeCoordinator: Coordinator<Void> {
         analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
     }
 
-    private func sendToken() async -> Bool {
+    private func sendToken(pubKey: String? = nil) async -> Bool {
         let vm = SendToken.ViewModel(
-            walletPubkey: nil,
+            walletPubkey: pubKey,
             destinationAddress: nil,
             relayMethod: .default
         )
@@ -143,10 +192,12 @@ final class HomeCoordinator: Coordinator<Void> {
         return await withCheckedContinuation { continuation in
             sendCoordinator?.doneHandler = { [unowned self] in
                 navigationController.popToRootViewController(animated: true)
-                sendCoordinator = nil
                 return continuation.resume(with: .success(true))
             }
-            sendCoordinator?.start(hidesBottomBarWhenPushed: true)
+            let vc = sendCoordinator?.start(hidesBottomBarWhenPushed: true)
+            vc?.onClose = {
+                continuation.resume(with: .success(false))
+            }
         }
     }
 
@@ -161,7 +212,48 @@ final class HomeCoordinator: Coordinator<Void> {
                 navigationController.popToRootViewController(animated: true)
                 return continuation.resume(with: .success(true))
             }
+            vc.onClose = {
+                continuation.resume(with: .success(false))
+            }
             navigationController.show(vc, sender: nil)
         }
     }
+
+    private func walletDetail(pubKey: String, tokenSymbol: String) async -> Bool {
+        analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
+        let vm = WalletDetail.ViewModel(pubkey: pubKey, symbol: tokenSymbol)
+        let vc = WalletDetail.ViewController(viewModel: vm)
+
+        return await withCheckedContinuation { continuation in
+            vc.processingTransactionDoneHandler = {
+                continuation.resume(with: .success(true))
+            }
+            vc.onClose = {
+                continuation.resume(with: .success(false))
+            }
+            navigationController.show(vc, sender: nil)
+        }
+    }
+
+    private func qrCodeScannerHandler(code: String, tokensViewModel: HomeWithTokensViewModel) {
+        guard NSRegularExpression.publicKey.matches(code) else { return }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            Task {
+                do {
+                    let done = await self.sendToken(pubKey: code)
+                    if done {
+                        tokensViewModel.scrollToTop()
+                    }
+                    self.sendCoordinator = nil
+                }
+            }
+        }
+    }
+}
+
+// MARK: - UINavigationControllerDelegate
+
+extension HomeCoordinator: UINavigationControllerDelegate {
+    func navigationController(_: UINavigationController, didShow _: UIViewController, animated _: Bool) {}
 }

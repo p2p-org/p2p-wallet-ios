@@ -11,6 +11,8 @@ import Resolver
 import SwiftUI
 
 struct HomeWithTokensView: View {
+    typealias Model = HomeWithTokensViewModel.Model
+
     @Injected private var analyticsManager: AnalyticsManager
 
     @ObservedObject var viewModel: HomeWithTokensViewModel
@@ -23,6 +25,7 @@ struct HomeWithTokensView: View {
     var body: some View {
         RefreshableScrollView(
             refreshing: $viewModel.pullToRefreshPending,
+            onTop: $viewModel.scrollOnTheTop,
             action: { viewModel.reloadData() },
             content: { scrollingContent }
         )
@@ -41,8 +44,7 @@ struct HomeWithTokensView: View {
             tokenOperationsButtons
             tokens
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 16)
+        .padding(.vertical, 16)
     }
 
     var tokenOperationsButtons: some View {
@@ -81,10 +83,53 @@ struct HomeWithTokensView: View {
             Text(L10n.tokens)
                 .font(.system(size: 20, weight: .medium))
                 .foregroundColor(Color(Asset.Colors.night.color))
-            ForEach(viewModel.items, id: \.title) { item in
-                TokenCellView(model: item)
-                    .frame(height: 72)
+                .padding(.horizontal, 16)
+            ForEach(viewModel.items, id: \.title) {
+                tokenCell(isVisible: true, model: $0)
+            }
+            if !viewModel.hiddenItems.isEmpty {
+                Button(
+                    action: {
+                        viewModel.toggleHiddenTokensVisibility()
+                    },
+                    label: {
+                        HStack(spacing: 8) {
+                            Image(uiImage: viewModel.tokensIsHidden ? .eyeHiddenTokens : .eyeHiddenTokensHide)
+                            Text(L10n.hiddenTokens)
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .font(.system(size: 16))
+                        }
+                    }
+                )
+                    .padding(.horizontal, 16)
+                if !viewModel.tokensIsHidden {
+                    ForEach(viewModel.hiddenItems, id: \.title) {
+                        tokenCell(isVisible: false, model: $0)
+                    }
+                    .transition(AnyTransition.opacity.animation(.linear(duration: 0.5)))
+                }
             }
         }
+    }
+
+    private func tokenCell(isVisible: Bool, model: Model) -> some View {
+        TokenCellView(model: model)
+            .padding(.horizontal, 16)
+            .swipeActions(
+                trailing: [
+                    SwipeActionButton(
+                        icon: Image(uiImage: isVisible ? .eyeHide : .eyeShow),
+                        tint: .clear,
+                        action: {
+                            viewModel.toggleTokenVisibility(model: model)
+                        }
+                    ),
+                ],
+                allowsFullSwipeTrailing: true
+            )
+            .frame(height: 72)
+            .onTapGesture {
+                viewModel.tokenClicked(model: model)
+            }
     }
 }
