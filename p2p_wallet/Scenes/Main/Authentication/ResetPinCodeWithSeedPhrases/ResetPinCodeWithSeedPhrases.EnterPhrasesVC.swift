@@ -6,8 +6,8 @@
 //
 
 import BEPureLayout
+import Combine
 import Resolver
-import RxSwift
 import UIKit
 
 extension ResetPinCodeWithSeedPhrases {
@@ -24,7 +24,7 @@ extension ResetPinCodeWithSeedPhrases {
             case error(_ message: String)
         }
 
-        private let buttonState = BehaviorSubject<ButtonState>(value: .enter)
+        private var buttonState = CurrentValueSubject<ButtonState, Never>(.enter)
 
         init(
             completion: @escaping ([String]) -> Void,
@@ -70,14 +70,14 @@ extension ResetPinCodeWithSeedPhrases {
                                                 self.pastButton.isHidden = text.count > 0
 
                                                 if text.isEmpty {
-                                                    self.buttonState.on(.next(.enter))
+                                                    self.buttonState.send(.enter)
                                                 } else {
                                                     let keyPhrase = text.trimmingCharacters(in: .whitespacesAndNewlines)
                                                         .components(separatedBy: " ")
                                                     let (status, error) = self.validate(keyPhrase)
                                                     self.buttonState
-                                                        .on(.next(status ? .reset(keyPhrase) :
-                                                                .error(error ?? L10n.error)))
+                                                        .send(status ? .reset(keyPhrase) :
+                                                            .error(error ?? L10n.error))
                                                 }
                                             }
                                             .disposed(by: disposeBag)
@@ -114,7 +114,7 @@ extension ResetPinCodeWithSeedPhrases {
 
                     // Button
                     BEZStackPosition(mode: .pinEdges([.bottom, .left, .right], avoidKeyboard: true)) {
-                        BEBuilderRxSwift(driver: buttonState.asDriver(onErrorJustReturn: .enter)) { state in
+                        BEBuilder(publisher: buttonState.eraseToAnyPublisher()) { state in
                             switch state {
                             case .enter:
                                 let button = WLStepButton.main(text: L10n.enterYourSecurityKey)
