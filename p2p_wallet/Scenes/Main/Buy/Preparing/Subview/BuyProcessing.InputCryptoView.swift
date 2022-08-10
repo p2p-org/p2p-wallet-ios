@@ -2,14 +2,15 @@
 // Created by Giang Long Tran on 04.03.2022.
 //
 
+import Combine
+import CombineCocoa
 import Foundation
 import Resolver
-import RxSwift
 import SolanaSwift
 
 extension BuyPreparing {
     final class InputCryptoView: BECompositionView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: BuyPreparingSceneModel
 
         init(viewModel: BuyPreparingSceneModel) {
@@ -28,20 +29,11 @@ extension BuyPreparing {
                         // Amount
                         CoinLogoImageView(size: 24, cornerRadius: 8)
                             .setup { view in
-                                Single<[Token]>.async {
-                                    Array(try await Resolver.resolve(SolanaTokensRepository.self).getTokensList())
-                                }
-                                .asDriver(onErrorJustReturn: [])
-                                .drive(onNext: { [weak self, weak view] tokens in
-                                    if let token = tokens.first(where: { token in
-                                        self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
-                                            .symbol.lowercased() == self?.viewModel.crypto.solanaCode
-                                            .lowercased() && token.address == self?.viewModel.crypto.mintAddress
-                                    }) {
+                                viewModel.solanaTokenPublisher
+                                    .sink { [weak view] token in
                                         view?.setUp(token: token)
                                     }
-                                })
-                                .disposed(by: disposeBag)
+                                    .store(in: &subscriptions)
                             }
                         UIView(width: 8)
 
@@ -55,11 +47,11 @@ extension BuyPreparing {
                         ).setup { view in
                             view.becomeFirstResponder()
                             view.text = viewModel.input.amount.toString()
-                            view.rx.text
-                                .subscribe(onNext: { [weak viewModel] text in
+                            view.textPublisher
+                                .sink { [weak viewModel] text in
                                     viewModel?.setAmount(value: Double(text ?? "") ?? 0)
-                                })
-                                .disposed(by: disposeBag)
+                                }
+                                .store(in: &subscriptions)
                         }
                     }
                 }
@@ -74,8 +66,10 @@ extension BuyPreparing {
                     // Output amount
                     UIStackView(axis: .horizontal) {
                         UILabel(text: "0.00 SOL").setup { view in
-                            viewModel.outputDriver.map { output in "$ \(output.amount)" }
-                                .drive(view.rx.text).disposed(by: disposeBag)
+                            viewModel.outputAnyPublisher
+                                .map { output in "$ \(output.amount)" }
+                                .assign(to: \.text, on: view)
+                                .store(in: &subscriptions)
                         }
                         UIImageView(image: .arrowUpDown)
                             .padding(.init(only: .left, inset: 6))
