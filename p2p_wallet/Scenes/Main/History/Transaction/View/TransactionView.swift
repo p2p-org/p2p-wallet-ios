@@ -47,21 +47,23 @@ extension History {
         private lazy var toAddressView = addressView(title: L10n.to, label: toAddressLabel)
 
         private let modelRelay = PassthroughSubject<Model, Never>()
-        private var model: AnyPublisher<Model, Never> { modelRelay.eraseToAnyPublisher() }
+        private var modelPublisher: AnyPublisher<Model, Never> { modelRelay.eraseToAnyPublisher() }
 
-        fileprivate var transactionIdClicked = PassthroughSubject<Void, Never>()
-        fileprivate var doneClicked = PassthroughSubject<Void, Never>()
-        fileprivate var transactionDetailClicked = PassthroughSubject<Void, Never>()
+        var transactionIdClicked = PassthroughSubject<Void, Never>()
+        var doneClicked = PassthroughSubject<Void, Never>()
+        var transactionDetailClicked = PassthroughSubject<Void, Never>()
 
         private var subscriptions = [AnyCancellable]()
 
-//        var model: Model {
-//            didSet {
-//                setModel(model)
-//            }
-//        }
-//
-//        var transactionIdClicked: Observable<Void> { base.transactionIdClicked.asObservable() }
+        var model: Model? {
+            didSet {
+                guard let model = model else {
+                    return
+                }
+                setModel(model)
+            }
+        }
+
 //        var doneClicked: Observable<Void> { base.doneClicked.asObservable() }
 //        var transactionDetailClicked: Observable<Void> { base.transactionDetailClicked.asObservable() }
 
@@ -124,7 +126,7 @@ extension History {
                 descriptionTitleLabel(text: L10n.transactionID)
                 BEHStack(spacing: 6, alignment: .center) {
                     descriptionLabel().setup {
-                        model.map(\.transactionId)
+                        modelPublisher.map(\.transactionId)
                             .map(Optional.init)
                             .assign(to: \.text, on: $0)
                             .store(in: &subscriptions)
@@ -155,7 +157,7 @@ extension History {
                 descriptionTitleLabel(text: L10n.fee)
                     .withContentHuggingPriority(.required, for: .horizontal)
                 descriptionLabel().setup {
-                    model.map(\.fee)
+                    modelPublisher.map(\.fee)
                         .assign(to: \.attributedText, on: $0)
                         .store(in: &subscriptions)
                 }
@@ -167,11 +169,11 @@ extension History {
                 descriptionTitleLabel(text: L10n.status)
                     .withContentHuggingPriority(.required, for: .horizontal)
                 descriptionLabel().setup {
-                    model.map(\.status.text)
+                    modelPublisher.map(\.status.text)
                         .map(Optional.init)
                         .assign(to: \.text, on: $0)
                         .store(in: &subscriptions)
-                    model.map(\.status.color)
+                    modelPublisher.map(\.status.color)
                         .assign(to: \.textColor, on: $0)
                         .store(in: &subscriptions)
                 }
@@ -183,7 +185,7 @@ extension History {
                 descriptionTitleLabel(text: L10n.blockNumber)
                     .withContentHuggingPriority(.required, for: .horizontal)
                 descriptionLabel().setup {
-                    model.map(\.blockNumber)
+                    modelPublisher.map(\.blockNumber)
                         .map(Optional.init)
                         .assign(to: \.text, on: $0)
                         .store(in: &subscriptions)

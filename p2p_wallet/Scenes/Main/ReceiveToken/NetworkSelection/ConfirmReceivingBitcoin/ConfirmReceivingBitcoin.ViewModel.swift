@@ -5,21 +5,20 @@
 //  Created by Chung Tran on 22/04/2022.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
     var solanaPubkey: String? { get }
-    var navigationDriver: Driver<ConfirmReceivingBitcoin.NavigatableScene?> { get }
-    var isLoadingDriver: Driver<Bool> { get }
-    var errorDriver: Driver<String?> { get }
-    var accountStatusDriver: Driver<ConfirmReceivingBitcoin.RenBTCAccountStatus?> { get }
-    var payingWalletDriver: Driver<Wallet?> { get }
-    var totalFeeDriver: Driver<Double?> { get }
-    var feeInFiatDriver: Driver<Double?> { get }
+    var navigationDriver: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> { get }
+    var isLoadingDriver: AnyPublisher<Bool, Never> { get }
+    var errorDriver: AnyPublisher<String?, Never> { get }
+    var accountStatusDriver: AnyPublisher<ConfirmReceivingBitcoin.RenBTCAccountStatus?, Never> { get }
+    var payingWalletDriver: AnyPublisher<Wallet?, Never> { get }
+    var totalFeeDriver: AnyPublisher<Double?, Never> { get }
+    var feeInFiatDriver: AnyPublisher<Double?, Never> { get }
 
     func reload()
     func navigate(to scene: ConfirmReceivingBitcoin.NavigatableScene?)
@@ -29,8 +28,8 @@ protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
 }
 
 extension ConfirmReceivingBitcoinViewModelType {
-    var feeInTextDriver: Driver<String?> {
-        Driver.combineLatest(
+    var feeInTextDriver: AnyPublisher<String?, Never> {
+        Publishers.CombineLatest(
             totalFeeDriver,
             payingWalletDriver
         )
@@ -40,11 +39,13 @@ extension ConfirmReceivingBitcoinViewModelType {
                 }
                 return fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol
             }
+            .eraseToAnyPublisher()
     }
 }
 
 extension ConfirmReceivingBitcoin {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var renBTCStatusService: RenBTCStatusServiceType
@@ -53,21 +54,21 @@ extension ConfirmReceivingBitcoin {
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         var completion: (() -> Void)?
         var topUpCompletion: (() -> Void)?
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let isLoadingSubject = BehaviorRelay<Bool>(value: true)
-        private let errorSubject = BehaviorRelay<String?>(value: nil)
-        private let accountStatusSubject = BehaviorRelay<RenBTCAccountStatus?>(value: nil)
-        private let payableWalletsSubject = BehaviorRelay<[Wallet]>(value: [])
+        @Published private var navigationSubject: NavigatableScene?
+        @Published private var isLoadingSubject = true
+        @Published private var errorSubject: String?
+        @Published private var accountStatusSubject: RenBTCAccountStatus?
+        @Published private var payableWalletsSubject = [Wallet]()
 
-        private let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        private let totalFeeSubject = BehaviorRelay<Double?>(value: nil)
-        private let feeInFiatSubject = BehaviorRelay<Double?>(value: nil)
+        @Published private var payingWalletSubject: Wallet?
+        @Published private var totalFeeSubject: Double?
+        @Published private var feeInFiatSubject: Double?
 
         // MARK: - Initializer
 
@@ -79,29 +80,29 @@ extension ConfirmReceivingBitcoin {
         // MARK: - Methods
 
         func reload() {
-            isLoadingSubject.accept(true)
-            errorSubject.accept(nil)
-            accountStatusSubject.accept(nil)
-            payableWalletsSubject.accept([])
-            payingWalletSubject.accept(nil)
+            isLoadingSubject = true
+            errorSubject = nil
+            accountStatusSubject = nil
+            payableWalletsSubject = []
+            payingWalletSubject = nil
 
             Task {
                 do {
                     try await renBTCStatusService.load()
                     let payableWallets = try await renBTCStatusService.getPayableWallets()
 
-                    errorSubject.accept(nil)
+                    errorSubject = nil
                     accountStatusSubject
-                        .accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
-                    payableWalletsSubject.accept(payableWallets)
-                    payingWalletSubject.accept(payableWallets.first)
+                        = !payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired
+                    payableWalletsSubject = payableWallets
+                    payingWalletSubject = payableWallets.first
                 } catch {
-                    errorSubject.accept(error.readableDescription)
-                    accountStatusSubject.accept(nil)
-                    payableWalletsSubject.accept([])
-                    payingWalletSubject.accept(nil)
+                    errorSubject = error.readableDescription
+                    accountStatusSubject = nil
+                    payableWalletsSubject = []
+                    payingWalletSubject = nil
                 }
-                isLoadingSubject.accept(false)
+                isLoadingSubject = false
             }
         }
 
@@ -136,54 +137,54 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
         walletsRepository.nativeWallet?.pubkey
     }
 
-    var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
+    var isLoadingDriver: AnyPublisher<Bool, Never> {
+        $isLoadingSubject.eraseToAnyPublisher()
     }
 
-    var errorDriver: Driver<String?> {
-        errorSubject.asDriver()
+    var errorDriver: AnyPublisher<String?, Never> {
+        $errorSubject.eraseToAnyPublisher()
     }
 
-    var accountStatusDriver: Driver<ConfirmReceivingBitcoin.RenBTCAccountStatus?> {
-        accountStatusSubject.asDriver()
+    var accountStatusDriver: AnyPublisher<ConfirmReceivingBitcoin.RenBTCAccountStatus?, Never> {
+        $accountStatusSubject.eraseToAnyPublisher()
     }
 
-    var payingWalletDriver: Driver<Wallet?> {
-        payingWalletSubject.asDriver()
+    var payingWalletDriver: AnyPublisher<Wallet?, Never> {
+        $payingWalletSubject.eraseToAnyPublisher()
     }
 
-    var totalFeeDriver: Driver<Double?> {
-        totalFeeSubject.asDriver()
+    var totalFeeDriver: AnyPublisher<Double?, Never> {
+        $totalFeeSubject.eraseToAnyPublisher()
     }
 
-    var feeInFiatDriver: Driver<Double?> {
-        feeInFiatSubject.asDriver()
+    var feeInFiatDriver: AnyPublisher<Double?, Never> {
+        $feeInFiatSubject.eraseToAnyPublisher()
     }
 
-    var navigationDriver: Driver<ConfirmReceivingBitcoin.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationDriver: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> {
+        $navigationSubject.eraseToAnyPublisher()
     }
 
     func navigate(to scene: ConfirmReceivingBitcoin.NavigatableScene?) {
-        navigationSubject.accept(scene)
+        navigationSubject = scene
     }
 
     func walletDidSelect(_ wallet: Wallet) {
-        payingWalletSubject.accept(wallet)
+        payingWalletSubject = wallet
     }
 
     func navigateToChoosingWallet() {
-        navigate(to: .chooseWallet(selectedWallet: payingWalletSubject.value,
-                                   payableWallets: payableWalletsSubject.value))
+        navigate(to: .chooseWallet(selectedWallet: payingWalletSubject,
+                                   payableWallets: payableWalletsSubject))
     }
 
     func createRenBTC() {
-        guard let mintAddress = payingWalletSubject.value?.mintAddress,
-              let address = payingWalletSubject.value?.pubkey
+        guard let mintAddress = payingWalletSubject?.mintAddress,
+              let address = payingWalletSubject?.pubkey
         else { return }
 
-        isLoadingSubject.accept(true)
-        errorSubject.accept(nil)
+        isLoadingSubject = true
+        errorSubject = nil
 
         Task {
             do {
@@ -191,16 +192,16 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                     payingFeeAddress: address,
                     payingFeeMintAddress: mintAddress
                 )
-                errorSubject.accept(nil)
+                errorSubject = nil
 
                 await MainActor.run { [weak self] in
                     self?.completion?()
                 }
             } catch {
-                errorSubject.accept(error.readableDescription)
+                errorSubject = error.readableDescription
             }
 
-            isLoadingSubject.accept(false)
+            isLoadingSubject = false
         }
     }
 
