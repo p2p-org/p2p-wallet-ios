@@ -6,53 +6,53 @@
 //
 
 import AnalyticsManager
+import Combine
 import Resolver
-import RxCocoa
-import RxSwift
 import UIKit
 
 protocol CreateOrRestoreWalletViewModelType {
-    var navigatableSceneDriver: Driver<CreateOrRestoreWallet.NavigatableScene?> { get }
+    var navigatableScenePublisher: AnyPublisher<CreateOrRestoreWallet.NavigatableScene?, Never> { get }
 
     func navigateToCreateWalletScene()
     func navigateToRestoreWalletScene()
 }
 
 extension CreateOrRestoreWallet {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected var analyticsManager: AnalyticsManager
 
+        // MARK: - Subjects
+
+        @Published private var navigatableScene: CreateOrRestoreWallet.NavigatableScene?
+
         // MARK: - Initializer
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
-
-        // MARK: - Subjects
-
-        private let navigatableSceneSubject = BehaviorRelay<CreateOrRestoreWallet.NavigatableScene?>(value: nil)
     }
 }
 
 extension CreateOrRestoreWallet.ViewModel: CreateOrRestoreWalletViewModelType {
-    var navigatableSceneDriver: Driver<CreateOrRestoreWallet.NavigatableScene?> {
-        navigatableSceneSubject.asDriver()
+    var navigatableScenePublisher: AnyPublisher<CreateOrRestoreWallet.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func navigateToCreateWalletScene() {
         analyticsManager.log(event: .splashCreating)
-        navigatableSceneSubject.accept(.createWallet)
+        navigatableScene = .createWallet
         OnboardingTracking.currentFlow = .create
     }
 
     func navigateToRestoreWalletScene() {
         analyticsManager.log(event: .splashRestoring)
         analyticsManager.log(event: .recoveryOpen(fromPage: "first_in"))
-        navigatableSceneSubject.accept(.restoreWallet)
+        navigatableScene = .restoreWallet
         OnboardingTracking.currentFlow = .restore
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
 import UIKit
@@ -16,6 +17,7 @@ extension CreateOrRestoreWallet {
 
         private let viewModel: CreateOrRestoreWalletViewModelType
         @Injected private var analyticsManager: AnalyticsManager
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -90,9 +92,9 @@ extension CreateOrRestoreWallet {
 
         override func bind() {
             super.bind()
-            viewModel.navigatableSceneDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigatableScenePublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         override func viewDidAppear(_ animated: Bool) {
