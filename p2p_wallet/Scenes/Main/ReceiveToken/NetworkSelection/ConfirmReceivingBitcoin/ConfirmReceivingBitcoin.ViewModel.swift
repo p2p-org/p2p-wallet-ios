@@ -60,15 +60,15 @@ extension ConfirmReceivingBitcoin {
 
         // MARK: - Subject
 
-        @Published private var navigationSubject: NavigatableScene?
-        @Published private var isLoadingSubject = true
-        @Published private var errorSubject: String?
-        @Published private var accountStatusSubject: RenBTCAccountStatus?
-        @Published private var payableWalletsSubject = [Wallet]()
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var isLoading = true
+        @Published private var error: String?
+        @Published private var accountStatus: RenBTCAccountStatus?
+        @Published private var payableWallets = [Wallet]()
 
-        @Published private var payingWalletSubject: Wallet?
-        @Published private var totalFeeSubject: Double?
-        @Published private var feeInFiatSubject: Double?
+        @Published private var payingWallet: Wallet?
+        @Published private var totalFee: Double?
+        @Published private var feeInFiat: Double?
 
         // MARK: - Initializer
 
@@ -80,54 +80,52 @@ extension ConfirmReceivingBitcoin {
         // MARK: - Methods
 
         func reload() {
-            isLoadingSubject = true
-            errorSubject = nil
-            accountStatusSubject = nil
-            payableWalletsSubject = []
-            payingWalletSubject = nil
+            isLoading = true
+            error = nil
+            accountStatus = nil
+            payableWallets = []
+            payingWallet = nil
 
             Task {
                 do {
                     try await renBTCStatusService.load()
                     let payableWallets = try await renBTCStatusService.getPayableWallets()
 
-                    errorSubject = nil
-                    accountStatusSubject
+                    error = nil
+                    accountStatus
                         = !payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired
-                    payableWalletsSubject = payableWallets
-                    payingWalletSubject = payableWallets.first
+                    payableWallets = payableWallets
+                    payingWallet = payableWallets.first
                 } catch {
-                    errorSubject = error.readableDescription
-                    accountStatusSubject = nil
-                    payableWalletsSubject = []
-                    payingWalletSubject = nil
+                    error = error.readableDescription
+                    accountStatus = nil
+                    payableWallets = []
+                    payingWallet = nil
                 }
-                isLoadingSubject = false
+                isLoading = false
             }
         }
 
         private func bind() {
-            payingWalletSubject
-                .flatMapLatest { wallet -> Single<Double?> in
-                    Single.async { [weak self] in
-                        guard let self = self, let wallet = wallet else { return nil }
-                        let fee = try await self.renBTCStatusService
-                            .getCreationFee(payingFeeMintAddress: wallet.mintAddress)
-                        return fee.convertToBalance(decimals: wallet.token.decimals)
-                    }
+            $payingWallet
+                .asyncMap { [weak self] wallet -> Double? in
+                    guard let self = self, let wallet = wallet else { return nil }
+                    let fee = try await self.renBTCStatusService
+                        .getCreationFee(payingFeeMintAddress: wallet.mintAddress)
+                    return fee.convertToBalance(decimals: wallet.token.decimals)
                 }
-                .catchAndReturn(nil)
-                .bind(to: totalFeeSubject)
-                .disposed(by: disposeBag)
+                .replaceError(with: nil)
+                .assign(to: \.totalFee, on: self)
+                .store(in: &subscriptions)
 
-            totalFeeSubject
+            $totalFee
                 .map { [weak self] fee -> Double? in
-                    guard let fee = fee, let symbol = self?.payingWalletSubject.value?.token.symbol,
+                    guard let fee = fee, let symbol = self?.payingWallet?.token.symbol,
                           let price = self?.pricesService.currentPrice(for: symbol)?.value else { return nil }
                     return fee * price
                 }
-                .bind(to: feeInFiatSubject)
-                .disposed(by: disposeBag)
+                .assign(to: \.feeInFiat, on: self)
+                .store(in: &subscriptions)
         }
     }
 }
@@ -138,53 +136,53 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
     }
 
     var isLoadingDriver: AnyPublisher<Bool, Never> {
-        $isLoadingSubject.eraseToAnyPublisher()
+        $isLoading.eraseToAnyPublisher()
     }
 
     var errorDriver: AnyPublisher<String?, Never> {
-        $errorSubject.eraseToAnyPublisher()
+        $error.eraseToAnyPublisher()
     }
 
     var accountStatusDriver: AnyPublisher<ConfirmReceivingBitcoin.RenBTCAccountStatus?, Never> {
-        $accountStatusSubject.eraseToAnyPublisher()
+        $accountStatus.eraseToAnyPublisher()
     }
 
     var payingWalletDriver: AnyPublisher<Wallet?, Never> {
-        $payingWalletSubject.eraseToAnyPublisher()
+        $payingWallet.eraseToAnyPublisher()
     }
 
     var totalFeeDriver: AnyPublisher<Double?, Never> {
-        $totalFeeSubject.eraseToAnyPublisher()
+        $totalFee.eraseToAnyPublisher()
     }
 
     var feeInFiatDriver: AnyPublisher<Double?, Never> {
-        $feeInFiatSubject.eraseToAnyPublisher()
+        $feeInFiat.eraseToAnyPublisher()
     }
 
     var navigationDriver: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> {
-        $navigationSubject.eraseToAnyPublisher()
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     func navigate(to scene: ConfirmReceivingBitcoin.NavigatableScene?) {
-        navigationSubject = scene
+        navigatableScene = scene
     }
 
     func walletDidSelect(_ wallet: Wallet) {
-        payingWalletSubject = wallet
+        payingWallet = wallet
     }
 
     func navigateToChoosingWallet() {
-        navigate(to: .chooseWallet(selectedWallet: payingWalletSubject,
-                                   payableWallets: payableWalletsSubject))
+        navigate(to: .chooseWallet(selectedWallet: payingWallet,
+                                   payableWallets: payableWallets))
     }
 
     func createRenBTC() {
-        guard let mintAddress = payingWalletSubject?.mintAddress,
-              let address = payingWalletSubject?.pubkey
+        guard let mintAddress = payingWallet?.mintAddress,
+              let address = payingWallet?.pubkey
         else { return }
 
-        isLoadingSubject = true
-        errorSubject = nil
+        isLoading = true
+        error = nil
 
         Task {
             do {
@@ -192,16 +190,16 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                     payingFeeAddress: address,
                     payingFeeMintAddress: mintAddress
                 )
-                errorSubject = nil
+                error = nil
 
                 await MainActor.run { [weak self] in
                     self?.completion?()
                 }
             } catch {
-                errorSubject = error.readableDescription
+                self.error = error.readableDescription
             }
 
-            isLoadingSubject = false
+            isLoading = false
         }
     }
 
