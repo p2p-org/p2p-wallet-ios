@@ -6,9 +6,8 @@
 //
 
 import BEPureLayout
-import RxCocoa
-import RxGesture
-import RxSwift
+import Combine
+import CombineCocoa
 import SolanaSwift
 import UIKit
 
@@ -47,14 +46,24 @@ extension History {
         private lazy var toAddressLabel = descriptionLabel()
         private lazy var toAddressView = addressView(title: L10n.to, label: toAddressLabel)
 
-        private let modelRelay = PublishRelay<Model>()
-        private var model: Driver<Model> { modelRelay.asDriver() }
+        private let modelRelay = PassthroughSubject<Model, Never>()
+        private var model: AnyPublisher<Model, Never> { modelRelay.eraseToAnyPublisher() }
 
-        fileprivate var transactionIdClicked = PublishRelay<Void>()
-        fileprivate var doneClicked = PublishRelay<Void>()
-        fileprivate var transactionDetailClicked = PublishRelay<Void>()
+        fileprivate var transactionIdClicked = PassthroughSubject<Void, Never>()
+        fileprivate var doneClicked = PassthroughSubject<Void, Never>()
+        fileprivate var transactionDetailClicked = PassthroughSubject<Void, Never>()
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
+
+//        var model: Model {
+//            didSet {
+//                setModel(model)
+//            }
+//        }
+//
+//        var transactionIdClicked: Observable<Void> { base.transactionIdClicked.asObservable() }
+//        var doneClicked: Observable<Void> { base.doneClicked.asObservable() }
+//        var transactionDetailClicked: Observable<Void> { base.transactionDetailClicked.asObservable() }
 
         override func build() -> UIView {
             BESafeArea {
@@ -85,9 +94,11 @@ extension History {
                             labelFont: .systemFont(ofSize: 17, weight: .medium)
                         ).setup {
                             $0.layer.cornerRadius = 12
-                            $0.rx.controlEvent(.touchUpInside)
-                                .bind(to: doneClicked)
-                                .disposed(by: disposeBag)
+                            $0.tapPublisher
+                                .sink { [weak self] _ in
+                                    self?.doneClicked.send()
+                                }
+                                .store(in: &subscriptions)
                         }
                         UIButton(
                             height: 64,
@@ -95,9 +106,11 @@ extension History {
                             labelFont: .systemFont(ofSize: 17, weight: .medium),
                             textColor: ._5887ff
                         ).setup {
-                            $0.rx.controlEvent(.touchUpInside)
-                                .bind(to: transactionDetailClicked)
-                                .disposed(by: disposeBag)
+                            $0.tapPublisher
+                                .sink { [weak self] _ in
+                                    self?.transactionDetailClicked.send()
+                                }
+                                .store(in: &subscriptions)
                         }
                         .padding(.init(only: .bottom, inset: 8))
                     }
@@ -112,8 +125,9 @@ extension History {
                 BEHStack(spacing: 6, alignment: .center) {
                     descriptionLabel().setup {
                         model.map(\.transactionId)
-                            .drive($0.rx.text)
-                            .disposed(by: disposeBag)
+                            .map(Optional.init)
+                            .assign(to: \.text, on: $0)
+                            .store(in: &subscriptions)
                     }
                     UIImageView(
                         width: 20,
@@ -122,12 +136,8 @@ extension History {
                         tintColor: .textSecondary
                     )
                 }
-                .setup { view in
-                    view.rx.tapGesture()
-                        .when(.recognized)
-                        .mapToVoid()
-                        .bind(to: transactionIdClicked)
-                        .disposed(by: disposeBag)
+                .onTap { [weak self] in
+                    self?.transactionIdClicked.send()
                 }
             }
         }
@@ -146,8 +156,8 @@ extension History {
                     .withContentHuggingPriority(.required, for: .horizontal)
                 descriptionLabel().setup {
                     model.map(\.fee)
-                        .drive($0.rx.attributedText)
-                        .disposed(by: disposeBag)
+                        .assign(to: \.attributedText, on: $0)
+                        .store(in: &subscriptions)
                 }
             }
         }
@@ -158,11 +168,12 @@ extension History {
                     .withContentHuggingPriority(.required, for: .horizontal)
                 descriptionLabel().setup {
                     model.map(\.status.text)
-                        .drive($0.rx.text)
-                        .disposed(by: disposeBag)
+                        .map(Optional.init)
+                        .assign(to: \.text, on: $0)
+                        .store(in: &subscriptions)
                     model.map(\.status.color)
-                        .drive($0.rx.textColor)
-                        .disposed(by: disposeBag)
+                        .assign(to: \.textColor, on: $0)
+                        .store(in: &subscriptions)
                 }
             }
         }
@@ -173,8 +184,9 @@ extension History {
                     .withContentHuggingPriority(.required, for: .horizontal)
                 descriptionLabel().setup {
                     model.map(\.blockNumber)
-                        .drive($0.rx.text)
-                        .disposed(by: disposeBag)
+                        .map(Optional.init)
+                        .assign(to: \.text, on: $0)
+                        .store(in: &subscriptions)
                 }
             }
         }
@@ -209,7 +221,7 @@ extension History {
             fromAddressView.isHidden = model.addresses.from == nil
             fromAddressLabel.text = model.addresses.from
 
-            modelRelay.accept(model)
+            modelRelay.send(model)
         }
     }
 }
@@ -231,14 +243,4 @@ extension History.TransactionView {
         let text: String
         let color: UIColor
     }
-}
-
-extension Reactive where Base == History.TransactionView {
-    var model: Binder<Base.Model> {
-        Binder(base) { $0.setModel($1) }
-    }
-
-    var transactionIdClicked: Observable<Void> { base.transactionIdClicked.asObservable() }
-    var doneClicked: Observable<Void> { base.doneClicked.asObservable() }
-    var transactionDetailClicked: Observable<Void> { base.transactionDetailClicked.asObservable() }
 }
