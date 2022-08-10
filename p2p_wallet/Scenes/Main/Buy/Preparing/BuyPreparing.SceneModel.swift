@@ -6,151 +6,181 @@
 //
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
+import SolanaSwift
 
 protocol BuyPreparingSceneModel: BESceneModel {
     func setAmount(value: Double?)
     func swap()
 
-    var inputDriver: Driver<Buy.ExchangeInput> { get }
-    var outputDriver: Driver<Buy.ExchangeOutput> { get }
-    var minFiatAmount: Driver<Double> { get }
-    var minCryptoAmount: Driver<Double> { get }
-    var exchangeRateDriver: Driver<Buy.ExchangeRate?> { get }
+    var inputAnyPublisher: AnyPublisher<Buy.ExchangeInput, Never> { get }
+    var outputAnyPublisher: AnyPublisher<Buy.ExchangeOutput, Never> { get }
+    var minFiatAmount: AnyPublisher<Double, Never> { get }
+    var minCryptoAmount: AnyPublisher<Double, Never> { get }
+    var exchangeRateAnyPublisher: AnyPublisher<Buy.ExchangeRate?, Never> { get }
     var input: Buy.ExchangeInput { get }
     var crypto: Buy.CryptoCurrency { get }
     var amount: Double { get }
     var walletsRepository: WalletsRepository { get }
+    var solanaTokenPublisher: AnyPublisher<Token?, Never> { get }
 }
 
 extension BuyPreparing {
-    class SceneModel: BuyPreparingSceneModel {
+    class SceneModel: ObservableObject, BuyPreparingSceneModel {
         private let exchangeService: Buy.ExchangeService
-        let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         @Injected var walletsRepository: WalletsRepository
 
         let crypto: Buy.CryptoCurrency
-        private let errorRelay = BehaviorRelay<String?>(value: nil)
-        private let inputRelay =
-            BehaviorRelay<Buy.ExchangeInput>(value: .init(amount: 0, currency: Buy.FiatCurrency.usd))
-        private let outputRelay: BehaviorRelay<Buy.ExchangeOutput>
-        private let minFiatAmountsRelay = BehaviorRelay<Double>(value: 0)
-        private let minCryptoAmountsRelay = BehaviorRelay<Double>(value: 0)
-        private let exchangeRateRelay = BehaviorRelay<Buy.ExchangeRate?>(value: nil)
-        private let updateTimer = Observable<Int>
-            .timer(.seconds(0), period: .seconds(10), scheduler: ConcurrentDispatchQueueScheduler(qos: .background))
+        @Published private var errorRelay: String?
+        @Published private var inputRelay = Buy.ExchangeInput(amount: 0, currency: Buy.FiatCurrency.usd)
+        @Published private var outputRelay: Buy.ExchangeOutput
+        @Published private var minFiatAmountsRelay = 0.0
+        @Published private var minCryptoAmountsRelay = 0.0
+        @Published private var exchangeRateRelay: Buy.ExchangeRate?
+        @Published private var solanaToken: Token?
+        private let updateTimer = Timer.publish(every: 10, on: .main, in: .default).autoconnect()
 
         init(crypto: Buy.CryptoCurrency, exchangeService: Buy.ExchangeService) {
             self.crypto = crypto
             self.exchangeService = exchangeService
-
-            outputRelay = BehaviorRelay<Buy.ExchangeOutput>(
-                value: .init(
-                    amount: 0,
-                    currency: crypto,
-                    processingFee: 0,
-                    networkFee: 0,
-                    purchaseCost: 0,
-                    total: 0
-                )
+            outputRelay = .init(
+                amount: 0,
+                currency: crypto,
+                processingFee: 0,
+                networkFee: 0,
+                purchaseCost: 0,
+                total: 0
             )
 
             updateTimer
-                .subscribe(onNext: { [weak self] _ in
-                    guard let self = self else { return }
-                    Single.zip(
-                        self.exchangeService.getExchangeRate(from: .usd, to: crypto),
-                        self.exchangeService.getMinAmount(currency: crypto),
-                        self.exchangeService.getMinAmount(currency: Buy.FiatCurrency.usd)
-                    ).subscribe(onSuccess: { [weak self] exchangeRate, minCryptoAmount, minFiatAmount in
-                        self?.exchangeRateRelay.accept(exchangeRate)
-                        self?.minCryptoAmountsRelay.accept(minCryptoAmount)
+                .sink { [weak self] _ in
+                    Task { [weak self] in
+                        try? await self?.update()
+                    }
+                }
+                .store(in: &subscriptions)
 
-                        let minFiatAmount = max(ceil(minCryptoAmount * exchangeRate.amount), minFiatAmount)
-                            .rounded(decimals: 2)
-                        self?.minFiatAmountsRelay.accept(minFiatAmount)
-                    }).disposed(by: self.disposeBag)
-                })
-                .disposed(by: disposeBag)
+            Publishers.CombineLatest(
+                $inputRelay,
+                updateTimer
+            )
+                .receive(on: RunLoop.main)
+                .asyncMap { [weak self] input, _ -> Buy.ExchangeOutput in
+                    guard let self = self
+                    else { throw NSError(domain: "Preparing", code: -1) }
 
-            Observable.combineLatest(inputRelay, updateTimer)
-                .flatMapLatest { [weak self] input, _ -> Single<Buy.ExchangeOutput> in
-                    guard let self = self else { return .error(NSError(domain: "Preparing", code: -1)) }
                     if input.amount == 0 {
-                        return .just(.init(
+                        return .init(
                             amount: 0,
-                            currency: self.outputRelay.value.currency,
+                            currency: self.outputRelay.currency,
                             processingFee: 0,
                             networkFee: 0,
                             purchaseCost: 0,
                             total: 0
-                        ))
+                        )
                     }
-                    return self.exchangeService
-                        .convert(input: input, to: input.currency is Buy.FiatCurrency ? crypto : Buy.FiatCurrency.usd)
-                        .do { [weak self] _ in
-                            self?.errorRelay.accept(nil)
-                        }
-                        .catch { [weak self] error in
-                            guard let self = self else { throw error }
-                            if let error = error as? Buy.Exception {
-                                switch error {
-                                case .invalidInput:
-                                    self.errorRelay.accept("Invalid input")
-                                case let .message(message):
-                                    self.errorRelay.accept(message)
-                                }
 
-                            } else {
-                                self.errorRelay.accept(error.localizedDescription)
-                            }
-                            return .just(.init(
-                                amount: 0,
-                                currency: self.outputRelay.value.currency,
-                                processingFee: 0,
-                                networkFee: 0,
-                                purchaseCost: 0,
-                                total: 0
-                            ))
-                        }
+                    return try await self.exchangeService
+                        .convert(
+                            input: input,
+                            to: input.currency is Buy.FiatCurrency ? crypto : Buy.FiatCurrency.usd
+                        )
                 }
-                .bind(to: outputRelay)
-                .disposed(by: disposeBag)
+                .handleEvents(receiveOutput: { [weak self] _ in
+                    self?.errorRelay = nil
+                }, receiveCompletion: { [weak self] completion in
+                    switch completion {
+                    case .finished:
+                        self?.errorRelay = nil
+                    case let .failure(error):
+                        guard let self = self else { return }
+                        if let error = error as? Buy.Exception {
+                            switch error {
+                            case .invalidInput:
+                                self.errorRelay = "Invalid input"
+                            case let .message(message):
+                                self.errorRelay = message
+                            }
+
+                        } else {
+                            self.errorRelay = error.localizedDescription
+                        }
+                    }
+                })
+                .replaceError(with: .init(
+                    amount: 0,
+                    currency: outputRelay.currency,
+                    processingFee: 0,
+                    networkFee: 0,
+                    purchaseCost: 0,
+                    total: 0
+                ))
+                .assign(to: \.outputRelay, on: self)
+                .store(in: &subscriptions)
+
+            Task {}
+        }
+
+        private func update() async throws {
+            let (exchangeRate, minCryptoAmount, minFiatAmount) = try await(
+                exchangeService.getExchangeRate(from: .usd, to: crypto),
+                exchangeService.getMinAmount(currency: crypto),
+                exchangeService.getMinAmount(currency: Buy.FiatCurrency.usd)
+            )
+
+            exchangeRateRelay = exchangeRate
+            minCryptoAmountsRelay = minCryptoAmount
+
+            let mfa = max(ceil(minCryptoAmount * exchangeRate.amount), minFiatAmount)
+                .rounded(decimals: 2)
+            minFiatAmountsRelay = mfa
         }
 
         func setAmount(value: Double?) {
             if value == input.amount { return }
             // Update amount
-            inputRelay.accept(
-                .init(
-                    amount: value ?? 0,
-                    currency: inputRelay.value.currency
-                )
+            inputRelay = .init(
+                amount: value ?? 0,
+                currency: inputRelay.currency
             )
         }
 
         func swap() {
-            let (input, output) = inputRelay.value.swap(with: outputRelay.value)
-            outputRelay.accept(output)
-            inputRelay.accept(input)
+            let (input, output) = inputRelay.swap(with: outputRelay)
+            outputRelay = output
+            inputRelay = input
         }
 
-        var inputDriver: Driver<Buy.ExchangeInput> { inputRelay.asDriver() }
+        var inputAnyPublisher: AnyPublisher<Buy.ExchangeInput, Never> {
+            $inputRelay.receive(on: RunLoop.main).eraseToAnyPublisher()
+        }
 
-        var outputDriver: Driver<Buy.ExchangeOutput> { outputRelay.asDriver() }
+        var outputAnyPublisher: AnyPublisher<Buy.ExchangeOutput, Never> {
+            $outputRelay.receive(on: RunLoop.main).eraseToAnyPublisher()
+        }
 
-        var exchangeRateDriver: Driver<Buy.ExchangeRate?> { exchangeRateRelay.asDriver() }
+        var exchangeRateAnyPublisher: AnyPublisher<Buy.ExchangeRate?, Never> {
+            $exchangeRateRelay.receive(on: RunLoop.main).eraseToAnyPublisher()
+        }
 
-        var input: Buy.ExchangeInput { inputRelay.value }
+        var input: Buy.ExchangeInput { inputRelay }
 
-        var minFiatAmount: Driver<Double> { minFiatAmountsRelay.asDriver() }
+        var minFiatAmount: AnyPublisher<Double, Never> {
+            $minFiatAmountsRelay.receive(on: RunLoop.main).eraseToAnyPublisher()
+        }
 
-        var minCryptoAmount: Driver<Double> { minCryptoAmountsRelay.asDriver() }
+        var minCryptoAmount: AnyPublisher<Double, Never> {
+            $minCryptoAmountsRelay.receive(on: RunLoop.main).eraseToAnyPublisher()
+        }
 
-        var amount: Double { outputRelay.value.total }
+        var amount: Double { outputRelay.total }
+
+        var solanaTokenPublisher: AnyPublisher<Token?, Never> {
+            $solanaToken.receive(on: RunLoop.main).eraseToAnyPublisher()
+        }
     }
 }
