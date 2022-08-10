@@ -33,6 +33,7 @@ extension BuyPreparing {
         private var subscriptions = [AnyCancellable]()
 
         @Injected var walletsRepository: WalletsRepository
+        @Injected var solanaTokensRepository: SolanaTokensRepository
 
         let crypto: Buy.CryptoCurrency
         @Published private var errorRelay: String?
@@ -55,6 +56,18 @@ extension BuyPreparing {
                 purchaseCost: 0,
                 total: 0
             )
+
+            // get solana
+            Task {
+                let tokens = try await solanaTokensRepository.getTokensList()
+                if let token = tokens.first(where: { token in
+                    crypto == .sol ? token.symbol == "SOL" : token
+                        .symbol.lowercased() == crypto.solanaCode
+                        .lowercased() && token.address == crypto.mintAddress
+                }) {
+                    solanaToken = token
+                }
+            }
 
             updateTimer
                 .sink { [weak self] _ in
