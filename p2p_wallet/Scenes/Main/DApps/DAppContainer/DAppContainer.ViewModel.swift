@@ -69,39 +69,31 @@ extension DAppContainer.ViewModel: DAppContainerViewModelType {
 }
 
 extension DAppContainer.ViewModel: DAppChannelDelegate {
-    func connect() -> Single<String> {
+    func connect() async throws -> String {
         guard let pubKey = walletsRepository.getWallets().first(where: { $0.isNativeSOL })?.pubkey else {
-            return .error(DAppChannelError.canNotFindWalletAddress)
+            throw DAppChannelError.canNotFindWalletAddress
         }
 
-        return .just(pubKey)
+        return pubKey
     }
 
-    func signTransaction(transaction: Transaction) -> Single<Transaction> {
-        do {
+    func signTransaction(transaction: Transaction) async throws -> Transaction {
+        var transaction = transaction
+        guard let signer = accountStorage.account
+        else { throw DAppChannelError.unauthorized }
+
+        try transaction.sign(signers: [signer])
+        return transaction
+    }
+
+    func signTransactions(transactions: [Transaction]) async throws -> [Transaction] {
+        try transactions.map { transaction in
             var transaction = transaction
             guard let signer = accountStorage.account
             else { throw DAppChannelError.unauthorized }
 
             try transaction.sign(signers: [signer])
-            return .just(transaction)
-        } catch let e {
-            return .error(e)
-        }
-    }
-
-    func signTransactions(transactions: [Transaction]) -> Single<[Transaction]> {
-        do {
-            return .just(try transactions.map { transaction in
-                var transaction = transaction
-                guard let signer = accountStorage.account
-                else { throw DAppChannelError.unauthorized }
-
-                try transaction.sign(signers: [signer])
-                return transaction
-            })
-        } catch let e {
-            return .error(e)
+            return transaction
         }
     }
 }
