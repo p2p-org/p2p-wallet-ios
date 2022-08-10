@@ -35,7 +35,6 @@ target 'p2p_wallet' do
 
   # reactive
   pod 'Action'
-  pod "RxGesture"
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'

@@ -159,9 +159,6 @@ PODS:
     - RxSwift (~> 6)
   - RxConcurrency (0.1.1):
     - RxSwift (~> 6.5.0)
-  - RxGesture (4.0.4):
-    - RxCocoa (~> 6.0)
-    - RxSwift (~> 6.0)
   - RxRelay (6.5.0):
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
@@ -220,7 +217,6 @@ DEPENDENCIES:
   - RxCocoa (= 6.5.0)
   - RxCombine
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
-  - RxGesture
   - RxSwift (= 6.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SolanaPricesAPIs (from `KeyAppKit`)
@@ -266,7 +262,6 @@ SPEC REPOS:
     - Resolver
     - RxCocoa
     - RxCombine
-    - RxGesture
     - RxRelay
     - RxSwift
     - secp256k1.swift
@@ -386,7 +381,6 @@ SPEC CHECKSUMS:
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
   RxCombine: 74cd98f7bb1d908eff3758d13651917fc296adb3
   RxConcurrency: fde98edd4056a8f13ff293689a25a17563e3e843
-  RxGesture: f3efb47ed2d26a8082f7b660d4a59970e275a7f8
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
@@ -405,6 +399,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 84d8752fda400d86dcca03aba0689e7c9e726ac6
+PODFILE CHECKSUM: e37c86fb855cda4c88a52f45894f0aae2e4f8e83
 
 COCOAPODS: 1.11.3
