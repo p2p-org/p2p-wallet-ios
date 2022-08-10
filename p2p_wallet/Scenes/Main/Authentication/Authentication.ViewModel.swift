@@ -5,14 +5,13 @@
 //  Created by Chung Tran on 12/11/2021.
 //
 
+import Combine
 import Foundation
 import LocalAuthentication
 import Resolver
-import RxCocoa
-import RxSwift
 
 protocol AuthenticationViewModelType {
-    var navigationDriver: Driver<Authentication.NavigatableScene?> { get }
+    var navigationPublisher: AnyPublisher<Authentication.NavigatableScene?, Never> { get }
     func showResetPincodeWithASeedPhrase()
     func getCurrentPincode() -> String?
     func getCurrentBiometryType() -> LABiometryType
@@ -24,7 +23,8 @@ protocol AuthenticationViewModelType {
 }
 
 extension Authentication {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var pincodeStorage: PincodeStorageType
@@ -33,24 +33,24 @@ extension Authentication {
         // MARK: - Initializers
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        @Published private var navigatableScene: NavigatableScene?
     }
 }
 
 extension Authentication.ViewModel: AuthenticationViewModelType {
-    var navigationDriver: Driver<Authentication.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<Authentication.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func showResetPincodeWithASeedPhrase() {
-        navigationSubject.accept(.resetPincodeWithASeedPhrase)
+        navigatableScene = .resetPincodeWithASeedPhrase
     }
 
     func getCurrentPincode() -> String? {
@@ -97,6 +97,6 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
 
     func signOut() {
         setBlockedTime(nil)
-        navigationSubject.accept(.signOutAlert { [weak self] in self?.logoutResponder.logout() })
+        navigatableScene = .signOutAlert { [weak self] in self?.logoutResponder.logout() }
     }
 }

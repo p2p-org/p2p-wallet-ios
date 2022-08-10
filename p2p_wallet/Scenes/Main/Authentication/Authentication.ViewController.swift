@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import LocalAuthentication
 import UIKit
@@ -15,6 +16,7 @@ extension Authentication {
         // MARK: - Dependencies
 
         private let viewModel: AuthenticationViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -62,9 +64,9 @@ extension Authentication {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
