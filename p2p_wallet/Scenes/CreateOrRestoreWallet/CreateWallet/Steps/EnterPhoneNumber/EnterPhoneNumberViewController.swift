@@ -8,7 +8,7 @@ import CombineCocoa
 import KeyAppUI
 import UIKit
 
-final class EnterPhoneNumberViewController: BaseViewController {
+final class EnterPhoneNumberViewController: BaseOTPViewController {
     private var viewModel: EnterPhoneNumberViewModel
 
     // MARK: -
@@ -66,7 +66,7 @@ final class EnterPhoneNumberViewController: BaseViewController {
             PhoneTextField(
                 leftText: "🇦🇷",
                 onLeftTap: {
-                    self.viewModel.input.selectCountryTapped.send()
+                    self.viewModel.selectCountryTap()
                 },
                 constantPlaceholder: "+44 7400 123456"
             ).bind(phoneInputRef)
@@ -78,7 +78,7 @@ final class EnterPhoneNumberViewController: BaseViewController {
             TextButton(title: L10n.enterTheNumberToContinue, style: .primary, size: .large).setup { button in
                 button.isEnabled = false
             }.bind(continueButtonRef).onPressed { [weak self] _ in
-                self?.viewModel.input.button.send()
+                self?.viewModel.buttonTaped()
             }
         }.padding(.init(only: .bottom, inset: 18))
     }
@@ -86,27 +86,45 @@ final class EnterPhoneNumberViewController: BaseViewController {
     override func bind() {
         super.bind()
 
-        phoneInputRef.view?.textField?.textPublisher.removeDuplicates()
-            .sink(receiveValue: { [weak self] value in
-                self?.viewModel.input.phone.send(value)
-            }).store(in: &store)
+        if let phone = phoneInputRef.view {
+            viewModel.$phone
+                .assign(to: \.text, on: phone)
+                .store(in: &store)
 
-        viewModel.output.phone.sink { [weak self] phone in
-            self?.phoneInputRef.view?.text = phone
-        }.store(in: &store)
+            phone.textField?
+                .textPublisher.assign(to: \.phone, on: viewModel)
+                .store(in: &store)
 
-        viewModel.output.flag.sink { flag in
-            self.phoneInputRef.view?.countryEmoji = flag
-        }.store(in: &store)
+            viewModel.$flag
+                .assign(to: \.countryEmoji, on: phone)
+                .store(in: &store)
 
-        viewModel.output.phonePlaceholder.sink { placeholder in
-            self.phoneInputRef.view?.constantPlaceholder = placeholder
-        }.store(in: &store)
+            viewModel.$phonePlaceholder
+                .assign(to: \.constantPlaceholder, on: phone)
+                .store(in: &store)
 
-        viewModel.output.isButtonEnabled.sink { [weak self] isEnabled in
+            viewModel.$inputError.sink { error in
+                phone.bottomTip(error ?? "")
+                phone.style = error == nil ? .default : .error
+                if error != nil {
+                    phone.shake()
+                }
+            }.store(in: &store)
+        }
+
+        viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
             self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterTheNumberToContinue
             self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
+        }.store(in: &store)
+
+        viewModel.$isLoading.sink { [weak self] isLoading in
+            self?.continueButtonRef.view?.isLoading = isLoading
+        }.store(in: &store)
+
+        viewModel.$error.sink { [weak self] error in
+            guard let error = error else { return }
+            self?.showError(error: error)
         }.store(in: &store)
     }
 

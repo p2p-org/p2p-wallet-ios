@@ -148,9 +148,6 @@ extension Resolver: ResolverRegistering {
         register { OnboardingServiceImpl() }
             .implements(OnboardingService.self)
 
-        register { SMSServiceImplMock() }
-            .implements(SMSService.self)
-
         register { BiometricsAuthProviderImpl() }
             .implements(BiometricsAuthProvider.self)
     }
