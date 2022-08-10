@@ -7,16 +7,17 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
 import SafariServices
 import WebKit
 
 extension BuyPreparing {
     final class Scene: BaseViewController {
         private let viewModel: BuyPreparingSceneModel
-        private let infoToggle = BehaviorRelay<Bool>(value: false)
+        private let infoToggle = CurrentValueSubject<Bool, Never>(false)
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: BuyPreparingSceneModel) {
             self.viewModel = viewModel
@@ -66,9 +67,12 @@ extension BuyPreparing {
                     BESafeArea {
                         WLStepButton.main(text: L10n.continue)
                             .setup { view in
-                                viewModel.nextStatus.map(\.text).drive(onNext: { [weak view] in view?.text = $0 })
-                                    .disposed(by: disposeBag)
-                                viewModel.nextStatus.map(\.isEnable).drive(view.rx.isEnabled).disposed(by: disposeBag)
+                                viewModel.nextStatus.map(\.text)
+                                    .sink { [weak view] in view?.text = $0 }
+                                    .store(in: &subscriptions)
+                                viewModel.nextStatus.map(\.isEnable)
+                                    .assign(to: \.isEnabled, on: view)
+                                    .store(in: &subscriptions)
                             }
                             .onTap { [unowned self] in navigateToWeb() }
                             .padding(.init(all: 18))
@@ -85,7 +89,7 @@ extension BuyPreparing {
                 // Exchange
                 WLCard {
                     BEVStack {
-                        BEBuilderRxSwift(driver: viewModel.onInputMode) { [unowned self] input in
+                        BEBuilder(publisher: viewModel.onInputMode) { [unowned self] input in
                             switch input {
                             case .fiat:
                                 return InputFiatView(viewModel: viewModel)
@@ -100,34 +104,32 @@ extension BuyPreparing {
                             descriptionRow(
                                 label: "\(viewModel.crypto.name) \(L10n.price)",
                                 initial: "$ 0.0",
-                                viewModel.exchangeRateStringDriver
+                                viewModel.exchangeRateStringAnyPublisher
                             )
 
                             BEHStack(alignment: .center) {
                                 UILabel(text: L10n.hideFees)
                                     .setup { view in
                                         self.infoToggle
-                                            .asDriver()
-                                            .drive(onNext: { [weak view] value in
+                                            .sink { [weak view] value in
                                                 view?.text = value ? L10n.hideFees : L10n.showFees
-                                            })
-                                            .disposed(by: disposeBag)
+                                            }
+                                            .store(in: &subscriptions)
                                     }
                                 UIImageView(image: .chevronDown, tintColor: .black)
                                     .setup { view in
                                         self.infoToggle
-                                            .asDriver()
-                                            .drive(onNext: { [weak view] value in
+                                            .sink { [weak view] value in
                                                 view?.image = value ? .chevronUp : .chevronDown
-                                            })
-                                            .disposed(by: disposeBag)
+                                            }
+                                            .store(in: &subscriptions)
                                     }
                             }
                             .centered(.horizontal)
                             .padding(.init(only: .top, inset: 18))
-                            .onTap { [unowned self] in infoToggle.accept(!infoToggle.value) }
+                            .onTap { [unowned self] in infoToggle.send(!infoToggle.value) }
 
-                            BEBuilderRxSwift(driver: infoToggle.asDriver()) { [weak self] value in
+                            BEBuilder(publisher: infoToggle.eraseToAnyPublisher()) { [weak self] value in
                                 guard let self = self else { return UIView() }
                                 return value ? self.feeInfo() : UIView()
                             }
@@ -166,22 +168,26 @@ extension BuyPreparing {
             }
         }
 
-        private func descriptionRow(label: String, initial: String, _ trailingDriver: Driver<String>? = nil) -> UIView {
+        private func descriptionRow(label: String, initial: String,
+                                    _ trailingAnyPublisher: AnyPublisher<String, Never>? = nil) -> UIView
+        {
             UIStackView(axis: .horizontal, alignment: .fill) {
                 UILabel(text: label, textColor: .secondaryLabel)
                 UIView.spacer
                 UILabel(text: initial).setup { view in
-                    trailingDriver?.drive(view.rx.text).disposed(by: disposeBag)
+                    trailingAnyPublisher?.map { Optional($0) }.assign(to: \.text, on: view).store(in: &subscriptions)
                 }
             }
         }
 
-        private func totalRow(label: String, initial: String, _ trailingDriver: Driver<String>? = nil) -> UIView {
+        private func totalRow(label: String, initial: String,
+                              _ trailingAnyPublisher: AnyPublisher<String, Never>? = nil) -> UIView
+        {
             UIStackView(axis: .horizontal, alignment: .fill) {
                 UILabel(text: label)
                 UIView.spacer
                 UILabel(text: initial, weight: .bold).setup { view in
-                    trailingDriver?.drive(view.rx.text).disposed(by: disposeBag)
+                    trailingAnyPublisher?.map { Optional($0) }.assign(to: \.text, on: view).store(in: &subscriptions)
                 }
             }
         }
@@ -199,8 +205,8 @@ private enum InputMode {
 }
 
 private extension BuyPreparingSceneModel {
-    var onInputMode: Driver<InputMode> {
-        inputDriver
+    var onInputMode: AnyPublisher<InputMode, Never> {
+        inputAnyPublisher
             .map { input in
                 if input.currency is Buy.CryptoCurrency {
                     return .crypto
@@ -208,11 +214,12 @@ private extension BuyPreparingSceneModel {
                     return .fiat
                 }
             }
-            .distinctUntilChanged { $0 }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
     }
 
-    var exchangeRateStringDriver: Driver<String> {
-        exchangeRateDriver
+    var exchangeRateStringAnyPublisher: AnyPublisher<String, Never> {
+        exchangeRateAnyPublisher
             .map { rate -> String in
                 if let rate = rate {
                     return "$ \(rate.amount)"
@@ -221,27 +228,28 @@ private extension BuyPreparingSceneModel {
                 }
             }
             .map { "$ \($0.fiatFormat)" }
+            .eraseToAnyPublisher()
     }
 
-    var feeAmount: Driver<String> {
-        outputDriver.map(\.processingFee.convertedFiat)
+    var feeAmount: AnyPublisher<String, Never> {
+        outputAnyPublisher.map(\.processingFee.convertedFiat).eraseToAnyPublisher()
     }
 
-    var networkFee: Driver<String> {
-        outputDriver.map(\.networkFee.convertedFiat)
+    var networkFee: AnyPublisher<String, Never> {
+        outputAnyPublisher.map(\.networkFee.convertedFiat).eraseToAnyPublisher()
     }
 
-    var total: Driver<String> {
-        outputDriver.map(\.total.convertedFiat)
+    var total: AnyPublisher<String, Never> {
+        outputAnyPublisher.map(\.total.convertedFiat).eraseToAnyPublisher()
     }
 
-    var purchaseCost: Driver<String> {
-        outputDriver.map(\.purchaseCost.convertedFiat)
+    var purchaseCost: AnyPublisher<String, Never> {
+        outputAnyPublisher.map(\.purchaseCost.convertedFiat).eraseToAnyPublisher()
     }
 
-    var nextStatus: Driver<NextStatus> {
-        Driver
-            .combineLatest(inputDriver, minFiatAmount, minCryptoAmount)
+    var nextStatus: AnyPublisher<NextStatus, Never> {
+        Publishers
+            .CombineLatest3(inputAnyPublisher, minFiatAmount, minCryptoAmount)
             .map { [weak self] input, minUSD, minSol in
                 if minUSD == 0 || minSol == 0 {
                     return NextStatus(text: L10n.loading, isEnable: false)
@@ -266,6 +274,7 @@ private extension BuyPreparingSceneModel {
                     return NextStatus(text: L10n.continue, isEnable: true)
                 }
             }
+            .eraseToAnyPublisher()
     }
 }
 

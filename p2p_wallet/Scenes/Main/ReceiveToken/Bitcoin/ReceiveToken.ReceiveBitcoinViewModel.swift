@@ -83,7 +83,8 @@ extension ReceiveToken {
 
         private func bind() {
             // timer
-            Timer.publish(every: 1_000_000, on: .main, in: .default)
+            Timer.publish(every: 1, on: .main, in: .default)
+                .autoconnect()
                 .sink { [weak self] _ in
                     self?.timerSubject.accept(())
                 }

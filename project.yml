@@ -16,7 +16,7 @@ name: p2p_wallet
 
 options:
     deploymentTarget: 
-        iOS: 13.0
+        iOS: 14.0
     groupSortPosition: top
     minimumXcodeGenVersion: 2.18.0
     preGenCommand: sh Scripts/preGenCommand.sh
@@ -74,7 +74,7 @@ targets:
     p2p_wallet:
         type: application
         platform: iOS
-        deploymentTarget: 13.0
+        deploymentTarget: 14.0
         sources:
         - path: p2p_wallet
           name: p2p_wallet
