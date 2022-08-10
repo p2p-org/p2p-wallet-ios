@@ -21,6 +21,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     let socialSignInDelegatedCoordinator: SocialSignInDelegatedCoordinator
     let bindingPhoneNumberDelegatedCoordinator: BindingPhoneNumberDelegatedCoordinator
+    let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
 
     init(parent: UIViewController) {
         parentViewController = parent
@@ -36,6 +37,12 @@ final class CreateWalletCoordinator: Coordinator<Void> {
         bindingPhoneNumberDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
                 try await viewModel?.onboardingStateMachine.accept(event: .bindingPhoneNumberEvent(event))
+            }
+        )
+
+        securitySetupDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.onboardingStateMachine.accept(event: .securitySetup(event))
             }
         )
 
@@ -59,6 +66,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
         socialSignInDelegatedCoordinator.rootViewController = navigationController
         bindingPhoneNumberDelegatedCoordinator.rootViewController = navigationController
+        securitySetupDelegatedCoordinator.rootViewController = navigationController
 
         Task {
             DispatchQueue.main.async { self.navigationController?.showIndetermineHud() }
@@ -118,6 +126,8 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             return socialSignInDelegatedCoordinator.buildViewController(for: innerState)
         case let .bindingPhoneNumber(_, _, _, innerState):
             return bindingPhoneNumberDelegatedCoordinator.buildViewController(for: innerState)
+        case let .securitySetup(_, _, _, innerState):
+            return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
         default:
             return nil
         }

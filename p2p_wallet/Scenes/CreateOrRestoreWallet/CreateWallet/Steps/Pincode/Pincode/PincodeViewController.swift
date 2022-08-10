@@ -24,7 +24,7 @@ final class PincodeViewController: BaseViewController {
     override func setUp() {
         super.setUp()
         view.backgroundColor = Asset.Colors.lime.color
-        addRightButton()
+        setupNavBar()
     }
 
     override func build() -> UIView {
@@ -46,7 +46,7 @@ final class PincodeViewController: BaseViewController {
 
                 UIView.spacer
 
-                PinCode(correctPincode: viewModel.pincode, bottomLeftButton: makeBottomLeftButton())
+                PinCode(correctPincode: viewModel.pincode, bottomLeftButton: nil)
                     .setup { view in
                         view.stackViewSpacing = 24
                     }
@@ -68,15 +68,37 @@ final class PincodeViewController: BaseViewController {
         pincodeView.onFailed = { [weak viewModel] in
             viewModel?.pincodeFailed.send()
         }
-        pincodeView.onFailedAndExceededMaxAttemps = { [weak viewModel] in
-            viewModel?.pincodeFailedAndExceededMaxAttempts.send()
-        }
 
-        viewModel.$snackbar.sink { [weak self] snackbar in
-            guard let self = self, let snackbar = snackbar else { return }
-            SnackBar(icon: snackbar.image, text: snackbar.title).show(in: self, autoDismiss: true)
-            self.viewModel.snackbar = nil
+        viewModel.$snackbarMessage.sink { [weak self] message in
+            guard let self = self, let message = message else { return }
+            SnackBar(text: message).show(in: self, autoDismiss: true)
+            self.viewModel.snackbarMessage = nil
         }.store(in: &subscriptions)
+    }
+
+    private func setupNavBar() {
+        navigationItem.title = L10n.stepOf("3", "3")
+        addLeftButton()
+        addRightButton()
+    }
+
+    private func addLeftButton() {
+        guard viewModel.isBackAvailable else { return }
+        let backButton = UIBarButtonItem(
+            image: UINavigationBar.appearance().backIndicatorImage,
+            style: .plain,
+            target: self,
+            action: #selector(onBack)
+        )
+        backButton.tintColor = Asset.Colors.night.color
+
+        let spacing = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        spacing.width = 8
+        navigationItem.setLeftBarButtonItems([spacing, backButton], animated: false)
+    }
+
+    @objc private func onBack() {
+        viewModel.back.send()
     }
 
     private func addRightButton() {
@@ -89,14 +111,5 @@ final class PincodeViewController: BaseViewController {
 
     @objc private func openInfo() {
         viewModel.infoDidTap.send()
-    }
-
-    private func makeBottomLeftButton() -> IconButton? {
-        guard let image = viewModel.bioAuthStatus.icon, viewModel.isBiometryAvailable else { return nil }
-        let button = IconButton(image: image, style: .ghostBlack, size: .large)
-        button.onPressed { [weak viewModel] _ in
-            viewModel?.bioAuthDidTap.send()
-        }
-        return button
     }
 }

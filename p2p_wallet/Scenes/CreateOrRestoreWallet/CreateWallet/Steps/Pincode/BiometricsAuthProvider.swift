@@ -4,7 +4,7 @@ import LocalAuthentication
 protocol BiometricsAuthProvider {
     var availabilityStatus: LABiometryType { get }
 
-    func authenticate(authenticationPrompt: String, completion: @escaping (Bool) -> Void)
+    func authenticate(authenticationPrompt: String, completion: @escaping (Bool, NSError?) -> Void)
 }
 
 final class BiometricsAuthProviderImpl: BiometricsAuthProvider {
@@ -17,14 +17,11 @@ final class BiometricsAuthProviderImpl: BiometricsAuthProvider {
     private let context = LAContext()
     private let policy = LAPolicy.deviceOwnerAuthenticationWithBiometrics
 
-    func authenticate(authenticationPrompt: String, completion: @escaping (Bool) -> Void) {
+    func authenticate(authenticationPrompt: String, completion: @escaping (Bool, NSError?) -> Void) {
         context
             .evaluatePolicy(policy, localizedReason: authenticationPrompt) { success, error in
                 DispatchQueue.main.async {
-                    if let error = error {
-                        debugPrint(error)
-                    }
-                    completion(success)
+                    completion(success, error as? NSError)
                 }
             }
     }
