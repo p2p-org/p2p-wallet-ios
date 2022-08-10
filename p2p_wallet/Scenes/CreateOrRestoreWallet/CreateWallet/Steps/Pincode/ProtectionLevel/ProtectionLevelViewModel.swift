@@ -3,13 +3,6 @@ import LocalAuthentication
 import Resolver
 import UIKit
 
-extension ProtectionLevelViewModel {
-    enum NavigatableScene {
-        case createPincode
-        case main
-    }
-}
-
 final class ProtectionLevelViewModel: BaseViewModel {
     // MARK: - Dependencies
 
@@ -20,10 +13,11 @@ final class ProtectionLevelViewModel: BaseViewModel {
     @Published var data: OnboardingContentData
     @Published var localAuthTitle = ""
     @Published var localAuthImage: UIImage?
-    @Published var navigatableScene: NavigatableScene?
 
     let useLocalAuthDidTap = PassthroughSubject<Void, Never>()
     let setUpPinDidTap = PassthroughSubject<Void, Never>()
+    let authenticatedSuccessfully = PassthroughSubject<Void, Never>()
+    let viewAppeared = PassthroughSubject<Void, Never>()
 
     private var bioAuthStatus: LABiometryType { biometricsAuthProvider.availabilityStatus }
 
@@ -38,18 +32,16 @@ final class ProtectionLevelViewModel: BaseViewModel {
         localAuthTitle = L10n.use(bioAuthStatus.stringValue)
         localAuthImage = bioAuthStatus.icon
 
-        setUpPinDidTap.sink { [weak self] _ in
-            self?.navigatableScene = .createPincode
-        }.store(in: &subscriptions)
-
         useLocalAuthDidTap.sink { [weak self] _ in
             guard let self = self else { return }
             let prompt = L10n.insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
-            self.biometricsAuthProvider.authenticate(authenticationPrompt: prompt, completion: { success in
+            self.biometricsAuthProvider.authenticate(authenticationPrompt: prompt, completion: { success, error in
                 if success {
-                    self.navigatableScene = .main
+                    self.authenticatedSuccessfully.send()
+                } else if let error = error, error.code == kLAErrorUserCancel {
+                    self.setUpPinDidTap.send()
                 } else {
-                    // TODO: handle error
+                    // System will handle is itself
                 }
             })
         }.store(in: &subscriptions)

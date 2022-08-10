@@ -19,6 +19,8 @@ struct ProtectionLevelView: View {
                 bottomActionsView
             }
             .edgesIgnoringSafeArea(.bottom)
+        }.onAppear { [weak viewModel] in
+            viewModel?.viewAppeared.send()
         }
     }
 }
