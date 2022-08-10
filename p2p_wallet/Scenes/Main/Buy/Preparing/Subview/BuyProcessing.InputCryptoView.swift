@@ -2,14 +2,14 @@
 // Created by Giang Long Tran on 04.03.2022.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxSwift
 import SolanaSwift
 
 extension BuyPreparing {
     final class InputCryptoView: BECompositionView {
-        private let disposeBag = DisposeBag()
+        private let subscriptions = [AnyCancellable]()
         private let viewModel: BuyPreparingSceneModel
 
         init(viewModel: BuyPreparingSceneModel) {

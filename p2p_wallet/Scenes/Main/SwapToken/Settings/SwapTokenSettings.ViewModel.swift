@@ -24,6 +24,7 @@ protocol NewSwapTokenSettingsViewModelType: AnyObject {
 }
 
 extension SwapTokenSettings {
+    @MainActor
     final class ViewModel: NewSwapTokenSettingsViewModelType {
         // MARK: - Properties
 
