@@ -7,16 +7,15 @@
 
 import FeeRelayerSwift
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
+import Combine
 
 protocol SendTokenRecipientAndNetworkHandler: AnyObject {
-    var disposeBag: DisposeBag { get }
+    var subscriptions: [AnyCancellable] { get set }
     var sendService: SendServiceType { get }
-    var recipientSubject: BehaviorRelay<SendToken.Recipient?> { get }
-    var networkSubject: BehaviorRelay<SendToken.Network> { get }
-    var payingWalletSubject: BehaviorRelay<Wallet?> { get }
+    var recipientSubject: CurrentValueSubject<SendToken.Recipient?, Never> { get }
+    var networkSubject: CurrentValueSubject<SendToken.Network, Never> { get }
+    var payingWalletSubject: CurrentValueSubject<Wallet?, Never> { get }
     var feeInfoSubject: LoadableRelay<SendToken.FeeInfo> { get }
 
     func getSelectedWallet() -> Wallet?
@@ -24,20 +23,20 @@ protocol SendTokenRecipientAndNetworkHandler: AnyObject {
 }
 
 extension SendTokenRecipientAndNetworkHandler {
-    var recipientDriver: Driver<SendToken.Recipient?> {
-        recipientSubject.asDriver()
+    var recipientDriver: AnyPublisher<SendToken.Recipient?, Never> {
+        recipientSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var networkDriver: Driver<SendToken.Network> {
-        networkSubject.asDriver()
+    var networkDriver: AnyPublisher<SendToken.Network, Never> {
+        networkSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var payingWalletDriver: Driver<Wallet?> {
-        payingWalletSubject.asDriver()
+    var payingWalletDriver: AnyPublisher<Wallet?, Never> {
+        payingWalletSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {
-        feeInfoSubject.asDriver()
+    var feeInfoDriver: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
+        feeInfoSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     func getSelectedRecipient() -> SendToken.Recipient? {
@@ -57,31 +56,31 @@ extension SendTokenRecipientAndNetworkHandler {
     }
 
     func selectRecipient(_ recipient: SendToken.Recipient?) {
-        recipientSubject.accept(recipient)
+        recipientSubject.send(recipient)
 
         if recipient != nil {
             if isRecipientBTCAddress() {
-                networkSubject.accept(.bitcoin)
+                networkSubject.send(.bitcoin)
             } else {
-                networkSubject.accept(.solana)
+                networkSubject.send(.solana)
             }
         }
     }
 
     func selectNetwork(_ network: SendToken.Network) {
-        networkSubject.accept(network)
+        networkSubject.send(network)
 
         switch network {
         case .solana:
-            if isRecipientBTCAddress() { recipientSubject.accept(nil) }
+            if isRecipientBTCAddress() { recipientSubject.send(nil) }
         case .bitcoin:
-            if !isRecipientBTCAddress() { recipientSubject.accept(nil) }
+            if !isRecipientBTCAddress() { recipientSubject.send(nil) }
         }
     }
 
     func selectPayingWallet(_ payingWallet: Wallet) {
         Defaults.payingTokenMint = payingWallet.mintAddress
-        payingWalletSubject.accept(payingWallet)
+        payingWalletSubject.send(payingWallet)
     }
 
     // MARK: - Helpers
@@ -93,24 +92,15 @@ extension SendTokenRecipientAndNetworkHandler {
             .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
     }
 
-    func bindFees(walletSubject: BehaviorRelay<Wallet?>? = nil) {
-        var observables = [
-            payingWalletSubject.distinctUntilChanged().map { $0 as Any },
-            recipientSubject.distinctUntilChanged().map { $0 as Any },
-            networkSubject.distinctUntilChanged().map { $0 as Any },
-        ]
-
-        if let walletSubject = walletSubject {
-            observables.append(walletSubject.distinctUntilChanged().map { $0 as Any })
-        }
-
-        Observable.combineLatest(observables)
-            .subscribe(onNext: { [weak self] params in
-                let payingWallet = params[0] as? Wallet
-                let recipient = params[1] as? SendToken.Recipient
-                let network = params[2] as! SendToken.Network
-
+    func bindFees() {
+        Publishers.CombineLatest3(
+            payingWalletSubject.removeDuplicates(),
+            recipientSubject.removeDuplicates(),
+            networkSubject.removeDuplicates()
+        )
+            .sink { [weak self] payingWallet, recipient, network in
                 guard let self = self else { return }
+                
                 if let wallet = self.getSelectedWallet() {
                     self.feeInfoSubject.request = Single.async(with: self) { `self` -> SendToken.FeeInfo in
                         let feeAmountInSol = try await self.sendService.getFees(
@@ -157,7 +147,7 @@ extension SendTokenRecipientAndNetworkHandler {
                         .just(.init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil))
                 }
                 self.feeInfoSubject.reload()
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
     }
 }
