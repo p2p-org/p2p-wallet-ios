@@ -19,7 +19,6 @@ final class ContinueCoordinator: Coordinator<Void> {
 
         let navigationController = UINavigationController(rootViewController: viewController)
         style(nc: navigationController)
-
         window.animate(newRootViewController: navigationController)
 
         viewModel.$navigatableScene.sink { [weak self] scene in
@@ -37,8 +36,8 @@ final class ContinueCoordinator: Coordinator<Void> {
         return subject.eraseToAnyPublisher()
     }
 
-    private func openStart(navigationController: UINavigationController) {
-        coordinate(to: StartCoordinator(navigation: .push(nc: navigationController)))
+    private func openStart(navigationController _: UINavigationController) {
+        coordinate(to: StartCoordinator(window: window, params: StartParameters(isAnimatable: false)))
             .sink(receiveValue: { _ in })
             .store(in: &subscriptions)
     }
