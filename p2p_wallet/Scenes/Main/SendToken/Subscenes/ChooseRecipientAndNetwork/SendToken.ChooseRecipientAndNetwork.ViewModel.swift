@@ -5,20 +5,19 @@
 //  Created by Chung Tran on 29/11/2021.
 //
 
+import Combine
 import FeeRelayerSwift
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler,
     SendTokenSelectNetworkViewModelType
 {
     var preSelectedNetwork: SendToken.Network? { get }
-    var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> { get }
-    var walletDriver: Driver<Wallet?> { get }
-    var amountDriver: Driver<Double?> { get }
+    var navigationDriver: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> { get }
+    var walletDriver: AnyPublisher<Wallet?, Never> { get }
+    var amountDriver: AnyPublisher<Double?, Never> { get }
 
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
@@ -31,7 +30,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 
 extension SendToken.ChooseRecipientAndNetwork {
     @MainActor
-    class ViewModel {
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         let sendService: SendServiceType
@@ -43,14 +42,14 @@ extension SendToken.ChooseRecipientAndNetwork {
         // MARK: - Properties
 
         private let relayMethod: SendTokenRelayMethod
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
-        let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
-        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        @Published private var navigationSubject: NavigatableScene?
+        @Published private var recipientSubject: SendToken.Recipient?
+        @Published private var networkSubject: SendToken.Network = .solana
+        @Published private var payingWalletSubject: Wallet?
         let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(
             request: .just(
                 .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
@@ -144,15 +143,15 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.getSelectedWallet()
     }
 
-    var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationDriver: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> {
+        $navigationSubject.eraseToAnyPublisher()
     }
 
-    var walletDriver: Driver<Wallet?> {
+    var walletDriver: AnyPublisher<Wallet?, Never> {
         sendTokenViewModel.walletDriver
     }
 
-    var amountDriver: Driver<Double?> {
+    var amountDriver: AnyPublisher<Double?, Never> {
         sendTokenViewModel.amountDriver
     }
 
