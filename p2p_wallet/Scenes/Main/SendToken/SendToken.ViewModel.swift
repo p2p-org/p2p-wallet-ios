@@ -6,11 +6,10 @@
 //
 
 import AnalyticsManager
+import Combine
 import FeeRelayerSwift
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler,
