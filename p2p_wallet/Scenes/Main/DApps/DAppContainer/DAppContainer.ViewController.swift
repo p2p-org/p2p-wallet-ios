@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 25.11.21.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -13,6 +14,7 @@ extension DAppContainer {
         // MARK: - Dependencies
 
         private let viewModel: DAppContainerViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: DAppContainerViewModelType) {
             self.viewModel = viewModel
@@ -33,9 +35,9 @@ extension DAppContainer {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationAnyPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
