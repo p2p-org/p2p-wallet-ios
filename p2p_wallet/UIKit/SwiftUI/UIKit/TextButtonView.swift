@@ -2,7 +2,7 @@ import KeyAppUI
 import SwiftUI
 import UIKit
 
-struct TextButtonView: UIViewR2313epresentable {
+struct TextButtonView: UIViewRepresentable {
     private let title: String
     private let style: TextButton.Style
     private let size: TextButton.Size
@@ -27,7 +27,7 @@ struct TextButtonView: UIViewR2313epresentable {
         self.trailing = trailing
         self.onPressed = onPressed
         self.isLoading = isLoading
-    }   
+    }
 
     func makeUIView(context _: Context) -> TextButton {
         let button = TextButton(title: title, style: style, size: size, leading: leading, trailing: trailing)
