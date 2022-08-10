@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 16.12.21.
 //
 
+import Combine
 import Foundation
 import Resolver
 import SafariServices
@@ -19,6 +20,7 @@ extension BuyRoot {
         private let navigation: UINavigationController
 
         override var preferredNavigationBarStype: NavigationBarStyle { .hidden }
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Initializer
 
@@ -45,9 +47,9 @@ extension BuyRoot {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

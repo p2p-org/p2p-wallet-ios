@@ -5,42 +5,42 @@
 //  Created by Giang Long Tran on 16.12.21.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 
 protocol BuyViewModelType {
     var walletsRepository: WalletsRepository { get }
-    var navigationDriver: Driver<BuyRoot.NavigatableScene> { get }
+    var navigationPublisher: AnyPublisher<BuyRoot.NavigatableScene, Never> { get }
 
     func navigate(to scene: BuyRoot.NavigatableScene)
 }
 
 extension BuyRoot {
-    class ViewModel: NSObject {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         // MARK: - Subject
 
-        private let navigationSubject = PublishSubject<NavigatableScene>()
+        private let navigationSubject = PassthroughSubject<NavigatableScene, Never>()
     }
 }
 
 extension BuyRoot.ViewModel: BuyViewModelType {
-    var navigationDriver: Driver<BuyRoot.NavigatableScene> {
-        navigationSubject.asDriver(onErrorJustReturn: .none)
+    var navigationPublisher: AnyPublisher<BuyRoot.NavigatableScene, Never> {
+        navigationSubject.replaceError(with: .none).eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func navigate(to scene: BuyRoot.NavigatableScene) {
-        navigationSubject.onNext(scene)
+        navigationSubject.send(scene)
     }
 }
