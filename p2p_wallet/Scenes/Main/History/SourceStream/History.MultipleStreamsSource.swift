@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import RxConcurrency
 
 extension History {
     /// The class that merges many sources into one and represents as single stream of sequential transactions.
