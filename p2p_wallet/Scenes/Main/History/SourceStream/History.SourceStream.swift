@@ -4,7 +4,6 @@
 
 import FeeRelayerSwift
 import Foundation
-import RxSwift
 import SolanaSwift
 
 /// The protocol that manages the sequential loading of transaction.
