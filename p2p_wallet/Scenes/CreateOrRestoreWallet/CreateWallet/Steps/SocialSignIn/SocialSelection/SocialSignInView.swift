@@ -55,11 +55,11 @@ struct SocialSignInView: View {
         VStack {
             VStack(spacing: .zero) {
                 TextButtonView(
-                    title: .constant("Sign in with Apple"),
+                    title: "Sign in with Apple",
                     style: .inverted,
                     size: .large,
                     leading: .appleLogo,
-                    isLoading: .constant(viewModel.loading == .appleButton),
+                    isLoading: viewModel.loading == .appleButton,
                     onPressed: { [weak viewModel] in
                         viewModel?.onSignInTap(.apple)
                     }
@@ -67,11 +67,11 @@ struct SocialSignInView: View {
                     .frame(height: TextButton.Size.large.height)
                     .padding(.top, 20)
                 TextButtonView(
-                    title: .constant("Sign in with Google"),
+                    title: "Sign in with Google",
                     style: .inverted,
                     size: .large,
                     leading: .google,
-                    isLoading: .constant(viewModel.loading == .googleButton),
+                    isLoading: viewModel.loading == .googleButton,
                     onPressed: { [weak viewModel] in
                         viewModel?.onSignInTap(.google)
                     }
