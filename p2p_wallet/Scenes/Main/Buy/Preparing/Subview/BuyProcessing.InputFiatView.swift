@@ -2,14 +2,15 @@
 // Created by Giang Long Tran on 04.03.2022.
 //
 
+import Combine
+import CombineCocoa
 import Foundation
 import Resolver
-import RxSwift
 import SolanaSwift
 
 extension BuyPreparing {
     class InputFiatView: BECompositionView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: BuyPreparingSceneModel
 
         init(viewModel: BuyPreparingSceneModel) {
@@ -41,19 +42,21 @@ extension BuyPreparing {
                         ).setup { [weak self] view in
                             view.becomeFirstResponder()
                             view.text = viewModel.input.amount.toString()
-                            view.rx.text
+                            view.textPublisher
                                 .map { $0?.fiatFormat }
-                                .subscribe(onNext: { [weak self, weak view] text in
+                                .sink { [weak self, weak view] text in
                                     view?.text = text
                                     self?.viewModel.setAmount(value: Double(text ?? "") ?? 0)
-                                })
-                                .disposed(by: disposeBag)
-                            view.rx.controlEvent(.editingDidEnd)
-                                .asObservable()
-                                .subscribe(onNext: { [weak view] in
+                                }
+                                .store(in: &subscriptions)
+                            NotificationCenter.default.publisher(
+                                for: UITextField.textDidEndEditingNotification,
+                                object: view
+                            )
+                                .sink { [weak view] _ in
                                     view?.text = view?.text?.withoutLastZeros
-                                })
-                                .disposed(by: disposeBag)
+                                }
+                                .store(in: &subscriptions)
                         }
                     }
                 }
@@ -69,28 +72,20 @@ extension BuyPreparing {
                     UIStackView(axis: .horizontal) {
                         CoinLogoImageView(size: 20, cornerRadius: 9)
                             .setup { view in
-                                Single<[Token]>.async {
-                                    Array(try await Resolver.resolve(SolanaTokensRepository.self).getTokensList())
-                                }
-                                .asDriver(onErrorJustReturn: [])
-                                .drive(onNext: { [weak self, weak view] tokens in
-                                    if let token = tokens.first(where: { token in
-                                        self?.viewModel.crypto == .sol ? token.symbol == "SOL" : token
-                                            .symbol.lowercased() == self?.viewModel.crypto.solanaCode
-                                            .lowercased() && token.address == self?.viewModel.crypto.mintAddress
-                                    }) {
+                                viewModel.solanaTokenPublisher
+                                    .sink { [weak view] token in
                                         view?.setUp(token: token)
                                     }
-                                })
-                                .disposed(by: disposeBag)
+                                    .store(in: &subscriptions)
                             }
                         UIView(width: 4)
                         UILabel(text: "0.00 \(viewModel.crypto)").setup { view in
-                            viewModel.outputDriver
+                            viewModel.outputAnyPublisher
                                 .map { [weak self] output in
                                     "\(output.amount) \(self?.viewModel.crypto.name ?? "?")"
                                 }
-                                .drive(view.rx.text).disposed(by: disposeBag)
+                                .assign(to: \.text, on: view)
+                                .store(in: &subscriptions)
                         }
                         UIImageView(image: .arrowUpDown)
                             .padding(.init(only: .left, inset: 6))

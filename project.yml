@@ -74,7 +74,7 @@ targets:
     p2p_wallet:
         type: application
         platform: iOS
-        deploymentTarget: 13.0
+        deploymentTarget: 14.0
         sources:
         - path: p2p_wallet
           name: p2p_wallet
