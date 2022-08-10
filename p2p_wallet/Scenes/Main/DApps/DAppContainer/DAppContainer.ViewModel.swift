@@ -5,15 +5,14 @@
 //  Created by Giang Long Tran on 25.11.21.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import WebKit
 
 protocol DAppContainerViewModelType {
-    var navigationDriver: Driver<DAppContainer.NavigatableScene?> { get }
+    var navigationAnyPublisher: AnyPublisher<DAppContainer.NavigatableScene?, Never> { get }
     func navigate(to scene: DAppContainer.NavigatableScene)
 
     func getWebviewConfiguration() -> WKWebViewConfiguration
@@ -21,7 +20,8 @@ protocol DAppContainerViewModelType {
 }
 
 extension DAppContainer {
-    class ViewModel: NSObject {
+    @MainActor
+    class ViewModel: NSObject, ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var dAppChannel: DAppChannel
@@ -34,7 +34,7 @@ extension DAppContainer {
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        @Published private var navigationSubject: NavigatableScene?
 
         init(dapp: DApp) {
             self.dapp = dapp
@@ -43,20 +43,20 @@ extension DAppContainer {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
     }
 }
 
 extension DAppContainer.ViewModel: DAppContainerViewModelType {
-    var navigationDriver: Driver<DAppContainer.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationAnyPublisher: AnyPublisher<DAppContainer.NavigatableScene?, Never> {
+        $navigationSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func navigate(to scene: DAppContainer.NavigatableScene) {
-        navigationSubject.accept(scene)
+        navigationSubject = scene
     }
 
     func getWebviewConfiguration() -> WKWebViewConfiguration {

@@ -5,15 +5,15 @@
 //  Created by Chung Tran on 26/11/2021.
 //
 
+import Combine
 import Foundation
-import RxSwift
 import SolanaSwift
 import WebKit
 
 protocol DAppChannelDelegate: AnyObject {
-    func connect() -> Single<String>
-    func signTransaction(transaction: Transaction) -> Single<Transaction>
-    func signTransactions(transactions: [Transaction]) -> Single<[Transaction]>
+    func connect() async throws -> String
+    func signTransaction(transaction: Transaction) async throws -> Transaction
+    func signTransactions(transactions: [Transaction]) async throws -> [Transaction]
 }
 
 protocol DAppChannelType {
@@ -41,7 +41,7 @@ class DAppChannel: NSObject {
     // MARK: - Properties
 
     private weak var delegate: DAppChannelDelegate?
-    private let disposeBag = DisposeBag()
+    private var subscriptions = [AnyCancellable]()
 
     func setDelegate(_ delegate: DAppChannelDelegate) {
         self.delegate = delegate
@@ -102,9 +102,10 @@ extension DAppChannel: WKScriptMessageHandler {
 
         switch method {
         case "connect":
-            delegate.connect().subscribe(onSuccess: { [weak self] value in
-                self?.call(webView: webView, id: id, args: value)
-            }).disposed(by: disposeBag)
+            Task {
+                let value = try await delegate.connect()
+                call(webView: webView, id: id, args: value)
+            }
         case "signTransaction":
             do {
                 guard let rawData = body["args"] as? String,
@@ -115,14 +116,14 @@ extension DAppChannel: WKScriptMessageHandler {
                 }
 
                 let transaction = try Transaction.from(data: data)
-                delegate.signTransaction(transaction: transaction).subscribe(onSuccess: { [weak self] trx in
+                Task {
                     do {
-                        var trx = trx
-                        self?.call(webView: webView, id: id, args: try trx.serialize().base64EncodedString())
-                    } catch let e {
-                        self?.call(webView: webView, id: id, error: e.localizedDescription)
+                        var trx = try await delegate.signTransaction(transaction: transaction)
+                        call(webView: webView, id: id, args: try trx.serialize().base64EncodedString())
+                    } catch {
+                        call(webView: webView, id: id, error: error.localizedDescription)
                     }
-                }).disposed(by: disposeBag)
+                }
             } catch {
                 call(webView: webView, id: id, error: error.localizedDescription)
             }
@@ -134,16 +135,18 @@ extension DAppChannel: WKScriptMessageHandler {
 
             do {
                 let transactions = try data.map { try Transaction.from(data: Data(base64urlEncoded: $0)!) }
-                delegate.signTransactions(transactions: transactions).subscribe(onSuccess: { [weak self] values in
+
+                Task {
                     do {
-                        self?.call(webView: webView, id: id, args: try values.map { trx -> String in
+                        let values = try await delegate.signTransactions(transactions: transactions)
+                        call(webView: webView, id: id, args: try values.map { trx -> String in
                             var trx = trx
                             return try trx.serialize().base64EncodedString()
                         })
-                    } catch let e {
-                        self?.call(webView: webView, id: id, error: e.localizedDescription)
+                    } catch {
+                        call(webView: webView, id: id, error: error.localizedDescription)
                     }
-                }).disposed(by: disposeBag)
+                }
             } catch let e {
                 call(webView: webView, id: id, error: e.localizedDescription)
             }

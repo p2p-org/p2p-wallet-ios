@@ -18,7 +18,7 @@ protocol BuyViewModelType {
 
 extension BuyRoot {
     @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: NSObject, ObservableObject {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
