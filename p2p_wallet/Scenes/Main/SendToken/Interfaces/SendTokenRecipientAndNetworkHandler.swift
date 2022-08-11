@@ -16,6 +16,7 @@ import SolanaSwift
 protocol SendTokenRecipientAndNetworkHandler: AnyObject {
     var subscriptions: [AnyCancellable] { get set }
     var sendService: SendServiceType { get }
+    var wallet: Wallet? { get }
 
     // MARK: - @Published var recipient
 
@@ -46,7 +47,6 @@ protocol SendTokenRecipientAndNetworkHandler: AnyObject {
 
     var feeInfoSubject: LoadableRelay<SendToken.FeeInfo> { get }
 
-    func getSelectedWallet() -> Wallet?
     func getSendService() -> SendServiceType
 }
 
@@ -77,7 +77,7 @@ extension SendTokenRecipientAndNetworkHandler {
 
     func getSelectableNetworks() -> [SendToken.Network] {
         var networks: [SendToken.Network] = [.solana]
-        if getSelectedWallet()?.token.isRenBTC == true {
+        if wallet?.token.isRenBTC == true {
             networks.append(.bitcoin)
         }
         return networks
@@ -129,7 +129,7 @@ extension SendTokenRecipientAndNetworkHandler {
             .sink { [weak self] payingWallet, recipient, network in
                 guard let self = self else { return }
 
-                if let wallet = self.getSelectedWallet() {
+                if let wallet = self.wallet {
                     self.feeInfoSubject.request = {
                         let feeAmountInSol = try await self.sendService.getFees(
                             from: wallet,
