@@ -143,6 +143,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
         FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
         KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
+
+        DefaultLogManager.shared.setProviders(loggers)
     }
 
     private func setupNavigationAppearance() {
