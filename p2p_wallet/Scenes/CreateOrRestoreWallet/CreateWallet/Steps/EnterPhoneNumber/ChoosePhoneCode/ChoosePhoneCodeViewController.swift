@@ -11,6 +11,7 @@ final class ChoosePhoneCodeViewController: BaseViewController {
     // MARK: - Properties
 
     private let viewModel: ChoosePhoneCodeViewModel
+    private let searchBar = BERef<BESearchBar>()
 
     init(viewModel: ChoosePhoneCodeViewModel) {
         self.viewModel = viewModel
@@ -29,6 +30,11 @@ final class ChoosePhoneCodeViewController: BaseViewController {
         viewModel.reload()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        searchBar.view?.becomeFirstResponder()
+    }
+
     override func build() -> UIView {
         BEVStack {
             BESearchBar(fixedHeight: 38, cornerRadius: 10)
@@ -40,6 +46,7 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                     searchBar.magnifyingIconSize = 15.63
                     searchBar.delegate = self
                 }
+                .bind(searchBar)
                 .padding(.init(top: 0, left: 16, bottom: 12, right: 16))
             BEStaticSectionsCollectionView(
                 sections: [

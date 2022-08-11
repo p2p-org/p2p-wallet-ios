@@ -85,8 +85,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 }.eraseToAnyPublisher(),
             coordinatorIO.countrySelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
         )
-        .assign(to: \.phone, on: self)
-        .store(in: &cancellable)
+            .assign(to: \.phone, on: self)
+            .store(in: &cancellable)
 
         Publishers.MergeMany(
             coordinatorIO.countrySelected.map { $0?.dialCode }.eraseToAnyPublisher(),
