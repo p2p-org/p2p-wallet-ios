@@ -6,14 +6,14 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension OrcaSwapV2 {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected var authenticationHandler: AuthenticationHandlerType
@@ -25,28 +25,28 @@ extension OrcaSwapV2 {
 
         // MARK: - Properties
 
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
         var isSelectingSourceWallet = false // indicate if selecting source wallet or destination wallet
         var isUsingAllBalance = false
 
         // MARK: - Subject
 
-        let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        let loadingStateSubject = BehaviorRelay<LoadableState>(value: .notRequested)
-        let sourceWalletSubject = BehaviorRelay<Wallet?>(value: nil)
-        let destinationWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        @Published var navigation: NavigatableScene?
+        @Published var loadingState: LoadableState = .notRequested
+        @Published var sourceWallet: Wallet?
+        @Published var destinationWallet: Wallet?
         let tradablePoolsPairsSubject = LoadableRelay<[Swap.PoolsPair]>(request: { [] })
-        let bestPoolsPairSubject = BehaviorRelay<Swap.PoolsPair?>(value: nil)
-        let availableAmountSubject = BehaviorRelay<Double?>(value: nil)
-        let inputAmountSubject = BehaviorRelay<Double?>(value: nil)
-        let estimatedAmountSubject = BehaviorRelay<Double?>(value: nil)
+        @Published var bestPoolsPair: Swap.PoolsPair?
+        @Published var availableAmount: Double?
+        @Published var inputAmount: Double?
+        @Published var estimatedAmount: Double?
         let feesSubject = LoadableRelay<[PayingFee]>(request: { [] })
-        let slippageSubject = BehaviorRelay<Double>(value: Defaults.slippage)
-        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        @Published var slippage: Double = Defaults.slippage
+        @Published var payingWallet: Wallet?
 
-        let errorSubject = BehaviorRelay<VerificationError?>(value: nil)
-        let showHideDetailsButtonTapSubject = PublishRelay<Void>()
-        let isShowingDetailsSubject = BehaviorRelay<Bool>(value: false)
+        @Published var error: VerificationError?
+        var showHideDetailsButtonTapSubject = PassthroughSubject<Void, Never>()
+        @Published var isShowingDetails: Bool = false
         var activeInputField = ActiveInputField.none
 
         // MARK: - setter
@@ -54,52 +54,51 @@ extension OrcaSwapV2 {
         init(
             initialWallet: Wallet?
         ) {
-            payingWalletSubject.accept(walletsRepository.nativeWallet)
+            payingWallet = walletsRepository.nativeWallet
             reload()
             bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         func bind(initialWallet: Wallet?) {
             // wait until loaded and choose initial wallet
             if let initialWallet = initialWallet {
-                loadingStateSubject
-                    .take(until: { $0 == .loaded })
-                    .take(1)
-                    .subscribe(onNext: { [weak self] _ in
-                        self?.sourceWalletSubject.accept(initialWallet)
-                    })
-                    .disposed(by: disposeBag)
+                $loadingState
+                    .filter { $0 == .loaded } // .take(until: { $0 == .loaded })
+                    .prefix(1)
+                    .sink { [weak self] _ in
+                        self?.sourceWallet = initialWallet
+                    }
+                    .store(in: &subscriptions)
             }
 
             // update wallet after swapping
             walletsRepository.dataPublisher
-                .asObservable()
-                .skip(1)
-                .subscribe(onNext: { [weak self] wallets in
-                    if self?.sourceWalletSubject.value?.pubkey != nil,
-                       let wallet = wallets.first(where: { $0.pubkey == self?.sourceWalletSubject.value?.pubkey })
+                .dropFirst()
+                .sink { [weak self] wallets in
+                    if self?.sourceWallet?.pubkey != nil,
+                       let wallet = wallets.first(where: { $0.pubkey == self?.sourceWallet?.pubkey })
                     {
-                        self?.sourceWalletSubject.accept(wallet)
+                        self?.sourceWallet = wallet
                     }
 
-                    if self?.destinationWalletSubject.value?.pubkey != nil,
+                    if self?.destinationWallet?.pubkey != nil,
                        let wallet = wallets
-                           .first(where: { $0.pubkey == self?.destinationWalletSubject.value?.pubkey })
+                           .first(where: { $0.pubkey == self?.destinationWallet?.pubkey })
                     {
-                        self?.destinationWalletSubject.accept(wallet)
+                        self?.destinationWallet = wallet
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // available amount
-            Observable.combineLatest(
-                sourceWalletSubject,
-                payingWalletSubject,
-                feesSubject.valueObservable
+            Publishers.CombineLatest3(
+                $sourceWallet,
+                $payingWallet,
+                feesSubject.$value
             )
                 .map { sourceWallet, payingWallet, fees in
                     calculateAvailableAmount(
@@ -108,63 +107,63 @@ extension OrcaSwapV2 {
                         fees: fees
                     )
                 }
-                .bind(to: availableAmountSubject)
-                .disposed(by: disposeBag)
+                .assign(to: \.availableAmount, on: self)
+                .store(in: &subscriptions)
 
             // auto fill balance after tapping max
-            availableAmountSubject
+            $availableAmount
                 .filter { [weak self] availableAmount in
                     guard let self = self else { return false }
-                    return self.isUsingAllBalance && self.inputAmountSubject.value?
-                        .rounded(decimals: self.sourceWalletSubject.value?.token.decimals) > availableAmount?
-                        .rounded(decimals: self.sourceWalletSubject.value?.token.decimals)
+                    return self.isUsingAllBalance && self.inputAmount?
+                        .rounded(decimals: self.sourceWallet?.token.decimals) > availableAmount?
+                        .rounded(decimals: self.sourceWallet?.token.decimals)
                 }
-                .subscribe(onNext: { [weak self] availableAmount in
+                .sink { [weak self] availableAmount in
                     self?.isUsingAllBalance = false
                     self?.enterInputAmount(availableAmount)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // get tradable pools pair for each token pair
-            Observable.combineLatest(
-                sourceWalletSubject.distinctUntilChanged(),
-                destinationWalletSubject.distinctUntilChanged()
+            Publishers.CombineLatest(
+                $sourceWallet.removeDuplicates(),
+                $destinationWallet.removeDuplicates()
             )
-                .subscribe(onNext: { [weak self] sourceWallet, destinationWallet in
+                .sink { [weak self] sourceWallet, destinationWallet in
                     guard let self = self,
                           let sourceWallet = sourceWallet,
                           let destinationWallet = destinationWallet
                     else {
-                        self?.tradablePoolsPairsSubject.request = .just([])
+                        self?.tradablePoolsPairsSubject.request = { [] }
                         self?.tradablePoolsPairsSubject.reload()
                         return
                     }
 
-                    self.tradablePoolsPairsSubject.request = Single.async(with: self) { `self` in
-                        try await self.swapService.getPoolPair(
+                    self.tradablePoolsPairsSubject.request = { [weak self] in
+                        try await self?.swapService.getPoolPair(
                             from: sourceWallet.token.address,
                             to: destinationWallet.token.address
-                        )
+                        ) ?? []
                     }
                     self.tradablePoolsPairsSubject.reload()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // Fill input amount and estimated amount after loaded
-            tradablePoolsPairsSubject.stateObservable
-                .distinctUntilChanged()
+            tradablePoolsPairsSubject.$state
+                .removeDuplicates()
                 .filter { $0 == .loaded }
-                .subscribe(onNext: { [weak self] _ in
+                .sink { [weak self] _ in
                     guard let self = self else { return }
-                    if let inputAmount = self.inputAmountSubject.value,
+                    if let inputAmount = self.inputAmount,
                        self.activeInputField != .destination
                     {
                         self.enterInputAmount(inputAmount)
-                    } else if let estimatedAmount = self.estimatedAmountSubject.value {
+                    } else if let estimatedAmount = self.estimatedAmount {
                         self.enterEstimatedAmount(estimatedAmount)
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // fees
             Observable.combineLatest(
@@ -183,7 +182,7 @@ extension OrcaSwapV2 {
                     }
                     self.feesSubject.reload()
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             // Smart selection fee token paying
 
@@ -191,9 +190,9 @@ extension OrcaSwapV2 {
             sourceWalletSubject
                 .subscribe(onNext: { [weak self] wallet in
                     guard let self = self, let wallet = wallet else { return }
-                    self.payingWalletSubject.accept(wallet)
+                    self.payingWallet = wallet)
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             // Input amount was changed
             inputAmountSubject
@@ -202,12 +201,12 @@ extension OrcaSwapV2 {
                     guard
                         let self = self,
                         let input = input,
-                        let availableAmount = self.availableAmountSubject.value
+                        let availableAmount = self.availableAmount
                     else { return }
 
                     // If paying token fee equals input token
-                    if self.payingWalletSubject.value == self.sourceWalletSubject.value,
-                       self.payingWalletSubject.value?.isNativeSOL == false
+                    if self.payingWallet == self.sourceWallet,
+                       self.payingWallet?.isNativeSOL == false
                     {
                         // Selected wallet can not covert fee
                         if input + fees.totalDecimal > availableAmount,
@@ -218,7 +217,7 @@ extension OrcaSwapV2 {
                         }
                     }
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             // Error
             Observable.combineLatest(
@@ -227,21 +226,21 @@ extension OrcaSwapV2 {
                 destinationWalletSubject,
                 tradablePoolsPairsSubject.stateObservable,
                 bestPoolsPairSubject,
-                feesSubject.valueObservable,
+                feesObservable,
                 slippageSubject,
                 payingWalletSubject
             )
                 .map { [weak self] _ in self?.verify() }
                 .bind(to: errorSubject)
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             showHideDetailsButtonTapSubject
                 .subscribe(onNext: { [weak self] in
                     guard let self = self else { return }
 
-                    self.isShowingDetailsSubject.accept(!self.isShowingDetailsSubject.value)
+                    self.isShowingDetails = !self.isShowingDetails)
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
         }
 
         func authenticateAndSwap() {
@@ -259,16 +258,16 @@ extension OrcaSwapV2 {
             guard verify() == nil else { return }
 
             let authority = walletsRepository.nativeWallet?.pubkey
-            let sourceWallet = sourceWalletSubject.value!
-            let destinationWallet = destinationWalletSubject.value!
-            let bestPoolsPair = bestPoolsPairSubject.value!
-            let inputAmount = inputAmountSubject.value!
-            let estimatedAmount = estimatedAmountSubject.value!
-            let payingWallet = payingWalletSubject.value
-            let slippage = slippageSubject.value
-            let fees = feesSubject.value?.filter { $0.type != .liquidityProviderFee } ?? []
+            let sourceWallet = sourceWallet!
+            let destinationWallet = destinationWallet!
+            let bestPoolsPair = bestPoolsPair!
+            let inputAmount = inputAmount!
+            let estimatedAmount = estimatedAmount!
+            let payingWallet = payingWallet
+            let slippage = slippage
+            let fees = fees?.filter { $0.type != .liquidityProviderFee } ?? []
 
-            let swapMAX = availableAmountSubject.value == inputAmount
+            let swapMAX = availableAmount == inputAmount
 
             // log
             minimumReceiveAmountObservable
@@ -281,7 +280,7 @@ extension OrcaSwapV2 {
                     let swapUSD = receiveAmount * receivePriceFiat
 
                     // show processing scene
-                    self.navigationSubject.accept(
+                    self.navigation =
                         .processTransaction(
                             ProcessTransaction.SwapTransaction(
                                 swapService: self.swapService,
@@ -300,9 +299,8 @@ extension OrcaSwapV2 {
                                 )
                             )
                         )
-                    )
                 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
         }
     }
 }
