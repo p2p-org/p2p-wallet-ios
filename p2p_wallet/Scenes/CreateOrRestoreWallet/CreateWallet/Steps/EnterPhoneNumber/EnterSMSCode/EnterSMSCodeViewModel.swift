@@ -3,6 +3,7 @@ import CountriesAPI
 import Foundation
 import Onboarding
 import PhoneNumberKit
+import Reachability
 import Resolver
 
 #if DEBUG
@@ -20,6 +21,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     // MARK: -
 
+    @Injected private var reachability: Reachability
+
     private var rawCode: String = "" {
         didSet {
             isButtonEnabled = rawCode.count == Self.codeLength
@@ -36,12 +39,18 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     @Published public var isButtonEnabled: Bool = false
 
     func buttonTaped() {
-        guard !isLoading else { return }
+        guard
+            !isLoading,
+            reachability.check()
+        else { return }
         coordinatorIO.onConfirm.send(rawCode)
     }
 
     func resendButtonTapped() {
-        guard !isLoading else { return }
+        guard
+            !isLoading,
+            reachability.check()
+        else { return }
         coordinatorIO.onResend.send()
 
         // Setup timer

@@ -9,9 +9,10 @@ import SwiftUI
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
+        print(state)
+        print(state == .socialSelection)
         switch state {
         case .socialSelection:
-            // TODO: rename class name
             let vm = SocialSignInViewModel()
             let vc = SocialSignInView(viewModel: vm)
             vc.viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }

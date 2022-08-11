@@ -3,6 +3,7 @@ import CountriesAPI
 import Foundation
 import Onboarding
 import PhoneNumberKit
+import Reachability
 import Resolver
 
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
@@ -16,6 +17,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     // MARK: -
 
+    @Injected private var reachability: Reachability
+
     @Published public var phone: String?
     @Published public var flag: String = ""
     @Published public var phonePlaceholder: String?
@@ -24,7 +27,11 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published public var inputError: String?
 
     func buttonTaped() {
-        guard let phone = phone, !isLoading else { return }
+        guard
+            let phone = phone,
+            !isLoading,
+            reachability.check()
+        else { return }
         coordinatorIO.phoneEntered.send(phone)
     }
 
@@ -85,8 +92,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 }.eraseToAnyPublisher(),
             coordinatorIO.countrySelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
         )
-        .assign(to: \.phone, on: self)
-        .store(in: &cancellable)
+            .assign(to: \.phone, on: self)
+            .store(in: &cancellable)
 
         Publishers.MergeMany(
             coordinatorIO.countrySelected.map { $0?.dialCode }.eraseToAnyPublisher(),
