@@ -178,7 +178,9 @@ extension OrcaSwapV2 {
                 .observe(on: MainScheduler.asyncInstance)
                 .subscribe(onNext: { [weak self] _ in
                     guard let self = self else { return }
-                    self.feesSubject.request = self.feesRequest()
+                    self.feesSubject.request = { [weak self] in
+                        (try await self?.feesRequest()) ?? []
+                    }
                     self.feesSubject.reload()
                 })
                 .disposed(by: disposeBag)

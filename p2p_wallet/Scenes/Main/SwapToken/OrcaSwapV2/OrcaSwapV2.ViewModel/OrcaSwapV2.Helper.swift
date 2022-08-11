@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import RxSwift
 
 // MARK: - Helpers
 
@@ -122,30 +121,26 @@ extension OrcaSwapV2.ViewModel {
         slippageSubject.value <= .maxSlippage && slippageSubject.value > 0
     }
 
-    func feesRequest() -> Single<[PayingFee]> {
+    func feesRequest() async throws -> [PayingFee] {
         guard
             let sourceWallet = sourceWalletSubject.value,
             let destinationWallet = destinationWalletSubject.value
         else {
-            return .just([])
+            return []
         }
 
         let bestPoolsPair = bestPoolsPairSubject.value
         let inputAmount = inputAmountSubject.value
         let slippage = slippageSubject.value
 
-        return Single.async {
-            try await self.swapService.getFees(
-                sourceMint: sourceWallet.mintAddress,
-                destinationAddress: destinationWallet.pubkey,
-                destinationToken: destinationWallet.token,
-                bestPoolsPair: bestPoolsPair,
-                payingWallet: self.payingWalletSubject.value,
-                inputAmount: inputAmount,
-                slippage: slippage
-            )
-        }
-        .map { info in info.fees }
-        .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
+        return try await swapService.getFees(
+            sourceMint: sourceWallet.mintAddress,
+            destinationAddress: destinationWallet.pubkey,
+            destinationToken: destinationWallet.token,
+            bestPoolsPair: bestPoolsPair,
+            payingWallet: payingWalletSubject.value,
+            inputAmount: inputAmount,
+            slippage: slippage
+        ).fees
     }
 }
