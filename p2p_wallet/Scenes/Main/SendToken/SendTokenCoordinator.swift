@@ -19,8 +19,6 @@ extension SendToken {
 
         var doneHandler: (() -> Void)?
 
-        private let disposeBag = DisposeBag()
-
         init(
             viewModel: SendTokenViewModelType,
             navigationController: UINavigationController?
@@ -31,7 +29,7 @@ extension SendToken {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         private func bind() {
@@ -53,7 +51,7 @@ extension SendToken {
 
         @discardableResult
         private func pushChooseToken(showAfterConfirmation: Bool, hidesBottomBarWhenPushed: Bool) -> UIViewController {
-            let amount = viewModel.getSelectedAmount()
+            let amount = viewModel.amount
             let vm = ChooseTokenAndAmount.ViewModel(
                 initialAmount: amount,
                 showAfterConfirmation: showAfterConfirmation,

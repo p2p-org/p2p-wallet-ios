@@ -5,14 +5,13 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import UIKit
 
 extension ReceiveToken {
     class ReceiveBitcoinView: BECompositionView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: ReceiveTokenBitcoinViewModelType
 
         // MARK: - Initializers
@@ -33,7 +32,9 @@ extension ReceiveToken {
                     }.onSave { [unowned self] image in
                         self.viewModel.saveAction(image: image)
                     }.setup { card in
-                        viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
+                        viewModel.addressPublisher
+                            .assign(to: \.pubkey, on: card)
+                            .store(in: &subscriptions)
                     }
 
                 // Status
