@@ -5,8 +5,8 @@
 //  Created by Chung Tran on 22/04/2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 
 extension ConfirmReceivingBitcoin.ViewController {
     func createRenBTCView() -> BEVStack {
@@ -22,11 +22,11 @@ extension ConfirmReceivingBitcoin.ViewController {
                 BEHStack(spacing: 12, alignment: .center) {
                     CoinLogoImageView(size: 44)
                         .setup { logoView in
-                            viewModel.payingWalletDriver
-                                .drive(onNext: { [weak logoView] in
+                            viewModel.payingWalletPublisher
+                                .sink { [weak logoView] in
                                     logoView?.setUp(wallet: $0)
-                                })
-                                .disposed(by: disposeBag)
+                                }
+                                .store(in: &subscriptions)
                         }
 
                     BEVStack(spacing: 4) {
