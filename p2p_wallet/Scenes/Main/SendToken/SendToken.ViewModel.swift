@@ -29,7 +29,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     func getSelectedAmount() -> Double?
     func getFreeTransactionFeeLimit() async throws -> UsageStatus
 
-    func reload()
+    func reload() async
     func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
     func cleanAllFields()
@@ -53,7 +53,7 @@ extension SendToken {
 
         // MARK: - Properties
 
-        let subscriptions = [AnyCancellable]()
+        var subscriptions = [AnyCancellable]()
         let relayMethod: SendTokenRelayMethod
         let canGoBack: Bool
 
@@ -67,9 +67,9 @@ extension SendToken {
         @Published private var loadingState = LoadableState.notRequested
         @Published private var payingWallet: Wallet?
         let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(
-            request: .just(
+            request: {
                 .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
-            )
+            }
         )
 
         // MARK: - Initializers
@@ -93,7 +93,7 @@ extension SendToken {
             } else {
                 walletSubject = walletsRepository.nativeWallet
             }
-            
+
             bind()
             reload()
         }
@@ -103,51 +103,48 @@ extension SendToken {
         }
 
         func bind() {
-            bindFees(walletSubject: walletSubject)
+            bindFees()
 
             // update wallet after sending
             walletsRepository.dataPublisher
-                .asObservable()
-                .skip(1)
-                .withLatestFrom(walletSubject.asObservable(), resultSelector: { ($0, $1) })
-                .subscribe(onNext: { [weak self] wallets, myWallet in
+                .dropFirst()
+                .withLatestFrom($wallet, resultSelector: { ($0, $1) })
+                .sink { [weak self] wallets, myWallet in
                     guard let self = self else { return }
                     if let wallet = wallets.first(where: { $0.pubkey == myWallet?.pubkey }),
                        wallet.lamports != myWallet?.lamports
                     {
                         self.walletSubject.accept(wallet)
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
-        func reload() {
-            loadingStateSubject.accept(.loading)
+        func reload() async {
+            loadingState = .loading
+            do {
+                _ = try await(
+                    sendService.load(),
+                    walletsRepository.statePublisher
+                        .filter { $0 == .loaded }
+                        .prefix(1)
+                        .map { _ in () }
+                        .eraseToAnyPublisher()
+                        .async()
+                )
 
-            Completable.zip(
-                Completable.async { try await self.sendService.load() },
-                walletsRepository.statePublisher
-                    .asObservable()
-                    .filter { $0 == .loaded }
-                    .take(1)
-                    .asSingle()
-                    .asCompletable()
-            )
-                .subscribe(onCompleted: { [weak self] in
-                    guard let self = self else { return }
-                    self.loadingStateSubject.accept(.loaded)
-                    if self.walletSubject.value == nil {
-                        self.walletSubject.accept(self.walletsRepository.getWallets().first(where: { $0.isNativeSOL }))
-                    }
-                    if let payingWallet = self.walletsRepository.getWallets()
-                        .first(where: { $0.mintAddress == Defaults.payingTokenMint })
-                    {
-                        self.payingWalletSubject.accept(payingWallet)
-                    }
-                }, onError: { [weak self] error in
-                    self?.loadingStateSubject.accept(.error(error.readableDescription))
-                })
-                .disposed(by: disposeBag)
+                loadingState = .loaded
+                if wallet == nil {
+                    wallet = walletsRepository.getWallets().first(where: { $0.isNativeSOL })
+                }
+                if let payingWallet = walletsRepository.getWallets()
+                    .first(where: { $0.mintAddress == Defaults.payingTokenMint })
+                {
+                    self.payingWallet = payingWallet
+                }
+            } catch {
+                loadingState = .error(error.readableDescription)
+            }
         }
 
         private func send() {
@@ -200,19 +197,19 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     var navigationSubject: CurrentValueSubject<SendToken.NavigatableScene?, Never> {
         <#code#>
     }
-    
+
     var walletSubject: BehaviorRelay<Wallet?> {
         <#code#>
     }
-    
+
     var amountSubject: BehaviorRelay<Double?> {
         <#code#>
     }
-    
+
     func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
         <#code#>
     }
-    
+
     var navigationDriver: AnyPublisher<SendToken.NavigatableScene?, Never> {
         navigationSubject.asDriver()
     }
