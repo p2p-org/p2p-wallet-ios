@@ -14,9 +14,9 @@ import SolanaSwift
 protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, SendTokenTokenAndAmountHandler {
     var initialAmount: Double? { get }
 
-    var navigationDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> { get }
-    var currencyModeDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.CurrencyMode, Never> { get }
-    var errorDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.Error?, Never> { get }
+    var navigationPublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> { get }
+    var currencyModePublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.CurrencyMode, Never> { get }
+    var errorPublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.Error?, Never> { get }
     var clearForm: CurrentValueSubject<Void, Never> { get }
     var showAfterConfirmation: Bool { get }
     var canGoBack: Bool { get }
@@ -39,7 +39,8 @@ extension SendTokenChooseTokenAndAmountViewModelType {
 }
 
 extension SendToken.ChooseTokenAndAmount {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
@@ -55,11 +56,11 @@ extension SendToken.ChooseTokenAndAmount {
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
-        let walletSubject = BehaviorRelay<Wallet?>(value: nil)
-        let amountSubject = BehaviorRelay<Double?>(value: nil)
-        let clearForm = CurrentValueSubject<Void, Never>()
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var currencyMode = CurrencyMode.token
+        @Published var wallet: Wallet?
+        @Published var amount: Double?
+        let clearForm = CurrentValueSubject<Void, Never>(())
 
         // MARK: - Initializer
 
@@ -78,20 +79,20 @@ extension SendToken.ChooseTokenAndAmount {
 
         private func bind() {
             #if DEBUG
-                amountSubject.subscribe(onNext: { debugPrint($0 ?? 0) }).disposed(by: disposeBag)
+                $amount.sink { print($0 ?? 0) }.store(in: &subscriptions)
             #endif
 
-            sendTokenViewModel.walletDriver
-                .drive(walletSubject)
-                .disposed(by: disposeBag)
+            sendTokenViewModel.walletPublisher
+                .assign(to: \.wallet, on: self)
+                .store(in: &subscriptions)
 
-            sendTokenViewModel.amountDriver
-                .drive(amountSubject)
-                .disposed(by: disposeBag)
+            sendTokenViewModel.amountPublisher
+                .assign(to: \.amount, on: self)
+                .store(in: &subscriptions)
 
             clearForm
-                .subscribe(onNext: { _ in self.clear() })
-                .disposed(by: disposeBag)
+                .sink { _ in self.clear() }
+                .store(in: &subscriptions)
         }
     }
 }
@@ -101,19 +102,19 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         sendTokenViewModel.canGoBack
     }
 
-    var navigationDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
-    var currencyModeDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.CurrencyMode, Never> {
-        currencyModeSubject.asDriver()
+    var currencyModePublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.CurrencyMode, Never> {
+        $currencyMode.eraseToAnyPublisher()
     }
 
-    var errorDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.Error?, Never> {
-        Driver.combineLatest(
-            walletDriver,
-            amountDriver,
-            currencyModeDriver
+    var errorPublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.Error?, Never> {
+        Publishers.CombineLatest3(
+            $wallet,
+            $amount,
+            $currencyMode
         )
             .map { [weak self] wallet, amount, _ in
                 if wallet == nil { return .destinationWalletIsMissing }
@@ -121,6 +122,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
                 if (amount ?? 0) > (self?.calculateAvailableAmount() ?? 0) { return .insufficientFunds }
                 return nil
             }
+            .eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -129,7 +131,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         if scene == .chooseWallet {
             analyticsManager.log(event: .tokenListViewed(lastScreen: "Send", tokenListLocation: "Token_A"))
         }
-        navigationSubject.accept(scene)
+        navigatableScene = scene
     }
 
     func cancelSending() {
@@ -137,20 +139,20 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
 
     func toggleCurrencyMode() {
-        if currencyModeSubject.value == .token {
-            currencyModeSubject.accept(.fiat)
+        if currencyMode == .token {
+            currencyMode = .fiat
         } else {
-            currencyModeSubject.accept(.token)
+            currencyMode = .token
         }
     }
 
     func calculateAvailableAmount() -> Double? {
-        guard let wallet = walletSubject.value else { return nil }
+        guard let wallet = wallet else { return nil }
         // all amount
         var availableAmount = wallet.amount ?? 0
 
         // convert to fiat in fiat mode
-        if currencyModeSubject.value == .fiat {
+        if currencyMode == .fiat {
             availableAmount = (availableAmount * wallet.priceInCurrentFiat).rounded(decimals: wallet.token.decimals)
         }
 
@@ -163,21 +165,21 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
     }
 
     func isTokenValidForSelectedNetwork() -> Bool {
-        let isValid = selectedNetwork != .bitcoin || walletSubject.value?.token.isRenBTC == true
+        let isValid = selectedNetwork != .bitcoin || wallet?.token.isRenBTC == true
         if !isValid, showAfterConfirmation {
-            navigationSubject.accept(.invalidTokenForSelectedNetworkAlert)
+            navigatableScene = .invalidTokenForSelectedNetworkAlert
         }
         return isValid
     }
 
     func save() {
-        guard let wallet = walletSubject.value,
+        guard let wallet = wallet,
               let totalLamports = wallet.lamports,
-              var amount = amountSubject.value
+              var amount = amount
         else { return }
 
         // convert value
-        if currencyModeSubject.value == .fiat, (wallet.priceInCurrentFiat ?? 0) > 0 {
+        if currencyMode == .fiat, (wallet.priceInCurrentFiat ?? 0) > 0 {
             amount /= wallet.priceInCurrentFiat!
         }
 
@@ -187,14 +189,14 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
             lamports = totalLamports
         }
 
-        sendTokenViewModel.chooseWallet(wallet)
-        sendTokenViewModel.enterAmount(lamports.convertToBalance(decimals: wallet.token.decimals))
+        sendTokenViewModel.setWallet(wallet)
+        sendTokenViewModel.setAmount(lamports.convertToBalance(decimals: wallet.token.decimals))
     }
 
     func clear() {
         // Set Sol as a default wallet by default
-        walletSubject.accept(walletsRepository.nativeWallet)
-        amountSubject.accept(nil)
+        wallet = walletsRepository.nativeWallet
+        amount = nil
     }
 
     func navigateNext() {
