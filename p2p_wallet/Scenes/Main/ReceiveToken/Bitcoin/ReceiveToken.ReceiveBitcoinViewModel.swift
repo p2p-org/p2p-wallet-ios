@@ -9,13 +9,11 @@ import AnalyticsManager
 import Combine
 import RenVMSwift
 import Resolver
-import RxCocoa
-import RxSwift
 
 protocol ReceiveTokenBitcoinViewModelType: AnyObject {
-    var addressDriver: Driver<String?> { get }
-    var timerSignal: Signal<Void> { get }
-    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
+    var addressPublisher: AnyPublisher<String?, Never> { get }
+    var timerPublisher: AnyPublisher<Void, Never> { get }
+    var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> { get }
     var hasExplorerButton: Bool { get }
     var sessionEndDate: Date? { get }
 
@@ -28,10 +26,10 @@ protocol ReceiveTokenBitcoinViewModelType: AnyObject {
 }
 
 extension ReceiveToken {
-    class ReceiveBitcoinViewModel {
+    @MainActor
+    class ReceiveBitcoinViewModel: ObservableObject {
         // MARK: - Constants
 
-        private let disposeBag = DisposeBag()
         private var subscriptions = [AnyCancellable]()
         let hasExplorerButton: Bool
 
@@ -46,11 +44,12 @@ extension ReceiveToken {
 
         // MARK: - Subjects
 
-        private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
-        private let timerSubject = PublishRelay<Void>()
-        private let navigationSubject: PublishRelay<NavigatableScene?>
-        private let addressSubject = BehaviorRelay<String?>(value: nil)
-        private let processingTransactionsSubject = BehaviorRelay<[LockAndMint.ProcessingTx]>(value: [])
+        @Published private var isLoading = false
+        private let timerSubject = Timer.publish(every: 1, on: .main, in: .default)
+            .autoconnect()
+        private let navigationSubject: PassthroughSubject<NavigatableScene?, Never>
+        @Published private var address: String?
+        @Published private var processingTransactions = [LockAndMint.ProcessingTx]()
 
         // MARK: - Properties
 
@@ -59,17 +58,17 @@ extension ReceiveToken {
         // MARK: - Initializers
 
         init(
-            navigationSubject: PublishRelay<NavigatableScene?>,
+            navigationSubject: PassthroughSubject<NavigatableScene?, Never>,
             hasExplorerButton: Bool
         ) {
             self.navigationSubject = navigationSubject
             self.hasExplorerButton = hasExplorerButton
 
-            bind()
+            Task { await bind() }
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         func acceptConditionAndLoadAddress() {
@@ -81,60 +80,48 @@ extension ReceiveToken {
             }
         }
 
-        private func bind() {
+        private func bind() async {
             // timer
-            Timer.publish(every: 1, on: .main, in: .default)
-                .autoconnect()
-                .sink { [weak self] _ in
-                    self?.timerSubject.accept(())
-                }
-                .store(in: &subscriptions)
-
-            timerSubject
+            timerPublisher
                 .withLatestFrom(
-                    Single.async {
+                    Just(Date()).asyncMap { _ in
                         await self.persistentStore.session?.endAt
                     }
+                    .eraseToAnyPublisher()
                 )
-                .subscribe(onNext: { [weak self] endAt in
+                .sink { [weak self] endAt in
                     guard let endAt = endAt else { return }
                     if Date() >= endAt {
                         Task { [weak self] in
                             try await self?.lockAndMintService.expireCurrentSession()
                         }
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // listen to lockAndMintService
             lockAndMintService.delegate = self
 
             if lockAndMintService.isLoading {
-                isLoadingSubject.accept(true)
+                isLoading = true
             }
 
-            Task {
-                guard let address = await persistentStore.gatewayAddress else { return }
-                await MainActor.run { [weak self] in
-                    self?.addressSubject.accept(address)
-                }
-            }
+            guard let address = await persistentStore.gatewayAddress else { return }
+            self.address = address
         }
     }
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
     func lockAndMintServiceWillStartLoading(_: LockAndMintService) {
-        isLoadingSubject.accept(true)
+        isLoading = true
     }
 
     func lockAndMintService(_: LockAndMintService, didLoadWithGatewayAddress gatewayAddress: String) {
-        addressSubject.accept(gatewayAddress)
+        address = gatewayAddress
         Task {
             let endAt = await persistentStore.session?.endAt
-            await MainActor.run {
-                sessionEndDate = endAt
-            }
+            sessionEndDate = endAt
         }
     }
 
@@ -146,43 +133,37 @@ extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
         _: LockAndMintService,
         didUpdateTransactions processingTransactions: [LockAndMint.ProcessingTx]
     ) {
-        processingTransactionsSubject.accept(processingTransactions)
+        self.processingTransactions = processingTransactions
     }
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
-    var addressDriver: Driver<String?> {
-        addressSubject.asDriver()
+    var addressPublisher: AnyPublisher<String?, Never> {
+        $address.eraseToAnyPublisher()
     }
 
-    var timerSignal: Signal<Void> {
-        timerSubject.asSignal()
+    var timerPublisher: AnyPublisher<Void, Never> {
+        timerSubject.map { _ in () }.eraseToAnyPublisher()
     }
 
-    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
-        processingTransactionsSubject.asDriver()
+    var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> {
+        $processingTransactions.eraseToAnyPublisher()
     }
 
     func copyToClipboard() {
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
-            await MainActor.run {
-                clipboardManager.copyToClipboard(address)
-                notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-                analyticsManager.log(event: .receiveAddressCopied)
-            }
+            clipboardManager.copyToClipboard(address)
+            notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
+            analyticsManager.log(event: .receiveAddressCopied)
         }
     }
 
     func share(image: UIImage) {
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
-            await MainActor.run {
-                analyticsManager.log(event: .receiveAddressShare)
-                navigationSubject.accept(
-                    .share(address: address, qrCode: image)
-                )
-            }
+            analyticsManager.log(event: .receiveAddressShare)
+            navigationSubject.send(.share(address: address, qrCode: image))
         }
     }
 
@@ -195,7 +176,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
             case let .failure(error):
                 switch error {
                 case .noAccess:
-                    self?.navigationSubject.accept(.showPhotoLibraryUnavailable)
+                    self?.navigationSubject.send(.showPhotoLibraryUnavailable)
                 case .restrictedRightNow:
                     break
                 case let .unknown(error):
@@ -208,14 +189,12 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     func showBTCAddressInExplorer() {
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
-            await MainActor.run {
-                analyticsManager.log(event: .receiveViewingExplorer)
-                navigationSubject.accept(.showBTCExplorer(address: address))
-            }
+            analyticsManager.log(event: .receiveViewingExplorer)
+            navigationSubject.send(.showBTCExplorer(address: address))
         }
     }
 
     func showReceivingStatuses() {
-        navigationSubject.accept(.showRenBTCReceivingStatus)
+        navigationSubject.send(.showRenBTCReceivingStatus)
     }
 }
