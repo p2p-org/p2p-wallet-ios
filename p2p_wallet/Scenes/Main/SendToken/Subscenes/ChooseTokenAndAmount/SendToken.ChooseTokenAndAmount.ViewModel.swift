@@ -6,19 +6,18 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, SendTokenTokenAndAmountHandler {
     var initialAmount: Double? { get }
 
-    var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> { get }
-    var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> { get }
-    var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> { get }
-    var clearForm: PublishSubject<Void> { get }
+    var navigationDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> { get }
+    var currencyModeDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.CurrencyMode, Never> { get }
+    var errorDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.Error?, Never> { get }
+    var clearForm: CurrentValueSubject<Void, Never> { get }
     var showAfterConfirmation: Bool { get }
     var canGoBack: Bool { get }
 
@@ -35,7 +34,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
 
 extension SendTokenChooseTokenAndAmountViewModelType {
     func walletDidSelect(_ wallet: Wallet) {
-        chooseWallet(wallet)
+        setWallet(wallet)
     }
 }
 
@@ -49,7 +48,7 @@ extension SendToken.ChooseTokenAndAmount {
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         let showAfterConfirmation: Bool
         let initialAmount: Double?
         let selectedNetwork: SendToken.Network?
@@ -60,7 +59,7 @@ extension SendToken.ChooseTokenAndAmount {
         private let currencyModeSubject = BehaviorRelay<CurrencyMode>(value: .token)
         let walletSubject = BehaviorRelay<Wallet?>(value: nil)
         let amountSubject = BehaviorRelay<Double?>(value: nil)
-        let clearForm = PublishSubject<Void>()
+        let clearForm = CurrentValueSubject<Void, Never>()
 
         // MARK: - Initializer
 
@@ -102,15 +101,15 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         sendTokenViewModel.canGoBack
     }
 
-    var navigationDriver: Driver<SendToken.ChooseTokenAndAmount.NavigatableScene?> {
+    var navigationDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> {
         navigationSubject.asDriver()
     }
 
-    var currencyModeDriver: Driver<SendToken.ChooseTokenAndAmount.CurrencyMode> {
+    var currencyModeDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.CurrencyMode, Never> {
         currencyModeSubject.asDriver()
     }
 
-    var errorDriver: Driver<SendToken.ChooseTokenAndAmount.Error?> {
+    var errorDriver: AnyPublisher<SendToken.ChooseTokenAndAmount.Error?, Never> {
         Driver.combineLatest(
             walletDriver,
             amountDriver,
