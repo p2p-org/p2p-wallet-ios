@@ -5,8 +5,8 @@
 //  Created by Chung Tran on 30/11/2021.
 //
 
+import Combine
 import Foundation
-import RxSwift
 import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
@@ -14,7 +14,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -46,21 +46,21 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func bind() {
-            let didFinishSearchingDriver = viewModel.inputStateDriver
+            let didFinishSearchingPublisher = viewModel.inputStatePublisher
                 .map { $0 != .searching }
-                .distinctUntilChanged()
+                .removeDuplicates()
 
-            didFinishSearchingDriver
-                .drive(scanQrCodeButton.rx.isHidden)
-                .disposed(by: disposeBag)
+            didFinishSearchingPublisher
+                .assign(to: \.isHidden, on: scanQrCodeButton)
+                .store(in: &subscriptions)
 
-            didFinishSearchingDriver
-                .drive(pasteQrCodeButton.rx.isHidden)
-                .disposed(by: disposeBag)
+            didFinishSearchingPublisher
+                .assign(to: \.isHidden, on: pasteQrCodeButton)
+                .store(in: &subscriptions)
 
-            didFinishSearchingDriver
-                .drive(separator.rx.isHidden)
-                .disposed(by: disposeBag)
+            didFinishSearchingPublisher
+                .assign(to: \.isHidden, on: separator)
+                .store(in: &subscriptions)
         }
 
         // MARK: - Actions
