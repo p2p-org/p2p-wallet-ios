@@ -2,21 +2,11 @@ import Combine
 import SwiftUI
 import UIKit
 
-extension StartViewModel {
-    enum NavigatableScene {
-        case createWallet
-        case restoreWallet
-        case openTerms
-        case mockContinue // TODO: Remove mock scene
-    }
-}
-
 final class StartViewModel: BaseViewModel {
     @Published var data: [StartPageData] = []
-    @Published var navigatableScene: NavigatableScene?
     @Published var currentDataIndex: Int = .zero
-    let isAnimatable: Bool
 
+    let isAnimatable: Bool
     let termsDidTap = PassthroughSubject<Void, Never>()
     let createWalletDidTap = PassthroughSubject<Void, Never>()
     let restoreWalletDidTap = PassthroughSubject<Void, Never>()
@@ -25,16 +15,6 @@ final class StartViewModel: BaseViewModel {
     init(isAnimatable: Bool) {
         self.isAnimatable = isAnimatable
         super.init()
-
-        Publishers.Merge4(
-            createWalletDidTap.map { NavigatableScene.createWallet },
-            restoreWalletDidTap.map { NavigatableScene.restoreWallet },
-            termsDidTap.map { NavigatableScene.openTerms },
-            mockButtonDidTap.map { NavigatableScene.mockContinue }
-        ).sink { [weak self] scene in
-            self?.navigatableScene = scene
-        }.store(in: &subscriptions)
-
         setData()
     }
 
