@@ -10,8 +10,6 @@ import Foundation
 import GT3Captcha
 import NameService
 import Resolver
-import RxCocoa
-import RxSwift
 import UIKit
 
 protocol ReserveNameViewModelType: AnyObject {

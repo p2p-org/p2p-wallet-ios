@@ -12,13 +12,13 @@ import SolanaSwift
 
 protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
     var solanaPubkey: String? { get }
-    var navigationDriver: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> { get }
-    var isLoadingDriver: AnyPublisher<Bool, Never> { get }
-    var errorDriver: AnyPublisher<String?, Never> { get }
-    var accountStatusDriver: AnyPublisher<ConfirmReceivingBitcoin.RenBTCAccountStatus?, Never> { get }
-    var payingWalletDriver: AnyPublisher<Wallet?, Never> { get }
-    var totalFeeDriver: AnyPublisher<Double?, Never> { get }
-    var feeInFiatDriver: AnyPublisher<Double?, Never> { get }
+    var navigationPublisher: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> { get }
+    var isLoadingPublisher: AnyPublisher<Bool, Never> { get }
+    var errorPublisher: AnyPublisher<String?, Never> { get }
+    var accountStatusPublisher: AnyPublisher<ConfirmReceivingBitcoin.RenBTCAccountStatus?, Never> { get }
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var totalFeePublisher: AnyPublisher<Double?, Never> { get }
+    var feeInFiatPublisher: AnyPublisher<Double?, Never> { get }
 
     func reload()
     func navigate(to scene: ConfirmReceivingBitcoin.NavigatableScene?)
@@ -30,8 +30,8 @@ protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
 extension ConfirmReceivingBitcoinViewModelType {
     var feeInTextDriver: AnyPublisher<String?, Never> {
         Publishers.CombineLatest(
-            totalFeeDriver,
-            payingWalletDriver
+            totalFeePublisher,
+            payingWalletPublisher
         )
             .map { fee, wallet in
                 guard let fee = fee, let wallet = wallet else {
@@ -135,31 +135,31 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
         walletsRepository.nativeWallet?.pubkey
     }
 
-    var isLoadingDriver: AnyPublisher<Bool, Never> {
+    var isLoadingPublisher: AnyPublisher<Bool, Never> {
         $isLoading.eraseToAnyPublisher()
     }
 
-    var errorDriver: AnyPublisher<String?, Never> {
+    var errorPublisher: AnyPublisher<String?, Never> {
         $error.eraseToAnyPublisher()
     }
 
-    var accountStatusDriver: AnyPublisher<ConfirmReceivingBitcoin.RenBTCAccountStatus?, Never> {
+    var accountStatusPublisher: AnyPublisher<ConfirmReceivingBitcoin.RenBTCAccountStatus?, Never> {
         $accountStatus.eraseToAnyPublisher()
     }
 
-    var payingWalletDriver: AnyPublisher<Wallet?, Never> {
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> {
         $payingWallet.eraseToAnyPublisher()
     }
 
-    var totalFeeDriver: AnyPublisher<Double?, Never> {
+    var totalFeePublisher: AnyPublisher<Double?, Never> {
         $totalFee.eraseToAnyPublisher()
     }
 
-    var feeInFiatDriver: AnyPublisher<Double?, Never> {
+    var feeInFiatPublisher: AnyPublisher<Double?, Never> {
         $feeInFiat.eraseToAnyPublisher()
     }
 
-    var navigationDriver: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> {
+    var navigationPublisher: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 
