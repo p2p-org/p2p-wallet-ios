@@ -5,19 +5,20 @@
 //  Created by Chung Tran on 10/12/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 
 extension SendToken.SelectNetwork {
     final class ViewController: BaseViewController {
         private let viewModel: SendTokenSelectNetworkViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // Internal state
-        private let selectedNetwork: BehaviorRelay<SendToken.Network>
+        private let selectedNetwork: CurrentValueSubject<SendToken.Network, Never>
 
         init(viewModel: SendTokenSelectNetworkViewModelType) {
             self.viewModel = viewModel
-            selectedNetwork = BehaviorRelay(value: viewModel.getSelectedNetwork())
+            selectedNetwork = .init(viewModel.getSelectedNetwork())
             super.init()
             navigationItem.title = L10n.chooseTheNetwork
         }
@@ -46,16 +47,14 @@ extension SendToken.SelectNetwork {
                                 numberOfLines: 5
                             )
                                 .setup { label in
-                                    viewModel.getFreeTransactionFeeLimit()
-                                        .map(\.maxUsage)
-                                        .subscribe(onSuccess: { [weak label] maxUsage in
-                                            label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P
-                                                .Org
-                                                .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(
-                                                    maxUsage
-                                                )
-                                        })
-                                        .disposed(by: disposeBag)
+                                    Task {
+                                        let maxUsage = try await viewModel.getFreeTransactionFeeLimit().maxUsage
+                                        label.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P
+                                            .Org
+                                            .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(
+                                                maxUsage
+                                            )
+                                    }
                                 }
                         }.padding(.init(only: .top, inset: 18))
                     }
@@ -72,24 +71,24 @@ extension SendToken.SelectNetwork {
         private func createNetworkView(network: SendToken.Network) -> _NetworkView {
             _NetworkView()
                 .setup { view in
-                    Driver.combineLatest(
-                        viewModel.feeInfoDriver,
-                        viewModel.payingWalletDriver
+                    Publishers.CombineLatest(
+                        viewModel.feeInfoPublisher,
+                        viewModel.payingWalletPublisher
                     )
-                        .drive(onNext: { [weak view, weak self] feeInfo, payingWallet in
+                        .sink { [weak view, weak self] feeInfo, payingWallet in
                             view?.setUp(
                                 network: network,
                                 payingWallet: payingWallet,
                                 feeInfo: feeInfo.value,
                                 prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
                             )
-                        })
-                        .disposed(by: disposeBag)
+                        }
+                        .store(in: &subscriptions)
 
-                    selectedNetwork.asDriver()
+                    selectedNetwork
                         .map { $0 != network }
-                        .drive(view.tickView.rx.isHidden)
-                        .disposed(by: disposeBag)
+                        .assign(to: \.isHidden, on: view.tickView)
+                        .store(in: &subscriptions)
                 }
                 .onTap { [unowned self] in self.switchNetwork(to: network) }
         }
@@ -110,7 +109,7 @@ extension SendToken.SelectNetwork {
                 if index == 0 {
                     self?.back()
                 } else {
-                    self?.selectedNetwork.accept(network)
+                    self?.selectedNetwork.send(network)
                     self?.viewModel.selectNetwork(network)
                     self?.viewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
                 }
