@@ -27,14 +27,14 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesV
     var isShowingDetailsPublisher: AnyPublisher<Bool, Never> { get }
     var isShowingShowDetailsButtonPublisher: AnyPublisher<Bool, Never> { get }
     var showHideDetailsButtonTapSubject: PassthroughSubject<Void, Never> { get }
-    var slippageSubject: CurrentValueSubject<Double, Never> { get }
     var activeInputField: OrcaSwapV2.ActiveInputField { get set }
 
-    func reload()
+    func reload() async
     func navigate(to scene: OrcaSwapV2.NavigatableScene)
     func chooseSourceWallet()
     func chooseDestinationWallet()
     func swapSourceAndDestination()
+    func setSlippage(_ slippage: Double)
     func useAllBalance()
     func enterInputAmount(_ amount: Double?)
     func enterEstimatedAmount(_ amount: Double?)
