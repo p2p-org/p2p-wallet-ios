@@ -7,8 +7,6 @@
 
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol FeeServiceType: AnyObject {
@@ -18,16 +16,13 @@ protocol FeeServiceType: AnyObject {
 }
 
 extension FeeServiceType {
-    func load() -> Completable {
-        Completable.async { [weak self] in
-            guard let self = self else { return }
-            let (lps, mbr) = try await(
-                self.apiClient.getFees(commitment: nil).feeCalculator?.lamportsPerSignature,
-                self.apiClient.getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
-            )
-            self.lamportsPerSignature = lps
-            self.minimumBalanceForRenExemption = mbr
-        }
+    func load() async throws {
+        let (lps, mbr) = try await(
+            apiClient.getFees(commitment: nil).feeCalculator?.lamportsPerSignature,
+            apiClient.getMinimumBalanceForRentExemption(span: AccountInfo.BUFFER_LENGTH)
+        )
+        lamportsPerSignature = lps
+        minimumBalanceForRenExemption = mbr
     }
 }
 
