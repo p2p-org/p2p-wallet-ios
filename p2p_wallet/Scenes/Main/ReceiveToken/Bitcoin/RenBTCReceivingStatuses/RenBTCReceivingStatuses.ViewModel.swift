@@ -91,7 +91,7 @@ extension RenBTCReceivingStatuses.ViewModel: BECollectionViewModelType {
 
 extension RenBTCReceivingStatuses.ViewModel: RenBTCReceivingStatusesViewModelType {
     var navigationPublisher: AnyPublisher<RenBTCReceivingStatuses.NavigatableScene?, Never> {
-        navigationSubject.eraseToAnyPublisher()
+        $navigationSubject.eraseToAnyPublisher()
     }
 
     var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> {
