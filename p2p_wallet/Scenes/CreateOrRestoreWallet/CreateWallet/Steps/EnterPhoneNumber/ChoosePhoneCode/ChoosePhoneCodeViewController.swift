@@ -33,7 +33,12 @@ final class ChoosePhoneCodeViewController: BaseViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        searchBar.view?.becomeFirstResponder()
+        _ = searchBar.view?.becomeFirstResponder()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        _ = searchBar.view?.resignFirstResponder()
     }
 
     override func build() -> UIView {
