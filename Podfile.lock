@@ -186,6 +186,7 @@ PODS:
     - PhoneNumberKit/PhoneNumberKitCore
   - PromisesObjC (2.1.1)
   - PureLayout (3.1.9)
+  - ReachabilitySwift (5.0.0)
   - RenVMSwift (2.0.1):
     - SolanaSwift (~> 2)
   - Resolver (1.5.0)
@@ -269,6 +270,7 @@ DEPENDENCIES:
   - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
   - Periphery
   - PhoneNumberKit (~> 3.3.4)
+  - ReachabilitySwift (~> 5.0.0)
   - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
   - Resolver
   - RxAppState
@@ -330,6 +332,7 @@ SPEC REPOS:
     - PhoneNumberKit
     - PromisesObjC
     - PureLayout
+    - ReachabilitySwift
     - Resolver
     - RxAppState
     - RxCocoa
@@ -541,6 +544,7 @@ SPEC CHECKSUMS:
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   RenVMSwift: 9cfd6610adc9c74a6e761c615cd30a31129e79c6
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
@@ -568,6 +572,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 87cface0f5acc09497127a93bdd29396dd87f11c
+PODFILE CHECKSUM: d55d641b1e9408e85fab39b1ab85c9a873d4d512
 
 COCOAPODS: 1.11.3
