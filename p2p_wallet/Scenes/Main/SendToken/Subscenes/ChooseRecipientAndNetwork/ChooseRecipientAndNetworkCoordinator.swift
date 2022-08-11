@@ -5,9 +5,8 @@
 //  Created by Ivan on 18.04.2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork {
@@ -26,14 +25,14 @@ extension SendToken.ChooseRecipientAndNetwork {
             navigationController: UINavigationController
         ) {
             // clearing recipient on init
-            viewModel.recipientSubject.accept(nil)
+            viewModel.setRecipient(nil)
             self.viewModel = viewModel
             self.navigationController = navigationController
             bind()
         }
 
         private func bind() {
-            Driver.combineLatest(
+            Publishers.CombineLatest(
                 viewModel.walletDriver,
                 viewModel.amountDriver
             )
