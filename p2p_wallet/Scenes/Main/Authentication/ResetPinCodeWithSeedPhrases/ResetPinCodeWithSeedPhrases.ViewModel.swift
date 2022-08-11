@@ -6,7 +6,6 @@
 //
 
 import Resolver
-import RxCocoa
 import SolanaSwift
 import UIKit
 

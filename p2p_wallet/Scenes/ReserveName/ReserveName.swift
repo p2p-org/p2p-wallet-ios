@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxCocoa
 
 enum ReserveName {
     enum NavigatableScene {

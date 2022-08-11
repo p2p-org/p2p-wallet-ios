@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxCocoa
 
 enum BuyRoot {
     enum NavigatableScene {

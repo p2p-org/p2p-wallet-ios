@@ -7,7 +7,6 @@
 
 import Foundation
 import Resolver
-import RxCocoa
 
 protocol SettingsBackupViewModelType {
     var navigationDriver: Driver<Settings.Backup.NavigatableScene?> { get }
