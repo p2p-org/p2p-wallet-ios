@@ -25,6 +25,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published public var isButtonEnabled: Bool = false
     @Published public var isLoading: Bool = false
     @Published public var inputError: String?
+    @Published public var selectedCountry: Country?
 
     func buttonTaped() {
         guard
@@ -36,7 +37,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     func selectCountryTap() {
-        coordinatorIO.selectFlag.send()
+        coordinatorIO.selectFlag.send(selectedCountry)
     }
 
     @MainActor
@@ -51,7 +52,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         var error: PassthroughSubject<Error?, Never> = .init()
         var countrySelected: PassthroughSubject<Country?, Never> = .init()
         // Output
-        var selectFlag: PassthroughSubject<Void, Never> = .init()
+        var selectFlag: PassthroughSubject<Country?, Never> = .init()
         var phoneEntered: PassthroughSubject<String, Never> = .init()
     }
 
@@ -130,6 +131,11 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         }
         .assign(to: \.isButtonEnabled, on: self)
         .store(in: &cancellable)
+
+        coordinatorIO.countrySelected
+            .eraseToAnyPublisher()
+            .assign(to: \.selectedCountry, on: self)
+            .store(in: &cancellable)
     }
 
     func exampleNumberWith(phone: String) -> PhoneNumber? {
