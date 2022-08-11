@@ -49,11 +49,11 @@ extension ReceiveToken {
         // MARK: - Subjects
 
         let showHideAddressesInfoButtonTapSubject = PassthroughSubject<Void, Never>()
-        let addressesHintIsHiddenSubject = BehaviorRelay<Bool>(value: false)
+        @Published var isAddressesHintHidden = false
         let hideAddressesHintSubject = PassthroughSubject<Void, Never>()
-        private let navigationSubject = PublishRelay<NavigatableScene?>()
-        private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
-        private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
+        private let navigationSubject = PassthroughSubject<NavigatableScene?, Never>()
+        @Published private var tokenType = TokenType.solana
+        @Published private var isAddressesInfoOpened = false
         let tokenWallet: Wallet?
         private let canOpenTokensList: Bool
         let shouldShowChainsSwitcher: Bool

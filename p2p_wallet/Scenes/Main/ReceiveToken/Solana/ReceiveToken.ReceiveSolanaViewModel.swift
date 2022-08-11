@@ -6,9 +6,8 @@
 //
 
 import AnalyticsManager
+import Combine
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol ReceiveTokenSolanaViewModelType: BESceneModel {
@@ -30,7 +29,7 @@ extension ReceiveToken {
         @Injected private var clipboardManger: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
         @Injected private var imageSaver: ImageSaverType
-        private let navigationSubject: PublishRelay<NavigatableScene?>
+        private let navigationSubject: PassthroughSubject<NavigatableScene?, Never>
 
         let pubkey: String
         let tokenWallet: Wallet?
@@ -39,7 +38,7 @@ extension ReceiveToken {
         init(
             solanaPubkey: String,
             solanaTokenWallet: Wallet? = nil,
-            navigationSubject: PublishRelay<NavigatableScene?>,
+            navigationSubject: PassthroughSubject<NavigatableScene?, Never>,
             hasExplorerButton: Bool
         ) {
             pubkey = solanaPubkey
@@ -62,7 +61,7 @@ extension ReceiveToken {
 
         func shareAction(image: UIImage) {
             analyticsManager.log(event: .receiveUsercardShared)
-            navigationSubject.accept(.share(address: pubkey, qrCode: image))
+            navigationSubject.send(.share(address: pubkey, qrCode: image))
         }
 
         func saveAction(image: UIImage) {
@@ -74,7 +73,7 @@ extension ReceiveToken {
                 case let .failure(error):
                     switch error {
                     case .noAccess:
-                        self?.navigationSubject.accept(.showPhotoLibraryUnavailable)
+                        self?.navigationSubject.send(.showPhotoLibraryUnavailable)
                     case .restrictedRightNow:
                         break
                     case let .unknown(error):
@@ -86,7 +85,7 @@ extension ReceiveToken {
 
         func showSOLAddressInExplorer() {
             analyticsManager.log(event: .receiveViewingExplorer)
-            navigationSubject.accept(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
+            navigationSubject.send(.showInExplorer(address: tokenWallet?.pubkey ?? pubkey))
         }
     }
 }
