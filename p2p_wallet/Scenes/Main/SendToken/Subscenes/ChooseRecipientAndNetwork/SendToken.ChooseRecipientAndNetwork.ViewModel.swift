@@ -139,6 +139,62 @@ extension SendToken.ChooseRecipientAndNetwork {
 }
 
 extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipientAndNetworkViewModelType {
+    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
+    }
+
+    func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene) {
+        navigatableScene = scene
+    }
+
+    var walletPublisher: AnyPublisher<Wallet?, Never> {
+        sendTokenViewModel.walletPublisher
+    }
+
+    var amountPublisher: AnyPublisher<Double?, Never> {
+        sendTokenViewModel.amountPublisher
+    }
+
+    func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
+        let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
+            chooseRecipientAndNetworkViewModel: self,
+            showAfterConfirmation: showAfterConfirmation,
+            relayMethod: relayMethod,
+            amount: sendTokenViewModel.amount ?? 0
+        )
+        return vm
+    }
+
+    func getSendService() -> SendServiceType {
+        sendTokenViewModel.getSendService()
+    }
+
+    func getPrice(for symbol: String) -> Double {
+        sendTokenViewModel.getPrice(for: symbol)
+    }
+
+    func getPrices(for symbols: [String]) -> [String: Double] {
+        sendTokenViewModel.getPrices(for: symbols)
+    }
+
+    func save() {
+        sendTokenViewModel.setRecipient(recipient)
+        sendTokenViewModel.setNetwork(network)
+        sendTokenViewModel.setPayingWallet(payingWallet)
+    }
+
+    func navigateNext() {
+        if showAfterConfirmation {
+            navigatableScene = .backToConfirmation
+        } else {
+            sendTokenViewModel.navigate(to: .confirmation)
+        }
+    }
+
+    var wallet: Wallet? {
+        sendTokenViewModel.wallet
+    }
+
     func setRecipient(_ recipient: SendToken.Recipient?) {
         self.recipient = recipient
     }
@@ -170,63 +226,11 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         feeInfoSubject.eraseToAnyPublisher()
     }
 
-    var navigationPublihser: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> {
-        $navigatableScene.eraseToAnyPublisher()
-    }
-
-    var walletPublisher: AnyPublisher<Wallet?, Never> {
-        sendTokenViewModel.walletPublisher
-    }
-
-    var amountPublisher: AnyPublisher<Double?, Never> {
-        sendTokenViewModel.amountPublisher
-    }
-
-    func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene) {
-        navigatableScene = scene
-    }
-
-    func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
-        let vm = SendToken.ChooseRecipientAndNetwork.SelectAddress.ViewModel(
-            chooseRecipientAndNetworkViewModel: self,
-            showAfterConfirmation: showAfterConfirmation,
-            relayMethod: relayMethod,
-            amount: sendTokenViewModel.amount ?? 0
-        )
-        return vm
-    }
-
-    func getSendService() -> SendServiceType {
-        sendTokenViewModel.getSendService()
-    }
-
-    func getPrice(for symbol: String) -> Double {
-        sendTokenViewModel.getPrice(for: symbol)
-    }
-
-    func getPrices(for symbols: [String]) -> [String: Double] {
-        sendTokenViewModel.getPrices(for: symbols)
-    }
-
     func getFreeTransactionFeeLimit() async throws -> UsageStatus {
         try await sendTokenViewModel.getFreeTransactionFeeLimit()
     }
 
     func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
         sendTokenViewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
-    }
-
-    func save() {
-        sendTokenViewModel.setRecipient(recipient)
-        sendTokenViewModel.setNetwork(network)
-        sendTokenViewModel.setPayingWallet(payingWallet)
-    }
-
-    func navigateNext() {
-        if showAfterConfirmation {
-            navigatableScene = .backToConfirmation
-        } else {
-            sendTokenViewModel.navigate(to: .confirmation)
-        }
     }
 }
