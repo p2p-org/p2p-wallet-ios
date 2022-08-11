@@ -17,24 +17,19 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
 {
     // navigatableScene
     var navigatableScenePublisher: AnyPublisher<SendToken.NavigatableScene?, Never> { get }
-    func setNavigatableScene(_ scene: SendToken.NavigatableScene?)
-    
+    func navigate(to scene: SendToken.NavigatableScene)
+
     // loadingState
     var loadingStatePublisher: AnyPublisher<LoadableState, Never> { get }
-    
+
     var relayMethod: SendTokenRelayMethod { get }
     var canGoBack: Bool { get }
 
     func getPrice(for symbol: String) -> Double
     func getPrices(for symbols: [String]) -> [String: Double]
-    func getSelectableNetworks() -> [SendToken.Network]
-    func getSelectedRecipient() -> SendToken.Recipient?
-    func getSelectedNetwork() -> SendToken.Network
-    func getSelectedAmount() -> Double?
     func getFreeTransactionFeeLimit() async throws -> UsageStatus
 
     func reload() async
-    func navigate(to scene: SendToken.NavigatableScene)
     func chooseWallet(_ wallet: Wallet)
     func cleanAllFields()
 
@@ -197,50 +192,49 @@ extension SendToken {
 
 extension SendToken.ViewModel: SendTokenViewModelType {
     // MARK: - navigatableScene
-    
-    func setNavigatableScene(_ scene: SendToken.NavigatableScene?) {
-        navigatableScene = scene
-    }
-    
+
     var navigatableScenePublisher: AnyPublisher<SendToken.NavigatableScene?, Never> {
         $navigatableScene.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
-    
+
+    func navigate(to scene: SendToken.NavigatableScene) {
+        navigatableScene = scene
+    }
+
     // MARK: - loadingState
-    
+
     var loadingStatePublisher: AnyPublisher<LoadableState, Never> {
         $loadingState.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
-    
+
     // MARK: - SendTokenRecipientAndNetworkHandler
+
     func setRecipient(_ recipient: SendToken.Recipient?) {
         self.recipient = recipient
     }
-    
+
     var recipientPublisher: AnyPublisher<SendToken.Recipient?, Never> {
         $recipient.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
-    
+
     func setNetwork(_ network: SendToken.Network?) {
         guard let network = network else {
             return
         }
         self.network = network
     }
-    
+
     var networkPublisher: AnyPublisher<SendToken.Network, Never> {
         $network.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
-    
+
     func setPayingWallet(_ payingWallet: Wallet?) {
         self.payingWallet = payingWallet
     }
-    
+
     var payingWalletPublisher: AnyPublisher<Wallet?, Never> {
         $payingWallet.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
-
-    
 
     func getSelectedWallet() -> Wallet? {
         walletSubject.value
@@ -263,25 +257,21 @@ extension SendToken.ViewModel: SendTokenViewModelType {
     }
 
     func getFreeTransactionFeeLimit() async throws -> UsageStatus {
-        Single.async { try await self.sendService.getFreeTransactionFeeLimit() }
-    }
-
-    func navigate(to scene: SendToken.NavigatableScene) {
-        navigationSubject.accept(scene)
+        try await sendService.getFreeTransactionFeeLimit()
     }
 
     func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
-        recipientSubject.accept(nil)
-        navigationSubject.accept(.chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: network))
+        recipient = nil
+        navigatableScene = .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: network)
     }
 
     func chooseWallet(_ wallet: Wallet) {
         analyticsManager.log(
             event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
         )
-        walletSubject.accept(wallet)
+        self.wallet = wallet
 
-        if !wallet.token.isRenBTC, networkSubject.value == .bitcoin {
+        if !wallet.token.isRenBTC, network == .bitcoin {
             selectNetwork(.solana)
         }
     }
