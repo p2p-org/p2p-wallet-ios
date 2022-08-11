@@ -2,16 +2,8 @@ import Combine
 import SwiftUI
 import UIKit
 
-extension ContinueViewModel {
-    enum NavigatableScene {
-        case `continue`
-        case start
-    }
-}
-
 final class ContinueViewModel: BaseViewModel {
-    @Published var data: OnboardingContentData
-    @Published var navigatableScene: NavigatableScene?
+    @Published var data: StartPageData
 
     let continueDidTap = PassthroughSubject<Void, Never>()
     let startDidTap = PassthroughSubject<Void, Never>()
@@ -24,12 +16,5 @@ final class ContinueViewModel: BaseViewModel {
         )
 
         super.init()
-
-        Publishers.Merge(
-            continueDidTap.map { NavigatableScene.continue },
-            startDidTap.map { NavigatableScene.start }
-        ).sink { [weak self] value in
-            self?.navigatableScene = value
-        }.store(in: &subscriptions)
     }
 }

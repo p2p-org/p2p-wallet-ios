@@ -859,3 +859,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Pubkey solana already exists" = "Pubkey solana đã tồn tại";
 "Pubkey solana and phone number already exists" = "Pubkey solana và số điện thoại đã tồn tại";
 "Invalid value of OTP. Please try again to input correct value of OTP" = "Giá trị OTP không hợp lệ.  Vui lòng thử lại để nhập đúng giá trị của OTP";
+"Something went wrong. Please try again" = "Đã xảy ra lỗi.  Vui lòng thử lại";
+"You’re offline. Keep calm" = "Bạn đang ngoại tuyến.  Giữ bình tĩnh";

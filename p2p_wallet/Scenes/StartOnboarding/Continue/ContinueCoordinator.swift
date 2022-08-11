@@ -21,17 +21,15 @@ final class ContinueCoordinator: Coordinator<Void> {
         style(nc: navigationController)
         window.animate(newRootViewController: navigationController)
 
-        viewModel.$navigatableScene.sink { [weak self] scene in
-            guard let self = self else { return }
-            switch scene {
-            case .continue:
-                break
-            case .start:
-                self.openStart(navigationController: navigationController)
-            case .none:
-                break
-            }
-        }.store(in: &subscriptions)
+        viewModel.startDidTap.sink { [weak self] _ in
+            self?.openStart(navigationController: navigationController)
+        }
+        .store(in: &subscriptions)
+
+        viewModel.continueDidTap.sink { _ in
+            // TODO: Add continue navigation
+        }
+        .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
     }

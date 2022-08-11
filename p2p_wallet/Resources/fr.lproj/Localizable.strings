@@ -855,3 +855,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Pubkey solana already exists" = "Pubkey solana existe déjà";
 "Pubkey solana and phone number already exists" = "Pubkey solana et le numéro de téléphone existent déjà";
 "Invalid value of OTP. Please try again to input correct value of OTP" = "Valeur invalide d'OTP.  Veuillez réessayer pour entrer la valeur correcte d'OTP";
+"Something went wrong. Please try again" = "Quelque chose s'est mal passé.  Veuillez réessayer";
+"You’re offline. Keep calm" = "Vous n'êtes pas connecté.  Rester calme";
