@@ -110,24 +110,6 @@ targets:
                 CODE_SIGN_ENTITLEMENTS: p2p_wallet/p2p_wallet.entitlements
                 CODE_SIGN_STYLE: Automatic
                 CURRENT_PROJECT_VERSION: 1
-                OTHER_LDFLAGS:
-                - "$(inherited)"
-                - "-framework"
-                - "\"BEPureLayout\""
-                - "-framework"
-                - "\"CFNetwork\""
-                - "-framework"
-                - "\"Foundation\""
-                - "-framework"
-                - "\"PureLayout\""
-                - "-framework"
-                - "\"RxCocoa\""
-                - "-framework"
-                - "\"RxRelay\""
-                - "-framework"
-                - "\"RxSwift\""
-                - "-framework"
-                - "\"SolanaSwift\""
                 PRODUCT_NAME: "$(TARGET_NAME)"
                 DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
             configs:
