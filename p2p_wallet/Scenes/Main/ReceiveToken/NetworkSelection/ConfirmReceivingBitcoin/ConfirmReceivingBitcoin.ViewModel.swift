@@ -94,10 +94,10 @@ extension ConfirmReceivingBitcoin {
                     error = nil
                     accountStatus
                         = !payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired
-                    payableWallets = payableWallets
+                    self.payableWallets = payableWallets
                     payingWallet = payableWallets.first
                 } catch {
-                    error = error.readableDescription
+                    self.error = error.readableDescription
                     accountStatus = nil
                     payableWallets = []
                     payingWallet = nil
