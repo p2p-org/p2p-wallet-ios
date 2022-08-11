@@ -861,3 +861,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Invalid value of OTP. Please try again to input correct value of OTP" = "Giá trị OTP không hợp lệ.  Vui lòng thử lại để nhập đúng giá trị của OTP";
 "Something went wrong. Please try again" = "Đã xảy ra lỗi.  Vui lòng thử lại";
 "You’re offline. Keep calm" = "Bạn đang ngoại tuyến.  Giữ bình tĩnh";
+"You have a great start with %@. It’s only a pin code needed  to create a new wallet" = "Bạn có một khởi đầu tuyệt vời với %@.  Đó chỉ là mã pin cần thiết để tạo ví mới";

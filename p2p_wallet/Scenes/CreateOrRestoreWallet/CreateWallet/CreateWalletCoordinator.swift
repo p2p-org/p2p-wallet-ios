@@ -7,24 +7,30 @@ import Foundation
 import Onboarding
 import UIKit
 
-final class CreateWalletCoordinator: Coordinator<Void> {
+enum CreateWalletResult {
+    case restore(socialProvider: SocialProvider, email: String)
+    case success(OnboardingWallet)
+}
+
+final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     // MARK: - NavigationController
 
     private let parentViewController: UIViewController
     private(set) var navigationController: UINavigationController?
 
-    let tKeyFacade: TKeyJSFacade?
-    let webView = GlobalWebView.requestWebView()
-    let viewModel: CreateWalletViewModel
-
-    private var result = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
+    private let tKeyFacade: TKeyJSFacade?
+    private let webView = GlobalWebView.requestWebView()
+    private let viewModel: CreateWalletViewModel
+    private var result = PassthroughSubject<CreateWalletResult, Never>()
 
     let socialSignInDelegatedCoordinator: SocialSignInDelegatedCoordinator
     let bindingPhoneNumberDelegatedCoordinator: BindingPhoneNumberDelegatedCoordinator
     let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
 
-    init(parent: UIViewController) {
+    init(parent: UIViewController, initialState: CreateWalletFlowState? = nil) {
         parentViewController = parent
+
+        // Setup
         tKeyFacade = TKeyJSFacade(
             wkWebView: webView,
             config: .init(
@@ -36,7 +42,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
                 ]
             )
         )
-        viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
+        viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade, initialState: initialState)
 
         socialSignInDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
@@ -65,7 +71,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     // MARK: - Methods
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<CreateWalletResult, Never> {
         // Create root view controller
         guard let viewController = buildViewController(state: viewModel.onboardingStateMachine.currentState) else {
             return Empty().eraseToAnyPublisher()
@@ -90,7 +96,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
             .pairwise()
             .receive(on: RunLoop.main)
             .sink { [weak self] pairwise in
-                self?.navigate(from: pairwise.previous, to: pairwise.current)
+                self?.stateChangeHandler(from: pairwise.previous, to: pairwise.current)
             }
             .store(in: &subscriptions)
 
@@ -106,16 +112,18 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     // MARK: Navigation
 
-    private func navigate(from: CreateWalletFlowState?, to: CreateWalletFlowState) {
-        // Handler final states
-        // TODO: handle result
+    private func stateChangeHandler(from: CreateWalletFlowState?, to: CreateWalletFlowState) {
         if case let .finish(result) = to {
+            navigationController?.dismiss(animated: true)
             switch result {
-            default:
-                navigationController?.dismiss(animated: true)
-                self.result.send()
-                return
+            case let .switchToRestoreFlow(socialProvider, email):
+                self.result.send(.restore(socialProvider: socialProvider, email: email))
+            case let .newWallet(onboardingWallet):
+                self.result.send(.success(onboardingWallet))
+            case .breakProcess:
+                break
             }
+            self.result.send(completion: .finished)
         }
 
         guard let navigationController = navigationController else { return }
@@ -132,12 +140,13 @@ final class CreateWalletCoordinator: Coordinator<Void> {
     }
 
     private func buildViewController(state: CreateWalletFlowState) -> UIViewController? {
+        print(state)
         switch state {
         case let .socialSignIn(innerState):
             return socialSignInDelegatedCoordinator.buildViewController(for: innerState)
-        case let .bindingPhoneNumber(_, _, _, innerState):
+        case let .bindingPhoneNumber(_, _, _, _, innerState):
             return bindingPhoneNumberDelegatedCoordinator.buildViewController(for: innerState)
-        case let .securitySetup(_, _, _, innerState):
+        case let .securitySetup(_, _, _, _, innerState):
             return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
         default:
             return nil

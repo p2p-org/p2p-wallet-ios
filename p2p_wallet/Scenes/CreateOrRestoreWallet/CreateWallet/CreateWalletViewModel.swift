@@ -10,8 +10,11 @@ import Resolver
 final class CreateWalletViewModel: BaseViewModel {
     let onboardingStateMachine: CreateWalletStateMachine
 
-    init(tKeyFacade: TKeyFacade? = nil) {
+    @Injected var onboardingService: OnboardingService
+
+    init(tKeyFacade: TKeyFacade? = nil, initialState: CreateWalletFlowState?) {
         onboardingStateMachine = .init(
+            initialState: initialState,
             provider: .init(
                 authService: AuthServiceBridge(),
                 apiGatewayClient: APIGatewayClientImplMock(),
@@ -19,6 +22,17 @@ final class CreateWalletViewModel: BaseViewModel {
                 securityStatusProvider: Resolver.resolve()
             )
         )
+
+        super.init()
+
+        onboardingStateMachine.stateStream.sink { [weak onboardingService] state in
+            switch state {
+            case .finish:
+                onboardingService?.lastState = nil
+            default:
+                if state.continuable { onboardingService?.lastState = state }
+            }
+        }.store(in: &subscriptions)
     }
 }
 

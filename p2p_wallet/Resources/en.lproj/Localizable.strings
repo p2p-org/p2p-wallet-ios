@@ -868,3 +868,4 @@ Reset the PIN or wait for %@.";
 "Invalid value of OTP. Please try again to input correct value of OTP" = "Invalid value of OTP. Please try again to input correct value of OTP";
 "Something went wrong. Please try again" = "Something went wrong. Please try again";
 "You’re offline. Keep calm" = "You’re offline. Keep calm";
+"You have a great start with %@. It’s only a pin code needed  to create a new wallet" = "You have a great start with %@. It’s only a pin code needed  to create a new wallet";
