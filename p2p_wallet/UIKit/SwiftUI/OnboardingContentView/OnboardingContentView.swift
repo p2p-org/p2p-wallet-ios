@@ -1,10 +1,8 @@
 import KeyAppUI
 import SwiftUI
 
-struct StartPageView: View {
-    @State var data: StartPageData
-
-    let subtitleFontWeight: SwiftUI.Font.Weight
+struct OnboardingContentView: View {
+    @State var data: OnboardingContentData
 
     var body: some View {
         VStack(spacing: .zero) {
@@ -20,7 +18,7 @@ struct StartPageView: View {
                 .padding(.top, 24)
 
             Text(data.subtitle)
-                .font(.system(size: UIFont.fontSize(of: .title3), weight: subtitleFontWeight))
+                .font(.system(size: UIFont.fontSize(of: .title3), weight: .regular))
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .multilineTextAlignment(.center)
                 .padding(.top, 16)

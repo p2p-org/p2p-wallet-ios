@@ -9,7 +9,7 @@ final class ContinueViewModel: BaseViewModel {
     let startDidTap = PassthroughSubject<Void, Never>()
 
     override init() {
-        data = StartPageData(
+        data = OnboardingContentData(
             image: .safe,
             title: L10n.letSContinue,
             subtitle: L10n.YouHaveAGreatStartWith.itSOnlyAPhoneNumberNeededToCreateANewWallet("test@test.ru")
