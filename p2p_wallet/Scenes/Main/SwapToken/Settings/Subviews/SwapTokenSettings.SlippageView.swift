@@ -57,7 +57,7 @@ extension SwapTokenSettings {
                             break
                         }
 
-                        viewModel.customSlippageIsOpenedDriver
+                        viewModel.customSlippageIsOpenedPublisher
                             .map { !$0 }
                             .assign(to: \.isHidden, on: textField)
                             .store(in: &subscriptions)

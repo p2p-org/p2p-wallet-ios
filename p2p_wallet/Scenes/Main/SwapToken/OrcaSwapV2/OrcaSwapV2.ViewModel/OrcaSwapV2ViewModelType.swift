@@ -5,29 +5,29 @@
 //  Created by Chung Tran on 26/10/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 import SolanaSwift
 
 protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesViewModelType {
-    var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> { get }
-    var loadingStateDriver: Driver<LoadableState> { get }
+    var navigationPublisher: AnyPublisher<OrcaSwapV2.NavigatableScene?, Never> { get }
+    var loadingStatePublisher: AnyPublisher<LoadableState, Never> { get }
 
-    var sourceWalletDriver: Driver<Wallet?> { get }
-    var destinationWalletDriver: Driver<Wallet?> { get }
-    var inputAmountDriver: Driver<Double?> { get }
-    var estimatedAmountDriver: Driver<Double?> { get }
-    var minimumReceiveAmountDriver: Driver<Double?> { get }
-    var slippageDriver: Driver<Double> { get }
-    var exchangeRateDriver: Driver<Double?> { get }
+    var sourceWalletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var destinationWalletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var inputAmountPublisher: AnyPublisher<Double?, Never> { get }
+    var estimatedAmountPublisher: AnyPublisher<Double?, Never> { get }
+    var minimumReceiveAmountPublisher: AnyPublisher<Double?, Never> { get }
+    var slippagePublisher: AnyPublisher<Double, Never> { get }
+    var exchangeRatePublisher: AnyPublisher<Double?, Never> { get }
 
-    var feePayingTokenDriver: Driver<Wallet?> { get }
-    var errorDriver: Driver<OrcaSwapV2.VerificationError?> { get }
-    var isSendingMaxAmountDriver: Driver<Bool> { get }
-    var isShowingDetailsDriver: Driver<Bool> { get }
-    var isShowingShowDetailsButtonDriver: Driver<Bool> { get }
-    var showHideDetailsButtonTapSubject: PublishRelay<Void> { get }
-    var slippageSubject: BehaviorRelay<Double> { get }
+    var feePayingTokenPublisher: AnyPublisher<Wallet?, Never> { get }
+    var errorPublisher: AnyPublisher<OrcaSwapV2.VerificationError?, Never> { get }
+    var isSendingMaxAmountPublisher: AnyPublisher<Bool, Never> { get }
+    var isShowingDetailsPublisher: AnyPublisher<Bool, Never> { get }
+    var isShowingShowDetailsButtonPublisher: AnyPublisher<Bool, Never> { get }
+    var showHideDetailsButtonTapSubject: PassthroughSubject<Void, Never> { get }
+    var slippageSubject: CurrentValueSubject<Double, Never> { get }
     var activeInputField: OrcaSwapV2.ActiveInputField { get set }
 
     func reload()
@@ -49,7 +49,9 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesV
 }
 
 extension OrcaSwapV2ViewModelType {
-    var feePayingTokenStringDriver: Driver<String?> {
-        feePayingTokenDriver.map { wallet in wallet?.token.symbol }
+    var feePayingTokenStringPublisher: AnyPublisher<String?, Never> {
+        feePayingTokenPublisher
+            .map { wallet in wallet?.token.symbol }
+            .eraseToAnyPublisher()
     }
 }

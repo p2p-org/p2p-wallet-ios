@@ -6,46 +6,45 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
-    var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<OrcaSwapV2.NavigatableScene?, Never> {
+        navigationSubject.eraseToAnyPublisher()
     }
 
-    var loadingStateDriver: Driver<LoadableState> {
-        loadingStateSubject.asDriver()
+    var loadingStatePublisher: AnyPublisher<LoadableState, Never> {
+        loadingStateSubject.eraseToAnyPublisher()
     }
 
-    var sourceWalletDriver: Driver<Wallet?> {
-        sourceWalletSubject.asDriver().distinctUntilChanged()
+    var sourceWalletPublisher: AnyPublisher<Wallet?, Never> {
+        sourceWalletSubject.eraseToAnyPublisher().distinctUntilChanged()
     }
 
-    var destinationWalletDriver: Driver<Wallet?> {
-        destinationWalletSubject.asDriver().distinctUntilChanged()
+    var destinationWalletPublisher: AnyPublisher<Wallet?, Never> {
+        destinationWalletSubject.eraseToAnyPublisher().distinctUntilChanged()
     }
 
-    var inputAmountDriver: Driver<Double?> {
-        inputAmountSubject.asDriver()
+    var inputAmountPublisher: AnyPublisher<Double?, Never> {
+        inputAmountSubject.eraseToAnyPublisher()
     }
 
-    var estimatedAmountDriver: Driver<Double?> {
-        estimatedAmountSubject.asDriver()
+    var estimatedAmountPublisher: AnyPublisher<Double?, Never> {
+        estimatedAmountSubject.eraseToAnyPublisher()
     }
 
-    var feesDriver: Driver<Loadable<[PayingFee]>> {
-        feesSubject.asDriver()
+    var feesPublisher: AnyPublisher<Loadable<[PayingFee]>, Never> {
+        feesSubject.eraseToAnyPublisher()
     }
 
-    var availableAmountDriver: Driver<Double?> {
-        availableAmountSubject.asDriver()
+    var availableAmountPublisher: AnyPublisher<Double?, Never> {
+        availableAmountSubject.eraseToAnyPublisher()
     }
 
-    var slippageDriver: Driver<Double> {
-        slippageSubject.asDriver()
+    var slippagePublisher: AnyPublisher<Double, Never> {
+        slippageSubject.eraseToAnyPublisher()
     }
 
     var minimumReceiveAmountObservable: Observable<Double?> {
@@ -69,11 +68,11 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             }
     }
 
-    var minimumReceiveAmountDriver: Driver<Double?> {
+    var minimumReceiveAmountPublisher: AnyPublisher<Double?, Never> {
         minimumReceiveAmountObservable.asDriver(onErrorJustReturn: nil)
     }
 
-    var exchangeRateDriver: Driver<Double?> {
+    var exchangeRatePublisher: AnyPublisher<Double?, Never> {
         Observable.combineLatest(
             inputAmountSubject,
             estimatedAmountSubject
@@ -89,20 +88,20 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             .asDriver(onErrorJustReturn: nil)
     }
 
-    var errorDriver: Driver<OrcaSwapV2.VerificationError?> {
-        errorSubject.asDriver()
+    var errorPublisher: AnyPublisher<OrcaSwapV2.VerificationError?, Never> {
+        errorSubject.eraseToAnyPublisher()
     }
 
-    var isSendingMaxAmountDriver: Driver<Bool> {
+    var isSendingMaxAmountPublisher: AnyPublisher<Bool, Never> {
         Driver.combineLatest(availableAmountDriver, inputAmountDriver)
             .map { availableAmount, currentAmount in
                 availableAmount == currentAmount
             }
     }
 
-    var isShowingDetailsDriver: Driver<Bool> {
+    var isShowingDetailsPublisher: AnyPublisher<Bool, Never> {
         Driver.combineLatest(
-            isShowingDetailsSubject.asDriver(),
+            isShowingDetailsSubject.eraseToAnyPublisher(),
             isShowingShowDetailsButtonDriver
         )
             .map {
@@ -110,7 +109,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             }
     }
 
-    var isShowingShowDetailsButtonDriver: Driver<Bool> {
+    var isShowingShowDetailsButtonPublisher: AnyPublisher<Bool, Never> {
         Driver.combineLatest(
             sourceWalletDriver,
             destinationWalletDriver
@@ -246,8 +245,8 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         }
     }
 
-    var feePayingTokenDriver: Driver<Wallet?> {
-        payingWalletSubject.asDriver()
+    var feePayingTokenPublisher: AnyPublisher<Wallet?, Never> {
+        payingWalletSubject.eraseToAnyPublisher()
     }
 
     func changeFeePayingToken(to payingToken: Wallet) {
