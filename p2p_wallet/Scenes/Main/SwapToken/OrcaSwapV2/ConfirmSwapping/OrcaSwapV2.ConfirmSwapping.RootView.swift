@@ -111,27 +111,29 @@ extension OrcaSwapV2.ConfirmSwapping {
                 amountPublisher: viewModel.inputAmountStringPublisher,
                 amountInFiatPublisher: viewModel.inputAmountInFiatStringPublisher
             )
-                .drive(inputAmountLabel.rx.attributedText)
+                .map(Optional.init)
+                .assign(to: \.attributedText, on: inputAmountLabel)
                 .store(in: &subscriptions)
 
             combinedAmountPublisher(
                 amountPublisher: viewModel.receiveAtLeastStringPublisher,
                 amountInFiatPublisher: viewModel.receiveAtLeastInFiatStringPublisher
             )
-                .drive(minimumAmountLabel.rx.attributedText)
+                .map(Optional.init)
+                .assign(to: \.attributedText, on: minimumAmountLabel)
                 .store(in: &subscriptions)
 
             viewModel.slippagePublisher
                 .map { ($0 * 100).toString(maximumFractionDigits: 2) + "%" }
-                .drive(slippageLabel.rx.text)
+                .assign(to: \.text, on: slippageLabel)
                 .store(in: &subscriptions)
 
-            Publisher.combineLatest(
+            Publishers.CombineLatest(
                 viewModel.sourceWalletPublisher.map { $0?.token.symbol },
                 viewModel.destinationWalletPublisher.map { $0?.token.symbol }
             )
                 .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
-                .drive(onNext: { [weak actionButton] in actionButton?.text = $0 })
+                .sink { [weak actionButton] in actionButton?.text = $0 }
                 .store(in: &subscriptions)
 
             feesView.clickHandler = { [weak self] fee in
@@ -162,10 +164,11 @@ extension OrcaSwapV2.ConfirmSwapping {
             }
         }
 
-        private func combinedAmountPublisher(amountPublisher: Publisher<String?>,
-                                             amountInFiatPublisher: Publisher<String?>) -> Publisher<NSAttributedString>
-        {
-            Publisher.combineLatest(
+        private func combinedAmountPublisher(
+            amountPublisher: AnyPublisher<String?, Never>,
+            amountInFiatPublisher: AnyPublisher<String?, Never>
+        ) -> AnyPublisher<NSAttributedString, Never> {
+            Publishers.CombineLatest(
                 amountPublisher,
                 amountInFiatPublisher
             )
@@ -174,6 +177,7 @@ extension OrcaSwapV2.ConfirmSwapping {
                         .text($0.0 ?? "0", size: 15)
                         .text(" (~" + ($0.1 ?? "") + ")", size: 15, color: .textSecondary)
                 }
+                .eraseToAnyPublisher()
         }
     }
 }
@@ -188,7 +192,7 @@ extension OrcaSwapV2.ConfirmSwapping {
 
         private let viewModel: OrcaSwapV2ConfirmSwappingViewModelType
         private let type: WalletType
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -234,27 +238,27 @@ extension OrcaSwapV2.ConfirmSwapping {
                 .destinationWalletPublisher
 
             walletPublisher
-                .drive(onNext: { [weak coinLogoImageView] in coinLogoImageView?.wallet = $0 })
+                .sink { [weak coinLogoImageView] in coinLogoImageView?.wallet = $0 }
                 .store(in: &subscriptions)
 
             switch type {
             case .source:
                 viewModel.inputAmountStringPublisher
-                    .drive(amountLabel.rx.text)
+                    .assign(to: \.text, on: amountLabel)
                     .store(in: &subscriptions)
 
                 viewModel.inputAmountInFiatStringPublisher
                     .map { "~ " + $0 }
-                    .drive(equityAmountLabel.rx.text)
+                    .assign(to: \.text, on: equityAmountLabel)
                     .store(in: &subscriptions)
             case .destination:
                 viewModel.estimatedAmountStringPublisher
-                    .drive(amountLabel.rx.text)
+                    .assign(to: \.text, on: amountLabel)
                     .store(in: &subscriptions)
 
                 viewModel.receiveAtLeastStringPublisher
                     .map { "≥ " + $0 }
-                    .drive(equityAmountLabel.rx.text)
+                    .assign(to: \.text, on: equityAmountLabel)
                     .store(in: &subscriptions)
             }
         }

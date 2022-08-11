@@ -267,6 +267,10 @@ extension OrcaSwapV2 {
         func swap() {
             guard verify() == nil else { return }
 
+            guard let sourceWallet = sourceWallet, let destinationWallet = destinationWallet,
+                  let payingWallet = payingWallet, let bestPoolsPair = bestPoolsPair,
+                  let inputAmount = inputAmount, let estimatedAmount = estimatedAmount else { return }
+
             let authority = walletsRepository.nativeWallet?.pubkey
             let fees = feesSubject.value?.filter { $0.type != .liquidityProviderFee } ?? []
 
@@ -277,8 +281,7 @@ extension OrcaSwapV2 {
                 .first()
                 .sink { [weak self] receiveAmount in
                     guard let self = self else { return }
-
-                    let receiveAmount: Double = receiveAmount.map { $0 ?? 0 } ?? 0
+                    let receiveAmount: Double = receiveAmount.map { $0 } ?? 0
                     let receivePriceFiat: Double = destinationWallet.priceInCurrentFiat ?? 0.0
                     let swapUSD = receiveAmount * receivePriceFiat
 
@@ -294,7 +297,7 @@ extension OrcaSwapV2 {
                                 poolsPair: bestPoolsPair,
                                 amount: inputAmount,
                                 estimatedAmount: estimatedAmount,
-                                slippage: slippage,
+                                slippage: self.slippage,
                                 fees: fees,
                                 metaInfo: .init(
                                     swapMAX: swapMAX,
