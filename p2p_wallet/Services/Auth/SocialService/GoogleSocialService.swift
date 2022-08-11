@@ -30,7 +30,11 @@ final class GoogleSocialService: NSObject, SocialService {
                 presenting: rootViewController
             ) { user, error in
                 if let error = error {
-                    continuation.resume(with: .failure(error))
+                    var retError = error
+                    if case GIDSignInError.canceled = error {
+                        retError = SocialServiceError.cancelled
+                    }
+                    continuation.resume(with: .failure(retError))
                 } else {
                     guard let user = user else {
                         return continuation.resume(with: .failure(SocialServiceError.unknown))
