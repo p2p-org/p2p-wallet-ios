@@ -8,10 +8,9 @@
 import Action
 import AnalyticsManager
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 
@@ -21,7 +20,7 @@ extension OrcaSwapV2 {
             case source, destination
         }
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: OrcaSwapV2ViewModelType
         private let type: WalletType
         @Injected private var analyticsManager: AnalyticsManager
@@ -121,30 +120,31 @@ extension OrcaSwapV2 {
 
         private func bind() {
             // subjects
-            let walletDriver: Driver<Wallet?>
+            let walletPublisher: AnyPublisher<Wallet?, Never>
             let textFieldKeydownEvent: (Double) -> AnalyticsEvent
-//            let equityValueLabelDriver: Driver<String?>
-            let balanceTextDriver: Driver<String?>
-            let outputDriver: Driver<Double?>
+//            let equityValueLabelPublisher: AnyPublisher<String?, Never>
+            let balanceTextPublisher: AnyPublisher<String?, Never>
+            let outputPublisher: AnyPublisher<Double?, Never>
 
             switch type {
             case .source:
-                walletDriver = viewModel.sourceWalletDriver
+                walletPublisher = viewModel.sourceWalletPublisher
 
                 textFieldKeydownEvent = { amount in
                     .swapTokenAAmountKeydown(sum: amount)
                 }
 
-                outputDriver = viewModel.inputAmountDriver
+                outputPublisher = viewModel.inputAmountPublisher
 
                 // available amount
-                balanceTextDriver = walletDriver
+                balanceTextPublisher = walletPublisher
                     .map { $0?.amount?.toString(maximumFractionDigits: 9) ?? "0" }
+                    .eraseToAnyPublisher()
 
-                Driver.combineLatest(
-                    viewModel.errorDriver
+                Publishers.CombineLatest(
+                    viewModel.errorPublisher
                         .map { $0 == .insufficientFunds || $0 == .inputAmountIsNotValid },
-                    viewModel.isSendingMaxAmountDriver
+                    viewModel.isSendingMaxAmountPublisher
                 )
                     .map { isErrorState, isSendingMax -> UIColor in
                         if isErrorState {
@@ -155,66 +155,69 @@ extension OrcaSwapV2 {
                             return .h8e8e93
                         }
                     }
-                    .drive(balanceView.rx.tintColor)
-                    .disposed(by: disposeBag)
-                viewModel.isSendingMaxAmountDriver
-                    .drive(balanceView.maxButton.rx.isHidden)
-                    .disposed(by: disposeBag)
+                    .assign(to: \.tintColor, on: balanceView)
+                    .store(in: &subscriptions)
+                viewModel.isSendingMaxAmountPublisher
+                    .assign(to: \.isHidden, on: balanceView.maxButton)
+                    .store(in: &subscriptions)
 
                 questionMarkView.isHidden = false
-                viewModel.isSendingMaxAmountDriver
+                viewModel.isSendingMaxAmountPublisher
                     .map { !$0 }
-                    .drive(questionMarkView.rx.isHidden)
-                    .disposed(by: disposeBag)
+                    .assign(to: \.isHidden, on: questionMarkView)
+                    .store(in: &subscriptions)
 
             case .destination:
-                walletDriver = viewModel.destinationWalletDriver
+                walletPublisher = viewModel.destinationWalletPublisher
 
                 textFieldKeydownEvent = { amount in
                     .swapTokenBAmountKeydown(sum: amount)
                 }
 
-                outputDriver = viewModel.estimatedAmountDriver
+                outputPublisher = viewModel.estimatedAmountPublisher
 
-                balanceTextDriver = viewModel.destinationWalletDriver
+                balanceTextPublisher = viewModel.destinationWalletPublisher
                     .map { wallet -> String? in
                         wallet?.amount?.toString(maximumFractionDigits: 9)
                     }
+                    .eraseToAnyPublisher()
 
                 questionMarkView.isHidden = true
             }
 
             // wallet
-            walletDriver
-                .drive(onNext: { [weak self] wallet in
+            walletPublisher
+                .sink { [weak self] wallet in
                     self?.setUp(wallet: wallet)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // balance text
-            balanceTextDriver
-                .drive(balanceView.balanceLabel.rx.text)
-                .disposed(by: disposeBag)
+            balanceTextPublisher
+                .assign(to: \.text, on: balanceView.balanceLabel)
+                .store(in: &subscriptions)
 
-            balanceTextDriver.map { $0 == nil }
-                .drive(balanceView.walletView.rx.isHidden)
-                .disposed(by: disposeBag)
+            balanceTextPublisher.map { $0 == nil }
+                .assign(to: \.isHidden, on: balanceView.walletView)
+                .store(in: &subscriptions)
 
             // analytics
-            amountTextField.rx.controlEvent([.editingDidEnd])
-                .asObservable()
-                .compactMap { [weak self] in
+            NotificationCenter.default.publisher(
+                for: UITextField.textDidEndEditingNotification,
+                object: amountTextField
+            )
+                .compactMap { [weak self] _ in
                     self?.amountTextField.text?.double
                 }
                 .map(textFieldKeydownEvent)
-                .subscribe(onNext: { [weak self] event in
+                .sink { [weak self] event in
                     self?.analyticsManager.log(event: event)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            amountTextField.rx.controlEvent(.editingChanged)
+            NotificationCenter.default.publisher(for: UITextField.textDidChangeNotification, object: amountTextField)
                 .filter { [weak self] _ in self?.amountTextField.isFirstResponder == true }
-                .subscribe(onNext: { [weak self] _ in
+                .sink { [weak self] _ in
                     guard let self = self else { return }
                     let amount = self.amountTextField.text?.double
 
@@ -223,14 +226,14 @@ extension OrcaSwapV2 {
                     } else if self.type == .destination {
                         self.viewModel.enterEstimatedAmount(amount)
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            outputDriver
+            outputPublisher
                 .map { $0?.toString(maximumFractionDigits: 9, groupingSeparator: "") }
                 .filter { [weak self] _ in self?.amountTextField.isFirstResponder == false }
-                .drive(amountTextField.rx.text)
-                .disposed(by: disposeBag)
+                .assign(to: \.text, on: amountTextField)
+                .store(in: &subscriptions)
         }
 
         private func setUp(wallet: Wallet?) {
