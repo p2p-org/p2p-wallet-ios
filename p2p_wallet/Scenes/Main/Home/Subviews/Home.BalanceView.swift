@@ -6,7 +6,6 @@
 //
 
 import BECollectionView_Combine
-import Charts
 import Combine
 import Foundation
 
