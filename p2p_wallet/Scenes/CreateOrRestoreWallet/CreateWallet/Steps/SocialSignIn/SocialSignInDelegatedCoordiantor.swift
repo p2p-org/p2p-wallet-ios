@@ -32,9 +32,13 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
                 do {
                     try await stateMachine <- .signIn(socialProvider: provider)
                 } catch {
+                    defer { vm?.input.isLoading.send(false) }
+                    if case SocialServiceError.cancelled = error {
+                        // Not sending error if it's cancelled byy user
+                        return
+                    }
                     vc.viewModel.input.onError.send(error)
                 }
-                vm?.input.isLoading.send(false)
             }.store(in: &subscriptions)
             return vc
         case let .socialSignInAccountWasUsed(provider, usedEmail):
