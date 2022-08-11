@@ -1,24 +1,18 @@
 import Combine
 import KeyAppUI
 import Onboarding
-import Resolver
 import SwiftUI
 import UIKit
 
 final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetupState> {
-    @Injected var biometryAuthProvider: BiometricsAuthProvider
-
     override func buildViewController(for state: SecuritySetupState) -> UIViewController? {
         switch state {
         case .setProtectionLevel:
-//            if biometryAuthProvider.availabilityStatus == .none { // TODO: fix
-//                return createPincodeScreen(isBackAvailable: false)
-//            }
-
             return protectionLevelScreen()
 
         case .createPincode:
-            return createPincodeScreen(isBackAvailable: true)
+            let isInitial = SecuritySetupState.initialState == .createPincode
+            return createPincodeScreen(isBackAvailable: !isInitial)
 
         case let .confirmPincode(pin):
             return confirmPincodeScreen(pin)

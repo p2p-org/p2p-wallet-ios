@@ -8,6 +8,7 @@
 import AnalyticsManager
 import FeeRelayerSwift
 import NameService
+import Onboarding
 import OrcaSwapSwift
 import RenVMSwift
 import Resolver
@@ -150,6 +151,9 @@ extension Resolver: ResolverRegistering {
 
         register { BiometricsAuthProviderImpl() }
             .implements(BiometricsAuthProvider.self)
+
+        register { BiometricsAuthProviderImpl() }
+            .implements(SecurityStatusProvider.self)
     }
 
     /// Session scope: Live when user is authenticated

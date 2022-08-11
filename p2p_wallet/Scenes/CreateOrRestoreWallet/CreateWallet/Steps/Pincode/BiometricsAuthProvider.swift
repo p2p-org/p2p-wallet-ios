@@ -1,13 +1,16 @@
-import Foundation
 import LocalAuthentication
+import Onboarding
 
-protocol BiometricsAuthProvider {
+protocol BiometricsAuthProvider: SecurityStatusProvider {
     var availabilityStatus: LABiometryType { get }
-
     func authenticate(authenticationPrompt: String, completion: @escaping (Bool, NSError?) -> Void)
 }
 
 final class BiometricsAuthProviderImpl: BiometricsAuthProvider {
+    var isBiometryAvailable: Bool {
+        availabilityStatus == .faceID || availabilityStatus == .touchID
+    }
+
     var availabilityStatus: LABiometryType {
         let context = LAContext()
         _ = context.canEvaluatePolicy(policy, error: nil)
