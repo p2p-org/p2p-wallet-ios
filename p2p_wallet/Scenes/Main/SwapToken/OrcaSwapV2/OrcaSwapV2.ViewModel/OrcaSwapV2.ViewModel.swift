@@ -57,7 +57,7 @@ extension OrcaSwapV2 {
             payingWallet = walletsRepository.nativeWallet
             bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
 
-            Task { async reload() }
+            Task { await reload() }
         }
 
         deinit {

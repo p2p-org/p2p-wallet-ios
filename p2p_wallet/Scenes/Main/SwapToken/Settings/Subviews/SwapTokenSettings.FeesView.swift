@@ -27,7 +27,7 @@ extension SwapTokenSettings {
                 ).padding(.init(only: .left, inset: 18))
 
                 // Fee table
-                FeesTable(cellsContentDriver: viewModel.feesContentPublisher)
+                FeesTable(cellsContentPublisher: viewModel.feesContentPublisher)
             }
         }
     }
