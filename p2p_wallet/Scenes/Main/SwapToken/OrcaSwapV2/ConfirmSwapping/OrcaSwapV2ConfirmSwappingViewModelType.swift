@@ -5,18 +5,18 @@
 //  Created by Chung Tran on 15/12/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 import SolanaSwift
 
 protocol OrcaSwapV2ConfirmSwappingViewModelType: DetailFeesViewModelType {
-    var sourceWalletDriver: Driver<Wallet?> { get }
-    var destinationWalletDriver: Driver<Wallet?> { get }
-    var inputAmountDriver: Driver<Double?> { get }
-    var estimatedAmountDriver: Driver<Double?> { get }
-    var minimumReceiveAmountDriver: Driver<Double?> { get }
-    var exchangeRatesDriver: Driver<Double?> { get }
-    var slippageDriver: Driver<Double> { get }
+    var sourceWalletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var destinationWalletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var inputAmountPublisher: AnyPublisher<Double?, Never> { get }
+    var estimatedAmountPublisher: AnyPublisher<Double?, Never> { get }
+    var minimumReceiveAmountPublisher: AnyPublisher<Double?, Never> { get }
+    var exchangeRatesPublisher: AnyPublisher<Double?, Never> { get }
+    var slippagePublisher: AnyPublisher<Double, Never> { get }
 
     func isBannerForceClosed() -> Bool
 
@@ -26,53 +26,58 @@ protocol OrcaSwapV2ConfirmSwappingViewModelType: DetailFeesViewModelType {
 }
 
 extension OrcaSwapV2ConfirmSwappingViewModelType {
-    var inputAmountStringDriver: Driver<String?> {
-        Driver.combineLatest(
-            sourceWalletDriver,
-            inputAmountDriver
+    var inputAmountStringPublisher: AnyPublisher<String?, Never> {
+        Publishers.CombineLatest(
+            sourceWalletPublisher,
+            inputAmountPublisher
         )
             .map { wallet, amount in
                 amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
             }
+            .eraseToAnyPublisher()
     }
 
-    var inputAmountInFiatStringDriver: Driver<String?> {
-        Driver.combineLatest(
-            sourceWalletDriver,
-            inputAmountDriver
+    var inputAmountInFiatStringPublisher: AnyPublisher<String?, Never> {
+        Publishers.CombineLatest(
+            sourceWalletPublisher,
+            inputAmountPublisher
         )
             .map { wallet, amount in
                 Defaults.fiat.symbol + (amount * wallet?.priceInCurrentFiat).toString(maximumFractionDigits: 2)
             }
+            .eraseToAnyPublisher()
     }
 
-    var estimatedAmountStringDriver: Driver<String?> {
-        Driver.combineLatest(
-            destinationWalletDriver,
-            estimatedAmountDriver
+    var estimatedAmountStringPublisher: AnyPublisher<String?, Never> {
+        Publishers.CombineLatest(
+            destinationWalletPublisher,
+            estimatedAmountPublisher
         )
             .map { wallet, amount in
                 amount.toString(maximumFractionDigits: 9) + " " + wallet?.token.symbol
             }
+            .eraseToAnyPublisher()
     }
 
-    var receiveAtLeastStringDriver: Driver<String?> {
-        Driver.combineLatest(
-            destinationWalletDriver,
-            minimumReceiveAmountDriver
+    var receiveAtLeastStringPublisher: AnyPublisher<String?, Never> {
+        Publishers.CombineLatest(
+            destinationWalletPublisher,
+            minimumReceiveAmountPublisher
         )
             .map { wallet, amount in
                 amount.toString(maximumFractionDigits: 9) + " " + (wallet?.token.symbol ?? "")
             }
+            .eraseToAnyPublisher()
     }
 
-    var receiveAtLeastInFiatStringDriver: Driver<String?> {
-        Driver.combineLatest(
-            destinationWalletDriver,
-            minimumReceiveAmountDriver
+    var receiveAtLeastInFiatStringPublisher: AnyPublisher<String?, Never> {
+        Publishers.CombineLatest(
+            destinationWalletPublisher,
+            minimumReceiveAmountPublisher
         )
             .map { wallet, amount in
                 Defaults.fiat.symbol + (amount * wallet?.priceInCurrentFiat).toString(maximumFractionDigits: 2)
             }
+            .eraseToAnyPublisher()
     }
 }

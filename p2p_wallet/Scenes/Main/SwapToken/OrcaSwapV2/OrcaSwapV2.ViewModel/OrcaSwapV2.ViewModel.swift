@@ -166,42 +166,47 @@ extension OrcaSwapV2 {
                 .store(in: &subscriptions)
 
             // fees
-            Observable.combineLatest(
-                bestPoolsPairSubject,
-                inputAmountSubject,
-                slippageSubject,
-                destinationWalletSubject,
-                sourceWalletSubject,
-                payingWalletSubject
+            Publishers.CombineLatest(
+                Publishers.CombineLatest3(
+                    $bestPoolsPair,
+                    $inputAmount,
+                    $slippage
+                ),
+                Publishers.CombineLatest3(
+                    $destinationWallet,
+                    $sourceWallet,
+                    $payingWallet
+                )
             )
-                .observe(on: MainScheduler.asyncInstance)
-                .subscribe(onNext: { [weak self] _ in
+                .receive(on: RunLoop.main)
+                .sink { [weak self] _ in
                     guard let self = self else { return }
                     self.feesSubject.request = { [weak self] in
                         (try await self?.feesRequest()) ?? []
                     }
                     self.feesSubject.reload()
-                })
+                }
                 .store(in: &subscriptions)
 
             // Smart selection fee token paying
 
             // Input wallet was changed
-            sourceWalletSubject
-                .subscribe(onNext: { [weak self] wallet in
+            $sourceWallet
+                .sink { [weak self] wallet in
                     guard let self = self, let wallet = wallet else { return }
-                    self.payingWallet = wallet)
-                })
+                    self.payingWallet = wallet
+                }
                 .store(in: &subscriptions)
 
             // Input amount was changed
-            inputAmountSubject
-                .flatMap { Single.zip(.just($0), self.feesRequest()) }
-                .subscribe(onNext: { [weak self] input, fees in
+            $inputAmount
+                .asyncMap { ($0, try? await self.feesRequest()) }
+                .sink { [weak self] input, fees in
                     guard
                         let self = self,
                         let input = input,
-                        let availableAmount = self.availableAmount
+                        let availableAmount = self.availableAmount,
+                        let fees = fees
                     else { return }
 
                     // If paying token fee equals input token
@@ -216,30 +221,34 @@ extension OrcaSwapV2 {
                             self.changeFeePayingToken(to: solWallet)
                         }
                     }
-                })
+                }
                 .store(in: &subscriptions)
 
             // Error
-            Observable.combineLatest(
-                loadingStateSubject,
-                sourceWalletSubject,
-                destinationWalletSubject,
-                tradablePoolsPairsSubject.stateObservable,
-                bestPoolsPairSubject,
-                feesObservable,
-                slippageSubject,
-                payingWalletSubject
+            Publishers.CombineLatest(
+                Publishers.CombineLatest4(
+                    $loadingState,
+                    $sourceWallet,
+                    $destinationWallet,
+                    tradablePoolsPairsSubject.$state
+                ),
+                Publishers.CombineLatest4(
+                    $bestPoolsPair,
+                    feesSubject.$value,
+                    $slippage,
+                    $payingWallet
+                )
             )
                 .map { [weak self] _ in self?.verify() }
-                .bind(to: errorSubject)
+                .assign(to: \.error, on: self)
                 .store(in: &subscriptions)
 
             showHideDetailsButtonTapSubject
-                .subscribe(onNext: { [weak self] in
+                .sink { [weak self] in
                     guard let self = self else { return }
 
-                    self.isShowingDetails = !self.isShowingDetails)
-                })
+                    self.isShowingDetails.toggle()
+                }
                 .store(in: &subscriptions)
         }
 
@@ -258,21 +267,14 @@ extension OrcaSwapV2 {
             guard verify() == nil else { return }
 
             let authority = walletsRepository.nativeWallet?.pubkey
-            let sourceWallet = sourceWallet!
-            let destinationWallet = destinationWallet!
-            let bestPoolsPair = bestPoolsPair!
-            let inputAmount = inputAmount!
-            let estimatedAmount = estimatedAmount!
-            let payingWallet = payingWallet
-            let slippage = slippage
-            let fees = fees?.filter { $0.type != .liquidityProviderFee } ?? []
+            let fees = feesSubject.value?.filter { $0.type != .liquidityProviderFee } ?? []
 
             let swapMAX = availableAmount == inputAmount
 
             // log
-            minimumReceiveAmountObservable
+            minimumReceiveAmountPublisher
                 .first()
-                .subscribe(onSuccess: { [weak self] receiveAmount in
+                .sink { [weak self] receiveAmount in
                     guard let self = self else { return }
 
                     let receiveAmount: Double = receiveAmount.map { $0 ?? 0 } ?? 0
@@ -299,7 +301,7 @@ extension OrcaSwapV2 {
                                 )
                             )
                         )
-                })
+                }
                 .store(in: &subscriptions)
         }
     }
