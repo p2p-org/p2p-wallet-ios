@@ -5,6 +5,8 @@
 //  Created by Chung Tran on 11/10/2021.
 //
 
+import Combine
+import CombineCocoa
 import Foundation
 import Resolver
 import UIKit
@@ -12,6 +14,7 @@ import UIKit
 extension Settings {
     class ViewController: p2p_wallet.BaseViewController {
         let viewModel: SettingsViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: SettingsViewModelType) {
             self.viewModel = viewModel
@@ -34,13 +37,13 @@ extension Settings {
                             icon: .profileIcon,
                             title: UILabel(text: L10n.username.onlyUppercaseFirst()),
                             trailing: UILabel(textSize: 15).setup { label in
-                                viewModel.usernameDriver
+                                viewModel.usernamePublisher
                                     .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notYetReserved }
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
-                                viewModel.usernameDriver.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
-                                    .drive(label.rx.textColor)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.text, on: label)
+                                    .store(in: &subscriptions)
+                                viewModel.usernamePublisher.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
+                                    .assign(to: \.textColor, on: label)
+                                    .store(in: &subscriptions)
                             }
                         ).onTap { [unowned self] in
                             if self.viewModel.getUsername() == nil {
@@ -65,15 +68,15 @@ extension Settings {
                             title: UILabel(text: L10n.backup.onlyUppercaseFirst()),
                             trailing: UILabel(textSize: 15).setup { label in
                                 // Text
-                                viewModel.didBackupDriver
+                                viewModel.didBackupPublisher
                                     .map { $0 ? L10n.backupIsReady : L10n.backupRequired }
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.text, on: label)
+                                    .store(in: &subscriptions)
                                 // Color
-                                viewModel.didBackupDriver
+                                viewModel.didBackupPublisher
                                     .map { $0 ? UIColor.h34c759 : UIColor.ff3b30 }
-                                    .drive(label.rx.textColor)
-                                    .disposed(by: disposeBag)
+                                    .assign(to: \.textColor, on: label)
+                                    .store(in: &subscriptions)
                             }
                         )
                             .onTap { [unowned self] in viewModel.navigate(to: .backup) }
@@ -89,28 +92,30 @@ extension Settings {
                         CellView(
                             icon: .faceIdIcon,
                             title: UILabel().setup { view in
-                                viewModel.biometryTypeDriver.map {
+                                viewModel.biometryTypePublisher.map {
                                     switch $0 {
                                     case .touch: return L10n.touchID
                                     default: return L10n.faceID
                                     }
-                                }.drive(view.rx.text)
-                                    .disposed(by: disposeBag)
+                                }
+                                .assign(to: \.text, on: view)
+                                .store(in: &subscriptions)
                             },
                             trailing: UISwitch().setup { switcher in
-                                viewModel.isBiometryAvailableDriver.drive(switcher.rx.isEnabled)
-                                    .disposed(by: disposeBag)
-                                viewModel.isBiometryEnabledDriver.drive(switcher.rx.value).disposed(by: disposeBag)
-                                switcher.rx
-                                    .controlEvent(.valueChanged)
-                                    .withLatestFrom(switcher.rx.value)
-                                    .subscribe { [unowned self] value in
+                                viewModel.isBiometryAvailablePublisher
+                                    .assign(to: \.isEnabled, on: switcher)
+                                    .store(in: &subscriptions)
+                                viewModel.isBiometryEnabledPublisher
+                                    .assign(to: \.isOn, on: switcher)
+                                    .store(in: &subscriptions)
+                                switcher.isOnPublisher
+                                    .sink { [unowned self] value in
                                         self.viewModel.setEnabledBiometry(value) { [weak self] error in
                                             guard let error = error else { return }
                                             self?.showError(error)
                                         }
                                     }
-                                    .disposed(by: disposeBag)
+                                    .store(in: &subscriptions)
                             },
                             nextArrowEnable: false
                         )
@@ -126,10 +131,10 @@ extension Settings {
                             title: UILabel(text: L10n.currency.onlyUppercaseFirst()),
                             trailing: UILabel(text: L10n.system, textColor: .secondaryLabel)
                                 .setup { label in
-                                    viewModel.fiatDriver
+                                    viewModel.fiatPublisher
                                         .map { fiat in fiat.name }
-                                        .drive(label.rx.text)
-                                        .disposed(by: disposeBag)
+                                        .assign(to: \.text, on: label)
+                                        .store(in: &subscriptions)
                                 }
                         ).onTap { [unowned self] in self.viewModel.navigate(to: .currency) }
                         // Hide zero balance
@@ -137,11 +142,12 @@ extension Settings {
                             icon: .hideZeroBalance,
                             title: UILabel(text: L10n.hideZeroBalances.onlyUppercaseFirst()),
                             trailing: UISwitch().setup { switcher in
-                                viewModel.hideZeroBalancesDriver.drive(switcher.rx.value).disposed(by: disposeBag)
-                                switcher.rx.controlEvent(.valueChanged)
-                                    .withLatestFrom(switcher.rx.value)
-                                    .subscribe { [unowned self] in viewModel.setHideZeroBalances($0) }
-                                    .disposed(by: disposeBag)
+                                viewModel.hideZeroBalancesPublisher
+                                    .assign(to: \.isOn, on: switcher)
+                                    .store(in: &subscriptions)
+                                switcher.isOnPublisher
+                                    .sink { [unowned self] in viewModel.setHideZeroBalances($0) }
+                                    .store(in: &subscriptions)
                             },
                             nextArrowEnable: false
                         )
@@ -166,12 +172,12 @@ extension Settings {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
 
             viewModel.logoutAlertSignal
-                .emit(onNext: { [weak self] in
+                .sink { [weak self] in
                     self?.showAlert(
                         title: L10n.areYouSureYouWantToSignOut,
                         message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
@@ -184,8 +190,8 @@ extension Settings {
                             self?.viewModel.logout()
                         })
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

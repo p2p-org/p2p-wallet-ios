@@ -6,12 +6,11 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import LocalAuthentication
 import RenVMSwift
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol ChangeLanguageResponder {
@@ -32,15 +31,15 @@ protocol LogoutResponder {
 
 protocol SettingsViewModelType: ReserveNameHandler {
     var selectableLanguages: [(LocalizedLanguage, Bool)] { get }
-    var navigationDriver: Driver<Settings.NavigatableScene?> { get }
-    var usernameDriver: Driver<String?> { get }
-    var didBackupDriver: Driver<Bool> { get }
-    var fiatDriver: Driver<Fiat> { get }
-    var hideZeroBalancesDriver: Driver<Bool> { get }
-    var logoutAlertSignal: Signal<Void> { get }
-    var biometryTypeDriver: Driver<Settings.BiometryType> { get }
-    var isBiometryEnabledDriver: Driver<Bool> { get }
-    var isBiometryAvailableDriver: Driver<Bool> { get }
+    var navigationPublisher: AnyPublisher<Settings.NavigatableScene?, Never> { get }
+    var usernamePublisher: AnyPublisher<String?, Never> { get }
+    var didBackupPublisher: AnyPublisher<Bool, Never> { get }
+    var fiatPublisher: AnyPublisher<Fiat, Never> { get }
+    var hideZeroBalancesPublisher: AnyPublisher<Bool, Never> { get }
+    var logoutAlertSignal: AnyPublisher<Void, Never> { get }
+    var biometryTypePublisher: AnyPublisher<Settings.BiometryType, Never> { get }
+    var isBiometryEnabledPublisher: AnyPublisher<Bool, Never> { get }
+    var isBiometryAvailablePublisher: AnyPublisher<Bool, Never> { get }
     var appVersion: String { get }
 
     func getUserAddress() -> String?
@@ -66,7 +65,8 @@ protocol SettingsViewModelType: ReserveNameHandler {
 }
 
 extension Settings {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
@@ -86,30 +86,32 @@ extension Settings {
         // MARK: - Properties
 
         private var disposables = [DefaultsDisposable]()
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var usernameSubject = BehaviorRelay<String?>(value: storage.getName())
-        private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
-            .didBackupOffline)
-        private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
-        private let endpointSubject = BehaviorRelay<APIEndPoint>(value: Defaults.apiEndPoint)
-        private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
-        private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?
-            .overrideUserInterfaceStyle)
-        private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
-        private let biometryTypeSubject = BehaviorRelay<BiometryType>(value: .face)
-        private let isBiometryEnabledSubject = BehaviorRelay<Bool>(value: Defaults.isBiometryEnabled)
-        private let isBiometryAvailableSubject = BehaviorRelay<Bool>(value: false)
-        private let logoutAlertSubject = PublishRelay<Void>()
+        @Published private var navigation: NavigatableScene?
+        @Published private var username: String?
+        @Published private var didBackup: Bool = false
+        @Published private var fiat: Fiat = Defaults.fiat
+        @Published private var endpoint: APIEndPoint = Defaults.apiEndPoint
+        @Published private var securityMethods: [String] = []
+        @Published private var theme: UIUserInterfaceStyle? = AppDelegate.shared.window?
+            .overrideUserInterfaceStyle
+        @Published private var hideZeroBalances: Bool = Defaults.hideZeroBalances
+        @Published private var biometryType: BiometryType = .face
+        @Published private var isBiometryEnabled: Bool = Defaults.isBiometryEnabled
+        @Published private var isBiometryAvailable: Bool = false
+        private let logoutAlertSubject = PassthroughSubject<Void, Never>()
 
         // MARK: - Initializer
 
         init() {
             setUp()
             bind()
+            username = storage.getName()
+            didBackup = storage.didBackupUsingIcloud || Defaults.didBackupOffline
+            securityMethods = getSecurityMethods()
         }
 
         deinit {
@@ -121,32 +123,32 @@ extension Settings {
         func setUp() {
             let context = LAContext()
             if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil) {
-                isBiometryAvailableSubject.accept(true)
+                isBiometryAvailable = true
             }
 
             switch context.biometryType {
             case .faceID:
-                biometryTypeSubject.accept(.face)
+                biometryType = .face
             case .touchID:
-                biometryTypeSubject.accept(.touch)
+                biometryType = .touch
             default:
-                biometryTypeSubject.accept(.none)
+                biometryType = .none
             }
         }
 
         func bind() {
             disposables.append(Defaults.observe(\.forceCloseNameServiceBanner) { [weak self] _ in
-                self?.usernameSubject.accept(self?.storage.getName())
+                self?.username = self?.storage.getName()
             })
 
             storage
                 .onValueChange
-                .emit(onNext: { [weak self] event in
+                .sink { [weak self] event in
                     if event.key == "getName", let name = event.value as? String {
-                        self?.usernameSubject.accept(name)
+                        self?.username = name
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Methods
@@ -167,28 +169,28 @@ extension Settings.ViewModel: SettingsViewModelType {
         localizationManager.selectableLanguages()
     }
 
-    var navigationDriver: Driver<Settings.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<Settings.NavigatableScene?, Never> {
+        $navigation.eraseToAnyPublisher()
     }
 
-    var usernameDriver: Driver<String?> {
-        usernameSubject.asDriver()
+    var usernamePublisher: AnyPublisher<String?, Never> {
+        $username.eraseToAnyPublisher()
     }
 
-    var didBackupDriver: Driver<Bool> {
-        didBackupSubject.asDriver()
+    var didBackupPublisher: AnyPublisher<Bool, Never> {
+        $didBackup.eraseToAnyPublisher()
     }
 
-    var fiatDriver: Driver<Fiat> {
-        fiatSubject.asDriver()
+    var fiatPublisher: AnyPublisher<Fiat, Never> {
+        $fiat.eraseToAnyPublisher()
     }
 
-    var hideZeroBalancesDriver: Driver<Bool> {
-        hideZeroBalancesSubject.asDriver()
+    var hideZeroBalancesPublisher: AnyPublisher<Bool, Never> {
+        $hideZeroBalances.eraseToAnyPublisher()
     }
 
-    var logoutAlertSignal: Signal<Void> {
-        logoutAlertSubject.asSignal()
+    var logoutAlertSignal: AnyPublisher<Void, Never> {
+        logoutAlertSubject.eraseToAnyPublisher()
     }
 
     func getUserAddress() -> String? {
@@ -202,7 +204,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     // MARK: - Actions
 
     func navigate(to scene: Settings.NavigatableScene) {
-        navigationSubject.accept(scene)
+        navigation = scene
     }
 
     func showOrReserveUsername() {
@@ -214,7 +216,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func setDidBackup(_ didBackup: Bool) {
-        didBackupSubject.accept(didBackup)
+        self.didBackup = didBackup
     }
 
     func setFiat(_ fiat: Fiat) {
@@ -227,13 +229,13 @@ extension Settings.ViewModel: SettingsViewModelType {
         }
 
         // accept new value
-        fiatSubject.accept(fiat)
+        self.fiat = fiat
         notificationsService.showInAppNotification(.done(L10n.currencyChanged))
     }
 
     func setApiEndpoint(_ endpoint: APIEndPoint) {
         guard Defaults.apiEndPoint != endpoint else { return }
-        endpointSubject.accept(endpoint)
+        self.endpoint = endpoint
         analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
         Task {
             try await renVMService.expireCurrentSession()
@@ -243,11 +245,11 @@ extension Settings.ViewModel: SettingsViewModelType {
         }
     }
 
-    var isBiometryEnabledDriver: Driver<Bool> { isBiometryEnabledSubject.asDriver() }
+    var isBiometryEnabledPublisher: AnyPublisher<Bool, Never> { $isBiometryEnabled.eraseToAnyPublisher() }
 
-    var isBiometryAvailableDriver: Driver<Bool> { isBiometryAvailableSubject.asDriver() }
+    var isBiometryAvailablePublisher: AnyPublisher<Bool, Never> { $isBiometryAvailable.eraseToAnyPublisher() }
 
-    var biometryTypeDriver: Driver<Settings.BiometryType> { biometryTypeSubject.asDriver() }
+    var biometryTypePublisher: AnyPublisher<Settings.BiometryType, Never> { $biometryType.eraseToAnyPublisher() }
 
     var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
 
@@ -272,9 +274,9 @@ extension Settings.ViewModel: SettingsViewModelType {
                 DispatchQueue.main.async { [weak self] in
                     if success {
                         Defaults.isBiometryEnabled.toggle()
-                        self?.isBiometryEnabledSubject.accept(Defaults.isBiometryEnabled)
+                        self?.isBiometryEnabled = Defaults.isBiometryEnabled
                         self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
-                        self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
+                        self?.securityMethods = self?.getSecurityMethods() ?? []
                     } else {
                         if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
                             onError(nil)
@@ -282,7 +284,7 @@ extension Settings.ViewModel: SettingsViewModelType {
                             onError(authenticationError)
                         }
                         // Setting actual value of biometry to the view
-                        self?.isBiometryEnabledSubject.accept(self?.isBiometryEnabledSubject.value ?? false)
+                        self?.isBiometryEnabled = self?.isBiometryEnabled ?? false
                     }
                 }
 
@@ -320,7 +322,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func setTheme(_ theme: UIUserInterfaceStyle) {
-        themeSubject.accept(theme)
+        self.theme = theme
         analyticsManager.log(event: .settingsAppearanceSelected(appearance: theme.name))
         changeThemeResponder.changeThemeTo(theme)
     }
@@ -328,12 +330,12 @@ extension Settings.ViewModel: SettingsViewModelType {
     func setHideZeroBalances(_ hideZeroBalances: Bool) {
         Defaults.hideZeroBalances.toggle()
         analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
-        hideZeroBalancesSubject.accept(hideZeroBalances)
+        self.hideZeroBalances = hideZeroBalances
     }
 
     func showLogoutAlert() {
         analyticsManager.log(event: .signOut(lastScreen: "Settings"))
-        logoutAlertSubject.accept(())
+        logoutAlertSubject.send(())
     }
 
     func copyUsernameToClipboard() {

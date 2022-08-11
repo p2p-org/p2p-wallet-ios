@@ -48,7 +48,7 @@ extension ConfirmReceivingBitcoin {
                 )
                     .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
                     .setup { label in
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .payingWalletAvailable }
                             .assign(to: \.isHidden, on: label)
                             .store(in: &subscriptions)
@@ -58,7 +58,7 @@ extension ConfirmReceivingBitcoin {
                 UIView.spacer
                     .setup { view in
                         view.autoSetDimension(.height, toSize: 14)
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .topUpRequired }
                             .assign(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
