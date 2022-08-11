@@ -89,18 +89,14 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
         collectionView.updateWithoutAnimations {
             viewModel.batchUpdate { countries in
                 var countries = countries
-                var selectedIndex: Int = .zero
                 for i in 0 ..< countries.count {
                     if countries[i].value.code == selectedCountry.value.code {
-                        selectedIndex = i
                         countries[i].isSelected = true
                     } else {
                         countries[i].isSelected = false
                     }
                 }
-                let selectedCountry = countries.remove(at: selectedIndex)
                 countries = countries.filteredAndSorted()
-                countries.insert(selectedCountry, at: .zero)
                 return countries
             }
         }
