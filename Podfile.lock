@@ -1,7 +1,4 @@
 PODS:
-  - Action (5.0.0):
-    - RxCocoa (~> 6.0)
-    - RxSwift (~> 6.0)
   - Amplitude (8.3.1)
   - AnalyticsManager (1.0.0):
     - Amplitude (~> 8.3.0)
@@ -151,12 +148,6 @@ PODS:
   - RenVMSwift (2.0.1):
     - SolanaSwift (~> 2)
   - Resolver (1.5.0)
-  - RxCocoa (6.5.0):
-    - RxRelay (= 6.5.0)
-    - RxSwift (= 6.5.0)
-  - RxRelay (6.5.0):
-    - RxSwift (= 6.5.0)
-  - RxSwift (6.5.0)
   - secp256k1.swift (0.1.4)
   - Sentry (7.18.1):
     - Sentry/Core (= 7.18.1)
@@ -184,7 +175,6 @@ PODS:
   - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
-  - Action
   - AnalyticsManager (from `KeyAppKit`)
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
@@ -223,7 +213,6 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Action
     - Amplitude
     - Charts
     - CocoaDebug
@@ -251,9 +240,6 @@ SPEC REPOS:
     - PromisesObjC
     - PureLayout
     - Resolver
-    - RxCocoa
-    - RxRelay
-    - RxSwift
     - secp256k1.swift
     - SubviewAttachingTextView
     - SwiftAlgorithms
@@ -322,7 +308,6 @@ CHECKOUT OPTIONS:
     :tag: 7.18.1
 
 SPEC CHECKSUMS:
-  Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
@@ -362,9 +347,6 @@ SPEC CHECKSUMS:
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
   RenVMSwift: 9cfd6610adc9c74a6e761c615cd30a31129e79c6
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
-  RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
-  RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
-  RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
@@ -381,6 +363,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: cc6a72222cc4afcd163f5e18b118f28bb24ba051
+PODFILE CHECKSUM: a4ac83d651ddc96dcfcbc8e1883a5bc1424975ed
 
 COCOAPODS: 1.11.3

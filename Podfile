@@ -33,9 +33,6 @@ target 'p2p_wallet' do
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
 
-  # reactive
-  pod 'Action'
-
   # kits
   pod 'KeychainSwift', '~> 19.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
