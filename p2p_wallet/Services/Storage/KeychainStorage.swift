@@ -2,16 +2,15 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import Combine
 import Foundation
 import KeychainSwift
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 class KeychainStorage {
     // MARK: - Constants
 
-    let onValueChangeSubject = PublishSubject<StorageValueOnChange>()
+    let onValueChangeSubject = PassthroughSubject<StorageValueOnChange, Never>()
     let pincodeKey: String
     let phrasesKey: String
     let derivableTypeKey: String
@@ -22,7 +21,7 @@ class KeychainStorage {
 
     // MARK: - Properties
 
-    var _account: SolanaSwift.Account?
+    var _account: Account?
 
     // MARK: - Services
 
@@ -105,7 +104,7 @@ class KeychainStorage {
 }
 
 extension KeychainStorage: StorageType {
-    var onValueChange: Signal<StorageValueOnChange> {
-        onValueChangeSubject.asSignal(onErrorJustReturn: ("", nil))
+    var onValueChange: AnyPublisher<StorageValueOnChange, Never> {
+        onValueChangeSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 }

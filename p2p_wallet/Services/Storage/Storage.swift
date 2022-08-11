@@ -5,17 +5,16 @@
 //  Created by Chung Tran on 10/29/20.
 //
 
+import Combine
 import Foundation
 import KeychainSwift
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 typealias StorageValueOnChange = (key: String, value: Any?)
 
 protocol StorageType {
     // listens to value changing
-    var onValueChange: Signal<StorageValueOnChange> { get }
+    var onValueChange: AnyPublisher<StorageValueOnChange, Never> { get }
 }
 
 protocol ICloudStorageType: AnyObject, StorageType {

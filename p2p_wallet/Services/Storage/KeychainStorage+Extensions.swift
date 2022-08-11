@@ -8,7 +8,7 @@ extension KeychainStorage: NameStorageType {
     func save(name: String) {
         keychain.set(name, forKey: nameKey)
         saveNameToICloudIfAccountSaved()
-        onValueChangeSubject.on(.next(("getName", name)))
+        onValueChangeSubject.send(("getName", name))
     }
 
     func getName() -> String? {
