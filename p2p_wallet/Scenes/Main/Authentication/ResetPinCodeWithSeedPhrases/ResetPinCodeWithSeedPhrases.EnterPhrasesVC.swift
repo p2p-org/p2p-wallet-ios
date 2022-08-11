@@ -7,6 +7,7 @@
 
 import BEPureLayout
 import Combine
+import CombineCocoa
 import Resolver
 import UIKit
 
@@ -17,6 +18,8 @@ extension ResetPinCodeWithSeedPhrases {
 
         private let pastButton = BERef<UIButton>()
         private let inputTextField = BERef<ExpandableTextView>()
+
+        private var subscriptions = [AnyCancellable]()
 
         enum ButtonState {
             case enter
@@ -63,8 +66,8 @@ extension ResetPinCodeWithSeedPhrases {
                                     .setup { textField in
                                         textField.placeholder = L10n.yourSecurityKey
 
-                                        textField.textView.rx.text
-                                            .bind { [weak self] text in
+                                        textField.textView.textPublisher
+                                            .sink { [weak self] text in
                                                 guard let self = self else { return }
                                                 let text = text ?? ""
                                                 self.pastButton.isHidden = text.count > 0
@@ -80,7 +83,7 @@ extension ResetPinCodeWithSeedPhrases {
                                                             .error(error ?? L10n.error))
                                                 }
                                             }
-                                            .disposed(by: disposeBag)
+                                            .store(in: &subscriptions)
                                     }
                                     .bind(inputTextField)
                                     .withTag(1)
