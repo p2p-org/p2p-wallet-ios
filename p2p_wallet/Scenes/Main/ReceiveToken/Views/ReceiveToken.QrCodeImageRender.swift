@@ -135,12 +135,13 @@ extension ReceiveToken {
             }
 
             if !showTokenIcon {
-                return try await renderAsView(username: username, address: address, tokenImage: nil)
+                return await renderAsView(username: username, address: address, tokenImage: nil)
                     .asImageInBackground()
             }
 
             let image = try await tokenIcon(urlString: token?.logoURI ?? Token.nativeSolana.logoURI)
-            return try await renderAsView(username: username, address: address, tokenImage: image).asImageInBackground()
+            return await renderAsView(username: username, address: address, tokenImage: image)
+                .asImageInBackground()
         }
     }
 }

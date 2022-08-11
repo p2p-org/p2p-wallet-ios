@@ -89,7 +89,7 @@ extension ConfirmReceivingBitcoin {
                 BEVStack(spacing: 10) {
                     topUpButtonsView()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .topUpRequired }
                                 .assign(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
@@ -97,7 +97,7 @@ extension ConfirmReceivingBitcoin {
 
                     shareSolanaAddressButton()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .topUpRequired }
                                 .assign(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
@@ -105,7 +105,7 @@ extension ConfirmReceivingBitcoin {
 
                     createRenBTCButton()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .payingWalletAvailable }
                                 .assign(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
