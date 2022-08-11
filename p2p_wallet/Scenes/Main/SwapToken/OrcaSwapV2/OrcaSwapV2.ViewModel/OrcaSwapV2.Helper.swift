@@ -11,17 +11,17 @@ extension OrcaSwapV2.ViewModel {
     /// - Returns: String or nil if no error
     func verify() -> OrcaSwapV2.VerificationError? {
         // loading state
-        if loadingStateSubject.value != .loaded {
+        if loadingState != .loaded {
             return .swappingIsNotAvailable
         }
 
         // source wallet
-        guard let sourceWallet = sourceWalletSubject.value else {
+        guard let sourceWallet = sourceWallet else {
             return .sourceWalletIsEmpty
         }
 
         // destination wallet
-        guard let destinationWallet = destinationWalletSubject.value else {
+        guard let destinationWallet = destinationWallet else {
             return .destinationWalletIsEmpty
         }
 
@@ -35,12 +35,12 @@ extension OrcaSwapV2.ViewModel {
             return .tradablePoolsPairsNotLoaded
         }
 
-        if tradablePoolsPairsSubject.value == nil || tradablePoolsPairsSubject.value?.isEmpty == true {
+        if tradablePoolsPairs == nil || tradablePoolsPairs?.isEmpty == true {
             return .tradingPairNotSupported
         }
 
         // inputAmount
-        guard let inputAmount = inputAmountSubject.value else {
+        guard let inputAmount = inputAmount else {
             return .inputAmountIsEmpty
         }
 
@@ -48,14 +48,14 @@ extension OrcaSwapV2.ViewModel {
             return .inputAmountIsNotValid
         }
 
-        if inputAmount.rounded(decimals: sourceWallet.token.decimals) > availableAmountSubject.value?
+        if inputAmount.rounded(decimals: sourceWallet.token.decimals) > availableAmount?
             .rounded(decimals: sourceWallet.token.decimals)
         {
             return .insufficientFunds
         }
 
         // estimated amount
-        guard let estimatedAmount = estimatedAmountSubject.value else {
+        guard let estimatedAmount = estimatedAmount else {
             return .estimatedAmountIsNotValid
         }
 
@@ -64,7 +64,7 @@ extension OrcaSwapV2.ViewModel {
         }
 
         // best pools pairs
-        if bestPoolsPairSubject.value == nil {
+        if bestPoolsPair == nil {
             return .bestPoolsPairsIsEmpty
         }
 
@@ -77,12 +77,12 @@ extension OrcaSwapV2.ViewModel {
             return .feesIsBeingCalculated
         }
 
-        guard payingWalletSubject.value != nil else {
+        guard payingWallet != nil else {
             return .payingFeeWalletNotFound
         }
 
         // paying with SOL
-        if payingWalletSubject.value?.isNativeSOL == true {
+        if payingWallet?.isNativeSOL == true {
             guard let wallet = walletsRepository.nativeWallet else {
                 return .nativeWalletNotFound
             }
@@ -100,7 +100,7 @@ extension OrcaSwapV2.ViewModel {
             //                if feeCompensationPool == nil {
             //                    return L10n.feeCompensationPoolNotFound
             //                }
-            if let payingWallet = payingWalletSubject.value, let feeTotal = feesSubject.value?.totalLamport {
+            if let payingWallet = payingWallet, let feeTotal = feesSubject.value?.totalLamport {
                 if payingWallet.token.symbol == feesSubject.value?.totalToken?.symbol {
                     if feeTotal > (payingWallet.lamports ?? 0) {
                         return .notEnoughBalanceToCoverFees
@@ -118,27 +118,27 @@ extension OrcaSwapV2.ViewModel {
     }
 
     private func isSlippageValid() -> Bool {
-        slippageSubject.value <= .maxSlippage && slippageSubject.value > 0
+        slippage <= .maxSlippage && slippage > 0
     }
 
     func feesRequest() async throws -> [PayingFee] {
         guard
-            let sourceWallet = sourceWalletSubject.value,
-            let destinationWallet = destinationWalletSubject.value
+            let sourceWallet = sourceWallet,
+            let destinationWallet = destinationWallet
         else {
             return []
         }
 
-        let bestPoolsPair = bestPoolsPairSubject.value
-        let inputAmount = inputAmountSubject.value
-        let slippage = slippageSubject.value
+        let bestPoolsPair = bestPoolsPair
+        let inputAmount = inputAmount
+        let slippage = slippage
 
         return try await swapService.getFees(
             sourceMint: sourceWallet.mintAddress,
             destinationAddress: destinationWallet.pubkey,
             destinationToken: destinationWallet.token,
             bestPoolsPair: bestPoolsPair,
-            payingWallet: payingWalletSubject.value,
+            payingWallet: payingWallet,
             inputAmount: inputAmount,
             slippage: slippage
         ).fees

@@ -6,8 +6,7 @@
 //
 
 import BEPureLayout
-import RxCocoa
-import RxSwift
+import Combine
 import UIKit
 
 extension OrcaSwapV2 {
@@ -18,7 +17,7 @@ extension OrcaSwapV2 {
         private let receiveAtLeastView = HorizontalLabelsWithSpacer()
 
         private let viewModel: OrcaSwapV2ViewModelType
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
@@ -84,9 +83,9 @@ extension OrcaSwapV2 {
         }
 
         private func bind() {
-            Driver.combineLatest(
-                viewModel.minimumReceiveAmountDriver,
-                viewModel.destinationWalletDriver
+            Publishers.CombineLatest(
+                viewModel.minimumReceiveAmountPublisher,
+                viewModel.destinationWalletPublisher
             )
                 .map { minReceiveAmount, wallet -> String? in
                     guard let minReceiveAmount = minReceiveAmount else { return nil }
@@ -100,10 +99,10 @@ extension OrcaSwapV2 {
 
                     return formattedReceiveAmount + " " + formattedReceiveFiatAmount
                 }
-                .drive { [weak self] in
+                .sink { [weak self] in
                     self?.setAtLeastText(string: $0)
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
         }
 
         @objc
