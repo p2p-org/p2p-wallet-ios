@@ -100,47 +100,38 @@ extension SendToken.ChooseRecipientAndNetwork {
 
             // Smart select fee token
             $recipient
-                .flatMapLatest { [weak self] _ -> Single<FeeAmount?> in
-                    guard
-                        let self = self,
-                        let wallet = self.sendTokenViewModel.walletSubject.value,
-                        let receiver = self.recipientSubject.value
-                    else { return .just(.zero) }
-
-                    return Single.async {
-                        try await self.sendService.getFees(
-                            from: wallet,
-                            receiver: receiver.address,
-                            network: self.networkSubject.value,
-                            payingTokenMint: wallet.mintAddress
-                        )
-                    }
-                    .flatMap { [weak self] fee -> Single<FeeAmount?> in
-                        guard let self = self, let fee = fee else { return .just(.zero) }
-
-                        return Single.async {
-                            try await self.sendService.getFeesInPayingToken(
-                                feeInSOL: fee,
-                                payingFeeWallet: wallet
-                            )
-                        }
-                    }
+                .asyncMap { [weak self] _ async throws -> FeeAmount? in // TODO: - flatMapLatest
+                    guard let self = self,
+                          let wallet = self.sendTokenViewModel.wallet,
+                          let receiver = self.recipient
+                    else { return .zero }
+                    let feeInSOL = try await self.sendService.getFees(
+                        from: wallet,
+                        receiver: receiver.address,
+                        network: self.network,
+                        payingTokenMint: wallet.mintAddress
+                    ) ?? .zero
+                    return try await self.sendService.getFeesInPayingToken(
+                        feeInSOL: feeInSOL,
+                        payingFeeWallet: wallet
+                    )
                 }
-                .subscribe(onNext: { [weak self] fee in
+                .replaceError(with: nil)
+                .sink { [weak self] fee in
                     guard
                         let self = self,
-                        let amount = self.sendTokenViewModel.amountSubject.value,
-                        let wallet = self.sendTokenViewModel.walletSubject.value,
+                        let amount = self.sendTokenViewModel.amount,
+                        let wallet = self.sendTokenViewModel.wallet,
                         let fee = fee
                     else { return }
 
                     if amount.toLamport(decimals: wallet.token.decimals) + fee.total > (wallet.lamports ?? 0) {
-                        self.payingWalletSubject.accept(self.walletRepository.nativeWallet)
+                        self.payingWallet = self.walletRepository.nativeWallet
                     } else {
-                        self.payingWalletSubject.accept(wallet)
+                        self.payingWallet = wallet
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             bindFees()
         }
