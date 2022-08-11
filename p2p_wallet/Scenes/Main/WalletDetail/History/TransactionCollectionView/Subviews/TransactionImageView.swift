@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxSwift
 import SolanaSwift
 import UIKit
 
@@ -29,6 +28,15 @@ final class TransactionImageView: BEView {
 
     private lazy var fromTokenImageView = CoinLogoImageView(size: miniIconsSize)
     private lazy var toTokenImageView = CoinLogoImageView(size: miniIconsSize)
+
+    var imageType: ImageType? {
+        didSet {
+            guard let imageType = imageType else {
+                return
+            }
+            setUp(imageType: imageType)
+        }
+    }
 
     init(
         size: CGFloat,
@@ -98,13 +106,5 @@ extension TransactionImageView {
     enum ImageType {
         case oneImage(image: UIImage)
         case fromOneToOne(from: Token?, to: Token?)
-    }
-}
-
-// MARK: - Reactive
-
-extension Reactive where Base == TransactionImageView {
-    var imageType: Binder<Base.ImageType> {
-        Binder(base) { $0.setUp(imageType: $1) }
     }
 }
