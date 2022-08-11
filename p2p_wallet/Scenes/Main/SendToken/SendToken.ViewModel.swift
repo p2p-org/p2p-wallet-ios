@@ -62,10 +62,10 @@ extension SendToken {
         @Published private var navigatableScene: NavigatableScene?
         @Published private var wallet: Wallet?
         @Published private var amount: Double?
-        @Published private var recipient: Recipient?
-        @Published private var network = Network.solana
+        @Published var recipient: Recipient?
+        @Published var network = Network.solana
         @Published private var loadingState = LoadableState.notRequested
-        @Published private var payingWallet: Wallet?
+        @Published var payingWallet: Wallet?
         let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(
             request: {
                 .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
@@ -89,13 +89,15 @@ extension SendToken {
                let selectableWallet = walletsRepository.getWallets()
                    .first(where: { $0.pubkey == pubkey }) ?? walletsRepository.nativeWallet
             {
-                walletSubject = selectableWallet
+                wallet = selectableWallet
             } else {
-                walletSubject = walletsRepository.nativeWallet
+                wallet = walletsRepository.nativeWallet
             }
 
             bind()
-            reload()
+            Task {
+                await reload()
+            }
         }
 
         deinit {
@@ -114,7 +116,7 @@ extension SendToken {
                     if let wallet = wallets.first(where: { $0.pubkey == myWallet?.pubkey }),
                        wallet.lamports != myWallet?.lamports
                     {
-                        self.walletSubject.accept(wallet)
+                        self.wallet = wallet
                     }
                 }
                 .store(in: &subscriptions)
@@ -171,20 +173,18 @@ extension SendToken {
                 )
             )
 
-            navigationSubject.send(
-                .processTransaction(
-                    ProcessTransaction.SendTransaction(
-                        sendService: sendService,
-                        network: network,
-                        sender: wallet,
-                        receiver: receiver,
-                        authority: walletsRepository.nativeWallet?.pubkey,
-                        amount: amount.toLamport(decimals: wallet.token.decimals),
-                        payingFeeWallet: payingWallet,
-                        feeInSOL: feeInfoSubject.value?.feeAmountInSOL.total ?? 0,
-                        feeInToken: feeInfoSubject.value?.feeAmount,
-                        isSimulation: false
-                    )
+            navigatableScene = .processTransaction(
+                ProcessTransaction.SendTransaction(
+                    sendService: sendService,
+                    network: network,
+                    sender: wallet,
+                    receiver: receiver,
+                    authority: walletsRepository.nativeWallet?.pubkey,
+                    amount: amount.toLamport(decimals: wallet.token.decimals),
+                    payingFeeWallet: payingWallet,
+                    feeInSOL: feeInfoSubject.value?.feeAmountInSOL.total ?? 0,
+                    feeInToken: feeInfoSubject.value?.feeAmount,
+                    isSimulation: false
                 )
             )
         }
@@ -192,22 +192,6 @@ extension SendToken {
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
-    var navigationSubject: CurrentValueSubject<SendToken.NavigatableScene?, Never> {
-        <#code#>
-    }
-
-    var walletSubject: BehaviorRelay<Wallet?> {
-        <#code#>
-    }
-
-    var amountSubject: BehaviorRelay<Double?> {
-        <#code#>
-    }
-
-    func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
-        <#code#>
-    }
-
     var navigationDriver: AnyPublisher<SendToken.NavigatableScene?, Never> {
         navigationSubject.asDriver()
     }
