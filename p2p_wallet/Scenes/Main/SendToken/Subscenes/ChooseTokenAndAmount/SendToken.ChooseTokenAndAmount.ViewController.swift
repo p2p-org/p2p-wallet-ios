@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 23/11/2021.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -14,6 +15,7 @@ extension SendToken.ChooseTokenAndAmount {
 
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
         private var viewAppeared: Bool = false
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -59,7 +61,7 @@ extension SendToken.ChooseTokenAndAmount {
         }
 
         func clearForm() {
-            viewModel.clearForm.onNext(())
+            viewModel.clearForm.send()
         }
 
         // MARK: - Methods
@@ -83,14 +85,14 @@ extension SendToken.ChooseTokenAndAmount {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
 
-            viewModel.errorDriver
+            viewModel.errorPublisher
                 .map { $0 == nil }
-                .drive(nextButton.rx.isEnabled)
-                .disposed(by: disposeBag)
+                .assign(to: \.isEnabled, on: nextButton)
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
@@ -112,7 +114,7 @@ extension SendToken.ChooseTokenAndAmount {
                 showAlert(
                     title: L10n.changeTheToken,
                     message: L10n.ifTheTokenIsChangedToTheAddressFieldMustBeFilledInWithA(
-                        viewModel.getSelectedWallet()?.token.symbol ?? "",
+                        viewModel.wallet?.token.symbol ?? "",
                         L10n.compatibleAddress(L10n.solana)
                     ),
                     buttonTitles: [L10n.discard, L10n.change],

@@ -6,14 +6,14 @@
 //
 //
 
+import Combine
 import Down
-import RxCocoa
-import RxSwift
 import UIKit
 
 extension ReceiveToken {
     class NetworkSelectionScene: BaseViewController {
         private let viewModel: ReceiveSceneModel
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: ReceiveSceneModel) {
             self.viewModel = viewModel
@@ -32,12 +32,11 @@ extension ReceiveToken {
                             networkDescription: L10n
                                 .receiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletList,
                             icon: .squircleSolanaIcon
-                        ).setup { [unowned self] view in
-                            self.viewModel.tokenTypeDriver
+                        ).setup { view in
+                            viewModel.tokenTypePublisher
                                 .map { type -> Bool in type == .solana }
-                                .asDriver()
-                                .drive(view.rx.isSelected)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isSelected, on: view)
+                                .store(in: &subscriptions)
                         }.onTap { [unowned self] in
                             self.viewModel.switchToken(.solana)
                             self.back()
@@ -52,11 +51,10 @@ extension ReceiveToken {
                                 .youMayLoseAssetsBySendingAnotherCoin("Bitcoin"),
                             icon: .squircleBitcoinIcon
                         ).setup { [unowned self] view in
-                            self.viewModel.tokenTypeDriver
+                            self.viewModel.tokenTypePublisher
                                 .map { type -> Bool in type == .btc }
-                                .asDriver()
-                                .drive(view.rx.isSelected)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isSelected, on: view)
+                                .store(in: &subscriptions)
                         }.onTap { [unowned self] in
                             if self.viewModel.isRenBtcCreated() {
                                 self.viewModel.switchToken(.btc)
@@ -141,15 +139,6 @@ extension ReceiveToken {
                 UIImageView(width: 22, height: 22, image: .checkBoxIOS)
                     .setup { view in selectionView = view }
             }
-        }
-    }
-}
-
-private extension Reactive where Base: ReceiveToken.NetworkCell {
-    /// Bindable sink for `text` property.
-    var isSelected: Binder<Bool> {
-        Binder(base) { view, value in
-            view.isSelected = value
         }
     }
 }
