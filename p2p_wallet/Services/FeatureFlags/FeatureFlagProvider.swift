@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import RxSwift
 
-public final class FeatureFlagProvider: ReactiveCompatible {
+public final class FeatureFlagProvider {
     public static let shared = FeatureFlagProvider()
 
     var featureFlags: [FeatureFlag] = []
