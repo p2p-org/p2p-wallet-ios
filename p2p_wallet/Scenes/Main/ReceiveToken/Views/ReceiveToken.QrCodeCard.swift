@@ -90,27 +90,27 @@ extension ReceiveToken {
                         .onTap { [unowned self] in self.onCopy?(pubKey) }
                     UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
                         .onTap { [unowned self] in
-                            qrImageRender.render(
+                            let image = try await qrImageRender.render(
                                 username: username,
                                 address: pubKey,
                                 token: token,
                                 showTokenIcon: showCoinLogo
-                            ).subscribe(onSuccess: { [weak self] image in
+                            )
+                            await MainActor.run { [weak self] in
                                 self?.onShare?(image)
-                            })
-                                .disposed(by: disposeBag)
+                            }
                         }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in
-                            qrImageRender.render(
+                            let image = try await qrImageRender.render(
                                 username: username,
                                 address: pubKey,
                                 token: token,
                                 showTokenIcon: showCoinLogo
-                            ).subscribe(onSuccess: { [weak self] image in
+                            )
+                            await MainActor.run { [weak self] in
                                 self?.onSave?(image)
-                            })
-                                .disposed(by: disposeBag)
+                            }
                         }
                 }.padding(.init(x: 0, y: 4))
 
