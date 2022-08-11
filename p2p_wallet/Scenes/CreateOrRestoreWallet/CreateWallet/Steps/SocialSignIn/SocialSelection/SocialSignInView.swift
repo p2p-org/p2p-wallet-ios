@@ -40,14 +40,13 @@ struct SocialSignInView: View {
     }
 
     var content: some View {
-        StartPageView(
+        OnboardingContentView(
             data: .init(
                 image: .introWelcomeToP2pFamily,
                 title: L10n.protectingTheFunds,
                 subtitle: L10n.WeUseMultiFactorAuthentication
                     .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
-            ),
-            subtitleFontWeight: .regular
+            )
         ).padding(.horizontal, 40)
     }
 
