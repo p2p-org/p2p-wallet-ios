@@ -5,10 +5,10 @@
 //  Created by Chung Tran on 09/12/2021.
 //
 
+import Combine
 import FeeRelayerSwift
 import Foundation
 import SolanaSwift
-import Combine
 
 protocol SendTokenRecipientAndNetworkHandler: AnyObject {
     var subscriptions: [AnyCancellable] { get set }
@@ -36,7 +36,7 @@ extension SendTokenRecipientAndNetworkHandler {
     }
 
     var feeInfoDriver: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
-        feeInfoSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
+        feeInfoSubject.eraseToAnyPublisher().receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     func getSelectedRecipient() -> SendToken.Recipient? {
@@ -100,9 +100,9 @@ extension SendTokenRecipientAndNetworkHandler {
         )
             .sink { [weak self] payingWallet, recipient, network in
                 guard let self = self else { return }
-                
+
                 if let wallet = self.getSelectedWallet() {
-                    self.feeInfoSubject.request = Single.async(with: self) { `self` -> SendToken.FeeInfo in
+                    self.feeInfoSubject.request = {
                         let feeAmountInSol = try await self.sendService.getFees(
                             from: wallet,
                             receiver: recipient?.address,
@@ -142,9 +142,9 @@ extension SendTokenRecipientAndNetworkHandler {
                         )
                     }
                 } else {
-                    self.feeInfoSubject
-                        .request =
-                        .just(.init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil))
+                    self.feeInfoSubject.request = {
+                        .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
+                    }
                 }
                 self.feeInfoSubject.reload()
             }
