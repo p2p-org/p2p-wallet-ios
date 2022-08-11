@@ -52,8 +52,13 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         }
         cachedResult = try await CountriesAPIImpl().fetchCountries()
             .map { .init(value: $0, isSelected: $0.code == initialSelectedCountry?.code) }
-        return cachedResult
-            .filteredAndSorted(byKeyword: keyword.value)
+        var countries = cachedResult.filteredAndSorted(byKeyword: keyword.value)
+        // Put initial selected country in the first place
+        if let selectedIndex = countries.firstIndex(where: { $0.value.code == initialSelectedCountry?.code }) {
+            let selectedCountry = countries.remove(at: selectedIndex)
+            countries.insert(selectedCountry, at: .zero)
+        }
+        return countries
     }
 
     private func emptyCountryModel() -> SelectableCountry {

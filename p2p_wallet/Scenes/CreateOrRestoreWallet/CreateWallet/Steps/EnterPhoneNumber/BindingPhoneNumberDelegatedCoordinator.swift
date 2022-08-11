@@ -15,8 +15,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             mv.phone = initialPhoneNumber
             let vc = EnterPhoneNumberViewController(viewModel: mv)
 
-            mv.coordinatorIO.selectFlag.sinkAsync { [weak self] in
-                guard let result = try await self?.selectCountry() else { return }
+            mv.coordinatorIO.selectFlag.sinkAsync { [weak self] selectedCountry in
+                guard let result = try await self?.selectCountry(selectedCountry: selectedCountry) else { return }
                 mv.coordinatorIO.countrySelected.send(result)
             }.store(in: &subscriptions)
 
@@ -79,10 +79,10 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         rootViewController?.present(vc, animated: true)
     }
 
-    public func selectCountry() async throws -> Country? {
+    public func selectCountry(selectedCountry: Country?) async throws -> Country? {
         guard let rootViewController = rootViewController else { return nil }
         let coordinator = ChoosePhoneCodeCoordinator(
-            selectedCountry: nil,
+            selectedCountry: selectedCountry,
             presentingViewController: rootViewController
         )
         return try await coordinator.start().async()
