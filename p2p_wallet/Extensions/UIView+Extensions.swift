@@ -28,7 +28,7 @@ extension UIView {
         }
     }
 
-    func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
+    func showErrorView(title: String? = nil, description: String? = nil, retryAction: (() -> Void)? = nil) {
         removeErrorView()
         let errorView = ErrorView(backgroundColor: .textWhite)
         if let title = title {

@@ -40,10 +40,9 @@ extension UIView {
             showErrorView(
                 title: L10n.error,
                 description: L10n.somethingWentWrong + ". " + L10n.pleaseTryAgainLater.uppercaseFirst,
-                retryAction: .init(workFactory: { _ in
+                retryAction: {
                     reloadAction()
-                    return .just(())
-                })
+                }
             )
         }
     }

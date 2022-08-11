@@ -39,7 +39,7 @@ class WLPhrasesListView: BEView {
         .padding(.init(all: 9))
         .onTap(self, action: #selector(copyToClipboard))
 
-    var copyToClipboardAction: CocoaAction?
+    var copyToClipboardAction: (() -> Void)?
 
     override func commonInit() {
         super.commonInit()
@@ -65,7 +65,7 @@ class WLPhrasesListView: BEView {
     }
 
     @objc func copyToClipboard() {
-        copyToClipboardAction?.execute()
+        copyToClipboardAction?()
     }
 
     func setUp(phrases: [String]) {

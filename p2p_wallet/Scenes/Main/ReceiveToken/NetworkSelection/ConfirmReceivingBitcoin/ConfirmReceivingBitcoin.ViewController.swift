@@ -156,7 +156,6 @@ extension ConfirmReceivingBitcoin {
                     if error != nil {
                         self?.showErrorView(retryAction: .init { [weak self] in
                             self?.viewModel.reload()
-                            return .just(())
                         })
                     }
                 }

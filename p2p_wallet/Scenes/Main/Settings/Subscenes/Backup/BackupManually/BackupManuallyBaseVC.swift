@@ -32,9 +32,8 @@ class BackupManuallyBaseVC: BaseVC {
 
     lazy var phrasesListView: WLPhrasesListView = {
         let listView = WLPhrasesListView(forAutoLayout: ())
-        listView.copyToClipboardAction = CocoaAction { [weak self] in
+        listView.copyToClipboardAction = { [weak self] in
             self?.buttonCopyToClipboardDidTouch()
-            return .just(())
         } // phrase
         listView.setUp(phrases: phrases)
         return listView

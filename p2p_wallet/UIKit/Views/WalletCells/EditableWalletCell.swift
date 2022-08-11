@@ -20,8 +20,8 @@ class EditableWalletCell: WalletCell {
     lazy var buttonStackView = UIStackView(axis: .horizontal, spacing: 16, alignment: .fill, distribution: .fill)
     lazy var hideButton = UIImageView(width: 24, height: 24, image: .visibilityHide, tintColor: .textBlack)
 
-    var editAction: CocoaAction?
-    var hideAction: CocoaAction?
+    var editAction: (() -> Void)?
+    var hideAction: (() -> Void)?
 
     override func commonInit() {
         super.commonInit()
@@ -57,10 +57,10 @@ class EditableWalletCell: WalletCell {
     }
 
     @objc func buttonEditDidTouch() {
-        editAction?.execute()
+        editAction?()
     }
 
     @objc func buttonHideDidTouch() {
-        hideAction?.execute()
+        hideAction?()
     }
 }
