@@ -6,6 +6,7 @@ import BECollectionView_Combine
 import BEPureLayout
 import Foundation
 import KeyAppUI
+import UIKit
 
 final class ChoosePhoneCodeViewController: BaseViewController {
     // MARK: - Properties
@@ -66,6 +67,11 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                 .setup { collectionView in
                     collectionView.delegate = self
                 }
+            TextButton(title: L10n.ok, style: .primary, size: .large)
+                .onPressed { [weak self] _ in
+                    self?.doneButtonDidTouch()
+                }
+                .padding(UIEdgeInsets(top: .zero, left: 20, bottom: 34, right: 20))
         }
     }
 
