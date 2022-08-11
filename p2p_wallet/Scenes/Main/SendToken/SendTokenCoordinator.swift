@@ -5,9 +5,8 @@
 //  Created by Ivan on 18.04.2022.
 //
 
+import Combine
 import Foundation
-import RxSwift
-import UIKit
 
 extension SendToken {
     @MainActor
@@ -16,6 +15,7 @@ extension SendToken {
         private weak var navigationController: UINavigationController?
 
         private var coordinator: ChooseRecipientAndNetwork.Coordinator?
+        private var subscriptions = [AnyCancellable]()
 
         var doneHandler: (() -> Void)?
 
@@ -35,9 +35,9 @@ extension SendToken {
         }
 
         private func bind() {
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigatableScenePublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
