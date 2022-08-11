@@ -50,7 +50,9 @@ class SocialSignInViewModel: BaseViewModel {
 
         loading = .other
         let process: ReactiveProcess<Void> = .init(data: ()) { [weak self] error in
-            if let error = error { self?.notificationService.showInAppNotification(.error(error)) }
+            if let error = error {
+                self?.notificationService.showDefaultErrorNotification()
+            }
             self?.loading = nil
         }
         coordinatorIO.outBack.send(process)
@@ -65,7 +67,9 @@ class SocialSignInViewModel: BaseViewModel {
         }
 
         let process: ReactiveProcess<SocialProvider> = .init(data: provider) { [weak self] error in
-            if let error = error { self?.notificationService.showInAppNotification(.error(error)) }
+            if let error = error {
+                self?.notificationService.showDefaultErrorNotification()
+            }
             self?.loading = nil
         }
 
