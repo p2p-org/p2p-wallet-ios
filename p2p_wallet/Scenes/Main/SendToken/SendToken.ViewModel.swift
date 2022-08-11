@@ -148,23 +148,21 @@ extension SendToken {
         }
 
         private func send() {
-            guard let wallet = walletSubject.value,
-                  var amount = amountSubject.value,
-                  let receiver = recipientSubject.value
+            guard let wallet = wallet,
+                  var amount = amount,
+                  let receiver = recipient
             else { return }
 
             // modify amount if using source wallet as paying wallet
             if let totalFee = feeInfoSubject.value?.feeAmount,
                totalFee.total > 0,
-               payingWalletSubject.value?.pubkey == wallet.pubkey
+               payingWallet?.pubkey == wallet.pubkey
             {
-                let feeAmount = totalFee.total.convertToBalance(decimals: payingWalletSubject.value?.token.decimals)
+                let feeAmount = totalFee.total.convertToBalance(decimals: payingWallet?.token.decimals)
                 if amount + feeAmount > wallet.amount {
                     amount -= feeAmount
                 }
             }
-
-            let network = networkSubject.value
 
             analyticsManager.log(
                 event: .sendSendClick(
@@ -173,7 +171,7 @@ extension SendToken {
                 )
             )
 
-            navigationSubject.accept(
+            navigationSubject.send(
                 .processTransaction(
                     ProcessTransaction.SendTransaction(
                         sendService: sendService,
@@ -182,7 +180,7 @@ extension SendToken {
                         receiver: receiver,
                         authority: walletsRepository.nativeWallet?.pubkey,
                         amount: amount.toLamport(decimals: wallet.token.decimals),
-                        payingFeeWallet: payingWalletSubject.value,
+                        payingFeeWallet: payingWallet,
                         feeInSOL: feeInfoSubject.value?.feeAmountInSOL.total ?? 0,
                         feeInToken: feeInfoSubject.value?.feeAmount,
                         isSimulation: false
