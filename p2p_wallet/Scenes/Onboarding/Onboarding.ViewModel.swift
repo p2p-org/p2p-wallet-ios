@@ -6,10 +6,9 @@
 //
 
 import AnalyticsManager
+import Combine
 import LocalAuthentication
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 import UserNotifications
@@ -20,7 +19,7 @@ protocol OnboardingHandler {
 }
 
 protocol OnboardingViewModelType {
-    var navigatableSceneDriver: Driver<Onboarding.NavigatableScene?> { get }
+    var navigatableScenePublisher: AnyPublisher<Onboarding.NavigatableScene?, Never> { get }
 
     func savePincode(_ pincode: String)
 
@@ -36,7 +35,8 @@ protocol OnboardingViewModelType {
 }
 
 extension Onboarding {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var handler: OnboardingHandler
@@ -50,7 +50,7 @@ extension Onboarding {
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        @Published private var navigatableScene: NavigatableScene?
 
         // MARK: - Initializer
 
@@ -59,14 +59,14 @@ extension Onboarding {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
     }
 }
 
 extension Onboarding.ViewModel: OnboardingViewModelType {
-    var navigatableSceneDriver: Driver<Onboarding.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigatableScenePublisher: AnyPublisher<Onboarding.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     // MARK: - Pincode
@@ -143,7 +143,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
 
     func navigateNext() {
         if pinCodeStorage.pinCode == nil {
-            navigationSubject.accept(.createPincode)
+            navigatableScene = .createPincode
             return
         }
 
@@ -151,7 +151,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
             var error: NSError?
             if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
                 // evaluate
-                navigationSubject.accept(.setUpBiometryAuthentication)
+                navigatableScene = .setUpBiometryAuthentication
                 analyticsManager.log(event: .setupFaceidOpen)
             } else {
                 enableBiometryLater()
@@ -171,7 +171,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
 
                 // not authorized
                 guard settings.authorizationStatus == .authorized else {
-                    self.navigationSubject.accept(.setUpNotifications)
+                    self.navigatableScene = .setUpNotifications
                     self.analyticsManager.log(event: .setupAllowPushOpen)
                     return
                 }
@@ -189,7 +189,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     }
 
     func cancelOnboarding() {
-        navigationSubject.accept(.dismiss)
+        navigatableScene = .dismiss
         handler.onboardingDidCancel()
     }
 
@@ -197,14 +197,14 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
         switch OnboardingTracking.currentFlow {
         case .create:
             analyticsManager
-                .log(event: .walletCreated(lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"))
+                .log(event: .walletCreated(lastScreen: navigatableScene?.screenName ?? "Sign_In_Apple"))
         case .restore:
             analyticsManager
-                .log(event: .walletRestored(lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"))
+                .log(event: .walletRestored(lastScreen: navigatableScene?.screenName ?? "Sign_In_Apple"))
         case .none: break
         }
 
-        navigationSubject.accept(.dismiss)
+        navigatableScene = .dismiss
         handler.onboardingDidComplete()
     }
 }
