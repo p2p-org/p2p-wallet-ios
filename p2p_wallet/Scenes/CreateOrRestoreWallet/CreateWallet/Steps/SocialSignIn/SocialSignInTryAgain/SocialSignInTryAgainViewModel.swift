@@ -51,9 +51,10 @@ class SocialSignInTryAgainViewModel: NSObject, ViewModelType {
 
         input.onError.sink { [weak self] error in
             DispatchQueue.main.async {
-                self?.notificationService.showInAppNotification(.error(error))
+                self?.notificationService.showDefaultErrorNotification()
+//                self?.notificationService.showInAppNotification(.error(error))
             }
-        }
-        .store(in: &subscriptions)
+            DefaultLogManager.shared.log(event: error.readableDescription, logLevel: .error)
+        }.store(in: &subscriptions)
     }
 }
