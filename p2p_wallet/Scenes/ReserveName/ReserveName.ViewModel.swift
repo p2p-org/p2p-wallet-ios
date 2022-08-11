@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import GT3Captcha
 import NameService
@@ -13,12 +14,12 @@ import Resolver
 import UIKit
 
 protocol ReserveNameViewModelType: AnyObject {
-    var navigationDriver: Driver<ReserveName.NavigatableScene?> { get }
-    var textFieldStateDriver: Driver<ReserveName.TextFieldState> { get }
-    var mainButtonStateDriver: Driver<ReserveName.MainButtonState> { get }
-    var textFieldTextSubject: BehaviorRelay<String?> { get }
-    var usernameValidationLoadingDriver: Driver<Bool> { get }
-    var isLoadingDriver: Driver<Bool> { get }
+    var navigationPublisher: AnyPublisher<ReserveName.NavigatableScene?, Never> { get }
+    var textFieldStatePublisher: AnyPublisher<ReserveName.TextFieldState, Never> { get }
+    var mainButtonStatePublisher: AnyPublisher<ReserveName.MainButtonState, Never> { get }
+    var textFieldTextSubject: CurrentValueSubject<String?, Never> { get }
+    var usernameValidationLoadingPublisher: AnyPublisher<Bool, Never> { get }
+    var isLoadingPublisher: AnyPublisher<Bool, Never> { get }
     var kind: ReserveNameKind { get }
 
     func showTermsOfUse()
@@ -29,7 +30,8 @@ protocol ReserveNameViewModelType: AnyObject {
 }
 
 extension ReserveName {
-    class ViewModel: NSObject {
+    @MainActor
+    class ViewModel: NSObject, ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var notificationsService: NotificationService
@@ -52,18 +54,18 @@ extension ReserveName {
         let kind: ReserveNameKind
         private let goBackOnCompletion: Bool
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
-        private var nameAvailabilityDisposable: Disposable?
+        private var nameAvailabilityTask: Task<Void, Never>?
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let textFieldStateSubject = BehaviorRelay<TextFieldState>(value: .empty)
-        private let mainButtonStateSubject = BehaviorRelay<ReserveName.MainButtonState>(value: .empty)
-        let textFieldTextSubject = BehaviorRelay<String?>(value: nil)
-        private let usernameValidationLoadingSubject = BehaviorRelay<Bool>(value: false)
-        private let isLoadingSubject = BehaviorRelay<Bool>(value: false)
+        @Published private var navigation: NavigatableScene?
+        @Published private var textFieldState: TextFieldState = .empty
+        @Published private var mainButtonState: ReserveName.MainButtonState = .empty
+        let textFieldTextSubject = CurrentValueSubject<String?, Never>(nil)
+        @Published private var usernameValidationLoading: Bool = false
+        @Published private var isLoading: Bool = false
 
         init(
             kind: ReserveNameKind,
@@ -88,58 +90,55 @@ extension ReserveName {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         private func bind() {
             textFieldTextSubject
-                .subscribe { [weak self] in
+                .sink { [weak self] in
                     self?.checkUsernameForAvailability(string: $0)
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
         }
 
         private func checkUsernameForAvailability(string: String?) {
-            nameAvailabilityDisposable?.dispose()
+            nameAvailabilityTask?.cancel()
 
             guard let string = string, !string.isEmpty else {
                 return setEmptyState()
             }
 
-            usernameValidationLoadingSubject.accept(true)
+            usernameValidationLoading = true
 
-            nameAvailabilityDisposable = Single.async { [weak self] in
-                try await self?.nameService.isNameAvailable(string) ?? false
+            nameAvailabilityTask = Task { [weak self] in
+                guard let self = self else { return }
+                let isNameAvailable = (try? await self.nameService.isNameAvailable(string)) ?? false
+                let state: TextFieldState = isNameAvailable ? .available(name: string) : .unavailable(name: string)
+                self.textFieldState = state
+                self.mainButtonState = isNameAvailable ? .canContinue : .unavailableUsername
+                self.usernameValidationLoading = false
             }
-            .subscribe(
-                onSuccess: { [weak self] in
-                    let state: TextFieldState = $0 ? .available(name: string) : .unavailable(name: string)
-                    self?.textFieldStateSubject.accept(state)
-                    self?.mainButtonStateSubject.accept($0 ? .canContinue : .unavailableUsername)
-                    self?.usernameValidationLoadingSubject.accept(false)
-                }
-            )
         }
 
         private func checkIfUsernameHasAlreadyBeenRegistered() {
-            isLoadingSubject.accept(true)
+            isLoading = true
 
             Task {
                 do {
                     let name = try await nameService.getName(owner)
-                    isLoadingSubject.accept(false)
+                    isLoading = false
                     if let name = name {
-                        await nameDidReserve(name)
+                        nameDidReserve(name)
                     }
                 } catch {
-                    isLoadingSubject.accept(false)
+                    isLoading = false
                 }
             }
         }
 
         private func setEmptyState() {
-            textFieldStateSubject.accept(.empty)
-            mainButtonStateSubject.accept(.empty)
+            textFieldState = .empty
+            mainButtonState = .empty
         }
 
         private func reserveName(
@@ -150,7 +149,7 @@ extension ReserveName {
             guard let name = textFieldTextSubject.value else { return }
             analyticsManager.log(event: .usernameSaved(lastScreen: "Onboarding"))
 
-            isLoadingSubject.accept(true)
+            isLoading = true
 
             Task {
                 do {
@@ -166,10 +165,10 @@ extension ReserveName {
                                 )
                             )
                         )
-                    isLoadingSubject.accept(false)
-                    await nameDidReserve(name)
+                    isLoading = false
+                    nameDidReserve(name)
                 } catch {
-                    isLoadingSubject.accept(false)
+                    isLoading = false
                     if let error = error as? NameServiceError,
                        error == .invalidStatusCode(500)
                     {
@@ -209,35 +208,33 @@ extension ReserveName {
 }
 
 extension ReserveName.ViewModel: ReserveNameViewModelType {
-    var usernameValidationLoadingDriver: Driver<Bool> {
-        usernameValidationLoadingSubject.asDriver()
+    var usernameValidationLoadingPublisher: AnyPublisher<Bool, Never> {
+        $usernameValidationLoading.eraseToAnyPublisher()
     }
 
     func skipButtonPressed() {
-        navigationSubject.accept(
-            .skipAlert { [weak self] in
-                let isFilled = self?.textFieldStateSubject.value == ReserveName.TextFieldState
-                    .empty ? "Not_Filled" : "Filled"
-                self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
-                self?.handleSkipAlertAction(isProceed: $0)
-            }
-        )
+        navigation = .skipAlert { [weak self] in
+            let isFilled = self?.textFieldState == ReserveName.TextFieldState
+                .empty ? "Not_Filled" : "Filled"
+            self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
+            self?.handleSkipAlertAction(isProceed: $0)
+        }
     }
 
-    var navigationDriver: Driver<ReserveName.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<ReserveName.NavigatableScene?, Never> {
+        $navigation.eraseToAnyPublisher()
     }
 
-    var textFieldStateDriver: Driver<ReserveName.TextFieldState> {
-        textFieldStateSubject.asDriver()
+    var textFieldStatePublisher: AnyPublisher<ReserveName.TextFieldState, Never> {
+        $textFieldState.eraseToAnyPublisher()
     }
 
-    var mainButtonStateDriver: Driver<ReserveName.MainButtonState> {
-        mainButtonStateSubject.asDriver()
+    var mainButtonStatePublisher: AnyPublisher<ReserveName.MainButtonState, Never> {
+        $mainButtonState.eraseToAnyPublisher()
     }
 
-    var isLoadingDriver: Driver<Bool> {
-        isLoadingSubject.asDriver()
+    var isLoadingPublisher: AnyPublisher<Bool, Never> {
+        $isLoading.eraseToAnyPublisher()
     }
 
     func goForth() {
@@ -245,22 +242,22 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     }
 
     func goBack() {
-        navigationSubject.accept(.back)
+        navigation = .back
     }
 
     func showTermsOfUse() {
-        navigationSubject.accept(.termsOfUse)
+        navigation = .termsOfUse
     }
 
     func showPrivacyPolicy() {
-        navigationSubject.accept(.privacyPolicy)
+        navigation = .privacyPolicy
     }
 }
 
 extension ReserveName.ViewModel: GT3CaptchaManagerDelegate {
     func gtCaptcha(_: GT3CaptchaManager, errorHandler error: GT3Error) {
         if error.isNameServiceUnavailable {
-            mainButtonStateSubject.accept(.unavailableNameService)
+            mainButtonState = .unavailableNameService
         }
         notificationsService
             .showInAppNotification(.message(error.readableDescription))
