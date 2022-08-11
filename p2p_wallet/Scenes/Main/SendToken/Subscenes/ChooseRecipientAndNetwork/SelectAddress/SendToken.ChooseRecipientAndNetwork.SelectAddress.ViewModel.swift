@@ -6,10 +6,9 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDidSelectHandler {
@@ -17,16 +16,18 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var showAfterConfirmation: Bool { get }
     var preSelectedNetwork: SendToken.Network? { get }
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel { get }
-    var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> { get }
-    var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> { get }
-    var searchTextDriver: Driver<String?> { get }
-    var walletDriver: Driver<Wallet?> { get }
-    var recipientDriver: Driver<SendToken.Recipient?> { get }
-    var networkDriver: Driver<SendToken.Network> { get }
-    var payingWalletDriver: Driver<Wallet?> { get }
-    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> { get }
-    var warningDriver: Driver<String?> { get }
-    var isValidDriver: Driver<Bool> { get }
+    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?, Never> {
+        get
+    }
+    var inputStatePublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState, Never> { get }
+    var searchTextPublisher: AnyPublisher<String?, Never> { get }
+    var walletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var recipientPublisher: AnyPublisher<SendToken.Recipient?, Never> { get }
+    var networkPublisher: AnyPublisher<SendToken.Network, Never> { get }
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var feeInfoPublisher: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> { get }
+    var warningPublisher: AnyPublisher<String?, Never> { get }
+    var isValidPublisher: AnyPublisher<Bool, Never> { get }
 
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
     func getCurrentSearchKey() -> String?
@@ -53,7 +54,7 @@ extension SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     @MainActor
-    class ViewModel {
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
@@ -67,15 +68,15 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Properties
 
         let relayMethod: SendTokenRelayMethod
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         let recipientsListViewModel = RecipientsListViewModel()
         let showAfterConfirmation: Bool
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let inputStateSubject = BehaviorRelay<InputState>(value: .searching)
-        private let searchTextSubject = BehaviorRelay<String?>(value: nil)
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var inputState = InputState.searching
+        @Published private var searchText: String?
 
         init(
             chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType,
@@ -92,7 +93,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
             if chooseRecipientAndNetworkViewModel.getSelectedRecipient() != nil {
                 if showAfterConfirmation {
-                    inputStateSubject.accept(.recipientSelected)
+                    inputState = .recipientSelected
                 } else {
                     clearRecipient()
                 }
@@ -108,70 +109,68 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
         chooseRecipientAndNetworkViewModel.preSelectedNetwork
     }
 
-    var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
-    var inputStateDriver: Driver<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState> {
-        inputStateSubject.asDriver()
+    var inputStatePublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState, Never> {
+        $inputState.eraseToAnyPublisher()
     }
 
-    var searchTextDriver: Driver<String?> {
-        searchTextSubject.asDriver()
+    var searchTextPublisher: AnyPublisher<String?, Never> {
+        $searchText.eraseToAnyPublisher()
     }
 
-    var walletDriver: Driver<Wallet?> {
-        chooseRecipientAndNetworkViewModel.walletDriver
+    var walletPublisher: AnyPublisher<Wallet?, Never> {
+        chooseRecipientAndNetworkViewModel.walletPublisher
     }
 
-    var recipientDriver: Driver<SendToken.Recipient?> {
-        chooseRecipientAndNetworkViewModel.recipientDriver
+    var recipientPublisher: AnyPublisher<SendToken.Recipient?, Never> {
+        chooseRecipientAndNetworkViewModel.recipientPublisher
     }
 
-    var networkDriver: Driver<SendToken.Network> {
-        chooseRecipientAndNetworkViewModel.networkDriver
+    var networkPublisher: AnyPublisher<SendToken.Network, Never> {
+        chooseRecipientAndNetworkViewModel.networkPublisher
     }
 
-    var payingWalletDriver: Driver<Wallet?> {
-        chooseRecipientAndNetworkViewModel.payingWalletDriver
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> {
+        chooseRecipientAndNetworkViewModel.payingWalletPublisher
     }
 
-    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {
-        chooseRecipientAndNetworkViewModel.feeInfoDriver
+    var feeInfoPublisher: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
+        chooseRecipientAndNetworkViewModel.feeInfoPublisher
     }
 
-    var warningDriver: Driver<String?> {
-        recipientDriver
-            .withLatestFrom(walletDriver) { ($0, $1) }
-            .asObservable()
-            .flatMapLatest { recipient, wallet -> Observable<String?> in
-                Single<String?>.async { [weak self] in
-                    guard let self = self,
-                          let wallet = wallet,
-                          wallet.isNativeSOL,
-                          self.amount < self.minSolForSending,
-                          let address = recipient?.address
-                    else { return nil }
-                    let balance = try await self.solanaAPIClient.getBalance(account: address, commitment: nil)
-                    guard balance == 0 else { return nil }
-                    return L10n.youCanTSendLessThan("\(self.minSolForSending) SOL")
-                }
-                .asObservable()
+    var warningPublisher: AnyPublisher<String?, Never> {
+        recipientPublisher
+            .withLatestFrom(walletPublisher, resultSelector: { ($0, $1) })
+            .asyncMap { [weak self] recipient, wallet -> String? in
+                guard let self = self,
+                      let wallet = wallet,
+                      wallet.isNativeSOL,
+                      self.amount < self.minSolForSending,
+                      let address = recipient?.address
+                else { return nil }
+                let balance = try await self.solanaAPIClient.getBalance(account: address, commitment: nil)
+                guard balance == 0 else { return nil }
+                return L10n.youCanTSendLessThan("\(self.minSolForSending) SOL")
             }
-            .asDriver()
+//            .switchToLatest() // TODO: - Not work
+            .replaceError(with: nil)
+            .eraseToAnyPublisher()
     }
 
-    var isValidDriver: Driver<Bool> {
-        var conditionDrivers = [
-            recipientDriver.map { $0 != nil },
+    var isValidPublisher: AnyPublisher<Bool, Never> {
+        var conditionPublishers = [
+            recipientPublisher.map { $0 != nil },
         ]
 
-        conditionDrivers.append(
-            Driver.combineLatest(
-                networkDriver,
-                payingWalletDriver,
-                feeInfoDriver,
-                warningDriver
+        conditionPublishers.append(
+            Publisher.combineLatest(
+                networkPublisher,
+                payingWalletPublisher,
+                feeInfoPublisher,
+                warningPublisher
             ).map { [weak self] network, payingWallet, feeInfo, warning -> Bool in
                 guard let self = self, (warning ?? "").isEmpty else { return false }
 
@@ -198,7 +197,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
             }
         )
 
-        return Driver.combineLatest(conditionDrivers).map { $0.allSatisfy { $0 }}
+        return Publisher.combineLatest(conditionPublishers).map { $0.allSatisfy { $0 }}
     }
 
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
