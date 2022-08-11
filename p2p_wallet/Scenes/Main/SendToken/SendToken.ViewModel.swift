@@ -15,11 +15,15 @@ import SolanaSwift
 protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenTokenAndAmountHandler,
     SendTokenSelectNetworkViewModelType
 {
-    var navigationSubject: CurrentValueSubject<SendToken.NavigatableScene?, Never> { get }
+    // navigatableScene
+    var navigatableScenePublisher: AnyPublisher<SendToken.NavigatableScene?, Never> { get }
+    func setNavigatableScene(_ scene: SendToken.NavigatableScene?)
+    
+    // loadingState
+    var loadingStatePublisher: AnyPublisher<LoadableState, Never> { get }
+    
     var relayMethod: SendTokenRelayMethod { get }
     var canGoBack: Bool { get }
-    var navigationDriver: AnyPublisher<SendToken.NavigatableScene?, Never> { get }
-    var loadingStateDriver: AnyPublisher<LoadableState, Never> { get }
 
     func getPrice(for symbol: String) -> Double
     func getPrices(for symbols: [String]) -> [String: Double]
@@ -59,7 +63,7 @@ extension SendToken {
 
         // MARK: - Subject
 
-        @Published private var navigatableScene: NavigatableScene?
+        @Published var navigatableScene: NavigatableScene?
         @Published private var wallet: Wallet?
         @Published private var amount: Double?
         @Published var recipient: Recipient?
@@ -192,13 +196,51 @@ extension SendToken {
 }
 
 extension SendToken.ViewModel: SendTokenViewModelType {
-    var navigationDriver: AnyPublisher<SendToken.NavigatableScene?, Never> {
-        navigationSubject.asDriver()
+    // MARK: - navigatableScene
+    
+    func setNavigatableScene(_ scene: SendToken.NavigatableScene?) {
+        navigatableScene = scene
+    }
+    
+    var navigatableScenePublisher: AnyPublisher<SendToken.NavigatableScene?, Never> {
+        $navigatableScene.receive(on: RunLoop.main).eraseToAnyPublisher()
+    }
+    
+    // MARK: - loadingState
+    
+    var loadingStatePublisher: AnyPublisher<LoadableState, Never> {
+        $loadingState.receive(on: RunLoop.main).eraseToAnyPublisher()
+    }
+    
+    // MARK: - SendTokenRecipientAndNetworkHandler
+    func setRecipient(_ recipient: SendToken.Recipient?) {
+        self.recipient = recipient
+    }
+    
+    var recipientPublisher: AnyPublisher<SendToken.Recipient?, Never> {
+        $recipient.receive(on: RunLoop.main).eraseToAnyPublisher()
+    }
+    
+    func setNetwork(_ network: SendToken.Network?) {
+        guard let network = network else {
+            return
+        }
+        self.network = network
+    }
+    
+    var networkPublisher: AnyPublisher<SendToken.Network, Never> {
+        $network.receive(on: RunLoop.main).eraseToAnyPublisher()
+    }
+    
+    func setPayingWallet(_ payingWallet: Wallet?) {
+        self.payingWallet = payingWallet
+    }
+    
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> {
+        $payingWallet.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var loadingStateDriver: AnyPublisher<LoadableState, Never> {
-        loadingStateSubject.asDriver()
-    }
+    
 
     func getSelectedWallet() -> Wallet? {
         walletSubject.value
