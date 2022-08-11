@@ -161,51 +161,49 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
     }
 
     var isValidPublisher: AnyPublisher<Bool, Never> {
-        var conditionPublishers = [
+        Publishers.CombineLatest(
             recipientPublisher.map { $0 != nil },
-        ]
-
-        conditionPublishers.append(
-            Publisher.combineLatest(
+            Publishers.CombineLatest4(
                 networkPublisher,
                 payingWalletPublisher,
                 feeInfoPublisher,
                 warningPublisher
-            ).map { [weak self] network, payingWallet, feeInfo, warning -> Bool in
-                guard let self = self, (warning ?? "").isEmpty else { return false }
+            )
+                .map { [weak self] network, payingWallet, feeInfo, warning -> Bool in
+                    guard let self = self, (warning ?? "").isEmpty else { return false }
 
-                switch network {
-                case .solana:
-                    switch self.relayMethod {
-                    case .relay:
-                        guard let value = feeInfo.value else { return false }
+                    switch network {
+                    case .solana:
+                        switch self.relayMethod {
+                        case .relay:
+                            guard let value = feeInfo.value else { return false }
 
-                        let feeAmountInSOL = value.feeAmountInSOL
-                        let feeAmountInToken = value.feeAmount
-                        if feeAmountInSOL.total == 0 {
+                            let feeAmountInSOL = value.feeAmountInSOL
+                            let feeAmountInToken = value.feeAmount
+                            if feeAmountInSOL.total == 0 {
+                                return true
+                            } else {
+                                guard let payingWallet = payingWallet else { return false }
+                                return (payingWallet.lamports ?? 0) >= feeAmountInToken.total
+                            }
+                        case .reward:
                             return true
-                        } else {
-                            guard let payingWallet = payingWallet else { return false }
-                            return (payingWallet.lamports ?? 0) >= feeAmountInToken.total
                         }
-                    case .reward:
+                    case .bitcoin:
                         return true
                     }
-                case .bitcoin:
-                    return true
                 }
-            }
         )
-
-        return Publisher.combineLatest(conditionPublishers).map { $0.allSatisfy { $0 }}
+            .map { $0 && $1 }
+            .eraseToAnyPublisher()
     }
 
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
-        inputStateSubject.value
+        inputState
     }
 
     func getCurrentSearchKey() -> String? {
-        searchTextSubject.value
+        searchText
     }
 
     func getPrice(for symbol: String) -> Double {
@@ -231,7 +229,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
         if scene == .selectPayingWallet {
             analyticsManager.log(event: .tokenListViewed(lastScreen: "Send", tokenListLocation: "Fee"))
         }
-        navigationSubject.accept(scene)
+        navigatableScene = scene
     }
 
     func navigateToChoosingNetworkScene() {
@@ -248,7 +246,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
     }
 
     func search(_ address: String?) {
-        searchTextSubject.accept(address)
+        searchText = address
         if recipientsListViewModel.searchString != address {
             recipientsListViewModel.searchString = address
             recipientsListViewModel.reload()
@@ -257,11 +255,11 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
 
     func selectRecipient(_ recipient: SendToken.Recipient) {
         chooseRecipientAndNetworkViewModel.selectRecipient(recipient)
-        inputStateSubject.accept(.recipientSelected)
+        inputState = .recipientSelected
     }
 
     func clearRecipient() {
-        inputStateSubject.accept(.searching)
+        inputState = .searching
         chooseRecipientAndNetworkViewModel.selectRecipient(nil)
     }
 
