@@ -1,15 +1,16 @@
 import Combine
+import Onboarding
 import SwiftUI
 
 struct StartParameters {
     let isAnimatable: Bool
 }
 
-final class StartCoordinator: Coordinator<Void> {
+final class StartCoordinator: Coordinator<OnboardingWallet> {
     private let window: UIWindow
     private weak var viewController: UIViewController?
     private let params: StartParameters
-    private var subject = PassthroughSubject<Void, Never>()
+    private var subject = PassthroughSubject<OnboardingWallet, Never>()
 
     // MARK: - Initializer
 
@@ -18,7 +19,7 @@ final class StartCoordinator: Coordinator<Void> {
         self.params = params
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<OnboardingWallet, Never> {
         let viewModel = StartViewModel(isAnimatable: params.isAnimatable)
         let viewController = UIHostingController(rootView: StartView(viewModel: viewModel))
         self.viewController = viewController
@@ -45,18 +46,20 @@ final class StartCoordinator: Coordinator<Void> {
             }
             .store(in: &subscriptions)
 
-        viewModel.mockButtonDidTap
-            .sink { [weak self] _ in
-                self?.openContinue(vc: viewController)
-            }
-            .store(in: &subscriptions)
-
         return subject.eraseToAnyPublisher()
     }
 
     private func openCreateWallet(vc: UIViewController) {
-        coordinate(to: CreateWalletCoordinator(parent: vc))
-            .sink { _ in }.store(in: &subscriptions)
+        coordinate(to: CreateWalletCoordinator(parent: vc)).sink { [weak vc] result in
+            switch result {
+            case let .restore(socialProvider, email):
+                guard let vc = vc else { return }
+                self.openRestoreWallet(vc: vc)
+            case let .success(onboardingWallet):
+                self.subject.send(onboardingWallet)
+            }
+            self.subject.send(completion: .finished)
+        }.store(in: &subscriptions)
     }
 
     private func openRestoreWallet(vc: UIViewController) {
@@ -70,12 +73,6 @@ final class StartCoordinator: Coordinator<Void> {
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
         viewController?.present(vc, animated: true)
-    }
-
-    // TODO: Mock method
-    private func openContinue(vc _: UIViewController) {
-        coordinate(to: ContinueCoordinator(window: window))
-            .sink(receiveValue: {}).store(in: &subscriptions)
     }
 
     private func style(nc: UINavigationController) {

@@ -15,3 +15,19 @@ extension SocialProvider {
         }
     }
 }
+
+struct ReactiveProcess<T> {
+    let data: T
+    let finish: (Error?) -> Void
+
+    func start(_ compute: @escaping () async throws -> Void) {
+        Task {
+            do {
+                try await compute()
+                finish(nil)
+            } catch {
+                finish(error)
+            }
+        }
+    }
+}

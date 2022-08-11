@@ -7,12 +7,14 @@
 
 import Action
 import Foundation
+import Resolver
 import UIKit
 
 extension Main {
     class ViewController: BaseVC {
         // MARK: - Dependencies
 
+        @Injected private var pincodeStorage: PincodeStorageType
         private let viewModel: MainViewModelType
 
         // MARK: - Properties

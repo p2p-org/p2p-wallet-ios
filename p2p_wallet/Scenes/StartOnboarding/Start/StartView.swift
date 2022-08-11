@@ -11,7 +11,6 @@ struct StartView: View {
         ZStack {
             Color(Asset.Colors.lime.color)
                 .edgesIgnoringSafeArea(.all)
-            mockView
             VStack(spacing: .zero) {
                 if isShowing {
                     PagingView(
@@ -44,18 +43,6 @@ struct StartView: View {
 }
 
 extension StartView {
-    private var mockView: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Button("Continue", action: viewModel.mockButtonDidTap.send)
-                    .foregroundColor(Color.blue)
-            }
-            .padding()
-            Spacer()
-        }
-    }
-
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
             // Create a wallet

@@ -1,13 +1,11 @@
-//
-//  Reachability+Combine.swift
-//
-//
-//  Created by István Kreisz on 27/01/2020.
-//
+// Copyright 2022 P2P Validator Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
 
 import Combine
 import Foundation
 import Reachability
+import Resolver
 
 public extension Reachability {
     static var reachabilityChanged: AnyPublisher<Reachability, Never> {
@@ -74,5 +72,18 @@ public extension Reachability {
             .filter { !$0 }
             .map { _ in }
             .eraseToAnyPublisher()
+    }
+}
+
+public extension Reachability {
+    func check() -> Bool {
+        print(connection)
+        switch connection {
+        case .unavailable:
+            Resolver.resolve(NotificationService.self).showToast(title: "☕️", text: L10n.YouReOffline.keepCalm)
+            return false
+        default:
+            return true
+        }
     }
 }
