@@ -78,7 +78,7 @@ extension UIViewController {
         }
     }
 
-    func showErrorView(title: String? = nil, description: String? = nil, retryAction: CocoaAction? = nil) {
+    func showErrorView(title: String? = nil, description: String? = nil, retryAction: (() -> Void)? = nil) {
         view.showErrorView(title: title, description: description, retryAction: retryAction)
     }
 

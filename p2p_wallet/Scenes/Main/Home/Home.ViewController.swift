@@ -78,9 +78,8 @@ extension Home {
                 .sink { [weak self] hasError in
                     // TODO: catch network error!
                     if hasError, self?.viewModel.walletsRepository.getError() != nil {
-                        self?.view.showConnectionErrorView(refreshAction: CocoaAction { [weak self] in
+                        self?.view.showConnectionErrorView(refreshAction: { [weak self] in
                             self?.viewModel.walletsRepository.reload()
-                            return .just(())
                         })
                     } else {
                         self?.view.hideConnectionErrorView()

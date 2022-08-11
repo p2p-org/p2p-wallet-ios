@@ -10,7 +10,7 @@ import Foundation
 import SolanaSwift
 
 class HiddenWalletsSectionHeaderView: BECollectionCell {
-    var showHideHiddenWalletsAction: CocoaAction?
+    var showHideHiddenWalletsAction: (() -> Void)?
 
     private let imageRef = BERef<UIImageView>()
 
@@ -23,7 +23,7 @@ class HiddenWalletsSectionHeaderView: BECollectionCell {
         }
         .frame(height: 18)
         .padding(.init(top: 18, left: 18, bottom: 18, right: 0))
-        .onTap { [unowned self] in showHideHiddenWalletsAction?.execute() }
+        .onTap { [unowned self] in showHideHiddenWalletsAction?() }
     }
 
     @discardableResult
@@ -42,12 +42,12 @@ class HiddenWalletsSectionHeaderView: BECollectionCell {
     }
 
     @objc func stackViewDidTouch() {
-        showHideHiddenWalletsAction?.execute()
+        showHideHiddenWalletsAction?()
     }
 }
 
 class HiddenWalletsSection: WalletsSection {
-    var showHideHiddenWalletsAction: CocoaAction?
+    var showHideHiddenWalletsAction: (() -> Void)?
 
     init(
         index: Int,
@@ -58,7 +58,7 @@ class HiddenWalletsSection: WalletsSection {
         footer: BECollectionViewSectionFooterLayout? = nil,
         background: UICollectionReusableView.Type? = nil,
         onSend: BECallback<Wallet>? = nil,
-        showHideHiddenWalletsAction: CocoaAction?
+        showHideHiddenWalletsAction: (() -> Void)?
     ) {
         self.showHideHiddenWalletsAction = showHideHiddenWalletsAction
         super.init(

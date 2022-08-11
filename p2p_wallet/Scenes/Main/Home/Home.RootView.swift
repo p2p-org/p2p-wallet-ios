@@ -95,9 +95,8 @@ extension Home {
                                 onSend: { [weak self] wallet in
                                     self?.viewModel.navigate(to: .sendToken(fromAddress: wallet.pubkey))
                                 },
-                                showHideHiddenWalletsAction: CocoaAction { [weak self] in
+                                showHideHiddenWalletsAction: { [weak self] in
                                     self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
-                                    return .just(())
                                 }
                             ),
                         ]
