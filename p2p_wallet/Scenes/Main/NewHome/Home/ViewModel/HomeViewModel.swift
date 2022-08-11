@@ -17,21 +17,27 @@ class HomeViewModel: ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
-    private let walletsRepository = Resolver.resolve(WalletsRepository.self)
+    private let walletsRepository: WalletsRepository
 
     @Published var state = State.pending
     @Published var address = "..."
 
     private var cancellables = Set<AnyCancellable>()
 
-    private let scanQrClicked = PassthroughSubject<Void, Never>()
+    private let receiveClicked = PassthroughSubject<Void, Never>()
     private let error = PassthroughSubject<Bool, Never>()
-    var scanQrShow: AnyPublisher<Void, Never> { scanQrClicked.eraseToAnyPublisher() }
+    var receiveShow: AnyPublisher<PublicKey, Never>
     var errorShow: AnyPublisher<Bool, Never> { error.eraseToAnyPublisher() }
 
     private var initStateFinished = false
 
     init() {
+        let walletsRepository = Resolver.resolve(WalletsRepository.self)
+        self.walletsRepository = walletsRepository
+        receiveShow = receiveClicked
+            .compactMap { try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) }
+            .eraseToAnyPublisher()
+
         Observable.combineLatest(
             walletsRepository.stateObservable,
             walletsRepository.dataObservable.filter { $0 != nil }
@@ -80,8 +86,8 @@ class HomeViewModel: ObservableObject {
         analyticsManager.log(event: .receiveAddressCopied)
     }
 
-    func scanQr() {
-        scanQrClicked.send()
+    func receive() {
+        receiveClicked.send()
     }
 }
 

@@ -65,12 +65,12 @@ struct HomeEmptyView: View {
                 VStack(spacing: 9) {
                     Text(L10n.topUpYourAccountToGetStarted)
                         .foregroundColor(Color(Asset.Colors.snow.color))
-                        .font(.system(size: 18, weight: .medium))
+                        .font(uiFont: .font(of: .text1, weight: .bold))
                     Text(L10n.makeYourFirstDepositOrBuyWithYourCreditCardOrApplePay)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                        .foregroundColor(Color(.bfbfbf))
-                        .font(.system(size: 15))
+                        .foregroundColor(Color(Asset.Colors.cloud.color))
+                        .font(uiFont: .font(of: .text3, weight: .regular))
                         .frame(width: 264)
                 }
                 Button(
@@ -79,8 +79,8 @@ struct HomeEmptyView: View {
                     },
                     label: {
                         Text(L10n.topUp)
-                            .foregroundColor(.black)
-                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .font(uiFont: .font(of: .text4, weight: .bold))
                             .frame(width: 204, height: 49)
                             .background(Color(.ddfa2b))
                             .cornerRadius(8)

@@ -68,6 +68,9 @@ target 'p2p_wallet' do
   
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
+  
+  #SwiftUI
+  pod 'BottomSheet', :git => 'https://github.com/weitieda/bottom-sheet.git'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths

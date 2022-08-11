@@ -10,6 +10,7 @@ PODS:
     - RxCocoa (~> 6.5.0)
   - BEPureLayout (0.4.0):
     - PureLayout
+  - BottomSheet (1.0.6)
   - Cache (1.0.0)
   - Charts (4.0.3):
     - Charts/Core (= 4.0.3)
@@ -203,6 +204,7 @@ DEPENDENCIES:
   - AnalyticsManager (from `KeyAppKit`)
   - BECollectionView (from `BECollectionView`)
   - BEPureLayout (from `BEPureLayout`)
+  - BottomSheet (from `https://github.com/weitieda/bottom-sheet.git`)
   - Cache (from `KeyAppKit`)
   - Charts
   - CocoaDebug
@@ -301,6 +303,8 @@ EXTERNAL SOURCES:
     :path: BECollectionView
   BEPureLayout:
     :path: BEPureLayout
+  BottomSheet:
+    :git: https://github.com/weitieda/bottom-sheet.git
   Cache:
     :path: KeyAppKit
   Down:
@@ -335,6 +339,9 @@ EXTERNAL SOURCES:
     :path: KeyAppKit
 
 CHECKOUT OPTIONS:
+  BottomSheet:
+    :commit: de09fedfb7a9c5ab4effbdb4df284229c60f72db
+    :git: https://github.com/weitieda/bottom-sheet.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
@@ -357,6 +364,7 @@ SPEC CHECKSUMS:
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
+  BottomSheet: 0a164143e34470cc332db0ce4e55d6da202d7ac6
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   Charts: d959d6723c8eedfdd0735dfc28cb0a71762ac4d9
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
@@ -417,6 +425,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: c00aa16deed1916d305edfda7f9c61ee577dd128
+PODFILE CHECKSUM: 5074ec3951d83278b56e568d560f82a03131eceb
 
 COCOAPODS: 1.11.3
