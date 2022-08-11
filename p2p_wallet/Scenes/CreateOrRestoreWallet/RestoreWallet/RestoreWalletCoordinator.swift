@@ -11,7 +11,17 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     let parent: UIViewController
     let webView = GlobalWebView.requestWebView()
-    lazy var tKeyFacade: TKeyJSFacade = .init(wkWebView: webView)
+    lazy var tKeyFacade: TKeyJSFacade = .init(
+        wkWebView: webView,
+        config: .init(
+            metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
+            torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
+            torusVerifierMapping: [
+                "google": String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? "",
+                "apple": String.secretConfig("TORUS_APPLE_VERIFIER") ?? "",
+            ]
+        )
+    )
 
     private(set) var navigationController: UINavigationController?
 
