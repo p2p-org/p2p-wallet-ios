@@ -28,6 +28,7 @@ protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesV
     var isShowingShowDetailsButtonPublisher: AnyPublisher<Bool, Never> { get }
     var showHideDetailsButtonTapSubject: PassthroughSubject<Void, Never> { get }
     var activeInputField: OrcaSwapV2.ActiveInputField { get set }
+    var slippage: Double { get }
 
     func reload() async
     func navigate(to scene: OrcaSwapV2.NavigatableScene)

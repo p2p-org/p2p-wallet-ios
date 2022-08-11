@@ -6,11 +6,11 @@
 //
 
 import BEPureLayout
-import RxCocoa
+import Combine
 import UIKit
 
 protocol DetailFeesViewModelType {
-    var feesDriver: Driver<Loadable<[PayingFee]>> { get }
+    var feesPublisher: AnyPublisher<Loadable<[PayingFee]>, Never> { get }
     func getPrice(symbol: String) -> Double?
 }
 
@@ -25,7 +25,7 @@ extension OrcaSwapV2 {
         }
 
         override func build() -> UIView {
-            BEBuilderRxSwift(driver: viewModel.feesDriver) { [weak self] snapshot in
+            BEBuilder(publisher: viewModel.feesPublisher) { [weak self] snapshot in
                 guard let self = self else { return UIView() }
 
                 switch snapshot.state {
