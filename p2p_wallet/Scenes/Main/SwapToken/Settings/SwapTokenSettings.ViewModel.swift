@@ -28,7 +28,7 @@ extension SwapTokenSettings {
         // MARK: - Properties
 
         var slippageType: SwapTokenSettings.SlippageType {
-            .init(doubleValue: swapViewModel.slippageSubject.value)
+            .init(doubleValue: swapViewModel.slippage)
         }
 
         private let swapViewModel: OrcaSwapV2ViewModelType
@@ -95,7 +95,7 @@ extension SwapTokenSettings {
 
             guard let doubleSlippage = selected.doubleValue else { return }
 
-            swapViewModel.slippageSubject.accept(doubleSlippage)
+            swapViewModel.setSlippage(doubleSlippage)
             notificationService.showInAppNotification(.done(L10n.thePriceSlippageWasSetAt(selected.description)))
         }
 
@@ -103,7 +103,7 @@ extension SwapTokenSettings {
             if let value = SlippageType.custom(value).doubleValue,
                customSlippageIsOpened
             {
-                swapViewModel.slippageSubject.accept(value)
+                swapViewModel.setSlippage(value)
             }
         }
 

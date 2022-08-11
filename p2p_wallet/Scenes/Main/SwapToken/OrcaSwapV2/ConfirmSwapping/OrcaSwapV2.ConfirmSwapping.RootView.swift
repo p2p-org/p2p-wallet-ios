@@ -6,9 +6,8 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import UIKit
 
 extension OrcaSwapV2.ConfirmSwapping {
@@ -16,7 +15,7 @@ extension OrcaSwapV2.ConfirmSwapping {
         // MARK: - Properties
 
         private let viewModel: OrcaSwapV2ConfirmSwappingViewModelType
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -37,9 +36,9 @@ extension OrcaSwapV2.ConfirmSwapping {
             .withContentHuggingPriority(.required, for: .horizontal)
         private lazy var slippageLabel = UILabel(text: nil, textSize: 15, textAlignment: .right)
         private lazy var ratesView = OrcaSwapV2.RatesStackView(
-            exchangeRateDriver: viewModel.exchangeRatesDriver,
-            sourceWalletDriver: viewModel.sourceWalletDriver,
-            destinationWalletDriver: viewModel.destinationWalletDriver
+            exchangeRatePublisher: viewModel.exchangeRatesPublisher,
+            sourceWalletPublisher: viewModel.sourceWalletPublisher,
+            destinationWalletPublisher: viewModel.destinationWalletPublisher
         )
         private lazy var feesView = OrcaSwapV2.DetailFeesView(viewModel: viewModel)
         private lazy var actionButton = WLStepButton.main(image: .buttonSwapSmall, text: nil)
@@ -108,32 +107,32 @@ extension OrcaSwapV2.ConfirmSwapping {
         }
 
         private func bind() {
-            combinedAmountDriver(
-                amountDriver: viewModel.inputAmountStringDriver,
-                amountInFiatDriver: viewModel.inputAmountInFiatStringDriver
+            combinedAmountPublisher(
+                amountPublisher: viewModel.inputAmountStringPublisher,
+                amountInFiatPublisher: viewModel.inputAmountInFiatStringPublisher
             )
                 .drive(inputAmountLabel.rx.attributedText)
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            combinedAmountDriver(
-                amountDriver: viewModel.receiveAtLeastStringDriver,
-                amountInFiatDriver: viewModel.receiveAtLeastInFiatStringDriver
+            combinedAmountPublisher(
+                amountPublisher: viewModel.receiveAtLeastStringPublisher,
+                amountInFiatPublisher: viewModel.receiveAtLeastInFiatStringPublisher
             )
                 .drive(minimumAmountLabel.rx.attributedText)
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.slippageDriver
+            viewModel.slippagePublisher
                 .map { ($0 * 100).toString(maximumFractionDigits: 2) + "%" }
                 .drive(slippageLabel.rx.text)
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            Driver.combineLatest(
-                viewModel.sourceWalletDriver.map { $0?.token.symbol },
-                viewModel.destinationWalletDriver.map { $0?.token.symbol }
+            Publisher.combineLatest(
+                viewModel.sourceWalletPublisher.map { $0?.token.symbol },
+                viewModel.destinationWalletPublisher.map { $0?.token.symbol }
             )
                 .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
                 .drive(onNext: { [weak actionButton] in actionButton?.text = $0 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             feesView.clickHandler = { [weak self] fee in
                 guard let info = fee.info else { return }
@@ -163,12 +162,12 @@ extension OrcaSwapV2.ConfirmSwapping {
             }
         }
 
-        private func combinedAmountDriver(amountDriver: Driver<String?>,
-                                          amountInFiatDriver: Driver<String?>) -> Driver<NSAttributedString>
+        private func combinedAmountPublisher(amountPublisher: Publisher<String?>,
+                                             amountInFiatPublisher: Publisher<String?>) -> Publisher<NSAttributedString>
         {
-            Driver.combineLatest(
-                amountDriver,
-                amountInFiatDriver
+            Publisher.combineLatest(
+                amountPublisher,
+                amountInFiatPublisher
             )
                 .map {
                     NSMutableAttributedString()
@@ -231,31 +230,32 @@ extension OrcaSwapV2.ConfirmSwapping {
         }
 
         private func bind() {
-            let walletDriver = type == .source ? viewModel.sourceWalletDriver : viewModel.destinationWalletDriver
+            let walletPublisher = type == .source ? viewModel.sourceWalletPublisher : viewModel
+                .destinationWalletPublisher
 
-            walletDriver
+            walletPublisher
                 .drive(onNext: { [weak coinLogoImageView] in coinLogoImageView?.wallet = $0 })
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             switch type {
             case .source:
-                viewModel.inputAmountStringDriver
+                viewModel.inputAmountStringPublisher
                     .drive(amountLabel.rx.text)
-                    .disposed(by: disposeBag)
+                    .store(in: &subscriptions)
 
-                viewModel.inputAmountInFiatStringDriver
+                viewModel.inputAmountInFiatStringPublisher
                     .map { "~ " + $0 }
                     .drive(equityAmountLabel.rx.text)
-                    .disposed(by: disposeBag)
+                    .store(in: &subscriptions)
             case .destination:
-                viewModel.estimatedAmountStringDriver
+                viewModel.estimatedAmountStringPublisher
                     .drive(amountLabel.rx.text)
-                    .disposed(by: disposeBag)
+                    .store(in: &subscriptions)
 
-                viewModel.receiveAtLeastStringDriver
+                viewModel.receiveAtLeastStringPublisher
                     .map { "≥ " + $0 }
                     .drive(equityAmountLabel.rx.text)
-                    .disposed(by: disposeBag)
+                    .store(in: &subscriptions)
             }
         }
     }
