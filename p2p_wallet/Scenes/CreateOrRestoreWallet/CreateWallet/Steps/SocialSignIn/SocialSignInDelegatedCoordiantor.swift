@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 import Onboarding
+import SwiftUI
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
@@ -12,35 +13,19 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
         case .socialSelection:
             // TODO: rename class name
             let vm = SocialSignInViewModel()
-            let vc = SocialSignInViewController(viewModel: vm)
-            vc.viewModel.coordinatorIO.onTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }
+            let vc = SocialSignInView(viewModel: vm)
+            vc.viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }
                 .store(in: &subscriptions)
 
-            vc.viewModel.coordinatorIO.onBack.sinkAsync { [weak vm, stateMachine] in
-                vm?.input.isLoading.send(true)
-                do {
-                    try await stateMachine <- .signInBack
-                } catch {
-                    vc.viewModel.input.onError.send(error)
-                }
-                vm?.input.isLoading.send(false)
+            vc.viewModel.coordinatorIO.outBack.sinkAsync { [stateMachine] process in
+                process.start { try await stateMachine <- .signInBack }
             }.store(in: &subscriptions)
 
-            vc.viewModel.coordinatorIO.onLogin.sinkAsync { [weak vm, stateMachine] provider in
-                if vc.viewModel.input.isLoading.value { return }
-                vm?.input.isLoading.send(true)
-                do {
-                    try await stateMachine <- .signIn(socialProvider: provider)
-                } catch {
-                    defer { vm?.input.isLoading.send(false) }
-                    if case SocialServiceError.cancelled = error {
-                        // Not sending error if it's cancelled byy user
-                        return
-                    }
-                    vc.viewModel.input.onError.send(error)
-                }
+            vc.viewModel.coordinatorIO.outLogin.sinkAsync { [stateMachine] process in
+                process.start { try await stateMachine <- .signIn(socialProvider: process.data) }
             }.store(in: &subscriptions)
-            return vc
+
+            return UIHostingController(rootView: vc)
         case let .socialSignInAccountWasUsed(provider, usedEmail):
             let vm = SocialSignInAccountHasBeenUsedViewModel(
                 email: usedEmail,
@@ -57,7 +42,15 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
                 } catch {
                     vm?.input.onError.send(error)
                 }
-            }
+            }.store(in: &subscriptions)
+
+            vm.coordinatorIO.back.sinkAsync { [weak vm, stateMachine] in
+                do {
+                    try await stateMachine <- .signInBack
+                } catch {
+                    vm?.input.onError.send(error)
+                }
+            }.store(in: &subscriptions)
 
             vm.coordinatorIO.switchToRestoreFlow.sinkAsync { [weak vm, stateMachine] in
                 if vm?.input.isLoading.value ?? false { return }
@@ -69,11 +62,11 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
                 } catch {
                     vm?.input.onError.send(error)
                 }
-            }
+            }.store(in: &subscriptions)
 
             let vc = SocialSignInAccountHasBeenUsedViewController(viewModel: vm)
             return vc
-        case let .socialSignInTryAgain(socialProvider, usedEmail):
+        case let .socialSignInTryAgain(socialProvider, _):
             let vm = SocialSignInTryAgainViewModel(signInProvider: socialProvider)
 
             vm.coordinator.startScreen.sinkAsync { [weak vm, stateMachine] in

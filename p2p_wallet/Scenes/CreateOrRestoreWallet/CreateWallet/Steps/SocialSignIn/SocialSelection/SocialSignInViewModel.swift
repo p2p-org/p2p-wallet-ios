@@ -7,63 +7,72 @@ import Foundation
 import Onboarding
 import Resolver
 
-class SocialSignInViewModel: NSObject, ViewModelType {
-    struct Input {
-        let onBack: PassthroughSubject<Void, Never> = .init()
-        let onError: PassthroughSubject<Error, Never> = .init()
-        let onTermAndCondition: PassthroughSubject<Void, Never> = .init()
-        let onInfo: PassthroughSubject<Void, Never> = .init()
-        let onSignInWithApple: PassthroughSubject<Void, Never> = .init()
-        let onSignInWithGoogle: PassthroughSubject<Void, Never> = .init()
+struct ReactiveProcess<T> {
+    let data: T
+    let finish: (Error?) -> Void
 
-        let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
-
-        fileprivate let onSuccessfulLogin: PassthroughSubject<SocialProvider, Never> = .init()
+    func start(_ compute: @escaping () async throws -> Void) {
+        Task {
+            do {
+                try await compute()
+                finish(nil)
+            } catch {
+                finish(error)
+            }
+        }
     }
+}
 
-    struct Output {
-        let isLoading: AnyPublisher<Bool, Never>
+class SocialSignInViewModel: BaseViewModel {
+    enum Loading {
+        case appleButton
+        case googleButton
+        case other
     }
 
     struct CoordinatorIO {
-        let onBack: AnyPublisher<Void, Never>
-        let onTermAndCondition: AnyPublisher<Void, Never>
-        let onInfo: AnyPublisher<Void, Never>
-        let onLogin: AnyPublisher<SocialProvider, Never>
+        let outBack: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
+        let outTermAndCondition: PassthroughSubject<Void, Never> = .init()
+        let outInfo: PassthroughSubject<Void, Never> = .init()
+        let outLogin: PassthroughSubject<ReactiveProcess<SocialProvider>, Never> = .init()
     }
 
-    private(set) var input: Input = .init()
-    private(set) var output: Output
-    private(set) var coordinatorIO: CoordinatorIO
-
     @Injected var notificationService: NotificationService
+    @Published var loading: Loading?
+    private(set) var coordinatorIO: CoordinatorIO = .init()
 
-    var subscriptions = [AnyCancellable]()
+    func onInfo() {
+        guard loading == nil else { return }
+    }
 
-    override init() {
-        output = .init(isLoading: input.isLoading.eraseToAnyPublisher())
-        coordinatorIO = .init(
-            onBack: input.onBack.eraseToAnyPublisher(),
-            onTermAndCondition: input.onTermAndCondition.eraseToAnyPublisher(),
-            onInfo: input.onInfo.eraseToAnyPublisher(),
-            onLogin: input.onSuccessfulLogin.eraseToAnyPublisher()
-        )
+    func onBack() {
+        guard loading == nil else { return }
 
-        super.init()
-
-        input.onError.sink { [weak self] error in
-            DispatchQueue.main.async {
-                self?.notificationService.showInAppNotification(.error(error))
+        loading = .other
+        let process: ReactiveProcess<Void> = .init(data: ()) { [weak self] error in
+            if let error = error {
+                self?.notificationService.showDefaultErrorNotification()
             }
+            self?.loading = nil
         }
-        .store(in: &subscriptions)
+        coordinatorIO.outBack.send(process)
+    }
 
-        input.onSignInWithApple.sink { [weak self] in
-            self?.input.onSuccessfulLogin.send(.apple)
-        }.store(in: &subscriptions)
+    func onSignInTap(_ provider: SocialProvider) {
+        guard loading == nil else { return }
 
-        input.onSignInWithGoogle.sink { [weak self] in
-            self?.input.onSuccessfulLogin.send(.google)
-        }.store(in: &subscriptions)
+        switch provider {
+        case .apple: loading = .appleButton
+        case .google: loading = .googleButton
+        }
+
+        let process: ReactiveProcess<SocialProvider> = .init(data: provider) { [weak self] error in
+            if let error = error {
+                self?.notificationService.showDefaultErrorNotification()
+            }
+            self?.loading = nil
+        }
+
+        coordinatorIO.outLogin.send(process)
     }
 }
