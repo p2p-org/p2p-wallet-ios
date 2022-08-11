@@ -8,6 +8,7 @@
 import AnalyticsManager
 import Foundation
 import KeyAppUI
+import Reachability
 import Resolver
 import SolanaSwift
 import UIKit
@@ -19,6 +20,7 @@ class AppCoordinator: Coordinator<Void> {
     private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
     let analyticsManager: AnalyticsManager = Resolver.resolve()
     let notificationsService: NotificationService = Resolver.resolve()
+    @Injected var notificationService: NotificationService
 
     // MARK: - Properties
 
@@ -26,12 +28,14 @@ class AppCoordinator: Coordinator<Void> {
     var isRestoration = false
     var showAuthenticationOnMainOnAppear = true
     var resolvedName: String?
+    var reachability: Reachability?
 
     // MARK: - Initializers
 
     override init() {
         super.init()
         defer { Task { await appEventHandler.delegate = self } }
+        reachability = try? Reachability()
     }
 
     // MARK: - Methods
@@ -44,6 +48,13 @@ class AppCoordinator: Coordinator<Void> {
         }
 
         openSplash()
+
+        try? reachability?.startNotifier()
+
+        reachability?.isReachable.filter { !$0 }
+            .sink(receiveValue: { [weak self] _ in
+                self?.notificationService.showToast(title: "☕️", text: L10n.YouReOffline.keepCalm)
+            }).store(in: &subscriptions)
     }
 
     func reload() async {
@@ -139,6 +150,10 @@ class AppCoordinator: Coordinator<Void> {
                 debugPrint(value)
             })
             .store(in: &subscriptions)
+    }
+
+    deinit {
+        reachability?.stopNotifier()
     }
 
     // MARK: - Helper

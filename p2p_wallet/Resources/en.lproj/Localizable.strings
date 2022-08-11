@@ -858,3 +858,4 @@ Reset the PIN or wait for %@.";
 "Pubkey solana and phone number already exists" = "Pubkey solana and phone number already exists";
 "Invalid value of OTP. Please try again to input correct value of OTP" = "Invalid value of OTP. Please try again to input correct value of OTP";
 "Something went wrong. Please try again" = "Something went wrong. Please try again";
+"You’re offline. Keep calm" = "You’re offline. Keep calm";
