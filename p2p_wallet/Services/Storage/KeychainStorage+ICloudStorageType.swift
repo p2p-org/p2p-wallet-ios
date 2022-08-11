@@ -21,7 +21,7 @@ extension KeychainStorage: ICloudStorageType {
         }
 
         defer {
-            onValueChangeSubject.on(.next(("didBackupUsingIcloud", didBackupUsingIcloud)))
+            onValueChangeSubject.send(("didBackupUsingIcloud", didBackupUsingIcloud))
         }
 
         // save

@@ -5,18 +5,17 @@
 //  Created by Andrew Vasiliev on 21.12.2021.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol NewSwapTokenSettingsViewModelType: AnyObject {
-    var navigationDriver: Driver<SwapTokenSettings.NavigatableScene?> { get }
+    var navigationPublisher: AnyPublisher<SwapTokenSettings.NavigatableScene?, Never> { get }
     var possibleSlippageTypes: [SwapTokenSettings.SlippageType] { get }
     var slippageType: SwapTokenSettings.SlippageType { get }
-    var feesContentDriver: Driver<[SwapTokenSettings.FeeCellContent]> { get }
-    var customSlippageIsOpenedDriver: Driver<Bool> { get }
+    var feesContentPublisher: AnyPublisher<[SwapTokenSettings.FeeCellContent], Never> { get }
+    var customSlippageIsOpenedPublisher: AnyPublisher<Bool, Never> { get }
 
     func slippageSelected(_ selected: SwapTokenSettings.SlippageType)
     func customSlippageChanged(_ value: Double?)
@@ -24,11 +23,12 @@ protocol NewSwapTokenSettingsViewModelType: AnyObject {
 }
 
 extension SwapTokenSettings {
-    final class ViewModel: NewSwapTokenSettingsViewModelType {
+    @MainActor
+    final class ViewModel: ObservableObject, NewSwapTokenSettingsViewModelType {
         // MARK: - Properties
 
         var slippageType: SwapTokenSettings.SlippageType {
-            .init(doubleValue: swapViewModel.slippageSubject.value)
+            .init(doubleValue: swapViewModel.slippage)
         }
 
         private let swapViewModel: OrcaSwapV2ViewModelType
@@ -37,16 +37,16 @@ extension SwapTokenSettings {
 
         // MARK: - Subject
 
-        var customSlippageIsOpenedDriver: Driver<Bool> { customSlippageIsOpenedSubject.asDriver() }
+        var customSlippageIsOpenedPublisher: AnyPublisher<Bool, Never> { $customSlippageIsOpened.eraseToAnyPublisher() }
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private let customSlippageIsOpenedSubject = BehaviorRelay<Bool>(value: false)
+        @Published private var navigation: NavigatableScene?
+        @Published private var customSlippageIsOpened: Bool = false
 
-        var feesContentDriver: Driver<[FeeCellContent]> {
-            Driver.combineLatest(
-                swapViewModel.sourceWalletDriver,
-                swapViewModel.destinationWalletDriver,
-                swapViewModel.feePayingTokenDriver
+        var feesContentPublisher: AnyPublisher<[FeeCellContent], Never> {
+            Publishers.CombineLatest3(
+                swapViewModel.sourceWalletPublisher,
+                swapViewModel.destinationWalletPublisher,
+                swapViewModel.feePayingTokenPublisher
             ).map { [weak self] _, _, feePayingToken in
                 guard let self = self else { return [] }
                 var list: [FeeCellContent] = []
@@ -66,6 +66,7 @@ extension SwapTokenSettings {
 
                 return list
             }
+            .eraseToAnyPublisher()
         }
 
         // MARK: NewSwapTokenSettingsViewModelType
@@ -74,8 +75,8 @@ extension SwapTokenSettings {
             SlippageType.allCases
         }
 
-        var navigationDriver: Driver<NavigatableScene?> {
-            navigationSubject.asDriver()
+        var navigationPublisher: AnyPublisher<NavigatableScene?, Never> {
+            $navigation.eraseToAnyPublisher()
         }
 
         // MARK: - Actions
@@ -94,28 +95,28 @@ extension SwapTokenSettings {
 
             guard let doubleSlippage = selected.doubleValue else { return }
 
-            swapViewModel.slippageSubject.accept(doubleSlippage)
+            swapViewModel.setSlippage(doubleSlippage)
             notificationService.showInAppNotification(.done(L10n.thePriceSlippageWasSetAt(selected.description)))
         }
 
         func customSlippageChanged(_ value: Double?) {
             if let value = SlippageType.custom(value).doubleValue,
-               customSlippageIsOpenedSubject.value
+               customSlippageIsOpened
             {
-                swapViewModel.slippageSubject.accept(value)
+                swapViewModel.setSlippage(value)
             }
         }
 
         func goBack() {
-            navigationSubject.accept(.back)
+            navigation = .back
         }
 
         private func setCustomSlippageIsOpened(slippageType: SlippageType) {
             switch slippageType {
             case .oneTenth, .fiveTenth, .one:
-                customSlippageIsOpenedSubject.accept(false)
+                customSlippageIsOpened = false
             case .custom:
-                customSlippageIsOpenedSubject.accept(true)
+                customSlippageIsOpened = true
             }
         }
     }

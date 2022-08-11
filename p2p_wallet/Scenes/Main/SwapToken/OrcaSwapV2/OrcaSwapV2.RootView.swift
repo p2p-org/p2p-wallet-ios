@@ -5,15 +5,15 @@
 //  Created by Chung Tran on 15/10/2021.
 //
 
-import RxCocoa
-import RxSwift
+import Combine
+import CombineCocoa
 import UIKit
 
 extension OrcaSwapV2 {
     final class RootView: ScrollableVStackRootView {
         // MARK: - Constants
 
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -67,53 +67,57 @@ extension OrcaSwapV2 {
         }
 
         private func bind() {
-            viewModel.loadingStateDriver
-                .drive(rx.loadableState { [weak self] in
-                    self?.viewModel.reload()
-                })
-                .disposed(by: disposeBag)
+            viewModel.loadingStatePublisher
+                .sink { [weak self] loadableState in
+                    self?.setUp(loadableState, reloadAction: { [weak self] in
+                        Task { await self?.viewModel.reload() }
+                    })
+                }
+                .store(in: &subscriptions)
 
-            viewModel.isShowingDetailsDriver
-                .drive(onNext: { [weak showDetailsButton] in showDetailsButton?.isOpened = $0 })
-                .disposed(by: disposeBag)
+            viewModel.isShowingDetailsPublisher
+                .sink { [weak showDetailsButton] in showDetailsButton?.isOpened = $0 }
+                .store(in: &subscriptions)
 
-            viewModel.isShowingDetailsDriver
-                .drive { [weak self] isShowing in
+            viewModel.isShowingDetailsPublisher
+                .sink { [weak self] isShowing in
                     guard let self = self else { return }
                     self.stackView.setIsHidden(!isShowing, on: self.detailsView, animated: true)
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.isShowingDetailsDriver
-                .drive { [weak self] isShowing in
+            viewModel.isShowingDetailsPublisher
+                .sink { [weak self] isShowing in
                     if isShowing {
                         self?.endEditing(true)
                     }
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.isShowingShowDetailsButtonDriver
-                .drive { [weak self] isShowing in
+            viewModel.isShowingShowDetailsButtonPublisher
+                .sink { [weak self] isShowing in
                     self?.showDetailsButton.isHidden = !isShowing
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            showDetailsButton.rx.tap
-                .bind(to: viewModel.showHideDetailsButtonTapSubject)
-                .disposed(by: disposeBag)
+            showDetailsButton.tapPublisher
+                .sink { [weak self] in
+                    self?.viewModel.showHideDetailsButtonTapSubject.send()
+                }
+                .store(in: &subscriptions)
 
-            viewModel.errorDriver.map { $0 == nil }
-                .drive(nextButton.rx.isEnabled)
-                .disposed(by: disposeBag)
+            viewModel.errorPublisher.map { $0 == nil }
+                .assign(to: \.isEnabled, on: nextButton)
+                .store(in: &subscriptions)
 
-            Driver.combineLatest(
-                viewModel.errorDriver,
-                viewModel.feePayingTokenDriver.map { $0?.token.symbol }
+            Publishers.CombineLatest(
+                viewModel.errorPublisher,
+                viewModel.feePayingTokenPublisher.map { $0?.token.symbol }
             )
-                .drive { [weak self] in
+                .sink { [weak self] in
                     self?.setError(error: $0, feePayingTokenSymbol: $1)
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
         }
 
         private func setError(error: OrcaSwapV2.VerificationError?, feePayingTokenSymbol: String?) {

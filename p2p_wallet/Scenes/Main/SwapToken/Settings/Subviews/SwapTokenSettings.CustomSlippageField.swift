@@ -6,7 +6,8 @@
 //
 
 import BEPureLayout
-import RxSwift
+import Combine
+import CombineCocoa
 import UIKit
 
 extension SwapTokenSettings {
@@ -20,8 +21,8 @@ extension SwapTokenSettings {
         )
         private let percentLabel = UILabel(text: "%", textSize: 15)
 
-        var rxText: Observable<String?> {
-            textField.rx.text.asObservable()
+        var textPublisher: AnyPublisher<String?, Never> {
+            textField.textPublisher
         }
 
         init() {

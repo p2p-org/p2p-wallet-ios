@@ -2,8 +2,8 @@
 // Created by Giang Long Tran on 18.02.2022.
 //
 
+import Combine
 import Foundation
-import RxSwift
 
 class ReserveNameBanner: Banners.Banner {
     fileprivate static let id = "reserve-banner"
@@ -29,7 +29,7 @@ class ReserveNameBanner: Banners.Banner {
 class ReserveNameBannerHandler: Banners.Handler {
     weak var delegate: Banners.Service?
     let nameStorage: NameStorageType
-    let disposeBag = DisposeBag()
+    var subscriptions = [AnyCancellable]()
 
     init(nameStorage: NameStorageType) { self.nameStorage = nameStorage }
 
@@ -39,12 +39,12 @@ class ReserveNameBannerHandler: Banners.Handler {
         // Subscribe to name storage
         nameStorage
             .onValueChange
-            .emit(onNext: { [weak self] event in
+            .sink { [weak self] event in
                 if event.key == "getName", event.value != nil {
                     self?.delegate?.remove(bannerId: ReserveNameBanner.id)
                 }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
         // Check if name wasn't reserved
         if nameStorage.getName() == nil {

@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxCocoa
 
 extension SendToken {
     enum ChooseRecipientAndNetwork {

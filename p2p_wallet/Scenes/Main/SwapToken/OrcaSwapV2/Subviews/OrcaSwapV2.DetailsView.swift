@@ -6,23 +6,22 @@
 //
 
 import BEPureLayout
-import RxCocoa
-import RxSwift
+import Combine
 import UIKit
 
 extension OrcaSwapV2 {
     final class DetailsView: UIStackView {
         private lazy var ratesStack = RatesStackView(
-            exchangeRateDriver: viewModel.exchangeRateDriver,
-            sourceWalletDriver: viewModel.sourceWalletDriver,
-            destinationWalletDriver: viewModel.destinationWalletDriver
+            exchangeRatePublisher: viewModel.exchangeRatePublisher,
+            sourceWalletPublisher: viewModel.sourceWalletPublisher,
+            destinationWalletPublisher: viewModel.destinationWalletPublisher
         )
         private let slippageView = ClickableRow(title: L10n.maxPriceSlippage)
         private let payFeesWithView = ClickableRow(title: L10n.paySwapFeesWith)
         private lazy var feesView = DetailFeesView(viewModel: viewModel)
 
         private let viewModel: OrcaSwapV2ViewModelType
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: OrcaSwapV2ViewModelType) {
             self.viewModel = viewModel
@@ -58,17 +57,17 @@ extension OrcaSwapV2 {
         }
 
         private func bind() {
-            viewModel.slippageDriver
-                .drive { [weak slippageView] in
+            viewModel.slippagePublisher
+                .sink { [weak slippageView] in
                     slippageView?.setValue(text: "\($0 * 100)%")
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.feePayingTokenStringDriver
-                .drive { [weak payFeesWithView] in
+            viewModel.feePayingTokenStringPublisher
+                .sink { [weak payFeesWithView] in
                     payFeesWithView?.setValue(text: $0)
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
             slippageView.clickHandler = { [weak viewModel] in
                 viewModel?.navigate(to: .settings)

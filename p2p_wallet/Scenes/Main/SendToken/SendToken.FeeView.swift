@@ -5,20 +5,19 @@
 //  Created by Chung Tran on 31/01/2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension SendToken {
     final class FeeView: WLFloatingPanelView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let coinLogoImageView = CoinLogoImageView(size: 44)
 
         init(
             solPrice: Double,
-            payingWalletDriver: Driver<Wallet?>,
-            feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>
+            payingWalletPublisher: AnyPublisher<Wallet?, Never>,
+            feeInfoPublisher: AnyPublisher<Loadable<SendToken.FeeInfo>, Never>
         ) {
             super.init(cornerRadius: 12, contentInset: .init(all: 18))
             stackView.alignment = .center
@@ -28,45 +27,45 @@ extension SendToken {
                 coinLogoImageView
                     .setup { imageView in
 
-                        let driver = Driver.combineLatest(
-                            payingWalletDriver,
-                            feeInfoDriver
+                        let publisher = Publishers.CombineLatest(
+                            payingWalletPublisher,
+                            feeInfoPublisher
                         )
 
-                        driver
+                        publisher
                             .map { $0 == nil && $1.value?.hasAvailableWalletToPayFee != false }
-                            .drive(imageView.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: imageView)
+                            .store(in: &subscriptions)
 
-                        driver
-                            .drive(onNext: { [weak imageView] in
+                        publisher
+                            .sink { [weak imageView] in
                                 if $1.value?.hasAvailableWalletToPayFee == false {
                                     imageView?.tokenIcon.image = .squircleNotEnoughFunds
                                 } else {
                                     imageView?.setUp(wallet: $0)
                                 }
-                            })
-                            .disposed(by: disposeBag)
+                            }
+                            .store(in: &subscriptions)
                     }
                 UIStackView(axis: .vertical, spacing: 4, alignment: .fill, distribution: .fill) {
                     UILabel(text: "Account creation fee", textSize: 13, numberOfLines: 0)
                         .setup { label in
-                            payingWalletDriver
+                            payingWalletPublisher
                                 .map { $0 == nil }
-                                .drive(label.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: label)
+                                .store(in: &subscriptions)
 
-                            feeInfoDriver
+                            feeInfoPublisher
                                 .map { $0.value?.feeAmountInSOL }
                                 .map { feeAmountToAttributedString(feeAmount: $0, solPrice: solPrice) }
-                                .drive(label.rx.attributedText)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.attributedText, on: label)
+                                .store(in: &subscriptions)
                         }
                     UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold, numberOfLines: 0)
                         .setup { label in
-                            let driver = Driver.combineLatest(
-                                payingWalletDriver,
-                                feeInfoDriver
+                            let publisher = Publishers.CombineLatest(
+                                payingWalletPublisher,
+                                feeInfoPublisher
                             )
                                 .map { payingWallet, feeInfo in
                                     payingWalletToString(
@@ -76,13 +75,13 @@ extension SendToken {
                                     )
                                 }
 
-                            driver.map(\.0)
-                                .drive(label.rx.text)
-                                .disposed(by: disposeBag)
+                            publisher.map(\.0)
+                                .assign(to: \.text, on: label)
+                                .store(in: &subscriptions)
 
-                            driver.map(\.1)
-                                .drive(label.rx.textColor)
-                                .disposed(by: disposeBag)
+                            publisher.map(\.1)
+                                .assign(to: \.textColor, on: label)
+                                .store(in: &subscriptions)
                         }
                 }
                 UIView.defaultNextArrow()

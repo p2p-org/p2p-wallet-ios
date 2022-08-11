@@ -5,13 +5,14 @@
 //  Created by Chung Tran on 15/12/2021.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
 import SolanaSwift
 
 extension OrcaSwapV2.ConfirmSwapping {
-    final class ViewModel {
+    @MainActor
+    final class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var pricesService: PricesServiceType
@@ -29,36 +30,36 @@ extension OrcaSwapV2.ConfirmSwapping {
 }
 
 extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewModelType {
-    var sourceWalletDriver: Driver<Wallet?> {
-        swapViewModel.sourceWalletDriver
+    var sourceWalletPublisher: AnyPublisher<Wallet?, Never> {
+        swapViewModel.sourceWalletPublisher
     }
 
-    var destinationWalletDriver: Driver<Wallet?> {
-        swapViewModel.destinationWalletDriver
+    var destinationWalletPublisher: AnyPublisher<Wallet?, Never> {
+        swapViewModel.destinationWalletPublisher
     }
 
-    var inputAmountDriver: Driver<Double?> {
-        swapViewModel.inputAmountDriver
+    var inputAmountPublisher: AnyPublisher<Double?, Never> {
+        swapViewModel.inputAmountPublisher
     }
 
-    var estimatedAmountDriver: Driver<Double?> {
-        swapViewModel.estimatedAmountDriver
+    var estimatedAmountPublisher: AnyPublisher<Double?, Never> {
+        swapViewModel.estimatedAmountPublisher
     }
 
-    var minimumReceiveAmountDriver: Driver<Double?> {
-        swapViewModel.minimumReceiveAmountDriver
+    var minimumReceiveAmountPublisher: AnyPublisher<Double?, Never> {
+        swapViewModel.minimumReceiveAmountPublisher
     }
 
-    var exchangeRatesDriver: Driver<Double?> {
-        swapViewModel.exchangeRateDriver
+    var exchangeRatesPublisher: AnyPublisher<Double?, Never> {
+        swapViewModel.exchangeRatePublisher
     }
 
-    var feesDriver: Driver<Loadable<[PayingFee]>> {
-        swapViewModel.feesDriver
+    var feesPublisher: AnyPublisher<Loadable<[PayingFee]>, Never> {
+        swapViewModel.feesPublisher
     }
 
-    var slippageDriver: Driver<Double> {
-        swapViewModel.slippageDriver
+    var slippagePublisher: AnyPublisher<Double, Never> {
+        swapViewModel.slippagePublisher
     }
 
     func isBannerForceClosed() -> Bool {

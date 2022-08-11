@@ -6,56 +6,55 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
-    var navigationDriver: Driver<OrcaSwapV2.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<OrcaSwapV2.NavigatableScene?, Never> {
+        $navigation.eraseToAnyPublisher()
     }
 
-    var loadingStateDriver: Driver<LoadableState> {
-        loadingStateSubject.asDriver()
+    var loadingStatePublisher: AnyPublisher<LoadableState, Never> {
+        $loadingState.eraseToAnyPublisher()
     }
 
-    var sourceWalletDriver: Driver<Wallet?> {
-        sourceWalletSubject.asDriver().distinctUntilChanged()
+    var sourceWalletPublisher: AnyPublisher<Wallet?, Never> {
+        $sourceWallet.removeDuplicates().eraseToAnyPublisher()
     }
 
-    var destinationWalletDriver: Driver<Wallet?> {
-        destinationWalletSubject.asDriver().distinctUntilChanged()
+    var destinationWalletPublisher: AnyPublisher<Wallet?, Never> {
+        $destinationWallet.removeDuplicates().eraseToAnyPublisher()
     }
 
-    var inputAmountDriver: Driver<Double?> {
-        inputAmountSubject.asDriver()
+    var inputAmountPublisher: AnyPublisher<Double?, Never> {
+        $inputAmount.eraseToAnyPublisher()
     }
 
-    var estimatedAmountDriver: Driver<Double?> {
-        estimatedAmountSubject.asDriver()
+    var estimatedAmountPublisher: AnyPublisher<Double?, Never> {
+        $estimatedAmount.eraseToAnyPublisher()
     }
 
-    var feesDriver: Driver<Loadable<[PayingFee]>> {
-        feesSubject.asDriver()
+    var feesPublisher: AnyPublisher<Loadable<[PayingFee]>, Never> {
+        feesSubject.eraseToAnyPublisher()
     }
 
-    var availableAmountDriver: Driver<Double?> {
-        availableAmountSubject.asDriver()
+    var availableAmountPublisher: AnyPublisher<Double?, Never> {
+        $availableAmount.eraseToAnyPublisher()
     }
 
-    var slippageDriver: Driver<Double> {
-        slippageSubject.asDriver()
+    var slippagePublisher: AnyPublisher<Double, Never> {
+        $slippage.eraseToAnyPublisher()
     }
 
-    var minimumReceiveAmountObservable: Observable<Double?> {
-        bestPoolsPairSubject
+    var minimumReceiveAmountPublisher: AnyPublisher<Double?, Never> {
+        $bestPoolsPair
             .withLatestFrom(
-                Observable.combineLatest(
-                    inputAmountSubject,
-                    slippageSubject,
-                    sourceWalletSubject,
-                    destinationWalletSubject
+                Publishers.CombineLatest4(
+                    $inputAmount,
+                    $slippage,
+                    $sourceWallet,
+                    $destinationWallet
                 )
             ) { ($0, $1.0, $1.1, $1.2, $1.3) }
             .map { poolsPair, inputAmount, slippage, sourceWallet, destinationWallet in
@@ -67,16 +66,13 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 return poolsPair.getMinimumAmountOut(inputAmount: inputAmount, slippage: slippage)?
                     .convertToBalance(decimals: destinationDecimals)
             }
+            .eraseToAnyPublisher()
     }
 
-    var minimumReceiveAmountDriver: Driver<Double?> {
-        minimumReceiveAmountObservable.asDriver(onErrorJustReturn: nil)
-    }
-
-    var exchangeRateDriver: Driver<Double?> {
-        Observable.combineLatest(
-            inputAmountSubject,
-            estimatedAmountSubject
+    var exchangeRatePublisher: AnyPublisher<Double?, Never> {
+        Publishers.CombineLatest(
+            $inputAmount,
+            $estimatedAmount
         )
             .map { inputAmount, estimatedAmount in
                 guard let inputAmount = inputAmount,
@@ -86,38 +82,41 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                 else { return nil }
                 return estimatedAmount / inputAmount
             }
-            .asDriver(onErrorJustReturn: nil)
+            .eraseToAnyPublisher()
     }
 
-    var errorDriver: Driver<OrcaSwapV2.VerificationError?> {
-        errorSubject.asDriver()
+    var errorPublisher: AnyPublisher<OrcaSwapV2.VerificationError?, Never> {
+        $error.eraseToAnyPublisher()
     }
 
-    var isSendingMaxAmountDriver: Driver<Bool> {
-        Driver.combineLatest(availableAmountDriver, inputAmountDriver)
+    var isSendingMaxAmountPublisher: AnyPublisher<Bool, Never> {
+        Publishers.CombineLatest(availableAmountPublisher, inputAmountPublisher)
             .map { availableAmount, currentAmount in
                 availableAmount == currentAmount
             }
+            .eraseToAnyPublisher()
     }
 
-    var isShowingDetailsDriver: Driver<Bool> {
-        Driver.combineLatest(
-            isShowingDetailsSubject.asDriver(),
-            isShowingShowDetailsButtonDriver
+    var isShowingDetailsPublisher: AnyPublisher<Bool, Never> {
+        Publishers.CombineLatest(
+            $isShowingDetails.eraseToAnyPublisher(),
+            isShowingShowDetailsButtonPublisher
         )
             .map {
                 $0 && $1
             }
+            .eraseToAnyPublisher()
     }
 
-    var isShowingShowDetailsButtonDriver: Driver<Bool> {
-        Driver.combineLatest(
-            sourceWalletDriver,
-            destinationWalletDriver
+    var isShowingShowDetailsButtonPublisher: AnyPublisher<Bool, Never> {
+        Publishers.CombineLatest(
+            $sourceWallet,
+            $destinationWallet
         )
             .map {
                 $0 != nil && $1 != nil
             }
+            .eraseToAnyPublisher()
     }
 
     func getPrice(symbol: String) -> Double? {
@@ -126,58 +125,55 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     // MARK: - Actions
 
-    func reload() {
-        loadingStateSubject.accept(.loading)
-
-        Completable.async { try await self.swapService.load() }
-            .subscribe(
-                onCompleted: { [weak self] in
-                    self?.loadingStateSubject.accept(.loaded)
-                },
-                onError: { [weak self] error in
-                    self?.loadingStateSubject.accept(.error(error.readableDescription))
-                }
-            )
-            .disposed(by: disposeBag)
+    func reload() async {
+        loadingState = .loading
+        do {
+            try await swapService.load()
+            loadingState = .loaded
+        } catch {
+            loadingState = .error(error.readableDescription)
+        }
     }
 
     func navigate(to scene: OrcaSwapV2.NavigatableScene) {
-        navigationSubject.accept(scene)
+        navigation = scene
     }
 
     func chooseSourceWallet() {
         isSelectingSourceWallet = true
         analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
-        navigationSubject.accept(.chooseSourceWallet(currentlySelectedWallet: sourceWalletSubject.value))
+        navigation = .chooseSourceWallet(currentlySelectedWallet: sourceWallet)
     }
 
     func chooseDestinationWallet() {
         var destinationMints = [String]()
-        if let sourceWallet = sourceWalletSubject.value,
+        if let sourceWallet = sourceWallet,
            let validMints = try? swapService.findPosibleDestinationMints(fromMint: sourceWallet.token.address)
         {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
         analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
-        navigationSubject.accept(.chooseDestinationWallet(
-            currentlySelectedWallet: destinationWalletSubject.value,
+        navigation = .chooseDestinationWallet(
+            currentlySelectedWallet: destinationWallet,
             validMints: Set(destinationMints),
-            excludedSourceWalletPubkey: sourceWalletSubject.value?.pubkey
-        ))
+            excludedSourceWalletPubkey: sourceWallet?.pubkey
+        )
     }
 
     func swapSourceAndDestination() {
-        let source = sourceWalletSubject.value
-        sourceWalletSubject.accept(destinationWalletSubject.value)
-        destinationWalletSubject.accept(source)
+        Swift.swap(&sourceWallet, &destinationWallet)
+    }
+
+    func setSlippage(_ slippage: Double) {
+        self.slippage = slippage
     }
 
     func useAllBalance() {
         isUsingAllBalance = true
-        enterInputAmount(availableAmountSubject.value)
+        enterInputAmount(availableAmount)
 
-        if let fees = feesSubject.value, !fees.isEmpty, availableAmountSubject.value != inputAmountSubject.value {
+        if let fees = feesSubject.value, !fees.isEmpty, availableAmount != inputAmount {
             notificationsService
                 .showInAppNotification(.message(L10n
                         .thisValueIsCalculatedBySubtractingTheTransactionFeeFromYourBalance))
@@ -185,12 +181,12 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func enterInputAmount(_ amount: Double?) {
-        let amount = amount?.rounded(decimals: sourceWalletSubject.value?.token.decimals)
-        inputAmountSubject.accept(amount)
+        let amount = amount?.rounded(decimals: sourceWallet?.token.decimals)
+        inputAmount = amount
 
         // calculate estimated amount
-        if let sourceDecimals = sourceWalletSubject.value?.token.decimals,
-           let destinationDecimals = destinationWalletSubject.value?.token.decimals,
+        if let sourceDecimals = sourceWallet?.token.decimals,
+           let destinationDecimals = destinationWallet?.token.decimals,
            let inputAmount = amount?.toLamport(decimals: sourceDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
            let bestPoolsPair = poolsPairs.findBestPoolsPairForInputAmount(inputAmount),
@@ -198,21 +194,21 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                .convertToBalance(decimals: destinationDecimals)
                .rounded(decimals: destinationDecimals)
         {
-            estimatedAmountSubject.accept(bestEstimatedAmount)
-            bestPoolsPairSubject.accept(bestPoolsPair)
+            estimatedAmount = bestEstimatedAmount
+            self.bestPoolsPair = bestPoolsPair
         } else {
-            estimatedAmountSubject.accept(nil)
-            bestPoolsPairSubject.accept(nil)
+            estimatedAmount = nil
+            bestPoolsPair = nil
         }
     }
 
     func enterEstimatedAmount(_ amount: Double?) {
-        let amount = amount?.rounded(decimals: destinationWalletSubject.value?.token.decimals)
-        estimatedAmountSubject.accept(amount)
+        let amount = amount?.rounded(decimals: destinationWallet?.token.decimals)
+        estimatedAmount = amount
 
         // calculate input amount
-        if let sourceDecimals = sourceWalletSubject.value?.token.decimals,
-           let destinationDecimals = destinationWalletSubject.value?.token.decimals,
+        if let sourceDecimals = sourceWallet?.token.decimals,
+           let destinationDecimals = destinationWallet?.token.decimals,
            let estimatedAmount = amount?.toLamport(decimals: destinationDecimals),
            let poolsPairs = tradablePoolsPairsSubject.value,
            let bestPoolsPair = poolsPairs.findBestPoolsPairForEstimatedAmount(estimatedAmount),
@@ -220,16 +216,16 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
                .convertToBalance(decimals: sourceDecimals)
                .rounded(decimals: sourceDecimals)
         {
-            inputAmountSubject.accept(bestInputAmount)
-            bestPoolsPairSubject.accept(bestPoolsPair)
+            inputAmount = bestInputAmount
+            self.bestPoolsPair = bestPoolsPair
         } else {
-            inputAmountSubject.accept(nil)
-            bestPoolsPairSubject.accept(nil)
+            inputAmount = nil
+            bestPoolsPair = nil
         }
     }
 
     func choosePayFee() {
-        navigationSubject.accept(.settings)
+        navigation = .settings
     }
 
     func openSettings() {
@@ -239,24 +235,24 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
             analyticsManager.log(event: .swapChangingTokenA(tokenAName: wallet.token.symbol))
-            sourceWalletSubject.accept(wallet)
+            sourceWallet = wallet
         } else {
             analyticsManager.log(event: .swapChangingTokenB(tokenBName: wallet.token.symbol))
-            destinationWalletSubject.accept(wallet)
+            destinationWallet = wallet
         }
     }
 
-    var feePayingTokenDriver: Driver<Wallet?> {
-        payingWalletSubject.asDriver()
+    var feePayingTokenPublisher: AnyPublisher<Wallet?, Never> {
+        $payingWallet.eraseToAnyPublisher()
     }
 
     func changeFeePayingToken(to payingToken: Wallet) {
-        payingWalletSubject.accept(payingToken)
+        payingWallet = payingToken
     }
 
     func cleanAllFields() {
-        sourceWalletSubject.accept(nil)
-        destinationWalletSubject.accept(nil)
+        sourceWallet = nil
+        destinationWallet = nil
         enterInputAmount(nil)
     }
 

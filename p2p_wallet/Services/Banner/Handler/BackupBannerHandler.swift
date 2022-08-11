@@ -2,8 +2,8 @@
 // Created by Giang Long Tran on 18.02.2022.
 //
 
+import Combine
 import Foundation
-import RxSwift
 import SwiftyUserDefaults
 
 class BackupBanner: Banners.Banner {
@@ -30,7 +30,7 @@ class BackupBanner: Banners.Banner {
 class BackupBannerHandler: Banners.Handler {
     weak var delegate: Banners.Service?
     let backupStorage: ICloudStorageType
-    let disposeBag = DisposeBag()
+    var subscriptions = [AnyCancellable]()
     var defaultsDisposable: DefaultsDisposable!
 
     init(backupStorage: ICloudStorageType) { self.backupStorage = backupStorage }
@@ -41,13 +41,13 @@ class BackupBannerHandler: Banners.Handler {
         // Subscribe backup on change
         backupStorage
             .onValueChange
-            .emit(onNext: { [weak self] event in
+            .sink { [weak self] event in
                 debugPrint("Backup Banner", event)
                 if event.key == "didBackupUsingIcloud", event.value != nil {
                     self?.delegate?.remove(bannerId: BackupBanner.id)
                 }
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
 
         if Defaults.didBackupOffline {
             delegate?.remove(bannerId: BackupBanner.id)

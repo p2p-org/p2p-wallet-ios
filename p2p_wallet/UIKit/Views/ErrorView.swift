@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 16/11/2020.
 //
 
-import Action
 import Foundation
 
 class MessageView: BEView {
@@ -39,14 +38,16 @@ class MessageView: BEView {
         actionButton.isHidden = true
     }
 
-    var buttonAction: CocoaAction? {
+    var buttonAction: (() -> Void)? {
         didSet {
-            guard let action = buttonAction else {
+            guard buttonAction != nil else {
                 actionButton.isHidden = true
                 return
             }
             actionButton.isHidden = false
-            actionButton.rx.action = action
+            actionButton.onTap { [weak self] in
+                self?.buttonAction?()
+            }
         }
     }
 }

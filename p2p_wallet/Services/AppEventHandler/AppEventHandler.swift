@@ -9,7 +9,6 @@ import Foundation
 import LocalAuthentication
 import RenVMSwift
 import Resolver
-import RxCocoa
 import SolanaSwift
 
 protocol AppEventHandlerType {

@@ -6,12 +6,9 @@
 //
 
 import Foundation
-import RxSwift
 import UIKit
 
 class BaseVC: BEViewController {
-    let disposeBag = DisposeBag()
-
     deinit {
         debugPrint("\(String(describing: self)) deinited")
     }

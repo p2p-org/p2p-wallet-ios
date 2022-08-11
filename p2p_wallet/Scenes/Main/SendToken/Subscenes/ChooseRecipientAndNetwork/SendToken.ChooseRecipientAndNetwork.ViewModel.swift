@@ -5,22 +5,24 @@
 //  Created by Chung Tran on 29/11/2021.
 //
 
+import Combine
 import FeeRelayerSwift
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndNetworkHandler,
     SendTokenSelectNetworkViewModelType
 {
-    var preSelectedNetwork: SendToken.Network? { get }
-    var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> { get }
-    var walletDriver: Driver<Wallet?> { get }
-    var amountDriver: Driver<Double?> { get }
-
+    // Navigation
+    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> { get }
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
+
+    // Properties
+    var preSelectedNetwork: SendToken.Network? { get }
+    var walletPublisher: AnyPublisher<Wallet?, Never> { get }
+    var amountPublisher: AnyPublisher<Double?, Never> { get }
+
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
     func getSendService() -> SendServiceType
     func getPrice(for symbol: String) -> Double
@@ -31,7 +33,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 
 extension SendToken.ChooseRecipientAndNetwork {
     @MainActor
-    class ViewModel {
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         let sendService: SendServiceType
@@ -43,18 +45,18 @@ extension SendToken.ChooseRecipientAndNetwork {
         // MARK: - Properties
 
         private let relayMethod: SendTokenRelayMethod
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        let recipientSubject = BehaviorRelay<SendToken.Recipient?>(value: nil)
-        let networkSubject = BehaviorRelay<SendToken.Network>(value: .solana)
-        let payingWalletSubject = BehaviorRelay<Wallet?>(value: nil)
+        @Published private var navigatableScene: NavigatableScene?
+        @Published var recipient: SendToken.Recipient?
+        @Published var network: SendToken.Network = .solana
+        @Published var payingWallet: Wallet?
         let feeInfoSubject = LoadableRelay<SendToken.FeeInfo>(
-            request: .just(
+            request: {
                 .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
-            )
+            }
         )
 
         // MARK: - Initializers
@@ -79,60 +81,57 @@ extension SendToken.ChooseRecipientAndNetwork {
 
         func bind() {
             sendTokenViewModel.recipientDriver
-                .drive(recipientSubject)
-                .disposed(by: disposeBag)
+                .sink { [weak self] recipient in
+                    self?.setRecipient(recipient)
+                }
+                .store(in: &subscriptions)
 
             sendTokenViewModel.networkDriver
-                .drive(networkSubject)
-                .disposed(by: disposeBag)
+                .sink { [weak self] network in
+                    self?.setNetwork(network)
+                }
+                .store(in: &subscriptions)
 
             sendTokenViewModel.payingWalletDriver
-                .drive(payingWalletSubject)
-                .disposed(by: disposeBag)
+                .sink { [weak self] payingWallet in
+                    self?.setPayingWallet(payingWallet)
+                }
+                .store(in: &subscriptions)
 
             // Smart select fee token
-            recipientSubject
-                .flatMapLatest { [weak self] _ -> Single<FeeAmount?> in
-                    guard
-                        let self = self,
-                        let wallet = self.sendTokenViewModel.walletSubject.value,
-                        let receiver = self.recipientSubject.value
-                    else { return .just(.zero) }
-
-                    return Single.async {
-                        try await self.sendService.getFees(
-                            from: wallet,
-                            receiver: receiver.address,
-                            network: self.networkSubject.value,
-                            payingTokenMint: wallet.mintAddress
-                        )
-                    }
-                    .flatMap { [weak self] fee -> Single<FeeAmount?> in
-                        guard let self = self, let fee = fee else { return .just(.zero) }
-
-                        return Single.async {
-                            try await self.sendService.getFeesInPayingToken(
-                                feeInSOL: fee,
-                                payingFeeWallet: wallet
-                            )
-                        }
-                    }
+            $recipient
+                .asyncMap { [weak self] _ async throws -> FeeAmount? in // TODO: - flatMapLatest
+                    guard let self = self,
+                          let wallet = self.sendTokenViewModel.wallet,
+                          let receiver = self.recipient
+                    else { return .zero }
+                    let feeInSOL = try await self.sendService.getFees(
+                        from: wallet,
+                        receiver: receiver.address,
+                        network: self.network,
+                        payingTokenMint: wallet.mintAddress
+                    ) ?? .zero
+                    return try await self.sendService.getFeesInPayingToken(
+                        feeInSOL: feeInSOL,
+                        payingFeeWallet: wallet
+                    )
                 }
-                .subscribe(onNext: { [weak self] fee in
+                .replaceError(with: nil)
+                .sink { [weak self] fee in
                     guard
                         let self = self,
-                        let amount = self.sendTokenViewModel.amountSubject.value,
-                        let wallet = self.sendTokenViewModel.walletSubject.value,
+                        let amount = self.sendTokenViewModel.amount,
+                        let wallet = self.sendTokenViewModel.wallet,
                         let fee = fee
                     else { return }
 
                     if amount.toLamport(decimals: wallet.token.decimals) + fee.total > (wallet.lamports ?? 0) {
-                        self.payingWalletSubject.accept(self.walletRepository.nativeWallet)
+                        self.payingWallet = self.walletRepository.nativeWallet
                     } else {
-                        self.payingWalletSubject.accept(wallet)
+                        self.payingWallet = wallet
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             bindFees()
         }
@@ -140,24 +139,20 @@ extension SendToken.ChooseRecipientAndNetwork {
 }
 
 extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipientAndNetworkViewModelType {
-    func getSelectedWallet() -> Wallet? {
-        sendTokenViewModel.getSelectedWallet()
-    }
-
-    var navigationDriver: Driver<SendToken.ChooseRecipientAndNetwork.NavigatableScene?> {
-        navigationSubject.asDriver()
-    }
-
-    var walletDriver: Driver<Wallet?> {
-        sendTokenViewModel.walletDriver
-    }
-
-    var amountDriver: Driver<Double?> {
-        sendTokenViewModel.amountDriver
+    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene) {
-        navigationSubject.accept(scene)
+        navigatableScene = scene
+    }
+
+    var walletPublisher: AnyPublisher<Wallet?, Never> {
+        sendTokenViewModel.walletPublisher
+    }
+
+    var amountPublisher: AnyPublisher<Double?, Never> {
+        sendTokenViewModel.amountPublisher
     }
 
     func createSelectAddressViewModel() -> SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
@@ -165,7 +160,7 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
             chooseRecipientAndNetworkViewModel: self,
             showAfterConfirmation: showAfterConfirmation,
             relayMethod: relayMethod,
-            amount: sendTokenViewModel.amountSubject.value ?? 0
+            amount: sendTokenViewModel.amount ?? 0
         )
         return vm
     }
@@ -182,25 +177,60 @@ extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipien
         sendTokenViewModel.getPrices(for: symbols)
     }
 
-    func getFreeTransactionFeeLimit() -> Single<UsageStatus> {
-        sendTokenViewModel.getFreeTransactionFeeLimit()
-    }
-
-    func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
-        sendTokenViewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
-    }
-
     func save() {
-        sendTokenViewModel.selectRecipient(recipientSubject.value)
-        sendTokenViewModel.selectNetwork(networkSubject.value)
-        sendTokenViewModel.payingWalletSubject.accept(payingWalletSubject.value)
+        sendTokenViewModel.setRecipient(recipient)
+        sendTokenViewModel.setNetwork(network)
+        sendTokenViewModel.setPayingWallet(payingWallet)
     }
 
     func navigateNext() {
         if showAfterConfirmation {
-            navigationSubject.accept(.backToConfirmation)
+            navigatableScene = .backToConfirmation
         } else {
             sendTokenViewModel.navigate(to: .confirmation)
         }
+    }
+
+    var wallet: Wallet? {
+        sendTokenViewModel.wallet
+    }
+
+    func setRecipient(_ recipient: SendToken.Recipient?) {
+        self.recipient = recipient
+    }
+
+    var recipientPublisher: AnyPublisher<SendToken.Recipient?, Never> {
+        $recipient.eraseToAnyPublisher()
+    }
+
+    func setNetwork(_ network: SendToken.Network?) {
+        guard let network = network else {
+            return
+        }
+        self.network = network
+    }
+
+    var networkPublisher: AnyPublisher<SendToken.Network, Never> {
+        $network.eraseToAnyPublisher()
+    }
+
+    func setPayingWallet(_ payingWallet: Wallet?) {
+        self.payingWallet = payingWallet
+    }
+
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> {
+        $payingWallet.eraseToAnyPublisher()
+    }
+
+    var feeInfoPublisher: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
+        feeInfoSubject.eraseToAnyPublisher()
+    }
+
+    func getFreeTransactionFeeLimit() async throws -> UsageStatus {
+        try await sendTokenViewModel.getFreeTransactionFeeLimit()
+    }
+
+    func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
+        sendTokenViewModel.navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(network)
     }
 }

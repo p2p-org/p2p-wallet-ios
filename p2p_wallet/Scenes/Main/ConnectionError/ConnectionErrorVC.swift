@@ -5,12 +5,11 @@
 //  Created by Chung Tran on 05/05/2021.
 //
 
-import Action
 import Foundation
 
 extension UIView {
     @discardableResult
-    func showConnectionErrorView(refreshAction: CocoaAction? = nil) -> ConnectionErrorView {
+    func showConnectionErrorView(refreshAction: (() -> Void)? = nil) -> ConnectionErrorView {
         hideConnectionErrorView()
 
         let errorView = ConnectionErrorView()
@@ -72,9 +71,11 @@ class ConnectionErrorView: BEView {
         return view
     }()
 
-    var refreshAction: CocoaAction? {
+    var refreshAction: (() -> Void)? {
         didSet {
-            refreshButton.rx.action = refreshAction
+            refreshButton.onTap { [weak self] in
+                self?.refreshAction?()
+            }
         }
     }
 

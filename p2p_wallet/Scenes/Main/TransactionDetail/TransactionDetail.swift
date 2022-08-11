@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import RxCocoa
 
 enum TransactionDetail {
     enum NavigatableScene {

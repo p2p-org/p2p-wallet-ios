@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 28/10/2021.
 //
 
-import Action
 import BECollectionView_Combine
 import BEPureLayout
 import Combine
@@ -96,9 +95,8 @@ extension Home {
                                 onSend: { [weak self] wallet in
                                     self?.viewModel.navigate(to: .sendToken(fromAddress: wallet.pubkey))
                                 },
-                                showHideHiddenWalletsAction: CocoaAction { [weak self] in
+                                showHideHiddenWalletsAction: { [weak self] in
                                     self?.viewModel.walletsRepository.toggleIsHiddenWalletShown()
-                                    return .just(())
                                 }
                             ),
                         ]
