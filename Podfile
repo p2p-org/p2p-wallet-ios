@@ -55,6 +55,7 @@ target 'p2p_wallet' do
   pod 'SwiftLint'
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
+  pod 'ReachabilitySwift', '~> 5.0.0'
 
   # reactive
   pod 'Action'

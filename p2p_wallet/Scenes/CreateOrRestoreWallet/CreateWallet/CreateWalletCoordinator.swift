@@ -25,7 +25,17 @@ final class CreateWalletCoordinator: Coordinator<Void> {
 
     init(parent: UIViewController) {
         parentViewController = parent
-        tKeyFacade = TKeyJSFacade(wkWebView: webView)
+        tKeyFacade = TKeyJSFacade(
+            wkWebView: webView,
+            config: .init(
+                metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
+                torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
+                torusVerifierMapping: [
+                    "google": String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? "",
+                    "apple": String.secretConfig("TORUS_APPLE_VERIFIER") ?? "",
+                ]
+            )
+        )
         viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade)
 
         socialSignInDelegatedCoordinator = .init(
@@ -102,6 +112,7 @@ final class CreateWalletCoordinator: Coordinator<Void> {
         if case let .finish(result) = to {
             switch result {
             default:
+                navigationController?.dismiss(animated: true)
                 self.result.send()
                 return
             }
