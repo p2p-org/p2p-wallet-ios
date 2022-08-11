@@ -2,16 +2,15 @@
 // Created by Giang Long Tran on 27.12.21.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension ReceiveToken {
     class QrCodeCard: BECompositionView {
         @Injected var qrImageRender: QrCodeImageRender
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         var username: String? {
             didSet {
@@ -161,11 +160,5 @@ extension ReceiveToken {
             onSave = callback
             return self
         }
-    }
-}
-
-extension Reactive where Base: ReceiveToken.QrCodeCard {
-    var pubKey: Binder<String?> {
-        Binder(base) { view, pubKey in view.pubKey = pubKey }
     }
 }
