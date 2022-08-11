@@ -50,8 +50,8 @@ extension ConfirmReceivingBitcoin {
                     .setup { label in
                         viewModel.accountStatusDriver
                             .map { $0 != .payingWalletAvailable }
-                            .drive(label.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: label)
+                            .store(in: &subscriptions)
                     }
 
                 // Additional spacer in top up view
@@ -60,8 +60,8 @@ extension ConfirmReceivingBitcoin {
                         view.autoSetDimension(.height, toSize: 14)
                         viewModel.accountStatusDriver
                             .map { $0 != .topUpRequired }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                 // Alert and separator
@@ -91,24 +91,24 @@ extension ConfirmReceivingBitcoin {
                         .setup { view in
                             viewModel.accountStatusDriver
                                 .map { $0 != .topUpRequired }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
 
                     shareSolanaAddressButton()
                         .setup { view in
                             viewModel.accountStatusDriver
                                 .map { $0 != .topUpRequired }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
 
                     createRenBTCButton()
                         .setup { view in
                             viewModel.accountStatusDriver
                                 .map { $0 != .payingWalletAvailable }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
                 }
                 .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
