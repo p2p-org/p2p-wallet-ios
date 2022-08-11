@@ -6,16 +6,16 @@
 //
 
 import AnalyticsManager
+import Combine
+import CombineCocoa
 import Resolver
-import RxCocoa
-import RxSwift
 import UIKit
 
 extension SendToken.ChooseTokenAndAmount {
     class RootView: BEView {
         // MARK: - Constants
 
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -140,24 +140,24 @@ extension SendToken.ChooseTokenAndAmount {
         }
 
         private func bind() {
-            viewModel.walletDriver
-                .drive(onNext: { [weak self] wallet in
+            viewModel.walletPublisher
+                .sink { [weak self] wallet in
                     self?.coinLogoImageView.setUp(wallet: wallet)
                     self?.coinSymbolLabel.text = wallet?.token.symbol
                     self?.amountTextField.setUp(decimals: wallet?.token.decimals)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // equity label
-            viewModel.walletDriver
+            viewModel.walletPublisher
                 .map { $0?.priceInCurrentFiat == nil }
-                .drive(equityValueLabel.rx.isHidden)
-                .disposed(by: disposeBag)
+                .assign(to: \.isHidden, on: equityValueLabel)
+                .store(in: &subscriptions)
 
-            Driver.combineLatest(
-                viewModel.amountDriver,
-                viewModel.walletDriver,
-                viewModel.currencyModeDriver
+            Publishers.CombineLatest3(
+                viewModel.amountPublisher,
+                viewModel.walletPublisher,
+                viewModel.currencyModePublisher
             ).map { amount, wallet, currencyMode -> String in
                 guard let wallet = wallet else { return "" }
 
@@ -176,37 +176,38 @@ extension SendToken.ChooseTokenAndAmount {
                     : equityValue.toString(maximumFractionDigits: 9, groupingSeparator: "")
                 return equityValueSymbol + " " + value
             }
-            .asDriver()
-            .drive(equityValueLabel.rx.text)
-            .disposed(by: disposeBag)
+            .assign(to: \.text, on: equityValueLabel)
+            .store(in: &subscriptions)
 
             // amount
-            amountTextField.rx.text
-                .subscribe(onNext: { [weak self] text in
-                    self?.viewModel.enterAmount(Double(text ?? "") ?? 0)
-                })
-                .disposed(by: disposeBag)
+            amountTextField.textPublisher
+                .sink { [weak self] text in
+                    self?.viewModel.setAmount(Double(text ?? "") ?? 0)
+                }
+                .store(in: &subscriptions)
 
-            amountTextField.rx.controlEvent([.editingDidEnd])
-                .asObservable()
-                .withLatestFrom(amountTextField.rx.text)
-                .subscribe(onNext: { [weak self] amount in
+            NotificationCenter.default.publisher(
+                for: UITextField.textDidEndEditingNotification,
+                object: amountTextField
+            )
+                .withLatestFrom(amountTextField.textPublisher)
+                .sink { [weak self] amount in
                     guard let amount = amount?.double else { return }
                     self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.amountDriver
-                .distinctUntilChanged()
-                .withLatestFrom(viewModel.walletDriver, resultSelector: { ($0, $1) })
+            viewModel.amountPublisher
+                .removeDuplicates()
+                .withLatestFrom(viewModel.walletPublisher, resultSelector: { ($0, $1) })
                 .map { $0.0?.toString(maximumFractionDigits: Int($0.1?.token.decimals ?? 0), groupingSeparator: "") }
-                .drive(amountTextField.rx.text)
-                .disposed(by: disposeBag)
+                .assign(to: \.text, on: amountTextField)
+                .store(in: &subscriptions)
 
             // available amount
-            let balanceTextDriver = Driver.combineLatest(
-                viewModel.walletDriver,
-                viewModel.currencyModeDriver
+            let balanceTextPublisher = Publishers.CombineLatest(
+                viewModel.walletPublisher,
+                viewModel.currencyModePublisher
             )
                 .map { [weak self] wallet, mode -> String? in
                     guard
@@ -219,13 +220,13 @@ extension SendToken.ChooseTokenAndAmount {
                     return string
                 }
 
-            balanceTextDriver
-                .drive(balanceLabel.rx.text)
-                .disposed(by: disposeBag)
+            balanceTextPublisher
+                .assign(to: \.text, on: balanceLabel)
+                .store(in: &subscriptions)
 
             // error
-            let balanceTintColorDriver = viewModel.errorDriver
-                .withLatestFrom(viewModel.amountDriver.map(\.isNilOrZero)) { ($0, $1) }
+            let balanceTintColorPublisher = viewModel.errorPublisher
+                .withLatestFrom(viewModel.amountPublisher.map(\.isNilOrZero)) { ($0, $1) }
                 .map { error, amountIsNilOrZero -> UIColor in
                     var color = UIColor.textSecondary
                     if error != nil, !amountIsNilOrZero {
@@ -234,16 +235,16 @@ extension SendToken.ChooseTokenAndAmount {
                     return color
                 }
 
-            balanceTintColorDriver
-                .drive(walletImageView.rx.tintColor)
-                .disposed(by: disposeBag)
+            balanceTintColorPublisher
+                .assign(to: \.tintColor, on: walletImageView)
+                .store(in: &subscriptions)
 
-            balanceTintColorDriver
-                .drive(balanceLabel.rx.textColor)
-                .disposed(by: disposeBag)
+            balanceTintColorPublisher
+                .assign(to: \.textColor, on: balanceLabel)
+                .store(in: &subscriptions)
 
             // action button
-            viewModel.errorDriver
+            viewModel.errorPublisher
                 .map { [weak self] in
                     $0?.buttonSuggestion ??
                         (
@@ -252,10 +253,10 @@ extension SendToken.ChooseTokenAndAmount {
                                 L10n.chooseTheRecipient
                         )
                 }
-                .drive(onNext: { [weak actionButton] in actionButton?.text = $0 })
-                .disposed(by: disposeBag)
+                .sink { [weak actionButton] in actionButton?.text = $0 }
+                .store(in: &subscriptions)
 
-            viewModel.errorDriver
+            viewModel.errorPublisher
                 .map { [weak self] in
                     $0 != nil ? nil : (
                         self?.viewModel.showAfterConfirmation == true ?
@@ -263,19 +264,19 @@ extension SendToken.ChooseTokenAndAmount {
                             .buttonChooseTheRecipient
                     )
                 }
-                .drive(onNext: { [weak actionButton] in actionButton?.image = $0 })
-                .disposed(by: disposeBag)
+                .sink { [weak actionButton] in actionButton?.image = $0 }
+                .store(in: &subscriptions)
 
-            viewModel.errorDriver
+            viewModel.errorPublisher
                 .map { $0 == nil }
-                .drive(actionButton.rx.isEnabled)
-                .disposed(by: disposeBag)
+                .assign(to: \.isEnabled, on: actionButton)
+                .store(in: &subscriptions)
 
             #if DEBUG
                 viewModel.errorPublisher
                     .map { String(describing: $0?.rawValue) }
-                    .drive(errorLabel.rx.text)
-                    .disposed(by: disposeBag)
+                    .assign(to: \.text, on: errorLabel)
+                    .store(in: &subscriptions)
             #endif
         }
 
