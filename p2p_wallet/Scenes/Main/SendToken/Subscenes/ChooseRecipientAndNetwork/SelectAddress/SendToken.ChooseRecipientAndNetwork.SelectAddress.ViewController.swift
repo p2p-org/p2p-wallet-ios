@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 29/11/2021.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -13,6 +14,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         var customView: RootView {
             guard let customView = view as? RootView else {
@@ -45,9 +47,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation
