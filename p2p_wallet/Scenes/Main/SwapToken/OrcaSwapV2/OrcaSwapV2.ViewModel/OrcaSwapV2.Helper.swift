@@ -35,7 +35,7 @@ extension OrcaSwapV2.ViewModel {
             return .tradablePoolsPairsNotLoaded
         }
 
-        if tradablePoolsPairs == nil || tradablePoolsPairs?.isEmpty == true {
+        if tradablePoolsPairsSubject.value == nil || tradablePoolsPairsSubject.value?.isEmpty == true {
             return .tradingPairNotSupported
         }
 
