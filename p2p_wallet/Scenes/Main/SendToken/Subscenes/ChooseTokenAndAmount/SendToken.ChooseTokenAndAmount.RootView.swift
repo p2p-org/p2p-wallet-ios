@@ -272,7 +272,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .disposed(by: disposeBag)
 
             #if DEBUG
-                viewModel.errorDriver
+                viewModel.errorPublisher
                     .map { String(describing: $0?.rawValue) }
                     .drive(errorLabel.rx.text)
                     .disposed(by: disposeBag)
