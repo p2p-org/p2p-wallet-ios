@@ -7,8 +7,6 @@
 
 import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 
 public enum LoadableState: Equatable {
     case notRequested
@@ -66,13 +64,13 @@ extension UIView {
     }
 }
 
-extension Reactive where Base: UIView {
-    func loadableState(reloadAction: @escaping (() -> Void)) -> Binder<LoadableState> {
-        Binder(base) { view, loadableState in
-            view.setUp(loadableState, reloadAction: reloadAction)
-        }
-    }
-}
+// extension Reactive where Base: UIView {
+//    func loadableState(reloadAction: @escaping (() -> Void)) -> Binder<LoadableState> {
+//        Binder(base) { view, loadableState in
+//            view.setUp(loadableState, reloadAction: reloadAction)
+//        }
+//    }
+// }
 
 extension Collection where Element == LoadableState {
     var combined: Element {
@@ -90,26 +88,18 @@ extension Collection where Element == LoadableState {
 public class LoadableRelay<T> {
     // MARK: - Subject
 
-    private let stateRelay = BehaviorRelay<LoadableState>(value: .notRequested)
+    @Published public private(set) var state = LoadableState.notRequested
+    @Published public private(set) var value: T?
 
     // MARK: - Properties
 
-    public var request: Single<T>
-    public private(set) var value: T?
-    public var state: LoadableState { stateRelay.value }
+    public var request: (() async throws -> T)?
 
-    private var disposable: Disposable?
-
-    public var stateObservable: Observable<LoadableState> { stateRelay.asObservable() }
-    public var valueObservable: Observable<T?> {
-        stateRelay
-            .map { [weak self] _ in self?.value }
-            .asObservable()
-    }
+    private var task: Task<Void, Never>?
 
     // MARK: - Initializer
 
-    public init(request: Single<T>) {
+    public init(request: (() async throws -> T)? = nil) {
         self.request = request
     }
 
@@ -119,7 +109,7 @@ public class LoadableRelay<T> {
     public func flush() {
         cancelRequest()
         value = nil
-        stateRelay.accept(.notRequested)
+        state = .notRequested
     }
 
     /// Flush result and refresh
@@ -134,17 +124,23 @@ public class LoadableRelay<T> {
         cancelRequest()
 
         // Mark as loading
-        stateRelay.accept(.loading)
+        state = .loading
 
         // Load request
-        disposable = request
-            .subscribe(onSuccess: { [weak self] data in
-                guard let self = self else { return }
+        task = Task {
+            do {
+                try Task.checkCancellation()
+                guard let data = try await request?() else {
+                    state = .loaded
+                    return
+                }
+                try Task.checkCancellation()
                 self.value = self.map(oldData: self.value, newData: data)
-                self.stateRelay.accept(.loaded)
-            }, onFailure: { [weak self] error in
-                self?.stateRelay.accept(.error(error.readableDescription))
-            })
+                self.state = .loaded
+            } catch {
+                state = .error(error.readableDescription)
+            }
+        }
     }
 
     /// Mapping
@@ -154,46 +150,39 @@ public class LoadableRelay<T> {
 
     /// Cancel current request
     public func cancelRequest() {
-        disposable?.dispose()
+        task?.cancel()
     }
 
     /// Override value by a given value and set state to loaded
     /// - Parameter value: value for overriding
-    public func accept(_ value: T?, state: LoadableState) {
+    public func send(_ value: T?, state: LoadableState) {
         cancelRequest()
         self.value = value
-        stateRelay.accept(state)
+        self.state = state
     }
 }
 
 public typealias Loadable<T> = (value: T?, state: LoadableState, reloadAction: (() -> Void)?)
 
 public extension LoadableRelay {
-    /// Convert to driver to drive UI
-    func asDriver() -> Driver<Loadable<T>> {
-        stateObservable.asDriver(onErrorJustReturn: .notRequested)
-            .map { [weak self] in (value: self?.value, state: $0, reloadAction: { [weak self] in self?.reload() }) }
-    }
-
     /// Convert to publisher
     func eraseToAnyPublisher() -> AnyPublisher<Loadable<T>, Never> {
-        stateObservable.publisher.replaceError(with: .notRequested)
+        $state
             .map { [weak self] in (value: self?.value, state: $0, reloadAction: { [weak self] in self?.reload() }) }
-            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 }
 
-public extension Reactive where Base: UILabel {
-    /// Bindable sink for `loadbleText` property.
-    func loadableText<T>(
-        onLoaded: @escaping ((T?) -> String?)
-    ) -> Binder<Loadable<T>> {
-        Binder(base) { label, loadableValue in
-            label.set(loadableValue, onLoaded: onLoaded)
-        }
-    }
-}
+// public extension Reactive where Base: UILabel {
+//    /// Bindable sink for `loadbleText` property.
+//    func loadableText<T>(
+//        onLoaded: @escaping ((T?) -> String?)
+//    ) -> Binder<Loadable<T>> {
+//        Binder(base) { label, loadableValue in
+//            label.set(loadableValue, onLoaded: onLoaded)
+//        }
+//    }
+// }
 
 public extension UILabel {
     func set<T>(_ loadableValue: Loadable<T>, onLoaded: @escaping ((T?) -> String?)) {
