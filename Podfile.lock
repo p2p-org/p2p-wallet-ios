@@ -447,7 +447,7 @@ CHECKOUT OPTIONS:
     :commit: 145b589ae5ed31c72dc51959bc7f782d69b07cc6
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :commit: 449587811282fccdbaf665c1f25b8c40d26aedaa
+    :commit: 5290f40fb5d71f8e6b2a8e462cab0309914772e4
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
     :commit: 449587811282fccdbaf665c1f25b8c40d26aedaa
@@ -462,7 +462,7 @@ CHECKOUT OPTIONS:
     :commit: 449587811282fccdbaf665c1f25b8c40d26aedaa
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 449587811282fccdbaf665c1f25b8c40d26aedaa
+    :commit: 5290f40fb5d71f8e6b2a8e462cab0309914772e4
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -568,6 +568,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 35eda948cb0585e0c3ec3fb81c54308361ff1dac
+PODFILE CHECKSUM: 87cface0f5acc09497127a93bdd29396dd87f11c
 
 COCOAPODS: 1.11.3
