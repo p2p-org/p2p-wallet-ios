@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppUI
 import Resolver
 import RxCocoa
 import RxSwift
@@ -17,6 +18,7 @@ protocol NotificationService {
     func sendRegisteredDeviceToken(_ deviceToken: Data) async
     func deleteDeviceToken() async
     func showInAppNotification(_ notification: InAppNotification)
+    func showDefaultErrorNotification()
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
     func didReceivePush(userInfo: [AnyHashable: Any])
     func notificationWasOpened()
@@ -112,6 +114,12 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         }
     }
 
+    func showDefaultErrorNotification() {
+        DispatchQueue.main.async {
+            UIApplication.shared.showToastError()
+        }
+    }
+
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         if launchOptions?[.remoteNotification] != nil {
             UserDefaults.standard.set(true, forKey: openAfterPushKey)
@@ -201,11 +209,37 @@ private extension UIApplication {
             }
         }
     }
+
+    func showToastError(title: String? = nil, text: String? = nil) {
+        guard let viewController = windows.first?.topViewController() else { return }
+        SnackBar(
+            title: title ?? "😓",
+            text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
+        ).show(in: viewController)
+    }
 }
 
 private extension Data {
     var formattedDeviceToken: String {
         let tokenParts = map { data in String(format: "%02.2hhx", data) }
         return tokenParts.joined()
+    }
+}
+
+extension UIWindow {
+    func topViewController() -> UIViewController? {
+        var top = rootViewController
+        while true {
+            if let presented = top?.presentedViewController {
+                top = presented
+            } else if let nav = top as? UINavigationController {
+                top = nav.visibleViewController
+            } else if let tab = top as? UITabBarController {
+                top = tab.selectedViewController
+            } else {
+                break
+            }
+        }
+        return top
     }
 }
