@@ -5,18 +5,17 @@
 //  Created by Andrew Vasiliev on 21.12.2021.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol NewSwapTokenSettingsViewModelType: AnyObject {
-    var navigationDriver: Driver<SwapTokenSettings.NavigatableScene?> { get }
+    var navigationPublisher: AnyPublisher<SwapTokenSettings.NavigatableScene?, Never> { get }
     var possibleSlippageTypes: [SwapTokenSettings.SlippageType] { get }
     var slippageType: SwapTokenSettings.SlippageType { get }
-    var feesContentDriver: Driver<[SwapTokenSettings.FeeCellContent]> { get }
-    var customSlippageIsOpenedDriver: Driver<Bool> { get }
+    var feesContentPublisher: AnyPublisher<[SwapTokenSettings.FeeCellContent], Never> { get }
+    var customSlippageIsOpenedPublisher: AnyPublisher<Bool, Never> { get }
 
     func slippageSelected(_ selected: SwapTokenSettings.SlippageType)
     func customSlippageChanged(_ value: Double?)
@@ -24,7 +23,8 @@ protocol NewSwapTokenSettingsViewModelType: AnyObject {
 }
 
 extension SwapTokenSettings {
-    final class ViewModel: NewSwapTokenSettingsViewModelType {
+    @MainActor
+    final class ViewModel: ObservableObject, NewSwapTokenSettingsViewModelType {
         // MARK: - Properties
 
         var slippageType: SwapTokenSettings.SlippageType {
@@ -37,12 +37,12 @@ extension SwapTokenSettings {
 
         // MARK: - Subject
 
-        var customSlippageIsOpenedDriver: Driver<Bool> { customSlippageIsOpenedSubject.asDriver() }
+        var customSlippageIsOpenedPublisher: AnyPublisher<Bool, Never> { customSlippageIsOpenedSubject.asDriver() }
 
         private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
         private let customSlippageIsOpenedSubject = BehaviorRelay<Bool>(value: false)
 
-        var feesContentDriver: Driver<[FeeCellContent]> {
+        var feesContentPublisher: AnyPublisher<[FeeCellContent]> {
             Driver.combineLatest(
                 swapViewModel.sourceWalletDriver,
                 swapViewModel.destinationWalletDriver,
@@ -74,7 +74,7 @@ extension SwapTokenSettings {
             SlippageType.allCases
         }
 
-        var navigationDriver: Driver<NavigatableScene?> {
+        var navigationPublisher: AnyPublisher<NavigatableScene?, Never> {
             navigationSubject.asDriver()
         }
 

@@ -6,12 +6,12 @@
 //
 
 import BEPureLayout
-import RxSwift
+import Combine
 import UIKit
 
 extension SwapTokenSettings {
     final class SlippageView: BECompositionView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: NewSwapTokenSettingsViewModelType
 
         let customField = BERef<CustomSlippageField>()
@@ -59,17 +59,17 @@ extension SwapTokenSettings {
 
                         viewModel.customSlippageIsOpenedDriver
                             .map { !$0 }
-                            .drive(textField.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: textField)
+                            .store(in: &subscriptions)
 
-                        textField.rxText
-                            .distinctUntilChanged()
+                        textField.textPublisher
+                            .removeDuplicates()
                             .map { $0.flatMap(NumberFormatter().number) }
                             .map { $0?.doubleValue }
-                            .bind { [weak self] in
+                            .sink { [weak self] in
                                 self?.viewModel.customSlippageChanged($0)
                             }
-                            .disposed(by: disposeBag)
+                            .store(in: &subscriptions)
                     }
 
                 // Description
