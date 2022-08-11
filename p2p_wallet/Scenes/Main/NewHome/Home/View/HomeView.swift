@@ -5,6 +5,7 @@
 //  Created by Ivan on 08.08.2022.
 //
 
+import BottomSheet
 import KeyAppUI
 import SwiftUI
 
@@ -60,7 +61,7 @@ struct HomeView: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(
                             action: {
-                                viewModel.scanQr()
+                                viewModel.receive()
                             },
                             label: {
                                 Image(uiImage: .scanQr)

@@ -54,17 +54,9 @@ final class HomeCoordinator: Coordinator<Void> {
                 homeView.navigationIsHidden = false
             })
             .store(in: &subscriptions)
-        viewModel.scanQrShow
+        viewModel.receiveShow
             .sink(receiveValue: { [unowned self] in
-                let coordinator = ScanQrCoordinator(navigationController: navigationController)
-                coordinate(to: coordinator)
-                    .sink(receiveValue: { [weak self] in
-                        guard let code = $0 else { return }
-                        self?.qrCodeScannerHandler(code: code, tokensViewModel: tokensViewModel)
-                    })
-                    .store(in: &subscriptions)
-                analyticsManager.log(event: .mainScreenQrOpen)
-                analyticsManager.log(event: .scanQrOpen(fromPage: "main_screen"))
+                openReceiveScreen(pubKey: $0)
             })
             .store(in: &subscriptions)
         viewModel.errorShow
@@ -234,26 +226,4 @@ final class HomeCoordinator: Coordinator<Void> {
             navigationController.show(vc, sender: nil)
         }
     }
-
-    private func qrCodeScannerHandler(code: String, tokensViewModel: HomeWithTokensViewModel) {
-        guard NSRegularExpression.publicKey.matches(code) else { return }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            Task {
-                do {
-                    let done = await self.sendToken(pubKey: code)
-                    if done {
-                        tokensViewModel.scrollToTop()
-                    }
-                    self.sendCoordinator = nil
-                }
-            }
-        }
-    }
-}
-
-// MARK: - UINavigationControllerDelegate
-
-extension HomeCoordinator: UINavigationControllerDelegate {
-    func navigationController(_: UINavigationController, didShow _: UIViewController, animated _: Bool) {}
 }

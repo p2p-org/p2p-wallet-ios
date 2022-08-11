@@ -31,7 +31,7 @@ struct PopularCoinView: View {
 
     var body: some View {
         ZStack {
-            Color(UIColor.f8f8fa)
+            Color(Asset.Colors.smoke.color)
                 .frame(height: 74)
                 .cornerRadius(20)
             HStack {
@@ -42,8 +42,8 @@ struct PopularCoinView: View {
                         Text(title)
                         Text(subtitle)
                     }
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.black)
+                    .font(uiFont: .font(of: .text1, weight: .bold))
+                    .foregroundColor(Color(Asset.Colors.night.color))
                 }
                 .padding(.leading, 16)
                 Spacer()
@@ -51,8 +51,8 @@ struct PopularCoinView: View {
                     action: action,
                     label: {
                         Text(actionTitle)
-                            .foregroundColor(.black)
-                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .font(uiFont: .font(of: .text4, weight: .bold))
                             .padding(.vertical, 8)
                             .padding(.horizontal, 12)
                     }

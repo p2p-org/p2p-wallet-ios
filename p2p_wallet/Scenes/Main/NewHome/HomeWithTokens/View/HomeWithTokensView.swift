@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import BottomSheet
 import KeyAppUI
 import Resolver
 import SwiftUI
@@ -16,6 +17,8 @@ struct HomeWithTokensView: View {
     @Injected private var analyticsManager: AnalyticsManager
 
     @ObservedObject var viewModel: HomeWithTokensViewModel
+
+//    @State private var tokenDetailIsPresented = false
 
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
@@ -29,6 +32,9 @@ struct HomeWithTokensView: View {
             action: { viewModel.reloadData() },
             content: { scrollingContent }
         )
+//            .bottomSheet(isPresented: $tokenDetailIsPresented, height: 700) {
+//                TokenDetailActionView()
+//            }
     }
 
     var scrollingContent: some View {
@@ -129,6 +135,7 @@ struct HomeWithTokensView: View {
             )
             .frame(height: 72)
             .onTapGesture {
+//                tokenDetailIsPresented.toggle()
                 viewModel.tokenClicked(model: model)
             }
     }

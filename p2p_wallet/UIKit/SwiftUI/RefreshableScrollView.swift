@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 struct RefreshableScrollView<Content: View>: UIViewRepresentable {
-    public typealias Action = () -> Void
+    typealias Action = () -> Void
     @Binding var refreshing: Bool
     @Binding var onTop: Bool
     let action: Action?
@@ -39,30 +39,26 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
             action: #selector(Coordinator.handleRefreshControl),
             for: .valueChanged
         )
-        updateView(scrollView: scrollView)
         return scrollView
     }
 
     func updateUIView(_ uiView: UIScrollView, context _: Context) {
+        updateView(scrollView: uiView)
         if !refreshing, uiView.refreshControl?.isRefreshing == true {
             uiView.refreshControl?.endRefreshing()
         }
-        if onTop {
-            uiView.scrollTo(y: 0, animated: false)
-        }
-        updateView(scrollView: uiView)
+//        if onTop {
+//            uiView.scrollTo(y: 0, animated: false)
+//        }
     }
 
     private func updateView(scrollView: UIScrollView) {
-        scrollView.subviews.forEach {
-            if !($0 is UIRefreshControl) {
-                $0.removeFromSuperview()
-            }
-        }
+        let contentOffset = scrollView.contentOffset
+        let lastView = scrollView.subviews.first { !($0 is UIRefreshControl) }
 
         let content = content().uiView()
         content.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.addSubview(content)
+        scrollView.insertSubview(content, at: 1)
         let constraints = [
             content.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             content.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
@@ -71,6 +67,11 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
             content.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
         ]
         scrollView.addConstraints(constraints)
+
+        DispatchQueue.main.async {
+            scrollView.contentOffset = contentOffset
+            lastView?.removeFromSuperview()
+        }
     }
 
     class Coordinator: NSObject, UIScrollViewDelegate {
@@ -85,8 +86,8 @@ struct RefreshableScrollView<Content: View>: UIViewRepresentable {
             control.refreshing = true
         }
 
-        func scrollViewDidScroll(_ scrollView: UIScrollView) {
-            control.onTop = scrollView.contentOffset == .zero
+        func scrollViewDidScroll(_: UIScrollView) {
+//            control.onTop = scrollView.contentOffset == .zero
         }
     }
 }
