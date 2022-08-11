@@ -5,8 +5,9 @@
 //  Created by Chung Tran on 30/11/2021.
 //
 
+import Combine
+import CombineCocoa
 import Foundation
-import RxSwift
 import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
@@ -14,7 +15,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -41,8 +42,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     guard let self = self else { return }
                     #if DEBUG
                         var didTake = false
-                        self.viewModel.walletDriver
-                            .drive(onNext: { [weak self] in
+                        self.viewModel.walletPublisher
+                            .sink { [weak self] in
                                 guard !didTake else { return }
                                 didTake = true
                                 if $0?.token.isRenBTC == true {
@@ -50,8 +51,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                 } else {
                                     self?.viewModel.search("bigears")
                                 }
-                            })
-                            .disposed(by: self.disposeBag)
+                            }
+                            .store(in: &self.subscriptions)
                     #endif
                 }
             }
@@ -65,25 +66,24 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Methods
 
         private func bind() {
-            textField.rx.text
-                .distinctUntilChanged()
-                .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
-                .subscribe(onNext: { [weak self] address in
+            textField.textPublisher
+                .removeDuplicates()
+                .debounce(for: 300, scheduler: RunLoop.main)
+                .sink { [weak self] address in
                     self?.viewModel.search(address)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.searchTextDriver
-                .distinctUntilChanged()
-                .drive(textField.rx.text)
-                .disposed(by: disposeBag)
+            viewModel.searchTextPublisher
+                .removeDuplicates()
+                .assign(to: \.text, on: textField)
+                .store(in: &subscriptions)
 
-            viewModel.searchTextDriver
-                .distinctUntilChanged()
+            viewModel.searchTextPublisher
+                .removeDuplicates()
                 .map { $0 == nil || $0?.isEmpty == true }
-                .asDriver(onErrorJustReturn: true)
-                .drive(clearButton.rx.isHidden)
-                .disposed(by: disposeBag)
+                .assign(to: \.isHidden, on: clearButton)
+                .store(in: &subscriptions)
         }
 
         // MARK: - Actions

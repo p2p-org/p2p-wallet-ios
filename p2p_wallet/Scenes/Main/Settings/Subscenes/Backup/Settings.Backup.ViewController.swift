@@ -5,14 +5,15 @@
 //  Created by Chung Tran on 12/10/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 import UIKit
 
 extension Settings.Backup {
     class ViewController: Settings.BaseViewController {
         // MARK: - Properties
 
+        private var subscriptions = [AnyCancellable]()
         lazy var shieldImageView = UIImageView(width: 80, height: 100, image: .backupShield)
         lazy var titleLabel = UILabel(textSize: 21, weight: .bold, numberOfLines: 0, textAlignment: .center)
         lazy var descriptionLabel = UILabel(
@@ -83,17 +84,17 @@ extension Settings.Backup {
 
         override func bind() {
             super.bind()
-            viewModel.didBackupDriver
-                .drive(onNext: { [weak self] didBackup in
+            viewModel.didBackupPublisher
+                .sink { [weak self] didBackup in
                     self?.handleDidBackup(didBackup)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] scene in
+            viewModel.navigationPublisher
+                .sink { [weak self] scene in
                     self?.navigate(to: scene)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         @objc func buttonBackupUsingICloudDidTouch() {

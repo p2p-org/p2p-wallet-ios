@@ -5,114 +5,132 @@
 //  Created by Chung Tran on 09/12/2021.
 //
 
+import Combine
 import FeeRelayerSwift
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
+// How to Define a Protocol With @Published Property Wrapper Type
+// https://swiftsenpai.com/swift/define-protocol-with-published-property-wrapper/
+
 protocol SendTokenRecipientAndNetworkHandler: AnyObject {
-    var disposeBag: DisposeBag { get }
+    var subscriptions: [AnyCancellable] { get set }
     var sendService: SendServiceType { get }
-    var recipientSubject: BehaviorRelay<SendToken.Recipient?> { get }
-    var networkSubject: BehaviorRelay<SendToken.Network> { get }
-    var payingWalletSubject: BehaviorRelay<Wallet?> { get }
+    var wallet: Wallet? { get }
+
+    // MARK: - @Published var recipient
+
+    // Define recipient (wrapped value)
+    var recipient: SendToken.Recipient? { get }
+    // Define recipient Published property wrapper
+    func setRecipient(_ recipient: SendToken.Recipient?)
+    // Define recipient publisher
+    var recipientPublisher: AnyPublisher<SendToken.Recipient?, Never> { get }
+
+    // MARK: - @Published var network
+
+    // Define network (wrapped value)
+    var network: SendToken.Network { get }
+    // Define network Published property wrapper
+    func setNetwork(_ network: SendToken.Network?)
+    // Define network publisher
+    var networkPublisher: AnyPublisher<SendToken.Network, Never> { get }
+
+    // MARK: - @Published var payingWallet
+
+    // Define payingWallet (wrapped value)
+    var payingWallet: Wallet? { get }
+    // Define payingWallet Published property wrapper
+    func setPayingWallet(_ payingWallet: Wallet?)
+    // Define payingWallet publisher
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> { get }
+
     var feeInfoSubject: LoadableRelay<SendToken.FeeInfo> { get }
 
-    func getSelectedWallet() -> Wallet?
     func getSendService() -> SendServiceType
 }
 
 extension SendTokenRecipientAndNetworkHandler {
-    var recipientDriver: Driver<SendToken.Recipient?> {
-        recipientSubject.asDriver()
+    var recipientDriver: AnyPublisher<SendToken.Recipient?, Never> {
+        recipientPublisher.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var networkDriver: Driver<SendToken.Network> {
-        networkSubject.asDriver()
+    var networkDriver: AnyPublisher<SendToken.Network, Never> {
+        networkPublisher.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var payingWalletDriver: Driver<Wallet?> {
-        payingWalletSubject.asDriver()
+    var payingWalletDriver: AnyPublisher<Wallet?, Never> {
+        payingWalletPublisher.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>> {
-        feeInfoSubject.asDriver()
+    var feeInfoDriver: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
+        feeInfoSubject.eraseToAnyPublisher().receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     func getSelectedRecipient() -> SendToken.Recipient? {
-        recipientSubject.value
+        recipient
     }
 
     func getSelectedNetwork() -> SendToken.Network {
-        networkSubject.value
+        network
     }
 
     func getSelectableNetworks() -> [SendToken.Network] {
         var networks: [SendToken.Network] = [.solana]
-        if getSelectedWallet()?.token.isRenBTC == true {
+        if wallet?.token.isRenBTC == true {
             networks.append(.bitcoin)
         }
         return networks
     }
 
     func selectRecipient(_ recipient: SendToken.Recipient?) {
-        recipientSubject.accept(recipient)
+        setRecipient(recipient)
 
         if recipient != nil {
             if isRecipientBTCAddress() {
-                networkSubject.accept(.bitcoin)
+                setNetwork(.bitcoin)
             } else {
-                networkSubject.accept(.solana)
+                setNetwork(.solana)
             }
         }
     }
 
     func selectNetwork(_ network: SendToken.Network) {
-        networkSubject.accept(network)
+        setNetwork(network)
 
         switch network {
         case .solana:
-            if isRecipientBTCAddress() { recipientSubject.accept(nil) }
+            if isRecipientBTCAddress() { setRecipient(nil) }
         case .bitcoin:
-            if !isRecipientBTCAddress() { recipientSubject.accept(nil) }
+            if !isRecipientBTCAddress() { setRecipient(nil) }
         }
     }
 
     func selectPayingWallet(_ payingWallet: Wallet) {
         Defaults.payingTokenMint = payingWallet.mintAddress
-        payingWalletSubject.accept(payingWallet)
+        setPayingWallet(payingWallet)
     }
 
     // MARK: - Helpers
 
     private func isRecipientBTCAddress() -> Bool {
-        guard let recipient = recipientSubject.value else { return false }
+        guard let recipient = recipient else { return false }
         return recipient.name == nil &&
             recipient.address
             .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
     }
 
-    func bindFees(walletSubject: BehaviorRelay<Wallet?>? = nil) {
-        var observables = [
-            payingWalletSubject.distinctUntilChanged().map { $0 as Any },
-            recipientSubject.distinctUntilChanged().map { $0 as Any },
-            networkSubject.distinctUntilChanged().map { $0 as Any },
-        ]
-
-        if let walletSubject = walletSubject {
-            observables.append(walletSubject.distinctUntilChanged().map { $0 as Any })
-        }
-
-        Observable.combineLatest(observables)
-            .subscribe(onNext: { [weak self] params in
-                let payingWallet = params[0] as? Wallet
-                let recipient = params[1] as? SendToken.Recipient
-                let network = params[2] as! SendToken.Network
-
+    func bindFees() {
+        Publishers.CombineLatest3(
+            payingWalletPublisher.removeDuplicates(),
+            recipientPublisher.removeDuplicates(),
+            networkPublisher.removeDuplicates()
+        )
+            .sink { [weak self] payingWallet, recipient, network in
                 guard let self = self else { return }
-                if let wallet = self.getSelectedWallet() {
-                    self.feeInfoSubject.request = Single.async(with: self) { `self` -> SendToken.FeeInfo in
+
+                if let wallet = self.wallet {
+                    self.feeInfoSubject.request = {
                         let feeAmountInSol = try await self.sendService.getFees(
                             from: wallet,
                             receiver: recipient?.address,
@@ -152,12 +170,12 @@ extension SendTokenRecipientAndNetworkHandler {
                         )
                     }
                 } else {
-                    self.feeInfoSubject
-                        .request =
-                        .just(.init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil))
+                    self.feeInfoSubject.request = {
+                        .init(feeAmount: .zero, feeAmountInSOL: .zero, hasAvailableWalletToPayFee: nil)
+                    }
                 }
                 self.feeInfoSubject.reload()
-            })
-            .disposed(by: disposeBag)
+            }
+            .store(in: &subscriptions)
     }
 }

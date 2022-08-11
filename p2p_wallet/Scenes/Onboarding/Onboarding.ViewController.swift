@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 19/02/2021.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -17,6 +18,7 @@ extension Onboarding {
         // MARK: - Properties
 
         private lazy var childNavigationController = UINavigationController()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Initializer
 
@@ -35,9 +37,9 @@ extension Onboarding {
 
         override func bind() {
             super.bind()
-            viewModel.navigatableSceneDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigatableScenePublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

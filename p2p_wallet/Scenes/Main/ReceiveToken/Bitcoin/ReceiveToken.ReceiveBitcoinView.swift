@@ -5,14 +5,13 @@
 //  Created by Chung Tran on 15/09/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import UIKit
 
 extension ReceiveToken {
     class ReceiveBitcoinView: BECompositionView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: ReceiveTokenBitcoinViewModelType
 
         // MARK: - Initializers
@@ -33,7 +32,9 @@ extension ReceiveToken {
                     }.onSave { [unowned self] image in
                         self.viewModel.saveAction(image: image)
                     }.setup { card in
-                        viewModel.addressDriver.drive(card.rx.pubKey).disposed(by: disposeBag)
+                        viewModel.addressPublisher
+                            .assign(to: \.pubKey, on: card)
+                            .store(in: &subscriptions)
                     }
 
                 // Status
@@ -49,7 +50,9 @@ extension ReceiveToken {
                         .textBuilder(text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown())
                         .setup { view in
                             guard let textLabel = view.viewWithTag(1) as? UILabel else { return }
-                            viewModel.timeRemainsDriver().drive(textLabel.rx.attributedText).disposed(by: disposeBag)
+                            viewModel.timeRemainsPublisher()
+                                .assign(to: \.attributedText, on: textLabel)
+                                .store(in: &subscriptions)
                         }
                 }
                 if viewModel.hasExplorerButton {
@@ -71,28 +74,29 @@ extension ReceiveToken {
                         // Last time
                         UILabel(text: "\(L10n.theLastOne) 0m ago", textSize: 13, textColor: .secondaryLabel)
                             .setup { view in
-                                viewModel.lastTrxDate().drive(view.rx.text).disposed(by: disposeBag)
+                                viewModel.lastTrxDate().assign(to: \.text, on: view).store(in: &subscriptions)
                             }
                     }
                     UIView.spacer
                     UILabel(text: "0")
                         .setup { view in
-                            viewModel.txsCountDriver().drive(view.rx.text).disposed(by: disposeBag)
+                            viewModel.txsCountPublisher().assign(to: \.text, on: view).store(in: &subscriptions)
                         }
                         .padding(.init(only: .right, inset: 8))
                     // Arrow
                     UIView.defaultNextArrow()
                         .setup { view in
-                            viewModel.processingTxsDriver
+                            viewModel.processingTxsPublisher
                                 .map(\.isEmpty)
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
                 }.padding(.init(x: 18, y: 14))
             }
             .setup { view in
-                viewModel.showReceivingStatusesEnableDriver().drive(view.rx.isUserInteractionEnabled)
-                    .disposed(by: disposeBag)
+                viewModel.showReceivingStatusesEnablePublisher()
+                    .assign(to: \.isUserInteractionEnabled, on: view)
+                    .store(in: &subscriptions)
             }
             .onTap { [unowned self] in viewModel.showReceivingStatuses() }
         }
@@ -100,20 +104,20 @@ extension ReceiveToken {
 }
 
 private extension ReceiveTokenBitcoinViewModelType {
-    func showReceivingStatusesEnableDriver() -> Driver<Bool> {
-        processingTxsDriver
+    func showReceivingStatusesEnablePublisher() -> AnyPublisher<Bool, Never> {
+        processingTxsPublisher
             .map { !$0.isEmpty }
-            .asDriver()
+            .eraseToAnyPublisher()
     }
 
-    func txsCountDriver() -> Driver<String?> {
-        processingTxsDriver
+    func txsCountPublisher() -> AnyPublisher<String?, Never> {
+        processingTxsPublisher
             .map { trx in "\(trx.count)" }
-            .asDriver()
+            .eraseToAnyPublisher()
     }
 
-    func lastTrxDate() -> Driver<String?> {
-        processingTxsDriver
+    func lastTrxDate() -> AnyPublisher<String?, Never> {
+        processingTxsPublisher
             .map { trx in
                 guard let lastTrx = trx.first,
                       let receiveAt = lastTrx.submitedAt else { return L10n.none }
@@ -124,11 +128,12 @@ private extension ReceiveTokenBitcoinViewModelType {
                 let time = formatter.localizedString(for: receiveAt, relativeTo: Date())
 
                 return "\(L10n.theLastOne) \(time)"
-            }.asDriver()
+            }
+            .eraseToAnyPublisher()
     }
 
-    func timeRemainsDriver() -> Driver<NSAttributedString?> {
-        timerSignal.map { [weak self] in
+    func timeRemainsPublisher() -> AnyPublisher<NSAttributedString?, Never> {
+        timerPublisher.map { [weak self] in
             guard let self = self else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
             guard let endAt = self.sessionEndDate
             else { return L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59").asMarkdown() }
@@ -139,6 +144,7 @@ private extension ReceiveTokenBitcoinViewModelType {
             let countdown = String(format: "%02d:%02d:%02d", d.hour ?? 0, d.minute ?? 0, d.second ?? 0)
 
             return L10n.isTheRemainingTimeToSafelySendTheAssets(countdown).asMarkdown()
-        }.asDriver(onErrorJustReturn: NSAttributedString(string: "00:00:00"))
+        }
+        .eraseToAnyPublisher()
     }
 }

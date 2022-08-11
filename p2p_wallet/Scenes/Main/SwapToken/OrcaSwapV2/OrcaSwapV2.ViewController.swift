@@ -6,6 +6,8 @@
 //
 
 import BEPureLayout
+import Combine
+import CombineCocoa
 import Foundation
 import Resolver
 import UIKit
@@ -22,6 +24,7 @@ extension OrcaSwapV2 {
         // MARK: - Dependencies
 
         private let viewModel: OrcaSwapV2ViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Handlers
 
@@ -50,15 +53,14 @@ extension OrcaSwapV2 {
         override func bind() {
             super.bind()
 
-            settingButton.rx.tap
-                .asDriver()
-                .drive(onNext: { [unowned viewModel] in
+            settingButton.tapPublisher
+                .sink { [unowned viewModel] in
                     viewModel.openSettings()
-                })
-                .disposed(by: disposeBag)
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

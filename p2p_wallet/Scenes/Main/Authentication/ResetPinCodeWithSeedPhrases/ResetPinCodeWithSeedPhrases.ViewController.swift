@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 16/04/2021.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -18,6 +19,7 @@ extension ResetPinCodeWithSeedPhrases {
 
         var childNavigationController: UINavigationController!
         var completion: (() -> Void)?
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - ChildVC
 
@@ -47,9 +49,9 @@ extension ResetPinCodeWithSeedPhrases {
 
         override func bind() {
             super.bind()
-            viewModel.navigatableSceneDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigatableScenePublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

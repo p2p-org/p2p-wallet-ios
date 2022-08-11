@@ -2,16 +2,15 @@
 // Created by Giang Long Tran on 27.12.21.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 extension ReceiveToken {
     class QrCodeCard: BECompositionView {
         @Injected var qrImageRender: QrCodeImageRender
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
 
         var username: String? {
             didSet {
@@ -91,27 +90,27 @@ extension ReceiveToken {
                         .onTap { [unowned self] in self.onCopy?(pubKey) }
                     UIButton.text(text: L10n.share, image: .share2, tintColor: .h5887ff)
                         .onTap { [unowned self] in
-                            qrImageRender.render(
+                            let image = try await qrImageRender.render(
                                 username: username,
                                 address: pubKey,
                                 token: token,
                                 showTokenIcon: showCoinLogo
-                            ).subscribe(onSuccess: { [weak self] image in
+                            )
+                            await MainActor.run { [weak self] in
                                 self?.onShare?(image)
-                            })
-                                .disposed(by: disposeBag)
+                            }
                         }
                     UIButton.text(text: L10n.save, image: .imageIcon, tintColor: .h5887ff)
                         .onTap { [unowned self] in
-                            qrImageRender.render(
+                            let image = try await qrImageRender.render(
                                 username: username,
                                 address: pubKey,
                                 token: token,
                                 showTokenIcon: showCoinLogo
-                            ).subscribe(onSuccess: { [weak self] image in
+                            )
+                            await MainActor.run { [weak self] in
                                 self?.onSave?(image)
-                            })
-                                .disposed(by: disposeBag)
+                            }
                         }
                 }.padding(.init(x: 0, y: 4))
 
@@ -161,11 +160,5 @@ extension ReceiveToken {
             onSave = callback
             return self
         }
-    }
-}
-
-extension Reactive where Base: ReceiveToken.QrCodeCard {
-    var pubKey: Binder<String?> {
-        Binder(base) { view, pubKey in view.pubKey = pubKey }
     }
 }

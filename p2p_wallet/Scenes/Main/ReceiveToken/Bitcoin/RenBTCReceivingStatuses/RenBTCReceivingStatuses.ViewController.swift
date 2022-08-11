@@ -6,9 +6,9 @@
 //
 
 import BECollectionView_Combine
+import Combine
 import Foundation
 import RenVMSwift
-import RxCombine
 import UIKit
 
 extension RenBTCReceivingStatuses {
@@ -16,6 +16,8 @@ extension RenBTCReceivingStatuses {
         override var preferredNavigationBarStype: BEViewController.NavigationBarStyle {
             .hidden
         }
+
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Dependencies
 
@@ -25,9 +27,9 @@ extension RenBTCReceivingStatuses {
             self.viewModel = viewModel
             super.init()
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         override func build() -> UIView {
@@ -36,10 +38,10 @@ extension RenBTCReceivingStatuses {
                     NewWLNavigationBar(initialTitle: L10n.receivingStatuses, separatorEnable: false)
                         .onBack { [unowned self] in self.back() }
                         .setup { view in
-                            viewModel.processingTxsDriver
+                            viewModel.processingTxsPublisher
                                 .map { txs in L10n.statusesReceived(txs.count) }
-                                .drive(view.titleLabel.rx.text)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.text, on: view.titleLabel)
+                                .store(in: &subscriptions)
                         }
                     NBENewDynamicSectionsCollectionView(
                         viewModel: viewModel,
@@ -96,10 +98,10 @@ extension RenBTCReceivingStatuses.ViewController: BECollectionViewDelegate {
         switch scene {
         case let .detail(txid):
             let vc = RenBTCReceivingStatuses
-                .TxDetailViewController(viewModel: .init(processingTxsPublisher: viewModel.processingTxsDriver.publisher
-                        .replaceError(with: [])
-                        .eraseToAnyPublisher(),
-                    txid: txid))
+                .TxDetailViewController(
+                    viewModel: .init(processingTxsPublisher: viewModel.processingTxsPublisher,
+                                     txid: txid)
+                )
             show(vc, sender: nil)
         case .none:
             break

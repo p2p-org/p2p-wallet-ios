@@ -5,6 +5,7 @@
 //  Created by Andrew Vasiliev on 21.12.2021.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -13,6 +14,7 @@ extension SwapTokenSettings {
         // MARK: - Dependencies
 
         private let viewModel: NewSwapTokenSettingsViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Methods
 
@@ -28,9 +30,9 @@ extension SwapTokenSettings {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

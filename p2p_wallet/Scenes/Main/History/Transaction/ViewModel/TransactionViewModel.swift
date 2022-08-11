@@ -5,14 +5,14 @@
 //  Created by Ivan on 17.04.2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import TransactionParser
 import UIKit
 
 extension History {
+    @MainActor
     final class TransactionViewModel {
         let input = Input()
         let output: Output
@@ -25,20 +25,20 @@ extension History {
             let fromView = input.view
 
             let showWebView = fromView.transactionDetailClicked
-                .mapTo("https://explorer.solana.com/tx/\(transaction.signature ?? "")")
-            let model = fromView.viewDidLoad.mapTo(transaction.mapTransaction(pricesService: pricesService))
+                .map { _ in "https://explorer.solana.com/tx/\(transaction.signature ?? "")" }
+            let model = fromView.viewDidLoad.map { _ in transaction.mapTransaction(pricesService: pricesService) }
             let copyTransactionId = fromView.transactionIdClicked
-                .mapTo(transaction.signature ?? "")
-                .do(onNext: { clipboardManager.copyToClipboard($0) })
-                .mapToVoid()
+                .map { _ in transaction.signature ?? "" }
+                .handleEvents(receiveOutput: { clipboardManager.copyToClipboard($0) })
+                .map { _ in () }
 
             let view = Output.View(
-                model: model.asDriver(),
-                copied: copyTransactionId.asDriver()
+                model: model.eraseToAnyPublisher(),
+                copied: copyTransactionId.eraseToAnyPublisher()
             )
             let coord = Output.Coord(
-                done: fromView.doneClicked.asDriver(),
-                showWebView: showWebView.asDriver()
+                done: fromView.doneClicked.eraseToAnyPublisher(),
+                showWebView: showWebView.eraseToAnyPublisher()
             )
             output = Output(view: view, coord: coord)
         }
@@ -196,10 +196,10 @@ extension History.TransactionViewModel: ViewModel {
         let coord = Coord()
 
         struct View {
-            let viewDidLoad = PublishRelay<Void>()
-            let transactionIdClicked = PublishRelay<Void>()
-            let doneClicked = PublishRelay<Void>()
-            let transactionDetailClicked = PublishRelay<Void>()
+            let viewDidLoad = PassthroughSubject<Void, Never>()
+            let transactionIdClicked = PassthroughSubject<Void, Never>()
+            let doneClicked = PassthroughSubject<Void, Never>()
+            let transactionDetailClicked = PassthroughSubject<Void, Never>()
         }
 
         class Coord {}
@@ -212,12 +212,12 @@ extension History.TransactionViewModel: ViewModel {
         let coord: Coord
 
         struct View {
-            var model: Driver<Model>
-            var copied: Driver<Void>
+            var model: AnyPublisher<Model, Never>
+            var copied: AnyPublisher<Void, Never>
 
             init(
-                model: Driver<Model>,
-                copied: Driver<Void>
+                model: AnyPublisher<Model, Never>,
+                copied: AnyPublisher<Void, Never>
             ) {
                 self.model = model
                 self.copied = copied
@@ -225,75 +225,16 @@ extension History.TransactionViewModel: ViewModel {
         }
 
         class Coord {
-            var done: Driver<Void>
-            var showWebView: Driver<String>
+            var done: AnyPublisher<Void, Never>
+            var showWebView: AnyPublisher<String, Never>
 
             init(
-                done: Driver<Void>,
-                showWebView: Driver<String>
+                done: AnyPublisher<Void, Never>,
+                showWebView: AnyPublisher<String, Never>
             ) {
                 self.done = done
                 self.showWebView = showWebView
             }
         }
-    }
-}
-
-// TODO: - Remove after merging 1652
-
-extension ObservableType {
-    func filterComplete() -> Observable<Element> {
-        materializeAndFilterComplete().dematerialize()
-    }
-
-    func materializeAndFilterComplete() -> Observable<RxSwift.Event<Element>> {
-        materialize().filter { !$0.event.isCompleted }
-    }
-
-    func asDriver() -> RxCocoa.Driver<Element> {
-        observe(on: MainScheduler.instance)
-            .asDriver(onErrorDriveWith: Driver.empty())
-    }
-
-    func mapTo<Result>(_ value: Result) -> Observable<Result> {
-        map { _ in value }
-    }
-
-    func unwrap<R>() -> Observable<R> where Element == R? {
-        compactMap { $0 }
-    }
-
-    func optionallWrap() -> Observable<Element?> {
-        map { Optional($0) }
-    }
-}
-
-extension ObservableType {
-    func mapToVoid() -> Observable<Void> {
-        map { _ in }
-    }
-}
-
-extension PrimitiveSequence where Trait == SingleTrait {
-    func mapToVoid() -> Single<Void> {
-        map { _ in }
-    }
-}
-
-extension ObservableType where Element: EventConvertible {
-    /**
-     Returns an observable sequence containing only next elements from its input
-     - seealso: [materialize operator on reactivex.io](http://reactivex.io/documentation/operators/materialize-dematerialize.html)
-     */
-    func elements() -> Observable<Element.Element> {
-        compactMap(\.event.element)
-    }
-
-    /**
-     Returns an observable sequence containing only error elements from its input
-     - seealso: [materialize operator on reactivex.io](http://reactivex.io/documentation/operators/materialize-dematerialize.html)
-     */
-    func errors() -> Observable<Error> {
-        compactMap(\.event.error)
     }
 }

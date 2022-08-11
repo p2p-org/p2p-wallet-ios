@@ -5,15 +5,15 @@
 //  Created by Andrew Vasiliev on 26.11.2021.
 //
 
-import RxCocoa
-import RxSwift
+import Combine
+import CombineCocoa
 import UIKit
 
 extension ReserveName {
     class RootView: BEView {
         // MARK: - Constants
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -146,46 +146,48 @@ extension ReserveName {
         }
 
         private func bind() {
-            viewModel.textFieldStateDriver
-                .drive { [weak self] in
+            viewModel.textFieldStatePublisher
+                .sink { [weak self] in
                     self?.setHintContent(for: $0)
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            textView.textView.rx.text
-                .throttle(.milliseconds(200), scheduler: MainScheduler.instance)
-                .distinctUntilChanged()
-                .bind(to: viewModel.textFieldTextSubject)
-                .disposed(by: disposeBag)
+            textView.textView.textPublisher
+                .throttle(for: 200, scheduler: RunLoop.main, latest: true)
+                .removeDuplicates()
+                .sink { [weak self] value in
+                    self?.viewModel.textFieldTextSubject.send(value)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.mainButtonStateDriver
-                .drive { [weak self] in
+            viewModel.mainButtonStatePublisher
+                .sink { [weak self] in
                     self?.setMainButtonContent(for: $0)
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.isLoadingDriver
-                .skip(1)
-                .drive { [weak self] isPosting in
+            viewModel.isLoadingPublisher
+                .dropFirst(1)
+                .sink { [weak self] isPosting in
                     isPosting ? self?.showIndetermineHud() : self?.hideHud()
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.usernameValidationLoadingDriver
-                .drive { [weak self] isLoading in
+            viewModel.usernameValidationLoadingPublisher
+                .sink { [weak self] isLoading in
                     self?.setHintIsLoading(isLoading)
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            viewModel.mainButtonStateDriver
+            viewModel.mainButtonStatePublisher
                 .map { $0 == .unavailableNameService }
-                .drive(onNext: { [weak self] isNameServiceUnavailable in
+                .sink { [weak self] isNameServiceUnavailable in
                     if isNameServiceUnavailable {
                         self?.endEditing(true)
                         self?.textView.isUserInteractionEnabled = false
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         private func setHintIsLoading(_ isLoading: Bool) {

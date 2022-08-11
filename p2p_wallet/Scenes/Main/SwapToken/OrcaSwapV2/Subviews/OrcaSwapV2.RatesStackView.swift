@@ -6,8 +6,7 @@
 //
 
 import BEPureLayout
-import RxCocoa
-import RxSwift
+import Combine
 import SolanaSwift
 import UIKit
 
@@ -15,10 +14,10 @@ extension OrcaSwapV2 {
     final class RatesStackView: UIStackView {
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
-        private let exchangeRateDriver: Driver<Double?>
-        private let sourceWalletDriver: Driver<Wallet?>
-        private let destinationWalletDriver: Driver<Wallet?>
+        private var subscriptions = [AnyCancellable]()
+        private let exchangeRatePublisher: AnyPublisher<Double?, Never>
+        private let sourceWalletPublisher: AnyPublisher<Wallet?, Never>
+        private let destinationWalletPublisher: AnyPublisher<Wallet?, Never>
 
         // MARK: - Subviews
 
@@ -26,13 +25,13 @@ extension OrcaSwapV2 {
         private let toRatesView = DetailRatesView()
 
         init(
-            exchangeRateDriver: Driver<Double?>,
-            sourceWalletDriver: Driver<Wallet?>,
-            destinationWalletDriver: Driver<Wallet?>
+            exchangeRatePublisher: AnyPublisher<Double?, Never>,
+            sourceWalletPublisher: AnyPublisher<Wallet?, Never>,
+            destinationWalletPublisher: AnyPublisher<Wallet?, Never>
         ) {
-            self.exchangeRateDriver = exchangeRateDriver
-            self.sourceWalletDriver = sourceWalletDriver
-            self.destinationWalletDriver = destinationWalletDriver
+            self.exchangeRatePublisher = exchangeRatePublisher
+            self.sourceWalletPublisher = sourceWalletPublisher
+            self.destinationWalletPublisher = destinationWalletPublisher
             super.init(frame: .zero)
             set(axis: .vertical, spacing: 8, alignment: .fill)
             layout()
@@ -52,11 +51,11 @@ extension OrcaSwapV2 {
         }
 
         private func bind() {
-            exchangeRateDriver
+            exchangeRatePublisher
                 .withLatestFrom(
-                    Driver.combineLatest(
-                        sourceWalletDriver,
-                        destinationWalletDriver
+                    Publishers.CombineLatest(
+                        sourceWalletPublisher,
+                        destinationWalletPublisher
                     ),
                     resultSelector: { ($0, $1.0, $1.1) }
                 )
@@ -81,21 +80,21 @@ extension OrcaSwapV2 {
                         fiatPrice: formattedFiatPrice
                     )
                 }
-                .drive { [weak fromRatesView] in
+                .sink { [weak fromRatesView] in
                     fromRatesView?.isHidden = $0 == nil
 
                     if let rateContent = $0 {
                         fromRatesView?.setData(content: rateContent)
                     }
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
 
-            exchangeRateDriver
+            exchangeRatePublisher
                 .map { $0.isNilOrZero ? nil : 1 / $0 }
                 .withLatestFrom(
-                    Driver.combineLatest(
-                        sourceWalletDriver,
-                        destinationWalletDriver
+                    Publishers.CombineLatest(
+                        sourceWalletPublisher,
+                        destinationWalletPublisher
                     ),
                     resultSelector: { ($0, $1.0, $1.1) }
                 )
@@ -120,14 +119,14 @@ extension OrcaSwapV2 {
                         fiatPrice: formattedFiatPrice
                     )
                 }
-                .drive { [weak toRatesView] in
+                .sink { [weak toRatesView] in
                     toRatesView?.isHidden = $0 == nil
 
                     if let rateContent = $0 {
                         toRatesView?.setData(content: rateContent)
                     }
                 }
-                .disposed(by: disposeBag)
+                .store(in: &subscriptions)
         }
     }
 

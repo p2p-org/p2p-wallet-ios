@@ -5,14 +5,15 @@
 //  Created by Chung Tran on 15/12/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 
 extension OrcaSwapV2.ConfirmSwapping {
     final class ViewController: BaseVC {
         // MARK: - Properties
 
         private let viewModel: OrcaSwapV2ConfirmSwappingViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -32,17 +33,17 @@ extension OrcaSwapV2.ConfirmSwapping {
         override func bind() {
             super.bind()
             // navigation bar
-            Driver.combineLatest(
-                viewModel.sourceWalletDriver,
-                viewModel.destinationWalletDriver
+            Publishers.CombineLatest(
+                viewModel.sourceWalletPublisher,
+                viewModel.destinationWalletPublisher
             )
                 .map { source, destination in
                     L10n.confirmSwapping(source?.token.symbol ?? "", destination?.token.symbol ?? "")
                 }
-                .drive(onNext: { [weak self] in
+                .sink { [weak self] in
                     self?.navigationItem.title = $0
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
     }
 }

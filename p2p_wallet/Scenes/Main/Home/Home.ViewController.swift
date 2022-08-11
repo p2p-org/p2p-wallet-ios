@@ -5,7 +5,6 @@
 //  Created by Chung Tran on 28/10/2021.
 //
 
-import Action
 import AnalyticsManager
 import Combine
 import Foundation
@@ -79,9 +78,8 @@ extension Home {
                 .sink { [weak self] hasError in
                     // TODO: catch network error!
                     if hasError, self?.viewModel.walletsRepository.getError() != nil {
-                        self?.view.showConnectionErrorView(refreshAction: CocoaAction { [weak self] in
+                        self?.view.showConnectionErrorView(refreshAction: { [weak self] in
                             self?.viewModel.walletsRepository.reload()
-                            return .just(())
                         })
                     } else {
                         self?.view.hideConnectionErrorView()

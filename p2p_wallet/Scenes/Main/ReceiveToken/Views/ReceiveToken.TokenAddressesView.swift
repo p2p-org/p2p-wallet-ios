@@ -6,12 +6,12 @@
 //
 
 import BEPureLayout
-import RxSwift
+import Combine
 
 extension ReceiveToken {
     final class TokenAddressesView: UIStackView {
         private let viewModel: ReceiveSceneModel
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         private lazy var directAddressLine = HorizontalLabelsWithSpacer()
             .onLongTap(self, action: #selector(directAddressLongTap))
@@ -86,14 +86,14 @@ extension ReceiveToken {
             }
 
             tapAndHoldView.closeHandler = { [weak self] in
-                self?.viewModel.hideAddressesHintSubject.accept(())
+                self?.viewModel.hideAddressesHintSubject.send(())
             }
         }
 
         private func bind() {
-            viewModel.addressesHintIsHiddenDriver
-                .drive(fullTapAndHoldView.rx.isHidden)
-                .disposed(by: disposeBag)
+            viewModel.addressesHintIsHiddenPublisher
+                .assign(to: \.isHidden, on: fullTapAndHoldView)
+                .store(in: &subscriptions)
         }
 
         @objc

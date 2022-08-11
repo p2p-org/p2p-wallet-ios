@@ -8,8 +8,6 @@
 import BECollectionView_Combine
 import BEPureLayout
 import Combine
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 
@@ -17,7 +15,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class RootView: ScrollableVStackRootView {
         // MARK: - Constants
 
-        let disposeBag = DisposeBag()
         var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
@@ -78,10 +75,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             numberOfLines: 0
         )
         private lazy var feeView = _FeeView( // for relayMethod == .relay only
-            walletDriver: viewModel.walletDriver,
+            walletPublisher: viewModel.walletPublisher,
             solPrice: viewModel.getPrice(for: "SOL"),
-            feeInfoDriver: viewModel.feeInfoDriver,
-            payingWalletDriver: viewModel.payingWalletDriver
+            feeInfoPublisher: viewModel.feeInfoPublisher,
+            payingWalletPublisher: viewModel.payingWalletPublisher
         )
             .onTap { [weak self] in
                 self?.viewModel.navigate(to: .selectPayingWallet)
@@ -133,9 +130,9 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 #if DEBUG
                     UILabel(textColor: .red, numberOfLines: 0, textAlignment: .center)
                         .setup { label in
-                            viewModel.feeInfoDriver
+                            viewModel.feeInfoPublisher
                                 .map { $0.value?.feeAmountInSOL ?? .zero }
-                                .drive(onNext: { [weak label] feeAmount in
+                                .sink { [weak label] feeAmount in
                                     label?.attributedText = NSMutableAttributedString()
                                         .text(
                                             "Transaction fee: \(feeAmount.transaction) lamports",
@@ -148,8 +145,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                                             size: 13,
                                             color: .red
                                         )
-                                })
-                                .disposed(by: disposeBag)
+                                }
+                                .store(in: &subscriptions)
                         }
                 #endif
             }
@@ -164,49 +161,50 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private func bind() {
             // input state
-            let isSearchingDriver = viewModel.inputStateDriver
+            let isSearchingPublisher = viewModel.inputStatePublisher
                 .map { $0 == .searching }
-                .distinctUntilChanged()
+                .removeDuplicates()
 
             // enable scrolling only when scrollView is not visible
-            isSearchingDriver
+            isSearchingPublisher
                 .map { !$0 }
-                .drive(scrollView.rx.isScrollEnabled)
-                .disposed(by: disposeBag)
+                .assign(to: \.isScrollEnabled, on: scrollView)
+                .store(in: &subscriptions)
 
             // address input view
-            isSearchingDriver.map { !$0 }
-                .drive(addressInputView.rx.isHidden)
-                .disposed(by: disposeBag)
+            isSearchingPublisher.map { !$0 }
+                .assign(to: \.isHidden, on: addressInputView)
+                .store(in: &subscriptions)
 
             // recipient view
-            isSearchingDriver
-                .drive(recipientView.rx.isHidden)
-                .disposed(by: disposeBag)
+            isSearchingPublisher
+                .assign(to: \.isHidden, on: recipientView)
+                .store(in: &subscriptions)
 
             // searching empty state
-            let shouldHideNetworkDriver: Driver<Bool>
+            let shouldHideNetworkPublisher: AnyPublisher<Bool, Never>
             if viewModel.preSelectedNetwork == nil {
-                shouldHideNetworkDriver = isSearchingDriver
+                shouldHideNetworkPublisher = isSearchingPublisher.eraseToAnyPublisher()
             } else {
                 // show preselected network when search is empty
-                shouldHideNetworkDriver = Driver.combineLatest(
-                    isSearchingDriver.map { !$0 },
-                    viewModel.searchTextDriver.map { $0 == nil || $0?.isEmpty == true }
+                shouldHideNetworkPublisher = Publishers.CombineLatest(
+                    isSearchingPublisher.map { !$0 },
+                    viewModel.searchTextPublisher.map { $0 == nil || $0?.isEmpty == true }
                 )
                     .map { $0.1 || $0.0 }
                     .map { !$0 }
+                    .eraseToAnyPublisher()
             }
 
             // collection view
-            shouldHideNetworkDriver.map { !$0 }
-                .drive(recipientCollectionView.rx.isHidden)
-                .disposed(by: disposeBag)
+            shouldHideNetworkPublisher.map { !$0 }
+                .assign(to: \.isHidden, on: recipientCollectionView)
+                .store(in: &subscriptions)
 
             // net work view
-            shouldHideNetworkDriver
-                .drive(networkView.rx.isHidden)
-                .disposed(by: disposeBag)
+            shouldHideNetworkPublisher
+                .assign(to: \.isHidden, on: networkView)
+                .store(in: &subscriptions)
 
             viewModel.recipientsListViewModel
                 .$state
@@ -233,10 +231,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 .store(in: &subscriptions)
 
             // fee view
-            Driver.combineLatest(
-                isSearchingDriver,
-                viewModel.networkDriver,
-                viewModel.feeInfoDriver
+            Publishers.CombineLatest3(
+                isSearchingPublisher,
+                viewModel.networkPublisher,
+                viewModel.feeInfoPublisher
             )
                 .map { isSearching, network, fee in
                     if isSearching || network != .solana {
@@ -248,45 +246,48 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                         return true
                     }
                 }
-                .drive(feeView.rx.isHidden)
-                .disposed(by: disposeBag)
+                .assign(to: \.isHidden, on: feeView)
+                .store(in: &subscriptions)
 
-            viewModel.inputStateDriver
-                .skip(1)
-                .drive(onNext: { [weak self] _ in
+            viewModel.inputStatePublisher
+                .dropFirst()
+                .sink { [weak self] _ in
                     UIView.animate(withDuration: 0.3) {
                         self?.layoutIfNeeded()
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // address
-            viewModel.recipientDriver
-                .drive(onNext: { [weak self] recipient in
+            viewModel.recipientPublisher
+                .sink { [weak self] recipient in
                     guard let recipient = recipient else { return }
                     self?.recipientView.setRecipient(recipient)
                     self?.recipientView.setHighlighted()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // action button
-            viewModel.isValidDriver
-                .drive(actionButton.rx.isEnabled)
-                .disposed(by: disposeBag)
+            viewModel.isValidPublisher
+                .assign(to: \.isEnabled, on: actionButton)
+                .store(in: &subscriptions)
 
-            viewModel.isValidDriver
+            viewModel.isValidPublisher
                 .map { $0 ? UIImage.buttonCheckSmall : nil }
-                .drive(onNext: { [weak actionButton] in actionButton?.image = $0 })
-                .disposed(by: disposeBag)
+                .sink { [weak actionButton] in actionButton?.image = $0 }
+                .store(in: &subscriptions)
 
-            Driver.combineLatest(
-                viewModel.walletDriver,
-                viewModel.recipientDriver,
-                viewModel.payingWalletDriver,
-                viewModel.feeInfoDriver,
-                viewModel.networkDriver
+            Publishers.CombineLatest4(
+                viewModel.walletPublisher,
+                viewModel.recipientPublisher,
+                viewModel.payingWalletPublisher,
+                Publishers.CombineLatest(
+                    viewModel.feeInfoPublisher,
+                    viewModel.networkPublisher
+                )
             )
-                .map { [weak self] sourceWallet, recipient, payingWallet, feeInfo, network in
+                .map { [weak self] sourceWallet, recipient, payingWallet, feeAndNetwork in
+                    let (feeInfo, network) = feeAndNetwork
                     guard let self = self else { return "" }
                     if recipient == nil {
                         return L10n.chooseTheRecipientToProceed
@@ -340,16 +341,16 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
                     return L10n.reviewAndConfirm
                 }
-                .drive(onNext: { [weak actionButton] in actionButton?.text = $0 })
-                .disposed(by: disposeBag)
+                .sink { [weak actionButton] in actionButton?.text = $0 }
+                .store(in: &subscriptions)
 
-            viewModel.warningDriver
-                .drive(warningLabel.rx.text)
-                .disposed(by: disposeBag)
-            viewModel.warningDriver
+            viewModel.warningPublisher
+                .assign(to: \.text, on: warningLabel)
+                .store(in: &subscriptions)
+            viewModel.warningPublisher
                 .map { ($0 ?? "").isEmpty }
-                .drive(warningView.rx.isHidden)
-                .disposed(by: disposeBag)
+                .assign(to: \.isHidden, on: warningView)
+                .store(in: &subscriptions)
         }
 
         // MARK: - Actions
@@ -373,7 +374,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     private class _NetworkView: WLFloatingPanelView {
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
         private let _networkView = SendToken.NetworkView()
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         init(viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType) {
             self.viewModel = viewModel
@@ -384,20 +385,20 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func bind() {
-            Driver.combineLatest(
-                viewModel.networkDriver,
-                viewModel.payingWalletDriver,
-                viewModel.feeInfoDriver
+            Publishers.CombineLatest3(
+                viewModel.networkPublisher,
+                viewModel.payingWalletPublisher,
+                viewModel.feeInfoPublisher
             )
-                .drive(onNext: { [weak self] network, payingWallet, feeInfo in
+                .sink { [weak self] network, payingWallet, feeInfo in
                     self?._networkView.setUp(
                         network: network,
                         payingWallet: payingWallet,
                         feeInfo: feeInfo.value,
                         prices: self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
                     )
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
     }
 }
@@ -411,7 +412,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress.RootView: BECollecti
 }
 
 private class _FeeView: UIStackView {
-    private let disposeBag = DisposeBag()
+    private var subscriptions = [AnyCancellable]()
     private let feeView: SendToken.FeeView
     private let attentionLabel = UILabel(
         text: nil,
@@ -420,12 +421,16 @@ private class _FeeView: UIStackView {
     )
 
     init(
-        walletDriver: Driver<Wallet?>,
+        walletPublisher: AnyPublisher<Wallet?, Never>,
         solPrice: Double,
-        feeInfoDriver: Driver<Loadable<SendToken.FeeInfo>>,
-        payingWalletDriver: Driver<Wallet?>
+        feeInfoPublisher: AnyPublisher<Loadable<SendToken.FeeInfo>, Never>,
+        payingWalletPublisher: AnyPublisher<Wallet?, Never>
     ) {
-        feeView = .init(solPrice: solPrice, payingWalletDriver: payingWalletDriver, feeInfoDriver: feeInfoDriver)
+        feeView = .init(
+            solPrice: solPrice,
+            payingWalletPublisher: payingWalletPublisher,
+            feeInfoPublisher: feeInfoPublisher
+        )
         super.init(frame: .zero)
         set(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill)
         addArrangedSubviews {
@@ -439,13 +444,13 @@ private class _FeeView: UIStackView {
             feeView
         }
 
-        feeInfoDriver
+        feeInfoPublisher
             .map { $0.value?.feeAmountInSOL }
             .map { $0?.accountBalances ?? 0 == 0 }
-            .drive(attentionLabel.superview!.rx.isHidden)
-            .disposed(by: disposeBag)
+            .assign(to: \.isHidden, on: attentionLabel)
+            .store(in: &subscriptions)
 
-        walletDriver.map { $0?.token.symbol ?? "" }
+        walletPublisher.map { $0?.token.symbol ?? "" }
             .map {
                 L10n.ThisAddressDoesNotAppearToHaveAAccount.YouHaveToPayAOneTimeFeeToCreateAAccountForThisAddress
                     .youCanChooseWhichCurrencyToPayInBelow(
@@ -453,8 +458,8 @@ private class _FeeView: UIStackView {
                         $0
                     )
             }
-            .drive(attentionLabel.rx.text)
-            .disposed(by: disposeBag)
+            .assign(to: \.text, on: attentionLabel)
+            .store(in: &subscriptions)
     }
 
     @available(*, unavailable)

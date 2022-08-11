@@ -5,9 +5,8 @@
 //  Created by Chung Tran on 12/02/2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import SolanaSwift
 import UIKit
 
@@ -130,7 +129,7 @@ extension SendToken.ConfirmViewController {
     }
 
     class FeesView: UIStackView {
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         private let viewModel: SendTokenViewModelType
         private let feeInfoDidTouch: (String, String) -> Void
 
@@ -154,9 +153,9 @@ extension SendToken.ConfirmViewController {
                     // fee
                     SectionView(title: L10n.transferFee)
                         .setup { view in
-                            Driver.combineLatest(
-                                viewModel.feeInfoDriver.map { $0.value?.feeAmount },
-                                viewModel.payingWalletDriver
+                            Publishers.CombineLatest(
+                                viewModel.feeInfoPublisher.map { $0.value?.feeAmount },
+                                viewModel.payingWalletPublisher
                             )
                                 .map { [weak self] feeAmount, payingWallet in
                                     guard let self = self else { return NSAttributedString() }
@@ -168,22 +167,23 @@ extension SendToken.ConfirmViewController {
                                         decimals: payingWallet?.token.decimals
                                     )
                                 }
-                                .drive(view.rightLabel.rx.attributedText)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.attributedText, on: view.rightLabel)
+                                .store(in: &subscriptions)
                         }
                     // info
                     UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
                         .setup { view in
-                            viewModel.networkDriver
+                            viewModel.networkPublisher
                                 .map { $0 != .solana }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
 
-                            viewModel.getFreeTransactionFeeLimit()
-                                .subscribe(onSuccess: { [weak view] limit in
+                            Task {
+                                let limit = try await viewModel.getFreeTransactionFeeLimit()
+                                await MainActor.run { [weak view] in
                                     view?.tintColor = limit.currentUsage >= limit.maxUsage ? .textSecondary : .h34c759
-                                })
-                                .disposed(by: disposeBag)
+                                }
+                            }
                         }
                         .onTap(self, action: #selector(feeInfoButtonDidTap))
                 }
@@ -191,22 +191,22 @@ extension SendToken.ConfirmViewController {
                 // Account creation fee
                 SectionView(title: L10n.accountCreationFee)
                     .setup { view in
-                        Driver.combineLatest(
-                            viewModel.networkDriver,
-                            viewModel.feeInfoDriver.map { $0.value?.feeAmount }
+                        Publishers.CombineLatest(
+                            viewModel.networkPublisher,
+                            viewModel.feeInfoPublisher.map { $0.value?.feeAmount }
                         )
                             .map { network, feeAmount -> Bool in
                                 if network != .solana { return true }
                                 guard let feeAmount = feeAmount else { return true }
                                 return feeAmount.accountBalances == 0
                             }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
 
-                        Driver.combineLatest(
-                            viewModel.networkDriver,
-                            viewModel.payingWalletDriver,
-                            viewModel.feeInfoDriver.map { $0.value?.feeAmount }
+                        Publishers.CombineLatest3(
+                            viewModel.networkPublisher,
+                            viewModel.payingWalletPublisher,
+                            viewModel.feeInfoPublisher.map { $0.value?.feeAmount }
                         )
                             .map { [weak self] network, payingWallet, feeAmount -> NSAttributedString? in
                                 if network != .solana { return nil }
@@ -219,26 +219,26 @@ extension SendToken.ConfirmViewController {
                                     decimals: payingWallet?.token.decimals
                                 )
                             }
-                            .drive(view.rightLabel.rx.attributedText)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.attributedText, on: view.rightLabel)
+                            .store(in: &subscriptions)
                     }
 
                 // Other fees
                 SectionView(title: "")
                     .setup { view in
-                        Driver.combineLatest(
-                            viewModel.networkDriver,
-                            viewModel.feeInfoDriver.map { $0.value?.feeAmount }
+                        Publishers.CombineLatest(
+                            viewModel.networkPublisher,
+                            viewModel.feeInfoPublisher.map { $0.value?.feeAmount }
                         )
                             .map { network, feeAmount -> Bool in
                                 if network != .bitcoin { return true }
                                 guard let otherFees = feeAmount?.others else { return true }
                                 return otherFees.isEmpty
                             }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
 
-                        viewModel.feeInfoDriver
+                        viewModel.feeInfoPublisher
                             .map { $0.value?.feeAmountInSOL }
                             .map { [weak self] feeAmount -> NSAttributedString? in
                                 guard let feeAmount = feeAmount else {
@@ -247,8 +247,8 @@ extension SendToken.ConfirmViewController {
                                 let prices = self?.viewModel.getPrices(for: ["SOL", "renBTC"]) ?? [:]
                                 return feeAmount.attributedStringForOtherFees(prices: prices)
                             }
-                            .drive(view.rightLabel.rx.attributedText)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.attributedText, on: view.rightLabel)
+                            .store(in: &subscriptions)
                     }
 
                 // Separator
@@ -261,9 +261,9 @@ extension SendToken.ConfirmViewController {
                 // Total fee
                 SectionView(title: L10n.total)
                     .setup { view in
-                        Driver.combineLatest(
-                            viewModel.feeInfoDriver.map { $0.value?.feeAmount },
-                            viewModel.payingWalletDriver
+                        Publishers.CombineLatest(
+                            viewModel.feeInfoPublisher.map { $0.value?.feeAmount },
+                            viewModel.payingWalletPublisher
                         )
                             .map { [weak self] feeAmount, payingWallet -> NSAttributedString in
                                 guard let self = self, let feeAmount = feeAmount else { return NSAttributedString() }
@@ -273,8 +273,8 @@ extension SendToken.ConfirmViewController {
                                     decimals: payingWallet?.token.decimals
                                 )
                             }
-                            .drive(view.rightLabel.rx.attributedText)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.attributedText, on: view.rightLabel)
+                            .store(in: &subscriptions)
                     }
             }
         }
@@ -287,19 +287,23 @@ extension SendToken.ConfirmViewController {
                 feeInfoDidTouch(title, message)
             case .relay:
                 showIndetermineHud()
-                viewModel.getFreeTransactionFeeLimit()
-                    .observe(on: MainScheduler.instance)
-                    .subscribe(onSuccess: { [weak self] limit in
-                        self?.hideHud()
-                        guard let self = self else { return }
-                        let title = L10n.thereAreFreeTransactionsLeftForToday(limit.maxUsage - limit.currentUsage)
-                        let message = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
-                            .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(limit.maxUsage)
-                        self.feeInfoDidTouch(title, message)
-                    }, onFailure: { [weak self] _ in
-                        self?.hideHud()
-                    })
-                    .disposed(by: disposeBag)
+                Task {
+                    do {
+                        let limit = try await viewModel.getFreeTransactionFeeLimit()
+                        await MainActor.run { [weak self] in
+                            self?.hideHud()
+                            let title = L10n.thereAreFreeTransactionsLeftForToday(limit.maxUsage - limit.currentUsage)
+                            let message = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                                .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(limit.maxUsage)
+                            self?.feeInfoDidTouch(title, message)
+                        }
+
+                    } catch {
+                        await MainActor.run { [weak self] in
+                            self?.hideHud()
+                        }
+                    }
+                }
             }
         }
     }

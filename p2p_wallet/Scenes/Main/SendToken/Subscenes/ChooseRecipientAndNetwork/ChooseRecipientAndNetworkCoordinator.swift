@@ -5,9 +5,8 @@
 //  Created by Ivan on 18.04.2022.
 //
 
+import Combine
 import Foundation
-import RxCocoa
-import RxSwift
 import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork {
@@ -19,37 +18,37 @@ extension SendToken.ChooseRecipientAndNetwork {
             viewModel: viewModel.createSelectAddressViewModel()
         )
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
 
         init(
             viewModel: SendTokenChooseRecipientAndNetworkViewModelType,
             navigationController: UINavigationController
         ) {
             // clearing recipient on init
-            viewModel.recipientSubject.accept(nil)
+            viewModel.setRecipient(nil)
             self.viewModel = viewModel
             self.navigationController = navigationController
             bind()
         }
 
         private func bind() {
-            Driver.combineLatest(
-                viewModel.walletDriver,
-                viewModel.amountDriver
+            Publishers.CombineLatest(
+                viewModel.walletPublisher,
+                viewModel.amountPublisher
             )
                 .map { wallet, amount -> String in
                     let amount = amount ?? 0
                     let symbol = wallet?.token.symbol ?? ""
                     return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
                 }
-                .drive(onNext: { [weak self] in
+                .sink { [weak self] in
                     self?.addressVC.navigationItem.title = $0
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         func start() {

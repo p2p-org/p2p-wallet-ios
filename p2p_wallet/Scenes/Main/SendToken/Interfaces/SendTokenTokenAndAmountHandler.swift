@@ -5,37 +5,26 @@
 //  Created by Chung Tran on 09/12/2021.
 //
 
+import Combine
 import Foundation
-import RxCocoa
 import SolanaSwift
 
 protocol SendTokenTokenAndAmountHandler {
-    var walletSubject: BehaviorRelay<Wallet?> { get }
-    var amountSubject: BehaviorRelay<Double?> { get }
-}
+    // MARK: - @Published var wallet
 
-extension SendTokenTokenAndAmountHandler {
-    var walletDriver: Driver<Wallet?> {
-        walletSubject.asDriver()
-    }
+    // Define wallet (wrapped value)
+    var wallet: Wallet? { get }
+    // Define wallet Published property wrapper
+    func setWallet(_ wallet: Wallet?)
+    // Define wallet publisher
+    var walletPublisher: AnyPublisher<Wallet?, Never> { get }
 
-    var amountDriver: Driver<Double?> {
-        amountSubject.asDriver()
-    }
+    // MARK: - @Published var amount
 
-    func chooseWallet(_ wallet: Wallet) {
-        walletSubject.accept(wallet)
-    }
-
-    func enterAmount(_ amount: Double?) {
-        amountSubject.accept(amount)
-    }
-
-    func getSelectedAmount() -> Double? {
-        amountSubject.value
-    }
-
-    func getSelectedWallet() -> Wallet? {
-        walletSubject.value
-    }
+    // Define amount (wrapped value)
+    var amount: Double? { get }
+    // Define amount Published property wrapper
+    func setAmount(_ amount: Double?)
+    // Define amount publisher
+    var amountPublisher: AnyPublisher<Double?, Never> { get }
 }

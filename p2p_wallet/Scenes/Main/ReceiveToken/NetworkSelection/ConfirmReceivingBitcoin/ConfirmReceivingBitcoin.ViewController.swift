@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import UIKit
 
@@ -14,6 +15,7 @@ extension ConfirmReceivingBitcoin {
         // MARK: - Properties
 
         let viewModel: ConfirmReceivingBitcoinViewModelType
+        var subscriptions = [AnyCancellable]()
 
         // MARK: - Initializer
 
@@ -46,20 +48,20 @@ extension ConfirmReceivingBitcoin {
                 )
                     .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
                     .setup { label in
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .payingWalletAvailable }
-                            .drive(label.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: label)
+                            .store(in: &subscriptions)
                     }
 
                 // Additional spacer in top up view
                 UIView.spacer
                     .setup { view in
                         view.autoSetDimension(.height, toSize: 14)
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .topUpRequired }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                 // Alert and separator
@@ -87,26 +89,26 @@ extension ConfirmReceivingBitcoin {
                 BEVStack(spacing: 10) {
                     topUpButtonsView()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .topUpRequired }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
 
                     shareSolanaAddressButton()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .topUpRequired }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
 
                     createRenBTCButton()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .payingWalletAvailable }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
                 }
                 .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
@@ -117,18 +119,18 @@ extension ConfirmReceivingBitcoin {
             BEVStack(spacing: 12) {
                 topUpRequiredView()
                     .setup { view in
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .topUpRequired }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                 createRenBTCView()
                     .setup { view in
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .payingWalletAvailable }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
             }
         }
@@ -137,32 +139,31 @@ extension ConfirmReceivingBitcoin {
 
         override func bind() {
             super.bind()
-            viewModel.isLoadingDriver
-                .drive(onNext: { [weak self] isLoading in
+            viewModel.isLoadingPublisher
+                .sink { [weak self] isLoading in
                     isLoading ? self?.showIndetermineHud() : self?.hideHud()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.accountStatusDriver
-                .drive(onNext: { [weak self] _ in
+            viewModel.accountStatusPublisher
+                .sink { [weak self] _ in
                     self?.updatePresentationLayout(animated: true)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.errorDriver
-                .drive(onNext: { [weak self] error in
+            viewModel.errorPublisher
+                .sink { [weak self] error in
                     if error != nil {
                         self?.showErrorView(retryAction: .init { [weak self] in
                             self?.viewModel.reload()
-                            return .just(())
                         })
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

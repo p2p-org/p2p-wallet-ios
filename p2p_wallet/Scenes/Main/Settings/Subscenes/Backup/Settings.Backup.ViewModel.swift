@@ -5,43 +5,48 @@
 //  Created by Chung Tran on 10/03/2022.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
 
 protocol SettingsBackupViewModelType {
-    var navigationDriver: Driver<Settings.Backup.NavigatableScene?> { get }
-    var didBackupDriver: Driver<Bool> { get }
+    var navigationPublisher: AnyPublisher<Settings.Backup.NavigatableScene?, Never> { get }
+    var didBackupPublisher: AnyPublisher<Bool, Never> { get }
     func backupUsingICloud()
     func backupManually()
     func setDidBackupOffline()
 }
 
 extension Settings.Backup {
-    final class ViewModel {
+    @MainActor
+    final class ViewModel: ObservableObject {
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
         @Injected private var notificationsService: NotificationService
         var didBackupHandler: (() -> Void)?
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
-        private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
-            .didBackupOffline)
+        @Published private var navigatableScene: NavigatableScene?
+        @Published private var didBackup: Bool = false
+
+        init() {
+            didBackup = storage.didBackupUsingIcloud || Defaults
+                .didBackupOffline
+        }
     }
 }
 
 extension Settings.Backup.ViewModel: SettingsBackupViewModelType {
-    var navigationDriver: Driver<Settings.Backup.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<Settings.Backup.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
-    var didBackupDriver: Driver<Bool> {
-        didBackupSubject.asDriver()
+    var didBackupPublisher: AnyPublisher<Bool, Never> {
+        $didBackup.eraseToAnyPublisher()
     }
 
     func backupManually() {
-        if didBackupSubject.value {
+        if didBackup {
             authenticationHandler.pauseAuthentication(true)
             deviceOwnerAuthenticationHandler.requiredOwner(onSuccess: {
                 self.navigate(to: .showPhrases)
@@ -87,7 +92,7 @@ extension Settings.Backup.ViewModel: SettingsBackupViewModelType {
     }
 
     func navigate(to scene: Settings.Backup.NavigatableScene) {
-        navigationSubject.accept(scene)
+        navigatableScene = scene
     }
 
     func setDidBackupOffline() {
@@ -96,7 +101,7 @@ extension Settings.Backup.ViewModel: SettingsBackupViewModelType {
     }
 
     func setDidBackup(_ didBackup: Bool) {
-        didBackupSubject.accept(didBackup)
+        self.didBackup = didBackup
         didBackupHandler?()
     }
 }

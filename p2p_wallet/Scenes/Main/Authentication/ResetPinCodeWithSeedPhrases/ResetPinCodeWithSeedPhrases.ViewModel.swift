@@ -5,14 +5,14 @@
 //  Created by Chung Tran on 16/04/2021.
 //
 
+import Combine
 import Resolver
-import RxCocoa
 import SolanaSwift
 import UIKit
 
 protocol ResetPinCodeWithSeedPhrasesViewModelType {
-    var navigatableSceneDriver: Driver<ResetPinCodeWithSeedPhrases.NavigatableScene> { get }
-    var errorDriver: Driver<Error?> { get }
+    var navigatableScenePublisher: AnyPublisher<ResetPinCodeWithSeedPhrases.NavigatableScene, Never> { get }
+    var errorPublisher: AnyPublisher<Error?, Never> { get }
 
     func savePincode(_ code: String)
     func handlePhrases(_ phrases: [String])
@@ -20,7 +20,8 @@ protocol ResetPinCodeWithSeedPhrasesViewModelType {
 }
 
 extension ResetPinCodeWithSeedPhrases {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         @Injected private var storage: PincodeSeedPhrasesStorage
@@ -31,18 +32,18 @@ extension ResetPinCodeWithSeedPhrases {
 
         // MARK: - Subjects
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene>(value: .enterSeedPhrases)
-        private let errorSubject = BehaviorRelay<Error?>(value: nil)
+        @Published private var navigatableScene: NavigatableScene = .enterSeedPhrases
+        @Published private var error: Error?
     }
 }
 
 extension ResetPinCodeWithSeedPhrases.ViewModel: ResetPinCodeWithSeedPhrasesViewModelType {
-    var navigatableSceneDriver: Driver<ResetPinCodeWithSeedPhrases.NavigatableScene> {
-        navigationSubject.asDriver()
+    var navigatableScenePublisher: AnyPublisher<ResetPinCodeWithSeedPhrases.NavigatableScene, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
-    var errorDriver: Driver<Error?> {
-        errorSubject.asDriver()
+    var errorPublisher: AnyPublisher<Error?, Never> {
+        $error.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -53,10 +54,10 @@ extension ResetPinCodeWithSeedPhrases.ViewModel: ResetPinCodeWithSeedPhrasesView
 
     func handlePhrases(_ phrases: [String]) {
         guard storage.phrases == phrases else {
-            errorSubject.accept(SolanaError.other("Seed phrases is not correct"))
+            error = SolanaError.other("Seed phrases is not correct")
             return
         }
-        navigationSubject.accept(.createNewPasscode)
+        navigatableScene = .createNewPasscode
     }
 
     func validatePhrases(_ phrases: [String]) -> (status: Bool, error: String?) {

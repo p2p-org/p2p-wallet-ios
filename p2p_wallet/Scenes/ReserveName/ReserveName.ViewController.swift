@@ -5,6 +5,7 @@
 //  Created by Andrew Vasiliev on 26.11.2021.
 //
 
+import Combine
 import Foundation
 import UIKit
 
@@ -13,6 +14,7 @@ extension ReserveName {
         // MARK: - Dependencies
 
         private let viewModel: ReserveNameViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Properties
 
@@ -49,19 +51,19 @@ extension ReserveName {
 
         override func bind() {
             super.bind()
-            viewModel.isLoadingDriver
-                .drive(onNext: { [weak self] isLoading in
+            viewModel.isLoadingPublisher
+                .sink { [weak self] isLoading in
                     if isLoading {
                         self?.view.showIndetermineHud()
                     } else {
                         self?.view.hideHud()
                     }
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
-            viewModel.navigationDriver
-                .drive(onNext: { [weak self] in self?.navigate(to: $0) })
-                .disposed(by: disposeBag)
+            viewModel.navigationPublisher
+                .sink { [weak self] in self?.navigate(to: $0) }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Navigation

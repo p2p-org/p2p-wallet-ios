@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import Resolver
 
 extension History {
@@ -13,6 +14,7 @@ extension History {
         @Injected private var notificationService: NotificationService
 
         private lazy var customView = TransactionView()
+        private var subscriptions = [AnyCancellable]()
 
         private let viewModel: TransactionViewModel
         private var viewAppeared: Bool = false
@@ -28,7 +30,7 @@ extension History {
         override func viewWillAppear(_ animated: Bool) {
             super.viewWillAppear(animated)
             if !viewAppeared {
-                viewModel.viewIO.0.viewDidLoad.accept(())
+                viewModel.viewIO.0.viewDidLoad.send()
                 viewAppeared = true
             }
         }
@@ -38,42 +40,47 @@ extension History {
 
             let (input, output) = viewModel.viewIO
 
-            customView.rx
-                .transactionIdClicked
-                .bind(to: input.transactionIdClicked)
-                .disposed(by: disposeBag)
-            customView.rx
-                .doneClicked
-                .bind(to: input.doneClicked)
-                .disposed(by: disposeBag)
-            customView.rx
-                .transactionDetailClicked
-                .bind(to: input.transactionDetailClicked)
-                .disposed(by: disposeBag)
+            customView.transactionIdClicked
+                .sink {
+                    input.transactionIdClicked.send()
+                }
+                .store(in: &subscriptions)
+            customView.doneClicked
+                .sink {
+                    input.doneClicked.send()
+                }
+                .store(in: &subscriptions)
+            customView.transactionDetailClicked
+                .sink {
+                    input.transactionDetailClicked.send()
+                }
+                .store(in: &subscriptions)
 
             output.model
-                .drive(customView.rx.model)
-                .disposed(by: disposeBag)
+                .map(Optional.init)
+                .assign(to: \.model, on: customView)
+                .store(in: &subscriptions)
+
             output.copied
-                .drive(onNext: { [weak self] in
+                .sink { [weak self] in
                     self?.notificationService.showInAppNotification(.done(L10n.copiedToClipboard))
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
 
             // TODO: - Move to coordinator later
 
             let (_, coordinatorOutput) = viewModel.coordIO
 
             coordinatorOutput.done
-                .drive(onNext: { [unowned self] in
+                .sink { [unowned self] in
                     dismiss(animated: true)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
             coordinatorOutput.showWebView
-                .drive(onNext: { [unowned self] url in
+                .sink { [unowned self] url in
                     showWebsite(url: url)
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
     }
 }

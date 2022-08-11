@@ -9,30 +9,28 @@ import BECollectionView_Combine
 import Combine
 import Foundation
 import RenVMSwift
-import RxCocoa
-import RxCombine
-import RxSwift
 
 protocol RenBTCReceivingStatusesViewModelType: BECollectionViewModelType {
-    var navigationDriver: Driver<RenBTCReceivingStatuses.NavigatableScene?> { get }
-    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> { get }
+    var navigationPublisher: AnyPublisher<RenBTCReceivingStatuses.NavigatableScene?, Never> { get }
+    var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> { get }
     func showDetail(txid: String)
 }
 
 extension RenBTCReceivingStatuses {
-    class ViewModel {
+    @MainActor
+    class ViewModel: ObservableObject {
         // MARK: - Dependencies
 
         let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
         // MARK: - Properties
 
-        let disposeBag = DisposeBag()
+        var subscriptions = [AnyCancellable]()
         var data = [LockAndMint.ProcessingTx]()
 
         // MARK: - Subject
 
-        private let navigationSubject = BehaviorRelay<NavigatableScene?>(value: nil)
+        @Published private var navigationSubject: NavigatableScene?
 
         // MARK: - Initializer
 
@@ -42,20 +40,19 @@ extension RenBTCReceivingStatuses {
         }
 
         func bind() {
-            receiveBitcoinViewModel.processingTxsDriver
-                .drive(onNext: { [weak self] in
+            receiveBitcoinViewModel.processingTxsPublisher
+                .sink { [weak self] in
                     let new = Array($0.reversed())
                     self?.data = new
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
     }
 }
 
 extension RenBTCReceivingStatuses.ViewModel: BECollectionViewModelType {
     var dataDidChange: AnyPublisher<Void, Never> {
-        receiveBitcoinViewModel.processingTxsDriver.map { _ in () }.publisher
-            .replaceError(with: ())
+        receiveBitcoinViewModel.processingTxsPublisher.map { _ in () }
             .eraseToAnyPublisher()
     }
 
@@ -93,17 +90,17 @@ extension RenBTCReceivingStatuses.ViewModel: BECollectionViewModelType {
 }
 
 extension RenBTCReceivingStatuses.ViewModel: RenBTCReceivingStatusesViewModelType {
-    var navigationDriver: Driver<RenBTCReceivingStatuses.NavigatableScene?> {
-        navigationSubject.asDriver()
+    var navigationPublisher: AnyPublisher<RenBTCReceivingStatuses.NavigatableScene?, Never> {
+        $navigationSubject.eraseToAnyPublisher()
     }
 
-    var processingTxsDriver: Driver<[LockAndMint.ProcessingTx]> {
-        receiveBitcoinViewModel.processingTxsDriver
+    var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> {
+        receiveBitcoinViewModel.processingTxsPublisher
     }
 
     // MARK: - Actions
 
     func showDetail(txid: String) {
-        navigationSubject.accept(.detail(txid: txid))
+        navigationSubject = .detail(txid: txid)
     }
 }
