@@ -10,6 +10,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 
+@MainActor
 protocol ReceiveSceneModel: BESceneModel {
     var tokenTypePublisher: AnyPublisher<ReceiveToken.TokenType, Never> { get }
     var hasAddressesInfoPublisher: AnyPublisher<Bool, Never> { get }
@@ -93,10 +94,10 @@ extension ReceiveToken {
             debugPrint("\(String(describing: self)) deinited")
         }
 
-        var tokenTypePublisher: AnyPublisher<ReceiveToken.TokenType, Never> { tokenTypeSubject.asDriver() }
+        var tokenTypePublisher: AnyPublisher<ReceiveToken.TokenType, Never> { $tokenType.eraseToAnyPublisher() }
 
         var hasAddressesInfoPublisher: AnyPublisher<Bool, Never> {
-            tokenTypeSubject
+            $tokenType
                 .map { [weak self] tokenType in
                     guard let self = self else { return false }
 
@@ -111,15 +112,15 @@ extension ReceiveToken {
         }
 
         var addressesInfoIsOpenedPublisher: AnyPublisher<Bool, Never> {
-            addressesInfoIsOpenedSubject.asDriver()
+            $isAddressesInfoOpened.eraseToAnyPublisher()
         }
 
         var addressesHintIsHiddenPublisher: AnyPublisher<Bool, Never> {
-            addressesHintIsHiddenSubject.asDriver()
+            $isAddressesHintHidden.eraseToAnyPublisher()
         }
 
         var tokenListAvailabilityPublisher: AnyPublisher<Bool, Never> {
-            tokenTypeDriver
+            $tokenType
                 .map { [weak self] in
                     switch $0 {
                     case .solana:
@@ -128,10 +129,11 @@ extension ReceiveToken {
                         return false
                     }
                 }
+                .eraseToAnyPublisher()
         }
 
         var hasHintViewOnTopPublisher: AnyPublisher<Bool, Never> {
-            tokenTypeDriver
+            $tokenType
                 .map { [weak self] tokenType in
                     guard let self = self else { return false }
 
@@ -142,17 +144,18 @@ extension ReceiveToken {
                         return false
                     }
                 }
+                .eraseToAnyPublisher()
         }
 
         func switchToken(_ tokenType: ReceiveToken.TokenType) {
-            tokenTypeSubject.accept(tokenType)
+            self.tokenType = tokenType
             if tokenType == .btc {
                 receiveBitcoinViewModel.acceptConditionAndLoadAddress()
             }
         }
 
         func showSelectionNetwork() {
-            navigationSubject.accept(.networkSelection)
+            navigationSubject.send(.networkSelection)
         }
 
         func copyDirectAddress() {
@@ -174,23 +177,21 @@ extension ReceiveToken {
         }
 
         var navigation: AnyPublisher<NavigatableScene?, Never> {
-            navigationSubject.asDriver(onErrorDriveWith: Driver.empty())
+            navigationSubject.eraseToAnyPublisher()
         }
 
         private func bind() {
             showHideAddressesInfoButtonTapSubject
-                .subscribe(onNext: { [weak addressesInfoIsOpenedSubject] in
-                    guard let addressesInfoIsOpenedSubject = addressesInfoIsOpenedSubject else { return }
-                    addressesInfoIsOpenedSubject.accept(!addressesInfoIsOpenedSubject.value)
-                })
-                .disposed(by: disposeBag)
+                .sink { [weak self] in
+                    self?.isAddressesInfoOpened = !(self?.isAddressesInfoOpened ?? true)
+                }
+                .store(in: &subscriptions)
 
             hideAddressesHintSubject
-                .subscribe(onNext: { [weak addressesHintIsHiddenSubject] in
-                    guard let addressesHintIsHiddenSubject = addressesHintIsHiddenSubject else { return }
-                    addressesHintIsHiddenSubject.accept(true)
-                })
-                .disposed(by: disposeBag)
+                .sink { [weak self] in
+                    self?.isAddressesHintHidden = true
+                }
+                .store(in: &subscriptions)
         }
 
         private func showCopied() {
@@ -198,7 +199,7 @@ extension ReceiveToken {
         }
 
         func navigateToBuy() {
-            navigationSubject.accept(.buy)
+            navigationSubject.send(.buy)
         }
     }
 }
