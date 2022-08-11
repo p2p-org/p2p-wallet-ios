@@ -5,26 +5,25 @@
 //  Created by Chung Tran on 07/06/2021.
 //
 
+import Combine
 import Foundation
 import Resolver
-import RxCocoa
-import RxSwift
 import SolanaSwift
 
 protocol ReceiveSceneModel: BESceneModel {
-    var tokenTypeDriver: Driver<ReceiveToken.TokenType> { get }
-    var hasAddressesInfoDriver: Driver<Bool> { get }
-    var hasHintViewOnTopDriver: Driver<Bool> { get }
-    var addressesInfoIsOpenedDriver: Driver<Bool> { get }
-    var showHideAddressesInfoButtonTapSubject: PublishRelay<Void> { get }
-    var addressesHintIsHiddenDriver: Driver<Bool> { get }
-    var hideAddressesHintSubject: PublishRelay<Void> { get }
-    var tokenListAvailabilityDriver: Driver<Bool> { get }
+    var tokenTypePublisher: AnyPublisher<ReceiveToken.TokenType, Never> { get }
+    var hasAddressesInfoPublisher: AnyPublisher<Bool, Never> { get }
+    var hasHintViewOnTopPublisher: AnyPublisher<Bool, Never> { get }
+    var addressesInfoIsOpenedPublisher: AnyPublisher<Bool, Never> { get }
+    var showHideAddressesInfoButtonTapSubject: PassthroughSubject<Void, Never> { get }
+    var addressesHintIsHiddenPublisher: AnyPublisher<Bool, Never> { get }
+    var hideAddressesHintSubject: PassthroughSubject<Void, Never> { get }
+    var tokenListAvailabilityPublisher: AnyPublisher<Bool, Never> { get }
     var receiveSolanaViewModel: ReceiveTokenSolanaViewModelType { get }
     var receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType { get }
     var shouldShowChainsSwitcher: Bool { get }
     var tokenWallet: Wallet? { get }
-    var navigation: Driver<ReceiveToken.NavigatableScene?> { get }
+    var navigation: AnyPublisher<ReceiveToken.NavigatableScene?, Never> { get }
 
     func isRenBtcCreated() -> Bool
     func switchToken(_ tokenType: ReceiveToken.TokenType)
@@ -35,22 +34,23 @@ protocol ReceiveSceneModel: BESceneModel {
 }
 
 extension ReceiveToken {
-    class SceneModel: NSObject, ReceiveSceneModel {
+    @MainActor
+    class SceneModel: NSObject, ObservableObject, ReceiveSceneModel {
         @Injected private var clipboardManager: ClipboardManagerType
         @Injected private var notificationsService: NotificationService
         @Injected private var walletsRepository: WalletsRepository
 
         // MARK: - Properties
 
-        private let disposeBag = DisposeBag()
+        private var subscriptions = [AnyCancellable]()
         let receiveSolanaViewModel: ReceiveTokenSolanaViewModelType
         let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
         // MARK: - Subjects
 
-        let showHideAddressesInfoButtonTapSubject = PublishRelay<Void>()
+        let showHideAddressesInfoButtonTapSubject = PassthroughSubject<Void, Never>()
         let addressesHintIsHiddenSubject = BehaviorRelay<Bool>(value: false)
-        let hideAddressesHintSubject = PublishRelay<Void>()
+        let hideAddressesHintSubject = PassthroughSubject<Void, Never>()
         private let navigationSubject = PublishRelay<NavigatableScene?>()
         private let tokenTypeSubject = BehaviorRelay<TokenType>(value: .solana)
         private let addressesInfoIsOpenedSubject = BehaviorRelay<Bool>(value: false)
@@ -93,10 +93,10 @@ extension ReceiveToken {
             debugPrint("\(String(describing: self)) deinited")
         }
 
-        var tokenTypeDriver: Driver<ReceiveToken.TokenType> { tokenTypeSubject.asDriver() }
+        var tokenTypePublisher: AnyPublisher<ReceiveToken.TokenType, Never> { tokenTypeSubject.asDriver() }
 
-        var hasAddressesInfoDriver: Driver<Bool> {
-            tokenTypeDriver
+        var hasAddressesInfoPublisher: AnyPublisher<Bool, Never> {
+            tokenTypeSubject
                 .map { [weak self] tokenType in
                     guard let self = self else { return false }
 
@@ -107,17 +107,18 @@ extension ReceiveToken {
                         return false
                     }
                 }
+                .eraseToAnyPublisher()
         }
 
-        var addressesInfoIsOpenedDriver: Driver<Bool> {
+        var addressesInfoIsOpenedPublisher: AnyPublisher<Bool, Never> {
             addressesInfoIsOpenedSubject.asDriver()
         }
 
-        var addressesHintIsHiddenDriver: Driver<Bool> {
+        var addressesHintIsHiddenPublisher: AnyPublisher<Bool, Never> {
             addressesHintIsHiddenSubject.asDriver()
         }
 
-        var tokenListAvailabilityDriver: Driver<Bool> {
+        var tokenListAvailabilityPublisher: AnyPublisher<Bool, Never> {
             tokenTypeDriver
                 .map { [weak self] in
                     switch $0 {
@@ -129,7 +130,7 @@ extension ReceiveToken {
                 }
         }
 
-        var hasHintViewOnTopDriver: Driver<Bool> {
+        var hasHintViewOnTopPublisher: AnyPublisher<Bool, Never> {
             tokenTypeDriver
                 .map { [weak self] tokenType in
                     guard let self = self else { return false }
@@ -172,7 +173,9 @@ extension ReceiveToken {
             walletsRepository.getWallets().contains(where: \.token.isRenBTC)
         }
 
-        var navigation: Driver<NavigatableScene?> { navigationSubject.asDriver(onErrorDriveWith: Driver.empty()) }
+        var navigation: AnyPublisher<NavigatableScene?, Never> {
+            navigationSubject.asDriver(onErrorDriveWith: Driver.empty())
+        }
 
         private func bind() {
             showHideAddressesInfoButtonTapSubject
