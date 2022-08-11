@@ -33,7 +33,7 @@ extension ReceiveToken {
                         self.viewModel.saveAction(image: image)
                     }.setup { card in
                         viewModel.addressPublisher
-                            .assign(to: \.pubkey, on: card)
+                            .assign(to: \.pubKey, on: card)
                             .store(in: &subscriptions)
                     }
 
