@@ -154,11 +154,6 @@ PODS:
   - RxCocoa (6.5.0):
     - RxRelay (= 6.5.0)
     - RxSwift (= 6.5.0)
-  - RxCombine (2.0.1):
-    - RxRelay (~> 6)
-    - RxSwift (~> 6)
-  - RxConcurrency (0.1.1):
-    - RxSwift (~> 6.5.0)
   - RxRelay (6.5.0):
     - RxSwift (= 6.5.0)
   - RxSwift (6.5.0)
@@ -214,10 +209,6 @@ DEPENDENCIES:
   - Periphery
   - RenVMSwift (from `RenVMSwift`)
   - Resolver
-  - RxCocoa (= 6.5.0)
-  - RxCombine
-  - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
-  - RxSwift (= 6.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SolanaPricesAPIs (from `KeyAppKit`)
   - SolanaSwift (from `SolanaSwift`)
@@ -261,7 +252,6 @@ SPEC REPOS:
     - PureLayout
     - Resolver
     - RxCocoa
-    - RxCombine
     - RxRelay
     - RxSwift
     - secp256k1.swift
@@ -304,9 +294,6 @@ EXTERNAL SOURCES:
     :path: OrcaSwapSwift
   RenVMSwift:
     :path: RenVMSwift
-  RxConcurrency:
-    :branch: main
-    :git: https://github.com/TrGiLong/RxConcurrency.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
@@ -330,9 +317,6 @@ CHECKOUT OPTIONS:
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
-  RxConcurrency:
-    :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
-    :git: https://github.com/TrGiLong/RxConcurrency.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
@@ -379,8 +363,6 @@ SPEC CHECKSUMS:
   RenVMSwift: 9cfd6610adc9c74a6e761c615cd30a31129e79c6
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
   RxCocoa: 94f817b71c07517321eb4f9ad299112ca8af743b
-  RxCombine: 74cd98f7bb1d908eff3758d13651917fc296adb3
-  RxConcurrency: fde98edd4056a8f13ff293689a25a17563e3e843
   RxRelay: 1de1523e604c72b6c68feadedd1af3b1b4d0ecbd
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
@@ -399,6 +381,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: e37c86fb855cda4c88a52f45894f0aae2e4f8e83
+PODFILE CHECKSUM: cc6a72222cc4afcd163f5e18b118f28bb24ba051
 
 COCOAPODS: 1.11.3
