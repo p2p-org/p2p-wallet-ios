@@ -24,7 +24,7 @@ protocol SendTokenRecipientAndNetworkHandler: AnyObject {
     // Define recipient Published property wrapper
     func setRecipient(_ recipient: SendToken.Recipient?)
     // Define recipient publisher
-    var recipientPublisher: Published<SendToken.Recipient?>.Publisher { get }
+    var recipientPublisher: AnyPublisher<SendToken.Recipient?, Never> { get }
 
     // MARK: - @Published var network
 
@@ -33,7 +33,7 @@ protocol SendTokenRecipientAndNetworkHandler: AnyObject {
     // Define network Published property wrapper
     func setNetwork(_ network: SendToken.Network?)
     // Define network publisher
-    var networkPublisher: Published<SendToken.Network>.Publisher { get }
+    var networkPublisher: AnyPublisher<SendToken.Network, Never> { get }
 
     // MARK: - @Published var payingWallet
 
@@ -42,7 +42,7 @@ protocol SendTokenRecipientAndNetworkHandler: AnyObject {
     // Define payingWallet Published property wrapper
     func setPayingWallet(_ payingWallet: Wallet?)
     // Define payingWallet publisher
-    var payingWalletPublisher: Published<Wallet?>.Publisher { get }
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> { get }
 
     var feeInfoSubject: LoadableRelay<SendToken.FeeInfo> { get }
 
