@@ -8,7 +8,7 @@ class BaseOTPViewController: BaseViewController {
 
     func showError(error: String?) {
         guard let error = error else { return }
-        let bar = SnackBar(icon: UIImage(), text: error)
+        let bar = SnackBar(text: error)
         bar.show(in: self)
     }
 }
