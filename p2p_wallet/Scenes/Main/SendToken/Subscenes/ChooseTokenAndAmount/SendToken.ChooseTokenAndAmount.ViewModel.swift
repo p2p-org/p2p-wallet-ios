@@ -98,6 +98,22 @@ extension SendToken.ChooseTokenAndAmount {
 }
 
 extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmountViewModelType {
+    func setWallet(_ wallet: Wallet?) {
+        self.wallet = wallet
+    }
+
+    var walletPublisher: AnyPublisher<Wallet?, Never> {
+        $wallet.eraseToAnyPublisher()
+    }
+
+    func setAmount(_ amount: Double?) {
+        self.amount = amount
+    }
+
+    var amountPublisher: AnyPublisher<Double?, Never> {
+        $amount.eraseToAnyPublisher()
+    }
+
     var canGoBack: Bool {
         sendTokenViewModel.canGoBack
     }

@@ -52,9 +52,9 @@ extension ReceiveToken {
                                     // Wallet Icon
                                     UIImageView(width: 44, height: 44)
                                         .setup { imageView in
-                                            viewModel.tokenTypeDriver.map { type in type.icon }
-                                                .drive(imageView.rx.image)
-                                                .disposed(by: disposeBag)
+                                            viewModel.tokenTypePublisher.map { type in type.icon }
+                                                .assign(to: \.image, on: imageView)
+                                                .store(in: &subscriptions)
                                         }
                                     // Text
                                     UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
@@ -65,10 +65,10 @@ extension ReceiveToken {
                                         )
                                         UILabel(text: L10n.network("Solana"), textSize: 17, weight: .semibold)
                                             .setup { view in
-                                                viewModel.tokenTypeDriver
+                                                viewModel.tokenTypePublisher
                                                     .map { L10n.network($0.localizedName).onlyUppercaseFirst() }
-                                                    .drive(view.rx.text)
-                                                    .disposed(by: disposeBag)
+                                                    .assign(to: \.text, on: view)
+                                                    .store(in: &subscriptions)
                                             }
                                     }.padding(.init(x: 12, y: 0))
                                     // Next icon
@@ -132,11 +132,13 @@ extension ReceiveToken {
                             openedText: L10n.hideDirectAndMintAddresses
                         )
                             .setup { view in
-                                viewModel.addressesInfoIsOpenedDriver
+                                viewModel.addressesInfoIsOpenedPublisher
                                     .assign(to: \.isOpened, on: view)
                                     .store(in: &subscriptions)
                                 view.tapPublisher
-                                    .assign(to: \.showHideAddressesInfoButtonTapSubject, on: viewModel)
+                                    .sink { [weak viewModel] in
+                                        viewModel?.showHideAddressesInfoButtonTapSubject.send()
+                                    }
                                     .store(in: &subscriptions)
                             }
                         TokenAddressesView(viewModel: viewModel)

@@ -208,7 +208,7 @@ extension SendToken {
                             viewModel.walletPublisher
                                 .map { $0?.token.symbol ?? "" }
                                 .map { "1 \($0)" }
-                                .drive(view.leftLabel.rx.text)
+                                .assign(to: \.text, on: view.leftLabel)
                                 .store(in: &subscriptions)
 
                             viewModel.walletPublisher
