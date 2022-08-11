@@ -857,3 +857,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Invalid value of OTP. Please try again to input correct value of OTP" = "Valeur invalide d'OTP.  Veuillez réessayer pour entrer la valeur correcte d'OTP";
 "Something went wrong. Please try again" = "Quelque chose s'est mal passé.  Veuillez réessayer";
 "You’re offline. Keep calm" = "Vous n'êtes pas connecté.  Rester calme";
+"You have a great start with %@. It’s only a pin code needed  to create a new wallet" = "Vous avez un bon début avec %@.  C'est seulement un code PIN nécessaire pour créer un nouveau portefeuille";

@@ -78,7 +78,6 @@ struct SocialSignInView: View {
                     .frame(height: TextButton.Size.large.height)
                     .padding(.top, 20)
             }
-            .padding(.horizontal, 20)
             .padding(.bottom, 34)
             .bottomActionsStyle()
         }

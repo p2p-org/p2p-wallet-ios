@@ -5,23 +5,8 @@
 import Combine
 import Foundation
 import Onboarding
+import Reachability
 import Resolver
-
-struct ReactiveProcess<T> {
-    let data: T
-    let finish: (Error?) -> Void
-
-    func start(_ compute: @escaping () async throws -> Void) {
-        Task {
-            do {
-                try await compute()
-                finish(nil)
-            } catch {
-                finish(error)
-            }
-        }
-    }
-}
 
 class SocialSignInViewModel: BaseViewModel {
     enum Loading {
@@ -38,6 +23,8 @@ class SocialSignInViewModel: BaseViewModel {
     }
 
     @Injected var notificationService: NotificationService
+    @Injected var reachability: Reachability
+
     @Published var loading: Loading?
     private(set) var coordinatorIO: CoordinatorIO = .init()
 
@@ -59,7 +46,10 @@ class SocialSignInViewModel: BaseViewModel {
     }
 
     func onSignInTap(_ provider: SocialProvider) {
-        guard loading == nil else { return }
+        guard
+            loading == nil,
+            reachability.check()
+        else { return }
 
         switch provider {
         case .apple: loading = .appleButton
@@ -67,11 +57,13 @@ class SocialSignInViewModel: BaseViewModel {
         }
 
         let process: ReactiveProcess<SocialProvider> = .init(data: provider) { [weak self] error in
-            switch error {
-            case is SocialServiceError:
-                break
-            default:
-                self?.notificationService.showDefaultErrorNotification()
+            if let error = error {
+                switch error {
+                case is SocialServiceError:
+                    break
+                default:
+                    self?.notificationService.showDefaultErrorNotification()
+                }
             }
             self?.loading = nil
         }

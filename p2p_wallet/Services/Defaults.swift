@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Onboarding
 import RenVMSwift
 import SolanaSwift
 import SwiftyUserDefaults
@@ -15,6 +16,8 @@ extension UIUserInterfaceStyle: DefaultsSerializable {}
 extension Fiat: DefaultsSerializable {}
 
 extension APIEndPoint: DefaultsSerializable {}
+
+extension CreateWalletFlowState: DefaultsSerializable {}
 
 extension DefaultsKeys {
     // Keychain-keys
@@ -59,4 +62,6 @@ extension DefaultsKeys {
     var authenticationBlockingTime: DefaultsKey<Date?> { .init(#function, defaultValue: nil) }
     var shouldShowConfirmAlertOnSend: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
     var shouldShowConfirmAlertOnSwap: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
+
+    var onboardingLastState: DefaultsKey<CreateWalletFlowState?> { .init(#function, defaultValue: nil) }
 }
