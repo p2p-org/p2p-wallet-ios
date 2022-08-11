@@ -28,7 +28,7 @@ protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
 }
 
 extension ConfirmReceivingBitcoinViewModelType {
-    var feeInTextDriver: AnyPublisher<String?, Never> {
+    var feeInTextPublisher: AnyPublisher<String?, Never> {
         Publishers.CombineLatest(
             totalFeePublisher,
             payingWalletPublisher

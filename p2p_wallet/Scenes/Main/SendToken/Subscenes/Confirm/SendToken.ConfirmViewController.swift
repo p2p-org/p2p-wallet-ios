@@ -6,15 +6,15 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
-import RxCocoa
-import UIKit
 
 extension SendToken {
     final class ConfirmViewController: BaseVC {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenViewModelType
+        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subviews
 
@@ -50,14 +50,14 @@ extension SendToken {
                     AmountSummaryView()
                         .setup { view in
                             view.addArrangedSubview(.defaultNextArrow())
-                            Driver.combineLatest(
-                                viewModel.walletDriver,
-                                viewModel.amountDriver
+                            Publishers.CombineLatest(
+                                viewModel.walletPublisher,
+                                viewModel.amountPublisher
                             )
-                                .drive(with: view, onNext: { view, param in
-                                    view.setUp(wallet: param.0, amount: param.1 ?? 0)
-                                })
-                                .disposed(by: disposeBag)
+                                .sink { [weak view] param in
+                                    view?.setUp(wallet: param.0, amount: param.1 ?? 0)
+                                }
+                                .store(in: &subscriptions)
                         }
                 }
                 .onTap { [weak self] in
@@ -69,11 +69,11 @@ extension SendToken {
                     RecipientView()
                         .setup { view in
                             view.addArrangedSubview(.defaultNextArrow())
-                            viewModel.recipientDriver
-                                .drive(with: view, onNext: { view, recipient in
-                                    view.setUp(recipient: recipient)
-                                })
-                                .disposed(by: disposeBag)
+                            viewModel.recipientPublisher
+                                .sink { [weak view] recipient in
+                                    view?.setUp(recipient: recipient)
+                                }
+                                .store(in: &subscriptions)
                         }
                 }
                 .onTap { [weak self] in
@@ -87,12 +87,12 @@ extension SendToken {
                     NetworkView()
                         .setup { view in
                             view.addArrangedSubview(.defaultNextArrow())
-                            Driver.combineLatest(
-                                viewModel.networkDriver,
-                                viewModel.payingWalletDriver,
-                                viewModel.feeInfoDriver
+                            Publishers.CombineLatest3(
+                                viewModel.networkPublisher,
+                                viewModel.payingWalletPublisher,
+                                viewModel.feeInfoPublisher
                             )
-                                .drive(onNext: { [weak self, weak view] network, payingWallet, feeInfo in
+                                .sink { [weak self, weak view] network, payingWallet, feeInfo in
                                     guard let self = self else { return }
                                     view?.setUp(
                                         network: network,
@@ -100,8 +100,8 @@ extension SendToken {
                                         feeInfo: feeInfo.value,
                                         prices: self.viewModel.getPrices(for: ["SOL", "renBTC"])
                                     )
-                                })
-                                .disposed(by: disposeBag)
+                                }
+                                .store(in: &subscriptions)
                         }
                 }
                 .onTap { [weak self] in
@@ -112,13 +112,13 @@ extension SendToken {
                 if viewModel.relayMethod == .relay {
                     FeeView(
                         solPrice: viewModel.getPrice(for: "SOL"),
-                        payingWalletDriver: viewModel.payingWalletDriver,
-                        feeInfoDriver: viewModel.feeInfoDriver
+                        payingWalletPublisher: viewModel.payingWalletPublisher,
+                        feeInfoPublisher: viewModel.feeInfoPublisher
                     )
                         .setup { view in
-                            Driver.combineLatest(
-                                viewModel.networkDriver,
-                                viewModel.feeInfoDriver
+                            Publishers.CombineLatest(
+                                viewModel.networkPublisher,
+                                viewModel.feeInfoPublisher
                             )
                                 .map { network, fee in
                                     if network != .solana { return true }
@@ -128,8 +128,8 @@ extension SendToken {
                                         return true
                                     }
                                 }
-                                .drive(view.rx.isHidden)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.isHidden, on: view)
+                                .store(in: &subscriptions)
                         }
                         .onTap { [weak self] in
                             self?.viewModel
@@ -145,9 +145,9 @@ extension SendToken {
                     // Receive
                     SectionView(title: L10n.receive)
                         .setup { view in
-                            Driver.combineLatest(
-                                viewModel.walletDriver,
-                                viewModel.amountDriver
+                            Publishers.CombineLatest(
+                                viewModel.walletPublisher,
+                                viewModel.amountPublisher
                             )
                                 .map { wallet, amount in
                                     let amount = amount
@@ -165,8 +165,8 @@ extension SendToken {
                                             color: .textSecondary
                                         )
                                 }
-                                .drive(view.rightLabel.rx.attributedText)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.attributedText, on: view.rightLabel)
+                                .store(in: &subscriptions)
                         }
 
                     // Fees
@@ -190,7 +190,7 @@ extension SendToken {
                     SectionView(title: "<1 USD>")
                         .setup { view in
                             view.leftLabel.text = "1 \(Defaults.fiat.code)"
-                            viewModel.walletDriver
+                            viewModel.walletPublisher
                                 .map { [weak self] in
                                     (self?.viewModel.getPrice(for: $0?.token.symbol ?? ""),
                                      $0?.token.symbol ?? "")
@@ -199,19 +199,19 @@ extension SendToken {
                                     let price: Double = price == 0 ? 0 : 1 / price
                                     return price.toString(maximumFractionDigits: 9) + " " + symbol
                                 }
-                                .drive(view.rightLabel.rx.text)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.text, on: view.rightLabel)
+                                .store(in: &subscriptions)
                         }
 
                     SectionView(title: "<1 renBTC>")
                         .setup { view in
-                            viewModel.walletDriver
+                            viewModel.walletPublisher
                                 .map { $0?.token.symbol ?? "" }
                                 .map { "1 \($0)" }
                                 .drive(view.leftLabel.rx.text)
-                                .disposed(by: disposeBag)
+                                .store(in: &subscriptions)
 
-                            viewModel.walletDriver
+                            viewModel.walletPublisher
                                 .map { [weak self] in
                                     (self?.viewModel.getPrice(for: $0?.token.symbol ?? ""),
                                      $0?.token.symbol ?? "")
@@ -219,8 +219,8 @@ extension SendToken {
                                 .map { price, _ in
                                     price?.toString(maximumFractionDigits: 2) + " " + Defaults.fiat.code
                                 }
-                                .drive(view.rightLabel.rx.text)
-                                .disposed(by: disposeBag)
+                                .assign(to: \.text, on: view.rightLabel)
+                                .store(in: &subscriptions)
                         }
                 }
             }
@@ -239,26 +239,26 @@ extension SendToken {
 
             let actionButton = WLStepButton.main(image: .buttonSendSmall, text: L10n.sendNow)
                 .setup { view in
-                    Driver.combineLatest(
-                        viewModel.walletDriver,
-                        viewModel.amountDriver
+                    Publishers.CombineLatest(
+                        viewModel.walletPublisher,
+                        viewModel.amountPublisher
                     )
                         .map { wallet, amount in
                             let amount = amount ?? 0
                             let symbol = wallet?.token.symbol ?? ""
                             return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
                         }
-                        .drive(onNext: { [weak view] in view?.text = $0 })
-                        .disposed(by: disposeBag)
+                        .sink { [weak view] in view?.text = $0 }
+                        .store(in: &subscriptions)
 
-                    Driver.combineLatest([
-                        viewModel.walletDriver.map { $0 != nil },
-                        viewModel.amountDriver.map { $0 != nil },
-                        viewModel.recipientDriver.map { $0 != nil },
-                    ])
-                        .map { $0.allSatisfy { $0 }}
-                        .drive(view.rx.isEnabled)
-                        .disposed(by: disposeBag)
+                    Publishers.CombineLatest3(
+                        viewModel.walletPublisher.map { $0 != nil },
+                        viewModel.amountPublisher.map { $0 != nil },
+                        viewModel.recipientPublisher.map { $0 != nil }
+                    )
+                        .map { $0 && $1 && $2 }
+                        .assign(to: \.isEnabled, on: view)
+                        .store(in: &subscriptions)
                 }
                 .onTap { [weak self] in
                     self?.viewModel.authenticateAndSend()
@@ -268,26 +268,26 @@ extension SendToken {
             actionButton.autoPinEdge(.top, to: .bottom, of: scrollView, withOffset: 8)
             actionButton.autoPinEdgesToSuperviewSafeArea(with: .init(all: 18), excludingEdge: .top)
 
-            Driver.combineLatest(
-                viewModel.feeInfoDriver.map { $0.value?.feeAmount },
-                viewModel.payingWalletDriver
+            Publishers.CombineLatest(
+                viewModel.feeInfoPublisher.map { $0.value?.feeAmount },
+                viewModel.payingWalletPublisher
             )
-                .drive(onNext: { [weak stackView, weak view] _ in
+                .sink { [weak stackView, weak view] _ in
                     stackView?.setNeedsLayout()
                     view?.layoutIfNeeded()
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         override func bind() {
             super.bind()
             // title
-            viewModel.walletDriver
+            viewModel.walletPublisher
                 .map { L10n.confirmSending($0?.token.symbol ?? "") }
-                .drive(onNext: { [weak self] in
+                .sink { [weak self] in
                     self?.navigationItem.title = $0
-                })
-                .disposed(by: disposeBag)
+                }
+                .store(in: &subscriptions)
         }
 
         // MARK: - Actions

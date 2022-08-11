@@ -37,7 +37,7 @@ extension ConfirmReceivingBitcoin.ViewController {
                             numberOfLines: 0
                         )
                             .setup { label in
-                                viewModel.feeInFiatDriver
+                                viewModel.feeInFiatPublisher
                                     .map { fee in
                                         NSMutableAttributedString()
                                             .text(L10n.accountCreationFee + ": ", size: 13, color: .textSecondary)
@@ -47,14 +47,15 @@ extension ConfirmReceivingBitcoin.ViewController {
                                                 color: .textBlack
                                             )
                                     }
-                                    .drive(label.rx.attributedText)
-                                    .disposed(by: disposeBag)
+                                    .map(Optional.init)
+                                    .assign(to: \.attributedText, on: label)
+                                    .store(in: &subscriptions)
                             }
                         UILabel(text: "0.509 USDC", textSize: 17, weight: .semibold)
                             .setup { label in
-                                viewModel.feeInTextDriver
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
+                                viewModel.feeInTextPublisher
+                                    .assign(to: \.text, on: label)
+                                    .store(in: &subscriptions)
                             }
                     }
 
@@ -89,9 +90,9 @@ extension ConfirmReceivingBitcoin.ViewController {
     func createRenBTCButton() -> UIView {
         WLStepButton.main(text: "Pay 0.509 USDC & Continue")
             .setup { button in
-                Driver.combineLatest(
-                    viewModel.totalFeeDriver,
-                    viewModel.payingWalletDriver
+                Publishers.CombineLatest(
+                    viewModel.totalFeePublisher,
+                    viewModel.payingWalletPublisher
                 )
                     .map { fee, wallet in
                         guard let fee = fee, let wallet = wallet, fee > 0 else {
@@ -99,8 +100,8 @@ extension ConfirmReceivingBitcoin.ViewController {
                         }
                         return L10n.payAndContinue(fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol)
                     }
-                    .drive(onNext: { [weak button] in button?.text = $0 })
-                    .disposed(by: disposeBag)
+                    .sink { [weak button] in button?.text = $0 }
+                    .store(in: &subscriptions)
             }
             .onTap { [unowned self] in
                 self.viewModel.createRenBTC()
