@@ -3,7 +3,7 @@ import SwiftUI
 import UIKit
 
 final class StartViewModel: BaseViewModel {
-    @Published var data: [StartPageData] = []
+    @Published var data: [OnboardingContentData] = []
     @Published var currentDataIndex: Int = .zero
 
     let isAnimatable: Bool
