@@ -1,10 +1,8 @@
-import Combine
 import KeyAppUI
-import SolanaSwift
 import SwiftUI
 
-struct ContinueView: View {
-    @ObservedObject var viewModel: ContinueViewModel
+struct ProtectionLevelView: View {
+    @ObservedObject var viewModel: ProtectionLevelViewModel
 
     var body: some View {
         ZStack {
@@ -21,20 +19,28 @@ struct ContinueView: View {
                 bottomActionsView
             }
             .edgesIgnoringSafeArea(.bottom)
+        }.onAppear { [weak viewModel] in
+            viewModel?.viewAppeared.send()
         }
     }
 }
 
-extension ContinueView {
+extension ProtectionLevelView {
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
-            TextButtonView(title: L10n.continue, style: .inverted, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.continueDidTap.send()
-            })
+            TextButtonView(
+                title: viewModel.localAuthTitle,
+                style: .inverted,
+                size: .large,
+                trailing: viewModel.localAuthImage,
+                onPressed: { [weak viewModel] in
+                    viewModel?.useLocalAuthDidTap.send()
+                }
+            )
                 .styled()
                 .padding(.top, 20)
-            TextButtonView(title: L10n.startingScreen, style: .ghostLime, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.startDidTap.send()
+            TextButtonView(title: L10n.setUpAPINCode, style: .ghostLime, size: .large, onPressed: { [weak viewModel] in
+                viewModel?.setUpPinDidTap.send()
             })
                 .styled()
                 .padding(.top, 12)

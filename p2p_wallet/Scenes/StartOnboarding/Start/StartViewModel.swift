@@ -20,22 +20,22 @@ final class StartViewModel: BaseViewModel {
 
     private func setData() {
         data = [
-            StartPageData(
+            OnboardingContentData(
                 image: .coins,
                 title: L10n.welcomeToKeyApp,
                 subtitle: L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos
             ),
-            StartPageData(
+            OnboardingContentData(
                 image: .coins,
                 title: "\(L10n.welcomeToKeyApp) 2",
                 subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 2"
             ),
-            StartPageData(
+            OnboardingContentData(
                 image: .coins,
                 title: "\(L10n.welcomeToKeyApp) 3",
                 subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 3"
             ),
-            StartPageData(
+            OnboardingContentData(
                 image: .coins,
                 title: "\(L10n.welcomeToKeyApp) 4",
                 subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 4"

@@ -4,7 +4,7 @@ import SwiftUI
 final class ContinueCoordinator: Coordinator<Void> {
     private let window: UIWindow
 
-    private var subject = PassthroughSubject<Void, Never>() // TODO: - Complete this when next navigation is done
+    private var subject = PassthroughSubject<Void, Never>()
 
     // MARK: - Initializer
 
