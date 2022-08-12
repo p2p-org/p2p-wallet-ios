@@ -13,43 +13,24 @@ struct HomeEmptyView: View {
     @ObservedObject var viewModel: HomeEmptyViewModel
 
     var body: some View {
-        RefreshableScrollView(
-            refreshing: $viewModel.pullToRefreshPending,
-            action: { viewModel.reloadData() },
-            content: { scrollingContent }
-        )
-    }
-
-    var scrollingContent: some View {
-        VStack(spacing: 32) {
-            banner
-            VStack(alignment: .leading, spacing: 16) {
-                Text(L10n.popularCoins)
-                    .foregroundColor(.black)
-                    .font(.system(size: 20, weight: .medium))
-                ForEach(Array(viewModel.popularCoins.indices), id: \.self) { index in
-                    let coin = viewModel.popularCoins[index]
-                    VStack(spacing: 16) {
-                        PopularCoinView(
-                            title: coin.title,
-                            subtitle: coin.amount,
-                            actionTitle: coin.actionTitle,
-                            image: coin.image,
-                            action: {
-                                coinTapped(at: index)
-                            }
-                        ).onTapGesture {
-                            coinTapped(at: index)
-                        }
-                    }
-                }
+        List {
+            Group {
+                banner
+                    .topPadding()
+                    .padding(.bottom, 32)
+                scrollingContent
             }
+            .horizontalPadding()
+            .withoutSeparatorsAfterListContent()
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 16)
+        .withoutSeparatorsiOS14()
+        .listStyle(.plain)
+        .customRefreshable {
+            await viewModel.reloadData()
+        }
     }
 
-    var banner: some View {
+    private var banner: some View {
         ZStack(alignment: .bottom) {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
@@ -73,21 +54,42 @@ struct HomeEmptyView: View {
                         .font(uiFont: .font(of: .text3, weight: .regular))
                         .frame(width: 264)
                 }
-                Button(
-                    action: {
+                Text(L10n.topUp)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .font(uiFont: .font(of: .text4, weight: .bold))
+                    .frame(width: 204, height: 49)
+                    .background(Color(.ddfa2b))
+                    .cornerRadius(8)
+                    .onTapGesture {
                         viewModel.topUp.send()
-                    },
-                    label: {
-                        Text(L10n.topUp)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .font(uiFont: .font(of: .text4, weight: .bold))
-                            .frame(width: 204, height: 49)
-                            .background(Color(.ddfa2b))
-                            .cornerRadius(8)
                     }
-                )
             }
             .padding(.bottom, 18)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var scrollingContent: some View {
+        Group {
+            Text(L10n.popularCoins)
+                .foregroundColor(Color(Asset.Colors.night.color))
+                .font(uiFont: .font(of: .title3, weight: .bold))
+                .padding(.bottom, 16)
+            ForEach(Array(viewModel.popularCoins.indices), id: \.self) { index in
+                let coin = viewModel.popularCoins[index]
+                PopularCoinView(
+                    title: coin.title,
+                    subtitle: coin.amount,
+                    actionTitle: coin.actionTitle,
+                    image: coin.image,
+                    action: {
+                        coinTapped(at: index)
+                    }
+                ).onTapGesture {
+                    coinTapped(at: index)
+                }
+                .padding(.bottom, 16)
+            }
         }
     }
 
@@ -96,6 +98,24 @@ struct HomeEmptyView: View {
             viewModel.receiveRenBtcClicked()
         } else {
             viewModel.topUpCoin.send(index == 0 ? .usdc : .sol)
+        }
+    }
+}
+
+private extension View {
+    @ViewBuilder func horizontalPadding() -> some View {
+        if #available(iOS 15, *) {
+            padding(.horizontal, 16)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder func topPadding() -> some View {
+        if #available(iOS 15, *) {
+            padding(.top, 46)
+        } else {
+            padding(.top, 16)
         }
     }
 }

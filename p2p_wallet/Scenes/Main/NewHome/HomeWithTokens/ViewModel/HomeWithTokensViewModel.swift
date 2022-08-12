@@ -29,7 +29,6 @@ class HomeWithTokensViewModel: ObservableObject {
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
 
     @Published var balance = ""
-    @Published var pullToRefreshPending = false
     @Published var scrollOnTheTop = true
 
     private var wallets = [Wallet]()
@@ -39,6 +38,7 @@ class HomeWithTokensViewModel: ObservableObject {
     @Published var tokensIsHidden: Bool
 
     private var cancellables = Set<AnyCancellable>()
+    private var reloadCancellable: AnyCancellable?
 
     init(walletsRepository: WalletsRepository = Resolver.resolve()) {
         self.walletsRepository = walletsRepository
@@ -66,18 +66,6 @@ class HomeWithTokensViewModel: ObservableObject {
                 self?.balance = $0
             })
             .store(in: &cancellables)
-        walletsRepository.stateObservable
-            .asPublisher()
-            .assertNoFailure()
-            .sink(receiveValue: { [weak self] in
-                switch $0 {
-                case .initializing, .loading:
-                    break
-                case .loaded, .error:
-                    self?.pullToRefreshPending = false
-                }
-            })
-            .store(in: &cancellables)
         walletsRepository.dataObservable
             .asPublisher()
             .assertNoFailure()
@@ -96,8 +84,19 @@ class HomeWithTokensViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func reloadData() {
+    func reloadData() async {
         walletsRepository.reload()
+        return await withCheckedContinuation { continuation in
+            reloadCancellable = walletsRepository.stateObservable
+                .asPublisher()
+                .assertNoFailure()
+                .sink(receiveValue: { [weak self] in
+                    if $0 == .loaded || $0 == .error {
+                        continuation.resume()
+                        self?.reloadCancellable = nil
+                    }
+                })
+        }
     }
 
     func buy() {
