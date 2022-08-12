@@ -14,8 +14,6 @@ import SolanaSwift
 import UIKit
 
 class HomeWithTokensViewModel: ObservableObject {
-    typealias Model = TokenCellView.Model
-
     private let walletsRepository: WalletsRepository
     private let pricesService = Resolver.resolve(PricesServiceType.self)
 
@@ -35,8 +33,8 @@ class HomeWithTokensViewModel: ObservableObject {
     @Published var scrollOnTheTop = true
 
     private var wallets = [Wallet]()
-    @Published var items = [Model]()
-    @Published var hiddenItems = [Model]()
+    @Published var items = [Wallet]()
+    @Published var hiddenItems = [Wallet]()
 
     @Published var tokensIsHidden: Bool
 
@@ -88,13 +86,7 @@ class HomeWithTokensViewModel: ObservableObject {
                 self.wallets = wallets
                 let items = wallets.map {
                     (
-                        Model(
-                            imageUrl: $0.token.logoURI ?? "",
-                            title: $0.name,
-                            subtitle: $0.amount?.tokenAmount(symbol: $0.token.symbol) ?? "",
-                            amount: $0.amountInCurrentFiat.fiatAmount(),
-                            wrappedImage: $0.token.wrappedBy?.image
-                        ),
+                        $0,
                         $0.isHidden
                     )
                 }
@@ -124,10 +116,8 @@ class HomeWithTokensViewModel: ObservableObject {
         tradeClicked.send()
     }
 
-    func tokenClicked(model: Model) {
-        guard
-            let wallet = (wallets.first { $0.name == model.title }),
-            let pubKey = wallet.pubkey
+    func tokenClicked(wallet: Wallet) {
+        guard let pubKey = wallet.pubkey
         else { return }
         walletClicked.send((pubKey: pubKey, tokenSymbol: wallet.token.symbol))
     }
@@ -136,8 +126,7 @@ class HomeWithTokensViewModel: ObservableObject {
         scrollOnTheTop = true
     }
 
-    func toggleTokenVisibility(model: Model) {
-        guard let wallet = (wallets.first { $0.name == model.title }) else { return }
+    func toggleTokenVisibility(wallet: Wallet) {
         walletsRepository.toggleWalletVisibility(wallet)
     }
 

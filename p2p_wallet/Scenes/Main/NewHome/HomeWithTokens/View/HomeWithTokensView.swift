@@ -9,11 +9,10 @@ import AnalyticsManager
 import BottomSheet
 import KeyAppUI
 import Resolver
+import SolanaSwift
 import SwiftUI
 
 struct HomeWithTokensView: View {
-    typealias Model = HomeWithTokensViewModel.Model
-
     @Injected private var analyticsManager: AnalyticsManager
 
     @ObservedObject var viewModel: HomeWithTokensViewModel
@@ -78,8 +77,8 @@ struct HomeWithTokensView: View {
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
 
-            ForEach(viewModel.items, id: \.title) {
-                tokenCell(isVisible: true, model: $0)
+            ForEach(viewModel.items, id: \.token.symbol) {
+                tokenCell(isVisible: true, wallet: $0)
             }
 
             if !viewModel.hiddenItems.isEmpty {
@@ -98,8 +97,8 @@ struct HomeWithTokensView: View {
                 )
 
                 if !viewModel.tokensIsHidden {
-                    ForEach(viewModel.hiddenItems, id: \.title) {
-                        tokenCell(isVisible: false, model: $0)
+                    ForEach(viewModel.hiddenItems, id: \.token.symbol) {
+                        tokenCell(isVisible: false, wallet: $0)
                     }
                     .transition(AnyTransition.opacity.animation(.linear(duration: 0.5)))
                 }
@@ -124,15 +123,15 @@ struct HomeWithTokensView: View {
             .buttonStyle(PlainButtonStyle())
     }
 
-    private func tokenCell(isVisible: Bool, model: Model) -> some View {
-        TokenCellView(model: model)
+    private func tokenCell(isVisible: Bool, wallet: Wallet) -> some View {
+        TokenCellView(wallet: wallet)
             .swipeActions(
                 trailing: [
                     SwipeActionButton(
                         icon: Image(uiImage: isVisible ? .eyeHide : .eyeShow),
                         tint: .clear,
                         action: {
-                            viewModel.toggleTokenVisibility(model: model)
+                            viewModel.toggleTokenVisibility(wallet: wallet)
                         }
                     ),
                 ],
@@ -141,7 +140,7 @@ struct HomeWithTokensView: View {
             .frame(height: 72)
             .onTapGesture {
 //                tokenDetailIsPresented.toggle()
-                viewModel.tokenClicked(model: model)
+                viewModel.tokenClicked(wallet: wallet)
             }
     }
 }
