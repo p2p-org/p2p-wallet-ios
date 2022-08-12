@@ -77,7 +77,7 @@ struct HomeWithTokensView: View {
                 .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
 
-            ForEach(viewModel.items, id: \.token.symbol) {
+            ForEach(viewModel.items, id: \.pubkey) {
                 tokenCell(isVisible: true, wallet: $0)
             }
 
