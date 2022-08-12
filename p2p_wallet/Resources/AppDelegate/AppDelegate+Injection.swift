@@ -8,7 +8,9 @@
 import AnalyticsManager
 import FeeRelayerSwift
 import NameService
+import Onboarding
 import OrcaSwapSwift
+import Reachability
 import RenVMSwift
 import Resolver
 import SolanaPricesAPIs
@@ -69,6 +71,13 @@ extension Resolver: ResolverRegistering {
             .scope(.application)
 
         // NotificationManager
+        register(Reachability.self) {
+            let reachability = try! Reachability()
+            try! reachability.startNotifier()
+            return reachability
+        }
+        .scope(.application)
+
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
             .scope(.application)
@@ -148,8 +157,9 @@ extension Resolver: ResolverRegistering {
         register { OnboardingServiceImpl() }
             .implements(OnboardingService.self)
 
-        register { SMSServiceImplMock() }
-            .implements(SMSService.self)
+        register { BiometricsAuthProviderImpl() }
+            .implements(BiometricsAuthProvider.self)
+            .implements(SecurityStatusProvider.self)
     }
 
     /// Session scope: Live when user is authenticated

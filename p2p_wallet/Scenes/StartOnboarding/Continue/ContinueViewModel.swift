@@ -2,34 +2,19 @@ import Combine
 import SwiftUI
 import UIKit
 
-extension ContinueViewModel {
-    enum NavigatableScene {
-        case `continue`
-        case start
-    }
-}
-
 final class ContinueViewModel: BaseViewModel {
-    @Published var data: StartPageData
-    @Published var navigatableScene: NavigatableScene?
+    @Published var data: OnboardingContentData
 
     let continueDidTap = PassthroughSubject<Void, Never>()
     let startDidTap = PassthroughSubject<Void, Never>()
 
-    override init() {
-        data = StartPageData(
+    init(subtitle: String) {
+        data = OnboardingContentData(
             image: .safe,
             title: L10n.letSContinue,
-            subtitle: L10n.YouHaveAGreatStartWith.itSOnlyAPhoneNumberNeededToCreateANewWallet("test@test.ru")
+            subtitle: subtitle
         )
 
         super.init()
-
-        Publishers.Merge(
-            continueDidTap.map { NavigatableScene.continue },
-            startDidTap.map { NavigatableScene.start }
-        ).sink { [weak self] value in
-            self?.navigatableScene = value
-        }.store(in: &subscriptions)
     }
 }

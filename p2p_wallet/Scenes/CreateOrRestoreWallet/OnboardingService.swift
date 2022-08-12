@@ -1,9 +1,12 @@
 import Onboarding
 
-protocol OnboardingService {
-    var lastState: CreateWalletState? { get }
+protocol OnboardingService: AnyObject {
+    var lastState: CreateWalletFlowState? { get set }
 }
 
 final class OnboardingServiceImpl: OnboardingService {
-    var lastState: CreateWalletState?
+    var lastState: CreateWalletFlowState? {
+        get { Defaults.onboardingLastState }
+        set { Defaults.onboardingLastState = newValue }
+    }
 }

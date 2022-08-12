@@ -63,7 +63,11 @@ extension AppleSocialService: ASAuthorizationControllerDelegate {
     }
 
     func authorizationController(controller _: ASAuthorizationController, didCompleteWithError error: Error) {
-        authContinuation?.resume(with: .failure(error))
+        var retError = error
+        if let authError = (error as? ASAuthorizationError), case ASAuthorizationError.canceled = authError {
+            retError = SocialServiceError.cancelled
+        }
+        authContinuation?.resume(with: .failure(retError))
         authContinuation = nil
     }
 }

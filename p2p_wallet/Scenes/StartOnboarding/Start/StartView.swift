@@ -11,7 +11,6 @@ struct StartView: View {
         ZStack {
             Color(Asset.Colors.lime.color)
                 .edgesIgnoringSafeArea(.all)
-            mockView
             VStack(spacing: .zero) {
                 if isShowing {
                     PagingView(
@@ -20,21 +19,23 @@ struct StartView: View {
                         fillColor: Color(Asset.Colors.night.color)
                     ) {
                         ForEach(viewModel.data, id: \.id) { data in
-                            StartPageView(data: data, subtitleFontWeight: .medium)
+                            OnboardingContentView(data: data)
                         }
                     }
-                    .transition(.move(edge: .top))
-                    .opacity(isShowing ? 1 : 0)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
 
                     bottomActionsView
-                        .transition(.move(edge: .bottom))
-                        .opacity(isShowing ? 1 : 0)
+                        .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
             }
             .edgesIgnoringSafeArea(.bottom)
         }
         .onAppear {
-            withAnimation {
+            if viewModel.isAnimatable {
+                withAnimation {
+                    isShowing = true
+                }
+            } else {
                 isShowing = true
             }
         }
@@ -42,18 +43,6 @@ struct StartView: View {
 }
 
 extension StartView {
-    private var mockView: some View {
-        VStack {
-            HStack {
-                Spacer()
-                Button("Continue", action: viewModel.mockButtonDidTap.send)
-                    .foregroundColor(Color.blue)
-            }
-            .padding()
-            Spacer()
-        }
-    }
-
     private var bottomActionsView: some View {
         VStack(spacing: .zero) {
             // Create a wallet
@@ -61,7 +50,7 @@ extension StartView {
                 title: L10n.createANewWallet,
                 style: .inverted,
                 size: .large,
-                trailing: UIImage.arrowForward
+                trailing: Asset.MaterialIcon.arrowForward.image
             ) { [weak viewModel] in viewModel?.createWalletDidTap.send() }
                 .styled()
                 .padding(.top, 20)
@@ -72,10 +61,18 @@ extension StartView {
             }
             .styled()
             .padding(.top, 12)
-            .padding(.bottom, 24)
+
+            VStack(spacing: 2) {
+                Text(L10n.byContinuingYouAgreeToKeyAppS)
+                    .styled(color: Asset.Colors.mountain, font: .label1)
+                Text(L10n.capitalizedTermsAndConditions)
+                    .styled(color: Asset.Colors.snow, font: .label1)
+                    .onTapGesture(perform: { [weak viewModel] in
+                        viewModel?.termsDidTap.send()
+                    })
+            }
+            .padding(.vertical, 24)
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 10)
         .bottomActionsStyle()
     }
 }

@@ -8,6 +8,7 @@
 import AnalyticsManager
 import Foundation
 import KeyAppUI
+import Reachability
 import Resolver
 import SolanaSwift
 import UIKit
@@ -19,6 +20,8 @@ class AppCoordinator: Coordinator<Void> {
     private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
     let analyticsManager: AnalyticsManager = Resolver.resolve()
     let notificationsService: NotificationService = Resolver.resolve()
+    @Injected var notificationService: NotificationService
+    @Injected var reachability: Reachability
 
     // MARK: - Properties
 
@@ -44,6 +47,11 @@ class AppCoordinator: Coordinator<Void> {
         }
 
         openSplash()
+
+        reachability.isReachable.filter { !$0 }
+            .sink(receiveValue: { [weak self] _ in
+                self?.notificationService.showToast(title: "☕️", text: L10n.YouReOffline.keepCalm)
+            }).store(in: &subscriptions)
     }
 
     func reload() async {
@@ -92,18 +100,7 @@ class AppCoordinator: Coordinator<Void> {
 
     private func navigate(account: Account?) {
         if account == nil {
-            showAuthenticationOnMainOnAppear = false
-            if available(.newOnboardingFlow) {
-                newOnboardingFlow()
-            } else {
-                oldOnboardingFlow()
-            }
-        } else if storage.pinCode == nil ||
-            !Defaults.didSetEnableBiometry ||
-            !Defaults.didSetEnableNotifications
-        {
-            showAuthenticationOnMainOnAppear = false
-            navigateToOnboarding()
+            newOnboardingFlow()
         } else {
             navigateToMain()
         }
@@ -135,8 +132,25 @@ class AppCoordinator: Coordinator<Void> {
         let startCoordinator = provider.startCoordinator(for: window)
 
         coordinate(to: startCoordinator)
-            .sink(receiveValue: { value in
-                debugPrint(value)
+            .sink(receiveValue: { [unowned self] onboardingWallet in
+                // Save wallet
+                Resolver
+                    .resolve(CreateOrRestoreWalletHandler.self)
+                    .creatingWalletDidComplete(
+                        phrases: onboardingWallet.solPrivateKey.components(separatedBy: " "),
+                        derivablePath: .default,
+                        name: nil
+                    )
+
+                // Save pincode
+                Resolver
+                    .resolve(PincodeStorageType.self)
+                    .save(onboardingWallet.pincode)
+
+                self.showAuthenticationOnMainOnAppear = false
+
+                // Reload
+                Task { await self.finishSetUp() }
             })
             .store(in: &subscriptions)
     }
