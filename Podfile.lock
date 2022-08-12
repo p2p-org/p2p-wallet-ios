@@ -284,10 +284,10 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   BECollectionView_Combine:
-    :commit: 5271d68f69562ba05a553a70d1e76753c7be619d
+    :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
     :git: https://github.com/bigearsenal/BECollectionView.git
   BECollectionView_Core:
-    :commit: 5271d68f69562ba05a553a70d1e76753c7be619d
+    :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
     :git: https://github.com/bigearsenal/BECollectionView.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918

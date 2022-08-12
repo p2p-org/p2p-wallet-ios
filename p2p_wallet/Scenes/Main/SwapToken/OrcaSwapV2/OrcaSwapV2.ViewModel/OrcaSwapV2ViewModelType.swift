@@ -9,7 +9,7 @@ import Combine
 import Foundation
 import SolanaSwift
 
-protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, AnyObject, DetailFeesViewModelType {
+protocol OrcaSwapV2ViewModelType: WalletDidSelectHandler, DetailFeesViewModelType {
     var navigationPublisher: AnyPublisher<OrcaSwapV2.NavigatableScene?, Never> { get }
     var loadingStatePublisher: AnyPublisher<LoadableState, Never> { get }
 

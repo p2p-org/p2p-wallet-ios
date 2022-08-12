@@ -84,7 +84,8 @@ extension Collection where Element == LoadableState {
     }
 }
 
-public class LoadableRelay<T> {
+@MainActor
+public class LoadableRelay<T>: ObservableObject {
     // MARK: - Subject
 
     @Published public private(set) var state = LoadableState.notRequested

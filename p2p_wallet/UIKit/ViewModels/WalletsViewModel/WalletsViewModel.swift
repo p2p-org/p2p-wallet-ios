@@ -43,9 +43,7 @@ class WalletsViewModel: BECollectionViewModel<Wallet> {
     }
 
     deinit {
-        Task {
-            await stopObserving()
-        }
+        timer?.invalidate()
     }
 
     // MARK: - Binding

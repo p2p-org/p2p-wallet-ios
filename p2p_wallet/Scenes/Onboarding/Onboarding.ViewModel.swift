@@ -164,23 +164,20 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
         }
 
         if !Defaults.didSetEnableNotifications {
-            UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
-                debugPrint("Notification settings: \(settings)")
-
-                guard let self = self else { return }
+            Task {
+                let settings = await UNUserNotificationCenter.current().notificationSettings()
+                print("Notification settings: \(settings)")
 
                 // not authorized
                 guard settings.authorizationStatus == .authorized else {
-                    self.navigatableScene = .setUpNotifications
-                    self.analyticsManager.log(event: .setupAllowPushOpen)
+                    navigatableScene = .setUpNotifications
+                    analyticsManager.log(event: .setupAllowPushOpen)
                     return
                 }
 
                 // authorized
-                DispatchQueue.main.async { [weak self] in
-                    self?.notificationService.registerForRemoteNotifications()
-                    self?.markNotificationsAsSet()
-                }
+                notificationService.registerForRemoteNotifications()
+                markNotificationsAsSet()
             }
             return
         }
