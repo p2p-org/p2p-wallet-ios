@@ -128,6 +128,7 @@ struct HomeWithTokensView: View {
                 }
             }
         )
+            .buttonStyle(PlainButtonStyle())
     }
 
     private func tokenCell(isVisible: Bool, model: Model) -> some View {
