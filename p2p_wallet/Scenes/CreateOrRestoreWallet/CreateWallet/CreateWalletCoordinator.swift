@@ -100,6 +100,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
             }
             .store(in: &subscriptions)
 
+        navigationController?.modalTransitionStyle = .crossDissolve
         parentViewController.present(navigationController!, animated: true)
 
         return result.eraseToAnyPublisher()
