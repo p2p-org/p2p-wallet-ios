@@ -122,26 +122,8 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         derivablePath = account.derivablePath
         if let name = account.name {
             self.name = name
-            finish()
-        } else {
-            // create account
-            isLoadingSubject.accept(true)
-            guard let phrases = phrases else { return }
-            Task {
-                do {
-                    let account = try await Account(
-                        phrase: phrases,
-                        network: Defaults.apiEndPoint.network,
-                        derivablePath: derivablePath
-                    )
-                    // reserve name
-                    isLoadingSubject.accept(false)
-                    navigationSubject.accept(.reserveName(owner: account.publicKey.base58EncodedString))
-                } catch {
-                    errorSubject.accept(error.readableDescription)
-                }
-            }
         }
+        finish()
     }
 }
 
@@ -177,8 +159,6 @@ extension RestoreWallet.ViewModel {
 
                     if let name = name {
                         await handleName(name)
-                    } else {
-                        navigationSubject.accept(.reserveName(owner: owner))
                     }
                 } catch {
                     isLoadingSubject.accept(false)
