@@ -16,9 +16,8 @@ struct TokenCellView: View {
         HStack(alignment: .center, spacing: 12) {
             CoinLogoImageViewRepresentable(size: 50, token: wallet.token)
                 .frame(width: 50, height: 50)
-//            TokenImageView(imageURL: model.imageUrl, wrappedImage: model.wrappedImage)
             VStack(alignment: .leading, spacing: 4) {
-                Text(wallet.name)
+                Text(wallet.token.name)
                     .font(uiFont: .font(of: .text2))
                     .foregroundColor(Color(Asset.Colors.night.color))
                 Text(wallet.amount?.tokenAmount(symbol: wallet.token.symbol) ?? "")

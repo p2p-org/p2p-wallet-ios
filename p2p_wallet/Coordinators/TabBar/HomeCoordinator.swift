@@ -28,10 +28,7 @@ final class HomeCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = HomeViewModel()
         let tokensViewModel = HomeWithTokensViewModel()
-        let emptyViewModel = HomeEmptyViewModel(
-            pricesService: Resolver.resolve(),
-            walletsRepository: Resolver.resolve()
-        )
+        let emptyViewModel = HomeEmptyViewModel()
         let emptyVMOutput = emptyViewModel.output.coord
         let homeView = HomeView(
             viewModel: viewModel,
