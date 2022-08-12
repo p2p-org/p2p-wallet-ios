@@ -816,3 +816,14 @@ Reset the PIN or wait for %@.";
 "Pay %@ and Continue" = "Pay %@ & Continue";
 "You can’t send less than %@" = "You can’t send less than %@";
 "Refresh page" = "Refresh page";
+"Buy it" = "Buy it";
+"Top up" = "Top up";
+"Popular coins" = "Popular coins";
+"Trade" = "Trade";
+"Actions" = "Actions";
+"using Apple Pay or bank card" = "using Apple Pay or bank card";
+"from another wallet or exchange" = "from another wallet or exchange";
+"to phone number, username or address" = "to phone number, username or address";
+"one crypto for 
+another" = "one crypto for 
+another";
