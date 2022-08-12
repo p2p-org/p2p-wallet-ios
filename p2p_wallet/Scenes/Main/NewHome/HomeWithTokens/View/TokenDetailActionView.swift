@@ -26,7 +26,7 @@ struct TokenDetailActionView: View {
                         actionView(
                             image: .homeBuyAction,
                             title: L10n.buy,
-                            subtitle: L10n.usingApplePayOrBankCard,
+                            subtitle: L10n.usingApplePayOrCreditCard,
                             action: {
                                 actionSubject.send(.buy)
                             }
