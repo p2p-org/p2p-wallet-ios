@@ -148,6 +148,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func setupNavigationAppearance() {
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        UINavigationBar.appearance().standardAppearance = appearance
+
         let barButtonAppearance = UIBarButtonItem.appearance()
         let navBarAppearence = UINavigationBar.appearance()
         navBarAppearence.backIndicatorImage = .navigationBack
