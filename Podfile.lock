@@ -465,7 +465,7 @@ CHECKOUT OPTIONS:
     :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: b6f029e0e3f6a96b6cab1713e36223d9a7591e30
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -572,6 +572,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 2a1bd79253c791e1e00008647a969b938e9611c5
+PODFILE CHECKSUM: d55d641b1e9408e85fab39b1ab85c9a873d4d512
 
 COCOAPODS: 1.11.3
