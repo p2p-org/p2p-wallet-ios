@@ -23,76 +23,70 @@ struct HomeWithTokensView: View {
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
         analyticsManager.log(event: .mainScreenWalletsOpen)
+
+        if #unavailable(iOS 15) {
+            // for earlier iOS version
+            UITableView.appearance().separatorColor = .clear
+        }
     }
 
     var body: some View {
-        RefreshableScrollView(
-            refreshing: $viewModel.pullToRefreshPending,
-            onTop: $viewModel.scrollOnTheTop,
-            action: { viewModel.reloadData() },
-            content: { scrollingContent }
-        )
-//            .bottomSheet(isPresented: $tokenDetailIsPresented, height: 700) {
-//                TokenDetailActionView()
-//            }
-    }
-
-    var scrollingContent: some View {
-        VStack(alignment: .center, spacing: 32) {
-            VStack(alignment: .center, spacing: 6) {
-                Text(L10n.balance)
-                    .font(uiFont: .font(of: .text1, weight: .bold))
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                Text(viewModel.balance)
-                    .font(uiFont: .font(of: .title1, weight: .bold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
+        List {
+            // do your stuff when pulled
+            Group {
+                header
+                Spacer(minLength: 32)
+                content
             }
-            tokenOperationsButtons
-            tokens
-        }
-        .padding(.vertical, 16)
-    }
-
-    var tokenOperationsButtons: some View {
-        HStack(spacing: 37) {
-            tokenOperation(title: L10n.buy, image: .homeBuy) {
-                viewModel.buy()
-            }
-            tokenOperation(title: L10n.receive, image: .homeReceive) {
-                viewModel.receive()
-            }
-            tokenOperation(title: L10n.send, image: .homeSend) {
-                viewModel.send()
-            }
-            tokenOperation(title: L10n.trade, image: .homeSwap) {
-                viewModel.trade()
-            }
+            .withCustomListStyle()
         }
     }
 
-    func tokenOperation(title: String, image: UIImage, action: @escaping () -> Void) -> some View {
-        Button(
-            action: action,
-            label: {
-                VStack(spacing: 8) {
-                    Image(uiImage: image)
-                    Text(title)
-                        .font(.system(size: 13, weight: .medium))
+    private var header: some View {
+        Group {
+            HStack {
+                Spacer()
+                VStack(alignment: .center, spacing: 6) {
+                    Text(L10n.balance)
+                        .font(uiFont: .font(of: .text1, weight: .bold))
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                    Text(viewModel.balance)
+                        .font(uiFont: .font(of: .title1, weight: .bold))
                         .foregroundColor(Color(Asset.Colors.night.color))
                 }
+                Spacer()
             }
-        )
+            .padding(.top, 16)
+
+            Spacer(minLength: 32)
+
+            HStack(spacing: 37) {
+                tokenOperation(title: L10n.buy, image: .homeBuy) {
+                    viewModel.buy()
+                }
+                tokenOperation(title: L10n.receive, image: .homeReceive) {
+                    viewModel.receive()
+                }
+                tokenOperation(title: L10n.send, image: .homeSend) {
+                    viewModel.send()
+                }
+                tokenOperation(title: L10n.trade, image: .homeSwap) {
+                    viewModel.trade()
+                }
+            }
+        }
     }
 
-    var tokens: some View {
-        VStack(alignment: .leading, spacing: 8) {
+    private var content: some View {
+        Group {
             Text(L10n.tokens)
-                .font(.system(size: 20, weight: .medium))
+                .font(.system(size: 20, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
-                .padding(.horizontal, 16)
+
             ForEach(viewModel.items, id: \.title) {
                 tokenCell(isVisible: true, model: $0)
             }
+
             if !viewModel.hiddenItems.isEmpty {
                 Button(
                     action: {
@@ -107,7 +101,7 @@ struct HomeWithTokensView: View {
                         }
                     }
                 )
-                    .padding(.horizontal, 16)
+
                 if !viewModel.tokensIsHidden {
                     ForEach(viewModel.hiddenItems, id: \.title) {
                         tokenCell(isVisible: false, model: $0)
@@ -118,9 +112,24 @@ struct HomeWithTokensView: View {
         }
     }
 
+    private func tokenOperation(title: String, image: UIImage, action: @escaping () -> Void) -> some View {
+        Button(
+            action: action,
+            label: {
+                VStack(spacing: 8) {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                    Text(title)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                }
+            }
+        )
+    }
+
     private func tokenCell(isVisible: Bool, model: Model) -> some View {
         TokenCellView(model: model)
-            .padding(.horizontal, 16)
             .swipeActions(
                 trailing: [
                     SwipeActionButton(
@@ -138,5 +147,26 @@ struct HomeWithTokensView: View {
 //                tokenDetailIsPresented.toggle()
                 viewModel.tokenClicked(model: model)
             }
+    }
+}
+
+private extension View {
+    @ViewBuilder func withCustomListStyle() -> some View {
+        listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets())
+            .listRowSeparatorHiddenForIOS15()
+    }
+
+    /// Applies the given transform if the given condition evaluates to `true`.
+    /// - Parameters:
+    ///   - condition: The condition to evaluate.
+    ///   - transform: The transform to apply to the source `View`.
+    /// - Returns: Either the original `View` or the modified `View` if the condition is `true`.
+    @ViewBuilder func listRowSeparatorHiddenForIOS15() -> some View {
+        if #available(iOS 15, *) {
+            self.listRowSeparator(.hidden)
+        } else {
+            self
+        }
     }
 }
