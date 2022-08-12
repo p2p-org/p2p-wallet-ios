@@ -35,6 +35,7 @@ extension ProcessTransaction.Status {
         private func bind() {
             viewModel.pendingTransactionDriver
                 .map { info -> String in
+                    print("Status: \(info.status)")
                     let originalText = info.rawTransaction.isSwap ? L10n.theSwapIsBeingProcessed : L10n
                         .theTransactionIsBeingProcessed
 

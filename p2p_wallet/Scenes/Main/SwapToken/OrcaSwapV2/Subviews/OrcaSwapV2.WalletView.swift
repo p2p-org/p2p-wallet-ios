@@ -20,7 +20,7 @@ extension OrcaSwapV2 {
         }
 
         private var subscriptions = [AnyCancellable]()
-        private let viewModel: OrcaSwapV2ViewModelType
+        private var viewModel: OrcaSwapV2ViewModelType
         private let type: WalletType
         @Injected private var analyticsManager: AnalyticsManager
 

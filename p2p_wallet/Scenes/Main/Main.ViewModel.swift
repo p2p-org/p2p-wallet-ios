@@ -51,11 +51,7 @@ extension Main {
         }
 
         deinit {
-            Task {
-                await socket.disconnect()
-                await pricesService.stopObserving()
-                print("\(String(describing: self)) deinited")
-            }
+            print("\(String(describing: self)) deinited")
         }
     }
 }

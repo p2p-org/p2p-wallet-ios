@@ -48,9 +48,9 @@ extension Home {
                             .store(in: &subscriptions)
                     }
 
-                    BEBuilder(publisher: viewModel.isWalletReadyPublisher) { [weak self] state in
+                    BEBuilder(publisher: viewModel.isWalletEmptyPublisher) { [weak self] isEmpty in
                         guard let self = self else { return UIView() }
-                        return state ? self.content() : self.emptyScreen()
+                        return isEmpty ? self.emptyScreen() : self.content()
                     }
                 }
             }
@@ -108,8 +108,7 @@ extension Home {
                         collectionView.clipsToBounds = true
 
                         viewModel
-                            .isWalletReadyPublisher
-                            .map { !$0 }
+                            .isWalletEmptyPublisher
                             .assign(to: \.isHidden, on: collectionView)
                             .store(in: &subscriptions)
 
@@ -142,29 +141,17 @@ extension Home.RootView: BECollectionViewDelegate {
 }
 
 private extension HomeViewModelType {
-    var isWalletReadyPublisher: AnyPublisher<Bool, Never> {
+    var isWalletEmptyPublisher: AnyPublisher<Bool, Never> {
         Publishers.CombineLatest(
             walletsRepository.statePublisher,
             walletsRepository.dataPublisher
-                .withPrevious()
         )
-            .map { state, change in
-                // if loaded
-                if let previous = change.0 {
-                    if state == .loading || state == .initializing {
-                        let amount = previous.reduce(0) { $0 + $1.amount }
-                        return amount > 0
-                    } else {
-                        let amount = change.1.reduce(0) { partialResult, wallet in partialResult + wallet.amount }
-                        return amount > 0
-                    }
-                }
-
-                // Not loaded
-                return true
+            .map { state, data in
+                let amount = data.reduce(0) { partialResult, wallet in partialResult + wallet.amount }
+                let isEmpty = amount == 0
+                return state == .loaded && isEmpty
             }
             .removeDuplicates()
-            .replaceError(with: true)
             .eraseToAnyPublisher()
     }
 }

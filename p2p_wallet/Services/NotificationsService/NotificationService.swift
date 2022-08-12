@@ -143,7 +143,7 @@ extension NotificationServiceImpl: UNUserNotificationCenterDelegate {
         willPresent _: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.alert, .sound, .badge])
+        completionHandler([.banner, .sound, .badge])
     }
 }
 

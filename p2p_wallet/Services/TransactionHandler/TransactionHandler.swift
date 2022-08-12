@@ -63,7 +63,9 @@ class TransactionHandler: ObservableObject, TransactionHandlerType {
         onNewTransactionPublish.send((trx, txIndex))
 
         // process
-        try await sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
+        Task {
+            try await sendAndObserve(index: txIndex, processingTransaction: processingTransaction)
+        }
 
         return txIndex
     }

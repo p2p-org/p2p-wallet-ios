@@ -54,8 +54,8 @@ extension OrcaSwapV2 {
             super.bind()
 
             settingButton.tapPublisher
-                .sink { [unowned viewModel] in
-                    viewModel.openSettings()
+                .sink { [unowned self] in
+                    self.viewModel.openSettings()
                 }
                 .store(in: &subscriptions)
             viewModel.navigationPublisher

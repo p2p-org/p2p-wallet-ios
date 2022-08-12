@@ -69,17 +69,17 @@ extension OrcaSwapV2 {
                 }
                 .store(in: &subscriptions)
 
-            slippageView.clickHandler = { [weak viewModel] in
-                viewModel?.navigate(to: .settings)
+            slippageView.clickHandler = { [weak self] in
+                self?.viewModel.navigate(to: .settings)
             }
 
-            payFeesWithView.clickHandler = { [weak viewModel] in
-                viewModel?.choosePayFee()
+            payFeesWithView.clickHandler = { [weak self] in
+                self?.viewModel.choosePayFee()
             }
 
-            feesView.clickHandler = { [weak viewModel] fee in
+            feesView.clickHandler = { [weak self] fee in
                 guard let info = fee.info else { return }
-                viewModel?.navigate(to: .info(title: info.alertTitle, description: info.alertDescription))
+                self?.viewModel.navigate(to: .info(title: info.alertTitle, description: info.alertDescription))
             }
         }
     }

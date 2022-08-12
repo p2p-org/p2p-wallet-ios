@@ -63,6 +63,7 @@ extension EnterSeed {
                 .store(in: &subscriptions)
 
             seedTextSubject
+                .map { _ in nil }
                 .assign(to: \.error, on: self)
                 .store(in: &subscriptions)
         }

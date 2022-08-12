@@ -78,8 +78,12 @@ extension AppEventHandler: ChangeThemeResponder {
 
 extension AppEventHandler: LogoutResponder {
     func logout() {
+        Resolver.resolve(Socket.self).disconnect()
+        Resolver.resolve(PricesServiceType.self).stopObserving()
+
         ResolverScope.session.reset()
         notificationsService.unregisterForRemoteNotifications()
+
         Task {
             await notificationsService.deleteDeviceToken()
         }

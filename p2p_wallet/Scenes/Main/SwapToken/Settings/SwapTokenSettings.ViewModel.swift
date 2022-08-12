@@ -10,7 +10,8 @@ import Foundation
 import Resolver
 import SolanaSwift
 
-protocol NewSwapTokenSettingsViewModelType: AnyObject {
+@MainActor
+protocol NewSwapTokenSettingsViewModelType {
     var navigationPublisher: AnyPublisher<SwapTokenSettings.NavigatableScene?, Never> { get }
     var possibleSlippageTypes: [SwapTokenSettings.SlippageType] { get }
     var slippageType: SwapTokenSettings.SlippageType { get }

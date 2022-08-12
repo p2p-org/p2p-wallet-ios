@@ -63,7 +63,7 @@ extension SendTokenRecipientAndNetworkHandler {
         payingWalletPublisher.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var feeInfoDriver: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
+    @MainActor var feeInfoDriver: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
         feeInfoSubject.eraseToAnyPublisher().receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
@@ -120,7 +120,7 @@ extension SendTokenRecipientAndNetworkHandler {
             .matches(oneOfRegexes: .bitcoinAddress(isTestnet: getSendService().isTestNet()))
     }
 
-    func bindFees() {
+    @MainActor func bindFees() {
         Publishers.CombineLatest3(
             payingWalletPublisher.removeDuplicates(),
             recipientPublisher.removeDuplicates(),
