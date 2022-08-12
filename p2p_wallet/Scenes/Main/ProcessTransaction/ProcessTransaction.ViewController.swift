@@ -35,9 +35,7 @@ extension ProcessTransaction {
 
         override func setUp() {
             super.setUp()
-            Task {
-                try? await viewModel.sendAndObserveTransaction()
-            }
+            viewModel.sendAndObserveTransaction()
             view.onTap { [weak view] in
                 view?.endEditing(true)
             }
