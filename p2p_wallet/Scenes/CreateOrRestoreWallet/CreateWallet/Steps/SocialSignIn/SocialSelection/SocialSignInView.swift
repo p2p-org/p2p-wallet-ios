@@ -23,9 +23,7 @@ struct SocialSignInView: View {
                     Image(systemName: "chevron.left")
                         .foregroundColor(Color(Asset.Colors.night.color))
                 }
-            )
-        )
-        .navigationBarItems(
+            ),
             trailing: Button(
                 action: { [weak viewModel] in viewModel?.onInfo() },
                 label: {
@@ -59,9 +57,7 @@ struct SocialSignInView: View {
                     size: .large,
                     leading: .appleLogo,
                     isLoading: viewModel.loading == .appleButton,
-                    onPressed: { [weak viewModel] in
-                        viewModel?.onSignInTap(.apple)
-                    }
+                    onPressed: { [weak viewModel] in viewModel?.onSignInTap(.apple) }
                 )
                     .frame(height: TextButton.Size.large.height)
                     .padding(.top, 20)
@@ -71,15 +67,11 @@ struct SocialSignInView: View {
                     size: .large,
                     leading: .google,
                     isLoading: viewModel.loading == .googleButton,
-                    onPressed: { [weak viewModel] in
-                        viewModel?.onSignInTap(.google)
-                    }
+                    onPressed: { [weak viewModel] in viewModel?.onSignInTap(.google) }
                 )
                     .frame(height: TextButton.Size.large.height)
                     .padding(.top, 20)
-            }
-            .padding(.bottom, 34)
-            .bottomActionsStyle()
+            }.bottomActionsStyle()
         }
     }
 }
