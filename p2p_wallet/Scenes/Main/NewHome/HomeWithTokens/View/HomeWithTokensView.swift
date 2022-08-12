@@ -34,7 +34,7 @@ struct HomeWithTokensView: View {
         List {
             Group {
                 header
-                Spacer(minLength: 32)
+                    .padding(.bottom, 18)
                 content
             }
             .withCustomListStyle()
@@ -45,22 +45,15 @@ struct HomeWithTokensView: View {
     }
 
     private var header: some View {
-        Group {
-            HStack {
-                Spacer()
-                VStack(alignment: .center, spacing: 6) {
-                    Text(L10n.balance)
-                        .font(uiFont: .font(of: .text1, weight: .bold))
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-                    Text(viewModel.balance)
-                        .font(uiFont: .font(of: .title1, weight: .bold))
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                }
-                Spacer()
+        VStack(alignment: .center, spacing: 32) {
+            VStack(alignment: .center, spacing: 6) {
+                Text(L10n.balance)
+                    .font(uiFont: .font(of: .text1, weight: .bold))
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                Text(viewModel.balance)
+                    .font(uiFont: .font(of: .title1, weight: .bold))
+                    .foregroundColor(Color(Asset.Colors.night.color))
             }
-            .padding(.top, 16)
-
-            Spacer(minLength: 32)
 
             HStack(spacing: 37) {
                 tokenOperation(title: L10n.buy, image: .homeBuy) {
