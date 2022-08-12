@@ -71,7 +71,7 @@ extension StartView {
                         viewModel?.termsDidTap.send()
                     })
             }
-            .padding(.vertical, 24)
+            .padding(.top, 24)
         }
         .bottomActionsStyle()
     }
