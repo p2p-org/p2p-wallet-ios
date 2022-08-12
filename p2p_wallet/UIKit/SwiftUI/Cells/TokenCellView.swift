@@ -6,38 +6,29 @@
 //
 
 import KeyAppUI
+import SolanaSwift
 import SwiftUI
 
 struct TokenCellView: View {
-    let model: Model
+    let wallet: Wallet
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            TokenImageView(imageURL: model.imageUrl, wrappedImage: model.wrappedImage)
+            CoinLogoImageViewRepresentable(size: 50, token: wallet.token)
+                .frame(width: 50, height: 50)
+//            TokenImageView(imageURL: model.imageUrl, wrappedImage: model.wrappedImage)
             VStack(alignment: .leading, spacing: 4) {
-                Text(model.title)
+                Text(wallet.name)
                     .font(uiFont: .font(of: .text2))
                     .foregroundColor(Color(Asset.Colors.night.color))
-                Text(model.subtitle)
+                Text(wallet.amount?.tokenAmount(symbol: wallet.token.symbol) ?? "")
                     .font(uiFont: .font(of: .label1))
                     .foregroundColor(Color(Asset.Colors.mountain.color))
             }
             Spacer()
-            Text(model.amount)
+            Text(wallet.amountInCurrentFiat.fiatAmount())
                 .font(uiFont: .font(of: .text3, weight: .bold))
                 .foregroundColor(Color(Asset.Colors.night.color))
         }
-    }
-}
-
-// MARK: - Model
-
-extension TokenCellView {
-    struct Model {
-        let imageUrl: String
-        let title: String
-        let subtitle: String
-        let amount: String
-        var wrappedImage: UIImage?
     }
 }
