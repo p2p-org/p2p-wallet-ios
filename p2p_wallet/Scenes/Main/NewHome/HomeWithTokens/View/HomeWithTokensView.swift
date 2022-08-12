@@ -17,28 +17,25 @@ struct HomeWithTokensView: View {
 
     @ObservedObject var viewModel: HomeWithTokensViewModel
 
-//    @State private var tokenDetailIsPresented = false
-
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
         analyticsManager.log(event: .mainScreenWalletsOpen)
-
-        if #unavailable(iOS 15) {
-            // for earlier iOS version
-            UITableView.appearance().separatorColor = .clear
-        }
     }
 
     var body: some View {
         List {
             Group {
                 header
+                    .topPadding()
                     .padding(.bottom, 18)
                 content
             }
-            .withCustomListStyle()
+            .horizontalPadding()
+            .withoutSeparatorsAfterListContent()
         }
-        .refreshable {
+        .withoutSeparatorsiOS14()
+        .listStyle(.plain)
+        .customRefreshable {
             await viewModel.reloadData()
         }
     }
@@ -53,32 +50,38 @@ struct HomeWithTokensView: View {
                     .font(uiFont: .font(of: .title1, weight: .bold))
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
-
-            HStack(spacing: 37) {
+            HStack {
                 tokenOperation(title: L10n.buy, image: .homeBuy) {
                     viewModel.buy()
                 }
+                Spacer()
                 tokenOperation(title: L10n.receive, image: .homeReceive) {
                     viewModel.receive()
                 }
+                Spacer()
                 tokenOperation(title: L10n.send, image: .homeSend) {
                     viewModel.send()
                 }
+                Spacer()
                 tokenOperation(title: L10n.trade, image: .homeSwap) {
                     viewModel.trade()
                 }
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
     private var content: some View {
         Group {
             Text(L10n.tokens)
-                .font(.system(size: 20, weight: .semibold))
+                .font(uiFont: .font(of: .title3, weight: .bold))
                 .foregroundColor(Color(Asset.Colors.night.color))
-
             ForEach(viewModel.items, id: \.pubkey) {
-                tokenCell(isVisible: true, wallet: $0)
+                if $0.isNativeSOL {
+                    tokenCell(isVisible: true, wallet: $0)
+                } else {
+                    swipeTokenCell(isVisible: true, wallet: $0)
+                }
             }
 
             if !viewModel.hiddenItems.isEmpty {
@@ -100,7 +103,7 @@ struct HomeWithTokensView: View {
 
                 if !viewModel.tokensIsHidden {
                     ForEach(viewModel.hiddenItems, id: \.token.symbol) {
-                        tokenCell(isVisible: false, wallet: $0)
+                        swipeTokenCell(isVisible: false, wallet: $0)
                     }
                     .transition(AnyTransition.opacity.animation(.linear(duration: 0.5)))
                 }
@@ -117,15 +120,24 @@ struct HomeWithTokensView: View {
                         .resizable()
                         .scaledToFit()
                     Text(title)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(uiFont: .font(of: .text4, weight: .bold))
                         .foregroundColor(Color(Asset.Colors.night.color))
                 }
+                .frame(width: 56)
             }
         )
             .buttonStyle(PlainButtonStyle())
     }
 
-    private func tokenCell(isVisible: Bool, wallet: Wallet) -> some View {
+    private func tokenCell(isVisible _: Bool, wallet: Wallet) -> some View {
+        TokenCellView(wallet: wallet)
+            .frame(height: 72)
+            .onTapGesture {
+                viewModel.tokenClicked(wallet: wallet)
+            }
+    }
+
+    private func swipeTokenCell(isVisible: Bool, wallet: Wallet) -> some View {
         TokenCellView(wallet: wallet)
             .swipeActions(
                 trailing: [
@@ -143,27 +155,23 @@ struct HomeWithTokensView: View {
             )
             .frame(height: 72)
             .onTapGesture {
-//                tokenDetailIsPresented.toggle()
                 viewModel.tokenClicked(wallet: wallet)
             }
     }
 }
 
 private extension View {
-    @ViewBuilder func withCustomListStyle() -> some View {
-        listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets())
-            .listRowSeparatorHiddenForIOS15()
+    @ViewBuilder func horizontalPadding() -> some View {
+        if #available(iOS 15, *) {
+            padding(.horizontal, 16)
+        } else {
+            self
+        }
     }
 
-    /// Applies the given transform if the given condition evaluates to `true`.
-    /// - Parameters:
-    ///   - condition: The condition to evaluate.
-    ///   - transform: The transform to apply to the source `View`.
-    /// - Returns: Either the original `View` or the modified `View` if the condition is `true`.
-    @ViewBuilder func listRowSeparatorHiddenForIOS15() -> some View {
+    @ViewBuilder func topPadding() -> some View {
         if #available(iOS 15, *) {
-            self.listRowSeparator(.hidden)
+            padding(.top, 16)
         } else {
             self
         }
