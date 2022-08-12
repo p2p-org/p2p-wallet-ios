@@ -38,7 +38,7 @@ extension Settings {
                         UILabel(
                             text:
                             L10n
-                                .yourP2PUsernameAllowsYouToReceiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletList,
+                                .yourP2PUsernameAllowsYouToReceiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletTokenList,
                             textSize: 15,
                             numberOfLines: 0
                         )
