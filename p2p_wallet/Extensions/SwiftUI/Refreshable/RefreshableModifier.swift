@@ -42,8 +42,11 @@ struct RefreshableModifier: ViewModifier {
 }
 
 public extension View {
-    @available(iOS, obsoleted: 15)
-    func refreshable(action: @escaping @Sendable () async -> Void) -> some View {
-        modifier(RefreshableModifier(action: action))
+    @ViewBuilder func customRefreshable(action: @escaping @Sendable () async -> Void) -> some View {
+        if #available(iOS 15, *) {
+            refreshable(action: action)
+        } else {
+            modifier(RefreshableModifier(action: action))
+        }
     }
 }

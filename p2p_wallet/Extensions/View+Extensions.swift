@@ -62,3 +62,34 @@ extension View {
         ))
     }
 }
+
+extension List {
+    @ViewBuilder func withoutSeparatorsiOS14() -> some View {
+        if #available(iOS 15, *) {
+            self
+        } else {
+            listStyle(SidebarListStyle())
+                .listRowInsets(EdgeInsets())
+                .onAppear {
+                    UITableView.appearance().backgroundColor = UIColor.systemBackground
+                }
+        }
+    }
+}
+
+extension View {
+    @ViewBuilder func withoutSeparatorsAfterListContent() -> some View {
+        if #available(iOS 15, *) {
+            listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden)
+        } else {
+            frame(
+                minWidth: 0, maxWidth: .infinity,
+                minHeight: 44,
+                alignment: .leading
+            )
+                .listRowInsets(EdgeInsets())
+                .background(Color(UIColor.systemBackground))
+        }
+    }
+}

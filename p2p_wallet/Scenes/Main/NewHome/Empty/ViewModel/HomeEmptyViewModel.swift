@@ -16,9 +16,9 @@ final class HomeEmptyViewModel: ObservableObject {
     let input = Input()
     let output: Output
 
-    private let walletsRepository: WalletsRepository
-    private let pricesService: PricesServiceType
-    private var cancellables = Set<AnyCancellable>()
+    @Injected private var walletsRepository: WalletsRepository
+    private let pricesService: PricesServiceType = Resolver.resolve()
+    private var cancellable: AnyCancellable?
 
     let topUp = PassthroughSubject<Void, Never>()
     let topUpCoin = PassthroughSubject<Buy.CryptoCurrency, Never>()
@@ -47,15 +47,7 @@ final class HomeEmptyViewModel: ObservableObject {
         ]
     }
 
-    @Published var pullToRefreshPending = false
-
-    init(
-        pricesService: PricesServiceType,
-        walletsRepository: WalletsRepository
-    ) {
-        self.pricesService = pricesService
-        self.walletsRepository = walletsRepository
-
+    init() {
         output = Output(
             view: .init(),
             coord: .init(
@@ -64,19 +56,22 @@ final class HomeEmptyViewModel: ObservableObject {
                 receiveRenBtcShow: receiveRenBtc.eraseToAnyPublisher()
             )
         )
-        walletsRepository.stateObservable
-            .asPublisher()
-            .assertNoFailure()
-            .sink(receiveValue: { [weak self] in
-                if $0 == .loaded {
-                    self?.pullToRefreshPending = false
-                }
-            })
-            .store(in: &cancellables)
     }
 
-    func reloadData() {
+    func reloadData() async {
         walletsRepository.reload()
+
+        return await withCheckedContinuation { continuation in
+            cancellable = walletsRepository.stateObservable
+                .asPublisher()
+                .assertNoFailure()
+                .sink(receiveValue: { [weak self] in
+                    if $0 == .loaded || $0 == .error {
+                        continuation.resume()
+                        self?.cancellable = nil
+                    }
+                })
+        }
     }
 
     func receiveRenBtcClicked() {
