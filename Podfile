@@ -60,6 +60,7 @@ target 'p2p_wallet' do
   pod 'GT3Captcha-iOS'
   pod 'SkeletonUI'
   pod 'SwiftSVG', '~> 2.0'
+  pod 'Introspect'
 
   # Firebase
   pod 'Firebase/Analytics'
