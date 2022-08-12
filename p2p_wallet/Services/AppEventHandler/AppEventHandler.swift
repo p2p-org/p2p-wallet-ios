@@ -106,7 +106,6 @@ extension AppEventHandler: LogoutResponder {
 
 extension AppEventHandler: CreateOrRestoreWalletHandler {
     func creatingWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
-        delegate?.createWalletDidComplete()
         saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
         resolvedName = name
     }

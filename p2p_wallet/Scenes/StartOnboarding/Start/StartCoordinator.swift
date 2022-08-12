@@ -1,57 +1,65 @@
 import Combine
+import Onboarding
 import SwiftUI
 
-enum StartCoordinatorNavigation {
-    case root(window: UIWindow)
-    case push(nc: UINavigationController)
+struct StartParameters {
+    let isAnimatable: Bool
 }
 
-final class StartCoordinator: Coordinator<Void> {
-    private let navigation: StartCoordinatorNavigation
+final class StartCoordinator: Coordinator<OnboardingWallet> {
+    private let window: UIWindow
     private weak var viewController: UIViewController?
-    private var subject = PassthroughSubject<Void, Never>()
+    private let params: StartParameters
+    private var subject = PassthroughSubject<OnboardingWallet, Never>()
 
     // MARK: - Initializer
 
-    init(navigation: StartCoordinatorNavigation) {
-        self.navigation = navigation
+    init(window: UIWindow, params: StartParameters = StartParameters(isAnimatable: true)) {
+        self.window = window
+        self.params = params
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
-        let viewModel = StartViewModel()
+    override func start() -> AnyPublisher<OnboardingWallet, Never> {
+        let viewModel = StartViewModel(isAnimatable: params.isAnimatable)
         let viewController = UIHostingController(rootView: StartView(viewModel: viewModel))
         self.viewController = viewController
 
-        switch navigation {
-        case let .root(window):
-            let navigationController = UINavigationController(rootViewController: viewController)
-            style(nc: navigationController)
-            window.animate(newRootViewController: navigationController)
-        case let .push(nc):
-            nc.delegate = self
-            nc.pushViewController(viewController, animated: true)
-        }
+        let navigationController = UINavigationController(rootViewController: viewController)
+        style(nc: navigationController)
+        window.animate(newRootViewController: navigationController)
 
-        viewModel.$navigatableScene.sink { [weak self] scene in
-            guard let self = self else { return }
-            switch scene {
-            case .restoreWallet:
-                self.openRestoreWallet(vc: viewController)
-            case .createWallet:
-                self.openCreateWallet(vc: viewController)
-            case .mockContinue:
-                self.openContinue(vc: viewController)
-            case .none:
-                break
+        viewModel.createWalletDidTap
+            .sink { [weak self] _ in
+                self?.openCreateWallet(vc: viewController)
             }
-        }.store(in: &subscriptions)
+            .store(in: &subscriptions)
+
+        viewModel.restoreWalletDidTap
+            .sink { [weak self] _ in
+                self?.openRestoreWallet(vc: viewController)
+            }
+            .store(in: &subscriptions)
+
+        viewModel.termsDidTap
+            .sink { [weak self] _ in
+                self?.openTerms()
+            }
+            .store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
     }
 
     private func openCreateWallet(vc: UIViewController) {
-        coordinate(to: CreateWalletCoordinator(parent: vc))
-            .sink { _ in }.store(in: &subscriptions)
+        coordinate(to: CreateWalletCoordinator(parent: vc)).sink { [weak vc] result in
+            switch result {
+            case let .restore(socialProvider, email):
+                guard let vc = vc else { return }
+                self.openRestoreWallet(vc: vc)
+            case let .success(onboardingWallet):
+                self.subject.send(onboardingWallet)
+            }
+            self.subject.send(completion: .finished)
+        }.store(in: &subscriptions)
     }
 
     private func openRestoreWallet(vc: UIViewController) {
@@ -59,35 +67,17 @@ final class StartCoordinator: Coordinator<Void> {
             .sink { _ in }.store(in: &subscriptions)
     }
 
-    // TODO: Mock method
-    private func openContinue(vc _: UIViewController) {
-        switch navigation {
-        case let .root(window):
-            coordinate(to: ContinueCoordinator(window: window))
-                .sink(receiveValue: {}).store(in: &subscriptions)
-        case let .push(nc):
-            break
-        }
+    private func openTerms() {
+        let vc = WLMarkdownVC(
+            title: L10n.termsOfUse,
+            bundledMarkdownTxtFileName: "Terms_of_service"
+        )
+        viewController?.present(vc, animated: true)
     }
 
     private func style(nc: UINavigationController) {
         nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
         nc.navigationBar.shadowImage = UIImage()
         nc.navigationBar.isTranslucent = true
-    }
-}
-
-// MARK: - UINavigationControllerDelegate
-
-extension StartCoordinator: UINavigationControllerDelegate {
-    func navigationController(
-        _ navigationController: UINavigationController,
-        didShow viewController: UIViewController,
-        animated _: Bool
-    ) {
-        guard let currentVC = self.viewController, viewController != currentVC else { return }
-        if navigationController.viewControllers.contains(where: { $0 == currentVC }) == false {
-            subject.send(completion: .finished)
-        }
     }
 }

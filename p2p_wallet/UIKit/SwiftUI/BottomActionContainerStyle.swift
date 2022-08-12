@@ -3,7 +3,9 @@ import SwiftUI
 
 extension View {
     func bottomActionsStyle() -> some View {
-        background(Color(Asset.Colors.night.color))
+        padding(.horizontal, 20)
+            .padding(.bottom, 34)
+            .background(Color(Asset.Colors.night.color))
             .cornerRadius(radius: 16, corners: [.topLeft, .topRight])
     }
 }

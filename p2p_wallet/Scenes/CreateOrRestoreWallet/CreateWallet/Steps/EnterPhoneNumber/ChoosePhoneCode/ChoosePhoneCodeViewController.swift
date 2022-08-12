@@ -6,11 +6,13 @@ import BECollectionView_Combine
 import BEPureLayout
 import Foundation
 import KeyAppUI
+import UIKit
 
 final class ChoosePhoneCodeViewController: BaseViewController {
     // MARK: - Properties
 
     private let viewModel: ChoosePhoneCodeViewModel
+    private let searchBar = BERef<BESearchBar>()
 
     init(viewModel: ChoosePhoneCodeViewModel) {
         self.viewModel = viewModel
@@ -29,6 +31,16 @@ final class ChoosePhoneCodeViewController: BaseViewController {
         viewModel.reload()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        _ = searchBar.view?.becomeFirstResponder()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        _ = searchBar.view?.resignFirstResponder()
+    }
+
     override func build() -> UIView {
         BEVStack {
             BESearchBar(fixedHeight: 38, cornerRadius: 10)
@@ -40,6 +52,7 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                     searchBar.magnifyingIconSize = 15.63
                     searchBar.delegate = self
                 }
+                .bind(searchBar)
                 .padding(.init(top: 0, left: 16, bottom: 12, right: 16))
             BEStaticSectionsCollectionView(
                 sections: [
@@ -59,6 +72,11 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                 .setup { collectionView in
                     collectionView.delegate = self
                 }
+            TextButton(title: L10n.ok, style: .primary, size: .large)
+                .onPressed { [weak self] _ in
+                    self?.doneButtonDidTouch()
+                }
+                .padding(UIEdgeInsets(top: .zero, left: 20, bottom: 34, right: 20))
         }
     }
 
@@ -76,18 +94,14 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
         collectionView.updateWithoutAnimations {
             viewModel.batchUpdate { countries in
                 var countries = countries
-                var selectedIndex: Int = .zero
                 for i in 0 ..< countries.count {
                     if countries[i].value.code == selectedCountry.value.code {
-                        selectedIndex = i
                         countries[i].isSelected = true
                     } else {
                         countries[i].isSelected = false
                     }
                 }
-                let selectedCountry = countries.remove(at: selectedIndex)
                 countries = countries.filteredAndSorted()
-                countries.insert(selectedCountry, at: .zero)
                 return countries
             }
         }

@@ -13,7 +13,7 @@ struct ContinueView: View {
             VStack(spacing: .zero) {
                 Spacer()
 
-                StartPageView(data: viewModel.data, subtitleFontWeight: .regular)
+                OnboardingContentView(data: viewModel.data)
                     .padding(.horizontal, 40)
 
                 Spacer()
@@ -39,8 +39,6 @@ extension ContinueView {
                 .styled()
                 .padding(.top, 12)
         }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 34)
         .bottomActionsStyle()
     }
 }

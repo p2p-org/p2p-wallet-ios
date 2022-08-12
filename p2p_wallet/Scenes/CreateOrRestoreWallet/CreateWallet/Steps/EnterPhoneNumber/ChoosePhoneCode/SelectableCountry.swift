@@ -17,27 +17,42 @@ extension Array where Element == SelectableCountry {
             let keyword = keyword.lowercased()
             countries = countries
                 .filter { country in
-                    country.value.name.lowercased().contains(keyword) ||
-                        country.value.code.lowercased().contains(keyword) ||
-                        keyword.contains(country.value.emoji ?? "") ||
-                        country.value.dialCode.contains(keyword)
+                    // Filter only countries which name or dialCode starts with keyword
+                    var dialCode = country.value.dialCode
+                    if keyword.first != "+" {
+                        dialCode.removeFirst()
+                    }
+                    return country.value.name.lowercased().starts(with: keyword) ||
+                        country.value.dialCode.starts(with: keyword) ||
+                        dialCode.starts(with: keyword)
                 }
                 .sorted(by: { c1, c2 in
                     let name1 = c1.value.name.lowercased()
                     let name2 = c2.value.name.lowercased()
 
-                    // Sort:
-                    // First by name that starts with keyword, then by alphabet
+                    var dialCode1 = c1.value.dialCode
+                    var dialCode2 = c2.value.dialCode
+                    if keyword.first != "+" {
+                        dialCode1.removeFirst()
+                        dialCode2.removeFirst()
+                    }
 
-                    // if both name start with keyword or both name do not start with keyword, compare by alphabet
-                    if (name1.starts(with: keyword) && name2.starts(with: keyword)) ||
-                        (!name1.starts(with: keyword) && !name2.starts(with: keyword))
-                    {
+                    // Sort:
+
+                    // First by name that starts with keyword
+                    // Compare names by alphabet
+                    if name1.starts(with: keyword), name2.starts(with: keyword) {
                         return name1 < name2
                     }
 
-                    // else
-                    return name1.starts(with: keyword)
+                    // Second by dialCode that starts with keyword
+                    // Compare by alphabet
+                    if dialCode1.starts(with: keyword), dialCode2.starts(with: keyword) {
+                        return dialCode1 < dialCode2
+                    }
+
+                    // else by alphabet
+                    return name1 < name2
                 })
         }
         return countries
