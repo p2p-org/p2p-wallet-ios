@@ -10,7 +10,7 @@ import KeyAppUI
 import SwiftUI
 
 struct HomeView: View {
-    @ObservedObject var viewModel: HomeViewModel
+    @StateObject var viewModel: HomeViewModel
     let viewModelWithTokens: HomeWithTokensViewModel
     let emptyViewModel: HomeEmptyViewModel
 
