@@ -8,7 +8,6 @@
 import AnalyticsManager
 import Foundation
 import KeyAppUI
-import Reachability
 import Resolver
 import SolanaSwift
 import UIKit
@@ -21,7 +20,6 @@ class AppCoordinator: Coordinator<Void> {
     let analyticsManager: AnalyticsManager = Resolver.resolve()
     let notificationsService: NotificationService = Resolver.resolve()
     @Injected var notificationService: NotificationService
-    @Injected var reachability: Reachability
 
     // MARK: - Properties
 
@@ -47,11 +45,6 @@ class AppCoordinator: Coordinator<Void> {
         }
 
         openSplash()
-
-        reachability.isReachable.filter { !$0 }
-            .sink(receiveValue: { [weak self] _ in
-                self?.notificationService.showToast(title: "☕️", text: L10n.YouReOffline.keepCalm)
-            }).store(in: &subscriptions)
     }
 
     func reload() async {
