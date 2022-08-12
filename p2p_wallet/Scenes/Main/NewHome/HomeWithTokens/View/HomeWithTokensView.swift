@@ -84,7 +84,9 @@ struct HomeWithTokensView: View {
             if !viewModel.hiddenItems.isEmpty {
                 Button(
                     action: {
-                        viewModel.toggleHiddenTokensVisibility()
+                        withAnimation {
+                            viewModel.toggleHiddenTokensVisibility()
+                        }
                     },
                     label: {
                         HStack(spacing: 8) {
@@ -131,7 +133,9 @@ struct HomeWithTokensView: View {
                         icon: Image(uiImage: isVisible ? .eyeHide : .eyeShow),
                         tint: .clear,
                         action: {
-                            viewModel.toggleTokenVisibility(wallet: wallet)
+                            withAnimation {
+                                viewModel.toggleTokenVisibility(wallet: wallet)
+                            }
                         }
                     ),
                 ],
