@@ -32,13 +32,15 @@ struct HomeWithTokensView: View {
 
     var body: some View {
         List {
-            // do your stuff when pulled
             Group {
                 header
                 Spacer(minLength: 32)
                 content
             }
             .withCustomListStyle()
+        }
+        .refreshable {
+            await viewModel.reloadData()
         }
     }
 

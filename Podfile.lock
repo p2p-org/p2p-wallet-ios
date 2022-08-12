@@ -129,6 +129,7 @@ PODS:
     - GoogleUtilities/Logger
   - GT3Captcha-iOS (0.15.2)
   - Intercom (12.4.3)
+  - Introspect (0.1.4)
   - JazziconSwift (1.1.0)
   - KeyAppUI (0.1.2):
     - BEPureLayout
@@ -215,6 +216,7 @@ DEPENDENCIES:
   - Firebase/RemoteConfig
   - GT3Captcha-iOS
   - Intercom
+  - Introspect
   - JazziconSwift (~> 1.1.0)
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `develop`)"
   - KeychainSwift (~> 19.0)
@@ -266,6 +268,7 @@ SPEC REPOS:
     - GoogleUtilities
     - GT3Captcha-iOS
     - Intercom
+    - Introspect
     - JazziconSwift
     - KeychainSwift
     - Kingfisher
@@ -384,6 +387,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   GT3Captcha-iOS: 7ae08a5421c8e40463ec84ae807e82c19be3929a
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
+  Introspect: b62c4dd2063072327c21d618ef2bedc3c87bc366
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
   KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
@@ -425,6 +429,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 382a34df32243e1ed15af9e77bd8f126682db47f
+PODFILE CHECKSUM: 887c856f2027430f8247356b7e52c04bbc21e380
 
 COCOAPODS: 1.11.3
