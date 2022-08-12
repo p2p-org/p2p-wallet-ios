@@ -21,8 +21,8 @@ protocol ProcessTransactionViewModelType {
 
     func getMainDescription() -> String
 
-    func sendAndObserveTransaction() async throws
-    func handleErrorRetryOrMakeAnotherTransaction() async throws
+    func sendAndObserveTransaction()
+    func handleErrorRetryOrMakeAnotherTransaction()
     func navigate(to scene: ProcessTransaction.NavigatableScene)
 }
 
@@ -86,9 +86,9 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
 
     // MARK: - Actions
 
-    func sendAndObserveTransaction() async throws {
+    func sendAndObserveTransaction() {
         // send transaction and get observation index
-        let index = try await transactionHandler.sendTransaction(rawTransaction)
+        let index = transactionHandler.sendTransaction(rawTransaction)
         observingTransactionIndex = index
 
         // send and catch error
@@ -107,7 +107,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             .store(in: &subscriptions)
     }
 
-    func handleErrorRetryOrMakeAnotherTransaction() async throws {
+    func handleErrorRetryOrMakeAnotherTransaction() {
         if pendingTransaction.status.error == nil {
             // log
             let status = pendingTransaction.status.rawValue
@@ -139,7 +139,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
                 }
             }
 
-            try await sendAndObserveTransaction()
+            sendAndObserveTransaction()
         }
     }
 
