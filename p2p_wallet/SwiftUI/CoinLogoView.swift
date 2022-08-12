@@ -1,3 +1,4 @@
+import Cache
 import Combine
 import SkeletonUI
 import SwiftSVG
@@ -37,7 +38,6 @@ struct ImageView: View {
                 .skeleton(with: isLoading)
             SVGView(svg: $svg)
                 .opacity($svg.isEmpty ? 0 : 1)
-                .frame(width: 48, height: 48)
         }.onReceive(imageLoader.didChange) { data in
             if let image = UIImage(data: data) {
                 self.image = image
@@ -83,6 +83,8 @@ class SVGViewCoordinator<T>: NSObject {
 
 /// Loader to get retreive images
 class ImageLoader: ObservableObject {
+    static let cache = Cache<String, Data>()
+
     var didChange = PassthroughSubject<Data, Never>()
     var data = Data() {
         didSet {
@@ -91,12 +93,23 @@ class ImageLoader: ObservableObject {
     }
 
     init(url: URL) {
-        let task = URLSession.shared.dataTask(with: url) { data, _, _ in
-            guard let data = data else { return }
-            DispatchQueue.main.async {
-                self.data = data
+        Task {
+            if let data = await Self.cache.value(forKey: url.absoluteString) {
+                DispatchQueue.main.async {
+                    self.data = data
+                }
+            } else {
+                let task = URLSession.shared.dataTask(with: url) { data, _, _ in
+                    guard let data = data else { return }
+                    Task {
+                        await Self.cache.insert(data, forKey: url.absoluteString)
+                    }
+                    DispatchQueue.main.async {
+                        self.data = data
+                    }
+                }
+                task.resume()
             }
         }
-        task.resume()
     }
 }
