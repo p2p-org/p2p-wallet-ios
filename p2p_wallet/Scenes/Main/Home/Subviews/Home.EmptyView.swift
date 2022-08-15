@@ -54,7 +54,7 @@ extension Home {
                     )
                     UIView(height: 10)
                     UILabel(
-                        text: L10n.makeYourFirstDepositOrBuyWithYourCreditCardOrApplePay,
+                        text: L10n.makeYourFirstDepositOrMakeAPurchaseUsingYourCreditCardOrApplePay,
                         textColor: .secondaryLabel,
                         numberOfLines: 3,
                         textAlignment: .center
