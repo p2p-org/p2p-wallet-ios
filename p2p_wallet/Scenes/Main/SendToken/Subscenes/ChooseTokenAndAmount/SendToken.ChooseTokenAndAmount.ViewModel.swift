@@ -173,7 +173,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         }
 
         #if DEBUG
-            debugPrint("availableAmount \(availableAmount)")
+            print("availableAmount \(availableAmount)")
         #endif
 
         // return

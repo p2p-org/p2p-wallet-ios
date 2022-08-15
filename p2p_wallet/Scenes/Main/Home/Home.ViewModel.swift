@@ -40,7 +40,7 @@ extension Home {
         private let scrollToTopSubject = PassthroughSubject<Void, Never>()
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
     }
 }

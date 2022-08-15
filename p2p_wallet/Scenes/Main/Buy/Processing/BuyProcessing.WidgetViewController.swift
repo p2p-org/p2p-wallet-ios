@@ -106,7 +106,7 @@ open class BuyTokenWidgetViewController: UIViewController, WKUIDelegate, WKNavig
     private func loadTransak() {
         // modify params
         let urlString = provider.getUrl()
-        debugPrint(urlString)
+        print(urlString)
 
         // load url
         guard let myURL = URL(string: urlString) else {

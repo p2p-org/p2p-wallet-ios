@@ -95,7 +95,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         deinit {
-            debugPrint("RootView deinited")
+            print("RootView deinited")
         }
 
         // MARK: - Methods
