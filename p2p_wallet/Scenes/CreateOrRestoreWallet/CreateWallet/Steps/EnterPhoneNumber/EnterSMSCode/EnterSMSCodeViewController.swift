@@ -41,17 +41,17 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     }
 
     override func build() -> UIView {
-        BEScrollView(contentInsets: .init(top: 130, left: 18, bottom: 18, right: 18)) {
+        BEScrollView(contentInsets: .init(top: 30, left: 18, bottom: 18, right: 18)) {
             BEContainer {
                 UILabel(numberOfLines: 0).withAttributedText(
                     .attributedString(
-                        with: L10n.pleaseEnterTheCodeWeSentYou,
+                        with: L10n.theCodeFromSMS,
                         of: .title1,
                         weight: .bold,
                         alignment: .center
                     )
                 )
-                UIView(height: 8)
+                UIView(height: 10)
                 UILabel().withAttributedText(
                     .attributedString(
                         with: "Check the number \(self.viewModel.phone)",
@@ -59,16 +59,16 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
                     ).withForegroundColor(Asset.Colors.night.color)
                 )
 
-                BaseTextFieldView(leftView: BEView(width: 5), rightView: nil, isBig: true).bind(smsInputRef)
+                BaseTextFieldView(leftView: BEView(width: 7), rightView: nil, isBig: true).bind(smsInputRef)
                     .setup { input in
                         input.textField?.keyboardType = .numberPad
                         input.constantPlaceholder = "••• •••"
                         input.textField?.textContentType = .oneTimeCode
-                    }.frame(width: 173).padding(.init(only: .top, inset: 42))
+                    }.frame(width: 180).padding(.init(only: .top, inset: 28))
 
                 BEHStack {
                     UIButton().bind(resendButtonRef).setup { _ in }
-                }.padding(.init(only: .top, inset: 10))
+                }.padding(.init(only: .top, inset: 7))
             }
         }
     }
@@ -76,7 +76,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     func bottomView() -> UIView {
         BEContainer {
             TextButton(
-                title: L10n.continue,
+                title: L10n.enterCodeToContinue,
                 style: .primary,
                 size: .large,
                 trailing: Asset.MaterialIcon.arrowForward.image
@@ -105,6 +105,8 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
 
         viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
+            self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterCodeToContinue
+            self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
         }.store(in: &store)
 
         if let textField = smsInputRef.view?.textField {
