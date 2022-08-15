@@ -85,7 +85,7 @@ final class PincodeViewController: BaseViewController {
     private func addLeftButton() {
         guard viewModel.isBackAvailable else { return }
         let backButton = UIBarButtonItem(
-            image: UINavigationBar.appearance().backIndicatorImage,
+            image: Asset.MaterialIcon.arrowBackIos.image,
             style: .plain,
             target: self,
             action: #selector(onBack)

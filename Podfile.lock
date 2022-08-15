@@ -158,7 +158,7 @@ PODS:
     - BEPureLayout
     - SkeletonView (~> 1.7)
   - KeychainSwift (19.0.0)
-  - Kingfisher (7.3.1)
+  - Kingfisher (7.3.2)
   - KituraContracts (1.2.1):
     - LoggerAPI (~> 1.7)
   - ListPlaceholder (1.5)
@@ -208,7 +208,7 @@ PODS:
   - Sentry (7.18.1):
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
-  - SkeletonView (1.29.2)
+  - SkeletonView (1.30.0)
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -423,7 +423,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -438,10 +438,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -450,10 +450,10 @@ CHECKOUT OPTIONS:
     :commit: 145b589ae5ed31c72dc51959bc7f782d69b07cc6
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: f6d2b6f5f64e6bfdac9cfebcad58c3981e5319ba
@@ -462,10 +462,10 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: b6f029e0e3f6a96b6cab1713e36223d9a7591e30
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -480,13 +480,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: ab32c12f8f8db70910c54771ebf646eb6003ebc9
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: be9dc2b6239eafc76ecb8f154e911e5062212c47
+    :commit: a70a288ddaf637c3be94d9ec562cb738e6154ae6
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -530,7 +530,7 @@ SPEC CHECKSUMS:
   KeyAppKitLogger: 1db675b452a0faa4bd0097f5c88fcc635ed67205
   KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
-  Kingfisher: f411ab4902e733fc0c40522920fb5a236d7a7334
+  Kingfisher: 0086ad83719761ba9b2cdaf6ef4d5b4878cbae23
   KituraContracts: e845e60dc8627ad0a76fa55ef20a45451d8f830b
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerAPI: ad9c4a6f1e32f518fdb43a1347ac14d765ab5e3d
@@ -555,7 +555,7 @@ SPEC CHECKSUMS:
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
-  SkeletonView: 915a80ecc2b6421ab7ac0f0212321c0cc1406472
+  SkeletonView: 939a2cc7d1ea697cdb41d4c2dea6257d3dc74987
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 6ba5043ed04055eb874085d2f96499022ddcd6e8
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
@@ -572,6 +572,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: d55d641b1e9408e85fab39b1ab85c9a873d4d512
+PODFILE CHECKSUM: 2a1bd79253c791e1e00008647a969b938e9611c5
 
 COCOAPODS: 1.11.3
