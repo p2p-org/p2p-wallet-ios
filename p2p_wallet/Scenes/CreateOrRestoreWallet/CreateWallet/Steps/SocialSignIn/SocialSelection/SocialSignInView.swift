@@ -60,6 +60,7 @@ struct SocialSignInView: View {
                     onPressed: { [weak viewModel] in viewModel?.onSignInTap(.apple) }
                 )
                     .frame(height: TextButton.Size.large.height)
+                    .disabled(viewModel.loading == .googleButton)
                 TextButtonView(
                     title: "Sign in with Google",
                     style: .inverted,
@@ -70,6 +71,7 @@ struct SocialSignInView: View {
                 )
                     .frame(height: TextButton.Size.large.height)
                     .padding(.top, 12)
+                    .disabled(viewModel.loading == .appleButton)
             }
         }
     }
