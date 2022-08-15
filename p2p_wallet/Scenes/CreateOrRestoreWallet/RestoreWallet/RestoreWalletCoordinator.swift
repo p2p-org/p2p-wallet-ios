@@ -10,9 +10,8 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
     let parent: UIViewController
-    let webView = GlobalWebView.requestWebView()
     lazy var tKeyFacade: TKeyJSFacade = .init(
-        wkWebView: webView,
+        wkWebView: GlobalWebView.requestWebView(),
         config: .init(
             metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
             torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
@@ -32,22 +31,12 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     // MARK: - Methods
 
-    func initializeTkey() async throws {
-        try await tKeyFacade.initialize()
-        DispatchQueue.main.async { self.navigationController?.hideHud() }
-    }
-
     override func start() -> AnyPublisher<Void, Never> {
         // Create root view controller
         let viewModel = RestoreWalletViewModel(tKeyFacade: tKeyFacade)
         let viewController = buildViewController(viewModel: viewModel)
         navigationController = UINavigationController(rootViewController: viewController)
         navigationController?.modalPresentationStyle = .fullScreen
-
-        Task {
-            DispatchQueue.main.async { self.navigationController?.showIndetermineHud() }
-            try await initializeTkey()
-        }
 
         viewModel.stateMachine
             .stateStream

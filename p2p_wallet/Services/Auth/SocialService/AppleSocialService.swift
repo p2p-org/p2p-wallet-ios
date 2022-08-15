@@ -25,9 +25,27 @@ final class AppleSocialService: NSObject, SocialService {
             let request = appleIDProvider.createRequest()
             let authorizationController = ASAuthorizationController(authorizationRequests: [request])
             authorizationController.delegate = self
+            authorizationController.presentationContextProvider = self
             request.requestedScopes = [.email]
             authorizationController.performRequests()
         }
+    }
+}
+
+// MARK: - ASAuthorizationControllerDelegate
+
+extension AppleSocialService: ASAuthorizationControllerPresentationContextProviding {
+    func presentationAnchor(for _: ASAuthorizationController) -> ASPresentationAnchor {
+        window() ?? UIWindow()
+    }
+
+    private func window() -> UIWindow? {
+        UIApplication.shared.connectedScenes.filter {
+            $0.activationState == .foregroundActive
+        }
+        .first(where: { $0 is UIWindowScene })
+        .flatMap { $0 as? UIWindowScene }?.windows
+        .first(where: \.isKeyWindow)
     }
 }
 
