@@ -20,7 +20,7 @@ struct SocialSignInView: View {
             leading: Button(
                 action: { [weak viewModel] in viewModel?.onBack() },
                 label: {
-                    Image(systemName: "chevron.left")
+                    Image(uiImage: Asset.MaterialIcon.arrowBackIos.image)
                         .foregroundColor(Color(Asset.Colors.night.color))
                 }
             ),
@@ -49,7 +49,7 @@ struct SocialSignInView: View {
     }
 
     var actions: some View {
-        VStack {
+        BottomActionContainer {
             VStack(spacing: .zero) {
                 TextButtonView(
                     title: "Sign in with Apple",
@@ -60,7 +60,6 @@ struct SocialSignInView: View {
                     onPressed: { [weak viewModel] in viewModel?.onSignInTap(.apple) }
                 )
                     .frame(height: TextButton.Size.large.height)
-                    .padding(.top, 20)
                     .disabled(viewModel.loading == .googleButton)
                 TextButtonView(
                     title: "Sign in with Google",
@@ -71,9 +70,9 @@ struct SocialSignInView: View {
                     onPressed: { [weak viewModel] in viewModel?.onSignInTap(.google) }
                 )
                     .frame(height: TextButton.Size.large.height)
-                    .padding(.top, 20)
+                    .padding(.top, 12)
                     .disabled(viewModel.loading == .appleButton)
-            }.bottomActionsStyle()
+            }
         }
     }
 }

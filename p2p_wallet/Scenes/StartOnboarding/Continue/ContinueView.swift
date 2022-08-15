@@ -19,27 +19,31 @@ struct ContinueView: View {
                 Spacer()
 
                 bottomActionsView
-            }
-            .edgesIgnoringSafeArea(.bottom)
+            }.edgesIgnoringSafeArea(.bottom)
         }
     }
 }
 
 extension ContinueView {
     private var bottomActionsView: some View {
-        VStack(spacing: .zero) {
-            TextButtonView(title: L10n.continue, style: .inverted, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.continueDidTap.send()
-            })
-                .styled()
-                .padding(.top, 20)
-            TextButtonView(title: L10n.startingScreen, style: .ghostLime, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.startDidTap.send()
-            })
-                .styled()
-                .padding(.top, 12)
+        BottomActionContainer {
+            VStack(spacing: .zero) {
+                TextButtonView(title: L10n.continue, style: .inverted, size: .large, onPressed: { [weak viewModel] in
+                    viewModel?.continueDidTap.send()
+                }).styled()
+
+                TextButtonView(
+                    title: L10n.startingScreen,
+                    style: .ghostLime,
+                    size: .large,
+                    onPressed: { [weak viewModel] in
+                        viewModel?.startDidTap.send()
+                    }
+                )
+                    .styled()
+                    .padding(.top, 12)
+            }
         }
-        .bottomActionsStyle()
     }
 }
 
