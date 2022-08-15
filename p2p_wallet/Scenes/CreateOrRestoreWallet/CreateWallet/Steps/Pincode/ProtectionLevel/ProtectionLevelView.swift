@@ -27,25 +27,30 @@ struct ProtectionLevelView: View {
 
 extension ProtectionLevelView {
     private var bottomActionsView: some View {
-        VStack(spacing: .zero) {
-            TextButtonView(
-                title: viewModel.localAuthTitle,
-                style: .inverted,
-                size: .large,
-                trailing: viewModel.localAuthImage,
-                onPressed: { [weak viewModel] in
-                    viewModel?.useLocalAuthDidTap.send()
-                }
-            )
-                .styled()
-                .padding(.top, 20)
-            TextButtonView(title: L10n.setUpAPINCode, style: .ghostLime, size: .large, onPressed: { [weak viewModel] in
-                viewModel?.setUpPinDidTap.send()
-            })
-                .styled()
-                .padding(.top, 12)
+        BottomActionContainer {
+            VStack(spacing: .zero) {
+                TextButtonView(
+                    title: viewModel.localAuthTitle,
+                    style: .inverted,
+                    size: .large,
+                    trailing: viewModel.localAuthImage,
+                    onPressed: { [weak viewModel] in
+                        viewModel?.useLocalAuthDidTap.send()
+                    }
+                ).styled()
+
+                TextButtonView(
+                    title: L10n.setUpAPINCode,
+                    style: .ghostLime,
+                    size: .large,
+                    onPressed: { [weak viewModel] in
+                        viewModel?.setUpPinDidTap.send()
+                    }
+                )
+                    .styled()
+                    .padding(.top, 12)
+            }
         }
-        .bottomActionsStyle()
     }
 }
 

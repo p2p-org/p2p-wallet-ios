@@ -30,7 +30,7 @@ class SocialSignInAccountHasBeenUsedViewController: BaseViewController {
 
         // Left button
         let backButton = UIBarButtonItem(
-            image: UINavigationBar.appearance().backIndicatorImage,
+            image: Asset.MaterialIcon.arrowBackIos.image,
             style: .plain,
             target: self,
             action: #selector(onBack)

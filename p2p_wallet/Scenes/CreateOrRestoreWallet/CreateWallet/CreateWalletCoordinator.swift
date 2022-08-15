@@ -19,7 +19,6 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     private(set) var navigationController: UINavigationController?
 
     private let tKeyFacade: TKeyJSFacade?
-    private let webView = GlobalWebView.requestWebView()
     private let viewModel: CreateWalletViewModel
     private var result = PassthroughSubject<CreateWalletResult, Never>()
 
@@ -32,7 +31,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
 
         // Setup
         tKeyFacade = TKeyJSFacade(
-            wkWebView: webView,
+            wkWebView: GlobalWebView.requestWebView(),
             config: .init(
                 metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
                 torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
@@ -65,10 +64,6 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         super.init()
     }
 
-    deinit {
-        webView.removeFromSuperview()
-    }
-
     // MARK: - Methods
 
     override func start() -> AnyPublisher<CreateWalletResult, Never> {
@@ -83,11 +78,6 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         socialSignInDelegatedCoordinator.rootViewController = navigationController
         bindingPhoneNumberDelegatedCoordinator.rootViewController = navigationController
         securitySetupDelegatedCoordinator.rootViewController = navigationController
-
-        Task {
-            DispatchQueue.main.async { self.navigationController?.showIndetermineHud() }
-            try await initializeTkey()
-        }
 
         viewModel.onboardingStateMachine
             .stateStream
@@ -104,11 +94,6 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         parentViewController.present(navigationController!, animated: true)
 
         return result.eraseToAnyPublisher()
-    }
-
-    func initializeTkey() async throws {
-        try await tKeyFacade?.initialize()
-        DispatchQueue.main.async { self.navigationController?.hideHud() }
     }
 
     // MARK: Navigation
@@ -132,7 +117,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         // TODO: Add empty screen
         let vc = buildViewController(state: to) ?? UIViewController()
 
-        if to.step > (from?.step ?? -1) {
+        if to.step >= (from?.step ?? -1) {
             navigationController.setViewControllers([vc], animated: true)
         } else {
             navigationController.setViewControllers([vc] + navigationController.viewControllers, animated: false)
