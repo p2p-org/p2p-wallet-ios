@@ -12,10 +12,10 @@ import SolanaSwift
 import UIKit
 
 protocol CreateSecurityKeysViewModelType: AnyObject {
-    var showTermsAndConditionsSignal: AnyPublisher<Void, Never> { get }
-    var showPhotoLibraryUnavailableSignal: AnyPublisher<Void, Never> { get }
-    var phrasesDriver: AnyPublisher<[String], Never> { get }
-    var errorSignal: AnyPublisher<String, Never> { get }
+    var showTermsAndConditionsPublisher: AnyPublisher<Void, Never> { get }
+    var showPhotoLibraryUnavailablePublisher: AnyPublisher<Void, Never> { get }
+    var phrasesPublisher: AnyPublisher<[String], Never> { get }
+    var errorPublisher: AnyPublisher<String, Never> { get }
 
     func copyToClipboard()
     func renewPhrases()
@@ -66,19 +66,19 @@ extension CreateSecurityKeys {
 }
 
 extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
-    var showPhotoLibraryUnavailableSignal: AnyPublisher<Void, Never> {
+    var showPhotoLibraryUnavailablePublisher: AnyPublisher<Void, Never> {
         showPhotoLibraryUnavailableSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var showTermsAndConditionsSignal: AnyPublisher<Void, Never> {
+    var showTermsAndConditionsPublisher: AnyPublisher<Void, Never> {
         showTermsAndConditionsSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var phrasesDriver: AnyPublisher<[String], Never> {
+    var phrasesPublisher: AnyPublisher<[String], Never> {
         $phrases.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var errorSignal: AnyPublisher<String, Never> {
+    var errorPublisher: AnyPublisher<String, Never> {
         errorSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 

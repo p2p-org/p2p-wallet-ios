@@ -80,19 +80,19 @@ extension SendToken.ChooseRecipientAndNetwork {
         }
 
         func bind() {
-            sendTokenViewModel.recipientDriver
+            sendTokenViewModel.recipientPublisher
                 .sink { [weak self] recipient in
                     self?.setRecipient(recipient)
                 }
                 .store(in: &subscriptions)
 
-            sendTokenViewModel.networkDriver
+            sendTokenViewModel.networkPublisher
                 .sink { [weak self] network in
                     self?.setNetwork(network)
                 }
                 .store(in: &subscriptions)
 
-            sendTokenViewModel.payingWalletDriver
+            sendTokenViewModel.payingWalletPublisher
                 .sink { [weak self] payingWallet in
                     self?.setPayingWallet(payingWallet)
                 }

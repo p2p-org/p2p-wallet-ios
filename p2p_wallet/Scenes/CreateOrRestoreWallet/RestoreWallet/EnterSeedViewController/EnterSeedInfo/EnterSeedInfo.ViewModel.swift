@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 protocol EnterSeedInfoViewModelType {
-    var navigationDriver: AnyPublisher<EnterSeedInfo.NavigatableScene?, Never> { get }
+    var navigationPublisher: AnyPublisher<EnterSeedInfo.NavigatableScene?, Never> { get }
     func done()
 }
 
@@ -31,7 +31,7 @@ extension EnterSeedInfo {
 }
 
 extension EnterSeedInfo.ViewModel: EnterSeedInfoViewModelType {
-    var navigationDriver: AnyPublisher<EnterSeedInfo.NavigatableScene?, Never> {
+    var navigationPublisher: AnyPublisher<EnterSeedInfo.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 

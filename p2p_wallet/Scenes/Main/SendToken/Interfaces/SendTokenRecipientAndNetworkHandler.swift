@@ -51,19 +51,19 @@ protocol SendTokenRecipientAndNetworkHandler: AnyObject {
 }
 
 extension SendTokenRecipientAndNetworkHandler {
-    var recipientDriver: AnyPublisher<SendToken.Recipient?, Never> {
+    var recipientPublisher: AnyPublisher<SendToken.Recipient?, Never> {
         recipientPublisher.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var networkDriver: AnyPublisher<SendToken.Network, Never> {
+    var networkPublisher: AnyPublisher<SendToken.Network, Never> {
         networkPublisher.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var payingWalletDriver: AnyPublisher<Wallet?, Never> {
+    var payingWalletPublisher: AnyPublisher<Wallet?, Never> {
         payingWalletPublisher.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    @MainActor var feeInfoDriver: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
+    @MainActor var feeInfoPublisher: AnyPublisher<Loadable<SendToken.FeeInfo>, Never> {
         feeInfoSubject.eraseToAnyPublisher().receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 

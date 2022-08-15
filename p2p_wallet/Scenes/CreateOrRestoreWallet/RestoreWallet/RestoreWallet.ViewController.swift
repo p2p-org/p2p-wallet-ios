@@ -69,17 +69,17 @@ extension RestoreWallet {
 
         override func bind() {
             super.bind()
-            viewModel.navigatableSceneDriver
+            viewModel.navigatableScenePublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
 
-            viewModel.isLoadingDriver
+            viewModel.isLoadingPublisher
                 .sink {
                     $0 ? UIApplication.shared.showIndetermineHud() : UIApplication.shared.hideHud()
                 }
                 .store(in: &subscriptions)
 
-            viewModel.errorSignal
+            viewModel.errorPublisher
                 .sink { [weak self] in self?.showAlert(title: L10n.error.uppercaseFirst, message: $0) }
                 .store(in: &subscriptions)
 

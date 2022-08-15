@@ -49,7 +49,7 @@ extension History {
         }
 
         override func build() -> UIView {
-            BEBuilder(publisher: viewModel.stateDriver) { [weak self] state in
+            BEBuilder(publisher: viewModel.statePublisher) { [weak self] state in
                 guard let self = self else { return UIView() }
                 switch state {
                 case .items:

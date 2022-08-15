@@ -36,7 +36,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
     var didBackupPublisher: AnyPublisher<Bool, Never> { get }
     var fiatPublisher: AnyPublisher<Fiat, Never> { get }
     var hideZeroBalancesPublisher: AnyPublisher<Bool, Never> { get }
-    var logoutAlertSignal: AnyPublisher<Void, Never> { get }
+    var logoutAlertPublisher: AnyPublisher<Void, Never> { get }
     var biometryTypePublisher: AnyPublisher<Settings.BiometryType, Never> { get }
     var isBiometryEnabledPublisher: AnyPublisher<Bool, Never> { get }
     var isBiometryAvailablePublisher: AnyPublisher<Bool, Never> { get }
@@ -189,7 +189,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         $hideZeroBalances.eraseToAnyPublisher()
     }
 
-    var logoutAlertSignal: AnyPublisher<Void, Never> {
+    var logoutAlertPublisher: AnyPublisher<Void, Never> {
         logoutAlertSubject.eraseToAnyPublisher()
     }
 

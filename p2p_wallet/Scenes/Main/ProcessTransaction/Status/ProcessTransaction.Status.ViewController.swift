@@ -57,7 +57,7 @@ extension ProcessTransaction.Status {
                         BEZStackPosition {
                             ProgressView()
                                 .setup { progressView in
-                                    viewModel.pendingTransactionDriver
+                                    viewModel.pendingTransactionPublisher
                                         .map(\.status)
                                         .map { Optional($0) }
                                         .assign(to: \.transactionStatus, on: progressView)
@@ -70,7 +70,7 @@ extension ProcessTransaction.Status {
                         BEZStackPosition {
                             UIImageView(width: 44, height: 44)
                                 .setup { imageView in
-                                    viewModel.pendingTransactionDriver
+                                    viewModel.pendingTransactionPublisher
                                         .map(\.status)
                                         .map { status -> UIImage in
                                             switch status {
@@ -94,7 +94,7 @@ extension ProcessTransaction.Status {
                     UIView.greenBannerView {
                         UILabel(text: nil, textSize: 13, numberOfLines: 0)
                             .setup { label in
-                                viewModel.pendingTransactionDriver
+                                viewModel.pendingTransactionPublisher
                                     .map(\.rawTransaction.networkFees)
                                     .filter { $0 != nil }
                                     .map {
@@ -116,7 +116,7 @@ extension ProcessTransaction.Status {
                     }
                     .padding(.init(top: 0, left: 18, bottom: 14, right: 18))
                     .setup { view in
-                        viewModel.pendingTransactionDriver
+                        viewModel.pendingTransactionPublisher
                             .map { $0.status.error != FeeRelayerError.topUpSuccessButTransactionThrows.message }
                             .assign(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
@@ -134,7 +134,7 @@ extension ProcessTransaction.Status {
                                     textAlignment: .right
                                 )
                                     .setup { label in
-                                        viewModel.pendingTransactionDriver
+                                        viewModel.pendingTransactionPublisher
                                             .map {
                                                 $0.transactionId?
                                                     .truncatingMiddle(numOfSymbolsRevealed: 9,
@@ -164,7 +164,7 @@ extension ProcessTransaction.Status {
                     }
                     .padding(.init(top: 0, left: 18, bottom: 36, right: 18))
                     .setup { view in
-                        viewModel.pendingTransactionDriver
+                        viewModel.pendingTransactionPublisher
                             .map { $0.transactionId == nil }
                             .assign(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
@@ -189,11 +189,11 @@ extension ProcessTransaction.Status {
 
         override func bind() {
             super.bind()
-            viewModel.navigationDriver
+            viewModel.navigationPublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
 
-            viewModel.pendingTransactionDriver
+            viewModel.pendingTransactionPublisher
                 .map { $0.transactionId == nil }
                 .sink { [weak self] _ in
                     UIView.animate(withDuration: 0.3) {

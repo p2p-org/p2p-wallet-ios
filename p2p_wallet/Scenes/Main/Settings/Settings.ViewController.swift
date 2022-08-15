@@ -176,7 +176,7 @@ extension Settings {
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
 
-            viewModel.logoutAlertSignal
+            viewModel.logoutAlertPublisher
                 .sink { [weak self] in
                     self?.showAlert(
                         title: L10n.areYouSureYouWantToSignOut,
