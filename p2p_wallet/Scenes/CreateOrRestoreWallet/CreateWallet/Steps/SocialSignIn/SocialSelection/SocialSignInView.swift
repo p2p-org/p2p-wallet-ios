@@ -61,6 +61,7 @@ struct SocialSignInView: View {
                 )
                     .frame(height: TextButton.Size.large.height)
                     .padding(.top, 20)
+                    .disabled(viewModel.loading == .googleButton)
                 TextButtonView(
                     title: "Sign in with Google",
                     style: .inverted,
@@ -71,6 +72,7 @@ struct SocialSignInView: View {
                 )
                     .frame(height: TextButton.Size.large.height)
                     .padding(.top, 20)
+                    .disabled(viewModel.loading == .appleButton)
             }.bottomActionsStyle()
         }
     }
