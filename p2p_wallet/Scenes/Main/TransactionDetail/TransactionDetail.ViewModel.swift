@@ -13,7 +13,7 @@ import SolanaSwift
 import TransactionParser
 
 protocol TransactionDetailViewModelType: AnyObject {
-    var navigationPublisher: AnyPublisher<TransactionDetail.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<TransactionDetail.NavigatableScene?, Never> { get }
     var parsedTransactionPublisher: AnyPublisher<ParsedTransaction?, Never> { get }
     var navigationTitle: AnyPublisher<String, Never> { get }
     var senderNamePublisher: AnyPublisher<String?, Never> { get }
@@ -126,7 +126,7 @@ extension TransactionDetail {
 }
 
 extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
-    var navigationPublisher: AnyPublisher<TransactionDetail.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<TransactionDetail.NavigatableScene?, Never> {
         $navigationSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 

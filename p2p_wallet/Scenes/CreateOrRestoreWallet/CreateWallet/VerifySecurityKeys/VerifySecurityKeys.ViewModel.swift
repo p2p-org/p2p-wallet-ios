@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 protocol VerifySecurityKeysViewModelType {
-    var navigationPublisher: AnyPublisher<VerifySecurityKeys.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<VerifySecurityKeys.NavigatableScene?, Never> { get }
     var questionsPublisher: AnyPublisher<[VerifySecurityKeys.Question], Never> { get }
     var validationPublisher: AnyPublisher<Bool, Never> { get }
 
@@ -62,7 +62,7 @@ extension VerifySecurityKeys.ViewModel: VerifySecurityKeysViewModelType {
             .eraseToAnyPublisher()
     }
 
-    var navigationPublisher: AnyPublisher<VerifySecurityKeys.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<VerifySecurityKeys.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 

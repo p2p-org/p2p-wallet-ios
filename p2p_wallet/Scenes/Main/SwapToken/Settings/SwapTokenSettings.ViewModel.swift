@@ -12,7 +12,7 @@ import SolanaSwift
 
 @MainActor
 protocol NewSwapTokenSettingsViewModelType {
-    var navigationPublisher: AnyPublisher<SwapTokenSettings.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<SwapTokenSettings.NavigatableScene?, Never> { get }
     var possibleSlippageTypes: [SwapTokenSettings.SlippageType] { get }
     var slippageType: SwapTokenSettings.SlippageType { get }
     var feesContentPublisher: AnyPublisher<[SwapTokenSettings.FeeCellContent], Never> { get }
@@ -40,7 +40,7 @@ extension SwapTokenSettings {
 
         var customSlippageIsOpenedPublisher: AnyPublisher<Bool, Never> { $customSlippageIsOpened.eraseToAnyPublisher() }
 
-        @Published private var navigation: NavigatableScene?
+        @Published private var navigatableScene: NavigatableScene?
         @Published private var customSlippageIsOpened: Bool = false
 
         var feesContentPublisher: AnyPublisher<[FeeCellContent], Never> {
@@ -76,8 +76,8 @@ extension SwapTokenSettings {
             SlippageType.allCases
         }
 
-        var navigationPublisher: AnyPublisher<NavigatableScene?, Never> {
-            $navigation.eraseToAnyPublisher()
+        var navigatableScenePublisher: AnyPublisher<NavigatableScene?, Never> {
+            $navigatableScene.eraseToAnyPublisher()
         }
 
         // MARK: - Actions
@@ -109,7 +109,7 @@ extension SwapTokenSettings {
         }
 
         func goBack() {
-            navigation = .back
+            navigatableScene = .back
         }
 
         private func setCustomSlippageIsOpened(slippageType: SlippageType) {

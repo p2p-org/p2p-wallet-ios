@@ -138,7 +138,7 @@ extension TransactionDetail {
         override func bind() {
             super.bind()
 
-            viewModel.navigationPublisher
+            viewModel.navigatableScenePublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
             viewModel.navigationTitle

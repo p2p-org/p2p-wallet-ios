@@ -16,7 +16,10 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var showAfterConfirmation: Bool { get }
     var preSelectedNetwork: SendToken.Network? { get }
     var recipientsListViewModel: SendToken.ChooseRecipientAndNetwork.SelectAddress.RecipientsListViewModel { get }
-    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<
+        SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?,
+        Never
+    > {
         get
     }
     var inputStatePublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState, Never> { get }
@@ -109,7 +112,10 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
         chooseRecipientAndNetworkViewModel.preSelectedNetwork
     }
 
-    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<
+        SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene?,
+        Never
+    > {
         $navigatableScene.eraseToAnyPublisher()
     }
 

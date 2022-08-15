@@ -11,7 +11,7 @@ import SolanaSwift
 
 protocol EnterSeedViewModelType: AnyObject {
     var maxWordsCount: Int { get }
-    var navigationPublisher: AnyPublisher<EnterSeed.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<EnterSeed.NavigatableScene?, Never> { get }
     var errorPublisher: AnyPublisher<String?, Never> { get }
     var seedTextSubject: CurrentValueSubject<String?, Never> { get }
     var seedTextPublisher: AnyPublisher<String?, Never> { get }
@@ -92,7 +92,7 @@ extension EnterSeed {
 }
 
 extension EnterSeed.ViewModel: EnterSeedViewModelType {
-    var navigationPublisher: AnyPublisher<EnterSeed.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<EnterSeed.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 

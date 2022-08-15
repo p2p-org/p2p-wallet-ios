@@ -10,7 +10,7 @@ import Foundation
 import Resolver
 
 protocol SettingsBackupViewModelType {
-    var navigationPublisher: AnyPublisher<Settings.Backup.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<Settings.Backup.NavigatableScene?, Never> { get }
     var didBackupPublisher: AnyPublisher<Bool, Never> { get }
     func backupUsingICloud()
     func backupManually()
@@ -37,7 +37,7 @@ extension Settings.Backup {
 }
 
 extension Settings.Backup.ViewModel: SettingsBackupViewModelType {
-    var navigationPublisher: AnyPublisher<Settings.Backup.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<Settings.Backup.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 

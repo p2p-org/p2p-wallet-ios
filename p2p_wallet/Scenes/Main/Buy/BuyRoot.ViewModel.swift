@@ -11,7 +11,7 @@ import Resolver
 
 protocol BuyViewModelType {
     var walletsRepository: WalletsRepository { get }
-    var navigationPublisher: AnyPublisher<BuyRoot.NavigatableScene, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<BuyRoot.NavigatableScene, Never> { get }
 
     func navigate(to scene: BuyRoot.NavigatableScene)
 }
@@ -34,7 +34,7 @@ extension BuyRoot {
 }
 
 extension BuyRoot.ViewModel: BuyViewModelType {
-    var navigationPublisher: AnyPublisher<BuyRoot.NavigatableScene, Never> {
+    var navigatableScenePublisher: AnyPublisher<BuyRoot.NavigatableScene, Never> {
         navigationSubject.replaceError(with: .none).eraseToAnyPublisher()
     }
 

@@ -12,7 +12,7 @@ import Resolver
 import SolanaSwift
 
 protocol ProcessTransactionViewModelType {
-    var navigationPublisher: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> { get }
     var pendingTransactionPublisher: AnyPublisher<PendingTransaction, Never> { get }
     var observingTransactionIndexPublisher: AnyPublisher<Int?, Never> { get }
 
@@ -60,7 +60,7 @@ extension ProcessTransaction {
 }
 
 extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
-    var navigationPublisher: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> {
         $navigatableScene.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 

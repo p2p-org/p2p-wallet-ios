@@ -11,7 +11,7 @@ import Foundation
 import RenVMSwift
 
 protocol RenBTCReceivingStatusesViewModelType: BECollectionViewModelType {
-    var navigationPublisher: AnyPublisher<RenBTCReceivingStatuses.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<RenBTCReceivingStatuses.NavigatableScene?, Never> { get }
     var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> { get }
     func showDetail(txid: String)
 }
@@ -90,7 +90,7 @@ extension RenBTCReceivingStatuses.ViewModel: BECollectionViewModelType {
 }
 
 extension RenBTCReceivingStatuses.ViewModel: RenBTCReceivingStatusesViewModelType {
-    var navigationPublisher: AnyPublisher<RenBTCReceivingStatuses.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<RenBTCReceivingStatuses.NavigatableScene?, Never> {
         $navigationSubject.eraseToAnyPublisher()
     }
 

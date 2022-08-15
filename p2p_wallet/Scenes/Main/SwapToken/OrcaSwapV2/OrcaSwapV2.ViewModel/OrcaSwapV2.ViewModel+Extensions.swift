@@ -11,8 +11,8 @@ import Foundation
 import SolanaSwift
 
 extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
-    var navigationPublisher: AnyPublisher<OrcaSwapV2.NavigatableScene?, Never> {
-        $navigation.eraseToAnyPublisher()
+    var navigatableScenePublisher: AnyPublisher<OrcaSwapV2.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     var loadingStatePublisher: AnyPublisher<LoadableState, Never> {
@@ -136,13 +136,13 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func navigate(to scene: OrcaSwapV2.NavigatableScene) {
-        navigation = scene
+        navigatableScene = scene
     }
 
     func chooseSourceWallet() {
         isSelectingSourceWallet = true
         analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
-        navigation = .chooseSourceWallet(currentlySelectedWallet: sourceWallet)
+        navigatableScene = .chooseSourceWallet(currentlySelectedWallet: sourceWallet)
     }
 
     func chooseDestinationWallet() {
@@ -154,7 +154,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
         }
         isSelectingSourceWallet = false
         analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
-        navigation = .chooseDestinationWallet(
+        navigatableScene = .chooseDestinationWallet(
             currentlySelectedWallet: destinationWallet,
             validMints: Set(destinationMints),
             excludedSourceWalletPubkey: sourceWallet?.pubkey
@@ -225,7 +225,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
     }
 
     func choosePayFee() {
-        navigation = .settings
+        navigatableScene = .settings
     }
 
     func openSettings() {

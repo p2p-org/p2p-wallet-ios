@@ -14,7 +14,7 @@ import Resolver
 import UIKit
 
 protocol ReserveNameViewModelType: AnyObject {
-    var navigationPublisher: AnyPublisher<ReserveName.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<ReserveName.NavigatableScene?, Never> { get }
     var textFieldStatePublisher: AnyPublisher<ReserveName.TextFieldState, Never> { get }
     var mainButtonStatePublisher: AnyPublisher<ReserveName.MainButtonState, Never> { get }
     var textFieldTextSubject: CurrentValueSubject<String?, Never> { get }
@@ -60,7 +60,7 @@ extension ReserveName {
 
         // MARK: - Subject
 
-        @Published private var navigation: NavigatableScene?
+        @Published private var navigatableScene: NavigatableScene?
         @Published private var textFieldState: TextFieldState = .empty
         @Published private var mainButtonState: ReserveName.MainButtonState = .empty
         let textFieldTextSubject = CurrentValueSubject<String?, Never>(nil)
@@ -213,7 +213,7 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     }
 
     func skipButtonPressed() {
-        navigation = .skipAlert { [weak self] in
+        navigatableScene = .skipAlert { [weak self] in
             let isFilled = self?.textFieldState == ReserveName.TextFieldState
                 .empty ? "Not_Filled" : "Filled"
             self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
@@ -221,8 +221,8 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
         }
     }
 
-    var navigationPublisher: AnyPublisher<ReserveName.NavigatableScene?, Never> {
-        $navigation.eraseToAnyPublisher()
+    var navigatableScenePublisher: AnyPublisher<ReserveName.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     var textFieldStatePublisher: AnyPublisher<ReserveName.TextFieldState, Never> {
@@ -242,15 +242,15 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
     }
 
     func goBack() {
-        navigation = .back
+        navigatableScene = .back
     }
 
     func showTermsOfUse() {
-        navigation = .termsOfUse
+        navigatableScene = .termsOfUse
     }
 
     func showPrivacyPolicy() {
-        navigation = .privacyPolicy
+        navigatableScene = .privacyPolicy
     }
 }
 

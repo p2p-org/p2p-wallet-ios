@@ -11,7 +11,7 @@ import Resolver
 import SolanaPricesAPIs
 
 protocol HomeViewModelType: ReserveNameHandler {
-    var navigationPublisher: AnyPublisher<Home.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<Home.NavigatableScene?, Never> { get }
     var pricesLoadingStatePublisher: AnyPublisher<LoadableState, Never> { get }
     var scrollToTopPublisher: AnyPublisher<Void, Never> { get }
 
@@ -59,7 +59,7 @@ extension Home.ViewModel: HomeViewModelType {
         walletsRepository.nativeWallet?.pubkey
     }
 
-    var navigationPublisher: AnyPublisher<Home.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<Home.NavigatableScene?, Never> {
         $navigationSubject.eraseToAnyPublisher()
     }
 
