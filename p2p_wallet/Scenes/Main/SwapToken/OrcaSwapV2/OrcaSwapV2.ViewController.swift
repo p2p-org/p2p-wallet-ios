@@ -58,7 +58,7 @@ extension OrcaSwapV2 {
                     self.viewModel.openSettings()
                 }
                 .store(in: &subscriptions)
-            viewModel.navigationPublisher
+            viewModel.navigatableScenePublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
         }

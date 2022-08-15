@@ -14,7 +14,7 @@ import SolanaSwift
 protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, SendTokenTokenAndAmountHandler {
     var initialAmount: Double? { get }
 
-    var navigationPublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> { get }
     var currencyModePublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.CurrencyMode, Never> { get }
     var errorPublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.Error?, Never> { get }
     var clearForm: CurrentValueSubject<Void, Never> { get }
@@ -118,7 +118,7 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         sendTokenViewModel.canGoBack
     }
 
-    var navigationPublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<SendToken.ChooseTokenAndAmount.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 

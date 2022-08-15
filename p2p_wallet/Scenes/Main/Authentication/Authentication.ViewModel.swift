@@ -11,7 +11,7 @@ import LocalAuthentication
 import Resolver
 
 protocol AuthenticationViewModelType {
-    var navigationPublisher: AnyPublisher<Authentication.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<Authentication.NavigatableScene?, Never> { get }
     func showResetPincodeWithASeedPhrase()
     func getCurrentPincode() -> String?
     func getCurrentBiometryType() -> LABiometryType
@@ -43,7 +43,7 @@ extension Authentication {
 }
 
 extension Authentication.ViewModel: AuthenticationViewModelType {
-    var navigationPublisher: AnyPublisher<Authentication.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<Authentication.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 

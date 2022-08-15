@@ -12,7 +12,7 @@ import SolanaSwift
 
 protocol ConfirmReceivingBitcoinViewModelType: WalletDidSelectHandler {
     var solanaPubkey: String? { get }
-    var navigationPublisher: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> { get }
     var isLoadingPublisher: AnyPublisher<Bool, Never> { get }
     var errorPublisher: AnyPublisher<String?, Never> { get }
     var accountStatusPublisher: AnyPublisher<ConfirmReceivingBitcoin.RenBTCAccountStatus?, Never> { get }
@@ -159,7 +159,7 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
         $feeInFiat.eraseToAnyPublisher()
     }
 
-    var navigationPublisher: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<ConfirmReceivingBitcoin.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 

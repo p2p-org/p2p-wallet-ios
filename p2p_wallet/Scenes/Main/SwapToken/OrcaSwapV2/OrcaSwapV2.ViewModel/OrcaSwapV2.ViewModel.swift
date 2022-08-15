@@ -31,7 +31,7 @@ extension OrcaSwapV2 {
 
         // MARK: - Subject
 
-        @Published var navigation: NavigatableScene?
+        @Published var navigatableScene: NavigatableScene?
         @Published var loadingState: LoadableState = .notRequested
         @Published var sourceWallet: Wallet?
         @Published var destinationWallet: Wallet?
@@ -286,7 +286,7 @@ extension OrcaSwapV2 {
                     let swapUSD = receiveAmount * receivePriceFiat
 
                     // show processing scene
-                    self.navigation =
+                    self.navigatableScene =
                         .processTransaction(
                             ProcessTransaction.SwapTransaction(
                                 swapService: self.swapService,

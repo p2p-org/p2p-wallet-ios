@@ -15,7 +15,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
     SendTokenSelectNetworkViewModelType
 {
     // Navigation
-    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> { get }
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.NavigatableScene)
 
     // Properties
@@ -139,7 +139,7 @@ extension SendToken.ChooseRecipientAndNetwork {
 }
 
 extension SendToken.ChooseRecipientAndNetwork.ViewModel: SendTokenChooseRecipientAndNetworkViewModelType {
-    var navigationPublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<SendToken.ChooseRecipientAndNetwork.NavigatableScene?, Never> {
         $navigatableScene.eraseToAnyPublisher()
     }
 

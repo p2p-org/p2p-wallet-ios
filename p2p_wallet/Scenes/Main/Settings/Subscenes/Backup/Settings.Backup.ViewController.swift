@@ -90,7 +90,7 @@ extension Settings.Backup {
                 }
                 .store(in: &subscriptions)
 
-            viewModel.navigationPublisher
+            viewModel.navigatableScenePublisher
                 .sink { [weak self] scene in
                     self?.navigate(to: scene)
                 }

@@ -31,7 +31,7 @@ protocol LogoutResponder {
 
 protocol SettingsViewModelType: ReserveNameHandler {
     var selectableLanguages: [(LocalizedLanguage, Bool)] { get }
-    var navigationPublisher: AnyPublisher<Settings.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<Settings.NavigatableScene?, Never> { get }
     var usernamePublisher: AnyPublisher<String?, Never> { get }
     var didBackupPublisher: AnyPublisher<Bool, Never> { get }
     var fiatPublisher: AnyPublisher<Fiat, Never> { get }
@@ -90,7 +90,7 @@ extension Settings {
 
         // MARK: - Subject
 
-        @Published private var navigation: NavigatableScene?
+        @Published private var navigatableScene: NavigatableScene?
         @Published private var username: String?
         @Published private var didBackup: Bool = false
         @Published private var fiat: Fiat = Defaults.fiat
@@ -169,8 +169,8 @@ extension Settings.ViewModel: SettingsViewModelType {
         localizationManager.selectableLanguages()
     }
 
-    var navigationPublisher: AnyPublisher<Settings.NavigatableScene?, Never> {
-        $navigation.eraseToAnyPublisher()
+    var navigatableScenePublisher: AnyPublisher<Settings.NavigatableScene?, Never> {
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     var usernamePublisher: AnyPublisher<String?, Never> {
@@ -204,7 +204,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     // MARK: - Actions
 
     func navigate(to scene: Settings.NavigatableScene) {
-        navigation = scene
+        navigatableScene = scene
     }
 
     func showOrReserveUsername() {
