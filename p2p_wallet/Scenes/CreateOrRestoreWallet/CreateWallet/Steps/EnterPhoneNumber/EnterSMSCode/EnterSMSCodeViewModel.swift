@@ -60,9 +60,13 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         setResendCountdown()
     }
 
-    func backTapped() {}
+    func backTapped() {
+        coordinatorIO.goBack.send()
+    }
 
-    func infoTapped() {}
+    func infoTapped() {
+        coordinatorIO.showInfo.send()
+    }
 
     // MARK: -
 
