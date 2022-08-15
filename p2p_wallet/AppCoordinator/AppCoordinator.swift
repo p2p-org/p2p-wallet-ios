@@ -111,7 +111,7 @@ class AppCoordinator: Coordinator<Void> {
         let account = await reloadData()
 
         if let splashVC = window?.rootViewController as? SplashViewController {
-            splashVC.completionHandler = { [weak self] in
+            splashVC.stop { [weak self] in
                 self?.navigate(account: account)
             }
         } else {
