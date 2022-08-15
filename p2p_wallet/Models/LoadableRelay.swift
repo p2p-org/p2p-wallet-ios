@@ -63,14 +63,6 @@ extension UIView {
     }
 }
 
-// extension Reactive where Base: UIView {
-//    func loadableState(reloadAction: @escaping (() -> Void)) -> Binder<LoadableState> {
-//        Binder(base) { view, loadableState in
-//            view.setUp(loadableState, reloadAction: reloadAction)
-//        }
-//    }
-// }
-
 extension Collection where Element == LoadableState {
     var combined: Element {
         // if there is some error, return error
@@ -172,17 +164,6 @@ public extension LoadableRelay {
             .eraseToAnyPublisher()
     }
 }
-
-// public extension Reactive where Base: UILabel {
-//    /// Bindable sink for `loadbleText` property.
-//    func loadableText<T>(
-//        onLoaded: @escaping ((T?) -> String?)
-//    ) -> Binder<Loadable<T>> {
-//        Binder(base) { label, loadableValue in
-//            label.set(loadableValue, onLoaded: onLoaded)
-//        }
-//    }
-// }
 
 public extension UILabel {
     func set<T>(_ loadableValue: Loadable<T>, onLoaded: @escaping ((T?) -> String?)) {
