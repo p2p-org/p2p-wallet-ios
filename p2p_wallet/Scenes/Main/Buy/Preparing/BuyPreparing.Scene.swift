@@ -52,7 +52,7 @@ extension BuyPreparing {
                         self?.present(vc, animated: true)
                     }
             } catch let e {
-                debugPrint(e)
+                print(e)
             }
         }
 

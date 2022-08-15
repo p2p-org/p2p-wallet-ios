@@ -27,7 +27,7 @@ extension ResetPinCodeWithSeedPhrases {
         @Injected private var storage: PincodeSeedPhrasesStorage
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         // MARK: - Subjects

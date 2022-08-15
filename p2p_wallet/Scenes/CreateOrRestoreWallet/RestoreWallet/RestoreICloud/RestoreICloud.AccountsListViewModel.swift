@@ -21,7 +21,7 @@ extension RestoreICloud {
         // MARK: - Methods
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         override func createRequest() async throws -> [RestoreICloud.ParsedAccount] {

@@ -25,7 +25,7 @@ extension EnterSeedInfo {
         @Published private var navigatableScene: NavigatableScene?
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
     }
 }

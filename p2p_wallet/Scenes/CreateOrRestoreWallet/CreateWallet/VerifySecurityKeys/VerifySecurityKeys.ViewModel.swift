@@ -45,7 +45,7 @@ extension VerifySecurityKeys {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
     }
 }

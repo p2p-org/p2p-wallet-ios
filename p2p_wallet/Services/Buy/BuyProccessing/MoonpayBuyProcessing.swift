@@ -62,7 +62,7 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
         ]
 
         let path = environment.endpoint + "?" + params.query
-        debugPrint(path)
+        print(path)
 
         return path
     }

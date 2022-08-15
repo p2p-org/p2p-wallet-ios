@@ -91,7 +91,7 @@ extension ReceiveToken {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         var tokenTypePublisher: AnyPublisher<ReceiveToken.TokenType, Never> { $tokenType.eraseToAnyPublisher() }

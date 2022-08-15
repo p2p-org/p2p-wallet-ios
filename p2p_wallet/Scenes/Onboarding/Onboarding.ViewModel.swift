@@ -122,7 +122,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     func requestRemoteNotifications() {
         UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound, .badge]) { [weak self] granted, _ in
-                debugPrint("Permission granted: \(granted)")
+                print("Permission granted: \(granted)")
                 DispatchQueue.main.async { [weak self] in
                     guard granted else {
                         UIApplication.shared.openAppSettings()
@@ -158,7 +158,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
             }
 
             if let error = error {
-                debugPrint("deviceOwnerAuthenticationWithBiometrics error: \(error)")
+                print("deviceOwnerAuthenticationWithBiometrics error: \(error)")
             }
             return
         }

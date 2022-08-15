@@ -82,10 +82,10 @@ extension History {
 
             /// Shows to console the statistic.
             func summarize() {
-                debugPrint("Summarize cache:")
-                debugPrint("Hit: ", hit)
-                debugPrint("Total: ", total)
-                if total > 0 { debugPrint("Coefficient: ", Double(hit) / Double(total)) }
+                print("Summarize cache:")
+                print("Hit: ", hit)
+                print("Total: ", total)
+                if total > 0 { print("Coefficient: ", Double(hit) / Double(total)) }
             }
         }
     }

@@ -48,7 +48,7 @@ extension ReceiveToken {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         var username: String? { nameStorage.getName() }

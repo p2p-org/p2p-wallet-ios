@@ -49,7 +49,7 @@ extension EnterSeed {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         private func bind() {

@@ -85,7 +85,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
-        debugPrint("Failed to register: \(error)")
+        print("Failed to register: \(error)")
         proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 

@@ -29,7 +29,7 @@ class BannerServiceImpl: ObservableObject, Banners.Service {
     }
 
     func update(banner: Banners.Banner) {
-        debugPrint(banner)
+        print(banner)
         _banners.insert(banner)
         bannersSubject = _banners
     }

@@ -53,7 +53,7 @@ extension WalletDetail {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         /// Bind subjects
@@ -91,7 +91,7 @@ extension WalletDetail {
             if symbol == "SOL" {
                 tokens = .sol
             }
-            debugPrint(symbol)
+            print(symbol)
             if symbol == "USDC" {
                 tokens = .usdc
             }

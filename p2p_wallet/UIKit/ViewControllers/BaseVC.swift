@@ -10,7 +10,7 @@ import UIKit
 
 class BaseVC: BEViewController {
     deinit {
-        debugPrint("\(String(describing: self)) deinited")
+        print("\(String(describing: self)) deinited")
     }
 
     override func setUp() {
