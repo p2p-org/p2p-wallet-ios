@@ -9,8 +9,6 @@ import SwiftUI
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
-        print(state)
-        print(state == .socialSelection)
         switch state {
         case .socialSelection:
             let vm = SocialSignInViewModel()
