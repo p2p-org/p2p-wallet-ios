@@ -15,8 +15,8 @@ extension TransactionDetail {
     final class FromToSection: UIStackView {
         private var subscriptions = [AnyCancellable]()
         private let viewModel: TransactionDetailViewModelType
-        var isSwapDriver: AnyPublisher<Bool, Never> {
-            viewModel.parsedTransactionDriver
+        var isSwapPublisher: AnyPublisher<Bool, Never> {
+            viewModel.parsedTransactionPublisher
                 .map { $0?.info is SwapInfo }
                 .eraseToAnyPublisher()
         }
@@ -33,7 +33,7 @@ extension TransactionDetail {
                 BEHStack(spacing: 12, alignment: .top) {
                     titleLabel()
                         .setup { fromTitleLabel in
-                            isSwapDriver
+                            isSwapPublisher
                                 .map { $0 ? L10n.from : L10n.senderSAddress }
                                 .assign(to: \.text, on: fromTitleLabel)
                                 .store(in: &subscriptions)
@@ -42,7 +42,7 @@ extension TransactionDetail {
                     BEVStack(spacing: 8) {
                         addressLabel()
                             .setup { fromAddressLabel in
-                                viewModel.parsedTransactionDriver
+                                viewModel.parsedTransactionPublisher
                                     .map { $0?.info }
                                     .map { transaction -> String? in
                                         switch transaction {
@@ -59,11 +59,11 @@ extension TransactionDetail {
                             }
                         nameLabel()
                             .setup { fromNameLabel in
-                                isSwapDriver
+                                isSwapPublisher
                                     .assign(to: \.isHidden, on: fromNameLabel)
                                     .store(in: &subscriptions)
 
-                                viewModel.senderNameDriver
+                                viewModel.senderNamePublisher
                                     .assign(to: \.text, on: fromNameLabel)
                                     .store(in: &subscriptions)
                             }
@@ -81,7 +81,7 @@ extension TransactionDetail {
                 BEHStack(spacing: 12, alignment: .top) {
                     titleLabel()
                         .setup { toTitleLabel in
-                            isSwapDriver
+                            isSwapPublisher
                                 .map { $0 ? L10n.to : L10n.recipientSAddress }
                                 .assign(to: \.text, on: toTitleLabel)
                                 .store(in: &subscriptions)
@@ -90,7 +90,7 @@ extension TransactionDetail {
                     BEVStack(spacing: 8) {
                         addressLabel()
                             .setup { toAddressLabel in
-                                viewModel.parsedTransactionDriver
+                                viewModel.parsedTransactionPublisher
                                     .map { $0?.info }
                                     .map { transaction -> String? in
                                         switch transaction {
@@ -107,11 +107,11 @@ extension TransactionDetail {
                             }
                         nameLabel()
                             .setup { toNameLabel in
-                                isSwapDriver
+                                isSwapPublisher
                                     .assign(to: \.isHidden, on: toNameLabel)
                                     .store(in: &subscriptions)
 
-                                viewModel.receiverNameDriver
+                                viewModel.receiverNamePublisher
                                     .assign(to: \.text, on: toNameLabel)
                                     .store(in: &subscriptions)
                             }

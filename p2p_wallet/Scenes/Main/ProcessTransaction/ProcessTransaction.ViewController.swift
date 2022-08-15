@@ -44,7 +44,7 @@ extension ProcessTransaction {
         override func bind() {
             super.bind()
 
-            viewModel.observingTransactionIndexDriver
+            viewModel.observingTransactionIndexPublisher
                 .filter { $0 != nil }
                 .map { $0! }
                 .removeDuplicates()
@@ -57,7 +57,7 @@ extension ProcessTransaction {
                 }
                 .store(in: &subscriptions)
 
-            viewModel.navigationDriver
+            viewModel.navigationPublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
         }

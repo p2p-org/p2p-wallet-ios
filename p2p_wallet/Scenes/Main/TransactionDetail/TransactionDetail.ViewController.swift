@@ -37,14 +37,14 @@ extension TransactionDetail {
                 ) {
                     // Status View
                     StatusView()
-                        .driven(with: viewModel.parsedTransactionDriver)
+                        .driven(with: viewModel.parsedTransactionPublisher)
 
                     // Summary View
                     UIView.floatingPanel(contentInset: .init(x: 8, y: 16)) {
                         SummaryView(viewModel: viewModel)
                     }
                     .setup { view in
-                        viewModel.isSummaryAvailableDriver
+                        viewModel.isSummaryAvailablePublisher
                             .map { !$0 }
                             .assign(to: \.isHidden, on: view)
                             .store(in: &subscriptions)
@@ -71,7 +71,7 @@ extension TransactionDetail {
                             BEHStack(spacing: 4, alignment: .center) {
                                 UILabel(text: "4gj7UK2mG...NjweNS39N", textSize: 15, textAlignment: .right)
                                     .setup { label in
-                                        viewModel.parsedTransactionDriver
+                                        viewModel.parsedTransactionPublisher
                                             .map {
                                                 $0?.signature?
                                                     .truncatingMiddle(numOfSymbolsRevealed: 9,
@@ -107,7 +107,7 @@ extension TransactionDetail {
                     // From to section
                     FromToSection(viewModel: viewModel)
                         .setup { section in
-                            viewModel.isFromToSectionAvailableDriver
+                            viewModel.isFromToSectionAvailablePublisher
                                 .map { !$0 }
                                 .assign(to: \.isHidden, on: section)
                                 .store(in: &subscriptions)
@@ -125,7 +125,7 @@ extension TransactionDetail {
 
                         UILabel(text: "#5387498763", textSize: 15, textAlignment: .right)
                             .setup { label in
-                                viewModel.parsedTransactionDriver
+                                viewModel.parsedTransactionPublisher
                                     .map { "#\($0?.slot ?? 0)" }
                                     .assign(to: \.text, on: label)
                                     .store(in: &subscriptions)
@@ -138,7 +138,7 @@ extension TransactionDetail {
         override func bind() {
             super.bind()
 
-            viewModel.navigationDriver
+            viewModel.navigationPublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
             viewModel.navigationTitle

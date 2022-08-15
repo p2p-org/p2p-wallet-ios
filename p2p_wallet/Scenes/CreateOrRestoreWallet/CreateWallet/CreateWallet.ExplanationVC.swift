@@ -64,7 +64,7 @@ extension CreateWallet {
 
         override func bind() {
             super.bind()
-            viewModel.navigatableSceneDriver
+            viewModel.navigatableScenePublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
         }

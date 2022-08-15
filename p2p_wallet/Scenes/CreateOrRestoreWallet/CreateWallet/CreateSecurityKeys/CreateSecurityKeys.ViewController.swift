@@ -32,7 +32,7 @@ extension CreateSecurityKeys {
 
         override func bind() {
             super.bind()
-            viewModel.showTermsAndConditionsSignal
+            viewModel.showTermsAndConditionsPublisher
                 .sink { [weak self] in
                     let vc = WLMarkdownVC(
                         title: L10n.termsOfUse.uppercaseFirst,
@@ -42,14 +42,14 @@ extension CreateSecurityKeys {
                 }
                 .store(in: &subscriptions)
 
-            viewModel.showPhotoLibraryUnavailableSignal
+            viewModel.showPhotoLibraryUnavailablePublisher
                 .sink { [weak self] in
                     guard let self = self else { return }
                     PhotoLibraryAlertPresenter().present(on: self)
                 }
                 .store(in: &subscriptions)
 
-            viewModel.errorSignal
+            viewModel.errorPublisher
                 .sink { [weak self] error in
                     self?.showAlert(title: L10n.error.uppercaseFirst, message: error)
                 }

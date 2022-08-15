@@ -47,7 +47,7 @@ extension History {
             case error
         }
 
-        var stateDriver: AnyPublisher<State, Never> {
+        var statePublisher: AnyPublisher<State, Never> {
             Publishers.CombineLatest3(
                 $data.eraseToAnyPublisher(),
                 $state.eraseToAnyPublisher(),

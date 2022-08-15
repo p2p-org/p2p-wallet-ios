@@ -24,7 +24,7 @@ extension TransactionDetail {
 
             let leftView = SubView()
                 .setup { view in
-                    viewModel.parsedTransactionDriver
+                    viewModel.parsedTransactionPublisher
                         .sink { [weak view] parsedTransaction in
                             switch parsedTransaction?.info {
                             case let transaction as TransferInfo:
@@ -54,8 +54,8 @@ extension TransactionDetail {
             let rightView = SubView()
                 .setup { view in
                     Publishers.CombineLatest(
-                        viewModel.parsedTransactionDriver,
-                        viewModel.receiverNameDriver
+                        viewModel.parsedTransactionPublisher,
+                        viewModel.receiverNamePublisher
                     )
                         .sink { [weak view] parsedTransaction, receiverName in
                             switch parsedTransaction?.info {

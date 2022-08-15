@@ -12,7 +12,7 @@ import SolanaSwift
 import UIKit
 
 protocol CreateWalletViewModelType: ReserveNameHandler {
-    var navigatableSceneDriver: AnyPublisher<CreateWallet.NavigatableScene?, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<CreateWallet.NavigatableScene?, Never> { get }
 
     func kickOff()
     func verifyPhrase(_ phrases: [String])
@@ -48,7 +48,7 @@ extension CreateWallet {
 }
 
 extension CreateWallet.ViewModel: CreateWalletViewModelType {
-    var navigatableSceneDriver: AnyPublisher<CreateWallet.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<CreateWallet.NavigatableScene?, Never> {
         $navigationSubject.eraseToAnyPublisher()
     }
 

@@ -13,10 +13,10 @@ import SolanaSwift
 import UIKit
 
 protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandler {
-    var navigatableSceneDriver: AnyPublisher<RestoreWallet.NavigatableScene?, Never> { get }
-    var isLoadingDriver: AnyPublisher<Bool, Never> { get }
+    var navigatableScenePublisher: AnyPublisher<RestoreWallet.NavigatableScene?, Never> { get }
+    var isLoadingPublisher: AnyPublisher<Bool, Never> { get }
     var isRestorableUsingIcloud: AnyPublisher<Bool, Never> { get }
-    var errorSignal: AnyPublisher<String, Never> { get }
+    var errorPublisher: AnyPublisher<String, Never> { get }
 
     func handleICloudAccount(_ account: RawAccount)
     func restoreFromICloud()
@@ -60,15 +60,15 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         $isRestorableUsingIcloudSubject.eraseToAnyPublisher()
     }
 
-    var navigatableSceneDriver: AnyPublisher<RestoreWallet.NavigatableScene?, Never> {
+    var navigatableScenePublisher: AnyPublisher<RestoreWallet.NavigatableScene?, Never> {
         $navigationSubject.eraseToAnyPublisher()
     }
 
-    var isLoadingDriver: AnyPublisher<Bool, Never> {
+    var isLoadingPublisher: AnyPublisher<Bool, Never> {
         $isLoadingSubject.eraseToAnyPublisher()
     }
 
-    var errorSignal: AnyPublisher<String, Never> {
+    var errorPublisher: AnyPublisher<String, Never> {
         errorSubject.eraseToAnyPublisher()
     }
 

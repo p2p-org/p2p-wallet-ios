@@ -13,13 +13,13 @@ import SolanaSwift
 import TransactionParser
 
 protocol TransactionDetailViewModelType: AnyObject {
-    var navigationDriver: AnyPublisher<TransactionDetail.NavigatableScene?, Never> { get }
-    var parsedTransactionDriver: AnyPublisher<ParsedTransaction?, Never> { get }
+    var navigationPublisher: AnyPublisher<TransactionDetail.NavigatableScene?, Never> { get }
+    var parsedTransactionPublisher: AnyPublisher<ParsedTransaction?, Never> { get }
     var navigationTitle: AnyPublisher<String, Never> { get }
-    var senderNameDriver: AnyPublisher<String?, Never> { get }
-    var receiverNameDriver: AnyPublisher<String?, Never> { get }
-    var isSummaryAvailableDriver: AnyPublisher<Bool, Never> { get }
-    var isFromToSectionAvailableDriver: AnyPublisher<Bool, Never> { get }
+    var senderNamePublisher: AnyPublisher<String?, Never> { get }
+    var receiverNamePublisher: AnyPublisher<String?, Never> { get }
+    var isSummaryAvailablePublisher: AnyPublisher<Bool, Never> { get }
+    var isFromToSectionAvailablePublisher: AnyPublisher<Bool, Never> { get }
 
     func getTransactionId() -> String?
     func getPayingFeeWallet() -> Wallet?
@@ -126,16 +126,16 @@ extension TransactionDetail {
 }
 
 extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
-    var navigationDriver: AnyPublisher<TransactionDetail.NavigatableScene?, Never> {
+    var navigationPublisher: AnyPublisher<TransactionDetail.NavigatableScene?, Never> {
         $navigationSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var parsedTransactionDriver: AnyPublisher<ParsedTransaction?, Never> {
+    var parsedTransactionPublisher: AnyPublisher<ParsedTransaction?, Never> {
         $parsedTransationSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     var navigationTitle: AnyPublisher<String, Never> {
-        parsedTransactionDriver
+        parsedTransactionPublisher
             .map { parsedTransaction -> String in
                 var text = L10n.transaction
 
@@ -179,15 +179,15 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
             .eraseToAnyPublisher()
     }
 
-    var senderNameDriver: AnyPublisher<String?, Never> {
+    var senderNamePublisher: AnyPublisher<String?, Never> {
         $senderNameSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var receiverNameDriver: AnyPublisher<String?, Never> {
+    var receiverNamePublisher: AnyPublisher<String?, Never> {
         $receiverNameSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var isSummaryAvailableDriver: AnyPublisher<Bool, Never> {
+    var isSummaryAvailablePublisher: AnyPublisher<Bool, Never> {
         $parsedTransationSubject
             .map { parsedTransaction in
                 switch parsedTransaction?.info {
@@ -209,8 +209,8 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
             .eraseToAnyPublisher()
     }
 
-    var isFromToSectionAvailableDriver: AnyPublisher<Bool, Never> {
-        isSummaryAvailableDriver
+    var isFromToSectionAvailablePublisher: AnyPublisher<Bool, Never> {
+        isSummaryAvailablePublisher
     }
 
     func getTransactionId() -> String? {

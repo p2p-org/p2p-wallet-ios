@@ -78,7 +78,7 @@ extension CreateSecurityKeys {
         }
 
         func bind() {
-            viewModel.phrasesDriver
+            viewModel.phrasesPublisher
                 .assign(to: \.keys, on: keysView)
                 .store(in: &subscriptions)
 

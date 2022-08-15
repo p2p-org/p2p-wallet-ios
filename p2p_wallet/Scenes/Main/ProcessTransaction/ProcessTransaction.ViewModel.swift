@@ -12,9 +12,9 @@ import Resolver
 import SolanaSwift
 
 protocol ProcessTransactionViewModelType {
-    var navigationDriver: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> { get }
-    var pendingTransactionDriver: AnyPublisher<PendingTransaction, Never> { get }
-    var observingTransactionIndexDriver: AnyPublisher<Int?, Never> { get }
+    var navigationPublisher: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> { get }
+    var pendingTransactionPublisher: AnyPublisher<PendingTransaction, Never> { get }
+    var observingTransactionIndexPublisher: AnyPublisher<Int?, Never> { get }
 
     var isSwapping: Bool { get }
     var transactionID: String? { get }
@@ -60,11 +60,11 @@ extension ProcessTransaction {
 }
 
 extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
-    var navigationDriver: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> {
+    var navigationPublisher: AnyPublisher<ProcessTransaction.NavigatableScene?, Never> {
         $navigatableScene.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
-    var pendingTransactionDriver: AnyPublisher<PendingTransaction, Never> {
+    var pendingTransactionPublisher: AnyPublisher<PendingTransaction, Never> {
         $pendingTransaction.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
@@ -80,7 +80,7 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         rawTransaction.mainDescription
     }
 
-    var observingTransactionIndexDriver: AnyPublisher<Int?, Never> {
+    var observingTransactionIndexPublisher: AnyPublisher<Int?, Never> {
         $observingTransactionIndex.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 

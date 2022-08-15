@@ -57,7 +57,7 @@ extension TransactionDetail {
         }
 
         private func swapSection() -> BEVStack {
-            let swapTransactionDriver = viewModel.parsedTransactionDriver
+            let swapTransactionPublisher = viewModel.parsedTransactionPublisher
                 .map { $0?.info as? SwapInfo }
 
             return BEVStack(spacing: 8) {
@@ -65,7 +65,7 @@ extension TransactionDetail {
                     titleLabel(text: L10n.spent)
                     UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
                         .setup { label in
-                            swapTransactionDriver
+                            swapTransactionPublisher
                                 .map { [weak self] swapTransaction -> NSAttributedString? in
                                     self?.getAttributedString(
                                         amount: swapTransaction?.sourceAmount,
@@ -81,7 +81,7 @@ extension TransactionDetail {
                     titleLabel(text: L10n.received)
                     UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
                         .setup { label in
-                            swapTransactionDriver
+                            swapTransactionPublisher
                                 .map { [weak self] swapTransaction -> NSAttributedString? in
                                     self?.getAttributedString(
                                         amount: swapTransaction?.destinationAmount,
@@ -99,7 +99,7 @@ extension TransactionDetail {
             BEHStack(spacing: 12) {
                 titleLabel(text: L10n.spent)
                     .setup { label in
-                        viewModel.parsedTransactionDriver
+                        viewModel.parsedTransactionPublisher
                             .map { $0?.amount ?? 0 }
                             .map { $0 > 0 ? L10n.received : L10n.spent }
                             .assign(to: \.text, on: label)
@@ -107,7 +107,7 @@ extension TransactionDetail {
                     }
                 UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, textAlignment: .right)
                     .setup { label in
-                        viewModel.parsedTransactionDriver
+                        viewModel.parsedTransactionPublisher
                             .map { [weak self] in
                                 self?.getAttributedString(amount: abs($0?.amount ?? 0), symbol: $0?.symbol)
                             }
@@ -118,14 +118,14 @@ extension TransactionDetail {
         }
 
         private func feesSection() -> BEHStack {
-            let feesDriver = viewModel.parsedTransactionDriver
+            let feesPublisher = viewModel.parsedTransactionPublisher
                 .map { $0?.fee }
 
             return BEHStack(spacing: 4, alignment: .top) {
                 titleLabel(text: L10n.transferFee)
                     .withContentHuggingPriority(.required, for: .horizontal)
                     .setup { label in
-                        viewModel.parsedTransactionDriver
+                        viewModel.parsedTransactionPublisher
                             .map { $0?.info is SwapInfo }
                             .map { $0 ? L10n.swapFees : L10n.transferFee }
                             .assign(to: \.text, on: label)
@@ -136,7 +136,7 @@ extension TransactionDetail {
                     // deposit
 //                    UILabel(text: "0.02 SOL (Deposit)", textSize: 15, textAlignment: .right)
 //                        .setup { depositLabel in
-//                            feesDriver
+//                            feesPublisher
 //                                .map { [weak self] feeAmount -> NSAttributedString? in
 //                                    guard let self = self else {return nil}
 //                                    let payingWallet = self.getPayingFeeWallet()
@@ -151,7 +151,7 @@ extension TransactionDetail {
 //                                .drive(depositLabel.rx.attributedText)
 //                                .disposed(by: disposeBag)
 //
-//                            feesDriver
+//                            feesPublisher
 //                                .map {$0?.deposit ?? 0}
 //                                .map {$0 == 0}
 //                                .drive(depositLabel.rx.isHidden)
@@ -166,7 +166,7 @@ extension TransactionDetail {
                         textAlignment: .right
                     )
                         .setup { accountCreationLabel in
-                            feesDriver
+                            feesPublisher
                                 .map { [weak self] feeAmount -> NSAttributedString? in
                                     guard let self = self else { return nil }
                                     let payingWallet = self.getPayingFeeWallet()
@@ -189,7 +189,7 @@ extension TransactionDetail {
                                 .assign(to: \.attributedText, on: accountCreationLabel)
                                 .store(in: &subscriptions)
 
-                            feesDriver
+                            feesPublisher
                                 .map { $0?.accountBalances ?? 0 }
                                 .map { $0 == 0 }
                                 .assign(to: \.isHidden, on: accountCreationLabel)
@@ -200,7 +200,7 @@ extension TransactionDetail {
                     BEHStack(spacing: 4) {
                         UILabel(text: "0.02 SOL (Transfer fee)", textSize: 15, textAlignment: .right)
                             .setup { accountCreationLabel in
-                                feesDriver
+                                feesPublisher
                                     .map { [weak self] feeAmount -> NSAttributedString? in
                                         guard let self = self else { return nil }
                                         let payingWallet = self.getPayingFeeWallet()
@@ -225,7 +225,7 @@ extension TransactionDetail {
                             }
                         UIImageView(width: 21, height: 21, image: .info, tintColor: .h34c759)
                             .setup { infoButton in
-                                feesDriver
+                                feesPublisher
                                     .map { $0?.transaction != 0 }
                                     .assign(to: \.isHidden, on: infoButton)
                                     .store(in: &subscriptions)
@@ -242,7 +242,7 @@ extension TransactionDetail {
 
                         UILabel(text: "0.02 SOL (Transfer fee)", textSize: 15, textAlignment: .right)
                             .setup { totalFeeLabel in
-                                feesDriver
+                                feesPublisher
                                     .map { [weak self] feeAmount -> NSAttributedString? in
                                         guard let self = self else { return nil }
                                         let payingWallet = self.getPayingFeeWallet()
@@ -274,7 +274,7 @@ extension TransactionDetail {
                     .withContentHuggingPriority(.required, for: .horizontal)
                 UILabel(text: "0.00227631 renBTC (~$150)", textSize: 15, numberOfLines: 2, textAlignment: .right)
                     .setup { label in
-                        viewModel.parsedTransactionDriver
+                        viewModel.parsedTransactionPublisher
                             .map { [weak self] transaction -> NSAttributedString? in
                                 guard let self = self else { return nil }
 
@@ -357,7 +357,7 @@ extension TransactionDetail {
         }
 
         private func showView<T: Hashable>(_ view: UIView, onlyWhenTransactionIs _: T.Type) {
-            viewModel.parsedTransactionDriver
+            viewModel.parsedTransactionPublisher
                 .map { $0?.info is T }
                 .map { !$0 }
                 .assign(to: \.isHidden, on: view)
