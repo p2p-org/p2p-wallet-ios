@@ -48,6 +48,7 @@ struct HomeEmptyView: View {
                         .foregroundColor(Color(Asset.Colors.snow.color))
                         .font(uiFont: .font(of: .text1, weight: .bold))
                     Text(L10n.makeYourFirstDepositOrMakeAPurchaseUsingYourCreditCardOrApplePay)
+                        .minimumScaleFactor(0.5)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .foregroundColor(Color(Asset.Colors.cloud.color))
