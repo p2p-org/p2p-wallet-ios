@@ -52,7 +52,7 @@ struct HomeEmptyView: View {
                         .lineLimit(2)
                         .foregroundColor(Color(Asset.Colors.cloud.color))
                         .font(uiFont: .font(of: .text3, weight: .regular))
-                        .frame(width: 264)
+                        .padding(.horizontal, 24)
                 }
                 Text(L10n.topUp)
                     .foregroundColor(Color(Asset.Colors.night.color))
