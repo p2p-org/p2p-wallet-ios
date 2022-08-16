@@ -44,8 +44,7 @@ extension ConfirmReceivingBitcoinViewModelType {
 }
 
 extension ConfirmReceivingBitcoin {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var renBTCStatusService: RenBTCStatusServiceType
@@ -54,7 +53,6 @@ extension ConfirmReceivingBitcoin {
 
         // MARK: - Properties
 
-        private var subscriptions = [AnyCancellable]()
         var completion: (() -> Void)?
         var topUpCompletion: (() -> Void)?
 
@@ -72,7 +70,8 @@ extension ConfirmReceivingBitcoin {
 
         // MARK: - Initializer
 
-        init() {
+        override init() {
+            super.init()
             reload()
             bind()
         }

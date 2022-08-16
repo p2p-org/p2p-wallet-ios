@@ -65,8 +65,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
 }
 
 extension Settings {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
@@ -86,7 +85,6 @@ extension Settings {
         // MARK: - Properties
 
         private var disposables = [DefaultsDisposable]()
-        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subject
 
@@ -106,16 +104,13 @@ extension Settings {
 
         // MARK: - Initializer
 
-        init() {
+        override init() {
+            super.init()
             setUp()
             bind()
             username = storage.getName()
             didBackup = storage.didBackupUsingIcloud || Defaults.didBackupOffline
             securityMethods = getSecurityMethods()
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
 
         // MARK: - Methods

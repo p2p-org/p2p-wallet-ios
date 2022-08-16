@@ -24,8 +24,7 @@ protocol RestoreWalletViewModelType: ReserveNameHandler, AccountRestorationHandl
 }
 
 extension RestoreWallet {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
@@ -48,10 +47,6 @@ extension RestoreWallet {
         @Published private var isRestorableUsingIcloudSubject = false
         private let errorSubject = PassthroughSubject<String, Never>()
         private let finishedSubject = PassthroughSubject<Void, Never>()
-
-        deinit {
-            print("\(String(describing: self)) deinited")
-        }
     }
 }
 

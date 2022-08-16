@@ -12,8 +12,7 @@ import Resolver
 import SolanaSwift
 
 extension OrcaSwapV2 {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected var authenticationHandler: AuthenticationHandlerType
@@ -25,7 +24,6 @@ extension OrcaSwapV2 {
 
         // MARK: - Properties
 
-        var subscriptions = [AnyCancellable]()
         var isSelectingSourceWallet = false // indicate if selecting source wallet or destination wallet
         var isUsingAllBalance = false
 
@@ -54,14 +52,11 @@ extension OrcaSwapV2 {
         init(
             initialWallet: Wallet?
         ) {
+            super.init()
             payingWallet = walletsRepository.nativeWallet
             bind(initialWallet: initialWallet ?? walletsRepository.nativeWallet)
 
             Task { await reload() }
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
 
         func bind(initialWallet: Wallet?) {

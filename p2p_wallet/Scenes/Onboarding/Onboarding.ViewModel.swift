@@ -35,8 +35,7 @@ protocol OnboardingViewModelType {
 }
 
 extension Onboarding {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var handler: OnboardingHandler
@@ -54,12 +53,9 @@ extension Onboarding {
 
         // MARK: - Initializer
 
-        init() {
+        override init() {
+            super.init()
             navigateNext()
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
     }
 }

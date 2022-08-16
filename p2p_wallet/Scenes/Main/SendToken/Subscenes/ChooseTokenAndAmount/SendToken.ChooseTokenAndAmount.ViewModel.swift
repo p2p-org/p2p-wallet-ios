@@ -39,8 +39,7 @@ extension SendTokenChooseTokenAndAmountViewModelType {
 }
 
 extension SendToken.ChooseTokenAndAmount {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
@@ -49,7 +48,6 @@ extension SendToken.ChooseTokenAndAmount {
 
         // MARK: - Properties
 
-        private var subscriptions = [AnyCancellable]()
         let showAfterConfirmation: Bool
         let initialAmount: Double?
         let selectedNetwork: SendToken.Network?
@@ -74,6 +72,7 @@ extension SendToken.ChooseTokenAndAmount {
             self.showAfterConfirmation = showAfterConfirmation
             self.selectedNetwork = selectedNetwork
             self.sendTokenViewModel = sendTokenViewModel
+            super.init()
             bind()
         }
 

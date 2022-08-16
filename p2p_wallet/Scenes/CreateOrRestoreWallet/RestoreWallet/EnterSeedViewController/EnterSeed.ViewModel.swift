@@ -27,14 +27,7 @@ private enum Constants {
 }
 
 extension EnterSeed {
-    @MainActor
-    final class ViewModel: ObservableObject {
-        // MARK: - Dependencies
-
-        // MARK: - Properties
-
-        private var subscriptions = [AnyCancellable]()
-
+    final class ViewModel: BaseViewModel {
         // MARK: - Subject
 
         @Published private var navigatableScene: NavigatableScene?
@@ -44,12 +37,9 @@ extension EnterSeed {
         let seedTextSubject = CurrentValueSubject<String?, Never>(nil)
         let maxWordsCount = Constants.maxWordsCount
 
-        init() {
+        override init() {
+            super.init()
             bind()
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
 
         private func bind() {

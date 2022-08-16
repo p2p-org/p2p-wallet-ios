@@ -14,8 +14,7 @@ protocol EnterSeedInfoViewModelType {
 }
 
 extension EnterSeedInfo {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         // MARK: - Properties
@@ -23,10 +22,6 @@ extension EnterSeedInfo {
         // MARK: - Subject
 
         @Published private var navigatableScene: NavigatableScene?
-
-        deinit {
-            print("\(String(describing: self)) deinited")
-        }
     }
 }
 

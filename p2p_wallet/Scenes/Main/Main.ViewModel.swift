@@ -22,8 +22,7 @@ protocol MainViewModelType {
 }
 
 extension Main {
-    @MainActor
-    final class ViewModel {
+    final class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var socket: Socket
@@ -41,17 +40,14 @@ extension Main {
 
         // MARK: - Initializer
 
-        init() {
+        override init() {
+            super.init()
             socket.connect()
             burnAndRelease.resume()
             Task {
                 await pricesService.startObserving()
                 try await lockAndMint.resume()
             }
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
     }
 }

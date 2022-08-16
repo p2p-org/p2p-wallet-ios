@@ -24,8 +24,7 @@ protocol VerifySecurityKeysViewModelType {
 }
 
 extension VerifySecurityKeys {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         private let createWalletViewModel: CreateWalletViewModelType
@@ -42,10 +41,6 @@ extension VerifySecurityKeys {
         init(keyPhrase: [String], createWalletViewModel: CreateWalletViewModelType) {
             self.keyPhrase = keyPhrase
             self.createWalletViewModel = createWalletViewModel
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
     }
 }

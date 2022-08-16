@@ -25,8 +25,7 @@ protocol DrivableAccountsViewModelType {
 }
 
 extension DerivableAccounts {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         private let handler: AccountRestorationHandler
@@ -47,10 +46,6 @@ extension DerivableAccounts {
             self.phrases = phrases
             self.handler = handler
             accountsListViewModel = ListViewModel(phrases: phrases)
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
     }
 }

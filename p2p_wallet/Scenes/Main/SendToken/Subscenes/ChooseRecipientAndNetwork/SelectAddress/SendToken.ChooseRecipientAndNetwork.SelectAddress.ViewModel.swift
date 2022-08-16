@@ -56,8 +56,7 @@ extension SendTokenChooseRecipientAndNetworkSelectAddressViewModelType {
 }
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         private let chooseRecipientAndNetworkViewModel: SendTokenChooseRecipientAndNetworkViewModelType
@@ -71,7 +70,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         // MARK: - Properties
 
         let relayMethod: SendTokenRelayMethod
-        private var subscriptions = [AnyCancellable]()
         let recipientsListViewModel = RecipientsListViewModel()
         let showAfterConfirmation: Bool
 
@@ -92,6 +90,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             self.showAfterConfirmation = showAfterConfirmation
             self.amount = amount
             recipientsListViewModel.solanaAPIClient = chooseRecipientAndNetworkViewModel.getSendService()
+            super.init()
             recipientsListViewModel.preSelectedNetwork = preSelectedNetwork
 
             if chooseRecipientAndNetworkViewModel.getSelectedRecipient() != nil {

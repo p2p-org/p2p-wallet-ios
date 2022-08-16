@@ -18,8 +18,7 @@ protocol CreateOrRestoreWalletViewModelType {
 }
 
 extension CreateOrRestoreWallet {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected var analyticsManager: AnalyticsManager
@@ -27,12 +26,6 @@ extension CreateOrRestoreWallet {
         // MARK: - Subjects
 
         @Published private var navigatableScene: CreateOrRestoreWallet.NavigatableScene?
-
-        // MARK: - Initializer
-
-        deinit {
-            print("\(String(describing: self)) deinited")
-        }
     }
 }
 
