@@ -10,7 +10,11 @@ import SwiftUI
 
 extension View {
     func asViewController() -> UIViewController {
-        UIHostingController(rootView: self)
+        UIHostingControllerWithoutNavigation(rootView: self)
+    }
+
+    func uiView() -> UIView {
+        asViewController().view
     }
 
     /// A backwards compatible wrapper for iOS 14 `onChange`
@@ -21,6 +25,71 @@ extension View {
             onReceive(Just(value)) { value in
                 onChange(value)
             }
+        }
+    }
+}
+
+// MARK: - Font
+
+private struct TextModifier: ViewModifier {
+    let uiFont: UIFont
+
+    func body(content: Content) -> some View {
+        content.font(SwiftUI.Font(uiFont: uiFont))
+    }
+}
+
+extension View {
+    func font(uiFont: UIFont) -> some View {
+        modifier(TextModifier(uiFont: uiFont))
+    }
+}
+
+// MARK: - Swipe
+
+extension View {
+    func swipeActions(
+        leading: [SwipeActionButton] = [],
+        allowsFullSwipeLeading: Bool = false,
+        trailing: [SwipeActionButton] = [],
+        allowsFullSwipeTrailing: Bool = false
+    ) -> some View {
+        modifier(SwipeActionView(
+            leading: leading,
+            allowsFullSwipeLeading: allowsFullSwipeLeading,
+            trailing: trailing,
+            allowsFullSwipeTrailing: allowsFullSwipeTrailing
+        ))
+    }
+}
+
+extension List {
+    @ViewBuilder func withoutSeparatorsiOS14() -> some View {
+        if #available(iOS 15, *) {
+            self
+        } else {
+            listStyle(SidebarListStyle())
+                .listRowInsets(EdgeInsets())
+                .onAppear {
+                    UITableView.appearance().backgroundColor = UIColor.systemBackground
+                }
+        }
+    }
+}
+
+extension View {
+    @ViewBuilder func withoutSeparatorsAfterListContent() -> some View {
+        if #available(iOS 15, *) {
+            listRowInsets(EdgeInsets())
+                .listRowSeparator(.hidden)
+        } else {
+            frame(
+                minWidth: 0, maxWidth: .infinity,
+                minHeight: 44,
+                alignment: .leading
+            )
+                .listRowInsets(EdgeInsets())
+                .background(Color(UIColor.systemBackground))
         }
     }
 }

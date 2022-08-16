@@ -83,6 +83,7 @@ extension Double {
     }
 
     public func toString(
+        minimumFractionDigits: Int = 0,
         maximumFractionDigits: Int = 3,
         showPlus: Bool = false,
         showMinus: Bool = true,
@@ -93,6 +94,9 @@ extension Double {
         formatter.groupingSize = 3
         formatter.numberStyle = .decimal
         formatter.decimalSeparator = "."
+        formatter.currencyDecimalSeparator = "."
+        formatter.groupingSeparator = " "
+        formatter.minimumFractionDigits = minimumFractionDigits
         if let groupingSeparator = groupingSeparator {
             formatter.groupingSeparator = groupingSeparator
         }
@@ -116,6 +120,14 @@ extension Double {
 
         let number = showMinus ? self : abs(self)
         return formatter.string(from: number as NSNumber) ?? "0"
+    }
+
+    func fiatAmount(maximumFractionDigits: Int = 2) -> String {
+        "\(Defaults.fiat.symbol) \(toString(maximumFractionDigits: maximumFractionDigits))"
+    }
+
+    func tokenAmount(symbol: String, maximumFractionDigits: Int = 9) -> String {
+        "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
     }
 
     func rounded(decimals: Int?) -> Double {
