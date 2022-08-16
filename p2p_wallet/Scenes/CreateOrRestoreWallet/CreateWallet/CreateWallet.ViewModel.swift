@@ -38,13 +38,13 @@ extension CreateWallet {
 
         // MARK: - Subjects
 
-        @Published private var navigationSubject: CreateWallet.NavigatableScene?
+        @Published private var navigatableScene: CreateWallet.NavigatableScene?
     }
 }
 
 extension CreateWallet.ViewModel: CreateWalletViewModelType {
     var navigatableScenePublisher: AnyPublisher<CreateWallet.NavigatableScene?, Never> {
-        $navigationSubject.eraseToAnyPublisher()
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
@@ -54,7 +54,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
 
     func verifyPhrase(_ phrases: [String]) {
-        navigationSubject = .verifyPhrase(phrases)
+        navigatableScene = .verifyPhrase(phrases)
     }
 
     func handlePhrases(_ phrases: [String]) async {
@@ -82,7 +82,7 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
 
     func finish() {
-        navigationSubject = .dismiss
+        navigatableScene = .dismiss
         handler.creatingWalletDidComplete(
             phrases: phrases,
             derivablePath: .default,
@@ -91,20 +91,20 @@ extension CreateWallet.ViewModel: CreateWalletViewModelType {
     }
 
     func navigateToExplanation() {
-        navigationSubject = .explanation
+        navigatableScene = .explanation
     }
 
     func back() {
-        navigationSubject = .back
-        navigationSubject = .none
+        navigatableScene = .back
+        navigatableScene = .none
     }
 
     func navigateToCreatePhrases() {
         analyticsManager.log(event: .createSeedInvoked)
-        navigationSubject = .createPhrases
+        navigatableScene = .createPhrases
     }
 
     func navigateToReserveName(owner: String) {
-        navigationSubject = .reserveName(owner: owner)
+        navigatableScene = .reserveName(owner: owner)
     }
 }

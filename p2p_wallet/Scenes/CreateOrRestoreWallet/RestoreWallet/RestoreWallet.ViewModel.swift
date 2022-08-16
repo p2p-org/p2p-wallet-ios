@@ -42,7 +42,7 @@ extension RestoreWallet {
 
         // MARK: - Subjects
 
-        @Published private var navigationSubject: RestoreWallet.NavigatableScene?
+        @Published private var navigatableScene: RestoreWallet.NavigatableScene?
         @Published private var isLoadingSubject = false
         @Published private var isRestorableUsingIcloudSubject = false
         private let errorSubject = PassthroughSubject<String, Never>()
@@ -56,7 +56,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     }
 
     var navigatableScenePublisher: AnyPublisher<RestoreWallet.NavigatableScene?, Never> {
-        $navigationSubject.eraseToAnyPublisher()
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     var isLoadingPublisher: AnyPublisher<Bool, Never> {
@@ -94,12 +94,12 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         }
 
         // if there are more than 1 account saved in iCloud
-        navigationSubject = .restoreFromICloud
+        navigatableScene = .restoreFromICloud
     }
 
     func restoreManually() {
         analyticsManager.log(event: .restoreManualInvoked)
-        navigationSubject = .enterPhrases
+        navigatableScene = .enterPhrases
     }
 
     func handlePhrases(_ phrases: [String], derivablePath: DerivablePath?) {
@@ -107,7 +107,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
         if let derivablePath = derivablePath {
             derivablePathDidSelect(derivablePath, phrases: phrases)
         } else {
-            navigationSubject = .derivableAccounts(phrases: phrases)
+            navigatableScene = .derivableAccounts(phrases: phrases)
         }
     }
 
@@ -131,7 +131,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
                     )
                     // reserve name
                     isLoadingSubject = false
-                    navigationSubject = .reserveName(owner: account.publicKey.base58EncodedString)
+                    navigatableScene = .reserveName(owner: account.publicKey.base58EncodedString)
                 } catch {
                     errorSubject.send(error.readableDescription)
                 }
@@ -173,7 +173,7 @@ extension RestoreWallet.ViewModel {
                     if let name = name {
                         handleName(name)
                     } else {
-                        navigationSubject = .reserveName(owner: owner)
+                        navigatableScene = .reserveName(owner: owner)
                     }
                 } catch {
                     isLoadingSubject = false

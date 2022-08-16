@@ -51,7 +51,7 @@ extension TransactionDetail {
 
         // MARK: - Subject
 
-        @Published private var navigationSubject: NavigatableScene?
+        @Published private var navigatableScene: NavigatableScene?
         @Published private var parsedTransationSubject: ParsedTransaction?
         @Published private var senderNameSubject: String?
         @Published private var receiverNameSubject: String?
@@ -122,7 +122,7 @@ extension TransactionDetail {
 
 extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     var navigatableScenePublisher: AnyPublisher<TransactionDetail.NavigatableScene?, Never> {
-        $navigationSubject.receive(on: RunLoop.main).eraseToAnyPublisher()
+        $navigatableScene.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
     var parsedTransactionPublisher: AnyPublisher<ParsedTransaction?, Never> {
@@ -243,7 +243,7 @@ extension TransactionDetail.ViewModel: TransactionDetailViewModelType {
     // MARK: - Actions
 
     func navigate(to scene: TransactionDetail.NavigatableScene) {
-        navigationSubject = scene
+        navigatableScene = scene
     }
 
     func copyTransactionIdToClipboard() {
