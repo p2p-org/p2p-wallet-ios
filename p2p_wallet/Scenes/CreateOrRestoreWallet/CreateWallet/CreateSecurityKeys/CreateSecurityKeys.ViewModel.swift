@@ -28,8 +28,7 @@ protocol CreateSecurityKeysViewModelType: AnyObject {
 }
 
 extension CreateSecurityKeys {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var iCloudStorage: ICloudStorageType
@@ -51,11 +50,8 @@ extension CreateSecurityKeys {
 
         init(createWalletViewModel: CreateWalletViewModelType) {
             self.createWalletViewModel = createWalletViewModel
+            super.init()
             createPhrases()
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
 
         private func createPhrases() {

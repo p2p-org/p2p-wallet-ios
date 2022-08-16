@@ -17,15 +17,13 @@ protocol RenBTCReceivingStatusesViewModelType: BECollectionViewModelType {
 }
 
 extension RenBTCReceivingStatuses {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         let receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
 
         // MARK: - Properties
 
-        var subscriptions = [AnyCancellable]()
         var data = [LockAndMint.ProcessingTx]()
 
         // MARK: - Subject
@@ -36,6 +34,7 @@ extension RenBTCReceivingStatuses {
 
         init(receiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType) {
             self.receiveBitcoinViewModel = receiveBitcoinViewModel
+            super.init()
             bind()
         }
 

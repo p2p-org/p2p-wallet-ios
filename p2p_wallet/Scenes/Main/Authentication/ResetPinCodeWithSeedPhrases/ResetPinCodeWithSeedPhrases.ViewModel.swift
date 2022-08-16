@@ -20,15 +20,10 @@ protocol ResetPinCodeWithSeedPhrasesViewModelType {
 }
 
 extension ResetPinCodeWithSeedPhrases {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var storage: PincodeSeedPhrasesStorage
-
-        deinit {
-            print("\(String(describing: self)) deinited")
-        }
 
         // MARK: - Subjects
 

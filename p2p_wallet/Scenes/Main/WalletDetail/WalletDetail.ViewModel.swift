@@ -26,18 +26,13 @@ protocol WalletDetailViewModelType {
 }
 
 extension WalletDetail {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
         let pubkey: String
         let symbol: String
         @Injected var analyticsManager: AnalyticsManager
-
-        // MARK: - Properties
-
-        private var subscriptions = [AnyCancellable]()
 
         // MARK: - Subject
 
@@ -49,11 +44,8 @@ extension WalletDetail {
         init(pubkey: String, symbol: String) {
             self.pubkey = pubkey
             self.symbol = symbol
+            super.init()
             bind()
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
 
         /// Bind subjects

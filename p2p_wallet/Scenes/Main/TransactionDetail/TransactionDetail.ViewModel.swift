@@ -34,8 +34,7 @@ protocol TransactionDetailViewModelType: AnyObject {
 }
 
 extension TransactionDetail {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var transactionHandler: TransactionHandlerType
@@ -47,7 +46,6 @@ extension TransactionDetail {
 
         // MARK: - Properties
 
-        private var subscriptions = [AnyCancellable]()
         private let observingTransactionIndex: TransactionHandlerType.TransactionIndex?
         private var payingFeeWallet: Wallet?
 
@@ -62,6 +60,7 @@ extension TransactionDetail {
 
         init(parsedTransaction: ParsedTransaction) {
             observingTransactionIndex = nil
+            super.init()
             parsedTransationSubject = parsedTransaction
 
             mapNames(parsedTransaction: parsedTransaction)
@@ -69,12 +68,8 @@ extension TransactionDetail {
 
         init(observingTransactionIndex: TransactionHandlerType.TransactionIndex) {
             self.observingTransactionIndex = observingTransactionIndex
-
+            super.init()
             bind()
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
 
         func bind() {

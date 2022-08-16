@@ -32,8 +32,7 @@ protocol SendTokenChooseRecipientAndNetworkViewModelType: SendTokenRecipientAndN
 }
 
 extension SendToken.ChooseRecipientAndNetwork {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         let sendService: SendServiceType
@@ -45,7 +44,6 @@ extension SendToken.ChooseRecipientAndNetwork {
         // MARK: - Properties
 
         private let relayMethod: SendTokenRelayMethod
-        var subscriptions = [AnyCancellable]()
 
         // MARK: - Subjects
 
@@ -72,6 +70,7 @@ extension SendToken.ChooseRecipientAndNetwork {
             self.sendTokenViewModel = sendTokenViewModel
             self.relayMethod = relayMethod
             sendService = Resolver.resolve(args: relayMethod)
+            super.init()
             bind()
 
             if let preSelectedNetwork = preSelectedNetwork {

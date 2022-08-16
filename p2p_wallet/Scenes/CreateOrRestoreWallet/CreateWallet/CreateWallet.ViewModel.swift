@@ -24,8 +24,7 @@ protocol CreateWalletViewModelType: ReserveNameHandler {
 }
 
 extension CreateWallet {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var handler: CreateOrRestoreWalletHandler
@@ -40,10 +39,6 @@ extension CreateWallet {
         // MARK: - Subjects
 
         @Published private var navigationSubject: CreateWallet.NavigatableScene?
-
-        deinit {
-            print("\(String(describing: self)) deinited")
-        }
     }
 }
 

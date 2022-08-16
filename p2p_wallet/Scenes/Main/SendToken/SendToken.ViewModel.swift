@@ -38,8 +38,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
 }
 
 extension SendToken {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var authenticationHandler: AuthenticationHandlerType
@@ -50,7 +49,6 @@ extension SendToken {
 
         // MARK: - Properties
 
-        var subscriptions = [AnyCancellable]()
         let relayMethod: SendTokenRelayMethod
         let canGoBack: Bool
 
@@ -80,6 +78,7 @@ extension SendToken {
             self.relayMethod = relayMethod
             self.canGoBack = canGoBack
             sendService = Resolver.resolve(args: relayMethod)
+            super.init()
 
             // accept initial values
             if let pubkey = walletPubkey,
@@ -95,10 +94,6 @@ extension SendToken {
             Task {
                 await reload()
             }
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
 
         func bind() {

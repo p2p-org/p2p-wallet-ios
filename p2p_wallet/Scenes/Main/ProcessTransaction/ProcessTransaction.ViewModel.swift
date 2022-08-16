@@ -27,8 +27,7 @@ protocol ProcessTransactionViewModelType {
 }
 
 extension ProcessTransaction {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var analyticsManager: AnalyticsManager
@@ -36,7 +35,6 @@ extension ProcessTransaction {
 
         // MARK: - Properties
 
-        private var subscriptions = [AnyCancellable]()
         private let rawTransaction: RawTransactionType
 
         // MARK: - Subjects
@@ -51,10 +49,6 @@ extension ProcessTransaction {
             rawTransaction = processingTransaction
             pendingTransaction = .init(transactionId: nil, sentAt: Date(),
                                        rawTransaction: processingTransaction, status: .sending)
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
     }
 }

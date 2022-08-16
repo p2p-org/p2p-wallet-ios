@@ -25,8 +25,7 @@ protocol HomeViewModelType: ReserveNameHandler {
 }
 
 extension Home {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected var walletsRepository: WalletsRepository
@@ -38,10 +37,6 @@ extension Home {
 
         @Published private var navigationSubject: NavigatableScene?
         private let scrollToTopSubject = PassthroughSubject<Void, Never>()
-
-        deinit {
-            print("\(String(describing: self)) deinited")
-        }
     }
 }
 

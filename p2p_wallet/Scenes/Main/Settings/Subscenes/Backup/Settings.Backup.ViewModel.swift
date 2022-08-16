@@ -18,8 +18,7 @@ protocol SettingsBackupViewModelType {
 }
 
 extension Settings.Backup {
-    @MainActor
-    final class ViewModel: ObservableObject {
+    final class ViewModel: BaseViewModel {
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var deviceOwnerAuthenticationHandler: DeviceOwnerAuthenticationHandler
@@ -29,7 +28,8 @@ extension Settings.Backup {
         @Published private var navigatableScene: NavigatableScene?
         @Published private var didBackup: Bool = false
 
-        init() {
+        override init() {
+            super.init()
             didBackup = storage.didBackupUsingIcloud || Defaults
                 .didBackupOffline
         }

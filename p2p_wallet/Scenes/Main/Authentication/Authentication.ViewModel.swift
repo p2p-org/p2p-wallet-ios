@@ -23,18 +23,11 @@ protocol AuthenticationViewModelType {
 }
 
 extension Authentication {
-    @MainActor
-    class ViewModel: ObservableObject {
+    class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var pincodeStorage: PincodeStorageType
         @Injected private var logoutResponder: LogoutResponder
-
-        // MARK: - Initializers
-
-        deinit {
-            print("\(String(describing: self)) deinited")
-        }
 
         // MARK: - Subject
 

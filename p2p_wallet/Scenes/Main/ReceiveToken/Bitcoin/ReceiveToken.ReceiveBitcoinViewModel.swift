@@ -26,11 +26,9 @@ protocol ReceiveTokenBitcoinViewModelType: AnyObject {
 }
 
 extension ReceiveToken {
-    @MainActor
-    class ReceiveBitcoinViewModel: ObservableObject {
+    class ReceiveBitcoinViewModel: BaseViewModel {
         // MARK: - Constants
 
-        private var subscriptions = [AnyCancellable]()
         let hasExplorerButton: Bool
 
         // MARK: - Dependencies
@@ -63,12 +61,8 @@ extension ReceiveToken {
         ) {
             self.navigationSubject = navigationSubject
             self.hasExplorerButton = hasExplorerButton
-
+            super.init()
             Task { await bind() }
-        }
-
-        deinit {
-            print("\(String(describing: self)) deinited")
         }
 
         func acceptConditionAndLoadAddress() {

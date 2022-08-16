@@ -11,8 +11,7 @@ import Resolver
 import SolanaSwift
 
 extension OrcaSwapV2.ConfirmSwapping {
-    @MainActor
-    final class ViewModel: ObservableObject {
+    final class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
         @Injected private var pricesService: PricesServiceType
@@ -25,6 +24,7 @@ extension OrcaSwapV2.ConfirmSwapping {
 
         init(swapViewModel: OrcaSwapV2ViewModelType) {
             self.swapViewModel = swapViewModel
+            super.init()
         }
     }
 }

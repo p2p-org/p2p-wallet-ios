@@ -24,8 +24,7 @@ protocol NewSwapTokenSettingsViewModelType {
 }
 
 extension SwapTokenSettings {
-    @MainActor
-    final class ViewModel: ObservableObject, NewSwapTokenSettingsViewModelType {
+    final class ViewModel: BaseViewModel, NewSwapTokenSettingsViewModelType {
         // MARK: - Properties
 
         var slippageType: SwapTokenSettings.SlippageType {
@@ -87,7 +86,7 @@ extension SwapTokenSettings {
             swapViewModel: OrcaSwapV2ViewModelType
         ) {
             self.swapViewModel = swapViewModel
-
+            super.init()
             setCustomSlippageIsOpened(slippageType: slippageType)
         }
 
