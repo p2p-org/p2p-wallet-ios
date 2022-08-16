@@ -5,12 +5,16 @@
 //  Created by Ivan on 09.07.2022.
 //
 
+import Combine
 import Resolver
 import UIKit
 
 final class TabBarController: UITabBarController {
     @Injected private var helpCenterLauncher: HelpCenterLauncher
 
+    private var cancellables = Set<AnyCancellable>()
+
+    private var homeCoordinator: HomeCoordinator?
     private var sendTokenCoordinator: SendToken.Coordinator!
 
     init() {
@@ -45,8 +49,12 @@ final class TabBarController: UITabBarController {
     }
 
     private func setupViewControllers() {
-        let homeViewModel = Home.ViewModel()
-        let homeVC = Home.ViewController(viewModel: homeViewModel)
+        let homeNavigation = UINavigationController()
+        homeCoordinator = HomeCoordinator(navigationController: homeNavigation)
+        homeCoordinator?.start()
+            .sink(receiveValue: { _ in })
+            .store(in: &cancellables)
+
         let historyVC = History.Scene()
 
         let vm = SendToken.ViewModel(
@@ -58,9 +66,9 @@ final class TabBarController: UITabBarController {
         sendTokenCoordinator = SendToken.Coordinator(viewModel: vm, navigationController: nil)
         sendTokenCoordinator.doneHandler = { [weak self] in
             CATransaction.begin()
-            CATransaction.setCompletionBlock { [weak homeViewModel] in
-                homeViewModel?.scrollToTop()
-            }
+//            CATransaction.setCompletionBlock { [weak homeViewModel] in
+//                homeViewModel?.scrollToTop()
+//            }
             self?.changeItem(to: .wallet)
             CATransaction.commit()
         }
@@ -69,7 +77,7 @@ final class TabBarController: UITabBarController {
         let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel())
 
         viewControllers = [
-            UINavigationController(rootViewController: homeVC),
+            homeNavigation,
             UINavigationController(rootViewController: historyVC),
             sendTokenNavigationVC,
             UIViewController(),

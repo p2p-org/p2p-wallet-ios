@@ -61,7 +61,7 @@ class PricesService {
 
     // MARK: - Properties
 
-    private var watchList = [Token]()
+    private var watchList = [Token(.renBTC), Token(.nativeSolana), Token(.usdc)]
     private var timer: Timer?
     private lazy var currentPricesSubject = PricesLoadableRelay(request: .just([:]))
 
@@ -73,7 +73,10 @@ class PricesService {
 
         // get current price
         Task {
-            let initialValue = await storage.retrievePrices()
+            var initialValue = await storage.retrievePrices()
+            if initialValue.values.isEmpty {
+                initialValue = try await getCurrentPrices()
+            }
             currentPricesSubject.accept(initialValue, state: .loaded)
 
             // change request
@@ -88,6 +91,12 @@ class PricesService {
     // MARK: - Helpers
 
     private func getCurrentPricesRequest(tokens: [Token]? = nil) -> Single<[String: CurrentPrice]> {
+        Single.async {
+            try await self.getCurrentPrices(tokens: tokens)
+        }
+    }
+
+    private func getCurrentPrices(tokens: [Token]? = nil) async throws -> [String: CurrentPrice] {
         let coins = (tokens ?? watchList).filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
             .map { token -> Token in
                 if token.symbol == "renBTC" {
@@ -97,20 +106,17 @@ class PricesService {
             }
             .unique
         guard !coins.isEmpty else {
-            return .just([:])
+            return [:]
         }
 
-        return Single.async { [weak self] in
-            guard let self = self else { throw Error.unknown }
-            var newPrices = try await self.api.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
-            newPrices["renBTC"] = newPrices["BTC"]
-            var prices = self.currentPricesSubject.value ?? [:]
-            for newPrice in newPrices {
-                prices[newPrice.key] = newPrice.value
-            }
-            await self.storage.savePrices(prices)
-            return prices
+        var newPrices = try await api.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+        newPrices["renBTC"] = newPrices["BTC"]
+        var prices = currentPricesSubject.value ?? [:]
+        for newPrice in newPrices {
+            prices[newPrice.key] = newPrice.value
         }
+        await storage.savePrices(prices)
+        return prices
     }
 }
 
@@ -124,7 +130,7 @@ extension PricesService: PricesServiceType {
     }
 
     func currentPrice(for coinName: String) -> CurrentPrice? {
-        currentPricesSubject.value?[coinName]
+        currentPricesSubject.value?[coinName.uppercased()]
     }
 
     func clearCurrentPrices() {

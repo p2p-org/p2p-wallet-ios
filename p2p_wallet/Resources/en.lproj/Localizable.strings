@@ -514,7 +514,7 @@
 "Username %@ is successfully reserved" = "Username %@ is successfully reserved";
 "Not yet reserved" = "Not yet reserved";
 "Your p2p username" = "Your p2p username";
-"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list.";
+"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet token list." = "Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet token list.";
 "Save" = "Save";
 "Saved to photo library" = "Saved to photo library";
 "There is an error occurred. You can either retry or reserve name later in Settings" = "There is an error occurred. You can either retry or reserve name later in Settings";
@@ -736,7 +736,7 @@
 "Please choose another token and try again!" = "Please choose another token and try again!";
 "beta" = "beta";
 "Top up your account to get started" = "Top up your account to get started";
-"Make your first deposit or buy with your credit card or Apple Pay" = "Make your first deposit or buy with your credit card or Apple Pay";
+"Make your first deposit or make a purchase using your credit card or Apple Pay" = "Make your first deposit or make a purchase using your credit card or Apple Pay";
 "Tokens" = "Tokens";
 "Hidden tokens" = "Hidden tokens";
 "Exceeded maximum number of instructions allowed" = "Exceeded maximum number of instructions allowed";
@@ -816,3 +816,14 @@ Reset the PIN or wait for %@.";
 "Pay %@ and Continue" = "Pay %@ & Continue";
 "You can’t send less than %@" = "You can’t send less than %@";
 "Refresh page" = "Refresh page";
+"Buy it" = "Buy it";
+"Top up" = "Top up";
+"Popular coins" = "Popular coins";
+"Trade" = "Trade";
+"Actions" = "Actions";
+"using Apple Pay or credit card" = "using Apple Pay or credit card";
+"from another wallet or exchange" = "from another wallet or exchange";
+"to phone number, username or address" = "to phone number, username or address";
+"one crypto for 
+another" = "one crypto for 
+another";
