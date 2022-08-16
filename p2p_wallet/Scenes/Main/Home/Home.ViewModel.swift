@@ -35,7 +35,7 @@ extension Home {
 
         // MARK: - Subjects
 
-        @Published private var navigationSubject: NavigatableScene?
+        @Published private var navigatableScene: NavigatableScene?
         private let scrollToTopSubject = PassthroughSubject<Void, Never>()
     }
 }
@@ -55,7 +55,7 @@ extension Home.ViewModel: HomeViewModelType {
     }
 
     var navigatableScenePublisher: AnyPublisher<Home.NavigatableScene?, Never> {
-        $navigationSubject.eraseToAnyPublisher()
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     var pricesLoadingStatePublisher: AnyPublisher<LoadableState, Never> {
@@ -65,7 +65,7 @@ extension Home.ViewModel: HomeViewModelType {
     // MARK: - Actions
 
     func navigate(to scene: Home.NavigatableScene?) {
-        navigationSubject = scene
+        navigatableScene = scene
     }
 
     func scrollToTop() {

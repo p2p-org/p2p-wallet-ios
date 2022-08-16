@@ -28,7 +28,7 @@ extension RenBTCReceivingStatuses {
 
         // MARK: - Subject
 
-        @Published private var navigationSubject: NavigatableScene?
+        @Published private var navigatableScene: NavigatableScene?
 
         // MARK: - Initializer
 
@@ -90,7 +90,7 @@ extension RenBTCReceivingStatuses.ViewModel: BECollectionViewModelType {
 
 extension RenBTCReceivingStatuses.ViewModel: RenBTCReceivingStatusesViewModelType {
     var navigatableScenePublisher: AnyPublisher<RenBTCReceivingStatuses.NavigatableScene?, Never> {
-        $navigationSubject.eraseToAnyPublisher()
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     var processingTxsPublisher: AnyPublisher<[LockAndMint.ProcessingTx], Never> {
@@ -100,6 +100,6 @@ extension RenBTCReceivingStatuses.ViewModel: RenBTCReceivingStatusesViewModelTyp
     // MARK: - Actions
 
     func showDetail(txid: String) {
-        navigationSubject = .detail(txid: txid)
+        navigatableScene = .detail(txid: txid)
     }
 }

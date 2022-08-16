@@ -34,7 +34,7 @@ extension DAppContainer {
 
         // MARK: - Subject
 
-        @Published private var navigationSubject: NavigatableScene?
+        @Published private var navigatableScene: NavigatableScene?
 
         init(dapp: DApp) {
             self.dapp = dapp
@@ -50,13 +50,13 @@ extension DAppContainer {
 
 extension DAppContainer.ViewModel: DAppContainerViewModelType {
     var navigationAnyPublisher: AnyPublisher<DAppContainer.NavigatableScene?, Never> {
-        $navigationSubject.eraseToAnyPublisher()
+        $navigatableScene.eraseToAnyPublisher()
     }
 
     // MARK: - Actions
 
     func navigate(to scene: DAppContainer.NavigatableScene) {
-        navigationSubject = scene
+        navigatableScene = scene
     }
 
     func getWebviewConfiguration() -> WKWebViewConfiguration {
