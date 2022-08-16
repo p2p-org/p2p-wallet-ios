@@ -19,6 +19,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     private var cachedResult = [SelectableCountry]()
     private var initialSelectedCountry: Country?
 
+    @Published var selectedCountry: SelectableCountry?
     @Published var keyword = ""
     let didClose = PassthroughSubject<Void, Never>()
 
@@ -41,17 +42,20 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
                 self.overrideData(by: newData)
             }
             .store(in: &subscriptions)
+
+        $selectedCountry.sink { [weak self] country in
+            guard country != nil else { return }
+            self?.initialSelectedCountry = nil
+        }
+        .store(in: &subscriptions)
     }
 
     // MARK: - Methods
 
     override func createRequest() async throws -> [SelectableCountry] {
-        let initialSelectedCountry = initialSelectedCountry
-        if self.initialSelectedCountry != nil {
-            self.initialSelectedCountry = nil
-        }
+        let selectedCode = selectedCountry?.value.code ?? initialSelectedCountry?.code
         cachedResult = try await CountriesAPIImpl().fetchCountries()
-            .map { .init(value: $0, isSelected: $0.code == initialSelectedCountry?.code) }
+            .map { .init(value: $0, isSelected: $0.code == selectedCode) }
         var countries = cachedResult.filteredAndSorted(byKeyword: keyword.value)
         // Put initial selected country in the first place
         if let selectedIndex = countries.firstIndex(where: { $0.value.code == initialSelectedCountry?.code }) {
