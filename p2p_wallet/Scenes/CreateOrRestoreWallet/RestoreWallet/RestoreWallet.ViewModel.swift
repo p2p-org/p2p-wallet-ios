@@ -149,25 +149,22 @@ extension RestoreWallet.ViewModel {
                 let owner = account.publicKey.base58EncodedString
 
                 // check if name available
-                do {
-                    let name = try await nameService.getName(owner)
+                let name = try? await nameService.getName(owner)
 
-                    isLoadingSubject.accept(false)
+                isLoadingSubject.accept(false)
 
-                    // save to icloud
-                    await saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
+                // save to icloud
+                await saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
 
-                    if let name = name {
-                        await handleName(name)
-                    }
-                } catch {
-                    isLoadingSubject.accept(false)
-
-                    // save to icloud
-                    await saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
-
-                    await finish()
+                if let name = name {
+                    await handleName(name)
                 }
+
+                // } else {
+                // navigationSubject.accept(.reserveName(owner: owner))
+                // }
+
+                await finish()
             } catch {
                 errorSubject.accept(error.readableDescription)
             }
