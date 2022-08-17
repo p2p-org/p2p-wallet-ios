@@ -6,6 +6,7 @@
 //
 
 import Combine
+import KeyAppUI
 import Resolver
 import UIKit
 
@@ -17,19 +18,11 @@ final class TabBarController: UITabBarController {
     private var homeCoordinator: HomeCoordinator?
     private var sendTokenCoordinator: SendToken.Coordinator!
 
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        object_setClass(tabBar, CustomTabBar.self)
-    }
-
-    @available(*, unavailable)
-    required init?(coder _: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setUpTabBarAppearance()
+        setValue(CustomTabBar(frame: tabBar.frame), forKey: "tabBar")
         delegate = self
 
         setupViewControllers()
@@ -38,13 +31,34 @@ final class TabBarController: UITabBarController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        // Seems to be a bug in iOS 13 with stackedLayoutAppearance (set in AppDelegate), label is shrinked so we need to update its size
-        if #available(iOS 13, *) {
-            tabBar.subviews.forEach { bar in
-                bar.subviews.compactMap { $0 as? UILabel }.forEach {
-                    $0.sizeToFit()
-                }
+
+        tabBar.subviews.forEach { bar in
+            bar.subviews.compactMap { $0 as? UILabel }.forEach {
+                $0.sizeToFit()
             }
+        }
+    }
+
+    private func setUpTabBarAppearance() {
+        let standardAppearance = UITabBarAppearance()
+        standardAppearance.backgroundColor = Asset.Colors.snow.color
+//        standardAppearance.backgroundEffect = UIBlurEffect(style: .regular)
+        standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
+            .foregroundColor: Asset.Colors.mountain.color,
+        ]
+        standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+            .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
+            .foregroundColor: Asset.Colors.night.color,
+        ]
+        standardAppearance.stackedLayoutAppearance.normal.iconColor = Asset.Colors.mountain.color
+        standardAppearance.stackedLayoutAppearance.selected.iconColor = Asset.Colors.night.color
+        standardAppearance.stackedItemPositioning = .automatic
+        standardAppearance.shadowImage = nil
+        standardAppearance.shadowColor = nil
+        UITabBar.appearance().standardAppearance = standardAppearance
+        if #available(iOS 15.0, *) {
+            UITabBar.appearance().scrollEdgeAppearance = standardAppearance
         }
     }
 
@@ -87,11 +101,15 @@ final class TabBarController: UITabBarController {
 
     private func setupTabs() {
         TabItem.allCases.enumerated().forEach { index, item in
-            viewControllers?[index].tabBarItem = UITabBarItem(
-                title: item.displayTitle,
-                image: item.image,
-                selectedImage: item.selectedImage
-            )
+            if item == .send {
+                viewControllers?[index].tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
+            } else {
+                viewControllers?[index].tabBarItem = UITabBarItem(
+                    title: item.displayTitle,
+                    image: item.image,
+                    selectedImage: item.image
+                )
+            }
         }
     }
 
@@ -115,10 +133,12 @@ extension TabBarController: UITabBarControllerDelegate {
             return true
         }
 
-        if TabItem(rawValue: selectedIndex) == .feedback {
+        if TabItem(rawValue: selectedIndex) == .feedback || TabItem(rawValue: selectedIndex) == .send {
             routeToFeedback()
             return false
         }
+
+        (tabBar as! CustomTabBar).updateSelectedViewPositionIfNeeded()
 
         return true
     }
@@ -130,30 +150,15 @@ private extension TabItem {
     var image: UIImage {
         switch self {
         case .wallet:
-            return .tabBarWallet.withRenderingMode(.alwaysOriginal)
+            return .tabBarSelectedWallet
         case .history:
-            return .tabBarHistory.withRenderingMode(.alwaysOriginal)
+            return .tabBarHistory
         case .send:
-            return .tabBarSend.withRenderingMode(.alwaysOriginal)
+            return UIImage()
         case .feedback:
-            return .tabBarFeedback.withRenderingMode(.alwaysOriginal)
+            return .tabBarFeedback
         case .settings:
-            return .tabBarSettings.withRenderingMode(.alwaysOriginal)
-        }
-    }
-
-    var selectedImage: UIImage {
-        switch self {
-        case .wallet:
-            return .tabBarSelectedWallet.withRenderingMode(.alwaysOriginal)
-        case .history:
-            return .tabBarSelectedHistory.withRenderingMode(.alwaysOriginal)
-        case .send:
-            return .tabBarSelectedSend.withRenderingMode(.alwaysOriginal)
-        case .feedback:
-            return .tabBarSelectedFeedback.withRenderingMode(.alwaysOriginal)
-        case .settings:
-            return .tabBarSelectedSettings.withRenderingMode(.alwaysOriginal)
+            return .tabBarSettings
         }
     }
 
