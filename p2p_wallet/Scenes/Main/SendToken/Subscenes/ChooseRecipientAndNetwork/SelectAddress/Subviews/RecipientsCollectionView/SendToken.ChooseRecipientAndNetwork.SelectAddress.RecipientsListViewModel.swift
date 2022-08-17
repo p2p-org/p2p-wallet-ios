@@ -22,6 +22,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         var searchString: String?
 
+        private let addressSize = 44
         var isSearchingByAddress: Bool {
             searchString?
                 .matches(oneOfRegexes: .bitcoinAddress(isTestnet: solanaAPIClient.isTestNet()), .publicKey) == true
@@ -72,35 +73,47 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         }
 
         private func findAddressInSolanaNetwork(address: String) async throws -> [SendToken.Recipient] {
-            do {
-                let name = try await nameService.getName(address)
+//            Single<Bool>.async { [weak self] in
+//                (try? await self?.solanaAPIClient.checkAccountValidation(account: address)) ?? false
+//            }.map {
+//                [
+//                    .init(
+//                        address: address,
+//                        name: nil,
+//                        hasNoFunds: $0
+//                    ),
+//                ]
 
-                if let name = name {
-                    return [
-                        .init(
-                            address: address,
-                            name: name.withNameServiceDomain(),
-                            hasNoFunds: false
-                        ),
-                    ]
-                } else {
-                    let isValid = (try? await solanaAPIClient.checkAccountValidation(account: address)) ?? false
-                    return [
-                        .init(
-                            address: address,
-                            name: nil,
-                            hasNoFunds: !isValid
-                        ),
-                    ]
-                }
-            } catch {
-                return [.init(
+            // NameService is currently disabled
+//            do {
+//                let name = try await nameService.getName(address)
+
+//                if let name = name {
+//                    return [
+//                        .init(
+//                            address: address,
+//                            name: name.withNameServiceDomain(),
+//                            hasNoFunds: false
+//                        ),
+//                    ]
+//                } else {
+            let isValid = (try? await solanaAPIClient.checkAccountValidation(account: address)) ?? false
+            return [
+                .init(
                     address: address,
                     name: nil,
-                    hasNoFunds: false,
-                    hasNoInfo: true
-                )]
-            }
+                    hasNoFunds: !isValid
+                ),
+            ]
+//                }
+//            } catch {
+//                return [.init(
+//                    address: address,
+//                    name: nil,
+//                    hasNoFunds: false,
+//                    hasNoInfo: true
+//                )]
+//            }
         }
     }
 }

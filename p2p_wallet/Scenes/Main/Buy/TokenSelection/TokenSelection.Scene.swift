@@ -49,7 +49,7 @@ extension BuyTokenSelection {
                     cell.showLoader()
                     Task {
                         let tokens = try await tokenRepository.getTokensList()
-                        guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
+                        guard let token = tokens.first(where: { $0.address == cryptoCurrency.mintAddress }) else {
                             cell.isHidden = true
                             return
                         }

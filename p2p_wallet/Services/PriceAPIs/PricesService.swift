@@ -48,7 +48,7 @@ class PricesService: ObservableObject {
 
     // MARK: - Properties
 
-    @MainActor private var watchList = [Token]()
+    @MainActor private var watchList = [Token(.renBTC), Token(.nativeSolana), Token(.usdc)]
     private var timer: Timer?
     @Published private var currentPrices = [String: CurrentPrice]()
     @Published private var state = LoadableState.notRequested
@@ -58,8 +58,13 @@ class PricesService: ObservableObject {
     init() {
         // get current price
         Task {
-            currentPrices = await storage.retrievePrices()
-            state = .loaded
+            let initialValue = await storage.retrievePrices()
+            if initialValue.isEmpty {
+                try await getCurrentPrices()
+            } else {
+                currentPrices = initialValue
+                state = .loaded
+            }
         }
     }
 
