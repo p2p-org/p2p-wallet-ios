@@ -68,6 +68,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
         setupRemoteConfig()
 
+        UIViewController.swizzleViewDidDisappear()
+
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
@@ -197,7 +199,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
-        navBarAppearence.tintColor = .h5887ff
-        barButtonAppearance.tintColor = .h5887ff
+        navBarAppearence.tintColor = .black
+        barButtonAppearance.tintColor = .black
     }
 }

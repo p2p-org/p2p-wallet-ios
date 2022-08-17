@@ -16,12 +16,17 @@ extension Home {
     class RootView: BECompositionView {
         private var subscriptions = [AnyCancellable]()
         private let viewModel: HomeViewModelType
+        private let emptyViewModel: HomeEmptyViewModel
         // swiftlint:disable weak_delegate
         private var headerViewScrollDelegate = HeaderScrollDelegate()
         // swiftlint:enable weak_delegate
 
-        init(viewModel: HomeViewModelType) {
+        init(
+            viewModel: HomeViewModelType,
+            emptyViewModel: HomeEmptyViewModel
+        ) {
             self.viewModel = viewModel
+            self.emptyViewModel = emptyViewModel
             super.init(frame: .zero)
 
             viewModel.walletsRepository.reload()
@@ -29,35 +34,15 @@ extension Home {
 
         override func build() -> UIView {
             BESafeArea(bottom: false) {
-                BEVStack {
-                    // Indicator
-                    WLStatusIndicatorView(forAutoLayout: ()).setup { view in
-                        viewModel.pricesLoadingStatePublisher
-                            .sink { [weak view] state in
-                                switch state {
-                                case .notRequested:
-                                    view?.isHidden = true
-                                case .loading:
-                                    view?.setUp(state: .loading, text: L10n.updatingPrices)
-                                case .loaded:
-                                    view?.setUp(state: .success, text: L10n.pricesUpdated)
-                                case .error:
-                                    view?.setUp(state: .error, text: L10n.errorWhenUpdatingPrices)
-                                }
-                            }
-                            .store(in: &subscriptions)
-                    }
-
-                    BEBuilder(publisher: viewModel.isWalletEmptyPublisher) { [weak self] isEmpty in
-                        guard let self = self else { return UIView() }
-                        return isEmpty ? self.emptyScreen() : self.content()
-                    }
+                BEBuilder(publisher: viewModel.isWalletEmptyPublisher) { [weak self] state in
+                    guard let self = self else { return UIView() }
+                    return state ? self.content() : self.emptyScreen()
                 }
             }
         }
 
         func emptyScreen() -> UIView {
-            EmptyView(viewModel: viewModel)
+            HomeEmptyView(viewModel: emptyViewModel).uiView()
         }
 
         func content() -> UIView {

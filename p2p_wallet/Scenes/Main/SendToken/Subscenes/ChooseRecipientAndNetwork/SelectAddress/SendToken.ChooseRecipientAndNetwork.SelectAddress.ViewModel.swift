@@ -33,7 +33,6 @@ protocol SendTokenChooseRecipientAndNetworkSelectAddressViewModelType: WalletDid
     var isValidPublisher: AnyPublisher<Bool, Never> { get }
 
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState
-    func getCurrentSearchKey() -> String?
     func getPrice(for symbol: String) -> Double
     func getPrices(for symbols: [String]) -> [String: Double]
     func getFeeInCurrentFiat() -> String
@@ -205,10 +204,6 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
 
     func getCurrentInputState() -> SendToken.ChooseRecipientAndNetwork.SelectAddress.InputState {
         inputState
-    }
-
-    func getCurrentSearchKey() -> String? {
-        searchText
     }
 
     func getPrice(for symbol: String) -> Double {

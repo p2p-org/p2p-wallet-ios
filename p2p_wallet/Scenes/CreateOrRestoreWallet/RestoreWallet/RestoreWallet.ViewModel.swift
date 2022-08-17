@@ -115,28 +115,8 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     func handleICloudAccount(_ account: RawAccount) {
         phrases = account.phrase.components(separatedBy: " ")
         derivablePath = account.derivablePath
-        if let name = account.name {
-            self.name = name
-            finish()
-        } else {
-            // create account
-            isLoadingSubject = true
-            guard let phrases = phrases else { return }
-            Task {
-                do {
-                    let account = try await Account(
-                        phrase: phrases,
-                        network: Defaults.apiEndPoint.network,
-                        derivablePath: derivablePath
-                    )
-                    // reserve name
-                    isLoadingSubject = false
-                    navigatableScene = .reserveName(owner: account.publicKey.base58EncodedString)
-                } catch {
-                    errorSubject.send(error.readableDescription)
-                }
-            }
-        }
+        name = account.name
+        finish()
     }
 }
 
@@ -148,47 +128,10 @@ extension RestoreWallet.ViewModel {
         self.derivablePath = derivablePath
         self.phrases = phrases
 
-        // create account
-        isLoadingSubject = true
-
-        Task {
-            do {
-                let account = try await Account(
-                    phrase: phrases,
-                    network: Defaults.apiEndPoint.network,
-                    derivablePath: derivablePath
-                )
-
-                let owner = account.publicKey.base58EncodedString
-
-                // check if name available
-                do {
-                    let name = try await nameService.getName(owner)
-
-                    isLoadingSubject = false
-
-                    // save to icloud
-                    saveToICloud(name: name, phrase: phrases, derivablePath: derivablePath)
-
-                    if let name = name {
-                        handleName(name)
-                    } else {
-                        navigatableScene = .reserveName(owner: owner)
-                    }
-                } catch {
-                    isLoadingSubject = false
-
-                    // save to icloud
-                    saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
-
-                    finish()
-                }
-            } catch {
-                errorSubject.send(error.readableDescription)
-            }
-        }
-
-        DispatchQueue(label: "Create account", qos: .userInteractive).async {}
+        // save to icloud
+        saveToICloud(name: nil, phrase: phrases, derivablePath: derivablePath)
+        notificationsService.showInAppNotification(.done(L10n.savedToICloud))
+        finish()
     }
 
     @MainActor
