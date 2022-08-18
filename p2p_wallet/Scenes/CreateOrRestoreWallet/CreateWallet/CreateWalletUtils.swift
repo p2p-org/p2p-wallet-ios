@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import Combine
 import Foundation
 import Onboarding
 
@@ -29,5 +30,15 @@ struct ReactiveProcess<T> {
                 finish(error)
             }
         }
+    }
+}
+
+extension Subject {
+    func sendProcess<V>(data: V, _ finish: @escaping (Error?) -> Void) where Output == ReactiveProcess<V> {
+        send(ReactiveProcess<V>(data: data, finish: finish))
+    }
+
+    func sendProcess(_ finish: @escaping (Error?) -> Void) where Output == ReactiveProcess<Void> {
+        send(ReactiveProcess<Void>(data: (), finish: finish))
     }
 }
