@@ -874,3 +874,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "one crypto for\nanother" = "một loại tiền điện tử cho \n một loại tiền điện tử khác";
 "The code from SMS" = "Mã từ SMS";
 "Enter code to continue" = "Nhập mã để tiếp tục";
+"Enter the code to continue" = "Nhập mã để tiếp tục";
