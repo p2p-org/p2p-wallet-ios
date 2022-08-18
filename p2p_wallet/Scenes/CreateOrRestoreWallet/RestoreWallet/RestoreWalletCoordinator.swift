@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 import Onboarding
+import SwiftUI
 
 final class RestoreWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
@@ -22,6 +23,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
         )
     )
 
+    private var result = PassthroughSubject<Void, Never>()
     private(set) var navigationController: UINavigationController?
 
     init(parent: UIViewController) {
@@ -47,8 +49,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
         parent.present(navigationController!, animated: true)
 
-        return Empty()
-            .eraseToAnyPublisher()
+        return result.eraseToAnyPublisher()
     }
 
     // MARK: Navigation
@@ -62,10 +63,35 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
     private func buildViewController(viewModel: RestoreWalletViewModel) -> UIViewController {
         let state = viewModel.stateMachine.currentState
         switch state {
-        case .signIn:
-            return RestoreFlowsViewController(viewModel: viewModel)
+        case .restore:
+            let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(options: viewModel
+                .availableRestoreOptions)
+            chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { option in
+                var stateMachine = viewModel.stateMachine
+                switch option {
+                case .keychain:
+                    try await stateMachine <- .signInWithKeychain
+                default:
+                    break
+                }
+            })
+                .store(in: &subscriptions)
+            let view = ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel)
+            return UIHostingController(rootView: view)
+        case let .securitySetup(email, solPrivateKey, ethPublicKey, deviceShare, innerState):
+            fatalError()
         case let .restoredData(solPrivateKey: solPrivateKey, ethPublicKey: ethPublicKey):
             return RestoreResultViewController(sol: solPrivateKey, eth: ethPublicKey)
+        case .signInKeychain:
+            fatalError()
+        case .signInSeed:
+            fatalError()
+        case .enterPhone:
+            fatalError()
+        case let .enterOTP(phoneNumber: phoneNumber):
+            fatalError()
+        case let .social(result: result):
+            fatalError()
         }
     }
 }
