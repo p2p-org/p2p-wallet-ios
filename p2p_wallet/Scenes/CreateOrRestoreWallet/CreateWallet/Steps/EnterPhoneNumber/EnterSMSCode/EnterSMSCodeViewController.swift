@@ -105,7 +105,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
 
         viewModel.$isButtonEnabled.sink { [weak self] isEnabled in
             self?.continueButtonRef.view?.isEnabled = isEnabled
-            self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterCodeToContinue
+            self?.continueButtonRef.view?.title = isEnabled ? L10n.continue : L10n.enterTheCodeToContinue
             self?.continueButtonRef.view?.trailingImage = isEnabled ? Asset.MaterialIcon.arrowForward.image : nil
         }.store(in: &store)
 
