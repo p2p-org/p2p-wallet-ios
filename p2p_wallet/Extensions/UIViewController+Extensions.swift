@@ -169,3 +169,43 @@ extension UIViewController {
         preferredContentSize.height += 1
     }
 }
+
+// MARK: - ViewDidDisappearSwizzle
+
+private var onCloseKey: UInt8 = 0
+extension UIViewController {
+    var onClose: (() -> Void)? {
+        get {
+            objc_getAssociatedObject(
+                self,
+                &onCloseKey
+            ) as? () -> Void
+        }
+        set {
+            objc_setAssociatedObject(
+                self,
+                &onCloseKey,
+                newValue,
+                .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
+    }
+
+    @objc func viewDidDisappearOverride(_ animated: Bool) {
+        viewDidDisappearOverride(animated) // Incase we need to override this method
+        if isMovingFromParent || isBeingDismissed {
+            onClose?()
+        }
+    }
+
+    static func swizzleViewDidDisappear() {
+        if self != UIViewController.self { return }
+        let originalSelector = #selector(UIViewController.viewDidDisappear(_:))
+        let swizzledSelector = #selector(UIViewController.viewDidDisappearOverride(_:))
+        guard
+            let originalMethod = class_getInstanceMethod(self, originalSelector),
+            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
+        else { return }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
