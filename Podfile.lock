@@ -213,7 +213,6 @@ PODS:
   - Sentry (7.18.1):
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
-  - SkeletonUI (1.0.9)
   - SkeletonView (1.30.1)
   - SolanaPricesAPIs (1.0.0):
     - Cache
@@ -543,7 +542,6 @@ SPEC CHECKSUMS:
   RxSwift: 5710a9e6b17f3c3d6e40d6e559b9fa1e813b2ef8
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
-  SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
   SkeletonView: f1e8e19841be437746f07b7dc7ce4d028b698b96
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 6ba5043ed04055eb874085d2f96499022ddcd6e8
@@ -562,6 +560,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: d5c29d676ba2d0055a9a76f5afaf132a8edded6c
+PODFILE CHECKSUM: d55d641b1e9408e85fab39b1ab85c9a873d4d512
 
 COCOAPODS: 1.11.3
