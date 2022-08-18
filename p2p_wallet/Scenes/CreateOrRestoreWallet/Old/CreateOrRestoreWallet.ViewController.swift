@@ -78,7 +78,6 @@ extension CreateOrRestoreWallet {
 //            add(child: WelcomeVC(), to: containerView)
 
             videoPlayerView = IntroPlayerView(userInterfaceStyle: traitCollection.userInterfaceStyle)
-            videoPlayerView.skip = true
             videoPlayerView.autoAdjustWidthHeightRatio(1080 / 1130)
             videoPlayerView.autoSetDimension(.height, toSize: 349.adaptiveHeight)
 
