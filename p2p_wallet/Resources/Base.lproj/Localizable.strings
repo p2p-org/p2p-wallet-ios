@@ -882,3 +882,11 @@ another" = "one crypto for
 another";
 "The code from SMS" = "The code from SMS";
 "Enter the code to continue" = "Enter the code to continue";
+"Choose the way to continue" = "Choose the way to continue";
+"Restoring your wallet" = "Restoring your wallet";
+"Continue with Apple" = "Continue with Apple";
+"Continue with Google" = "Continue with Google";
+"Continue using Google" = "Continue using Google";
+"Continue using phone number" = "Continue using phone number";
+"Use a seed phrase / private key" = "Use a seed phrase / private key";
+"Continue with iCloud KeyChain" = "Continue with iCloud KeyChain";

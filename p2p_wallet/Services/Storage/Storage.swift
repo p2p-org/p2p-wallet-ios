@@ -35,12 +35,14 @@ protocol PincodeStorageType {
 }
 
 protocol AccountStorageType: SolanaAccountStorage {
+    var deviceShare: String? { get }
     func getDerivablePath() -> DerivablePath?
 
     func reloadSolanaAccount() async throws
     func save(phrases: [String]) throws
     func save(derivableType: DerivablePath.DerivableType) throws
     func save(walletIndex: Int) throws
+    func save(deviceShare: String) throws
     func clearAccount()
 }
 

@@ -26,8 +26,6 @@ struct PagingView<Content>: View where Content: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 24) {
-                Spacer()
-
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: .zero) {
                         self.content()
@@ -53,8 +51,6 @@ struct PagingView<Content>: View where Content: View {
                 )
 
                 PageControl(index: $index, maxIndex: maxIndex, fillColor: fillColor)
-
-                Spacer()
             }
         }
     }

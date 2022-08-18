@@ -6,6 +6,14 @@ import Foundation
 import SolanaSwift
 
 extension KeychainStorage: AccountStorageType {
+    public var account: SolanaSwift.Account? {
+        _account
+    }
+
+    var deviceShare: String? {
+        keychain.get(deviceShareKey)
+    }
+
     func reloadSolanaAccount() async throws {
         guard let phrases = keychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
         let derivableTypeRaw = keychain.get(derivableTypeKey) ?? ""
@@ -50,13 +58,13 @@ extension KeychainStorage: AccountStorageType {
         _account = nil
     }
 
-    public var account: SolanaSwift.Account? {
-        _account
-    }
-
     public func save(_: SolanaSwift.Account) throws { fatalError("Method has not been implemented") }
 
     func clearAccount() {
         removeCurrentAccount()
+    }
+
+    func save(deviceShare: String) throws {
+        keychain.set(deviceShare, forKey: deviceShareKey)
     }
 }

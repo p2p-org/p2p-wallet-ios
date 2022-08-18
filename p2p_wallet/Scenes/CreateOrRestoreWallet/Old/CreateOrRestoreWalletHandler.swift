@@ -9,6 +9,11 @@ import Foundation
 import SolanaSwift
 
 protocol CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?)
+    func creatingWalletDidComplete(
+        phrases: [String]?,
+        derivablePath: DerivablePath?,
+        name: String?,
+        deviceShare: String
+    )
     func restoringWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?)
 }

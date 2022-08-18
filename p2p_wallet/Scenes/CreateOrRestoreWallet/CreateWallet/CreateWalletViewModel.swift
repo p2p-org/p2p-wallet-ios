@@ -37,7 +37,7 @@ final class CreateWalletViewModel: BaseViewModel {
     }
 }
 
-private struct AuthServiceBridge: SocialAuthService {
+struct AuthServiceBridge: SocialAuthService {
     @Injected var authService: AuthService
 
     func auth(type: SocialProvider) async throws -> (tokenID: String, email: String) {
