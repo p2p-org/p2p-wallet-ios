@@ -19,12 +19,14 @@ struct ICloudWalletCell: View {
         }, label: {
             HStack {
                 Image(uiImage: Asset.MaterialIcon.accountBalanceWalletOutlined.image)
+                    .aspectRatio(1, contentMode: .fit)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .frame(width: 48, height: 48)
                     .background(Circle().fill(Color(Asset.Colors.rain.color)))
                     .padding(.leading, 16)
 
                 if let name = name {
+                    // With name
                     VStack(alignment: .leading, spacing: 4) {
                         Text(name)
                             .font(uiFont: UIFont.font(of: .text2, weight: .regular))
@@ -39,8 +41,18 @@ struct ICloudWalletCell: View {
                     }
                     .padding(.leading, 12)
                     .padding(.trailing, 8)
+                } else {
+                    // Wihout name
+                    HStack(spacing: 0) {
+                        Text(String(publicKey.dropLast(4)))
+                        Text(publicKey.suffix(4))
+                    }
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .font(uiFont: UIFont.font(of: .text2, weight: .regular))
+                    .lineLimit(1)
                 }
 
+                Spacer()
                 Image(uiImage: Asset.MaterialIcon.chevronRight.image)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .padding(.trailing, 14)
