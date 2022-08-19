@@ -7,11 +7,7 @@ import Reachability
 import Resolver
 import SwiftyUserDefaults
 
-#if DEBUG
-    let EnterSMSCodeCountdownLegs = [3, 4, 6, 9, 12]
-#else
-    let EnterSMSCodeCountdownLegs = [30, 40, 60, 90, 120]
-#endif
+let EnterSMSCodeCountdownLegs = [30, 40, 60, 90, 120]
 
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
