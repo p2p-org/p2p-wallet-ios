@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import KeyAppUI
+import Onboarding
 import SwiftUI
 
 struct ICloudRestoreScreen: View {
@@ -68,25 +69,26 @@ struct ICloudRestoreScreen: View {
             if viewModel.accounts.count <= 5 {
                 VStack {
                     ForEach(viewModel.accounts) { account in
-                        ICloudWalletCell(
-                            name: account.name,
-                            publicKey: account.publicKey
-                        ) {}
+                        walletCell(account: account)
                     }
                 }.padding(.top, 20)
             } else {
                 ScrollView(showsIndicators: false) {
                     LazyVStack {
                         ForEach(viewModel.accounts) { account in
-                            ICloudWalletCell(
-                                name: account.name,
-                                publicKey: account.publicKey
-                            ) {}
+                            walletCell(account: account)
                         }
                     }.padding(.top, 20)
                 }
             }
-        }
+        }.disabled(viewModel.loading == true)
+    }
+
+    func walletCell(account: ICloudAccount) -> some View {
+        ICloudWalletCell(
+            name: account.name,
+            publicKey: account.publicKey
+        ) { [weak viewModel] in viewModel?.restore(account: account) }
     }
 }
 

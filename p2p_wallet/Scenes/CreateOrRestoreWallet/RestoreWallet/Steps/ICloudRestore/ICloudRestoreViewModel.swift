@@ -14,7 +14,7 @@ class ICloudRestoreViewModel: BaseViewModel {
     struct CoordinatorIO {
         let back: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
         let info: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
-        let restore: PassthroughSubject<ReactiveProcess<SeedPhrase>, Never> = .init()
+        let restore: PassthroughSubject<ReactiveProcess<ICloudAccount>, Never> = .init()
     }
 
     // MARK: - Services
@@ -52,6 +52,16 @@ class ICloudRestoreViewModel: BaseViewModel {
         loading = true
 
         coordinatorIO.info.sendProcess { [weak self] error in
+            if let error = error { self?.notificationService.showDefaultErrorNotification() }
+            self?.loading = false
+        }
+    }
+
+    func restore(account: ICloudAccount) {
+        guard loading == false else { return }
+        loading = true
+
+        coordinatorIO.restore.sendProcess(data: account) { [weak self] error in
             if let error = error { self?.notificationService.showDefaultErrorNotification() }
             self?.loading = false
         }
