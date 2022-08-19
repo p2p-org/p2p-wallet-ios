@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '13.0'
+platform :ios, '14.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 
@@ -64,6 +64,7 @@ target 'p2p_wallet' do
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
+  pod 'RxCombine'
   pod 'CombineCocoa'
 
   # kits
@@ -84,6 +85,9 @@ target 'p2p_wallet' do
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'GT3Captcha-iOS'
   pod 'PhoneNumberKit', '~> 3.3.4'
+  pod 'SkeletonUI'
+  pod 'SwiftSVG', '~> 2.0'
+  pod 'Introspect'
 
   # Firebase
   pod 'Firebase/Analytics'
@@ -95,9 +99,12 @@ target 'p2p_wallet' do
 
   # Others
   pod 'SwiftJWT'
-  
+
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
+
+  #SwiftUI
+  pod 'BottomSheet', :git => 'https://github.com/weitieda/bottom-sheet.git'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths
@@ -117,7 +124,7 @@ post_install do |installer|
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
     end
-    
+
     if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'
         target.build_configurations.each do |config|
           config.build_settings['SWIFT_INSTALL_OBJC_HEADER'] = 'No'

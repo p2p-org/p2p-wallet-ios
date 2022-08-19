@@ -226,8 +226,39 @@ platform :ios do
   end
 
   lane :release do
-    # get version
-    version = get_version_number(target: "p2p_wallet")
+    # get current branch name
+    branch = git_branch.downcase
+    puts "Current branch is #{branch}"
+
+    # check if branch is a release branch
+    if !branch.start_with?("release/")
+      raise "The branch is not a release branch. Release branch format: release/<MARKETING_VERSION>"
+    end
+
+    # get release version
+    version = branch.split("release/").last
+    puts "Releasing version #{version}"
+
+    # check feature number
+    version_updated = false
+    if version != get_version_number(target: "p2p_wallet")
+      puts "The version number is not valid. Updating..."
+
+      # update project.yml
+      file_name = "project.yml"
+      text = File.read("../#{file_name}")
+      new_contents = text.gsub(/MARKETING_VERSION: .*/, "MARKETING_VERSION: #{version}")
+      File.open("../#{file_name}", "w") {|file| file.puts new_contents }
+
+      # commit and push
+      version_updated = true
+      
+      # update xcodeproj file
+      increment_version_number(
+        version_number: version,
+        xcodeproj: "./p2p_wallet.xcodeproj"
+      )
+    end
 
     # prepare for tagging
     tag_prefix = "v"
@@ -272,7 +303,11 @@ platform :ios do
     # clean
     delete_temp_keychain(TEMP_KEYCHAIN_USER)
 
-    # tag
+    # commit, tag and push
+    if version_updated
+      git_commit(path: "./project.yml", message: "release: bump version to #{version}")
+      push_to_git_remote()
+    end
     add_git_tag(tag: tag)
     push_git_tags(tag: tag)
   end

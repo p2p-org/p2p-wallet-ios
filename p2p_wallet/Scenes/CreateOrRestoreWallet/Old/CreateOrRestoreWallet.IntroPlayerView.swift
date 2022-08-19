@@ -33,7 +33,6 @@ extension CreateOrRestoreWallet {
 
         private lazy var placeholderImageView = UIImageView(image: .onboardingLastFrame)
 
-        public var skip: Bool = false
         private let theme: String
         private var step = 1
         private var movingToNextStep = false
@@ -109,7 +108,7 @@ extension CreateOrRestoreWallet {
             )
             NotificationCenter.default.addObserver(
                 self,
-                selector: #selector(_appDidBecomeActive),
+                selector: #selector(appWasBecameActive),
                 name: UIApplication.didBecomeActiveNotification,
                 object: nil
             )
@@ -123,11 +122,6 @@ extension CreateOrRestoreWallet {
         }
 
         func playNext() {
-            if skip {
-                completion?()
-                return
-            }
-
             guard !isAnimating else { return }
             guard step < 2 else {
                 completion?()
@@ -144,7 +138,7 @@ extension CreateOrRestoreWallet {
             activeResigned = true
         }
 
-        @objc private func _appDidBecomeActive() {
+        @objc func appWasBecameActive() {
             guard activeResigned, !isFinished else { return }
             player.play()
         }

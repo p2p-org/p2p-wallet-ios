@@ -18,6 +18,7 @@ final class CreateWalletViewModel: BaseViewModel {
             provider: .init(
                 authService: AuthServiceBridge(),
                 apiGatewayClient: APIGatewayClientImplMock(),
+                // apiGatewayClient: APIGatewayClientImpl(endpoint: String.secretConfig("API_GATEWAY")!),
                 tKeyFacade: tKeyFacade ?? TKeyMockupFacade(),
                 securityStatusProvider: Resolver.resolve()
             )
