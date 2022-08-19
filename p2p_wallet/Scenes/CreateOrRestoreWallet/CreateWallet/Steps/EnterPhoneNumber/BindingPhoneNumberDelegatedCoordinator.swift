@@ -31,7 +31,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
 
             }.store(in: &subscriptions)
             return vc
-        case let .enterOTP(phoneNumber, _):
+        case let .enterOTP(_, phoneNumber, _):
             let vm = EnterSMSCodeViewModel(phone: phoneNumber)
             let vc = EnterSMSCodeViewController(viewModel: vm)
 

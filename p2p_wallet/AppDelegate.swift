@@ -70,6 +70,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         setupDefaultFlags()
         FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
 
+        UIViewController.swizzleViewDidDisappear()
+
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
 
@@ -148,6 +150,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func setupNavigationAppearance() {
+        // Fix iOS 14 navigation bar
         let appearance = UINavigationBarAppearance()
         appearance.configureWithTransparentBackground()
         UINavigationBar.appearance().standardAppearance = appearance
