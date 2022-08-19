@@ -5,7 +5,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct ICloudRestoreView: View {
+struct ICloudRestoreScreen: View {
     @ObservedObject var viewModel: ICloudRestoreViewModel
 
     var body: some View {
@@ -13,6 +13,16 @@ struct ICloudRestoreView: View {
             Spacer()
             content
             Spacer()
+            BottomActionContainer {
+                LazyVStack {
+                    ForEach(viewModel.accounts) { account in
+                        ICloudWalletCell(
+                            name: account.name,
+                            publicKey: account.publicKey
+                        ) {}
+                    }
+                }
+            }
         }
         .navigationBarTitle(Text(L10n.createANewWallet), displayMode: .inline)
         .navigationBarItems(
@@ -47,10 +57,21 @@ struct ICloudRestoreView: View {
     }
 }
 
-struct ICloudRestoreView_Previews: PreviewProvider {
+struct ICloudRestoreScreen_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            ICloudRestoreView(viewModel: .init())
+            ICloudRestoreScreen(
+                viewModel: .init(
+                    accounts: [
+                        .init(
+                            name: "kirill.p2p.sol",
+                            phrase: "",
+                            derivablePath: .default,
+                            publicKey: "HAE1oNnc3XBmPudphRcHhyCvGShtgDYtZVzx2MocKEr1"
+                        ),
+                    ]
+                )
+            )
         }
     }
 }

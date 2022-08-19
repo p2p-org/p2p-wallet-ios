@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Combine
-import Foundation
+import Onboarding
 import Resolver
 
 class ICloudRestoreViewModel: BaseViewModel {
@@ -28,8 +28,14 @@ class ICloudRestoreViewModel: BaseViewModel {
     // MARK: - States
 
     @Published var loading: Bool = false
+    @Published var accounts: [ICloudAccount] = []
 
     // MARK: - Events
+
+    init(accounts: [ICloudAccount]) {
+        self.accounts = accounts
+        super.init()
+    }
 
     func back() {
         guard loading == false else { return }
@@ -50,4 +56,8 @@ class ICloudRestoreViewModel: BaseViewModel {
             self?.loading = false
         }
     }
+}
+
+extension ICloudAccount: Identifiable {
+    public var id: ObjectIdentifier { publicKey }
 }
