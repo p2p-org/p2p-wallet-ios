@@ -33,7 +33,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             !isLoading,
             reachability.check()
         else { return }
-        coordinatorIO.phoneEntered.send(phone)
+        coordinatorIO.phoneEntered.send(phone.replacingOccurrences(of: " ", with: ""))
     }
 
     func selectCountryTap() {
