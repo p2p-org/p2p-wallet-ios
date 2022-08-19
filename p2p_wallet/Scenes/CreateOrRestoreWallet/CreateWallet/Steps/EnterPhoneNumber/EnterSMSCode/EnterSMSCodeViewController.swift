@@ -76,7 +76,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     func bottomView() -> UIView {
         BEContainer {
             TextButton(
-                title: L10n.enterCodeToContinue,
+                title: L10n.enterTheCodeToContinue,
                 style: .primary,
                 size: .large,
                 trailing: Asset.MaterialIcon.arrowForward.image
