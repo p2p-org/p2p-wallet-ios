@@ -871,7 +871,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "from another wallet or exchange" = "từ ví hoặc sàn giao dịch khác";
 "one crypto for another" = "một loại tiền điện tử này cho một loại tiền điện tử khác";
 "to phone number, username or address" = "đến số điện thoại, tên người dùng hoặc địa chỉ";
-"one crypto for
-another" = "một tiền điện tử cho
- nữa";
 "one crypto for\nanother" = "một loại tiền điện tử cho \n một loại tiền điện tử khác";
+"The code from SMS" = "Mã từ SMS";
+"Enter code to continue" = "Nhập mã để tiếp tục";
+"Enter the code to continue" = "Nhập mã để tiếp tục";
