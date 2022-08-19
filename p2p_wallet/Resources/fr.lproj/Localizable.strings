@@ -871,3 +871,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 another" = "une crypto pour
  une autre";
 "one crypto for\nanother" = "un crypto pour\nun autre";
+"The code from SMS" = "Le code de SMS";
+"Enter code to continue" = "Entrez le code pour continuer";
+"Enter the code to continue" = "Entrez le code pour continuer";
