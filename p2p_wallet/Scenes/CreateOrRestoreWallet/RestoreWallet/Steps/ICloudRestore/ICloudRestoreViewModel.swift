@@ -71,3 +71,7 @@ class ICloudRestoreViewModel: BaseViewModel {
 extension ICloudAccount: Identifiable {
     public var id: String { publicKey }
 }
+
+extension ICloudAccount: Identifiable {
+    public var id: ObjectIdentifier { publicKey }
+}

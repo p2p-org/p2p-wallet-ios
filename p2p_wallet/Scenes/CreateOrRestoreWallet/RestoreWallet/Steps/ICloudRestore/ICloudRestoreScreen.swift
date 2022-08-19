@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import KeyAppUI
-import Onboarding
 import SwiftUI
 
 struct ICloudRestoreScreen: View {
@@ -14,7 +13,16 @@ struct ICloudRestoreScreen: View {
             Spacer()
             content
             Spacer()
-            bottomAction
+            BottomActionContainer {
+                LazyVStack {
+                    ForEach(viewModel.accounts) { account in
+                        ICloudWalletCell(
+                            name: account.name,
+                            publicKey: account.publicKey
+                        ) {}
+                    }
+                }
+            }
         }
         .navigationBarTitle(Text(L10n.createANewWallet), displayMode: .inline)
         .navigationBarItems(
@@ -39,56 +47,13 @@ struct ICloudRestoreScreen: View {
     }
 
     var content: some View {
-        VStack(spacing: .zero) {
-            if viewModel.accounts.count <= 5 {
-                Image(uiImage: .introWelcomeToP2pFamily)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(minHeight: viewModel.accounts.count < 3 ? 200 : 90)
-            }
-
-            Text(L10n.chooseYourWallet)
-                .font(.system(size: UIFont.fontSize(of: .largeTitle), weight: .bold))
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .multilineTextAlignment(.center)
-                .padding(.top, 24)
-
-            Text("\(viewModel.accounts.count) Wallets found")
-                .font(.system(size: UIFont.fontSize(of: .title3), weight: .regular))
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .multilineTextAlignment(.center)
-                .padding(.top, 16)
-        }
-        .padding(.horizontal, 40)
-        .padding(.vertical, 40)
-        .padding(.top, 54)
-    }
-
-    var bottomAction: some View {
-        BottomActionContainer(topPadding: 0) {
-            if viewModel.accounts.count <= 5 {
-                VStack {
-                    ForEach(viewModel.accounts) { account in
-                        walletCell(account: account)
-                    }
-                }.padding(.top, 20)
-            } else {
-                ScrollView(showsIndicators: false) {
-                    LazyVStack {
-                        ForEach(viewModel.accounts) { account in
-                            walletCell(account: account)
-                        }
-                    }.padding(.top, 20)
-                }
-            }
-        }.disabled(viewModel.loading == true)
-    }
-
-    func walletCell(account: ICloudAccount) -> some View {
-        ICloudWalletCell(
-            name: account.name,
-            publicKey: account.publicKey
-        ) { [weak viewModel] in viewModel?.restore(account: account) }
+        OnboardingContentView(
+            data: .init(
+                image: .introWelcomeToP2pFamily,
+                title: "Choose your wallet",
+                subtitle: "3 Wallets found"
+            )
+        ).padding(.horizontal, 40)
     }
 }
 
@@ -97,21 +62,16 @@ struct ICloudRestoreScreen_Previews: PreviewProvider {
         NavigationView {
             ICloudRestoreScreen(
                 viewModel: .init(
-                    accounts: (0 ..< 16).map { i in
+                    accounts: [
                         .init(
-                            name: i % 2 == 0 ? "kirill.p2p.sol" : nil,
+                            name: "kirill.p2p.sol",
                             phrase: "",
                             derivablePath: .default,
-                            publicKey: randomString(length: 32)
-                        )
-                    }
+                            publicKey: "HAE1oNnc3XBmPudphRcHhyCvGShtgDYtZVzx2MocKEr1"
+                        ),
+                    ]
                 )
             )
         }
     }
-}
-
-private func randomString(length: Int) -> String {
-    let letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    return String((0 ..< length).map { _ in letters.randomElement()! })
 }
