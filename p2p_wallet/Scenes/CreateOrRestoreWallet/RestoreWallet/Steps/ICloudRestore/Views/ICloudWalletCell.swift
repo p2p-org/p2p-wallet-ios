@@ -42,7 +42,7 @@ struct ICloudWalletCell: View {
                     .padding(.leading, 12)
                     .padding(.trailing, 8)
                 } else {
-                    // Wihout name
+                    // Without name
                     HStack(spacing: 0) {
                         Text(String(publicKey.dropLast(4)))
                         Text(publicKey.suffix(4))

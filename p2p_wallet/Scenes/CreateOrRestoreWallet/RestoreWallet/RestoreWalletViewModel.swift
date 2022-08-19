@@ -6,6 +6,7 @@ import Combine
 import Foundation
 import Onboarding
 import Resolver
+import SolanaSwift
 
 struct RestoreOption: OptionSet {
     let rawValue: Int
@@ -36,7 +37,8 @@ final class RestoreWalletViewModel: BaseViewModel {
             deviceShare: deviceShare,
             authService: AuthServiceBridge(),
             apiGatewayClient: APIGatewayClientImplMock(),
-            securityStatusProvider: Resolver.resolve()
+            securityStatusProvider: Resolver.resolve(),
+            icloudAccountProvider: Resolver.resolve(KeychainStorage.self)
         ))
 
         var options: RestoreOption = [.seed, .custom]
@@ -49,5 +51,12 @@ final class RestoreWalletViewModel: BaseViewModel {
         }
 
         availableRestoreOptions = options
+    }
+}
+
+extension KeychainStorage: ICloudAccountProvider {
+    func getAll() async throws -> [(name: String?, phrase: String, derivablePath: DerivablePath)] {
+        guard let accounts = accountFromICloud() else { return [] }
+        return accounts.map { (name: $0.name, phrase: $0.phrase, derivablePath: $0.derivablePath) }
     }
 }

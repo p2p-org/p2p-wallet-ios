@@ -11,7 +11,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
     // MARK: - NavigationController
 
     let parent: UIViewController
-    lazy var tKeyFacade: TKeyJSFacade = .init(
+    let tKeyFacade: TKeyJSFacade = .init(
         wkWebView: GlobalWebView.requestWebView(),
         config: .init(
             metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
@@ -23,11 +23,23 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
         )
     )
 
+    let viewModel: RestoreWalletViewModel
+
     private var result = PassthroughSubject<Void, Never>()
     private(set) var navigationController: UINavigationController?
 
+    let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
+
     init(parent: UIViewController) {
         self.parent = parent
+        viewModel = RestoreWalletViewModel(tKeyFacade: tKeyFacade)
+
+        securitySetupDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.stateMachine.accept(event: .securitySetup(event))
+            }
+        )
+
         super.init()
     }
 
@@ -35,8 +47,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     override func start() -> AnyPublisher<Void, Never> {
         // Create root view controller
-        let viewModel = RestoreWalletViewModel(tKeyFacade: tKeyFacade)
-        let viewController = buildViewController(viewModel: viewModel)
+        let viewController = buildViewController(viewModel: viewModel) ?? UIViewController()
         navigationController = UINavigationController(rootViewController: viewController)
         navigationController?.modalPresentationStyle = .fullScreen
 
@@ -44,7 +55,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
             .stateStream
             .dropFirst()
             .receive(on: RunLoop.main)
-            .sink { [weak self, unowned viewModel] _ in self?.navigate(viewModel: viewModel) }
+            .sink { [weak self] _ in self?.navigate() }
             .store(in: &subscriptions)
 
         parent.present(navigationController!, animated: true)
@@ -54,20 +65,20 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     // MARK: Navigation
 
-    private func navigate(viewModel: RestoreWalletViewModel) {
+    private func navigate() {
         guard let navigationController = navigationController else { return }
-        let vc = buildViewController(viewModel: viewModel)
+        let vc = buildViewController(viewModel: viewModel) ?? UIViewController()
         navigationController.setViewControllers([vc], animated: true)
     }
 
-    private func buildViewController(viewModel: RestoreWalletViewModel) -> UIViewController {
+    private func buildViewController(viewModel: RestoreWalletViewModel) -> UIViewController? {
+        var stateMachine = viewModel.stateMachine
         let state = viewModel.stateMachine.currentState
         switch state {
         case .restore:
             let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(options: viewModel
                 .availableRestoreOptions)
             chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { option in
-                var stateMachine = viewModel.stateMachine
                 switch option {
                 case .keychain:
                     try await stateMachine <- .signInWithKeychain
@@ -78,12 +89,28 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
                 .store(in: &subscriptions)
             let view = ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel)
             return UIHostingController(rootView: view)
-        case let .securitySetup(email, solPrivateKey, ethPublicKey, deviceShare, innerState):
-            fatalError()
+        case let .securitySetup(_, _, _, _, innerState):
+            return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
         case let .restoredData(solPrivateKey: solPrivateKey, ethPublicKey: ethPublicKey):
             return RestoreResultViewController(sol: solPrivateKey, eth: ethPublicKey)
-        case .signInKeychain:
-            fatalError()
+        case let .signInKeychain(accounts):
+            let vm = ICloudRestoreViewModel(accounts: accounts)
+
+            vm.coordinatorIO.back.sink { process in
+                process.start { try await stateMachine <- .back }
+            }.store(in: &subscriptions)
+
+            vm.coordinatorIO.info.sink { _ in
+                // TODO: show info screen
+            }.store(in: &subscriptions)
+
+            vm.coordinatorIO.restore.sink { process in
+                process.start {
+                    try await stateMachine <- .restoreICloudAccount(account: process.data)
+                }
+            }.store(in: &subscriptions)
+
+            return UIHostingController(rootView: ICloudRestoreScreen(viewModel: vm))
         case .signInSeed:
             fatalError()
         case .enterPhone:
