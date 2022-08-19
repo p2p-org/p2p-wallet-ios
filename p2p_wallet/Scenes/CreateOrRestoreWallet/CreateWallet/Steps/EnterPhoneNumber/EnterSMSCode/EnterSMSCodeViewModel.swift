@@ -5,18 +5,18 @@ import Onboarding
 import PhoneNumberKit
 import Reachability
 import Resolver
+import SwiftyUserDefaults
 
-#if DEBUG
-    let EnterSMSCodeCountdown = 5
-#else
-    let EnterSMSCodeCountdown = 60
-#endif
+let EnterSMSCodeCountdownLegs = [30, 40, 60, 90, 120]
 
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
+    private let countdownSteps = [3, 4, 6, 9, 12]
+    private static var phoneSteps = [String: Int]()
+
     private var cancellable = Set<AnyCancellable>()
-    private var countdown = EnterSMSCodeCountdown
+    private var countdown: Int
     private static let codeLength = 6
 
     // MARK: -
@@ -54,15 +54,20 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         coordinatorIO.onResend.send()
 
         // Setup timer
-        countdown = EnterSMSCodeCountdown
+        countdown = countdownSteps[Self.phoneSteps[phone] ?? 0]
+        Self.phoneSteps[phone] = min(EnterSMSCodeCountdownLegs.count - 1, (Self.phoneSteps[phone] ?? 0) + 1)
         timer?.invalidate()
         startTimer()
         setResendCountdown()
     }
 
-    func backTapped() {}
+    func backTapped() {
+        coordinatorIO.goBack.send()
+    }
 
-    func infoTapped() {}
+    func infoTapped() {
+        coordinatorIO.showInfo.send()
+    }
 
     // MARK: -
 
@@ -72,8 +77,11 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     init(phone: String) {
         self.phone = phone
+        countdown = countdownSteps[Self.phoneSteps[phone] ?? 0]
 
         super.init()
+
+        Self.phoneSteps[phone] = Self.phoneSteps[phone] ?? 1
 
         bind()
         startTimer()

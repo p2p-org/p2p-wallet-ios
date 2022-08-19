@@ -54,7 +54,7 @@ extension BuyTokenSelection {
                     }
                     .asDriver(onErrorJustReturn: [])
                     .drive(onNext: { [weak cell] tokens in
-                        guard let token = tokens.first(where: { $0.symbol == cryptoCurrency.name }) else {
+                        guard let token = tokens.first(where: { $0.address == cryptoCurrency.mintAddress }) else {
                             cell?.isHidden = true
                             return
                         }

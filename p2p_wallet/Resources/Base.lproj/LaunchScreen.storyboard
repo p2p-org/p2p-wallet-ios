@@ -27,7 +27,7 @@
     </scenes>
     <resources>
         <namedColor name="Lime">
-            <color red="0.89399999380111694" green="0.95300000905990601" blue="0.071000002324581146" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+            <color red="0.8666666666666667" green="0.98039215686274506" blue="0.16862745098039217" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
     </resources>
 </document>

@@ -91,6 +91,7 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let selectedCountry = item as? SelectableCountry, !selectedCountry.isSelected,
               !selectedCountry.isEmpty else { return }
+        viewModel.selectedCountry = selectedCountry
         collectionView.updateWithoutAnimations {
             viewModel.batchUpdate { countries in
                 var countries = countries
