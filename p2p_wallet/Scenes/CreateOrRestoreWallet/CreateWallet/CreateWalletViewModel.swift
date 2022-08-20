@@ -12,14 +12,14 @@ final class CreateWalletViewModel: BaseViewModel {
 
     @Injected var onboardingService: OnboardingService
 
-    init(tKeyFacade: TKeyFacade? = nil, initialState: CreateWalletFlowState?) {
+    init(tKeyFacade _: TKeyFacade? = nil, initialState: CreateWalletFlowState?) {
         onboardingStateMachine = .init(
             initialState: initialState,
             provider: .init(
                 authService: AuthServiceBridge(),
                 apiGatewayClient: APIGatewayClientImplMock(),
                 // apiGatewayClient: APIGatewayClientImpl(endpoint: String.secretConfig("API_GATEWAY")!),
-                tKeyFacade: tKeyFacade ?? TKeyMockupFacade(),
+                tKeyFacade: TKeyMockupFacade(),
                 securityStatusProvider: Resolver.resolve()
             )
         )
