@@ -6,6 +6,7 @@ import Combine
 import CountriesAPI
 import Foundation
 import Onboarding
+import SwiftUI
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
@@ -66,6 +67,24 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             }.store(in: &subscriptions)
 
             return vc
+        case .broken:
+            let view = OnboardingBrokenScreen(title: L10n.createANewWallet)
+
+            view.coordinator.help.sink { [stateMachine] _ in
+                // TODO: handle
+            }.store(in: &subscriptions)
+
+            // back
+            view.coordinator.backHome.sink { [stateMachine] process in
+                process.start { try await stateMachine <- .back }
+            }.store(in: &subscriptions)
+
+            // info
+            view.coordinator.info.sink { [stateMachine] _ in
+                // TODO: handle
+            }.store(in: &subscriptions)
+
+            return UIHostingController(rootView: view)
         default:
             return nil
         }
