@@ -22,6 +22,11 @@ struct ChooseRestoreOptionView: View {
             }
             .edgesIgnoringSafeArea(.bottom)
         }
+        .onboardingNavigationBar(title: L10n.restoringYourWallet) { [weak viewModel] in
+            viewModel?.back.send()
+        } onInfo: { [weak viewModel] in
+            viewModel?.openInfo.send()
+        }
     }
 }
 
@@ -35,8 +40,9 @@ extension ChooseRestoreOptionView {
                             title: button.title,
                             style: .inverted,
                             size: .large,
-                            leading: button.icon
-                        ) { [weak viewModel] in viewModel?.optionChosen.send(button.option) }
+                            leading: button.icon,
+                            isLoading: viewModel.isLoading == button.option
+                        ) { [weak viewModel] in viewModel?.optionDidTap.send(button.option) }
                             .styled()
                     }
                 }
@@ -46,8 +52,9 @@ extension ChooseRestoreOptionView {
                             title: button.title,
                             style: .outlineWhite,
                             size: .large,
-                            leading: button.icon
-                        ) { [weak viewModel] in viewModel?.optionChosen.send(button.option) }
+                            leading: button.icon,
+                            isLoading: viewModel.isLoading == button.option
+                        ) { [weak viewModel] in viewModel?.optionDidTap.send(button.option) }
                             .styled()
                     }
                 }
