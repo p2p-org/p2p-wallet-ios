@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import KeyAppUI
 import Onboarding
 import SwiftUI
 
@@ -30,6 +31,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
     let restoreCustomDelegatedCoordinator: RestoreCustomDelegatedCoordinator
+    let restoreSocialDelegatedCoordinator: RestoreSocialDelegatedCoordinator
 
     init(parent: UIViewController) {
         self.parent = parent
@@ -44,6 +46,12 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
         restoreCustomDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
                 try await viewModel?.stateMachine.accept(event: .restoreCustom(event))
+            }
+        )
+
+        restoreSocialDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.stateMachine.accept(event: .restoreSocial(event))
             }
         )
 
@@ -83,7 +91,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
     // MARK: Navigation
 
     private func stateChangeHandler(from: RestoreWalletState?, to: RestoreWalletState) {
-        if case let .restoredData(solPrivateKey, ethPublicKey) = to {
+        if case let .finished(result) = to {
             navigationController?.dismiss(animated: true)
             self.result.send(completion: .finished)
         }
@@ -107,61 +115,99 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
         case .restore:
             let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(options: viewModel
                 .availableRestoreOptions)
-            chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { [weak self] option in
+            chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { [weak self] process in
                 guard let self = self else { return }
-                switch option {
+                switch process.data {
                 case .keychain:
-                    try await stateMachine <- .signInWithKeychain
+                    process.start { _ = try await stateMachine <- .signInWithKeychain }
+
                 case .custom:
-                    try await stateMachine <- .restoreCustom(.enterPhone)
+                    process.start { _ = try await stateMachine <- .restoreCustom(.enterPhone) }
+
                 case .socialApple:
-                    try await stateMachine <-
-                        .restoreSocial(.signIn(socialProvider: .apple, deviceShare: self.viewModel.deviceShare!))
+                    process.start {
+                        if let deviceShare = self.viewModel.deviceShare {
+                            _ = try await stateMachine <-
+                                .restoreSocial(.signInDevice(socialProvider: .apple, deviceShare: deviceShare))
+                        } else {
+                            throw StateMachineError.invalidEvent
+                        }
+                    }
+
                 case .socialGoogle:
-                    try await stateMachine <-
-                        .restoreSocial(.signIn(socialProvider: .google, deviceShare: self.viewModel.deviceShare!))
+                    process.start {
+                        if let deviceShare = self.viewModel.deviceShare {
+                            _ = try await stateMachine <-
+                                .restoreSocial(.signInDevice(socialProvider: .google, deviceShare: deviceShare))
+                        } else {
+                            throw StateMachineError.invalidEvent
+                        }
+                    }
+
                 case .seed:
-                    try await stateMachine <- .signInWithSeed
+                    process.start {
+                        _ = try await stateMachine <- .signInWithSeed
+                    }
+
                 default:
                     break
                 }
             })
                 .store(in: &subscriptions)
-            let view = ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel)
-            return UIHostingController(rootView: view)
+            chooseRestoreOptionViewModel.back.sinkAsync {
+                _ = try await stateMachine <- .back
+            }
+            .store(in: &subscriptions)
+            chooseRestoreOptionViewModel.openInfo.sink { [weak self] in
+                self?.openInfo()
+            }
+            .store(in: &subscriptions)
+            return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel))
+
         case let .signInKeychain(accounts):
             let vm = ICloudRestoreViewModel(accounts: accounts)
 
             vm.coordinatorIO.back.sink { process in
-                process.start { try await stateMachine <- .back }
+                process.start { _ = try await stateMachine <- .back }
             }.store(in: &subscriptions)
 
-            vm.coordinatorIO.info.sink { _ in
-                // TODO: show info screen
+            vm.coordinatorIO.info.sink { [weak self] process in
+                process.start { self?.openTerms() }
             }.store(in: &subscriptions)
 
             vm.coordinatorIO.restore.sink { process in
                 process.start {
-                    try await stateMachine <- .restoreICloudAccount(account: process.data)
+                    _ = try await stateMachine <- .restoreICloudAccount(account: process.data)
                 }
             }.store(in: &subscriptions)
 
             return UIHostingController(rootView: ICloudRestoreScreen(viewModel: vm))
         case .signInSeed:
             fatalError()
-        case let .restoreSocial(_, option):
-            switch option {
-            case let .first(socialProvider, deviceShare):
-                fatalError()
-            case let .second(result):
-                fatalError()
-            }
+
+        case let .restoreSocial(innerState, _):
+            return restoreSocialDelegatedCoordinator.buildViewController(for: innerState)
+
         case let .restoreCustom(innerState):
             return restoreCustomDelegatedCoordinator.buildViewController(for: innerState)
+
         case let .securitySetup(_, _, _, _, innerState):
             return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
-        case let .restoredData(solPrivateKey: solPrivateKey, ethPublicKey: ethPublicKey):
-            fatalError()
+
+        case .finished:
+            return nil
         }
+    }
+
+    private func openTerms() {
+        let termsVC = WLMarkdownVC(
+            title: L10n.termsOfUse.uppercaseFirst,
+            bundledMarkdownTxtFileName: "Terms_of_service"
+        )
+        navigationController?.present(termsVC, animated: true)
+    }
+
+    @objc private func openInfo() {
+        openTerms()
     }
 }
