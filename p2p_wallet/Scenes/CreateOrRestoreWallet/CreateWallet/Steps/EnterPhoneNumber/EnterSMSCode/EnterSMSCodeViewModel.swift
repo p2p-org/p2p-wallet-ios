@@ -93,8 +93,15 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
             .error
             .receive(on: RunLoop.main)
             .sinkAsync { error in
-                if let serviceError = error as? APIGatewayError, serviceError == .invalidOTP {
-                    self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
+                if let serviceError = error as? APIGatewayError {
+                    switch serviceError {
+                    case .invalidOTP:
+                        self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
+                    case .youRequestOTPTooOften:
+                        return
+                    default:
+                        self.showError(error: error)
+                    }
                 } else {
                     self.showError(error: error)
                 }
