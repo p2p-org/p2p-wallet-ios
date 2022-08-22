@@ -29,5 +29,6 @@ struct TokenCellView: View {
                 .font(uiFont: .font(of: .text3, weight: .bold))
                 .foregroundColor(Color(Asset.Colors.night.color))
         }
+        .contentShape(Rectangle())
     }
 }
