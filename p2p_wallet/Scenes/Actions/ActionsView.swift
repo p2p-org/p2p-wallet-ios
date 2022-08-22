@@ -9,14 +9,17 @@ import Combine
 import KeyAppUI
 import SwiftUI
 
-struct TokenDetailActionView: View {
+struct ActionsView: View {
     private let actionSubject = PassthroughSubject<Action, Never>()
     var action: AnyPublisher<Action, Never> { actionSubject.eraseToAnyPublisher() }
-
-//    @Environment(\.presentationMode) var presentationMode
+    private let cancelSubject = PassthroughSubject<Void, Never>()
+    var cancel: AnyPublisher<Void, Never> { cancelSubject.eraseToAnyPublisher() }
 
     var body: some View {
         VStack(spacing: 28) {
+            Color(Asset.Colors.rain.color)
+                .frame(width: 31, height: 4)
+                .cornerRadius(2)
             Text(L10n.actions)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .text1, weight: .bold))
@@ -62,20 +65,22 @@ struct TokenDetailActionView: View {
             }
             Button(
                 action: {
-                    //                    presentationMode.wrappedValue.dismiss()
+                    cancelSubject.send()
                 },
                 label: {
                     Text(L10n.cancel)
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .font(uiFont: .font(of: .text1, weight: .bold))
+                        .frame(height: 60)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(Asset.Colors.rain.color))
+                        .cornerRadius(12)
                 }
             )
-                .frame(height: 60)
-                .frame(maxWidth: .infinity)
-                .background(Color(Asset.Colors.rain.color))
-                .cornerRadius(12)
         }
         .padding(.horizontal, 16)
+        .padding(.bottom, 16)
+        .padding(.top, 6)
     }
 
     func actionView(
@@ -87,37 +92,55 @@ struct TokenDetailActionView: View {
         Button(
             action: action,
             label: {
-                VStack(alignment: .leading, spacing: 12) {
-                    Image(uiImage: image)
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(title)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .font(uiFont: .font(of: .text1, weight: .bold))
-                        Text(subtitle)
-                            .foregroundColor(Color(Asset.Colors.mountain.color))
-                            .font(uiFont: .font(of: .label1, weight: .regular))
-                            .multilineTextAlignment(.leading)
+                ZStack(alignment: .leading) {
+                    Color(Asset.Colors.snow.color)
+                        .cornerRadius(12)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
+                        )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .aspectRatio(1, contentMode: .fit)
+                        .shadow(
+                            color: Color(UIColor(red: 0.043, green: 0.122, blue: 0.208, alpha: 0.1)),
+                            radius: 128,
+                            x: 9,
+                            y: 22
+                        )
+                    VStack(alignment: .leading, spacing: 12) {
+                        Image(uiImage: image)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(title)
+                                .foregroundColor(Color(Asset.Colors.night.color))
+                                .font(uiFont: .font(of: .text1, weight: .bold))
+                            Text(subtitle)
+                                .foregroundColor(Color(Asset.Colors.mountain.color))
+                                .font(uiFont: .font(of: .label1, weight: .regular))
+                                .multilineTextAlignment(.leading)
+                        }
                     }
-                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 20)
                 }
-                .padding(.horizontal, 15)
-                .padding(.vertical, 20)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color(Asset.Colors.snow.color))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
-                )
             }
         )
     }
 }
 
-extension TokenDetailActionView {
+// MARK: - Action
+
+extension ActionsView {
     enum Action {
         case buy
         case receive
         case trade
         case send
+    }
+}
+
+// MARK: - View Height
+
+extension ActionsView {
+    var viewHeight: CGFloat {
+        (UIScreen.main.bounds.width - 16 * 3) + (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 210
     }
 }
