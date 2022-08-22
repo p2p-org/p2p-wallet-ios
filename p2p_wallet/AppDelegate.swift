@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
-//        Bundle.swizzleLocalization()
+        // Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
         setupNavigationAppearance()
@@ -68,6 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
         setupDefaultFlags()
+        // TODO: Do we need it?
         FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
 
         UIViewController.swizzleViewDidDisappear()

@@ -882,3 +882,15 @@ another" = "one crypto for
 another";
 "The code from SMS" = "The code from SMS";
 "Enter the code to continue" = "Enter the code to continue";
+"Choose the way to continue" = "Choose the way to continue";
+"Restoring your wallet" = "Restoring your wallet";
+"Continue with Apple" = "Continue with Apple";
+"Continue with Google" = "Continue with Google";
+"Continue using Google" = "Continue using Google";
+"Continue using phone number" = "Continue using phone number";
+"Use a seed phrase / private key" = "Use a seed phrase / private key";
+"Continue with iCloud KeyChain" = "Continue with iCloud KeyChain";
+"WRITE TO HEEEEELP" = "WRITE TO HEEEEELP";
+"So, let’s breathe" = "So, let’s breathe";
+"You didn’t use any of 5 codes.\nFor your safety we freezed account for %@ min" = "You didn’t use any of 5 codes.\nFor your safety we freezed account for %@ min";
+"You request OTP too often. Try later." = "You request OTP too often. Try later.";

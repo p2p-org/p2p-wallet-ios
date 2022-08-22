@@ -4,6 +4,10 @@
 <dict>
 	<key>AMPLITUDE_API_KEY</key>
 	<string>$(AMPLITUDE_API_KEY)</string>
+	<key>API_GATEWAY_DEV</key>
+	<string>$(API_GATEWAY_DEV)</string>
+	<key>API_GATEWAY_PROD</key>
+	<string>$(API_GATEWAY_PROD)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
@@ -55,22 +59,14 @@
 	<string>$(GOOGLE_SIGN_IN_ID_RELEASE)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>META_DATA_ENDPOINT</key>
+	<string>$(META_DATA_ENDPOINT)</string>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
 	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
 	<key>MOONPAY_STAGING_API_KEY</key>
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
 	<key>NAME_SERVICE_ENDPOINT</key>
 	<string>$(NAME_SERVICE_ENDPOINT)</string>
-	<key>META_DATA_ENDPOINT</key>
-	<string>$(META_DATA_ENDPOINT)</string>
-	<key>TORUS_ENDPOINT</key>
-	<string>$(TORUS_ENDPOINT)</string>
-	<key>TORUS_GOOGLE_VERIFIER</key>
-	<string>$(TORUS_GOOGLE_VERIFIER)</string>
-	<key>API_GATEWAY</key>
-	<string>$(API_GATEWAY)</string>
-	<key>TORUS_APPLE_VERIFIER</key>
-	<string>$(TORUS_APPLE_VERIFIER)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -107,6 +103,12 @@
 	<string>$(SENTRY_DSN)</string>
 	<key>TEST_ACCOUNT_SEED_PHRASE</key>
 	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
+	<key>TORUS_APPLE_VERIFIER</key>
+	<string>$(TORUS_APPLE_VERIFIER)</string>
+	<key>TORUS_ENDPOINT</key>
+	<string>$(TORUS_ENDPOINT)</string>
+	<key>TORUS_GOOGLE_VERIFIER</key>
+	<string>$(TORUS_GOOGLE_VERIFIER)</string>
 	<key>TRANSAK_HOST_URL</key>
 	<string>$(TRANSAK_HOST_URL)</string>
 	<key>TRANSAK_PRODUCTION_API_KEY</key>

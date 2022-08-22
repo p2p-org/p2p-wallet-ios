@@ -64,7 +64,8 @@ extension CreateWallet {
             handler.creatingWalletDidComplete(
                 phrases: phrases,
                 derivablePath: .default,
-                name: nil
+                name: nil,
+                deviceShare: ""
             )
         }
 

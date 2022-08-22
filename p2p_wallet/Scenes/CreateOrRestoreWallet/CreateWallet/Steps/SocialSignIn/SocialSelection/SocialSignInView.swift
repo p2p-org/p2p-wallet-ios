@@ -15,26 +15,12 @@ struct SocialSignInView: View {
             Spacer()
             actions
         }
-        .navigationBarTitle(L10n.createANewWallet)
-        .navigationBarItems(
-            leading: Button(
-                action: { [weak viewModel] in viewModel?.onBack() },
-                label: {
-                    Image(uiImage: Asset.MaterialIcon.arrowBackIos.image)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                }
-            ),
-            trailing: Button(
-                action: { [weak viewModel] in viewModel?.onInfo() },
-                label: {
-                    Image(uiImage: Asset.MaterialIcon.helpOutline.image)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                }
-            )
+        .onboardingNavigationBar(
+            title: L10n.createAccount,
+            onBack: { [weak viewModel] in viewModel?.onBack() },
+            onInfo: { [weak viewModel] in viewModel?.onInfo() }
         )
-        .background(Color(Asset.Colors.lime.color))
-        .edgesIgnoringSafeArea(.all)
-        .frame(maxHeight: .infinity)
+        .onboardingScreen()
     }
 
     var content: some View {
