@@ -211,8 +211,8 @@ extension WLPhrasesTextView: UITextViewDelegate {
 
         // recalculate selected range
         if addingPlaceholderAttachment {
-            addPlaceholderAttachment(at: selectedLocation)
-            selectedRange = NSRange(location: selectedLocation + 1, length: 0)
+//            addPlaceholderAttachment(at: selectedLocation)
+//            selectedRange = NSRange(location: selectedLocation + 1, length: 0)
         }
     }
 
