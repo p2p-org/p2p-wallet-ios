@@ -1,4 +1,4 @@
-struct OnboardingContentData: Identifiable {
+struct OnboardingContentData: Identifiable, Equatable {
     var id: String { title }
     let image: UIImage?
     let title: String

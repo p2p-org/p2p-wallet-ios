@@ -82,6 +82,17 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             )
 
             return UIHostingController(rootView: view)
+
+        case let .block(until, _, _, _):
+            let view = OnboardingBlockScreen(
+                contentTitle: L10n.soLetSBreathe,
+                untilTimestamp: until,
+                onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
+                onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },
+                onTermAndCondition: { [weak self] in self?.showTermAndCondition() }
+            )
+
+            return UIHostingController(rootView: view)
         default:
             return nil
         }
