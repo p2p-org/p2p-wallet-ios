@@ -132,7 +132,8 @@ class AppCoordinator: Coordinator<Void> {
                     .creatingWalletDidComplete(
                         phrases: onboardingWallet.solPrivateKey.components(separatedBy: " "),
                         derivablePath: .default,
-                        name: nil
+                        name: nil,
+                        deviceShare: onboardingWallet.deviceShare
                     )
 
                 // Save pincode

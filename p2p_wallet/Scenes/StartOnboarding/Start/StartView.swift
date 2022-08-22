@@ -23,6 +23,7 @@ struct StartView: View {
                         }
                     }
                     .transition(.opacity.combined(with: .move(edge: .top)))
+                    .padding(.vertical, 32)
 
                     bottomActionsView
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
@@ -62,14 +63,8 @@ extension StartView {
                 .styled()
                 .padding(.top, 12)
 
-                VStack(spacing: 2) {
-                    Text(L10n.byContinuingYouAgreeToKeyAppS)
-                        .styled(color: Asset.Colors.mountain, font: .label1)
-                    Text(L10n.capitalizedTermsAndConditions)
-                        .styled(color: Asset.Colors.snow, font: .label1)
-                        .onTapGesture(perform: { [weak viewModel] in
-                            viewModel?.termsDidTap.send()
-                        })
+                OnboardingTermAndConditionButton { [weak viewModel] in
+                    viewModel?.termsDidTap.send()
                 }
                 .padding(.top, 24)
             }
@@ -78,15 +73,6 @@ extension StartView {
 }
 
 // MARK: - Style Helpers
-
-private extension Text {
-    func styled(color: ColorAsset, font: UIFont.Style) -> some View {
-        foregroundColor(Color(color.color))
-            .font(.system(size: UIFont.fontSize(of: font)))
-            .lineLimit(.none)
-            .multilineTextAlignment(.center)
-    }
-}
 
 private extension TextButtonView {
     func styled() -> some View {

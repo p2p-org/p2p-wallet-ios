@@ -41,6 +41,8 @@ class BaseOTPViewModel: BaseViewModel {
                 errorText = L10n.pubkeySolanaAndPhoneNumberAlreadyExists
             case .invalidOTP:
                 errorText = L10n.InvalidValueOfOTP.pleaseTryAgainToInputCorrectValueOfOTP
+            case .youRequestOTPTooOften:
+                errorText = L10n.YouRequestOTPTooOften.tryLater
             default:
                 errorText = error.localizedDescription
             }

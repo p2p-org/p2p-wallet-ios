@@ -18,7 +18,6 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     private let parentViewController: UIViewController
     private(set) var navigationController: UINavigationController?
 
-    private let tKeyFacade: TKeyJSFacade?
     private let viewModel: CreateWalletViewModel
     private var result = PassthroughSubject<CreateWalletResult, Never>()
 
@@ -30,18 +29,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         parentViewController = parent
 
         // Setup
-        tKeyFacade = TKeyJSFacade(
-            wkWebView: GlobalWebView.requestWebView(),
-            config: .init(
-                metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
-                torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
-                torusVerifierMapping: [
-                    "google": String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? "",
-                    "apple": String.secretConfig("TORUS_APPLE_VERIFIER") ?? "",
-                ]
-            )
-        )
-        viewModel = CreateWalletViewModel(tKeyFacade: tKeyFacade, initialState: initialState)
+        viewModel = CreateWalletViewModel(initialState: initialState)
 
         socialSignInDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
