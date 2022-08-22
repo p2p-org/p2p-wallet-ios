@@ -875,3 +875,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "The code from SMS" = "Mã từ SMS";
 "Enter code to continue" = "Nhập mã để tiếp tục";
 "Enter the code to continue" = "Nhập mã để tiếp tục";
+"WRITE TO HEEEEELP" = "VIẾT VÀO HEEEEELP";
+"So, let’s breathe" = "Vì vậy, chúng ta hãy thở";
+"You didn’t use any of 5 codes.\nFor your safety we freezed account for %@ min" = "Bạn không sử dụng bất kỳ mã nào trong số 5 mã. \n Vì sự an toàn của bạn, chúng tôi đã đóng băng tài khoản trong %@ phút";
+"You request OTP too often. Try later." = "Bạn yêu cầu OTP quá thường xuyên.  Thử lại sau.";

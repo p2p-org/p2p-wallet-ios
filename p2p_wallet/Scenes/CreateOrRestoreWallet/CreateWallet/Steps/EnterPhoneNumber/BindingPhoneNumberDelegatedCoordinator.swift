@@ -6,6 +6,7 @@ import Combine
 import CountriesAPI
 import Foundation
 import Onboarding
+import SwiftUI
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
@@ -66,6 +67,32 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             }.store(in: &subscriptions)
 
             return vc
+        case .broken:
+            let view = OnboardingBrokenScreen(
+                title: L10n.createANewWallet,
+                contentData: .init(
+                    image: .introWelcomeToP2pFamily,
+                    title: L10n.protectingTheFunds,
+                    subtitle: L10n.WeUseMultiFactorAuthentication
+                        .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
+                ),
+                back: { [stateMachine] in try await stateMachine <- .back },
+                info: { /* TODO: handle */ },
+                help: { /* TODO: handle */ }
+            )
+
+            return UIHostingController(rootView: view)
+
+        case let .block(until, _, _, _):
+            let view = OnboardingBlockScreen(
+                contentTitle: L10n.soLetSBreathe,
+                untilTimestamp: until,
+                onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
+                onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },
+                onTermAndCondition: { [weak self] in self?.showTermAndCondition() }
+            )
+
+            return UIHostingController(rootView: view)
         default:
             return nil
         }

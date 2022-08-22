@@ -63,17 +63,22 @@ extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
         case sslPinning
 
+        case mockedApiGateway
+        case mockedTKeyFacade
+
         var title: String {
             switch self {
-            case .sslPinning:
-                return "SSL Pinning"
+            case .sslPinning: return "SSL Pinning"
+            case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
+            case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
             }
         }
 
         var feature: Feature {
             switch self {
-            case .sslPinning:
-                return .sslPinning
+            case .sslPinning: return .sslPinning
+            case .mockedApiGateway: return .mockedApiGateway
+            case .mockedTKeyFacade: return .mockedTKeyFacade
             }
         }
     }

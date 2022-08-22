@@ -105,14 +105,19 @@ extension AppEventHandler: LogoutResponder {
 // MARK: - CreateOrRestoreWalletHandler
 
 extension AppEventHandler: CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
-        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
+    func creatingWalletDidComplete(
+        phrases: [String]?,
+        derivablePath: DerivablePath?,
+        name: String?,
+        deviceShare: String
+    ) {
+        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name, deviceShare: deviceShare)
         resolvedName = name
     }
 
     func restoringWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
         delegate?.restoreWalletDidComplete()
-        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name)
+        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name, deviceShare: nil)
         resolvedName = name
     }
 
@@ -121,7 +126,12 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
         delegate?.userDidLogout()
     }
 
-    private func saveAccountToStorage(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
+    private func saveAccountToStorage(
+        phrases: [String]?,
+        derivablePath: DerivablePath?,
+        name: String?,
+        deviceShare: String?
+    ) {
         guard let phrases = phrases, let derivablePath = derivablePath else {
             creatingOrRestoringWalletDidCancel()
             return
@@ -139,6 +149,10 @@ extension AppEventHandler: CreateOrRestoreWalletHandler {
 
                 if let name = name {
                     storage.save(name: name)
+                }
+
+                if let deviceShare = deviceShare {
+                    try storage.save(deviceShare: deviceShare)
                 }
 
                 await MainActor.run {
