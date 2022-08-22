@@ -43,7 +43,6 @@ class AppCoordinator: Coordinator<Void> {
         if #available(iOS 13.0, *) {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
-
         openSplash()
     }
 
@@ -100,9 +99,11 @@ class AppCoordinator: Coordinator<Void> {
     }
 
     private func openSplash() {
+//        let vc1 = BackupPasteSeedPhrasesVC()
         let vc = SplashViewController()
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
+
         Task { await warmup() }
     }
 
