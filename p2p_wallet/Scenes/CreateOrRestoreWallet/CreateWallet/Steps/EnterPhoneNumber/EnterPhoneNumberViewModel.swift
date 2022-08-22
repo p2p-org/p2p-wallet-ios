@@ -111,8 +111,13 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             if !$0 {
                 self.flag = "🏴"
             } else {
-                _ = self.partialFormatter.nationalNumber(from: self.phone ?? "")
-                let country = self.partialFormatter.currentRegion
+                var country = ""
+                if let parsed = try? self.phoneNumberKit.parse(self.phone ?? "", ignoreType: true) {
+                    country = parsed.regionID ?? self.partialFormatter.currentRegion
+                } else {
+                    _ = self.partialFormatter.nationalNumber(from: self.phone ?? "")
+                    country = self.partialFormatter.currentRegion
+                }
                 self.flag = Self.getFlag(from: country)
             }
         }.store(in: &cancellable)
@@ -134,13 +139,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         .store(in: &cancellable)
 
         $phone.removeDuplicates().map { [weak self] in
-            guard let self = self, let phoneNumber = self.exampleNumberWith(phone: $0 ?? "") else {
-                return false
-            }
-            let formatted = self.phoneNumberKit.format(phoneNumber, toType: .international)
-            let newPhone = self.clearedPhoneString(phone: $0 ?? "")
-            let cleared = self.clearedPhoneString(phone: formatted)
-            return !cleared.isEmpty && cleared.count == newPhone.count
+            (try? self?.phoneNumberKit.parse($0 ?? "", ignoreType: true)) != nil
         }
         .assign(to: \.isButtonEnabled, on: self)
         .store(in: &cancellable)
