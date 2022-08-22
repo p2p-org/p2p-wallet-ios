@@ -50,6 +50,7 @@ final class CreateWalletViewModel: BaseViewModel {
         super.init()
 
         onboardingStateMachine.stateStream.sink { [weak onboardingService] state in
+            print(state)
             switch state {
             case .finish:
                 onboardingService?.lastState = nil

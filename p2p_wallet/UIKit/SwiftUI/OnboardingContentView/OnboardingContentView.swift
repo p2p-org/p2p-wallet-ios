@@ -2,7 +2,7 @@ import KeyAppUI
 import SwiftUI
 
 struct OnboardingContentView: View {
-    @State var data: OnboardingContentData
+    let data: OnboardingContentData
 
     var body: some View {
         VStack(spacing: .zero) {
