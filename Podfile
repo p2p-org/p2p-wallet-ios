@@ -4,7 +4,7 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 
 # ENV Variables
-$keyAppKitPath = '../key-app-kit-swift'
+$keyAppKitPath = ENV['KEY_APP_KIT']
 
 puts $keyAppKitPath
 
@@ -27,7 +27,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'develop'
+    $keyAppKitBranch = 'feature/PWN-4371'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
