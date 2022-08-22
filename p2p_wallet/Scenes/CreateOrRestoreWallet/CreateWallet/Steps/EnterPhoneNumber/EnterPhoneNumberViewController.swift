@@ -106,9 +106,6 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
             viewModel.$inputError.sink { error in
                 phone.bottomTip(error ?? "")
                 phone.style = error == nil ? .default : .error
-                if error != nil {
-                    phone.shake()
-                }
             }.store(in: &store)
         }
 

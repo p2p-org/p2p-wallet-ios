@@ -12,7 +12,7 @@ let EnterSMSCodeCountdownLegs = [30, 40, 60, 90, 120]
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
-    private let countdownSteps = [3, 4, 6, 9, 12]
+    private let countdownSteps = EnterSMSCodeCountdownLegs
     private static var phoneSteps = [String: Int]()
 
     private var cancellable = Set<AnyCancellable>()
