@@ -16,7 +16,7 @@ struct SocialSignInView: View {
             actions
         }
         .onboardingNavigationBar(
-            title: L10n.createAccount,
+            title: viewModel.title,
             onBack: { [weak viewModel] in viewModel?.onBack() },
             onInfo: { [weak viewModel] in viewModel?.onInfo() }
         )
@@ -38,7 +38,7 @@ struct SocialSignInView: View {
         BottomActionContainer {
             VStack(spacing: .zero) {
                 TextButtonView(
-                    title: "Sign in with Apple",
+                    title: L10n.signInWithApple,
                     style: .inverted,
                     size: .large,
                     leading: .appleLogo,
@@ -48,7 +48,7 @@ struct SocialSignInView: View {
                     .frame(height: TextButton.Size.large.height)
                     .disabled(viewModel.loading == .googleButton)
                 TextButtonView(
-                    title: "Sign in with Google",
+                    title: L10n.signInWithGoogle,
                     style: .inverted,
                     size: .large,
                     leading: .google,
