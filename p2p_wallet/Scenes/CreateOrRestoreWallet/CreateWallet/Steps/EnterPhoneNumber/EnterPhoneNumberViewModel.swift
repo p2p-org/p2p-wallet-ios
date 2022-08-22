@@ -89,12 +89,33 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                     let newFormatted = formatted
                         .replacingOccurrences(of: "[0-9]", with: "X", options: .regularExpression)
                         .replacingOccurrences(of: "-", with: " ")
+                    guard $0 != nil else {
+                        return Self.format(with: newFormatted, phone: String(exampleNumber.countryCode))
+                    }
                     return Self.format(with: newFormatted, phone: $0 ?? "")
                 }.eraseToAnyPublisher(),
             coordinatorIO.countrySelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
         )
             .assign(to: \.phone, on: self)
             .store(in: &cancellable)
+
+        $phone.removeDuplicates().filter { $0 != nil }.map { phone -> Bool in
+            guard let exampleNumber = self.exampleNumberWith(phone: phone ?? "") else {
+                return true
+            }
+            return phone?
+                .replacingOccurrences(of: "+", with: "")
+                .starts(with: String(exampleNumber.countryCode)) ?? false
+        }.sink {
+            self.showInputError(error: $0 ? nil : L10n.sorryWeDonTKnowASuchCountry)
+            if !$0 {
+                self.flag = "🏴"
+            } else {
+                _ = self.partialFormatter.nationalNumber(from: self.phone ?? "")
+                let country = self.partialFormatter.currentRegion
+                self.flag = Self.getFlag(from: country)
+            }
+        }.store(in: &cancellable)
 
         Publishers.MergeMany(
             coordinatorIO.countrySelected.map { $0?.dialCode }.eraseToAnyPublisher(),
@@ -110,14 +131,6 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 .replacingOccurrences(of: "-", with: " ")
         }
         .assign(to: \.phonePlaceholder, on: self)
-        .store(in: &cancellable)
-
-        $phone.removeDuplicates().map {
-            _ = self.partialFormatter.nationalNumber(from: $0 ?? "")
-            let country = self.partialFormatter.currentRegion
-            return Self.getFlag(from: country)
-        }
-        .assign(to: \.flag, on: self)
         .store(in: &cancellable)
 
         $phone.removeDuplicates().map { [weak self] in
