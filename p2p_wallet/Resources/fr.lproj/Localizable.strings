@@ -878,3 +878,4 @@ another" = "une crypto pour
 "So, let’s breathe" = "Alors, respirons";
 "You didn’t use any of 5 codes.\nFor your safety we freezed account for %@ min" = "Vous n'avez utilisé aucun des 5 codes.\nPour votre sécurité, nous avons gelé le compte pendant %@ min";
 "You request OTP too often. Try later." = "Vous demandez OTP trop souvent.  Essayer plus tard.";
+"Sorry, we don't know such a country" = "Désolé, nous ne connaissons pas un tel pays";
