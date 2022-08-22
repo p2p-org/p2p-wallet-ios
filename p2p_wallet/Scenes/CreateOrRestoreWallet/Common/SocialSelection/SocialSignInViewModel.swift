@@ -28,6 +28,13 @@ class SocialSignInViewModel: BaseViewModel {
     @Published var loading: Loading?
     private(set) var coordinatorIO: CoordinatorIO = .init()
 
+    @Published private(set) var title: String
+
+    init(title: String) {
+        self.title = title
+        super.init()
+    }
+
     func onInfo() {
         guard loading == nil else { return }
     }
