@@ -12,14 +12,37 @@ final class CreateWalletViewModel: BaseViewModel {
 
     @Injected var onboardingService: OnboardingService
 
-    init(tKeyFacade: TKeyFacade? = nil, initialState: CreateWalletFlowState?) {
+    init(initialState: CreateWalletFlowState?) {
+        let tKeyFacade: TKeyFacade = available(.mockedTKeyFacade) ?
+            TKeyMockupFacade() :
+            TKeyJSFacade(
+                wkWebView: GlobalWebView.requestWebView(),
+                config: .init(
+                    metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
+                    torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
+                    torusVerifierMapping: [
+                        "google": String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? "",
+                        "apple": String.secretConfig("TORUS_APPLE_VERIFIER") ?? "",
+                    ]
+                )
+            )
+
+        #if !RELEASE
+            let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_DEV")!
+        #else
+            let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_PROD")!
+        #endif
+
+        let apiGatewayClient: APIGatewayClient = available(.mockedApiGateway) ?
+            APIGatewayClientImplMock() :
+            APIGatewayClientImpl(endpoint: apiGatewayEndpoint)
+
         onboardingStateMachine = .init(
             initialState: initialState,
             provider: .init(
                 authService: AuthServiceBridge(),
-                apiGatewayClient: APIGatewayClientImplMock(),
-                // apiGatewayClient: APIGatewayClientImpl(endpoint: String.secretConfig("API_GATEWAY")!),
-                tKeyFacade: tKeyFacade ?? TKeyMockupFacade(),
+                apiGatewayClient: apiGatewayClient,
+                tKeyFacade: tKeyFacade,
                 securityStatusProvider: Resolver.resolve()
             )
         )
@@ -27,6 +50,7 @@ final class CreateWalletViewModel: BaseViewModel {
         super.init()
 
         onboardingStateMachine.stateStream.sink { [weak onboardingService] state in
+            print(state)
             switch state {
             case .finish:
                 onboardingService?.lastState = nil
@@ -37,7 +61,7 @@ final class CreateWalletViewModel: BaseViewModel {
     }
 }
 
-private struct AuthServiceBridge: SocialAuthService {
+struct AuthServiceBridge: SocialAuthService {
     @Injected var authService: AuthService
 
     func auth(type: SocialProvider) async throws -> (tokenID: String, email: String) {
