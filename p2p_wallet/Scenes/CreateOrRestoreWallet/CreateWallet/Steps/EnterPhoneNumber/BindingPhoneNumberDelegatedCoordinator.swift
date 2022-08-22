@@ -68,21 +68,18 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
 
             return vc
         case .broken:
-            let view = OnboardingBrokenScreen(title: L10n.createANewWallet)
-
-            view.coordinator.help.sink { [stateMachine] _ in
-                // TODO: handle
-            }.store(in: &subscriptions)
-
-            // back
-            view.coordinator.backHome.sink { [stateMachine] process in
-                process.start { try await stateMachine <- .back }
-            }.store(in: &subscriptions)
-
-            // info
-            view.coordinator.info.sink { [stateMachine] _ in
-                // TODO: handle
-            }.store(in: &subscriptions)
+            let view = OnboardingBrokenScreen(
+                title: L10n.createANewWallet,
+                contentData: .init(
+                    image: .introWelcomeToP2pFamily,
+                    title: L10n.protectingTheFunds,
+                    subtitle: L10n.WeUseMultiFactorAuthentication
+                        .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
+                ),
+                back: { [stateMachine] in try await stateMachine <- .back },
+                info: { /* TODO: handle */ },
+                help: { /* TODO: handle */ }
+            )
 
             return UIHostingController(rootView: view)
         default:
