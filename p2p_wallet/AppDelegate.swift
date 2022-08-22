@@ -179,6 +179,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearence.shadowImage = UIImage()
+        navBarAppearence.isTranslucent = true
+
         navBarAppearence.tintColor = .black
         barButtonAppearance.tintColor = .black
     }

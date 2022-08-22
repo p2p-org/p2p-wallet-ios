@@ -17,6 +17,9 @@ final class TabBarController: UITabBarController {
 
     private var homeCoordinator: HomeCoordinator?
     private var sendTokenCoordinator: SendToken.Coordinator!
+    private var actionsCoordinator: ActionsCoordinator?
+
+    private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,22 +30,36 @@ final class TabBarController: UITabBarController {
 
         setupViewControllers()
         setupTabs()
+
+        bind()
     }
 
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
 
         tabBar.subviews.forEach { bar in
             bar.subviews.compactMap { $0 as? UILabel }.forEach {
-                $0.sizeToFit()
+                $0.adjustsFontSizeToFitWidth = true
             }
         }
+    }
+
+    private func bind() {
+        customTabBar.middleButtonClicked
+            .sink(receiveValue: { [unowned self] in
+                let generator = UIImpactFeedbackGenerator(style: .light)
+                generator.impactOccurred()
+                actionsCoordinator = ActionsCoordinator(viewController: self)
+                actionsCoordinator?.start()
+                    .sink(receiveValue: {})
+                    .store(in: &cancellables)
+            })
+            .store(in: &cancellables)
     }
 
     private func setUpTabBarAppearance() {
         let standardAppearance = UITabBarAppearance()
         standardAppearance.backgroundColor = Asset.Colors.snow.color
-//        standardAppearance.backgroundEffect = UIBlurEffect(style: .regular)
         standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
             .font: UIFont.systemFont(ofSize: 12, weight: .semibold),
             .foregroundColor: Asset.Colors.mountain.color,
@@ -101,7 +118,7 @@ final class TabBarController: UITabBarController {
 
     private func setupTabs() {
         TabItem.allCases.enumerated().forEach { index, item in
-            if item == .send {
+            if item == .actions {
                 viewControllers?[index].tabBarItem = UITabBarItem(title: nil, image: nil, selectedImage: nil)
             } else {
                 viewControllers?[index].tabBarItem = UITabBarItem(
@@ -133,12 +150,12 @@ extension TabBarController: UITabBarControllerDelegate {
             return true
         }
 
-        if TabItem(rawValue: selectedIndex) == .feedback || TabItem(rawValue: selectedIndex) == .send {
+        if TabItem(rawValue: selectedIndex) == .feedback || TabItem(rawValue: selectedIndex) == .actions {
             routeToFeedback()
             return false
         }
 
-        (tabBar as! CustomTabBar).updateSelectedViewPositionIfNeeded()
+        customTabBar.updateSelectedViewPositionIfNeeded()
 
         return true
     }
@@ -153,7 +170,7 @@ private extension TabItem {
             return .tabBarSelectedWallet
         case .history:
             return .tabBarHistory
-        case .send:
+        case .actions:
             return UIImage()
         case .feedback:
             return .tabBarFeedback
@@ -168,16 +185,12 @@ private extension TabItem {
             return L10n.wallet
         case .history:
             return L10n.history
-        case .send:
-            return L10n.send
+        case .actions:
+            return ""
         case .feedback:
             return L10n.feedback
         case .settings:
             return L10n.settings
         }
-    }
-
-    var hideTabBar: Bool {
-        self != .settings
     }
 }

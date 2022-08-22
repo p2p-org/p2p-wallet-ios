@@ -82,10 +82,7 @@ struct HomeEmptyView: View {
                     title: coin.title,
                     subtitle: coin.amount,
                     actionTitle: coin.actionTitle,
-                    image: coin.image,
-                    action: {
-                        coinTapped(at: index)
-                    }
+                    image: coin.image
                 ).onTapGesture {
                     coinTapped(at: index)
                 }

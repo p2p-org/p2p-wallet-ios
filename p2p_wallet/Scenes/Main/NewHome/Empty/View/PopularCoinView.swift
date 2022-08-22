@@ -13,20 +13,17 @@ struct PopularCoinView: View {
     let subtitle: String
     let actionTitle: String
     let image: UIImage
-    let action: () -> Void
 
     init(
         title: String,
         subtitle: String,
         actionTitle: String,
-        image: UIImage,
-        action: @escaping () -> Void
+        image: UIImage
     ) {
         self.title = title
         self.subtitle = subtitle
         self.actionTitle = actionTitle
         self.image = image
-        self.action = action
     }
 
     var body: some View {
@@ -47,16 +44,11 @@ struct PopularCoinView: View {
                 }
                 .padding(.leading, 16)
                 Spacer()
-                Button(
-                    action: action,
-                    label: {
-                        Text(actionTitle)
-                            .foregroundColor(Color(Asset.Colors.night.color))
-                            .font(uiFont: .font(of: .text4, weight: .bold))
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                    }
-                )
+                Text(actionTitle)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .font(uiFont: .font(of: .text4, weight: .bold))
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12)
                     .background(Color(Asset.Colors.rain.color))
                     .cornerRadius(8)
                     .frame(height: 32)

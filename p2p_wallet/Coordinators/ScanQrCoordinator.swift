@@ -19,10 +19,6 @@ final class ScanQrCoordinator: Coordinator<String?> {
         self.navigationController = navigationController
     }
 
-    deinit {
-        debugPrint("")
-    }
-
     override func start() -> AnyPublisher<String?, Never> {
         let vc = QrCodeScannerVC()
         vc.callback = { [weak self] code in

@@ -31,6 +31,11 @@ final class CustomTabBar: UITabBar {
         return selectedView
     }()
 
+    var currentIndex: Int? {
+        guard let item = selectedItem else { return nil }
+        return items?.firstIndex(of: item)
+    }
+
     static var additionalHeight: CGFloat = 16
 
     private let middleButtonClickedSubject = PassthroughSubject<Void, Never>()
@@ -38,11 +43,17 @@ final class CustomTabBar: UITabBar {
 
     override func layoutSubviews() {
         super.layoutSubviews()
+
         middleButton.center = CGPoint(
             x: frame.width / 2,
-            y: frame.height / 2 - Self.additionalHeight - 12
+            y: frame.height / 2 - Self.additionalHeight - 6
         )
         updateSelectedViewPositionIfNeeded()
+
+        layer.shadowColor = UIColor(red: 0.043, green: 0.122, blue: 0.208, alpha: 0.1).cgColor
+        layer.shadowOffset = CGSize(width: 9, height: 22)
+        layer.shadowRadius = 128
+        layer.shadowOpacity = 1
     }
 
     override func sizeThatFits(_ size: CGSize) -> CGSize {
@@ -63,10 +74,7 @@ final class CustomTabBar: UITabBar {
     }
 
     func updateSelectedViewPositionIfNeeded() {
-        guard
-            let item = selectedItem,
-            let index = items?.firstIndex(of: item)
-        else { return }
-        selectedView.center = CGPoint(x: subviews[index + 1].center.x, y: 0)
+        guard let currentIndex = currentIndex else { return }
+        selectedView.center = CGPoint(x: subviews[currentIndex + 1].center.x, y: 0)
     }
 }
