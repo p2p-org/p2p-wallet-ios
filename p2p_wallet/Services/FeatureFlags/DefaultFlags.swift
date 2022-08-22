@@ -14,6 +14,10 @@ func setupDefaultFlags() {
         featureFlags: [
             FeatureFlag(feature: .sslPinning, enabled: true),
             FeatureFlag(feature: .newOnboardingFlow, enabled: true),
+
+            // Onboarding
+            FeatureFlag(feature: .mockedApiGateway, enabled: false),
+            FeatureFlag(feature: .mockedTKeyFacade, enabled: false),
         ]
     )
 }
