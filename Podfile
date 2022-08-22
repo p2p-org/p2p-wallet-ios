@@ -4,7 +4,7 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 
 # ENV Variables
-$keyAppKitPath = '../key-app-kit-swift'
+$keyAppKitPath = ENV['KEY_APP_KIT']
 
 puts $keyAppKitPath
 
