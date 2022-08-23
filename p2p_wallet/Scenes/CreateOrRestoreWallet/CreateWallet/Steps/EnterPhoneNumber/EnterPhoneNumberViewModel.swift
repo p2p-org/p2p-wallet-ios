@@ -99,23 +99,23 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .assign(to: \.phone, on: self)
             .store(in: &cancellable)
 
-        $phone.removeDuplicates().filter { $0 != nil }.map { phone -> Bool in
+        $phone.removeDuplicates().filter { $0 != nil }.sink { phone in
             guard let exampleNumber = self.exampleNumberWith(phone: phone ?? "") else {
-                return true
+                return
             }
-            return phone?
+            let hasCountry = phone?
                 .replacingOccurrences(of: "+", with: "")
                 .starts(with: String(exampleNumber.countryCode)) ?? false
-        }.sink {
-            self.showInputError(error: $0 ? nil : L10n.sorryWeDonTKnowASuchCountry)
-            if !$0 {
+
+            self.showInputError(error: hasCountry ? nil : L10n.sorryWeDonTKnowASuchCountry)
+            if !hasCountry {
                 self.flag = "🏴"
             } else {
                 var country = ""
-                if let parsed = try? self.phoneNumberKit.parse(self.phone ?? "", ignoreType: true) {
+                if let parsed = try? self.phoneNumberKit.parse(phone ?? "", ignoreType: true) {
                     country = parsed.regionID ?? self.partialFormatter.currentRegion
                 } else {
-                    _ = self.partialFormatter.nationalNumber(from: self.phone ?? "")
+                    _ = self.partialFormatter.nationalNumber(from: phone ?? "")
                     country = self.partialFormatter.currentRegion
                 }
                 self.flag = Self.getFlag(from: country)
