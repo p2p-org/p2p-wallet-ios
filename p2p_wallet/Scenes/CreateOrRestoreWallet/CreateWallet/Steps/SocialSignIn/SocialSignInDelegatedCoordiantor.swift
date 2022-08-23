@@ -11,7 +11,12 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
         switch state {
         case .socialSelection:
-            let vm = SocialSignInViewModel(title: L10n.createAccount)
+            let content = OnboardingContentData(
+                image: .introWelcomeToP2pFamily,
+                title: L10n.protectingTheFunds,
+                subtitle: L10n.WeUseMultiFactorAuthentication.youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
+            )
+            let vm = SocialSignInViewModel(title: L10n.createAccount, content: content)
             let vc = SocialSignInView(viewModel: vm)
             vc.viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }
                 .store(in: &subscriptions)
