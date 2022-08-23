@@ -8,9 +8,13 @@ import KeyAppUI
 import Onboarding
 import SwiftUI
 
-final class RestoreWalletCoordinator: Coordinator<Void> {
-    // MARK: - NavigationController
+enum RestoreWalletResult {
+    case start
+    case help
+    case success(OnboardingWallet)
+}
 
+final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     let parent: UIViewController
     let tKeyFacade: TKeyJSFacade = .init(
         wkWebView: GlobalWebView.requestWebView(),
@@ -26,7 +30,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     let viewModel: RestoreWalletViewModel
 
-    private var result = PassthroughSubject<Void, Never>()
+    private var result = PassthroughSubject<RestoreWalletResult, Never>()
     private(set) var navigationController: UINavigationController?
 
     let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
@@ -35,7 +39,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     init(parent: UIViewController) {
         self.parent = parent
-        viewModel = RestoreWalletViewModel(tKeyFacade: tKeyFacade)
+        viewModel = RestoreWalletViewModel(tKeyFacade: nil)
 
         securitySetupDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
@@ -60,7 +64,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     // MARK: - Methods
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<RestoreWalletResult, Never> {
         guard let viewController = buildViewController(state: viewModel.stateMachine.currentState) else {
             return Empty().eraseToAnyPublisher()
         }
@@ -92,6 +96,14 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     private func stateChangeHandler(from: RestoreWalletState?, to: RestoreWalletState) {
         if case let .finished(result) = to {
+            switch result {
+            case let .successful(wallet):
+                self.result.send(.success(wallet))
+            case .breakProcess:
+                self.result.send(.start)
+            case .needHelp:
+                self.result.send(.help)
+            }
             navigationController?.dismiss(animated: true)
             self.result.send(completion: .finished)
         }
