@@ -12,8 +12,7 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
         case .signIn:
             return nil
         case .social:
-            let content = OnboardingContentData(image: .safeRestore, title: L10n.howToContinue)
-            let viewModel = SocialSignInViewModel(title: L10n.restoringYourWallet, content: content)
+            let viewModel = SocialSignInViewModel(parameters: socialSignInParameters())
             let view = SocialSignInView(viewModel: viewModel)
             viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.openTerms() }
                 .store(in: &subscriptions)
@@ -43,5 +42,16 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
         rootViewController?.present(viewController, animated: true)
+    }
+
+    private func socialSignInParameters() -> SocialSignInParameters {
+        let content = OnboardingContentData(image: .safeRestore, title: L10n.howToContinue)
+        let parameters = SocialSignInParameters(
+            title: L10n.restoringYourWallet,
+            content: content,
+            appleButtonTitle: L10n.continueWithApple,
+            googleButtonTitle: L10n.continueWithGoogle
+        )
+        return parameters
     }
 }

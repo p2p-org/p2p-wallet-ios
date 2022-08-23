@@ -8,6 +8,13 @@ import Onboarding
 import Reachability
 import Resolver
 
+struct SocialSignInParameters {
+    let title: String
+    let content: OnboardingContentData
+    let appleButtonTitle: String
+    let googleButtonTitle: String
+}
+
 class SocialSignInViewModel: BaseViewModel {
     enum Loading {
         case appleButton
@@ -30,10 +37,14 @@ class SocialSignInViewModel: BaseViewModel {
 
     @Published private(set) var title: String
     @Published private(set) var content: OnboardingContentData
+    @Published private(set) var appleButtonTitle: String
+    @Published private(set) var googleButtonTitle: String
 
-    init(title: String, content: OnboardingContentData) {
-        self.title = title
-        self.content = content
+    init(parameters: SocialSignInParameters) {
+        title = parameters.title
+        content = parameters.content
+        appleButtonTitle = parameters.appleButtonTitle
+        googleButtonTitle = parameters.googleButtonTitle
         super.init()
     }
 

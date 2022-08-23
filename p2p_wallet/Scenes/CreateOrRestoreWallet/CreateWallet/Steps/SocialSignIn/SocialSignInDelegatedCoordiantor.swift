@@ -11,12 +11,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
         switch state {
         case .socialSelection:
-            let content = OnboardingContentData(
-                image: .introWelcomeToP2pFamily,
-                title: L10n.protectingTheFunds,
-                subtitle: L10n.WeUseMultiFactorAuthentication.youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
-            )
-            let vm = SocialSignInViewModel(title: L10n.createAccount, content: content)
+            let vm = SocialSignInViewModel(parameters: socialSignInParameters())
             let vc = SocialSignInView(viewModel: vm)
             vc.viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }
                 .store(in: &subscriptions)
@@ -108,5 +103,20 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
         rootViewController?.present(vc, animated: true)
+    }
+
+    private func socialSignInParameters() -> SocialSignInParameters {
+        let content = OnboardingContentData(
+            image: .introWelcomeToP2pFamily,
+            title: L10n.protectingTheFunds,
+            subtitle: L10n.WeUseMultiFactorAuthentication.youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
+        )
+        let parameters = SocialSignInParameters(
+            title: L10n.createAccount,
+            content: content,
+            appleButtonTitle: L10n.signInWithApple,
+            googleButtonTitle: L10n.signInWithGoogle
+        )
+        return parameters
     }
 }

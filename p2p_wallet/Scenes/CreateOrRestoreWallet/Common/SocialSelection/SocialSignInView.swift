@@ -32,7 +32,7 @@ struct SocialSignInView: View {
         BottomActionContainer {
             VStack(spacing: .zero) {
                 TextButtonView(
-                    title: L10n.signInWithApple,
+                    title: viewModel.appleButtonTitle,
                     style: .inverted,
                     size: .large,
                     leading: .appleLogo,
@@ -42,7 +42,7 @@ struct SocialSignInView: View {
                     .frame(height: TextButton.Size.large.height)
                     .disabled(viewModel.loading == .googleButton)
                 TextButtonView(
-                    title: L10n.signInWithGoogle,
+                    title: viewModel.googleButtonTitle,
                     style: .inverted,
                     size: .large,
                     leading: .google,

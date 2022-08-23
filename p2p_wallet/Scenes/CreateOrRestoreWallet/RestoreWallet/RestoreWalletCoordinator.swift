@@ -39,7 +39,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
 
     init(parent: UIViewController) {
         self.parent = parent
-        viewModel = RestoreWalletViewModel(tKeyFacade: nil)
+        viewModel = RestoreWalletViewModel(tKeyFacade: tKeyFacade)
 
         securitySetupDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
@@ -127,42 +127,21 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         case .restore:
             let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(options: viewModel
                 .availableRestoreOptions)
-            chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { [weak self] process in
-                guard let self = self else { return }
-                switch process.data {
-                case .keychain:
-                    process.start { _ = try await stateMachine <- .signInWithKeychain }
-
-                case .custom:
-                    process.start { _ = try await stateMachine <- .restoreCustom(.enterPhone) }
-
-                case .socialApple:
-                    process.start {
-                        if let deviceShare = self.viewModel.deviceShare {
-                            _ = try await stateMachine <-
-                                .restoreSocial(.signInDevice(socialProvider: .apple, deviceShare: deviceShare))
-                        } else {
-                            throw StateMachineError.invalidEvent
-                        }
-                    }
-
-                case .socialGoogle:
-                    process.start {
-                        if let deviceShare = self.viewModel.deviceShare {
-                            _ = try await stateMachine <-
-                                .restoreSocial(.signInDevice(socialProvider: .google, deviceShare: deviceShare))
-                        } else {
-                            throw StateMachineError.invalidEvent
-                        }
-                    }
-
-                case .seed:
-                    process.start {
+            chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { process in
+                process.start {
+                    switch process.data {
+                    case .keychain:
+                        _ = try await stateMachine <- .signInWithKeychain
+                    case .custom:
+                        _ = try await stateMachine <- .restoreCustom(.enterPhone)
+                    case .socialApple:
+                        _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .apple))
+                    case .socialGoogle:
+                        _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .google))
+                    case .seed:
                         _ = try await stateMachine <- .signInWithSeed
+                    default: break
                     }
-
-                default:
-                    break
                 }
             })
                 .store(in: &subscriptions)
