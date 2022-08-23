@@ -5,63 +5,69 @@
 import Combine
 import Foundation
 import Onboarding
+import Reachability
 import Resolver
 
-class SocialSignInAccountHasBeenUsedViewModel: NSObject, ViewModelType {
-    struct Input {
-        let onError: PassthroughSubject<Error, Never> = .init()
-        let onBack: PassthroughSubject<Void, Never> = .init()
-        let onInfo: PassthroughSubject<Void, Never> = .init()
-
-        let useAnotherAccount: PassthroughSubject<Void, Never> = .init()
-        let restoreThisWallet: PassthroughSubject<Void, Never> = .init()
-
-        let isLoading: CurrentValueSubject<Bool, Never> = .init(false)
+class SocialSignInAccountHasBeenUsedViewModel: BaseViewModel {
+    struct Coordinator {
+        let useAnotherAccount: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
+        let switchToRestoreFlow: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
+        let info: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
+        let back: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
     }
 
-    struct Output {
-        let emailAddress: AnyPublisher<String, Never>
-        let signInProvider: AnyPublisher<SocialProvider, Never>
-        let isLoading: AnyPublisher<Bool, Never>
-    }
+    let coordinator: Coordinator = .init()
 
-    struct CoordinatorIO {
-        let useAnotherAccount: AnyPublisher<Void, Never>
-        let switchToRestoreFlow: AnyPublisher<Void, Never>
-        let back: AnyPublisher<Void, Never>
-    }
-
-    var input: Input = .init()
-    var output: Output
-    let coordinatorIO: CoordinatorIO
-
-    var subscriptions = [AnyCancellable]()
+    @Published var emailAddress: String
+    @Published var signInProvider: SocialProvider
+    @Published var loading: Bool = false
 
     @Injected var authService: AuthService
     @Injected var notificationService: NotificationService
+    @Injected var reachability: Reachability
 
     init(email: String, signInProvider: SocialProvider) {
-        output = .init(
-            emailAddress: CurrentValueSubject(email).eraseToAnyPublisher(),
-            signInProvider: CurrentValueSubject(signInProvider).eraseToAnyPublisher(),
-            isLoading: input.isLoading.eraseToAnyPublisher()
-        )
-
-        coordinatorIO = .init(
-            useAnotherAccount: input.useAnotherAccount.eraseToAnyPublisher(),
-            switchToRestoreFlow: input.restoreThisWallet.eraseToAnyPublisher(),
-            back: input.onBack.eraseToAnyPublisher()
-        )
+        emailAddress = email
+        self.signInProvider = signInProvider
 
         super.init()
+    }
 
-        input.onError.sink { [weak self] error in
-            DispatchQueue.main.async {
-                self?.notificationService.showDefaultErrorNotification()
-//                self?.notificationService.showInAppNotification(.error(error))
+    func back() {
+        coordinator.back.sendProcess()
+    }
+
+    func info() {
+        coordinator.info.sendProcess()
+    }
+
+    func switchToRestore() {
+        coordinator.switchToRestoreFlow.sendProcess()
+    }
+
+    func userAnotherAccount() {
+        guard
+            loading == false,
+            reachability.check()
+        else { return }
+
+        loading = true
+        coordinator.useAnotherAccount.sendProcess { [weak self] error in
+            if let error = error {
+                switch error {
+                case is SocialServiceError:
+                    break
+                default:
+                    self?.notificationService.showDefaultErrorNotification()
+                }
             }
-            DefaultLogManager.shared.log(event: error.readableDescription, logLevel: .error)
+
+            self?.loading = false
         }
-        .store(in: &subscriptions)
+    }
+
+    func handleError(error: Error) {
+        notificationService.showDefaultErrorNotification()
+        DefaultLogManager.shared.log(event: error.readableDescription, logLevel: .error)
     }
 }

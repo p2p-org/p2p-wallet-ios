@@ -19,6 +19,7 @@ protocol NotificationService {
     func deleteDeviceToken() async
     func showInAppNotification(_ notification: InAppNotification)
     func showToast(title: String?, text: String?)
+    func hideToasts()
     func showDefaultErrorNotification()
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
     func didReceivePush(userInfo: [AnyHashable: Any])
@@ -119,6 +120,10 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         DispatchQueue.main.async {
             UIApplication.shared.showToastError(title: title, text: text)
         }
+    }
+
+    func hideToasts() {
+        SnackBarManager.shared.dismissAll()
     }
 
     func showDefaultErrorNotification() {
@@ -235,18 +240,26 @@ private extension Data {
 
 extension UIWindow {
     func topViewController() -> UIViewController? {
-        var top = rootViewController
-        while true {
-            if let presented = top?.presentedViewController {
-                top = presented
-            } else if let nav = top as? UINavigationController {
-                top = nav.visibleViewController
-            } else if let tab = top as? UITabBarController {
-                top = tab.selectedViewController
-            } else {
-                break
-            }
+        rootViewController?.topMostViewController()
+    }
+}
+
+private extension UIViewController {
+    func topMostViewController() -> UIViewController? {
+        if self is SnackBarViewController { return nil }
+        if presentedViewController == nil { return self }
+
+        if let navigation = presentedViewController as? UINavigationController {
+            return navigation.visibleViewController!.topMostViewController() ?? self
         }
-        return top
+
+        if let tab = presentedViewController as? UITabBarController {
+            if let selectedTab = tab.selectedViewController {
+                return selectedTab.topMostViewController() ?? self
+            }
+            return tab.topMostViewController() ?? self
+        }
+
+        return presentedViewController!.topMostViewController() ?? self
     }
 }
