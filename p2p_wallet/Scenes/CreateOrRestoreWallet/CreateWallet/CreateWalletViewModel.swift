@@ -20,6 +20,7 @@ final class CreateWalletViewModel: BaseViewModel {
                 config: .init(
                     metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
                     torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
+                    torusNetwork: "testnet",
                     torusVerifierMapping: [
                         "google": String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? "",
                         "apple": String.secretConfig("TORUS_APPLE_VERIFIER") ?? "",

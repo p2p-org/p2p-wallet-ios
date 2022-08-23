@@ -41,4 +41,8 @@ extension Subject {
     func sendProcess(_ finish: @escaping (Error?) -> Void) where Output == ReactiveProcess<Void> {
         send(ReactiveProcess<Void>(data: (), finish: finish))
     }
+
+    func sendProcess() where Output == ReactiveProcess<Void> {
+        send(ReactiveProcess<Void>(data: (), finish: { _ in }))
+    }
 }
