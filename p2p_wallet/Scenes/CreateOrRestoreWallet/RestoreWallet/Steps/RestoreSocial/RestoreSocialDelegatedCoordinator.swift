@@ -12,7 +12,8 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
         case .signIn:
             return nil
         case .social:
-            let viewModel = SocialSignInViewModel(title: L10n.restoringYourWallet)
+            let content = OnboardingContentData(image: .safeRestore, title: L10n.howToContinue)
+            let viewModel = SocialSignInViewModel(title: L10n.restoringYourWallet, content: content)
             let view = SocialSignInView(viewModel: viewModel)
             viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.openTerms() }
                 .store(in: &subscriptions)

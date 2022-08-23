@@ -29,9 +29,11 @@ class SocialSignInViewModel: BaseViewModel {
     private(set) var coordinatorIO: CoordinatorIO = .init()
 
     @Published private(set) var title: String
+    @Published private(set) var content: OnboardingContentData
 
-    init(title: String) {
+    init(title: String, content: OnboardingContentData) {
         self.title = title
+        self.content = content
         super.init()
     }
 
