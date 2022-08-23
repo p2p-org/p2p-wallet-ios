@@ -54,15 +54,7 @@ class SocialSignInViewModel: BaseViewModel {
 
     func onBack() {
         guard loading == nil else { return }
-
-        loading = .other
-        let process: ReactiveProcess<Void> = .init(data: ()) { [weak self] error in
-            if let error = error {
-                self?.notificationService.showDefaultErrorNotification()
-            }
-            self?.loading = nil
-        }
-        coordinatorIO.outBack.send(process)
+        coordinatorIO.outBack.sendProcess()
     }
 
     func onSignInTap(_ provider: SocialProvider) {
@@ -76,7 +68,8 @@ class SocialSignInViewModel: BaseViewModel {
         case .google: loading = .googleButton
         }
 
-        let process: ReactiveProcess<SocialProvider> = .init(data: provider) { [weak self] error in
+        notificationService.hideToasts()
+        coordinatorIO.outLogin.sendProcess(data: provider) { [weak self] error in
             if let error = error {
                 switch error {
                 case is SocialServiceError:
@@ -87,7 +80,5 @@ class SocialSignInViewModel: BaseViewModel {
             }
             self?.loading = nil
         }
-
-        coordinatorIO.outLogin.send(process)
     }
 }
