@@ -99,20 +99,25 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .assign(to: \.phone, on: self)
             .store(in: &cancellable)
 
-        $phone.removeDuplicates().filter { $0 != nil }.map { phone -> Bool in
+        $phone.removeDuplicates().filter { $0 != nil }.sink { phone in
             guard let exampleNumber = self.exampleNumberWith(phone: phone ?? "") else {
-                return true
+                return
             }
-            return phone?
+            let hasCountry = phone?
                 .replacingOccurrences(of: "+", with: "")
                 .starts(with: String(exampleNumber.countryCode)) ?? false
-        }.sink {
-            self.showInputError(error: $0 ? nil : L10n.sorryWeDonTKnowASuchCountry)
-            if !$0 {
+
+            self.showInputError(error: hasCountry ? nil : L10n.sorryWeDonTKnowASuchCountry)
+            if !hasCountry {
                 self.flag = "🏴"
             } else {
-                _ = self.partialFormatter.nationalNumber(from: self.phone ?? "")
-                let country = self.partialFormatter.currentRegion
+                var country = ""
+                if let parsed = try? self.phoneNumberKit.parse(phone ?? "", ignoreType: true) {
+                    country = parsed.regionID ?? self.partialFormatter.currentRegion
+                } else {
+                    _ = self.partialFormatter.nationalNumber(from: phone ?? "")
+                    country = self.partialFormatter.currentRegion
+                }
                 self.flag = Self.getFlag(from: country)
             }
         }.store(in: &cancellable)
@@ -134,13 +139,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         .store(in: &cancellable)
 
         $phone.removeDuplicates().map { [weak self] in
-            guard let self = self, let phoneNumber = self.exampleNumberWith(phone: $0 ?? "") else {
-                return false
-            }
-            let formatted = self.phoneNumberKit.format(phoneNumber, toType: .international)
-            let newPhone = self.clearedPhoneString(phone: $0 ?? "")
-            let cleared = self.clearedPhoneString(phone: formatted)
-            return !cleared.isEmpty && cleared.count == newPhone.count
+            (try? self?.phoneNumberKit.parse($0 ?? "", ignoreType: true)) != nil
         }
         .assign(to: \.isButtonEnabled, on: self)
         .store(in: &cancellable)
