@@ -17,7 +17,7 @@ final class PincodeViewModel: BaseViewModel {
     // MARK: - Properties
 
     @Published var title: String = ""
-    @Published var snackbarMessage: String?
+    @Published var snackbar: PincodeSnackbar?
 
     let back = PassthroughSubject<Void, Never>()
     let infoDidTap = PassthroughSubject<Void, Never>()
@@ -68,7 +68,7 @@ private extension PincodeViewModel {
             case .create:
                 self.confirmPin.send(pin)
             case .confirm:
-                self.snackbarMessage = L10n._️YeahYouVeCreatedThePINToKeyApp
+                self.snackbar = PincodeSnackbar(message: L10n._️YeahYouVeCreatedThePINToKeyApp, isFailure: false)
                 self.pincodeStorage.save(pin)
                 let prompt = L10n
                     .insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
@@ -89,7 +89,7 @@ private extension PincodeViewModel {
             switch self.state {
             case .create: break
             case .confirm:
-                self.snackbarMessage = L10n.😢PINDoesnTMatch.tryAgain
+                self.snackbar = PincodeSnackbar(message: L10n.😢PINDoesnTMatch.tryAgain, isFailure: true)
             }
         }.store(in: &subscriptions)
     }
