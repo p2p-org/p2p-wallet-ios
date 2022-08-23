@@ -64,7 +64,19 @@ final class StartCoordinator: Coordinator<OnboardingWallet> {
 
     private func openRestoreWallet(vc: UIViewController) {
         coordinate(to: RestoreWalletCoordinator(parent: vc))
-            .sink { _ in }.store(in: &subscriptions)
+            .sink(receiveValue: { [weak self] result in
+                guard let self = self else { return }
+                switch result {
+                case let .success(wallet):
+                    self.subject.send(wallet)
+                    self.subject.send(completion: .finished)
+                case .start:
+                    break
+                case .help:
+                    break
+                }
+            })
+            .store(in: &subscriptions)
     }
 
     private func openTerms() {
