@@ -88,12 +88,12 @@ class WLEnterPhrasesVC: BaseVC, WLPhrasesTextViewDelegate {
         view.addSubview(descriptionLabel)
         descriptionLabel.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         descriptionLabel.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-        retryButton.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
 
         view.addSubview(retryButton)
         retryButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
         retryButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
         retryButton.autoPinEdge(.bottom, to: .top, of: descriptionLabel, withOffset: -30)
+        retryButton.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
 
         textView.becomeFirstResponder()
         textView.keyboardDismissMode = .onDrag
