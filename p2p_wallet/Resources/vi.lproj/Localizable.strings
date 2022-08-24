@@ -880,3 +880,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "You didn’t use any of 5 codes.\nFor your safety we freezed account for %@ min" = "Bạn không sử dụng bất kỳ mã nào trong số 5 mã. \n Vì sự an toàn của bạn, chúng tôi đã đóng băng tài khoản trong %@ phút";
 "You request OTP too often. Try later." = "Bạn yêu cầu OTP quá thường xuyên.  Thử lại sau.";
 "Sorry, we don't know such a country" = "Xin lỗi, chúng tôi không biết một quốc gia như vậy";
+"Well, well" = "Chà, tốt";
+"We’ve broke something really big.\nLet’s wait together, finnaly the app will be repaired.\n\nIf you will write us, use error code %@" = "Chúng tôi đã phá vỡ một điều gì đó thực sự lớn. \n Chúng ta hãy cùng nhau chờ đợi, ứng dụng sẽ được sửa chữa. \n \n Nếu bạn muốn viết thư cho chúng tôi, hãy sử dụng mã lỗi %@";
