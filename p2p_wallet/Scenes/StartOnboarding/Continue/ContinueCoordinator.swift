@@ -51,8 +51,6 @@ final class ContinueCoordinator: Coordinator<OnboardingWallet> {
     }
 
     private func openStart(navigationController _: UINavigationController) {
-        onboardingService.lastState = nil
-
         coordinate(to: StartCoordinator(window: window, params: StartParameters(isAnimatable: false)))
             .sink(receiveValue: { _ in })
             .store(in: &subscriptions)
