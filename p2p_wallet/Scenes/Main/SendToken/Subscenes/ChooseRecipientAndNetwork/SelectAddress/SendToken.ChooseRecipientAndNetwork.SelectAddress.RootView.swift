@@ -155,6 +155,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             actionButton.autoPinEdge(toSuperviewEdge: .leading, withInset: 18)
             actionButton.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
             actionButton.autoPinBottomToSuperViewSafeAreaAvoidKeyboard(inset: 18)
+            actionButton.isEnabled = false
 
             recipientCollectionView.autoPinEdge(.bottom, to: .bottom, of: self, withOffset: -(56 + 18))
         }
