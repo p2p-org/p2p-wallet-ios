@@ -222,14 +222,14 @@ private extension RestoreWalletCoordinator {
                 isBackAvailable: false,
                 content: OnboardingContentData(image: .box, title: L10n.notFound, subtitle: subtitle),
                 options: [.socialApple, .socialGoogle, .custom],
-                isStartButtonAvailable: true
+                isStartAvailable: true
             )
         default:
             return ChooseRestoreOptionParameters(
                 isBackAvailable: true,
                 content: OnboardingContentData(image: .lockPincode, title: L10n.chooseTheWayToContinue),
                 options: viewModel.availableRestoreOptions,
-                isStartButtonAvailable: false
+                isStartAvailable: false
             )
         }
     }

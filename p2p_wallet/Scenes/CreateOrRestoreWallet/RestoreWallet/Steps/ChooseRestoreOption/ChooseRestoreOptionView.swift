@@ -49,26 +49,38 @@ extension ChooseRestoreOptionView {
                 }
                 VStack(spacing: 12) {
                     ForEach(viewModel.secondaryButtons, id: \.option.rawValue) { button in
-                        TextButtonView(
+                        secondaryButton(
                             title: button.title,
-                            style: .outlineWhite,
-                            size: .large,
-                            leading: button.icon,
+                            icon: button.icon,
                             isLoading: viewModel.isLoading == button.option
-                        ) { [weak viewModel] in viewModel?.optionDidTap.send(button.option) }
-                            .styled()
+                        ) { [weak viewModel] in
+                            viewModel?.optionDidTap.send(button.option)
+                        }
                     }
-                    if viewModel.isStartButtonAvailable {
-                        TextButtonView(
-                            title: L10n.goToTheStartingScreen,
-                            style: .outlineWhite,
-                            size: .large
-                        ) { [weak viewModel] in viewModel?.openStart.send() }
-                            .styled()
+                    if viewModel.isStartAvailable {
+                        secondaryButton(title: L10n.goToTheStartingScreen) { [weak viewModel] in
+                            viewModel?.openStart.send()
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+private extension ChooseRestoreOptionView {
+    func secondaryButton(title: String, icon: UIImage? = nil, isLoading: Bool = false,
+                         onPressed: @escaping () -> Void) -> some View
+    {
+        TextButtonView(
+            title: title,
+            style: .outlineWhite,
+            size: .large,
+            leading: icon,
+            isLoading: isLoading,
+            onPressed: onPressed
+        )
+            .styled()
     }
 }
 

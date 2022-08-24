@@ -905,3 +905,5 @@ another";
 "No wallet found" = "No wallet found";
 "Well, well" = "Well, well";
 "We’ve broke something really big.\nLet’s wait together, finnaly the app will be repaired.\n\nIf you will write us, use error code %@" = "We’ve broke something really big.\nLet’s wait together, finnaly the app will be repaired.\n\nIf you will write us, use error code %@";
+"We can’t SMS you" = "We can’t SMS you";
+"Something wrong with phone number %@ or settings. If you will write us, use error code #10464" = "Something wrong with phone number %@ or settings. If you will write us, use error code #10464";
