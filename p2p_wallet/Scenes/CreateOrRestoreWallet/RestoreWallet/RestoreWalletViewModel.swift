@@ -30,6 +30,7 @@ final class RestoreWalletViewModel: BaseViewModel {
     @Injected var authService: AuthService
 
     init(tKeyFacade: TKeyFacade? = nil) {
+        let keychainStorage: KeychainStorage = Resolver.resolve()
         deviceShare = Resolver.resolve(AccountStorageType.self).deviceShare
 
         stateMachine = .init(provider: RestoreWalletFlowContainer(
@@ -38,7 +39,7 @@ final class RestoreWalletViewModel: BaseViewModel {
             authService: AuthServiceBridge(),
             apiGatewayClient: APIGatewayClientImplMock(),
             securityStatusProvider: Resolver.resolve(),
-            icloudAccountProvider: Resolver.resolve(KeychainStorage.self)
+            icloudAccountProvider: keychainStorage
         ))
 
         var options: RestoreOption = [.seed, .custom]
@@ -46,7 +47,12 @@ final class RestoreWalletViewModel: BaseViewModel {
             options.insert(RestoreOption.socialApple)
             options.insert(RestoreOption.socialGoogle)
         }
-        if true {
+
+        // If icloud stores some accounts
+        if
+            let accounts = keychainStorage.accountFromICloud(),
+            !accounts.isEmpty
+        {
             options.insert(RestoreOption.keychain)
         }
 

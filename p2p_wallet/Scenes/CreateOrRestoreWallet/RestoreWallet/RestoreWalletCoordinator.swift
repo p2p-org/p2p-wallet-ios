@@ -8,15 +8,20 @@ import KeyAppUI
 import Onboarding
 import SwiftUI
 
-final class RestoreWalletCoordinator: Coordinator<Void> {
-    // MARK: - NavigationController
+enum RestoreWalletResult {
+    case start
+    case help
+    case success(OnboardingWallet)
+}
 
+final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     let parent: UIViewController
     let tKeyFacade: TKeyJSFacade = .init(
         wkWebView: GlobalWebView.requestWebView(),
         config: .init(
             metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
             torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
+            torusNetwork: "testnet",
             torusVerifierMapping: [
                 "google": String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? "",
                 "apple": String.secretConfig("TORUS_APPLE_VERIFIER") ?? "",
@@ -24,14 +29,13 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
         )
     )
 
-    let viewModel: RestoreWalletViewModel
-
-    private var result = PassthroughSubject<Void, Never>()
+    private let viewModel: RestoreWalletViewModel
+    private var result = PassthroughSubject<RestoreWalletResult, Never>()
     private(set) var navigationController: UINavigationController?
 
-    let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
-    let restoreCustomDelegatedCoordinator: RestoreCustomDelegatedCoordinator
-    let restoreSocialDelegatedCoordinator: RestoreSocialDelegatedCoordinator
+    private let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
+    private let restoreCustomDelegatedCoordinator: RestoreCustomDelegatedCoordinator
+    private let restoreSocialDelegatedCoordinator: RestoreSocialDelegatedCoordinator
 
     init(parent: UIViewController) {
         self.parent = parent
@@ -60,7 +64,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     // MARK: - Methods
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<RestoreWalletResult, Never> {
         guard let viewController = buildViewController(state: viewModel.stateMachine.currentState) else {
             return Empty().eraseToAnyPublisher()
         }
@@ -71,6 +75,7 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
         restoreCustomDelegatedCoordinator.rootViewController = navigationController
         securitySetupDelegatedCoordinator.rootViewController = navigationController
+        restoreSocialDelegatedCoordinator.rootViewController = navigationController
 
         viewModel.stateMachine
             .stateStream
@@ -92,6 +97,14 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     private func stateChangeHandler(from: RestoreWalletState?, to: RestoreWalletState) {
         if case let .finished(result) = to {
+            switch result {
+            case let .successful(wallet):
+                self.result.send(.success(wallet))
+            case .breakProcess:
+                self.result.send(.start)
+            case .needHelp:
+                self.result.send(.help)
+            }
             navigationController?.dismiss(animated: true)
             self.result.send(completion: .finished)
         }
@@ -112,57 +125,44 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
     private func buildViewController(state: RestoreWalletState) -> UIViewController? {
         var stateMachine = viewModel.stateMachine
         switch state {
-        case .restore:
-            let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(options: viewModel
-                .availableRestoreOptions)
-            chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { [weak self] process in
-                guard let self = self else { return }
-                switch process.data {
-                case .keychain:
-                    process.start { _ = try await stateMachine <- .signInWithKeychain }
+        case .restore, .restoreNotFoundDevice:
+            let params = chooseRestoreOptionParameters(for: state)
+            return buildRestoreScreen(parameters: params)
 
-                case .custom:
-                    process.start { _ = try await stateMachine <- .restoreCustom(.enterPhone) }
-
-                case .socialApple:
-                    process.start {
-                        if let deviceShare = self.viewModel.deviceShare {
-                            _ = try await stateMachine <-
-                                .restoreSocial(.signInDevice(socialProvider: .apple, deviceShare: deviceShare))
-                        } else {
-                            throw StateMachineError.invalidEvent
-                        }
-                    }
-
-                case .socialGoogle:
-                    process.start {
-                        if let deviceShare = self.viewModel.deviceShare {
-                            _ = try await stateMachine <-
-                                .restoreSocial(.signInDevice(socialProvider: .google, deviceShare: deviceShare))
-                        } else {
-                            throw StateMachineError.invalidEvent
-                        }
-                    }
-
-                case .seed:
-                    process.start {
-                        _ = try await stateMachine <- .signInWithSeed
-                    }
-
-                default:
-                    break
+        case let .restoreNotFoundCustom(_, email):
+            let content = OnboardingContentData(
+                image: .box,
+                title: L10n.noWalletFound,
+                subtitle: L10n.withTryAnotherAccount(email)
+            )
+            let actionViewModel = RestoreSocialOptionViewModel()
+            actionViewModel.optionChosen.sinkAsync { process in
+                process.start {
+                    _ = try await stateMachine <- .restoreSocial(.signInCustom(socialProvider: process.data))
                 }
-            })
-                .store(in: &subscriptions)
-            chooseRestoreOptionViewModel.back.sinkAsync {
-                _ = try await stateMachine <- .back
-            }
-            .store(in: &subscriptions)
-            chooseRestoreOptionViewModel.openInfo.sink { [weak self] in
+            }.store(in: &subscriptions)
+            let actionView = RestoreSocialOptionView(viewModel: actionViewModel)
+            let view = OnboardingBrokenScreen(title: "", contentData: content, back: {
+                Task { _ = try await stateMachine <- .start }
+            }, info: { [weak self] in
                 self?.openInfo()
-            }
-            .store(in: &subscriptions)
-            return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel))
+            }, customActions: { actionView })
+            return UIHostingController(rootView: view)
+
+        case .noMatch:
+            let content = OnboardingContentData(
+                image: .box,
+                title: L10n.sharesArenTMatch,
+                subtitle: L10n.SoSorryBaby.ifYouWillWriteUsUseErrorCode10464
+            )
+            let view = OnboardingBrokenScreen(title: "", contentData: content, back: {
+                Task { _ = try await stateMachine <- .start }
+            }, info: { [weak self] in
+                self?.openInfo()
+            }, help: {
+                Task { _ = try await stateMachine <- .help }
+            })
+            return UIHostingController(rootView: view)
 
         case let .signInKeychain(accounts):
             let vm = ICloudRestoreViewModel(accounts: accounts)
@@ -209,5 +209,62 @@ final class RestoreWalletCoordinator: Coordinator<Void> {
 
     @objc private func openInfo() {
         openTerms()
+    }
+}
+
+private extension RestoreWalletCoordinator {
+    func chooseRestoreOptionParameters(for state: RestoreWalletState) -> ChooseRestoreOptionParameters {
+        switch state {
+        case let .restoreNotFoundDevice(_, email):
+            let subtitle = email == nil ? L10n.tryWithAnotherAccountOrUseAPhoneNumber : L10n
+                .emailTryAnotherAccountOrUseAPhoneNumber(email ?? "")
+            return ChooseRestoreOptionParameters(
+                isBackAvailable: false,
+                content: OnboardingContentData(image: .box, title: L10n.notFound, subtitle: subtitle),
+                options: [.socialApple, .socialGoogle, .custom],
+                isStartButtonAvailable: true
+            )
+        default:
+            return ChooseRestoreOptionParameters(
+                isBackAvailable: true,
+                content: OnboardingContentData(image: .lockPincode, title: L10n.chooseTheWayToContinue),
+                options: viewModel.availableRestoreOptions,
+                isStartButtonAvailable: false
+            )
+        }
+    }
+
+    func buildRestoreScreen(parameters: ChooseRestoreOptionParameters) -> UIViewController {
+        var stateMachine = viewModel.stateMachine
+        let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(parameters: parameters)
+        chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { process in
+            switch process.data {
+            case .keychain:
+                _ = try await stateMachine <- .signInWithKeychain
+            case .custom:
+                _ = try await stateMachine <- .restoreCustom(.enterPhone)
+            case .socialApple:
+                _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .apple))
+            case .socialGoogle:
+                _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .google))
+            case .seed:
+                _ = try await stateMachine <- .signInWithSeed
+            default: break
+            }
+        })
+            .store(in: &subscriptions)
+        chooseRestoreOptionViewModel.openStart.sinkAsync {
+            _ = try await stateMachine <- .start
+        }
+        .store(in: &subscriptions)
+        chooseRestoreOptionViewModel.openInfo.sink { [weak self] in
+            self?.openInfo()
+        }
+        .store(in: &subscriptions)
+        chooseRestoreOptionViewModel.back.sinkAsync {
+            _ = try await stateMachine <- .back
+        }
+        .store(in: &subscriptions)
+        return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel))
     }
 }

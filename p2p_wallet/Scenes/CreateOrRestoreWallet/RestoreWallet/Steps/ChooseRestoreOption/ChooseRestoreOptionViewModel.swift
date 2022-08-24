@@ -3,6 +3,13 @@ import KeyAppUI
 import SwiftUI
 import UIKit
 
+struct ChooseRestoreOptionParameters {
+    let isBackAvailable: Bool
+    let content: OnboardingContentData
+    let options: RestoreOption
+    let isStartButtonAvailable: Bool
+}
+
 final class ChooseRestoreOptionViewModel: BaseViewModel {
     @Published var data: OnboardingContentData
     @Published var options: RestoreOption
@@ -12,16 +19,19 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
     @Published var secondaryButtons: [ChooseRestoreOptionButton] = []
 
     let back = PassthroughSubject<Void, Never>()
+    let openStart = PassthroughSubject<Void, Never>()
     let openInfo = PassthroughSubject<Void, Never>()
     let optionDidTap = PassthroughSubject<RestoreOption, Never>()
     let optionChosen = PassthroughSubject<ReactiveProcess<RestoreOption>, Never>()
 
-    init(options: RestoreOption) {
-        self.options = options
-        data = OnboardingContentData(
-            image: .lockPincode,
-            title: L10n.chooseTheWayToContinue
-        )
+    let isBackAvailable: Bool
+    let isStartButtonAvailable: Bool
+
+    init(parameters: ChooseRestoreOptionParameters) {
+        options = parameters.options
+        data = parameters.content
+        isBackAvailable = parameters.isBackAvailable
+        isStartButtonAvailable = parameters.isStartButtonAvailable
         super.init()
         configureButtons(options: options)
 

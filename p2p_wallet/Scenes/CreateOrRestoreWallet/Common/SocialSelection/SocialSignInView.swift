@@ -24,21 +24,15 @@ struct SocialSignInView: View {
     }
 
     var content: some View {
-        OnboardingContentView(
-            data: .init(
-                image: .introWelcomeToP2pFamily,
-                title: L10n.protectingTheFunds,
-                subtitle: L10n.WeUseMultiFactorAuthentication
-                    .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
-            )
-        ).padding(.horizontal, 40)
+        OnboardingContentView(data: viewModel.content)
+            .padding(.horizontal, 40)
     }
 
     var actions: some View {
         BottomActionContainer {
             VStack(spacing: .zero) {
                 TextButtonView(
-                    title: L10n.signInWithApple,
+                    title: viewModel.appleButtonTitle,
                     style: .inverted,
                     size: .large,
                     leading: .appleLogo,
@@ -48,7 +42,7 @@ struct SocialSignInView: View {
                     .frame(height: TextButton.Size.large.height)
                     .disabled(viewModel.loading == .googleButton)
                 TextButtonView(
-                    title: L10n.signInWithGoogle,
+                    title: viewModel.googleButtonTitle,
                     style: .inverted,
                     size: .large,
                     leading: .google,

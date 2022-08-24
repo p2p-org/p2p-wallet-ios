@@ -32,7 +32,7 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
             }.store(in: &subscriptions)
             return viewController
 
-        case let .enterOTP(phoneNumber, solPrivateKey):
+        case let .enterOTP(phoneNumber, solPrivateKey, _):
             let viewModel = EnterSMSCodeViewModel(phone: phoneNumber)
             let viewController = EnterSMSCodeViewController(viewModel: viewModel)
 

@@ -8,6 +8,13 @@ import Onboarding
 import Reachability
 import Resolver
 
+struct SocialSignInParameters {
+    let title: String
+    let content: OnboardingContentData
+    let appleButtonTitle: String
+    let googleButtonTitle: String
+}
+
 class SocialSignInViewModel: BaseViewModel {
     enum Loading {
         case appleButton
@@ -29,9 +36,15 @@ class SocialSignInViewModel: BaseViewModel {
     private(set) var coordinatorIO: CoordinatorIO = .init()
 
     @Published private(set) var title: String
+    @Published private(set) var content: OnboardingContentData
+    @Published private(set) var appleButtonTitle: String
+    @Published private(set) var googleButtonTitle: String
 
-    init(title: String) {
-        self.title = title
+    init(parameters: SocialSignInParameters) {
+        title = parameters.title
+        content = parameters.content
+        appleButtonTitle = parameters.appleButtonTitle
+        googleButtonTitle = parameters.googleButtonTitle
         super.init()
     }
 
@@ -41,15 +54,7 @@ class SocialSignInViewModel: BaseViewModel {
 
     func onBack() {
         guard loading == nil else { return }
-
-        loading = .other
-        let process: ReactiveProcess<Void> = .init(data: ()) { [weak self] error in
-            if let error = error {
-                self?.notificationService.showDefaultErrorNotification()
-            }
-            self?.loading = nil
-        }
-        coordinatorIO.outBack.send(process)
+        coordinatorIO.outBack.sendProcess()
     }
 
     func onSignInTap(_ provider: SocialProvider) {
@@ -63,7 +68,8 @@ class SocialSignInViewModel: BaseViewModel {
         case .google: loading = .googleButton
         }
 
-        let process: ReactiveProcess<SocialProvider> = .init(data: provider) { [weak self] error in
+        notificationService.hideToasts()
+        coordinatorIO.outLogin.sendProcess(data: provider) { [weak self] error in
             if let error = error {
                 switch error {
                 case is SocialServiceError:
@@ -74,7 +80,5 @@ class SocialSignInViewModel: BaseViewModel {
             }
             self?.loading = nil
         }
-
-        coordinatorIO.outLogin.send(process)
     }
 }
