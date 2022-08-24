@@ -21,7 +21,7 @@ extension TransactionHandler {
             //                self.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenSent))
 
             // update status
-            updateTransactionAtIndex(index) { _ in
+            await updateTransactionAtIndex(index) { _ in
                 .init(
                     transactionId: transactionID,
                     sentAt: Date(),
@@ -37,7 +37,7 @@ extension TransactionHandler {
             notificationsService.showInAppNotification(.error(error))
 
             // mark transaction as failured
-            updateTransactionAtIndex(index) { currentValue in
+            await updateTransactionAtIndex(index) { currentValue in
                 var info = currentValue
                 info.status = .error(error.readableDescription)
                 return info
@@ -50,7 +50,7 @@ extension TransactionHandler {
     /// Observe confirmation statuses of given transaction
     private func observe(index: TransactionIndex, transactionId: String) async throws {
         for await status in apiClient.observeSignatureStatus(signature: transactionId) {
-            updateTransactionAtIndex(index) { currentValue in
+            await updateTransactionAtIndex(index) { currentValue in
                 var value = currentValue
                 value.status = status
                 if let slot = status.slot {
@@ -61,7 +61,7 @@ extension TransactionHandler {
         }
 
         // update one last time
-        updateTransactionAtIndex(index) { currentValue in
+        await updateTransactionAtIndex(index) { currentValue in
             var value = currentValue
             value.status = .finalized
             return value
@@ -70,7 +70,7 @@ extension TransactionHandler {
 
     /// Update transaction
     @discardableResult
-    private func updateTransactionAtIndex(
+    @MainActor private func updateTransactionAtIndex(
         _ index: TransactionIndex,
         update: (PendingTransaction) -> PendingTransaction
     ) -> Bool {
@@ -100,7 +100,7 @@ extension TransactionHandler {
         return false
     }
 
-    private func updateRepository(with rawTransaction: RawTransactionType) {
+    @MainActor private func updateRepository(with rawTransaction: RawTransactionType) {
         switch rawTransaction {
         case let transaction as ProcessTransaction.SendTransaction:
             guard !socket.isConnected else { return }
