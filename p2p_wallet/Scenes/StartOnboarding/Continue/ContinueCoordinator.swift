@@ -35,9 +35,17 @@ final class ContinueCoordinator: Coordinator<OnboardingWallet> {
         .store(in: &subscriptions)
 
         viewModel.continueDidTap.sink { [weak self] _ in
-            self?.continueCreateWallet()
+            self?.continueCreateWallet(animated: true)
         }
         .store(in: &subscriptions)
+
+        // Force continue in predefined states
+        switch onboardingService.lastState {
+        case .securitySetup:
+            continueCreateWallet(animated: false)
+        default:
+            break
+        }
 
         return subject.eraseToAnyPublisher()
     }
@@ -50,13 +58,13 @@ final class ContinueCoordinator: Coordinator<OnboardingWallet> {
             .store(in: &subscriptions)
     }
 
-    private func continueCreateWallet() {
+    private func continueCreateWallet(animated: Bool) {
         guard
             let lastState = onboardingService.lastState,
             let root = window.rootViewController
         else { return }
 
-        coordinate(to: CreateWalletCoordinator(parent: root, initialState: lastState))
+        coordinate(to: CreateWalletCoordinator(parent: root, initialState: lastState, animated: animated))
             .sink { result in
                 switch result {
                 case let .success(onboardingWallet):
