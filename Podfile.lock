@@ -482,7 +482,7 @@ CHECKOUT OPTIONS:
     :commit: d7af6930953274c020703b812f707265d439fb1e
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: 561467fc5f0e1cd71a0f426b627d2eb87397bfd9
+    :commit: 967e89ecacc87e57ea83dc44899b39be1891b2fc
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
@@ -604,6 +604,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 232cfef25fdf975b545759148c2433beb1aae670
+PODFILE CHECKSUM: d5ad4bc3c5536cbb855d97ba57638b1605749279
 
 COCOAPODS: 1.11.3
