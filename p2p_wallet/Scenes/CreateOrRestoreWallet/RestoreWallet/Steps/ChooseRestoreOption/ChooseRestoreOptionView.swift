@@ -15,6 +15,7 @@ struct ChooseRestoreOptionView: View {
 
                 OnboardingContentView(data: viewModel.data)
                     .padding(.vertical, 32)
+                    .padding(.horizontal, 20)
 
                 Spacer()
 
@@ -22,11 +23,11 @@ struct ChooseRestoreOptionView: View {
             }
             .edgesIgnoringSafeArea(.bottom)
         }
-        .onboardingNavigationBar(title: L10n.restoringYourWallet) { [weak viewModel] in
-            viewModel?.back.send()
-        } onInfo: { [weak viewModel] in
-            viewModel?.openInfo.send()
-        }
+        .onboardingNavigationBar(
+            title: L10n.restoringYourWallet,
+            onBack: viewModel.isBackAvailable ? { [weak viewModel] in viewModel?.back.send() } : nil,
+            onInfo: { [weak viewModel] in viewModel?.openInfo.send() }
+        )
     }
 }
 
@@ -55,6 +56,14 @@ extension ChooseRestoreOptionView {
                             leading: button.icon,
                             isLoading: viewModel.isLoading == button.option
                         ) { [weak viewModel] in viewModel?.optionDidTap.send(button.option) }
+                            .styled()
+                    }
+                    if viewModel.isStartButtonAvailable {
+                        TextButtonView(
+                            title: L10n.goToTheStartingScreen,
+                            style: .outlineWhite,
+                            size: .large
+                        ) { [weak viewModel] in viewModel?.openStart.send() }
                             .styled()
                     }
                 }

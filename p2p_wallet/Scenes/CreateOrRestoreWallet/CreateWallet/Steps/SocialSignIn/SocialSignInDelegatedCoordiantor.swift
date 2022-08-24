@@ -11,7 +11,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
         switch state {
         case .socialSelection:
-            let vm = SocialSignInViewModel(title: L10n.createAccount)
+            let vm = SocialSignInViewModel(parameters: socialSignInParameters())
             let vc = SocialSignInView(viewModel: vm)
             vc.viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }
                 .store(in: &subscriptions)
@@ -31,40 +31,20 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
                 signInProvider: provider
             )
 
-            vm.coordinatorIO.useAnotherAccount.sinkAsync { [weak vm, stateMachine] in
-                if vm?.input.isLoading.value ?? false { return }
-                vm?.input.isLoading.send(true)
-                defer { vm?.input.isLoading.send(false) }
-
-                do {
-                    try await stateMachine <- .signIn(socialProvider: .google)
-                } catch {
-                    vm?.input.onError.send(error)
-                }
+            vm.coordinator.useAnotherAccount.sink { [stateMachine] process in
+                process.start { try await stateMachine <- .signIn(socialProvider: .google) }
             }.store(in: &subscriptions)
 
-            vm.coordinatorIO.back.sinkAsync { [weak vm, stateMachine] in
-                do {
-                    try await stateMachine <- .signInBack
-                } catch {
-                    vm?.input.onError.send(error)
-                }
+            vm.coordinator.back.sink { [stateMachine] process in
+                process.start { try await stateMachine <- .signInBack }
             }.store(in: &subscriptions)
 
-            vm.coordinatorIO.switchToRestoreFlow.sinkAsync { [weak vm, stateMachine] in
-                if vm?.input.isLoading.value ?? false { return }
-                vm?.input.isLoading.send(true)
-                defer { vm?.input.isLoading.send(false) }
-
-                do {
-                    try await stateMachine <- .restore(authProvider: provider, email: usedEmail)
-                } catch {
-                    vm?.input.onError.send(error)
-                }
+            vm.coordinator.switchToRestoreFlow.sink { [stateMachine] process in
+                process.start { try await stateMachine <- .restore(authProvider: provider, email: usedEmail) }
             }.store(in: &subscriptions)
 
-            let vc = SocialSignInAccountHasBeenUsedViewController(viewModel: vm)
-            return vc
+            let vc = SocialSignInAccountHasBeenUsedView(viewModel: vm)
+            return UIHostingController(rootView: vc)
         case let .socialSignInTryAgain(socialProvider, _):
             let vm = SocialSignInTryAgainViewModel(signInProvider: socialProvider)
 
@@ -103,5 +83,20 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
         rootViewController?.present(vc, animated: true)
+    }
+
+    private func socialSignInParameters() -> SocialSignInParameters {
+        let content = OnboardingContentData(
+            image: .introWelcomeToP2pFamily,
+            title: L10n.protectingTheFunds,
+            subtitle: L10n.WeUseMultiFactorAuthentication.youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
+        )
+        let parameters = SocialSignInParameters(
+            title: L10n.createAccount,
+            content: content,
+            appleButtonTitle: L10n.signInWithApple,
+            googleButtonTitle: L10n.signInWithGoogle
+        )
+        return parameters
     }
 }
