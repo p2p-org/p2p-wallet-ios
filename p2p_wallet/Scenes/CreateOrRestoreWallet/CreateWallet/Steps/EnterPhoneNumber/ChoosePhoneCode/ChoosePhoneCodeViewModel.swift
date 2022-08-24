@@ -32,20 +32,34 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
             .sink { [weak self] keyword in
                 guard let self = self else { return }
                 if keyword.isEmpty {
-                    self.overrideData(by: self.cachedResult)
+                    self.overrideData(by: self.placeInitialIfNeeded(countries: self.cachedResult))
                     return
                 }
                 var newData = self.cachedResult.filteredAndSorted(byKeyword: keyword)
                 if newData.isEmpty {
                     newData.append(self.emptyCountryModel())
+                } else {
+                    newData = self.placeInitialIfNeeded(countries: newData)
                 }
                 self.overrideData(by: newData)
             }
             .store(in: &subscriptions)
 
-        $selectedCountry.sink { [weak self] country in
-            guard country != nil else { return }
+        $selectedCountry.sink { [weak self] value in
+            guard let value = value else { return }
+
+            if let index = self?.cachedResult.firstIndex(where: {
+                $0.value.code == self?.initialSelectedCountry?.code
+            }) {
+                self?.cachedResult[index].isSelected = false
+            }
             self?.initialSelectedCountry = nil
+
+            if let index = self?.cachedResult.firstIndex(where: {
+                $0.value.code == value.value.code
+            }) {
+                self?.cachedResult[index].isSelected = true
+            }
         }
         .store(in: &subscriptions)
     }
@@ -57,11 +71,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
         cachedResult = try await CountriesAPIImpl().fetchCountries()
             .map { .init(value: $0, isSelected: $0.code == selectedCode) }
         var countries = cachedResult.filteredAndSorted(byKeyword: keyword.value)
-        // Put initial selected country in the first place
-        if let selectedIndex = countries.firstIndex(where: { $0.value.code == initialSelectedCountry?.code }) {
-            let selectedCountry = countries.remove(at: selectedIndex)
-            countries.insert(selectedCountry, at: .zero)
-        }
+        countries = placeInitialIfNeeded(countries: countries)
         return countries
     }
 
@@ -71,5 +81,16 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
             isSelected: false,
             isEmpty: true
         )
+    }
+
+    private func placeInitialIfNeeded(countries: [SelectableCountry]) -> [SelectableCountry] {
+        guard initialSelectedCountry != nil else { return countries }
+        var countries = countries
+        // Put initial selected country in the first place
+        if let selectedIndex = countries.firstIndex(where: { $0.value.code == initialSelectedCountry?.code }) {
+            let selectedCountry = countries.remove(at: selectedIndex)
+            countries.insert(selectedCountry, at: .zero)
+        }
+        return countries
     }
 }
