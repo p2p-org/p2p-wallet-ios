@@ -107,11 +107,11 @@ extension ReceiveToken {
 }
 
 extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
-    func lockAndMintServiceWillStartLoading(_: LockAndMintService) {
+    @MainActor func lockAndMintServiceWillStartLoading(_: LockAndMintService) {
         isLoading = true
     }
 
-    func lockAndMintService(_: LockAndMintService, didLoadWithGatewayAddress gatewayAddress: String) {
+    @MainActor func lockAndMintService(_: LockAndMintService, didLoadWithGatewayAddress gatewayAddress: String) {
         address = gatewayAddress
         Task {
             let endAt = await persistentStore.session?.endAt
@@ -119,11 +119,11 @@ extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
         }
     }
 
-    func lockAndMintService(_: LockAndMintService, didFailToLoadWithError _: Error) {
+    @MainActor func lockAndMintService(_: LockAndMintService, didFailToLoadWithError _: Error) {
         sessionEndDate = nil
     }
 
-    func lockAndMintService(
+    @MainActor func lockAndMintService(
         _: LockAndMintService,
         didUpdateTransactions processingTransactions: [LockAndMint.ProcessingTx]
     ) {
