@@ -20,6 +20,7 @@ final class HomeCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
 
     private var sendCoordinator: SendToken.Coordinator?
+    private let scrollSubject = PassthroughSubject<Void, Never>()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -37,6 +38,12 @@ final class HomeCoordinator: Coordinator<Void> {
         ).asViewController() as! UIHostingControllerWithoutNavigation<HomeView>
 
         navigationController.setViewControllers([homeView], animated: false)
+
+        scrollSubject
+            .sink(receiveValue: {
+                tokensViewModel.scrollToTop()
+            })
+            .store(in: &subscriptions)
 
         homeView.viewWillAppear
             .sink(receiveValue: { [unowned homeView] in
@@ -223,5 +230,9 @@ final class HomeCoordinator: Coordinator<Void> {
             }
             navigationController.show(vc, sender: nil)
         }
+    }
+
+    func scrollToTop() {
+        scrollSubject.send()
     }
 }
