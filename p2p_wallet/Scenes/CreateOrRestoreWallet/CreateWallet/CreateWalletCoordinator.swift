@@ -25,8 +25,11 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     let bindingPhoneNumberDelegatedCoordinator: BindingPhoneNumberDelegatedCoordinator
     let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
 
-    init(parent: UIViewController, initialState: CreateWalletFlowState? = nil) {
+    var animated: Bool = true
+
+    init(parent: UIViewController, initialState: CreateWalletFlowState? = nil, animated: Bool = true) {
         parentViewController = parent
+        self.animated = animated
 
         // Setup
         viewModel = CreateWalletViewModel(initialState: initialState)
@@ -79,7 +82,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
             .store(in: &subscriptions)
 
         navigationController?.modalTransitionStyle = .crossDissolve
-        parentViewController.present(navigationController!, animated: true)
+        parentViewController.present(navigationController!, animated: animated)
 
         return result.eraseToAnyPublisher()
     }
