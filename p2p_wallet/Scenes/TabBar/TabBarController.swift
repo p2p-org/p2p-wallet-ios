@@ -157,6 +157,13 @@ extension TabBarController: UITabBarControllerDelegate {
 
         customTabBar.updateSelectedViewPositionIfNeeded()
 
+        if TabItem(rawValue: selectedIndex) == .wallet,
+           (viewController as! UINavigationController).viewControllers.count == 1,
+           self.selectedIndex == selectedIndex
+        {
+            homeCoordinator?.scrollToTop()
+        }
+
         return true
     }
 }

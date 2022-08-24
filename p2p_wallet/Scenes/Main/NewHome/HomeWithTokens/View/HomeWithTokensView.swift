@@ -25,20 +25,31 @@ struct HomeWithTokensView: View {
     }
 
     var body: some View {
-        List {
-            Group {
-                header
-                    .topPadding()
-                    .padding(.bottom, 18)
-                content
+        ScrollViewReader { reader in
+            List {
+                Group {
+                    header
+                        .topPadding()
+                        .padding(.bottom, 18)
+                        .id(0)
+                    content
+                }
+                .horizontalPadding()
+                .withoutSeparatorsAfterListContent()
+                .onReceive(viewModel.$scrollOnTheTop) { _ in
+                    reader.scrollTo(0, anchor: .top)
+                }
             }
-            .horizontalPadding()
-            .withoutSeparatorsAfterListContent()
-        }
-        .withoutSeparatorsiOS14()
-        .listStyle(.plain)
-        .customRefreshable {
-            await viewModel.reloadData()
+            .withoutSeparatorsiOS14()
+            .listStyle(.plain)
+            .customRefreshable {
+                await viewModel.reloadData()
+            }
+            .onReceive(viewModel.$scrollOnTheTop) { _ in
+                withAnimation {
+                    reader.scrollTo(0, anchor: .top)
+                }
+            }
         }
     }
 
