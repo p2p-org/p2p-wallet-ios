@@ -68,7 +68,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
         private func bind() {
             textField.textPublisher
                 .removeDuplicates()
-                .debounce(for: 300, scheduler: RunLoop.main)
+                .debounce(for: .seconds(0.3), scheduler: RunLoop.main)
                 .sink { [weak self] address in
                     self?.viewModel.search(address)
                 }
