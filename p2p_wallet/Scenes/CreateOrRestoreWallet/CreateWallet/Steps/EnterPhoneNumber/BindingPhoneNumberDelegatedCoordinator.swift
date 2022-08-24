@@ -67,14 +67,16 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             }.store(in: &subscriptions)
 
             return vc
-        case .broken:
+        case let .broken(code):
             let view = OnboardingBrokenScreen(
                 title: L10n.createANewWallet,
                 contentData: .init(
                     image: .introWelcomeToP2pFamily,
-                    title: L10n.protectingTheFunds,
-                    subtitle: L10n.WeUseMultiFactorAuthentication
-                        .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
+                    title: L10n.wellWell,
+                    subtitle: L10n
+                        .WeVeBrokeSomethingReallyBig
+                        .LetSWaitTogetherFinnalyTheAppWillBeRepaired
+                        .ifYouWillWriteUsUseErrorCode("#\(abs(code))")
                 ),
                 back: { [stateMachine] in try await stateMachine <- .back },
                 info: { /* TODO: handle */ },
