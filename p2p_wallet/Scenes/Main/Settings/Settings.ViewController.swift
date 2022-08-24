@@ -109,6 +109,7 @@ extension Settings {
                                     .assign(to: \.isOn, on: switcher)
                                     .store(in: &subscriptions)
                                 switcher.isOnPublisher
+                                    .dropFirst()
                                     .sink { [unowned self] value in
                                         self.viewModel.setEnabledBiometry(value) { [weak self] error in
                                             guard let error = error else { return }
