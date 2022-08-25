@@ -17,6 +17,7 @@ struct HomeWithTokensView: View {
     @ObservedObject var viewModel: HomeWithTokensViewModel
 
     @State private var currentUserInteractionCellID: String?
+    @State private var scrollAnimationIsEnded = true
 
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
@@ -36,9 +37,6 @@ struct HomeWithTokensView: View {
                 }
                 .horizontalPadding()
                 .withoutSeparatorsAfterListContent()
-                .onReceive(viewModel.$scrollOnTheTop) { _ in
-                    reader.scrollTo(0, anchor: .top)
-                }
             }
             .withoutSeparatorsiOS14()
             .listStyle(.plain)
@@ -46,9 +44,15 @@ struct HomeWithTokensView: View {
                 await viewModel.reloadData()
             }
             .onReceive(viewModel.$scrollOnTheTop) { _ in
-                withAnimation {
-                    reader.scrollTo(0, anchor: .top)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    scrollAnimationIsEnded = true
                 }
+                if scrollAnimationIsEnded {
+                    withAnimation {
+                        reader.scrollTo(0, anchor: .top)
+                    }
+                }
+                scrollAnimationIsEnded = false
             }
         }
     }
@@ -105,6 +109,9 @@ struct HomeWithTokensView: View {
                         withAnimation {
                             viewModel.toggleHiddenTokensVisibility()
                         }
+//                        withAnimation {
+//                            viewModel.toggleHiddenTokensVisibility()
+//                        }
                     },
                     label: {
                         HStack(spacing: 8) {

@@ -36,20 +36,19 @@ final class ActionsCoordinator: Coordinator<Void> {
         navigationController.modalPresentationStyle = .custom
         self.viewController.present(navigationController, animated: true)
 
+        let subject = PassthroughSubject<Void, Never>()
         transition.dimmClicked
             .sink(receiveValue: {
-                self.viewController.dismiss(animated: true)
+                viewController.dismiss(animated: true)
             })
             .store(in: &subscriptions)
 
-        let subject = PassthroughSubject<Void, Never>()
-        viewController.onClose = {
+        navigationController.onClose = {
             subject.send()
         }
         view.cancel
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
-                subject.send()
             })
             .store(in: &subscriptions)
         view.action
@@ -79,8 +78,8 @@ final class ActionsCoordinator: Coordinator<Void> {
                     let navigation = UINavigationController(rootViewController: vc)
                     analyticsManager.log(event: .mainScreenSwapOpen)
                     analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
-                    vc.doneHandler = {
-                        self.viewController.dismiss(animated: true)
+                    vc.doneHandler = { [weak self] in
+                        self?.viewController.dismiss(animated: true)
                     }
                     navigationController.present(navigation, animated: true)
                 case .send:
@@ -96,8 +95,8 @@ final class ActionsCoordinator: Coordinator<Void> {
                     analyticsManager.log(event: .mainScreenSendOpen)
                     analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
 
-                    sendCoordinator?.doneHandler = {
-                        self.viewController.dismiss(animated: true)
+                    sendCoordinator?.doneHandler = { [weak self] in
+                        self?.viewController.dismiss(animated: true)
                     }
                     sendCoordinator?.start(hidesBottomBarWhenPushed: true, push: false)
                 }
