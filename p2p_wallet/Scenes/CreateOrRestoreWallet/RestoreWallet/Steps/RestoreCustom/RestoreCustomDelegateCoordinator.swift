@@ -4,24 +4,36 @@
 
 import Combine
 import CountriesAPI
-import Foundation
+import KeyAppUI
 import Onboarding
 import SwiftUI
 
 final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCustomState> {
     override func buildViewController(for state: RestoreCustomState) -> UIViewController? {
         switch state {
-        case .enterPhone:
-            return handleEnterPhone()
+        case let .enterPhone(phone, _):
+            return handleEnterPhone(phone: phone)
 
-        case let .enterOTP(phoneNumber, _, _):
-            return handleEnterOtp(phoneNumber: phoneNumber)
+        case let .enterOTP(phone, _, _, _):
+            return handleEnterOtp(phone: phone)
 
-        case let .otpNotDeliveredRequireSocial(phone):
+        case let .otpNotDeliveredTrySocial(phone):
             return handleOtpNotDeliveredRequireSocial(phone: phone)
 
         case let .otpNotDelivered(phone):
             return handleOtpNotDelivered(phone: phone)
+
+        case .noMatch:
+            return handleNoMatch()
+
+        case let .broken(code):
+            return handleBroken(code: code)
+
+        case let .tryAnother(wrongNumber, trySocial):
+            return tryAnother(wrongNumber: wrongNumber, trySocial: trySocial)
+
+        case let .block(until, _, reason):
+            return handleBlock(until: until, reason: reason)
 
         default:
             return nil
@@ -29,6 +41,10 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
     }
 
     private func openInfo() {
+        openTermAndCondition()
+    }
+
+    private func openTermAndCondition() {
         let viewController = WLMarkdownVC(
             title: L10n.termsOfUse.uppercaseFirst,
             bundledMarkdownTxtFileName: "Terms_of_service"
@@ -57,10 +73,9 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 // MARK: - Single state handlers
 
 private extension RestoreCustomDelegatedCoordinator {
-    func handleEnterPhone() -> UIViewController {
+    func handleEnterPhone(phone: String?) -> UIViewController {
         let viewModel = EnterPhoneNumberViewModel()
-        let viewController = EnterPhoneNumberViewController(viewModel: viewModel)
-
+        if let phone = phone { viewModel.phone = phone }
         viewModel.coordinatorIO.selectFlag.sinkAsync { [weak self] selectedCountry in
             guard let result = try await self?.selectCountry(selectedCountry: selectedCountry) else { return }
             viewModel.coordinatorIO.countrySelected.send(result)
@@ -70,18 +85,18 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = true
 
             do {
-                try await stateMachine <- .enterPhoneNumber(phoneNumber: phone)
+                try await stateMachine <- .enterPhoneNumber(phone: phone)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
             viewModel?.isLoading = false
 
         }.store(in: &subscriptions)
-        return viewController
+        return EnterPhoneNumberViewController(viewModel: viewModel)
     }
 
-    func handleEnterOtp(phoneNumber: String) -> UIViewController {
-        let viewModel = EnterSMSCodeViewModel(phone: phoneNumber)
+    func handleEnterOtp(phone: String) -> UIViewController {
+        let viewModel = EnterSMSCodeViewModel(phone: phone)
         let viewController = EnterSMSCodeViewController(viewModel: viewModel)
 
         viewModel.coordinatorIO.onConfirm.sinkAsync { [weak viewModel, stateMachine] otp in
@@ -153,16 +168,111 @@ private extension RestoreCustomDelegatedCoordinator {
     }
 
     func handleOtpNotDelivered(phone: String) -> UIViewController {
-        let view = OnboardingBrokenScreen(
-            title: "", contentData: weCanTSMSYouContent(phone: phone), back: { [stateMachine] in
-                Task { _ = try await stateMachine <- .back }
+        let content = weCanTSMSYouContent(phone: phone)
+        return buildOnboardingBrokenScreen(content: content)
+    }
+
+    func handleNoMatch() -> UIViewController {
+        let content = OnboardingContentData(
+            image: .box,
+            title: L10n.sharesArenTMatch,
+            subtitle: L10n.SoSorryBaby.ifYouWillWriteUsUseErrorCode10464
+        )
+        return buildOnboardingBrokenScreen(content: content)
+    }
+
+    func handleBroken(code: Int) -> UIViewController {
+        let content = OnboardingContentData(
+            image: .box,
+            title: L10n.wellWell,
+            subtitle: L10n.YouVeFindASeldonPage🦄ItSLikeAUnicornButItSACrush.WeReAlreadyFixingIt
+                .ifYouWillWriteUsUseErrorCode("\(code)")
+        )
+        return buildOnboardingBrokenScreen(content: content)
+    }
+
+    func buildOnboardingBrokenScreen(content: OnboardingContentData) -> UIViewController {
+        let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
+            Task { _ = try await stateMachine <- .start }
+        }, info: { [weak self] in
+            self?.openInfo()
+        }, help: { [stateMachine] in
+            Task { _ = try await stateMachine <- .help }
+        })
+        return UIHostingController(rootView: view)
+    }
+
+    func tryAnother(wrongNumber: String, trySocial: Bool) -> UIViewController {
+        if trySocial {
+            let content = OnboardingContentData(
+                image: .box,
+                title: L10n.noWalletFound,
+                subtitle: L10n.tryWithAnotherAccountOrUseAPhoneNumber
+            )
+            let parameters = ChooseRestoreOptionParameters(
+                isBackAvailable: false,
+                content: content,
+                options: [.socialApple, .socialGoogle, .custom],
+                isStartAvailable: true
+            )
+
+            let viewModel = ChooseRestoreOptionViewModel(parameters: parameters)
+            viewModel.optionChosen.sinkAsync(receiveValue: { [stateMachine] process in
+                switch process.data {
+                case .socialApple:
+                    _ = try await stateMachine <- .requireSocial(provider: .apple)
+                case .socialGoogle:
+                    _ = try await stateMachine <- .requireSocial(provider: .google)
+                case .custom:
+                    _ = try await stateMachine <- .enterPhone
+                default: break
+                }
+            })
+                .store(in: &subscriptions)
+            viewModel.openStart.sinkAsync { [stateMachine] in
+                _ = try await stateMachine <- .start
+            }
+            .store(in: &subscriptions)
+            viewModel.openInfo.sink { [weak self] in
+                self?.openInfo()
+            }
+            .store(in: &subscriptions)
+
+            return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: viewModel))
+        } else {
+            let content = OnboardingContentData(
+                image: .box,
+                title: L10n.accountNotFound,
+                subtitle: L10n.PhoneNotWorks.useAnAnotherPhoneNumber(wrongNumber)
+            )
+            let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
+                Task { _ = try await stateMachine <- .start }
             }, info: { [weak self] in
                 self?.openInfo()
-            }, help: { [stateMachine] in
-                Task { _ = try await stateMachine <- .help }
-            }
-        )
+            }, help: nil,
+            customActions: {
+                TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted, size: .large) { [stateMachine] in
+                    Task { _ = try await stateMachine <- .enterPhone }
+                }.frame(height: TextButton.Size.large.height).frame(maxWidth: .infinity)
+            })
+            return UIHostingController(rootView: view)
+        }
+    }
 
+    func handleBlock(until: Date, reason: PhoneFlowBlockReason) -> UIViewController {
+        let subtitle = reason == .blockEnterPhoneNumber ?
+            L10n.YouUsedTooMuchNumbers.forYourSafetyWeFreezedAccountForMin
+            : L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFreezedAccountForMin
+        let view = OnboardingBlockScreen(
+            contentTitle: L10n.soLetSBreathe,
+            contentSubtitle: subtitle,
+            untilTimestamp: until,
+            onHome: { [stateMachine] in Task { _ = try await stateMachine <- .start } },
+            onCompletion: { [stateMachine] in
+                Task { _ = try await stateMachine <- .enterPhone }
+            },
+            onTermAndCondition: { [weak self] in self?.openTermAndCondition() }
+        )
         return UIHostingController(rootView: view)
     }
 }

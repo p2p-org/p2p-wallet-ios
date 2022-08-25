@@ -10,6 +10,8 @@ struct OnboardingBlockScreen: View {
     @State var loading: Bool = false
 
     let contentTitle: String
+    let contentSubtitle: (_ p1: Any) -> String
+
     @State var untilTimestamp: Date = .init()
     @State var formattedCountDown: String = "00:00"
 
@@ -24,9 +26,9 @@ struct OnboardingBlockScreen: View {
             Spacer()
             OnboardingContentView(
                 data: .init(
-                    image: .coins,
+                    image: .rocket,
                     title: contentTitle,
-                    subtitle: L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFreezedAccountForMin(formattedCountDown)
+                    subtitle: contentSubtitle(formattedCountDown)
                 )
             )
                 .onAppear { formatCountdown() }
