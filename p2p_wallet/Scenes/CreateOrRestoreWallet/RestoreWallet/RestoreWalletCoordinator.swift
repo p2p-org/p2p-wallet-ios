@@ -125,29 +125,14 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     private func buildViewController(state: RestoreWalletState) -> UIViewController? {
         var stateMachine = viewModel.stateMachine
         switch state {
-        case .restore, .restoreNotFoundDevice:
-            let params = chooseRestoreOptionParameters(for: state)
-            return buildRestoreScreen(parameters: params)
-
-        case let .restoreNotFoundCustom(_, email):
-            let content = OnboardingContentData(
-                image: .box,
-                title: L10n.noWalletFound,
-                subtitle: L10n.withTryAnotherAccount(email)
+        case .restore:
+            let params = ChooseRestoreOptionParameters(
+                isBackAvailable: true,
+                content: OnboardingContentData(image: .lockPincode, title: L10n.chooseTheWayToContinue),
+                options: viewModel.availableRestoreOptions,
+                isStartAvailable: false
             )
-            let actionViewModel = RestoreSocialOptionViewModel()
-            actionViewModel.optionChosen.sinkAsync { process in
-                process.start {
-                    _ = try await stateMachine <- .restoreSocial(.signInCustom(socialProvider: process.data))
-                }
-            }.store(in: &subscriptions)
-            let actionView = RestoreSocialOptionView(viewModel: actionViewModel)
-            let view = OnboardingBrokenScreen(title: "", contentData: content, back: {
-                Task { _ = try await stateMachine <- .start }
-            }, info: { [weak self] in
-                self?.openInfo()
-            }, customActions: { actionView })
-            return UIHostingController(rootView: view)
+            return buildRestoreScreen(parameters: params)
 
         case let .signInKeychain(accounts):
             let vm = ICloudRestoreViewModel(accounts: accounts)
@@ -176,7 +161,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         case let .restoreCustom(innerState):
             return restoreCustomDelegatedCoordinator.buildViewController(for: innerState)
 
-        case let .securitySetup(_, _, _, _, innerState):
+        case let .securitySetup(_, _, _, innerState):
             return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
 
         case .finished:
@@ -198,27 +183,6 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
 }
 
 private extension RestoreWalletCoordinator {
-    func chooseRestoreOptionParameters(for state: RestoreWalletState) -> ChooseRestoreOptionParameters {
-        switch state {
-        case let .restoreNotFoundDevice(_, email):
-            let subtitle = email == nil ? L10n.tryWithAnotherAccountOrUseAPhoneNumber : L10n
-                .emailTryAnotherAccountOrUseAPhoneNumber(email ?? "")
-            return ChooseRestoreOptionParameters(
-                isBackAvailable: false,
-                content: OnboardingContentData(image: .box, title: L10n.notFound, subtitle: subtitle),
-                options: [.socialApple, .socialGoogle, .custom],
-                isStartAvailable: true
-            )
-        default:
-            return ChooseRestoreOptionParameters(
-                isBackAvailable: true,
-                content: OnboardingContentData(image: .lockPincode, title: L10n.chooseTheWayToContinue),
-                options: viewModel.availableRestoreOptions,
-                isStartAvailable: false
-            )
-        }
-    }
-
     func buildRestoreScreen(parameters: ChooseRestoreOptionParameters) -> UIViewController {
         var stateMachine = viewModel.stateMachine
         let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(parameters: parameters)
