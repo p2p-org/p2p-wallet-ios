@@ -37,7 +37,12 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     func selectCountryTap() {
-        coordinatorIO.selectFlag.send(selectedCountry)
+        guard
+            let number = phone,
+            let phoneNumber = exampleNumberWith(phone: number),
+            let regionId = phoneNumber.regionID
+        else { return }
+        coordinatorIO.selectCode.send(regionId)
     }
 
     @MainActor
@@ -52,7 +57,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         var error: PassthroughSubject<Error?, Never> = .init()
         var countrySelected: PassthroughSubject<Country?, Never> = .init()
         // Output
-        var selectFlag: PassthroughSubject<Country?, Never> = .init()
+        var selectCode: PassthroughSubject<String?, Never> = .init()
         var phoneEntered: PassthroughSubject<String, Never> = .init()
     }
 
