@@ -51,7 +51,9 @@ final class TabBarController: UITabBarController {
                 generator.impactOccurred()
                 actionsCoordinator = ActionsCoordinator(viewController: self)
                 actionsCoordinator?.start()
-                    .sink(receiveValue: {})
+                    .sink(receiveValue: { [unowned self] in
+                        actionsCoordinator = nil
+                    })
                     .store(in: &cancellables)
             })
             .store(in: &cancellables)
