@@ -17,8 +17,8 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
             viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.openTerms() }
                 .store(in: &subscriptions)
 
-            viewModel.coordinatorIO.outBack.sinkAsync { _ in
-                // is back necessary here? waiting for design
+            viewModel.coordinatorIO.outBack.sinkAsync { [stateMachine] process in
+                process.start { _ = try await stateMachine <- .back }
             }
             .store(in: &subscriptions)
 

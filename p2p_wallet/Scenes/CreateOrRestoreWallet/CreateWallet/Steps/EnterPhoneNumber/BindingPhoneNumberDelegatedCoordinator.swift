@@ -88,6 +88,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         case let .block(until, _, _, _):
             let view = OnboardingBlockScreen(
                 contentTitle: L10n.soLetSBreathe,
+                contentSubtitle: L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFreezedAccountForMin,
                 untilTimestamp: until,
                 onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },

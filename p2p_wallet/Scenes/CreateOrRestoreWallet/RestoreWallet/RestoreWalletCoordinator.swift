@@ -149,21 +149,6 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             }, customActions: { actionView })
             return UIHostingController(rootView: view)
 
-        case .noMatch:
-            let content = OnboardingContentData(
-                image: .box,
-                title: L10n.sharesArenTMatch,
-                subtitle: L10n.SoSorryBaby.ifYouWillWriteUsUseErrorCode10464
-            )
-            let view = OnboardingBrokenScreen(title: "", contentData: content, back: {
-                Task { _ = try await stateMachine <- .start }
-            }, info: { [weak self] in
-                self?.openInfo()
-            }, help: {
-                Task { _ = try await stateMachine <- .help }
-            })
-            return UIHostingController(rootView: view)
-
         case let .signInKeychain(accounts):
             let vm = ICloudRestoreViewModel(accounts: accounts)
 
