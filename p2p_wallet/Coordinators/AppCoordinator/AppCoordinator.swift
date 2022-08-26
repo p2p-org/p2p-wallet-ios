@@ -103,7 +103,6 @@ class AppCoordinator: Coordinator<Void> {
         let vc = SplashViewController()
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
-
         Task { await warmup() }
     }
 
