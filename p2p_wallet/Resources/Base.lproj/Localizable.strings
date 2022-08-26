@@ -913,3 +913,6 @@ another";
 "%@ not works. Use an another phone number" = "%@ not works. Use an another phone number";
 "Try with another account or use an another phone number" = "Try with another account or use an another phone number";
 "Something wrong with phone number %@ or settings. If you will write us, use error code %@" = "Something wrong with phone number %@ or settings. If you will write us, use error code %@";
+"It’s okay to be wrong" = "It’s okay to be wrong";
+"You used 5 incorrect codes.\nFor your safety we freezed account for %@" = "You used 5 incorrect codes.\nFor your safety we freezed account for %@";
+"You didn’t use any of 5 codes.\nFor your safety we freezed account for %@" = "You didn’t use any of 5 codes.\nFor your safety we freezed account for %@";

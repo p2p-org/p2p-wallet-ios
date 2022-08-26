@@ -18,6 +18,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     // MARK: -
 
     @Injected private var reachability: Reachability
+    @Injected private var notificationService: NotificationService
 
     @Published public var phone: String?
     @Published public var flag: String = ""
@@ -77,6 +78,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .sinkAsync { error in
                 if let serviceError = error as? APIGatewayError, serviceError == .invalidRequest {
                     self.showInputError(error: "")
+                } else if error is UndefinedAPIGatewayError {
+                    self.notificationService.showDefaultErrorNotification()
                 } else {
                     self.showError(error: error)
                 }
