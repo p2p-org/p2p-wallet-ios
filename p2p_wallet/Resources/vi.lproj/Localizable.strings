@@ -882,3 +882,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Sorry, we don't know such a country" = "Xin lỗi, chúng tôi không biết một quốc gia như vậy";
 "Well, well" = "Chà, tốt";
 "We’ve broke something really big.\nLet’s wait together, finnaly the app will be repaired.\n\nIf you will write us, use error code %@" = "Chúng tôi đã phá vỡ một điều gì đó thực sự lớn. \n Chúng ta hãy cùng nhau chờ đợi, ứng dụng sẽ được sửa chữa. \n \n Nếu bạn muốn viết thư cho chúng tôi, hãy sử dụng mã lỗi %@";
+"Enter your seed phrase" = "Nhập cụm từ hạt giống của bạn";
+"Seed phrase" = "Cụm từ hạt giống";
+"Restoring your wallet" = "Khôi phục ví của bạn";
+"Clear" = "Xa lạ";
