@@ -13,17 +13,17 @@ final class ChoosePhoneCodeCoordinator: Coordinator<Country?> {
     // MARK: - Properties
 
     let presentingViewController: UIViewController
-    let selectedCountry: Country?
+    let selectedCountryCode: String?
 
     // MARK: - Initializer
 
-    init(selectedCountry: Country? = nil, presentingViewController: UIViewController) {
+    init(selectedCountryCode: String? = nil, presentingViewController: UIViewController) {
         self.presentingViewController = presentingViewController
-        self.selectedCountry = selectedCountry
+        self.selectedCountryCode = selectedCountryCode
     }
 
     override func start() -> AnyPublisher<Country?, Never> {
-        let vm = ChoosePhoneCodeViewModel(selectedCountry: selectedCountry)
+        let vm = ChoosePhoneCodeViewModel(selectedCountryCode: selectedCountryCode)
         let vc = ChoosePhoneCodeViewController(viewModel: vm)
         vc.isModalInPresentation = true
         let nc = UINavigationController(rootViewController: vc)
