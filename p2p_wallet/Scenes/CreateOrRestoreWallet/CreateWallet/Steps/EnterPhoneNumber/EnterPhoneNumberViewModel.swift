@@ -105,25 +105,22 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .store(in: &cancellable)
 
         $phone.removeDuplicates().filter { $0 != nil }.sink { phone in
-            guard let exampleNumber = self.exampleNumberWith(phone: phone ?? "") else {
-                return
-            }
-            let hasCountry = phone?
-                .replacingOccurrences(of: "+", with: "")
-                .starts(with: String(exampleNumber.countryCode)) ?? false
+            guard let exampleNumber = self.exampleNumberWith(phone: phone ?? "") else { return }
+            let countryCode = "\(exampleNumber.countryCode)"
 
-            self.showInputError(error: hasCountry ? nil : L10n.sorryWeDonTKnowASuchCountry)
-            if !hasCountry {
-                self.flag = "🏴"
+            var country = ""
+            if let parsed = try? self.phoneNumberKit.parse(countryCode, ignoreType: true) {
+                country = parsed.regionID ?? self.partialFormatter.currentRegion
             } else {
-                var country = ""
-                if let parsed = try? self.phoneNumberKit.parse(phone ?? "", ignoreType: true) {
-                    country = parsed.regionID ?? self.partialFormatter.currentRegion
-                } else {
-                    _ = self.partialFormatter.nationalNumber(from: phone ?? "")
-                    country = self.partialFormatter.currentRegion
-                }
-                self.flag = Self.getFlag(from: country)
+                _ = self.partialFormatter.nationalNumber(from: countryCode)
+                country = self.partialFormatter.currentRegion
+            }
+            self.flag = Self.getFlag(from: country)
+
+            self.showInputError(error: !self.flag.isEmpty ? nil : L10n.sorryWeDonTKnowASuchCountry)
+
+            if self.flag.isEmpty {
+                self.flag = "🏴"
             }
         }.store(in: &cancellable)
 
