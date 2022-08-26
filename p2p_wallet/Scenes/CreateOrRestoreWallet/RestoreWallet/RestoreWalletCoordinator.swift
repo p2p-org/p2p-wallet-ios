@@ -152,8 +152,36 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             }.store(in: &subscriptions)
 
             return UIHostingController(rootView: ICloudRestoreScreen(viewModel: vm))
+
         case .signInSeed:
-            fatalError()
+            let viewModel = SeedPhraseRestoreWalletViewModel()
+            let seedVC = UIHostingController(rootView: SeedPhraseRestoreWalletView(viewModel: viewModel))
+            viewModel.coordinatorIO.finishedWithSeed.sinkAsync { phrase in
+                _ = try await stateMachine <- .derivationPath(phrase: phrase)
+            }.store(in: &subscriptions)
+
+            viewModel.coordinatorIO.back.sinkAsync { _ in
+                _ = try await stateMachine <- .back
+            }.store(in: &subscriptions)
+
+            viewModel.coordinatorIO.info.sinkAsync { [weak self] _ in
+                self?.openInfo()
+            }.store(in: &subscriptions)
+            return seedVC
+
+        case let .derivationPath(phrase: phrase):
+            let viewModel = NewDerivableAccounts.ViewModel(phrases: phrase)
+
+            viewModel.coordinatorIO.didSucceed.sinkAsync { phrase, path in
+                _ = try await stateMachine <- .restoreWithSeed(phrase: phrase, path: path)
+            }.store(in: &subscriptions)
+
+            viewModel.coordinatorIO.back.sinkAsync { _ in
+                _ = try await stateMachine <- .back
+            }.store(in: &subscriptions)
+
+            let viewController = NewDerivableAccounts.ViewController(viewModel: viewModel)
+            return viewController
 
         case let .restoreSocial(innerState, _):
             return restoreSocialDelegatedCoordinator.buildViewController(for: innerState)
@@ -201,7 +229,7 @@ private extension RestoreWalletCoordinator {
             default: break
             }
         })
-            .store(in: &subscriptions)
+        .store(in: &subscriptions)
         chooseRestoreOptionViewModel.openStart.sinkAsync {
             _ = try await stateMachine <- .start
         }

@@ -29,7 +29,7 @@ def key_app_kit
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
     $keyAppKitBranch = 'feature/PWN-4371'
     for $dependency in $dependencies do
-      pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
+      pod $dependency, :path => '../p2p/key-app-kit-swift' #:git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
   end
 end
@@ -74,7 +74,7 @@ target 'p2p_wallet' do
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
-  pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
+  pod 'KeyAppUI', :path => '../p2p/KeyAppUI' #:git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   pod 'Resolver'
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'

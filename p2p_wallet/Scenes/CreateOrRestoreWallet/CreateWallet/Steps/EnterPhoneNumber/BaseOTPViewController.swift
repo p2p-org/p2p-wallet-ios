@@ -9,6 +9,6 @@ class BaseOTPViewController: BaseViewController {
     func showError(error: String?) {
         guard let error = error else { return }
         let bar = SnackBar(text: error)
-        bar.show(in: self)
+//        bar.show(in: self)
     }
 }

@@ -8,7 +8,7 @@
 import Foundation
 import SolanaSwift
 
-extension DerivablePaths {
+extension NewDerivablePaths {
     typealias Callback = (DerivablePath) -> Void
 
     class ViewController: WLBottomSheet {
