@@ -1,8 +1,11 @@
 import Combine
 import Onboarding
+import Resolver
 import SwiftUI
 
 final class RestoreSocialOptionViewModel: BaseViewModel {
+    @Injected var notificationService: NotificationService
+
     @Published var isLoading: SocialProvider?
 
     let optionDidTap = PassthroughSubject<SocialProvider, Never>()
@@ -15,8 +18,16 @@ final class RestoreSocialOptionViewModel: BaseViewModel {
             guard let self = self else { return }
             self.isLoading = provider
 
+            self.notificationService.hideToasts()
             let process = ReactiveProcess<SocialProvider>(data: provider) { error in
-                if let error = error {}
+                if let error = error {
+                    switch error {
+                    case is SocialServiceError:
+                        break
+                    default:
+                        self.notificationService.showDefaultErrorNotification()
+                    }
+                }
                 self.isLoading = nil
             }
 
