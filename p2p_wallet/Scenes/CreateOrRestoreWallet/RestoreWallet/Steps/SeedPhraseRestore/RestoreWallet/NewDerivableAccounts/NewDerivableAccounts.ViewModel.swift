@@ -1,10 +1,3 @@
-//
-//  DerivableAccounts.ViewModel.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 18/05/2021.
-//
-
 import AnalyticsManager
 import Combine
 import Foundation
@@ -36,7 +29,6 @@ extension NewDerivableAccounts {
         @Injected var notificationsService: NotificationService
         @Injected var appEventHandler: AppEventHandlerType
         @Injected private var iCloudStorage: ICloudStorageType
-//        private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
 
         // MARK: - Properties
 
@@ -68,10 +60,6 @@ extension NewDerivableAccounts {
 }
 
 extension NewDerivableAccounts.ViewModel: NewDrivableAccountsViewModelType {
-    var errorPublisher: AnyPublisher<String?, Never> {
-        $error.eraseToAnyPublisher()
-    }
-
     var loadingPublisher: AnyPublisher<Bool, Never> {
         $loading.eraseToAnyPublisher()
     }
@@ -127,6 +115,7 @@ extension NewDerivableAccounts.ViewModel: NewDrivableAccountsViewModelType {
 
     // MARK: -
 
+    // Commented it for now, but can use this method insted of delegation stuff
     /*
         func derivablePathDidSelect(_ derivablePath: DerivablePath, phrases: [String]) async throws {
             analyticsManager.log(event: .recoveryRestoreClick)

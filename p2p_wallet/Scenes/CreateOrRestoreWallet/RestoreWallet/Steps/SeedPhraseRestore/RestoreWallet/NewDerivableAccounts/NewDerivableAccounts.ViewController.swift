@@ -170,14 +170,6 @@ extension NewDerivableAccounts {
             spacing.width = 8
 
             navigationItem.setLeftBarButtonItems([spacing, backButton], animated: false)
-//
-//            // Right button
-//            let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-//            infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
-//            infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
-//            infoButton.contentMode = .scaleAspectFill
-//            infoButton.tintColor = Asset.Colors.night.color
-//            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
         }
     }
 }
