@@ -47,7 +47,7 @@ extension DerivablePaths {
                         textColor: .textSecondary,
                         textAlignment: .center
                     )
-                    .padding(.init(x: 0, y: 15))
+                        .padding(.init(x: 0, y: 15))
                     UIView.defaultSeparator()
 
                     // Derivable paths
