@@ -181,12 +181,12 @@ private extension RestoreCustomDelegatedCoordinator {
         return buildOnboardingBrokenScreen(content: content)
     }
 
-    func handleBroken(code _: Int) -> UIViewController {
+    func handleBroken(code: Int) -> UIViewController {
         let content = OnboardingContentData(
             image: .box,
             title: L10n.wellWell,
             subtitle: L10n.YouVeFindASeldonPage🦄ItSLikeAUnicornButItSACrush.WeReAlreadyFixingIt
-             .ifYouWillWriteUsUseErrorCode("\(code)")
+                .ifYouWillWriteUsUseErrorCode("\(code)")
         )
         return buildOnboardingBrokenScreen(content: content)
     }
