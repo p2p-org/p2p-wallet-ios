@@ -11,7 +11,6 @@ struct TextButtonView: UIViewRepresentable {
     private let trailing: UIImage?
     private let onPressed: (() -> Void)?
     private let isLoading: Bool
-//    @State var isEnabled: Bool?
 
     init(
         title: String,

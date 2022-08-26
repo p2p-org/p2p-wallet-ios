@@ -185,8 +185,8 @@ private extension RestoreCustomDelegatedCoordinator {
         let content = OnboardingContentData(
             image: .box,
             title: L10n.wellWell,
-            subtitle: "" // L10n.YouVeFindASeldonPage🦄ItSLikeAUnicornButItSACrush.WeReAlreadyFixingIt
-            // .ifYouWillWriteUsUseErrorCode("\(code)")
+            subtitle: L10n.YouVeFindASeldonPage🦄ItSLikeAUnicornButItSACrush.WeReAlreadyFixingIt
+             .ifYouWillWriteUsUseErrorCode("\(code)")
         )
         return buildOnboardingBrokenScreen(content: content)
     }
@@ -243,7 +243,7 @@ private extension RestoreCustomDelegatedCoordinator {
             let content = OnboardingContentData(
                 image: .box,
                 title: L10n.accountNotFound,
-                subtitle: "" // L10n.PhoneNotWorks.useAnAnotherPhoneNumber(wrongNumber)
+                subtitle: L10n.PhoneNotWorks.useAnAnotherPhoneNumber(wrongNumber)
             )
             let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
                 Task { _ = try await stateMachine <- .start }
@@ -251,7 +251,7 @@ private extension RestoreCustomDelegatedCoordinator {
                 self?.openInfo()
             }, help: nil,
             customActions: {
-                TextButtonView(title: "" /* L10n.useAnAnotherPhone */, style: .inverted,
+                TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted,
                                size: .large) { [stateMachine] in
                     Task { _ = try await stateMachine <- .enterPhone }
                 }.frame(height: TextButton.Size.large.height).frame(maxWidth: .infinity)
