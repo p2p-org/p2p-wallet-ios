@@ -10,9 +10,6 @@ struct SelectableCountry: Hashable {
 extension Array where Element == SelectableCountry {
     func filteredAndSorted(byKeyword keyword: String = "") -> Self {
         var countries = self
-        if keyword.isEmpty {
-            return countries.sorted(by: { $0.value.name < $1.value.name })
-        }
         if !keyword.isEmpty {
             let keyword = keyword.lowercased()
             countries = countries
@@ -26,35 +23,7 @@ extension Array where Element == SelectableCountry {
                         country.value.dialCode.starts(with: keyword) ||
                         dialCode.starts(with: keyword)
                 }
-                .sorted(by: { c1, c2 in
-                    let name1 = c1.value.name.lowercased()
-                    let name2 = c2.value.name.lowercased()
-
-                    var dialCode1 = c1.value.dialCode
-                    var dialCode2 = c2.value.dialCode
-                    if keyword.first != "+" {
-                        dialCode1.removeFirst()
-                        dialCode2.removeFirst()
-                    }
-
-                    // Sort:
-
-                    // First by name that starts with keyword
-                    // Compare names by alphabet
-                    if name1.starts(with: keyword), name2.starts(with: keyword) {
-                        return name1 < name2
-                    }
-
-                    // Second by dialCode that starts with keyword
-                    // Compare by alphabet
-                    if dialCode1.starts(with: keyword), dialCode2.starts(with: keyword) {
-                        return dialCode1 < dialCode2
-                    }
-
-                    // else by alphabet
-                    return name1 < name2
-                })
         }
-        return countries
+        return countries.sorted(by: { $0.value.name < $1.value.name })
     }
 }
