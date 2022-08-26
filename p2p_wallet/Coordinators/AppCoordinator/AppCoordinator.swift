@@ -144,7 +144,7 @@ class AppCoordinator: Coordinator<Void> {
                 self.showAuthenticationOnMainOnAppear = false
 
                 // Reload
-                Task { await self.finishSetUp() }
+                finishSetUp()
             })
             .store(in: &subscriptions)
     }

@@ -164,7 +164,7 @@ extension NotificationServiceImpl: UNUserNotificationCenterDelegate {
         willPresent _: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.alert, .sound, .badge])
+        completionHandler([.list, .banner, .sound, .badge])
     }
 }
 
@@ -223,11 +223,11 @@ private extension UIApplication {
     }
 
     func showToastError(title: String? = nil, text: String? = nil) {
-        guard let viewController = windows.first?.topViewController() else { return }
+        guard let window = kWindow else { return }
         SnackBar(
             title: title ?? "😓",
             text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
-        ).show(in: viewController)
+        ).show(in: window)
     }
 }
 
@@ -246,7 +246,6 @@ extension UIWindow {
 
 private extension UIViewController {
     func topMostViewController() -> UIViewController? {
-        if self is SnackBarViewController { return nil }
         if presentedViewController == nil { return self }
 
         if let navigation = presentedViewController as? UINavigationController {
