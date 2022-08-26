@@ -29,7 +29,7 @@ def key_app_kit
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
     $keyAppKitBranch = 'feature/PWN-4371'
     for $dependency in $dependencies do
-      pod $dependency, :path => '../p2p/key-app-kit-swift' #:git => $keyAppKitGit, :branch => $keyAppKitBranch
+      pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
   end
 end
