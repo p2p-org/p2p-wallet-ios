@@ -911,3 +911,7 @@ another";
 "Phone not works. Use an another phone number" = "%@ not works. Use an another phone number";
 "Use an another phone" = "Use an another phone";
 "You used too much numbers. For your safety we freezed account for %@ min" = "You used too much numbers. For your safety we freezed account for %@ min";
+"Enter your seed phrase" = "Enter your seed phrase";
+"Seed phrase" = "Seed phrase";
+"Restoring your wallet" = "Restoring your wallet";
+"Clear" = "Clear";

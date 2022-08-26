@@ -5,8 +5,14 @@ import SwiftUI
 struct SeedPhraseRestoreWalletView: View {
 //    @FocusState private var isFocused: Bool
     @ObservedObject var viewModel: SeedPhraseRestoreWalletViewModel
-    @State private var seedText =
-        "crowd level crater figure super canyon silver wheel release cage zoo crucial sail aerobic road awesome fatal comfort canvas obscure grow mechanic spirit pave"
+
+    #if DEBUG
+        @State private var seedText =
+            "crowd level crater figure super canyon silver wheel release cage zoo crucial sail aerobic road awesome fatal comfort canvas obscure grow mechanic spirit pave"
+    #else
+        @State private var seedText = ""
+    #endif
+
     @State var isButtonEnabled = false
 
     init(viewModel: SeedPhraseRestoreWalletViewModel) {
@@ -15,7 +21,7 @@ struct SeedPhraseRestoreWalletView: View {
 
     var body: some View {
         VStack {
-            Text("Enter your seed phrase")
+            Text(L10n.enterYourSeedPhrase)
                 .apply(style: .text3)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.top, 4)
@@ -29,7 +35,7 @@ struct SeedPhraseRestoreWalletView: View {
 
             Group {
                 TextButtonView(
-                    title: "Continue",
+                    title: L10n.continue,
                     style: .primary,
                     size: .large,
                     trailing: Asset.MaterialIcon.arrowForward.image,
@@ -46,7 +52,7 @@ struct SeedPhraseRestoreWalletView: View {
         VStack {
             VStack {
                 HStack {
-                    Text("Seed phrase")
+                    Text(L10n.seedPhrase)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .padding(.top, 17)
@@ -81,7 +87,7 @@ struct SeedPhraseRestoreWalletView: View {
         )
         .cornerRadius(16)
         .padding([.leading, .trailing], 16)
-        .onboardingNavigationBar(title: "Restoring your wallet") {
+        .onboardingNavigationBar(title: L10n.restoringYourWallet) {
             self.viewModel.back()
         } onInfo: {
             self.viewModel.info()
@@ -99,7 +105,7 @@ struct SeedPhraseRestoreWalletView: View {
                         .resizable()
                         .frame(width: 16, height: 16)
                         .foregroundColor(.black)
-                    Text("Paste")
+                    Text(L10n.paste)
                         .font(uiFont: UIFont.font(of: .text4))
                         .foregroundColor(.black)
                 }
@@ -119,7 +125,7 @@ struct SeedPhraseRestoreWalletView: View {
             },
             label: {
                 HStack {
-                    Text("Clear")
+                    Text(L10n.clear)
                         .font(uiFont: UIFont.font(of: .text4))
                         .foregroundColor(.black)
                     Image(uiImage: Asset.MaterialIcon.clear.image)

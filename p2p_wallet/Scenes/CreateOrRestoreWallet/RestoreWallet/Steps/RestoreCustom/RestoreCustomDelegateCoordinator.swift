@@ -202,7 +202,7 @@ private extension RestoreCustomDelegatedCoordinator {
         return UIHostingController(rootView: view)
     }
 
-    func tryAnother(wrongNumber _: String, trySocial: Bool) -> UIViewController {
+    func tryAnother(wrongNumber: String, trySocial: Bool) -> UIViewController {
         if trySocial {
             let content = OnboardingContentData(
                 image: .box,
