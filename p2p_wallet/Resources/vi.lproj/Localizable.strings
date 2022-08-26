@@ -890,3 +890,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "%@ not works. Use an another phone number" = "%@ không hoạt động.  Sử dụng một số điện thoại khác";
 "Try with another account or use an another phone number" = "Thử bằng một tài khoản khác hoặc sử dụng một số điện thoại khác";
 "Something wrong with phone number %@ or settings. If you will write us, use error code %@" = "Đã xảy ra lỗi với số điện thoại %@ hoặc cài đặt.  Nếu bạn sẽ viết thư cho chúng tôi, hãy sử dụng mã lỗi %@";
+"%@ found" = "%@ được tìm thấy";
