@@ -7,8 +7,8 @@ class BaseOTPViewController: BaseViewController {
     }
 
     func showError(error: String?) {
-        guard let error = error else { return }
+        guard let error = error, let window = UIApplication.shared.kWindow else { return }
         let bar = SnackBar(text: error)
-        bar.show(in: self)
+        bar.show(in: window)
     }
 }
