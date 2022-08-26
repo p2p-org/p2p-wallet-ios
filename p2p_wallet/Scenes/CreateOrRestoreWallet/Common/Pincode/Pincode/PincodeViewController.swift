@@ -71,7 +71,7 @@ final class PincodeViewController: BaseViewController {
 
         viewModel.$snackbar.sink { [weak self] model in
             guard let self = self, let model = model else { return }
-            SnackBar(text: model.message).show(in: self, autoDismiss: true) {
+            SnackBar(text: model.message).show(in: self.view, autoHide: true) {
                 guard model.isFailure else { return }
                 self.pincodeView.view?.reset()
             }
