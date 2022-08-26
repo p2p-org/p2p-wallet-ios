@@ -150,7 +150,7 @@ private extension RestoreCustomDelegatedCoordinator {
             default: break
             }
         })
-            .store(in: &subscriptions)
+        .store(in: &subscriptions)
         viewModel.openStart.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .start
         }
@@ -181,12 +181,12 @@ private extension RestoreCustomDelegatedCoordinator {
         return buildOnboardingBrokenScreen(content: content)
     }
 
-    func handleBroken(code: Int) -> UIViewController {
+    func handleBroken(code _: Int) -> UIViewController {
         let content = OnboardingContentData(
             image: .box,
             title: L10n.wellWell,
-            subtitle: L10n.YouVeFindASeldonPage🦄ItSLikeAUnicornButItSACrush.WeReAlreadyFixingIt
-                .ifYouWillWriteUsUseErrorCode("\(code)")
+            subtitle: "" // L10n.YouVeFindASeldonPage🦄ItSLikeAUnicornButItSACrush.WeReAlreadyFixingIt
+            // .ifYouWillWriteUsUseErrorCode("\(code)")
         )
         return buildOnboardingBrokenScreen(content: content)
     }
@@ -202,7 +202,7 @@ private extension RestoreCustomDelegatedCoordinator {
         return UIHostingController(rootView: view)
     }
 
-    func tryAnother(wrongNumber: String, trySocial: Bool) -> UIViewController {
+    func tryAnother(wrongNumber _: String, trySocial: Bool) -> UIViewController {
         if trySocial {
             let content = OnboardingContentData(
                 image: .box,
@@ -228,7 +228,7 @@ private extension RestoreCustomDelegatedCoordinator {
                 default: break
                 }
             })
-                .store(in: &subscriptions)
+            .store(in: &subscriptions)
             viewModel.openStart.sinkAsync { [stateMachine] in
                 _ = try await stateMachine <- .start
             }
@@ -243,7 +243,7 @@ private extension RestoreCustomDelegatedCoordinator {
             let content = OnboardingContentData(
                 image: .box,
                 title: L10n.accountNotFound,
-                subtitle: L10n.PhoneNotWorks.useAnAnotherPhoneNumber(wrongNumber)
+                subtitle: "" // L10n.PhoneNotWorks.useAnAnotherPhoneNumber(wrongNumber)
             )
             let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
                 Task { _ = try await stateMachine <- .start }
@@ -251,7 +251,8 @@ private extension RestoreCustomDelegatedCoordinator {
                 self?.openInfo()
             }, help: nil,
             customActions: {
-                TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted, size: .large) { [stateMachine] in
+                TextButtonView(title: "" /* L10n.useAnAnotherPhone */, style: .inverted,
+                               size: .large) { [stateMachine] in
                     Task { _ = try await stateMachine <- .enterPhone }
                 }.frame(height: TextButton.Size.large.height).frame(maxWidth: .infinity)
             })

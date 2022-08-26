@@ -123,7 +123,7 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     }
 
     func hideToasts() {
-        SnackBarManager.shared.dismissAll()
+//        SnackBarManager.shared.dismissAll()
     }
 
     func showDefaultErrorNotification() {
