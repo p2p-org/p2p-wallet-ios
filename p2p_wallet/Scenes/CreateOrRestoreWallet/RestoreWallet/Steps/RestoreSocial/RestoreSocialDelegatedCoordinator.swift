@@ -15,8 +15,10 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
             return handleSocial()
         case let .notFoundCustom(_, email):
             return handleNotFoundCustom(email: email)
-        case let .notFoundDevice(_, email, _):
-            return handleNotFoundDevice(email: email)
+        case let .notFoundDevice(data, code, _):
+            return handleNotFoundDevice(email: code == 1009 ? data.email : nil)
+        case .expiredSocialTryAgain:
+            return nil
         case .finish:
             return nil
         }
