@@ -37,12 +37,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     func selectCountryTap() {
-        guard
+        if let selectedCountry = selectedCountry {
+            coordinatorIO.selectCode.send(selectedCountry.code)
+        } else if
             let number = phone,
             let phoneNumber = exampleNumberWith(phone: number),
             let regionId = phoneNumber.regionID
-        else { return }
-        coordinatorIO.selectCode.send(regionId)
+        {
+            coordinatorIO.selectCode.send(regionId)
+        }
     }
 
     @MainActor
@@ -98,8 +101,11 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                         return Self.format(with: newFormatted, phone: String(exampleNumber.countryCode))
                     }
                     return Self.format(with: newFormatted, phone: $0 ?? "")
-                }.eraseToAnyPublisher(),
-            coordinatorIO.countrySelected.compactMap { $0?.dialCode }.eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher(),
+            coordinatorIO.countrySelected
+                .compactMap { $0?.dialCode }
+                .eraseToAnyPublisher()
         )
             .assign(to: \.phone, on: self)
             .store(in: &cancellable)
@@ -123,6 +129,12 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 self.flag = "🏴"
             }
         }.store(in: &cancellable)
+
+        coordinatorIO.countrySelected
+            .compactMap { $0?.emoji }
+            .debounce(for: .seconds(0.01), scheduler: DispatchQueue.main)
+            .assign(to: \.flag, on: self)
+            .store(in: &cancellable)
 
         Publishers.MergeMany(
             coordinatorIO.countrySelected.map { $0?.dialCode }.eraseToAnyPublisher(),
