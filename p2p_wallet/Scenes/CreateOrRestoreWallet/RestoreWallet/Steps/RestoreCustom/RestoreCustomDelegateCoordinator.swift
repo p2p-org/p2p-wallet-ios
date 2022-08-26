@@ -65,7 +65,7 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         OnboardingContentData(
             image: .box,
             title: L10n.weCanTSMSYou,
-            subtitle: L10n.SomethingWrongWithPhoneNumberOrSettings.ifYouWillWriteUsUseErrorCode10464(phone)
+            subtitle: L10n.SomethingWrongWithPhoneNumberOrSettings.ifYouWillWriteUsUseErrorCode(phone, "\(10464)")
         )
     }
 }
@@ -243,7 +243,7 @@ private extension RestoreCustomDelegatedCoordinator {
             let content = OnboardingContentData(
                 image: .box,
                 title: L10n.accountNotFound,
-                subtitle: L10n.PhoneNotWorks.useAnAnotherPhoneNumber(wrongNumber)
+                subtitle: L10n.NotWorks.useAnAnotherPhoneNumber(wrongNumber)
             )
             let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
                 Task { _ = try await stateMachine <- .start }
