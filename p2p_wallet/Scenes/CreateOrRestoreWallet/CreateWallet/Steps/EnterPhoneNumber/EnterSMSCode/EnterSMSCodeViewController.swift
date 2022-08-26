@@ -35,9 +35,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
 
         configureNavBar()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.smsInputRef.view?.textField?.becomeFirstResponder()
-        }
+        smsInputRef.view?.textField?.becomeFirstResponder()
     }
 
     override func build() -> UIView {
