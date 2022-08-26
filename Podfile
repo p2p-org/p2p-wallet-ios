@@ -74,7 +74,7 @@ target 'p2p_wallet' do
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
-  pod 'KeyAppUI', :path => '../p2p/KeyAppUI' #:git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
+  pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   pod 'Resolver'
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'
