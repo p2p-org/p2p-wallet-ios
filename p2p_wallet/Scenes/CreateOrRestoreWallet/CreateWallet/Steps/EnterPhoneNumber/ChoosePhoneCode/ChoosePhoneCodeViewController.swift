@@ -68,10 +68,10 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                         viewModel: viewModel
                     ),
                 ]
-            )
-                .setup { collectionView in
-                    collectionView.delegate = self
-                }
+            ).setup { collectionView in
+                collectionView.canRefresh = false
+                collectionView.delegate = self
+            }
             TextButton(title: L10n.ok, style: .primary, size: .large)
                 .onPressed { [weak self] _ in
                     self?.doneButtonDidTouch()
