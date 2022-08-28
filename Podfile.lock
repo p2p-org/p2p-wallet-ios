@@ -446,7 +446,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -464,10 +464,10 @@ CHECKOUT OPTIONS:
     :commit: de09fedfb7a9c5ab4effbdb4df284229c60f72db
     :git: https://github.com/weitieda/bottom-sheet.git
   Cache:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -476,10 +476,10 @@ CHECKOUT OPTIONS:
     :commit: 145b589ae5ed31c72dc51959bc7f782d69b07cc6
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: bbacfd4c0b0ba56606f811591c4f89b34ef19918
@@ -488,10 +488,10 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -506,13 +506,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: ab32c12f8f8db70910c54771ebf646eb6003ebc9
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: b068e1a2e3fe4c8f7983e2450e3159cd9d0da45d
+    :commit: e9c4a17aab3a012d398a2057947aed67f035866c
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:

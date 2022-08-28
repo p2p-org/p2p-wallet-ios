@@ -52,7 +52,10 @@ final class ContinueCoordinator: Coordinator<OnboardingWallet> {
 
     private func openStart(navigationController _: UINavigationController) {
         coordinate(to: StartCoordinator(window: window, params: StartParameters(isAnimatable: false)))
-            .sink(receiveValue: { _ in })
+            .sink(receiveValue: { result in
+                self.subject.send(result)
+                self.subject.send(completion: .finished)
+            })
             .store(in: &subscriptions)
     }
 
