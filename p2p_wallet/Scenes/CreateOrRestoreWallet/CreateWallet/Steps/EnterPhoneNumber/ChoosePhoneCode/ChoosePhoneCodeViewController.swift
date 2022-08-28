@@ -4,6 +4,7 @@
 
 import BECollectionView_Combine
 import BEPureLayout
+import Combine
 import Foundation
 import KeyAppUI
 import UIKit
@@ -13,6 +14,8 @@ final class ChoosePhoneCodeViewController: BaseViewController {
 
     private let viewModel: ChoosePhoneCodeViewModel
     private let searchBar = BERef<BESearchBar>()
+
+    private var cancellables = Set<AnyCancellable>()
 
     init(viewModel: ChoosePhoneCodeViewModel) {
         self.viewModel = viewModel
@@ -68,10 +71,15 @@ final class ChoosePhoneCodeViewController: BaseViewController {
                         viewModel: viewModel
                     ),
                 ]
-            )
-                .setup { collectionView in
-                    collectionView.delegate = self
-                }
+            ).setup { collectionView in
+                collectionView.canRefresh = false
+                collectionView.delegate = self
+                collectionView.collectionView.didScrollPublisher
+                    .sink(receiveValue: { [weak view] _ in
+                        view?.endEditing(true)
+                    })
+                    .store(in: &cancellables)
+            }
             TextButton(title: L10n.ok, style: .primary, size: .large)
                 .onPressed { [weak self] _ in
                     self?.doneButtonDidTouch()
@@ -86,6 +94,8 @@ final class ChoosePhoneCodeViewController: BaseViewController {
         }
     }
 }
+
+// MARK: - BECollectionViewDelegate
 
 extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
@@ -108,6 +118,8 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
         }
     }
 }
+
+// MARK: - BESearchBarDelegate
 
 extension ChoosePhoneCodeViewController: BESearchBarDelegate {
     func beSearchBar(_: BESearchBar, searchWithKeyword keyword: String) {
