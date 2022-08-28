@@ -893,3 +893,7 @@ another" = "une crypto pour
 "It’s okay to be wrong" = "C'est bien d'avoir tort";
 "You used 5 incorrect codes.\nFor your safety we freezed account for %@" = "Vous avez utilisé 5 codes incorrects.\nPour votre sécurité, nous avons gelé le compte de %@";
 "You didn’t use any of 5 codes.\nFor your safety we freezed account for %@" = "Vous n'avez utilisé aucun des 5 codes.\nPour votre sécurité, nous avons gelé le compte de %@";
+"Enter your seed phrase" = "Entrez votre phrase de départ";
+"Seed phrase" = "Phrase de départ";
+"Restoring your wallet" = "Restaurer votre portefeuille";
+"Clear" = "Dégager";
