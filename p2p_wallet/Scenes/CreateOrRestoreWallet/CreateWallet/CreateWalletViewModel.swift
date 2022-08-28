@@ -61,12 +61,3 @@ final class CreateWalletViewModel: BaseViewModel {
         }.store(in: &subscriptions)
     }
 }
-
-struct AuthServiceBridge: SocialAuthService {
-    @Injected var authService: AuthService
-
-    func auth(type: SocialProvider) async throws -> (tokenID: String, email: String) {
-        let authResult = try await authService.socialSignIn(type.socialType)
-        return (tokenID: authResult.tokenID, email: authResult.email)
-    }
-}

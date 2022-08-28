@@ -11,7 +11,7 @@ import SwiftUI
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
-        case let .enterPhoneNumber(initialPhoneNumber, _):
+        case let .enterPhoneNumber(initialPhoneNumber, _, _):
             let mv = EnterPhoneNumberViewModel()
             mv.phone = initialPhoneNumber
             let vc = EnterPhoneNumberViewController(viewModel: mv)
@@ -86,9 +86,21 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
 
             return UIHostingController(rootView: view)
 
-        case let .block(until, _, _, _):
+        case let .block(until, reason, _, _):
+            var title = ""
+            var contentSubtitle: (_ value: Any) -> String = { _ in "" }
+            switch reason {
+            case .blockEnterOTP:
+                title = L10n.itSOkayToBeWrong
+                contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeFreezedAccountFor
+            case .blockEnterPhoneNumber:
+                title = L10n.soLetSBreathe
+                contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFreezedAccountFor
+            }
+
             let view = OnboardingBlockScreen(
-                contentTitle: L10n.soLetSBreathe,
+                contentTitle: title,
+                contentSubtitle: contentSubtitle,
                 untilTimestamp: until,
                 onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },

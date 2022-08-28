@@ -10,6 +10,8 @@ struct OnboardingBlockScreen: View {
     @State var loading: Bool = false
 
     let contentTitle: String
+    let contentSubtitle: (_ p1: Any) -> String
+
     @State var untilTimestamp: Date = .init()
     @State var formattedCountDown: String = "00:00"
 
@@ -24,9 +26,9 @@ struct OnboardingBlockScreen: View {
             Spacer()
             OnboardingContentView(
                 data: .init(
-                    image: .coins,
+                    image: .rocket,
                     title: contentTitle,
-                    subtitle: L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFreezedAccountForMin(formattedCountDown)
+                    subtitle: contentSubtitle(formattedCountDown)
                 )
             )
                 .onAppear { formatCountdown() }
@@ -76,12 +78,11 @@ struct OnboardingBlockScreen: View {
         let interval: TimeInterval = untilTimestamp.timeIntervalSinceReferenceDate - Date()
             .timeIntervalSinceReferenceDate
 
-        // guard interval > 0 else {
-        //     formattedCountDown = "00:00"
-        //     return
-        // }
+        guard interval > 0 else {
+            formattedCountDown = "0 sec"
+            return
+        }
 
-        formattedCountDown = formatter.string(from: interval)!
-        print(formattedCountDown)
+        formattedCountDown = "\(formatter.string(from: interval)!) \(interval > 60 ? "min" : "sec")"
     }
 }
