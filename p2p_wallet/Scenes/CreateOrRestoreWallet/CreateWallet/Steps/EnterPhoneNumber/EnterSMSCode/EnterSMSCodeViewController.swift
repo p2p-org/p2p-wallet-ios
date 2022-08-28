@@ -157,11 +157,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
             action: #selector(onBack)
         )
         backButton.tintColor = Asset.Colors.night.color
-
-        let spacing = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        spacing.width = 8
-
-        navigationItem.setLeftBarButtonItems([spacing, backButton], animated: false)
+        navigationItem.leftBarButtonItem = backButton
 
         // Right button
         let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
