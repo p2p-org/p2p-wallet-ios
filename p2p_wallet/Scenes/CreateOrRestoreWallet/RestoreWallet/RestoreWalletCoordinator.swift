@@ -125,44 +125,14 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     private func buildViewController(state: RestoreWalletState) -> UIViewController? {
         var stateMachine = viewModel.stateMachine
         switch state {
-        case .restore, .restoreNotFoundDevice:
-            let params = chooseRestoreOptionParameters(for: state)
+        case .restore:
+            let params = ChooseRestoreOptionParameters(
+                isBackAvailable: true,
+                content: OnboardingContentData(image: .lockPincode, title: L10n.chooseTheWayToContinue),
+                options: viewModel.availableRestoreOptions,
+                isStartAvailable: false
+            )
             return buildRestoreScreen(parameters: params)
-
-        case let .restoreNotFoundCustom(_, email):
-            let content = OnboardingContentData(
-                image: .box,
-                title: L10n.noWalletFound,
-                subtitle: L10n.withTryAnotherAccount(email)
-            )
-            let actionViewModel = RestoreSocialOptionViewModel()
-            actionViewModel.optionChosen.sinkAsync { process in
-                process.start {
-                    _ = try await stateMachine <- .restoreSocial(.signInCustom(socialProvider: process.data))
-                }
-            }.store(in: &subscriptions)
-            let actionView = RestoreSocialOptionView(viewModel: actionViewModel)
-            let view = OnboardingBrokenScreen(title: "", contentData: content, back: {
-                Task { _ = try await stateMachine <- .start }
-            }, info: { [weak self] in
-                self?.openInfo()
-            }, customActions: { actionView })
-            return UIHostingController(rootView: view)
-
-        case .noMatch:
-            let content = OnboardingContentData(
-                image: .box,
-                title: L10n.sharesArenTMatch,
-                subtitle: L10n.SoSorryBaby.ifYouWillWriteUsUseErrorCode10464
-            )
-            let view = OnboardingBrokenScreen(title: "", contentData: content, back: {
-                Task { _ = try await stateMachine <- .start }
-            }, info: { [weak self] in
-                self?.openInfo()
-            }, help: {
-                Task { _ = try await stateMachine <- .help }
-            })
-            return UIHostingController(rootView: view)
 
         case let .signInKeychain(accounts):
             let vm = ICloudRestoreViewModel(accounts: accounts)
@@ -182,8 +152,36 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             }.store(in: &subscriptions)
 
             return UIHostingController(rootView: ICloudRestoreScreen(viewModel: vm))
+
         case .signInSeed:
-            fatalError()
+            let viewModel = SeedPhraseRestoreWalletViewModel()
+            let seedVC = UIHostingController(rootView: SeedPhraseRestoreWalletView(viewModel: viewModel))
+            viewModel.coordinatorIO.finishedWithSeed.sinkAsync { phrase in
+                _ = try await stateMachine <- .derivationPath(phrase: phrase)
+            }.store(in: &subscriptions)
+
+            viewModel.coordinatorIO.back.sinkAsync { _ in
+                _ = try await stateMachine <- .back
+            }.store(in: &subscriptions)
+
+            viewModel.coordinatorIO.info.sinkAsync { [weak self] _ in
+                self?.openInfo()
+            }.store(in: &subscriptions)
+            return seedVC
+
+        case let .derivationPath(phrase: phrase):
+            let viewModel = NewDerivableAccounts.ViewModel(phrases: phrase)
+
+            viewModel.coordinatorIO.didSucceed.sinkAsync { phrase, path in
+                _ = try await stateMachine <- .restoreWithSeed(phrase: phrase, path: path)
+            }.store(in: &subscriptions)
+
+            viewModel.coordinatorIO.back.sinkAsync { _ in
+                _ = try await stateMachine <- .back
+            }.store(in: &subscriptions)
+
+            let viewController = NewDerivableAccounts.ViewController(viewModel: viewModel)
+            return viewController
 
         case let .restoreSocial(innerState, _):
             return restoreSocialDelegatedCoordinator.buildViewController(for: innerState)
@@ -191,7 +189,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         case let .restoreCustom(innerState):
             return restoreCustomDelegatedCoordinator.buildViewController(for: innerState)
 
-        case let .securitySetup(_, _, _, _, innerState):
+        case let .securitySetup(_, _, _, innerState):
             return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
 
         case .finished:
@@ -213,27 +211,6 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
 }
 
 private extension RestoreWalletCoordinator {
-    func chooseRestoreOptionParameters(for state: RestoreWalletState) -> ChooseRestoreOptionParameters {
-        switch state {
-        case let .restoreNotFoundDevice(_, email):
-            let subtitle = email == nil ? L10n.tryWithAnotherAccountOrUseAPhoneNumber : L10n
-                .emailTryAnotherAccountOrUseAPhoneNumber(email ?? "")
-            return ChooseRestoreOptionParameters(
-                isBackAvailable: false,
-                content: OnboardingContentData(image: .box, title: L10n.notFound, subtitle: subtitle),
-                options: [.socialApple, .socialGoogle, .custom],
-                isStartAvailable: true
-            )
-        default:
-            return ChooseRestoreOptionParameters(
-                isBackAvailable: true,
-                content: OnboardingContentData(image: .lockPincode, title: L10n.chooseTheWayToContinue),
-                options: viewModel.availableRestoreOptions,
-                isStartAvailable: false
-            )
-        }
-    }
-
     func buildRestoreScreen(parameters: ChooseRestoreOptionParameters) -> UIViewController {
         var stateMachine = viewModel.stateMachine
         let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(parameters: parameters)
@@ -252,7 +229,7 @@ private extension RestoreWalletCoordinator {
             default: break
             }
         })
-            .store(in: &subscriptions)
+        .store(in: &subscriptions)
         chooseRestoreOptionViewModel.openStart.sinkAsync {
             _ = try await stateMachine <- .start
         }

@@ -34,9 +34,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
 
         configureNavBar()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.phoneInputRef.view?.textField?.becomeFirstResponder()
-        }
+        phoneInputRef.view?.textField?.becomeFirstResponder()
     }
 
     private var topContentInset = {
@@ -129,11 +127,6 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
 
     func configureNavBar() {
         navigationItem.title = L10n.stepOf("2", "3")
-
-        let spacing = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        spacing.width = 8
-
-        navigationItem.setLeftBarButtonItems([spacing], animated: false)
 
         // Right button
         let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
