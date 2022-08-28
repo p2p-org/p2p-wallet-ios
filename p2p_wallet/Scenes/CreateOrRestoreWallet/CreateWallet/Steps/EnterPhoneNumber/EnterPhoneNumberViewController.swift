@@ -34,9 +34,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
 
         configureNavBar()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.phoneInputRef.view?.textField?.becomeFirstResponder()
-        }
+        phoneInputRef.view?.textField?.becomeFirstResponder()
     }
 
     private var topContentInset = {
