@@ -94,10 +94,7 @@ final class PincodeViewController: BaseViewController {
             action: #selector(onBack)
         )
         backButton.tintColor = Asset.Colors.night.color
-
-        let spacing = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        spacing.width = 8
-        navigationItem.setLeftBarButtonItems([spacing, backButton], animated: false)
+        navigationItem.leftBarButtonItem = backButton
     }
 
     @objc private func onBack() {

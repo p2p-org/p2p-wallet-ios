@@ -130,11 +130,6 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
     func configureNavBar() {
         navigationItem.title = L10n.stepOf("2", "3")
 
-        let spacing = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
-        spacing.width = 8
-
-        navigationItem.setLeftBarButtonItems([spacing], animated: false)
-
         // Right button
         let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
         infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)

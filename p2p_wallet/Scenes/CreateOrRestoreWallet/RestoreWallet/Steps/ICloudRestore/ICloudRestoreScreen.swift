@@ -16,23 +16,11 @@ struct ICloudRestoreScreen: View {
             Spacer()
             bottomAction
         }
-        .navigationBarTitle(Text(L10n.createANewWallet), displayMode: .inline)
-        .navigationBarItems(
-            leading: Button(
-                action: { [weak viewModel] in viewModel?.back() },
-                label: {
-                    Image(uiImage: Asset.MaterialIcon.arrowBackIos.image)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                }
-            ),
-            trailing: Button(
-                action: { [weak viewModel] in viewModel?.info() },
-                label: {
-                    Image(uiImage: Asset.MaterialIcon.helpOutline.image)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                }
-            )
-        )
+        .onboardingNavigationBar(title: L10n.createANewWallet, onBack: { [weak viewModel] in
+            viewModel?.back()
+        }, onInfo: { [weak viewModel] in
+            viewModel?.info()
+        })
         .background(Color(Asset.Colors.lime.color))
         .edgesIgnoringSafeArea(.all)
         .frame(maxHeight: .infinity)
@@ -53,7 +41,7 @@ struct ICloudRestoreScreen: View {
                 .multilineTextAlignment(.center)
                 .padding(.top, 24)
 
-            Text("\(viewModel.accounts.count) Wallets found")
+            Text(L10n.found(L10n.dWallet(viewModel.accounts.count)))
                 .font(.system(size: UIFont.fontSize(of: .title3), weight: .regular))
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .multilineTextAlignment(.center)

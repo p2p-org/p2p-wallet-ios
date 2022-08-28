@@ -889,6 +889,7 @@ another" = "une crypto pour
 "%@ not works. Use an another phone number" = "%@ ne fonctionne pas.  Utiliser un autre numéro de téléphone";
 "Try with another account or use an another phone number" = "Essayez avec un autre compte ou utilisez un autre numéro de téléphone";
 "Something wrong with phone number %@ or settings. If you will write us, use error code %@" = "Quelque chose ne va pas avec le numéro de téléphone %@ ou les paramètres.  Si vous nous écrivez, utilisez le code d'erreur %@";
+"%@ found" = "%@ trouvé";
 "It’s okay to be wrong" = "C'est bien d'avoir tort";
 "You used 5 incorrect codes.\nFor your safety we freezed account for %@" = "Vous avez utilisé 5 codes incorrects.\nPour votre sécurité, nous avons gelé le compte de %@";
 "You didn’t use any of 5 codes.\nFor your safety we freezed account for %@" = "Vous n'avez utilisé aucun des 5 codes.\nPour votre sécurité, nous avons gelé le compte de %@";
