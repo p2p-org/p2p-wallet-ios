@@ -891,3 +891,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Try with another account or use an another phone number" = "Thử bằng một tài khoản khác hoặc sử dụng một số điện thoại khác";
 "Something wrong with phone number %@ or settings. If you will write us, use error code %@" = "Đã xảy ra lỗi với số điện thoại %@ hoặc cài đặt.  Nếu bạn sẽ viết thư cho chúng tôi, hãy sử dụng mã lỗi %@";
 "%@ found" = "%@ được tìm thấy";
+"It’s okay to be wrong" = "Sai cũng không sao";
+"You used 5 incorrect codes.\nFor your safety we freezed account for %@" = "Bạn đã sử dụng 5 mã không chính xác. \n Vì sự an toàn của bạn, chúng tôi đã phong tỏa tài khoản cho %@";
+"You didn’t use any of 5 codes.\nFor your safety we freezed account for %@" = "Bạn không sử dụng bất kỳ mã nào trong số 5 mã. \n Vì sự an toàn của bạn, chúng tôi đã đóng băng tài khoản cho %@";

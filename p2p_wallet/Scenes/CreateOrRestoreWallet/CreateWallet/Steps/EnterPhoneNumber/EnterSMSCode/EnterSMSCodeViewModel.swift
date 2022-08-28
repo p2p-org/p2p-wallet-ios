@@ -7,7 +7,7 @@ import Reachability
 import Resolver
 import SwiftyUserDefaults
 
-let EnterSMSCodeCountdownLegs = [30, 40, 60, 90, 120]
+let EnterSMSCodeCountdownLegs = [2, 3, 4, 5, 6]
 
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
@@ -22,6 +22,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
     @Injected private var reachability: Reachability
+    @Injected private var notificationService: NotificationService
 
     private var rawCode: String = "" {
         didSet {
@@ -102,6 +103,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                     default:
                         self.showError(error: error)
                     }
+                } else if error is UndefinedAPIGatewayError {
+                    self.notificationService.showDefaultErrorNotification()
                 } else {
                     self.showError(error: error)
                 }

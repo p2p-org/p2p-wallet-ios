@@ -78,12 +78,11 @@ struct OnboardingBlockScreen: View {
         let interval: TimeInterval = untilTimestamp.timeIntervalSinceReferenceDate - Date()
             .timeIntervalSinceReferenceDate
 
-        // guard interval > 0 else {
-        //     formattedCountDown = "00:00"
-        //     return
-        // }
+        guard interval > 0 else {
+            formattedCountDown = "0 sec"
+            return
+        }
 
-        formattedCountDown = formatter.string(from: interval)!
-        print(formattedCountDown)
+        formattedCountDown = "\(formatter.string(from: interval)!) \(interval > 60 ? "min" : "sec")"
     }
 }
