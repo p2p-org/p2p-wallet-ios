@@ -894,3 +894,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "It’s okay to be wrong" = "Sai cũng không sao";
 "You used 5 incorrect codes.\nFor your safety we freezed account for %@" = "Bạn đã sử dụng 5 mã không chính xác. \n Vì sự an toàn của bạn, chúng tôi đã phong tỏa tài khoản cho %@";
 "You didn’t use any of 5 codes.\nFor your safety we freezed account for %@" = "Bạn không sử dụng bất kỳ mã nào trong số 5 mã. \n Vì sự an toàn của bạn, chúng tôi đã đóng băng tài khoản cho %@";
+"Enter your seed phrase" = "Nhập cụm từ hạt giống của bạn";
+"Seed phrase" = "Cụm từ hạt giống";
+"Restoring your wallet" = "Khôi phục ví của bạn";
+"Clear" = "Xa lạ";

@@ -154,7 +154,7 @@ private extension RestoreCustomDelegatedCoordinator {
             default: break
             }
         })
-            .store(in: &subscriptions)
+        .store(in: &subscriptions)
         viewModel.openStart.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .start
         }
@@ -232,7 +232,7 @@ private extension RestoreCustomDelegatedCoordinator {
                 default: break
                 }
             })
-                .store(in: &subscriptions)
+            .store(in: &subscriptions)
             viewModel.openStart.sinkAsync { [stateMachine] in
                 _ = try await stateMachine <- .start
             }
@@ -255,7 +255,8 @@ private extension RestoreCustomDelegatedCoordinator {
                 self?.openInfo()
             }, help: nil,
             customActions: {
-                TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted, size: .large) { [stateMachine] in
+                TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted,
+                               size: .large) { [stateMachine] in
                     Task { _ = try await stateMachine <- .enterPhone }
                 }.frame(height: TextButton.Size.large.height).frame(maxWidth: .infinity)
             })
