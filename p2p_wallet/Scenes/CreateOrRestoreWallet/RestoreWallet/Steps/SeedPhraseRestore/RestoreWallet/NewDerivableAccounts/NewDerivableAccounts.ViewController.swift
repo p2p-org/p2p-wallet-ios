@@ -24,7 +24,6 @@ extension NewDerivableAccounts {
                         UILabel(text: L10n.derivationPath, textSize: 16, weight: .regular)
                         derivationPathLabel
                     }
-//                    UIView.defaultNextArrow()
                     UIImageView(
                         width: 20,
                         height: 25,
@@ -136,7 +135,7 @@ extension NewDerivableAccounts {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .selectDerivationPath:
-                let vc = DerivablePaths
+                let vc = NewDerivablePaths
                     .ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath()) { [weak self] path in
                         self?.derivablePathsVC(didSelectPath: path)
                     }
