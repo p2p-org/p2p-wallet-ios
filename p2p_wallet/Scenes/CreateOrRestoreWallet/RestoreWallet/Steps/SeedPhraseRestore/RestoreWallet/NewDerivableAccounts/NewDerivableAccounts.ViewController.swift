@@ -17,15 +17,23 @@ extension NewDerivableAccounts {
 
         // MARK: - Subviews
 
-        private lazy var headerView = UIStackView(axis: .vertical, spacing: 20, alignment: .fill, distribution: .fill) {
-            WLCard {
+        private lazy var headerView = UIStackView(axis: .vertical, spacing: 18, alignment: .fill, distribution: .fill) {
+            WLCard(cornerRadius: 16) {
                 UIStackView(axis: .horizontal, spacing: 10, alignment: .center, distribution: .fill) {
-                    UIStackView(axis: .vertical, spacing: 8, alignment: .leading) {
-                        UILabel(text: L10n.derivationPath, textSize: 17, weight: .semibold)
+                    UIStackView(axis: .vertical, spacing: 4, alignment: .leading) {
+                        UILabel(text: L10n.derivationPath, textSize: 16, weight: .regular)
                         derivationPathLabel
                     }
-                    UIView.defaultNextArrow()
-                }.padding(.init(x: 18, y: 14))
+                    UIImageView(
+                        width: 20,
+                        height: 25,
+                        image: Asset.MaterialIcon.chevronRight.image,
+                        tintColor: Asset.Colors.mountain.color
+                    ).setup { image in
+                        image.contentMode = .scaleAspectFill
+                    }
+                    .padding(.init(only: .right, inset: 3))
+                }.padding(.init(x: 29, y: 14))
             }.onTap(self, action: #selector(chooseDerivationPath))
 
             UIView.greyBannerView {
@@ -73,12 +81,12 @@ extension NewDerivableAccounts {
             configureNavBar()
 
             view.addSubview(headerView)
-            headerView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 4)
-            headerView.autoPinEdge(toSuperviewEdge: .left, withInset: 20)
-            headerView.autoPinEdge(toSuperviewEdge: .right, withInset: 20)
+            headerView.autoPinEdge(toSuperviewSafeArea: .top, withInset: 12)
+            headerView.autoPinEdge(toSuperviewEdge: .left, withInset: 16)
+            headerView.autoPinEdge(toSuperviewEdge: .right, withInset: 16)
 
             view.addSubview(accountsCollectionView)
-            accountsCollectionView.autoPinEdge(.top, to: .bottom, of: headerView)
+            accountsCollectionView.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: 16)
             accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .leading)
             accountsCollectionView.autoPinEdge(toSuperviewSafeArea: .trailing)
 
@@ -87,15 +95,14 @@ extension NewDerivableAccounts {
                 style: .primary,
                 size: .large,
                 trailing: Asset.MaterialIcon.arrowForward.image
-            )
-            .onPressed { _ in self.restore() }
+            ).onPressed { _ in self.restore() }
             view.addSubview(button)
             continueButton = button
 
             button.autoPinEdge(.top, to: .bottom, of: accountsCollectionView, withOffset: 16)
             button.autoPinEdge(toSuperviewEdge: .leading, withInset: 20)
             button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 20)
-            button.autoPinEdge(toSuperviewEdge: .bottom, withInset: 30)
+            button.autoPinEdge(toSuperviewEdge: .bottom, withInset: 44)
         }
 
         override func bind() {
@@ -128,7 +135,7 @@ extension NewDerivableAccounts {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case .selectDerivationPath:
-                let vc = DerivablePaths
+                let vc = NewDerivablePaths
                     .ViewController(currentPath: viewModel.getCurrentSelectedDerivablePath()) { [weak self] path in
                         self?.derivablePathsVC(didSelectPath: path)
                     }

@@ -23,13 +23,11 @@ extension NewRestoreWallet {
         private lazy var iCloudRestoreButton = WLStepButton.main(
             image: .appleLogo,
             text: L10n.restoreUsingICloud
-        )
-        .onTap(self, action: #selector(restoreFromICloud))
+        ).onTap(self, action: #selector(restoreFromICloud))
 
         private lazy var restoreManuallyButton = WLStepButton.sub(
             text: L10n.restoreManually
-        )
-        .onTap(self, action: #selector(restoreManually))
+        ).onTap(self, action: #selector(restoreManually))
 
         // MARK: - Initializer
 
@@ -56,8 +54,7 @@ extension NewRestoreWallet {
                     image: .introImportAWallet,
                     title: L10n.importAWallet,
                     description: L10n.ICloudRestoreIsForReturningUsers.pastingTheSecurityKeyManuallyIsForEveryone
-                )
-                .padding(.init(x: 20, y: 0))
+                ).padding(.init(x: 20, y: 0))
                 iCloudRestoreButton.padding(.init(x: 20, y: 0))
                 restoreManuallyButton.padding(.init(x: 20, y: 0))
             }
