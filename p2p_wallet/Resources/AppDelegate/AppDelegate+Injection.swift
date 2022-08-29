@@ -159,7 +159,6 @@ extension Resolver: ResolverRegistering {
 
         register { BiometricsAuthProviderImpl() }
             .implements(BiometricsAuthProvider.self)
-            .implements(SecurityStatusProvider.self)
     }
 
     /// Session scope: Live when user is authenticated

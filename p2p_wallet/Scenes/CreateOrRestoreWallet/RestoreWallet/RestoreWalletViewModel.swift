@@ -38,7 +38,6 @@ final class RestoreWalletViewModel: BaseViewModel {
             deviceShare: deviceShare,
             authService: AuthServiceBridge(),
             apiGatewayClient: APIGatewayClientImplMock(),
-            securityStatusProvider: Resolver.resolve(),
             icloudAccountProvider: keychainStorage
         ))
 
