@@ -898,3 +898,4 @@ another" = "une crypto pour
 "Restoring your wallet" = "Restaurer votre portefeuille";
 "Clear" = "Dégager";
 "There isn’t a wallet with these seed phrase. Check it again" = "Il n'y a pas de portefeuille avec ces phrases de départ.  Vérifiez à nouveau";
+"There is a problem with %@ Services. Try again" = "Il y a un problème avec les services %@.  Réessayer";
