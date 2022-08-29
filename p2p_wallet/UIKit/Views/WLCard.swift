@@ -7,9 +7,11 @@ import Foundation
 
 class WLCard: BECompositionView {
     let child: UIView
+    let cornerRadius: CGFloat
 
-    required init(@BEViewBuilder builder: Builder) {
+    required init(cornerRadius: CGFloat = 12.0, @BEViewBuilder builder: Builder) {
         child = builder().build()
+        self.cornerRadius = cornerRadius
         super.init(frame: .zero)
     }
 
@@ -18,7 +20,7 @@ class WLCard: BECompositionView {
             child
                 .backgroundColor(color: .contentBackground)
                 .border(width: 1, color: .f2f2f7)
-                .box(cornerRadius: 12)
+                .box(cornerRadius: cornerRadius)
                 .lightShadow()
         }
     }
