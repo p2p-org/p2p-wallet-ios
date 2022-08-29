@@ -15,8 +15,12 @@ class SeedPhraseRestoreWalletViewModel: ObservableObject {
 
     // Word suggestions should appearr here
     @Published var suggestions = [String]()
-    @Published var seed =
-        "crowd level crater figure super canyon silver wheel release cage zoo crucial sail aerobic road awesome fatal comfort canvas obscure grow mechanic spirit pave"
+    #if DEBUG
+        @Published var seed =
+            "crowd level crater figure super canyon silver wheel release cage zoo crucial sail aerobic road awesome fatal comfort canvas obscure grow mechanic spirit pave"
+    #else
+        @Published var seed = ""
+    #endif
     @Published var hasPasteboard: Bool = false
 
     func continueButtonTapped() {
@@ -26,7 +30,7 @@ class SeedPhraseRestoreWalletViewModel: ObservableObject {
             // show error
             notificationService.showToast(
                 title: "😔",
-                text: "There isn’t a wallet with these seed phrase. Check it again"
+                text: L10n.ThereIsnTAWalletWithTheseSeedPhrase.checkItAgain
             )
         }
     }

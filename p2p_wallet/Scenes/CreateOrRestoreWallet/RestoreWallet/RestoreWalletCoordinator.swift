@@ -229,7 +229,8 @@ private extension RestoreWalletCoordinator {
             default: break
             }
         })
-        .store(in: &subscriptions)
+            .store(in: &subscriptions)
+
         chooseRestoreOptionViewModel.openStart.sinkAsync {
             _ = try await stateMachine <- .start
         }

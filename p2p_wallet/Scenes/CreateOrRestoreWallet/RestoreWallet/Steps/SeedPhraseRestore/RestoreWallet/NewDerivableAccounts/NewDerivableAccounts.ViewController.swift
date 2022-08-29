@@ -96,8 +96,7 @@ extension NewDerivableAccounts {
                 style: .primary,
                 size: .large,
                 trailing: Asset.MaterialIcon.arrowForward.image
-            )
-            .onPressed { _ in self.restore() }
+            ).onPressed { _ in self.restore() }
             view.addSubview(button)
             continueButton = button
 

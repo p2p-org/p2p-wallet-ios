@@ -6,13 +6,7 @@ struct SeedPhraseRestoreWalletView: View {
 //    @FocusState private var isFocused: Bool
     @ObservedObject var viewModel: SeedPhraseRestoreWalletViewModel
 
-    #if DEBUG
-        @State private var seedText =
-            "crowd level crater figure super canyon silver wheel release cage zoo crucial sail aerobic road awesome fatal comfort canvas obscure grow mechanic spirit pave"
-    #else
-        @State private var seedText = ""
-    #endif
-
+    @State private var seedText = ""
     @State var isButtonEnabled = false
 
     init(viewModel: SeedPhraseRestoreWalletViewModel) {
@@ -42,8 +36,7 @@ struct SeedPhraseRestoreWalletView: View {
                     onPressed: {
                         self.viewModel.continueButtonTapped()
                     }
-                )
-                .frame(height: 56)
+                ).frame(height: 56)
             }.padding([.leading, .trailing], 20)
         }
     }
@@ -111,11 +104,11 @@ struct SeedPhraseRestoreWalletView: View {
                 }
             }
         )
-        .frame(height: 32)
-        .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
-        .background(viewModel.hasPasteboard ? Color(Asset.Colors.lime.color) : Color.clear)
-        .cornerRadius(8)
-        .fixedSize()
+            .frame(height: 32)
+            .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
+            .background(viewModel.hasPasteboard ? Color(Asset.Colors.lime.color) : Color.clear)
+            .cornerRadius(8)
+            .fixedSize()
     }
 
     var clearButton: some View {
@@ -135,11 +128,11 @@ struct SeedPhraseRestoreWalletView: View {
                 }
             }
         )
-        .frame(height: 32)
-        .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
-        .background(Color(Asset.Colors.rain.color))
-        .cornerRadius(8)
-        .fixedSize()
+            .frame(height: 32)
+            .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
+            .background(Color(Asset.Colors.rain.color))
+            .cornerRadius(8)
+            .fixedSize()
     }
 
     var suggestions: some View {
