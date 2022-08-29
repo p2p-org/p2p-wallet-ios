@@ -40,8 +40,7 @@ extension NewDerivablePaths {
                         weight: .semibold,
                         textColor: .textSecondary,
                         textAlignment: .center
-                    )
-                    .padding(.init(x: 0, y: 15))
+                    ).padding(.init(x: 0, y: 15))
                     UIView.defaultSeparator()
 
                     // Derivable paths
@@ -70,8 +69,7 @@ extension NewDerivablePaths {
                     type: .white,
                     label: L10n.cancel,
                     labelColor: Asset.Colors.night.color
-                )
-                .onTap(self, action: #selector(back))
+                ).onTap(self, action: #selector(back))
             }
         }
 

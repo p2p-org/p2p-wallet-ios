@@ -154,7 +154,8 @@ private extension RestoreCustomDelegatedCoordinator {
             default: break
             }
         })
-        .store(in: &subscriptions)
+            .store(in: &subscriptions)
+
         viewModel.openStart.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .start
         }
@@ -232,7 +233,8 @@ private extension RestoreCustomDelegatedCoordinator {
                 default: break
                 }
             })
-            .store(in: &subscriptions)
+                .store(in: &subscriptions)
+
             viewModel.openStart.sinkAsync { [stateMachine] in
                 _ = try await stateMachine <- .start
             }
