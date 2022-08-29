@@ -170,10 +170,11 @@ class PhoneTextField: BaseTextFieldView {
     // MARK: -
 
     private func inputLeftView() -> BEHStack {
-        BEHStack {
-            UILabel().withAttributedText(
-                .attributedString(with: countryEmoji, of: .title1)
-            ).bind(leftViewLabelRef)
+        BEHStack(alignment: .center) {
+            UILabel()
+                .withAttributedText(.attributedString(with: countryEmoji, of: .title1))
+                .bind(leftViewLabelRef)
+
             UIImageView(
                 width: 8,
                 height: 5,
