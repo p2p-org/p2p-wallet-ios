@@ -72,8 +72,13 @@ class SocialSignInViewModel: BaseViewModel {
         coordinatorIO.outLogin.sendProcess(data: provider) { [weak self] error in
             if let error = error {
                 switch error {
-                case is SocialServiceError:
+                case SocialServiceError.cancelled:
                     break
+                case is SocialServiceError:
+                    self?.notificationService.showToast(
+                        title: nil,
+                        text: L10n.ThereIsAProblemWithServices.tryAgain(provider.rawValue.uppercaseFirst)
+                    )
                 default:
                     self?.notificationService.showDefaultErrorNotification()
                 }
