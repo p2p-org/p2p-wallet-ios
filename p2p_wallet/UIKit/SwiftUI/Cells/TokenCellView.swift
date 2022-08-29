@@ -26,8 +26,9 @@ struct TokenCellView: View {
             }
             Spacer()
             Text(wallet.amountInCurrentFiat.fiatAmount())
-                .font(uiFont: .font(of: .text3, weight: .bold))
+                .font(uiFont: .font(of: .text3, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
         }
+        .contentShape(Rectangle())
     }
 }

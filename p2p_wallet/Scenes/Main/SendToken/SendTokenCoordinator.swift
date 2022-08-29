@@ -42,16 +42,20 @@ extension SendToken {
         // MARK: - Navigation
 
         @discardableResult
-        func start(hidesBottomBarWhenPushed: Bool) -> UIViewController {
-            pushChooseToken(showAfterConfirmation: false, hidesBottomBarWhenPushed: hidesBottomBarWhenPushed)
-        }
-
-        func popToRootViewController(animated: Bool) {
-            navigationController?.popToRootViewController(animated: animated)
+        func start(hidesBottomBarWhenPushed: Bool, push: Bool = true) -> UIViewController {
+            pushChooseToken(
+                showAfterConfirmation: false,
+                hidesBottomBarWhenPushed: hidesBottomBarWhenPushed,
+                push: push
+            )
         }
 
         @discardableResult
-        private func pushChooseToken(showAfterConfirmation: Bool, hidesBottomBarWhenPushed: Bool) -> UIViewController {
+        private func pushChooseToken(
+            showAfterConfirmation: Bool,
+            hidesBottomBarWhenPushed: Bool,
+            push: Bool = true
+        ) -> UIViewController {
             let amount = viewModel.getSelectedAmount()
             let vm = ChooseTokenAndAmount.ViewModel(
                 initialAmount: amount,
@@ -64,8 +68,15 @@ extension SendToken {
                 hidesBottomBarWhenPushed: hidesBottomBarWhenPushed
             )
             if let navigationController = navigationController {
-                navigationController.pushViewController(vc, animated: true)
-                return vc
+                if push {
+                    navigationController.pushViewController(vc, animated: true)
+                    return vc
+                } else {
+                    let navigation = UINavigationController(rootViewController: vc)
+                    navigationController.present(navigation, animated: true)
+                    self.navigationController = navigation
+                    return navigation
+                }
             } else {
                 let navigationController = UINavigationController(rootViewController: vc)
                 self.navigationController = navigationController
