@@ -55,7 +55,7 @@ class SeedPhraseRestoreWalletViewModel: ObservableObject {
     init() {
         // swiftlint:disable clipboard_direct_api
         UIPasteboard.general.hasStringsPublisher.sink { val in
-            self.hasPasteboard = val != nil
+            self.hasPasteboard = val
         }.store(in: &bag)
         // swiftlint:enable clipboard_direct_api
     }
