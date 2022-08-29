@@ -45,24 +45,6 @@ extension View {
     }
 }
 
-// MARK: - Swipe
-
-extension View {
-    func swipeActions(
-        leading: [SwipeActionButton] = [],
-        allowsFullSwipeLeading: Bool = false,
-        trailing: [SwipeActionButton] = [],
-        allowsFullSwipeTrailing: Bool = false
-    ) -> some View {
-        modifier(SwipeActionView(
-            leading: leading,
-            allowsFullSwipeLeading: allowsFullSwipeLeading,
-            trailing: trailing,
-            allowsFullSwipeTrailing: allowsFullSwipeTrailing
-        ))
-    }
-}
-
 extension List {
     @ViewBuilder func withoutSeparatorsiOS14() -> some View {
         if #available(iOS 15, *) {

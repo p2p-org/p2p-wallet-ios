@@ -12,10 +12,12 @@ import UIKit
 
 final class BuyPreparingCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
+    private let strategy: Strategy
     private let crypto: Buy.CryptoCurrency
 
-    init(navigationController: UINavigationController, crypto: Buy.CryptoCurrency) {
+    init(navigationController: UINavigationController, strategy: Strategy, crypto: Buy.CryptoCurrency) {
         self.navigationController = navigationController
+        self.strategy = strategy
         self.crypto = crypto
     }
 
@@ -26,8 +28,25 @@ final class BuyPreparingCoordinator: Coordinator<Void> {
                 exchangeService: Resolver.resolve()
             )
         )
-        navigationController.show(vc, sender: nil)
-        return Empty(completeImmediately: false)
-            .eraseToAnyPublisher()
+        switch strategy {
+        case .show:
+            navigationController.show(vc, sender: nil)
+        case .present:
+            let navigation = UINavigationController(rootViewController: vc)
+            navigationController.present(navigation, animated: true)
+        }
+
+        let subject = PassthroughSubject<Void, Never>()
+        vc.onClose = {
+            subject.send()
+        }
+        return subject.eraseToAnyPublisher()
+    }
+}
+
+extension BuyPreparingCoordinator {
+    enum Strategy {
+        case show
+        case present
     }
 }
