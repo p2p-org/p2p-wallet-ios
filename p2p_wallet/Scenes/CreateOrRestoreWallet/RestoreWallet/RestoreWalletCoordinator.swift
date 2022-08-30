@@ -16,18 +16,6 @@ enum RestoreWalletResult {
 
 final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     let parent: UIViewController
-    let tKeyFacade: TKeyJSFacade = .init(
-        wkWebView: GlobalWebView.requestWebView(),
-        config: .init(
-            metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
-            torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
-            torusNetwork: "testnet",
-            torusVerifierMapping: [
-                "google": String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? "",
-                "apple": String.secretConfig("TORUS_APPLE_VERIFIER") ?? "",
-            ]
-        )
-    )
 
     private let viewModel: RestoreWalletViewModel
     private var result = PassthroughSubject<RestoreWalletResult, Never>()
@@ -40,7 +28,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
 
     init(parent: UIViewController) {
         self.parent = parent
-        viewModel = RestoreWalletViewModel(tKeyFacade: tKeyFacade)
+        viewModel = RestoreWalletViewModel()
 
         securitySetupDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
