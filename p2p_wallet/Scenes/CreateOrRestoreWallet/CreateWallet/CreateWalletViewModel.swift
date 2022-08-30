@@ -52,8 +52,12 @@ final class CreateWalletViewModel: BaseViewModel {
         onboardingStateMachine.stateStream.sink { [weak onboardingService] state in
             print(state)
             switch state {
-            case .finish:
-                onboardingService?.lastState = nil
+            case let .finish(result):
+                switch result {
+                case .breakProcess: break
+                default: onboardingService?.lastState = nil
+                }
+
             default:
                 if state.continuable { onboardingService?.lastState = state }
             }
