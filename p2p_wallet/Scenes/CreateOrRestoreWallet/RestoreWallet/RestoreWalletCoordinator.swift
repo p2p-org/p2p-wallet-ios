@@ -36,6 +36,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     private let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
     private let restoreCustomDelegatedCoordinator: RestoreCustomDelegatedCoordinator
     private let restoreSocialDelegatedCoordinator: RestoreSocialDelegatedCoordinator
+    private let restoreSeedDelegatedCoordinator: RestoreSeedPhraseDelegatedCoordinator
 
     init(parent: UIViewController) {
         self.parent = parent
@@ -59,6 +60,12 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             }
         )
 
+        restoreSeedDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.stateMachine.accept(event: .restoreSeed(event))
+            }
+        )
+
         super.init()
     }
 
@@ -73,9 +80,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         navigationController?.modalPresentationStyle = .fullScreen
         navigationController?.modalTransitionStyle = .crossDissolve
 
-        restoreCustomDelegatedCoordinator.rootViewController = navigationController
-        securitySetupDelegatedCoordinator.rootViewController = navigationController
-        restoreSocialDelegatedCoordinator.rootViewController = navigationController
+        setDelegatedCoordinator(rootViewController: navigationController)
 
         viewModel.stateMachine
             .stateStream
@@ -94,6 +99,13 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     }
 
     // MARK: Navigation
+
+    private func setDelegatedCoordinator(rootViewController: UIViewController?) {
+        restoreCustomDelegatedCoordinator.rootViewController = rootViewController
+        securitySetupDelegatedCoordinator.rootViewController = rootViewController
+        restoreSocialDelegatedCoordinator.rootViewController = rootViewController
+        restoreSeedDelegatedCoordinator.rootViewController = rootViewController
+    }
 
     private func stateChangeHandler(from: RestoreWalletState?, to: RestoreWalletState) {
         if case let .finished(result) = to {
@@ -153,41 +165,14 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
 
             return UIHostingController(rootView: ICloudRestoreScreen(viewModel: vm))
 
-        case .signInSeed:
-            let viewModel = SeedPhraseRestoreWalletViewModel()
-            let seedVC = UIHostingController(rootView: SeedPhraseRestoreWalletView(viewModel: viewModel))
-            viewModel.coordinatorIO.finishedWithSeed.sinkAsync { phrase in
-                _ = try await stateMachine <- .derivationPath(phrase: phrase)
-            }.store(in: &subscriptions)
-
-            viewModel.coordinatorIO.back.sinkAsync { _ in
-                _ = try await stateMachine <- .back
-            }.store(in: &subscriptions)
-
-            viewModel.coordinatorIO.info.sinkAsync { [weak self] _ in
-                self?.openInfo()
-            }.store(in: &subscriptions)
-            return seedVC
-
-        case let .derivationPath(phrase: phrase):
-            let viewModel = NewDerivableAccounts.ViewModel(phrases: phrase)
-
-            viewModel.coordinatorIO.didSucceed.sinkAsync { phrase, path in
-                _ = try await stateMachine <- .restoreWithSeed(phrase: phrase, path: path)
-            }.store(in: &subscriptions)
-
-            viewModel.coordinatorIO.back.sinkAsync { _ in
-                _ = try await stateMachine <- .back
-            }.store(in: &subscriptions)
-
-            let viewController = NewDerivableAccounts.ViewController(viewModel: viewModel)
-            return viewController
-
         case let .restoreSocial(innerState, _):
             return restoreSocialDelegatedCoordinator.buildViewController(for: innerState)
 
         case let .restoreCustom(innerState):
             return restoreCustomDelegatedCoordinator.buildViewController(for: innerState)
+
+        case let .restoreSeed(innerState):
+            return restoreSeedDelegatedCoordinator.buildViewController(for: innerState)
 
         case let .securitySetup(_, _, _, innerState):
             return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
@@ -225,12 +210,11 @@ private extension RestoreWalletCoordinator {
             case .socialGoogle:
                 _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .google))
             case .seed:
-                _ = try await stateMachine <- .signInWithSeed
+                _ = try await stateMachine <- .restoreSeed(.signInWithSeed)
             default: break
             }
         })
             .store(in: &subscriptions)
-
         chooseRestoreOptionViewModel.openStart.sinkAsync {
             _ = try await stateMachine <- .start
         }
