@@ -140,6 +140,7 @@ class AppCoordinator: Coordinator<Void> {
                 Resolver
                     .resolve(PincodeStorageType.self)
                     .save(onboardingWallet.pincode)
+                Defaults.isBiometryEnabled = onboardingWallet.isBiometryEnabled
 
                 self.showAuthenticationOnMainOnAppear = false
 

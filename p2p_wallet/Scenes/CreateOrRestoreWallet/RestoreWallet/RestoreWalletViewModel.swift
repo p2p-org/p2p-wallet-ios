@@ -30,6 +30,7 @@ final class RestoreWalletViewModel: BaseViewModel {
     @Injected var authService: AuthService
 
     override init() {
+        // TODO: Move into a single TKeyFacade provider for create and restore wallet
         let tKeyFacade: TKeyFacade = available(.mockedTKeyFacade) ?
             TKeyMockupFacade() :
             TKeyJSFacade(
@@ -63,7 +64,6 @@ final class RestoreWalletViewModel: BaseViewModel {
             deviceShare: deviceShare,
             authService: AuthServiceBridge(),
             apiGatewayClient: apiGatewayClient,
-            securityStatusProvider: Resolver.resolve(),
             icloudAccountProvider: keychainStorage
         ))
 
@@ -82,6 +82,8 @@ final class RestoreWalletViewModel: BaseViewModel {
         }
 
         availableRestoreOptions = options
+
+        super.init()
     }
 }
 
