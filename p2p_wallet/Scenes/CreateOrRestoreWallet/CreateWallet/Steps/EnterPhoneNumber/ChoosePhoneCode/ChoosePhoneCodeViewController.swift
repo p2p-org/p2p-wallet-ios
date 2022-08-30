@@ -112,7 +112,6 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
                         countries[i].isSelected = false
                     }
                 }
-                countries = countries.filteredAndSorted()
                 return countries
             }
         }

@@ -45,6 +45,7 @@ final class RestoreWalletViewModel: BaseViewModel {
                     ]
                 )
             )
+
         #if !RELEASE
             let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_DEV")!
         #else
