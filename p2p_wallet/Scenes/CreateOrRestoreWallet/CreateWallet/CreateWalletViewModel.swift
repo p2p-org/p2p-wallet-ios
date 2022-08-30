@@ -43,8 +43,7 @@ final class CreateWalletViewModel: BaseViewModel {
             provider: .init(
                 authService: AuthServiceBridge(),
                 apiGatewayClient: apiGatewayClient,
-                tKeyFacade: tKeyFacade,
-                securityStatusProvider: Resolver.resolve()
+                tKeyFacade: tKeyFacade
             )
         )
 

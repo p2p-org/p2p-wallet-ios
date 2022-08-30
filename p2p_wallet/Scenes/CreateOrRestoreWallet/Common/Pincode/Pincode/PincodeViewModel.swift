@@ -75,11 +75,7 @@ private extension PincodeViewModel {
                     .insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
                 self.biometricsAuthProvider.authenticate(
                     authenticationPrompt: prompt, completion: { success, _ in
-                        if success {
-                            self.openMain.send((pin, true))
-                        } else {
-                            self.openMain.send((pin, false))
-                        }
+                        self.openMain.send((pin, success))
                     }
                 )
             }

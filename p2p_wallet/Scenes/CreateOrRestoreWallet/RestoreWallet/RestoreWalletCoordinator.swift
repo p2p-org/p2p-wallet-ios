@@ -25,6 +25,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     private let restoreCustomDelegatedCoordinator: RestoreCustomDelegatedCoordinator
     private let restoreSocialDelegatedCoordinator: RestoreSocialDelegatedCoordinator
     private let restoreSeedDelegatedCoordinator: RestoreSeedPhraseDelegatedCoordinator
+    private let restoreICloudDelegatedCoordinator: RestoreICloudDelegatedCoordinator
 
     init(parent: UIViewController) {
         self.parent = parent
@@ -51,6 +52,12 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         restoreSeedDelegatedCoordinator = .init(
             stateMachine: .init { [weak viewModel] event in
                 try await viewModel?.stateMachine.accept(event: .restoreSeed(event))
+            }
+        )
+
+        restoreICloudDelegatedCoordinator = .init(
+            stateMachine: .init { [weak viewModel] event in
+                try await viewModel?.stateMachine.accept(event: .restoreICloud(event))
             }
         )
 
@@ -93,6 +100,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         securitySetupDelegatedCoordinator.rootViewController = rootViewController
         restoreSocialDelegatedCoordinator.rootViewController = rootViewController
         restoreSeedDelegatedCoordinator.rootViewController = rootViewController
+        restoreICloudDelegatedCoordinator.rootViewController = rootViewController
     }
 
     private func stateChangeHandler(from: RestoreWalletState?, to: RestoreWalletState) {
@@ -123,7 +131,6 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     }
 
     private func buildViewController(state: RestoreWalletState) -> UIViewController? {
-        var stateMachine = viewModel.stateMachine
         switch state {
         case .restore:
             let params = ChooseRestoreOptionParameters(
@@ -134,24 +141,8 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             )
             return buildRestoreScreen(parameters: params)
 
-        case let .signInKeychain(accounts):
-            let vm = ICloudRestoreViewModel(accounts: accounts)
-
-            vm.coordinatorIO.back.sink { process in
-                process.start { _ = try await stateMachine <- .back }
-            }.store(in: &subscriptions)
-
-            vm.coordinatorIO.info.sink { [weak self] process in
-                process.start { self?.openTerms() }
-            }.store(in: &subscriptions)
-
-            vm.coordinatorIO.restore.sink { process in
-                process.start {
-                    _ = try await stateMachine <- .restoreICloudAccount(account: process.data)
-                }
-            }.store(in: &subscriptions)
-
-            return UIHostingController(rootView: ICloudRestoreScreen(viewModel: vm))
+        case let .restoreICloud(innerState):
+            return restoreICloudDelegatedCoordinator.buildViewController(for: innerState)
 
         case let .restoreSocial(innerState, _):
             return restoreSocialDelegatedCoordinator.buildViewController(for: innerState)
@@ -190,7 +181,7 @@ private extension RestoreWalletCoordinator {
         chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { process in
             switch process.data {
             case .keychain:
-                _ = try await stateMachine <- .signInWithKeychain
+                _ = try await stateMachine <- .restoreICloud(.signIn)
             case .custom:
                 _ = try await stateMachine <- .restoreCustom(.enterPhone)
             case .socialApple:
