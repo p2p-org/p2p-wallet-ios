@@ -79,11 +79,13 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        emptyVMOutput.topUpShow
+        Publishers.Merge(emptyVMOutput.topUpShow, tokensViewModel.buyShow)
+            .filter { !available(.buyScenarioEnabled)  }
             .sink(receiveValue: { [unowned self] in
                 presentBuyView()
             })
             .store(in: &subscriptions)
+
         emptyVMOutput.topUpCoinShow
             .sink(receiveValue: { [unowned self] in
                 let coordinator = BuyPreparingCoordinator(
@@ -100,11 +102,13 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        tokensViewModel.buyShow
-            .sink(receiveValue: { [unowned self] in
-                presentBuyView()
-            })
+        Publishers.Merge(tokensViewModel.buyShow, emptyVMOutput.topUpShow)
+            .filter { available(.buyScenarioEnabled) }
+            .flatMap { [unowned self] in
+                coordinate(to: BuyCoordinator(navigationController: self.navigationController))
+            }.sink(receiveValue: {_ in })
             .store(in: &subscriptions)
+
         tokensViewModel.receiveShow
             .sink(receiveValue: { [unowned self] in
                 openReceiveScreen(pubKey: $0)

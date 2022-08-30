@@ -175,7 +175,7 @@ PODS:
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
   - SkeletonUI (1.0.8)
-  - SkeletonView (1.29.2)
+  - SkeletonView (1.30.1)
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -342,7 +342,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   KeyAppUI:
-    :commit: dc342fe639225a903f7cf4bff4e3530608eadaec
+    :commit: bbacfd4c0b0ba56606f811591c4f89b34ef19918
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
@@ -405,7 +405,7 @@ SPEC CHECKSUMS:
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SkeletonUI: 04bd73f70c0488eceed13eb13c731138c5636db8
-  SkeletonView: 915a80ecc2b6421ab7ac0f0212321c0cc1406472
+  SkeletonView: f1e8e19841be437746f07b7dc7ce4d028b698b96
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 6ba5043ed04055eb874085d2f96499022ddcd6e8
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
@@ -421,6 +421,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: e0aaf685684617ce28d3d5a158ce39abf11dbd7a
+PODFILE CHECKSUM: 2d1084c9e560e8074eedd2837d926c1da1a4dbfc
 
 COCOAPODS: 1.11.3
