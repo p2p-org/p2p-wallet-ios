@@ -1,38 +1,53 @@
 name: Auto deploy
 on:
   pull_request:
-    
+    types: [opened]
+  issue_comment:
+    types: [created]
+
 jobs:
   upload_build_for_testing:
     name: Upload build for testing
-    if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
-    
     runs-on: macos-12
 
     steps:
+      - uses: khan/pull-request-comment-trigger@v1.1.0
+        id: check
+        with:
+          trigger: '@deploy'
+          reaction: rocket
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+
       - name: Check out current branch
+
         uses: actions/checkout@v3
+        if: steps.check.outputs.triggered == 'true'
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           submodules: recursive
           token: ${{ secrets.SUBMODULES_ACCESS_TOKEN }}
 
       - name: Grant access to KeyAppUI
+        if: steps.check.outputs.triggered == 'true'
         uses: webfactory/ssh-agent@v0.5.4
         with:
           ssh-private-key: ${{ secrets.KEY_APP_UI_GIT_SSH }}
 
       - name: Copy xcconfig file
+        if: steps.check.outputs.triggered == 'true'
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
         shell: bash
 
       - name: Install project
+        if: steps.check.outputs.triggered == 'true'
         run: |
           chmod u+x Scripts/install.sh && Scripts/install.sh
         shell: bash
 
       - name: Upload to test
+        if: steps.check.outputs.triggered == 'true'
         uses: maierj/fastlane-action@v2.2.0
         with:
           lane: feature_test
