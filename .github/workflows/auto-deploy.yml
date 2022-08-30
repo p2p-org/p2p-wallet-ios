@@ -1,24 +1,8 @@
 name: Auto deploy
 on:
   pull_request:
+    
 jobs:
-#  haslabel:
-#    name: "analyse labels"
-#    runs-on: ubuntu-latest
-#    outputs:
-#      preview: ${{ steps.haslabel.outputs.labeled-preview }}
-#    steps:
-#      - name: Cancel Previous Runs
-#        uses: styfle/cancel-workflow-action@0.4.1
-#        with:
-#          access_token: ${{ github.token }}
-#      - uses: actions/checkout@v2
-#      - name: Labeled to preview
-#        id: haslabel
-#        uses: DanielTamkin/HasLabel@v1.0.4
-#        with:
-#          contains: 'auto-deploy-to-qa'
-
   upload_build_for_testing:
     name: Upload build for testing
     if: ${{ contains(github.event.pull_request.labels.*.name, 'auto:qa-deploy') }}
