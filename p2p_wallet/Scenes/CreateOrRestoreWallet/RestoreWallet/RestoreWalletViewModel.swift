@@ -29,15 +29,40 @@ final class RestoreWalletViewModel: BaseViewModel {
 
     @Injected var authService: AuthService
 
-    init(tKeyFacade: TKeyFacade? = nil) {
+    override init() {
+        let tKeyFacade: TKeyFacade = available(.mockedTKeyFacade) ?
+            TKeyMockupFacade() :
+            TKeyJSFacade(
+                wkWebView: GlobalWebView.requestWebView(),
+                config: .init(
+                    metadataEndpoint: String.secretConfig("META_DATA_ENDPOINT") ?? "",
+                    torusEndpoint: String.secretConfig("TORUS_ENDPOINT") ?? "",
+                    torusNetwork: "testnet",
+                    torusVerifierMapping: [
+                        "google": String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? "",
+                        "apple": String.secretConfig("TORUS_APPLE_VERIFIER") ?? "",
+                    ]
+                )
+            )
+
+        #if !RELEASE
+            let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_DEV")!
+        #else
+            let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_PROD")!
+        #endif
+
+        let apiGatewayClient: APIGatewayClient = available(.mockedApiGateway) ?
+            APIGatewayClientImplMock() :
+            APIGatewayClientImpl(endpoint: apiGatewayEndpoint)
+
         let keychainStorage: KeychainStorage = Resolver.resolve()
         deviceShare = Resolver.resolve(AccountStorageType.self).deviceShare
 
         stateMachine = .init(provider: RestoreWalletFlowContainer(
-            tKeyFacade: tKeyFacade ?? TKeyMockupFacade(),
+            tKeyFacade: tKeyFacade,
             deviceShare: deviceShare,
             authService: AuthServiceBridge(),
-            apiGatewayClient: APIGatewayClientImplMock(),
+            apiGatewayClient: apiGatewayClient,
             securityStatusProvider: Resolver.resolve(),
             icloudAccountProvider: keychainStorage
         ))
