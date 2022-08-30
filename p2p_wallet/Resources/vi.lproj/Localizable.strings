@@ -837,3 +837,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 another" = "một tiền điện tử cho
  nữa";
 "one crypto for\nanother" = "một loại tiền điện tử cho \n một loại tiền điện tử khác";
+"SOL purchase cost" = "Chi phí mua SOL";
+"Transaction details" = "Chi tiết giao dịch";
