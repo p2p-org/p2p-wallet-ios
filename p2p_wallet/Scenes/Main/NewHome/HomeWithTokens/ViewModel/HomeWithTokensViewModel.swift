@@ -116,8 +116,7 @@ class HomeWithTokensViewModel: ObservableObject {
     }
 
     func tokenClicked(wallet: Wallet) {
-        guard let pubKey = wallet.pubkey
-        else { return }
+        guard let pubKey = wallet.pubkey else { return }
         walletClicked.send((pubKey: pubKey, tokenSymbol: wallet.token.symbol))
     }
 
