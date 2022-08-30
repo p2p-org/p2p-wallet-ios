@@ -32,7 +32,8 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
             .sink { [weak self] keyword in
                 guard let self = self else { return }
                 if keyword.isEmpty {
-                    self.overrideData(by: self.placeInitialIfNeeded(countries: self.cachedResult))
+                    let cachedResult = self.cachedResult
+                    self.overrideData(by: self.placeInitialIfNeeded(countries: cachedResult))
                     return
                 }
                 var newData = self.cachedResult.filteredAndSorted(byKeyword: keyword)
@@ -45,20 +46,19 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
             }
             .store(in: &subscriptions)
 
+        var selectedIndex = 0
         $selectedCountryCode.sink { [weak self] value in
             guard let value = value else { return }
 
-            if let index = self?.cachedResult.firstIndex(where: {
-                $0.value.code == self?.initialCountryCode
-            }) {
+            if let index = (self?.cachedResult.firstIndex { $0.value.code == self?.initialCountryCode }) {
                 self?.cachedResult[index].isSelected = false
             }
             self?.initialCountryCode = nil
 
-            if let index = self?.cachedResult.firstIndex(where: {
-                $0.value.code == value.value
-            }) {
+            if let index = (self?.cachedResult.firstIndex { $0.value.code == value.value }) {
+                self?.cachedResult[selectedIndex].isSelected = false
                 self?.cachedResult[index].isSelected = true
+                selectedIndex = index
             }
         }
         .store(in: &subscriptions)
