@@ -48,8 +48,8 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
             .store(in: &subscriptions)
 
         viewModel.openMain
-            .sinkAsync { [stateMachine] pincode in
-                try await stateMachine <- .setPincode(pincode: pincode)
+            .sinkAsync { [stateMachine] pincode, isBiometryEnabled in
+                try await stateMachine <- .setPincode(pincode: pincode, isBiometryEnabled: isBiometryEnabled)
             }
             .store(in: &subscriptions)
 

@@ -26,7 +26,7 @@ final class PincodeViewModel: BaseViewModel {
     let pincodeFailed = PassthroughSubject<Void, Never>()
 
     let confirmPin = PassthroughSubject<String, Never>()
-    let openMain = PassthroughSubject<String, Never>()
+    let openMain = PassthroughSubject<(String, Bool), Never>()
 
     let isBackAvailable: Bool
 
@@ -74,8 +74,8 @@ private extension PincodeViewModel {
                 let prompt = L10n
                     .insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
                 self.biometricsAuthProvider.authenticate(
-                    authenticationPrompt: prompt, completion: { _, _ in
-                        self.openMain.send(pin)
+                    authenticationPrompt: prompt, completion: { success, _ in
+                        self.openMain.send((pin, success))
                     }
                 )
             }
