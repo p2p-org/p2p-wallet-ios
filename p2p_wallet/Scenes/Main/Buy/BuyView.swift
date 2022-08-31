@@ -123,7 +123,7 @@ struct BuyView: View {
         }.padding(EdgeInsets(top: 0, leading: 24, bottom: 18, trailing: 29))
     }
 
-    func methodCard(item: BuyMethodItem) -> some View {
+    func methodCard(item: BuyViewModel.PaymentTypeItem) -> some View {
         VStack(alignment: .leading) {
             HStack {
                 HStack(alignment: .bottom) {
