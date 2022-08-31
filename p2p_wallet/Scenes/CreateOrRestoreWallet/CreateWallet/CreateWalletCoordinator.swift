@@ -9,7 +9,7 @@ import UIKit
 
 enum CreateWalletResult {
     case restore(socialProvider: SocialProvider, email: String)
-    case success(OnboardingWallet)
+    case success(CreateWalletData)
 }
 
 final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
