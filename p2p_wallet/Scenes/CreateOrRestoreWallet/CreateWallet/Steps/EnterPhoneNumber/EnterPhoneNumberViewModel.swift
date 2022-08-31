@@ -28,6 +28,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published public var inputError: String?
     @Published public var selectedCountry: Country?
 
+    let isBackAvailable: Bool
+
     func buttonTaped() {
         guard
             let phone = phone,
@@ -63,13 +65,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         // Output
         var selectCode: PassthroughSubject<String?, Never> = .init()
         var phoneEntered: PassthroughSubject<String, Never> = .init()
+        let back: PassthroughSubject<Void, Never> = .init()
     }
 
     // MARK: -
 
     var coordinatorIO: CoordinatorIO = .init()
 
-    override init() {
+    init(isBackAvailable: Bool) {
+        self.isBackAvailable = isBackAvailable
         super.init()
         bind()
     }
