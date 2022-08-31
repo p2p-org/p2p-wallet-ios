@@ -1,15 +1,15 @@
-import SwiftUI
 import KeyAppUI
+import SolanaSwift
+import SwiftUI
 
 struct BuyView: View {
-
     private let textLeadingPadding = 24.0
     private let cardLeadingPadding = 16.0
 
     // MARK: -
 
     @ObservedObject var viewModel: BuyViewModel
-    @State var bottomOffset = CGFloat.zero
+//    @State var bottomOffset = CGFloat.zero
     @State var leftInputText: String = ""
     @State var rightInputText: String = ""
 
@@ -40,11 +40,12 @@ struct BuyView: View {
                 .background(Color(Asset.Colors.rain.color))
                 .cornerRadius(20)
                 .padding([.leading, .trailing], 16)
+                .offset(y: 30)
             }
             Spacer()
             bottomActionsView
-                .offset(y: bottomOffset)
                 .frame(height: 110)
+//                .offset(y: bottomOffset)
         }
 //        .gesture(
 //            DragGesture().onChanged({ gesture in
@@ -58,9 +59,8 @@ struct BuyView: View {
 //                bottomOffset = .zero
 //            })
 //        )
-        .offset(y: 30)
-        .edgesIgnoringSafeArea(.bottom)
-        .navigationTitle(L10n.buy)
+            .edgesIgnoringSafeArea(.bottom)
+            .navigationTitle(L10n.buy)
     }
 
     var icon: some View {
@@ -74,13 +74,19 @@ struct BuyView: View {
                 .padding(.leading, textLeadingPadding)
 
             HStack(alignment: .center, spacing: 1) {
-                inputView(text: $leftInputText)
+                inputView(text: $leftInputText, coin: viewModel.token.symbol)
                     .cornerRadius(radius: 12, corners: [.topLeft, .bottomLeft])
-                inputView(text: $rightInputText)
+                    .onTapGesture {
+                        viewModel.tokenSelectTapped()
+                    }
+                inputView(text: $rightInputText, coin: viewModel.fiat.symbol)
                     .cornerRadius(radius: 12, corners: [.topRight, .bottomRight])
+                    .onTapGesture {
+                        viewModel.fiatSelectTapped()
+                    }
             }
-                .padding([.leading, .trailing], cardLeadingPadding)
-                .padding(.top, -4)
+            .padding([.leading, .trailing], cardLeadingPadding)
+            .padding(.top, -4)
         }
     }
 
@@ -105,8 +111,8 @@ struct BuyView: View {
             Text("Total")
                 .apply(style: .text3)
             Spacer()
-            Button {
-                
+            Button { [weak viewModel] in
+                viewModel?.didTapTotal()
             } label: {
                 Text("346.4 USD")
                     .apply(style: .text3)
@@ -133,16 +139,14 @@ struct BuyView: View {
 
                 Spacer()
 
-                Button {
-                    
-                } label: {
+                Button {} label: {
                     Image("checkmark-empty")
                         .resizable()
                         .scaledToFill()
                         .frame(width: 25, height: 25)
                 }
-                    .padding(.trailing, 13)
-                    .padding(.top, -3)
+                .padding(.trailing, 13)
+                .padding(.top, -3)
             }.padding(EdgeInsets(top: 13, leading: cardLeadingPadding, bottom: 0, trailing: 0))
 
             Text(item.time)
@@ -161,16 +165,18 @@ struct BuyView: View {
                 Spacer()
             }.padding(EdgeInsets(top: 5, leading: cardLeadingPadding, bottom: 12, trailing: 0))
         }
-            .frame(width: 145)
-            .background(Color(Asset.Colors.cloud.color))
-            .cornerRadius(16)
+        .frame(width: 145)
+        .background(Color(Asset.Colors.cloud.color))
+        .cornerRadius(16)
     }
 
-    func inputView(text: Binding<String>) -> some View {
+    func inputView(text: Binding<String>, coin: String) -> some View {
         HStack(alignment: .center, spacing: 4) {
             TextField("", text: text)
                 .multilineTextAlignment(.trailing)
-            Text("SOL").apply(style: .title2).foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+            Text(coin)
+                .apply(style: .title2)
+                .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                 .padding(.trailing, 1)
             Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
                 .resizable()
@@ -178,8 +184,8 @@ struct BuyView: View {
                 .frame(width: 16, height: 16)
                 .padding(.trailing, 10)
         }
-            .frame(height: 62)
-            .background(Color(Asset.Colors.snow.color))
+        .frame(height: 62)
+        .background(Color(Asset.Colors.snow.color))
     }
 }
 
@@ -192,9 +198,8 @@ extension BuyView {
                     title: L10n.buy,
                     style: .inverted,
                     size: .large,
-                    trailing: UIImage(named: "buy-wallet")!
+                    trailing: UIImage.buyWallet
                 ) { [weak viewModel] in
-                    viewModel.didTapTotal()
                 }
             }
         }

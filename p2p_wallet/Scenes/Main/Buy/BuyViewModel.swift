@@ -1,7 +1,8 @@
-import Foundation
-import UIKit
 import Combine
+import Foundation
 import KeyAppUI
+import SolanaSwift
+import UIKit
 
 struct BuyMethodItem {
     var fee: String
@@ -11,11 +12,13 @@ struct BuyMethodItem {
 }
 
 class BuyViewModel: ObservableObject {
-    
     var coordinatorIO = CoordinatorIO()
-    
+    private var subscriptions = Set<AnyCancellable>()
+
     @Published var availableMethods = [BuyMethodItem]()
-    
+    @Published var token: Token = .nativeSolana
+    @Published var fiat: Fiat = .usd
+
     init() {
         availableMethods.append(
             .init(
@@ -41,12 +44,28 @@ class BuyViewModel: ObservableObject {
                 icon: UIImage(named: "buy-apple")!
             )
         )
+
+        coordinatorIO.tokenSelected.sink { token in
+            self.token = token
+        }.store(in: &subscriptions)
+
+        coordinatorIO.fiatSelected.sink { fiat in
+            self.fiat = fiat
+        }.store(in: &subscriptions)
     }
-    
+
     func didTapTotal() {
-        coordinatorIO.didTapTotal.send()
+        coordinatorIO.showDetail.send()
     }
-    
+
+    func tokenSelectTapped() {
+        coordinatorIO.showTokenSelect.send()
+    }
+
+    func fiatSelectTapped() {
+        coordinatorIO.showFiatSelect.send()
+    }
+
     enum PaymentType {
         case card
         case apple
@@ -56,6 +75,12 @@ class BuyViewModel: ObservableObject {
 
 extension BuyViewModel {
     struct CoordinatorIO {
-        var didTapTotal = PassthroughSubject<Void, Never>()
+        // Input
+        var showDetail = PassthroughSubject<Void, Never>()
+        var showTokenSelect = PassthroughSubject<Void, Never>()
+        var showFiatSelect = PassthroughSubject<Void, Never>()
+        // Output
+        var tokenSelected = PassthroughSubject<Token, Never>()
+        var fiatSelected = PassthroughSubject<Fiat, Never>()
     }
 }
