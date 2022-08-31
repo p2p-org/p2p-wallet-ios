@@ -32,8 +32,8 @@ class BuyViewModel: ObservableObject {
     }
 
     func didSelectPayment(_ payment: PaymentTypeItem) {
-        self.lastMethod = payment.type
-        self.selectedPayment = payment.type
+        lastMethod = payment.type
+        selectedPayment = payment.type
     }
 
     // TODO: rename
