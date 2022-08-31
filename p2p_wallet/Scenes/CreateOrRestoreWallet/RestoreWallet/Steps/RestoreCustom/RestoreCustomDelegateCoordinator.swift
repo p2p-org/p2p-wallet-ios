@@ -77,7 +77,7 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
 private extension RestoreCustomDelegatedCoordinator {
     func handleEnterPhone(phone: String?) -> UIViewController {
-        let viewModel = EnterPhoneNumberViewModel()
+        let viewModel = EnterPhoneNumberViewModel(isBackAvailable: true)
         if let phone = phone { viewModel.phone = phone }
 
         viewModel.coordinatorIO.selectCode.sinkAsync { [weak self] selectedCountryCode in
@@ -89,13 +89,18 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = true
 
             do {
-                try await stateMachine <- .enterPhoneNumber(phone: phone)
+                _ = try await stateMachine <- .enterPhoneNumber(phone: phone)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
             viewModel?.isLoading = false
 
         }.store(in: &subscriptions)
+
+        viewModel.coordinatorIO.back.sinkAsync { [stateMachine] in
+            _ = try await stateMachine <- .back
+        }.store(in: &subscriptions)
+
         return EnterPhoneNumberViewController(viewModel: viewModel)
     }
 
