@@ -85,9 +85,11 @@ View where Model == Cell.Model {
                                     .padding(.trailing, 8)
                             }
                         }
-                        Divider()
-                            .frame(height: 1)
-                            .foregroundColor(Color(Asset.Colors.rain.color))
+                        if model != viewModel.items.last {
+                            Divider()
+                                .frame(height: 1)
+                                .foregroundColor(Color(Asset.Colors.rain.color))
+                        }
                     }
                 }
             }.padding(.top, 10)

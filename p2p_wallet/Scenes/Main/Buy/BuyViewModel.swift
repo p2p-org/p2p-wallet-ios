@@ -2,48 +2,22 @@ import Combine
 import Foundation
 import KeyAppUI
 import SolanaSwift
+import SwiftyUserDefaults
 import UIKit
-
-struct BuyMethodItem {
-    var fee: String
-    var time: String
-    var name: String
-    var icon: UIImage
-}
 
 class BuyViewModel: ObservableObject {
     var coordinatorIO = CoordinatorIO()
     private var subscriptions = Set<AnyCancellable>()
 
-    @Published var availableMethods = [BuyMethodItem]()
+    @Published var availableMethods = [PaymentTypeItem]()
     @Published var token: Token = .nativeSolana
     @Published var fiat: Fiat = .usd
 
+    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod) var lastMethod: PaymentType
+
     init() {
-        availableMethods.append(
-            .init(
-                fee: "4%",
-                time: "1 day",
-                name: "Bank transfer",
-                icon: UIImage(named: "buy-bank")!
-            )
-        )
-        availableMethods.append(
-            .init(
-                fee: "1%",
-                time: "instant",
-                name: "Card",
-                icon: UIImage(named: "buy-card")!
-            )
-        )
-        availableMethods.append(
-            .init(
-                fee: "0%",
-                time: "instant",
-                name: "ApplePay",
-                icon: UIImage(named: "buy-apple")!
-            )
-        )
+        availableMethods = PaymentType.allCases.filter { $0 != lastMethod }.map { $0.paymentItem() }
+        availableMethods.insert(lastMethod.paymentItem(), at: 0)
 
         coordinatorIO.tokenSelected.sink { token in
             self.token = token
@@ -54,6 +28,9 @@ class BuyViewModel: ObservableObject {
         }.store(in: &subscriptions)
     }
 
+    func didSelectPayment() {}
+
+    // TODO: rename
     func didTapTotal() {
         coordinatorIO.showDetail.send()
     }
@@ -64,12 +41,6 @@ class BuyViewModel: ObservableObject {
 
     func fiatSelectTapped() {
         coordinatorIO.showFiatSelect.send()
-    }
-
-    enum PaymentType {
-        case card
-        case apple
-        case bank
     }
 }
 
@@ -82,5 +53,47 @@ extension BuyViewModel {
         // Output
         var tokenSelected = PassthroughSubject<Token, Never>()
         var fiatSelected = PassthroughSubject<Fiat, Never>()
+    }
+}
+
+extension BuyViewModel {
+    enum PaymentType: String, DefaultsSerializable, CaseIterable {
+        case card
+        case apple
+        case bank
+
+        func paymentItem() -> PaymentTypeItem {
+            switch self {
+            case .bank:
+                return .init(
+                    fee: "1%",
+                    time: "~17 hours",
+                    name: "Bank transfer",
+                    icon: UIImage.buyBank
+                )
+            case .card:
+                return .init(
+                    fee: "4%",
+                    time: "instant",
+                    name: "Card",
+                    icon: UIImage.buyCard
+                )
+            case .apple:
+                return .init(
+                    fee: "4%",
+                    time: "instant",
+                    name: "Apple pay",
+                    icon: UIImage.buyApple
+                )
+            }
+        }
+    }
+
+    struct PaymentTypeItem {
+        var fee: String
+        // TODO: rename to 'duration'
+        var time: String
+        var name: String
+        var icon: UIImage
     }
 }
