@@ -13,14 +13,14 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
         case .socialSelection:
             let vm = SocialSignInViewModel(parameters: socialSignInParameters())
             let vc = SocialSignInView(viewModel: vm)
-            vc.viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.showTermAndCondition() }
+            vc.viewModel.outInfo.sink { [weak self] in self?.openInfo() }
                 .store(in: &subscriptions)
 
-            vc.viewModel.coordinatorIO.outBack.sinkAsync { [stateMachine] process in
+            vc.viewModel.outBack.sinkAsync { [stateMachine] process in
                 process.start { try await stateMachine <- .signInBack }
             }.store(in: &subscriptions)
 
-            vc.viewModel.coordinatorIO.outLogin.sinkAsync { [stateMachine] process in
+            vc.viewModel.outLogin.sinkAsync { [stateMachine] process in
                 process.start { try await stateMachine <- .signIn(socialProvider: process.data) }
             }.store(in: &subscriptions)
 
@@ -77,7 +77,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
         }
     }
 
-    public func showTermAndCondition() {
+    public func openInfo() {
         let vc = WLMarkdownVC(
             title: L10n.termsOfUse.uppercaseFirst,
             bundledMarkdownTxtFileName: "Terms_of_service"
