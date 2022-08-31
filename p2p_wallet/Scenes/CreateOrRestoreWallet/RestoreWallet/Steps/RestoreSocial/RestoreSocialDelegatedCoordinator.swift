@@ -24,16 +24,12 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
         }
     }
 
-    private func openTerms() {
+    private func openInfo() {
         let viewController = WLMarkdownVC(
             title: L10n.termsOfUse.uppercaseFirst,
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
         rootViewController?.present(viewController, animated: true)
-    }
-
-    private func openInfo() {
-        openTerms()
     }
 
     private func socialSignInParameters() -> SocialSignInParameters {
@@ -53,14 +49,13 @@ private extension RestoreSocialDelegatedCoordinator {
     func handleSocial() -> UIViewController {
         let viewModel = SocialSignInViewModel(parameters: socialSignInParameters())
         let view = SocialSignInView(viewModel: viewModel)
-        viewModel.coordinatorIO.outInfo.sink { [weak self] in self?.openInfo() }
+        viewModel.outInfo.sink { [weak self] in self?.openInfo() }
             .store(in: &subscriptions)
 
-        viewModel.coordinatorIO.outLogin.sinkAsync { [stateMachine] process in
-            process
-                .start {
-                    _ = try await stateMachine <- .signInCustom(socialProvider: process.data)
-                }
+        viewModel.outLogin.sinkAsync { [stateMachine] process in
+            process.start {
+                _ = try await stateMachine <- .signInCustom(socialProvider: process.data)
+            }
         }
         .store(in: &subscriptions)
 

@@ -23,18 +23,10 @@ class SocialSignInViewModel: BaseViewModel {
         case other
     }
 
-    struct CoordinatorIO {
-        let outBack: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
-        let outTermAndCondition: PassthroughSubject<Void, Never> = .init()
-        let outInfo: PassthroughSubject<Void, Never> = .init()
-        let outLogin: PassthroughSubject<ReactiveProcess<SocialProvider>, Never> = .init()
-    }
-
     @Injected var notificationService: NotificationService
     @Injected var reachability: Reachability
 
     @Published var loading: Loading?
-    private(set) var coordinatorIO: CoordinatorIO = .init()
 
     @Published private(set) var title: String
     @Published private(set) var content: OnboardingContentData
@@ -42,6 +34,9 @@ class SocialSignInViewModel: BaseViewModel {
     @Published private(set) var googleButtonTitle: String
 
     let isBackAvailable: Bool
+    let outBack: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
+    let outInfo: PassthroughSubject<Void, Never> = .init()
+    let outLogin: PassthroughSubject<ReactiveProcess<SocialProvider>, Never> = .init()
 
     init(parameters: SocialSignInParameters) {
         title = parameters.title
@@ -54,12 +49,12 @@ class SocialSignInViewModel: BaseViewModel {
 
     func onInfo() {
         guard loading == nil else { return }
-        coordinatorIO.outInfo.send()
+        outInfo.send()
     }
 
     func onBack() {
         guard loading == nil else { return }
-        coordinatorIO.outBack.sendProcess()
+        outBack.sendProcess()
     }
 
     func onSignInTap(_ provider: SocialProvider) {
@@ -74,7 +69,7 @@ class SocialSignInViewModel: BaseViewModel {
         }
 
         notificationService.hideToasts()
-        coordinatorIO.outLogin.sendProcess(data: provider) { [weak self] error in
+        outLogin.sendProcess(data: provider) { [weak self] error in
             if let error = error {
                 switch error {
                 case SocialServiceError.cancelled:
