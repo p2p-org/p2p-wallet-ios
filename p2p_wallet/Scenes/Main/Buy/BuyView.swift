@@ -99,7 +99,11 @@ struct BuyView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(viewModel.availableMethods, id: \.name) { item in
-                        methodCard(item: item)
+                        Button {
+                            viewModel.didSelectPayment(item)
+                        } label: {
+                            methodCard(item: item)
+                        }
                     }
                 }.padding([.leading, .trailing], 16)
             }
@@ -139,11 +143,20 @@ struct BuyView: View {
 
                 Spacer()
 
-                Button {} label: {
-                    Image("checkmark-empty")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 25, height: 25)
+                Button {
+                    
+                } label: {
+                    if viewModel.selectedPayment == item.type {
+                        Image("checkmark-filled")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 25, height: 25)
+                    } else {
+                        Image("checkmark-empty")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 25, height: 25)
+                    }
                 }
                 .padding(.trailing, 13)
                 .padding(.top, -3)
