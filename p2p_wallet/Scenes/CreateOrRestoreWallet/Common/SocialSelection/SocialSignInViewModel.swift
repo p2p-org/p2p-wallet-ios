@@ -13,6 +13,7 @@ struct SocialSignInParameters {
     let content: OnboardingContentData
     let appleButtonTitle: String
     let googleButtonTitle: String
+    let isBackAvailable: Bool
 }
 
 class SocialSignInViewModel: BaseViewModel {
@@ -40,16 +41,20 @@ class SocialSignInViewModel: BaseViewModel {
     @Published private(set) var appleButtonTitle: String
     @Published private(set) var googleButtonTitle: String
 
+    let isBackAvailable: Bool
+
     init(parameters: SocialSignInParameters) {
         title = parameters.title
         content = parameters.content
         appleButtonTitle = parameters.appleButtonTitle
         googleButtonTitle = parameters.googleButtonTitle
+        isBackAvailable = parameters.isBackAvailable
         super.init()
     }
 
     func onInfo() {
         guard loading == nil else { return }
+        coordinatorIO.outInfo.send()
     }
 
     func onBack() {

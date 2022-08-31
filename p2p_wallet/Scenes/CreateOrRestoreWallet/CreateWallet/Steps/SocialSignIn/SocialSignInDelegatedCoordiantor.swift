@@ -95,7 +95,8 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             title: L10n.createAccount,
             content: content,
             appleButtonTitle: L10n.signInWithApple,
-            googleButtonTitle: L10n.signInWithGoogle
+            googleButtonTitle: L10n.signInWithGoogle,
+            isBackAvailable: true
         )
         return parameters
     }

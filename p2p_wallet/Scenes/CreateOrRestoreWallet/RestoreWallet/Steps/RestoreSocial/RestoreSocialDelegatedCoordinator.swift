@@ -42,7 +42,8 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
             title: L10n.restoringYourWallet,
             content: content,
             appleButtonTitle: L10n.continueWithApple,
-            googleButtonTitle: L10n.continueWithGoogle
+            googleButtonTitle: L10n.continueWithGoogle,
+            isBackAvailable: false
         )
         return parameters
     }
@@ -52,13 +53,8 @@ private extension RestoreSocialDelegatedCoordinator {
     func handleSocial() -> UIViewController {
         let viewModel = SocialSignInViewModel(parameters: socialSignInParameters())
         let view = SocialSignInView(viewModel: viewModel)
-        viewModel.coordinatorIO.outTermAndCondition.sink { [weak self] in self?.openTerms() }
+        viewModel.coordinatorIO.outInfo.sink { [weak self] in self?.openInfo() }
             .store(in: &subscriptions)
-
-        viewModel.coordinatorIO.outBack.sinkAsync { [stateMachine] process in
-            process.start { _ = try await stateMachine <- .back }
-        }
-        .store(in: &subscriptions)
 
         viewModel.coordinatorIO.outLogin.sinkAsync { [stateMachine] process in
             process
