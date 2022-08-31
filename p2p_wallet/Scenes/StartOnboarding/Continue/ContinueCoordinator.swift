@@ -3,10 +3,10 @@ import Onboarding
 import Resolver
 import SwiftUI
 
-final class ContinueCoordinator: Coordinator<OnboardingWallet> {
+final class ContinueCoordinator: Coordinator<OnboardingResult> {
     private let window: UIWindow
 
-    private var subject = PassthroughSubject<OnboardingWallet, Never>()
+    private var subject = PassthroughSubject<OnboardingResult, Never>()
 
     @Injected private var onboardingService: OnboardingService
 
@@ -16,7 +16,7 @@ final class ContinueCoordinator: Coordinator<OnboardingWallet> {
         self.window = window
     }
 
-    override func start() -> AnyPublisher<OnboardingWallet, Never> {
+    override func start() -> AnyPublisher<OnboardingResult, Never> {
         guard let lastState = onboardingService.lastState else {
             return Empty(completeImmediately: true).eraseToAnyPublisher()
         }
@@ -69,7 +69,7 @@ final class ContinueCoordinator: Coordinator<OnboardingWallet> {
             .sink { result in
                 switch result {
                 case let .success(onboardingWallet):
-                    self.subject.send(onboardingWallet)
+                    self.subject.send(.created(onboardingWallet))
                 default:
                     break
                 }

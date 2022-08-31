@@ -12,7 +12,6 @@ enum PincodeState {
 final class PincodeViewModel: BaseViewModel {
     // MARK: - Dependencies
 
-    @Injected private var pincodeStorage: PincodeStorageType
     @Injected private var biometricsAuthProvider: BiometricsAuthProvider
 
     // MARK: - Properties
@@ -70,7 +69,6 @@ private extension PincodeViewModel {
                 self.confirmPin.send(pin)
             case .confirm:
                 self.snackbar = PincodeSnackbar(message: L10n._️YeahYouVeCreatedThePINToKeyApp, isFailure: false)
-                self.pincodeStorage.save(pin)
                 let prompt = L10n
                     .insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
                 self.biometricsAuthProvider.authenticate(

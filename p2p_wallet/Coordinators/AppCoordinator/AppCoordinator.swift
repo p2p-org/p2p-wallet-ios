@@ -8,6 +8,7 @@
 import AnalyticsManager
 import Foundation
 import KeyAppUI
+import Onboarding
 import Resolver
 import SolanaSwift
 import UIKit
@@ -125,22 +126,25 @@ class AppCoordinator: Coordinator<Void> {
         let startCoordinator = provider.startCoordinator(for: window)
 
         coordinate(to: startCoordinator)
-            .sink(receiveValue: { [unowned self] onboardingWallet in
-                // Save wallet
-                Resolver
-                    .resolve(CreateOrRestoreWalletHandler.self)
-                    .creatingWalletDidComplete(
-                        phrases: onboardingWallet.solPrivateKey.components(separatedBy: " "),
-                        derivablePath: .default,
+            .sink(receiveValue: { [unowned self] result in
+                let handler = Resolver.resolve(CreateOrRestoreWalletHandler.self)
+                switch result {
+                case let .created(data):
+                    handler.creatingWalletDidComplete(
+                        phrases: data.wallet.seedPhrase.components(separatedBy: " "),
+                        derivablePath: data.wallet.derivablePath,
                         name: nil,
-                        deviceShare: onboardingWallet.deviceShare
+                        deviceShare: data.deviceShare
                     )
-
-                // Save pincode
-                Resolver
-                    .resolve(PincodeStorageType.self)
-                    .save(onboardingWallet.pincode)
-                Defaults.isBiometryEnabled = onboardingWallet.isBiometryEnabled
+                    saveSecurity(data: data.security)
+                case let .restored(data):
+                    handler.restoringWalletDidComplete(
+                        phrases: data.wallet.seedPhrase.components(separatedBy: " "),
+                        derivablePath: data.wallet.derivablePath,
+                        name: nil
+                    )
+                    saveSecurity(data: data.security)
+                }
 
                 self.showAuthenticationOnMainOnAppear = false
 
@@ -148,6 +152,11 @@ class AppCoordinator: Coordinator<Void> {
                 finishSetUp()
             })
             .store(in: &subscriptions)
+    }
+
+    private func saveSecurity(data: SecurityData) {
+        Resolver.resolve(PincodeStorageType.self).save(data.pincode)
+        Defaults.isBiometryEnabled = data.isBiometryEnabled
     }
 
     // MARK: - Helper

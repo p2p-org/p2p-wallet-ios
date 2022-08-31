@@ -11,7 +11,7 @@ import SwiftUI
 enum RestoreWalletResult {
     case start
     case help
-    case success(OnboardingWallet)
+    case success(RestoreWalletData)
 }
 
 final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
@@ -153,7 +153,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         case let .restoreSeed(innerState):
             return restoreSeedDelegatedCoordinator.buildViewController(for: innerState)
 
-        case let .securitySetup(_, _, _, innerState):
+        case let .securitySetup(_, _, innerState):
             return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
 
         case .finished:

@@ -6,11 +6,16 @@ struct StartParameters {
     let isAnimatable: Bool
 }
 
-final class StartCoordinator: Coordinator<OnboardingWallet> {
+enum OnboardingResult {
+    case created(CreateWalletData)
+    case restored(RestoreWalletData)
+}
+
+final class StartCoordinator: Coordinator<OnboardingResult> {
     private let window: UIWindow
     private weak var viewController: UIViewController?
     private let params: StartParameters
-    private var subject = PassthroughSubject<OnboardingWallet, Never>()
+    private var subject = PassthroughSubject<OnboardingResult, Never>()
 
     // MARK: - Initializer
 
@@ -19,7 +24,7 @@ final class StartCoordinator: Coordinator<OnboardingWallet> {
         self.params = params
     }
 
-    override func start() -> AnyPublisher<OnboardingWallet, Never> {
+    override func start() -> AnyPublisher<OnboardingResult, Never> {
         let viewModel = StartViewModel(isAnimatable: params.isAnimatable)
         let viewController = UIHostingController(rootView: StartView(viewModel: viewModel))
         self.viewController = viewController
@@ -52,11 +57,11 @@ final class StartCoordinator: Coordinator<OnboardingWallet> {
     private func openCreateWallet(vc: UIViewController) {
         coordinate(to: CreateWalletCoordinator(parent: vc)).sink { [weak vc] result in
             switch result {
-            case let .restore(socialProvider, email):
+            case .restore:
                 guard let vc = vc else { return }
                 self.openRestoreWallet(vc: vc)
-            case let .success(onboardingWallet):
-                self.subject.send(onboardingWallet)
+            case let .success(data):
+                self.subject.send(.created(data))
             }
             self.subject.send(completion: .finished)
         }.store(in: &subscriptions)
@@ -67,8 +72,8 @@ final class StartCoordinator: Coordinator<OnboardingWallet> {
             .sink(receiveValue: { [weak self] result in
                 guard let self = self else { return }
                 switch result {
-                case let .success(wallet):
-                    self.subject.send(wallet)
+                case let .success(data):
+                    self.subject.send(.restored(data))
                     self.subject.send(completion: .finished)
                 case .start:
                     break

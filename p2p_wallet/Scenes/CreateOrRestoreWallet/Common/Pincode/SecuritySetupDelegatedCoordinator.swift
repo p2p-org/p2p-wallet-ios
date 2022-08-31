@@ -62,14 +62,6 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
         return viewController
     }
 
-    private func addRightButton(vc: UIViewController) {
-        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
-        infoButton.addTarget(self, action: #selector(openInfo), for: .touchUpInside)
-        infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
-        infoButton.contentMode = .scaleAspectFill
-        vc.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
-    }
-
     @objc private func openInfo() {
         let vc = WLMarkdownVC(
             title: L10n.termsOfUse.uppercaseFirst,
