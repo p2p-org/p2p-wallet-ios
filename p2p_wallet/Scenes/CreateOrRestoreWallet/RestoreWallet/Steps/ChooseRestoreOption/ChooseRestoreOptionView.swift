@@ -34,7 +34,7 @@ struct ChooseRestoreOptionView: View {
 extension ChooseRestoreOptionView {
     private var bottomActionsView: some View {
         BottomActionContainer {
-            VStack(spacing: 32) {
+            VStack(spacing: (viewModel.mainButtons.count + viewModel.secondaryButtons.count) > 3 ? 32 : 12) {
                 VStack(spacing: 12) {
                     ForEach(viewModel.mainButtons, id: \.option.rawValue) { button in
                         TextButtonView(
