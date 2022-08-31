@@ -17,7 +17,7 @@ struct SocialSignInView: View {
         }
         .onboardingNavigationBar(
             title: viewModel.title,
-            onBack: { [weak viewModel] in viewModel?.onBack() },
+            onBack: viewModel.isBackAvailable ? { [weak viewModel] in viewModel?.onBack() } : nil,
             onInfo: { [weak viewModel] in viewModel?.onInfo() }
         )
         .onboardingScreen()
