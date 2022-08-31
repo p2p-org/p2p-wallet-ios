@@ -12,10 +12,13 @@ class BuyViewModel: ObservableObject {
     @Published var availableMethods = [PaymentTypeItem]()
     @Published var token: Token = .nativeSolana
     @Published var fiat: Fiat = .usd
+    @Published var selectedPayment: PaymentType?
 
-    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod) var lastMethod: PaymentType
+    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached) var lastMethod: PaymentType
 
     init() {
+        selectedPayment = lastMethod
+
         availableMethods = PaymentType.allCases.filter { $0 != lastMethod }.map { $0.paymentItem() }
         availableMethods.insert(lastMethod.paymentItem(), at: 0)
 
@@ -28,7 +31,10 @@ class BuyViewModel: ObservableObject {
         }.store(in: &subscriptions)
     }
 
-    func didSelectPayment() {}
+    func didSelectPayment(_ payment: PaymentTypeItem) {
+        self.lastMethod = payment.type
+        self.selectedPayment = payment.type
+    }
 
     // TODO: rename
     func didTapTotal() {
@@ -66,6 +72,7 @@ extension BuyViewModel {
             switch self {
             case .bank:
                 return .init(
+                    type: self,
                     fee: "1%",
                     time: "~17 hours",
                     name: "Bank transfer",
@@ -73,6 +80,7 @@ extension BuyViewModel {
                 )
             case .card:
                 return .init(
+                    type: self,
                     fee: "4%",
                     time: "instant",
                     name: "Card",
@@ -80,6 +88,7 @@ extension BuyViewModel {
                 )
             case .apple:
                 return .init(
+                    type: self,
                     fee: "4%",
                     time: "instant",
                     name: "Apple pay",
@@ -89,7 +98,8 @@ extension BuyViewModel {
         }
     }
 
-    struct PaymentTypeItem {
+    struct PaymentTypeItem: Equatable {
+        var type: PaymentType
         var fee: String
         // TODO: rename to 'duration'
         var time: String
