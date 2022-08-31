@@ -95,17 +95,27 @@ struct BuyView: View {
             Text("Method")
                 .apply(style: .text3)
                 .padding(.leading, textLeadingPadding)
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(viewModel.availableMethods, id: \.name) { item in
-                        Button {
-                            viewModel.didSelectPayment(item)
-                        } label: {
-                            methodCard(item: item)
+            ScrollViewReader { scrollView in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(viewModel.availableMethods, id: \.name) { item in
+                            Button {
+                                viewModel.didSelectPayment(item)
+                                withAnimation {
+                                    scrollView.scrollTo(item.type, anchor: .center)
+                                }
+                            } label: {
+                                methodCard(item: item)
+                                    .foregroundColor(Color(Asset.Colors.night.color))
+                            }
+                            .addBorder(
+                                item.type == viewModel.selectedPayment ?
+                                    Color(Asset.Colors.night.color) :
+                                    Color.clear, width: 1, cornerRadius: 16
+                            ).id(item.type)
                         }
-                    }
-                }.padding([.leading, .trailing], 16)
+                    }.padding(.horizontal, 16)
+                }
             }
         }
     }
@@ -140,26 +150,22 @@ struct BuyView: View {
                         .padding(.leading, -4)
                     Spacer()
                 }
-
                 Spacer()
-
-                Button {
-                    
-                } label: {
-                    if viewModel.selectedPayment == item.type {
-                        Image("checkmark-filled")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 25, height: 25)
-                    } else {
-                        Image("checkmark-empty")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 25, height: 25)
-                    }
+                if viewModel.selectedPayment == item.type {
+                    Image("checkmark-filled")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 25, height: 25)
+                        .padding(.trailing, 13)
+                        .padding(.top, -3)
+                } else {
+                    Image("checkmark-empty")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 25, height: 25)
+                        .padding(.trailing, 13)
+                        .padding(.top, -3)
                 }
-                .padding(.trailing, 13)
-                .padding(.top, -3)
             }.padding(EdgeInsets(top: 13, leading: cardLeadingPadding, bottom: 0, trailing: 0))
 
             Text(item.time)
