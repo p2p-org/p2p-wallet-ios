@@ -74,7 +74,12 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
         }
 
         if options.contains(.custom) {
-            secondaryButtons.append(ChooseRestoreOptionButton(option: .custom, title: L10n.continueUsingPhoneNumber))
+            let customButton = ChooseRestoreOptionButton(option: .custom, title: L10n.continueUsingPhoneNumber)
+            if options.contains(.keychain) || options.contains(.socialApple) {
+                secondaryButtons.append(customButton)
+            } else {
+                mainButtons.append(customButton)
+            }
         }
 
         if options.contains(.seed) {
