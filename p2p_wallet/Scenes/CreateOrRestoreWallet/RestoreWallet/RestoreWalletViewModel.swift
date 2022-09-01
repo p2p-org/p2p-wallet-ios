@@ -56,8 +56,10 @@ final class RestoreWalletViewModel: BaseViewModel {
             APIGatewayClientImplMock() :
             APIGatewayClientImpl(endpoint: apiGatewayEndpoint)
 
+        let accountStorage: AccountStorageType = Resolver.resolve()
+        deviceShare = available(.mockedDeviceShare) ? "someDeviceShare" : accountStorage.deviceShare
+
         let keychainStorage: KeychainStorage = Resolver.resolve()
-        deviceShare = Resolver.resolve(AccountStorageType.self).deviceShare
 
         stateMachine = .init(provider: RestoreWalletFlowContainer(
             tKeyFacade: tKeyFacade,

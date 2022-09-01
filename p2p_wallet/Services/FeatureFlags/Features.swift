@@ -13,4 +13,5 @@ public extension Feature {
     // Onboarding
     static let mockedApiGateway = Feature(rawValue: "mockedApiGateway")
     static let mockedTKeyFacade = Feature(rawValue: "mockedTKeyFacade")
+    static let mockedDeviceShare = Feature(rawValue: "mockedDeviceShare")
 }
