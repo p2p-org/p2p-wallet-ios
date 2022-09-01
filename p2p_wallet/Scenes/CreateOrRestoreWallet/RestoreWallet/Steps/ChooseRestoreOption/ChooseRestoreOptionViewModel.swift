@@ -83,7 +83,7 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
         }
 
         if options.contains(.seed) {
-            secondaryButtons.append(ChooseRestoreOptionButton(option: .seed, title: L10n.useASeedPhrasePrivateKey))
+            secondaryButtons.append(ChooseRestoreOptionButton(option: .seed, title: L10n.useASeedPhrase))
         }
     }
 }
