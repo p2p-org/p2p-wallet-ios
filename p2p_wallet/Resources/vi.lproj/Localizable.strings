@@ -919,3 +919,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Your seed phrase must never be shared" = "Cụm từ hạt giống của bạn không bao giờ được chia sẻ";
 "Seed phrase" = "Cụm từ hạt giống";
 "Your seed phrase" = "Cụm từ hạt giống của bạn";
+"Your recovery kit" = "Bộ phục hồi của bạn";
+"If you switch devices, you can easily restore your wallet. No private keys needed." = "Nếu bạn chuyển đổi thiết bị, bạn có thể dễ dàng khôi phục ví của mình.  Không cần khóa riêng.";

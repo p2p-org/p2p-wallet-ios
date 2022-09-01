@@ -918,3 +918,5 @@ another" = "une crypto pour
 "Your seed phrase must never be shared" = "Votre phrase de départ ne doit jamais être partagée";
 "Seed phrase" = "Phrase de départ";
 "Your seed phrase" = "Votre phrase de départ";
+"Your recovery kit" = "Votre kit de récupération";
+"If you switch devices, you can easily restore your wallet. No private keys needed." = "Si vous changez d'appareil, vous pouvez facilement restaurer votre portefeuille.  Aucune clé privée nécessaire.";
