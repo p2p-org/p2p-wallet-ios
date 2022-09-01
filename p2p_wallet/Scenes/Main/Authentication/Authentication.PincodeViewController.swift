@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 13/11/2021.
 //
 
+import BEPureLayout
 import Foundation
 import UIKit
 

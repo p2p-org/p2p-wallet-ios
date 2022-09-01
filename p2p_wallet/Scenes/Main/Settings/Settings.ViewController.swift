@@ -7,6 +7,7 @@
 
 import Foundation
 import Resolver
+import SwiftUI
 import UIKit
 
 extension Settings {
@@ -208,11 +209,8 @@ extension Settings {
                 let vc = ReserveName.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .backup:
-                let viewModel = Backup.ViewModel()
-                viewModel.didBackupHandler = { [weak self] in
-                    self?.viewModel.setDidBackup(true)
-                }
-                let vc = Backup.ViewController(viewModel: viewModel)
+
+                let vc = UIHostingController(rootView: SeedPhraseDetailView(viewModel: .init()))
                 show(vc, sender: nil)
             case .currency:
                 let vc = SelectFiatViewController(viewModel: viewModel)
