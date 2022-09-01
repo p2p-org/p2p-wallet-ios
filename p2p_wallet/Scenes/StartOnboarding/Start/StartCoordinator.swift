@@ -71,7 +71,7 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
 
         if let lastState = service.lastState {
             switch lastState {
-            case let .bindingPhoneNumber(email, solPrivateKey, ethPublicKey, deviceShare, innerState):
+            case let .bindingPhoneNumber(email, seedPhrase, ethPublicKey, deviceShare, innerState):
                 switch innerState {
                 case let .block(until, _, phoneNumber, data):
                     // Move user to block screen, after expired time move him to enter phone number
@@ -80,7 +80,7 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
                             parent: vc,
                             initialState: CreateWalletFlowState.bindingPhoneNumber(
                                 email: email,
-                                solPrivateKey: solPrivateKey,
+                                seedPhrase: seedPhrase,
                                 ethPublicKey: ethPublicKey,
                                 deviceShare: deviceShare,
                                 BindingPhoneNumberState
@@ -117,8 +117,8 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
             case .restore:
                 guard let vc = vc else { return }
                 self.openRestoreWallet(vc: vc)
-            case let .success(onboardingWallet):
-                self.subject.send(onboardingWallet)
+            case let .success(data):
+                self.subject.send(.created(data))
             }
             self.subject.send(completion: .finished)
         }.store(in: &subscriptions)
