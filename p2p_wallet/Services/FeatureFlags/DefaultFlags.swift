@@ -18,6 +18,7 @@ func setupDefaultFlags() {
             // Onboarding
             FeatureFlag(feature: .mockedApiGateway, enabled: false),
             FeatureFlag(feature: .mockedTKeyFacade, enabled: false),
+            FeatureFlag(feature: .mockedDeviceShare, enabled: false),
         ]
     )
 }

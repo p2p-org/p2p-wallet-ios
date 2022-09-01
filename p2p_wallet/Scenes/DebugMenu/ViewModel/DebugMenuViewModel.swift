@@ -65,12 +65,14 @@ extension DebugMenuViewModel {
 
         case mockedApiGateway
         case mockedTKeyFacade
+        case mockedDeviceShare
 
         var title: String {
             switch self {
             case .sslPinning: return "SSL Pinning"
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
+            case .mockedDeviceShare: return "[Onboarding] DeviceShare Mock"
             }
         }
 
@@ -79,6 +81,7 @@ extension DebugMenuViewModel {
             case .sslPinning: return .sslPinning
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade
+            case .mockedDeviceShare: return .mockedDeviceShare
             }
         }
     }
