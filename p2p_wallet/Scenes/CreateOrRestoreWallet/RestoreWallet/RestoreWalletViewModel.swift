@@ -29,43 +29,16 @@ final class RestoreWalletViewModel: BaseViewModel {
 
     @Injected var authService: AuthService
 
-    override init() {
-        // TODO: Move into a single TKeyFacade provider for create and restore wallet
-        let tKeyFacade: TKeyFacade = available(.mockedTKeyFacade) ?
-            TKeyMockupFacade() :
-            TKeyJSFacade(
-                wkWebView: GlobalWebView.requestWebView(),
-                config: .init(
-                    metadataEndpoint: OnboardingConfig.shared.metaDataEndpoint,
-                    torusEndpoint: OnboardingConfig.shared.torusEndpoint,
-                    torusNetwork: "testnet",
-                    torusVerifierMapping: [
-                        "google": OnboardingConfig.shared.torusGoogleVerifier,
-                        "apple": OnboardingConfig.shared.torusAppleVerifier,
-                    ]
-                )
-            )
-
-        #if !RELEASE
-            let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_DEV")!
-        #else
-            let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_PROD")!
-        #endif
-
-        let apiGatewayClient: APIGatewayClient = available(.mockedApiGateway) ?
-            APIGatewayClientImplMock() :
-            APIGatewayClientImpl(endpoint: apiGatewayEndpoint)
-
+    init(provider: OnboardingStateMachineProvider = OnboardingStateMachineProviderImpl()) {
         let accountStorage: AccountStorageType = Resolver.resolve()
         deviceShare = available(.mockedDeviceShare) ? "someDeviceShare" : accountStorage.deviceShare
 
         let keychainStorage: KeychainStorage = Resolver.resolve()
-
         stateMachine = .init(provider: RestoreWalletFlowContainer(
-            tKeyFacade: tKeyFacade,
+            tKeyFacade: provider.createTKeyFacade(),
             deviceShare: deviceShare,
             authService: AuthServiceBridge(),
-            apiGatewayClient: apiGatewayClient,
+            apiGatewayClient: provider.createApiGatewayClient(),
             icloudAccountProvider: keychainStorage
         ))
 
