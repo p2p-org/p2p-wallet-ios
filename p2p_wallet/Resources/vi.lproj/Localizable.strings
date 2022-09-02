@@ -921,3 +921,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Your seed phrase" = "Cụm từ hạt giống của bạn";
 "Your recovery kit" = "Bộ phục hồi của bạn";
 "If you switch devices, you can easily restore your wallet. No private keys needed." = "Nếu bạn chuyển đổi thiết bị, bạn có thể dễ dàng khôi phục ví của mình.  Không cần khóa riêng.";
+"Multi-factor authentication" = "Xác thực đa yếu tố";
+"Your private key is split into multiple factors. At least, you should have three factors, but you can create more. To log in to different devices, you need at least two factors." = "Khóa cá nhân của bạn được chia thành nhiều yếu tố.  Ít nhất, bạn nên có ba yếu tố, nhưng bạn có thể tạo ra nhiều hơn nữa.  Để đăng nhập vào các thiết bị khác nhau, bạn cần ít nhất hai yếu tố.";

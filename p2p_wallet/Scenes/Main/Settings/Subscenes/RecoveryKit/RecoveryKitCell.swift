@@ -7,9 +7,10 @@ import SwiftUI
 
 struct RecoveryKitCell: View {
     let title: String
+    let onTap: (() -> Void)?
 
     var body: some View {
-        Button {} label: {
+        Button { onTap?() } label: {
             HStack {
                 Image(uiImage: .keyIcon)
                 Text(title)
@@ -33,7 +34,7 @@ struct RecoveryKitCell_Previews: PreviewProvider {
     static var previews: some View {
         ZStack {
             Color(.gray)
-            RecoveryKitCell(title: "Seed phrase")
+            RecoveryKitCell(title: "Seed phrase") {}
         }
     }
 }

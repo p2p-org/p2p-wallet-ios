@@ -15,11 +15,27 @@ struct RecoveryKitTKeyData {
 }
 
 class RecoveryKitViewModel: ObservableObject {
-    @Injected private var accountStorage: AccountStorageType
+    @Injected private var userWalletManager: UserWalletManager
 
     @Published var tKeyData: RecoveryKitTKeyData?
 
-    override init() {
+    var seedPhrase: (() -> Void)?
+
+    init() {
         if
+            let ethAddress = userWalletManager.wallet?.ethAddress,
+            let deviceShare = userWalletManager.wallet?.deviceShare
+        {
+            tKeyData = .init(
+                device: deviceShare,
+                phone: "Unavailable",
+                social: ethAddress,
+                socialProvider: "Unavailable"
+            )
+        }
+    }
+
+    func openSeedPhrase() {
+        seedPhrase?()
     }
 }
