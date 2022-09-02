@@ -7,11 +7,13 @@ import RenVMSwift
 import Resolver
 import SolanaSwift
 
+/// Centralized class for managing user accounts
 class UserWalletManager: ObservableObject {
     @Injected private var storage: KeychainStorage
     @Injected private var notificationsService: NotificationService
 
-    @Published var wallet: UserWallet?
+    /// Current selected wallet
+    @Published private(set) var wallet: UserWallet?
 
     init() {}
 
@@ -19,16 +21,20 @@ class UserWalletManager: ObservableObject {
         try await storage.reloadSolanaAccount()
 
         guard let account = storage.account else { return }
+
+        let withDeviceShare = storage.deviceShareAttachedEthAddressKey == storage.ethAddress
+
         wallet = .init(
             seedPhrase: account.phrase,
             derivablePath: storage.derivablePath,
             name: storage.getName(),
-            deviceShare: storage.deviceShare,
+            deviceShare: withDeviceShare ? storage.deviceShare : nil,
             ethAddress: storage.ethAddress,
             account: account
         )
     }
 
+    /// Set a new wallet and use it as default
     func add(
         seedPhrase: [String],
         derivablePath: DerivablePath,
@@ -43,11 +49,13 @@ class UserWalletManager: ObservableObject {
         try storage.save(ethAddress: ethAddress ?? "")
         if let deviceShare = deviceShare {
             try storage.save(deviceShare: deviceShare)
+            try storage.save(deviceShareAttachedEthAddress: ethAddress)
         }
 
         try await refresh()
     }
 
+    /// Remove a current selected wallet
     func remove() async throws {
         ResolverScope.session.reset()
 

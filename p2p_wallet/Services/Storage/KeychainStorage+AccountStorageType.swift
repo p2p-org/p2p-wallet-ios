@@ -81,4 +81,16 @@ extension KeychainStorage: AccountStorageType {
             keychain.set(ethAddress, forKey: ethAddressKey)
         }
     }
+
+    var deviceShareAttachedEthAddress: String? {
+        keychain.get(deviceShareAttachedEthAddressKey)
+    }
+
+    func save(deviceShareAttachedEthAddress: String) throws {
+        if ethAddress.isEmpty {
+            keychain.delete(deviceShareAttachedEthAddressKey)
+        } else {
+            keychain.set(deviceShareAttachedEthAddress, forKey: deviceShareAttachedEthAddressKey)
+        }
+    }
 }

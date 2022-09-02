@@ -17,8 +17,10 @@ class KeychainStorage {
     let derivableTypeKey: String
     let walletIndexKey: String
     let nameKey: String
-    let deviceShareKey: String
     let ethAddressKey: String
+
+    let deviceShareKey: String
+    let deviceShareAttachedEthAddressKey: String
 
     let iCloudAccountsKey = "Keychain.Accounts"
 
@@ -44,12 +46,14 @@ class KeychainStorage {
             Defaults.keychainNameKey = nameKey
         }
 
-        if let pincodeKey = Defaults.keychainPincodeKey,
-           let phrasesKey = Defaults.keychainPhrasesKey,
-           let derivableTypeKey = Defaults.keychainDerivableTypeKey,
-           let walletIndexKey = Defaults.keychainWalletIndexKey,
-           let deviceShareKey = Defaults.keychainDeviceShareKey,
-           let ethAddressKey = Defaults.keychainEthAddressKey
+        if
+            let pincodeKey = Defaults.keychainPincodeKey,
+            let phrasesKey = Defaults.keychainPhrasesKey,
+            let derivableTypeKey = Defaults.keychainDerivableTypeKey,
+            let walletIndexKey = Defaults.keychainWalletIndexKey,
+            let ethAddressKey = Defaults.keychainEthAddressKey,
+            let deviceShareKey = Defaults.keychainDeviceShareKey,
+            let deviceShareAttachedEthAddressKey = Defaults.deviceShareAttachedEthAddressKey
         {
             self.pincodeKey = pincodeKey
             self.phrasesKey = phrasesKey
@@ -57,6 +61,7 @@ class KeychainStorage {
             self.walletIndexKey = walletIndexKey
             self.deviceShareKey = deviceShareKey
             self.ethAddressKey = ethAddressKey
+            self.deviceShareAttachedEthAddressKey = deviceShareAttachedEthAddressKey
         } else {
             let pincodeKey = UUID().uuidString
             self.pincodeKey = pincodeKey
@@ -81,6 +86,10 @@ class KeychainStorage {
             let ethAddressKey = UUID().uuidString
             self.ethAddressKey = ethAddressKey
             Defaults.keychainEthAddressKey = ethAddressKey
+
+            let deviceShareAttachedEthAddressKey = UUID().uuidString
+            self.deviceShareAttachedEthAddressKey = deviceShareAttachedEthAddressKey
+            Defaults.keychainDeviceShareAttachedEthAddressKey = deviceShareAttachedEthAddressKey
 
             removeCurrentAccount()
         }
