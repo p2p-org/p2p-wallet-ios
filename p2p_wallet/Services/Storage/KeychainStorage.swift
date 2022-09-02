@@ -53,7 +53,7 @@ class KeychainStorage {
             let walletIndexKey = Defaults.keychainWalletIndexKey,
             let ethAddressKey = Defaults.keychainEthAddressKey,
             let deviceShareKey = Defaults.keychainDeviceShareKey,
-            let deviceShareAttachedEthAddressKey = Defaults.deviceShareAttachedEthAddressKey
+            let deviceShareAttachedEthAddressKey = Defaults.keychainDeviceShareAttachedEthAddressKey
         {
             self.pincodeKey = pincodeKey
             self.phrasesKey = phrasesKey
