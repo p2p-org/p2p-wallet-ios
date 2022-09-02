@@ -102,7 +102,7 @@ final class PincodeViewController: BaseViewController {
     }
 
     private func addRightButton() {
-        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let infoButton = UIButton()
         infoButton.addTarget(self, action: #selector(openInfo), for: .touchUpInside)
         infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
         infoButton.contentMode = .scaleAspectFill
