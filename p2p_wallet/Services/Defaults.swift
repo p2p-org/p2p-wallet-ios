@@ -27,10 +27,7 @@ extension DefaultsKeys {
     var keychainWalletIndexKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainNameKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainEthAddressKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
-    var keychainDeviceShareKey: keychainDeviceShareAttachedEthAddressKey DefaultsKey<String?> {
-        .init(#function, defaultValue: nil)
-    }
-
+    var keychainDeviceShareKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainDeviceShareAttachedEthAddressKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
 
     var didSetEnableBiometry: DefaultsKey<Bool> { .init(#function, defaultValue: false) }

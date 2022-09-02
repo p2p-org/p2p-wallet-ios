@@ -47,7 +47,12 @@ class UserWalletManager: ObservableObject {
         try storage.save(walletIndex: derivablePath.walletIndex)
         try storage.save(name: name ?? "")
         try storage.save(ethAddress: ethAddress ?? "")
-        if let deviceShare = deviceShare {
+
+        // Save device share
+        if
+            let deviceShare = deviceShare,
+            let ethAddress = ethAddress
+        {
             try storage.save(deviceShare: deviceShare)
             try storage.save(deviceShareAttachedEthAddress: ethAddress)
         }
