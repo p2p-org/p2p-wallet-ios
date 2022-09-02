@@ -14,4 +14,5 @@ public extension Feature {
     static let mockedApiGateway = Feature(rawValue: "mockedApiGateway")
     static let mockedTKeyFacade = Feature(rawValue: "mockedTKeyFacade")
     static let mockedDeviceShare = Feature(rawValue: "mockedDeviceShare")
+    static let simulatedSocialError = Feature(rawValue: "simulatedSocialError")
 }

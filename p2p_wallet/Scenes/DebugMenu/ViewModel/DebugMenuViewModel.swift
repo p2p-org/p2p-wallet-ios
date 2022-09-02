@@ -66,6 +66,7 @@ extension DebugMenuViewModel {
         case mockedApiGateway
         case mockedTKeyFacade
         case mockedDeviceShare
+        case simulatedSocialError
 
         var title: String {
             switch self {
@@ -73,6 +74,7 @@ extension DebugMenuViewModel {
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
             case .mockedDeviceShare: return "[Onboarding] DeviceShare Mock"
+            case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
             }
         }
 
@@ -82,6 +84,7 @@ extension DebugMenuViewModel {
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade
             case .mockedDeviceShare: return .mockedDeviceShare
+            case .simulatedSocialError: return .simulatedSocialError
             }
         }
     }
