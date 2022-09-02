@@ -496,7 +496,6 @@
 "Receiving statuses" = "Receiving statuses";
 "Receiving %@ renBTC" = "Receiving %@ renBTC";
 "Reserve your P2P username" = "Reserve your P2P username";
-"username" = "username";
 "Use any latin and special symbols or emojis." = "Use any latin and special symbols or emojis.";
 "You can also %@ this step and reserve a username later." = "You can also %@ this step and reserve a username later.";
 "skip" = "skip";
@@ -827,3 +826,6 @@ Reset the PIN or wait for %@.";
 "one crypto for 
 another" = "one crypto for 
 another";
+"Username" = "Username";
+"PROFILE AND SECURITY" = "PROFILE AND SECURITY";
+"Recovery kit" = "Recovery kit";

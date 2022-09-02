@@ -8,4 +8,5 @@
 public extension Feature {
     static let sslPinning = Feature(rawValue: "ssl_pinning")
     static let coinGeckoPriceProvider = Feature(rawValue: "coinGeckoPriceProvider")
+    static let settingsFeature = Feature(rawValue: "settingsFeature")
 }
