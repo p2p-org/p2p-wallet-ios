@@ -78,14 +78,6 @@ class AppCoordinator: Coordinator<Void> {
         hideLoadingAndTransitionTo(vc)
     }
 
-    private func navigate(account: Account?) {
-        if account == nil {
-            newOnboardingFlow()
-        } else {
-            navigateToMain()
-        }
-    }
-
     private func openSplash(_ completionHandler: @escaping () -> Void) {
         let vc = SplashViewController()
         window?.rootViewController = vc
