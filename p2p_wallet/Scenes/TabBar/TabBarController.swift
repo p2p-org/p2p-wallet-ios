@@ -18,6 +18,7 @@ final class TabBarController: UITabBarController {
     private var homeCoordinator: HomeCoordinator?
     private var sendTokenCoordinator: SendToken.Coordinator!
     private var actionsCoordinator: ActionsCoordinator?
+    private var settingsCoordinator: SettingsCoordinator?
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -109,12 +110,18 @@ final class TabBarController: UITabBarController {
 
         let settingsVC = Settings.ViewController(viewModel: Settings.ViewModel())
 
+        let settingsNavigation = UINavigationController()
+        settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
+        settingsCoordinator?.start()
+            .sink(receiveValue: { _ in })
+            .store(in: &cancellables)
+
         viewControllers = [
             homeNavigation,
             UINavigationController(rootViewController: historyVC),
             sendTokenNavigationVC,
             UIViewController(),
-            UINavigationController(rootViewController: settingsVC),
+            settingsNavigation,
         ]
     }
 
