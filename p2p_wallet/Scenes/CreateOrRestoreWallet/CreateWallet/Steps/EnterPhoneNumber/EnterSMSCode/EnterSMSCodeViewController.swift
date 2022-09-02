@@ -158,7 +158,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
         navigationItem.leftBarButtonItem = backButton
 
         // Right button
-        let infoButton = UIButton(frame: CGRect(x: 0, y: 0, width: 40, height: 40))
+        let infoButton = UIButton()
         infoButton.addTarget(self, action: #selector(onInfo), for: .touchUpInside)
         infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
         infoButton.contentMode = .scaleAspectFill
