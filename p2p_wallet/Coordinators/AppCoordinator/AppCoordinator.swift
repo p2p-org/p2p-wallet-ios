@@ -111,6 +111,7 @@ class AppCoordinator: Coordinator<Void> {
 
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
+                self.showAuthenticationOnMainOnAppear = false
                 let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
                 case let .created(data):
@@ -136,8 +137,6 @@ class AppCoordinator: Coordinator<Void> {
 
                     saveSecurity(data: data.security)
                 }
-
-                showAuthenticationOnMainOnAppear = false
             })
             .store(in: &subscriptions)
     }
