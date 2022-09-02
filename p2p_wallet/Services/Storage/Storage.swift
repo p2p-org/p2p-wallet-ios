@@ -35,8 +35,10 @@ protocol PincodeStorageType {
 }
 
 protocol AccountStorageType: SolanaAccountStorage {
-    var deviceShare: String? { get }
     var ethAddress: String? { get }
+
+    var deviceShare: String? { get }
+    var deviceShareAttachedEthAddress: String? { get }
 
     func getDerivablePath() -> DerivablePath?
 
@@ -44,8 +46,11 @@ protocol AccountStorageType: SolanaAccountStorage {
     func save(phrases: [String]) throws
     func save(derivableType: DerivablePath.DerivableType) throws
     func save(walletIndex: Int) throws
-    func save(deviceShare: String) throws
     func save(ethAddress: String) throws
+
+    func save(deviceShare: String) throws
+    func save(deviceShareAttachedEthAddress: String) throws
+
     func clearAccount()
 }
 
