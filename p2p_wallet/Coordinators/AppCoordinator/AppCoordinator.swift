@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import KeyAppUI
 import Onboarding
@@ -20,7 +21,9 @@ class AppCoordinator: Coordinator<Void> {
     private let storage: AccountStorageType & PincodeStorageType & NameStorageType = Resolver.resolve()
     let analyticsManager: AnalyticsManager = Resolver.resolve()
     let notificationsService: NotificationService = Resolver.resolve()
+
     @Injected var notificationService: NotificationService
+    @Injected var userWalletManager: UserWalletManager
 
     // MARK: - Properties
 
@@ -28,6 +31,8 @@ class AppCoordinator: Coordinator<Void> {
     var isRestoration = false
     var showAuthenticationOnMainOnAppear = true
     var resolvedName: String?
+
+    var reloadEvent: PassthroughSubject<Void, Never> = .init()
 
     // MARK: - Initializers
 
@@ -45,39 +50,25 @@ class AppCoordinator: Coordinator<Void> {
             window?.overrideUserInterfaceStyle = Defaults.appearance
         }
 
-        openSplash()
-    }
-
-    func reload() async {
-        let account = await reloadData()
-        navigate(account: account)
+        openSplash { [self] in
+            userWalletManager
+                .$wallet
+                .combineLatest(
+                    reloadEvent
+                        .map { _ in }
+                        .prepend(())
+                )
+                .receive(on: RunLoop.main)
+                .sink { wallet, _ in
+                    print("Here")
+                    print(wallet)
+                    wallet != nil ? navigateToMain() : newOnboardingFlow()
+                }
+                .store(in: &subscriptions)
+        }
     }
 
     // MARK: - Navigation
-
-    func oldOnboardingFlow() {
-        // TODO: - Change to CreateOrRestoreWallet.Coordinator.start()
-        let vm = CreateOrRestoreWallet.ViewModel()
-        let vc = CreateOrRestoreWallet.ViewController(viewModel: vm)
-        let nc = UINavigationController(rootViewController: vc)
-        hideLoadingAndTransitionTo(nc)
-    }
-
-    func navigateToOnboarding() {
-        // TODO: - Change to Onboarding.Coordinator.start()
-        let vm = Onboarding.ViewModel()
-        let vc = Onboarding.ViewController(viewModel: vm)
-        hideLoadingAndTransitionTo(vc)
-    }
-
-    func navigateToOnboardingDone() {
-        // TODO: - Change to Onboarding.Coordinator.start()
-        let vc = WelcomeViewController(isReturned: isRestoration, name: resolvedName)
-        vc.finishSetupHandler = { [weak self] in
-            self?.finishSetUp()
-        }
-        hideLoadingAndTransitionTo(vc)
-    }
 
     func navigateToMain() {
         // TODO: - Change to Main.Coordinator.start()
@@ -85,11 +76,6 @@ class AppCoordinator: Coordinator<Void> {
         let vc = Main.ViewController(viewModel: vm)
         vc.authenticateWhenAppears = showAuthenticationOnMainOnAppear
         hideLoadingAndTransitionTo(vc)
-    }
-
-    func finishSetUp() {
-        analyticsManager.log(event: .setupFinishClick)
-        Task { await reload() }
     }
 
     private func navigate(account: Account?) {
@@ -100,23 +86,21 @@ class AppCoordinator: Coordinator<Void> {
         }
     }
 
-    private func openSplash() {
+    private func openSplash(_ completionHandler: @escaping () -> Void) {
         let vc = SplashViewController()
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
-        Task { await warmup() }
-    }
 
-    private func warmup() async {
-        await Resolver.resolve(WarmupManager.self).start()
-        let account = await reloadData()
+        // warmup
+        Task {
+            await Resolver.resolve(WarmupManager.self).start()
+            try await userWalletManager.refresh()
 
-        if let splashVC = window?.rootViewController as? SplashViewController {
-            splashVC.stop { [weak self] in
-                self?.navigate(account: account)
+            if let splashVC = window?.rootViewController as? SplashViewController {
+                splashVC.stop(completionHandler: completionHandler)
+            } else {
+                completionHandler()
             }
-        } else {
-            navigate(account: account)
         }
     }
 
@@ -126,30 +110,34 @@ class AppCoordinator: Coordinator<Void> {
         let startCoordinator = provider.startCoordinator(for: window)
 
         coordinate(to: startCoordinator)
-            .sink(receiveValue: { [unowned self] result in
-                let handler = Resolver.resolve(CreateOrRestoreWalletHandler.self)
+            .sinkAsync(receiveValue: { [unowned self] result in
+                let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
                 case let .created(data):
-                    handler.creatingWalletDidComplete(
-                        phrases: data.wallet.seedPhrase.components(separatedBy: " "),
+                    analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
+
+                    try await userWalletManager.add(
+                        seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
                         derivablePath: data.wallet.derivablePath,
                         name: nil,
-                        deviceShare: data.deviceShare
+                        deviceShare: data.deviceShare,
+                        ethAddress: data.ethAddress
                     )
+
                     saveSecurity(data: data.security)
                 case let .restored(data):
-                    handler.restoringWalletDidComplete(
-                        phrases: data.wallet.seedPhrase.components(separatedBy: " "),
+                    try await userWalletManager.add(
+                        seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
                         derivablePath: data.wallet.derivablePath,
-                        name: nil
+                        name: nil,
+                        deviceShare: nil,
+                        ethAddress: data.ethAddress
                     )
+
                     saveSecurity(data: data.security)
                 }
 
-                self.showAuthenticationOnMainOnAppear = false
-
-                // Reload
-                finishSetUp()
+                showAuthenticationOnMainOnAppear = false
             })
             .store(in: &subscriptions)
     }
@@ -164,15 +152,6 @@ class AppCoordinator: Coordinator<Void> {
     private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
         window?.rootViewController?.view.hideLoadingIndicatorView()
         window?.rootViewController = vc
-    }
-
-    private func reloadData() async -> Account? {
-        // reload session
-        ResolverScope.session.reset()
-
-        // try to retrieve account from seed
-        try? await storage.reloadSolanaAccount()
-        return storage.account
     }
 }
 

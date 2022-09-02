@@ -26,10 +26,6 @@ protocol ChangeThemeResponder {
     func changeThemeTo(_ style: UIUserInterfaceStyle)
 }
 
-protocol LogoutResponder {
-    func logout()
-}
-
 protocol SettingsViewModelType: ReserveNameHandler {
     var selectableLanguages: [(LocalizedLanguage, Bool)] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
@@ -71,7 +67,7 @@ extension Settings {
 
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManager
-        @Injected private var logoutResponder: LogoutResponder
+        @Injected private var userWalletManager: UserWalletManager
         @Injected private var changeThemeResponder: ChangeThemeResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
@@ -364,6 +360,6 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func logout() {
         analyticsManager.log(event: .signedOut)
-        logoutResponder.logout()
+        Task { try await userWalletManager.remove() }
     }
 }

@@ -46,9 +46,6 @@ extension Resolver: ResolverRegistering {
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
             .implements(ChangeThemeResponder.self)
-            .implements(LogoutResponder.self)
-            .implements(CreateOrRestoreWalletHandler.self)
-            .implements(OnboardingHandler.self)
             .scope(.application)
 
         // Storages
@@ -63,6 +60,10 @@ extension Resolver: ResolverRegistering {
             .implements((AccountStorageType & PincodeStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType).self)
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
+            .scope(.application)
+
+        // WalletManager
+        register { UserWalletManager() }
             .scope(.application)
 
         // AnalyticsManager

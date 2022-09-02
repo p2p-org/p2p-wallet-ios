@@ -25,6 +25,8 @@ final class AppEventHandler: AppEventHandlerType {
     // MARK: - Properties
 
     weak var delegate: AppEventHandlerDelegate?
+
+    @available(*, deprecated, message: "Will be removed")
     private var resolvedName: String?
 
     init() {
@@ -72,112 +74,6 @@ extension AppEventHandler: ChangeThemeResponder {
     func changeThemeTo(_ style: UIUserInterfaceStyle) {
         Defaults.appearance = style
         delegate?.userDidChangeTheme(to: style)
-    }
-}
-
-// MARK: - LogoutResponder
-
-extension AppEventHandler: LogoutResponder {
-    func logout() {
-        ResolverScope.session.reset()
-        notificationsService.unregisterForRemoteNotifications()
-        Task {
-            await notificationsService.deleteDeviceToken()
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.storage.clearAccount()
-            Defaults.walletName = [:]
-            Defaults.didSetEnableBiometry = false
-            Defaults.didSetEnableNotifications = false
-            Defaults.didBackupOffline = false
-            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForSession)
-            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForGatewayAddress)
-            UserDefaults.standard.removeObject(forKey: LockAndMint.keyForProcessingTransactions)
-            UserDefaults.standard.removeObject(forKey: BurnAndRelease.keyForSubmitedBurnTransaction)
-            Defaults.forceCloseNameServiceBanner = false
-            Defaults.shouldShowConfirmAlertOnSend = true
-            Defaults.shouldShowConfirmAlertOnSwap = true
-            self.delegate?.userDidLogout()
-        }
-    }
-}
-
-// MARK: - CreateOrRestoreWalletHandler
-
-extension AppEventHandler: CreateOrRestoreWalletHandler {
-    func creatingWalletDidComplete(
-        phrases: [String]?,
-        derivablePath: DerivablePath?,
-        name: String?,
-        deviceShare: String
-    ) {
-        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name, deviceShare: deviceShare)
-        resolvedName = name
-    }
-
-    func restoringWalletDidComplete(phrases: [String]?, derivablePath: DerivablePath?, name: String?) {
-        delegate?.restoreWalletDidComplete()
-        saveAccountToStorage(phrases: phrases, derivablePath: derivablePath, name: name, deviceShare: nil)
-        resolvedName = name
-    }
-
-    func creatingOrRestoringWalletDidCancel() {
-        logout()
-        delegate?.userDidLogout()
-    }
-
-    private func saveAccountToStorage(
-        phrases: [String]?,
-        derivablePath: DerivablePath?,
-        name: String?,
-        deviceShare: String?
-    ) {
-        guard let phrases = phrases, let derivablePath = derivablePath else {
-            creatingOrRestoringWalletDidCancel()
-            return
-        }
-
-        delegate?.didStartLoading()
-
-        Task {
-            do {
-                try storage.save(phrases: phrases)
-                try storage.save(derivableType: derivablePath.type)
-                try storage.save(walletIndex: derivablePath.walletIndex)
-
-                try await storage.reloadSolanaAccount()
-
-                if let name = name {
-                    storage.save(name: name)
-                }
-
-                if let deviceShare = deviceShare {
-                    try storage.save(deviceShare: deviceShare)
-                }
-
-                await MainActor.run {
-                    delegate?.didStopLoading()
-                }
-            } catch {
-                await MainActor.run {
-                    delegate?.didStopLoading()
-                    notificationsService.showInAppNotification(.error(error))
-                    creatingOrRestoringWalletDidCancel()
-                }
-            }
-        }
-    }
-}
-
-// MARK: - OnboardingHandler
-
-extension AppEventHandler: OnboardingHandler {
-    func onboardingDidCancel() {
-        logout()
-    }
-
-    func onboardingDidComplete() {
-        delegate?.onboardingDidFinish(resolvedName: resolvedName)
     }
 }
 

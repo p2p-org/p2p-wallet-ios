@@ -10,10 +10,10 @@ final class RestoreSeedPhraseDelegatedCoordinator: DelegatedCoordinator<RestoreS
     override func buildViewController(for state: RestoreSeedState) -> UIViewController? {
         switch state {
         case .signInSeed:
-            return handleSignInSeed()
+            return signInViewController()
 
         case let .chooseDerivationPath(phrase):
-            return handleChooseDerivationPath(phrase: phrase)
+            return chooseDerivationPathViewController(phrase: phrase)
 
         case .finish:
             return nil
@@ -30,7 +30,7 @@ final class RestoreSeedPhraseDelegatedCoordinator: DelegatedCoordinator<RestoreS
 }
 
 private extension RestoreSeedPhraseDelegatedCoordinator {
-    func handleSignInSeed() -> UIViewController {
+    func signInViewController() -> UIViewController {
         let viewModel = SeedPhraseRestoreWalletViewModel()
         viewModel.coordinatorIO.finishedWithSeed.sinkAsync { [stateMachine] phrase in
             _ = try await stateMachine <- .chooseDerivationPath(phrase: phrase)
@@ -46,7 +46,7 @@ private extension RestoreSeedPhraseDelegatedCoordinator {
         return UIHostingController(rootView: SeedPhraseRestoreWalletView(viewModel: viewModel))
     }
 
-    func handleChooseDerivationPath(phrase: [String]) -> UIViewController {
+    func chooseDerivationPathViewController(phrase: [String]) -> UIViewController {
         let viewModel = NewDerivableAccounts.ViewModel(phrases: phrase)
 
         viewModel.coordinatorIO.didSucceed.sinkAsync { [stateMachine] phrase, path in

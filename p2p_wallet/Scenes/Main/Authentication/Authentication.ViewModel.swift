@@ -28,7 +28,7 @@ extension Authentication {
         // MARK: - Dependencies
 
         @Injected private var pincodeStorage: PincodeStorageType
-        @Injected private var logoutResponder: LogoutResponder
+        @Injected private var userWalletManager: UserWalletManager
 
         // MARK: - Initializers
 
@@ -97,6 +97,10 @@ extension Authentication.ViewModel: AuthenticationViewModelType {
 
     func signOut() {
         setBlockedTime(nil)
-        navigationSubject.accept(.signOutAlert { [weak self] in self?.logoutResponder.logout() })
+        navigationSubject.accept(
+            .signOutAlert { [userWalletManager] in
+                Task { try await userWalletManager.remove() }
+            }
+        )
     }
 }
