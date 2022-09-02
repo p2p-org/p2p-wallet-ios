@@ -931,3 +931,5 @@ another";
 "Your seed phrase" = "Your seed phrase";
 "Your recovery kit" = "Your recovery kit";
 "If you switch devices, you can easily restore your wallet. No private keys needed." = "If you switch devices, you can easily restore your wallet. No private keys needed.";
+"Multi-factor authentication" = "Multi-factor authentication";
+"Your private key is split into multiple factors. At least, you should have three factors, but you can create more. To log in to different devices, you need at least two factors." = "Your private key is split into multiple factors. At least, you should have three factors, but you can create more. To log in to different devices, you need at least two factors.";

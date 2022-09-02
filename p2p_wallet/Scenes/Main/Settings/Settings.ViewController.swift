@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 11/10/2021.
 //
 
+import Combine
 import Foundation
 import Resolver
 import SwiftUI
@@ -12,6 +13,8 @@ import UIKit
 
 extension Settings {
     class ViewController: p2p_wallet.BaseViewController {
+        var subscriptions = [AnyCancellable]()
+
         let viewModel: SettingsViewModelType
 
         init(viewModel: SettingsViewModelType) {
@@ -60,6 +63,13 @@ extension Settings {
 
                     // Security & network section
                     SectionView(title: L10n.securityNetwork) {
+                        // Recovery kit
+                        CellView(
+                            icon: .recoveryKitIcon,
+                            title: UILabel(text: "Recovery kit")
+                        )
+                            .onTap { [unowned self] in viewModel.navigate(to: .recoveryKit) }
+
                         // Backup
                         CellView(
                             icon: .backupIcon,
@@ -250,6 +260,12 @@ extension Settings {
                 present(vc, animated: true, completion: nil)
             case .accessToPhoto:
                 PhotoLibraryAlertPresenter().present(on: self)
+            case .recoveryKit:
+                guard let navigationController = navigationController else { return }
+                RecoveryKitCoordinator(navigationController: navigationController)
+                    .start()
+                    .sinkAsync {}
+                    .store(in: &subscriptions)
             }
         }
     }

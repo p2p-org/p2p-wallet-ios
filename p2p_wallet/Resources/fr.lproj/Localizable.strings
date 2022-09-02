@@ -920,3 +920,5 @@ another" = "une crypto pour
 "Your seed phrase" = "Votre phrase de départ";
 "Your recovery kit" = "Votre kit de récupération";
 "If you switch devices, you can easily restore your wallet. No private keys needed." = "Si vous changez d'appareil, vous pouvez facilement restaurer votre portefeuille.  Aucune clé privée nécessaire.";
+"Multi-factor authentication" = "Authentification multifacteur";
+"Your private key is split into multiple factors. At least, you should have three factors, but you can create more. To log in to different devices, you need at least two factors." = "Votre clé privée est divisée en plusieurs facteurs.  Au moins, vous devriez avoir trois facteurs, mais vous pouvez en créer plus.  Pour vous connecter à différents appareils, vous avez besoin d'au moins deux facteurs.";

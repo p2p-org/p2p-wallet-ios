@@ -109,7 +109,6 @@ class KeychainStorage {
         keychain.delete(derivableTypeKey)
         keychain.delete(walletIndexKey)
         keychain.delete(nameKey)
-        keychain.delete(deviceShareKey)
 
         removeAccountCache()
     }
