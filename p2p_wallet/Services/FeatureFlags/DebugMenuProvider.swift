@@ -7,36 +7,36 @@
 
 import Foundation
 
-private protocol DebugMenuFeaturesStorage: AnyObject {
-    var debugMenuFeatures: [FeatureFlag] { get set }
+private protocol FeaturesStorage: AnyObject {
+    var storagedFeatures: [FeatureFlag] { get set }
 }
 
 public final class DebugMenuFeaturesProvider: FetchesFeatureFlags {
     public static let shared = DebugMenuFeaturesProvider()
 
     private var featureFlags = [FeatureFlag]()
-    private let storage: DebugMenuFeaturesStorage
+    private let storage: FeaturesStorage
 
-    private init(storage: DebugMenuFeaturesStorage = UserDefaults.standard) {
+    private init(storage: FeaturesStorage = UserDefaults.standard) {
         self.storage = storage
     }
 
     public func fetchFeatureFlags(_ completion: @escaping ([FeatureFlag]) -> Void) {
-        featureFlags = storage.debugMenuFeatures
+        featureFlags = storage.storagedFeatures
         completion(featureFlags)
     }
 
     public func updateFlag(for feature: Feature, with value: Bool) {
         featureFlags = featureFlags.filter { $0.feature != feature }
         featureFlags.append(FeatureFlag(feature: feature, enabled: value))
-        storage.debugMenuFeatures = featureFlags
+        storage.storagedFeatures = featureFlags
     }
 }
 
-extension UserDefaults: DebugMenuFeaturesStorage {
+extension UserDefaults: FeaturesStorage {
     static let featureFlagsKey = "feature_flags"
 
-    var debugMenuFeatures: [FeatureFlag] {
+    var storagedFeatures: [FeatureFlag] {
         get {
             guard
                 let data = data(forKey: Self.featureFlagsKey),

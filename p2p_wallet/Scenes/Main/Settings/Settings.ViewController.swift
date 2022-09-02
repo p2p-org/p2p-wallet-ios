@@ -35,7 +35,7 @@ extension Settings {
                             title: UILabel(text: L10n.username.onlyUppercaseFirst()),
                             trailing: UILabel(textSize: 15).setup { label in
                                 viewModel.usernameDriver
-                                    .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notYetReserved }
+                                    .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notReserved }
                                     .drive(label.rx.text)
                                     .disposed(by: disposeBag)
                                 viewModel.usernameDriver.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
