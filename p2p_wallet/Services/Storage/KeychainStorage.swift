@@ -18,6 +18,7 @@ class KeychainStorage {
     let walletIndexKey: String
     let nameKey: String
     let deviceShareKey: String
+    let ethAddressKey: String
 
     let iCloudAccountsKey = "Keychain.Accounts"
 
@@ -47,13 +48,15 @@ class KeychainStorage {
            let phrasesKey = Defaults.keychainPhrasesKey,
            let derivableTypeKey = Defaults.keychainDerivableTypeKey,
            let walletIndexKey = Defaults.keychainWalletIndexKey,
-           let deviceShareKey = Defaults.keychainDeviceShareKey
+           let deviceShareKey = Defaults.keychainDeviceShareKey,
+           let ethAddressKey = Defaults.keychainEthAddressKey
         {
             self.pincodeKey = pincodeKey
             self.phrasesKey = phrasesKey
             self.derivableTypeKey = derivableTypeKey
             self.walletIndexKey = walletIndexKey
             self.deviceShareKey = deviceShareKey
+            self.ethAddressKey = ethAddressKey
         } else {
             let pincodeKey = UUID().uuidString
             self.pincodeKey = pincodeKey
@@ -74,6 +77,10 @@ class KeychainStorage {
             let keychainDeviceShareKey = UUID().uuidString
             deviceShareKey = keychainDeviceShareKey
             Defaults.keychainDeviceShareKey = keychainDeviceShareKey
+
+            let ethAddressKey = UUID().uuidString
+            self.ethAddressKey = ethAddressKey
+            Defaults.keychainEthAddressKey = ethAddressKey
 
             removeCurrentAccount()
         }

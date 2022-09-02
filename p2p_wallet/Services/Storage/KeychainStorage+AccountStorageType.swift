@@ -14,20 +14,22 @@ extension KeychainStorage: AccountStorageType {
         keychain.get(deviceShareKey)
     }
 
-    func reloadSolanaAccount() async throws {
-        guard let phrases = keychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
+    var derivablePath: DerivablePath {
         let derivableTypeRaw = keychain.get(derivableTypeKey) ?? ""
         let walletIndexRaw = keychain.get(walletIndexKey) ?? ""
-
         let defaultDerivablePath = DerivablePath.default
-
         let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath.type
         let walletIndex = Int(walletIndexRaw) ?? defaultDerivablePath.walletIndex
 
+        return .init(type: derivableType, walletIndex: walletIndex)
+    }
+
+    func reloadSolanaAccount() async throws {
+        guard let phrases = keychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
         _account = try await SolanaSwift.Account(
             phrase: phrases,
             network: Defaults.apiEndPoint.network,
-            derivablePath: .init(type: derivableType, walletIndex: walletIndex)
+            derivablePath: derivablePath
         )
     }
 
@@ -66,5 +68,17 @@ extension KeychainStorage: AccountStorageType {
 
     func save(deviceShare: String) throws {
         keychain.set(deviceShare, forKey: deviceShareKey)
+    }
+
+    var ethAddress: String? {
+        keychain.get(ethAddressKey)
+    }
+
+    func save(ethAddress: String) throws {
+        if ethAddress.isEmpty {
+            keychain.delete(ethAddressKey)
+        } else {
+            keychain.set(ethAddress, forKey: ethAddressKey)
+        }
     }
 }
