@@ -129,18 +129,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private func setupNavigationAppearance() {
         // Fix iOS 14 navigation bar
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().standardAppearance.configureWithTransparentBackground()
 
         let barButtonAppearance = UIBarButtonItem.appearance()
         let navBarAppearence = UINavigationBar.appearance()
         navBarAppearence.backIndicatorImage = .navigationBack
             .withRenderingMode(.alwaysTemplate)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+            .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
         navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
             .withRenderingMode(.alwaysTemplate)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+            .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
         barButtonAppearance.setBackButtonTitlePositionAdjustment(
             .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
             for: .default
@@ -148,6 +146,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
         navBarAppearence.tintColor = Asset.Colors.night.color
         barButtonAppearance.tintColor = Asset.Colors.night.color
+
+        navBarAppearence.setBackgroundImage(UIImage(), for: .default)
+        navBarAppearence.backgroundColor = .clear
 
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true

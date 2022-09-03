@@ -37,6 +37,6 @@ class SeedPhraseDetailViewModel: ObservableObject {
 
     func copy() {
         clipboardManger.copyToClipboard(phrase.joined(separator: " "))
-        notificationsService.showInAppNotification(.done(L10n.seedPhraseCopiedToClipboard))
+        notificationsService.showInAppNotification(.custom("👯", L10n.copiedToClipboard))
     }
 }

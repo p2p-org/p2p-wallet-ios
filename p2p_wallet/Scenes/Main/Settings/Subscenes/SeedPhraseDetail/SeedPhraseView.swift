@@ -24,17 +24,22 @@ struct SeedPhraseView: View {
 
                     Spacer()
 
-                    TextButtonView(title: L10n.hide, style: .second, size: .small, trailing: .eyeHiddenTokensHide) {
-                        hidden = !hidden
-                    }
-                    .frame(maxWidth: 90, maxHeight: TextButton.Size.small.height)
+                    TextButtonView(
+                        title: !hidden ? L10n.hide : L10n.show,
+                        style: .second,
+                        size: .small,
+                        trailing: !hidden ? .eyeHiddenTokensHide : .eyeHiddenTokens
+                    ) { hidden = !hidden }
+                        .frame(maxWidth: 100, maxHeight: TextButton.Size.small.height)
                 }
 
                 ScrollView {
                     Grid(columns: 3, list: seedPhrase) { word in
                         Text(word)
                             .apply(style: .text4)
-                    }.blur(radius: hidden ? 4 : 0)
+                    }
+                    .padding(4)
+                    .blur(radius: hidden ? 4 : 0)
                 }.frame(maxHeight: .infinity)
             }
             .padding(.vertical, 8)
