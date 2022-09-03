@@ -7,80 +7,104 @@ import Onboarding
 import SwiftUI
 
 struct RecoveryKitView: View {
+    @SwiftUI.Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
+
     let viewModel: RecoveryKitViewModel
 
     var body: some View {
-        VStack(spacing: 24) {
-            VStack {
-                Image(uiImage: .lockOutline)
-                    .padding(.top, 12)
-                Text(L10n.yourRecoveryKit)
-                    .fontWeight(.bold)
-                    .apply(style: .title2)
-                    .padding(.top, 8)
-                Text(L10n.IfYouSwitchDevicesYouCanEasilyRestoreYourWallet.noPrivateKeysNeeded)
-                    .apply(style: .text2)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 8)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 16)
-            .padding(.bottom, 24)
-            .background(Color(Asset.Colors.lime.color))
-            .cornerRadius(28)
-            .padding(.top, safeAreaInsets.top + 50)
+        ScrollView {
+            VStack(spacing: 24) {
+                // Card
+                VStack {
+                    Image(uiImage: .lockOutline)
+                        .padding(.top, 12)
+                    Text(L10n.yourRecoveryKit)
+                        .fontWeight(.bold)
+                        .apply(style: .title2)
+                        .padding(.top, 8)
+                    Text(L10n.IfYouSwitchDevicesYouCanEasilyRestoreYourWallet.noPrivateKeysNeeded)
+                        .apply(style: .text2)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.top, 8)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 24)
+                .padding(.bottom, 24)
+                .background(Color(Asset.Colors.lime.color))
+                .cornerRadius(28)
+                .overlay(
+                    helpButton,
+                    alignment: .topTrailing
+                )
+                .padding(.top, safeAreaInsets.top + 50)
 
-            if let tKeyData = viewModel.tKeyData {
-                VStack(alignment: .leading) {
-                    Text(L10n.multiFactorAuthentication)
-                        .apply(style: .caps)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                // TKey info
+                if let tKeyData = viewModel.tKeyData {
+                    VStack(alignment: .leading) {
+                        Text(L10n.multiFactorAuthentication)
+                            .apply(style: .caps)
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .padding(.leading, 16)
 
-                    VStack(spacing: 0) {
-                        RecoveryKitRow(
-                            icon: .deviceIcon,
-                            title: "Device",
-                            subtitle: tKeyData.device
+                        VStack(spacing: 0) {
+                            RecoveryKitRow(
+                                icon: .deviceIcon,
+                                title: "Device",
+                                subtitle: tKeyData.device
+                            )
+                            RecoveryKitRow(
+                                icon: .callIcon,
+                                title: "Phone",
+                                subtitle: tKeyData.phone
+                            )
+                            RecoveryKitRow(
+                                icon: .appleIcon,
+                                title: tKeyData.socialProvider,
+                                subtitle: tKeyData.social
+                            )
+                        }
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .background(Color(Asset.Colors.snow.color))
+                        .cornerRadius(20)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 20)
+                                .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
                         )
-                        RecoveryKitRow(
-                            icon: .callIcon,
-                            title: "Phone",
-                            subtitle: tKeyData.phone
-                        )
-                        RecoveryKitRow(
-                            icon: .appleIcon,
-                            title: tKeyData.socialProvider,
-                            subtitle: tKeyData.social
-                        )
-                    }
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .background(Color(Asset.Colors.snow.color))
-                    .cornerRadius(20)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
-                    )
 
-                    Text(L10n.YourPrivateKeyIsSplitIntoMultipleFactors
-                        .AtLeastYouShouldHaveThreeFactorsButYouCanCreateMore
-                        .toLogInToDifferentDevicesYouNeedAtLeastTwoFactors)
-                        .apply(style: .label1)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-                }.frame(maxWidth: .infinity)
-            }
+                        Text(L10n.YourPrivateKeyIsSplitIntoMultipleFactors
+                            .AtLeastYouShouldHaveThreeFactorsButYouCanCreateMore
+                            .toLogInToDifferentDevicesYouNeedAtLeastTwoFactors)
+                            .apply(style: .label1)
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .padding(.leading, 16)
+                    }.frame(maxWidth: .infinity)
+                }
 
-            RecoveryKitCell(title: L10n.seedPhrase) { [weak viewModel] in
-                viewModel?.openSeedPhrase()
-            }
-            Spacer()
+                // Seed phrase button
+                RecoveryKitCell(title: L10n.seedPhrase) { [weak viewModel] in
+                    viewModel?.openSeedPhrase()
+                }
+                Spacer()
+            }.padding(.horizontal, 16)
         }
-        .padding(.horizontal, 16)
-        .navigationTitle(L10n.seedPhraseDetails)
-        .navigationBarTitleDisplayMode(.inline)
         .background(Color(Asset.Colors.cloud.color))
         .edgesIgnoringSafeArea(.top)
+        // .keyAppNavigationBar(title: L10n.seedPhraseDetails) {
+        //     presentationMode.wrappedValue.dismiss()
+        // }
+    }
+
+    var helpButton: some View {
+        Button {
+            viewModel.openHelp()
+        } label: {
+            Image(uiImage: Asset.MaterialIcon.helpOutline.image)
+                .frame(width: 30, height: 30)
+                .padding(.top, 20)
+                .padding(.trailing, 20)
+        }
     }
 }
 

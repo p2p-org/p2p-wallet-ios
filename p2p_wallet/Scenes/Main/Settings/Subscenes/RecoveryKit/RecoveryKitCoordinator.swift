@@ -18,13 +18,16 @@ class RecoveryKitCoordinator: Coordinator<Void> {
         let result = PassthroughSubject<Void, Never>()
 
         let vm = RecoveryKitViewModel()
-        vm.seedPhrase = { [weak navigationController] in
+        vm.coordinator.seedPhrase = { [weak navigationController] in
             let vm = SeedPhraseDetailViewModel()
-            let vc = UIHostingController(rootView: SeedPhraseDetailView(viewModel: vm))
+            let vc = KeyAppHostingController(rootView: SeedPhraseDetailView(viewModel: vm))
+            vc.title = L10n.seedPhraseDetails
             navigationController?.pushViewController(vc, animated: true)
         }
 
-        let vc = UIHostingController(rootView: RecoveryKitView(viewModel: vm))
+        let vc = KeyAppHostingController(rootView: RecoveryKitView(viewModel: vm))
+        vc.title = L10n.walletProtection
+        vc.hidesBottomBarWhenPushed = true
         vc.onClose = { result.send() }
 
         navigationController.pushViewController(vc, animated: true)

@@ -6,6 +6,7 @@ import KeyAppUI
 import SwiftUI
 
 struct SeedPhraseDetailView: View {
+    @SwiftUI.Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
 
     @ObservedObject var viewModel: SeedPhraseDetailViewModel
@@ -67,14 +68,14 @@ struct SeedPhraseDetailView: View {
             }
         }
         .background(Color.white)
-        .edgesIgnoringSafeArea(.top)
+        .edgesIgnoringSafeArea(.vertical)
         .frame(maxHeight: .infinity)
-        .navigationTitle(L10n.seedPhraseDetails)
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     var centerText: some View {
         Text(viewModel.state == .lock ? L10n.makeSureYouUnderstandTheseAspects : L10n.yourSeedPhraseMustNeverBeShared)
+            .fontWeight(.semibold)
+            .apply(style: .text4)
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
             .background(Color.white)
@@ -90,6 +91,8 @@ struct SeedPhraseDetailView: View {
         HStack(alignment: .top) {
             Text("•")
             Text(LocalizedStringKey(text))
+                .apply(style: .text3)
+            Spacer()
         }
     }
 }

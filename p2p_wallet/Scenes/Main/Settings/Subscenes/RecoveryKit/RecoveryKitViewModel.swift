@@ -19,23 +19,31 @@ class RecoveryKitViewModel: ObservableObject {
 
     @Published var tKeyData: RecoveryKitTKeyData?
 
-    var seedPhrase: (() -> Void)?
+    struct Coordinator {
+        var seedPhrase: (() -> Void)?
+        var help: (() -> Void)?
+    }
+
+    var coordinator: Coordinator = .init()
 
     init() {
-        if
-            let ethAddress = userWalletManager.wallet?.ethAddress,
-            let deviceShare = userWalletManager.wallet?.deviceShare
-        {
-            tKeyData = .init(
-                device: deviceShare,
-                phone: "Unavailable",
-                social: ethAddress,
-                socialProvider: "Unavailable"
-            )
+        if let wallet = userWalletManager.wallet {
+            if let ethAddress = wallet.ethAddress {
+                tKeyData = .init(
+                    device: wallet.deviceShare ?? "Unavailable",
+                    phone: "Unavailable",
+                    social: ethAddress,
+                    socialProvider: "Unavailable"
+                )
+            }
         }
     }
 
     func openSeedPhrase() {
-        seedPhrase?()
+        coordinator.seedPhrase?()
+    }
+
+    func openHelp() {
+        coordinator.help?()
     }
 }
