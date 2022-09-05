@@ -78,14 +78,6 @@ class AppCoordinator: Coordinator<Void> {
         hideLoadingAndTransitionTo(vc)
     }
 
-    private func navigate(account: Account?) {
-        if account == nil {
-            newOnboardingFlow()
-        } else {
-            navigateToMain()
-        }
-    }
-
     private func openSplash(_ completionHandler: @escaping () -> Void) {
         let vc = SplashViewController()
         window?.rootViewController = vc
@@ -111,6 +103,7 @@ class AppCoordinator: Coordinator<Void> {
 
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
+                self.showAuthenticationOnMainOnAppear = false
                 let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
                 case let .created(data):
@@ -136,8 +129,6 @@ class AppCoordinator: Coordinator<Void> {
 
                     saveSecurity(data: data.security)
                 }
-
-                showAuthenticationOnMainOnAppear = false
             })
             .store(in: &subscriptions)
     }
