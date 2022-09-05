@@ -119,8 +119,8 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
                 self.openRestoreWallet(vc: vc)
             case let .success(data):
                 self.subject.send(.created(data))
+                self.subject.send(completion: .finished)
             }
-            self.subject.send(completion: .finished)
         }.store(in: &subscriptions)
     }
 
