@@ -1,9 +1,14 @@
 import Combine
 import KeyAppUI
+import Resolver
 import SwiftUI
 import UIKit
 
 final class ChooseRestoreOptionViewModel: BaseViewModel {
+    // MARK: - Dependencies
+
+    @Injected var notificationService: NotificationService
+
     @Published var data: OnboardingContentData
     @Published var options: RestoreOption
     @Published var isLoading: RestoreOption?
@@ -37,8 +42,14 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
                 break
             }
 
-            let process = ReactiveProcess<RestoreOption>(data: option) { error in
-                if let error = error {}
+            let process = ReactiveProcess<RestoreOption>(data: option) { [weak self] error in
+                guard let self = self else { return }
+                if let error = error {
+                    switch error {
+                    case is SocialServiceError: break
+                    default: self.notificationService.showDefaultErrorNotification()
+                    }
+                }
                 self.isLoading = nil
             }
 

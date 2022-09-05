@@ -73,14 +73,16 @@ private extension RestoreSocialDelegatedCoordinator {
         )
         let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(parameters: parameters)
         chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { [stateMachine] process in
-            switch process.data {
-            case .custom:
-                _ = try await stateMachine <- .requireCustom
-            case .socialApple:
-                _ = try await stateMachine <- .signInDevice(socialProvider: .apple)
-            case .socialGoogle:
-                _ = try await stateMachine <- .signInDevice(socialProvider: .google)
-            default: break
+            process.start {
+                switch process.data {
+                case .custom:
+                    _ = try await stateMachine <- .requireCustom
+                case .socialApple:
+                    _ = try await stateMachine <- .signInDevice(socialProvider: .apple)
+                case .socialGoogle:
+                    _ = try await stateMachine <- .signInDevice(socialProvider: .google)
+                default: break
+                }
             }
         })
             .store(in: &subscriptions)

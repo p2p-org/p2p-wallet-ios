@@ -151,12 +151,14 @@ private extension RestoreCustomDelegatedCoordinator {
 
         let viewModel = ChooseRestoreOptionViewModel(parameters: parameters)
         viewModel.optionChosen.sinkAsync(receiveValue: { [stateMachine] process in
-            switch process.data {
-            case .socialApple:
-                _ = try await stateMachine <- .requireSocial(provider: .apple)
-            case .socialGoogle:
-                _ = try await stateMachine <- .requireSocial(provider: .google)
-            default: break
+            process.start {
+                switch process.data {
+                case .socialApple:
+                    _ = try await stateMachine <- .requireSocial(provider: .apple)
+                case .socialGoogle:
+                    _ = try await stateMachine <- .requireSocial(provider: .google)
+                default: break
+                }
             }
         })
             .store(in: &subscriptions)
@@ -228,14 +230,16 @@ private extension RestoreCustomDelegatedCoordinator {
 
             let viewModel = ChooseRestoreOptionViewModel(parameters: parameters)
             viewModel.optionChosen.sinkAsync(receiveValue: { [stateMachine] process in
-                switch process.data {
-                case .socialApple:
-                    _ = try await stateMachine <- .requireSocial(provider: .apple)
-                case .socialGoogle:
-                    _ = try await stateMachine <- .requireSocial(provider: .google)
-                case .custom:
-                    _ = try await stateMachine <- .enterPhone
-                default: break
+                process.start {
+                    switch process.data {
+                    case .socialApple:
+                        _ = try await stateMachine <- .requireSocial(provider: .apple)
+                    case .socialGoogle:
+                        _ = try await stateMachine <- .requireSocial(provider: .google)
+                    case .custom:
+                        _ = try await stateMachine <- .enterPhone
+                    default: break
+                    }
                 }
             })
                 .store(in: &subscriptions)
