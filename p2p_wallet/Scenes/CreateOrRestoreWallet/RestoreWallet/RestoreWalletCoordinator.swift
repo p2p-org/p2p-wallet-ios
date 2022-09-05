@@ -179,18 +179,20 @@ private extension RestoreWalletCoordinator {
         var stateMachine = viewModel.stateMachine
         let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(parameters: parameters)
         chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { process in
-            switch process.data {
-            case .keychain:
-                _ = try await stateMachine <- .restoreICloud(.signIn)
-            case .custom:
-                _ = try await stateMachine <- .restoreCustom(.enterPhone)
-            case .socialApple:
-                _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .apple))
-            case .socialGoogle:
-                _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .google))
-            case .seed:
-                _ = try await stateMachine <- .restoreSeed(.signInWithSeed)
-            default: break
+            process.start {
+                switch process.data {
+                case .keychain:
+                    _ = try await stateMachine <- .restoreICloud(.signIn)
+                case .custom:
+                    _ = try await stateMachine <- .restoreCustom(.enterPhone)
+                case .socialApple:
+                    _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .apple))
+                case .socialGoogle:
+                    _ = try await stateMachine <- .restoreSocial(.signInDevice(socialProvider: .google))
+                case .seed:
+                    _ = try await stateMachine <- .restoreSeed(.signInWithSeed)
+                default: break
+                }
             }
         })
             .store(in: &subscriptions)
