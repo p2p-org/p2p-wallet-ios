@@ -6,35 +6,31 @@ import KeyAppUI
 import SwiftUI
 
 struct SeedPhraseDetailView: View {
-    @SwiftUI.Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
 
     @ObservedObject var viewModel: SeedPhraseDetailViewModel
 
     var body: some View {
-        GeometryReader { _ in
+        ExplainLayoutView {
             VStack {
-                VStack {
-                    Image(uiImage: viewModel.state == .lock ? UIImage.fogOpen : UIImage.fogClose)
-                    Text(viewModel.state == .lock ? L10n.showingSeedPhrase : L10n.yourSeedPhrase)
-                        .fontWeight(.bold)
-                        .apply(style: .title1)
-                        .padding(.bottom, 48)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.top, safeAreaInsets.top + 60)
-                .background(Color(Asset.Colors.lime.color))
-                .cornerRadius(28)
-                .overlay(centerText, alignment: .bottom)
-
+                Image(uiImage: viewModel.state == .lock ? UIImage.fogOpen : UIImage.fogClose)
+                Text(viewModel.state == .lock ? L10n.showingSeedPhrase : L10n.yourSeedPhrase)
+                    .fontWeight(.bold)
+                    .apply(style: .title1)
+                    .padding(.bottom, 48)
+            }
+        } content: {
+            VStack {
                 if viewModel.state == .lock {
                     VStack {
-                        hintRow(text: L10n.aSeedPhraseIsLikeAPasswordWordsThatAllowsYouToAccessAndManageYourCryptoFunds)
+                        ExplainText(text: L10n
+                            .aSeedPhraseIsLikeAPasswordWordsThatAllowsYouToAccessAndManageYourCryptoFunds)
 
-                        hintRow(text: L10n.ExceptYouNoOneKeepsYourEntireSeedPhrase
+                        ExplainText(text: L10n.ExceptYouNoOneKeepsYourEntireSeedPhrase
                             .thePartsAreDistributedDecentralizedOnTorusNetworkNodes)
                             .padding(.top, 12)
-                        hintRow(text: L10n.YourSeedPhraseMustNeverBeShared.keepItPrivateEvenFromUs)
+
+                        ExplainText(text: L10n.YourSeedPhraseMustNeverBeShared.keepItPrivateEvenFromUs)
                             .padding(.top, 12)
                         Spacer()
                     }
@@ -66,10 +62,9 @@ struct SeedPhraseDetailView: View {
                     }
                 }
             }
+        } hint: {
+            centerText
         }
-        .background(Color.white)
-        .edgesIgnoringSafeArea(.vertical)
-        .frame(maxHeight: .infinity)
     }
 
     var centerText: some View {
@@ -85,15 +80,6 @@ struct SeedPhraseDetailView: View {
                     .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
             )
             .offset(x: 0, y: 16)
-    }
-
-    func hintRow(text: String) -> some View {
-        HStack(alignment: .top) {
-            Text("•")
-            Text(LocalizedStringKey(text))
-                .apply(style: .text3)
-            Spacer()
-        }
     }
 }
 

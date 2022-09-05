@@ -219,8 +219,11 @@ extension Settings {
                 let vc = ReserveName.ViewController(viewModel: vm)
                 show(vc, sender: nil)
             case .backup:
-
-                let vc = UIHostingController(rootView: SeedPhraseDetailView(viewModel: .init()))
+                let viewModel = Backup.ViewModel()
+                viewModel.didBackupHandler = { [weak self] in
+                    self?.viewModel.setDidBackup(true)
+                }
+                let vc = Backup.ViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .currency:
                 let vc = SelectFiatViewController(viewModel: viewModel)
@@ -232,23 +235,32 @@ extension Settings {
                 let vc = ConfigureSecurityViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .changePincode:
-                let createPincodeVC = WLCreatePincodeVC(
-                    createPincodeTitle: L10n.setUpANewWalletPIN,
-                    confirmPincodeTitle: L10n.confirmPINCode
-                )
-
-                createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
-                    self?.viewModel.savePincode(String(pincode))
-                    createPincodeVC?.dismiss(animated: true) {
-                        Resolver.resolve(NotificationService.self)
-                            .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
+                guard let navigationController = navigationController else { return }
+                let pincodeChangeCoordinator = PincodeChangeCoordinator(navVC: navigationController)
+                pincodeChangeCoordinator
+                    .start()
+                    .sink { _ in
+                        navigationController.popToViewController(ofClass: ViewController.self, animated: true)
                     }
-                }
-                createPincodeVC.onCancel = { [weak createPincodeVC] in
-                    createPincodeVC?.dismiss(animated: true, completion: nil)
-                }
+                    .store(in: &subscriptions)
 
-                present(createPincodeVC, animated: true, completion: nil)
+            // let createPincodeVC = WLCreatePincodeVC(
+            //     createPincodeTitle: L10n.setUpANewWalletPIN,
+            //     confirmPincodeTitle: L10n.confirmPINCode
+            // )
+            //
+            // createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
+            //     self?.viewModel.savePincode(String(pincode))
+            //     createPincodeVC?.dismiss(animated: true) {
+            //         Resolver.resolve(NotificationService.self)
+            //             .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
+            //     }
+            // }
+            // createPincodeVC.onCancel = { [weak createPincodeVC] in
+            //     createPincodeVC?.dismiss(animated: true, completion: nil)
+            // }
+            //
+            // present(createPincodeVC, animated: true, completion: nil)
             case .language:
                 let vc = SelectLanguageViewController(viewModel: viewModel)
                 show(vc, sender: nil)
