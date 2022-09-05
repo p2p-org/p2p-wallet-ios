@@ -48,42 +48,34 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
     }
 
     private func configureButtons(options: RestoreOption) {
+        let factory = ChooseRestoreOptionButtonFactory()
+
         if options.contains(.keychain) {
-            mainButtons
-                .append(ChooseRestoreOptionButton(option: .keychain, title: L10n.continueWithICloudKeyChain,
-                                                  icon: UIImage.cloud))
+            mainButtons.append(factory.createMain(for: .keychain))
         }
 
         if options.contains(.socialApple) {
-            mainButtons.append(ChooseRestoreOptionButton(
-                option: .socialApple,
-                title: L10n.continueWithApple,
-                icon: UIImage.appleLogo
-            ))
+            mainButtons.append(factory.createMain(for: .socialApple))
         }
 
-        if options.contains(.socialGoogle) {
-            if options.contains(.keychain) {
-                secondaryButtons
-                    .append(ChooseRestoreOptionButton(option: .socialGoogle, title: L10n.continueUsingGoogle))
-            } else {
-                mainButtons
-                    .append(ChooseRestoreOptionButton(option: .socialGoogle, title: L10n.continueWithGoogle,
-                                                      icon: UIImage.google))
-            }
+        if options.contains(.socialGoogle), !options.contains(.keychain) {
+            mainButtons.append(factory.createMain(for: .socialGoogle))
         }
 
         if options.contains(.custom) {
-            let customButton = ChooseRestoreOptionButton(option: .custom, title: L10n.continueUsingPhoneNumber)
-            if options.contains(.keychain) || options.contains(.socialApple) {
-                secondaryButtons.append(customButton)
+            if mainButtons.isEmpty {
+                mainButtons.append(factory.createMain(for: .custom))
             } else {
-                mainButtons.append(customButton)
+                secondaryButtons.append(factory.createSecondary(for: .custom))
             }
         }
 
+        if options.contains(.socialGoogle), options.contains(.keychain) {
+            secondaryButtons.append(factory.createSecondary(for: .socialGoogle))
+        }
+
         if options.contains(.seed) {
-            secondaryButtons.append(ChooseRestoreOptionButton(option: .seed, title: L10n.useASeedPhrase))
+            secondaryButtons.append(factory.createSecondary(for: .seed))
         }
     }
 }
