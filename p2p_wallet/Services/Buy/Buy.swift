@@ -12,18 +12,33 @@ struct Buy {
     typealias ExchangeService = BuyExchangeServiceType
     typealias Currency = BuyCurrencyType
 
-    enum FiatCurrency: BuyCurrencyType {
+    enum FiatCurrency: String, BuyCurrencyType, Equatable {
         case usd
+        case eur
+        case cny
+        case vnd
+        case rub
+        case gbp
 
         var name: String {
             switch self {
             case .usd:
                 return "USD"
+            case .eur:
+                return "EUR"
+            case .cny:
+                return "CNY"
+            case .vnd:
+                return "VND"
+            case .rub:
+                return "RUB"
+            case .gbp:
+                return "GBD"
             }
         }
     }
 
-    enum CryptoCurrency: BuyCurrencyType {
+    enum CryptoCurrency: String, BuyCurrencyType, Equatable {
         case eth
         case sol
         case usdc

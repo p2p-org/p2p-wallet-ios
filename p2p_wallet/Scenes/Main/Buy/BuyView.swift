@@ -74,16 +74,31 @@ struct BuyView: View {
                 .padding(.leading, textLeadingPadding)
 
             HStack(alignment: .center, spacing: 1) {
-                inputView(text: $leftInputText, coin: viewModel.token.symbol)
-                    .cornerRadius(radius: 12, corners: [.topLeft, .bottomLeft])
-                    .onTapGesture {
+                inputView(
+                    text: $viewModel.tokenAmount,
+                    coin: viewModel.token.symbol,
+                    onEditing: { val in
+                        viewModel.isLeftFocus = val
+                    },
+                    action: {
                         viewModel.tokenSelectTapped()
-                    }
-                inputView(text: $rightInputText, coin: viewModel.fiat.symbol)
-                    .cornerRadius(radius: 12, corners: [.topRight, .bottomRight])
-                    .onTapGesture {
+                    }).cornerRadius(
+                        radius: 12,
+                        corners: [.topLeft, .bottomLeft]
+                    )
+
+                inputView(
+                    text: $viewModel.fiatAmount,
+                    coin: viewModel.fiat.symbol,
+                    onEditing: { val in
+                        viewModel.isRightFocus = val
+                    },
+                    action: {
                         viewModel.fiatSelectTapped()
-                    }
+                    }).cornerRadius(
+                        radius: 12,
+                        corners: [.topRight, .bottomRight]
+                    )
             }
             .padding([.leading, .trailing], cardLeadingPadding)
             .padding(.top, -4)
@@ -122,17 +137,21 @@ struct BuyView: View {
 
     var total: some View {
         HStack {
-            Text("Total")
+            Text(L10n.total)
                 .apply(style: .text3)
             Spacer()
-            Button { [weak viewModel] in
-                viewModel?.didTapTotal()
-            } label: {
-                Text("346.4 USD")
-                    .apply(style: .text3)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                Image(uiImage: Asset.MaterialIcon.chevronRight.image)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
+            if viewModel.isLoading {
+                ActivityIndicator(isAnimating: true)
+            } else {
+                Button { [weak viewModel] in
+                    viewModel?.didTapTotal()
+                } label: {
+                    Text("\(viewModel.total) USD")
+                        .apply(style: .text3)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                    Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                }
             }
         }.padding(EdgeInsets(top: 0, leading: 24, bottom: 18, trailing: 29))
     }
@@ -189,19 +208,25 @@ struct BuyView: View {
         .cornerRadius(16)
     }
 
-    func inputView(text: Binding<String>, coin: String) -> some View {
+    func inputView(text: Binding<String>, coin: String, onEditing: @escaping (Bool) -> Void, action: @escaping () -> Void) -> some View {
         HStack(alignment: .center, spacing: 4) {
-            TextField("", text: text)
-                .multilineTextAlignment(.trailing)
-            Text(coin)
-                .apply(style: .title2)
-                .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
-                .padding(.trailing, 1)
-            Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 16, height: 16)
-                .padding(.trailing, 10)
+            TextField("", text: text, onEditingChanged: { vall in
+                onEditing(vall)
+            })
+            .multilineTextAlignment(.trailing)
+            Group {
+                Text(coin)
+                    .apply(style: .title2)
+                    .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+                    .padding(.trailing, 1)
+                Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16, height: 16)
+                    .padding(.trailing, 10)
+            }.onTapGesture {
+                action()
+            }
         }
         .frame(height: 62)
         .background(Color(Asset.Colors.snow.color))
@@ -221,6 +246,45 @@ extension BuyView {
                 ) { [weak viewModel] in
                 }
             }
+        }
+    }
+}
+
+
+struct AutoFocusTextField: UIViewRepresentable {
+    @Binding var text: String
+    @Binding var focus: Bool
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    func makeUIView(context: UIViewRepresentableContext<AutoFocusTextField>) -> UITextField {
+        let textField = UITextField()
+        textField.delegate = context.coordinator
+        return textField
+    }
+
+    func updateUIView(_ uiView: UITextField, context:
+        UIViewRepresentableContext<AutoFocusTextField>) {
+        uiView.text = text
+//        if uiView.window != nil, !uiView.isFirstResponder && !focus {
+////            uiView.becomeFirstResponder()
+//            focus = true
+//        } else {
+//            focus = false
+//        }
+    }
+
+    class Coordinator: NSObject, UITextFieldDelegate {
+        var parent: AutoFocusTextField
+
+        init(_ autoFocusTextField: AutoFocusTextField) {
+            self.parent = autoFocusTextField
+        }
+
+        func textFieldDidChangeSelection(_ textField: UITextField) {
+            parent.text = textField.text ?? ""
         }
     }
 }

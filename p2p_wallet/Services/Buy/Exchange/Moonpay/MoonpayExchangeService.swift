@@ -113,6 +113,16 @@ extension Buy.FiatCurrency: MoonpayCodeMapping {
         switch self {
         case .usd:
             return "usd"
+        case .eur:
+            return "eur"
+        case .cny:
+            return "cny"
+        case .vnd:
+            return "vnd"
+        case .rub:
+            return "rub"
+        case .gbp:
+            return "gbd"
         }
     }
 }
