@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DebugMenuView: View {
     @ObservedObject private var viewModel: DebugMenuViewModel
+    @ObservedObject private var onboardingConfig = OnboardingConfig.shared
 
     init(viewModel: DebugMenuViewModel) {
         self.viewModel = viewModel
@@ -30,8 +31,27 @@ struct DebugMenuView: View {
                         }
                     }
                 }
+
+                Section(header: Text("Onboarding configurations")) {
+                    TextFieldRow(title: "Metadata:", content: $onboardingConfig.metaDataEndpoint)
+                    TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
+                    TextFieldRow(title: "Google:", content: $onboardingConfig.torusGoogleVerifier)
+                    TextFieldRow(title: "Apple", content: $onboardingConfig.torusAppleVerifier)
+                }
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
+        }
+    }
+}
+
+private struct TextFieldRow: View {
+    let title: String
+    let content: Binding<String>
+
+    var body: some View {
+        HStack {
+            Text(title)
+            TextEditor(text: content)
         }
     }
 }
