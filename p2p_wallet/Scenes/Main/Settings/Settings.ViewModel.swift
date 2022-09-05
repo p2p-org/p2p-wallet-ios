@@ -287,20 +287,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func changePincode() {
-        authenticationHandler.authenticate(
-            presentationStyle: .init(
-                title: L10n.enterCurrentPIN,
-                options: [.fullscreen, .disableBiometric, .withResetPassword],
-                completion: { [weak self] passwordReset in
-                    guard !passwordReset else {
-                        self?.notificationsService.showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
-                        return
-                    }
-                    // pin code vc
-                    self?.navigate(to: .changePincode)
-                }
-            )
-        )
+        navigate(to: .changePincode)
     }
 
     func savePincode(_ pincode: String) {

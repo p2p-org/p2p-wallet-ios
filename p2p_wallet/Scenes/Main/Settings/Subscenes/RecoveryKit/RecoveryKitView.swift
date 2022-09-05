@@ -91,9 +91,6 @@ struct RecoveryKitView: View {
         }
         .background(Color(Asset.Colors.cloud.color))
         .edgesIgnoringSafeArea(.top)
-        // .keyAppNavigationBar(title: L10n.seedPhraseDetails) {
-        //     presentationMode.wrappedValue.dismiss()
-        // }
     }
 
     var helpButton: some View {

@@ -5,8 +5,10 @@ inhibit_all_warnings!
 
 # ENV Variables
 $keyAppKitPath = ENV['KEY_APP_KIT']
+$keyAppUI = ENV['KEY_APP_UI']
 
 puts $keyAppKitPath
+puts $keyAppUI
 
 def key_app_kit
   $dependencies = [
@@ -74,7 +76,12 @@ target 'p2p_wallet' do
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
-  pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
+  if $keyAppUI
+    pod "KeyAppUI", :path => $keyAppUI
+  else
+    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
+  end
+  
   pod 'Resolver'
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'
