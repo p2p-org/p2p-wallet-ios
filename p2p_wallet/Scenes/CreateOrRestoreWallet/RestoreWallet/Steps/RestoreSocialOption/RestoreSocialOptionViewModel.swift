@@ -20,13 +20,13 @@ final class RestoreSocialOptionViewModel: BaseViewModel {
 
             self.notificationService.hideToasts()
             let process = ReactiveProcess<SocialProvider>(data: provider) { error in
-                if let error = error {
+                if let error = error as? SocialServiceError {
                     switch error {
-                    case is SocialServiceError:
-                        break
-                    default:
-                        self.notificationService.showDefaultErrorNotification()
+                    case .cancelled: break
+                    default: self.showSocialError(provider: provider)
                     }
+                } else if error != nil {
+                    self.notificationService.showDefaultErrorNotification()
                 }
                 self.isLoading = nil
             }
@@ -34,5 +34,12 @@ final class RestoreSocialOptionViewModel: BaseViewModel {
             self.optionChosen.send(process)
 
         }.store(in: &subscriptions)
+    }
+
+    private func showSocialError(provider: SocialProvider) {
+        notificationService.showToast(
+            title: nil,
+            text: L10n.ThereIsAProblemWithServices.tryAgain(provider.rawValue.uppercaseFirst)
+        )
     }
 }

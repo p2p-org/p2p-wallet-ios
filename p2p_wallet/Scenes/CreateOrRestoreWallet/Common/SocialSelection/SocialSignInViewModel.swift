@@ -70,12 +70,8 @@ class SocialSignInViewModel: BaseViewModel {
 
         notificationService.hideToasts()
         outLogin.sendProcess(data: provider) { [weak self] error in
-            print("Here")
-            print(error)
             if let error = error {
                 switch error {
-                // case SocialServiceError.cancelled:
-                //     break
                 case is SocialServiceError:
                     switch error as! SocialServiceError {
                     case .cancelled: break
