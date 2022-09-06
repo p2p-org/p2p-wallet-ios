@@ -71,7 +71,7 @@ class BuyViewModel: ObservableObject {
             let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
             if minAmount > aAmount {
                 return L10n.minimalTransactionIs(
-                    aAmount.fiatAmount(
+                    minAmount.fiatAmount(
                         maximumFractionDigits: 2,
                         currency: self.fiat
                     )
