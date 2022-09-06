@@ -32,7 +32,6 @@ PODS:
   - CocoaDebug (1.7.2)
   - CombineCocoa (0.4.0)
   - CountriesAPI (1.0.0)
-  - CryptoSwift (1.4.3)
   - Down (0.11.0)
   - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
@@ -177,10 +176,8 @@ PODS:
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
   - Onboarding (1.0.0):
-    - CryptoSwift (~> 1.4.1)
     - JSBridge
     - SolanaSwift (~> 2)
-    - TweetNacl (~> 1.0.2)
   - OrcaSwapSwift (2.1.1):
     - SolanaSwift (~> 2)
   - Periphery (2.9.0)
@@ -319,7 +316,6 @@ SPEC REPOS:
     - Charts
     - CocoaDebug
     - CombineCocoa
-    - CryptoSwift
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -446,7 +442,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -464,10 +460,10 @@ CHECKOUT OPTIONS:
     :commit: de09fedfb7a9c5ab4effbdb4df284229c60f72db
     :git: https://github.com/weitieda/bottom-sheet.git
   Cache:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -476,22 +472,22 @@ CHECKOUT OPTIONS:
     :commit: 145b589ae5ed31c72dc51959bc7f782d69b07cc6
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: 44ec89ada003b5fd451e9fe6173436d5ad64ed3a
+    :commit: 2296a154025b057a80f494d57db39baaa67671a4
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -506,13 +502,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: ab32c12f8f8db70910c54771ebf646eb6003ebc9
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: c721d12583dcaa803892d29e1b543c9d079c4e78
+    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -533,7 +529,6 @@ SPEC CHECKSUMS:
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
   CountriesAPI: 26d03b67fb2fd4ff26111b71ed3d492a3babb592
-  CryptoSwift: a0799ee936271bd2253a006f1e4523df21845000
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
   Firebase: 800f16f07af493d98d017446a315c27af0552f41
@@ -567,7 +562,7 @@ SPEC CHECKSUMS:
   Logging: beeb016c9c80cf77042d62e83495816847ef108b
   NameService: a5f786e710230ae26ea899b5fd7b894c740b86db
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  Onboarding: 5842208e78249c4a5c4fb06e032ca4d6187d1f7a
+  Onboarding: 68a96e945da8891b329481b69a7f051483f6005f
   OrcaSwapSwift: 8184e41e83f5349b38cc229532331064f8ed1fe8
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
