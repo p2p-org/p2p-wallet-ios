@@ -835,3 +835,4 @@ another" = "une crypto pour
 "one crypto for\nanother" = "un crypto pour\nun autre";
 "SOL purchase cost" = "Coût d'achat SOL";
 "Transaction details" = "Détails de la transaction";
+"Minimal transaction is %@" = "La transaction minimale est %@";

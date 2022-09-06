@@ -63,4 +63,7 @@ extension DefaultsKeys {
     var buyLastPaymentMethod: DefaultsKey<PaymentType> {
         .init(#function, defaultValue: PaymentType.bank)
     }
+    var buyMinPrices: DefaultsKey<[String: [String: Double]]> {
+        .init(#function, defaultValue: [:])
+    }
 }
