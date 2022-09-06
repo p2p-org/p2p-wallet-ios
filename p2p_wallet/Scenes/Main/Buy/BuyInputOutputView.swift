@@ -41,7 +41,6 @@ struct BuyInputOutputView: View {
                         side: .left
                     )
                         .padding(.leading, 8)
-                        .padding(.trailing, 4)
 
                     currency(value: leftSubtitle) { onTap(.left) }
                         .lineLimit(1)
@@ -61,11 +60,10 @@ struct BuyInputOutputView: View {
                         side: .right
                     )
                         .padding(.leading, 8)
-                        .padding(.trailing, 4)
 
                     currency(value: rightSubtitle) {}
                         .lineLimit(1)
-                        .padding(.trailing, 30)
+                        .padding(.trailing, 20)
                 }.frame(width: reader.size.width / 2)
             }
             .onAppear {
@@ -94,16 +92,17 @@ struct BuyInputOutputView: View {
         }.frame(height: 60)
             .background(Color(Asset.Colors.cloud.color))
             .cornerRadius(16)
-            .overlay(Text("\(fontSynchorinze.font)").apply(style: .text4).offset(x: 0, y: 50))
+        // .overlay(Text("\(fontSynchorinze.font)").apply(style: .text4).offset(x: 0, y: 50))
     }
 
     func currency(value: String, _ action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack {
+            HStack(spacing: 0) {
                 Text(value)
                     .font(uiFont: fontSynchorinze.font)
                     .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                     .fixedSize(horizontal: true, vertical: false)
+                    .padding(.trailing, 8)
                 Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
@@ -144,7 +143,7 @@ private class FontSynchorinze: ObservableObject {
                     .size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(fontSize)])
 
                 let leftTotal = 50 + leftTitleSize.width + 4 + leftSubtitleSize.width + 20
-                let rightTotal = 50 + rightTitleSize.width + 4 + rightSubTitleSize.width + 30
+                let rightTotal = 50 + rightTitleSize.width + 4 + rightSubTitleSize.width + 20
 
                 print(leftTitle, leftSubtitle, rightTitle, rightSubTitle)
                 print(leftTitleSize, rightTitleSize)
