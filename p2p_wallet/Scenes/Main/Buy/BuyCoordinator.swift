@@ -3,6 +3,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import SwiftUI
+import SafariServices
 
 final class BuyCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
@@ -12,9 +13,6 @@ final class BuyCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let fiats = [Fiat.usd, Fiat.eur, Fiat.gbp]
-        let tokens = [Token.nativeSolana, Token.usdc]
-
         let viewModel = BuyViewModel()
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
         viewController.hidesBottomBarWhenPushed = true
@@ -35,7 +33,7 @@ final class BuyCoordinator: Coordinator<Void> {
                 ))
         }.sink { _ in }.store(in: &subscriptions)
 
-        viewModel.coordinatorIO.showTokenSelect.flatMap { _ in
+        viewModel.coordinatorIO.showTokenSelect.flatMap { tokens in
             self.coordinate(
                 to: BuySelectCoordinator<Token, BuySelectTokenCellView>(
                     navigationController: self.navigationController,
@@ -53,7 +51,7 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         }).store(in: &subscriptions)
 
-        viewModel.coordinatorIO.showFiatSelect.flatMap { _ in
+        viewModel.coordinatorIO.showFiatSelect.flatMap { fiats in
             self.coordinate(
                 to: BuySelectCoordinator<Fiat, FiatCellView>(
                     navigationController: self.navigationController,
@@ -69,6 +67,12 @@ final class BuyCoordinator: Coordinator<Void> {
             default:
                 return
             }
+        }).store(in: &subscriptions)
+
+        viewModel.coordinatorIO.buy.sink(receiveValue: { [weak self] url in
+            let vc = SFSafariViewController(url: url)
+            vc.modalPresentationStyle = .automatic
+            self?.navigationController.present(vc, animated: true)
         }).store(in: &subscriptions)
 
         // TODO: substitute with result subject
