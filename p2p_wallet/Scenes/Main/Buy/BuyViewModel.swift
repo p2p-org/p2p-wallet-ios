@@ -157,8 +157,7 @@ class BuyViewModel: ObservableObject {
         }
     }
 
-    // TODO: rename
-    func didTapTotal() async throws {
+    func totalTapped() async throws {
         guard let exchangeOutput = exchangeOutput else { return }
         do {
             guard
@@ -395,8 +394,7 @@ extension BuyViewModel {
     struct PaymentTypeItem: Equatable {
         var type: PaymentType
         var fee: String
-        // TODO: rename to 'duration'
-        var time: String
+        var duration: String
         var name: String
         var icon: UIImage
     }
@@ -414,7 +412,7 @@ extension PaymentType {
             return .init(
                 type: self,
                 fee: "1%",
-                time: "~17 hours",
+                duration: "~17 hours",
                 name: "Bank transfer",
                 icon: UIImage.buyBank
             )
@@ -422,7 +420,7 @@ extension PaymentType {
             return .init(
                 type: self,
                 fee: "4%",
-                time: "instant",
+                duration: "instant",
                 name: "Card",
                 icon: UIImage.buyCard
             )

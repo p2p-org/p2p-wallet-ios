@@ -146,7 +146,7 @@ struct BuyView: View {
                     .frame(height: 24)
             } else {
                 Button { [weak viewModel] in
-                    Task { try await viewModel?.didTapTotal() }
+                    Task { try await viewModel?.totalTapped() }
                 } label: {
                     Text("\(viewModel.total)")
                         .apply(style: .text3)
@@ -194,7 +194,7 @@ struct BuyView: View {
                 trailing: 0
             ))
 
-            Text(item.time)
+            Text(item.duration)
                 .apply(style: .label1)
                 .foregroundColor(Color(Asset.Colors.mountain.color))
                 .padding(.top, -9)
