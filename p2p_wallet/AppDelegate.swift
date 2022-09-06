@@ -59,6 +59,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
 
+        setupRemoteConfig()
+
         // set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
@@ -66,10 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
-
-        setupDefaultFlags()
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
-        setupRemoteConfig()
 
         UIViewController.swizzleViewDidDisappear()
 
@@ -108,36 +106,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func setupRemoteConfig() {
-        #if !RELEASE
+        let remoteConfig = RemoteConfig.remoteConfig()
+        if Environment.current != .release {
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
             settings.minimumFetchInterval = 0
-            RemoteConfig.remoteConfig().configSettings = settings
-        #endif
+            remoteConfig.configSettings = settings
+        }
 
         let currentEndpoints = APIEndPoint.definedEndpoints
-        #if !RELEASE
+        if Environment.current != .release {
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
                     primaryFetcher: DebugMenuFeaturesProvider.shared,
                     secondaryFetcher: MergingFlagsFetcher(
                         primaryFetcher: defaultFlags,
-                        secondaryFetcher: RemoteConfig.remoteConfig()
+                        secondaryFetcher: remoteConfig
                     )
                 )
             ) { _ in
                 self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
             }
-        #else
+        } else {
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
-                    primaryFetcher: RemoteConfig.remoteConfig(),
+                    primaryFetcher: remoteConfig,
                     secondaryFetcher: defaultFlags
                 )
             ) { _ in
                 self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
             }
-        #endif
+        }
 
         Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
             .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
