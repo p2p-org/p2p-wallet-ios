@@ -15,11 +15,11 @@ enum RestoreWalletResult {
 }
 
 final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
-    let parent: UIViewController
+    private let parent: UIViewController
+    private let navigationController: UINavigationController
 
     private let viewModel: RestoreWalletViewModel
     private var result = PassthroughSubject<RestoreWalletResult, Never>()
-    private(set) var navigationController: UINavigationController?
 
     private let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
     private let restoreCustomDelegatedCoordinator: RestoreCustomDelegatedCoordinator
@@ -27,8 +27,10 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     private let restoreSeedDelegatedCoordinator: RestoreSeedPhraseDelegatedCoordinator
     private let restoreICloudDelegatedCoordinator: RestoreICloudDelegatedCoordinator
 
-    init(parent: UIViewController) {
+    init(parent: UIViewController, navigationController: UINavigationController) {
         self.parent = parent
+        self.navigationController = navigationController
+
         viewModel = RestoreWalletViewModel()
 
         securitySetupDelegatedCoordinator = .init(
@@ -62,6 +64,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         )
 
         super.init()
+        setDelegatedCoordinatorRoot()
     }
 
     // MARK: - Methods
@@ -71,11 +74,10 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             return Empty().eraseToAnyPublisher()
         }
 
-        navigationController = UINavigationController(rootViewController: viewController)
-        navigationController?.modalPresentationStyle = .fullScreen
-        navigationController?.modalTransitionStyle = .crossDissolve
-
-        setDelegatedCoordinator(rootViewController: navigationController)
+        navigationController.setViewControllers([viewController], animated: true)
+        if parent.presentedViewController == nil {
+            parent.present(navigationController, animated: true)
+        }
 
         viewModel.stateMachine
             .stateStream
@@ -88,19 +90,17 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             }
             .store(in: &subscriptions)
 
-        parent.present(navigationController!, animated: true)
-
         return result.eraseToAnyPublisher()
     }
 
     // MARK: Navigation
 
-    private func setDelegatedCoordinator(rootViewController: UIViewController?) {
-        restoreCustomDelegatedCoordinator.rootViewController = rootViewController
-        securitySetupDelegatedCoordinator.rootViewController = rootViewController
-        restoreSocialDelegatedCoordinator.rootViewController = rootViewController
-        restoreSeedDelegatedCoordinator.rootViewController = rootViewController
-        restoreICloudDelegatedCoordinator.rootViewController = rootViewController
+    private func setDelegatedCoordinatorRoot() {
+        restoreCustomDelegatedCoordinator.rootViewController = navigationController
+        securitySetupDelegatedCoordinator.rootViewController = navigationController
+        restoreSocialDelegatedCoordinator.rootViewController = navigationController
+        restoreSeedDelegatedCoordinator.rootViewController = navigationController
+        restoreICloudDelegatedCoordinator.rootViewController = navigationController
     }
 
     private func stateChangeHandler(from: RestoreWalletState?, to: RestoreWalletState) {
@@ -113,11 +113,9 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             case .needHelp:
                 self.result.send(.help)
             }
-            navigationController?.dismiss(animated: true)
+            self.navigationController.dismiss(animated: true)
             self.result.send(completion: .finished)
         }
-
-        guard let navigationController = navigationController else { return }
 
         // TODO: Add empty screen
         let vc = buildViewController(state: to) ?? UIViewController()
@@ -166,7 +164,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
             title: L10n.termsOfUse.uppercaseFirst,
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
-        navigationController?.present(termsVC, animated: true)
+        navigationController.present(termsVC, animated: true)
     }
 
     @objc private func openInfo() {
