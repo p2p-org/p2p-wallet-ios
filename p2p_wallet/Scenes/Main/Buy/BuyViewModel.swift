@@ -4,6 +4,7 @@ import KeyAppUI
 import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
+import UIKit
 
 class BuyViewModel: ObservableObject {
     var coordinatorIO = CoordinatorIO()
@@ -22,6 +23,7 @@ class BuyViewModel: ObservableObject {
     @Published var isLeftFocus = false
     @Published var isRightFocus = true
     @Published var buttonTitle: String = L10n.buy
+    @Published var buttonIcon: UIImage? = .buyWallet
 
     // MARK: -
 
@@ -67,19 +69,20 @@ class BuyViewModel: ObservableObject {
                 self.setForm(form: form)
             }).store(in: &subscriptions)
 
-        form.map { aFiat, aToken, aAmount, _ -> String in
+        form.sink { aFiat, aToken, aAmount, _ in
             let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
+            self.buttonIcon = UIImage.buyWallet
+            self.buttonTitle = L10n.buy
             if minAmount > aAmount {
-                return L10n.minimalTransactionIs(
+                self.buttonTitle = L10n.minimalTransactionIs(
                     minAmount.fiatAmount(
                         maximumFractionDigits: 2,
                         currency: self.fiat
                     )
                 )
+                self.buttonIcon = nil
             }
-            return L10n.buy
         }
-        .assign(to: \.buttonTitle, on: self)
         .store(in: &subscriptions)
 
         areMethodsLoading = true
@@ -172,8 +175,8 @@ class BuyViewModel: ObservableObject {
 
     var form: AnyPublisher<(Buy.FiatCurrency, Buy.CryptoCurrency, Double, Double), Never> {
         Publishers.CombineLatest4(
-            $fiat.removeDuplicates().map { $0.buyFiatCurrency()! },
-            $token.removeDuplicates().map { $0.buyCryptoCurrency()! },
+            $fiat.removeDuplicates().compactMap { $0.buyFiatCurrency() },
+            $token.removeDuplicates().compactMap { $0.buyCryptoCurrency() },
             $fiatAmount.map { Double($0) ?? 0 }.removeDuplicates(),
             $tokenAmount.map { Double($0) ?? 0 }.removeDuplicates()
         ).eraseToAnyPublisher()
@@ -245,16 +248,18 @@ class BuyViewModel: ObservableObject {
                 paymentType: paymentType
             )
         }
-        .replaceError(with: nil).compactMap { $0 }
-        .subscribe(on: DispatchQueue.global())
-        .receive(on: DispatchQueue.main)
-        // Getting only last request
-        .switchToLatest()
+        .replaceError(with: nil)
         .handleEvents(receiveOutput: { _ in
             DispatchQueue.main.async {
                 self.isLoading = false
             }
-        }).eraseToAnyPublisher()
+        })
+        .compactMap { $0 }
+        .subscribe(on: DispatchQueue.global())
+        .receive(on: DispatchQueue.main)
+        // Getting only last request
+        .switchToLatest()
+        .eraseToAnyPublisher()
     }
 
     func exchange(
@@ -509,11 +514,11 @@ struct MoonpayExchange: BuyExchangeService {
     }
 }
 
-extension Buy.FiatCurrency {
-    func fiat(_ fiatCurrency: Buy.FiatCurrency) -> Fiat? {
-        Fiat(rawValue: fiatCurrency.rawValue)
-    }
-}
+// extension Buy.FiatCurrency {
+//    func fiat(_ fiatCurrency: Buy.FiatCurrency) -> Fiat? {
+//        Fiat(rawValue: fiatCurrency.rawValue)
+//    }
+// }
 
 extension Fiat {
     func fiatCurrency(_ fiat: Fiat) -> Buy.FiatCurrency? {

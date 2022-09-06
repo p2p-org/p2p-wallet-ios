@@ -836,3 +836,5 @@ another" = "une crypto pour
 "SOL purchase cost" = "Coût d'achat SOL";
 "Transaction details" = "Détails de la transaction";
 "Minimal transaction is %@" = "La transaction minimale est %@";
+"Method" = "Méthode";
+"Buying" = "Achat";
