@@ -123,7 +123,7 @@ struct BuyView: View {
             ScrollViewReader { scrollView in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        if !viewModel.areMethodsLoading {
+                        if viewModel.areMethodsLoading {
                             skeletonMethod()
                             skeletonMethod()
 
