@@ -37,6 +37,10 @@ struct DebugMenuView: View {
                     TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
                     TextFieldRow(title: "Google:", content: $onboardingConfig.torusGoogleVerifier)
                     TextFieldRow(title: "Apple", content: $onboardingConfig.torusAppleVerifier)
+                    TextFieldRow(title: "MockDeviceShare:", content: $onboardingConfig.mockDeviceShare)
+                        .disabled(viewModel.features.first(where: { $0.feature == .mockedDeviceShare })?.isOn == false)
+                        .foregroundColor(viewModel.features.first(where: { $0.feature == .mockedDeviceShare })?
+                            .isOn == false ? Color.gray : Color.black)
                 }
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)
