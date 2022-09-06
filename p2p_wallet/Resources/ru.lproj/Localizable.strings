@@ -835,3 +835,4 @@ another" = "одна крипта для
 "one crypto for\nanother" = "одна крипта\nдругая";
 "SOL purchase cost" = "Стоимость покупки СОЛ";
 "Transaction details" = "Детали транзакции";
+"Minimal transaction is %@" = "Минимальная транзакция %@";

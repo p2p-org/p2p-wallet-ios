@@ -3,6 +3,7 @@ import SwiftUI
 import UIKit
 
 struct TextButtonView: UIViewRepresentable {
+    @Binding var titleBinding: String
     private let title: String
     private let style: TextButton.Style
     private let size: TextButton.Size
@@ -12,6 +13,7 @@ struct TextButtonView: UIViewRepresentable {
 
     init(
         title: String,
+        titleBinding: Binding<String>? = nil,
         style: TextButton.Style,
         size: TextButton.Size,
         leading: UIImage? = nil,
@@ -19,6 +21,7 @@ struct TextButtonView: UIViewRepresentable {
         onPressed: (() -> Void)? = nil
     ) {
         self.title = title
+        self._titleBinding = titleBinding ?? Binding<String>(get: { return ""}, set: { _, _ in })
         self.style = style
         self.size = size
         self.leading = leading
@@ -33,5 +36,7 @@ struct TextButtonView: UIViewRepresentable {
         return button
     }
 
-    func updateUIView(_: TextButton, context _: Context) {}
+    func updateUIView(_ button: TextButton, context: Context) {
+        button.title = titleBinding
+    }
 }
