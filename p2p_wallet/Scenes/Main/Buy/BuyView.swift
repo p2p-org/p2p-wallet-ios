@@ -35,7 +35,7 @@ struct BuyView: View {
                     Divider()
                         .frame(height: 1)
                         .overlay(Color(Asset.Colors.snow.color))
-                    if viewModel.availableMethods.count > 1 {
+                    if viewModel.availableMethods.count > 1 || viewModel.areMethodsLoading {
                         methods
                             .padding(.top, 20)
                     }
@@ -124,6 +124,10 @@ struct BuyView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         if !viewModel.areMethodsLoading {
+                            skeletonMethod()
+                            skeletonMethod()
+
+                        } else {
                             ForEach(viewModel.availableMethods, id: \.name) { item in
                                 Button { [weak viewModel] in
                                     viewModel?.didSelectPayment(item)
@@ -139,9 +143,6 @@ struct BuyView: View {
                                         Color.clear, width: 1, cornerRadius: 16
                                 ).id(item.type)
                             }
-                        } else {
-                            skeletonMethod()
-                            skeletonMethod()
                         }
                     }.padding(.horizontal, 16)
                 }
