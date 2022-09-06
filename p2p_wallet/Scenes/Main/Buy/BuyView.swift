@@ -1,7 +1,7 @@
 import KeyAppUI
+import SkeletonUI
 import SolanaSwift
 import SwiftUI
-import SkeletonUI
 
 struct BuyView: View {
     private let textLeadingPadding = 24.0
@@ -79,36 +79,39 @@ struct BuyView: View {
                 .apply(style: .text3)
                 .padding(.leading, textLeadingPadding)
 
-            HStack(alignment: .center, spacing: 1) {
-                inputView(
-                    text: $viewModel.tokenAmount,
-                    coin: viewModel.token.symbol,
-                    onEditing: { [weak viewModel] val in
-                        viewModel?.isLeftFocus = val
-                    },
-                    action: {
-                        viewModel.tokenSelectTapped()
-                    }).cornerRadius(
-                        radius: 12,
-                        corners: [.topLeft, .bottomLeft]
-                    )
-
-                inputView(
-                    text: $viewModel.fiatAmount,
-                    coin: viewModel.fiat.symbol,
-                    onEditing: { [weak viewModel] val in
-                        viewModel?.isRightFocus = val
-                    },
-                    action: {
-                        viewModel.fiatSelectTapped()
-                    }, showDisclosure: viewModel.availableFiat(payment: viewModel.selectedPayment).count > 1)
-                .cornerRadius(
-                        radius: 12,
-                        corners: [.topRight, .bottomRight]
-                    )
-            }
-            .padding([.leading, .trailing], cardLeadingPadding)
-            .padding(.top, -4)
+            BuyInputOutputView(
+                leftTitle: $viewModel.tokenAmount,
+                leftSubtitle: viewModel.token.symbol,
+                rightTitle: $viewModel.fiatAmount,
+                rightSubtitle: viewModel.fiat.symbol,
+                activeSide: .init(get: {
+                    if viewModel.isLeftFocus == false, viewModel.isRightFocus == false {
+                        return .none
+                    } else if viewModel.isLeftFocus == true {
+                        return .left
+                    } else {
+                        return .right
+                    }
+                }, set: { side in
+                    switch side {
+                    case .left:
+                        viewModel.isLeftFocus = true
+                        viewModel.isRightFocus = false
+                    case .right:
+                        viewModel.isLeftFocus = false
+                        viewModel.isRightFocus = true
+                    case .none:
+                        viewModel.isLeftFocus = false
+                        viewModel.isRightFocus = false
+                    }
+                })
+            ) { sideTap in
+                switch sideTap {
+                case .left: viewModel.tokenSelectTapped()
+                case .right: viewModel.fiatSelectTapped()
+                case .none: return
+                }
+            }.padding(.horizontal, 16)
         }
     }
 
@@ -200,8 +203,8 @@ struct BuyView: View {
                 top: 13,
                 leading: cardLeadingPadding,
                 bottom: 0,
-                trailing: 0)
-            )
+                trailing: 0
+            ))
 
             Text(item.time)
                 .apply(style: .label1)
@@ -221,8 +224,8 @@ struct BuyView: View {
                 top: 5,
                 leading: cardLeadingPadding,
                 bottom: 12,
-                trailing: 0)
-            )
+                trailing: 0
+            ))
         }
         .frame(width: 145)
         .background(Color(Asset.Colors.cloud.color))
@@ -243,8 +246,8 @@ struct BuyView: View {
                         top: 12,
                         leading: 16,
                         bottom: 4,
-                        trailing: 40)
-                    )
+                        trailing: 40
+                    ))
                 Text("")
                     .apply(style: .label2)
                     .padding(.trailing, 70)
@@ -256,8 +259,8 @@ struct BuyView: View {
                         top: 12,
                         leading: 16,
                         bottom: 0,
-                        trailing: 40)
-                    )
+                        trailing: 40
+                    ))
                 Spacer()
                 Text("").apply(style: .title3)
                     .skeleton(
@@ -268,8 +271,8 @@ struct BuyView: View {
                         top: 0,
                         leading: 16,
                         bottom: 12,
-                        trailing: 40)
-                    )
+                        trailing: 40
+                    ))
             }
             Spacer()
         }
@@ -289,7 +292,7 @@ struct BuyView: View {
             TextField("", text: text, onEditingChanged: { vall in
                 onEditing(vall)
             })
-            .multilineTextAlignment(.trailing)
+                .multilineTextAlignment(.trailing)
             Group {
                 Text(coin)
                     .apply(style: .title2)
@@ -334,7 +337,6 @@ extension BuyView {
     }
 }
 
-
 struct AutoFocusTextField: UIViewRepresentable {
     @Binding var text: String
     @Binding var focus: Bool
@@ -349,11 +351,12 @@ struct AutoFocusTextField: UIViewRepresentable {
         return textField
     }
 
-    func updateUIView(_ uiView: UITextField, context:
-        UIViewRepresentableContext<AutoFocusTextField>) {
+    func updateUIView(_ uiView: UITextField, context _:
+        UIViewRepresentableContext<AutoFocusTextField>)
+    {
         uiView.text = text
 //        if uiView.window != nil, !uiView.isFirstResponder && !focus {
-////            uiView.becomeFirstResponder()
+        ////            uiView.becomeFirstResponder()
 //            focus = true
 //        } else {
 //            focus = false
@@ -364,7 +367,7 @@ struct AutoFocusTextField: UIViewRepresentable {
         var parent: AutoFocusTextField
 
         init(_ autoFocusTextField: AutoFocusTextField) {
-            self.parent = autoFocusTextField
+            parent = autoFocusTextField
         }
 
         func textFieldDidChangeSelection(_ textField: UITextField) {
