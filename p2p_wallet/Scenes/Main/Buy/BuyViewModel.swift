@@ -49,6 +49,11 @@ class BuyViewModel: ObservableObject {
     private static let defaultMaxAmount = Double(9000)
 
     init() {
+        fiatAmount = String(
+            self.buyMinPrices[Fiat.usd.rawValue]?[Token.nativeSolana.symbol] ??
+            BuyViewModel.defaultMinAmount
+        )
+
         coordinatorIO.tokenSelected.sink { token in
             self.token = token
         }.store(in: &subscriptions)
