@@ -106,12 +106,12 @@ extension Moonpay {
                 throw Error.message(message: data.message)
             }
         }
-        
+
         func bankTransferAvailability() async throws -> BankTransferAvailability {
             struct IpAddress: Codable {
                 var alpha3: String?
             }
-            
+
             var components = URLComponents(string: api.endpoint + "/ip_address")!
             let params = ["apiKey": api.apiKey]
             components.queryItems = params.map { key, value in
@@ -126,7 +126,7 @@ extension Moonpay {
                 let alpha3 = json.alpha3 else { return .init() }
             return BankTransferAvailability(
                 gbp: alpha3 == "GBP",
-                eur: self.bankTransferAvailableAlpha3Codes().contains(alpha3)
+                eur: bankTransferAvailableAlpha3Codes().contains(alpha3)
             )
         }
     }
@@ -171,7 +171,7 @@ extension Moonpay.Provider {
             "SWE",
             "CHE",
             "GBR",
-            "VAT"
+            "VAT",
         ]
     }
 }

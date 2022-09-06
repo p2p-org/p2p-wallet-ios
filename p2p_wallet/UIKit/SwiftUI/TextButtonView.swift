@@ -23,19 +23,20 @@ struct TextButtonView: UIViewRepresentable {
         onPressed: (() -> Void)? = nil
     ) {
         self.title = title
-        _titleBinding = titleBinding ?? Binding<String>(get: { "" }, set: { _, _ in })
+        _titleBinding = titleBinding ??
+            Binding<String>(get: { "" }, set: { _, _ in })
         self.style = style
         self.size = size
         self.leading = leading
         self.trailing = trailing
-        _trailingBinding = trailingBinding ?? Binding<UIImage?>(get: { nil }, set: { _, _ in })
+        _trailingBinding = trailingBinding ??
+            Binding<UIImage?>(get: { nil }, set: { _, _ in })
         self.onPressed = onPressed
     }
 
     func makeUIView(context _: Context) -> TextButton {
         let button = TextButton(title: title, style: style, size: size, leading: leading, trailing: trailing)
         button.onPressed { _ in onPressed?() }
-
         return button
     }
 
