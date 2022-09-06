@@ -68,9 +68,7 @@ extension DebugMenuViewModel {
 
         var title: String {
             switch self {
-            case .newSettings:
-                return "New Settings"
-            case .sslPinning: return "SSL Pinning"
+            case .newSettings: return "New Settings"
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
             case .mockedDeviceShare: return "[Onboarding] DeviceShare Mock"
@@ -80,9 +78,7 @@ extension DebugMenuViewModel {
 
         var feature: Feature {
             switch self {
-            case .newSettings:
-                return .settingsFeature
-            case .sslPinning: return .sslPinning
+            case .newSettings: return .settingsFeature
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade
             case .mockedDeviceShare: return .mockedDeviceShare
