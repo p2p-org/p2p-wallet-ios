@@ -24,6 +24,7 @@ class BuyViewModel: ObservableObject {
     @Published var isRightFocus = true
     @Published var buttonTitle: String = L10n.buy
     @Published var buttonIcon: UIImage? = .buyWallet
+    @Published var exchangeOutput: Buy.ExchangeOutput?
 
     // MARK: -
 
@@ -45,6 +46,7 @@ class BuyViewModel: ObservableObject {
     var buyMinPrices: [String: [String: Double]]
 
     private static let defaultMinAmount = Double(40)
+    private static let defaultMaxAmount = Double(9000)
 
     init() {
         coordinatorIO.tokenSelected.sink { token in
@@ -69,36 +71,38 @@ class BuyViewModel: ObservableObject {
                     fiat: self.fiat,
                     fiatAmount: isToken ? nil : value.amount
                 )
+                self.exchangeOutput = value
                 self.setForm(form: form)
             }).store(in: &subscriptions)
 
-        form.sink { aFiat, aToken, aAmount, _ in
-            let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
-            self.buttonIcon = UIImage.buyWallet
-            self.buttonTitle = L10n.buy
-            if minAmount > aAmount {
-                self.buttonTitle = L10n.minimalTransactionIs(
-                    minAmount.fiatAmount(
-                        maximumFractionDigits: 2,
-                        currency: self.fiat
+        form
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .sink { aFiat, aToken, aAmount, _ in
+                let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
+                self.buttonIcon = UIImage.buyWallet
+                self.buttonTitle = L10n.buy
+                if minAmount > aAmount {
+                    self.buttonTitle = L10n.minimalTransactionIs(
+                        minAmount.fiatAmount(
+                            maximumFractionDigits: 2,
+                            currency: self.fiat
+                        )
                     )
-                )
-                self.buttonIcon = nil
-            }
-        }
-        .store(in: &subscriptions)
+                    self.buttonIcon = nil
+                }
+            }.store(in: &subscriptions)
 
         areMethodsLoading = true
 
         Task {
+            let buyBankEnabled = available(.buyBankTransferEnabled)
             let banks = try await exchangeService.isBankTransferEnabled()
-            self.isBankTransferEnabled = banks.eur
-            self.isGBPBankTransferEnabled = banks.gbp
+            self.isBankTransferEnabled = banks.eur && buyBankEnabled
+            self.isGBPBankTransferEnabled = banks.gbp && buyBankEnabled
 
             await self.setPaymentMethod(self.lastMethod)
-            self.buyMinPrices = [:]
-            var minPrices = [String: [String: Double]]()
 
+            var minPrices = [String: [String: Double]]()
             for aFiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
                 for aToken in [Token.nativeSolana, Token.usdc] {
                     guard
@@ -119,10 +123,8 @@ class BuyViewModel: ObservableObject {
                     }
                 }
             }
-
             debugPrint(minPrices)
             self.buyMinPrices = minPrices
-
             DispatchQueue.main.async {
                 // Set last used method first
                 self.availableMethods = self.availablePaymentTypes()
@@ -132,7 +134,6 @@ class BuyViewModel: ObservableObject {
                     self.availableMethods
                         .insert(self.lastMethod.paymentItem(), at: 0)
                 }
-
                 self.areMethodsLoading = false
             }
         }
@@ -157,8 +158,16 @@ class BuyViewModel: ObservableObject {
     }
 
     // TODO: rename
-    func didTapTotal() {
-        coordinatorIO.showDetail.send()
+    func didTapTotal() async throws {
+        guard let exchangeOutput = exchangeOutput else { return }
+        do {
+            guard
+                let fiat = fiat.buyFiatCurrency(),
+                let token = token.buyCryptoCurrency()
+            else { return }
+            let exchangeRate = try await exchangeService.getExchangeRate(from: fiat, to: token)
+            coordinatorIO.showDetail.send((exchangeOutput, exchangeRate: exchangeRate.amount, fiat: self.fiat))
+        }
     }
 
     func tokenSelectTapped() {
@@ -199,79 +208,85 @@ class BuyViewModel: ObservableObject {
             form,
             $selectedPayment.removeDuplicates()
         )
-        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-        .map { form, paymentType -> (BuyCurrencyType, BuyCurrencyType, Double, PaymentType) in
-            let (fiat, token, fAmount, tAmount) = form
-            let from: BuyCurrencyType
-            let to: BuyCurrencyType
-            let amount: Double
-            if self.isEditingFiat {
-                from = fiat
-                to = token
-                amount = fAmount
-            } else {
-                from = token
-                to = fiat
-                amount = tAmount
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .map { form, paymentType -> (BuyCurrencyType, BuyCurrencyType, Double, PaymentType) in
+                let (fiat, token, fAmount, tAmount) = form
+                let from: BuyCurrencyType
+                let to: BuyCurrencyType
+                let amount: Double
+                if self.isEditingFiat {
+                    from = fiat
+                    to = token
+                    amount = fAmount
+                } else {
+                    from = token
+                    to = fiat
+                    amount = tAmount
+                }
+                return (from, to, amount, paymentType)
+            }.removeDuplicates(by: { aLeft, aRight in
+                // Checking first param for equality
+                if
+                    // 1 step if it's fiat
+                    let lFiat = (aLeft.0 as? Buy.FiatCurrency),
+                    let rFiat = aRight.0 as? Buy.FiatCurrency
+                {
+                    guard lFiat == rFiat else { return false }
+                } else if
+                    // 2 step if it's crypto
+                    let lCrypto = aLeft.0 as? Buy.CryptoCurrency,
+                    let rCrypto = aRight.0 as? Buy.CryptoCurrency
+                {
+                    guard lCrypto == rCrypto else { return false }
+                } else {
+                    return false
+                }
+                // The same with second param
+                if
+                    let lFiat = (aLeft.1 as? Buy.FiatCurrency),
+                    let rFiat = aRight.1 as? Buy.FiatCurrency
+                {
+                    guard lFiat == rFiat else { return false }
+                } else if
+                    let lCrypto = aLeft.1 as? Buy.CryptoCurrency,
+                    let rCrypto = aRight.1 as? Buy.CryptoCurrency
+                {
+                    guard lCrypto == rCrypto else { return false }
+                } else {
+                    return false
+                }
+                // and the rest
+                return aLeft.2 == aRight.2 && aLeft.3 == aRight.3
+            }).handleEvents(receiveOutput: { [weak self] _ in
+                DispatchQueue.main.async {
+                    self?.isLoading = true
+                }
+            }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput, Never> in
+                self.exchange(
+                    from: from,
+                    to: to,
+                    amount: amount,
+                    paymentType: paymentType
+                )
             }
-            return (from, to, amount, paymentType)
-        }.removeDuplicates(by: { aLeft, aRight in
-            // Checking first param for equality
-            if
-                // 1 step if it's fiat
-                let lFiat = (aLeft.0 as? Buy.FiatCurrency),
-                let rFiat = aRight.0 as? Buy.FiatCurrency
-            {
-                guard lFiat == rFiat else { return false }
-            } else if
-                // 2 step if it's crypto
-                let lCrypto = aLeft.0 as? Buy.CryptoCurrency,
-                let rCrypto = aRight.0 as? Buy.CryptoCurrency
-            {
-                guard lCrypto == rCrypto else { return false }
-            } else {
-                return false
-            }
-            // The same with second param
-            if
-                let lFiat = (aLeft.1 as? Buy.FiatCurrency),
-                let rFiat = aRight.1 as? Buy.FiatCurrency
-            {
-                guard lFiat == rFiat else { return false }
-            } else if
-                let lCrypto = aLeft.1 as? Buy.CryptoCurrency,
-                let rCrypto = aRight.1 as? Buy.CryptoCurrency
-            {
-                guard lCrypto == rCrypto else { return false }
-            } else {
-                return false
-            }
-            // and the rest
-            return aLeft.2 == aRight.2 && aLeft.3 == aRight.3
-        }).handleEvents(receiveOutput: { [weak self] _ in
-            DispatchQueue.main.async {
-                self?.isLoading = true
-            }
-        }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput, Never> in
-            self.exchange(
-                from: from,
-                to: to,
-                amount: amount,
-                paymentType: paymentType
-            )
-        }
-        .replaceError(with: nil)
-        .handleEvents(receiveOutput: { _ in
-            DispatchQueue.main.async {
-                self.isLoading = false
-            }
-        })
-        .compactMap { $0 }
-        .subscribe(on: DispatchQueue.global())
-        .receive(on: DispatchQueue.main)
-        // Getting only last request
-        .switchToLatest()
-        .eraseToAnyPublisher()
+            .replaceError(with: nil)
+            .handleEvents(receiveOutput: { _ in
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                }
+            })
+            .replaceError(with: nil)
+            .handleEvents(receiveOutput: { _ in
+                DispatchQueue.main.async {
+                    self.isLoading = false
+                }
+            })
+            .compactMap { $0 }
+            .subscribe(on: DispatchQueue.global())
+            .receive(on: DispatchQueue.main)
+            // Getting only last request
+            .switchToLatest()
+            .eraseToAnyPublisher()
     }
 
     func exchange(
@@ -344,40 +359,6 @@ class BuyViewModel: ObservableObject {
         }
     }
 
-//    func compareCurrency(lh: BuyCurrencyType, rh: BuyCurrencyType) -> Bool {
-//        // Checking first param for equality
-//        if
-//            // 1 step if it's fiat
-//            let lFiat = (lh as? Buy.FiatCurrency),
-//            let rFiat = rh as? Buy.FiatCurrency
-//        {
-//            guard lFiat == rFiat else { return false }
-//        } else if
-//            // 2 step if it's crypto
-//            let lCrypto = lh as? Buy.CryptoCurrency,
-//            let rCrypto = rh as? Buy.CryptoCurrency
-//        {
-//            guard lCrypto == rCrypto else { return false }
-//        } else {
-//            return false
-//        }
-    ////        // The same with second param
-    ////        if
-    ////            let lFiat = (aLeft.1 as? Buy.FiatCurrency),
-    ////            let rFiat = aRight.1 as? Buy.FiatCurrency
-    ////        {
-    ////            guard lFiat == rFiat else { return false }
-    ////        } else if
-    ////            let lCrypto = aLeft.1 as? Buy.CryptoCurrency,
-    ////            let rCrypto = aRight.1 as? Buy.CryptoCurrency
-    ////        {
-    ////            guard lCrypto == rCrypto else { return false }
-    ////        } else {
-    ////            return false
-    ////        }
-//        return true
-//    }
-
     // MARK: -
 
     struct BuyForm: Equatable {
@@ -391,7 +372,7 @@ class BuyViewModel: ObservableObject {
 extension BuyViewModel {
     struct CoordinatorIO {
         // Input
-        var showDetail = PassthroughSubject<Void, Never>()
+        var showDetail = PassthroughSubject<(Buy.ExchangeOutput, exchangeRate: Double, fiat: Fiat), Never>()
         var showTokenSelect = PassthroughSubject<[Token], Never>()
         var showFiatSelect = PassthroughSubject<[Fiat], Never>()
         // Output
@@ -446,115 +427,5 @@ extension PaymentType {
                 icon: UIImage.buyCard
             )
         }
-    }
-}
-
-protocol BuyExchangeService {
-    func getMinAmount(currency: Buy.Currency) async throws -> Double
-    func getMinAmounts(_ currency1: Buy.Currency, _ currency2: Buy.Currency) async throws -> (Double, Double)
-    func convert(input: Buy.ExchangeInput, to currency: Buy.Currency, paymentType: PaymentType) async throws -> Buy
-        .ExchangeOutput
-    func getExchangeRate(from fiatCurrency: Buy.FiatCurrency, to cryptoCurrency: Buy.CryptoCurrency) async throws -> Buy
-        .ExchangeRate
-    func isBankTransferEnabled() async throws -> (gbp: Bool, eur: Bool)
-}
-
-struct MoonpayExchange: BuyExchangeService {
-    let provider: Moonpay.Provider
-
-    init(provider: Moonpay.Provider) { self.provider = provider }
-
-    func convert(
-        input: Buy.ExchangeInput,
-        to currency: Buy.Currency,
-        paymentType: PaymentType
-    ) async throws -> Buy.ExchangeOutput {
-        let currencies = [input.currency, currency]
-        let base = currencies.first { $0 is Buy.FiatCurrency }
-        let quote = currencies.first { $0 is Buy.CryptoCurrency }
-
-        guard
-            let base = base as? MoonpayCodeMapping,
-            let quote = quote as? MoonpayCodeMapping
-        else {
-//            throw Exception.invalidInput
-            fatalError()
-        }
-
-        let baseAmount = input.currency is Buy.Currency ? input.amount : nil
-        let quoteAmount = input.currency is Buy.CryptoCurrency ? input.amount : nil
-
-        do {
-            let buyQuote = try await provider
-                .getBuyQuote(
-                    baseCurrencyCode: base.moonpayCode,
-                    quoteCurrencyCode: quote.moonpayCode,
-                    baseCurrencyAmount: baseAmount,
-                    quoteCurrencyAmount: quoteAmount,
-                    paymentMethod: PaymentType.card == paymentType ? .creditDebitCard : .sepaBankTransfer
-                )
-
-            return Buy.ExchangeOutput(
-                amount: currency is Buy.CryptoCurrency ? buyQuote.quoteCurrencyAmount : buyQuote.totalAmount,
-                currency: currency,
-                processingFee: buyQuote.feeAmount,
-                networkFee: buyQuote.networkFeeAmount,
-                purchaseCost: buyQuote.baseCurrencyAmount,
-                total: buyQuote.totalAmount
-            )
-        } catch {
-            throw error
-        }
-    }
-
-    func getExchangeRate(
-        from fiatCurrency: Buy.FiatCurrency,
-        to cryptoCurrency: Buy.CryptoCurrency
-    ) async throws -> Buy.ExchangeRate {
-        let exchangeRate = try await provider
-            .getPrice(for: cryptoCurrency.moonpayCode, as: fiatCurrency.moonpayCode.uppercased())
-
-        return .init(amount: exchangeRate, cryptoCurrency: cryptoCurrency, fiatCurrency: fiatCurrency)
-    }
-
-    private func _getMinAmount(currencies: Moonpay.Currencies, for currency: BuyCurrencyType) -> Double {
-        guard let currency = currency as? MoonpayCodeMapping else { return 0.0 }
-        return currencies.first { e in e.code == currency.moonpayCode }?.minBuyAmount ?? 0.0
-    }
-
-    func getMinAmount(currency: Buy.Currency) async throws -> Double {
-        let currencies = try await provider
-            .getAllSupportedCurrencies()
-        return _getMinAmount(currencies: currencies, for: currency)
-    }
-
-    func getMinAmounts(_ currency1: Buy.Currency, _ currency2: Buy.Currency) async throws -> (Double, Double) {
-        let currencies = try await provider.getAllSupportedCurrencies()
-        return (
-            _getMinAmount(currencies: currencies, for: currency1),
-            _getMinAmount(currencies: currencies, for: currency2)
-        )
-    }
-
-    /// Weather banks are available for this provider
-    func isBankTransferEnabled() async throws -> (gbp: Bool, eur: Bool) {
-        let banks = try await provider.bankTransferAvailability()
-        return (gbp: banks.gbp, eur: banks.eur)
-    }
-}
-
-extension Fiat {
-    func fiatCurrency(_ fiat: Fiat) -> Buy.FiatCurrency? {
-        Buy.FiatCurrency(rawValue: fiat.rawValue)
-    }
-
-    func buyFiatCurrency() -> Buy.FiatCurrency? {
-        Buy.FiatCurrency(rawValue: rawValue)
-    }
-}
-
-extension Token {
-    func buyCryptoCurrency() -> Buy.CryptoCurrency? {
-        Buy.CryptoCurrency(rawValue: symbol.lowercased())
     }
 }

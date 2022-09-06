@@ -51,22 +51,9 @@ struct BuyView: View {
             Spacer()
             bottomActionsView
                 .frame(height: 110)
-//                .offset(y: bottomOffset)
         }
-//        .gesture(
-//            DragGesture().onChanged({ gesture in
-//                if gesture.startLocation.x > CGFloat(150.0) {
-//                    return
-//                }
-//                print("edge pan \(gesture.location)")
-//                print("edge pan \(gesture.translation)")
-//                bottomOffset -= gesture.translation.height
-//            }).onEnded({ gesture in
-//                bottomOffset = .zero
-//            })
-//        )
-            .edgesIgnoringSafeArea(.bottom)
-            .navigationTitle(L10n.buy)
+        .edgesIgnoringSafeArea(.bottom)
+        .navigationTitle(L10n.buy)
     }
 
     var icon: some View {
@@ -159,9 +146,9 @@ struct BuyView: View {
                     .frame(height: 24)
             } else {
                 Button { [weak viewModel] in
-                    viewModel?.didTapTotal()
+                    Task { try await viewModel?.didTapTotal() }
                 } label: {
-                    Text("\(viewModel.total) \(viewModel.fiat.code)")
+                    Text("\(viewModel.total)")
                         .apply(style: .text3)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                     Image(uiImage: Asset.MaterialIcon.chevronRight.image)
@@ -178,7 +165,7 @@ struct BuyView: View {
                     Text(item.fee)
                         .apply(style: .title2)
 
-                    Text("fee")
+                    Text(L10n.fee)
                         .apply(style: .label1)
                         .padding(.bottom, 3)
                         .padding(.leading, -4)

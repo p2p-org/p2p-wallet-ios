@@ -1,9 +1,9 @@
 import Combine
 import Foundation
 import Resolver
+import SafariServices
 import SolanaSwift
 import SwiftUI
-import SafariServices
 
 final class BuyCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
@@ -18,20 +18,22 @@ final class BuyCoordinator: Coordinator<Void> {
         viewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(viewController, animated: true)
 
-        viewModel.coordinatorIO.showDetail.flatMap { _ in
-            self.coordinate(to:
-                TransactionDetailsCoordinator(
-                    navigationController: self.navigationController,
-                    model: .init(
-                        solPrice: 22.1,
-                        solPurchaseCost: 22.3,
-                        processingFee: 10,
-                        networkFee: 1,
-                        total: 123.2,
-                        currency: .usd
-                    )
-                ))
-        }.sink { _ in }.store(in: &subscriptions)
+        viewModel.coordinatorIO.showDetail
+            .receive(on: RunLoop.main)
+            .flatMap { exchangeOutput, exchangeRate, currency in
+                self.coordinate(to:
+                    TransactionDetailsCoordinator(
+                        navigationController: self.navigationController,
+                        model: .init(
+                            solPrice: exchangeRate,
+                            solPurchaseCost: exchangeOutput.purchaseCost,
+                            processingFee: exchangeOutput.processingFee,
+                            networkFee: exchangeOutput.networkFee,
+                            total: exchangeOutput.total,
+                            currency: currency
+                        )
+                    ))
+            }.sink { _ in }.store(in: &subscriptions)
 
         viewModel.coordinatorIO.showTokenSelect.flatMap { tokens in
             self.coordinate(

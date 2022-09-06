@@ -22,7 +22,7 @@ protocol BuyProcessingFactory {
         amount: Double,
         toCurrency: BuyCurrencyType,
         paymentMethod: String
-    ) throws -> BuyProcessingServiceType 
+    ) throws -> BuyProcessingServiceType
 }
 
 extension Buy {
@@ -56,7 +56,8 @@ extension Buy {
         ) throws -> BuyProcessingServiceType {
             guard
                 let from = fromCurrency as? MoonpayCodeMapping,
-                let to = toCurrency as? MoonpayCodeMapping else {
+                let to = toCurrency as? MoonpayCodeMapping
+            else {
                 // TODO:
                 fatalError()
             }

@@ -40,7 +40,7 @@ struct BuyInputOutputView: View {
                         font: fontSynchorinze.font,
                         side: .left
                     )
-                    .padding(.leading, 8)
+                        .padding(.leading, 8)
 
                     currency(value: leftSubtitle) { onTap(.left) }
                         .lineLimit(1)
@@ -59,7 +59,7 @@ struct BuyInputOutputView: View {
                         font: fontSynchorinze.font,
                         side: .right
                     )
-                    .padding(.leading, 8)
+                        .padding(.leading, 8)
 
                     currency(value: rightSubtitle) { onTap(.right) }
                         .lineLimit(1)
@@ -183,6 +183,7 @@ private struct TextfieldView: UIViewRepresentable {
         textField.font = fontSynchorinze.font
         textField.textAlignment = .right
         textField.text = text
+        textField.keyboardType = .numberPad
         textField.addTarget(ctx.coordinator, action: #selector(ctx.coordinator.textDidChanged), for: .editingChanged)
 
         return textField

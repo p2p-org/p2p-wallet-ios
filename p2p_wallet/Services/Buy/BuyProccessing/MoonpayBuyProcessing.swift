@@ -68,7 +68,7 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
             "baseCurrencyAmount": baseCurrencyAmount != nil ? "\(baseCurrencyAmount!)" : nil,
             "quoteCurrencyAmount": quoteCurrencyAmount != nil ? "\(quoteCurrencyAmount!)" : nil,
         ]
-        
+
         if let paymentMethod = paymentMethod {
             params["paymentMethod"] = paymentMethod.rawValue
         }
