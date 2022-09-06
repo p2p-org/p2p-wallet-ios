@@ -123,10 +123,8 @@ struct BuyView: View {
             ScrollViewReader { scrollView in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
-                        ForEach(viewModel.availableMethods, id: \.name) { item in
-                            if viewModel.areMethodsLoading {
-                                self.skeletonMethod()
-                            } else {
+                        if !viewModel.areMethodsLoading {
+                            ForEach(viewModel.availableMethods, id: \.name) { item in
                                 Button { [weak viewModel] in
                                     viewModel?.didSelectPayment(item)
                                     withAnimation {
@@ -141,6 +139,9 @@ struct BuyView: View {
                                         Color.clear, width: 1, cornerRadius: 16
                                 ).id(item.type)
                             }
+                        } else {
+                            skeletonMethod()
+                            skeletonMethod()
                         }
                     }.padding(.horizontal, 16)
                 }
@@ -292,7 +293,7 @@ struct BuyView: View {
             TextField("", text: text, onEditingChanged: { vall in
                 onEditing(vall)
             })
-                .multilineTextAlignment(.trailing)
+            .multilineTextAlignment(.trailing)
             Group {
                 Text(coin)
                     .apply(style: .title2)
@@ -333,45 +334,6 @@ extension BuyView {
                     viewModel?.buyButtonTapped()
                 }
             }
-        }
-    }
-}
-
-struct AutoFocusTextField: UIViewRepresentable {
-    @Binding var text: String
-    @Binding var focus: Bool
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(self)
-    }
-
-    func makeUIView(context: UIViewRepresentableContext<AutoFocusTextField>) -> UITextField {
-        let textField = UITextField()
-        textField.delegate = context.coordinator
-        return textField
-    }
-
-    func updateUIView(_ uiView: UITextField, context _:
-        UIViewRepresentableContext<AutoFocusTextField>)
-    {
-        uiView.text = text
-//        if uiView.window != nil, !uiView.isFirstResponder && !focus {
-        ////            uiView.becomeFirstResponder()
-//            focus = true
-//        } else {
-//            focus = false
-//        }
-    }
-
-    class Coordinator: NSObject, UITextFieldDelegate {
-        var parent: AutoFocusTextField
-
-        init(_ autoFocusTextField: AutoFocusTextField) {
-            parent = autoFocusTextField
-        }
-
-        func textFieldDidChangeSelection(_ textField: UITextField) {
-            parent.text = textField.text ?? ""
         }
     }
 }
