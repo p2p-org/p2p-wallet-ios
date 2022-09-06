@@ -55,7 +55,7 @@ struct ActionsView: View {
                         actionView(
                             image: .homeSendAction,
                             title: L10n.send,
-                            subtitle: L10n.toPhoneNumberUsernameOrAddress,
+                            subtitle: "\(L10n.toUsernameOrAddress)\n",
                             action: {
                                 actionSubject.send(.send)
                             }

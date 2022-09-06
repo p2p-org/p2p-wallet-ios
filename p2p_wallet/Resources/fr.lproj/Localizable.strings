@@ -833,3 +833,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 another" = "une crypto pour
  une autre";
 "one crypto for\nanother" = "un crypto pour\nun autre";
+"to username or address" = "au nom d'utilisateur ou à l'adresse";
