@@ -1,6 +1,7 @@
 import KeyAppUI
 import SolanaSwift
 import SwiftUI
+import SkeletonUI
 
 struct BuyView: View {
     private let textLeadingPadding = 24.0
@@ -77,8 +78,8 @@ struct BuyView: View {
                 inputView(
                     text: $viewModel.tokenAmount,
                     coin: viewModel.token.symbol,
-                    onEditing: { val in
-                        viewModel.isLeftFocus = val
+                    onEditing: { [weak viewModel] val in
+                        viewModel?.isLeftFocus = val
                     },
                     action: {
                         viewModel.tokenSelectTapped()
@@ -90,12 +91,13 @@ struct BuyView: View {
                 inputView(
                     text: $viewModel.fiatAmount,
                     coin: viewModel.fiat.symbol,
-                    onEditing: { val in
-                        viewModel.isRightFocus = val
+                    onEditing: { [weak viewModel] val in
+                        viewModel?.isRightFocus = val
                     },
                     action: {
                         viewModel.fiatSelectTapped()
-                    }).cornerRadius(
+                    }, showDisclosure: viewModel.availableFiat(payment: viewModel.selectedPayment).count > 1)
+                .cornerRadius(
                         radius: 12,
                         corners: [.topRight, .bottomRight]
                     )
@@ -114,20 +116,23 @@ struct BuyView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 8) {
                         ForEach(viewModel.availableMethods, id: \.name) { item in
-                            Button {
-                                viewModel.didSelectPayment(item)
-                                withAnimation {
-                                    scrollView.scrollTo(item.type, anchor: .center)
-                                }
-                            } label: {
-                                methodCard(item: item)
-                                    .foregroundColor(Color(Asset.Colors.night.color))
+                            if viewModel.areMethodsLoading {
+                                self.skeletonMethod()
+                            } else {
+                                Button { [weak viewModel] in
+                                    viewModel?.didSelectPayment(item)
+                                    withAnimation {
+                                        scrollView.scrollTo(item.type, anchor: .center)
+                                    }
+                                } label: {
+                                    methodCard(item: item)
+                                        .foregroundColor(Color(Asset.Colors.night.color))
+                                }.addBorder(
+                                    item.type == viewModel.selectedPayment ?
+                                        Color(Asset.Colors.night.color) :
+                                        Color.clear, width: 1, cornerRadius: 16
+                                ).id(item.type)
                             }
-                            .addBorder(
-                                item.type == viewModel.selectedPayment ?
-                                    Color(Asset.Colors.night.color) :
-                                    Color.clear, width: 1, cornerRadius: 16
-                            ).id(item.type)
                         }
                     }.padding(.horizontal, 16)
                 }
@@ -142,11 +147,12 @@ struct BuyView: View {
             Spacer()
             if viewModel.isLoading {
                 ActivityIndicator(isAnimating: true)
+                    .frame(height: 24)
             } else {
                 Button { [weak viewModel] in
                     viewModel?.didTapTotal()
                 } label: {
-                    Text("\(viewModel.total) USD")
+                    Text("\(viewModel.total) \(viewModel.fiat.code)")
                         .apply(style: .text3)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                     Image(uiImage: Asset.MaterialIcon.chevronRight.image)
@@ -157,7 +163,7 @@ struct BuyView: View {
     }
 
     func methodCard(item: BuyViewModel.PaymentTypeItem) -> some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading) { [weak viewModel] in
             HStack {
                 HStack(alignment: .bottom) {
                     Text(item.fee)
@@ -170,7 +176,7 @@ struct BuyView: View {
                     Spacer()
                 }
                 Spacer()
-                if viewModel.selectedPayment == item.type {
+                if viewModel?.selectedPayment == item.type {
                     Image("checkmark-filled")
                         .resizable()
                         .scaledToFill()
@@ -185,7 +191,12 @@ struct BuyView: View {
                         .padding(.trailing, 13)
                         .padding(.top, -3)
                 }
-            }.padding(EdgeInsets(top: 13, leading: cardLeadingPadding, bottom: 0, trailing: 0))
+            }.padding(EdgeInsets(
+                top: 13,
+                leading: cardLeadingPadding,
+                bottom: 0,
+                trailing: 0)
+            )
 
             Text(item.time)
                 .apply(style: .label1)
@@ -201,14 +212,74 @@ struct BuyView: View {
                     .padding(.leading, -4)
                     .padding(.top, -1)
                 Spacer()
-            }.padding(EdgeInsets(top: 5, leading: cardLeadingPadding, bottom: 12, trailing: 0))
+            }.padding(EdgeInsets(
+                top: 5,
+                leading: cardLeadingPadding,
+                bottom: 12,
+                trailing: 0)
+            )
         }
         .frame(width: 145)
         .background(Color(Asset.Colors.cloud.color))
         .cornerRadius(16)
     }
 
-    func inputView(text: Binding<String>, coin: String, onEditing: @escaping (Bool) -> Void, action: @escaping () -> Void) -> some View {
+    func skeletonMethod() -> some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text("")
+                    .apply(style: .title2)
+                    .frame(width: 56, height: 28)
+                    .skeleton(
+                        with: viewModel.areMethodsLoading,
+                        size: CGSize(width: 56, height: 28),
+                        animated: .default
+                    ).padding(EdgeInsets(
+                        top: 12,
+                        leading: 16,
+                        bottom: 4,
+                        trailing: 40)
+                    )
+                Text("")
+                    .apply(style: .label2)
+                    .padding(.trailing, 70)
+                    .skeleton(
+                        with: viewModel.areMethodsLoading,
+                        size: CGSize(width: 56, height: 8),
+                        animated: .default
+                    ).padding(EdgeInsets(
+                        top: 12,
+                        leading: 16,
+                        bottom: 0,
+                        trailing: 40)
+                    )
+                Spacer()
+                Text("").apply(style: .title3)
+                    .skeleton(
+                        with: viewModel.areMethodsLoading,
+                        size: CGSize(width: 56, height: 16),
+                        animated: .default
+                    ).padding(EdgeInsets(
+                        top: 0,
+                        leading: 16,
+                        bottom: 12,
+                        trailing: 40)
+                    )
+            }
+            Spacer()
+        }
+        .frame(width: 151, height: 100)
+        .background(Color(Asset.Colors.cloud.color))
+        .cornerRadius(16)
+    }
+
+    func inputView(
+        text: Binding<String>,
+        coin: String,
+        onEditing: @escaping (Bool) -> Void,
+        action: @escaping () -> Void,
+        showDisclosure: Bool = true
+    ) -> some View {
         HStack(alignment: .center, spacing: 4) {
             TextField("", text: text, onEditingChanged: { vall in
                 onEditing(vall)
@@ -219,13 +290,19 @@ struct BuyView: View {
                     .apply(style: .title2)
                     .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
                     .padding(.trailing, 1)
-                Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 16, height: 16)
-                    .padding(.trailing, 10)
+                if showDisclosure {
+                    Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
+                        .padding(.trailing, 10)
+                } else {
+                    Spacer(minLength: 10)
+                }
             }.onTapGesture {
-                action()
+                if showDisclosure {
+                    action()
+                }
             }
         }
         .frame(height: 62)
@@ -239,11 +316,12 @@ extension BuyView {
             VStack(spacing: .zero) {
                 // Create a wallet
                 TextButtonView(
-                    title: L10n.buy,
+                    title: self.viewModel.buttonTitle,
                     style: .inverted,
                     size: .large,
                     trailing: UIImage.buyWallet
                 ) { [weak viewModel] in
+                    viewModel?.buyButtonTapped()
                 }
             }
         }

@@ -15,6 +15,14 @@ protocol BuyProcessingFactory {
         initialAmount: Double,
         currency: Buy.FiatCurrency
     ) throws -> BuyProcessingServiceType
+
+    func create(
+        walletRepository: WalletsRepository,
+        fromCurrency: BuyCurrencyType,
+        amount: Double,
+        toCurrency: BuyCurrencyType,
+        paymentMethod: String
+    ) throws -> BuyProcessingServiceType 
 }
 
 extension Buy {
@@ -25,10 +33,6 @@ extension Buy {
             initialAmount: Double,
             currency: FiatCurrency
         ) throws -> BuyProcessingServiceType {
-//            guard let walletAddress = walletRepository.getWallets().first(where: { $0.token.symbol == crypto.toWallet() })?.pubkey else {
-//                throw SolanaError.other(L10n.thereIsNoWalletInYourAccount("ETH"))
-//            }
-
             MoonpayBuyProcessing(
                 environment: Defaults.apiEndPoint.network == .mainnetBeta ?
                     .production :
@@ -40,6 +44,34 @@ extension Buy {
                 walletAddress: walletRepository.nativeWallet?.pubkey,
                 baseCurrencyCode: currency.moonpayCode,
                 baseCurrencyAmount: initialAmount
+            )
+        }
+
+        func create(
+            walletRepository: WalletsRepository,
+            fromCurrency: BuyCurrencyType,
+            amount: Double,
+            toCurrency: BuyCurrencyType,
+            paymentMethod: String
+        ) throws -> BuyProcessingServiceType {
+            guard
+                let from = fromCurrency as? MoonpayCodeMapping,
+                let to = toCurrency as? MoonpayCodeMapping else {
+                // TODO:
+                fatalError()
+            }
+            return MoonpayBuyProcessing(
+                environment: Defaults.apiEndPoint.network == .mainnetBeta ?
+                    .production :
+                    .staging,
+                apiKey: Defaults.apiEndPoint.network == .mainnetBeta ?
+                    .secretConfig("MOONPAY_PRODUCTION_API_KEY")! :
+                    .secretConfig("MOONPAY_STAGING_API_KEY")!,
+                currencyCode: to.moonpayCode,
+                walletAddress: walletRepository.nativeWallet?.pubkey,
+                baseCurrencyCode: from.moonpayCode,
+                baseCurrencyAmount: amount,
+                paymentMethod: paymentMethod == "card" ? .creditDebitCard : .sepaBankTransfer
             )
         }
     }
