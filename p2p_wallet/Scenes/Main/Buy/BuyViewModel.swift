@@ -1,9 +1,9 @@
 import Combine
 import Foundation
 import KeyAppUI
+import Resolver
 import SolanaSwift
 import SwiftyUserDefaults
-import Resolver
 
 class BuyViewModel: ObservableObject {
     var coordinatorIO = CoordinatorIO()
@@ -18,7 +18,7 @@ class BuyViewModel: ObservableObject {
     @Published var total: String = ""
     @Published var selectedPayment: PaymentType = .card
     @Published var isLoading = false
-    @Published var areMethodsLoading = false
+    @Published var areMethodsLoading = true
     @Published var isLeftFocus = false
     @Published var isRightFocus = true
     @Published var buttonTitle: String = L10n.buy
@@ -79,8 +79,8 @@ class BuyViewModel: ObservableObject {
             }
             return L10n.buy
         }
-            .assign(to: \.buttonTitle, on: self)
-            .store(in: &subscriptions)
+        .assign(to: \.buttonTitle, on: self)
+        .store(in: &subscriptions)
 
         areMethodsLoading = true
 
@@ -160,7 +160,7 @@ class BuyViewModel: ObservableObject {
             let from = fiat.buyFiatCurrency(),
             let to = token.buyCryptoCurrency(),
             let amount = Double(fiatAmount),
-            let url = try? self.getExchangeURL(
+            let url = try? getExchangeURL(
                 from: from,
                 to: to,
                 amount: amount
@@ -184,73 +184,77 @@ class BuyViewModel: ObservableObject {
             form,
             $selectedPayment.removeDuplicates()
         )
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .map({ form, paymentType -> (BuyCurrencyType, BuyCurrencyType, Double, PaymentType) in
-                let (fiat, token, fAmount, tAmount) = form
-                let from: BuyCurrencyType
-                let to: BuyCurrencyType
-                let amount: Double
-                if self.isEditingFiat {
-                    from = fiat
-                    to = token
-                    amount = fAmount
-                } else {
-                    from = token
-                    to = fiat
-                    amount = tAmount
-                }
-                return (from, to, amount, paymentType)
-            }).removeDuplicates(by: { aLeft, aRight in
-                // Checking first param for equality
-                if
-                    // 1 step if it's fiat
-                    let lFiat = (aLeft.0 as? Buy.FiatCurrency),
-                    let rFiat = aRight.0 as? Buy.FiatCurrency {
-                        guard lFiat == rFiat else { return true }
-                } else if
-                    // 2 step if it's crypto
-                    let lCrypto = aLeft.0 as? Buy.CryptoCurrency,
-                    let rCrypto = aRight.0 as? Buy.CryptoCurrency {
-                        guard lCrypto == rCrypto else { return true }
-                } else {
-                    return false
-                }
-                // The same with second param
-                if
-                    let lFiat = (aLeft.1 as? Buy.FiatCurrency),
-                    let rFiat = aRight.1 as? Buy.FiatCurrency {
-                        guard lFiat == rFiat else { return true }
-                } else if
-                    let lCrypto = aLeft.1 as? Buy.CryptoCurrency,
-                    let rCrypto = aRight.1 as? Buy.CryptoCurrency {
-                        guard lCrypto == rCrypto else { return true }
-                } else {
-                    return false
-                }
-                // and the rest
-                return aLeft.2 == aRight.2 && aLeft.3 == aRight.3
-            }).handleEvents(receiveOutput: { [weak self] _ in
-                DispatchQueue.main.async {
-                    self?.isLoading = true
-                }
-            }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput, Never> in
-                self.exchange(
-                    from: from,
-                    to: to,
-                    amount: amount,
-                    paymentType: paymentType
-                )
+        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+        .map { form, paymentType -> (BuyCurrencyType, BuyCurrencyType, Double, PaymentType) in
+            let (fiat, token, fAmount, tAmount) = form
+            let from: BuyCurrencyType
+            let to: BuyCurrencyType
+            let amount: Double
+            if self.isEditingFiat {
+                from = fiat
+                to = token
+                amount = fAmount
+            } else {
+                from = token
+                to = fiat
+                amount = tAmount
             }
-            .replaceError(with: nil).compactMap { $0 }
-            .subscribe(on: DispatchQueue.global())
-            .receive(on: DispatchQueue.main)
-            // Getting only last request
-            .switchToLatest()
-            .handleEvents(receiveOutput: { _ in
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                }
-            }).eraseToAnyPublisher()
+            return (from, to, amount, paymentType)
+        }.removeDuplicates(by: { aLeft, aRight in
+            // Checking first param for equality
+            if
+                // 1 step if it's fiat
+                let lFiat = (aLeft.0 as? Buy.FiatCurrency),
+                let rFiat = aRight.0 as? Buy.FiatCurrency
+            {
+                guard lFiat == rFiat else { return true }
+            } else if
+                // 2 step if it's crypto
+                let lCrypto = aLeft.0 as? Buy.CryptoCurrency,
+                let rCrypto = aRight.0 as? Buy.CryptoCurrency
+            {
+                guard lCrypto == rCrypto else { return true }
+            } else {
+                return false
+            }
+            // The same with second param
+            if
+                let lFiat = (aLeft.1 as? Buy.FiatCurrency),
+                let rFiat = aRight.1 as? Buy.FiatCurrency
+            {
+                guard lFiat == rFiat else { return true }
+            } else if
+                let lCrypto = aLeft.1 as? Buy.CryptoCurrency,
+                let rCrypto = aRight.1 as? Buy.CryptoCurrency
+            {
+                guard lCrypto == rCrypto else { return true }
+            } else {
+                return false
+            }
+            // and the rest
+            return aLeft.2 == aRight.2 && aLeft.3 == aRight.3
+        }).handleEvents(receiveOutput: { [weak self] _ in
+            DispatchQueue.main.async {
+                self?.isLoading = true
+            }
+        }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput, Never> in
+            self.exchange(
+                from: from,
+                to: to,
+                amount: amount,
+                paymentType: paymentType
+            )
+        }
+        .replaceError(with: nil).compactMap { $0 }
+        .subscribe(on: DispatchQueue.global())
+        .receive(on: DispatchQueue.main)
+        // Getting only last request
+        .switchToLatest()
+        .handleEvents(receiveOutput: { _ in
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
+        }).eraseToAnyPublisher()
     }
 
     func exchange(
@@ -264,16 +268,16 @@ class BuyViewModel: ObservableObject {
                 guard let self = self else { return }
                 try Task.checkCancellation()
 //                do {
-                    let result = try await self.exchangeService.convert(
-                        input: .init(
-                            amount: amount,
-                            currency: from
-                        ),
-                        to: to,
-                        paymentType: paymentType
-                    )
-                    try Task.checkCancellation()
-                    promise(.success(result))
+                let result = try await self.exchangeService.convert(
+                    input: .init(
+                        amount: amount,
+                        currency: from
+                    ),
+                    to: to,
+                    paymentType: paymentType
+                )
+                try Task.checkCancellation()
+                promise(.success(result))
 //                } catch let error {
 //                    promise(.failure(error))
 //                }
@@ -301,7 +305,7 @@ class BuyViewModel: ObservableObject {
             fromCurrency: from,
             amount: amount,
             toCurrency: to,
-            paymentMethod: self.selectedPayment.rawValue
+            paymentMethod: selectedPayment.rawValue
         )
         return URL(string: provider.getUrl())!
     }
@@ -414,8 +418,10 @@ extension PaymentType {
 protocol BuyExchangeService {
     func getMinAmount(currency: Buy.Currency) async throws -> Double
     func getMinAmounts(_ currency1: Buy.Currency, _ currency2: Buy.Currency) async throws -> (Double, Double)
-    func convert(input: Buy.ExchangeInput, to currency: Buy.Currency, paymentType: PaymentType) async throws -> Buy.ExchangeOutput
-    func getExchangeRate(from fiatCurrency: Buy.FiatCurrency, to cryptoCurrency: Buy.CryptoCurrency) async throws -> Buy.ExchangeRate
+    func convert(input: Buy.ExchangeInput, to currency: Buy.Currency, paymentType: PaymentType) async throws -> Buy
+        .ExchangeOutput
+    func getExchangeRate(from fiatCurrency: Buy.FiatCurrency, to cryptoCurrency: Buy.CryptoCurrency) async throws -> Buy
+        .ExchangeRate
     func isBankTransferEnabled() async throws -> (gbp: Bool, eur: Bool)
 }
 
@@ -435,9 +441,10 @@ struct MoonpayExchange: BuyExchangeService {
 
         guard
             let base = base as? MoonpayCodeMapping,
-            let quote = quote as? MoonpayCodeMapping else {
+            let quote = quote as? MoonpayCodeMapping
+        else {
 //            throw Exception.invalidInput
-                fatalError()
+            fatalError()
         }
 
         let baseAmount = input.currency is Buy.Currency ? input.amount : nil
@@ -514,12 +521,12 @@ extension Fiat {
     }
 
     func buyFiatCurrency() -> Buy.FiatCurrency? {
-        Buy.FiatCurrency(rawValue: self.rawValue)
+        Buy.FiatCurrency(rawValue: rawValue)
     }
 }
 
 extension Token {
     func buyCryptoCurrency() -> Buy.CryptoCurrency? {
-        Buy.CryptoCurrency(rawValue: self.symbol.lowercased())
+        Buy.CryptoCurrency(rawValue: symbol.lowercased())
     }
 }
