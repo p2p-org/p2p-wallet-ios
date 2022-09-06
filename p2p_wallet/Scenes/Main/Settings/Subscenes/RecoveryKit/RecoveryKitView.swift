@@ -16,18 +16,16 @@ struct RecoveryKitView: View {
         ScrollView {
             VStack(spacing: 24) {
                 // Card
-                VStack {
+                VStack(spacing: 8) {
                     Image(uiImage: .lockOutline)
-                        .padding(.top, 12)
+                        .padding(.top, 4)
                     Text(L10n.yourRecoveryKit)
                         .fontWeight(.bold)
                         .apply(style: .title2)
-                        .padding(.top, 8)
                     Text(L10n.IfYouSwitchDevicesYouCanEasilyRestoreYourWallet.noPrivateKeysNeeded)
                         .apply(style: .text2)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
-                        .padding(.top, 8)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 24)
