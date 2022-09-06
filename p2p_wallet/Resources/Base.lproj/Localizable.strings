@@ -821,10 +821,10 @@ Reset the PIN or wait for %@.";
 "Actions" = "Actions";
 "using Apple Pay or credit card" = "using Apple Pay or credit card";
 "from another wallet or exchange" = "from another wallet or exchange";
-"to phone number, username or address" = "to phone number, username or address";
 "one crypto for 
 another" = "one crypto for 
 another";
+"to username or address" = "to username or address";
 "Username" = "Username";
 "PROFILE AND SECURITY" = "PROFILE AND SECURITY";
 "Recovery kit" = "Recovery kit";
