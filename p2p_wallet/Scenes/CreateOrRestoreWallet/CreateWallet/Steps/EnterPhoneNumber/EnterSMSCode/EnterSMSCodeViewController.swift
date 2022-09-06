@@ -34,8 +34,16 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
         button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
 
         configureNavBar()
+    }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         smsInputRef.view?.textField?.becomeFirstResponder()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        smsInputRef.view?.textField?.resignFirstResponder()
     }
 
     override func build() -> UIView {
