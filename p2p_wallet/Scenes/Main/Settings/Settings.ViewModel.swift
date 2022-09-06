@@ -91,8 +91,6 @@ extension Settings {
         private lazy var didBackupSubject = BehaviorRelay<Bool>(value: storage.didBackupUsingIcloud || Defaults
             .didBackupOffline)
         private let fiatSubject = BehaviorRelay<Fiat>(value: Defaults.fiat)
-        private let endpointSubject = BehaviorRelay<APIEndPoint>(value: Defaults.apiEndPoint)
-        private lazy var securityMethodsSubject = BehaviorRelay<[String]>(value: getSecurityMethods())
         private let themeSubject = BehaviorRelay<UIUserInterfaceStyle?>(value: AppDelegate.shared.window?
             .overrideUserInterfaceStyle)
         private let hideZeroBalancesSubject = BehaviorRelay<Bool>(value: Defaults.hideZeroBalances)
@@ -143,17 +141,6 @@ extension Settings {
                     }
                 })
                 .disposed(by: disposeBag)
-        }
-
-        // MARK: - Methods
-
-        private func getSecurityMethods() -> [String] {
-            var methods: [String] = []
-            if Defaults.isBiometryEnabled {
-                methods.append(LABiometryType.current.stringValue)
-            }
-            methods.append(L10n.pinCode)
-            return methods
         }
     }
 }
@@ -227,7 +214,6 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func setApiEndpoint(_ endpoint: APIEndPoint) {
         guard Defaults.apiEndPoint != endpoint else { return }
-        endpointSubject.accept(endpoint)
         analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
         Task {
             try await renVMService.expireCurrentSession()
@@ -268,7 +254,6 @@ extension Settings.ViewModel: SettingsViewModelType {
                         Defaults.isBiometryEnabled.toggle()
                         self?.isBiometryEnabledSubject.accept(Defaults.isBiometryEnabled)
                         self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
-                        self?.securityMethodsSubject.accept(self?.getSecurityMethods() ?? [])
                     } else {
                         if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
                             onError(nil)

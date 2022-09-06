@@ -44,9 +44,7 @@ final class DebugMenuViewModel: ObservableObject {
 
     private func updateNetworkLoggerState() {
         #if !RELEASE
-
             showDebugger(networkLoggerVisible)
-
         #endif
     }
 }
@@ -61,7 +59,7 @@ extension DebugMenuViewModel {
 
 extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
-        case sslPinning
+        case newSettings
 
         case mockedApiGateway
         case mockedTKeyFacade
@@ -70,6 +68,8 @@ extension DebugMenuViewModel {
 
         var title: String {
             switch self {
+            case .newSettings:
+                return "New Settings"
             case .sslPinning: return "SSL Pinning"
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
@@ -80,6 +80,8 @@ extension DebugMenuViewModel {
 
         var feature: Feature {
             switch self {
+            case .newSettings:
+                return .settingsFeature
             case .sslPinning: return .sslPinning
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade

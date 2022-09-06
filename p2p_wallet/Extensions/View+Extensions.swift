@@ -9,8 +9,10 @@ import Combine
 import SwiftUI
 
 extension View {
-    func asViewController() -> UIViewController {
-        UIHostingControllerWithoutNavigation(rootView: self)
+    func asViewController(withoutUIKitNavBar: Bool = true) -> UIViewController {
+        withoutUIKitNavBar
+            ? UIHostingControllerWithoutNavigation(rootView: self)
+            : UIHostingController(rootView: self)
     }
 
     func uiView() -> UIView {

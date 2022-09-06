@@ -167,26 +167,49 @@ We would love you for the contribution to **P2P Wallet**, check the ``LICENSE`` 
 
 ### Add feature flag steps
 
-- Add feature flag to Firebase Remote Config
+- Add feature flag to Firebase Remote Config with style: `settingsFeature`
 - Add feature flag with the same title to `public extension Feature` struct
 
 ```
 public extension Feature {
-    static let sslPinning = Feature(rawValue: "ssl_pinning")
-    static let sslPinning = Feature(rawValue: "new_feature_flag")
+    static let settingsFeature = Feature(rawValue: "settingsFeature")
+}
+```
+
+- Add feature flag to DebugMenuViewModel
+
+```
+extension DebugMenuViewModel {
+    enum Menu: Int, CaseIterable {
+        case newSettings
+
+        var title: String {
+            switch self {
+            case .newSettings:
+                return "New Settings"
+            }
+        }
+
+        var feature: Feature {
+            switch self {
+            case .newSettings:
+                return .settingsFeature
+            }
+        }
+    }
 }
 ```
 
 ### Feature flag using example
 
 ```
-if available(.sslPinning) {
-    showSslPinningScreen(
+if available(.settingsFeature) {
+    showNewSettingsScreen(
         input: input,
         state: status.creditState
     )
 } else {
-    showAppStatus(
+    showOldSettingsScreen(
         input: input,
         status: status
     )
