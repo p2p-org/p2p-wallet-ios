@@ -15,8 +15,8 @@ enum CreateWalletResult {
 final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     // MARK: - NavigationController
 
-    private let parentViewController: UIViewController
-    private(set) var navigationController: UINavigationController?
+    private let parent: UIViewController
+    private let navigationController: UINavigationController
 
     private let viewModel: CreateWalletViewModel
     private var result = PassthroughSubject<CreateWalletResult, Never>()
@@ -27,8 +27,14 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
 
     var animated: Bool = true
 
-    init(parent: UIViewController, initialState: CreateWalletFlowState? = nil, animated: Bool = true) {
-        parentViewController = parent
+    init(
+        parent: UIViewController,
+        navigationController: UINavigationController,
+        initialState: CreateWalletFlowState? = nil,
+        animated: Bool = true
+    ) {
+        self.parent = parent
+        self.navigationController = navigationController
         self.animated = animated
 
         // Setup
@@ -63,8 +69,10 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
             return Empty().eraseToAnyPublisher()
         }
 
-        navigationController = navigationController ?? UINavigationController(rootViewController: viewController)
-        navigationController!.modalPresentationStyle = .fullScreen
+        navigationController.setViewControllers([viewController], animated: animated)
+        if parent.presentedViewController == nil {
+            parent.present(navigationController, animated: animated)
+        }
 
         socialSignInDelegatedCoordinator.rootViewController = navigationController
         bindingPhoneNumberDelegatedCoordinator.rootViewController = navigationController
@@ -81,9 +89,6 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
             }
             .store(in: &subscriptions)
 
-        navigationController?.modalTransitionStyle = .crossDissolve
-        parentViewController.present(navigationController!, animated: animated)
-
         return result.eraseToAnyPublisher()
     }
 
@@ -91,19 +96,17 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
 
     private func stateChangeHandler(from: CreateWalletFlowState?, to: CreateWalletFlowState) {
         if case let .finish(result) = to {
-            navigationController?.dismiss(animated: true)
             switch result {
             case let .switchToRestoreFlow(socialProvider, email):
                 self.result.send(.restore(socialProvider: socialProvider, email: email))
             case let .newWallet(onboardingWallet):
                 self.result.send(.success(onboardingWallet))
+                self.navigationController.dismiss(animated: true)
             case .breakProcess:
-                break
+                self.navigationController.dismiss(animated: true)
             }
             self.result.send(completion: .finished)
         }
-
-        guard let navigationController = navigationController else { return }
 
         // TODO: Add empty screen
         let vc = buildViewController(state: to) ?? UIViewController()
