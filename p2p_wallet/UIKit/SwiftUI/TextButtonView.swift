@@ -9,6 +9,7 @@ struct TextButtonView: UIViewRepresentable {
     private let size: TextButton.Size
     private let leading: UIImage?
     private let trailing: UIImage?
+    @Binding var trailingBinding: UIImage?
     private let onPressed: (() -> Void)?
 
     init(
@@ -18,14 +19,16 @@ struct TextButtonView: UIViewRepresentable {
         size: TextButton.Size,
         leading: UIImage? = nil,
         trailing: UIImage? = nil,
+        trailingBinding: Binding<UIImage?>? = nil,
         onPressed: (() -> Void)? = nil
     ) {
         self.title = title
-        self._titleBinding = titleBinding ?? Binding<String>(get: { return ""}, set: { _, _ in })
+        _titleBinding = titleBinding ?? Binding<String>(get: { "" }, set: { _, _ in })
         self.style = style
         self.size = size
         self.leading = leading
         self.trailing = trailing
+        _trailingBinding = trailingBinding ?? Binding<UIImage?>(get: { nil }, set: { _, _ in })
         self.onPressed = onPressed
     }
 
@@ -36,7 +39,8 @@ struct TextButtonView: UIViewRepresentable {
         return button
     }
 
-    func updateUIView(_ button: TextButton, context: Context) {
+    func updateUIView(_ button: TextButton, context _: Context) {
         button.title = titleBinding
+        button.trailingImage = trailingBinding
     }
 }

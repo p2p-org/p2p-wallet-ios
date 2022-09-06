@@ -75,7 +75,7 @@ struct BuyView: View {
 
     var input: some View {
         VStack(alignment: .leading) {
-            Text("Buying")
+            Text(L10n.buying)
                 .apply(style: .text3)
                 .padding(.leading, textLeadingPadding)
 
@@ -83,7 +83,7 @@ struct BuyView: View {
                 leftTitle: $viewModel.tokenAmount,
                 leftSubtitle: viewModel.token.symbol,
                 rightTitle: $viewModel.fiatAmount,
-                rightSubtitle: viewModel.fiat.symbol,
+                rightSubtitle: viewModel.fiat.code,
                 activeSide: .init(get: {
                     if viewModel.isLeftFocus == false, viewModel.isRightFocus == false {
                         return .none
@@ -117,7 +117,7 @@ struct BuyView: View {
 
     var methods: some View {
         VStack(alignment: .leading) {
-            Text("Method")
+            Text(L10n.method)
                 .apply(style: .text3)
                 .padding(.leading, textLeadingPadding)
             ScrollViewReader { scrollView in
@@ -126,7 +126,6 @@ struct BuyView: View {
                         if viewModel.areMethodsLoading {
                             skeletonMethod()
                             skeletonMethod()
-
                         } else {
                             ForEach(viewModel.availableMethods, id: \.name) { item in
                                 Button { [weak viewModel] in
@@ -283,41 +282,41 @@ struct BuyView: View {
         .cornerRadius(16)
     }
 
-    func inputView(
-        text: Binding<String>,
-        coin: String,
-        onEditing: @escaping (Bool) -> Void,
-        action: @escaping () -> Void,
-        showDisclosure: Bool = true
-    ) -> some View {
-        HStack(alignment: .center, spacing: 4) {
-            TextField("", text: text, onEditingChanged: { vall in
-                onEditing(vall)
-            })
-            .multilineTextAlignment(.trailing)
-            Group {
-                Text(coin)
-                    .apply(style: .title2)
-                    .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
-                    .padding(.trailing, 1)
-                if showDisclosure {
-                    Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 16, height: 16)
-                        .padding(.trailing, 10)
-                } else {
-                    Spacer(minLength: 10)
-                }
-            }.onTapGesture {
-                if showDisclosure {
-                    action()
-                }
-            }
-        }
-        .frame(height: 62)
-        .background(Color(Asset.Colors.snow.color))
-    }
+//    func inputView(
+//        text: Binding<String>,
+//        coin: String,
+//        onEditing: @escaping (Bool) -> Void,
+//        action: @escaping () -> Void,
+//        showDisclosure: Bool = true
+//    ) -> some View {
+//        HStack(alignment: .center, spacing: 4) {
+//            TextField("", text: text, onEditingChanged: { vall in
+//                onEditing(vall)
+//            })
+//            .multilineTextAlignment(.trailing)
+//            Group {
+//                Text(coin)
+//                    .apply(style: .title2)
+//                    .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
+//                    .padding(.trailing, 1)
+//                if showDisclosure {
+//                    Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
+//                        .resizable()
+//                        .scaledToFit()
+//                        .frame(width: 16, height: 16)
+//                        .padding(.trailing, 10)
+//                } else {
+//                    Spacer(minLength: 10)
+//                }
+//            }.onTapGesture {
+//                if showDisclosure {
+//                    action()
+//                }
+//            }
+//        }
+//        .frame(height: 62)
+//        .background(Color(Asset.Colors.snow.color))
+//    }
 }
 
 extension BuyView {
@@ -330,7 +329,8 @@ extension BuyView {
                     titleBinding: $viewModel.buttonTitle,
                     style: .inverted,
                     size: .large,
-                    trailing: UIImage.buyWallet
+                    trailing: UIImage.buyWallet,
+                    trailingBinding: $viewModel.buttonIcon
                 ) { [weak viewModel] in
                     viewModel?.buyButtonTapped()
                 }

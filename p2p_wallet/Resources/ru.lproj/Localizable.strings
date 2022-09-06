@@ -836,3 +836,5 @@ another" = "одна крипта для
 "SOL purchase cost" = "Стоимость покупки СОЛ";
 "Transaction details" = "Детали транзакции";
 "Minimal transaction is %@" = "Минимальная транзакция %@";
+"Method" = "Метод";
+"Buying" = "Покупка";

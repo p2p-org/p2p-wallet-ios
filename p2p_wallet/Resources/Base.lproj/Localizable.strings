@@ -830,3 +830,5 @@ another";
 "SOL purchase cost" = "SOL purchase cost";
 "Transaction details" = "Transaction details";
 "Minimal transaction is %@" = "Minimal transaction is %@";
+"Method" = "Method";
+"Buying" = "Buying";
