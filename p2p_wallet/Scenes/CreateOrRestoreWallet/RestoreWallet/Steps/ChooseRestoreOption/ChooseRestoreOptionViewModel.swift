@@ -1,9 +1,15 @@
 import Combine
 import KeyAppUI
+import Onboarding
+import Resolver
 import SwiftUI
 import UIKit
 
 final class ChooseRestoreOptionViewModel: BaseViewModel {
+    // MARK: - Dependencies
+
+    @Injected var notificationService: NotificationService
+
     @Published var data: OnboardingContentData
     @Published var options: RestoreOption
     @Published var isLoading: RestoreOption?
@@ -30,15 +36,23 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
 
         optionDidTap.sink { [weak self] option in
             guard let self = self else { return }
+
             switch option {
             case .socialGoogle, .socialApple:
                 self.isLoading = option
-            default:
-                break
+            default: break
             }
 
+            self.notificationService.hideToasts()
             let process = ReactiveProcess<RestoreOption>(data: option) { error in
-                if let error = error {}
+                if let error = error as? SocialServiceError {
+                    switch error {
+                    case .cancelled: break
+                    default: self.showSocialError(provider: option == .socialGoogle ? .google : .apple)
+                    }
+                } else if error != nil {
+                    self.notificationService.showDefaultErrorNotification()
+                }
                 self.isLoading = nil
             }
 
@@ -77,5 +91,12 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
         if options.contains(.seed) {
             secondaryButtons.append(factory.createSecondary(for: .seed))
         }
+    }
+
+    private func showSocialError(provider: SocialProvider) {
+        notificationService.showToast(
+            title: nil,
+            text: L10n.ThereIsAProblemWithServices.tryAgain(provider.rawValue.uppercaseFirst)
+        )
     }
 }

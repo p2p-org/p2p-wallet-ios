@@ -37,30 +37,22 @@ extension ChooseRestoreOptionView {
             VStack(spacing: (viewModel.mainButtons.count + viewModel.secondaryButtons.count) > 3 ? 32 : 12) {
                 VStack(spacing: 12) {
                     ForEach(viewModel.mainButtons, id: \.option.rawValue) { button in
-                        TextButtonView(
-                            title: button.title,
-                            style: .inverted,
-                            size: .large,
-                            leading: button.icon,
-                            isLoading: viewModel.isLoading == button.option
-                        ) { [weak viewModel] in viewModel?.optionDidTap.send(button.option) }
-                            .styled()
+                        restoreButton(style: .inverted, content: button)
                     }
                 }
                 VStack(spacing: 12) {
                     ForEach(viewModel.secondaryButtons, id: \.option.rawValue) { button in
-                        secondaryButton(
-                            title: button.title,
-                            icon: button.icon,
-                            isLoading: viewModel.isLoading == button.option
-                        ) { [weak viewModel] in
-                            viewModel?.optionDidTap.send(button.option)
-                        }
+                        restoreButton(style: .outlineWhite, content: button)
                     }
                     if viewModel.isStartAvailable {
-                        secondaryButton(title: L10n.goToTheStartingScreen) { [weak viewModel] in
-                            viewModel?.openStart.send()
-                        }
+                        TextButtonView(
+                            title: L10n.goToTheStartingScreen,
+                            style: .outlineWhite,
+                            size: .large,
+                            onPressed: { [weak viewModel] in viewModel?.openStart.send() }
+                        )
+                            .styled()
+                            .disabled(viewModel.isLoading != nil)
                     }
                 }
             }
@@ -69,18 +61,20 @@ extension ChooseRestoreOptionView {
 }
 
 private extension ChooseRestoreOptionView {
-    func secondaryButton(title: String, icon: UIImage? = nil, isLoading: Bool = false,
-                         onPressed: @escaping () -> Void) -> some View
-    {
+    func restoreButton(
+        style: TextButton.Style,
+        content: ChooseRestoreOptionButton
+    ) -> some View {
         TextButtonView(
-            title: title,
-            style: .outlineWhite,
+            title: content.title,
+            style: style,
             size: .large,
-            leading: icon,
-            isLoading: isLoading,
-            onPressed: onPressed
+            leading: content.icon,
+            isLoading: viewModel.isLoading == content.option,
+            onPressed: { [weak viewModel] in viewModel?.optionDidTap.send(content.option) }
         )
             .styled()
+            .disabled(viewModel.isLoading != nil && viewModel.isLoading != content.option)
     }
 }
 
