@@ -342,10 +342,7 @@ class BuyViewModel: ObservableObject {
         case .card:
             return [.eur, .gbp, .usd]
         case .bank:
-            if isGBPBankTransferEnabled {
-                return [.eur, .gbp]
-            }
-            return [.eur]
+            return isGBPBankTransferEnabled ? [.eur, .gbp] : [.eur]
         }
     }
 
