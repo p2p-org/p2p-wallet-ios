@@ -833,6 +833,10 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 another" = "une crypto pour
  une autre";
 "one crypto for\nanother" = "un crypto pour\nun autre";
+"Username" = "Nom d'utilisateur";
+"PROFILE AND SECURITY" = "PROFIL ET SÉCURITÉ";
+"Recovery kit" = "Trousse de récupération";
+"Not reserved" = "Non réservé";
 "SOL purchase cost" = "Coût d'achat SOL";
 "Transaction details" = "Détails de la transaction";
 "Minimal transaction is %@" = "La transaction minimale est %@";

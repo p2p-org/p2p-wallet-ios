@@ -50,9 +50,6 @@ final class HomeCoordinator: Coordinator<Void> {
                 homeView.navigationIsHidden = true
             })
             .store(in: &subscriptions)
-        homeView.viewDidAppear
-            .sink(receiveValue: {})
-            .store(in: &subscriptions)
         homeView.viewWillDisappear
             .sink(receiveValue: { [unowned homeView] in
                 homeView.navigationIsHidden = false
