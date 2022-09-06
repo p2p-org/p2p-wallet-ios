@@ -51,22 +51,16 @@ struct BuyView: View {
             Spacer()
             bottomActionsView
                 .frame(height: 110)
-//                .offset(y: bottomOffset)
+        }.onTapGesture {
+            UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder),
+                to: nil,
+                from: nil,
+                for: nil
+            )
         }
-//        .gesture(
-//            DragGesture().onChanged({ gesture in
-//                if gesture.startLocation.x > CGFloat(150.0) {
-//                    return
-//                }
-//                print("edge pan \(gesture.location)")
-//                print("edge pan \(gesture.translation)")
-//                bottomOffset -= gesture.translation.height
-//            }).onEnded({ gesture in
-//                bottomOffset = .zero
-//            })
-//        )
-            .edgesIgnoringSafeArea(.bottom)
-            .navigationTitle(L10n.buy)
+        .edgesIgnoringSafeArea(.bottom)
+        .navigationTitle(L10n.buy)
     }
 
     var icon: some View {
@@ -159,7 +153,7 @@ struct BuyView: View {
                     .frame(height: 24)
             } else {
                 Button { [weak viewModel] in
-                    viewModel?.didTapTotal()
+                    Task { try await viewModel?.didTapTotal() }
                 } label: {
                     Text("\(viewModel.total) \(viewModel.fiat.code)")
                         .apply(style: .text3)
