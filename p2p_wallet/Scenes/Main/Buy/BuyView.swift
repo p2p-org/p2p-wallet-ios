@@ -31,9 +31,14 @@ struct BuyView: View {
                     }
                     input
                         .padding(.top, 2)
-
-                    methods
-                        .padding(.top, 9)
+                        .padding(.bottom, 24)
+                    Divider()
+                        .frame(height: 1)
+                        .overlay(Color(Asset.Colors.snow.color))
+                    if viewModel.availableMethods.count > 1 {
+                        methods
+                            .padding(.top, 20)
+                    }
 
                     total
                         .padding(.top, 18)
@@ -316,7 +321,8 @@ extension BuyView {
             VStack(spacing: .zero) {
                 // Create a wallet
                 TextButtonView(
-                    title: self.viewModel.buttonTitle,
+                    title: viewModel.buttonTitle,
+                    titleBinding: $viewModel.buttonTitle,
                     style: .inverted,
                     size: .large,
                     trailing: UIImage.buyWallet

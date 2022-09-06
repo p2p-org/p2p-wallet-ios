@@ -7,13 +7,14 @@ import Resolver
 
 class BuyViewModel: ObservableObject {
     var coordinatorIO = CoordinatorIO()
-    private var subscriptions = Set<AnyCancellable>()
+
+    // MARK: -
 
     @Published var availableMethods = [PaymentTypeItem]()
     @Published var token: Token = .nativeSolana
     @Published var fiat: Fiat = .usd
     @Published var tokenAmount: String = ""
-    @Published var fiatAmount: String = "40"
+    @Published var fiatAmount: String = "\(BuyViewModel.defaultMinAmount)"
     @Published var total: String = ""
     @Published var selectedPayment: PaymentType = .card
     @Published var isLoading = false
@@ -21,25 +22,29 @@ class BuyViewModel: ObservableObject {
     @Published var isLeftFocus = false
     @Published var isRightFocus = true
     @Published var buttonTitle: String = L10n.buy
+
+    // MARK: -
+
+    private var subscriptions = Set<AnyCancellable>()
     private var isGBPBankTransferEnabled = false
     private var isBankTransferEnabled = false
-
-    private var isEditingFiat: Bool {
-        !isLeftFocus
-    }
+    private var minAmounts = [Fiat: Double]()
+    private var isEditingFiat: Bool { !isLeftFocus }
 
     // Dependencies
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: WalletsRepository
+
     // Defaults
-    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached) var lastMethod: PaymentType
+    @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
+    var lastMethod: PaymentType
+
+    @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
+    var buyMinPrices: [String: [String: Double]]
+
+    private static let defaultMinAmount = Double(40)
 
     init() {
-        setPaymentMethod(lastMethod)
-        // Set last used method first
-        availableMethods = PaymentType.allCases.filter { $0 != lastMethod }.map { $0.paymentItem() }
-        availableMethods.insert(lastMethod.paymentItem(), at: 0)
-
         coordinatorIO.tokenSelected.sink { token in
             self.token = token
         }.store(in: &subscriptions)
@@ -51,7 +56,7 @@ class BuyViewModel: ObservableObject {
         totalPublisher
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { value in
-                self.total = value.total.toString(minimumFractionDigits: 2, maximumFractionDigits: 2)
+                self.total = value.total.fiatAmount(maximumFractionDigits: 2, currency: self.fiat)
                 let isToken = self.isEditingFiat
                 let form = BuyForm(
                     token: self.token,
@@ -62,24 +67,70 @@ class BuyViewModel: ObservableObject {
                 self.setForm(form: form)
             }).store(in: &subscriptions)
 
+        form.map { aFiat, aToken, aAmount, _ -> String in
+            let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
+            if minAmount > aAmount {
+                return L10n.minimalTransactionIs(
+                    aAmount.fiatAmount(
+                        maximumFractionDigits: 2,
+                        currency: self.fiat
+                    )
+                )
+            }
+            return L10n.buy
+        }
+            .assign(to: \.buttonTitle, on: self)
+            .store(in: &subscriptions)
+
         areMethodsLoading = true
+
         Task {
             let banks = try await exchangeService.isBankTransferEnabled()
             self.isBankTransferEnabled = banks.eur
             self.isGBPBankTransferEnabled = banks.gbp
+
+            await self.setPaymentMethod(self.lastMethod)
+
+            var minPrices = [String: [String: Double]]()
+            for aFiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
+                for aToken in [Token.nativeSolana, Token.usdc] {
+                    guard
+                        let from = aFiat.buyFiatCurrency(),
+                        let to = aToken.buyCryptoCurrency() else { continue }
+                    if let amount = self.buyMinPrices[aFiat.rawValue]?[aToken.name] {
+                        minPrices[aFiat.rawValue] = [aToken.name: amount]
+                    } else {
+                        let result = try? await self.exchangeService.getMinAmounts(from, to)
+                        guard result?.0 > 0 else { continue }
+                        minPrices[aFiat.rawValue] = [aToken.name: result?.0 ?? BuyViewModel.defaultMinAmount]
+                    }
+                }
+            }
+            self.buyMinPrices = minPrices
+
             DispatchQueue.main.async {
+                // Set last used method first
+                self.availableMethods = self.availablePaymentTypes()
+                    .filter { $0 != self.lastMethod }
+                    .map { $0.paymentItem() }
+                if self.availablePaymentTypes().contains(self.lastMethod) {
+                    self.availableMethods
+                        .insert(self.lastMethod.paymentItem(), at: 0)
+                }
+
                 self.areMethodsLoading = false
             }
         }
     }
 
-    func didSelectPayment(_ payment: PaymentTypeItem) {
+    @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
     }
 
     // MARK: -
 
+    @MainActor
     private func setPaymentMethod(_ payment: PaymentType) {
         selectedPayment = payment
         lastMethod = payment
@@ -209,7 +260,7 @@ class BuyViewModel: ObservableObject {
         paymentType: PaymentType
     ) -> AnyPublisher<Buy.ExchangeOutput, Never> {
         Future { promise in
-            Task { [weak self]  in
+            Task { [weak self] in
                 guard let self = self else { return }
                 try Task.checkCancellation()
 //                do {
@@ -266,6 +317,17 @@ class BuyViewModel: ObservableObject {
             return [.eur]
         }
     }
+
+    func availablePaymentTypes() -> [PaymentType] {
+        PaymentType.allCases.filter {
+            if case .bank = $0 {
+                return self.isBankTransferEnabled || self.isGBPBankTransferEnabled
+            }
+            return true
+        }
+    }
+
+    // MARK: -
 
     struct BuyForm: Equatable {
         var token: Token
