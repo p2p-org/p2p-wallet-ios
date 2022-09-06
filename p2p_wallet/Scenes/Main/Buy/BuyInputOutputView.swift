@@ -28,45 +28,73 @@ struct BuyInputOutputView: View {
     @StateObject private var fontSynchorinze: FontSynchorinze = .init()
 
     var body: some View {
-        GeometryReader { _ in
+        GeometryReader { reader in
             HStack(spacing: 0) {
                 // Left input
-                TextfieldView(
-                    text: $leftTitle,
-                    activeSide: $activeSide,
-                    fontSynchorinze: fontSynchorinze,
-                    font: fontSynchorinze.font,
-                    side: .left
-                )
-                    .padding(.leading, 8)
-                    .padding(.trailing, 4)
 
-                currency(value: leftSubtitle) { onTap(.left) }
-                    .lineLimit(1)
-                    .padding(.trailing, 20)
+                HStack {
+                    TextfieldView(
+                        text: $leftTitle,
+                        activeSide: $activeSide,
+                        fontSynchorinze: fontSynchorinze,
+                        font: fontSynchorinze.font,
+                        side: .left
+                    )
+                        .padding(.leading, 8)
+                        .padding(.trailing, 4)
+
+                    currency(value: leftSubtitle) { onTap(.left) }
+                        .lineLimit(1)
+                        .padding(.trailing, 20)
+                }.frame(width: reader.size.width / 2)
 
                 // Divider
                 Divider()
 
                 // Right input
-                TextfieldView(
-                    text: $rightTitle,
-                    activeSide: $activeSide,
-                    fontSynchorinze: fontSynchorinze,
-                    font: fontSynchorinze.font,
-                    side: .right
-                )
-                    .padding(.leading, 8)
-                    .padding(.trailing, 4)
+                HStack {
+                    TextfieldView(
+                        text: $rightTitle,
+                        activeSide: $activeSide,
+                        fontSynchorinze: fontSynchorinze,
+                        font: fontSynchorinze.font,
+                        side: .right
+                    )
+                        .padding(.leading, 8)
+                        .padding(.trailing, 4)
 
-                currency(value: rightSubtitle) {}
-                    .lineLimit(1)
-                    .padding(.trailing, 30)
+                    currency(value: rightSubtitle) {}
+                        .lineLimit(1)
+                        .padding(.trailing, 30)
+                }.frame(width: reader.size.width / 2)
             }
+            .onAppear {
+                fontSynchorinze.apply(
+                    leftTitle: leftTitle,
+                    leftSubtitle: leftSubtitle,
+                    rightTitle: rightTitle,
+                    rightSubTitle: rightSubtitle,
+                    width: reader.size.width
+                )
+            }
+            .onChange(of: leftTitle) { newValue in fontSynchorinze.apply(
+                leftTitle: newValue,
+                leftSubtitle: leftSubtitle,
+                rightTitle: rightTitle,
+                rightSubTitle: rightSubtitle,
+                width: reader.size.width
+            ) }
+            .onChange(of: rightTitle) { newValue in fontSynchorinze.apply(
+                leftTitle: leftTitle,
+                leftSubtitle: leftSubtitle,
+                rightTitle: newValue,
+                rightSubTitle: rightSubtitle,
+                width: reader.size.width
+            ) }
         }.frame(height: 60)
             .background(Color(Asset.Colors.cloud.color))
             .cornerRadius(16)
-        // .overlay(Text("\(fontSynchorinze.font)").apply(style: .text4).offset(x: 0, y: 50))
+            .overlay(Text("\(fontSynchorinze.font)").apply(style: .text4).offset(x: 0, y: 50))
     }
 
     func currency(value: String, _ action: @escaping () -> Void) -> some View {
@@ -86,16 +114,54 @@ struct BuyInputOutputView: View {
 private class FontSynchorinze: ObservableObject {
     static let defaultFont: UIFont = UIFont.font(of: .title2)
     static let maxFontSize: CGFloat = 22
-    static let minFontSize: CGFloat = 15
+    static let minFontSize: CGFloat = 10
 
     var leftFontSize: CGFloat = FontSynchorinze.maxFontSize { didSet { recalculate() } }
     var rightFontSize: CGFloat = FontSynchorinze.maxFontSize { didSet { recalculate() } }
 
     @Published var font: UIFont = FontSynchorinze.defaultFont
 
+    func apply(
+        leftTitle: String,
+        leftSubtitle: String,
+        rightTitle: String,
+        rightSubTitle: String,
+        width: CGFloat
+    ) {
+        func minFontSize() -> CGFloat? {
+            for fontSize in stride(
+                from: FontSynchorinze.maxFontSize,
+                through: FontSynchorinze.minFontSize,
+                by: -1
+            ) {
+                let leftTitleSize = leftTitle
+                    .size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(fontSize)])
+                let leftSubtitleSize = leftSubtitle
+                    .size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(fontSize)])
+                let rightTitleSize = rightTitle
+                    .size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(fontSize)])
+                let rightSubTitleSize = rightSubTitle
+                    .size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(fontSize)])
+
+                let leftTotal = 50 + leftTitleSize.width + 4 + leftSubtitleSize.width + 20
+                let rightTotal = 50 + rightTitleSize.width + 4 + rightSubTitleSize.width + 30
+
+                print(leftTitle, leftSubtitle, rightTitle, rightSubTitle)
+                print(leftTitleSize, rightTitleSize)
+                print(leftTotal, rightTotal, width / 2)
+
+                if leftTotal < (width / 2), rightTotal < (width / 2) { return fontSize }
+            }
+            return nil
+        }
+
+        let minFontSizeValue = minFontSize() ?? FontSynchorinze.minFontSize
+        font = FontSynchorinze.defaultFont.withSize(minFontSizeValue)
+    }
+
     func recalculate() {
-        let minFontSize = min(leftFontSize, rightFontSize)
-        font = font.withSize(minFontSize)
+        // // let minFontSize = min(leftFontSize, rightFontSize)
+        // font = font.withSize(minFontSize)
     }
 }
 
@@ -114,7 +180,8 @@ private struct TextfieldView: UIViewRepresentable {
         textField.font = fontSynchorinze.font
         textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         textField.delegate = ctx.coordinator
-        textField.font = font
+        ctx.coordinator.adjustFont(textField)
+        textField.font = fontSynchorinze.font
         textField.textAlignment = .right
         textField.text = text
         textField.addTarget(ctx.coordinator, action: #selector(ctx.coordinator.textDidChanged), for: .editingChanged)
@@ -122,9 +189,10 @@ private struct TextfieldView: UIViewRepresentable {
         return textField
     }
 
-    func updateUIView(_ textField: UITextField, context _: Context) {
-        textField.font = font
+    func updateUIView(_ textField: UITextField, context ctx: Context) {
         textField.text = text
+        ctx.coordinator.adjustFont(textField)
+        textField.font = fontSynchorinze.font
     }
 
     func makeCoordinator() -> Coordinator {
@@ -156,7 +224,7 @@ private struct TextfieldView: UIViewRepresentable {
 
         @objc func textDidChanged(_ textField: UITextField) {
             text = textField.text ?? ""
-            adjustFont(textField)
+            // adjustFont(textField)
         }
 
         func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
@@ -180,16 +248,24 @@ private struct TextfieldView: UIViewRepresentable {
             let text = NSString(string: textField.text ?? "")
 
             func minFontSize() -> CGFloat? {
-                for fontSize in stride(from: FontSynchorinze.maxFontSize, through: FontSynchorinze.minFontSize, by: -1)
-                {
+                for fontSize in stride(
+                    from: FontSynchorinze.maxFontSize,
+                    through: FontSynchorinze.minFontSize,
+                    by: -0.5
+                ) {
                     let size = text.size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(fontSize)])
 
-                    if size.width <= textField.frame.width { return fontSize }
+                    if size.width + 10 < textField.frame.width { return fontSize }
                 }
                 return nil
             }
 
             let minFontSizeValue = minFontSize() ?? FontSynchorinze.minFontSize
+
+            let size = text.size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(minFontSizeValue)])
+
+            // print("Here: \(side) \(minFontSizeValue) \(size.width) \(textField.frame.width)")
+
             switch side {
             case .left: fontSynchorinze.leftFontSize = minFontSizeValue
             case .right: fontSynchorinze.rightFontSize = minFontSizeValue
@@ -208,7 +284,7 @@ struct BuyInputOutputView_Previews: PreviewProvider {
                 rightTitle: .constant("500"),
                 rightSubtitle: "USD",
                 activeSide: .constant(.none)
-            )
+            ) { _ in }
         }
     }
 }
