@@ -58,7 +58,10 @@ class BuyViewModel: ObservableObject {
         totalPublisher
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { value in
-                self.total = value.total.fiatAmount(maximumFractionDigits: 2, currency: self.fiat)
+                self.total = value.total.fiatAmount(
+                    maximumFractionDigits: 2,
+                    currency: self.fiat
+                )
                 let isToken = self.isEditingFiat
                 let form = BuyForm(
                     token: self.token,
@@ -93,22 +96,31 @@ class BuyViewModel: ObservableObject {
             self.isGBPBankTransferEnabled = banks.gbp
 
             await self.setPaymentMethod(self.lastMethod)
-
+            self.buyMinPrices = [:]
             var minPrices = [String: [String: Double]]()
+
             for aFiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
                 for aToken in [Token.nativeSolana, Token.usdc] {
                     guard
                         let from = aFiat.buyFiatCurrency(),
                         let to = aToken.buyCryptoCurrency() else { continue }
-                    if let amount = self.buyMinPrices[aFiat.rawValue]?[aToken.name] {
-                        minPrices[aFiat.rawValue] = [aToken.name: amount]
+                    if let amount = self.buyMinPrices[aFiat.rawValue]?[aToken.symbol] {
+                        if minPrices[aFiat.rawValue] == nil {
+                            minPrices[aFiat.rawValue] = [:]
+                        }
+                        minPrices[aFiat.rawValue]?[aToken.symbol] = amount
                     } else {
                         let result = try? await self.exchangeService.getMinAmounts(from, to)
-                        guard result?.0 > 0 else { continue }
-                        minPrices[aFiat.rawValue] = [aToken.name: result?.0 ?? BuyViewModel.defaultMinAmount]
+                        guard result?.0 ?? 0 > 0 else { continue }
+                        if minPrices[aFiat.rawValue] == nil {
+                            minPrices[aFiat.rawValue] = [:]
+                        }
+                        minPrices[aFiat.rawValue]?[aToken.symbol] = result?.0 ?? BuyViewModel.defaultMinAmount
                     }
                 }
             }
+
+            debugPrint(minPrices)
             self.buyMinPrices = minPrices
 
             DispatchQueue.main.async {
@@ -210,13 +222,13 @@ class BuyViewModel: ObservableObject {
                 let lFiat = (aLeft.0 as? Buy.FiatCurrency),
                 let rFiat = aRight.0 as? Buy.FiatCurrency
             {
-                guard lFiat == rFiat else { return true }
+                guard lFiat == rFiat else { return false }
             } else if
                 // 2 step if it's crypto
                 let lCrypto = aLeft.0 as? Buy.CryptoCurrency,
                 let rCrypto = aRight.0 as? Buy.CryptoCurrency
             {
-                guard lCrypto == rCrypto else { return true }
+                guard lCrypto == rCrypto else { return false }
             } else {
                 return false
             }
@@ -225,12 +237,12 @@ class BuyViewModel: ObservableObject {
                 let lFiat = (aLeft.1 as? Buy.FiatCurrency),
                 let rFiat = aRight.1 as? Buy.FiatCurrency
             {
-                guard lFiat == rFiat else { return true }
+                guard lFiat == rFiat else { return false }
             } else if
                 let lCrypto = aLeft.1 as? Buy.CryptoCurrency,
                 let rCrypto = aRight.1 as? Buy.CryptoCurrency
             {
-                guard lCrypto == rCrypto else { return true }
+                guard lCrypto == rCrypto else { return false }
             } else {
                 return false
             }
@@ -272,7 +284,6 @@ class BuyViewModel: ObservableObject {
             Task { [weak self] in
                 guard let self = self else { return }
                 try Task.checkCancellation()
-//                do {
                 let result = try await self.exchangeService.convert(
                     input: .init(
                         amount: amount,
@@ -283,9 +294,6 @@ class BuyViewModel: ObservableObject {
                 )
                 try Task.checkCancellation()
                 promise(.success(result))
-//                } catch let error {
-//                    promise(.failure(error))
-//                }
             }
         }.eraseToAnyPublisher()
     }
@@ -336,6 +344,40 @@ class BuyViewModel: ObservableObject {
         }
     }
 
+//    func compareCurrency(lh: BuyCurrencyType, rh: BuyCurrencyType) -> Bool {
+//        // Checking first param for equality
+//        if
+//            // 1 step if it's fiat
+//            let lFiat = (lh as? Buy.FiatCurrency),
+//            let rFiat = rh as? Buy.FiatCurrency
+//        {
+//            guard lFiat == rFiat else { return false }
+//        } else if
+//            // 2 step if it's crypto
+//            let lCrypto = lh as? Buy.CryptoCurrency,
+//            let rCrypto = rh as? Buy.CryptoCurrency
+//        {
+//            guard lCrypto == rCrypto else { return false }
+//        } else {
+//            return false
+//        }
+    ////        // The same with second param
+    ////        if
+    ////            let lFiat = (aLeft.1 as? Buy.FiatCurrency),
+    ////            let rFiat = aRight.1 as? Buy.FiatCurrency
+    ////        {
+    ////            guard lFiat == rFiat else { return false }
+    ////        } else if
+    ////            let lCrypto = aLeft.1 as? Buy.CryptoCurrency,
+    ////            let rCrypto = aRight.1 as? Buy.CryptoCurrency
+    ////        {
+    ////            guard lCrypto == rCrypto else { return false }
+    ////        } else {
+    ////            return false
+    ////        }
+//        return true
+//    }
+
     // MARK: -
 
     struct BuyForm: Equatable {
@@ -366,19 +408,6 @@ extension BuyViewModel {
         var tokenAmount: String
         var fiatAmmount: String
     }
-
-//    struct Model {
-//        let solPrice: Double
-//        let solPurchaseCost: Double
-//        let processingFee: Double
-//        let networkFee: Double
-//        let total: Double
-//        let currency: Fiat
-//
-//        fileprivate func convertedAmount(_ amount: Double) -> String {
-//            amount.fiatAmount(maximumFractionDigits: 2, currency: currency)
-//        }
-//    }
 }
 
 extension BuyViewModel {
@@ -513,12 +542,6 @@ struct MoonpayExchange: BuyExchangeService {
         return (gbp: banks.gbp, eur: banks.eur)
     }
 }
-
-// extension Buy.FiatCurrency {
-//    func fiat(_ fiatCurrency: Buy.FiatCurrency) -> Fiat? {
-//        Fiat(rawValue: fiatCurrency.rawValue)
-//    }
-// }
 
 extension Fiat {
     func fiatCurrency(_ fiat: Fiat) -> Buy.FiatCurrency? {

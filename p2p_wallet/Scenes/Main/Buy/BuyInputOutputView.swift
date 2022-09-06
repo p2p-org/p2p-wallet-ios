@@ -40,7 +40,7 @@ struct BuyInputOutputView: View {
                         font: fontSynchorinze.font,
                         side: .left
                     )
-                        .padding(.leading, 8)
+                    .padding(.leading, 8)
 
                     currency(value: leftSubtitle) { onTap(.left) }
                         .lineLimit(1)
@@ -59,9 +59,9 @@ struct BuyInputOutputView: View {
                         font: fontSynchorinze.font,
                         side: .right
                     )
-                        .padding(.leading, 8)
+                    .padding(.leading, 8)
 
-                    currency(value: rightSubtitle) {}
+                    currency(value: rightSubtitle) { onTap(.right) }
                         .lineLimit(1)
                         .padding(.trailing, 20)
                 }.frame(width: reader.size.width / 2)

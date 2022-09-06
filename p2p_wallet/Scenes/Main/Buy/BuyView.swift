@@ -281,42 +281,6 @@ struct BuyView: View {
         .background(Color(Asset.Colors.cloud.color))
         .cornerRadius(16)
     }
-
-//    func inputView(
-//        text: Binding<String>,
-//        coin: String,
-//        onEditing: @escaping (Bool) -> Void,
-//        action: @escaping () -> Void,
-//        showDisclosure: Bool = true
-//    ) -> some View {
-//        HStack(alignment: .center, spacing: 4) {
-//            TextField("", text: text, onEditingChanged: { vall in
-//                onEditing(vall)
-//            })
-//            .multilineTextAlignment(.trailing)
-//            Group {
-//                Text(coin)
-//                    .apply(style: .title2)
-//                    .foregroundColor(Color(Asset.Colors.night.color.withAlphaComponent(0.3)))
-//                    .padding(.trailing, 1)
-//                if showDisclosure {
-//                    Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
-//                        .resizable()
-//                        .scaledToFit()
-//                        .frame(width: 16, height: 16)
-//                        .padding(.trailing, 10)
-//                } else {
-//                    Spacer(minLength: 10)
-//                }
-//            }.onTapGesture {
-//                if showDisclosure {
-//                    action()
-//                }
-//            }
-//        }
-//        .frame(height: 62)
-//        .background(Color(Asset.Colors.snow.color))
-//    }
 }
 
 extension BuyView {
