@@ -11,9 +11,15 @@ import RxSwift
 public final class FeatureFlagProvider: ReactiveCompatible {
     public static let shared = FeatureFlagProvider()
 
-    var featureFlags: [FeatureFlag] = []
+    var featureFlags: [FeatureFlag] {
+        didSet {
+            UserDefaults.standard.storagedFeatures = featureFlags
+        }
+    }
 
-    init() {}
+    private init() {
+        featureFlags = UserDefaults.standard.storagedFeatures
+    }
 
     public func fetchFeatureFlags(
         mainFetcher: FetchesFeatureFlags,

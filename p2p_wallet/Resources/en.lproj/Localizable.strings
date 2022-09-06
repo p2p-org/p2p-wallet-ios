@@ -495,7 +495,6 @@
 "Receiving statuses" = "Receiving statuses";
 "Receiving %@ renBTC" = "Receiving %@ renBTC";
 "Reserve your P2P username" = "Reserve your P2P username";
-"username" = "username";
 "Use any latin and special symbols or emojis." = "Use any latin and special symbols or emojis.";
 "You can also %@ this step and reserve a username later." = "You can also %@ this step and reserve a username later.";
 "skip" = "skip";
@@ -511,7 +510,6 @@
 "Any token can be received using username regardless of whether it is in your wallet's list" = "Any token can be received using username regardless of whether it is in your wallet's list";
 "Username %@.p2p.sol has already been reserved for this user" = "Username %@.p2p.sol has already been reserved for this user";
 "Username %@ is successfully reserved" = "Username %@ is successfully reserved";
-"Not yet reserved" = "Not yet reserved";
 "Your p2p username" = "Your p2p username";
 "Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet token list." = "Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet token list.";
 "Save" = "Save";
@@ -871,10 +869,17 @@ Reset the PIN or wait for %@.";
 "Actions" = "Actions";
 "using Apple Pay or credit card" = "using Apple Pay or credit card";
 "from another wallet or exchange" = "from another wallet or exchange";
+"one crypto for
+another" = "one crypto for 
 "to phone number, username or address" = "to phone number, username or address";
 "one crypto for
 another" = "one crypto for
 another";
+"to username or address" = "to username or address";
+"Username" = "Username";
+"PROFILE AND SECURITY" = "PROFILE AND SECURITY";
+"Recovery kit" = "Recovery kit";
+"Not reserved" = "Not reserved";
 "The code from SMS" = "The code from SMS";
 "Enter the code to continue" = "Enter the code to continue";
 "WRITE TO HEEEEELP" = "WRITE TO HEEEEELP";

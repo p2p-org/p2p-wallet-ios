@@ -66,10 +66,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
-        setupDefaultFlags()
-        // TODO: Do we need it?
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
-
         UIViewController.swizzleViewDidDisappear()
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
