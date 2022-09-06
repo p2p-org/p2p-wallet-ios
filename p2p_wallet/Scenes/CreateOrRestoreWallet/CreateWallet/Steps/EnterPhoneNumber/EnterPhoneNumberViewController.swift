@@ -33,8 +33,16 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
         button.autoPinEdge(toSuperviewEdge: .trailing, withInset: 18)
 
         configureNavBar()
+    }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         phoneInputRef.view?.textField?.becomeFirstResponder()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        phoneInputRef.view?.textField?.resignFirstResponder()
     }
 
     private var topContentInset = {
