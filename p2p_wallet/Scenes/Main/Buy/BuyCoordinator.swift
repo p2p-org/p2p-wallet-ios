@@ -13,10 +13,15 @@ final class BuyCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
+        let result = PassthroughSubject<Void, Never>()
         let viewModel = BuyViewModel()
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
         viewController.hidesBottomBarWhenPushed = true
         navigationController.pushViewController(viewController, animated: true)
+
+        viewController.onClose = {
+            result.send()
+        }
 
         viewModel.coordinatorIO.showDetail
             .receive(on: RunLoop.main)
@@ -77,7 +82,6 @@ final class BuyCoordinator: Coordinator<Void> {
             self?.navigationController.present(vc, animated: true)
         }).store(in: &subscriptions)
 
-        // TODO: substitute with result subject
-        return PassthroughSubject<Void, Never>().eraseToAnyPublisher()
+        return result.eraseToAnyPublisher()
     }
 }
