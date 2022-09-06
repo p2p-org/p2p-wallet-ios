@@ -839,3 +839,4 @@ another" = "một tiền điện tử cho
 "one crypto for\nanother" = "một loại tiền điện tử cho \n một loại tiền điện tử khác";
 "SOL purchase cost" = "Chi phí mua SOL";
 "Transaction details" = "Chi tiết giao dịch";
+"Minimal transaction is %@" = "Giao dịch tối thiểu là %@";
