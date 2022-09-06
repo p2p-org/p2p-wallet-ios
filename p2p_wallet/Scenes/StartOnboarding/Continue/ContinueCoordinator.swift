@@ -6,6 +6,13 @@ import SwiftUI
 final class ContinueCoordinator: Coordinator<OnboardingResult> {
     private let window: UIWindow
 
+    private let navigationController: UINavigationController = {
+        let nc = UINavigationController()
+        nc.modalPresentationStyle = .fullScreen
+        nc.modalTransitionStyle = .crossDissolve
+        return nc
+    }()
+
     private var subject = PassthroughSubject<OnboardingResult, Never>()
 
     @Injected private var onboardingService: OnboardingService
@@ -24,13 +31,10 @@ final class ContinueCoordinator: Coordinator<OnboardingResult> {
         let viewModel = ContinueViewModel(subtitle: lastState.subtitle)
         let view = ContinueView(viewModel: viewModel)
         let viewController = UIHostingController(rootView: view)
-
-        let navigationController = UINavigationController(rootViewController: viewController)
-        style(nc: navigationController)
-        window.animate(newRootViewController: navigationController)
+        window.animate(newRootViewController: viewController)
 
         viewModel.startDidTap.sink { [weak self] _ in
-            self?.openStart(navigationController: navigationController)
+            self?.openStart()
         }
         .store(in: &subscriptions)
 
@@ -50,7 +54,7 @@ final class ContinueCoordinator: Coordinator<OnboardingResult> {
         return subject.eraseToAnyPublisher()
     }
 
-    private func openStart(navigationController _: UINavigationController) {
+    private func openStart() {
         coordinate(to: StartCoordinator(window: window, params: StartParameters(isAnimatable: false)))
             .sink(receiveValue: { result in
                 self.subject.send(result)
@@ -65,7 +69,12 @@ final class ContinueCoordinator: Coordinator<OnboardingResult> {
             let root = window.rootViewController
         else { return }
 
-        coordinate(to: CreateWalletCoordinator(parent: root, initialState: lastState, animated: animated))
+        coordinate(to: CreateWalletCoordinator(
+            parent: root,
+            navigationController: navigationController,
+            initialState: lastState,
+            animated: animated
+        ))
             .sink { result in
                 switch result {
                 case let .success(onboardingWallet):
@@ -75,12 +84,6 @@ final class ContinueCoordinator: Coordinator<OnboardingResult> {
                 }
                 self.subject.send(completion: .finished)
             }.store(in: &subscriptions)
-    }
-
-    private func style(nc: UINavigationController) {
-        nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        nc.navigationBar.shadowImage = UIImage()
-        nc.navigationBar.isTranslucent = true
     }
 }
 

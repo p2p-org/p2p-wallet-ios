@@ -18,6 +18,13 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
     private let params: StartParameters
     private var subject = PassthroughSubject<OnboardingResult, Never>()
 
+    private let navigationController: UINavigationController = {
+        let nc = UINavigationController()
+        nc.modalPresentationStyle = .fullScreen
+        nc.modalTransitionStyle = .crossDissolve
+        return nc
+    }()
+
     // MARK: - Initializer
 
     init(window: UIWindow, params: StartParameters = StartParameters(isAnimatable: true)) {
@@ -29,10 +36,7 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
         let viewModel = StartViewModel(isAnimatable: params.isAnimatable)
         let viewController = UIHostingController(rootView: StartView(viewModel: viewModel))
         self.viewController = viewController
-
-        let navigationController = UINavigationController(rootViewController: viewController)
-        style(nc: navigationController)
-        window.animate(newRootViewController: navigationController)
+        window.animate(newRootViewController: viewController)
 
         viewModel.createWalletDidTap
             .sink { [weak self] _ in
@@ -78,6 +82,7 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
                     if Date() < until {
                         coordinate(to: CreateWalletCoordinator(
                             parent: vc,
+                            navigationController: navigationController,
                             initialState: CreateWalletFlowState.bindingPhoneNumber(
                                 email: email,
                                 seedPhrase: seedPhrase,
@@ -112,20 +117,21 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
             }
         }
 
-        coordinate(to: CreateWalletCoordinator(parent: vc)).sink { [weak vc] result in
-            switch result {
-            case .restore:
-                guard let vc = vc else { return }
-                self.openRestoreWallet(vc: vc)
-            case let .success(data):
-                self.subject.send(.created(data))
-                self.subject.send(completion: .finished)
-            }
-        }.store(in: &subscriptions)
+        coordinate(to: CreateWalletCoordinator(parent: vc, navigationController: navigationController))
+            .sink { [weak vc] result in
+                switch result {
+                case .restore:
+                    guard let vc = vc else { return }
+                    self.openRestoreWallet(vc: self.navigationController)
+                case let .success(data):
+                    self.subject.send(.created(data))
+                    self.subject.send(completion: .finished)
+                }
+            }.store(in: &subscriptions)
     }
 
     private func openRestoreWallet(vc: UIViewController) {
-        coordinate(to: RestoreWalletCoordinator(parent: vc))
+        coordinate(to: RestoreWalletCoordinator(parent: vc, navigationController: navigationController))
             .sink(receiveValue: { [weak self] result in
                 guard let self = self else { return }
                 switch result {
@@ -147,11 +153,5 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
             bundledMarkdownTxtFileName: "Terms_of_service"
         )
         viewController?.present(vc, animated: true)
-    }
-
-    private func style(nc: UINavigationController) {
-        nc.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        nc.navigationBar.shadowImage = UIImage()
-        nc.navigationBar.isTranslucent = true
     }
 }
