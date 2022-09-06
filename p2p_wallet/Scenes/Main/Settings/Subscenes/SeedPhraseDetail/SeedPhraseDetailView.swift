@@ -22,16 +22,12 @@ struct SeedPhraseDetailView: View {
         } content: {
             VStack {
                 if viewModel.state == .lock {
-                    VStack {
+                    VStack(spacing: 12) {
                         ExplainText(text: L10n
                             .aSeedPhraseIsLikeAPasswordWordsThatAllowsYouToAccessAndManageYourCryptoFunds)
-
                         ExplainText(text: L10n.ExceptYouNoOneKeepsYourEntireSeedPhrase
                             .thePartsAreDistributedDecentralizedOnTorusNetworkNodes)
-                            .padding(.top, 12)
-
-                        ExplainText(text: L10n.YourSeedPhraseMustNeverBeShared.keepItPrivateEvenFromUs)
-                            .padding(.top, 12)
+                        attributedText
                         Spacer()
                     }
                     .padding(.top, 36)
@@ -70,7 +66,7 @@ struct SeedPhraseDetailView: View {
     var centerText: some View {
         Text(viewModel.state == .lock ? L10n.makeSureYouUnderstandTheseAspects : L10n.yourSeedPhraseMustNeverBeShared)
             .fontWeight(.semibold)
-            .apply(style: .text4)
+            .font(uiFont: .font(of: .text1, weight: .semibold))
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
             .background(Color.white)
@@ -80,6 +76,14 @@ struct SeedPhraseDetailView: View {
                     .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
             )
             .offset(x: 0, y: 16)
+    }
+
+    private var attributedText: some View {
+        HStack(alignment: .top) {
+            Text("•")
+            Text(viewModel.thirdRowText)
+            Spacer()
+        }
     }
 }
 
