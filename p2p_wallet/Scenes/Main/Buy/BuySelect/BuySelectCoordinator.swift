@@ -17,13 +17,16 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
     private let contentHeight: CGFloat
     private var viewModel: BuySelectViewModel<Model>
     private var selectedModel: Model?
+    private var title: String
 
     init(
+        title: String,
         navigationController: UINavigationController,
         items: [Model],
         contentHeight: CGFloat = 0,
         selectedModel: Model? = nil
     ) {
+        self.title = title
         self.navigationController = navigationController
         self.items = items
         self.contentHeight = contentHeight
@@ -38,7 +41,7 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
     private let viewControllerDismissed = PassthroughSubject<Void, Never>()
 
     override func start() -> AnyPublisher<BuySelectCoordinatorResult<Model>, Never> {
-        let view = BuySelectView<Model, Cell>(viewModel: viewModel)
+        let view = BuySelectView<Model, Cell>(viewModel: viewModel, title: title)
         let viewController = UIHostingController(rootView: view)
 
         transition.containerHeight = contentHeight

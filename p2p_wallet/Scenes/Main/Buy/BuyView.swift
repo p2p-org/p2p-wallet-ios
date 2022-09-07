@@ -47,6 +47,10 @@ struct BuyView: View {
                 .cornerRadius(20)
                 .padding([.leading, .trailing], 16)
                 .offset(y: 30)
+            }.onAppear {
+                UIScrollView.appearance().keyboardDismissMode = .onDrag
+            }.onTapGesture {
+                UIApplication.shared.keyWindow?.endEditing(true)
             }
             Spacer()
             bottomActionsView

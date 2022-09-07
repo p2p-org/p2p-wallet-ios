@@ -144,10 +144,10 @@ private class FontSynchorinze: ObservableObject {
 
                 let leftTotal = 50 + leftTitleSize.width + 4 + leftSubtitleSize.width + 20
                 let rightTotal = 50 + rightTitleSize.width + 4 + rightSubTitleSize.width + 20
-
-                print(leftTitle, leftSubtitle, rightTitle, rightSubTitle)
-                print(leftTitleSize, rightTitleSize)
-                print(leftTotal, rightTotal, width / 2)
+//
+//                print(leftTitle, leftSubtitle, rightTitle, rightSubTitle)
+//                print(leftTitleSize, rightTitleSize)
+//                print(leftTotal, rightTotal, width / 2)
 
                 if leftTotal < (width / 2), rightTotal < (width / 2) { return fontSize }
             }
@@ -183,7 +183,7 @@ private struct TextfieldView: UIViewRepresentable {
         textField.font = fontSynchorinze.font
         textField.textAlignment = .right
         textField.text = text
-        textField.keyboardType = .numberPad
+        textField.keyboardType = .decimalPad
         textField.addTarget(ctx.coordinator, action: #selector(ctx.coordinator.textDidChanged), for: .editingChanged)
 
         return textField
