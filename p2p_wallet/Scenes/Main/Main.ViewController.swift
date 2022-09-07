@@ -146,6 +146,7 @@ extension Main {
 
                 // handle cancelled by tapping <x>
                 localAuthVC?.onCancel = { [weak self] in
+                    status?.onCancel?()
                     self?.viewModel.authenticate(presentationStyle: nil)
                 }
             }
