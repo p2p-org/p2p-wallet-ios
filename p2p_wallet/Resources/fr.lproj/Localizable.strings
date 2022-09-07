@@ -939,3 +939,4 @@ another" = "une crypto pour
 "Confirm your new PIN code" = "Confirmez votre nouveau code PIN";
 "Forget you PIN?" = "Vous avez oublié votre NIP ?";
 "If you forget your PIN, you can log out and create a new one when you log in again." = "Si vous oubliez votre code PIN, vous pouvez vous déconnecter et en créer un nouveau lorsque vous vous reconnectez.";
+"Your PIN was changed" = "Votre code PIN a été modifié";

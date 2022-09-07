@@ -19,7 +19,7 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
     }
 
     private func createPincodeScreen() -> UIViewController {
-        let viewModel = PincodeViewModel(state: .create, isBackAvailable: false)
+        let viewModel = PincodeViewModel(state: .create, isBackAvailable: false, successNotification: "")
         let viewController = PincodeViewController(viewModel: viewModel)
 
         viewModel.infoDidTap
@@ -38,13 +38,15 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
     }
 
     private func confirmPincodeScreen(_ pincode: String) -> UIViewController {
-        let viewModel = PincodeViewModel(state: .confirm(pin: pincode))
+        let viewModel = PincodeViewModel(
+            state: .confirm(pin: pincode, askBiometric: true),
+            isBackAvailable: true,
+            successNotification: L10n._️YeahYouVeCreatedThePINToKeyApp
+        )
         let viewController = PincodeViewController(viewModel: viewModel)
 
         viewModel.infoDidTap
-            .sink { [weak self] _ in
-                self?.openInfo()
-            }
+            .sink { [weak self] _ in self?.openInfo() }
             .store(in: &subscriptions)
 
         viewModel.openMain
@@ -54,9 +56,7 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
             .store(in: &subscriptions)
 
         viewModel.back
-            .sinkAsync { [stateMachine] _ in
-                try await stateMachine <- .back
-            }
+            .sinkAsync { [stateMachine] _ in try await stateMachine <- .back }
             .store(in: &subscriptions)
 
         return viewController

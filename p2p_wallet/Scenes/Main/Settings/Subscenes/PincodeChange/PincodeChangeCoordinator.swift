@@ -62,7 +62,7 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
     }
 
     func openCreatePincode() {
-        let viewModel = PincodeViewModel(state: .create, isBackAvailable: false)
+        let viewModel = PincodeViewModel(state: .create, isBackAvailable: false, successNotification: "")
         let viewController = PincodeViewController(viewModel: viewModel)
         viewController.title = L10n.changePIN
 
@@ -79,14 +79,18 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
         navVC.setViewControllers(vcs, animated: true)
     }
 
-    func openConfirmPincode(pincode _: String) {
-        let viewModel = PincodeViewModel(state: .create, isBackAvailable: false)
+    func openConfirmPincode(pincode: String) {
+        let viewModel = PincodeViewModel(
+            state: .confirm(pin: pincode, askBiometric: false),
+            isBackAvailable: false,
+            successNotification: "🤗 " + L10n.yourPINWasChanged
+        )
         let viewController = PincodeViewController(viewModel: viewModel)
         viewController.title = L10n.changePIN
 
         viewModel.title = L10n.confirmYourPINCode
-        viewModel.confirmPin
-            .sinkAsync { [result, pincodeStorage] pincode in
+        viewModel.openMain
+            .sinkAsync { [result, pincodeStorage] _ in
                 pincodeStorage.save(pincode)
                 result.send(true)
                 result.send(completion: .finished)
