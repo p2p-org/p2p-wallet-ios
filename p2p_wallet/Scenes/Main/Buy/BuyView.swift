@@ -285,7 +285,8 @@ extension BuyView {
                     style: .inverted,
                     size: .large,
                     trailing: UIImage.buyWallet,
-                    trailingBinding: $viewModel.buttonIcon
+                    trailingBinding: $viewModel.buttonIcon,
+                    isEnabled: $viewModel.buttonEnabled
                 ) { [weak viewModel] in
                     viewModel?.buyButtonTapped()
                 }

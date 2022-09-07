@@ -843,3 +843,4 @@ another" = "одна крипта для
 "Method" = "Метод";
 "Buying" = "Покупка";
 "Coins to buy" = "Монеты для покупки";
+"Maximum transaction is %@" = "Максимальная транзакция %@";

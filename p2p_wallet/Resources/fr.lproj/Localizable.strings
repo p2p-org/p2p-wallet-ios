@@ -843,3 +843,4 @@ another" = "une crypto pour
 "Method" = "Méthode";
 "Buying" = "Achat";
 "Coins to buy" = "Pièces à acheter";
+"Maximum transaction is %@" = "La transaction maximale est %@";

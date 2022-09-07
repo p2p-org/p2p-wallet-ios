@@ -23,6 +23,7 @@ class BuyViewModel: ObservableObject {
     @Published var isLeftFocus = false
     @Published var isRightFocus = true
     @Published var buttonTitle: String = L10n.buy
+    @Published var buttonEnabled = false
     @Published var buttonIcon: UIImage? = .buyWallet
     @Published var exchangeOutput: Buy.ExchangeOutput?
 
@@ -86,6 +87,7 @@ class BuyViewModel: ObservableObject {
                 let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
                 self.buttonIcon = UIImage.buyWallet
                 self.buttonTitle = L10n.buy
+
                 if minAmount > aAmount {
                     self.buttonTitle = L10n.minimalTransactionIs(
                         minAmount.fiatAmount(
@@ -94,7 +96,20 @@ class BuyViewModel: ObservableObject {
                         )
                     )
                     self.buttonIcon = nil
+                    self.buttonEnabled = false
+                    return
+                } else if aAmount > BuyViewModel.defaultMaxAmount {
+                    self.buttonTitle = L10n.maximumTransactionIs(
+                        BuyViewModel.defaultMaxAmount.fiatAmount(
+                            maximumFractionDigits: 2,
+                            currency: self.fiat
+                        )
+                    )
+                    self.buttonIcon = nil
+                    self.buttonEnabled = false
+                    return
                 }
+                self.buttonEnabled = true
             }.store(in: &subscriptions)
 
         areMethodsLoading = true

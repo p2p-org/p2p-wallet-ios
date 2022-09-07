@@ -835,3 +835,4 @@ another";
 "Method" = "Method";
 "Buying" = "Buying";
 "Coins to buy" = "Coins to buy";
+"Maximum transaction is %@" = "Maximum transaction is %@";
