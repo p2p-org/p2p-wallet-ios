@@ -48,8 +48,9 @@ struct SeedPhraseDetailView: View {
                         SliderButtonView(
                             title: L10n.showMySeedPhrase,
                             image: Asset.Icons.key.image,
-                            style: .white
-                        ) { value in if value { viewModel.unlock() } }
+                            style: .white,
+                            isOn: $viewModel.isSliderOn
+                        )
                             .frame(height: 56)
                     } else {
                         TextButtonView(

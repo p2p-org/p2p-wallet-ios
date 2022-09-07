@@ -7,6 +7,7 @@ import SwiftUI
 
 struct PincodeChangeStartView: View {
     var startChanging: (() -> Void)?
+    @State var isOn: Bool = false
 
     var body: some View {
         ExplainLayoutView {
@@ -33,11 +34,10 @@ struct PincodeChangeStartView: View {
                     SliderButtonView(
                         title: L10n.changeMyPIN,
                         image: Asset.Icons.key.image,
-                        style: .white
-                    ) { [startChanging] value in
-                        if value { startChanging?() }
-                    }
-                    .frame(height: 56)
+                        style: .white,
+                        isOn: $isOn
+                    )
+                        .frame(height: 56)
                 }
             }
         } hint: {
