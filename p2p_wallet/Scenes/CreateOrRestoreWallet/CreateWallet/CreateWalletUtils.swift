@@ -46,3 +46,30 @@ extension Subject {
         send(ReactiveProcess<Void>(data: (), finish: { _ in }))
     }
 }
+
+struct ResponsiveReactiveProcess<Result, Data> {
+    let data: Data
+    let finish: (Result?, Error?) -> Void
+
+    func start(_ compute: @escaping () async throws -> Result) {
+        Task {
+            do {
+                finish(try await compute(), nil)
+            } catch {
+                finish(nil, error)
+            }
+        }
+    }
+}
+
+extension Subject {
+    func sendResponsiveProcess<Result, Data>(data: Data, _ finish: @escaping (Result?, Error?) -> Void)
+    where Output == ResponsiveReactiveProcess<Result, Data> {
+        send(ResponsiveReactiveProcess<Result, Data>(data: data, finish: finish))
+    }
+
+    func sendResponsiveProcess<Result>(_ finish: @escaping (Result?, Error?) -> Void)
+    where Output == ResponsiveReactiveProcess<Result, Void> {
+        send(ResponsiveReactiveProcess<Result, Void>(data: (), finish: finish))
+    }
+}

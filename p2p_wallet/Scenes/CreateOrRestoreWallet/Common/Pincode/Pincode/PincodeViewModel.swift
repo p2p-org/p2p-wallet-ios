@@ -6,7 +6,7 @@ import UIKit
 
 enum PincodeState {
     case create
-    case confirm(pin: String)
+    case confirm(pin: String, askBiometric: Bool)
 }
 
 final class PincodeViewModel: BaseViewModel {
@@ -28,11 +28,10 @@ final class PincodeViewModel: BaseViewModel {
     let openMain = PassthroughSubject<(String, Bool), Never>()
 
     let isBackAvailable: Bool
+    let successNotification: String
 
     var pincode: String? {
-        if case let .confirm(pin) = state {
-            return pin
-        }
+        if case let .confirm(pin, _) = state { return pin }
         return nil
     }
 
@@ -42,9 +41,10 @@ final class PincodeViewModel: BaseViewModel {
         biometricsAuthProvider.availabilityStatus
     }
 
-    init(state: PincodeState, isBackAvailable: Bool = true) {
+    init(state: PincodeState, isBackAvailable: Bool = true, successNotification: String) {
         self.state = state
         self.isBackAvailable = isBackAvailable
+        self.successNotification = successNotification
         super.init()
         title = title(for: state)
         bind()
@@ -67,15 +67,20 @@ private extension PincodeViewModel {
             switch self.state {
             case .create:
                 self.confirmPin.send(pin)
-            case .confirm:
-                self.snackbar = PincodeSnackbar(message: L10n._️YeahYouVeCreatedThePINToKeyApp, isFailure: false)
+            case let .confirm(_, askBiometric):
+                self.snackbar = PincodeSnackbar(message: self.successNotification, isFailure: false)
                 let prompt = L10n
                     .insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
-                self.biometricsAuthProvider.authenticate(
-                    authenticationPrompt: prompt, completion: { success, _ in
-                        self.openMain.send((pin, success))
-                    }
-                )
+
+                if askBiometric {
+                    self.biometricsAuthProvider.authenticate(
+                        authenticationPrompt: prompt, completion: { success, _ in
+                            self.openMain.send((pin, success))
+                        }
+                    )
+                } else {
+                    self.openMain.send((pin, false))
+                }
             }
         }.store(in: &subscriptions)
 
