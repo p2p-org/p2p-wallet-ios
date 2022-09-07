@@ -942,3 +942,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "If you forget your PIN, you can log out and create a new one when you log in again." = "Nếu bạn quên mã PIN, bạn có thể đăng xuất và tạo mã mới khi đăng nhập lại.";
 "Your seed phrase must never be shared." = "Cụm từ hạt giống của bạn không bao giờ được chia sẻ.";
 "Keep it private, even from us" = "Giữ nó ở chế độ riêng tư, ngay cả với chúng tôi";
+"Your PIN was changed" = "Mã PIN của bạn đã được thay đổi";

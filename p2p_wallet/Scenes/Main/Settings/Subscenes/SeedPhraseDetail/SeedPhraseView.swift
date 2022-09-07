@@ -15,7 +15,7 @@ struct SeedPhraseView: View {
     @State var hidden: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
             Group {
                 HStack {
                     Text(L10n.seedPhrase)
@@ -42,7 +42,8 @@ struct SeedPhraseView: View {
                     .blur(radius: hidden ? 4 : 0)
                 }.frame(maxHeight: .infinity)
             }
-            .padding(.vertical, 8)
+            .padding(.top, 8)
+            .padding(.bottom, 8)
             .padding(.leading, 16)
             .padding(.trailing, 8)
         }
@@ -101,15 +102,15 @@ private struct Grid<Content: View, T: Hashable>: View {
                         cellElement(i, j)
                     }
                 }
-                .padding(.bottom, 12)
+                .padding(.bottom, 8)
             }
         }
     }
 
     func cellElement(_ i: Int, _ j: Int) -> AnyView {
         if j < list[i].count {
-            let child = HStack(alignment: .firstTextBaseline) {
-                Text("\(i * 3 + (j + 1)).")
+            let child = HStack(alignment: .firstTextBaseline, spacing: 4) {
+                Text("\(i * 3 + (j + 1))")
                     .apply(style: .text4)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                 content(self.list[i][j])
