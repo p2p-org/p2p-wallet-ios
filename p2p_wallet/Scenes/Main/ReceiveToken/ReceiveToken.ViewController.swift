@@ -223,13 +223,13 @@ extension ReceiveToken.ViewController {
         case .showPhotoLibraryUnavailable:
             PhotoLibraryAlertPresenter().present(on: self)
         case .buy:
-            present(
+            show(
                 BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
                     let vm = BuyRoot.ViewModel()
                     let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
                     show(vc, sender: nil)
                 }),
-                animated: true
+                sender: nil
             )
         case .none:
             return
