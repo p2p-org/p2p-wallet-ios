@@ -13,5 +13,8 @@ class OnboardingConfig: ObservableObject {
     @Published var torusGoogleVerifier: String = String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? ""
     @Published var torusAppleVerifier: String = String.secretConfig("TORUS_APPLE_VERIFIER") ?? ""
 
+    @Published var isDeviceShareMocked: Bool = false
+    @Published var mockDeviceShare: String = ""
+
     private init() {}
 }
