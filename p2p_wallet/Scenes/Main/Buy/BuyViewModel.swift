@@ -50,8 +50,8 @@ class BuyViewModel: ObservableObject {
 
     init() {
         fiatAmount = String(
-            self.buyMinPrices[Fiat.usd.rawValue]?[Token.nativeSolana.symbol] ??
-            BuyViewModel.defaultMinAmount
+            buyMinPrices[Fiat.usd.rawValue]?[Token.nativeSolana.symbol] ??
+                BuyViewModel.defaultMinAmount
         )
 
         coordinatorIO.tokenSelected.sink { token in

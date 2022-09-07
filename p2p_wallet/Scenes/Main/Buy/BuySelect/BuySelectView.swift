@@ -6,12 +6,17 @@ import SwiftUI
 /// Base Select View
 struct BuySelect<Content: View>: View {
     let child: Content
-
     let didDismiss: (() -> Void)?
+    let title: String
 
-    init(didDismiss: (() -> Void)? = nil, @ViewBuilder child: () -> Content) {
+    init(
+        title: String,
+        didDismiss: (() -> Void)? = nil,
+        @ViewBuilder child: () -> Content
+    ) {
         self.child = child()
         self.didDismiss = didDismiss
+        self.title = title
     }
 
     var body: some View {
@@ -21,7 +26,7 @@ struct BuySelect<Content: View>: View {
                 .cornerRadius(2)
                 .padding(.top, 6)
 
-            Text(L10n.transactionDetails)
+            Text(title)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .padding(.top, 11)
@@ -33,7 +38,7 @@ struct BuySelect<Content: View>: View {
                 Spacer()
                 Button(
                     action: {
-                        self.didDismiss?()
+                        didDismiss?()
                     },
                     label: {
                         Text(L10n.done)
@@ -60,13 +65,15 @@ protocol BuySelectViewModelCell: View {
 struct BuySelectView<Model, Cell: BuySelectViewModelCell>:
 View where Model == Cell.Model {
     @ObservedObject var viewModel: BuySelectViewModel<Model>
+    let title: String
 
-    init(viewModel: BuySelectViewModel<Model>) {
+    init(viewModel: BuySelectViewModel<Model>, title: String) {
         self.viewModel = viewModel
+        self.title = title
     }
 
     var body: some View {
-        BuySelect(didDismiss: {
+        BuySelect(title: title, didDismiss: {
             viewModel.coordinatorIO.didDissmiss.send()
         }) {
             VStack(alignment: .leading, spacing: 0) {

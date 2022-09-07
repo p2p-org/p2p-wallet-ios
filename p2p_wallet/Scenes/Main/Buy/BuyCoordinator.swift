@@ -43,6 +43,7 @@ final class BuyCoordinator: Coordinator<Void> {
         viewModel.coordinatorIO.showTokenSelect.flatMap { tokens in
             self.coordinate(
                 to: BuySelectCoordinator<Token, BuySelectTokenCellView>(
+                    title: L10n.coinsToBuy,
                     navigationController: self.navigationController,
                     items: tokens,
                     contentHeight: 395,
@@ -61,6 +62,7 @@ final class BuyCoordinator: Coordinator<Void> {
         viewModel.coordinatorIO.showFiatSelect.flatMap { fiats in
             self.coordinate(
                 to: BuySelectCoordinator<Fiat, FiatCellView>(
+                    title: L10n.currency,
                     navigationController: self.navigationController,
                     items: fiats,
                     contentHeight: 436,
