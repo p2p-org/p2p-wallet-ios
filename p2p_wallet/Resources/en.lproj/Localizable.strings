@@ -945,3 +945,4 @@ Reset the PIN or wait for %@.";
 "Confirm your new PIN code" = "Confirm your new PIN code";
 "Forget you PIN?" = "Forget you PIN?";
 "If you forget your PIN, you can log out and create a new one when you log in again." = "If you forget your PIN, you can log out and create a new one when you log in again.";
+"Your PIN was changed" = "Your PIN was changed";
