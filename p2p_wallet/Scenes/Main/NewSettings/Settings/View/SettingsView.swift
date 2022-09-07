@@ -85,11 +85,10 @@ struct SettingsView: View {
 
     private var securitySection: some View {
         Section(header: headerText(L10n.security)) {
-            // TODO: - Disabled before onboarding finish
-//            Button(
-//                action: { viewModel.showView(.recoveryKit) },
-//                label: { cellView(image: .recoveryKit, title: L10n.recoveryKit) }
-//            )
+            Button(
+                action: { viewModel.showView(.recoveryKit) },
+                label: { cellView(image: .recoveryKit, title: L10n.recoveryKit) }
+            )
             Button(
                 action: { viewModel.showView(.yourPin) },
                 label: { cellView(image: .pinIcon, title: L10n.yourPIN) }
