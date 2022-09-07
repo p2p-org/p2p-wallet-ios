@@ -847,3 +847,4 @@ another" = "một tiền điện tử cho
 "Method" = "Phương pháp";
 "Buying" = "Mua";
 "Coins to buy" = "Xu để mua";
+"Maximum transaction is %@" = "Giao dịch tối đa là %@";
