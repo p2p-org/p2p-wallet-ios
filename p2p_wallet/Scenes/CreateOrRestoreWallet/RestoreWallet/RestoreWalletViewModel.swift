@@ -27,11 +27,12 @@ final class RestoreWalletViewModel: BaseViewModel {
     let availableRestoreOptions: RestoreOption
     let stateMachine: RestoreWalletStateMachine
 
-    @Injected var authService: AuthService
+    @Injected private var authService: AuthService
+    private let config: OnboardingConfig = .shared
 
     init(provider: OnboardingStateMachineProvider = OnboardingStateMachineProviderImpl()) {
         let accountStorage: AccountStorageType = Resolver.resolve()
-        deviceShare = available(.mockedDeviceShare) ? "someDeviceShare" : accountStorage.deviceShare
+        deviceShare = config.isDeviceShareMocked ? config.mockDeviceShare : accountStorage.deviceShare
 
         let keychainStorage: KeychainStorage = Resolver.resolve()
         stateMachine = .init(provider: RestoreWalletFlowContainer(
