@@ -42,7 +42,8 @@ final class SettingsCoordinator: Coordinator<Void> {
                     let vc = ReserveName.ViewController(viewModel: vm)
                     navigationController.pushViewController(vc, animated: true)
                 case .recoveryKit:
-                    break
+                    let coordinator = RecoveryKitCoordinator(navigationController: navigationController)
+                    coordinate(to: coordinator)
                 case .yourPin:
                     let createPincodeVC = WLCreatePincodeVC(
                         createPincodeTitle: L10n.setUpANewWalletPIN,
