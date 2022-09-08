@@ -33,17 +33,18 @@ final class BuyCoordinator: Coordinator<Void> {
 
         viewModel.coordinatorIO.showDetail
             .receive(on: RunLoop.main)
-            .flatMap { [unowned self] exchangeOutput, exchangeRate, currency in
+            .flatMap { [unowned self] exchangeOutput, exchangeRate, currency, token in
                 self.coordinate(to:
                     TransactionDetailsCoordinator(
                         controller: viewController,
                         model: .init(
-                            solPrice: exchangeRate,
-                            solPurchaseCost: exchangeOutput.purchaseCost,
+                            price: exchangeRate,
+                            purchaseCost: exchangeOutput.purchaseCost,
                             processingFee: exchangeOutput.processingFee,
                             networkFee: exchangeOutput.networkFee,
                             total: exchangeOutput.total,
-                            currency: currency
+                            currency: currency,
+                            token: token
                         )
                     ))
             }.sink { _ in }.store(in: &subscriptions)

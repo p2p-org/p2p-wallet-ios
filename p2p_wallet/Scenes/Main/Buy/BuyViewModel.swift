@@ -175,6 +175,12 @@ class BuyViewModel: ObservableObject {
 
     @MainActor
     private func setPaymentMethod(_ payment: PaymentType) {
+        guard availablePaymentTypes().contains(payment) else {
+            // Card always available
+            selectedPayment = .card
+            lastMethod = selectedPayment
+            return
+        }
         selectedPayment = payment
         lastMethod = payment
         // If selected payment doesnt have current currency
@@ -191,8 +197,16 @@ class BuyViewModel: ObservableObject {
                 let fiat = fiat.buyFiatCurrency(),
                 let token = token.buyCryptoCurrency()
             else { return }
-            let exchangeRate = try await exchangeService.getExchangeRate(from: fiat, to: token)
-            coordinatorIO.showDetail.send((exchangeOutput, exchangeRate: exchangeRate.amount, fiat: self.fiat))
+            let exchangeRate = try await exchangeService
+                .getExchangeRate(from: fiat, to: token)
+            coordinatorIO.showDetail.send(
+                (
+                    exchangeOutput,
+                    exchangeRate: exchangeRate.amount,
+                    fiat: self.fiat,
+                    token: self.token
+                )
+            )
         }
     }
 
@@ -202,7 +216,9 @@ class BuyViewModel: ObservableObject {
     }
 
     func fiatSelectTapped() {
-        coordinatorIO.showFiatSelect.send(availableFiat(payment: selectedPayment))
+        let fiats = availableFiat(payment: selectedPayment)
+        guard fiats.count > 1 else { return }
+        coordinatorIO.showFiatSelect.send(fiats)
     }
 
     func buyButtonTapped() {
@@ -369,9 +385,12 @@ class BuyViewModel: ObservableObject {
     func availableFiat(payment: PaymentType) -> [Fiat] {
         switch payment {
         case .card:
+            if !isBankTransferEnabled && !isGBPBankTransferEnabled {
+                return [.usd]
+            }
             return [.eur, .gbp, .usd]
         case .bank:
-            return isGBPBankTransferEnabled ? [.eur, .gbp] : [.eur]
+            return isGBPBankTransferEnabled ? [.gbp] : [.eur]
         }
     }
 
@@ -397,7 +416,12 @@ class BuyViewModel: ObservableObject {
 extension BuyViewModel {
     struct CoordinatorIO {
         // Input
-        var showDetail = PassthroughSubject<(Buy.ExchangeOutput, exchangeRate: Double, fiat: Fiat), Never>()
+        var showDetail = PassthroughSubject<(
+            Buy.ExchangeOutput,
+            exchangeRate: Double,
+            fiat: Fiat,
+            token: Token
+        ), Never>()
         var showTokenSelect = PassthroughSubject<[Token], Never>()
         var showFiatSelect = PassthroughSubject<[Fiat], Never>()
         var navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
