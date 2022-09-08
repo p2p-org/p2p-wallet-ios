@@ -14,6 +14,7 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
     enum MoonpayPaymentMethod: String {
         case creditDebitCard = "credit_debit_card"
         case sepaBankTransfer = "sepa_bank_transfer"
+        case gbpBankTransfer = "gbp_bank_transfer"
     }
 
     // Properties

@@ -121,7 +121,8 @@ class BuyViewModel: ObservableObject {
 
         Task {
             let buyBankEnabled = available(.buyBankTransferEnabled)
-            let banks = try await exchangeService.isBankTransferEnabled()
+            let banks = buyBankEnabled ? try await exchangeService.isBankTransferEnabled() : (gbp: false, eur: false)
+            debugPrint(banks)
             self.isBankTransferEnabled = banks.eur && buyBankEnabled
             self.isGBPBankTransferEnabled = banks.gbp && buyBankEnabled
 
@@ -352,12 +353,14 @@ class BuyViewModel: ObservableObject {
 
     func getExchangeURL(from: BuyCurrencyType, to: BuyCurrencyType, amount: Double) throws -> URL {
         let factory: BuyProcessingFactory = Resolver.resolve()
+        // HACK
+        let paymentMethod = isGBPBankTransferEnabled ? "gbp_bank" : selectedPayment.rawValue
         let provider = try factory.create(
             walletRepository: walletsRepository,
             fromCurrency: from,
             amount: amount,
             toCurrency: to,
-            paymentMethod: selectedPayment.rawValue
+            paymentMethod: paymentMethod
         )
         return URL(string: provider.getUrl())!
     }

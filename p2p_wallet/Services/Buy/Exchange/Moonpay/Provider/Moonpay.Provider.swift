@@ -12,6 +12,7 @@ extension Moonpay {
     enum MoonpayPaymentMethod: String {
         case creditDebitCard = "credit_debit_card"
         case sepaBankTransfer = "sepa_bank_transfer"
+        case gbpBankTransfer = "gbp_bank_transfer"
     }
 
     class Provider {
@@ -125,7 +126,7 @@ extension Moonpay {
                 let json = try? JSONDecoder().decode(IpAddress.self, from: data),
                 let alpha3 = json.alpha3 else { return .init() }
             return BankTransferAvailability(
-                gbp: alpha3 == "GBP",
+                gbp: alpha3 == "GBR",
                 eur: bankTransferAvailableAlpha3Codes().contains(alpha3)
             )
         }
