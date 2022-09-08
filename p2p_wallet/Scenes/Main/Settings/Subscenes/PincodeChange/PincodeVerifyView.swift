@@ -82,6 +82,7 @@ private struct SwiftPinCodeView: UIViewRepresentable {
         )
 
         pinCode.stackViewSpacing = stackViewSpacing ?? 24
+        pinCode.resetingDelayInSeconds = 2
         pinCode.onSuccess = onSuccess
         pinCode.onFailed = onFailed
 
