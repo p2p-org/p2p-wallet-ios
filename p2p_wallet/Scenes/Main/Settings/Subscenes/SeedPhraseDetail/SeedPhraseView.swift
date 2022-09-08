@@ -15,7 +15,7 @@ struct SeedPhraseView: View {
     @State var hidden: Bool = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
             Group {
                 HStack {
                     Text(L10n.seedPhrase)
@@ -32,6 +32,8 @@ struct SeedPhraseView: View {
                     ) { hidden = !hidden }
                         .frame(maxWidth: 100, maxHeight: TextButton.Size.small.height)
                 }
+                .padding(.top, 8)
+                .padding(.bottom, 8)
 
                 ScrollView {
                     Grid(columns: 3, list: seedPhrase) { word in
@@ -42,8 +44,6 @@ struct SeedPhraseView: View {
                     .blur(radius: hidden ? 4 : 0)
                 }.frame(maxHeight: .infinity)
             }
-            .padding(.top, 8)
-            .padding(.bottom, 8)
             .padding(.leading, 16)
             .padding(.trailing, 8)
         }
