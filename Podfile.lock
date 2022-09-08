@@ -271,7 +271,7 @@ DEPENDENCIES:
   - JazziconSwift (~> 1.1.0)
   - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
-  - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `feature/pincode-reseting-delay`)"
+  - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `develop`)"
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
@@ -407,7 +407,7 @@ EXTERNAL SOURCES:
     :branch: develop
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :branch: feature/pincode-reseting-delay
+    :branch: develop
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :branch: custom_gradient_color
@@ -442,7 +442,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -460,10 +460,10 @@ CHECKOUT OPTIONS:
     :commit: de09fedfb7a9c5ab4effbdb4df284229c60f72db
     :git: https://github.com/weitieda/bottom-sheet.git
   Cache:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -472,22 +472,22 @@ CHECKOUT OPTIONS:
     :commit: 145b589ae5ed31c72dc51959bc7f782d69b07cc6
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
-    :commit: bfe780627453d13cedbe9aeb6fcf7ce1ba84d08b
+    :commit: 2a39b0cc837e37dd39c4a507f9dc1981612e0902
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -502,13 +502,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: ab32c12f8f8db70910c54771ebf646eb6003ebc9
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: 498f5b46f97a59436f56c24ff4735ad6e7298491
+    :commit: c3056cd74f992a5d071eeb020bd8fc20c74fc8a3
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -599,6 +599,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: cdf26041fac0f4a4e45be037b6dbc874ec79fa52
+PODFILE CHECKSUM: 02a6751e73607aac5c1c8d2ef496e6c6e5ab4e02
 
 COCOAPODS: 1.11.3
