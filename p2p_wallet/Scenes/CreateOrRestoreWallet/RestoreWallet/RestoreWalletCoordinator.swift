@@ -75,7 +75,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         }
 
         navigationController.setViewControllers([viewController], animated: true)
-        if parent.presentedViewController == nil {
+        if navigationController.presentingViewController == nil {
             parent.present(navigationController, animated: true)
         }
 
