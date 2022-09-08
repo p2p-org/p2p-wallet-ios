@@ -7,7 +7,7 @@ import Foundation
 import KeyAppUI
 import Resolver
 
-class SeedPhraseDetailViewModel: ObservableObject {
+class SeedPhraseDetailViewModel: BaseViewModel {
     enum State {
         case lock
         case unlock
@@ -19,6 +19,7 @@ class SeedPhraseDetailViewModel: ObservableObject {
     @Injected private var notificationsService: NotificationService
 
     @Published var state: State
+    @Published var isSliderOn: Bool = false
 
     var thirdRowText: NSAttributedString {
         let firstAttributes: [NSAttributedString.Key: Any] = [
@@ -47,12 +48,20 @@ class SeedPhraseDetailViewModel: ObservableObject {
 
     init(initialState: State = .lock) {
         state = initialState
+        super.init()
+        $isSliderOn.sink { [weak self] isOn in
+            guard isOn else { return }
+            self?.unlock()
+        }.store(in: &subscriptions)
     }
 
     func unlock() {
         authenticationHandler.authenticate(presentationStyle: .init(
             completion: { [weak self] _ in
                 self?.state = .unlock
+            }, onCancel: { [weak self] in
+                self?.state = .lock
+                self?.isSliderOn = false
             }
         ))
     }
