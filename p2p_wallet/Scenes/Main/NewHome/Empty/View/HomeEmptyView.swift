@@ -46,18 +46,18 @@ struct HomeEmptyView: View {
                 VStack(spacing: 9) {
                     Text(L10n.topUpYourAccountToGetStarted)
                         .foregroundColor(Color(Asset.Colors.snow.color))
-                        .font(uiFont: .font(of: .text1, weight: .bold))
+                        .font(uiFont: .font(of: .text1, weight: .semibold))
                     Text(L10n.makeYourFirstDepositOrMakeAPurchaseUsingYourCreditCardOrApplePay)
                         .minimumScaleFactor(0.5)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
                         .foregroundColor(Color(Asset.Colors.cloud.color))
-                        .font(uiFont: .font(of: .text3, weight: .regular))
+                        .font(uiFont: .font(of: .text3))
                         .padding(.horizontal, 24)
                 }
                 Text(L10n.topUp)
                     .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .text4, weight: .bold))
+                    .font(uiFont: .font(of: .text4, weight: .semibold))
                     .frame(width: 204, height: 49)
                     .background(Color(.ddfa2b))
                     .cornerRadius(8)
@@ -74,7 +74,7 @@ struct HomeEmptyView: View {
         Group {
             Text(L10n.popularCoins)
                 .foregroundColor(Color(Asset.Colors.night.color))
-                .font(uiFont: .font(of: .title3, weight: .bold))
+                .font(uiFont: .font(of: .title3, weight: .semibold))
                 .padding(.bottom, 16)
             ForEach(Array(viewModel.popularCoins.indices), id: \.self) { index in
                 let coin = viewModel.popularCoins[index]
@@ -82,10 +82,7 @@ struct HomeEmptyView: View {
                     title: coin.title,
                     subtitle: coin.amount,
                     actionTitle: coin.actionTitle,
-                    image: coin.image,
-                    action: {
-                        coinTapped(at: index)
-                    }
+                    image: coin.image
                 ).onTapGesture {
                     coinTapped(at: index)
                 }

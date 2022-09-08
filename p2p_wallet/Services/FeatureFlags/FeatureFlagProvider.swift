@@ -10,9 +10,15 @@ import Foundation
 public final class FeatureFlagProvider {
     public static let shared = FeatureFlagProvider()
 
-    var featureFlags: [FeatureFlag] = []
+    var featureFlags: [FeatureFlag] {
+        didSet {
+            UserDefaults.standard.storagedFeatures = featureFlags
+        }
+    }
 
-    init() {}
+    private init() {
+        featureFlags = UserDefaults.standard.storagedFeatures
+    }
 
     public func fetchFeatureFlags(
         mainFetcher: FetchesFeatureFlags,

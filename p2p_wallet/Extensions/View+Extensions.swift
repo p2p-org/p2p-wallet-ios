@@ -9,8 +9,10 @@ import Combine
 import SwiftUI
 
 extension View {
-    func asViewController() -> UIViewController {
-        UIHostingControllerWithoutNavigation(rootView: self)
+    func asViewController(withoutUIKitNavBar: Bool = true) -> UIViewController {
+        withoutUIKitNavBar
+            ? UIHostingControllerWithoutNavigation(rootView: self)
+            : UIHostingController(rootView: self)
     }
 
     func uiView() -> UIView {
@@ -42,24 +44,6 @@ private struct TextModifier: ViewModifier {
 extension View {
     func font(uiFont: UIFont) -> some View {
         modifier(TextModifier(uiFont: uiFont))
-    }
-}
-
-// MARK: - Swipe
-
-extension View {
-    func swipeActions(
-        leading: [SwipeActionButton] = [],
-        allowsFullSwipeLeading: Bool = false,
-        trailing: [SwipeActionButton] = [],
-        allowsFullSwipeTrailing: Bool = false
-    ) -> some View {
-        modifier(SwipeActionView(
-            leading: leading,
-            allowsFullSwipeLeading: allowsFullSwipeLeading,
-            trailing: trailing,
-            allowsFullSwipeTrailing: allowsFullSwipeTrailing
-        ))
     }
 }
 

@@ -108,6 +108,8 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     func showInAppNotification(_ notification: InAppNotification) {
         DispatchQueue.main.async {
             UIApplication.shared.showToast(message: self.createTextFromNotification(notification))
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
         }
     }
 

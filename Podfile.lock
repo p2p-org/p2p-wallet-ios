@@ -8,7 +8,6 @@ PODS:
   - BECollectionView_Core (1.0.0)
   - BEPureLayout (0.4.0):
     - PureLayout
-  - BottomSheet (1.0.6)
   - Cache (1.0.0)
   - CocoaDebug (1.7.2)
   - CombineCocoa (0.4.0)
@@ -182,7 +181,6 @@ DEPENDENCIES:
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `BEPureLayout`)
-  - BottomSheet (from `https://github.com/weitieda/bottom-sheet.git`)
   - Cache (from `KeyAppKit`)
   - CocoaDebug
   - Down (from `https://github.com/p2p-org/Down.git`)
@@ -272,8 +270,6 @@ EXTERNAL SOURCES:
     :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
     :path: BEPureLayout
-  BottomSheet:
-    :git: https://github.com/weitieda/bottom-sheet.git
   Cache:
     :path: KeyAppKit
   Down:
@@ -311,9 +307,6 @@ CHECKOUT OPTIONS:
   BECollectionView_Core:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
     :git: https://github.com/bigearsenal/BECollectionView.git
-  BottomSheet:
-    :commit: de09fedfb7a9c5ab4effbdb4df284229c60f72db
-    :git: https://github.com/weitieda/bottom-sheet.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
@@ -333,7 +326,6 @@ SPEC CHECKSUMS:
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
-  BottomSheet: 0a164143e34470cc332db0ce4e55d6da202d7ac6
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
@@ -387,6 +379,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: f7c7ebaaf2e48661d0ab0b42f6dd551a08513747
+PODFILE CHECKSUM: 3928dc121a421cf829c729389b9c0e9be4b64492
 
 COCOAPODS: 1.11.3

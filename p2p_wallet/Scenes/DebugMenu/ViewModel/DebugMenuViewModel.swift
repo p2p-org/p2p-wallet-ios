@@ -44,9 +44,7 @@ final class DebugMenuViewModel: ObservableObject {
 
     private func updateNetworkLoggerState() {
         #if !RELEASE
-
             showDebugger(networkLoggerVisible)
-
         #endif
     }
 }
@@ -61,19 +59,19 @@ extension DebugMenuViewModel {
 
 extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
-        case sslPinning
+        case newSettings
 
         var title: String {
             switch self {
-            case .sslPinning:
-                return "SSL Pinning"
+            case .newSettings:
+                return "New Settings"
             }
         }
 
         var feature: Feature {
             switch self {
-            case .sslPinning:
-                return .sslPinning
+            case .newSettings:
+                return .settingsFeature
             }
         }
     }
