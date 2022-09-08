@@ -72,7 +72,9 @@ extension Buy {
                 walletAddress: walletRepository.nativeWallet?.pubkey,
                 baseCurrencyCode: from.moonpayCode,
                 baseCurrencyAmount: amount,
-                paymentMethod: paymentMethod == "card" ? .creditDebitCard : .sepaBankTransfer
+                paymentMethod: paymentMethod == "card" ? .creditDebitCard :
+                    paymentMethod == "gbp_bank" ? .gbpBankTransfer :
+                    .sepaBankTransfer
             )
         }
     }
