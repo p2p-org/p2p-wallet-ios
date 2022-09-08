@@ -35,7 +35,7 @@ class SeedPhraseDetailViewModel: BaseViewModel {
             attributes: firstAttributes
         )
         let secondString = NSAttributedString(
-            string: L10n.keepItPrivateEvenFromUs,
+            string: " \(L10n.keepItPrivateEvenFromUs)",
             attributes: secondAttributes
         )
         firstString.append(secondString)
