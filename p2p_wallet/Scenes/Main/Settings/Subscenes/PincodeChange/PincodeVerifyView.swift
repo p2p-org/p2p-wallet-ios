@@ -37,7 +37,10 @@ struct PincodeVerifyView: View {
                 maxAttemptsCount: nil,
                 stackViewSpacing: 24,
                 onSuccess: { _ in onSuccess?() },
-                onFailed: {}
+                onFailed: {
+                    let generator = UINotificationFeedbackGenerator()
+                    generator.notificationOccurred(.error)
+                }
             ).padding(.top, 40)
 
             // Forgot your  PIN
