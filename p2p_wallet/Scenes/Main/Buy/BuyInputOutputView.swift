@@ -57,7 +57,8 @@ struct BuyInputOutputView: View {
                         activeSide: $activeSide,
                         fontSynchorinze: fontSynchorinze,
                         font: fontSynchorinze.font,
-                        side: .right
+                        side: .right,
+                        isFocued: true
                     )
                         .padding(.leading, 8)
 
@@ -172,6 +173,7 @@ private struct TextfieldView: UIViewRepresentable {
     let fontSynchorinze: FontSynchorinze
     let font: UIFont
     let side: Side
+    var isFocued: Bool = false
 
     func makeUIView(context ctx: Context) -> UITextField {
         let textField = UITextField()
@@ -185,7 +187,11 @@ private struct TextfieldView: UIViewRepresentable {
         textField.text = text
         textField.keyboardType = .decimalPad
         textField.addTarget(ctx.coordinator, action: #selector(ctx.coordinator.textDidChanged), for: .editingChanged)
-
+        if isFocued {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                textField.becomeFirstResponder()
+            }
+        }
         return textField
     }
 
