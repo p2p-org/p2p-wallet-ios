@@ -19,6 +19,7 @@ final class HomeCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
 
     private var sendCoordinator: SendToken.Coordinator?
+    private let scrollSubject = PassthroughSubject<Void, Never>()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -37,13 +38,16 @@ final class HomeCoordinator: Coordinator<Void> {
 
         navigationController.setViewControllers([homeView], animated: false)
 
+        scrollSubject
+            .sink(receiveValue: {
+                tokensViewModel.scrollToTop()
+            })
+            .store(in: &subscriptions)
+
         homeView.viewWillAppear
             .sink(receiveValue: { [unowned homeView] in
                 homeView.navigationIsHidden = true
             })
-            .store(in: &subscriptions)
-        homeView.viewDidAppear
-            .sink(receiveValue: {})
             .store(in: &subscriptions)
         homeView.viewWillDisappear
             .sink(receiveValue: { [unowned homeView] in
@@ -52,7 +56,10 @@ final class HomeCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         viewModel.receiveShow
             .sink(receiveValue: { [unowned self] in
-                openReceiveScreen(pubKey: $0)
+                let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
+                coordinate(to: coordinator)
+                analyticsManager.log(event: .mainScreenReceiveOpen)
+                analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
             })
             .store(in: &subscriptions)
         viewModel.errorShow
@@ -76,6 +83,7 @@ final class HomeCoordinator: Coordinator<Void> {
             .sink(receiveValue: { [unowned self] in
                 let coordinator = BuyPreparingCoordinator(
                     navigationController: navigationController,
+                    strategy: .show,
                     crypto: $0
                 )
                 coordinate(to: coordinator)
@@ -144,6 +152,7 @@ final class HomeCoordinator: Coordinator<Void> {
             BuyTokenSelection.Scene(onTap: { [unowned self] in
                 let coordinator = BuyPreparingCoordinator(
                     navigationController: navigationController,
+                    strategy: .show,
                     crypto: $0
                 )
                 coordinate(to: coordinator)
@@ -153,12 +162,8 @@ final class HomeCoordinator: Coordinator<Void> {
     }
 
     private func openReceiveScreen(pubKey: PublicKey) {
-        let vm = ReceiveToken.SceneModel(
-            solanaPubkey: pubKey,
-            solanaTokenWallet: nil
-        )
-        let vc = ReceiveToken.ViewController(viewModel: vm, isOpeningFromToken: false)
-        navigationController.show(vc, sender: true)
+        let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubKey)
+        coordinate(to: coordinator)
         analyticsManager.log(event: .mainScreenReceiveOpen)
         analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
     }
@@ -220,5 +225,9 @@ final class HomeCoordinator: Coordinator<Void> {
             }
             navigationController.show(vc, sender: nil)
         }
+    }
+
+    func scrollToTop() {
+        scrollSubject.send()
     }
 }

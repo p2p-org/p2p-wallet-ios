@@ -837,3 +837,8 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 another" = "một tiền điện tử cho
  nữa";
 "one crypto for\nanother" = "một loại tiền điện tử cho \n một loại tiền điện tử khác";
+"to username or address" = "đến tên người dùng hoặc địa chỉ";
+"Username" = "tên tài khoản";
+"PROFILE AND SECURITY" = "HỒ SƠ VÀ BẢO MẬT";
+"Recovery kit" = "Bộ phục hồi";
+"Not reserved" = "Không được bảo lưu";

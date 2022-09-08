@@ -8,6 +8,7 @@
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
+import KeyAppUI
 import LoggerService
 import Resolver
 import Sentry
@@ -38,7 +39,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IntercomStartingConfigurator().configure()
 
         setupNavigationAppearance()
-        setupTabBarAppearance()
 
         FirebaseApp.configure()
 
@@ -56,6 +56,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
 
+        setupRemoteConfig()
+
         // set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
@@ -63,10 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         // notify notification Service
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
-
-        setupDefaultFlags()
-        FeatureFlagProvider.shared.fetchFeatureFlags(mainFetcher: defaultFlags)
-        setupRemoteConfig()
 
         UIViewController.swizzleViewDidDisappear()
 
@@ -105,61 +103,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func setupRemoteConfig() {
-        #if !RELEASE
+        let remoteConfig = RemoteConfig.remoteConfig()
+        if Environment.current != .release {
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
             settings.minimumFetchInterval = 0
-            RemoteConfig.remoteConfig().configSettings = settings
-        #endif
+            remoteConfig.configSettings = settings
+        }
 
         let currentEndpoints = APIEndPoint.definedEndpoints
-        #if !RELEASE
+        if Environment.current != .release {
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
                     primaryFetcher: DebugMenuFeaturesProvider.shared,
                     secondaryFetcher: MergingFlagsFetcher(
                         primaryFetcher: defaultFlags,
-                        secondaryFetcher: RemoteConfig.remoteConfig()
+                        secondaryFetcher: remoteConfig
                     )
                 )
             ) { _ in
                 self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
             }
-        #else
+        } else {
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
-                    primaryFetcher: RemoteConfig.remoteConfig(),
+                    primaryFetcher: remoteConfig,
                     secondaryFetcher: defaultFlags
                 )
             ) { _ in
                 self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
             }
-        #endif
+        }
 
         Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
             .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
-    }
-
-    private func setupTabBarAppearance() {
-        let standardAppearance = UITabBarAppearance()
-        standardAppearance.backgroundColor = .clear
-        standardAppearance.backgroundEffect = UIBlurEffect(style: .regular)
-        standardAppearance.stackedLayoutAppearance.normal.titleTextAttributes = [
-            .font: UIFont.systemFont(ofSize: 12, weight: .medium),
-            .foregroundColor: UIColor.h6f7d8d,
-        ]
-        standardAppearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-            .font: UIFont.systemFont(ofSize: 12, weight: .medium),
-            .foregroundColor: UIColor.h2b2b2b,
-        ]
-        standardAppearance.stackedItemPositioning = .automatic
-        standardAppearance.shadowImage = nil
-        standardAppearance.shadowColor = nil
-        UITabBar.appearance().standardAppearance = standardAppearance
-        UITabBar.appearance().tintColor = .h2b2b2b
-        if #available(iOS 15.0, *) {
-            UITabBar.appearance().scrollEdgeAppearance = standardAppearance
-        }
     }
 
     func setupLoggers() {
@@ -199,6 +176,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearence.shadowImage = UIImage()
+        navBarAppearence.isTranslucent = true
+
         navBarAppearence.tintColor = .black
         barButtonAppearance.tintColor = .black
     }

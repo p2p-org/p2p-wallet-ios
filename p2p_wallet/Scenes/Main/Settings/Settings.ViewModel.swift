@@ -110,7 +110,6 @@ extension Settings {
             bind()
             username = storage.getName()
             didBackup = storage.didBackupUsingIcloud || Defaults.didBackupOffline
-            securityMethods = getSecurityMethods()
         }
 
         // MARK: - Methods
@@ -144,17 +143,6 @@ extension Settings {
                     }
                 }
                 .store(in: &subscriptions)
-        }
-
-        // MARK: - Methods
-
-        private func getSecurityMethods() -> [String] {
-            var methods: [String] = []
-            if Defaults.isBiometryEnabled {
-                methods.append(LABiometryType.current.stringValue)
-            }
-            methods.append(L10n.pinCode)
-            return methods
         }
     }
 }
@@ -230,7 +218,6 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func setApiEndpoint(_ endpoint: APIEndPoint) {
         guard Defaults.apiEndPoint != endpoint else { return }
-        self.endpoint = endpoint
         analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
         Task {
             try await renVMService.expireCurrentSession()
@@ -271,7 +258,6 @@ extension Settings.ViewModel: SettingsViewModelType {
                         Defaults.isBiometryEnabled.toggle()
                         self?.isBiometryEnabled = Defaults.isBiometryEnabled
                         self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
-                        self?.securityMethods = self?.getSecurityMethods() ?? []
                     } else {
                         if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
                             onError(nil)

@@ -5,7 +5,6 @@
 //  Created by Ivan on 08.08.2022.
 //
 
-import BottomSheet
 import KeyAppUI
 import SwiftUI
 
@@ -50,7 +49,7 @@ struct HomeView: View {
                                         Image(uiImage: .walletNavigation)
                                         Text(viewModel.address)
                                             .foregroundColor(Color(Asset.Colors.mountain.color))
-                                            .font(uiFont: .font(of: .text1, weight: .bold))
+                                            .font(uiFont: .font(of: .text1, weight: .semibold))
                                     }
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)

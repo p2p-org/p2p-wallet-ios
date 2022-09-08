@@ -15,10 +15,11 @@ class HomeViewModel: ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
+    @Injected private var accountStorage: AccountStorageType
     private let walletsRepository: WalletsRepository
 
     @Published var state = State.pending
-    @Published var address = "..."
+    @Published var address = ""
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -35,6 +36,7 @@ class HomeViewModel: ObservableObject {
         receiveShow = receiveClicked
             .compactMap { try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) }
             .eraseToAnyPublisher()
+        address = accountStorage.account?.publicKey.base58EncodedString.shortAddress ?? ""
 
         Publishers.CombineLatest(
             walletsRepository.statePublisher,
@@ -53,7 +55,9 @@ class HomeViewModel: ObservableObject {
             guard let self = self else { return }
             if self.initStateFinished, $0 == .pending { return }
 
-            self.address = self.walletsRepository.nativeWallet?.pubkey?.shortAddress ?? "..."
+            if let address = self.accountStorage.account?.publicKey.base58EncodedString.shortAddress {
+                self.address = address
+            }
             self.state = $0
             if $0 != .pending {
                 self.initStateFinished = true
@@ -65,7 +69,6 @@ class HomeViewModel: ObservableObject {
             .assertNoFailure()
             .map { $0 == .error }
             .sink(receiveValue: { [weak self] hasError in
-                // TODO: catch network error!
                 if hasError, self?.walletsRepository.getError() != nil {
                     self?.error.send(true)
                 } else {
