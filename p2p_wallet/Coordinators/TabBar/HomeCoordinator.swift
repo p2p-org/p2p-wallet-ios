@@ -101,9 +101,9 @@ final class HomeCoordinator: Coordinator<Void> {
 
         Publishers.Merge(tokensViewModel.buyShow, emptyVMOutput.topUpShow)
             .filter { available(.buyScenarioEnabled) }
-            .flatMap { [unowned self] in
-                coordinate(to: BuyCoordinator(navigationController: self.navigationController))
-            }.sink(receiveValue: { _ in })
+            .sink(receiveValue: { [unowned self] _ in
+                coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
+            })
             .store(in: &subscriptions)
 
         tokensViewModel.receiveShow

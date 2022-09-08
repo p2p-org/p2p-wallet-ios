@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import KeyAppUI
@@ -39,6 +40,7 @@ class BuyViewModel: ObservableObject {
     // Dependencies
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: WalletsRepository
+    @Injected private var analyticsManager: AnalyticsManager
 
     // Defaults
     @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
@@ -56,12 +58,17 @@ class BuyViewModel: ObservableObject {
                 BuyViewModel.defaultMinAmount
         )
 
-        coordinatorIO.tokenSelected.compactMap { $0 }
-            .assign(to: \.token, on: self)
+        coordinatorIO.tokenSelected
+            .sink { [unowned self] token in
+                self.token = token ?? self.token
+                analyticsManager.log(event: .buyCoinChanged(self.token.symbol))
+            }
             .store(in: &subscriptions)
-
-        coordinatorIO.fiatSelected.compactMap { $0 }
-            .assign(to: \.fiat, on: self)
+        coordinatorIO.fiatSelected
+            .sink { [unowned self] fiat in
+                self.fiat = fiat ?? self.fiat
+                analyticsManager.log(event: .buyCurrencyChanged(self.fiat.symbol))
+            }
             .store(in: &subscriptions)
 
         coordinatorIO.navigationSlidingPercentage.sink { percentage in
@@ -169,6 +176,7 @@ class BuyViewModel: ObservableObject {
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
+        analyticsManager.log(event: .buyChosenMethodPayment(payment.type.rawValue))
     }
 
     // MARK: -
@@ -216,6 +224,24 @@ class BuyViewModel: ObservableObject {
                 amount: amount
             ) else { return }
         coordinatorIO.buy.send(url)
+
+        var typeBankTransfer: String?
+        if case .bank = selectedPayment {
+            if isGBPBankTransferEnabled {
+                typeBankTransfer = "gbp_bank_transfer"
+            } else {
+                typeBankTransfer = "sepa_bank_transfer"
+            }
+        }
+        analyticsManager.log(event: .buyButtonPressed(
+            sumCurrency: fiatAmount,
+            sumCoin: tokenAmount,
+            currency: from.name,
+            coin: to.name,
+            paymentMethod: selectedPayment.rawValue,
+            isBankTransfer: typeBankTransfer != nil,
+            typeBankTransfer: typeBankTransfer
+        ))
     }
 
     // MARK: -
