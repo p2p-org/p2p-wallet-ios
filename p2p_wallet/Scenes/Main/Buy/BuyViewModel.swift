@@ -56,13 +56,13 @@ class BuyViewModel: ObservableObject {
                 BuyViewModel.defaultMinAmount
         )
 
-        coordinatorIO.tokenSelected.sink { token in
-            self.token = token
-        }.store(in: &subscriptions)
+        coordinatorIO.tokenSelected.compactMap { $0 }
+            .assign(to: \.token, on: self)
+            .store(in: &subscriptions)
 
-        coordinatorIO.fiatSelected.sink { fiat in
-            self.fiat = fiat
-        }.store(in: &subscriptions)
+        coordinatorIO.fiatSelected.compactMap { $0 }
+            .assign(to: \.fiat, on: self)
+            .store(in: &subscriptions)
 
         coordinatorIO.navigationSlidingPercentage.sink { percentage in
             self.navigationSlidingPercentage = percentage * 110 * 2
@@ -398,8 +398,8 @@ extension BuyViewModel {
         var showFiatSelect = PassthroughSubject<[Fiat], Never>()
         var navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
         // Output
-        var tokenSelected = PassthroughSubject<Token, Never>()
-        var fiatSelected = PassthroughSubject<Fiat, Never>()
+        var tokenSelected = CurrentValueSubject<Token?, Never>(nil)
+        var fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
         var buy = PassthroughSubject<URL, Never>()
     }
 

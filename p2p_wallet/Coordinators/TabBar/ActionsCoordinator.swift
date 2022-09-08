@@ -55,17 +55,24 @@ final class ActionsCoordinator: Coordinator<Void> {
             .sink(receiveValue: { [unowned self] actionType in
                 switch actionType {
                 case .buy:
-                    navigationController.present(
-                        BuyTokenSelection.Scene(onTap: { [unowned self] in
-                            let coordinator = BuyPreparingCoordinator(
-                                navigationController: navigationController,
-                                strategy: .present,
-                                crypto: $0
-                            )
-                            coordinate(to: coordinator)
-                        }),
-                        animated: true
-                    )
+                    // Disabling on
+                    if available(.buyScenarioEnabled) {
+                        coordinate(to: BuyCoordinator(navigationController: navigationController, shouldPush: false))
+                            .sink { _ in }
+                            .store(in: &subscriptions)
+                    } else {
+                        navigationController.present(
+                            BuyTokenSelection.Scene(onTap: { [unowned self] in
+                                let coordinator = BuyPreparingCoordinator(
+                                    navigationController: navigationController,
+                                    strategy: .present,
+                                    crypto: $0
+                                )
+                                coordinate(to: coordinator)
+                            }),
+                            animated: true
+                        )
+                    }
                 case .receive:
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
                     let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)

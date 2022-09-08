@@ -20,11 +20,11 @@ final class BuyCoordinator: Coordinator<Void> {
         let viewModel = BuyViewModel()
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
         viewController.hidesBottomBarWhenPushed = true
-        navigationController.interactivePopGestureRecognizer?.addTarget(self, action: #selector(onGesture))
         if shouldPush {
+            navigationController.interactivePopGestureRecognizer?.addTarget(self, action: #selector(onGesture))
             navigationController.pushViewController(viewController, animated: true)
         } else {
-            navigationController.present(viewController, animated: true)
+            navigationController.present(UINavigationController(rootViewController: viewController), animated: true)
         }
 
         viewController.onClose = {
@@ -36,7 +36,7 @@ final class BuyCoordinator: Coordinator<Void> {
             .flatMap { [unowned self] exchangeOutput, exchangeRate, currency in
                 self.coordinate(to:
                     TransactionDetailsCoordinator(
-                        navigationController: self.navigationController,
+                        controller: viewController,
                         model: .init(
                             solPrice: exchangeRate,
                             solPurchaseCost: exchangeOutput.purchaseCost,
@@ -52,39 +52,43 @@ final class BuyCoordinator: Coordinator<Void> {
             self.coordinate(
                 to: BuySelectCoordinator<Token, BuySelectTokenCellView>(
                     title: L10n.coinsToBuy,
-                    navigationController: self.navigationController,
+                    controller: viewController,
                     items: tokens,
                     contentHeight: 395,
                     selectedModel: viewModel.token
                 )
-            )
-        }.sink(receiveValue: { result in
+            ).eraseToAnyPublisher()
+        }.compactMap { result in
             switch result {
             case let .result(model):
-                viewModel.coordinatorIO.tokenSelected.send(model)
+                return model
             default:
-                return
+                return nil
             }
-        }).store(in: &subscriptions)
+        }
+        .assign(to: \.value, on: viewModel.coordinatorIO.tokenSelected)
+        .store(in: &subscriptions)
 
         viewModel.coordinatorIO.showFiatSelect.flatMap { [unowned self] fiats in
             self.coordinate(
                 to: BuySelectCoordinator<Fiat, FiatCellView>(
                     title: L10n.currency,
-                    navigationController: self.navigationController,
+                    controller: viewController,
                     items: fiats,
                     contentHeight: 436,
                     selectedModel: viewModel.fiat
                 )
-            )
-        }.sink(receiveValue: { result in
+            ).eraseToAnyPublisher()
+        }.compactMap { result in
             switch result {
             case let .result(model):
-                viewModel.coordinatorIO.fiatSelected.send(model)
+                return model
             default:
-                return
+                return nil
             }
-        }).store(in: &subscriptions)
+        }
+        .assign(to: \.value, on: viewModel.coordinatorIO.fiatSelected)
+        .store(in: &subscriptions)
 
         vcPresentedPercentage.eraseToAnyPublisher()
             .sink(receiveValue: { val in
