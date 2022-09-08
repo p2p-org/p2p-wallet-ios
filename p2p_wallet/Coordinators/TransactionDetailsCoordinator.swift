@@ -6,18 +6,19 @@
 //
 
 import Combine
+import UIKit
 
 final class TransactionDetailsCoordinator: Coordinator<Void> {
-    private let navigationController: UINavigationController
+    private let controller: UIViewController
     private let model: BuyTransactionDetailsView.Model
 
     private let transition = PanelTransition()
 
     init(
-        navigationController: UINavigationController,
+        controller: UIViewController,
         model: BuyTransactionDetailsView.Model
     ) {
-        self.navigationController = navigationController
+        self.controller = controller
         self.model = model
     }
 
@@ -28,7 +29,7 @@ final class TransactionDetailsCoordinator: Coordinator<Void> {
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
-        navigationController.present(viewController, animated: true)
+        controller.present(viewController, animated: true)
 
         let resultSubject = PassthroughSubject<Void, Never>()
         view.dismiss

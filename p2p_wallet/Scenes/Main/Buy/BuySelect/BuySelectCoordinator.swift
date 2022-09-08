@@ -11,7 +11,7 @@ enum BuySelectCoordinatorResult<Model: Hashable> {
 
 final class BuySelectCoordinator<Model, Cell: BuySelectViewModelCell>:
 Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
-    private let navigationController: UINavigationController
+    private let controller: UIViewController
     private let items: [Model]
     private let transition = PanelTransition()
     private let contentHeight: CGFloat
@@ -21,13 +21,13 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
 
     init(
         title: String,
-        navigationController: UINavigationController,
+        controller: UIViewController,
         items: [Model],
         contentHeight: CGFloat = 0,
         selectedModel: Model? = nil
     ) {
         self.title = title
-        self.navigationController = navigationController
+        self.controller = controller
         self.items = items
         self.contentHeight = contentHeight
         self.selectedModel = selectedModel
@@ -48,7 +48,7 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
-        navigationController.present(viewController, animated: true)
+        controller.present(viewController, animated: true)
 
         viewController.onClose = { [weak self] in
             self?.viewControllerDismissed.send()
