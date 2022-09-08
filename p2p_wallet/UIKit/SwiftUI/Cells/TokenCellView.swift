@@ -9,19 +9,22 @@ import KeyAppUI
 import SolanaSwift
 import SwiftUI
 
-struct TokenCellViewItem {
+struct TokenCellViewItem: Hashable {
     init(wallet: Wallet) {
         token = wallet.token
         amount = wallet.amount
         amountInCurrentFiat = wallet.amountInCurrentFiat
     }
 
-    init(token: Token) {
+    init(token: Token, amount: Double? = nil, fiat: Fiat? = nil) {
         self.token = token
+        self.amount = amount
+        self.fiat = fiat
     }
 
     var token: Token
     var amount: Double?
+    var fiat: Fiat?
     var amountInCurrentFiat: Double?
 }
 

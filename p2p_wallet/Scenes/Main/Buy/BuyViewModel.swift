@@ -34,13 +34,14 @@ class BuyViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private var isGBPBankTransferEnabled = false
     private var isBankTransferEnabled = false
-    private var minAmounts = [Fiat: Double]()
+//    private var minAmounts = [Fiat: Double]()
     private var isEditingFiat: Bool { !isLeftFocus }
 
     // Dependencies
     @Injected var exchangeService: BuyExchangeService
     @Injected var walletsRepository: WalletsRepository
     @Injected private var analyticsManager: AnalyticsManager
+    @Injected private var pricesService: PricesServiceType
 
     // Defaults
     @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
@@ -48,6 +49,8 @@ class BuyViewModel: ObservableObject {
 
     @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
     var buyMinPrices: [String: [String: Double]]
+
+    private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
     private static let defaultMinAmount = Double(40)
     private static let defaultMaxAmount = Double(9000)
@@ -127,6 +130,15 @@ class BuyViewModel: ObservableObject {
         areMethodsLoading = true
 
         Task {
+            for fiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
+                self.tokenPrices[fiat] =
+                    try await pricesService.getCurrentPrices(
+                        tokens: [Token.usdc, Token.nativeSolana],
+                        toFiat: fiat
+                    ).mapValues { $0.value }
+            }
+            debugPrint(self.tokenPrices)
+
             let buyBankEnabled = available(.buyBankTransferEnabled)
             let banks = buyBankEnabled ? try await exchangeService.isBankTransferEnabled() : (gbp: false, eur: false)
             self.isBankTransferEnabled = banks.eur && buyBankEnabled
@@ -220,7 +232,15 @@ class BuyViewModel: ObservableObject {
 
     func tokenSelectTapped() {
         let tokens = [Token.nativeSolana, Token.usdc]
-        coordinatorIO.showTokenSelect.send(tokens)
+        coordinatorIO.showTokenSelect.send(
+            tokens.map {
+                TokenCellViewItem(
+                    token: $0,
+                    amount: self.tokenPrices[self.fiat]?[$0.symbol.uppercased()] ?? 0,
+                    fiat: self.fiat
+                )
+            }
+        )
     }
 
     func fiatSelectTapped() {
@@ -408,16 +428,18 @@ class BuyViewModel: ObservableObject {
         return URL(string: provider.getUrl())!
     }
 
-    func availableFiat(payment: PaymentType) -> [Fiat] {
-        switch payment {
-        case .card:
-            if !isBankTransferEnabled && !isGBPBankTransferEnabled {
-                return [.usd]
-            }
-            return [.eur, .gbp, .usd]
-        case .bank:
-            return isGBPBankTransferEnabled ? [.gbp] : [.eur]
-        }
+    func availableFiat(payment _: PaymentType) -> [Fiat] {
+        [.eur, .gbp, .usd]
+        // Uncomment in future
+//        switch payment {
+//        case .card:
+//            if !isBankTransferEnabled && !isGBPBankTransferEnabled {
+//                return [.usd]
+//            }
+//            return [.eur, .gbp, .usd]
+//        case .bank:
+//            return isGBPBankTransferEnabled ? [.gbp] : [.eur]
+//        }
     }
 
     func availablePaymentTypes() -> [PaymentType] {
@@ -429,17 +451,6 @@ class BuyViewModel: ObservableObject {
         }
     }
 
-    // MARK: -
-
-    struct BuyForm: Equatable {
-        var token: Token
-        var tokenAmount: Double?
-        var fiat: Fiat
-        var fiatAmount: Double?
-    }
-}
-
-extension BuyViewModel {
     struct CoordinatorIO {
         // Input
         var showDetail = PassthroughSubject<(
@@ -448,32 +459,13 @@ extension BuyViewModel {
             fiat: Fiat,
             token: Token
         ), Never>()
-        var showTokenSelect = PassthroughSubject<[Token], Never>()
+        var showTokenSelect = PassthroughSubject<[TokenCellViewItem], Never>()
         var showFiatSelect = PassthroughSubject<[Fiat], Never>()
         var navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
         // Output
         var tokenSelected = CurrentValueSubject<Token?, Never>(nil)
         var fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
         var buy = PassthroughSubject<URL, Never>()
-    }
-
-    struct TotalResult {
-        var total: String
-        var totalCurrency: Fiat
-        var token: Token
-        var fiat: Fiat
-        var tokenAmount: String
-        var fiatAmmount: String
-    }
-}
-
-extension BuyViewModel {
-    struct PaymentTypeItem: Equatable {
-        var type: PaymentType
-        var fee: String
-        var duration: String
-        var name: String
-        var icon: UIImage
     }
 }
 

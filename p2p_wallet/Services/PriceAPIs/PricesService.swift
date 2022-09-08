@@ -23,10 +23,10 @@ protocol PricesServiceType {
     // Actions
     func clearCurrentPrices()
     func addToWatchList(_ tokens: [Token])
-    func fetchPrices(tokens: [Token])
+    func fetchPrices(tokens: [Token], toFiat: Fiat)
     func fetchAllTokensPriceInWatchList()
     func fetchHistoricalPrice(for coinName: String, period: Period) -> Single<[PriceRecord]>
-
+    func getCurrentPrices(tokens: [Token]?, toFiat: Fiat) async throws -> [String: CurrentPrice]
     func startObserving()
     func stopObserving()
 }
@@ -90,13 +90,16 @@ class PricesService {
 
     // MARK: - Helpers
 
-    private func getCurrentPricesRequest(tokens: [Token]? = nil) -> Single<[String: CurrentPrice]> {
+    private func getCurrentPricesRequest(
+        tokens: [Token]? = nil,
+        toFiat: Fiat = Defaults.fiat
+    ) -> Single<[String: CurrentPrice]> {
         Single.async {
-            try await self.getCurrentPrices(tokens: tokens)
+            try await self.getCurrentPrices(tokens: tokens, toFiat: toFiat)
         }
     }
 
-    private func getCurrentPrices(tokens: [Token]? = nil) async throws -> [String: CurrentPrice] {
+    func getCurrentPrices(tokens: [Token]? = nil, toFiat: Fiat = Defaults.fiat) async throws -> [String: CurrentPrice] {
         let coins = (tokens ?? watchList).filter { !$0.symbol.contains("-") && !$0.symbol.contains("/") }
             .map { token -> Token in
                 if token.symbol == "renBTC" {
@@ -109,7 +112,7 @@ class PricesService {
             return [:]
         }
 
-        var newPrices = try await api.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
+        var newPrices = try await api.getCurrentPrices(coins: coins, toFiat: toFiat.code)
         newPrices["renBTC"] = newPrices["BTC"]
         var prices = currentPricesSubject.value ?? [:]
         for newPrice in newPrices {
@@ -147,9 +150,12 @@ extension PricesService: PricesServiceType {
         }
     }
 
-    func fetchPrices(tokens: [Token]) {
+    func fetchPrices(tokens: [Token], toFiat: Fiat = Defaults.fiat) {
         guard !tokens.isEmpty else { return }
-        currentPricesSubject.request = getCurrentPricesRequest(tokens: tokens)
+        currentPricesSubject.request = getCurrentPricesRequest(
+            tokens: tokens,
+            toFiat: toFiat
+        )
         currentPricesSubject.refresh()
     }
 

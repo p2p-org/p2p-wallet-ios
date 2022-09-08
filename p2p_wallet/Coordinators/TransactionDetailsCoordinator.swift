@@ -7,8 +7,8 @@
 
 import AnalyticsManager
 import Combine
-import UIKit
 import Resolver
+import UIKit
 
 final class TransactionDetailsCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
