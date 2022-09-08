@@ -200,7 +200,9 @@ class BuyViewModel: ObservableObject {
                 let token = token.buyCryptoCurrency()
             else { return }
             let exchangeRate = try await exchangeService.getExchangeRate(from: fiat, to: token)
-            coordinatorIO.showDetail.send((exchangeOutput, exchangeRate: exchangeRate.amount, fiat: self.fiat))
+            DispatchQueue.main.async {
+                self.coordinatorIO.showDetail.send((exchangeOutput, exchangeRate: exchangeRate.amount, fiat: self.fiat))
+            }
         }
     }
 
