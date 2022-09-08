@@ -12,7 +12,7 @@ class BuyViewModel: ObservableObject {
     // MARK: -
 
     @Published var availableMethods = [PaymentTypeItem]()
-    @Published var token: Token = .nativeSolana
+    @Published var token: Token = .usdc
     @Published var fiat: Fiat = .usd
     @Published var tokenAmount: String = ""
     @Published var fiatAmount: String = "\(BuyViewModel.defaultMinAmount)"
@@ -122,34 +122,35 @@ class BuyViewModel: ObservableObject {
         Task {
             let buyBankEnabled = available(.buyBankTransferEnabled)
             let banks = buyBankEnabled ? try await exchangeService.isBankTransferEnabled() : (gbp: false, eur: false)
-            debugPrint(banks)
             self.isBankTransferEnabled = banks.eur && buyBankEnabled
             self.isGBPBankTransferEnabled = banks.gbp && buyBankEnabled
 
             await self.setPaymentMethod(self.lastMethod)
 
-            var minPrices = [String: [String: Double]]()
-            for aFiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
-                for aToken in [Token.nativeSolana, Token.usdc] {
-                    guard
-                        let from = aFiat.buyFiatCurrency(),
-                        let to = aToken.buyCryptoCurrency() else { continue }
-                    if let amount = self.buyMinPrices[aFiat.rawValue]?[aToken.symbol] {
-                        if minPrices[aFiat.rawValue] == nil {
-                            minPrices[aFiat.rawValue] = [:]
-                        }
-                        minPrices[aFiat.rawValue]?[aToken.symbol] = amount
-                    } else {
-                        let result = try? await self.exchangeService.getMinAmounts(from, to)
-                        guard result?.0 ?? 0 > 0 else { continue }
-                        if minPrices[aFiat.rawValue] == nil {
-                            minPrices[aFiat.rawValue] = [:]
-                        }
-                        minPrices[aFiat.rawValue]?[aToken.symbol] = result?.0 ?? BuyViewModel.defaultMinAmount
-                    }
-                }
-            }
-            self.buyMinPrices = minPrices
+            /// Buy min price is used to cache min price values. Doesnt need to implemet it at the moment
+            self.buyMinPrices = [:]
+//    var minPrices = [String: [String: Double]]()
+//    for aFiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
+//        for aToken in [Token.nativeSolana, Token.usdc] {
+//            guard
+//                let from = aFiat.buyFiatCurrency(),
+//                let to = aToken.buyCryptoCurrency() else { continue }
+//            if let amount = self.buyMinPrices[aFiat.rawValue]?[aToken.symbol] {
+//                if minPrices[aFiat.rawValue] == nil {
+//                    minPrices[aFiat.rawValue] = [:]
+//                }
+//                minPrices[aFiat.rawValue]?[aToken.symbol] = amount
+//            } else {
+//                let result = try? await self.exchangeService.getMinAmounts(from, to)
+//                guard result?.0 ?? 0 > 0 else { continue }
+//                if minPrices[aFiat.rawValue] == nil {
+//                    minPrices[aFiat.rawValue] = [:]
+//                }
+//                minPrices[aFiat.rawValue]?[aToken.symbol] = result?.0 ?? BuyViewModel.defaultMinAmount
+//            }
+//        }
+//    }
+//    self.buyMinPrices = minPrices
 
             DispatchQueue.main.async {
                 // Set last used method first
