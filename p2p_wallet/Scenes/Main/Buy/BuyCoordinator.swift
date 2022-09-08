@@ -7,9 +7,12 @@ import SwiftUI
 
 final class BuyCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
+    private var vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
+    private var shouldPush = true
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, shouldPush: Bool = true) {
         self.navigationController = navigationController
+        self.shouldPush = shouldPush
     }
 
     override func start() -> AnyPublisher<Void, Never> {
@@ -17,7 +20,12 @@ final class BuyCoordinator: Coordinator<Void> {
         let viewModel = BuyViewModel()
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
         viewController.hidesBottomBarWhenPushed = true
-        navigationController.pushViewController(viewController, animated: true)
+        navigationController.interactivePopGestureRecognizer?.addTarget(self, action: #selector(onGesture))
+        if shouldPush {
+            navigationController.pushViewController(viewController, animated: true)
+        } else {
+            navigationController.present(viewController, animated: true)
+        }
 
         viewController.onClose = {
             result.send()
@@ -25,7 +33,7 @@ final class BuyCoordinator: Coordinator<Void> {
 
         viewModel.coordinatorIO.showDetail
             .receive(on: RunLoop.main)
-            .flatMap { exchangeOutput, exchangeRate, currency in
+            .flatMap { [unowned self] exchangeOutput, exchangeRate, currency in
                 self.coordinate(to:
                     TransactionDetailsCoordinator(
                         navigationController: self.navigationController,
@@ -40,7 +48,7 @@ final class BuyCoordinator: Coordinator<Void> {
                     ))
             }.sink { _ in }.store(in: &subscriptions)
 
-        viewModel.coordinatorIO.showTokenSelect.flatMap { tokens in
+        viewModel.coordinatorIO.showTokenSelect.flatMap { [unowned self] tokens in
             self.coordinate(
                 to: BuySelectCoordinator<Token, BuySelectTokenCellView>(
                     title: L10n.coinsToBuy,
@@ -59,7 +67,7 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         }).store(in: &subscriptions)
 
-        viewModel.coordinatorIO.showFiatSelect.flatMap { fiats in
+        viewModel.coordinatorIO.showFiatSelect.flatMap { [unowned self] fiats in
             self.coordinate(
                 to: BuySelectCoordinator<Fiat, FiatCellView>(
                     title: L10n.currency,
@@ -78,12 +86,42 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         }).store(in: &subscriptions)
 
+        vcPresentedPercentage.eraseToAnyPublisher()
+            .sink(receiveValue: { val in
+                viewModel.coordinatorIO.navigationSlidingPercentage.send(val)
+            })
+            .store(in: &subscriptions)
+
         viewModel.coordinatorIO.buy.sink(receiveValue: { [weak self] url in
             let vc = SFSafariViewController(url: url)
             vc.modalPresentationStyle = .automatic
             self?.navigationController.present(vc, animated: true)
         }).store(in: &subscriptions)
 
-        return result.eraseToAnyPublisher()
+        return result.prefix(1).eraseToAnyPublisher()
+    }
+
+    // MARK: -
+
+    private var currentTransitionCoordinator: UIViewControllerTransitionCoordinator?
+
+    @objc private func onGesture(sender: UIGestureRecognizer) {
+        switch sender.state {
+        case .began, .changed:
+            if let ct = navigationController.transitionCoordinator {
+                currentTransitionCoordinator = ct
+            }
+        case .cancelled, .ended:
+            //            currentTransitionCoordinator = nil
+            break
+        case .possible, .failed:
+            break
+        @unknown default:
+            break
+        }
+//        if let currentTransitionCoordinator = currentTransitionCoordinator {
+//            vcPresentedPercentage.send(currentTransitionCoordinator.percentComplete)
+//        }
+        vcPresentedPercentage.send(navigationController.transitionCoordinator?.percentComplete ?? 1)
     }
 }

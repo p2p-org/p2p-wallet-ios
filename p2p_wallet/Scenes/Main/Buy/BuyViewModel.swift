@@ -26,6 +26,7 @@ class BuyViewModel: ObservableObject {
     @Published var buttonEnabled = false
     @Published var buttonIcon: UIImage? = .buyWallet
     @Published var exchangeOutput: Buy.ExchangeOutput?
+    @Published var navigationSlidingPercentage: CGFloat = 1
 
     // MARK: -
 
@@ -63,6 +64,10 @@ class BuyViewModel: ObservableObject {
             self.fiat = fiat
         }.store(in: &subscriptions)
 
+        coordinatorIO.navigationSlidingPercentage.sink { percentage in
+            self.navigationSlidingPercentage = percentage * 110 * 2
+        }.store(in: &subscriptions)
+
         totalPublisher
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { value in
@@ -86,7 +91,7 @@ class BuyViewModel: ObservableObject {
             .sink { aFiat, aToken, aAmount, _ in
                 let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
                 self.buttonIcon = UIImage.buyWallet
-                self.buttonTitle = L10n.buy
+                self.buttonTitle = L10n.buy + " " + "\(self.token.symbol)"
 
                 if minAmount > aAmount {
                     self.buttonTitle = L10n.minimalTransactionIs(
@@ -143,8 +148,8 @@ class BuyViewModel: ObservableObject {
                     }
                 }
             }
-            debugPrint(minPrices)
             self.buyMinPrices = minPrices
+
             DispatchQueue.main.async {
                 // Set last used method first
                 self.availableMethods = self.availablePaymentTypes()
@@ -391,6 +396,7 @@ extension BuyViewModel {
         var showDetail = PassthroughSubject<(Buy.ExchangeOutput, exchangeRate: Double, fiat: Fiat), Never>()
         var showTokenSelect = PassthroughSubject<[Token], Never>()
         var showFiatSelect = PassthroughSubject<[Fiat], Never>()
+        var navigationSlidingPercentage = PassthroughSubject<CGFloat, Never>()
         // Output
         var tokenSelected = PassthroughSubject<Token, Never>()
         var fiatSelected = PassthroughSubject<Fiat, Never>()
@@ -436,7 +442,7 @@ extension PaymentType {
         case .card:
             return .init(
                 type: self,
-                fee: "4%",
+                fee: "4.5%",
                 duration: "instant",
                 name: "Card",
                 icon: UIImage.buyCard

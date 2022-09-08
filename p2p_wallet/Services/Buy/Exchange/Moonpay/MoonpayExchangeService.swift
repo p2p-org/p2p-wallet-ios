@@ -122,7 +122,7 @@ extension Buy.FiatCurrency: MoonpayCodeMapping {
         case .rub:
             return "rub"
         case .gbp:
-            return "gbd"
+            return "gbp"
         }
     }
 }

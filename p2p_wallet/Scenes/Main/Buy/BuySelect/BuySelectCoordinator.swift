@@ -50,13 +50,17 @@ Coordinator<BuySelectCoordinatorResult<Model>>where Model == Cell.Model {
         viewController.modalPresentationStyle = .custom
         navigationController.present(viewController, animated: true)
 
-        viewController.onClose = {
-            self.viewControllerDismissed.send()
+        viewController.onClose = { [weak self] in
+            self?.viewControllerDismissed.send()
         }
 
         return Publishers.Merge(
             // Dismiss events
-            Publishers.Merge(viewModel.coordinatorIO.didDissmiss, viewControllerDismissed)
+            Publishers.MergeMany(
+                viewModel.coordinatorIO.didDissmiss.eraseToAnyPublisher(),
+                viewControllerDismissed.eraseToAnyPublisher(),
+                transition.dimmClicked.eraseToAnyPublisher()
+            )
                 .map { BuySelectCoordinatorResult.cancel },
             viewModel.coordinatorIO.didSelectModel.map { BuySelectCoordinatorResult.result(model: $0) }
         ).handleEvents(receiveOutput: { _ in

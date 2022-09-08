@@ -33,7 +33,7 @@ struct Buy {
             case .rub:
                 return "RUB"
             case .gbp:
-                return "GBD"
+                return "GBP"
             }
         }
     }
