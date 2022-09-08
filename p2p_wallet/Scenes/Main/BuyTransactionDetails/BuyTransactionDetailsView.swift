@@ -7,6 +7,7 @@
 
 import Combine
 import KeyAppUI
+import SolanaSwift
 import SwiftUI
 
 struct BuyTransactionDetailsView: View {
@@ -56,13 +57,22 @@ struct BuyTransactionDetailsView: View {
         VStack(spacing: 16) {
             VStack(spacing: 20) {
                 amountView(
-                    title: L10n.solPrice,
-                    amount: model.convertedAmount(model.solPrice),
+                    title: "\(model.token.symbol) \(L10n.price)",
+                    amount: model.convertedAmount(model.price),
                     amountColor: Asset.Colors.mountain.color
                 )
-                amountView(title: L10n.solPurchaseCost, amount: model.convertedAmount(model.solPurchaseCost))
-                amountView(title: L10n.processingFee, amount: model.convertedAmount(model.processingFee))
-                amountView(title: L10n.networkFee, amount: model.convertedAmount(model.networkFee))
+                amountView(
+                    title: L10n.purchaseCost(model.token.symbol),
+                    amount: model.convertedAmount(model.purchaseCost)
+                )
+                amountView(
+                    title: L10n.processingFee,
+                    amount: model.convertedAmount(model.processingFee)
+                )
+                amountView(
+                    title: L10n.networkFee,
+                    amount: model.convertedAmount(model.networkFee)
+                )
                 Color(Asset.Colors.rain.color)
                     .frame(height: 1)
             }
@@ -98,12 +108,13 @@ struct BuyTransactionDetailsView: View {
 
 extension BuyTransactionDetailsView {
     struct Model {
-        let solPrice: Double
-        let solPurchaseCost: Double
+        let price: Double
+        let purchaseCost: Double
         let processingFee: Double
         let networkFee: Double
         let total: Double
         let currency: Fiat
+        let token: Token
 
         fileprivate func convertedAmount(_ amount: Double) -> String {
             amount.fiatAmount(maximumFractionDigits: 2, currency: currency)
