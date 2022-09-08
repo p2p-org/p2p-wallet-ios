@@ -106,6 +106,8 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                 self.navigationController.dismiss(animated: true)
             }
             self.result.send(completion: .finished)
+
+            return
         }
 
         // TODO: Add empty screen
