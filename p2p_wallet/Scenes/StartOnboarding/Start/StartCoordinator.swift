@@ -69,8 +69,8 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
                 self.openRestoreWallet(vc: vc)
             case let .success(data):
                 self.subject.send(.created(data))
+                self.subject.send(completion: .finished)
             }
-            self.subject.send(completion: .finished)
         }
 
         if let lastState = service.lastState {
@@ -118,11 +118,11 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
         }
 
         coordinate(to: CreateWalletCoordinator(parent: vc, navigationController: navigationController))
-            .sink { [weak vc] result in
+            .sink { [weak self] result in
+                guard let self = self else { return }
                 switch result {
                 case .restore:
-                    guard let vc = vc else { return }
-                    self.openRestoreWallet(vc: self.navigationController)
+                    self.openRestoreWallet(vc: vc)
                 case let .success(data):
                     self.subject.send(.created(data))
                     self.subject.send(completion: .finished)
