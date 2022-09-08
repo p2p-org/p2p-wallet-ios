@@ -44,7 +44,6 @@ final class BuyCoordinator: Coordinator<Void> {
         viewModel.coordinatorIO.showDetail
             .receive(on: RunLoop.main)
             .flatMap { [unowned self] exchangeOutput, exchangeRate, currency, token in
-analyticsManager.log(event: .buyTotalShowed)
                 self.coordinate(to:
                     TransactionDetailsCoordinator(
                         controller: viewController,
@@ -58,8 +57,7 @@ analyticsManager.log(event: .buyTotalShowed)
                             token: token
                         )
                     ))
-                analyticsManager.log(event: .buyTotalShowed)
-            })
+            }.sink(receiveValue: { _ in })
             .store(in: &subscriptions)
 
         viewModel.coordinatorIO.showTokenSelect.flatMap { [unowned self] tokens in
