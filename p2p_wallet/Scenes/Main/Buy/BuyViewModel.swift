@@ -127,7 +127,7 @@ class BuyViewModel: ObservableObject {
 
             await self.setPaymentMethod(self.lastMethod)
 
-            /// Buy min price is used to cache min price values. Doesnt need to implemet it at the moment
+            // Buy min price is used to cache min price values. Doesnt need to implemet it at the moment
             self.buyMinPrices = [:]
 //    var minPrices = [String: [String: Double]]()
 //    for aFiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
