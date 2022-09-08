@@ -5,10 +5,13 @@
 //  Created by Ivan on 29.08.2022.
 //
 
+import AnalyticsManager
 import Combine
 import UIKit
+import Resolver
 
 final class TransactionDetailsCoordinator: Coordinator<Void> {
+    @Injected private var analyticsManager: AnalyticsManager
     private let controller: UIViewController
     private let model: BuyTransactionDetailsView.Model
 
@@ -30,6 +33,7 @@ final class TransactionDetailsCoordinator: Coordinator<Void> {
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
+        analyticsManager.log(event: .buyTotalShowed)
 
         transition.dimmClicked
             .sink(receiveValue: {
