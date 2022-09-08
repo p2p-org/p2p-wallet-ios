@@ -57,7 +57,12 @@ final class ActionsCoordinator: Coordinator<Void> {
                 case .buy:
                     // Disabling on
                     if available(.buyScenarioEnabled) {
-                        coordinate(to: BuyCoordinator(navigationController: navigationController, shouldPush: false))
+                        let coordinator = BuyCoordinator(
+                            navigationController: navigationController,
+                            context: .fromHome,
+                            shouldPush: false
+                        )
+                        coordinate(to: coordinator)
                             .sink { _ in }
                             .store(in: &subscriptions)
                     } else {

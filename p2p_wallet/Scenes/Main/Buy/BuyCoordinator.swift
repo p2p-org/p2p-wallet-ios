@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
@@ -7,11 +8,19 @@ import SwiftUI
 
 final class BuyCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
-    private var vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
+    private let context: Context
     private var shouldPush = true
 
-    init(navigationController: UINavigationController, shouldPush: Bool = true) {
+    private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
+    @Injected private var analyticsManager: AnalyticsManager
+
+    init(
+        navigationController: UINavigationController,
+        context: Context,
+        shouldPush: Bool = true
+    ) {
         self.navigationController = navigationController
+        self.context = context
         self.shouldPush = shouldPush
     }
 
@@ -26,6 +35,7 @@ final class BuyCoordinator: Coordinator<Void> {
         } else {
             navigationController.present(UINavigationController(rootViewController: viewController), animated: true)
         }
+        analyticsManager.log(event: .buyScreenShowed(fromScreen: context == .fromHome ? "MainScreen" : "TokenScreen"))
 
         viewController.onClose = {
             result.send()
@@ -34,6 +44,7 @@ final class BuyCoordinator: Coordinator<Void> {
         viewModel.coordinatorIO.showDetail
             .receive(on: RunLoop.main)
             .flatMap { [unowned self] exchangeOutput, exchangeRate, currency, token in
+analyticsManager.log(event: .buyTotalShowed)
                 self.coordinate(to:
                     TransactionDetailsCoordinator(
                         controller: viewController,
@@ -47,7 +58,9 @@ final class BuyCoordinator: Coordinator<Void> {
                             token: token
                         )
                     ))
-            }.sink { _ in }.store(in: &subscriptions)
+                analyticsManager.log(event: .buyTotalShowed)
+            })
+            .store(in: &subscriptions)
 
         viewModel.coordinatorIO.showTokenSelect.flatMap { [unowned self] tokens in
             self.coordinate(
@@ -101,12 +114,16 @@ final class BuyCoordinator: Coordinator<Void> {
             let vc = SFSafariViewController(url: url)
             vc.modalPresentationStyle = .automatic
             self?.navigationController.present(vc, animated: true)
+
+            vc.onClose = { [weak self] in
+                self?.analyticsManager.log(event: .moonPayWindowClosed)
+            }
         }).store(in: &subscriptions)
 
         return result.prefix(1).eraseToAnyPublisher()
     }
 
-    // MARK: -
+    // MARK: - Gesture
 
     private var currentTransitionCoordinator: UIViewControllerTransitionCoordinator?
 
@@ -128,5 +145,14 @@ final class BuyCoordinator: Coordinator<Void> {
 //            vcPresentedPercentage.send(currentTransitionCoordinator.percentComplete)
 //        }
         vcPresentedPercentage.send(navigationController.transitionCoordinator?.percentComplete ?? 1)
+    }
+}
+
+// MARK: - Context
+
+extension BuyCoordinator {
+    enum Context {
+        case fromHome
+        case fromToken
     }
 }
