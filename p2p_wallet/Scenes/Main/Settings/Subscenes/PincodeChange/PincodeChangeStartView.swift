@@ -37,6 +37,12 @@ struct PincodeChangeStartView: View {
                         style: .white,
                         isOn: $isOn
                     )
+                        .onChange(of: isOn, perform: { newValue in
+                            if newValue {
+                                startChanging?()
+                                isOn = false
+                            }
+                        })
                         .frame(height: 56)
                 }
             }
