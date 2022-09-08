@@ -66,8 +66,7 @@ struct SeedPhraseDetailView: View {
 
     var centerText: some View {
         Text(viewModel.state == .lock ? L10n.makeSureYouUnderstandTheseAspects : L10n.yourSeedPhraseMustNeverBeShared)
-            .fontWeight(.semibold)
-            .font(uiFont: .font(of: .text1, weight: .semibold))
+            .font(uiFont: .font(of: .text4, weight: .semibold))
             .padding(.vertical, 8)
             .padding(.horizontal, 16)
             .background(Color.white)
