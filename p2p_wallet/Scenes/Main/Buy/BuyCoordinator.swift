@@ -62,18 +62,18 @@ final class BuyCoordinator: Coordinator<Void> {
 
         viewModel.coordinatorIO.showTokenSelect.flatMap { [unowned self] tokens in
             self.coordinate(
-                to: BuySelectCoordinator<Token, BuySelectTokenCellView>(
+                to: BuySelectCoordinator<TokenCellViewItem, BuySelectTokenCellView>(
                     title: L10n.coinsToBuy,
                     controller: viewController,
                     items: tokens,
                     contentHeight: 395,
-                    selectedModel: viewModel.token
+                    selectedModel: TokenCellViewItem(token: viewModel.token)
                 )
             ).eraseToAnyPublisher()
         }.compactMap { result in
             switch result {
             case let .result(model):
-                return model
+                return model.token
             default:
                 return nil
             }

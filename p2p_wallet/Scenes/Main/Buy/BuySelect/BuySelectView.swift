@@ -111,26 +111,29 @@ View where Model == Cell.Model {
 }
 
 struct BuySelectTokenCellView: BuySelectViewModelCell {
-    typealias Model = Token
+    typealias Model = TokenCellViewItem
 
     let model: Model
-    let item: TokenCellViewItem
     init(with: Model) {
         model = with
-        item = TokenCellViewItem(token: model)
     }
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
-            CoinLogoImageViewRepresentable(size: 48, token: item.token)
+            CoinLogoImageViewRepresentable(size: 48, token: model.token)
                 .frame(width: 48, height: 48)
                 .cornerRadius(16)
             VStack(alignment: .leading, spacing: 4) {
-                Text(item.token.name)
+                Text(model.token.name)
                     .apply(style: .text2)
                     .foregroundColor(Color(Asset.Colors.night.color))
-                if item.amount != nil {
-                    Text(item.amount!.tokenAmount(symbol: item.token.symbol))
+                if let amount = model.amount {
+                    Text(
+                        amount.fiatAmount(
+                            maximumFractionDigits: 2,
+                            currency: model.fiat ?? Fiat.usd
+                        )
+                    )
                         .apply(style: .label1)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                 }

@@ -95,7 +95,7 @@ extension ChooseWallet {
             analyticsManager.log(event: .tokenChosen(tokenName: wallet.token.symbol))
             handler.walletDidSelect(wallet)
             pricesService.addToWatchList([wallet.token])
-            pricesService.fetchPrices(tokens: [wallet.token])
+            pricesService.fetchPrices(tokens: [wallet.token], toFiat: Defaults.fiat)
         }
     }
 }
