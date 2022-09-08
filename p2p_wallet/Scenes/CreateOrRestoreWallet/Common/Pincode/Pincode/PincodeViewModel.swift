@@ -13,6 +13,7 @@ final class PincodeViewModel: BaseViewModel {
     // MARK: - Dependencies
 
     @Injected private var biometricsAuthProvider: BiometricsAuthProvider
+    @Injected private var authenticationHandler: AuthenticationHandlerType
 
     // MARK: - Properties
 
@@ -46,6 +47,8 @@ final class PincodeViewModel: BaseViewModel {
         self.isBackAvailable = isBackAvailable
         self.successNotification = successNotification
         super.init()
+        // Put fake value into authenticationStatusSubject. It is need for cancelling background/foreground lock logic in AuthenticationHandler.observeAppNotifications(). Might be refactored with AuthenticationHandler changes and enter pincode task
+        authenticationHandler.authenticate(presentationStyle: .init())
         title = title(for: state)
         bind()
     }
@@ -75,6 +78,7 @@ private extension PincodeViewModel {
                 if askBiometric {
                     self.biometricsAuthProvider.authenticate(
                         authenticationPrompt: prompt, completion: { success, _ in
+                            self.authenticationHandler.authenticate(presentationStyle: nil)
                             self.openMain.send((pin, success))
                         }
                     )
