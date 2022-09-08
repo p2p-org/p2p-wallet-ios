@@ -9,8 +9,16 @@ struct BuyView: View {
 
     // MARK: -
 
+    @State private var dragAmount = CGSize.zero
+    @GestureState private var position = CGSize.zero
+    func addToPosition(translation: CGSize) -> CGSize {
+        CGSize(width: dragAmount.width + translation.width, height: dragAmount.height + translation.height)
+    }
+
+    @State var fromEdge = false
+
     @ObservedObject var viewModel: BuyViewModel
-//    @State var bottomOffset = CGFloat.zero
+    @State var bottomOffset = CGFloat.zero
     @State var leftInputText: String = ""
     @State var rightInputText: String = ""
 
@@ -55,9 +63,15 @@ struct BuyView: View {
             Spacer()
             bottomActionsView
                 .frame(height: 110)
+//                .offset(y: viewModel.navigationSlidingPercentage)
         }
         .edgesIgnoringSafeArea(.bottom)
         .navigationTitle(L10n.buy)
+        .onAppear {
+            withAnimation {
+                viewModel.navigationSlidingPercentage = 0
+            }
+        }
     }
 
     var icon: some View {
@@ -219,7 +233,7 @@ struct BuyView: View {
                 trailing: 0
             ))
         }
-        .frame(width: 145)
+        .frame(width: 151)
         .background(Color(Asset.Colors.cloud.color))
         .cornerRadius(16)
     }
