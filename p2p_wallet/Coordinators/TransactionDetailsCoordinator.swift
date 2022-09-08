@@ -31,6 +31,12 @@ final class TransactionDetailsCoordinator: Coordinator<Void> {
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
 
+        transition.dimmClicked
+            .sink(receiveValue: {
+                viewController.dismiss(animated: true)
+            })
+            .store(in: &subscriptions)
+
         let resultSubject = PassthroughSubject<Void, Never>()
         view.dismiss
             .sink(receiveValue: {
