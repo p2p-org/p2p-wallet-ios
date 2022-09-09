@@ -111,7 +111,7 @@ final class BuyCoordinator: Coordinator<Void> {
         viewModel.coordinatorIO.buy.sink(receiveValue: { [weak self] url in
             let vc = SFSafariViewController(url: url)
             vc.modalPresentationStyle = .automatic
-            self?.navigationController.present(vc, animated: true)
+            viewController.present(vc, animated: true)
 
             vc.onClose = { [weak self] in
                 self?.analyticsManager.log(event: .moonPayWindowClosed)
