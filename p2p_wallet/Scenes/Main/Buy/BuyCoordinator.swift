@@ -67,7 +67,7 @@ final class BuyCoordinator: Coordinator<Void> {
                     controller: viewController,
                     items: tokens,
                     contentHeight: 395,
-                    selectedModel: TokenCellViewItem(token: viewModel.token)
+                    selectedModel: tokens.first { $0.token.symbol == viewModel.token.symbol }
                 )
             ).eraseToAnyPublisher()
         }.compactMap { result in

@@ -52,7 +52,7 @@ class BuyViewModel: ObservableObject {
     private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
     private static let defaultMinAmount = Double(40)
-    private static let defaultMaxAmount = Double(9000)
+    private static let defaultMaxAmount = Double(10000)
 
     init() {
         fiatAmount = String(
