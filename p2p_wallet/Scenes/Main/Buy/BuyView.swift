@@ -135,6 +135,7 @@ struct BuyView: View {
                             ForEach(viewModel.availableMethods, id: \.name) { item in
                                 Button { [weak viewModel] in
                                     viewModel?.didSelectPayment(item)
+                                    UIApplication.shared.keyWindow?.endEditing(true)
                                     withAnimation {
                                         scrollView.scrollTo(item.type, anchor: .center)
                                     }
