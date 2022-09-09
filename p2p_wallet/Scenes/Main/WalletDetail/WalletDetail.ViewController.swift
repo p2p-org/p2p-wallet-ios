@@ -6,6 +6,7 @@
 //
 
 import BEPureLayout
+import Combine
 import Foundation
 import Resolver
 import RxSwift
@@ -31,6 +32,7 @@ extension WalletDetail {
 
         private lazy var historyVC = History.Scene(account: viewModel.pubkey, symbol: viewModel.symbol)
         private var coordinator: SendToken.Coordinator?
+        private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Initializer
 
@@ -103,17 +105,29 @@ extension WalletDetail {
 
         // MARK: - Navigation
 
+        lazy var buyCoordinator = BuyCoordinator(
+            navigationController: self.navigationController ?? UINavigationController(),
+            context: .fromToken,
+            shouldPush: false
+        )
+
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
-                let vc = BuyPreparing.Scene(
-                    viewModel: BuyPreparing.SceneModel(
-                        crypto: crypto,
-                        exchangeService: Resolver.resolve()
+                let vc: UIViewController
+                if available(.buyScenarioEnabled) {
+                    // TODO: remove after moving to coordinator
+                    buyCoordinator.start().sink { _ in }.store(in: &subscriptions)
+                } else {
+                    vc = BuyPreparing.Scene(
+                        viewModel: BuyPreparing.SceneModel(
+                            crypto: crypto,
+                            exchangeService: Resolver.resolve()
+                        )
                     )
-                )
-                let navigation = UINavigationController(rootViewController: vc)
-                present(navigation, animated: true)
+                    let navigation = UINavigationController(rootViewController: vc)
+                    present(navigation, animated: true)
+                }
             case let .settings(pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
