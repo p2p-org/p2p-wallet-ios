@@ -46,7 +46,6 @@ class BuyViewModel: ObservableObject {
     // Defaults
     @SwiftyUserDefault(keyPath: \.buyLastPaymentMethod, options: .cached)
     var lastMethod: PaymentType
-
     @SwiftyUserDefault(keyPath: \.buyMinPrices, options: .cached)
     var buyMinPrices: [String: [String: Double]]
 
@@ -70,6 +69,14 @@ class BuyViewModel: ObservableObject {
         coordinatorIO.fiatSelected
             .sink { [unowned self] fiat in
                 self.fiat = fiat ?? self.fiat
+
+                Task {
+                    if isGBPBankTransferEnabled, fiat != .gbp {
+                        await self.setPaymentMethod(.card)
+                    } else if isBankTransferEnabled, fiat != .eur {
+                        await self.setPaymentMethod(.card)
+                    }
+                }
                 analyticsManager.log(event: .buyCurrencyChanged(self.fiat.symbol))
             }
             .store(in: &subscriptions)
@@ -137,7 +144,6 @@ class BuyViewModel: ObservableObject {
                         toFiat: fiat
                     ).mapValues { $0.value }
             }
-            debugPrint(self.tokenPrices)
 
             let buyBankEnabled = available(.buyBankTransferEnabled)
             let banks = buyBankEnabled ? try await exchangeService.isBankTransferEnabled() : (gbp: false, eur: false)
@@ -172,6 +178,11 @@ class BuyViewModel: ObservableObject {
 //    self.buyMinPrices = minPrices
 
             DispatchQueue.main.async {
+                // USD only if bank is unavailable
+                self.fiat = self.lastMethod == .bank ?
+                    self.isGBPBankTransferEnabled ? .gbp :
+                    (self.isBankTransferEnabled ? .eur : .usd) : .usd
+
                 // Set last used method first
                 self.availableMethods = self.availablePaymentTypes()
                     .filter { $0 != self.lastMethod }
@@ -203,11 +214,20 @@ class BuyViewModel: ObservableObject {
         }
         selectedPayment = payment
         lastMethod = payment
+
+        if payment == .bank {
+            if isGBPBankTransferEnabled {
+                fiat = .gbp
+            } else if isBankTransferEnabled {
+                fiat = .eur
+            }
+        }
+        // Uncomment in future
         // If selected payment doesnt have current currency
         // - changing to the fist one from allowed
-        if !availableFiat(payment: selectedPayment).contains(fiat) {
-            fiat = availableFiat(payment: selectedPayment).first ?? .usd
-        }
+//        if !availableFiat(payment: selectedPayment).contains(fiat) {
+//            fiat = availableFiat(payment: selectedPayment).first ?? .usd
+//        }
     }
 
     func totalTapped() async throws {
@@ -429,7 +449,10 @@ class BuyViewModel: ObservableObject {
     }
 
     func availableFiat(payment _: PaymentType) -> [Fiat] {
-        [.eur, .gbp, .usd]
+        if isBankTransferEnabled || isGBPBankTransferEnabled {
+            return [.eur, .gbp, .usd]
+        }
+        return [.usd]
         // Uncomment in future
 //        switch payment {
 //        case .card:
@@ -466,33 +489,5 @@ class BuyViewModel: ObservableObject {
         var tokenSelected = CurrentValueSubject<Token?, Never>(nil)
         var fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
         var buy = PassthroughSubject<URL, Never>()
-    }
-}
-
-enum PaymentType: String, DefaultsSerializable, CaseIterable {
-    case card
-    case bank
-}
-
-extension PaymentType {
-    func paymentItem() -> BuyViewModel.PaymentTypeItem {
-        switch self {
-        case .bank:
-            return .init(
-                type: self,
-                fee: "1%",
-                duration: "~17 hours",
-                name: "Bank transfer",
-                icon: UIImage.buyBank
-            )
-        case .card:
-            return .init(
-                type: self,
-                fee: "4.5%",
-                duration: "instant",
-                name: "Card",
-                icon: UIImage.buyCard
-            )
-        }
     }
 }
