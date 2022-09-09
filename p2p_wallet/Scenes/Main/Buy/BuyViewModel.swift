@@ -16,7 +16,7 @@ class BuyViewModel: ObservableObject {
     @Published var token: Token = .usdc
     @Published var fiat: Fiat = .usd
     @Published var tokenAmount: String = ""
-    @Published var fiatAmount: String = "\(BuyViewModel.defaultMinAmount)"
+    @Published var fiatAmount: String = BuyViewModel.defaultMinAmount.toString()
     @Published var total: String = ""
     @Published var selectedPayment: PaymentType = .card
     @Published var isLoading = false
@@ -306,8 +306,8 @@ class BuyViewModel: ObservableObject {
         Publishers.CombineLatest4(
             $fiat.removeDuplicates().compactMap { $0.buyFiatCurrency() },
             $token.removeDuplicates().compactMap { $0.buyCryptoCurrency() },
-            $fiatAmount.map { Double($0) ?? 0 }.removeDuplicates(),
-            $tokenAmount.map { Double($0) ?? 0 }.removeDuplicates()
+            $fiatAmount.map { Double($0.fiatFormat) ?? 0 }.removeDuplicates(),
+            $tokenAmount.map { Double($0.cryptoCurrencyFormat) ?? 0 }.removeDuplicates()
         ).eraseToAnyPublisher()
     }
 
