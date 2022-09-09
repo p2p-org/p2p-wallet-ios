@@ -1,0 +1,29 @@
+import Foundation
+
+enum PaymentType: String, DefaultsSerializable, CaseIterable {
+    case card
+    case bank
+}
+
+extension PaymentType {
+    func paymentItem() -> BuyViewModel.PaymentTypeItem {
+        switch self {
+        case .bank:
+            return .init(
+                type: self,
+                fee: "1%",
+                duration: "~17 hours",
+                name: "Bank transfer",
+                icon: UIImage.buyBank
+            )
+        case .card:
+            return .init(
+                type: self,
+                fee: "4.5%",
+                duration: "instant",
+                name: "Card",
+                icon: UIImage.buyCard
+            )
+        }
+    }
+}
