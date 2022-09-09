@@ -27,13 +27,22 @@ struct MoonpayExchange: BuyExchangeService {
         let quoteAmount = input.currency is Buy.CryptoCurrency ? input.amount : nil
 
         do {
+            var newPaymentType: Moonpay.MoonpayPaymentMethod
+            switch paymentType {
+            case .card:
+                newPaymentType = .creditDebitCard
+            case .bank:
+                newPaymentType = .sepaBankTransfer
+            case .gbpBank:
+                newPaymentType = .gbpBankTransfer
+            }
             let buyQuote = try await provider
                 .getBuyQuote(
                     baseCurrencyCode: base.moonpayCode,
                     quoteCurrencyCode: quote.moonpayCode,
                     baseCurrencyAmount: baseAmount,
                     quoteCurrencyAmount: quoteAmount,
-                    paymentMethod: PaymentType.card == paymentType ? .creditDebitCard : .sepaBankTransfer
+                    paymentMethod: newPaymentType
                 )
 
             return Buy.ExchangeOutput(

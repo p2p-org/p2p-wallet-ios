@@ -331,7 +331,10 @@ class BuyViewModel: ObservableObject {
                     to = fiat
                     amount = tAmount
                 }
-                return (from, to, amount, paymentType)
+                let newPayment = (self.isGBPBankTransferEnabled && paymentType == .bank) ?
+                    PaymentType.gbpBank :
+                    paymentType
+                return (from, to, amount, newPayment)
             }.removeDuplicates(by: { aLeft, aRight in
                 // Checking first param for equality
                 if
@@ -449,7 +452,7 @@ class BuyViewModel: ObservableObject {
     }
 
     func availableFiat(payment _: PaymentType) -> [Fiat] {
-        if isBankTransferEnabled || isGBPBankTransferEnabled {
+        if isBankTransferEnabled || isGBPBankTransferEnabled || available(.buyBankTransferEnabled) {
             return [.eur, .gbp, .usd]
         }
         return [.usd]

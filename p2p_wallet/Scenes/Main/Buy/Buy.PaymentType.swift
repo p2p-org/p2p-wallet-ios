@@ -3,12 +3,16 @@ import Foundation
 enum PaymentType: String, DefaultsSerializable, CaseIterable {
     case card
     case bank
+
+    case gbpBank
+
+    static var allCases: [PaymentType] = [.card, .bank]
 }
 
 extension PaymentType {
     func paymentItem() -> BuyViewModel.PaymentTypeItem {
         switch self {
-        case .bank:
+        case .bank, .gbpBank:
             return .init(
                 type: self,
                 fee: "1%",
