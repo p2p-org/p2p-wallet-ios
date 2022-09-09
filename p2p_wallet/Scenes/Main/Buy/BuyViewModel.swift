@@ -63,7 +63,7 @@ class BuyViewModel: ObservableObject {
         coordinatorIO.tokenSelected
             .sink { [unowned self] token in
                 self.token = token ?? self.token
-                analyticsManager.log(event: .buyCoinChanged(self.token.symbol))
+                analyticsManager.log(event: .buyCoinChanged(fromCoinToCoin: self.token.symbol))
             }
             .store(in: &subscriptions)
         coordinatorIO.fiatSelected
@@ -77,7 +77,7 @@ class BuyViewModel: ObservableObject {
                         await self.setPaymentMethod(.card)
                     }
                 }
-                analyticsManager.log(event: .buyCurrencyChanged(self.fiat.symbol))
+                analyticsManager.log(event: .buyCurrencyChanged(fromCurrencyToCurrency: self.fiat.code))
             }
             .store(in: &subscriptions)
 
@@ -199,7 +199,7 @@ class BuyViewModel: ObservableObject {
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
-        analyticsManager.log(event: .buyChosenMethodPayment(payment.type.rawValue))
+        analyticsManager.log(event: .buyChosenMethodPayment(type: payment.type.rawValue))
     }
 
     // MARK: -
@@ -295,7 +295,7 @@ class BuyViewModel: ObservableObject {
             currency: from.name,
             coin: to.name,
             paymentMethod: selectedPayment.rawValue,
-            isBankTransfer: typeBankTransfer != nil,
+            bankTransfer: typeBankTransfer != nil,
             typeBankTransfer: typeBankTransfer
         ))
     }
