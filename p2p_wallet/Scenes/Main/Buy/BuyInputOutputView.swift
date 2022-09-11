@@ -114,7 +114,7 @@ struct BuyInputOutputView: View {
 
 private class FontSynchorinze: ObservableObject {
     static let defaultFont: UIFont = UIFont.font(of: .title2)
-    static let maxFontSize: CGFloat = 22
+    static let maxFontSize: CGFloat = 28
     static let minFontSize: CGFloat = 10
 
     var leftFontSize: CGFloat = FontSynchorinze.maxFontSize { didSet { recalculate() } }
@@ -189,7 +189,7 @@ private struct TextfieldView: UIViewRepresentable {
         textField.keyboardType = .decimalPad
         textField.addTarget(ctx.coordinator, action: #selector(ctx.coordinator.textDidChanged), for: .editingChanged)
         if isFocued {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
                 textField.becomeFirstResponder()
             }
         }

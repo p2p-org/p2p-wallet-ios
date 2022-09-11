@@ -80,7 +80,7 @@ struct BuyTransactionDetailsView: View {
                 title: L10n.total,
                 amount: model.convertedAmount(model.total),
                 titleColor: Asset.Colors.night.color,
-                font: .font(of: .text3, weight: .semibold)
+                font: .font(of: .text3, weight: .bold)
             )
         }
     }
@@ -90,16 +90,16 @@ struct BuyTransactionDetailsView: View {
         amount: String,
         titleColor: UIColor = Asset.Colors.mountain.color,
         amountColor: UIColor = Asset.Colors.night.color,
-        font _: UIFont = .font(of: .text3)
+        font: UIFont = .font(of: .text3)
     ) -> some View {
         HStack {
             Text(title)
                 .foregroundColor(Color(titleColor))
-                .font(uiFont: .font(of: .text3))
+                .font(uiFont: font)
             Spacer()
             Text(amount)
                 .foregroundColor(Color(amountColor))
-                .font(uiFont: .font(of: .text3))
+                .font(uiFont: font)
         }
     }
 }
