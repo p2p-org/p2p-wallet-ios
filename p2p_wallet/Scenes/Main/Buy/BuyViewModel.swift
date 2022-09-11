@@ -7,14 +7,14 @@ import SolanaSwift
 import SwiftyUserDefaults
 import UIKit
 
-class BuyViewModel: ObservableObject {
+final class BuyViewModel: ObservableObject {
     var coordinatorIO = CoordinatorIO()
 
     // MARK: -
 
     @Published var availableMethods = [PaymentTypeItem]()
-    @Published var token: Token = .usdc
-    @Published var fiat: Fiat = .usd
+    @Published var token: Token = BuyViewModel.defaultToken
+    @Published var fiat: Fiat = BuyViewModel.defaultToken
     @Published var tokenAmount: String = ""
     @Published var fiatAmount: String = BuyViewModel.defaultMinAmount.toString()
     @Published var total: String = ""
@@ -23,11 +23,13 @@ class BuyViewModel: ObservableObject {
     @Published var areMethodsLoading = true
     @Published var isLeftFocus = false
     @Published var isRightFocus = true
-    @Published var buttonTitle: String = L10n.buy
-    @Published var buttonEnabled = false
-    @Published var buttonIcon: UIImage? = .buyWallet
     @Published var exchangeOutput: Buy.ExchangeOutput?
     @Published var navigationSlidingPercentage: CGFloat = 1
+    @Published var buttonItem: ButtonItem = .init(
+        title: L10n.buy + " \(defaultToken.symbol)",
+        icon: .buyWallet,
+        enabled: true
+    )
 
     // MARK: -
 
@@ -51,8 +53,12 @@ class BuyViewModel: ObservableObject {
 
     private var tokenPrices: [Fiat: [String: Double?]] = [:]
 
+    // Defaults
     private static let defaultMinAmount = Double(40)
     private static let defaultMaxAmount = Double(10000)
+    private static let tokens: [Token] = [.usdc, .nativeSolana]
+    private static let fiats: [Fiat] = available(.buyBankTransferEnabled) ? [.eur, .gbp, .usd] : [.usd]
+    private static let defaultToken = Token.usdc
 
     init() {
         fiatAmount = String(
@@ -69,7 +75,6 @@ class BuyViewModel: ObservableObject {
         coordinatorIO.fiatSelected
             .sink { [unowned self] fiat in
                 self.fiat = fiat ?? self.fiat
-
                 Task {
                     if isGBPBankTransferEnabled, fiat != .gbp {
                         await self.setPaymentMethod(.card)
@@ -103,44 +108,44 @@ class BuyViewModel: ObservableObject {
                 self.setForm(form: form)
             }).store(in: &subscriptions)
 
-        form
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .sink { aFiat, aToken, aAmount, _ in
+        form.debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .map { aFiat, aToken, anAmount, _ in
+                var enabled = true
+                var icon: UIImage? = .buyWallet
+                var title = L10n.buy + " \(BuyViewModel.defaultToken.symbol)"
                 let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
-                self.buttonIcon = UIImage.buyWallet
-                self.buttonTitle = L10n.buy + " " + "\(self.token.symbol)"
-
-                if minAmount > aAmount {
-                    self.buttonTitle = L10n.minimalTransactionIs(
+                if minAmount > anAmount {
+                    title = L10n.minimalTransactionIs(
                         minAmount.fiatAmount(
                             maximumFractionDigits: 2,
                             currency: self.fiat
                         )
                     )
-                    self.buttonIcon = nil
-                    self.buttonEnabled = false
-                    return
-                } else if aAmount > BuyViewModel.defaultMaxAmount {
-                    self.buttonTitle = L10n.maximumTransactionIs(
+                    icon = nil
+                    enabled = false
+                } else if anAmount > BuyViewModel.defaultMaxAmount {
+                    title = L10n.maximumTransactionIs(
                         BuyViewModel.defaultMaxAmount.fiatAmount(
                             maximumFractionDigits: 2,
                             currency: self.fiat
                         )
                     )
-                    self.buttonIcon = nil
-                    self.buttonEnabled = false
-                    return
+                    icon = nil
+                    enabled = false
                 }
-                self.buttonEnabled = true
-            }.store(in: &subscriptions)
+                return ButtonItem(title: title, icon: icon, enabled: enabled)
+            }
+            .removeDuplicates()
+            .assign(to: \.buttonItem, on: self)
+            .store(in: &subscriptions)
 
         areMethodsLoading = true
 
         Task {
-            for fiat in [Fiat.usd, Fiat.eur, Fiat.gbp] {
+            for fiat in BuyViewModel.fiats {
                 self.tokenPrices[fiat] =
                     try await pricesService.getCurrentPrices(
-                        tokens: [Token.usdc, Token.nativeSolana],
+                        tokens: BuyViewModel.tokens,
                         toFiat: fiat
                     ).mapValues { $0.value }
             }
@@ -149,7 +154,6 @@ class BuyViewModel: ObservableObject {
             let banks = buyBankEnabled ? try await exchangeService.isBankTransferEnabled() : (gbp: false, eur: false)
             self.isBankTransferEnabled = banks.eur && buyBankEnabled
             self.isGBPBankTransferEnabled = banks.gbp && buyBankEnabled
-
             await self.setPaymentMethod(self.lastMethod)
 
             // Buy min price is used to cache min price values. Doesnt need to implemet it at the moment
@@ -204,8 +208,7 @@ class BuyViewModel: ObservableObject {
 
     // MARK: -
 
-    @MainActor
-    private func setPaymentMethod(_ payment: PaymentType) {
+    @MainActor private func setPaymentMethod(_ payment: PaymentType) {
         guard availablePaymentTypes().contains(payment) else {
             // Card always available
             selectedPayment = .card
@@ -251,7 +254,7 @@ class BuyViewModel: ObservableObject {
     }
 
     func tokenSelectTapped() {
-        let tokens = [Token.nativeSolana, Token.usdc]
+        let tokens = BuyViewModel.tokens
         coordinatorIO.showTokenSelect.send(
             tokens.map {
                 TokenCellViewItem(
@@ -335,39 +338,11 @@ class BuyViewModel: ObservableObject {
                     PaymentType.gbpBank :
                     paymentType
                 return (from, to, amount, newPayment)
-            }.removeDuplicates(by: { aLeft, aRight in
-                // Checking first param for equality
-                if
-                    // 1 step if it's fiat
-                    let lFiat = (aLeft.0 as? Buy.FiatCurrency),
-                    let rFiat = aRight.0 as? Buy.FiatCurrency
-                {
-                    guard lFiat == rFiat else { return false }
-                } else if
-                    // 2 step if it's crypto
-                    let lCrypto = aLeft.0 as? Buy.CryptoCurrency,
-                    let rCrypto = aRight.0 as? Buy.CryptoCurrency
-                {
-                    guard lCrypto == rCrypto else { return false }
-                } else {
-                    return false
-                }
-                // The same with second param
-                if
-                    let lFiat = (aLeft.1 as? Buy.FiatCurrency),
-                    let rFiat = aRight.1 as? Buy.FiatCurrency
-                {
-                    guard lFiat == rFiat else { return false }
-                } else if
-                    let lCrypto = aLeft.1 as? Buy.CryptoCurrency,
-                    let rCrypto = aRight.1 as? Buy.CryptoCurrency
-                {
-                    guard lCrypto == rCrypto else { return false }
-                } else {
-                    return false
-                }
-                // and the rest
-                return aLeft.2 == aRight.2 && aLeft.3 == aRight.3
+            }
+            .removeDuplicates(by: { aLeft, aRight in
+                let currencies = aLeft.0.isEqualTo(aRight.0) && aLeft.1.isEqualTo(aRight.1)
+                let amounts = aLeft.2 == aRight.2 && aLeft.3 == aRight.3
+                return currencies && amounts
             }).handleEvents(receiveOutput: { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.isLoading = true
@@ -380,23 +355,16 @@ class BuyViewModel: ObservableObject {
                     paymentType: paymentType
                 )
             }
-            .replaceError(with: nil)
-            .handleEvents(receiveOutput: { _ in
-                DispatchQueue.main.async {
-                    self.isLoading = false
-                }
-            })
-            .replaceError(with: nil)
+            .subscribe(on: DispatchQueue.global())
+            .receive(on: DispatchQueue.main)
+            // Getting only last request
+            .switchToLatest()
             .handleEvents(receiveOutput: { _ in
                 DispatchQueue.main.async {
                     self.isLoading = false
                 }
             })
             .compactMap { $0 }
-            .subscribe(on: DispatchQueue.global())
-            .receive(on: DispatchQueue.main)
-            // Getting only last request
-            .switchToLatest()
             .eraseToAnyPublisher()
     }
 
@@ -453,7 +421,7 @@ class BuyViewModel: ObservableObject {
 
     func availableFiat(payment _: PaymentType) -> [Fiat] {
         if isBankTransferEnabled || isGBPBankTransferEnabled || available(.buyBankTransferEnabled) {
-            return [.eur, .gbp, .usd]
+            return BuyViewModel.fiats
         }
         return [.usd]
         // Uncomment in future
@@ -492,5 +460,11 @@ class BuyViewModel: ObservableObject {
         var tokenSelected = CurrentValueSubject<Token?, Never>(nil)
         var fiatSelected = CurrentValueSubject<Fiat?, Never>(nil)
         var buy = PassthroughSubject<URL, Never>()
+    }
+
+    struct ButtonItem: Equatable {
+        var title: String
+        var icon: UIImage?
+        var enabled: Bool
     }
 }

@@ -188,7 +188,7 @@ private struct TextfieldView: UIViewRepresentable {
         textField.keyboardType = .decimalPad
         textField.addTarget(ctx.coordinator, action: #selector(ctx.coordinator.textDidChanged), for: .editingChanged)
         if isFocued {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 textField.becomeFirstResponder()
             }
         }
@@ -229,7 +229,13 @@ private struct TextfieldView: UIViewRepresentable {
         }
 
         @objc func textDidChanged(_ textField: UITextField) {
-            text = textField.text ?? ""
+            if activeSide == .right {
+                text = (textField.text ?? "").fiatFormat
+            } else if activeSide == .left {
+                text = (textField.text ?? "").cryptoCurrencyFormat
+            } else {
+                text = textField.text ?? ""
+            }
             // adjustFont(textField)
         }
 
@@ -268,10 +274,8 @@ private struct TextfieldView: UIViewRepresentable {
 
             let minFontSizeValue = minFontSize() ?? FontSynchorinze.minFontSize
 
-            let size = text.size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(minFontSizeValue)])
-
+//            let size = text.size(withAttributes: [.font: FontSynchorinze.defaultFont.withSize(minFontSizeValue)])
             // print("Here: \(side) \(minFontSizeValue) \(size.width) \(textField.frame.width)")
-
             switch side {
             case .left: fontSynchorinze.leftFontSize = minFontSizeValue
             case .right: fontSynchorinze.rightFontSize = minFontSizeValue

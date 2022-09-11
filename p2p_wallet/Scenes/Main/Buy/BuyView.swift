@@ -9,16 +9,8 @@ struct BuyView: View {
 
     // MARK: -
 
-    @State private var dragAmount = CGSize.zero
-    @GestureState private var position = CGSize.zero
-    func addToPosition(translation: CGSize) -> CGSize {
-        CGSize(width: dragAmount.width + translation.width, height: dragAmount.height + translation.height)
-    }
-
-    @State var fromEdge = false
-
     @ObservedObject var viewModel: BuyViewModel
-    @State var bottomOffset = CGFloat.zero
+    @State var bottomOffset = CGFloat(110)
     @State var leftInputText: String = ""
     @State var rightInputText: String = ""
 
@@ -27,7 +19,7 @@ struct BuyView: View {
     }
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
             ScrollView {
                 VStack(alignment: .leading) {
                     HStack {
@@ -63,13 +55,14 @@ struct BuyView: View {
             Spacer()
             bottomActionsView
                 .frame(height: 110)
-//                .offset(y: viewModel.navigationSlidingPercentage)
+//                .offset(y: bottomOffset)
         }
         .edgesIgnoringSafeArea(.bottom)
         .navigationTitle(L10n.buy)
         .onAppear {
             withAnimation {
-                viewModel.navigationSlidingPercentage = 0
+//                viewModel.navigationSlidingPercentage = 0
+                bottomOffset = 0
             }
         }
     }
@@ -287,25 +280,24 @@ struct BuyView: View {
         .background(Color(Asset.Colors.cloud.color))
         .cornerRadius(16)
     }
-}
 
-extension BuyView {
     private var bottomActionsView: some View {
-        BottomActionContainer {
-            VStack(spacing: .zero) {
-                // Create a wallet
-                TextButtonView(
-                    title: viewModel.buttonTitle,
-                    titleBinding: $viewModel.buttonTitle,
-                    style: .inverted,
-                    size: .large,
-                    trailing: UIImage.buyWallet,
-                    trailingBinding: $viewModel.buttonIcon,
-                    isEnabled: $viewModel.buttonEnabled
-                ) { [weak viewModel] in
-                    viewModel?.buyButtonTapped()
-                }
-            }
+        TextButtonView(
+            title: viewModel.buttonItem.title,
+            titleBinding: $viewModel.buttonItem.title,
+            style: .inverted,
+            size: .large,
+            trailing: UIImage.buyWallet,
+            trailingBinding: $viewModel.buttonItem.icon,
+            isEnabled: $viewModel.buttonItem.enabled
+        ) { [weak viewModel] in
+            viewModel?.buyButtonTapped()
         }
+        .frame(height: 56)
+        .padding(.horizontal, 20)
+        .padding(.top, 20)
+        .padding(.bottom, max(60, SafeAreaInsetsKey.defaultValue.bottom))
+        .background(Color(Asset.Colors.night.color))
+        .cornerRadius(24, antialiased: false)
     }
 }
