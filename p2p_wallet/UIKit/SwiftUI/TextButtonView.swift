@@ -25,15 +25,13 @@ struct TextButtonView: UIViewRepresentable {
         onPressed: (() -> Void)? = nil
     ) {
         self.title = title
-        _titleBinding = titleBinding ??
-            Binding<String>(get: { "" }, set: { _, _ in })
+        _titleBinding = titleBinding ?? Binding.constant(title)
         self.style = style
         self.size = size
         self.leading = leading
         self.trailing = trailing
-        _trailingBinding = trailingBinding ??
-            Binding<UIImage?>(get: { nil }, set: { _, _ in })
-        _isEnabled = isEnabled ?? Binding<Bool>(get: { true }, set: { _, _ in })
+        _trailingBinding = trailingBinding ?? Binding.constant(trailing)
+        _isEnabled = isEnabled ?? Binding.constant(true)
         self.onPressed = onPressed
     }
 

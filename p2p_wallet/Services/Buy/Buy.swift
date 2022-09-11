@@ -36,6 +36,12 @@ struct Buy {
                 return "GBP"
             }
         }
+
+        // MARK: - Equatable
+
+        static func == (lhs: Buy.FiatCurrency, rhs: Buy.CryptoCurrency) -> Bool {
+            lhs.name == rhs.name
+        }
     }
 
     enum CryptoCurrency: String, BuyCurrencyType, Equatable {
@@ -101,6 +107,12 @@ struct Buy {
                 .sol: PublicKey.wrappedSOLMint.base58EncodedString,
             ],
         ]
+
+        // MARK: - Equatable
+
+        static func == (lhs: Buy.FiatCurrency, rhs: Buy.CryptoCurrency) -> Bool {
+            lhs.name == rhs.name
+        }
     }
 
     struct ExchangeInput {
@@ -147,4 +159,12 @@ struct Buy {
 
 protocol BuyCurrencyType {
     var name: String { get }
+    func isEqualTo(_ other: BuyCurrencyType) -> Bool
+}
+
+extension BuyCurrencyType where Self: Equatable {
+    func isEqualTo(_ other: BuyCurrencyType) -> Bool {
+        guard let otherX = other as? Self else { return false }
+        return self == otherX
+    }
 }
