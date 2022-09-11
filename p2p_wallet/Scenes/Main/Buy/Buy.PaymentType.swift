@@ -24,7 +24,7 @@ extension PaymentType {
             return .init(
                 type: self,
                 fee: "4.5%",
-                duration: "instant",
+                duration: "Instant",
                 name: "Card",
                 icon: UIImage.buyCard
             )

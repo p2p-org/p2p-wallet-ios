@@ -10,6 +10,7 @@ struct BuyView: View {
     // MARK: -
 
     @ObservedObject var viewModel: BuyViewModel
+    /// Bottom button view offset
     @State var bottomOffset = CGFloat(110)
     @State var leftInputText: String = ""
     @State var rightInputText: String = ""
@@ -46,7 +47,7 @@ struct BuyView: View {
                 .background(Color(Asset.Colors.rain.color))
                 .cornerRadius(20)
                 .padding([.leading, .trailing], 16)
-                .offset(y: 45)
+                .offset(y: min(45, 45 * UIScreen.main.bounds.height / 812))
             }.onAppear {
                 UIScrollView.appearance().keyboardDismissMode = .onDrag
             }.onTapGesture {
