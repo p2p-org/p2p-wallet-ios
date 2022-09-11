@@ -14,7 +14,7 @@ final class BuyViewModel: ObservableObject {
 
     @Published var availableMethods = [PaymentTypeItem]()
     @Published var token: Token = BuyViewModel.defaultToken
-    @Published var fiat: Fiat = BuyViewModel.defaultToken
+    @Published var fiat: Fiat = .usd
     @Published var tokenAmount: String = ""
     @Published var fiatAmount: String = BuyViewModel.defaultMinAmount.toString()
     @Published var total: String = ""

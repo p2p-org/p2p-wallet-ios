@@ -90,9 +90,9 @@ struct BuyInputOutputView: View {
                 rightSubTitle: rightSubtitle,
                 width: reader.size.width
             ) }
-        }.frame(height: 60)
+        }.frame(height: 62)
             .background(Color(Asset.Colors.cloud.color))
-            .cornerRadius(16)
+            .cornerRadius(12)
         // .overlay(Text("\(fontSynchorinze.font)").apply(style: .text4).offset(x: 0, y: 50))
     }
 
@@ -105,6 +105,7 @@ struct BuyInputOutputView: View {
                     .fixedSize(horizontal: true, vertical: false)
                     .padding(.trailing, 8)
                 Image(uiImage: Asset.MaterialIcon.arrowDropDown.image)
+                    .frame(width: 7, height: 4)
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
         }

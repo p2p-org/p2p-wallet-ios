@@ -4,7 +4,7 @@ import SolanaSwift
 import SwiftUI
 
 struct BuyView: View {
-    private let textLeadingPadding = 24.0
+    private let textLeadingPadding = 25.0
     private let cardLeadingPadding = 16.0
 
     // MARK: -
@@ -21,7 +21,7 @@ struct BuyView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack {
                         Spacer()
                         icon
@@ -30,23 +30,23 @@ struct BuyView: View {
                         Spacer()
                     }
                     input
-                        .padding(.top, 2)
-                        .padding(.bottom, 24)
+                        .padding(.top, 10)
+                        .padding(.bottom, 25)
                     Divider()
                         .frame(height: 1)
                         .overlay(Color(Asset.Colors.snow.color))
                     if viewModel.availableMethods.count > 1 || viewModel.areMethodsLoading {
                         methods
-                            .padding(.top, 20)
+                            .padding(.top, 22)
                     }
 
                     total
-                        .padding(.top, 18)
+                        .padding(.top, 26)
                 }
                 .background(Color(Asset.Colors.rain.color))
                 .cornerRadius(20)
                 .padding([.leading, .trailing], 16)
-                .offset(y: 30)
+                .offset(y: 45)
             }.onAppear {
                 UIScrollView.appearance().keyboardDismissMode = .onDrag
             }.onTapGesture {
@@ -72,7 +72,7 @@ struct BuyView: View {
     }
 
     var input: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 6) {
             Text(L10n.buying)
                 .apply(style: .text3)
                 .padding(.leading, textLeadingPadding)
@@ -123,7 +123,9 @@ struct BuyView: View {
                     HStack(spacing: 8) {
                         if viewModel.areMethodsLoading {
                             skeletonMethod()
+                                .frame(width: 158, height: 100)
                             skeletonMethod()
+                                .frame(width: 158, height: 100)
                         } else {
                             ForEach(viewModel.availableMethods, id: \.name) { item in
                                 Button { [weak viewModel] in
@@ -135,6 +137,7 @@ struct BuyView: View {
                                 } label: {
                                     methodCard(item: item)
                                         .foregroundColor(Color(Asset.Colors.night.color))
+                                        .frame(width: 158)
                                 }.addBorder(
                                     item.type == viewModel.selectedPayment ?
                                         Color(Asset.Colors.night.color) :
@@ -142,7 +145,7 @@ struct BuyView: View {
                                 ).id(item.type)
                             }
                         }
-                    }.padding(.horizontal, 16)
+                    }.padding(.horizontal, 17)
                 }
             }
         }
@@ -200,7 +203,7 @@ struct BuyView: View {
                         .padding(.top, -3)
                 }
             }.padding(EdgeInsets(
-                top: 13,
+                top: 14,
                 leading: cardLeadingPadding,
                 bottom: 0,
                 trailing: 0
@@ -223,11 +226,10 @@ struct BuyView: View {
             }.padding(EdgeInsets(
                 top: 5,
                 leading: cardLeadingPadding,
-                bottom: 12,
+                bottom: 13,
                 trailing: 0
             ))
         }
-        .frame(width: 151)
         .background(Color(Asset.Colors.cloud.color))
         .cornerRadius(16)
     }
@@ -276,9 +278,9 @@ struct BuyView: View {
             }
             Spacer()
         }
-        .frame(width: 151, height: 100)
-        .background(Color(Asset.Colors.cloud.color))
-        .cornerRadius(16)
+//        .frame(width: 151, height: 100)
+            .background(Color(Asset.Colors.cloud.color))
+            .cornerRadius(16)
     }
 
     private var bottomActionsView: some View {
