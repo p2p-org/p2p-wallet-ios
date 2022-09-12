@@ -83,8 +83,15 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .error
             .receive(on: RunLoop.main)
             .sinkAsync { error in
-                if let serviceError = error as? APIGatewayError, serviceError == .invalidRequest {
-                    self.showInputError(error: "")
+                if let serviceError = error as? APIGatewayError {
+                    switch serviceError {
+                    case .invalidRequest:
+                        self.showInputError(error: "")
+                    case .retry:
+                        self.notificationService.showDefaultErrorNotification()
+                    default:
+                        self.showError(error: error)
+                    }
                 } else if error is UndefinedAPIGatewayError {
                     self.notificationService.showDefaultErrorNotification()
                 } else {
