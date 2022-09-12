@@ -38,6 +38,9 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         case .expiredSocialTryAgain:
             return handleExpiredSocialTryAgain()
 
+        case let .notFoundDevice:
+            return handleNotFound()
+
         default:
             return nil
         }
@@ -311,5 +314,43 @@ private extension RestoreCustomDelegatedCoordinator {
             self?.openInfo()
         }, customActions: { actionView })
         return UIHostingController(rootView: view)
+    }
+
+    func handleNotFound() -> UIViewController {
+        let content = OnboardingContentData(
+            image: .box,
+            title: L10n.noWalletFound,
+            subtitle: L10n.tryWithAnotherAccountOrUseAnAnotherPhoneNumber
+        )
+        let parameters = ChooseRestoreOptionParameters(
+            isBackAvailable: false,
+            content: content,
+            options: [.socialApple, .socialGoogle, .custom],
+            isStartAvailable: true
+        )
+        let chooseRestoreOptionViewModel = ChooseRestoreOptionViewModel(parameters: parameters)
+        chooseRestoreOptionViewModel.optionChosen.sinkAsync(receiveValue: { [stateMachine] process in
+            process.start {
+                switch process.data {
+                case .custom:
+                    _ = try await stateMachine <- .enterPhone
+                case .socialApple:
+                    _ = try await stateMachine <- .requireSocial(provider: .apple)
+                case .socialGoogle:
+                    _ = try await stateMachine <- .requireSocial(provider: .google)
+                default: break
+                }
+            }
+        })
+            .store(in: &subscriptions)
+        chooseRestoreOptionViewModel.openStart.sinkAsync { [stateMachine] in
+            _ = try await stateMachine <- .start
+        }
+        .store(in: &subscriptions)
+        chooseRestoreOptionViewModel.openInfo.sink { [weak self] in
+            self?.openInfo()
+        }
+        .store(in: &subscriptions)
+        return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel))
     }
 }

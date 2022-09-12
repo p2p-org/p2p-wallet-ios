@@ -15,8 +15,10 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
             return handleSocial()
         case let .notFoundCustom(_, email):
             return handleNotFoundCustom(email: email)
-        case let .notFoundDevice(data, code, _):
-            return handleNotFoundDevice(email: code == 1009 ? data.email : nil)
+        case .notFoundDevice:
+            return handleNotFoundDeviceSocial(email: nil)
+        case let .notFoundSocial(data, _):
+            return handleNotFoundDeviceSocial(email: data.email)
         case .expiredSocialTryAgain:
             return nil
         case .finish:
@@ -62,7 +64,7 @@ private extension RestoreSocialDelegatedCoordinator {
         return UIHostingController(rootView: view)
     }
 
-    func handleNotFoundDevice(email: String?) -> UIViewController {
+    func handleNotFoundDeviceSocial(email: String?) -> UIViewController {
         let subtitle = email == nil ? L10n.tryWithAnotherAccountOrUseAPhoneNumber : L10n
             .emailTryAnotherAccountOrUseAPhoneNumber(email ?? "")
         let parameters = ChooseRestoreOptionParameters(
