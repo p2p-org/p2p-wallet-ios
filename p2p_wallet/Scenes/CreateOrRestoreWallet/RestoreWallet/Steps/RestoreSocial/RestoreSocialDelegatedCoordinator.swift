@@ -65,7 +65,7 @@ private extension RestoreSocialDelegatedCoordinator {
     }
 
     func handleNotFoundDeviceSocial(email: String?) -> UIViewController {
-        let subtitle = email == nil ? L10n.tryWithAnotherAccountOrUseAPhoneNumber : L10n
+        let subtitle = email == nil ? L10n.tryWithAccountOrUseAnAnotherPhoneNumber : L10n
             .emailTryAnotherAccountOrUseAPhoneNumber(email ?? "")
         let parameters = ChooseRestoreOptionParameters(
             isBackAvailable: false,
