@@ -85,12 +85,23 @@ final class HomeCoordinator: Coordinator<Void> {
 
         emptyVMOutput.topUpCoinShow
             .sink(receiveValue: { [unowned self] in
-                let coordinator = BuyPreparingCoordinator(
-                    navigationController: navigationController,
-                    strategy: .show,
-                    crypto: $0
-                )
+                let coordinator: Coordinator<Void>
+                if available(.buyScenarioEnabled) {
+                    coordinator = BuyCoordinator(
+                        navigationController: navigationController,
+                        context: .fromHome,
+                        defaultToken: $0
+                    )
+                } else {
+                    coordinator = BuyPreparingCoordinator(
+                        navigationController: navigationController,
+                        strategy: .show,
+                        crypto: $0
+                    )
+                }
                 coordinate(to: coordinator)
+                    .sink { _ in }
+                    .store(in: &subscriptions)
             })
             .store(in: &subscriptions)
         emptyVMOutput.receiveRenBtcShow

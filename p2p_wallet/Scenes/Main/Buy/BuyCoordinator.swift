@@ -7,34 +7,61 @@ import SolanaSwift
 import SwiftUI
 
 final class BuyCoordinator: Coordinator<Void> {
-    private let navigationController: UINavigationController
+    private var navigationController: UINavigationController!
+    private let presentingViewController: UIViewController?
     private let context: Context
     private var shouldPush = true
+    private var defaultToken: Token?
 
     private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
     @Injected private var analyticsManager: AnalyticsManager
 
     init(
-        navigationController: UINavigationController,
+        navigationController: UINavigationController? = nil,
         context: Context,
+        defaultToken: Buy.CryptoCurrency? = nil,
+        presentingViewController: UIViewController? = nil,
         shouldPush: Bool = true
     ) {
         self.navigationController = navigationController
+        self.presentingViewController = presentingViewController
         self.context = context
         self.shouldPush = shouldPush
+        if let defaultToken = defaultToken {
+            switch defaultToken {
+            case .usdc:
+                self.defaultToken = Token.usdc
+            case .sol:
+                self.defaultToken = Token.nativeSolana
+            default:
+                self.defaultToken = nil
+            }
+        }
     }
 
     override func start() -> AnyPublisher<Void, Never> {
         let result = PassthroughSubject<Void, Never>()
-        let viewModel = BuyViewModel()
+        let viewModel = BuyViewModel(defaultToken: defaultToken)
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
         viewController.hidesBottomBarWhenPushed = true
-        if shouldPush {
-            navigationController.interactivePopGestureRecognizer?.addTarget(self, action: #selector(onGesture))
-            navigationController.pushViewController(viewController, animated: true)
-        } else {
-            navigationController.present(UINavigationController(rootViewController: viewController), animated: true)
+        if navigationController == nil {
+            navigationController = UINavigationController(rootViewController: viewController)
         }
+        if let presentingViewController = presentingViewController {
+            DispatchQueue.main.async {
+                presentingViewController.show(self.navigationController, sender: nil)
+            }
+        } else {
+            if shouldPush {
+                navigationController?.interactivePopGestureRecognizer?.addTarget(self, action: #selector(onGesture))
+                navigationController?.pushViewController(viewController, animated: true)
+            } else {
+                let navigation = UINavigationController(rootViewController: viewController)
+                navigationController = navigation
+                navigationController?.present(navigation, animated: true)
+            }
+        }
+
         analyticsManager.log(event: .buyScreenShowed(fromScreen: context == .fromHome ? "MainScreen" : "TokenScreen"))
 
         viewController.onClose = {
@@ -152,5 +179,6 @@ extension BuyCoordinator {
     enum Context {
         case fromHome
         case fromToken
+        case fromRenBTC
     }
 }
