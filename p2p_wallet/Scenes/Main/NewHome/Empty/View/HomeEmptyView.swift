@@ -35,9 +35,9 @@ struct HomeEmptyView: View {
             ZStack(alignment: .top) {
                 VStack(spacing: 0) {
                     Color(.clear)
-                        .frame(height: 51)
+                        .frame(height: 87)
                     Color(._644aff)
-                        .frame(height: 223)
+                        .frame(height: 200)
                         .cornerRadius(12)
                 }
                 Image(uiImage: .homeBannerPerson)
@@ -58,14 +58,16 @@ struct HomeEmptyView: View {
                 Text(L10n.topUp)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .text4, weight: .semibold))
-                    .frame(width: 204, height: 49)
+                    .frame(height: 48)
+                    .frame(maxWidth: .infinity)
                     .background(Color(.ddfa2b))
                     .cornerRadius(8)
+                    .padding(.horizontal, 24)
                     .onTapGesture {
                         viewModel.topUp.send()
                     }
             }
-            .padding(.bottom, 18)
+            .padding(.bottom, 24)
         }
         .frame(maxWidth: .infinity)
     }
@@ -111,9 +113,9 @@ private extension View {
 
     @ViewBuilder func topPadding() -> some View {
         if #available(iOS 15, *) {
-            padding(.top, 46)
+            padding(.top, 12)
         } else {
-            padding(.top, 16)
+            padding(.top, 0)
         }
     }
 }
