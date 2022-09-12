@@ -13,7 +13,7 @@ final class BuyViewModel: ObservableObject {
     // MARK: -
 
     @Published var availableMethods = [PaymentTypeItem]()
-    @Published var token: Token = BuyViewModel.defaultToken
+    @Published var token: Token
     @Published var fiat: Fiat = .usd
     @Published var tokenAmount: String = ""
     @Published var fiatAmount: String = BuyViewModel.defaultMinAmount.toString()
@@ -60,7 +60,13 @@ final class BuyViewModel: ObservableObject {
     private static let fiats: [Fiat] = available(.buyBankTransferEnabled) ? [.eur, .gbp, .usd] : [.usd]
     private static let defaultToken = Token.usdc
 
-    init() {
+    init(defaultToken: Token? = nil) {
+        if let defaultFiat = defaultToken {
+            token = defaultFiat
+        } else {
+            token = BuyViewModel.defaultToken
+        }
+
         fiatAmount = String(
             buyMinPrices[Fiat.usd.rawValue]?[Token.nativeSolana.symbol] ??
                 BuyViewModel.defaultMinAmount

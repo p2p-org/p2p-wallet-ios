@@ -105,19 +105,20 @@ extension WalletDetail {
 
         // MARK: - Navigation
 
-        lazy var buyCoordinator = BuyCoordinator(
-            navigationController: self.navigationController ?? UINavigationController(),
-            context: .fromToken,
-            shouldPush: false
-        )
-
+        private var buyCoordinator: BuyCoordinator?
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
                 let vc: UIViewController
                 if available(.buyScenarioEnabled) {
                     // TODO: remove after moving to coordinator
-                    buyCoordinator.start().sink { _ in }.store(in: &subscriptions)
+                    buyCoordinator = BuyCoordinator(
+                        context: .fromToken,
+                        defaultToken: crypto,
+                        presentingViewController: self,
+                        shouldPush: false
+                    )
+                    buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
                 } else {
                     vc = BuyPreparing.Scene(
                         viewModel: BuyPreparing.SceneModel(

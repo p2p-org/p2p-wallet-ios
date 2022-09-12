@@ -58,8 +58,8 @@ final class ActionsCoordinator: Coordinator<Void> {
                     // Disabling on
                     if available(.buyScenarioEnabled) {
                         let coordinator = BuyCoordinator(
-                            navigationController: navigationController,
                             context: .fromHome,
+                            presentingViewController: viewController,
                             shouldPush: false
                         )
                         coordinate(to: coordinator)
@@ -81,7 +81,7 @@ final class ActionsCoordinator: Coordinator<Void> {
                 case .receive:
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
                     let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
-                    coordinate(to: coordinator)
+                    coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
                     analyticsManager.log(event: .mainScreenReceiveOpen)
                     analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
                 case .trade:
