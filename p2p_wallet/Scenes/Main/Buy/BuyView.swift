@@ -47,7 +47,7 @@ struct BuyView: View {
                 .background(Color(Asset.Colors.rain.color))
                 .cornerRadius(20)
                 .padding([.leading, .trailing], 16)
-                .offset(y: min(45, 45 * UIScreen.main.bounds.height / 812))
+                .offset(y: min(20, 20 * UIScreen.main.bounds.height / 812))
             }.onAppear {
                 UIScrollView.appearance().keyboardDismissMode = .onDrag
             }.onTapGesture {
