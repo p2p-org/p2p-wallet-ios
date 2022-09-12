@@ -156,7 +156,7 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             let newTokens = wallets.map(\.token)
                 .filter { !self.pricesService.getWatchList().contains($0) }
             self.pricesService.addToWatchList(newTokens)
-            self.pricesService.fetchPrices(tokens: newTokens)
+            self.pricesService.fetchPrices(tokens: newTokens, toFiat: Defaults.fiat)
         })
     }
 
