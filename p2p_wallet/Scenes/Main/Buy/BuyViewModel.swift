@@ -61,8 +61,8 @@ final class BuyViewModel: ObservableObject {
     private static let defaultToken = Token.usdc
 
     init(defaultToken: Token? = nil) {
-        if let defaultFiat = defaultToken {
-            token = defaultFiat
+        if let defaultToken = defaultToken {
+            token = defaultToken
         } else {
             token = BuyViewModel.defaultToken
         }
@@ -118,7 +118,7 @@ final class BuyViewModel: ObservableObject {
             .map { aFiat, aToken, anAmount, _ in
                 var enabled = true
                 var icon: UIImage? = .buyWallet
-                var title = L10n.buy + " \(BuyViewModel.defaultToken.symbol)"
+                var title = L10n.buy + " \(self.token.symbol)"
                 let minAmount = (self.buyMinPrices[aFiat.rawValue]?[aToken.name] ?? BuyViewModel.defaultMinAmount)
                 if minAmount > anAmount {
                     title = L10n.minimalTransactionIs(
