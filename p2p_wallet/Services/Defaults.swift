@@ -59,4 +59,12 @@ extension DefaultsKeys {
     var authenticationBlockingTime: DefaultsKey<Date?> { .init(#function, defaultValue: nil) }
     var shouldShowConfirmAlertOnSend: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
     var shouldShowConfirmAlertOnSwap: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
+    // Sepa Buy
+    var buyLastPaymentMethod: DefaultsKey<PaymentType> {
+        .init(#function, defaultValue: PaymentType.bank)
+    }
+
+    var buyMinPrices: DefaultsKey<[String: [String: Double]]> {
+        .init(#function, defaultValue: [:])
+    }
 }

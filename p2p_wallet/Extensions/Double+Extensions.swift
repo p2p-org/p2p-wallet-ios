@@ -122,8 +122,12 @@ extension Double {
         return formatter.string(from: number as NSNumber) ?? "0"
     }
 
-    func fiatAmount(maximumFractionDigits: Int = 2) -> String {
-        "\(Defaults.fiat.symbol) \(toString(maximumFractionDigits: maximumFractionDigits))"
+    func fiatAmount(maximumFractionDigits: Int = 2, currency: Fiat = .usd) -> String {
+        if currency == .usd {
+            return "\(currency.symbol) \(toString(maximumFractionDigits: maximumFractionDigits))"
+        } else {
+            return "\(toString(maximumFractionDigits: maximumFractionDigits)) \(currency.symbol)"
+        }
     }
 
     func tokenAmount(symbol: String, maximumFractionDigits: Int = 9) -> String {

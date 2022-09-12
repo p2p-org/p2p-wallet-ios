@@ -76,19 +76,32 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        emptyVMOutput.topUpShow
+        Publishers.Merge(emptyVMOutput.topUpShow, tokensViewModel.buyShow)
+            .filter { !available(.buyScenarioEnabled) }
             .sink(receiveValue: { [unowned self] in
                 presentBuyView()
             })
             .store(in: &subscriptions)
+
         emptyVMOutput.topUpCoinShow
             .sink(receiveValue: { [unowned self] in
-                let coordinator = BuyPreparingCoordinator(
-                    navigationController: navigationController,
-                    strategy: .show,
-                    crypto: $0
-                )
+                let coordinator: Coordinator<Void>
+                if available(.buyScenarioEnabled) {
+                    coordinator = BuyCoordinator(
+                        navigationController: navigationController,
+                        context: .fromHome,
+                        defaultToken: $0
+                    )
+                } else {
+                    coordinator = BuyPreparingCoordinator(
+                        navigationController: navigationController,
+                        strategy: .show,
+                        crypto: $0
+                    )
+                }
                 coordinate(to: coordinator)
+                    .sink { _ in }
+                    .store(in: &subscriptions)
             })
             .store(in: &subscriptions)
         emptyVMOutput.receiveRenBtcShow
@@ -97,11 +110,13 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        tokensViewModel.buyShow
-            .sink(receiveValue: { [unowned self] in
-                presentBuyView()
+        Publishers.Merge(tokensViewModel.buyShow, emptyVMOutput.topUpShow)
+            .filter { available(.buyScenarioEnabled) }
+            .sink(receiveValue: { [unowned self] _ in
+                coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
             })
             .store(in: &subscriptions)
+
         tokensViewModel.receiveShow
             .sink(receiveValue: { [unowned self] in
                 openReceiveScreen(pubKey: $0)
