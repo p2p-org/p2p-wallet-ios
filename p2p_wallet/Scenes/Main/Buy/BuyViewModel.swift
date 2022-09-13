@@ -368,8 +368,16 @@ final class BuyViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             // Getting only last request
             .switchToLatest()
-            .handleEvents(receiveOutput: { [weak self] _ in
+            .handleEvents(receiveOutput: { [weak self] output in
                 DispatchQueue.main.async {
+                    if output == nil {
+                        // removing calculated value on error
+                        if self?.isEditingFiat == true {
+                            self?.tokenAmount = "0".cryptoCurrencyFormat
+                        } else {
+                            self?.fiatAmount = "0".fiatFormat
+                        }
+                    }
                     self?.isLoading = false
                 }
             })
