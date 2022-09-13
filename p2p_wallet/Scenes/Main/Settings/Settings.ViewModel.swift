@@ -205,7 +205,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func setFiat(_ fiat: Fiat) {
-        analyticsManager.log(event: .settingsСurrencySelected(сurrency: fiat.code))
+        analyticsManager.log(event: AmplitudeEvent.settingsСurrencySelected(сurrency: fiat.code))
         // set default fiat
         Defaults.fiat = fiat
         pricesService.clearCurrentPrices()
@@ -218,7 +218,7 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func setApiEndpoint(_ endpoint: APIEndPoint) {
         guard Defaults.apiEndPoint != endpoint else { return }
-        analyticsManager.log(event: .networkChanging(networkName: endpoint.address))
+        analyticsManager.log(event: AmplitudeEvent.networkChanging(networkName: endpoint.address))
         Task {
             try await renVMService.expireCurrentSession()
             await MainActor.run {
@@ -257,7 +257,9 @@ extension Settings.ViewModel: SettingsViewModelType {
                     if success {
                         Defaults.isBiometryEnabled.toggle()
                         self?.isBiometryEnabledSubject.accept(Defaults.isBiometryEnabled)
-                        self?.analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
+                        self?.analyticsManager.log(event: AmplitudeEvent.settingsSecuritySelected(
+                            faceId: Defaults.isBiometryEnabled
+                        ))
                     } else {
                         if let authError = authenticationError as? LAError, authError.errorCode == kLAErrorUserCancel {
                             onError(nil)
@@ -298,24 +300,24 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func setLanguage(_ language: LocalizedLanguage) {
         localizationManager.changeCurrentLanguage(language)
-        analyticsManager.log(event: .settingsLanguageSelected(language: language.code))
+        analyticsManager.log(event: AmplitudeEvent.settingsLanguageSelected(language: language.code))
         changeLanguageResponder.languageDidChange(to: language)
     }
 
     func setTheme(_ theme: UIUserInterfaceStyle) {
         themeSubject.accept(theme)
-        analyticsManager.log(event: .settingsAppearanceSelected(appearance: theme.name))
+        analyticsManager.log(event: AmplitudeEvent.settingsAppearanceSelected(appearance: theme.name))
         changeThemeResponder.changeThemeTo(theme)
     }
 
     func setHideZeroBalances(_ hideZeroBalances: Bool) {
         Defaults.hideZeroBalances.toggle()
-        analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
+        analyticsManager.log(event: AmplitudeEvent.settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
         hideZeroBalancesSubject.accept(hideZeroBalances)
     }
 
     func showLogoutAlert() {
-        analyticsManager.log(event: .signOut(lastScreen: "Settings"))
+        analyticsManager.log(event: AmplitudeEvent.signOut(lastScreen: "Settings"))
         logoutAlertSubject.accept(())
     }
 
@@ -348,7 +350,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func logout() {
-        analyticsManager.log(event: .signedOut)
+        analyticsManager.log(event: AmplitudeEvent.signedOut)
         logoutResponder.logout()
     }
 }

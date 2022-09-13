@@ -164,7 +164,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
             await MainActor.run {
                 clipboardManager.copyToClipboard(address)
                 notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-                analyticsManager.log(event: .receiveAddressCopied)
+                analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
             }
         }
     }
@@ -173,7 +173,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
             await MainActor.run {
-                analyticsManager.log(event: .receiveAddressShare)
+                analyticsManager.log(event: AmplitudeEvent.receiveAddressShare)
                 navigationSubject.accept(
                     .share(address: address, qrCode: image)
                 )
@@ -182,7 +182,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     }
 
     func saveAction(image: UIImage) {
-        analyticsManager.log(event: .receiveQRSaved)
+        analyticsManager.log(event: AmplitudeEvent.receiveQRSaved)
         imageSaver.save(image: image) { [weak self] result in
             switch result {
             case .success:
@@ -204,7 +204,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
             await MainActor.run {
-                analyticsManager.log(event: .receiveViewingExplorer)
+                analyticsManager.log(event: AmplitudeEvent.receiveViewingExplorer)
                 navigationSubject.accept(.showBTCExplorer(address: address))
             }
         }
