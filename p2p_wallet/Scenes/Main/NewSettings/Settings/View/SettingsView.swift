@@ -136,6 +136,7 @@ struct SettingsView: View {
             }
         }
     }
+
     #if !RELEASE
         private var debugSection: some View {
             Section {
