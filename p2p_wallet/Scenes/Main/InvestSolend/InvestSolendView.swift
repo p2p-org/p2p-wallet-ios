@@ -6,6 +6,8 @@ import Solend
 import SwiftUI
 
 struct InvestSolendView: View {
+    let service = SolendServiceImpl(owner: try! .init(secretKey: Data()), lendingMark: "")
+
     var body: some View {
         Text(")")
     }
