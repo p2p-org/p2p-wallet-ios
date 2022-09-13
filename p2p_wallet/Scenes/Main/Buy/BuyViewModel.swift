@@ -282,7 +282,7 @@ final class BuyViewModel: ObservableObject {
         guard
             let from = fiat.buyFiatCurrency(),
             let to = token.buyCryptoCurrency(),
-            let amount = Double(fiatAmount),
+            let amount = Double(fiatAmount.fiatFormat),
             let url = try? getExchangeURL(
                 from: from,
                 to: to,
