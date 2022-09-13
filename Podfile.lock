@@ -5,13 +5,19 @@ PODS:
   - Amplitude (8.3.1)
   - AnalyticsManager (1.0.0):
     - Amplitude (~> 8.3.0)
-  - BECollectionView (0.1.0):
-    - PureLayout (~> 3.1.8)
+  - BECollectionView (1.0.0):
+    - BECollectionView_Core
     - RxCocoa (~> 6.5.0)
+  - BECollectionView_Combine (1.0.0):
+    - BECollectionView_Core
+    - CombineCocoa (~> 0.4.0)
+  - BECollectionView_Core (1.0.0)
   - BEPureLayout (0.4.0):
     - PureLayout
   - Cache (1.0.0)
   - CocoaDebug (1.7.2)
+  - CombineCocoa (0.4.0)
+  - CountriesAPI (1.0.0)
   - Down (0.11.0)
   - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
@@ -126,6 +132,7 @@ PODS:
   - Intercom (12.4.3)
   - Introspect (0.1.4)
   - JazziconSwift (1.1.0)
+  - JSBridge (1.0.0)
   - KeyAppKitLogger (1.0.7)
   - KeyAppUI (0.1.2):
     - BEPureLayout
@@ -175,7 +182,7 @@ PODS:
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
-  - SolanaSwift (2.4.0):
+  - SolanaSwift (2.5.0):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -196,13 +203,16 @@ PODS:
 
 DEPENDENCIES:
   - Action
-  - AnalyticsManager (from `KeyAppKit`)
-  - BECollectionView (from `BECollectionView`)
-  - BEPureLayout (from `BEPureLayout`)
-  - Cache (from `KeyAppKit`)
+  - AnalyticsManager (from `/Users/longtran/workspace/p2p/solana-swift-magic`)
+  - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
+  - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
+  - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
+  - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
+  - Cache (from `/Users/longtran/workspace/p2p/solana-swift-magic`)
   - CocoaDebug
+  - CountriesAPI (from `/Users/longtran/workspace/p2p/solana-swift-magic`)
   - Down (from `https://github.com/p2p-org/Down.git`)
-  - FeeRelayerSwift (from `FeeRelayerSwift`)
+  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
@@ -210,15 +220,16 @@ DEPENDENCIES:
   - Intercom
   - Introspect
   - JazziconSwift (~> 1.1.0)
-  - KeyAppKitLogger (from `KeyAppKit`)
+  - JSBridge (from `/Users/longtran/workspace/p2p/solana-swift-magic`)
+  - KeyAppKitLogger (from `/Users/longtran/workspace/p2p/solana-swift-magic`)
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `develop`)"
   - KeychainSwift (~> 19.0)
   - Kingfisher
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
-  - NameService (from `KeyAppKit`)
-  - OrcaSwapSwift (from `OrcaSwapSwift`)
+  - NameService (from `/Users/longtran/workspace/p2p/solana-swift-magic`)
+  - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
   - Periphery
-  - RenVMSwift (from `RenVMSwift`)
+  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
   - Resolver
   - RxAppState
   - RxCocoa (= 6.5.0)
@@ -228,8 +239,8 @@ DEPENDENCIES:
   - RxSwift (= 6.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SkeletonUI
-  - SolanaPricesAPIs (from `KeyAppKit`)
-  - SolanaSwift (from `SolanaSwift`)
+  - SolanaPricesAPIs (from `/Users/longtran/workspace/p2p/solana-swift-magic`)
+  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
   - SubviewAttachingTextView
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
@@ -237,7 +248,7 @@ DEPENDENCIES:
   - SwiftSVG (~> 2.0)
   - SwiftyUserDefaults (~> 5.0)
   - TagListView (~> 1.0)
-  - TransactionParser (from `KeyAppKit`)
+  - TransactionParser (from `/Users/longtran/workspace/p2p/solana-swift-magic`)
   - "UITextView+Placeholder"
 
 SPEC REPOS:
@@ -245,6 +256,7 @@ SPEC REPOS:
     - Action
     - Amplitude
     - CocoaDebug
+    - CombineCocoa
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -291,19 +303,32 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   AnalyticsManager:
-    :path: KeyAppKit
+    :path: "/Users/longtran/workspace/p2p/solana-swift-magic"
   BECollectionView:
-    :path: BECollectionView
+    :branch: master
+    :git: https://github.com/bigearsenal/BECollectionView.git
+  BECollectionView_Combine:
+    :branch: master
+    :git: https://github.com/bigearsenal/BECollectionView.git
+  BECollectionView_Core:
+    :branch: master
+    :git: https://github.com/bigearsenal/BECollectionView.git
   BEPureLayout:
-    :path: BEPureLayout
+    :branch: master
+    :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :path: KeyAppKit
+    :path: "/Users/longtran/workspace/p2p/solana-swift-magic"
+  CountriesAPI:
+    :path: "/Users/longtran/workspace/p2p/solana-swift-magic"
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :path: FeeRelayerSwift
+    :branch: master
+    :git: https://github.com/p2p-org/FeeRelayerSwift.git
+  JSBridge:
+    :path: "/Users/longtran/workspace/p2p/solana-swift-magic"
   KeyAppKitLogger:
-    :path: KeyAppKit
+    :path: "/Users/longtran/workspace/p2p/solana-swift-magic"
   KeyAppUI:
     :branch: develop
     :git: "git@github.com:p2p-org/KeyAppUI.git"
@@ -311,11 +336,13 @@ EXTERNAL SOURCES:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :path: KeyAppKit
+    :path: "/Users/longtran/workspace/p2p/solana-swift-magic"
   OrcaSwapSwift:
-    :path: OrcaSwapSwift
+    :branch: main
+    :git: https://github.com/p2p-org/OrcaSwapSwift.git
   RenVMSwift:
-    :path: RenVMSwift
+    :branch: master
+    :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :branch: main
     :git: https://github.com/TrGiLong/RxConcurrency.git
@@ -323,37 +350,66 @@ EXTERNAL SOURCES:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :path: KeyAppKit
+    :path: "/Users/longtran/workspace/p2p/solana-swift-magic"
   SolanaSwift:
-    :path: SolanaSwift
+    :branch: main
+    :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :path: KeyAppKit
+    :path: "/Users/longtran/workspace/p2p/solana-swift-magic"
 
 CHECKOUT OPTIONS:
+  BECollectionView:
+    :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
+    :git: https://github.com/bigearsenal/BECollectionView.git
+  BECollectionView_Combine:
+    :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
+    :git: https://github.com/bigearsenal/BECollectionView.git
+  BECollectionView_Core:
+    :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
+    :git: https://github.com/bigearsenal/BECollectionView.git
+  BEPureLayout:
+    :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
+    :git: https://github.com/p2p-org/BEPureLayout.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
+  FeeRelayerSwift:
+    :commit: 1a308c51278b2e877d183b9b6d679fe2b2ae7db5
+    :git: https://github.com/p2p-org/FeeRelayerSwift.git
   KeyAppUI:
     :commit: 2a39b0cc837e37dd39c4a507f9dc1981612e0902
     :git: "git@github.com:p2p-org/KeyAppUI.git"
   ListPlaceholder:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
+  OrcaSwapSwift:
+    :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
+    :git: https://github.com/p2p-org/OrcaSwapSwift.git
+  RenVMSwift:
+    :commit: bc5bf3ec5ec36bb93cc8b53b655599809633087e
+    :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
     :git: https://github.com/TrGiLong/RxConcurrency.git
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
+  SolanaSwift:
+    :commit: 72f1a7887b64b68f7430c06abca1b379f1738609
+    :git: https://github.com/p2p-org/solana-swift.git
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
-  BECollectionView: 058d23f37e4774178ef296978ad6ee8432e80377
+  BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
+  BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
+  BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
+  CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
+  CountriesAPI: 26d03b67fb2fd4ff26111b71ed3d492a3babb592
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
   Firebase: 800f16f07af493d98d017446a315c27af0552f41
@@ -372,6 +428,7 @@ SPEC CHECKSUMS:
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
   Introspect: b62c4dd2063072327c21d618ef2bedc3c87bc366
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
+  JSBridge: 5a257c92ad65fb16b255480cb3b2b867cc6ee39c
   KeyAppKitLogger: 1db675b452a0faa4bd0097f5c88fcc635ed67205
   KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
@@ -398,7 +455,7 @@ SPEC CHECKSUMS:
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
   SkeletonView: f1e8e19841be437746f07b7dc7ce4d028b698b96
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: 6ba5043ed04055eb874085d2f96499022ddcd6e8
+  SolanaSwift: 1b4138640dd65f7ffa13eef3db178c8efe468922
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
@@ -411,6 +468,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: cac4817f854121c5a95f0f004f2f72d97602f1f0
+PODFILE CHECKSUM: a9d1b26c37d7108bea0086208f8f3b3c8b1276bf
 
 COCOAPODS: 1.11.3
