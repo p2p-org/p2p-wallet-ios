@@ -21,7 +21,7 @@ struct HomeWithTokensView: View {
 
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
-        analyticsManager.log(event: .mainScreenWalletsOpen)
+        analyticsManager.log(event: AmplitudeEvent.mainScreenWalletsOpen)
         UITableView.appearance().showsVerticalScrollIndicator = false
     }
 
