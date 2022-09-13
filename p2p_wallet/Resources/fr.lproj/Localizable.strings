@@ -941,4 +941,5 @@ another" = "une crypto pour
 "If you forget your PIN, you can log out and create a new one when you log in again." = "Si vous oubliez votre code PIN, vous pouvez vous déconnecter et en créer un nouveau lorsque vous vous reconnectez.";
 "Your seed phrase must never be shared." = "Votre phrase de départ ne doit jamais être partagée.";
 "Keep it private, even from us" = "Gardez-le privé, même de nous";
-"Your PIN was changed" = "Votre code PIN a été modifié";"Try with account or use an another phone number" = "Essayez avec un compte ou utilisez un autre numéro de téléphone";
+"Your PIN was changed" = "Votre code PIN a été modifié";
+"Try with account or use an another phone number" = "Essayez avec un compte ou utilisez un autre numéro de téléphone";

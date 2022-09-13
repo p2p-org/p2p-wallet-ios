@@ -38,7 +38,7 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         case .expiredSocialTryAgain:
             return handleExpiredSocialTryAgain()
 
-        case let .notFoundDevice:
+        case .notFoundDevice:
             return handleNotFound()
 
         default:
