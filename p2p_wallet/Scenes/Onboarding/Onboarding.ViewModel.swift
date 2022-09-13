@@ -109,9 +109,9 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
         Defaults.isBiometryEnabled = on
         Defaults.didSetEnableBiometry = true
         if on {
-            analyticsManager.log(event: .bioApproved(lastScreen: "Onboarding"))
+            analyticsManager.log(event: AmplitudeEvent.bioApproved(lastScreen: "Onboarding"))
         } else {
-            analyticsManager.log(event: .bioRejected)
+            analyticsManager.log(event: AmplitudeEvent.bioRejected)
         }
 
         navigateNext()
@@ -152,7 +152,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
             if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
                 // evaluate
                 navigationSubject.accept(.setUpBiometryAuthentication)
-                analyticsManager.log(event: .setupFaceidOpen)
+                analyticsManager.log(event: AmplitudeEvent.setupFaceidOpen)
             } else {
                 enableBiometryLater()
             }
@@ -172,7 +172,7 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
                 // not authorized
                 guard settings.authorizationStatus == .authorized else {
                     self.navigationSubject.accept(.setUpNotifications)
-                    self.analyticsManager.log(event: .setupAllowPushOpen)
+                    self.analyticsManager.log(event: AmplitudeEvent.setupAllowPushOpen)
                     return
                 }
 
@@ -196,12 +196,15 @@ extension Onboarding.ViewModel: OnboardingViewModelType {
     func endOnboarding() {
         switch OnboardingTracking.currentFlow {
         case .create:
-            analyticsManager
-                .log(event: .walletCreated(lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"))
+            analyticsManager.log(event: AmplitudeEvent.walletCreated(
+                lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"
+            ))
         case .restore:
-            analyticsManager
-                .log(event: .walletRestored(lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"))
-        case .none: break
+            analyticsManager.log(event: AmplitudeEvent.walletRestored(
+                lastScreen: navigationSubject.value?.screenName ?? "Sign_In_Apple"
+            ))
+        case .none:
+            break
         }
 
         navigationSubject.accept(.dismiss)

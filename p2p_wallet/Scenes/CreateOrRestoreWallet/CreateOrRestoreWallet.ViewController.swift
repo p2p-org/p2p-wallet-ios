@@ -42,7 +42,7 @@ extension CreateOrRestoreWallet {
 
         override func setUp() {
             super.setUp()
-            analyticsManager.log(event: .splashViewed)
+            analyticsManager.log(event: AmplitudeEvent.splashViewed)
 
             // pattern background view
             let patternView = UIView.introPatternView()
