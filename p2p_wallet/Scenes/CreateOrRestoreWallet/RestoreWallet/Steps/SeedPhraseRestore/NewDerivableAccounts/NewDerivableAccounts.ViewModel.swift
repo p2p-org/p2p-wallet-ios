@@ -107,7 +107,7 @@ extension NewDerivableAccounts.ViewModel: NewDrivableAccountsViewModelType {
     }
 
     func derivablePathDidSelect(path: DerivablePath, phrases: [String]) async throws {
-        analyticsManager.log(event: .recoveryRestoreClick)
+        analyticsManager.log(event: AmplitudeEvent.recoveryRestoreClick)
         // save to icloud
 
         coordinatorIO.didSucceed.send((phrases, path))
