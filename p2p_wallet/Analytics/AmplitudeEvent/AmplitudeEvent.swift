@@ -195,4 +195,22 @@ enum AmplitudeEvent: AnalyticsEvent {
     // User
     case userHasPositiveBalance(_ positive: Bool)
     case userAggregateBalance(_ balance: Double)
+
+    // Buy
+    case buyCurrencyChanged(fromCurrencyToCurrency: String)
+    case buyCoinChanged(fromCoinToCoin: String)
+    case buyTotalShowed
+    case buyChosenMethodPayment(type: String)
+    case buyButtonPressed(
+        sumCurrency: String,
+        sumCoin: String,
+        currency: String,
+        coin: String,
+        paymentMethod: String,
+        bankTransfer: Bool,
+        typeBankTransfer: String?
+    )
+    case buyStatusTransaction(success: Bool)
+    case buyScreenShowed(fromScreen: String)
+    case moonPayWindowClosed
 }
