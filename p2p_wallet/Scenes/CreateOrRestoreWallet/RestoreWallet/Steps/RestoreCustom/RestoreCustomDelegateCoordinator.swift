@@ -17,11 +17,11 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         case let .enterOTP(phone, _, _, _):
             return handleEnterOtp(phone: phone)
 
-        case let .otpNotDeliveredTrySocial(phone):
-            return handleOtpNotDeliveredRequireSocial(phone: phone)
+        case let .otpNotDeliveredTrySocial(phone, code):
+            return handleOtpNotDeliveredRequireSocial(phone: phone, code: code)
 
-        case let .otpNotDelivered(phone):
-            return handleOtpNotDelivered(phone: phone)
+        case let .otpNotDelivered(phone, code):
+            return handleOtpNotDelivered(phone: phone, code: code)
 
         case .noMatch:
             return handleNoMatch()
@@ -72,11 +72,13 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         return try await coordinator.start().async()
     }
 
-    private func weCanTSMSYouContent(phone: String) -> OnboardingContentData {
+    private func weCanTSMSYouContent(phone: String, code: Int) -> OnboardingContentData {
         OnboardingContentData(
             image: .box,
             title: L10n.weCanTSMSYou,
-            subtitle: L10n.SomethingWrongWithPhoneNumberOrSettings.ifYouWillWriteUsUseErrorCode(phone, "\(10464)")
+            subtitle: L10n
+                .SomethingWrongWithPhoneNumberOrSettings
+                .ifYouWishToReportTheIssueUseErrorCode(phone, abs(code))
         )
     }
 }
@@ -150,10 +152,10 @@ private extension RestoreCustomDelegatedCoordinator {
         return viewController
     }
 
-    func handleOtpNotDeliveredRequireSocial(phone: String) -> UIViewController {
+    func handleOtpNotDeliveredRequireSocial(phone: String, code: Int) -> UIViewController {
         let parameters = ChooseRestoreOptionParameters(
             isBackAvailable: true,
-            content: weCanTSMSYouContent(phone: phone),
+            content: weCanTSMSYouContent(phone: phone, code: code),
             options: [.socialApple, .socialGoogle],
             isStartAvailable: true
         )
@@ -188,16 +190,16 @@ private extension RestoreCustomDelegatedCoordinator {
         return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: viewModel))
     }
 
-    func handleOtpNotDelivered(phone: String) -> UIViewController {
-        let content = weCanTSMSYouContent(phone: phone)
+    func handleOtpNotDelivered(phone: String, code: Int) -> UIViewController {
+        let content = weCanTSMSYouContent(phone: phone, code: code)
         return buildOnboardingBrokenScreen(content: content)
     }
 
     func handleNoMatch() -> UIViewController {
         let content = OnboardingContentData(
             image: .box,
-            title: L10n.sharesArenTMatch,
-            subtitle: L10n.SoSorryBaby.ifYouWillWriteUsUseErrorCode10464
+            title: L10n.noWalletFound,
+            subtitle: L10n.tryWithAnotherAccount
         )
         return buildOnboardingBrokenScreen(content: content)
     }
@@ -207,7 +209,7 @@ private extension RestoreCustomDelegatedCoordinator {
             image: .box,
             title: L10n.wellWell,
             subtitle: L10n.YouVeFindASeldonPage🦄ItSLikeAUnicornButItSACrush.WeReAlreadyFixingIt
-                .ifYouWillWriteUsUseErrorCode("\(code)")
+                .ifYouWishToReportTheIssueUseErrorCode(code)
         )
         return buildOnboardingBrokenScreen(content: content)
     }
@@ -267,7 +269,7 @@ private extension RestoreCustomDelegatedCoordinator {
             let content = OnboardingContentData(
                 image: .box,
                 title: L10n.accountNotFound,
-                subtitle: L10n.NotWorks.useAnAnotherPhoneNumber(wrongNumber)
+                subtitle: L10n.DoesnTWork.tryAnotherOption(wrongNumber)
             )
             let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
                 Task { _ = try await stateMachine <- .start }
@@ -286,8 +288,8 @@ private extension RestoreCustomDelegatedCoordinator {
 
     func handleBlock(until: Date, reason: PhoneFlowBlockReason) -> UIViewController {
         let subtitle = reason == .blockEnterPhoneNumber ?
-            L10n.YouUsedTooMuchNumbers.forYourSafetyWeFreezedAccountForMin
-            : L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFreezedAccountForMin
+            L10n.YouUsedTooMuchNumbers.forYourSafetyWeFrozeAccountFor
+            : L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFrozeAccountFor
         let view = OnboardingBlockScreen(
             contentTitle: L10n.soLetSBreathe,
             contentSubtitle: subtitle,

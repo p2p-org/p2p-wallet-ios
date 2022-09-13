@@ -147,7 +147,7 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
         case .restore:
             let params = ChooseRestoreOptionParameters(
                 isBackAvailable: isBackAvailable(),
-                content: OnboardingContentData(image: .lockPincode, title: L10n.chooseTheWayToContinue),
+                content: OnboardingContentData(image: .lockPincode, title: L10n.chooseAnOptionToContinue),
                 options: viewModel.availableRestoreOptions,
                 isStartAvailable: false
             )

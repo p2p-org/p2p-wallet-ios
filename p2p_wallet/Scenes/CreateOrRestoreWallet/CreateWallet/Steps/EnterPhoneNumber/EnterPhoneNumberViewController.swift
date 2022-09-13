@@ -62,7 +62,7 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
 
             UILabel().withAttributedText(
                 .attributedString(
-                    with: L10n.addAPhoneToProtectYourAccount,
+                    with: L10n.addAPhoneNumberToProtectYourAccount,
                     of: .text1,
                     weight: .regular,
                     alignment: .center
