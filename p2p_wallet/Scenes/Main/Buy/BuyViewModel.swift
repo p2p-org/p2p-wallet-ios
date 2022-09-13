@@ -75,7 +75,7 @@ final class BuyViewModel: ObservableObject {
         coordinatorIO.tokenSelected
             .sink { [unowned self] token in
                 self.token = token ?? self.token
-                analyticsManager.log(event: .buyCoinChanged(fromCoinToCoin: self.token.symbol))
+                analyticsManager.log(event: AmplitudeEvent.buyCoinChanged(fromCoinToCoin: self.token.symbol))
             }
             .store(in: &subscriptions)
         coordinatorIO.fiatSelected
@@ -88,7 +88,7 @@ final class BuyViewModel: ObservableObject {
                         await self.setPaymentMethod(.card)
                     }
                 }
-                analyticsManager.log(event: .buyCurrencyChanged(fromCurrencyToCurrency: self.fiat.code))
+                analyticsManager.log(event: AmplitudeEvent.buyCurrencyChanged(fromCurrencyToCurrency: self.fiat.code))
             }
             .store(in: &subscriptions)
 
@@ -209,7 +209,7 @@ final class BuyViewModel: ObservableObject {
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
-        analyticsManager.log(event: .buyChosenMethodPayment(type: payment.type.rawValue))
+        analyticsManager.log(event: AmplitudeEvent.buyChosenMethodPayment(type: payment.type.rawValue))
     }
 
     // MARK: -
@@ -298,7 +298,7 @@ final class BuyViewModel: ObservableObject {
                 typeBankTransfer = "sepa_bank_transfer"
             }
         }
-        analyticsManager.log(event: .buyButtonPressed(
+        analyticsManager.log(event: AmplitudeEvent.buyButtonPressed(
             sumCurrency: fiatAmount,
             sumCoin: tokenAmount,
             currency: from.name,
