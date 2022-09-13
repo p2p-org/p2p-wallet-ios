@@ -50,10 +50,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SentrySDK.start { options in
             options
                 .dsn = .secretConfig("SENTRY_DSN")
+            options.tracesSampleRate = 1.0
             #if DEBUG
                 options.debug = true
+                options.tracesSampleRate = 0.0
             #endif
-            options.tracesSampleRate = 1.0
             options.enableNetworkTracking = true
             options.enableOutOfMemoryTracking = true
         }
