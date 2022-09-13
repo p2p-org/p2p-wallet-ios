@@ -82,14 +82,14 @@ final class ActionsCoordinator: Coordinator<Void> {
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
                     let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
                     coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
-                    analyticsManager.log(event: .mainScreenReceiveOpen)
-                    analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
+                    analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
                 case .trade:
                     let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
                     let vc = OrcaSwapV2.ViewController(viewModel: vm)
                     let navigation = UINavigationController(rootViewController: vc)
-                    analyticsManager.log(event: .mainScreenSwapOpen)
-                    analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
+                    analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
                     vc.doneHandler = { [weak self] in
                         self?.viewController.dismiss(animated: true)
                     }
@@ -104,8 +104,8 @@ final class ActionsCoordinator: Coordinator<Void> {
                         viewModel: vm,
                         navigationController: navigationController
                     )
-                    analyticsManager.log(event: .mainScreenSendOpen)
-                    analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
+                    analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
 
                     sendCoordinator?.doneHandler = { [weak self] in
                         self?.viewController.dismiss(animated: true)

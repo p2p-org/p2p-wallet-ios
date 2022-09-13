@@ -132,7 +132,7 @@ extension OrcaSwapV2 {
                 walletDriver = viewModel.sourceWalletDriver
 
                 textFieldKeydownEvent = { amount in
-                    .swapTokenAAmountKeydown(sum: amount)
+                    AmplitudeEvent.swapTokenAAmountKeydown(sum: amount)
                 }
 
                 outputDriver = viewModel.inputAmountDriver
@@ -171,7 +171,7 @@ extension OrcaSwapV2 {
                 walletDriver = viewModel.destinationWalletDriver
 
                 textFieldKeydownEvent = { amount in
-                    .swapTokenBAmountKeydown(sum: amount)
+                    AmplitudeEvent.swapTokenBAmountKeydown(sum: amount)
                 }
 
                 outputDriver = viewModel.estimatedAmountDriver
