@@ -43,27 +43,31 @@ class HomeViewModel: ObservableObject {
         Observable.combineLatest(
             walletsRepository.stateObservable,
             walletsRepository.dataObservable.filter { $0 != nil }
-        ).map { state, data -> State in
+        ).map { state, data -> (State, Double?) in
             switch state {
             case .initializing, .loading:
-                return State.pending
+                return (State.pending, nil)
             case .loaded, .error:
                 let amount = data?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
-                return amount > 0 ? State.withTokens : State.empty
+                return (amount > 0 ? State.withTokens : State.empty, amount)
             }
         }
         .asPublisher()
         .assertNoFailure()
-        .sink(receiveValue: { [weak self] in
+        .sink(receiveValue: { [weak self] state, amount in
             guard let self = self else { return }
-            if self.initStateFinished, $0 == .pending { return }
+            if self.initStateFinished, state == .pending { return }
 
             if let address = self.accountStorage.account?.publicKey.base58EncodedString.shortAddress {
                 self.address = address
             }
-            self.state = $0
-            if $0 != .pending {
+            self.state = state
+            if state != .pending {
                 self.initStateFinished = true
+                self.analyticsManager.log(event: AmplitudeEvent.userHasPositiveBalance(amount > 0))
+                if let amount = amount {
+                    self.analyticsManager.log(event: AmplitudeEvent.userAggregateBalance(amount))
+                }
             }
         })
         .store(in: &cancellables)
@@ -86,7 +90,7 @@ class HomeViewModel: ObservableObject {
     func copyToClipboard() {
         clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
         notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-        analyticsManager.log(event: .receiveAddressCopied)
+        analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
     }
 
     func receive() {
