@@ -49,7 +49,7 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
 
                     if let help = help {
                         TextButtonView(
-                            title: L10n.writeToHeeeeelp,
+                            title: L10n.support,
                             style: .inverted,
                             size: .large,
                             leading: Asset.MaterialIcon.newReleasesOutlined.image,

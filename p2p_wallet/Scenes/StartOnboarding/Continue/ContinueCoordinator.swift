@@ -98,7 +98,7 @@ private extension CreateWalletFlowState {
         let email = self.email
         switch self {
         case .bindingPhoneNumber:
-            return L10n.YouHaveAGreatStartWith.itSOnlyAPhoneNumberNeededToCreateANewWallet(email)
+            return L10n.YouHaveAGreatStartWith.onlyAPhoneNumberIsNeededToCreateANewWallet(email)
         case .securitySetup:
             return L10n.YouHaveAGreatStartWith.itSOnlyAPinCodeNeededToCreateANewWallet(email)
         default:
