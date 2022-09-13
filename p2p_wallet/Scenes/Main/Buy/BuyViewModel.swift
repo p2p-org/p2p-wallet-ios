@@ -353,21 +353,24 @@ final class BuyViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self?.isLoading = true
                 }
-            }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput, Never> in
+            }).map { from, to, amount, paymentType -> AnyPublisher<Buy.ExchangeOutput?, Never> in
                 self.exchange(
                     from: from,
                     to: to,
                     amount: amount,
                     paymentType: paymentType
                 )
+                    .map(Optional.init)
+                    .replaceError(with: nil)
+                    .eraseToAnyPublisher()
             }
             .subscribe(on: DispatchQueue.global())
             .receive(on: DispatchQueue.main)
             // Getting only last request
             .switchToLatest()
-            .handleEvents(receiveOutput: { _ in
+            .handleEvents(receiveOutput: { [weak self] _ in
                 DispatchQueue.main.async {
-                    self.isLoading = false
+                    self?.isLoading = false
                 }
             })
             .compactMap { $0 }
@@ -379,21 +382,25 @@ final class BuyViewModel: ObservableObject {
         to: BuyCurrencyType,
         amount: Double,
         paymentType: PaymentType
-    ) -> AnyPublisher<Buy.ExchangeOutput, Never> {
+    ) -> AnyPublisher<Buy.ExchangeOutput, Error> {
         Future { promise in
             Task { [weak self] in
                 guard let self = self else { return }
                 try Task.checkCancellation()
-                let result = try await self.exchangeService.convert(
-                    input: .init(
-                        amount: amount,
-                        currency: from
-                    ),
-                    to: to,
-                    paymentType: paymentType
-                )
-                try Task.checkCancellation()
-                promise(.success(result))
+                do {
+                    let result = try await self.exchangeService.convert(
+                        input: .init(
+                            amount: amount,
+                            currency: from
+                        ),
+                        to: to,
+                        paymentType: paymentType
+                    )
+                    try Task.checkCancellation()
+                    promise(.success(result))
+                } catch {
+                    promise(.failure(error))
+                }
             }
         }.eraseToAnyPublisher()
     }
