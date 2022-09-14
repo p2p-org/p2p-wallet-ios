@@ -113,7 +113,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         Publishers.MergeMany(
             $phone.debounce(for: 0.0, scheduler: DispatchQueue.main)
                 .removeDuplicates()
-                .scan("", {
+                .scan("") {
                     if self.clearedPhoneString(phone: $1 ?? "").starts(with: self.selectedCountry.dialCode) == true {
                         guard let exampleNumber = self.exampleNumberWith(phone: $0) else {
                             return $1 ?? ""
@@ -125,40 +125,41 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                     } else {
                         return $0
                     }
-                })
+                }
                 .compactMap { $0 }
                 .eraseToAnyPublisher(),
             coordinatorIO.countrySelected
                 .compactMap { $0?.dialCode }
                 .eraseToAnyPublisher()
         )
-        .assign(to: \.phone, on: self)
-        .store(in: &cancellable)
+            .assign(to: \.phone, on: self)
+            .store(in: &cancellable)
 
-        $selectedCountry
-            .compactMap { $0.emoji }
-            .debounce(for: .seconds(0.01), scheduler: DispatchQueue.main)
+        $selectedCountry.debounce(for: .seconds(0.01), scheduler: DispatchQueue.main)
+            .compactMap(\.emoji)
             .assign(to: \.flag, on: self)
             .store(in: &cancellable)
 
-        $selectedCountry.compactMap { $0.dialCode }
-        .assign(to: \.phone, on: self)
-        .store(in: &cancellable)
+        $selectedCountry
+            .map(\.dialCode)
+            .compactMap { $0 }
+            .assign(to: \.phone, on: self)
+            .store(in: &cancellable)
 
         $phone.removeDuplicates()
-            .compactMap { $0 }.map { [weak self] in
-            guard let self else { return false }
-            let phones = self.phoneNumberKit.parse(
-                [$0],
-                withRegion: self.selectedCountry.code,
-                ignoreType: false,
-                shouldReturnFailedEmptyNumbers: false
-            )
-            debugPrint(phones)
-            return phones.count > 0
-        }
-        .assign(to: \.isButtonEnabled, on: self)
-        .store(in: &cancellable)
+            .compactMap { $0 }
+            .map { [weak self] in
+                guard let self else { return false }
+                let phones = self.phoneNumberKit.parse(
+                    [$0],
+                    withRegion: self.selectedCountry.code,
+                    ignoreType: false,
+                    shouldReturnFailedEmptyNumbers: false
+                )
+                return !phones.isEmpty
+            }
+            .assign(to: \.isButtonEnabled, on: self)
+            .store(in: &cancellable)
 
         coordinatorIO.countrySelected
             .eraseToAnyPublisher()
