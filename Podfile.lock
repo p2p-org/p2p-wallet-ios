@@ -260,7 +260,7 @@ DEPENDENCIES:
   - Firebase/RemoteConfig
   - GoogleSignIn
   - GT3Captcha-iOS
-  - Intercom
+  - Intercom (~> 12.4.3)
   - Introspect
   - JazziconSwift (~> 1.1.0)
   - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
@@ -589,6 +589,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 810360d9c2663005bbc4339c08ac069056616ba2
+PODFILE CHECKSUM: 8d45495f36826df5219e319a0600778a5645fda6
 
 COCOAPODS: 1.11.3
