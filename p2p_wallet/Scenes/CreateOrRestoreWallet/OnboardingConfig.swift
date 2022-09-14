@@ -16,5 +16,10 @@ class OnboardingConfig: ObservableObject {
     @Published var isDeviceShareMocked: Bool = false
     @Published var mockDeviceShare: String = ""
 
+    @Published var enterOTPResend: String = "30,40,60,90,120"
+    var enterOTPResendSteps: [Int] {
+        enterOTPResend.split(separator: ",").map { Int($0) ?? 30 }
+    }
+
     private init() {}
 }

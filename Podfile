@@ -86,7 +86,6 @@ target 'p2p_wallet' do
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
-  pod 'Charts'
   pod 'JazziconSwift', '~> 1.1.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'

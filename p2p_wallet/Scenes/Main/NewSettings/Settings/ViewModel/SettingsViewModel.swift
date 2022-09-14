@@ -85,7 +85,7 @@ final class SettingsViewModel: ObservableObject {
                     localizedReason: L10n.identifyYourself
                 )
                 Defaults.isBiometryEnabled.toggle()
-                analyticsManager.log(event: .settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
+                analyticsManager.log(event: AmplitudeEvent.settingsSecuritySelected(faceId: Defaults.isBiometryEnabled))
             } catch {
                 if let authError = error as? LAError, authError.errorCode == kLAErrorUserCancel {
                     return
@@ -115,17 +115,17 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func sendSignOutAnalytics() {
-        analyticsManager.log(event: .signOut(lastScreen: "Settings"))
+        analyticsManager.log(event: AmplitudeEvent.signOut(lastScreen: "Settings"))
     }
 
     func signOut() {
-        analyticsManager.log(event: .signedOut)
+        analyticsManager.log(event: AmplitudeEvent.signedOut)
         Task { try await userWalletManager.remove() }
     }
 
     private func toggleZeroBalancesVisibility() {
         Defaults.hideZeroBalances.toggle()
-        analyticsManager.log(event: .settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
+        analyticsManager.log(event: AmplitudeEvent.settingsHideBalancesClick(hide: Defaults.hideZeroBalances))
     }
 
     func updateNameIfNeeded() {

@@ -224,7 +224,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
 
     func navigate(to scene: SendToken.ChooseRecipientAndNetwork.SelectAddress.NavigatableScene) {
         if scene == .selectPayingWallet {
-            analyticsManager.log(event: .tokenListViewed(lastScreen: "Send", tokenListLocation: "Fee"))
+            analyticsManager.log(event: AmplitudeEvent.tokenListViewed(lastScreen: "Send", tokenListLocation: "Fee"))
         }
         navigationSubject.accept(scene)
     }

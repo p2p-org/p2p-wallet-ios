@@ -29,9 +29,9 @@ struct SettingsView: View {
                 securitySection
                 appearanceSection
                 appVersionSection
-                if Environment.current != .release {
+                #if !RELEASE
                     debugSection
-                }
+                #endif
             }
             .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
         }
@@ -136,17 +136,19 @@ struct SettingsView: View {
         }
     }
 
-    private var debugSection: some View {
-        Section {
-            Button(
-                action: { debugPresented.toggle() },
-                label: { cellView(image: UIImage(), title: "Debug Menu") }
-            )
+    #if !RELEASE
+        private var debugSection: some View {
+            Section {
+                Button(
+                    action: { debugPresented.toggle() },
+                    label: { cellView(image: UIImage(), title: "Debug Menu") }
+                )
+            }
+            .sheet(isPresented: $debugPresented) {
+                DebugMenuView(viewModel: .init())
+            }
         }
-        .sheet(isPresented: $debugPresented) {
-            DebugMenuView(viewModel: .init())
-        }
-    }
+    #endif
 
     private func cellView<Content: View>(image: UIImage, title: String, rightContent: () -> Content) -> some View {
         HStack(spacing: 8) {
