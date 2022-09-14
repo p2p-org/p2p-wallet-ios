@@ -946,4 +946,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Buying" = "Achat";
 "Coins to buy" = "Pièces à acheter";
 "Maximum transaction is %@" = "La transaction maximale est %@";
-"It’s a wrong seed phrase.\nCheck it and try again" = "C'est une phrase de départ erronée.\nVérifiez-la et réessayez";
+"The seed phrase doesn't match. Please try again" = "La phrase de départ ne correspond pas.  Veuillez réessayer";

@@ -67,7 +67,7 @@ extension DefaultsKeys {
     var shouldShowConfirmAlertOnSwap: DefaultsKey<Bool> { .init(#function, defaultValue: true) }
 
     var onboardingLastState: DefaultsKey<CreateWalletFlowState?> { .init(#function, defaultValue: nil) }
-    
+
     // Sepa Buy
     var buyLastPaymentMethod: DefaultsKey<PaymentType> {
         .init(#function, defaultValue: PaymentType.bank)
