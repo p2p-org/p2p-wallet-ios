@@ -949,4 +949,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Buying" = "Mua";
 "Coins to buy" = "Xu để mua";
 "Maximum transaction is %@" = "Giao dịch tối đa là %@";
-"It’s a wrong seed phrase.\nCheck it and try again" = "Đó là một cụm từ hạt giống sai. \n Hãy kiểm tra và thử lại";
+"The seed phrase doesn't match. Please try again" = "Cụm từ hạt giống không khớp.  Vui lòng thử lại";
