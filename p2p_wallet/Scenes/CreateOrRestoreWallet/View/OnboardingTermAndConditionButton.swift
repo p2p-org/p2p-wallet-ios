@@ -7,10 +7,11 @@ import SwiftUI
 
 struct OnboardingTermAndConditionButton: View {
     let onPressed: () -> Void
+    let isStart: Bool
 
     var body: some View {
         VStack(spacing: 2) {
-            Text(L10n.byContinuingYouAgreeToKeyAppS)
+            Text(isStart ? L10n.byContinuingYouAgreeToKeyAppS : L10n.keyAppS)
                 .styled(color: Asset.Colors.mountain, font: .label1)
             Text(L10n.capitalizedTermsAndConditions)
                 .styled(color: Asset.Colors.snow, font: .label1)
