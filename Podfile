@@ -81,7 +81,7 @@ target 'p2p_wallet' do
   else
     pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   end
-  
+
   pod 'Resolver'
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'
@@ -99,12 +99,13 @@ target 'p2p_wallet' do
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
   pod 'Firebase/RemoteConfig'
-  
+
   pod 'SwiftNotificationCenter'
   pod 'GoogleSignIn'
 
   # Others
   pod 'SwiftJWT'
+
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
