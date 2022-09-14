@@ -49,10 +49,12 @@ extension ChooseRestoreOptionView {
                             title: L10n.goToTheStartingScreen,
                             style: .outlineWhite,
                             size: .large,
-                            onPressed: { [weak viewModel] in viewModel?.openStart.send() }
+                            onPressed: { [weak viewModel] in
+                                guard viewModel?.isLoading == nil else { return }
+                                viewModel?.openStart.send()
+                            }
                         )
                             .styled()
-                            .disabled(viewModel.isLoading != nil)
                     }
                 }
             }
@@ -71,10 +73,12 @@ private extension ChooseRestoreOptionView {
             size: .large,
             leading: content.icon,
             isLoading: viewModel.isLoading == content.option,
-            onPressed: { [weak viewModel] in viewModel?.optionDidTap.send(content.option) }
+            onPressed: { [weak viewModel] in
+                guard viewModel?.isLoading == nil else { return }
+                viewModel?.optionDidTap.send(content.option)
+            }
         )
             .styled()
-            .disabled(viewModel.isLoading != nil && viewModel.isLoading != content.option)
     }
 }
 
