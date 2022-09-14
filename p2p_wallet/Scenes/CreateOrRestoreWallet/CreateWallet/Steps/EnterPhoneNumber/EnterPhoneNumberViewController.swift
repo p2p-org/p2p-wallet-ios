@@ -134,7 +134,6 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
     // MARK: -
 
     func configureNavBar() {
-        navigationItem.title = L10n.stepOf("2", "3")
         addLeftButton()
         // Right button
         let infoButton = UIButton()

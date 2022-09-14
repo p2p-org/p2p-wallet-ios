@@ -14,7 +14,6 @@ final class PincodeViewController: BaseViewController {
     init(viewModel: PincodeViewModel) {
         self.viewModel = viewModel
         super.init()
-        title = L10n.stepOf("3", "3")
     }
 
     override func viewWillAppear(_ animated: Bool) {
