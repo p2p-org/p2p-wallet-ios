@@ -168,7 +168,7 @@ extension SendToken {
             let network = networkSubject.value
 
             analyticsManager.log(
-                event: .sendSendClick(
+                event: AmplitudeEvent.sendSendClick(
                     tokenTicker: wallet.token.symbol,
                     sum: amount
                 )
@@ -238,7 +238,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
 
     func chooseWallet(_ wallet: Wallet) {
         analyticsManager.log(
-            event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
+            event: AmplitudeEvent.sendSelectTokenClick(tokenTicker: wallet.token.symbol)
         )
         walletSubject.accept(wallet)
 

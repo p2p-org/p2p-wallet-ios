@@ -867,9 +867,7 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "from another wallet or exchange" = "d'un autre portefeuille ou échange";
 "one crypto for another" = "une crypto pour une autre";
 "to phone number, username or address" = "au numéro de téléphone, nom d'utilisateur ou adresse";
-"one crypto for
-another" = "une crypto pour
- une autre";
+"one crypto for another" = "une crypto pourune autre";
 "one crypto for\nanother" = "un crypto pour\nun autre";
 "to username or address" = "au nom d'utilisateur ou à l'adresse";
 "Username" = "Nom d'utilisateur";
@@ -942,3 +940,10 @@ another" = "une crypto pour
 "Keep it private, even from us" = "Gardez-le privé, même de nous";
 "Your PIN was changed" = "Votre code PIN a été modifié";
 "It’s a wrong seed phrase.\nCheck it and try again" = "C'est une phrase de départ erronée.\nVérifiez-la et réessayez";
+"SOL purchase cost" = "Coût d'achat SOL";
+"Transaction details" = "Détails de la transaction";
+"Minimal transaction is %@" = "La transaction minimale est %@";
+"Method" = "Méthode";
+"Buying" = "Achat";
+"Coins to buy" = "Pièces à acheter";
+"Maximum transaction is %@" = "La transaction maximale est %@";
