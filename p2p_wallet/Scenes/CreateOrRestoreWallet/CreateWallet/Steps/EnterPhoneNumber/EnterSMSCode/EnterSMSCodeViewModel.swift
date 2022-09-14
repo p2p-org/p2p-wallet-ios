@@ -99,6 +99,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                         self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
                     case .youRequestOTPTooOften:
                         return
+                    case .retry:
+                        self.notificationService.showDefaultErrorNotification()
                     default:
                         self.showError(error: error)
                     }
