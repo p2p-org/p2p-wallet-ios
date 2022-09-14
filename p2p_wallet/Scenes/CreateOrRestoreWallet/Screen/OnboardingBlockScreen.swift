@@ -60,7 +60,7 @@ struct OnboardingBlockScreen: View {
                     }
                     .frame(height: TextButton.Size.large.height)
 
-                    OnboardingTermAndConditionButton(onPressed: onTermAndCondition)
+                    OnboardingTermAndConditionButton(onPressed: onTermAndCondition, isStart: false)
                         .padding(.top, 24)
                 }
             }
