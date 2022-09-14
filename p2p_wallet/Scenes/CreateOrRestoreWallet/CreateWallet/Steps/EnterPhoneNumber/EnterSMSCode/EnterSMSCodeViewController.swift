@@ -153,8 +153,6 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
     }
 
     func configureNavBar() {
-        navigationItem.title = L10n.stepOf("2", "3")
-
         // Left button
         let backButton = UIBarButtonItem(
             image: Asset.MaterialIcon.arrowBackIos.image,
