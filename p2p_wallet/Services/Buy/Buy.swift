@@ -12,18 +12,39 @@ struct Buy {
     typealias ExchangeService = BuyExchangeServiceType
     typealias Currency = BuyCurrencyType
 
-    enum FiatCurrency: BuyCurrencyType {
+    enum FiatCurrency: String, BuyCurrencyType, Equatable {
         case usd
+        case eur
+        case cny
+        case vnd
+        case rub
+        case gbp
 
         var name: String {
             switch self {
             case .usd:
                 return "USD"
+            case .eur:
+                return "EUR"
+            case .cny:
+                return "CNY"
+            case .vnd:
+                return "VND"
+            case .rub:
+                return "RUB"
+            case .gbp:
+                return "GBP"
             }
+        }
+
+        // MARK: - Equatable
+
+        static func == (lhs: Buy.FiatCurrency, rhs: Buy.CryptoCurrency) -> Bool {
+            lhs.name == rhs.name
         }
     }
 
-    enum CryptoCurrency: BuyCurrencyType {
+    enum CryptoCurrency: String, BuyCurrencyType, Equatable {
         case eth
         case sol
         case usdc
@@ -86,6 +107,12 @@ struct Buy {
                 .sol: PublicKey.wrappedSOLMint.base58EncodedString,
             ],
         ]
+
+        // MARK: - Equatable
+
+        static func == (lhs: Buy.FiatCurrency, rhs: Buy.CryptoCurrency) -> Bool {
+            lhs.name == rhs.name
+        }
     }
 
     struct ExchangeInput {
@@ -132,4 +159,12 @@ struct Buy {
 
 protocol BuyCurrencyType {
     var name: String { get }
+    func isEqualTo(_ other: BuyCurrencyType) -> Bool
+}
+
+extension BuyCurrencyType where Self: Equatable {
+    func isEqualTo(_ other: BuyCurrencyType) -> Bool {
+        guard let otherX = other as? Self else { return false }
+        return self == otherX
+    }
 }

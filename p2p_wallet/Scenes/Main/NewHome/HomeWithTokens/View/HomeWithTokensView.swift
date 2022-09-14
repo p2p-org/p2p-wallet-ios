@@ -21,7 +21,7 @@ struct HomeWithTokensView: View {
 
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
-        analyticsManager.log(event: .mainScreenWalletsOpen)
+        analyticsManager.log(event: AmplitudeEvent.mainScreenWalletsOpen)
         UITableView.appearance().showsVerticalScrollIndicator = false
     }
 
@@ -152,7 +152,7 @@ struct HomeWithTokensView: View {
     }
 
     private func tokenCell(wallet: Wallet) -> some View {
-        TokenCellView(wallet: wallet)
+        TokenCellView(item: TokenCellViewItem(wallet: wallet))
             .frame(height: 72)
             .onTapGesture {
                 viewModel.tokenClicked(wallet: wallet)
@@ -160,7 +160,7 @@ struct HomeWithTokensView: View {
     }
 
     private func swipeTokenCell(isVisible: Bool, wallet: Wallet) -> some View {
-        TokenCellView(wallet: wallet)
+        TokenCellView(item: TokenCellViewItem(wallet: wallet))
             .swipeActions(isVisible: isVisible, currentUserInteractionCellID: $currentUserInteractionCellID, action: {
                 withAnimation {
                     viewModel.toggleTokenVisibility(wallet: wallet)

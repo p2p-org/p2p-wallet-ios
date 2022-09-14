@@ -37,6 +37,7 @@ struct DebugMenuView: View {
                     TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
                     TextFieldRow(title: "Google:", content: $onboardingConfig.torusGoogleVerifier)
                     TextFieldRow(title: "Apple", content: $onboardingConfig.torusAppleVerifier)
+                    TextFieldRow(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
                 }
 
                 Section(header: Text("Mocked device share")) {

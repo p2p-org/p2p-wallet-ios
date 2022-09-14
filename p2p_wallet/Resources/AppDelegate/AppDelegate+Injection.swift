@@ -343,6 +343,10 @@ extension Resolver: ResolverRegistering {
             .implements(Buy.ExchangeService.self)
             .scope(.session)
 
+        register { MoonpayExchange(provider: resolve()) }
+            .implements(BuyExchangeService.self)
+            .scope(.session)
+
         // Banner
         register {
             BannerServiceImpl(handlers: [

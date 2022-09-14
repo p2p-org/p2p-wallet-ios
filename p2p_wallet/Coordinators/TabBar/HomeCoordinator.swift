@@ -59,8 +59,8 @@ final class HomeCoordinator: Coordinator<Void> {
             .sink(receiveValue: { [unowned self] in
                 let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
                 coordinate(to: coordinator)
-                analyticsManager.log(event: .mainScreenReceiveOpen)
-                analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
+                analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
+                analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
             })
             .store(in: &subscriptions)
         viewModel.errorShow
@@ -76,19 +76,32 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        emptyVMOutput.topUpShow
+        Publishers.Merge(emptyVMOutput.topUpShow, tokensViewModel.buyShow)
+            .filter { !available(.buyScenarioEnabled) }
             .sink(receiveValue: { [unowned self] in
                 presentBuyView()
             })
             .store(in: &subscriptions)
+
         emptyVMOutput.topUpCoinShow
             .sink(receiveValue: { [unowned self] in
-                let coordinator = BuyPreparingCoordinator(
-                    navigationController: navigationController,
-                    strategy: .show,
-                    crypto: $0
-                )
+                let coordinator: Coordinator<Void>
+                if available(.buyScenarioEnabled) {
+                    coordinator = BuyCoordinator(
+                        navigationController: navigationController,
+                        context: .fromHome,
+                        defaultToken: $0
+                    )
+                } else {
+                    coordinator = BuyPreparingCoordinator(
+                        navigationController: navigationController,
+                        strategy: .show,
+                        crypto: $0
+                    )
+                }
                 coordinate(to: coordinator)
+                    .sink { _ in }
+                    .store(in: &subscriptions)
             })
             .store(in: &subscriptions)
         emptyVMOutput.receiveRenBtcShow
@@ -97,11 +110,13 @@ final class HomeCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
-        tokensViewModel.buyShow
-            .sink(receiveValue: { [unowned self] in
-                presentBuyView()
+        Publishers.Merge(tokensViewModel.buyShow, emptyVMOutput.topUpShow)
+            .filter { available(.buyScenarioEnabled) }
+            .sink(receiveValue: { [unowned self] _ in
+                coordinate(to: BuyCoordinator(navigationController: navigationController, context: .fromHome))
             })
             .store(in: &subscriptions)
+
         tokensViewModel.receiveShow
             .sink(receiveValue: { [unowned self] in
                 openReceiveScreen(pubKey: $0)
@@ -166,8 +181,8 @@ final class HomeCoordinator: Coordinator<Void> {
     private func openReceiveScreen(pubKey: PublicKey) {
         let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubKey)
         coordinate(to: coordinator)
-        analyticsManager.log(event: .mainScreenReceiveOpen)
-        analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
+        analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
+        analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
     }
 
     private func sendToken(pubKey: String? = nil) async -> Bool {
@@ -180,8 +195,8 @@ final class HomeCoordinator: Coordinator<Void> {
             viewModel: vm,
             navigationController: navigationController
         )
-        analyticsManager.log(event: .mainScreenSendOpen)
-        analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
+        analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
+        analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
 
         return await withCheckedContinuation { continuation in
             sendCoordinator?.doneHandler = { [unowned self] in
@@ -198,8 +213,8 @@ final class HomeCoordinator: Coordinator<Void> {
     private func showTrade() async -> Bool {
         let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
         let vc = OrcaSwapV2.ViewController(viewModel: vm)
-        analyticsManager.log(event: .mainScreenSwapOpen)
-        analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
+        analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
+        analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
 
         return await withCheckedContinuation { continuation in
             vc.doneHandler = { [unowned self] in
@@ -214,7 +229,7 @@ final class HomeCoordinator: Coordinator<Void> {
     }
 
     private func walletDetail(pubKey: String, tokenSymbol: String) async -> Bool {
-        analyticsManager.log(event: .mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
+        analyticsManager.log(event: AmplitudeEvent.mainScreenTokenDetailsOpen(tokenTicker: tokenSymbol))
         let vm = WalletDetail.ViewModel(pubkey: pubKey, symbol: tokenSymbol)
         let vc = WalletDetail.ViewController(viewModel: vm)
 
