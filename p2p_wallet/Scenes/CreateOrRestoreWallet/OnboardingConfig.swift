@@ -8,7 +8,6 @@ import Foundation
 class OnboardingConfig: ObservableObject {
     static let shared = OnboardingConfig()
 
-    @Published var metaDataEndpoint: String = String.secretConfig("META_DATA_ENDPOINT") ?? ""
     @Published var torusEndpoint: String = String.secretConfig("TORUS_ENDPOINT") ?? ""
     @Published var torusGoogleVerifier: String = String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? ""
     @Published var torusAppleVerifier: String = String.secretConfig("TORUS_APPLE_VERIFIER") ?? ""
