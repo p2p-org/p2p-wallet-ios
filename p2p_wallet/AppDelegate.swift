@@ -37,7 +37,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
         // TODO: - Swizzle localization later
-        // Bundle.swizzleLocalization()
+//        Bundle.swizzleLocalization()
         IntercomStartingConfigurator().configure()
 
         setupNavigationAppearance()
@@ -50,10 +50,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SentrySDK.start { options in
             options
                 .dsn = .secretConfig("SENTRY_DSN")
+            options.tracesSampleRate = 1.0
             #if DEBUG
                 options.debug = true
+                options.tracesSampleRate = 0.0
             #endif
-            options.tracesSampleRate = 1.0
             options.enableNetworkTracking = true
             options.enableOutOfMemoryTracking = true
         }
@@ -119,7 +120,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
         FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
         KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
-
         DefaultLogManager.shared.setProviders(loggers)
     }
 

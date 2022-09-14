@@ -107,7 +107,7 @@ class AppCoordinator: Coordinator<Void> {
                 let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
                 case let .created(data):
-                    analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
+                    analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
 
                     try await userWalletManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),

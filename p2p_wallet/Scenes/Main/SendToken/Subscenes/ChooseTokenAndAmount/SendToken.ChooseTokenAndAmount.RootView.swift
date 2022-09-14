@@ -192,7 +192,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .withLatestFrom(amountTextField.rx.text)
                 .subscribe(onNext: { [weak self] amount in
                     guard let amount = amount?.double else { return }
-                    self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
+                    self?.analyticsManager.log(event: AmplitudeEvent.sendAmountKeydown(sum: amount))
                 })
                 .disposed(by: disposeBag)
 

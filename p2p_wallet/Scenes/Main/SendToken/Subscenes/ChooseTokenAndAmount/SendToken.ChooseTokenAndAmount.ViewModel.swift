@@ -128,7 +128,9 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
 
     func navigate(to scene: SendToken.ChooseTokenAndAmount.NavigatableScene) {
         if scene == .chooseWallet {
-            analyticsManager.log(event: .tokenListViewed(lastScreen: "Send", tokenListLocation: "Token_A"))
+            analyticsManager.log(event: AmplitudeEvent.tokenListViewed(
+                lastScreen: "Send", tokenListLocation: "Token_A"
+            ))
         }
         navigationSubject.accept(scene)
     }
