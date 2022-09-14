@@ -62,10 +62,12 @@ extension StartView {
                 .styled()
                 .padding(.top, 12)
 
-                OnboardingTermAndConditionButton { [weak viewModel] in
-                    viewModel?.termsDidTap.send()
-                }
-                .padding(.top, 24)
+                OnboardingTermAndConditionButton(
+                    onPressed: { [weak viewModel] in
+                        viewModel?.termsDidTap.send()
+                    },
+                    isStart: true
+                ).padding(.top, 24)
             }
         }
     }
