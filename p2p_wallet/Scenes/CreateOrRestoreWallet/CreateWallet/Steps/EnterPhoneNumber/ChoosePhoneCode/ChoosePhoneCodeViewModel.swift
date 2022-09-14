@@ -1,14 +1,8 @@
-//
-//  ChoosePhoneCodeViewModel.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 21/07/2022.
-//
-
 import BECollectionView_Combine
 import Combine
 import CountriesAPI
 import Foundation
+import PhoneNumberKit
 
 final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     // MARK: - Dependencies

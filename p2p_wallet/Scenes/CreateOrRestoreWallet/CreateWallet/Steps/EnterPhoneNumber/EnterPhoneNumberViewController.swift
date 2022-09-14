@@ -70,11 +70,10 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
             ).padding(.init(only: .top, inset: 19))
             UIView(height: 32)
             PhoneTextField(
-                leftText: "🇦🇷",
+                leftText: viewModel.selectedCountry.emoji ?? "",
                 onLeftTap: {
                     self.viewModel.selectCountryTap()
-                },
-                constantPlaceholder: "+44 7400 123456"
+                }
             ).bind(phoneInputRef)
         }
     }
@@ -175,15 +174,15 @@ class PhoneTextField: BaseTextFieldView {
 
     // MARK: -
 
-    init(leftText: String, onLeftTap: (() -> Void)?, constantPlaceholder placeholder: String) {
+    init(leftText: String, onLeftTap: (() -> Void)?) {
         super.init(leftView: nil, rightView: nil, isBig: true)
-        constantPlaceholder = placeholder
         countryEmoji = leftText
         leftView = inputLeftView()
         leftView?.onTap(onLeftTap ?? {})
         leftViewMode = .always
         textField?.keyboardType = .phonePad
         textField?.text = "+"
+        textField?.font = UIFont.font(of: .title1, weight: .bold)
     }
 
     @available(*, unavailable)
