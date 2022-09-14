@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import CountriesAPI
 import FeeRelayerSwift
 import NameService
 import Onboarding
@@ -16,7 +17,6 @@ import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
 import SwiftyUserDefaults
-import CountriesAPI
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
