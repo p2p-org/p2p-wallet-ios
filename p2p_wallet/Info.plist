@@ -59,8 +59,6 @@
 	<string>$(GOOGLE_SIGN_IN_ID_RELEASE)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>META_DATA_ENDPOINT</key>
-	<string>$(META_DATA_ENDPOINT)</string>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
 	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
 	<key>MOONPAY_STAGING_API_KEY</key>

@@ -33,7 +33,6 @@ struct DebugMenuView: View {
                 }
 
                 Section(header: Text("Onboarding configurations")) {
-                    TextFieldRow(title: "Metadata:", content: $onboardingConfig.metaDataEndpoint)
                     TextFieldRow(title: "Torus:", content: $onboardingConfig.torusEndpoint)
                     TextFieldRow(title: "Google:", content: $onboardingConfig.torusGoogleVerifier)
                     TextFieldRow(title: "Apple", content: $onboardingConfig.torusAppleVerifier)
