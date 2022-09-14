@@ -12,7 +12,6 @@ final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
             TKeyJSFacade(
                 wkWebView: GlobalWebView.requestWebView(),
                 config: .init(
-                    metadataEndpoint: OnboardingConfig.shared.metaDataEndpoint,
                     torusEndpoint: OnboardingConfig.shared.torusEndpoint,
                     torusNetwork: "testnet",
                     torusVerifierMapping: [
