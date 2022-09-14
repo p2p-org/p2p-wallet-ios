@@ -938,6 +938,7 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Your seed phrase must never be shared." = "Votre phrase de départ ne doit jamais être partagée.";
 "Keep it private, even from us" = "Gardez-le privé, même de nous";
 "Your PIN was changed" = "Votre code PIN a été modifié";
+"Try with account or use an another phone number" = "Essayez avec un compte ou utilisez un autre numéro de téléphone";
 "SOL purchase cost" = "Coût d'achat SOL";
 "Transaction details" = "Détails de la transaction";
 "Minimal transaction is %@" = "La transaction minimale est %@";

@@ -941,6 +941,7 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Your seed phrase must never be shared." = "Cụm từ hạt giống của bạn không bao giờ được chia sẻ.";
 "Keep it private, even from us" = "Giữ nó ở chế độ riêng tư, ngay cả với chúng tôi";
 "Your PIN was changed" = "Mã PIN của bạn đã được thay đổi";
+"Try with account or use an another phone number" = "Thử bằng tài khoản hoặc sử dụng một số điện thoại khác";
 "SOL purchase cost" = "Chi phí mua SOL";
 "Transaction details" = "Chi tiết giao dịch";
 "Minimal transaction is %@" = "Giao dịch tối thiểu là %@";
