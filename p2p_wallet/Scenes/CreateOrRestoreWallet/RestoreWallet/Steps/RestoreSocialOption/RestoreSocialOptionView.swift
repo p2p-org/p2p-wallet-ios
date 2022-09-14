@@ -14,10 +14,10 @@ struct RestoreSocialOptionView: View {
                 leading: .appleLogo,
                 isLoading: viewModel.isLoading == .apple
             ) { [weak viewModel] in
-                guard viewModel.isLoading == nil else { return }
+                guard viewModel?.isLoading == nil else { return }
                 viewModel?.optionDidTap.send(.apple)
             }
-                .styled()
+            .styled()
             TextButtonView(
                 title: L10n.continueWithGoogle,
                 style: .inverted,
@@ -25,10 +25,10 @@ struct RestoreSocialOptionView: View {
                 leading: .google,
                 isLoading: viewModel.isLoading == .google
             ) { [weak viewModel] in
-                guard viewModel.isLoading == nil else { return }
+                guard viewModel?.isLoading == nil else { return }
                 viewModel?.optionDidTap.send(.google)
             }
-                .styled()
+            .styled()
         }
     }
 }
