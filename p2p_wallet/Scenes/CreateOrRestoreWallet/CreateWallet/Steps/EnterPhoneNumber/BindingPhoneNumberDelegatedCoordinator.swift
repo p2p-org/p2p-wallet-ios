@@ -12,8 +12,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
         case let .enterPhoneNumber(initialPhoneNumber, _, _):
-            let mv = EnterPhoneNumberViewModel(isBackAvailable: false)
-            mv.phone = initialPhoneNumber
+            let mv = EnterPhoneNumberViewModel(phone: initialPhoneNumber, isBackAvailable: false)
             let vc = EnterPhoneNumberViewController(viewModel: mv)
 
             mv.coordinatorIO.selectCode.sinkAsync { [weak self] code in

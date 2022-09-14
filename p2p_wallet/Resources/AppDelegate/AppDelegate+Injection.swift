@@ -16,6 +16,7 @@ import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
 import SwiftyUserDefaults
+import CountriesAPI
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -81,6 +82,10 @@ extension Resolver: ResolverRegistering {
 
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
+            .scope(.application)
+
+        register { CountriesAPIImpl() }
+            .implements(CountriesAPI.self)
             .scope(.application)
 
         register { NotificationRepositoryImpl() }
