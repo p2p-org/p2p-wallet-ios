@@ -7,7 +7,13 @@ import Reachability
 import Resolver
 
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
-    private static let defaultConstantPlaceholder = "+44 7400 123456"
+    private static let defaultCountry = Country(
+        name: L10n.sorryWeDonTKnowASuchCountry,
+        dialCode: "",
+        code: "",
+        emoji: "🏴"
+    )
+
     private var cancellable = Set<AnyCancellable>()
     private lazy var phoneNumberKit = PhoneNumberKit()
     private lazy var partialFormatter: PartialFormatter = .init(
@@ -19,6 +25,9 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     @Injected private var reachability: Reachability
     @Injected private var notificationService: NotificationService
+    @Injected private var countriesAPI: CountriesAPI
+
+    // MARK: -
 
     @Published public var phone: String?
     @Published public var flag: String = ""
@@ -26,7 +35,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     @Published public var isButtonEnabled: Bool = false
     @Published public var isLoading: Bool = false
     @Published public var inputError: String?
-    @Published public var selectedCountry: Country?
+    @Published public var selectedCountry: Country = EnterPhoneNumberViewModel.defaultCountry
 
     let isBackAvailable: Bool
 
@@ -40,15 +49,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     func selectCountryTap() {
-        if let selectedCountry = selectedCountry {
-            coordinatorIO.selectCode.send(selectedCountry.code)
-        } else if
-            let number = phone,
-            let phoneNumber = exampleNumberWith(phone: number),
-            let regionId = phoneNumber.regionID
-        {
-            coordinatorIO.selectCode.send(regionId)
-        }
+        coordinatorIO.selectCode.send(selectedCountry.code)
     }
 
     @MainActor
@@ -72,15 +73,31 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     var coordinatorIO: CoordinatorIO = .init()
 
-    init(isBackAvailable: Bool) {
+    init(phone: String? = nil, isBackAvailable: Bool) {
         self.isBackAvailable = isBackAvailable
         super.init()
+
+        Task {
+            let countries = try await countriesAPI.fetchCountries()
+            if let phone {
+                // In case we have an initial phone number
+                let parsedRegion = try? self.phoneNumberKit.parse(phone).regionID
+                self.selectedCountry = countries.first(where: { country in
+                    country.code == parsedRegion ?? PhoneNumberKit.defaultRegionCode()
+                }) ?? countries.first ?? EnterPhoneNumberViewModel.defaultCountry
+                self.phone = phone
+            } else {
+                self.selectedCountry = countries.first(where: { country in
+                    country.code == PhoneNumberKit.defaultRegionCode()
+                }) ?? countries.first ?? EnterPhoneNumberViewModel.defaultCountry
+            }
+        }
+
         bind()
     }
 
     func bind() {
-        coordinatorIO
-            .error
+        coordinatorIO.error
             .receive(on: RunLoop.main)
             .sinkAsync { error in
                 if let serviceError = error as? APIGatewayError {
@@ -101,21 +118,22 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .store(in: &subscriptions)
 
         Publishers.MergeMany(
-            $phone.removeDuplicates()
-                .debounce(for: 0.0, scheduler: DispatchQueue.main)
-                .map {
-                    guard let exampleNumber = self.exampleNumberWith(phone: $0 ?? "") else {
-                        return Self.defaultConstantPlaceholder
+            $phone.debounce(for: 0.0, scheduler: DispatchQueue.main)
+                .removeDuplicates()
+                .scan("") {
+                    if self.clearedPhoneString(phone: $1 ?? "").starts(with: self.selectedCountry.dialCode) == true {
+                        guard let exampleNumber = self.exampleNumberWith(phone: $0) else {
+                            return $1 ?? ""
+                        }
+                        let formattedExample = self.phoneNumberKit.format(exampleNumber, toType: .international)
+                            .replacingOccurrences(of: "[0-9]", with: "X", options: .regularExpression)
+                            .replacingOccurrences(of: "-", with: " ")
+                        return Self.format(with: formattedExample, phone: $1 ?? "")
+                    } else {
+                        return $0
                     }
-                    let formatted = self.phoneNumberKit.format(exampleNumber, toType: .international)
-                    let newFormatted = formatted
-                        .replacingOccurrences(of: "[0-9]", with: "X", options: .regularExpression)
-                        .replacingOccurrences(of: "-", with: " ")
-                    guard $0 != nil else {
-                        return Self.format(with: newFormatted, phone: String(exampleNumber.countryCode))
-                    }
-                    return Self.format(with: newFormatted, phone: $0 ?? "")
                 }
+                .compactMap { $0 }
                 .eraseToAnyPublisher(),
             coordinatorIO.countrySelected
                 .compactMap { $0?.dialCode }
@@ -124,56 +142,35 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .assign(to: \.phone, on: self)
             .store(in: &cancellable)
 
-        $phone.removeDuplicates().filter { $0 != nil }.sink { phone in
-            guard let exampleNumber = self.exampleNumberWith(phone: phone ?? "") else { return }
-            let countryCode = "\(exampleNumber.countryCode)"
-
-            var country = ""
-            if let parsed = try? self.phoneNumberKit.parse(countryCode, ignoreType: true) {
-                country = parsed.regionID ?? self.partialFormatter.currentRegion
-            } else {
-                _ = self.partialFormatter.nationalNumber(from: countryCode)
-                country = self.partialFormatter.currentRegion
-            }
-            self.flag = Self.getFlag(from: country)
-
-            self.showInputError(error: !self.flag.isEmpty ? nil : L10n.sorryWeDonTKnowASuchCountry)
-
-            if self.flag.isEmpty {
-                self.flag = "🏴"
-            }
-        }.store(in: &cancellable)
-
-        coordinatorIO.countrySelected
-            .compactMap { $0?.emoji }
-            .debounce(for: .seconds(0.01), scheduler: DispatchQueue.main)
+        $selectedCountry.debounce(for: .seconds(0.01), scheduler: DispatchQueue.main)
+            .compactMap(\.emoji)
             .assign(to: \.flag, on: self)
             .store(in: &cancellable)
 
-        Publishers.MergeMany(
-            coordinatorIO.countrySelected.map { $0?.dialCode }.eraseToAnyPublisher(),
-            $phone.removeDuplicates().eraseToAnyPublisher()
-        ).map { vv -> String in
-            _ = self.partialFormatter.nationalNumber(from: vv ?? "")
-            let country = self.partialFormatter.currentRegion
-            guard let number = self.phoneNumberKit.getExampleNumber(forCountry: country) else {
-                return Self.defaultConstantPlaceholder
-            }
-            return self.phoneNumberKit
-                .format(number, toType: .international)
-                .replacingOccurrences(of: "-", with: " ")
-        }
-        .assign(to: \.phonePlaceholder, on: self)
-        .store(in: &cancellable)
+        $selectedCountry
+            .map(\.dialCode)
+            .compactMap { $0 }
+            .assign(to: \.phone, on: self)
+            .store(in: &cancellable)
 
-        $phone.removeDuplicates().map { [weak self] in
-            (try? self?.phoneNumberKit.parse($0 ?? "", ignoreType: true)) != nil
-        }
-        .assign(to: \.isButtonEnabled, on: self)
-        .store(in: &cancellable)
+        $phone.removeDuplicates()
+            .compactMap { $0 }
+            .map { [weak self] in
+                guard let self else { return false }
+                let phones = self.phoneNumberKit.parse(
+                    [$0],
+                    withRegion: self.selectedCountry.code,
+                    ignoreType: false,
+                    shouldReturnFailedEmptyNumbers: false
+                )
+                return !phones.isEmpty
+            }
+            .assign(to: \.isButtonEnabled, on: self)
+            .store(in: &cancellable)
 
         coordinatorIO.countrySelected
             .eraseToAnyPublisher()
+            .compactMap { $0 }
             .assign(to: \.selectedCountry, on: self)
             .store(in: &cancellable)
     }
@@ -189,15 +186,6 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     // MARK: -
-
-    static func getFlag(from countryCode: String) -> String {
-        countryCode
-            .unicodeScalars
-            .map { 127_397 + $0.value }
-            .compactMap(UnicodeScalar.init)
-            .map(String.init)
-            .joined()
-    }
 
     static func format(with mask: String, phone: String) -> String {
         if phone == "+" { return phone }

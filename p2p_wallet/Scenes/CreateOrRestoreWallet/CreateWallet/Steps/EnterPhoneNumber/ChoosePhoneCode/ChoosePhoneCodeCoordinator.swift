@@ -1,10 +1,3 @@
-//
-//  ChoosePhoneCodeCoordinator.swift
-//  p2p_wallet
-//
-//  Created by Chung Tran on 22/07/2022.
-//
-
 import Combine
 import CountriesAPI
 import Foundation
