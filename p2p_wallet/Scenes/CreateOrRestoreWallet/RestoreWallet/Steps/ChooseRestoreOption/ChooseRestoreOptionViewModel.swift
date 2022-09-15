@@ -26,6 +26,10 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
     let isBackAvailable: Bool
     let isStartAvailable: Bool
 
+    var buttonsCount: Int {
+        mainButtons.count + secondaryButtons.count + (isStartAvailable ? 1 : 0)
+    }
+
     init(parameters: ChooseRestoreOptionParameters) {
         options = parameters.options
         data = parameters.content
