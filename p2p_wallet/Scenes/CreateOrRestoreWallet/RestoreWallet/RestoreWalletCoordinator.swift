@@ -110,11 +110,14 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
                 self.result.send(.success(wallet))
             case .breakProcess:
                 self.result.send(.start)
+                self.navigationController.dismiss(animated: true)
             case .needHelp:
                 self.result.send(.help)
+                self.navigationController.dismiss(animated: true)
             }
-            self.navigationController.dismiss(animated: true)
             self.result.send(completion: .finished)
+
+            return
         }
 
         // TODO: Add empty screen

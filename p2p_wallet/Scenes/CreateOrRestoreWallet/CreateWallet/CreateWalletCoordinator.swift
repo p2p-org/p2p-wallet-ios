@@ -101,7 +101,6 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
                 self.result.send(.restore(socialProvider: socialProvider, email: email))
             case let .newWallet(onboardingWallet):
                 self.result.send(.success(onboardingWallet))
-                self.navigationController.dismiss(animated: true)
             case .breakProcess:
                 self.navigationController.dismiss(animated: true)
             }
