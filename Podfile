@@ -72,7 +72,7 @@ target 'p2p_wallet' do
   # kits
   pod 'KeychainSwift', '~> 19.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
-  pod 'Intercom'
+  pod 'Intercom', '~> 12.4.3'
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
@@ -81,12 +81,11 @@ target 'p2p_wallet' do
   else
     pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   end
-  
+
   pod 'Resolver'
   pod 'TagListView', '~> 1.0'
   pod 'UITextView+Placeholder'
   pod 'SubviewAttachingTextView'
-  pod 'Charts'
   pod 'JazziconSwift', '~> 1.1.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
@@ -100,12 +99,13 @@ target 'p2p_wallet' do
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
   pod 'Firebase/RemoteConfig'
-  
+
   pod 'SwiftNotificationCenter'
   pod 'GoogleSignIn'
 
   # Others
   pod 'SwiftJWT'
+
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'

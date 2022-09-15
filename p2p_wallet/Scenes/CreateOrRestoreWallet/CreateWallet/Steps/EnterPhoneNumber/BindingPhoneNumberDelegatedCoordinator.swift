@@ -14,6 +14,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         case let .enterPhoneNumber(initialPhoneNumber, _, _):
             let mv = EnterPhoneNumberViewModel(phone: initialPhoneNumber, isBackAvailable: false)
             let vc = EnterPhoneNumberViewController(viewModel: mv)
+            vc.title = L10n.stepOf("2", "3")
 
             mv.coordinatorIO.selectCode.sinkAsync { [weak self] code in
                 guard let result = try await self?.selectCountry(selectedCountryCode: code)
@@ -35,6 +36,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
         case let .enterOTP(_, _, phoneNumber, _):
             let vm = EnterSMSCodeViewModel(phone: phoneNumber)
             let vc = EnterSMSCodeViewController(viewModel: vm)
+            vc.title = L10n.stepOf("2", "3")
 
             vm.coordinatorIO.onConfirm.sinkAsync { [weak vm, stateMachine] opt in
                 vm?.isLoading = true

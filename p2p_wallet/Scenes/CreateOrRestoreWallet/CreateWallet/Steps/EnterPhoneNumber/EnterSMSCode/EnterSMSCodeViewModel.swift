@@ -7,12 +7,9 @@ import Reachability
 import Resolver
 import SwiftyUserDefaults
 
-let EnterSMSCodeCountdownLegs = [2, 3, 4, 5, 6]
-
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
-    private let countdownSteps = EnterSMSCodeCountdownLegs
     private static var phoneSteps = [String: Int]()
 
     private var cancellable = Set<AnyCancellable>()
@@ -55,8 +52,10 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         coordinatorIO.onResend.send()
 
         // Setup timer
-        countdown = countdownSteps[Self.phoneSteps[phone] ?? 0]
-        Self.phoneSteps[phone] = min(EnterSMSCodeCountdownLegs.count - 1, (Self.phoneSteps[phone] ?? 0) + 1)
+        countdown = OnboardingConfig.shared.enterOTPResendSteps[Self.phoneSteps[phone] ?? 0]
+        Self
+            .phoneSteps[phone] = min(OnboardingConfig.shared.enterOTPResendSteps.count - 1,
+                                     (Self.phoneSteps[phone] ?? 0) + 1)
         timer?.invalidate()
         startTimer()
         setResendCountdown()
@@ -78,7 +77,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     init(phone: String) {
         self.phone = phone
-        countdown = countdownSteps[Self.phoneSteps[phone] ?? 0]
+        countdown = OnboardingConfig.shared.enterOTPResendSteps[Self.phoneSteps[phone] ?? 0]
 
         super.init()
 
@@ -100,6 +99,8 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                         self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
                     case .youRequestOTPTooOften:
                         return
+                    case .retry:
+                        self.notificationService.showDefaultErrorNotification()
                     default:
                         self.showError(error: error)
                     }
