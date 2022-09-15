@@ -8,7 +8,7 @@ class BaseOTPViewModel: BaseViewModel {
 
     @MainActor
     internal func showError(error: Error?) {
-        var errorText = error?.readableDescription
+        var errorText = L10n.SomethingWentWrong.pleaseTryAgain
         if let error = error as? APIGatewayError {
             switch error {
             case .wait10Min:
@@ -29,28 +29,20 @@ class BaseOTPViewModel: BaseViewModel {
                 errorText = L10n.everythingIsBroken
             case .retry:
                 errorText = L10n.pleaseRetryOperation
-            case .changePhone:
-                errorText = L10n.SMSWillNotBeDelivered.pleaseChangePhoneNumber
             case .alreadyConfirmed:
                 errorText = L10n.ThisPhoneHasAlreadyBeenConfirmed.changePhoneNumber
-            case .callNotPermit:
-                errorText = L10n.CallNotPermit.UseSms.mayBeItHelps
-            case .publicKeyExists:
-                errorText = L10n.pubkeySolanaAlreadyExists
             case .publicKeyAndPhoneExists:
-                errorText = L10n.pubkeySolanaAndPhoneNumberAlreadyExists
+                errorText = L10n.ThisPhoneHasAlreadyBeenConfirmed.changePhoneNumber
             case .invalidOTP:
                 errorText = L10n.InvalidValueOfOTP.pleaseTryAgainToInputCorrectValueOfOTP
             case .youRequestOTPTooOften:
                 errorText = L10n.YouRequestOTPTooOften.tryLater
             default:
-                errorText = error.localizedDescription
+                errorText = L10n.SomethingWentWrong.pleaseTryAgain
             }
         }
         self.error = errorText
 
-        if let errorText = errorText {
-            DefaultLogManager.shared.log(event: "Enter SMS: \(errorText)", logLevel: .error)
-        }
+        DefaultLogManager.shared.log(event: "Enter SMS: \(error?.readableDescription ?? errorText)", logLevel: .error)
     }
 }
