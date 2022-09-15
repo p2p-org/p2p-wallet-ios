@@ -175,8 +175,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .store(in: &cancellable)
     }
 
-    func exampleNumberWith(phone: String) -> PhoneNumber? {
-        _ = partialFormatter.nationalNumber(from: phone)
+    func exampleNumberWith(phone: String? = "") -> PhoneNumber? {
+        _ = partialFormatter.nationalNumber(from: phone ?? "")
         let country = partialFormatter.currentRegion
         return phoneNumberKit.getExampleNumber(forCountry: country)
     }
