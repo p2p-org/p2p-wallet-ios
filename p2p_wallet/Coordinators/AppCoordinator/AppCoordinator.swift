@@ -142,7 +142,7 @@ class AppCoordinator: Coordinator<Void> {
 
     private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
         window?.rootViewController?.view.hideLoadingIndicatorView()
-        window?.rootViewController = vc
+        window?.animate(newRootViewController: vc)
     }
 }
 
