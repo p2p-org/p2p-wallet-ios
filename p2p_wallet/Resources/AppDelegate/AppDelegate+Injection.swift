@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import CountriesAPI
 import FeeRelayerSwift
 import NameService
 import Onboarding
@@ -81,6 +82,10 @@ extension Resolver: ResolverRegistering {
 
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
+            .scope(.application)
+
+        register { CountriesAPIImpl() }
+            .implements(CountriesAPI.self)
             .scope(.application)
 
         register { NotificationRepositoryImpl() }
