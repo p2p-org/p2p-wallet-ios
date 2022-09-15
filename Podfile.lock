@@ -119,10 +119,10 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
-  - GoogleSignIn (6.2.3):
+  - GoogleSignIn (6.2.4):
     - AppAuth (~> 1.5)
     - GTMAppAuth (~> 1.3)
-    - GTMSessionFetcher/Core (~> 1.1)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.1)
   - GoogleUtilities/AppDelegateSwizzler (7.8.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -146,7 +146,7 @@ PODS:
   - GTMAppAuth (1.3.1):
     - AppAuth/Core (~> 1.6)
     - GTMSessionFetcher/Core (< 3.0, >= 1.5)
-  - GTMSessionFetcher/Core (1.7.2)
+  - GTMSessionFetcher/Core (2.1.0)
   - Intercom (12.4.3)
   - Introspect (0.1.4)
   - JazziconSwift (1.1.0)
@@ -434,7 +434,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -452,10 +452,10 @@ CHECKOUT OPTIONS:
     :commit: de09fedfb7a9c5ab4effbdb4df284229c60f72db
     :git: https://github.com/weitieda/bottom-sheet.git
   Cache:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -464,10 +464,10 @@ CHECKOUT OPTIONS:
     :commit: 1a308c51278b2e877d183b9b6d679fe2b2ae7db5
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: 2a39b0cc837e37dd39c4a507f9dc1981612e0902
@@ -476,10 +476,10 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -494,13 +494,13 @@ CHECKOUT OPTIONS:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: 72f1a7887b64b68f7430c06abca1b379f1738609
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: c21751f5268ca6ee7c09061d123dc646027a0b12
+    :commit: f943b06f64714a7fd77aee30e07700702a569662
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -533,11 +533,11 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfig: ee09d77a7d7c7e31da6a0d1cf956cd611c85609c
   GoogleAppMeasurement: 6de2b1a69e4326eb82ee05d138f6a5cb7311bcb1
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
-  GoogleSignIn: f4d3939cc0d9264d7509c4b9a924a6c987e30b54
+  GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
   GT3Captcha-iOS: c57d863e89065712f3a515b0814edb22e0ca6eca
   GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
-  GTMSessionFetcher: 5595ec75acf5be50814f81e9189490412bad82ba
+  GTMSessionFetcher: ffbb25ec00ebcb5201adab0a56d808f6f1902d9f
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
   Introspect: b62c4dd2063072327c21d618ef2bedc3c87bc366
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
@@ -589,6 +589,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: e9b62644a62ec666257f3a8a7aec8d090e6540ab
+PODFILE CHECKSUM: 5205540d4f473e1b91a2f51cb6344816656ee59f
 
 COCOAPODS: 1.11.3
