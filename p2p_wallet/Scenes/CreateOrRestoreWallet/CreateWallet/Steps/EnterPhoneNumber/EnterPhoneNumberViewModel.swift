@@ -79,7 +79,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
         Task {
             let countries = try await countriesAPI.fetchCountries()
-            if let phone {
+            if let phone = phone {
                 // In case we have an initial phone number
                 let parsedRegion = try? self.phoneNumberKit.parse(phone).regionID
                 self.selectedCountry = countries.first(where: { country in
@@ -139,8 +139,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 .compactMap { $0?.dialCode }
                 .eraseToAnyPublisher()
         )
-            .assign(to: \.phone, on: self)
-            .store(in: &cancellable)
+        .assign(to: \.phone, on: self)
+        .store(in: &cancellable)
 
         $selectedCountry.debounce(for: .seconds(0.01), scheduler: DispatchQueue.main)
             .compactMap(\.emoji)
@@ -156,7 +156,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         $phone.removeDuplicates()
             .compactMap { $0 }
             .map { [weak self] in
-                guard let self else { return false }
+                guard let self = self else { return false }
                 let phones = self.phoneNumberKit.parse(
                     [$0],
                     withRegion: self.selectedCountry.code,
