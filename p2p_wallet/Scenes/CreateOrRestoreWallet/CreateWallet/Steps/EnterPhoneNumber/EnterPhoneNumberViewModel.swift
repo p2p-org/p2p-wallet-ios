@@ -122,7 +122,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 .removeDuplicates()
                 .scan("") {
                     if self.clearedPhoneString(phone: $1 ?? "").starts(with: self.selectedCountry.dialCode) == true {
-                        guard let exampleNumber = self.exampleNumberWith(phone: $0) else {
+                        guard let exampleNumber = self.exampleNumberWith(phone: $0 ?? "") else {
                             return $1 ?? ""
                         }
                         let formattedExample = self.phoneNumberKit.format(exampleNumber, toType: .international)
