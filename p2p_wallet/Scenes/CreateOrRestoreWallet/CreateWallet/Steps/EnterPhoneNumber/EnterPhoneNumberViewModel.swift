@@ -139,8 +139,8 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 .compactMap { $0?.dialCode }
                 .eraseToAnyPublisher()
         )
-        .assign(to: \.phone, on: self)
-        .store(in: &cancellable)
+            .assign(to: \.phone, on: self)
+            .store(in: &cancellable)
 
         $selectedCountry.debounce(for: .seconds(0.01), scheduler: DispatchQueue.main)
             .compactMap(\.emoji)

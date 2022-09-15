@@ -6,6 +6,7 @@ import Combine
 import CountriesAPI
 import KeyAppUI
 import Onboarding
+import Resolver
 import SwiftUI
 
 final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCustomState> {
@@ -82,6 +83,7 @@ private extension RestoreCustomDelegatedCoordinator {
     func handleEnterPhone(phone: String?) -> UIViewController {
         let viewModel = EnterPhoneNumberViewModel(isBackAvailable: true)
         if let phone = phone { viewModel.phone = phone }
+        let viewController = EnterPhoneNumberViewController(viewModel: viewModel)
 
         viewModel.coordinatorIO.selectCode.sinkAsync { [weak self] selectedCountryCode in
             guard let result = try await self?.selectCountry(selectedCountryCode: selectedCountryCode) else { return }
@@ -93,6 +95,12 @@ private extension RestoreCustomDelegatedCoordinator {
 
             do {
                 _ = try await stateMachine <- .enterPhoneNumber(phone: phone)
+            } catch APIGatewayError.changePhone {
+                let accountStorage: AccountStorageType = Resolver.resolve()
+                let error = accountStorage.deviceShare == nil
+                    ? L10n.SMSWillNotBeDelivered.pleaseCheckYourPhoneSettings
+                    : L10n.SMSWillNotBeDelivered.pleaseTryWithSocialLogin
+                viewController.showError(error: error)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
@@ -104,7 +112,7 @@ private extension RestoreCustomDelegatedCoordinator {
             _ = try await stateMachine <- .back
         }.store(in: &subscriptions)
 
-        return EnterPhoneNumberViewController(viewModel: viewModel)
+        return viewController
     }
 
     func handleEnterOtp(phone: String) -> UIViewController {

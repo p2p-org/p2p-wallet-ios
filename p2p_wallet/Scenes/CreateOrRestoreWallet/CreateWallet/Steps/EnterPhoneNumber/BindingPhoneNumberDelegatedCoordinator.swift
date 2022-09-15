@@ -26,6 +26,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 mv?.isLoading = true
                 do {
                     try await stateMachine <- .enterPhoneNumber(phoneNumber: phone, channel: .sms)
+                } catch APIGatewayError.changePhone {
+                    vc.showError(error: L10n.SMSWillNotBeDelivered.pleaseChangePhoneNumber)
                 } catch {
                     mv?.coordinatorIO.error.send(error)
                 }
