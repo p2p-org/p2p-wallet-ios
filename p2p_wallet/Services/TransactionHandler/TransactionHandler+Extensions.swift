@@ -57,12 +57,13 @@ extension TransactionHandler {
     /// Observe confirmation statuses of given transaction
     private func observe(index: TransactionIndex, transactionId: String) {
         let scheduler = ConcurrentDispatchQueueScheduler(qos: .default)
-        let status = Single.async { [weak self] () -> SolanaSwift.SignatureStatus in
+
+        let signatureStatus = Single.async { [weak self] () -> SignatureStatus in
             guard let self = self else { throw SolanaError.unknown }
             return try await self.apiClient.getSignatureStatus(signature: transactionId, configs: nil)
         }
-
-        status.subscribe(on: scheduler)
+        signatureStatus
+            .subscribe(on: scheduler)
             .observe(on: MainScheduler.instance)
             .do(onSuccess: { [weak self] status in
                 guard let self = self else { throw SolanaError.unknown }
@@ -90,7 +91,10 @@ extension TransactionHandler {
             .retry(maxAttempts: .max, delayInSeconds: 1)
             .timeout(.seconds(60), scheduler: scheduler)
             .observe(on: MainScheduler.instance)
-            .subscribe(onError: { [weak self] error in
+            .subscribe(onCompleted: { // [weak self] in
+//                self?.notificationsService.showInAppNotification(.done(L10n.transactionHasBeenConfirmed))
+            }, onError: { [weak self] error in
+                debugPrint(error)
                 self?.updateTransactionAtIndex(index) { currentValue in
                     var value = currentValue
                     value.status = .finalized

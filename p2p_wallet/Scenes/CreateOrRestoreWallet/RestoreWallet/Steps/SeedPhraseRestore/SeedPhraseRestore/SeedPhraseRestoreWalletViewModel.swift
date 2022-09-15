@@ -30,7 +30,7 @@ class SeedPhraseRestoreWalletViewModel: ObservableObject {
             // show error
             notificationService.showToast(
                 title: "😔",
-                text: L10n.ThereIsnTAWalletWithTheseSeedPhrase.checkItAgain
+                text: L10n.TheSeedPhraseDoesnTMatch.pleaseTryAgain
             )
         }
     }

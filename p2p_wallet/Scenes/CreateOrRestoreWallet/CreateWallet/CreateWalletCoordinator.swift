@@ -129,7 +129,9 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         case let .bindingPhoneNumber(_, _, _, _, innerState):
             return bindingPhoneNumberDelegatedCoordinator.buildViewController(for: innerState)
         case let .securitySetup(_, _, _, _, innerState):
-            return securitySetupDelegatedCoordinator.buildViewController(for: innerState)
+            let vc = securitySetupDelegatedCoordinator.buildViewController(for: innerState)
+            vc?.title = L10n.stepOf("3", "3")
+            return vc
         default:
             return nil
         }

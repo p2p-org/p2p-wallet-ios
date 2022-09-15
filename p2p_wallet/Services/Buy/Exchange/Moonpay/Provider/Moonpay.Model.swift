@@ -37,4 +37,9 @@ extension Moonpay {
         let supportsTestMode, isSuspended, isSupportedInUS, isSellSupported: Bool?
         let notAllowedUSStates: [String]?
     }
+
+    struct BankTransferAvailability: Codable {
+        var gbp: Bool = false
+        var eur: Bool = false
+    }
 }

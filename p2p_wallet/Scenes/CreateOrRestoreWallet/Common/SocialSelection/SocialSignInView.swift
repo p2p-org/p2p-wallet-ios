@@ -37,21 +37,25 @@ struct SocialSignInView: View {
                     size: .large,
                     leading: .appleLogo,
                     isLoading: viewModel.loading == .appleButton,
-                    onPressed: { [weak viewModel] in viewModel?.onSignInTap(.apple) }
+                    onPressed: { [weak viewModel] in
+                        guard viewModel?.loading == nil else { return }
+                        viewModel?.onSignInTap(.apple)
+                    }
                 )
                     .frame(height: TextButton.Size.large.height)
-                    .disabled(viewModel.loading == .googleButton)
                 TextButtonView(
                     title: viewModel.googleButtonTitle,
                     style: .inverted,
                     size: .large,
                     leading: .google,
                     isLoading: viewModel.loading == .googleButton,
-                    onPressed: { [weak viewModel] in viewModel?.onSignInTap(.google) }
+                    onPressed: { [weak viewModel] in
+                        guard viewModel?.loading == nil else { return }
+                        viewModel?.onSignInTap(.google)
+                    }
                 )
                     .frame(height: TextButton.Size.large.height)
                     .padding(.top, 12)
-                    .disabled(viewModel.loading == .appleButton)
             }
         }
     }
