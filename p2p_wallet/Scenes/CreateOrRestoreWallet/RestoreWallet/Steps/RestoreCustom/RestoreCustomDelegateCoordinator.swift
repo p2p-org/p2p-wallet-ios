@@ -6,7 +6,6 @@ import Combine
 import CountriesAPI
 import KeyAppUI
 import Onboarding
-import Resolver
 import SwiftUI
 
 final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCustomState> {
@@ -49,6 +48,11 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
     private func openInfo() {
         openTermAndCondition()
+    }
+
+    private func openHelp() {
+        openInfo()
+        // TODO: possible entry point for https://p2pvalidator.atlassian.net/browse/PWN-4640
     }
 
     private func openTermAndCondition() {
@@ -95,12 +99,6 @@ private extension RestoreCustomDelegatedCoordinator {
 
             do {
                 _ = try await stateMachine <- .enterPhoneNumber(phone: phone)
-            } catch APIGatewayError.changePhone {
-                let accountStorage: AccountStorageType = Resolver.resolve()
-                let error = accountStorage.deviceShare == nil
-                    ? L10n.SMSWillNotBeDelivered.pleaseCheckYourPhoneSettings
-                    : L10n.SMSWillNotBeDelivered.pleaseTryWithSocialLogin
-                viewController.showError(error: error)
             } catch {
                 viewModel?.coordinatorIO.error.send(error)
             }
@@ -219,8 +217,8 @@ private extension RestoreCustomDelegatedCoordinator {
             Task { _ = try await stateMachine <- .start }
         }, info: { [weak self] in
             self?.openInfo()
-        }, help: { [stateMachine] in
-            Task { _ = try await stateMachine <- .help }
+        }, help: { [weak self] in
+            self?.openHelp()
         })
         return UIHostingController(rootView: view)
     }
