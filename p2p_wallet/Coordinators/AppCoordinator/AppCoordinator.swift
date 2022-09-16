@@ -128,6 +128,8 @@ class AppCoordinator: Coordinator<Void> {
                     )
 
                     saveSecurity(data: data.security)
+                case .breakProcess:
+                    self.newOnboardingFlow()
                 }
             })
             .store(in: &subscriptions)

@@ -5,13 +5,7 @@ import SwiftUI
 
 final class ContinueCoordinator: Coordinator<OnboardingResult> {
     private let window: UIWindow
-
-    private let navigationController: UINavigationController = {
-        let nc = UINavigationController()
-        nc.modalPresentationStyle = .fullScreen
-        nc.modalTransitionStyle = .crossDissolve
-        return nc
-    }()
+    private let navigationController: UINavigationController
 
     private var subject = PassthroughSubject<OnboardingResult, Never>()
 
@@ -21,6 +15,7 @@ final class ContinueCoordinator: Coordinator<OnboardingResult> {
 
     init(window: UIWindow) {
         self.window = window
+        navigationController = UINavigationController()
     }
 
     override func start() -> AnyPublisher<OnboardingResult, Never> {

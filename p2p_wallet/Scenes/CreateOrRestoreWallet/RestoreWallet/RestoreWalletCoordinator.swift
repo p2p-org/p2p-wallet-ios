@@ -8,18 +8,17 @@ import KeyAppUI
 import Onboarding
 import SwiftUI
 
-enum RestoreWalletResult {
-    case start
-    case help
-    case success(RestoreWalletData)
+enum RestoreWalletNavigation {
+    case root(window: UIWindow)
+    case child(parent: UIViewController, navigationController: UINavigationController)
 }
 
-final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
-    private let parent: UIViewController
+final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
     private let navigationController: UINavigationController
+    private let navigation: RestoreWalletNavigation
 
     private let viewModel: RestoreWalletViewModel
-    private var result = PassthroughSubject<RestoreWalletResult, Never>()
+    private var result = PassthroughSubject<OnboardingResult, Never>()
 
     private let securitySetupDelegatedCoordinator: SecuritySetupDelegatedCoordinator
     private let restoreCustomDelegatedCoordinator: RestoreCustomDelegatedCoordinator
@@ -27,9 +26,16 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
     private let restoreSeedDelegatedCoordinator: RestoreSeedPhraseDelegatedCoordinator
     private let restoreICloudDelegatedCoordinator: RestoreICloudDelegatedCoordinator
 
-    init(parent: UIViewController, navigationController: UINavigationController) {
-        self.parent = parent
-        self.navigationController = navigationController
+    init(navigation: RestoreWalletNavigation) {
+        switch navigation {
+        case .root:
+            navigationController = UINavigationController()
+        case let .child(_, navigationController):
+            self.navigationController = navigationController
+        }
+        self.navigation = navigation
+        navigationController.modalPresentationStyle = .fullScreen
+        navigationController.modalTransitionStyle = .crossDissolve
 
         viewModel = RestoreWalletViewModel()
 
@@ -69,14 +75,19 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
 
     // MARK: - Methods
 
-    override func start() -> AnyPublisher<RestoreWalletResult, Never> {
+    override func start() -> AnyPublisher<OnboardingResult, Never> {
         guard let viewController = buildViewController(state: viewModel.stateMachine.currentState) else {
             return Empty().eraseToAnyPublisher()
         }
 
         navigationController.setViewControllers([viewController], animated: true)
-        if navigationController.presentingViewController == nil {
-            parent.present(navigationController, animated: true)
+        switch navigation {
+        case let .root(window):
+            window.animate(newRootViewController: navigationController)
+        case let .child(parent, navigationController):
+            if navigationController.presentingViewController == nil {
+                parent.present(navigationController, animated: true)
+            }
         }
 
         viewModel.stateMachine
@@ -107,13 +118,13 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         if case let .finished(result) = to {
             switch result {
             case let .successful(wallet):
-                self.result.send(.success(wallet))
+                self.result.send(.restored(wallet))
             case .breakProcess:
-                self.result.send(.start)
-                self.navigationController.dismiss(animated: true)
-            case .needHelp:
-                self.result.send(.help)
-                self.navigationController.dismiss(animated: true)
+                self.result.send(.breakProcess)
+                switch navigation {
+                case .root: break
+                case .child: self.navigationController.dismiss(animated: true)
+                }
             }
             self.result.send(completion: .finished)
 
@@ -135,7 +146,7 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
         switch state {
         case .restore:
             let params = ChooseRestoreOptionParameters(
-                isBackAvailable: true,
+                isBackAvailable: isBackAvailable(),
                 content: OnboardingContentData(image: .lockPincode, title: L10n.chooseTheWayToContinue),
                 options: viewModel.availableRestoreOptions,
                 isStartAvailable: false
@@ -174,6 +185,15 @@ final class RestoreWalletCoordinator: Coordinator<RestoreWalletResult> {
 
     @objc private func openInfo() {
         openTerms()
+    }
+
+    private func isBackAvailable() -> Bool {
+        switch navigation {
+        case .root:
+            return false
+        case .child:
+            return true
+        }
     }
 }
 

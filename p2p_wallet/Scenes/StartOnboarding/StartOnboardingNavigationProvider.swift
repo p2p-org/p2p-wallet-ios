@@ -8,9 +8,12 @@ protocol StartOnboardingNavigationProvider {
 
 final class StartOnboardingNavigationProviderImpl: StartOnboardingNavigationProvider {
     @Injected var service: OnboardingService
+    @Injected var accountStorage: AccountStorageType
 
     @MainActor func startCoordinator(for window: UIWindow) -> Coordinator<OnboardingResult> {
-        if let lastState = service.lastState {
+        if accountStorage.deviceShare != nil {
+            return RestoreWalletCoordinator(navigation: .root(window: window))
+        } else if let lastState = service.lastState {
             return ContinueCoordinator(window: window)
         } else {
             return StartCoordinator(window: window)
