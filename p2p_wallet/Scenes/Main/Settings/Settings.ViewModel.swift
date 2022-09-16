@@ -243,7 +243,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         // get context
         let context = LAContext()
         let reason = L10n.identifyYourself
-
+        context.localizedFallbackTitle = ""
         // evaluate Policy
         context
             .evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
