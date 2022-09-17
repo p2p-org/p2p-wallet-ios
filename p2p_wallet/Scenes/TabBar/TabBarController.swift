@@ -8,6 +8,7 @@
 import Combine
 import KeyAppUI
 import Resolver
+import SwiftUI
 import UIKit
 
 final class TabBarController: UITabBarController {
@@ -89,7 +90,7 @@ final class TabBarController: UITabBarController {
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
 
-        let historyVC = History.Scene()
+        let historyVC = UIHostingControllerWithoutNavigation(rootView: InvestView())
 
         let vm = SendToken.ViewModel(
             walletPubkey: nil,
