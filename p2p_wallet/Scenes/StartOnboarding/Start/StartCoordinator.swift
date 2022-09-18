@@ -10,6 +10,7 @@ struct StartParameters {
 enum OnboardingResult {
     case created(CreateWalletData)
     case restored(RestoreWalletData)
+    case breakProcess
 }
 
 final class StartCoordinator: Coordinator<OnboardingResult> {
@@ -17,19 +18,14 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
     private weak var viewController: UIViewController?
     private let params: StartParameters
     private var subject = PassthroughSubject<OnboardingResult, Never>()
-
-    private let navigationController: UINavigationController = {
-        let nc = UINavigationController()
-        nc.modalPresentationStyle = .fullScreen
-        nc.modalTransitionStyle = .crossDissolve
-        return nc
-    }()
+    private let navigationController: UINavigationController
 
     // MARK: - Initializer
 
     init(window: UIWindow, params: StartParameters = StartParameters(isAnimatable: true)) {
         self.window = window
         self.params = params
+        navigationController = UINavigationController()
     }
 
     override func start() -> AnyPublisher<OnboardingResult, Never> {
@@ -131,20 +127,18 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
     }
 
     private func openRestoreWallet(vc: UIViewController) {
-        coordinate(to: RestoreWalletCoordinator(parent: vc, navigationController: navigationController))
-            .sink(receiveValue: { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case let .success(data):
-                    self.subject.send(.restored(data))
-                    self.subject.send(completion: .finished)
-                case .start:
-                    break
-                case .help:
-                    break
-                }
-            })
-            .store(in: &subscriptions)
+        coordinate(to: RestoreWalletCoordinator(navigation: .child(
+            parent: vc,
+            navigationController: navigationController
+        ))).sink(receiveValue: { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case let .restored(data):
+                self.subject.send(.restored(data))
+                self.subject.send(completion: .finished)
+            case .created, .breakProcess: break
+            }
+        }).store(in: &subscriptions)
     }
 
     private func openTerms() {

@@ -946,5 +946,3 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "The seed phrase doesn't match. Please try again" = "La phrase de départ ne correspond pas.  Veuillez réessayer";
 "By continuing, you agree to Key App’s" = "En continuant, vous acceptez les conditions d'utilisation de Key App";
 "Key App’s" = "Key App’s";
-"SMS will not be delivered. Please try with social login" = "Les SMS ne seront pas délivrés.  Veuillez essayer avec une connexion sociale";
-"SMS will not be delivered. Please check your phone settings" = "Les SMS ne seront pas délivrés.  Veuillez vérifier les paramètres de votre téléphone";
