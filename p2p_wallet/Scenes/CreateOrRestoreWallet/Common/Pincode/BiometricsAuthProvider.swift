@@ -17,6 +17,7 @@ final class BiometricsAuthProviderImpl: BiometricsAuthProvider {
     private let policy = LAPolicy.deviceOwnerAuthenticationWithBiometrics
 
     func authenticate(authenticationPrompt: String, completion: @escaping (Bool, NSError?) -> Void) {
+        context.localizedFallbackTitle = ""
         context
             .evaluatePolicy(policy, localizedReason: authenticationPrompt) { success, error in
                 DispatchQueue.main.async {
