@@ -209,7 +209,7 @@ final class BuyViewModel: ObservableObject {
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
-        analyticsManager.log(event: AmplitudeEvent.buyChosenMethodPayment(type: payment.type.rawValue))
+        analyticsManager.log(event: AmplitudeEvent.buyChosenMethodPayment(type: payment.type.analyticName))
     }
 
     // MARK: -
@@ -303,7 +303,7 @@ final class BuyViewModel: ObservableObject {
             sumCoin: tokenAmount,
             currency: from.name,
             coin: to.name,
-            paymentMethod: selectedPayment.rawValue,
+            paymentMethod: selectedPayment.analyticName,
             bankTransfer: typeBankTransfer != nil,
             typeBankTransfer: typeBankTransfer
         ))

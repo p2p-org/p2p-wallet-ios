@@ -211,6 +211,6 @@ enum AmplitudeEvent: AnalyticsEvent {
         typeBankTransfer: String?
     )
     case buyStatusTransaction(success: Bool)
-    case buyScreenShowed(fromScreen: String)
-    case moonPayWindowClosed
+    case buyScreenOpened(lastScreen: String)
+    case moonpayWindowClosed
 }
