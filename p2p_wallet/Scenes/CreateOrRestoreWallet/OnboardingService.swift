@@ -6,7 +6,26 @@ protocol OnboardingService: AnyObject {
 
 final class OnboardingServiceImpl: OnboardingService {
     var lastState: CreateWalletFlowState? {
-        get { Defaults.onboardingLastState }
+        get { validate(lastState: Defaults.onboardingLastState) }
         set { Defaults.onboardingLastState = newValue }
+    }
+
+    private func validate(lastState: CreateWalletFlowState?) -> CreateWalletFlowState? {
+        switch lastState {
+        case let .bindingPhoneNumber(email, seedPhrase, ethPublicKey, deviceShare, .block(until, _, phoneNumber, data)):
+            if Date() >= until {
+                return .bindingPhoneNumber(
+                    email: email,
+                    seedPhrase: seedPhrase,
+                    ethPublicKey: ethPublicKey,
+                    deviceShare: deviceShare,
+                    .enterPhoneNumber(initialPhoneNumber: phoneNumber, didSend: false, data: data)
+                )
+            } else {
+                fallthrough
+            }
+        default:
+            return lastState
+        }
     }
 }

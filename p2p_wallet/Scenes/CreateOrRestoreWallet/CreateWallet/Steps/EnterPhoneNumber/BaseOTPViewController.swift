@@ -1,14 +1,15 @@
 import Foundation
 import KeyAppUI
+import Resolver
 
 class BaseOTPViewController: BaseViewController {
+    @Injected private var notificationService: NotificationService
+
     override func bind() {
         super.bind()
     }
 
     func showError(error: String?) {
-        guard let error = error, let window = UIApplication.shared.kWindow else { return }
-        let bar = SnackBar(text: error)
-        bar.show(in: window)
+        notificationService.showToast(title: nil, text: error)
     }
 }
