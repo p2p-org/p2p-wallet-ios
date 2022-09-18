@@ -97,6 +97,9 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 title = L10n.itSOkayToBeWrong
                 contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeFreezedAccountFor
             case .blockEnterPhoneNumber:
+                title = L10n.itSOkayToBeWrong
+                contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeStopedActionsFor
+            case .blockResend:
                 title = L10n.soLetSBreathe
                 contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFreezedAccountFor
             }

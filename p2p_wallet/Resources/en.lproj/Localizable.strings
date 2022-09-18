@@ -951,3 +951,6 @@ Reset the PIN or wait for %@.";
 "The seed phrase doesn't match. Please try again" = "The seed phrase doesn't match. Please try again";
 "By continuing, you agree to Key App’s" = "By continuing, you agree to Key App’s";
 "Key App’s" = "Key App’s";
+"SMS will not be delivered. Please try with social login" = "SMS will not be delivered. Please try with social login";
+"SMS will not be delivered. Please check your phone settings" = "SMS will not be delivered. Please check your phone settings";
+"You used too much numbers.\nFor your safety we stoped actions for %@" = "You used too much numbers.\nFor your safety we stoped actions for %@";

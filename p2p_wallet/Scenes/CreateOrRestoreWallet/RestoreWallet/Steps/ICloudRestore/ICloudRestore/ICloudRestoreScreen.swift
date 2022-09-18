@@ -16,7 +16,7 @@ struct ICloudRestoreScreen: View {
             Spacer()
             bottomAction
         }
-        .onboardingNavigationBar(title: L10n.createANewWallet, onBack: { [weak viewModel] in
+        .onboardingNavigationBar(title: L10n.restoringYourWallet, onBack: { [weak viewModel] in
             viewModel?.back()
         }, onInfo: { [weak viewModel] in
             viewModel?.info()
