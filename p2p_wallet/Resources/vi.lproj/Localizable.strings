@@ -949,5 +949,3 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "The seed phrase doesn't match. Please try again" = "Cụm từ hạt giống không khớp.  Vui lòng thử lại";
 "By continuing, you agree to Key App’s" = "Bằng cách tiếp tục, bạn đồng ý với Key App’s";
 "Key App’s" = "Key App’s";
-"SMS will not be delivered. Please try with social login" = "SMS sẽ không được gửi.  Vui lòng thử với đăng nhập xã hội";
-"SMS will not be delivered. Please check your phone settings" = "SMS sẽ không được gửi.  Vui lòng kiểm tra cài đặt điện thoại của bạn";
