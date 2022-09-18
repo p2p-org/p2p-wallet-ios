@@ -949,3 +949,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "SMS will not be delivered. Please try with social login" = "Les SMS ne seront pas délivrés.  Veuillez essayer avec une connexion sociale";
 "SMS will not be delivered. Please check your phone settings" = "Les SMS ne seront pas délivrés.  Veuillez vérifier les paramètres de votre téléphone";
 "You used too much numbers.\nFor your safety we stoped actions for %@" = "Vous avez utilisé trop de chiffres.\nPour votre sécurité, nous avons arrêté les actions pendant %@";
+"Your seed phrase must never be shared" = "Votre phrase de départ ne doit jamais être partagée";
