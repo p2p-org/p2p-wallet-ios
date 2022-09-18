@@ -49,6 +49,7 @@ final class PincodeViewController: BaseViewController {
                 PinCode(correctPincode: viewModel.pincode, bottomLeftButton: nil)
                     .setup { view in
                         view.stackViewSpacing = 24
+                        view.resetingDelayInSeconds = 1
                     }
                     .bind(pincodeView)
             }
@@ -72,10 +73,7 @@ final class PincodeViewController: BaseViewController {
         viewModel.$snackbar.sink { [weak self] model in
             guard let self = self, let model = model else { return }
             let view: UIView = self.navigationController?.view ?? self.view
-            SnackBar(text: model.message).show(in: view, autoHide: true) {
-                guard model.isFailure else { return }
-                self.pincodeView.view?.reset()
-            }
+            SnackBar(text: model.message).show(in: view, autoHide: true)
             self.viewModel.snackbar = nil
         }.store(in: &subscriptions)
     }
