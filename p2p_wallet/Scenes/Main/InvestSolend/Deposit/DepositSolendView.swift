@@ -19,7 +19,7 @@ struct DepositSolendView: View {
                 deposit: viewModel.invest.userDeposit?.depositedAmount,
                 apy: viewModel.invest.market?.supplyInterest
             ).padding(.top, 8)
-            
+
             Spacer()
 
             HStack {
@@ -46,9 +46,10 @@ struct DepositSolendView: View {
             ) {
                 Task {
                     try await viewModel.deposit()
-                    self.presentationMode.wrappedValue.dismiss()
+                    presentationMode.wrappedValue.dismiss()
                 }
             }
+            .disabled(viewModel.loading)
             .frame(height: TextButton.Size.large.height)
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
