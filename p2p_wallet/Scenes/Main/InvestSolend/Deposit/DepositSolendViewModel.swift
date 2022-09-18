@@ -16,31 +16,27 @@ import Solend
 class DepositSolendViewModel: ObservableObject {
     private let dataService: SolendDataService
     private let actionService: SolendActionService
+    @Injected private var notificationService: NotificationService
     // private let
 
     var subscriptions = Set<AnyCancellable>()
 
+    @Published var loading: Bool = false
     @Published var input: String = "" {
         didSet {
             inputLamport = inputInLamport
             Task {
-                let fee = try await self.actionService.depositFee(amount: inputInLamport, symbol: asset.symbol)
+                let fee = try await self.actionService.depositFee(amount: inputInLamport, symbol: invest.asset.symbol)
                 self.depositFee = fee
             }
         }
     }
 
-    @Published var asset: SolendConfigAsset
-    @Published var loading: Bool = false
-
     @Published var invest: Invest
-    @Published var trxID: String = ""
     @Published var depositFee: SolendDepositFee? = nil
-
     @Published var inputLamport: UInt64 = 0
 
     init(initialAsset: SolendConfigAsset, mocked: Bool = false) throws {
-        asset = initialAsset
         dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
         actionService = mocked ? SolendActionServiceMock() : Resolver.resolve(SolendActionService.self)
         invest = (asset: initialAsset, market: nil, userDeposit: nil)
@@ -64,12 +60,18 @@ class DepositSolendViewModel: ObservableObject {
 
     var inputInLamport: UInt64 {
         guard let amount = Double(input) else { return 0 }
-
         return UInt64(amount * pow(10, Double(invest.asset.decimals)))
     }
 
     func deposit() async throws {
-        guard inputInLamport > 0 else { return }
-        try await actionService.deposit(amount: inputInLamport, symbol: asset.symbol)
+        guard loading == false, inputInLamport > 0 else { return }
+        do {
+            loading = true
+            defer { loading = false }
+
+            try await actionService.deposit(amount: inputInLamport, symbol: invest.asset.symbol)
+        } catch {
+            notificationService.showInAppNotification(.error(error.localizedDescription))
+        }
     }
 }
