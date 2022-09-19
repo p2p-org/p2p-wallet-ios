@@ -5,10 +5,13 @@ import Resolver
 import SwiftUI
 import UIKit
 
-final class ChooseRestoreOptionViewModel: BaseViewModel {
+final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
     // MARK: - Dependencies
 
-    @Injected var notificationService: NotificationService
+    @Injected private var biometricsProvider: BiometricsAuthProvider
+    @Injected private var keychainStorage: KeychainStorage
+
+    // MARK: - Properties
 
     @Published var data: OnboardingContentData
     @Published var options: RestoreOption
@@ -22,6 +25,7 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
     let openInfo = PassthroughSubject<Void, Never>()
     let optionDidTap = PassthroughSubject<RestoreOption, Never>()
     let optionChosen = PassthroughSubject<ReactiveProcess<RestoreOption>, Never>()
+    let restoreRawWallet = PassthroughSubject<ReactiveProcess<RawAccount>, Never>()
 
     let isBackAvailable: Bool
     let isStartAvailable: Bool
@@ -44,6 +48,11 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
             switch option {
             case .socialGoogle, .socialApple:
                 self.isLoading = option
+            case .keychain:
+                if let accounts = self.keychainStorage.accountFromICloud(), accounts.count == 1 {
+                    self.restore(icloudAccount: accounts[0])
+                    return
+                }
             default: break
             }
 
@@ -102,5 +111,17 @@ final class ChooseRestoreOptionViewModel: BaseViewModel {
             title: nil,
             text: L10n.ThereIsAProblemWithServices.tryAgain(provider.rawValue.uppercaseFirst)
         )
+    }
+
+    private func restore(icloudAccount: RawAccount) {
+        isLoading = .keychain
+        let process = ReactiveProcess<RawAccount>(data: icloudAccount) { [weak self] _ in
+            self?.isLoading = nil
+        }
+        authenticate(completion: { [weak self] success in
+            if success {
+                self?.restoreRawWallet.send(process)
+            }
+        })
     }
 }
