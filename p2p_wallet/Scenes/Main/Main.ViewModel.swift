@@ -37,6 +37,7 @@ extension Main {
         @Injected private var accountStorage: AccountStorageType
         @Injected private var nameService: NameService
         @Injected private var nameStorage: NameStorageType
+        let solendActivityCenter: AnyObject?
 
         private let transactionAnalytics = [
             Resolver.resolve(SwapTransactionAnalytics.self),
@@ -47,6 +48,12 @@ extension Main {
         // MARK: - Initializer
 
         init() {
+            if #available(iOS 16.1, *) {
+                solendActivityCenter = SolendActivityCenter()
+            } else {
+                solendActivityCenter = NSObject()
+            }
+            
             socket.connect()
             pricesService.startObserving()
             burnAndRelease.resume()

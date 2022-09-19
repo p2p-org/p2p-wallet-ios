@@ -30,7 +30,7 @@ struct InvestSolendView: View {
                     .apply(style: .text3)
 
                 // Reward
-                Text("$ 0.0000000000")
+                Text("$ 0.0000000041")
                     .fontWeight(.bold)
                     .apply(style: .title1)
                     .padding(.top, 8)
