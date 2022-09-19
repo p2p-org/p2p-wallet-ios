@@ -72,12 +72,9 @@ private extension PincodeViewModel {
                 self.confirmPin.send(pin)
             case let .confirm(_, askBiometric):
                 self.snackbar = PincodeSnackbar(message: self.successNotification, isFailure: false)
-                let prompt = L10n
-                    .insteadOfAPINCodeYouCanAccessTheAppUsing(self.bioAuthStatus.stringValue)
-
                 if askBiometric {
                     self.biometricsAuthProvider.authenticate(
-                        authenticationPrompt: prompt, completion: { success, _ in
+                        completion: { success, _ in
                             self.authenticationHandler.authenticate(presentationStyle: nil)
                             self.openMain.send((pin, success))
                         }
