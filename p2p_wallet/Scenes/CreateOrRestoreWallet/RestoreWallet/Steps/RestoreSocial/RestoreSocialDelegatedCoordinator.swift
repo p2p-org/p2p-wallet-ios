@@ -66,10 +66,10 @@ private extension RestoreSocialDelegatedCoordinator {
 
     func handleNotFoundDeviceSocial(email: String?) -> UIViewController {
         let subtitle = email == nil ? L10n.tryWithAccountOrUseAnAnotherPhoneNumber : L10n
-            .emailTryAnotherAccountOrUseAPhoneNumber(email ?? "")
+            .tryAnotherAccountOrUseAPhoneNumber
         let parameters = ChooseRestoreOptionParameters(
             isBackAvailable: false,
-            content: OnboardingContentData(image: .box, title: L10n.notFound, subtitle: subtitle),
+            content: OnboardingContentData(image: .box, title: L10n.notFound, email: email, subtitle: subtitle),
             options: [.socialApple, .socialGoogle, .custom],
             isStartAvailable: true
         )
@@ -107,7 +107,8 @@ private extension RestoreSocialDelegatedCoordinator {
         let content = OnboardingContentData(
             image: .box,
             title: L10n.noWalletFound,
-            subtitle: L10n.withTryAnotherAccount(email)
+            email: email,
+            subtitle: L10n.tryAnotherOption
         )
         let actionViewModel = RestoreSocialOptionViewModel()
         actionViewModel.optionChosen.sinkAsync { [stateMachine] process in
