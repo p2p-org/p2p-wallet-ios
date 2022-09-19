@@ -10,11 +10,11 @@ import SwiftUI
 
 enum RestoreWalletNavigation {
     case root(window: UIWindow)
-    case child(parent: UIViewController, navigationController: UINavigationController)
+    case child(parent: UIViewController, navigationController: OnboardingNavigationController)
 }
 
 final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
-    private let navigationController: UINavigationController
+    private let navigationController: OnboardingNavigationController
     private let navigation: RestoreWalletNavigation
 
     private let viewModel: RestoreWalletViewModel
@@ -29,13 +29,11 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
     init(navigation: RestoreWalletNavigation) {
         switch navigation {
         case .root:
-            navigationController = UINavigationController()
+            navigationController = OnboardingNavigationController()
         case let .child(_, navigationController):
             self.navigationController = navigationController
         }
         self.navigation = navigation
-        navigationController.modalPresentationStyle = .fullScreen
-        navigationController.modalTransitionStyle = .crossDissolve
 
         viewModel = RestoreWalletViewModel()
 
