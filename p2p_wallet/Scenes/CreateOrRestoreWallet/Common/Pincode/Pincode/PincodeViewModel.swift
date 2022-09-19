@@ -58,9 +58,9 @@ private extension PincodeViewModel {
     func title(for state: PincodeState) -> String {
         switch state {
         case .create:
-            return L10n.createYourPINCode
+            return L10n.createYourPasscode
         case .confirm:
-            return L10n.confirmYourPINCode
+            return L10n.confirmYourPasscode
         }
     }
 
@@ -93,7 +93,7 @@ private extension PincodeViewModel {
             switch self.state {
             case .create: break
             case .confirm:
-                self.snackbar = PincodeSnackbar(message: L10n.😢PINDoesnTMatch.tryAgain, isFailure: true)
+                self.snackbar = PincodeSnackbar(message: L10n.😢PasscodeDoesnTMatch.pleaseTryAgain, isFailure: true)
             }
         }.store(in: &subscriptions)
     }

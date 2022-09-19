@@ -41,7 +41,7 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
         let viewModel = PincodeViewModel(
             state: .confirm(pin: pincode, askBiometric: true),
             isBackAvailable: true,
-            successNotification: L10n._️YeahYouVeCreatedThePINToKeyApp
+            successNotification: L10n._️GreatYourNewPasscodeIsSet
         )
         let viewController = PincodeViewController(viewModel: viewModel)
 
