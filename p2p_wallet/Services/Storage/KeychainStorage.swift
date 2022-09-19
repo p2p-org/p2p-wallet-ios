@@ -19,8 +19,7 @@ class KeychainStorage {
     let nameKey: String
     let ethAddressKey: String
 
-    let deviceShareKey: String
-    let deviceShareAttachedEthAddressKey: String
+    let deviceShareKey: String = "deviceShareKey"
 
     let iCloudAccountsKey = "Keychain.Accounts"
 
@@ -30,11 +29,15 @@ class KeychainStorage {
 
     // MARK: - Services
 
-    let keychain: KeychainSwift = {
+    /// This keychain storage will sync across devices
+    let icloudKeychain: KeychainSwift = {
         let kc = KeychainSwift()
         kc.synchronizable = true
         return kc
     }()
+
+    /// This keychain storage will only locally store in device
+    let localKeychain: KeychainSwift = .init()
 
     // MARK: - Initializers
 
@@ -51,17 +54,13 @@ class KeychainStorage {
             let phrasesKey = Defaults.keychainPhrasesKey,
             let derivableTypeKey = Defaults.keychainDerivableTypeKey,
             let walletIndexKey = Defaults.keychainWalletIndexKey,
-            let ethAddressKey = Defaults.keychainEthAddressKey,
-            let deviceShareKey = Defaults.keychainDeviceShareKey,
-            let deviceShareAttachedEthAddressKey = Defaults.keychainDeviceShareAttachedEthAddressKey
+            let ethAddressKey = Defaults.keychainEthAddressKey
         {
             self.pincodeKey = pincodeKey
             self.phrasesKey = phrasesKey
             self.derivableTypeKey = derivableTypeKey
             self.walletIndexKey = walletIndexKey
-            self.deviceShareKey = deviceShareKey
             self.ethAddressKey = ethAddressKey
-            self.deviceShareAttachedEthAddressKey = deviceShareAttachedEthAddressKey
         } else {
             let pincodeKey = UUID().uuidString
             self.pincodeKey = pincodeKey
@@ -79,17 +78,9 @@ class KeychainStorage {
             self.walletIndexKey = walletIndexKey
             Defaults.keychainWalletIndexKey = walletIndexKey
 
-            let keychainDeviceShareKey = UUID().uuidString
-            deviceShareKey = keychainDeviceShareKey
-            Defaults.keychainDeviceShareKey = keychainDeviceShareKey
-
             let ethAddressKey = UUID().uuidString
             self.ethAddressKey = ethAddressKey
             Defaults.keychainEthAddressKey = ethAddressKey
-
-            let deviceShareAttachedEthAddressKey = UUID().uuidString
-            self.deviceShareAttachedEthAddressKey = deviceShareAttachedEthAddressKey
-            Defaults.keychainDeviceShareAttachedEthAddressKey = deviceShareAttachedEthAddressKey
 
             removeCurrentAccount()
         }
@@ -105,7 +96,7 @@ class KeychainStorage {
         if !UserDefaults.standard.bool(forKey: ubiquitousKeyValueStoreToKeychain) {
             let ubiquitousStore = NSUbiquitousKeyValueStore()
             if let data = ubiquitousStore.data(forKey: iCloudAccountsKey) {
-                keychain.set(data, forKey: iCloudAccountsKey)
+                icloudKeychain.set(data, forKey: iCloudAccountsKey)
             }
             // mark as completed
             UserDefaults.standard.set(true, forKey: ubiquitousKeyValueStoreToKeychain)
@@ -113,11 +104,11 @@ class KeychainStorage {
     }
 
     func removeCurrentAccount() {
-        keychain.delete(pincodeKey)
-        keychain.delete(phrasesKey)
-        keychain.delete(derivableTypeKey)
-        keychain.delete(walletIndexKey)
-        keychain.delete(nameKey)
+        icloudKeychain.delete(pincodeKey)
+        icloudKeychain.delete(phrasesKey)
+        icloudKeychain.delete(derivableTypeKey)
+        icloudKeychain.delete(walletIndexKey)
+        icloudKeychain.delete(nameKey)
 
         removeAccountCache()
     }
