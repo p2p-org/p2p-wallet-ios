@@ -31,15 +31,15 @@ private extension RestoreICloudDelegatedCoordinator {
     func handleSignInKeychain(accounts: [ICloudAccount]) -> UIViewController {
         let vm = ICloudRestoreViewModel(accounts: accounts)
 
-        vm.coordinatorIO.back.sink { [stateMachine] process in
+        vm.back.sink { [stateMachine] process in
             process.start { _ = try await stateMachine <- .back }
         }.store(in: &subscriptions)
 
-        vm.coordinatorIO.info.sink { [weak self] process in
+        vm.info.sink { [weak self] process in
             process.start { self?.openInfo() }
         }.store(in: &subscriptions)
 
-        vm.coordinatorIO.restore.sink { [stateMachine] process in
+        vm.restore.sink { [stateMachine] process in
             process.start {
                 _ = try await stateMachine <- .restoreWallet(account: process.data)
             }

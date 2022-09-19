@@ -8,7 +8,6 @@ protocol BiometricsAuthProvider {
 
 final class BiometricsAuthProviderImpl: BiometricsAuthProvider {
     var availabilityStatus: LABiometryType {
-        let context = LAContext()
         _ = context.canEvaluatePolicy(policy, error: nil)
         return context.biometryType
     }
@@ -24,5 +23,12 @@ final class BiometricsAuthProviderImpl: BiometricsAuthProvider {
                     completion(success, error as? NSError)
                 }
             }
+    }
+}
+
+extension BiometricsAuthProvider {
+    func authenticate(completion: @escaping (Bool, NSError?) -> Void) {
+        let prompt = L10n.insteadOfAPINCodeYouCanAccessTheAppUsing(availabilityStatus.stringValue)
+        authenticate(authenticationPrompt: prompt, completion: completion)
     }
 }
