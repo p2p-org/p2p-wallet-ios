@@ -5,6 +5,7 @@
 //  Created by Ivan on 14.06.2022.
 //
 
+import Resolver
 import SwiftUI
 
 struct DebugMenuView: View {
@@ -47,6 +48,14 @@ struct DebugMenuView: View {
                     TextFieldRow(title: "Share:", content: $onboardingConfig.mockDeviceShare)
                         .disabled(!onboardingConfig.isDeviceShareMocked)
                         .foregroundColor(!onboardingConfig.isDeviceShareMocked ? Color.gray : Color.black)
+
+                    HStack {
+                        Text("Delete current share")
+                        Button {
+                            do { try Resolver.resolve(KeychainStorage.self).save(deviceShare: "") }
+                            catch { print(error) }
+                        } label: { Text("Delete") }
+                    }
                 }
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)

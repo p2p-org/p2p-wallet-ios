@@ -7,16 +7,16 @@ import Foundation
 extension KeychainStorage: NameStorageType {
     func save(name: String) {
         if name.isEmpty {
-            keychain.delete(nameKey)
+            icloudKeychain.delete(nameKey)
         } else {
-            keychain.set(name, forKey: nameKey)
+            icloudKeychain.set(name, forKey: nameKey)
             saveNameToICloudIfAccountSaved()
             onValueChangeSubject.on(.next(("getName", name)))
         }
     }
 
     func getName() -> String? {
-        keychain.get(nameKey)
+        icloudKeychain.get(nameKey)
     }
 
     private func saveNameToICloudIfAccountSaved() {
@@ -33,11 +33,11 @@ extension KeychainStorage: NameStorageType {
 
 extension KeychainStorage: PincodeStorageType {
     func save(_ pinCode: String) {
-        keychain.set(pinCode, forKey: pincodeKey)
+        icloudKeychain.set(pinCode, forKey: pincodeKey)
     }
 
     var pinCode: String? {
-        keychain.get(pincodeKey)
+        icloudKeychain.get(pincodeKey)
     }
 }
 

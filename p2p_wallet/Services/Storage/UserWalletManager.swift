@@ -22,13 +22,11 @@ class UserWalletManager: ObservableObject {
 
         guard let account = storage.account else { return }
 
-        let withDeviceShare = storage.deviceShareAttachedEthAddressKey == storage.ethAddress
-
         wallet = .init(
             seedPhrase: account.phrase,
             derivablePath: storage.derivablePath,
             name: storage.getName(),
-            deviceShare: withDeviceShare ? storage.deviceShare : nil,
+            deviceShare: nil,
             ethAddress: storage.ethAddress,
             account: account
         )
@@ -49,12 +47,8 @@ class UserWalletManager: ObservableObject {
         try storage.save(ethAddress: ethAddress ?? "")
 
         // Save device share
-        if
-            let deviceShare = deviceShare,
-            let ethAddress = ethAddress
-        {
+        if let deviceShare = deviceShare, let ethAddress = ethAddress {
             try storage.save(deviceShare: deviceShare)
-            try storage.save(deviceShareAttachedEthAddress: ethAddress)
         }
 
         try await refresh()

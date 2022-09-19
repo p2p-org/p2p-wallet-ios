@@ -38,7 +38,6 @@ protocol AccountStorageType: SolanaAccountStorage {
     var ethAddress: String? { get }
 
     var deviceShare: String? { get }
-    var deviceShareAttachedEthAddress: String? { get }
 
     func getDerivablePath() -> DerivablePath?
 
@@ -49,7 +48,6 @@ protocol AccountStorageType: SolanaAccountStorage {
     func save(ethAddress: String) throws
 
     func save(deviceShare: String) throws
-    func save(deviceShareAttachedEthAddress: String) throws
 
     func clearAccount()
 }
