@@ -31,8 +31,8 @@ extension Authentication {
 
         // MARK: - Subscenes
 
-        private lazy var pincodeVC: PinCodeViewController = {
-            let pincodeVC = PinCodeViewController(viewModel: viewModel, extraAction: extraAction)
+        private lazy var pincodeVC: OldPinCodeViewController = {
+            let pincodeVC = OldPinCodeViewController(viewModel: viewModel, extraAction: extraAction)
             pincodeVC.onSuccess = { [weak self] in
                 self?.authenticationDidComplete(resetPassword: false)
             }

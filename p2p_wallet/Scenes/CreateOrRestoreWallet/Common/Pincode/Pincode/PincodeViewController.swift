@@ -1,5 +1,6 @@
 import Combine
 import KeyAppUI
+import SwiftUI
 import UIKit
 
 final class PincodeViewController: BaseViewController {
@@ -31,12 +32,17 @@ final class PincodeViewController: BaseViewController {
         BESafeArea {
             BEVStack {
                 UIImageView(
-                    width: 160,
-                    height: 120,
+                    width: 114,
+                    height: 107,
                     image: UIImage.lockPincode,
                     contentMode: .scaleAspectFit
                 )
-                    .padding(.init(top: 24, left: .zero, bottom: 24, right: .zero))
+                    .padding(.init(
+                        top: 70 * UIScreen.main.bounds.height / 812,
+                        left: .zero,
+                        bottom: 35,
+                        right: .zero
+                    ))
 
                 UILabel(
                     font: .font(of: .title2, weight: .regular),
@@ -44,16 +50,59 @@ final class PincodeViewController: BaseViewController {
                 )
                     .bind(titleLabel)
 
-                UIView.spacer
-
-                PinCode(correctPincode: viewModel.pincode, bottomLeftButton: nil)
-                    .setup { view in
-                        view.stackViewSpacing = 24
-                        view.resetingDelayInSeconds = 1
+                BEVStack {
+                    PinCode(correctPincode: viewModel.pincode, bottomLeftButton: self.bottomLeftButton())
+                        .setup { view in
+                            view.stackViewSpacing = 34
+                            view.resetingDelayInSeconds = 1
+                        }
+                        .bind(pincodeView)
+                        .padding(.init(
+                            top: 0,
+                            left: .zero,
+                            bottom: 41,
+                            right: .zero
+                        ))
+                    UIView.spacer
+                    if viewModel.showForgetPin {
+                        forgetPinView()
                     }
-                    .bind(pincodeView)
+                }
+                .frame(height: 417)
+                .padding(.init(top: 60, left: 0, bottom: 0, right: 0))
+                UIView.spacer
             }
         }
+    }
+
+    func forgetPinView() -> UIView {
+        BEVStack {
+            UIButton(
+                height: 24,
+                label: L10n.forgetYouPIN,
+                labelFont: UIFont.font(of: .text1),
+                textColor: Asset.Colors.sky.color
+            ).onTap {
+                self.openForgotPIN()
+            }
+        }.frame(height: 24)
+    }
+
+    func bottomLeftButton() -> UIView? {
+        if viewModel.showFaceid {
+            let button = UIButton(width: 32, height: 32)
+            button.setImage(UIImage.faceId, for: .normal)
+            button.tintColor = Asset.Colors.night.color
+            button.imageView?.contentMode = .scaleAspectFill
+            button.onTap { [weak viewModel] in
+                viewModel?.biometricsTapped()
+            }
+            let wrapper = BEView().frame(width: 68, height: 68)
+            wrapper.addSubview(button)
+            button.autoCenterInSuperView(leftInset: 18, rightInset: 18)
+            return wrapper
+        }
+        return nil
     }
 
     override func bind() {
@@ -73,9 +122,24 @@ final class PincodeViewController: BaseViewController {
         viewModel.$snackbar.sink { [weak self] model in
             guard let self = self, let model = model else { return }
             let view: UIView = self.navigationController?.view ?? self.view
-            SnackBar(text: model.message).show(in: view, autoHide: true)
+            SnackBar(title: model.title, text: model.message).show(in: view, autoHide: true) {
+                guard model.isFailure else { return }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.pincodeView.view?.reset()
+            }
             self.viewModel.snackbar = nil
         }.store(in: &subscriptions)
+
+        viewModel.$showForgotModal
+            .filter { $0 }
+            .sink { [weak self] _ in
+                self?.openForgotPIN(
+                    text: L10n.After2MoreIncorrectAttemptsWeLlLogYouOutOfTheCurrentAccountForYourSafety
+                        .youCanLogoutRightNowToCreateANewPINCodeForTheApp,
+                    height: 420
+                )
+            }.store(in: &subscriptions)
     }
 
     private func setupNavBar() {
@@ -109,5 +173,42 @@ final class PincodeViewController: BaseViewController {
 
     @objc private func openInfo() {
         viewModel.infoDidTap.send()
+    }
+
+    private var transition: PanelTransition?
+    private var forgetPinViewController: UIViewController?
+    private func openForgotPIN(
+        text: String? = L10n.ifYouForgetYourPINYouCanLogOutAndCreateANewOneWhenYouLogInAgain,
+        height: CGFloat? = nil
+    ) {
+        var view = ForgetPinView(text: text ?? L10n.ifYouForgetYourPINYouCanLogOutAndCreateANewOneWhenYouLogInAgain)
+        view.close = { [weak self] in self?.forgetPinViewController?.dismiss(animated: true) }
+        view.onLogout = { [weak self] in
+            self?.forgetPinViewController?.dismiss(animated: true, completion: { [weak self] in
+                self?.showAlert(
+                    title: L10n.areYouSureYouWantToSignOut,
+                    message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
+                    buttonTitles: [L10n.signOut, L10n.stay],
+                    highlightedButtonIndex: 1,
+                    destroingIndex: 0
+                ) { [weak self] index in
+                    guard index == 0 else { return }
+                    self?.viewModel.logout()
+                }
+            })
+        }
+        transition = PanelTransition()
+        transition?.containerHeight = height == nil ? view.viewHeight : (height ?? 0)
+        forgetPinViewController = UIHostingController(rootView: view)
+        forgetPinViewController?.view.layer.cornerRadius = 20
+        forgetPinViewController?.transitioningDelegate = transition
+        forgetPinViewController?.modalPresentationStyle = .custom
+        transition?.dimmClicked
+            .sink { [weak self] in self?.forgetPinViewController?.dismiss(animated: true) }
+            .store(in: &subscriptions)
+        guard let forgetPinViewController = forgetPinViewController else {
+            return
+        }
+        present(forgetPinViewController, animated: true)
     }
 }

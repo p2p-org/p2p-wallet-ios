@@ -37,6 +37,8 @@ extension Main {
         @Injected private var accountStorage: AccountStorageType
         @Injected private var nameService: NameService
         @Injected private var nameStorage: NameStorageType
+        @Injected private var userWalletManager: UserWalletManager
+        @Injected private var pincodeService: PincodeService
 
         private let transactionAnalytics = [
             Resolver.resolve(SwapTransactionAnalytics.self),
