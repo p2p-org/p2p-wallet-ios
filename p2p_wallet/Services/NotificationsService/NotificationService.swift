@@ -19,6 +19,7 @@ protocol NotificationService {
     func deleteDeviceToken() async
     func showInAppNotification(_ notification: InAppNotification)
     func showToast(title: String?, text: String?)
+    func showAlert(title: String, text: String)
     func hideToasts()
     func showDefaultErrorNotification()
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
@@ -121,6 +122,13 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     func showToast(title: String? = nil, text: String? = nil) {
         DispatchQueue.main.async {
             UIApplication.shared.showToastError(title: title, text: text)
+        }
+    }
+
+    func showAlert(title: String, text: String) {
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.topViewController()?
+                .showAlert(title: title, message: text)
         }
     }
 

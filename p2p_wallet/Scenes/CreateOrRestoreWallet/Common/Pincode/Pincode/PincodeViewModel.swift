@@ -1,4 +1,5 @@
 import Combine
+import Foundation
 import KeyAppUI
 import LocalAuthentication
 import Resolver
@@ -7,6 +8,7 @@ import UIKit
 enum PincodeState {
     case create
     case confirm(pin: String, askBiometric: Bool)
+    case check
 }
 
 final class PincodeViewModel: BaseViewModel {
@@ -14,11 +16,18 @@ final class PincodeViewModel: BaseViewModel {
 
     @Injected private var biometricsAuthProvider: BiometricsAuthProvider
     @Injected private var authenticationHandler: AuthenticationHandlerType
+    @Injected private var pincodeService: PincodeService
+    @Injected private var userWalletManager: UserWalletManager
+    @Injected private var notificationService: NotificationService
 
     // MARK: - Properties
 
     @Published var title: String = ""
     @Published var snackbar: PincodeSnackbar?
+    @Published var showAlert: (String, String)?
+    @Published var showForgetPin: Bool = false
+    @Published var showFaceid: Bool = false
+    @Published var showForgotModal: Bool = false
 
     let back = PassthroughSubject<Void, Never>()
     let infoDidTap = PassthroughSubject<Void, Never>()
@@ -29,10 +38,12 @@ final class PincodeViewModel: BaseViewModel {
     let openMain = PassthroughSubject<(String, Bool), Never>()
 
     let isBackAvailable: Bool
+    // TODO: seems like it is used only in confirm state, move to case?
     let successNotification: String
 
     var pincode: String? {
         if case let .confirm(pin, _) = state { return pin }
+        if case .check = state { return pincodeService.pincode() }
         return nil
     }
 
@@ -51,6 +62,51 @@ final class PincodeViewModel: BaseViewModel {
         authenticationHandler.authenticate(presentationStyle: .init())
         title = title(for: state)
         bind()
+
+        switch state {
+        case .check:
+            showForgetPin = true
+            if bioAuthStatus == .faceID || bioAuthStatus == .touchID {
+                showFaceid = true
+                requestBiometrics { [weak self] succeed in
+                    if succeed {
+                        self?.pincodeService.resetAttempts()
+                    }
+                }
+            }
+        default:
+            break
+        }
+    }
+
+    // MARK: -
+
+    func biometricsTapped() {
+        requestBiometrics { [weak self] succeed in
+            if succeed {
+                self?.pincodeService.resetAttempts()
+            }
+        }
+    }
+
+    func requestBiometrics(onResult: ((Bool) -> Void)? = nil) {
+        biometricsAuthProvider.authenticate(
+            authenticationPrompt: L10n.enterPINCode, completion: { success, _ in
+                onResult?(success)
+                if success, let pin = self.pincodeService.pincode() {
+                    self.authenticationHandler.authenticate(presentationStyle: nil)
+                    self.openMain.send((pin, success))
+                }
+            }
+        )
+    }
+
+    func forgotModalShowed() {
+        showForgotModal.toggle()
+    }
+
+    func logout() {
+        Task { try await self.userWalletManager.remove() }
     }
 }
 
@@ -61,6 +117,8 @@ private extension PincodeViewModel {
             return L10n.createYourPasscode
         case .confirm:
             return L10n.confirmYourPasscode
+        case .check:
+            return L10n.enterYourPINCode
         }
     }
 
@@ -82,16 +140,48 @@ private extension PincodeViewModel {
                 } else {
                     self.openMain.send((pin, false))
                 }
+            case .check:
+                self.pincodeService.resetAttempts()
+                self.openMain.send((pin, false))
             }
         }.store(in: &subscriptions)
 
-        pincodeFailed.sink { [weak self] _ in
-            guard let self = self else { return }
-            switch self.state {
-            case .create: break
-            case .confirm:
-                self.snackbar = PincodeSnackbar(message: L10n.😢PasscodeDoesnTMatch.pleaseTryAgain, isFailure: true)
-            }
-        }.store(in: &subscriptions)
+        pincodeFailed.eraseToAnyPublisher()
+            .sink { [weak self] _ in
+                guard let self = self else { return }
+                switch self.state {
+                case .create: break
+                case .confirm:
+                    self.snackbar = PincodeSnackbar(message: L10n.😢PasscodeDoesnTMatch.pleaseTryAgain, isFailure: true)
+                case .check:
+                    do {
+                        try self.pincodeService.pincodeFailed()
+                    } catch {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            self.notificationService.showAlert(
+                                title: L10n.youWereSignedOut,
+                                text: L10n.afrer5IncorrectAppPINCodes
+                            )
+                        }
+                        self.logout()
+                    }
+                    if self.pincodeService.attemptsLeft() == 2 {
+                        self.showForgotModal = true
+//                        self.snackbar = PincodeSnackbar(
+//                            title: "❌",
+//                            message: L10n.after2MoreIncorrectPINsWeLlLogOutCurrentAccountForYourSafety,
+//                            isFailure: true
+//                        )
+                    } else if self.pincodeService.attemptsLeft() == 0 {
+                        // pass
+                    } else {
+                        self.snackbar = PincodeSnackbar(
+                            title: "😢",
+                            message: L10n.IncorrectPIN.tryAgain,
+                            isFailure: true
+                        )
+                    }
+                }
+            }.store(in: &subscriptions)
     }
 }

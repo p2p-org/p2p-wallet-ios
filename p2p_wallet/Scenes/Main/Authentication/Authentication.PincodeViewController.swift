@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 extension Authentication {
-    class PinCodeViewController: BaseViewController {
+    class OldPinCodeViewController: BaseViewController {
         private let viewModel: AuthenticationViewModelType
 
         // MARK: - Constants
