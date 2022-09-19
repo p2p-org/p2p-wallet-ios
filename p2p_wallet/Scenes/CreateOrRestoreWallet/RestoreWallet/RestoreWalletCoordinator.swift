@@ -229,6 +229,16 @@ private extension RestoreWalletCoordinator {
             _ = try await stateMachine <- .back
         }
         .store(in: &subscriptions)
+        chooseRestoreOptionViewModel.restoreRawWallet.sinkAsync { process in
+            process.start {
+                _ = try await stateMachine <-
+                    .restoreICloud(.restoreRawWallet(
+                        name: process.data.name,
+                        phrase: process.data.phrase,
+                        derivablePath: process.data.derivablePath
+                    ))
+            }
+        }.store(in: &subscriptions)
         return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel))
     }
 }
