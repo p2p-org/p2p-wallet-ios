@@ -79,7 +79,15 @@ class AppCoordinator: Coordinator<Void> {
     }
 
     private func openSplash(_ completionHandler: @escaping () -> Void) {
-        let vc = SplashViewController()
+        // TODO: - Return for new splash screen
+//        let vc = SplashViewController()
+//        window?.rootViewController = vc
+//        window?.makeKeyAndVisible()
+
+        let vc = BaseVC()
+        let lockView = LockView()
+        vc.view.addSubview(lockView)
+        lockView.autoPinEdgesToSuperviewEdges()
         window?.rootViewController = vc
         window?.makeKeyAndVisible()
 
@@ -88,11 +96,11 @@ class AppCoordinator: Coordinator<Void> {
             await Resolver.resolve(WarmupManager.self).start()
             try await userWalletManager.refresh()
 
-            if let splashVC = window?.rootViewController as? SplashViewController {
-                splashVC.stop(completionHandler: completionHandler)
-            } else {
-                completionHandler()
-            }
+//            if let splashVC = window?.rootViewController as? SplashViewController {
+//                splashVC.stop(completionHandler: completionHandler)
+//            } else {
+            completionHandler()
+//            }
         }
     }
 
