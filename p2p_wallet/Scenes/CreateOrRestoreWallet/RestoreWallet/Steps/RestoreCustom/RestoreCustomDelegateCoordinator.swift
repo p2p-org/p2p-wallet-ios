@@ -11,8 +11,8 @@ import SwiftUI
 final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCustomState> {
     override func buildViewController(for state: RestoreCustomState) -> UIViewController? {
         switch state {
-        case let .enterPhone(phone, _):
-            return handleEnterPhone(phone: phone)
+        case let .enterPhone(initialPhoneNumber, _, _, _):
+            return handleEnterPhone(phone: initialPhoneNumber)
 
         case let .enterOTP(phone, _, _, _):
             return handleEnterOtp(phone: phone)
@@ -87,8 +87,8 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
 private extension RestoreCustomDelegatedCoordinator {
     func handleEnterPhone(phone: String?) -> UIViewController {
-        let viewModel = EnterPhoneNumberViewModel(isBackAvailable: true)
-        if let phone = phone { viewModel.phone = phone }
+        let viewModel = EnterPhoneNumberViewModel(phone: phone, isBackAvailable: true)
+        // if let phone = phone { viewModel.phone = phone }
         let viewController = EnterPhoneNumberViewController(viewModel: viewModel)
 
         viewModel.coordinatorIO.selectCode.sinkAsync { [weak self] selectedCountryCode in
