@@ -79,8 +79,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                     title: L10n.wellWell,
                     subtitle: L10n
                         .WeVeBrokeSomethingReallyBig
-                        .LetSWaitTogetherFinnalyTheAppWillBeRepaired
-                        .ifYouWillWriteUsUseErrorCode("#\(abs(code))")
+                        .LetSWaitTogetherFinallyTheAppWillBeRepaired
+                        .ifYouWishToReportTheIssueUseErrorCode(abs(code))
                 ),
                 back: { [stateMachine] in try await stateMachine <- .back },
                 info: { /* TODO: handle */ },
@@ -95,13 +95,13 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             switch reason {
             case .blockEnterOTP:
                 title = L10n.itSOkayToBeWrong
-                contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeFreezedAccountFor
+                contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeFrozeAccountFor
             case .blockEnterPhoneNumber:
                 title = L10n.itSOkayToBeWrong
-                contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeStopedActionsFor
+                contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeFrozeAccountFor
             case .blockResend:
                 title = L10n.soLetSBreathe
-                contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFreezedAccountFor
+                contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFrozeAccountFor
             }
 
             let view = OnboardingBlockScreen(
