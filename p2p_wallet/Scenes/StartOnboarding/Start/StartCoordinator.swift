@@ -18,14 +18,14 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
     private weak var viewController: UIViewController?
     private let params: StartParameters
     private var subject = PassthroughSubject<OnboardingResult, Never>()
-    private let navigationController: UINavigationController
+    private let navigationController: OnboardingNavigationController
 
     // MARK: - Initializer
 
     init(window: UIWindow, params: StartParameters = StartParameters(isAnimatable: true)) {
         self.window = window
         self.params = params
-        navigationController = UINavigationController()
+        navigationController = OnboardingNavigationController()
     }
 
     override func start() -> AnyPublisher<OnboardingResult, Never> {
