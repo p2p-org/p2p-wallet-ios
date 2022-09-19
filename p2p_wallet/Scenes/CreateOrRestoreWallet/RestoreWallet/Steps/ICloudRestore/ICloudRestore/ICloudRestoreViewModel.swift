@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Combine
+import LocalAuthentication
 import Onboarding
 import Resolver
 
@@ -11,19 +12,16 @@ class ICloudRestoreViewModel: BaseViewModel {
 
     typealias SeedPhrase = String
 
-    struct CoordinatorIO {
-        let back: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
-        let info: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
-        let restore: PassthroughSubject<ReactiveProcess<ICloudAccount>, Never> = .init()
-    }
-
     // MARK: - Services
 
-    @Injected var notificationService: NotificationService
+    @Injected private var notificationService: NotificationService
+    @Injected private var biometricsProvider: BiometricsAuthProvider
 
-    // MARK: - Coordinator
+    // MARK: - Output events
 
-    private(set) var coordinatorIO: CoordinatorIO = .init()
+    let back: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
+    let info: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
+    let restore: PassthroughSubject<ReactiveProcess<ICloudAccount>, Never> = .init()
 
     // MARK: - States
 
@@ -37,22 +35,22 @@ class ICloudRestoreViewModel: BaseViewModel {
         super.init()
     }
 
-    func back() {
+    func backPressed() {
         guard loading == false else { return }
         loading = true
 
-        coordinatorIO.back.sendProcess { [weak self] error in
-            if let error = error { self?.notificationService.showDefaultErrorNotification() }
+        back.sendProcess { [weak self] error in
+            if error != nil { self?.notificationService.showDefaultErrorNotification() }
             self?.loading = false
         }
     }
 
-    func info() {
+    func infoPressed() {
         guard loading == false else { return }
         loading = true
 
-        coordinatorIO.info.sendProcess { [weak self] error in
-            if let error = error { self?.notificationService.showDefaultErrorNotification() }
+        info.sendProcess { [weak self] error in
+            if error != nil { self?.notificationService.showDefaultErrorNotification() }
             self?.loading = false
         }
     }
@@ -61,9 +59,31 @@ class ICloudRestoreViewModel: BaseViewModel {
         guard loading == false else { return }
         loading = true
 
-        coordinatorIO.restore.sendProcess(data: account) { [weak self] error in
-            if let error = error { self?.notificationService.showDefaultErrorNotification() }
-            self?.loading = false
+        biometricsProvider.authenticate { [weak self] success, authError in
+            guard let self = self else { return }
+            if success || self.canBeSkipped(error: authError) {
+                self.restore.sendProcess(data: account) { error in
+                    if error != nil { self.notificationService.showDefaultErrorNotification() }
+                    self.loading = false
+                }
+            } else if authError?.code == LAError.biometryLockout.rawValue {
+                self.notificationService.showDefaultErrorNotification()
+                self.loading = false
+            } else {
+                self.loading = false
+            }
+        }
+    }
+
+    private func canBeSkipped(error: NSError?) -> Bool {
+        guard let error = error else { return true }
+        switch error.code {
+        case LAError.biometryNotEnrolled.rawValue:
+            return true
+        case LAError.biometryNotAvailable.rawValue:
+            return true
+        default:
+            return false
         }
     }
 }
