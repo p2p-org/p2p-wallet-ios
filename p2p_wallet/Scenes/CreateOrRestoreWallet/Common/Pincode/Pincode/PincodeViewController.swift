@@ -43,6 +43,7 @@ final class PincodeViewController: BaseViewController {
                         bottom: 35,
                         right: .zero
                     ))
+                UIView.spacer
 
                 UILabel(
                     font: .font(of: .title2, weight: .regular),
@@ -68,7 +69,7 @@ final class PincodeViewController: BaseViewController {
                         forgetPinView()
                     }
                 }
-                .frame(height: 417)
+                .frame(height: viewModel.showForgetPin ? 417 : 417 - 24)
                 .padding(.init(top: 60, left: 0, bottom: 0, right: 0))
                 UIView.spacer
             }
@@ -76,16 +77,14 @@ final class PincodeViewController: BaseViewController {
     }
 
     func forgetPinView() -> UIView {
-        BEVStack {
-            UIButton(
-                height: 24,
-                label: L10n.forgetYouPIN,
-                labelFont: UIFont.font(of: .text1),
-                textColor: Asset.Colors.sky.color
-            ).onTap {
-                self.openForgotPIN()
-            }
-        }.frame(height: 24)
+        UIButton(
+            height: 24,
+            label: L10n.forgetYouPIN,
+            labelFont: UIFont.font(of: .text1),
+            textColor: Asset.Colors.sky.color
+        ).onTap {
+            self.openForgotPIN()
+        }
     }
 
     func bottomLeftButton() -> UIView? {
