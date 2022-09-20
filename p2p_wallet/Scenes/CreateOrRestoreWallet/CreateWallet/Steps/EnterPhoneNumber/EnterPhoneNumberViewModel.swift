@@ -121,7 +121,9 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             $phone.debounce(for: 0.0, scheduler: DispatchQueue.main)
                 .removeDuplicates()
                 .scan("") {
-                    if self.clearedPhoneString(phone: $1 ?? "").starts(with: self.selectedCountry.dialCode) == true {
+                    if self.clearedPhoneString(phone: $1 ?? "")
+                        .starts(with: self.clearedPhoneString(phone: self.selectedCountry.dialCode)) == true
+                    {
                         guard let exampleNumber = self.exampleNumberWith(phone: $0 ?? "") else {
                             return $1 ?? ""
                         }
@@ -137,6 +139,10 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
                 .eraseToAnyPublisher(),
             coordinatorIO.countrySelected
                 .compactMap { $0?.dialCode }
+                .filter {
+                    !self.clearedPhoneString(phone: self.phone ?? "")
+                        .starts(with: self.clearedPhoneString(phone: $0 ?? ""))
+                }
                 .eraseToAnyPublisher()
         )
             .assign(to: \.phone, on: self)
@@ -149,6 +155,10 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
         $selectedCountry
             .map(\.dialCode)
+            .filter {
+                !self.clearedPhoneString(phone: self.phone ?? "")
+                    .starts(with: self.clearedPhoneString(phone: $0))
+            }
             .compactMap { $0 }
             .assign(to: \.phone, on: self)
             .store(in: &cancellable)
