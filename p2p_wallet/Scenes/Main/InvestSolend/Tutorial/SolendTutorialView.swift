@@ -42,9 +42,10 @@ extension SolendTutorialView {
                     title: L10n.createANewWallet,
                     style: .inverted,
                     size: .large,
-                    trailing: Asset.MaterialIcon.arrowForward.image
+                    trailing: Asset.MaterialIcon.arrowForward.image,
+                    isEnabled: .constant(true)
                 ) { [weak viewModel] in
-                    viewModel?.createWalletDidTap.send()
+                    viewModel?.continueDidTap.send()
                 }
                     .frame(height: 56)
                     .frame(maxWidth: .infinity)

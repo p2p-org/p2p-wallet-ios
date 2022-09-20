@@ -13,24 +13,19 @@ final class SolendTutorialViewModel: BaseViewModel {
     override init() {
         data = [
             SolendTutorialContentData(
-                image: .coins,
-                title: L10n.welcomeToKeyApp,
-                subtitle: L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos
+                image: .solendTutorial1,
+                title: L10n.letYourCryptoWorkForYou,
+                subtitle: L10n.growYourPortfolioByReceivingRewardsUpTo("15")
             ),
             SolendTutorialContentData(
-                image: .coins,
-                title: "\(L10n.welcomeToKeyApp) 2",
-                subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 2"
+                image: .solendTutorial2,
+                title: L10n.noLockUpPeriods,
+                subtitle: L10n.withdrawYourFundsWithAllRewardsAtAnyTime
             ),
             SolendTutorialContentData(
-                image: .coins,
-                title: "\(L10n.welcomeToKeyApp) 3",
-                subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 3"
-            ),
-            SolendTutorialContentData(
-                image: .coins,
-                title: "\(L10n.welcomeToKeyApp) 4",
-                subtitle: "\(L10n.useOurAdvancedSecurityToBuySellAndHoldCryptos) 4"
+                image: .solendTutorial3,
+                title: L10n.superheroProtection,
+                subtitle: L10n.asAllYourFundsAreInsuredYouDonTNeedToWorryAnymore
             ),
         ]
         
