@@ -53,7 +53,7 @@ struct SeedPhraseDetailView: View {
                             title: L10n.copy,
                             style: .third,
                             size: .large,
-                            trailing: Asset.Icons.copy.image
+                            trailing: Asset.Icons.copyFilled.image
                         ) { viewModel.copy() }
                             .frame(height: TextButton.Size.large.height)
                     }
