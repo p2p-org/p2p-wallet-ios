@@ -22,6 +22,7 @@ extension CreateWalletFlowState: DefaultsSerializable {}
 extension DefaultsKeys {
     // Keychain-keys
     var keychainPincodeKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
+    var pincodeAttemptsKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainPhrasesKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainDerivableTypeKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
     var keychainWalletIndexKey: DefaultsKey<String?> { .init(#function, defaultValue: nil) }
