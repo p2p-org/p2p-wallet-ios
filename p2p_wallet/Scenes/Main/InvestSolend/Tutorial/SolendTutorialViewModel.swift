@@ -9,6 +9,8 @@ final class SolendTutorialViewModel: BaseViewModel {
     let skipDidTap = PassthroughSubject<Void, Never>()
     let nextDidTap = PassthroughSubject<Void, Never>()
     let continueDidTap = PassthroughSubject<Void, Never>()
+    
+    private var subscriptions = [AnyCancellable]()
 
     init() {
         data = [
