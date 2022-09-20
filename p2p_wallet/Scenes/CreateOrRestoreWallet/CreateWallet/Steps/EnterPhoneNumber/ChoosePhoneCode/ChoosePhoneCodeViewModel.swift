@@ -11,15 +11,18 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
 
     private var subscriptions = [AnyCancellable]()
     private var cachedResult = [SelectableCountry]()
+    private var initialDialCode: String?
     private var initialCountryCode: String?
 
+    @Published var selectedDialCode: String?
     @Published var selectedCountryCode: String?
     @Published var keyword = ""
     let didClose = PassthroughSubject<Void, Never>()
 
     // MARK: - Initializers
 
-    init(selectedCountryCode: String?) {
+    init(selectedDialCode: String?, selectedCountryCode: String?) {
+        initialDialCode = selectedDialCode
         initialCountryCode = selectedCountryCode
         super.init()
         $keyword
@@ -41,15 +44,18 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
             .store(in: &subscriptions)
 
         var selectedIndex = 0
-        $selectedCountryCode.sink { [weak self] value in
+        $selectedDialCode.sink { [weak self] value in
             guard let value = value else { return }
 
-            if let index = (self?.cachedResult.firstIndex { $0.value.code == self?.initialCountryCode }) {
+            if let index = (self?.cachedResult
+                .firstIndex { $0.value.dialCode == self?.initialDialCode && $0.value.code == self?.initialCountryCode
+                })
+            {
                 self?.cachedResult[index].isSelected = false
             }
-            self?.initialCountryCode = nil
+            self?.initialDialCode = nil
 
-            if let index = (self?.cachedResult.firstIndex { $0.value.code == value.value }) {
+            if let index = (self?.cachedResult.firstIndex { $0.value.dialCode == value.value }) {
                 self?.cachedResult[selectedIndex].isSelected = false
                 self?.cachedResult[index].isSelected = true
                 selectedIndex = index
@@ -61,9 +67,10 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     // MARK: - Methods
 
     override func createRequest() async throws -> [SelectableCountry] {
-        let selectedCode = selectedCountryCode?.value ?? initialCountryCode
+        let selectedDialCode = selectedDialCode?.value ?? initialDialCode
+        let selectedCountryCode = selectedCountryCode?.value ?? initialCountryCode
         cachedResult = try await CountriesAPIImpl().fetchCountries()
-            .map { .init(value: $0, isSelected: $0.code == selectedCode) }
+            .map { .init(value: $0, isSelected: $0.dialCode == selectedDialCode && $0.code == selectedCountryCode) }
         var countries = cachedResult.filteredAndSorted(byKeyword: keyword.value)
         countries = placeInitialIfNeeded(countries: countries)
         return countries
@@ -71,17 +78,19 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
 
     private func emptyCountryModel() -> SelectableCountry {
         SelectableCountry(
-            value: Country(name: L10n.sorryWeDonTKnowASuchCountry, dialCode: "", code: "", emoji: "🏴"),
+            value: Country(name: L10n.sorryWeDonTKnowASuchCountry, code: "", dialCode: "", emoji: "🏴"),
             isSelected: false,
             isEmpty: true
         )
     }
 
     private func placeInitialIfNeeded(countries: [SelectableCountry]) -> [SelectableCountry] {
-        guard initialCountryCode != nil else { return countries }
+        guard initialDialCode != nil else { return countries }
         var countries = countries
         // Put initial selected country in the first place
-        if let selectedIndex = countries.firstIndex(where: { $0.value.code == initialCountryCode }) {
+        if let selectedIndex = countries
+            .firstIndex(where: { $0.value.dialCode == initialDialCode && $0.value.code == initialCountryCode })
+        {
             let selectedCountry = countries.remove(at: selectedIndex)
             countries.insert(selectedCountry, at: .zero)
         }
