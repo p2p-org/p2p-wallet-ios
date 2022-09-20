@@ -9,7 +9,7 @@ import SwiftUI
 struct ForgetPinView: View {
     @State var isLoading: Bool = false
     @Injected var userWalletManager: UserWalletManager
-    private var text: String
+    private let text: String
 
     var close: (() -> Void)?
     var onLogout: (() -> Void)?
