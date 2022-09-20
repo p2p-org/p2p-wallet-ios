@@ -226,25 +226,14 @@ extension ReceiveToken.ViewController {
         case .showPhotoLibraryUnavailable:
             PhotoLibraryAlertPresenter().present(on: self)
         case .buy:
-            if available(.buyScenarioEnabled) {
-                buyCoordinator = BuyCoordinator(
-                    context: .fromRenBTC,
-                    presentingViewController: self,
-                    shouldPush: false
-                )
-                buyCoordinator?.start()
-                    .sink { _ in }
-                    .store(in: &subscriptions)
-            } else {
-                show(
-                    BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
-                        let vm = BuyRoot.ViewModel()
-                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
-                        show(vc, sender: nil)
-                    }),
-                    sender: nil
-                )
-            }
+            buyCoordinator = BuyCoordinator(
+                context: .fromRenBTC,
+                presentingViewController: self,
+                shouldPush: false
+            )
+            buyCoordinator?.start()
+                .sink { _ in }
+                .store(in: &subscriptions)
         case .none:
             return
         }
