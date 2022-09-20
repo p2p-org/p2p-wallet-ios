@@ -41,7 +41,7 @@ final class NetworkViewModel: ObservableObject {
     func setEndPoint(_ endPoint: APIEndPoint) {
         guard Defaults.apiEndPoint != endPoint else { return }
 
-        analyticsManager.log(event: .networkChanging(networkName: endPoint.address))
+        analyticsManager.log(event: AmplitudeEvent.networkChanging(networkName: endPoint.address))
         Task {
             try await renVMService.expireCurrentSession()
             await MainActor.run {
