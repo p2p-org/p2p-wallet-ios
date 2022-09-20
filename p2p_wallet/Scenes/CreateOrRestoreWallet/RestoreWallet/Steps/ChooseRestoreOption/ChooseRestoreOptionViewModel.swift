@@ -121,6 +121,8 @@ final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
         authenticate(completion: { [weak self] success in
             if success {
                 self?.restoreRawWallet.send(process)
+            } else {
+                self?.isLoading = nil
             }
         })
     }
