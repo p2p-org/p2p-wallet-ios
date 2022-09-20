@@ -62,7 +62,12 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
     }
 
     func openCreatePincode() {
-        let viewModel = PincodeViewModel(state: .create, isBackAvailable: false, successNotification: "")
+        let viewModel = PincodeViewModel(
+            state: .create,
+            isBackAvailable: false,
+            successNotification: "",
+            ignoreAuthHandler: true
+        )
         let viewController = PincodeViewController(viewModel: viewModel)
         viewController.title = L10n.changePIN
 
@@ -83,7 +88,8 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
         let viewModel = PincodeViewModel(
             state: .confirm(pin: pincode, askBiometric: false),
             isBackAvailable: false,
-            successNotification: "🤗 " + L10n.yourPINWasChanged
+            successNotification: "🤗 " + L10n.yourPINWasChanged,
+            ignoreAuthHandler: true
         )
         let viewController = PincodeViewController(viewModel: viewModel)
         viewController.title = L10n.changePIN

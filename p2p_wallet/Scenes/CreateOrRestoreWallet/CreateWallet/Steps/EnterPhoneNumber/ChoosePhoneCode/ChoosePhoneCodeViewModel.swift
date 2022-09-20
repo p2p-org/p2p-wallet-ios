@@ -71,7 +71,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
 
     private func emptyCountryModel() -> SelectableCountry {
         SelectableCountry(
-            value: Country(name: L10n.sorryWeDonTKnowASuchCountry, dialCode: "", code: "", emoji: "🏴"),
+            value: Country(name: L10n.sorryWeDonTKnowASuchCountry, code: "", dialCode: "", emoji: "🏴"),
             isSelected: false,
             isEmpty: true
         )

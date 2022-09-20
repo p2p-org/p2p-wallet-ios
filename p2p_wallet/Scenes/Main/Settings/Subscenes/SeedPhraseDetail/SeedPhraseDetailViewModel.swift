@@ -57,6 +57,7 @@ class SeedPhraseDetailViewModel: BaseViewModel {
 
     func unlock() {
         authenticationHandler.authenticate(presentationStyle: .init(
+            options: [.fullscreen],
             completion: { [weak self] _ in
                 self?.state = .unlock
             }, onCancel: { [weak self] in
