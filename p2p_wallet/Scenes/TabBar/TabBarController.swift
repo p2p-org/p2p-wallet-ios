@@ -109,17 +109,11 @@ final class TabBarController: UITabBarController {
         let sendTokenNavigationVC = sendTokenCoordinator.start(hidesBottomBarWhenPushed: false)
 
         let settingsNavigation: UINavigationController
-        if available(.settingsFeature) {
-            settingsNavigation = UINavigationController()
-            settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
-            settingsCoordinator?.start()
-                .sink(receiveValue: { _ in })
-                .store(in: &cancellables)
-        } else {
-            settingsNavigation = UINavigationController(
-                rootViewController: Settings.ViewController(viewModel: Settings.ViewModel())
-            )
-        }
+        settingsNavigation = UINavigationController()
+        settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
+        settingsCoordinator?.start()
+            .sink(receiveValue: { _ in })
+            .store(in: &cancellables)
 
         viewControllers = [
             homeNavigation,

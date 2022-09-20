@@ -26,16 +26,17 @@ final class SettingsCoordinator: Coordinator<Void> {
         navigationController.setViewControllers([settingsVC], animated: false)
 
         viewModel.openAction
-            .sink(receiveValue: { [unowned self] action in
+            .sink(receiveValue: { [unowned self, weak viewModel] action in
+                guard let viewModel = viewModel else { return }
                 switch action {
                 case .username:
-                    let vc = Settings.NewUsernameViewController(viewModel: Settings.ViewModel())
+                    let vc = NewUsernameViewController(viewModel: viewModel)
                     navigationController.pushViewController(vc, animated: true)
                 case let .reserveUsername(userAddress):
                     let vm = ReserveName.ViewModel(
                         kind: .independent,
                         owner: userAddress,
-                        reserveNameHandler: Settings.ViewModel(),
+                        reserveNameHandler: viewModel,
                         goBackOnCompletion: true,
                         checkBeforeReserving: true
                     )
@@ -65,6 +66,11 @@ final class SettingsCoordinator: Coordinator<Void> {
                 case .network:
                     let coordinator = NetworkCoordinator(navigationController: navigationController)
                     coordinate(to: coordinator)
+                case let .share(item):
+                    let vc = UIActivityViewController(activityItems: [item], applicationActivities: nil)
+                    navigationController.present(vc, animated: true, completion: nil)
+                case .accessToPhoto:
+                    PhotoLibraryAlertPresenter().present(on: navigationController)
                 }
             })
             .store(in: &subscriptions)
