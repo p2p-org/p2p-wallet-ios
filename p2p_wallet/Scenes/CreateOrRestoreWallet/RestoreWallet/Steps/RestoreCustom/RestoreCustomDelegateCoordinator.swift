@@ -6,9 +6,12 @@ import Combine
 import CountriesAPI
 import KeyAppUI
 import Onboarding
+import Resolver
 import SwiftUI
 
 final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCustomState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: RestoreCustomState) -> UIViewController? {
         switch state {
         case let .enterPhone(initialPhoneNumber, _, _, _):
@@ -52,7 +55,6 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
     private func openHelp() {
         openInfo()
-        // TODO: possible entry point for https://p2pvalidator.atlassian.net/browse/PWN-4640
     }
 
     private func openTermAndCondition() {
@@ -111,6 +113,12 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = false
 
         }.store(in: &subscriptions)
+
+        viewModel.coordinatorIO.helpClicked
+            .sink(receiveValue: { [unowned self] in
+                helpLauncher.launch()
+            })
+            .store(in: &subscriptions)
 
         viewModel.coordinatorIO.back.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .back

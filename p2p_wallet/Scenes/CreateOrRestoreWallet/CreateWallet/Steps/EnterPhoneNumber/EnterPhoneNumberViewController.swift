@@ -159,7 +159,9 @@ final class EnterPhoneNumberViewController: BaseOTPViewController {
         viewModel.coordinatorIO.back.send()
     }
 
-    @objc func onInfo() {}
+    @objc func onInfo() {
+        viewModel.infoClicked()
+    }
 }
 
 class PhoneTextField: BaseTextFieldView {
