@@ -17,12 +17,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lock-background" translatesAutoresizingMaskIntoConstraints="NO" id="QRj-cR-GpW">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                            </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="p-logo" translatesAutoresizingMaskIntoConstraints="NO" id="yKQ-Pv-uA6">
                                 <rect key="frame" x="98.5" y="366" width="217" height="164"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
@@ -30,10 +27,6 @@
                         <constraints>
                             <constraint firstItem="yKQ-Pv-uA6" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="2OC-oY-nRu"/>
                             <constraint firstItem="yKQ-Pv-uA6" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="SJV-hE-jB8"/>
-                            <constraint firstItem="QRj-cR-GpW" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="Sl3-0m-lKK"/>
-                            <constraint firstAttribute="bottom" secondItem="QRj-cR-GpW" secondAttribute="bottom" id="ekS-pi-MSD"/>
-                            <constraint firstItem="QRj-cR-GpW" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="ouj-6g-nNJ"/>
-                            <constraint firstItem="QRj-cR-GpW" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="qSL-SV-qdv"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -43,7 +36,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="lock-background" width="375" height="812"/>
         <image name="p-logo" width="217" height="164"/>
         <namedColor name="Lime">
             <color red="0.8666666666666667" green="0.98039215686274506" blue="0.16862745098039217" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
