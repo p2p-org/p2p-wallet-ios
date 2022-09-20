@@ -85,8 +85,8 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     }
 
     private func placeInitialIfNeeded(countries: [SelectableCountry]) -> [SelectableCountry] {
-        guard initialDialCode != nil else { return countries }
-        var countries = countries
+        var countries = countries.filteredAndSorted()
+        guard initialDialCode != nil, initialCountryCode != nil else { return countries }
         // Put initial selected country in the first place
         if let selectedIndex = countries
             .firstIndex(where: { $0.value.dialCode == initialDialCode && $0.value.code == initialCountryCode })
