@@ -9,8 +9,8 @@ import Resolver
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     private static let defaultCountry = Country(
         name: L10n.sorryWeDonTKnowASuchCountry,
-        dialCode: "",
         code: "",
+        dialCode: "",
         emoji: "🏴"
     )
 
@@ -49,7 +49,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     }
 
     func selectCountryTap() {
-        coordinatorIO.selectCode.send(selectedCountry.code)
+        coordinatorIO.selectCode.send((selectedCountry.dialCode, selectedCountry.code))
     }
 
     @MainActor
@@ -64,7 +64,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         var error: PassthroughSubject<Error?, Never> = .init()
         var countrySelected: PassthroughSubject<Country?, Never> = .init()
         // Output
-        var selectCode: PassthroughSubject<String?, Never> = .init()
+        var selectCode: PassthroughSubject<(String?, String?), Never> = .init()
         var phoneEntered: PassthroughSubject<String, Never> = .init()
         let back: PassthroughSubject<Void, Never> = .init()
     }
@@ -81,14 +81,14 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             let countries = try await countriesAPI.fetchCountries()
             if let phone = phone {
                 // In case we have an initial phone number
-                let parsedRegion = try? self.phoneNumberKit.parse(phone).regionID
+                let parsedRegion = try? self.phoneNumberKit.parse(phone).regionID?.lowercased()
                 self.selectedCountry = countries.first(where: { country in
-                    country.code == parsedRegion ?? PhoneNumberKit.defaultRegionCode()
+                    country.code == parsedRegion ?? PhoneNumberKit.defaultRegionCode().lowercased()
                 }) ?? countries.first ?? EnterPhoneNumberViewModel.defaultCountry
                 self.phone = phone
             } else {
                 self.selectedCountry = countries.first(where: { country in
-                    country.code == PhoneNumberKit.defaultRegionCode()
+                    country.code == PhoneNumberKit.defaultRegionCode().lowercased()
                 }) ?? countries.first ?? EnterPhoneNumberViewModel.defaultCountry
             }
         }

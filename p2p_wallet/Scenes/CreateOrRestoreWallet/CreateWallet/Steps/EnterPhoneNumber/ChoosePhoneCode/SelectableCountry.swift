@@ -21,7 +21,9 @@ extension Array where Element == SelectableCountry {
                     }
                     return country.value.name.lowercased().starts(with: keyword) ||
                         country.value.dialCode.starts(with: keyword) ||
-                        dialCode.starts(with: keyword)
+                        dialCode.starts(with: keyword) ||
+                        country.value.name.lowercased().split(separator: " ")
+                        .map { $0.starts(with: keyword) }.contains(true)
                 }
         }
         return countries.sorted(by: { $0.value.name < $1.value.name })
