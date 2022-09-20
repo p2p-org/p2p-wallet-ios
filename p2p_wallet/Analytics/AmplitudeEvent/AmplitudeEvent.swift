@@ -192,10 +192,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case tokenListSearching(searchString: String)
     case tokenChosen(tokenName: String)
 
-    // User
-    case userHasPositiveBalance(_ positive: Bool)
-    case userAggregateBalance(_ balance: Double)
-
     // Buy
     case buyCurrencyChanged(fromCurrencyToCurrency: String)
     case buyCoinChanged(fromCoinToCoin: String)

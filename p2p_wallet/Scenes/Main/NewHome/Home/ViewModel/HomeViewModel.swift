@@ -48,8 +48,8 @@ class HomeViewModel: ObservableObject {
             case .initializing, .loading:
                 return (State.pending, nil)
             case .loaded, .error:
-                let amount = data?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
-                return (amount > 0 ? State.withTokens : State.empty, amount)
+                let fiatAmount = data?.reduce(0) { $0 + $1.amountInCurrentFiat } ?? 0
+                return (fiatAmount > 0 ? State.withTokens : State.empty, fiatAmount)
             }
         }
         .asPublisher()
@@ -64,9 +64,9 @@ class HomeViewModel: ObservableObject {
             self.state = state
             if state != .pending {
                 self.initStateFinished = true
-                self.analyticsManager.log(event: AmplitudeEvent.userHasPositiveBalance(amount > 0))
+                self.analyticsManager.setIdentifier(AmplitudeIdentifier.userHasPositiveBalance(positive: amount > 0))
                 if let amount = amount {
-                    self.analyticsManager.log(event: AmplitudeEvent.userAggregateBalance(amount))
+                    self.analyticsManager.setIdentifier(AmplitudeIdentifier.userAggregateBalance(balance: amount))
                 }
             }
         })
