@@ -17,7 +17,6 @@ extension Main {
 
         private let viewModel: MainViewModelType
         private var subscriptions = Set<AnyCancellable>()
-        private let generator = UINotificationFeedbackGenerator()
 
         // MARK: - Properties
 
@@ -114,7 +113,7 @@ extension Main {
             localAuthVC?.dismiss(animated: false, completion: nil)
             let pincodeViewModel = PincodeViewModel(
                 state: .check,
-                isBackAvailable: false,
+                isBackAvailable: !authStyle.options.contains(.required),
                 successNotification: ""
             )
             localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
@@ -133,6 +132,7 @@ extension Main {
                 .store(in: &subscriptions)
             localAuthVC?.onClose = { [weak self] in
                 self?.viewModel.authenticate(presentationStyle: nil)
+                authStyle.onCancel?()
             }
             presentLocalAuth()
         }

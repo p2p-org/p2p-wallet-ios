@@ -121,9 +121,7 @@ final class PincodeViewController: BaseViewController {
         viewModel.$snackbar.sink { [weak self] model in
             guard let self = self, let model = model else { return }
             let view: UIView = self.navigationController?.view ?? self.view
-            SnackBar(title: model.title, text: model.message).show(in: view, autoHide: true) {
-                guard model.isFailure else { return }
-            }
+            SnackBar(title: model.title, text: model.message).show(in: view, autoHide: true)
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 self.pincodeView.view?.reset()
             }
@@ -148,6 +146,14 @@ final class PincodeViewController: BaseViewController {
 
     private func addLeftButton() {
         guard viewModel.isBackAvailable else { return }
+        guard navigationController != nil else {
+            let closeButton = UIButton.close().onTap { [weak self] in
+                self?.close()
+            }
+            view.addSubview(closeButton)
+            closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16)
+            return
+        }
         let backButton = UIBarButtonItem(
             image: Asset.MaterialIcon.arrowBackIos.image,
             style: .plain,

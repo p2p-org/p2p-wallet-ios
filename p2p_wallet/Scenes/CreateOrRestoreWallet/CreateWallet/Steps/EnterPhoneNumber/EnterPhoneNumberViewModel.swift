@@ -9,8 +9,8 @@ import Resolver
 final class EnterPhoneNumberViewModel: BaseOTPViewModel {
     private static let defaultCountry = Country(
         name: L10n.sorryWeDonTKnowASuchCountry,
-        dialCode: "",
         code: "",
+        dialCode: "",
         emoji: "🏴"
     )
 

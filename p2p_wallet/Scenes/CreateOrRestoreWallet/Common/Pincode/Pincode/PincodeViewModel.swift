@@ -53,13 +53,21 @@ final class PincodeViewModel: BaseViewModel {
         biometricsAuthProvider.availabilityStatus
     }
 
-    init(state: PincodeState, isBackAvailable: Bool = true, successNotification: String) {
+    // HACK: ignoreAuthHandler to ignore initial value
+    init(
+        state: PincodeState,
+        isBackAvailable: Bool = true,
+        successNotification: String,
+        ignoreAuthHandler: Bool = false
+    ) {
         self.state = state
         self.isBackAvailable = isBackAvailable
         self.successNotification = successNotification
         super.init()
         // Put fake value into authenticationStatusSubject. It is need for cancelling background/foreground lock logic in AuthenticationHandler.observeAppNotifications(). Might be refactored with AuthenticationHandler changes and enter pincode task
-        authenticationHandler.authenticate(presentationStyle: .init())
+        if !ignoreAuthHandler {
+            authenticationHandler.authenticate(presentationStyle: .init())
+        }
         title = title(for: state)
         bind()
 
@@ -129,7 +137,7 @@ private extension PincodeViewModel {
             case .create:
                 self.confirmPin.send(pin)
             case let .confirm(_, askBiometric):
-                self.snackbar = PincodeSnackbar(message: self.successNotification, isFailure: false)
+                self.snackbar = PincodeSnackbar(message: self.successNotification)
                 if askBiometric {
                     self.biometricsAuthProvider.authenticate(
                         completion: { success, _ in
@@ -152,7 +160,7 @@ private extension PincodeViewModel {
                 switch self.state {
                 case .create: break
                 case .confirm:
-                    self.snackbar = PincodeSnackbar(message: L10n.😢PasscodeDoesnTMatch.pleaseTryAgain, isFailure: true)
+                    self.snackbar = PincodeSnackbar(message: L10n.😢PasscodeDoesnTMatch.pleaseTryAgain)
                 case .check:
                     do {
                         try self.pincodeService.pincodeFailed()
@@ -177,8 +185,7 @@ private extension PincodeViewModel {
                     } else {
                         self.snackbar = PincodeSnackbar(
                             title: "😢",
-                            message: L10n.IncorrectPIN.tryAgain,
-                            isFailure: true
+                            message: L10n.IncorrectPIN.tryAgain
                         )
                     }
                 }
