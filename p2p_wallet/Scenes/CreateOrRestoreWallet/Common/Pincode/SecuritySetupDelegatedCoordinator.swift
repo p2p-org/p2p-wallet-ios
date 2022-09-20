@@ -1,18 +1,19 @@
 import Combine
 import KeyAppUI
 import Onboarding
+import Resolver
 import SwiftUI
 import UIKit
 
 final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetupState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: SecuritySetupState) -> UIViewController? {
         switch state {
         case .createPincode:
             return createPincodeScreen()
-
         case let .confirmPincode(pin):
             return confirmPincodeScreen(pin)
-
         default:
             return nil
         }
@@ -63,10 +64,6 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
     }
 
     @objc private func openInfo() {
-        let vc = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        rootViewController?.present(vc, animated: true)
+        helpLauncher.launch()
     }
 }

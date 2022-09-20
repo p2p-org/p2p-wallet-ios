@@ -6,6 +6,7 @@ import Combine
 import Foundation
 import KeyAppUI
 import Onboarding
+import Resolver
 import SwiftUI
 
 enum RestoreWalletNavigation {
@@ -14,6 +15,8 @@ enum RestoreWalletNavigation {
 }
 
 final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     private let navigationController: OnboardingNavigationController
     private let navigation: RestoreWalletNavigation
 
@@ -173,16 +176,8 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
         }
     }
 
-    private func openTerms() {
-        let termsVC = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        navigationController.present(termsVC, animated: true)
-    }
-
     @objc private func openInfo() {
-        openTerms()
+        helpLauncher.launch()
     }
 
     private func isBackAvailable() -> Bool {

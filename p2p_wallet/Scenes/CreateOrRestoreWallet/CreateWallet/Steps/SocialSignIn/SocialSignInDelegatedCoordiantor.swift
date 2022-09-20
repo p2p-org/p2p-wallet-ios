@@ -5,9 +5,12 @@
 import Combine
 import Foundation
 import Onboarding
+import Resolver
 import SwiftUI
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
         switch state {
         case .socialSelection:
@@ -78,11 +81,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
     }
 
     public func openInfo() {
-        let vc = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        rootViewController?.present(vc, animated: true)
+        helpLauncher.launch()
     }
 
     private func socialSignInParameters() -> SocialSignInParameters {

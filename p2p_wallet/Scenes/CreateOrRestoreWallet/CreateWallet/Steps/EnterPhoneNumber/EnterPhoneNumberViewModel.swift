@@ -66,12 +66,13 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
         // Output
         var selectCode: PassthroughSubject<(String?, String?), Never> = .init()
         var phoneEntered: PassthroughSubject<String, Never> = .init()
+        let helpClicked = PassthroughSubject<Void, Never>()
         let back: PassthroughSubject<Void, Never> = .init()
     }
 
     // MARK: -
 
-    var coordinatorIO: CoordinatorIO = .init()
+    let coordinatorIO = CoordinatorIO()
 
     init(phone: String? = nil, isBackAvailable: Bool) {
         self.isBackAvailable = isBackAvailable
@@ -193,6 +194,10 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     func clearedPhoneString(phone: String) -> String {
         phone.filter("0123456789+".contains)
+    }
+
+    func infoClicked() {
+        coordinatorIO.helpClicked.send()
     }
 
     // MARK: -
