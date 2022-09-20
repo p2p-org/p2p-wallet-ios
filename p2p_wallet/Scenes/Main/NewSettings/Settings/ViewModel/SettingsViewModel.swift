@@ -19,6 +19,9 @@ final class SettingsViewModel: ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var logoutResponder: LogoutResponder
     @Injected private var authenticationHandler: AuthenticationHandlerType
+    @Injected private var clipboardManager: ClipboardManagerType
+    @Injected private var notificationsService: NotificationService
+    @Injected private var imageSaver: ImageSaverType
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
         didSet {
@@ -51,6 +54,10 @@ final class SettingsViewModel: ObservableObject {
     private var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
     var appInfo: String {
         "\(appVersion)\(Environment.current != .release ? ("(" + Bundle.main.buildVersionNumber + ")" + " " + Environment.current.description) : "")"
+    }
+
+    var userSOLAddress: String? {
+        solanaStorage.account?.publicKey.base58EncodedString
     }
 
     init() {
@@ -131,6 +138,41 @@ final class SettingsViewModel: ObservableObject {
     func updateNameIfNeeded() {
         name = storageName != nil ? storageName!.withNameServiceDomain() : L10n.notReserved
     }
+
+    func copyUsernameToClipboard() {
+        guard let username = nameStorage.getName()?.withNameServiceDomain() else { return }
+        clipboardManager.copyToClipboard(username)
+        notificationsService.showInAppNotification(.done(L10n.copiedToClipboard))
+    }
+
+    func share(image: UIImage) {
+        openActionSubject.send(.share(item: image))
+    }
+
+    func saveImage(image: UIImage) {
+        imageSaver.save(image: image) { [weak self] result in
+            switch result {
+            case .success:
+                self?.notificationsService.showInAppNotification(.done(L10n.savedToPhotoLibrary))
+            case let .failure(error):
+                switch error {
+                case .noAccess:
+                    self?.openActionSubject.send(.accessToPhoto)
+                case .restrictedRightNow:
+                    break
+                case let .unknown(error):
+                    self?.notificationsService.showInAppNotification(.error(error))
+                }
+            }
+        }
+    }
+}
+
+extension SettingsViewModel: ReserveNameHandler {
+    func handleName(_ name: String?) {
+        guard let name = name else { return }
+        nameStorage.save(name: name)
+    }
 }
 
 // MARK: - Open Action
@@ -142,6 +184,8 @@ extension SettingsViewModel {
         case recoveryKit
         case yourPin
         case network
+        case share(item: Any)
+        case accessToPhoto
     }
 }
 
