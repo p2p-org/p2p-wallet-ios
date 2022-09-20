@@ -19,14 +19,7 @@ final class DebugMenuViewModel: ObservableObject {
     @Published var features: [FeatureItem]
 
     init() {
-        features = Menu.allCases
-            .map {
-                FeatureItem(
-                    title: $0.title,
-                    feature: $0.feature,
-                    isOn: available($0.feature)
-                )
-            }
+        features = []
     }
 
     func setFeature(_ feature: Feature, isOn: Bool) {
@@ -54,25 +47,5 @@ extension DebugMenuViewModel {
         let title: String
         let feature: Feature
         var isOn: Bool
-    }
-}
-
-extension DebugMenuViewModel {
-    enum Menu: Int, CaseIterable {
-        case newSettings
-
-        var title: String {
-            switch self {
-            case .newSettings:
-                return "New Settings"
-            }
-        }
-
-        var feature: Feature {
-            switch self {
-            case .newSettings:
-                return .settingsFeature
-            }
-        }
     }
 }
