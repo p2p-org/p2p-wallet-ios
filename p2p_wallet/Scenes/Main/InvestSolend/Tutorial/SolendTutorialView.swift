@@ -19,7 +19,7 @@ struct SolendTutorialView: View {
                         fillColor: Color(Asset.Colors.night.color)
                     ) {
                         ForEach(viewModel.data, id: \.id) { data in
-                            OnboardingContentView(data: data)
+                            SolendTutorialSlideView(data: data)
                         }
                     }
                     .transition(.opacity.combined(with: .move(edge: .top)))
