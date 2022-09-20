@@ -6,6 +6,7 @@ import SwiftUI
 struct SolendTutorialView: View {
     @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
     @SwiftUI.Environment(\.presentationMode) var presentationMode
+    
     @StateObject var viewModel: SolendTutorialViewModel
 
     var body: some View {
@@ -46,6 +47,7 @@ struct SolendTutorialView: View {
     
     // MARK: - Actions
     private func markAsReadAndDismiss() {
+        Defaults.isSolendTutorialShown = true
         presentationMode.wrappedValue.dismiss()
     }
     
