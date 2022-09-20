@@ -4,7 +4,8 @@ import SolanaSwift
 import SwiftUI
 
 struct SolendTutorialView: View {
-    @ObservedObject var viewModel: SolendTutorialViewModel
+    @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
+    @StateObject var viewModel: SolendTutorialViewModel
 
     var body: some View {
         ZStack {
@@ -32,21 +33,26 @@ struct SolendTutorialView: View {
 
 extension SolendTutorialView {
     private var bottomActionsView: some View {
-        BottomActionContainer {
-            VStack(spacing: .zero) {
-                // Create a wallet
-                TextButtonView(
-                    title: L10n.createANewWallet,
-                    style: .inverted,
-                    size: .large,
-                    trailing: Asset.MaterialIcon.arrowForward.image,
-                    isEnabled: .constant(true)
-                ) { [weak viewModel] in
-                    viewModel?.continueDidTap.send()
+        TextButtonView(
+            title: viewModel.isLastPage ? L10n.continue: L10n.next.uppercaseFirst,
+            style: .primary,
+            size: .large,
+            isEnabled: .constant(true)
+        ) { [weak viewModel] in
+            if viewModel?.isLastPage == true {
+                withAnimation {
+//                    viewModel?.continueDidTap.send()
                 }
-                    .frame(height: 56)
-                    .frame(maxWidth: .infinity)
+            } else {
+                withAnimation {
+                    viewModel?.goNext()
+                }
             }
         }
+            .frame(height: 56)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, max(safeAreaInsets.bottom, 20))
     }
 }

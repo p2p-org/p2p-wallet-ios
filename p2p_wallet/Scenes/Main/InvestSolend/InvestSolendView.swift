@@ -81,7 +81,14 @@ struct InvestSolendView: View {
                     }
                 }
             }
-        }.onAppear { Task { try await viewModel.update() } }
+        }
+            .onAppear {
+                viewModel.isPresentingTutorial = true
+                Task { try await viewModel.update() }
+            }
+            .fullScreenCover(isPresented: $viewModel.isPresentingTutorial) {
+                SolendTutorialView(viewModel: .init())
+            }
     }
 }
 

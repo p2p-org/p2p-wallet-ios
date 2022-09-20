@@ -18,6 +18,7 @@ class InvestSolendViewModel: ObservableObject {
     @Published var loading: Bool = false
     @Published var market: [Invest] = []
     @Published var totalDeposit: Double = 0
+    @Published var isPresentingTutorial = false
 
     init(mocked: Bool) throws {
         service = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
@@ -37,6 +38,7 @@ class InvestSolendViewModel: ObservableObject {
                     return apy1 > apy2
                 }
             }
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] value in self?.market = value }
             .store(in: &subscriptions)
 
@@ -46,12 +48,14 @@ class InvestSolendViewModel: ObservableObject {
                     partialResult + (Double(deposit.depositedAmount) ?? 0)
                 }
             }
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] (totalDeposit: Double) in
                 self?.totalDeposit = totalDeposit
             }
             .store(in: &subscriptions)
 
         service.status
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] status in
                 guard let self = self else { return }
                 switch status {
