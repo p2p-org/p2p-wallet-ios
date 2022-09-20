@@ -159,6 +159,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                 return
             }
         }
+        timer?.fire()
     }
 
     private func setResendCountdown() {
