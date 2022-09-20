@@ -32,15 +32,15 @@ final class RestoreSeedPhraseDelegatedCoordinator: DelegatedCoordinator<RestoreS
 private extension RestoreSeedPhraseDelegatedCoordinator {
     func signInViewController() -> UIViewController {
         let viewModel = SeedPhraseRestoreWalletViewModel()
-        viewModel.coordinatorIO.finishedWithSeed.sinkAsync { [stateMachine] phrase in
+        viewModel.finishedWithSeed.sinkAsync { [stateMachine] phrase in
             _ = try await stateMachine <- .chooseDerivationPath(phrase: phrase)
         }.store(in: &subscriptions)
 
-        viewModel.coordinatorIO.back.sinkAsync { [stateMachine] _ in
+        viewModel.back.sinkAsync { [stateMachine] _ in
             _ = try await stateMachine <- .back
         }.store(in: &subscriptions)
 
-        viewModel.coordinatorIO.info.sinkAsync { [weak self] _ in
+        viewModel.info.sinkAsync { [weak self] _ in
             self?.openInfo()
         }.store(in: &subscriptions)
         return UIHostingController(rootView: SeedPhraseRestoreWalletView(viewModel: viewModel))
