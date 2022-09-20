@@ -83,7 +83,9 @@ struct InvestSolendView: View {
             }
         }
             .onAppear {
-                viewModel.isPresentingTutorial = true
+                if !viewModel.isTutorialShown {
+                    viewModel.isPresentingTutorial = true
+                }
                 Task { try await viewModel.update() }
             }
             .fullScreenCover(isPresented: $viewModel.isPresentingTutorial) {
