@@ -30,7 +30,7 @@ def key_app_kit
     end
   else
     $keyAppKitGit = 'https://github.com/p2p-org/key-app-kit-swift.git'
-    $keyAppKitBranch = 'develop'
+    $keyAppKitBranch = 'feature/solend-model'
     for $dependency in $dependencies do
       pod $dependency, :git => $keyAppKitGit, :branch => $keyAppKitBranch
     end
@@ -71,7 +71,7 @@ target 'p2p_wallet' do
   # kits
   pod 'KeychainSwift', '~> 19.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
-  pod 'Intercom'
+  pod 'Intercom', '~> 12.4.3'
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
