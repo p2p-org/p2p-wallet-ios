@@ -168,7 +168,7 @@ private extension PincodeViewModel {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             self.notificationService.showAlert(
                                 title: L10n.youWereSignedOut,
-                                text: L10n.afrer5IncorrectAppPINCodes
+                                text: L10n.after5IncorrectAppPINCodes
                             )
                         }
                         self.logout()
