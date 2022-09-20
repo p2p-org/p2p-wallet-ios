@@ -4,7 +4,7 @@ import SolanaSwift
 import SwiftUI
 
 struct SolendTutorialView: View {
-    @ObservedObject var viewModel: StartViewModel
+    @ObservedObject var viewModel: SolendTutorialViewModel
     @State private var isShowing = false
 
     var body: some View {
@@ -18,7 +18,7 @@ struct SolendTutorialView: View {
                         maxIndex: viewModel.data.count - 1,
                         fillColor: Color(Asset.Colors.night.color)
                     ) {
-                        ForEach(viewModel.data, id: \.id) { data in
+                        ForEach(viewModel.data) { data in
                             SolendTutorialSlideView(data: data)
                         }
                     }
