@@ -63,9 +63,10 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         rootViewController?.present(viewController, animated: true)
     }
 
-    private func selectCountry(selectedCountryCode: String?) async throws -> Country? {
+    private func selectCountry(selectedDialCode: String?, selectedCountryCode: String?) async throws -> Country? {
         guard let rootViewController = rootViewController else { return nil }
         let coordinator = ChoosePhoneCodeCoordinator(
+            selectedDialCode: selectedDialCode,
             selectedCountryCode: selectedCountryCode,
             presentingViewController: rootViewController
         )
@@ -91,8 +92,11 @@ private extension RestoreCustomDelegatedCoordinator {
         // if let phone = phone { viewModel.phone = phone }
         let viewController = EnterPhoneNumberViewController(viewModel: viewModel)
 
-        viewModel.coordinatorIO.selectCode.sinkAsync { [weak self] selectedCountryCode in
-            guard let result = try await self?.selectCountry(selectedCountryCode: selectedCountryCode) else { return }
+        viewModel.coordinatorIO.selectCode.sinkAsync { [weak self] dialCode, countryCode in
+            guard let result = try await self?.selectCountry(
+                selectedDialCode: dialCode,
+                selectedCountryCode: countryCode
+            ) else { return }
             viewModel.coordinatorIO.countrySelected.send(result)
         }.store(in: &subscriptions)
 
