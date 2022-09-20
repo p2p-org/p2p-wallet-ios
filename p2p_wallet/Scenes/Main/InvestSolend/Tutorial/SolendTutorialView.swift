@@ -5,6 +5,7 @@ import SwiftUI
 
 struct SolendTutorialView: View {
     @SwiftUI.Environment(\.safeAreaInsets) private var safeAreaInsets: EdgeInsets
+    @SwiftUI.Environment(\.presentationMode) var presentationMode
     @StateObject var viewModel: SolendTutorialViewModel
 
     var body: some View {
@@ -40,12 +41,10 @@ extension SolendTutorialView {
             isEnabled: .constant(true)
         ) { [weak viewModel] in
             if viewModel?.isLastPage == true {
-                withAnimation {
-//                    viewModel?.continueDidTap.send()
-                }
+                presentationMode.wrappedValue.dismiss()
             } else {
                 withAnimation {
-                    viewModel?.goNext()
+                    viewModel?.next()
                 }
             }
         }

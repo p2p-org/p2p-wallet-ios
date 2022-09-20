@@ -32,7 +32,7 @@ final class SolendTutorialViewModel: BaseViewModel {
         super.init()
     }
     
-    func goNext() {
+    func next() {
         guard currentDataIndex < data.count - 1 else {
             currentDataIndex = 0
             return
