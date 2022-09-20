@@ -69,7 +69,7 @@ target 'p2p_wallet' do
   # kits
   pod 'KeychainSwift', '~> 19.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
-  pod 'Intercom'
+  pod 'Intercom', '~> 12.4.3'
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
