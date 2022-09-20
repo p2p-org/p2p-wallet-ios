@@ -117,9 +117,9 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             let status = pendingTransactionSubject.value.status.rawValue
             switch rawTransaction {
             case is ProcessTransaction.SendTransaction:
-                analyticsManager.log(event: .sendMakeAnotherTransactionClick(txStatus: status))
+                analyticsManager.log(event: AmplitudeEvent.sendMakeAnotherTransactionClick(txStatus: status))
             case is ProcessTransaction.SwapTransaction:
-                analyticsManager.log(event: .swapMakeAnotherTransactionClick(txStatus: status))
+                analyticsManager.log(event: AmplitudeEvent.swapMakeAnotherTransactionClick(txStatus: status))
             default:
                 break
             }
@@ -130,9 +130,9 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
             if let error = pendingTransactionSubject.value.status.error {
                 switch rawTransaction {
                 case is ProcessTransaction.SendTransaction:
-                    analyticsManager.log(event: .sendTryAgainClick(error: error.readableDescription))
+                    analyticsManager.log(event: AmplitudeEvent.sendTryAgainClick(error: error.readableDescription))
                 case is ProcessTransaction.SwapTransaction:
-                    analyticsManager.log(event: .swapTryAgainClick(error: error.readableDescription))
+                    analyticsManager.log(event: AmplitudeEvent.swapTryAgainClick(error: error.readableDescription))
                 default:
                     break
                 }
@@ -154,9 +154,9 @@ extension ProcessTransaction.ViewModel: ProcessTransactionViewModelType {
         case .explorer:
             switch rawTransaction {
             case is ProcessTransaction.SendTransaction:
-                analyticsManager.log(event: .sendExplorerClick(txStatus: status))
+                analyticsManager.log(event: AmplitudeEvent.sendExplorerClick(txStatus: status))
             case is ProcessTransaction.SwapTransaction:
-                analyticsManager.log(event: .swapExplorerClick(txStatus: status))
+                analyticsManager.log(event: AmplitudeEvent.swapExplorerClick(txStatus: status))
             default:
                 break
             }
