@@ -8,6 +8,7 @@ struct InvestView: View {
     var body: some View {
         NavigationView {
             InvestSolendView(viewModel: try! .init(mocked: false))
+                .navigationBarHidden(true)
         }
     }
 }

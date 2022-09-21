@@ -12,7 +12,7 @@ struct InvestSolendView: View {
     @StateObject var viewModel: InvestSolendViewModel
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack {
             // Title
             HStack {
                 Text(L10n.earnAYield)
@@ -56,32 +56,42 @@ struct InvestSolendView: View {
             )
             .padding(.horizontal, 16)
             .padding(.bottom, 16)
+            
+            // Title
+            HStack {
+                Text(L10n.depositToEarnAYield)
+                    .fontWeight(.semibold)
+                    .apply(style: .text1)
+                Spacer()
+                Text(L10n.apy)
+                    .fontWeight(.semibold)
+                    .apply(style: .text1)
+            }.padding(.horizontal, 16)
 
             // Market
-            ScrollView {
-                // Title
-                HStack {
-                    Text(L10n.depositToEarnAYield)
-                        .fontWeight(.semibold)
-                        .apply(style: .text1)
-                    Spacer()
-                    Text(L10n.apy)
-                        .fontWeight(.semibold)
-                        .apply(style: .text1)
-                }.padding(.horizontal, 16)
-
-                // Cells
-                ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
-                    NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
-                        InvestSolendCell(
-                            asset: asset,
-                            deposit: userDeposit?.depositedAmount,
-                            apy: market?.supplyInterest
-                        )
+            List {
+                Group {
+                    // Cells
+                    ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
+                        NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
+                            InvestSolendCell(
+                                asset: asset,
+                                deposit: userDeposit?.depositedAmount,
+                                apy: market?.supplyInterest
+                            )
+                        }
+                        .padding(.trailing, 16)
                     }
                 }
+                .withoutSeparatorsAfterListContent()
             }
-        }.onAppear { Task { try await viewModel.update() } }
+            .withoutSeparatorsiOS14()
+            .listStyle(.plain)
+            .frame(maxHeight: .infinity)
+        }
+            .onAppear {
+                Task { try await viewModel.update() }
+            }
     }
 }
 
