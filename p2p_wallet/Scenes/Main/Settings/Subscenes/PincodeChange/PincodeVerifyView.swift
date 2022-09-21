@@ -24,7 +24,7 @@ struct PincodeVerifyView: View {
                     .resizable()
                     .frame(width: 160, height: 120)
 
-                Text(L10n.yourCurrentPINCode)
+                Text(L10n.yourCurrentPIN)
                     .apply(style: .title2)
                     .padding(.top, 24)
             }.padding(.top, 24)

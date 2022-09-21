@@ -28,7 +28,7 @@ final class BiometricsAuthProviderImpl: BiometricsAuthProvider {
 
 extension BiometricsAuthProvider {
     func authenticate(completion: @escaping (Bool, NSError?) -> Void) {
-        let prompt = L10n.insteadOfAPINCodeYouCanAccessTheAppUsing(availabilityStatus.stringValue)
+        let prompt = L10n.insteadOfAPINYouCanAccessTheAppUsing(availabilityStatus.stringValue)
         authenticate(authenticationPrompt: prompt, completion: completion)
     }
 }

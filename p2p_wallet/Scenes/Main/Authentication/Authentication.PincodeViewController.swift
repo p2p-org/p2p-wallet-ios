@@ -132,7 +132,7 @@ extension Authentication {
                         BEHStack {
                             UILabel(text: L10n.forgotYourPIN + " ", textSize: 17, weight: .medium)
                             UILabel(
-                                text: L10n.signOut,
+                                text: L10n.logOut,
                                 textSize: 17,
                                 weight: .medium,
                                 textColor: UIColor(red: 0.346, green: 0.529, blue: 1, alpha: 1)
