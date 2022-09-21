@@ -18,9 +18,9 @@ struct InvestSolendView: View {
                 Text(L10n.earnAYield)
                     .fontWeight(.bold)
                     .apply(style: .largeTitle)
-                Spacer()
-                Image(uiImage: Asset.MaterialIcon.helpOutline.image)
-            }.padding(.horizontal, 16)
+            }
+            .padding(.top, 20)
+            .padding(.horizontal, 16)
             
             // Card
             VStack(alignment: .leading) {
