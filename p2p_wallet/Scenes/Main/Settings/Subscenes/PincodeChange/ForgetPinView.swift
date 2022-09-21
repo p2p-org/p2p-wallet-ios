@@ -9,8 +9,14 @@ import SwiftUI
 struct ForgetPinView: View {
     @State var isLoading: Bool = false
     @Injected var userWalletManager: UserWalletManager
+    private let text: String
 
     var close: (() -> Void)?
+    var onLogout: (() -> Void)?
+
+    init(text: String = L10n.ifYouForgetYourPINYouCanLogOutAndCreateANewOneWhenYouLogInAgain) {
+        self.text = text
+    }
 
     var body: some View {
         VStack {
@@ -40,18 +46,22 @@ struct ForgetPinView: View {
             Divider()
 
             // Body
-            Text(L10n.ifYouForgetYourPINYouCanLogOutAndCreateANewOneWhenYouLogInAgain)
+            Text(text)
                 .apply(style: .text1)
                 .padding(.horizontal, 40)
                 .padding(.vertical, 24)
 
             // Logout button
             TextButtonView(title: L10n.logout, style: .second, size: .large, isLoading: isLoading) {
-                guard isLoading == false else { return }
-                Task {
-                    isLoading = true
-                    defer { isLoading = false }
-                    do { try await userWalletManager.remove() }
+                if let onLogout = onLogout {
+                    onLogout()
+                } else {
+                    guard isLoading == false else { return }
+                    Task {
+                        isLoading = true
+                        defer { isLoading = false }
+                        do { try await userWalletManager.remove() }
+                    }
                 }
             }
             .frame(height: TextButton.Size.large.height)
