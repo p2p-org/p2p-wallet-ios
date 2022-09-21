@@ -74,8 +74,9 @@ final class PincodeViewModel: BaseViewModel {
         switch state {
         case .check:
             showForgetPin = true
-            if bioAuthStatus == .faceID || bioAuthStatus == .touchID {
-                showFaceid = true
+            showFaceid = false
+            if Defaults.isBiometryEnabled, bioAuthStatus == .faceID || bioAuthStatus == .touchID {
+                showFaceid = Defaults.isBiometryEnabled
                 requestBiometrics { [weak self] succeed in
                     if succeed {
                         self?.pincodeService.resetAttempts()

@@ -33,14 +33,14 @@ final class PincodeViewController: BaseViewController {
             BEVStack {
                 UIImageView(
                     width: 114,
-                    height: 107,
+                    height: 107.adaptiveHeight,
                     image: UIImage.lockPincode,
                     contentMode: .scaleAspectFit
                 )
                     .padding(.init(
-                        top: 70 * UIScreen.main.bounds.height / 812,
+                        top: 70.adaptiveHeight,
                         left: .zero,
-                        bottom: 35,
+                        bottom: 33.adaptiveHeight,
                         right: .zero
                     ))
                 UIView.spacer
@@ -54,23 +54,21 @@ final class PincodeViewController: BaseViewController {
                 BEVStack {
                     PinCode(correctPincode: viewModel.pincode, bottomLeftButton: self.bottomLeftButton())
                         .setup { view in
-                            view.stackViewSpacing = 34
+                            view.stackViewSpacing = 20.adaptiveHeight
                             view.resetingDelayInSeconds = 1
                         }
                         .bind(pincodeView)
                         .padding(.init(
                             top: 0,
                             left: .zero,
-                            bottom: 41,
+                            bottom: 27.adaptiveHeight,
                             right: .zero
                         ))
-                    UIView.spacer
                     if viewModel.showForgetPin {
                         forgetPinView()
                     }
                 }
-                .frame(height: viewModel.showForgetPin ? 417 : 417 - 24)
-                .padding(.init(top: 60, left: 0, bottom: 0, right: 0))
+                .padding(.init(only: .top, inset: 56.adaptiveHeight))
                 UIView.spacer
             }
         }
@@ -134,7 +132,7 @@ final class PincodeViewController: BaseViewController {
                 self?.openForgotPIN(
                     text: L10n.After2MoreIncorrectAttemptsWeLlLogYouOutOfTheCurrentAccountForYourSafety
                         .youCanLogoutRightNowToCreateANewPINCodeForTheApp,
-                    height: 420
+                    height: 420.adaptiveHeight
                 )
             }.store(in: &subscriptions)
     }
