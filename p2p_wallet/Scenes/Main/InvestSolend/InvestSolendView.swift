@@ -18,6 +18,7 @@ struct InvestSolendView: View {
                 Text(L10n.earnAYield)
                     .fontWeight(.bold)
                     .apply(style: .largeTitle)
+                Spacer()
             }
             .padding(.top, 20)
             .padding(.horizontal, 16)
