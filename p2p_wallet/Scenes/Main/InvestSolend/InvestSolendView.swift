@@ -89,6 +89,8 @@ struct InvestSolendView: View {
                     }
                         .padding(.trailing, 20)
                 }
+                
+                Spacer(minLength: 20)
             }
             .frame(maxHeight: .infinity)
         }
