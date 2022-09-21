@@ -2,6 +2,7 @@
 // Use of this source code is governed by a MIT-style license that can be
 // found in the LICENSE file.
 
+import Amplitude
 import Combine
 import Foundation
 import Onboarding
@@ -20,8 +21,9 @@ final class CreateWalletViewModel: BaseViewModel {
             initialState: initialState,
             provider: .init(
                 authService: AuthServiceBridge(),
-                apiGatewayClient: provider.createApiGatewayClient(),
-                tKeyFacade: provider.createTKeyFacade()
+                apiGatewayClient: Resolver.resolve(),
+                tKeyFacade: provider.createTKeyFacade(),
+                deviceName: AMPDeviceInfo().model
             )
         )
 
