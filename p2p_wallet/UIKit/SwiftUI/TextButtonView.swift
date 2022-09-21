@@ -41,5 +41,6 @@ struct TextButtonView: UIViewRepresentable {
         textButton.isLoading = isLoading
         textButton.leadingImage = leading
         textButton.trailingImage = trailing
+        textButton.onPressed { _ in onPressed?() }
     }
 }
