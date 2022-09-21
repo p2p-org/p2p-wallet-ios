@@ -71,7 +71,7 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
         let viewController = PincodeViewController(viewModel: viewModel)
         viewController.title = L10n.changePIN
 
-        viewModel.title = L10n.createYourPasscode
+        viewModel.title = L10n.createYourPIN
         viewModel.confirmPin
             .sinkAsync { [openConfirmPincode] pincode in
                 openConfirmPincode(pincode)
@@ -94,7 +94,7 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
         let viewController = PincodeViewController(viewModel: viewModel)
         viewController.title = L10n.changePIN
 
-        viewModel.title = L10n.confirmYourPasscode
+        viewModel.title = L10n.confirmYourPIN
         viewModel.openMain
             .sinkAsync { [result, pincodeStorage] _ in
                 pincodeStorage.save(pincode)

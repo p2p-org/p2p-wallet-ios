@@ -19,7 +19,7 @@ final class ChooseRestoreOptionButtonFactory {
         case .custom:
             return .init(option: .custom, title: L10n.continueUsingPhoneNumber)
         case .socialGoogle:
-            return .init(option: .socialGoogle, title: L10n.continueUsingGoogle)
+            return .init(option: .socialGoogle, title: L10n.continueWithGoogle)
         case .seed:
             return .init(option: .seed, title: L10n.useASeedPhrase)
         default:

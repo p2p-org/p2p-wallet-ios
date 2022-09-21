@@ -133,7 +133,7 @@ final class PincodeViewController: BaseViewController {
             .sink { [weak self] _ in
                 self?.openForgotPIN(
                     text: L10n.After2MoreIncorrectAttemptsWeLlLogYouOutOfTheCurrentAccountForYourSafety
-                        .youCanLogoutRightNowToCreateANewPINCodeForTheApp,
+                        .youCanLogoutRightNowToCreateANewPINForTheApp,
                     height: 420
                 )
             }.store(in: &subscriptions)
@@ -191,9 +191,9 @@ final class PincodeViewController: BaseViewController {
         view.onLogout = { [weak self] in
             self?.forgetPinViewController?.dismiss(animated: true, completion: { [weak self] in
                 self?.showAlert(
-                    title: L10n.areYouSureYouWantToSignOut,
-                    message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
-                    buttonTitles: [L10n.signOut, L10n.stay],
+                    title: L10n.doYouWantToLogOut,
+                    message: L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn,
+                    buttonTitles: [L10n.logOut, L10n.stay],
                     highlightedButtonIndex: 1,
                     destroingIndex: 0
                 ) { [weak self] index in
