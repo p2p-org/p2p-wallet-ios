@@ -45,6 +45,6 @@ class PincodeServiceImpl: PincodeService {
 
     func resetAttempts() {
         // It's 1 because we have failure event only _after_ the attempt
-        pincodeStorage.saveAttempt(1)
+        pincodeStorage.saveAttempt(0)
     }
 }

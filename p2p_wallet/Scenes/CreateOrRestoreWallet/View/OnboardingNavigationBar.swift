@@ -11,7 +11,8 @@ extension View {
         onBack: (() -> Void)? = nil,
         onInfo: (() -> Void)? = nil
     ) -> some View {
-        navigationBarTitle(title, displayMode: .inline)
+        navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
                 leading: onBack != nil ? Button(
                     action: { onBack?() },

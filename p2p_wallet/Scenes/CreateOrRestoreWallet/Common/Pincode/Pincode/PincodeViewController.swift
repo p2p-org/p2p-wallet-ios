@@ -33,14 +33,14 @@ final class PincodeViewController: BaseViewController {
             BEVStack {
                 UIImageView(
                     width: 114,
-                    height: 107,
+                    height: 107.adaptiveHeight,
                     image: UIImage.lockPincode,
                     contentMode: .scaleAspectFit
                 )
                     .padding(.init(
-                        top: 70 * UIScreen.main.bounds.height / 812,
+                        top: 70.adaptiveHeight,
                         left: .zero,
-                        bottom: 35,
+                        bottom: 33.adaptiveHeight,
                         right: .zero
                     ))
                 UIView.spacer
@@ -54,23 +54,16 @@ final class PincodeViewController: BaseViewController {
                 BEVStack {
                     PinCode(correctPincode: viewModel.pincode, bottomLeftButton: self.bottomLeftButton())
                         .setup { view in
-                            view.stackViewSpacing = 34
+                            view.stackViewSpacing = 20.adaptiveHeight
                             view.resetingDelayInSeconds = 1
                         }
                         .bind(pincodeView)
-                        .padding(.init(
-                            top: 0,
-                            left: .zero,
-                            bottom: 41,
-                            right: .zero
-                        ))
-                    UIView.spacer
+                        .padding(.init(only: .bottom, inset: 27.adaptiveHeight))
                     if viewModel.showForgetPin {
                         forgetPinView()
                     }
                 }
-                .frame(height: viewModel.showForgetPin ? 417 : 417 - 24)
-                .padding(.init(top: 60, left: 0, bottom: 0, right: 0))
+                .padding(.init(only: .top, inset: 56.adaptiveHeight))
                 UIView.spacer
             }
         }
@@ -133,8 +126,8 @@ final class PincodeViewController: BaseViewController {
             .sink { [weak self] _ in
                 self?.openForgotPIN(
                     text: L10n.After2MoreIncorrectAttemptsWeLlLogYouOutOfTheCurrentAccountForYourSafety
-                        .youCanLogoutRightNowToCreateANewPINForTheApp,
-                    height: 420
+                        .youCanLogoutRightNowToCreateANewPINCodeForTheApp,
+                    height: 420.adaptiveHeight
                 )
             }.store(in: &subscriptions)
     }
@@ -151,7 +144,7 @@ final class PincodeViewController: BaseViewController {
                 self?.close()
             }
             view.addSubview(closeButton)
-            closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16)
+            closeButton.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 16)
             return
         }
         let backButton = UIBarButtonItem(
@@ -173,7 +166,12 @@ final class PincodeViewController: BaseViewController {
         infoButton.addTarget(self, action: #selector(openInfo), for: .touchUpInside)
         infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
         infoButton.contentMode = .scaleAspectFill
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+        if navigationController != nil {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+        } else {
+            view.addSubview(infoButton)
+            infoButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 17, yInset: 3)
+        }
     }
 
     @objc private func openInfo() {

@@ -149,7 +149,7 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
             .assign(to: \.phone, on: self)
             .store(in: &cancellable)
 
-        $selectedCountry.debounce(for: .seconds(0.01), scheduler: DispatchQueue.main)
+        $selectedCountry
             .compactMap(\.emoji)
             .assign(to: \.flag, on: self)
             .store(in: &cancellable)
