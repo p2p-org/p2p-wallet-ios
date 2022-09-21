@@ -37,7 +37,7 @@ struct SolendTutorialView: View {
                         markAsReadAndDismiss()
                     }
                     .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(.system(size: UIFont.fontSize(of: .text1), weight: .bold))
+                    .font(.system(size: UIFont.fontSize(of: .text1), weight: .medium))
                     .padding(.init(top: max(safeAreaInsets.top, 20), leading: 0, bottom: 0, trailing: 20))
                     Spacer()
                 }
