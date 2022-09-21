@@ -25,7 +25,6 @@ struct FixedList<Content: View>: View {
             }
             .withoutSeparatorsAfterListContent()
         }
-        .withoutSeparatorsiOS14()
         .listStyle(.plain)
     }
 }

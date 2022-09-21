@@ -87,6 +87,7 @@ struct InvestSolendView: View {
                             apy: market?.supplyInterest
                         )
                     }
+                        .padding(.trailing, 20)
                 }
             }
             .frame(maxHeight: .infinity)
