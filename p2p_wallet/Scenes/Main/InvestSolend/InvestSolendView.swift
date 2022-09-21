@@ -77,17 +77,18 @@ struct InvestSolendView: View {
                         ProgressView()
                         Spacer()
                     }
-                }
-                // Cells
-                ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
-                    NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
-                        InvestSolendCell(
-                            asset: asset,
-                            deposit: userDeposit?.depositedAmount,
-                            apy: market?.supplyInterest
-                        )
+                } else {
+                    // Cells
+                    ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
+                        NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
+                            InvestSolendCell(
+                                asset: asset,
+                                deposit: userDeposit?.depositedAmount,
+                                apy: market?.supplyInterest
+                            )
+                        }
+                            .padding(.trailing, 20)
                     }
-                        .padding(.trailing, 20)
                 }
                 
                 Spacer(minLength: 20)
