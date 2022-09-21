@@ -176,11 +176,6 @@ private extension PincodeViewModel {
                     }
                     if self.pincodeService.attemptsLeft() == 2 {
                         self.showForgotModal = true
-//                        self.snackbar = PincodeSnackbar(
-//                            title: "❌",
-//                            message: L10n.after2MoreIncorrectPINsWeLlLogOutCurrentAccountForYourSafety,
-//                            isFailure: true
-//                        )
                     } else if self.pincodeService.attemptsLeft() == 0 {
                         // pass
                     } else {

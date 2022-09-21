@@ -58,12 +58,7 @@ final class PincodeViewController: BaseViewController {
                             view.resetingDelayInSeconds = 1
                         }
                         .bind(pincodeView)
-                        .padding(.init(
-                            top: 0,
-                            left: .zero,
-                            bottom: 27.adaptiveHeight,
-                            right: .zero
-                        ))
+                        .padding(.init(only: .bottom, inset: 27.adaptiveHeight))
                     if viewModel.showForgetPin {
                         forgetPinView()
                     }
@@ -149,7 +144,7 @@ final class PincodeViewController: BaseViewController {
                 self?.close()
             }
             view.addSubview(closeButton)
-            closeButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 16)
+            closeButton.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 16)
             return
         }
         let backButton = UIBarButtonItem(
@@ -171,7 +166,12 @@ final class PincodeViewController: BaseViewController {
         infoButton.addTarget(self, action: #selector(openInfo), for: .touchUpInside)
         infoButton.setImage(Asset.MaterialIcon.helpOutline.image, for: .normal)
         infoButton.contentMode = .scaleAspectFill
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+        if navigationController != nil {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: infoButton)
+        } else {
+            view.addSubview(infoButton)
+            infoButton.autoPinToTopRightCornerOfSuperviewSafeArea(xInset: 17, yInset: 3)
+        }
     }
 
     @objc private func openInfo() {
