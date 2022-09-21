@@ -91,7 +91,7 @@ struct ForgetPinView: View {
 
 extension ForgetPinView {
     var viewHeight: CGFloat {
-        (UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 300
+        max(20, UIApplication.shared.kWindow?.safeAreaInsets.bottom ?? 0) + 300
     }
 }
 

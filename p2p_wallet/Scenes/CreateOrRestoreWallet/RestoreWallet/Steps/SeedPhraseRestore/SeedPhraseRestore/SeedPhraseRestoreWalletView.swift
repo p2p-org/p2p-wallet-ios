@@ -11,38 +11,35 @@ struct SeedPhraseRestoreWalletView: View {
 
     var body: some View {
         VStack {
-            Text(L10n.enterYourSeedPhrase)
-                .apply(style: .text3)
-                .foregroundColor(Color(Asset.Colors.mountain.color))
-                .padding(.top, 4)
-            inputView.padding(.top, 2)
+            VStack {
+                Text(L10n.enterYourSeedPhrase)
+                    .apply(style: .text3)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .padding(.top, 4)
+                inputView.padding(.top, 2)
 
-            if !viewModel.suggestions.isEmpty {
-                self.suggestions
-            }
+                if !viewModel.suggestions.isEmpty { suggestions }
 
-            Spacer()
+                Spacer()
+            }.onTapGesture { viewModel.isSeedFocused = false }
 
-            Group {
-                TextButtonView(
-                    title: viewModel.canContinue ? L10n.continue : L10n.fill12Or24Words,
-                    style: .primary,
-                    size: .large,
-                    trailing: viewModel.canContinue ? Asset.MaterialIcon.arrowForward.image : nil,
-                    onPressed: { [weak viewModel] in viewModel?.continueButtonTapped() }
-                )
-                    .frame(height: 56)
-                    .disabled(!viewModel.canContinue)
-            }.padding(.horizontal, 20)
-        }.onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.viewModel.isSeedFocused = true
-            }
-        }.onDisappear {
-            self.viewModel.isSeedFocused = false
-        }.onTapGesture {
-            self.viewModel.isSeedFocused = false
+            TextButtonView(
+                title: viewModel.canContinue ? L10n.continue : L10n.fill12Or24Words,
+                style: .primary,
+                size: .large,
+                trailing: viewModel.canContinue ? Asset.MaterialIcon.arrowForward.image : nil
+            ) { [weak viewModel] in viewModel?.continueButtonTapped() }
+                .frame(height: 56)
+                .disabled(!viewModel.canContinue)
+                .padding(.horizontal, 20)
         }
+        .onboardingNavigationBar(title: L10n.restoreYourWallet) { [weak viewModel] in
+            viewModel?.back.send()
+        } onInfo: { [weak viewModel] in
+            viewModel?.info.send()
+        }
+        .onAppear { DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { viewModel.isSeedFocused = true } }
+        .onDisappear { viewModel.isSeedFocused = false }
     }
 
     var inputView: some View {
@@ -84,7 +81,7 @@ struct SeedPhraseRestoreWalletView: View {
         )
         .cornerRadius(16)
         .padding(.horizontal, 16)
-        .onboardingNavigationBar(title: L10n.restoreYourWallet) { [weak viewModel] in
+        .onboardingNavigationBar(title: L10n.restoringYourWallet) { [weak viewModel] in
             viewModel?.back.send()
         } onInfo: { [weak viewModel] in
             viewModel?.info.send()

@@ -121,9 +121,10 @@ extension Main {
                 localAuthVC?.modalPresentationStyle = .fullScreen
             }
 
-            pincodeViewModel.pincodeSuccess.eraseToAnyPublisher()
-                .compactMap { $0 }
-                .sink { [weak self] in
+            var authSuccess = false
+            pincodeViewModel.openMain.eraseToAnyPublisher()
+                .sink { [weak self] _ in
+                    authSuccess = true
                     self?.viewModel.authenticate(presentationStyle: nil)
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                         authStyle.completion?(false)
@@ -132,7 +133,9 @@ extension Main {
                 .store(in: &subscriptions)
             localAuthVC?.onClose = { [weak self] in
                 self?.viewModel.authenticate(presentationStyle: nil)
-                authStyle.onCancel?()
+                if authSuccess == false {
+                    authStyle.onCancel?()
+                }
             }
             presentLocalAuth()
         }

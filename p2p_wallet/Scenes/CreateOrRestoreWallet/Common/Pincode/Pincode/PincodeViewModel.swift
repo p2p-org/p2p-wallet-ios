@@ -74,8 +74,9 @@ final class PincodeViewModel: BaseViewModel {
         switch state {
         case .check:
             showForgetPin = true
-            if bioAuthStatus == .faceID || bioAuthStatus == .touchID {
-                showFaceid = true
+            showFaceid = false
+            if Defaults.isBiometryEnabled, bioAuthStatus == .faceID || bioAuthStatus == .touchID {
+                showFaceid = Defaults.isBiometryEnabled
                 requestBiometrics { [weak self] succeed in
                     if succeed {
                         self?.pincodeService.resetAttempts()
@@ -175,11 +176,6 @@ private extension PincodeViewModel {
                     }
                     if self.pincodeService.attemptsLeft() == 2 {
                         self.showForgotModal = true
-//                        self.snackbar = PincodeSnackbar(
-//                            title: "❌",
-//                            message: L10n.after2MoreIncorrectPINsWeLlLogOutCurrentAccountForYourSafety,
-//                            isFailure: true
-//                        )
                     } else if self.pincodeService.attemptsLeft() == 0 {
                         // pass
                     } else {
