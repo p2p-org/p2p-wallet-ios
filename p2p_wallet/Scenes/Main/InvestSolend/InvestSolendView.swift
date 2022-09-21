@@ -10,7 +10,7 @@ import SwiftUI
 
 struct InvestSolendView: View {
     @StateObject var viewModel: InvestSolendViewModel
-
+    
     var body: some View {
         VStack {
             // Title
@@ -21,20 +21,20 @@ struct InvestSolendView: View {
                 Spacer()
                 Image(uiImage: Asset.MaterialIcon.helpOutline.image)
             }.padding(.horizontal, 16)
-
+            
             // Card
             VStack(alignment: .leading) {
                 // Title
                 Text(L10n.totalRewardsEarned)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .apply(style: .text3)
-
+                
                 // Reward
                 Text("$ 0.0000000000")
                     .fontWeight(.bold)
                     .apply(style: .title1)
                     .padding(.top, 8)
-
+                
                 // Show deposit
                 HStack {
                     Text(L10n.showDeposit("$ \(viewModel.totalDeposit.fixedDecimal(2))"))
@@ -69,24 +69,19 @@ struct InvestSolendView: View {
             }.padding(.horizontal, 16)
 
             // Market
-            List {
-                Group {
-                    // Cells
-                    ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
-                        NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
-                            InvestSolendCell(
-                                asset: asset,
-                                deposit: userDeposit?.depositedAmount,
-                                apy: market?.supplyInterest
-                            )
-                        }
-                        .padding(.trailing, 16)
+            FixedList {
+                // Cells
+                ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
+                    NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
+                        InvestSolendCell(
+                            asset: asset,
+                            deposit: userDeposit?.depositedAmount,
+                            apy: market?.supplyInterest
+                        )
                     }
+                    .padding(.trailing, 16)
                 }
-                .withoutSeparatorsAfterListContent()
             }
-            .withoutSeparatorsiOS14()
-            .listStyle(.plain)
             .frame(maxHeight: .infinity)
         }
             .onAppear {
