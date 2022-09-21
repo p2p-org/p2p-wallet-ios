@@ -37,7 +37,7 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
     private func socialSignInParameters() -> SocialSignInParameters {
         let content = OnboardingContentData(image: .safeRestore, title: L10n.howToContinue)
         let parameters = SocialSignInParameters(
-            title: L10n.restoringYourWallet,
+            title: L10n.restoreYourWallet,
             content: content,
             appleButtonTitle: L10n.continueWithApple,
             googleButtonTitle: L10n.continueWithGoogle,

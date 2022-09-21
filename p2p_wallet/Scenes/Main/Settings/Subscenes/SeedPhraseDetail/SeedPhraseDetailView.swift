@@ -14,7 +14,7 @@ struct SeedPhraseDetailView: View {
         ExplainLayoutView {
             VStack {
                 Image(uiImage: viewModel.state == .lock ? UIImage.fogOpen : UIImage.fogClose)
-                Text(viewModel.state == .lock ? L10n.showingSeedPhrase : L10n.yourSeedPhrase)
+                Text(viewModel.state == .lock ? L10n.showSeedPhrase : L10n.yourSeedPhrase)
                     .fontWeight(.bold)
                     .apply(style: .title1)
                     .padding(.bottom, 48)
@@ -24,8 +24,8 @@ struct SeedPhraseDetailView: View {
                 if viewModel.state == .lock {
                     VStack(spacing: 12) {
                         ExplainText(text: L10n
-                            .aSeedPhraseIsLikeAPasswordWordsThatAllowsYouToAccessAndManageYourCryptoFunds)
-                        ExplainText(text: L10n.ExceptYouNoOneKeepsYourEntireSeedPhrase
+                            .ASeedPhraseIsLikeAPassword.itAllowsYouToAccessAndManageYourCrypto)
+                        ExplainText(text: L10n.ApartFromYouNoOneKeepsYourEntireSeedPhrase
                             .thePartsAreDistributedDecentralizedOnTorusNetworkNodes)
                         attributedText
                         Spacer()

@@ -33,7 +33,7 @@ struct SeedPhraseRestoreWalletView: View {
                 .disabled(!viewModel.canContinue)
                 .padding(.horizontal, 20)
         }
-        .onboardingNavigationBar(title: L10n.restoringYourWallet) { [weak viewModel] in
+        .onboardingNavigationBar(title: L10n.restoreYourWallet) { [weak viewModel] in
             viewModel?.back.send()
         } onInfo: { [weak viewModel] in
             viewModel?.info.send()
@@ -81,6 +81,11 @@ struct SeedPhraseRestoreWalletView: View {
         )
         .cornerRadius(16)
         .padding(.horizontal, 16)
+        .onboardingNavigationBar(title: L10n.restoringYourWallet) { [weak viewModel] in
+            viewModel?.back.send()
+        } onInfo: { [weak viewModel] in
+            viewModel?.info.send()
+        }
     }
 
     var pasteButton: some View {

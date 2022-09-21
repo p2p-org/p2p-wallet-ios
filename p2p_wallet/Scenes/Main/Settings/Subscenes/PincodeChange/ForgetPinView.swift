@@ -52,7 +52,7 @@ struct ForgetPinView: View {
                 .padding(.vertical, 24)
 
             // Logout button
-            TextButtonView(title: L10n.logout, style: .second, size: .large, isLoading: isLoading) {
+            TextButtonView(title: L10n.logOut, style: .second, size: .large, isLoading: isLoading) {
                 if let onLogout = onLogout {
                     onLogout()
                 } else {
