@@ -54,14 +54,14 @@ class InvestSolendViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         service.status
-            .receive(on: RunLoop.main)
-            .sink { [weak self] status in
-                guard let self = self else { return }
+            .map { status in
                 switch status {
-                case .initialized, .ready: self.loading = false
-                case .updating: self.loading = true
+                case .initialized, .ready: return false
+                case .updating: return true
                 }
             }
+            .receive(on: RunLoop.main)
+            .assign(to: \.loading, on: self)
             .store(in: &subscriptions)
     }
 
