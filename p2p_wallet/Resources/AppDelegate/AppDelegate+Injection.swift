@@ -197,6 +197,10 @@ extension Resolver: ResolverRegistering {
             .implements(AuthenticationHandlerType.self)
             .scope(.session)
 
+        register { PincodeServiceImpl() }
+            .implements(PincodeService.self)
+            .scope(.session)
+
         // SendService
         register { _, args in
             SendService(relayMethod: args())

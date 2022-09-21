@@ -32,8 +32,17 @@ extension KeychainStorage: NameStorageType {
 }
 
 extension KeychainStorage: PincodeStorageType {
+    func saveAttempt(_ attempt: Int) {
+        icloudKeychain.set(String(attempt), forKey: pincodeAttemptsKey)
+    }
+
+    var attempt: Int? {
+        Int(icloudKeychain.get(pincodeAttemptsKey) ?? "")
+    }
+
     func save(_ pinCode: String) {
         icloudKeychain.set(pinCode, forKey: pincodeKey)
+        saveAttempt(0)
     }
 
     var pinCode: String? {

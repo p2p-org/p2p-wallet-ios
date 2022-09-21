@@ -1,4 +1,9 @@
 struct PincodeSnackbar {
+    let title: String?
     let message: String
-    let isFailure: Bool
+
+    init(title: String? = nil, message: String) {
+        self.title = title
+        self.message = message
+    }
 }

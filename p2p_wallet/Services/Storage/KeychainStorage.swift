@@ -13,6 +13,7 @@ class KeychainStorage {
 
     let onValueChangeSubject = PublishSubject<StorageValueOnChange>()
     let pincodeKey: String
+    let pincodeAttemptsKey: String
     let phrasesKey: String
     let derivableTypeKey: String
     let walletIndexKey: String
@@ -51,12 +52,14 @@ class KeychainStorage {
 
         if
             let pincodeKey = Defaults.keychainPincodeKey,
+            let pincodeAttemptsKey = Defaults.pincodeAttemptsKey,
             let phrasesKey = Defaults.keychainPhrasesKey,
             let derivableTypeKey = Defaults.keychainDerivableTypeKey,
             let walletIndexKey = Defaults.keychainWalletIndexKey,
             let ethAddressKey = Defaults.keychainEthAddressKey
         {
             self.pincodeKey = pincodeKey
+            self.pincodeAttemptsKey = pincodeAttemptsKey
             self.phrasesKey = phrasesKey
             self.derivableTypeKey = derivableTypeKey
             self.walletIndexKey = walletIndexKey
@@ -65,6 +68,10 @@ class KeychainStorage {
             let pincodeKey = UUID().uuidString
             self.pincodeKey = pincodeKey
             Defaults.keychainPincodeKey = pincodeKey
+
+            let pincodeAttemptsKey = UUID().uuidString
+            self.pincodeAttemptsKey = pincodeAttemptsKey
+            Defaults.pincodeAttemptsKey = pincodeAttemptsKey
 
             let phrasesKey = UUID().uuidString
             self.phrasesKey = phrasesKey
@@ -109,6 +116,7 @@ class KeychainStorage {
         icloudKeychain.delete(derivableTypeKey)
         icloudKeychain.delete(walletIndexKey)
         icloudKeychain.delete(nameKey)
+        icloudKeychain.delete(pincodeAttemptsKey)
 
         removeAccountCache()
     }
