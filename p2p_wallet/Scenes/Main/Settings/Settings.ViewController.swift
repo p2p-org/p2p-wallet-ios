@@ -55,7 +55,7 @@ extension Settings {
                         }
                         // Sign out button
                         BECenter {
-                            UILabel(text: L10n.signOut, textColor: .ff3b30)
+                            UILabel(text: L10n.logOut, textColor: .ff3b30)
                         }
                         .frame(height: 60)
                         .onTap { [unowned self] in viewModel.showLogoutAlert() }
@@ -184,9 +184,9 @@ extension Settings {
             viewModel.logoutAlertSignal
                 .emit(onNext: { [weak self] in
                     self?.showAlert(
-                        title: L10n.areYouSureYouWantToSignOut,
-                        message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
-                        buttonTitles: [L10n.signOut, L10n.stay],
+                        title: L10n.doYouWantToLogOut,
+                        message: L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn,
+                        buttonTitles: [L10n.logOut, L10n.stay],
                         highlightedButtonIndex: 1,
                         destroingIndex: 0
                     ) { [weak self] index in

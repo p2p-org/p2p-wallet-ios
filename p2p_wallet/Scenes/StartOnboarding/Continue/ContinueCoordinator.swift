@@ -100,7 +100,7 @@ private extension CreateWalletFlowState {
         case .bindingPhoneNumber:
             return L10n.YouHaveAGreatStartWith.onlyAPhoneNumberIsNeededToCreateANewWallet(email)
         case .securitySetup:
-            return L10n.YouHaveAGreatStartWith.itSOnlyAPinCodeNeededToCreateANewWallet(email)
+            return L10n.YouHaveAGreatStartWith.itSOnlyAPINNeededToCreateANewWallet(email)
         default:
             return ""
         }

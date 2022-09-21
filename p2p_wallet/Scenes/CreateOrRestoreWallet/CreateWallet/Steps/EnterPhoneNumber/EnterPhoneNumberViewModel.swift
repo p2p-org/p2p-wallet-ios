@@ -29,13 +29,14 @@ final class EnterPhoneNumberViewModel: BaseOTPViewModel {
 
     // MARK: -
 
-    @Published public var phone: String?
-    @Published public var flag: String = ""
-    @Published public var phonePlaceholder: String?
-    @Published public var isButtonEnabled: Bool = false
-    @Published public var isLoading: Bool = false
-    @Published public var inputError: String?
-    @Published public var selectedCountry: Country = EnterPhoneNumberViewModel.defaultCountry
+    @Published var phone: String?
+    @Published var flag: String = ""
+    @Published var phonePlaceholder: String?
+    @Published var isButtonEnabled: Bool = false
+    @Published var isLoading: Bool = false
+    @Published var inputError: String?
+    @Published var selectedCountry: Country = EnterPhoneNumberViewModel.defaultCountry
+    @Published var subtitle: String = L10n.addAPhoneNumberToProtectYourAccount
 
     let isBackAvailable: Bool
 

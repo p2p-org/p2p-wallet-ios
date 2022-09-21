@@ -62,7 +62,7 @@ struct SettingsView: View {
                 label: {
                     HStack(spacing: 8) {
                         Spacer()
-                        Text(L10n.signOut)
+                        Text(L10n.logOut)
                             .font(uiFont: .font(of: .text2, weight: .semibold))
                         Image(uiImage: .settingsSignOut)
                         Spacer()
@@ -72,9 +72,9 @@ struct SettingsView: View {
             )
                 .alert(isPresented: $logOutPresented) {
                     Alert(
-                        title: Text(L10n.areYouSureYouWantToSignOut),
-                        message: Text(L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount),
-                        primaryButton: .destructive(Text(L10n.signOut)) {
+                        title: Text(L10n.doYouWantToLogOut),
+                        message: Text(L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn),
+                        primaryButton: .destructive(Text(L10n.logOut)) {
                             viewModel.signOut()
                         },
                         secondaryButton: .cancel(Text(L10n.stay))

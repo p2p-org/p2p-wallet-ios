@@ -84,9 +84,9 @@ extension Authentication {
                 present(vc, animated: true, completion: nil)
             case let .signOutAlert(onLogout):
                 showAlert(
-                    title: L10n.areYouSureYouWantToSignOut,
-                    message: L10n.ifYouHaveNoBackupYouMayNeverBeAbleToAccessThisAccount,
-                    buttonTitles: [L10n.signOut, L10n.stay],
+                    title: L10n.doYouWantToLogOut,
+                    message: L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn,
+                    buttonTitles: [L10n.logOut, L10n.stay],
                     highlightedButtonIndex: 1,
                     destroingIndex: 0
                 ) { [weak self] index in

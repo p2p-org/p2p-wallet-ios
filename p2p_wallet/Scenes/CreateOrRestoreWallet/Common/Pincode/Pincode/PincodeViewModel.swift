@@ -123,11 +123,11 @@ private extension PincodeViewModel {
     func title(for state: PincodeState) -> String {
         switch state {
         case .create:
-            return L10n.createYourPasscode
+            return L10n.createYourPIN
         case .confirm:
-            return L10n.confirmYourPasscode
+            return L10n.confirmYourPIN
         case .check:
-            return L10n.enterYourPINCode
+            return L10n.enterYourPIN
         }
     }
 
@@ -161,7 +161,7 @@ private extension PincodeViewModel {
                 switch self.state {
                 case .create: break
                 case .confirm:
-                    self.snackbar = PincodeSnackbar(message: L10n.😢PasscodeDoesnTMatch.pleaseTryAgain)
+                    self.snackbar = PincodeSnackbar(message: L10n.😢PINDoesnTMatch.pleaseTryAgain)
                 case .check:
                     do {
                         try self.pincodeService.pincodeFailed()
@@ -169,7 +169,7 @@ private extension PincodeViewModel {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                             self.notificationService.showAlert(
                                 title: L10n.youWereSignedOut,
-                                text: L10n.after5IncorrectAppPINCodes
+                                text: L10n.after5IncorrectAppPINs
                             )
                         }
                         self.logout()

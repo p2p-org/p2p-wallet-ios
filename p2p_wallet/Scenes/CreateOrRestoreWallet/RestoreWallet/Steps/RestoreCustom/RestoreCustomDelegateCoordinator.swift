@@ -89,7 +89,7 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 private extension RestoreCustomDelegatedCoordinator {
     func handleEnterPhone(phone: String?) -> UIViewController {
         let viewModel = EnterPhoneNumberViewModel(phone: phone, isBackAvailable: true)
-        // if let phone = phone { viewModel.phone = phone }
+        viewModel.subtitle = L10n.addAPhoneNumberToRestoreYourAccount
         let viewController = EnterPhoneNumberViewController(viewModel: viewModel)
 
         viewModel.coordinatorIO.selectCode.sinkAsync { [weak self] dialCode, countryCode in
@@ -292,8 +292,8 @@ private extension RestoreCustomDelegatedCoordinator {
 
     func handleBlock(until: Date, reason: PhoneFlowBlockReason) -> UIViewController {
         let subtitle = reason == .blockEnterPhoneNumber ?
-            L10n.YouUsedTooMuchNumbers.forYourSafetyWeFrozeAccountFor
-            : L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeFrozeAccountFor
+            L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenAccountFor
+            : L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenAccountFor
         let view = OnboardingBlockScreen(
             contentTitle: L10n.soLetSBreathe,
             contentSubtitle: subtitle,
