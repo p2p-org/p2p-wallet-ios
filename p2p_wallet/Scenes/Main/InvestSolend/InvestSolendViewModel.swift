@@ -26,7 +26,19 @@ class InvestSolendViewModel: ObservableObject {
             .combineLatest(service.marketInfo, service.deposits)
             .map { (assets: [SolendConfigAsset], marketInfo: [SolendMarketInfo], userDeposits: [SolendUserDeposit]) -> [Invest] in
                 assets.map { asset -> Invest in
-                    (
+                    // Temporary fix for USDT logo
+                    var asset = asset
+                    if asset.symbol == "USDT" {
+                        asset = .init(
+                            name: asset.name,
+                            symbol: asset.symbol,
+                            decimals: asset.decimals,
+                            mintAddress: asset.mintAddress,
+                            logo: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/BQcdHdAQW1hczDbBi9hiegXAR7A98Q9jx3X3iBBBDiq4/logo.png"
+                        )
+                    }
+                    
+                    return (
                         asset: asset,
                         market: marketInfo.first(where: { $0.symbol == asset.symbol }),
                         userDeposit: userDeposits.first(where: { $0.symbol == asset.symbol })
