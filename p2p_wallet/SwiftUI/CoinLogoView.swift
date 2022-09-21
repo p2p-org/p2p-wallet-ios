@@ -21,7 +21,7 @@ struct CoinLogoView: View {
 struct ImageView: View {
     @ObservedObject var imageLoader: ImageLoader
     @State var image: UIImage? = .init()
-    @State var svg: Data = .init()
+//    @State var svg: Data = .init() // SVG cause crash on iphone 6s 15.5
     @State var isLoading = true
 
     init(withURL url: URL) {
@@ -33,16 +33,16 @@ struct ImageView: View {
             Image(uiImage: image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-                .opacity($svg.isEmpty ? 1 : 0)
+//                .opacity($svg.isEmpty ? 1 : 0)
                 .skeleton(with: isLoading)
-            SVGView(svg: $svg)
-                .opacity($svg.isEmpty ? 0 : 1)
-                .frame(width: 48, height: 48)
-        }.onReceive(imageLoader.didChange) { data in
+//            SVGView(svg: $svg)
+//                .opacity($svg.isEmpty ? 0 : 1)
+//                .frame(width: 48, height: 48)
+        }.onReceive(imageLoader.didChange.receive(on: RunLoop.main)) { data in
             if let image = UIImage(data: data) {
                 self.image = image
             } else {
-                self.svg = data
+//                self.svg = data
             }
             self.isLoading = false
         }

@@ -26,7 +26,19 @@ class InvestSolendViewModel: ObservableObject {
             .combineLatest(service.marketInfo, service.deposits)
             .map { (assets: [SolendConfigAsset], marketInfo: [SolendMarketInfo], userDeposits: [SolendUserDeposit]) -> [Invest] in
                 assets.map { asset -> Invest in
-                    (
+                    // Temporary fix for USDT logo
+                    var asset = asset
+                    if asset.symbol == "USDT" {
+                        asset = .init(
+                            name: asset.name,
+                            symbol: asset.symbol,
+                            decimals: asset.decimals,
+                            mintAddress: asset.mintAddress,
+                            logo: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/BQcdHdAQW1hczDbBi9hiegXAR7A98Q9jx3X3iBBBDiq4/logo.png"
+                        )
+                    }
+                    
+                    return (
                         asset: asset,
                         market: marketInfo.first(where: { $0.symbol == asset.symbol }),
                         userDeposit: userDeposits.first(where: { $0.symbol == asset.symbol })
@@ -37,6 +49,7 @@ class InvestSolendViewModel: ObservableObject {
                     return apy1 > apy2
                 }
             }
+            .receive(on: RunLoop.main)
             .sink { [weak self] value in self?.market = value }
             .store(in: &subscriptions)
 
@@ -46,20 +59,24 @@ class InvestSolendViewModel: ObservableObject {
                     partialResult + (Double(deposit.depositedAmount) ?? 0)
                 }
             }
+            .receive(on: RunLoop.main)
             .sink { [weak self] (totalDeposit: Double) in
                 self?.totalDeposit = totalDeposit
             }
             .store(in: &subscriptions)
 
         service.status
-            .sink { [weak self] status in
-                guard let self = self else { return }
+            .map { status in
                 switch status {
-                case .initialized, .ready: self.loading = false
-                case .updating: self.loading = true
+                case .initialized, .ready: return false
+                case .updating: return true
                 }
             }
+            .receive(on: RunLoop.main)
+            .assign(to: \.loading, on: self)
             .store(in: &subscriptions)
+
+        Task {try await update()}
     }
 
     func update() async throws {
