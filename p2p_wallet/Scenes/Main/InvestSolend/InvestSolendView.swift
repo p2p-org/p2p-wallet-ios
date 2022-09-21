@@ -77,6 +77,17 @@ struct InvestSolendView: View {
                         ProgressView()
                         Spacer()
                     }
+                } else if viewModel.market.isEmpty {
+                    HStack {
+                        Spacer()
+                        Text(L10n.somethingWentWrong + "...")
+                        Button {
+                            Task {try await viewModel.update()}
+                        } label: {
+                            Text(L10n.tryAgain)
+                        }
+                        Spacer()
+                    }
                 } else {
                     // Cells
                     ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
