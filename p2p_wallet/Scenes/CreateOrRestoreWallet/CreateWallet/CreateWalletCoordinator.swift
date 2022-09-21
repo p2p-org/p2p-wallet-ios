@@ -125,7 +125,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
         switch state {
         case let .socialSignIn(innerState):
             return socialSignInDelegatedCoordinator.buildViewController(for: innerState)
-        case let .bindingPhoneNumber(_, _, _, _, innerState):
+        case let .bindingPhoneNumber(_, _, _, _, _, innerState):
             return bindingPhoneNumberDelegatedCoordinator.buildViewController(for: innerState)
         case let .securitySetup(_, _, _, _, innerState):
             let vc = securitySetupDelegatedCoordinator.buildViewController(for: innerState)

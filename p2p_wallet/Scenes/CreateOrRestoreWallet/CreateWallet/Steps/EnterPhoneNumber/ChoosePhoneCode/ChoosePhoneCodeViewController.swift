@@ -101,12 +101,15 @@ extension ChoosePhoneCodeViewController: BECollectionViewDelegate {
     func beCollectionView(collectionView: BECollectionViewBase, didSelect item: AnyHashable) {
         guard let selectedCountry = item as? SelectableCountry, !selectedCountry.isSelected,
               !selectedCountry.isEmpty else { return }
+        viewModel.selectedDialCode = selectedCountry.value.dialCode
         viewModel.selectedCountryCode = selectedCountry.value.code
         collectionView.updateWithoutAnimations {
             viewModel.batchUpdate { countries in
                 var countries = countries
                 for i in 0 ..< countries.count {
-                    if countries[i].value.code == selectedCountry.value.code {
+                    if countries[i].value.dialCode == selectedCountry.value.dialCode,
+                       countries[i].value.code == selectedCountry.value.code
+                    {
                         countries[i].isSelected = true
                     } else {
                         countries[i].isSelected = false

@@ -63,9 +63,32 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
 
+        // API Gateway
+        register { () -> APIGatewayClient in
+            #if !RELEASE
+                let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_DEV")!
+            #else
+                let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_PROD")!
+            #endif
+
+            return available(.mockedApiGateway) ?
+                APIGatewayClientImplMock() :
+                APIGatewayClientImpl(endpoint: apiGatewayEndpoint)
+        }
+
         // WalletManager
         register { UserWalletManager() }
             .scope(.application)
+
+        // WalletMetadata
+        register { LocalWalletMetadataProvider() }
+        register { RemoteWalletMetadataProvider() }
+        register {
+            WalletMetadataService(
+                localProvider: resolve(LocalWalletMetadataProvider.self),
+                remoteProvider: resolve(RemoteWalletMetadataProvider.self)
+            )
+        }.scope(.application)
 
         // AnalyticsManager
         register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
