@@ -70,6 +70,13 @@ struct InvestSolendView: View {
 
             // Market
             FixedList {
+                if viewModel.loading {
+                    HStack {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                }
                 // Cells
                 ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
                     NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
