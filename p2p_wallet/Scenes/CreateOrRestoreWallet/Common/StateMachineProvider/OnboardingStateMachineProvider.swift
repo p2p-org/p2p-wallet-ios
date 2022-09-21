@@ -2,7 +2,6 @@ import Onboarding
 
 protocol OnboardingStateMachineProvider {
     func createTKeyFacade() -> TKeyFacade
-    func createApiGatewayClient() -> APIGatewayClient
 }
 
 final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
@@ -21,18 +20,5 @@ final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
                 )
             )
         return tKeyFacade
-    }
-
-    func createApiGatewayClient() -> APIGatewayClient {
-        #if !RELEASE
-            let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_DEV")!
-        #else
-            let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_PROD")!
-        #endif
-
-        let apiGatewayClient: APIGatewayClient = available(.mockedApiGateway) ?
-            APIGatewayClientImplMock() :
-            APIGatewayClientImpl(endpoint: apiGatewayEndpoint)
-        return apiGatewayClient
     }
 }

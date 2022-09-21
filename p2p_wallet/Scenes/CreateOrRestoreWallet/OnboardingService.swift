@@ -12,10 +12,18 @@ final class OnboardingServiceImpl: OnboardingService {
 
     private func validate(lastState: CreateWalletFlowState?) -> CreateWalletFlowState? {
         switch lastState {
-        case let .bindingPhoneNumber(email, seedPhrase, ethPublicKey, deviceShare, .block(until, _, phoneNumber, data)):
+        case let .bindingPhoneNumber(
+            email,
+            authProvider,
+            seedPhrase,
+            ethPublicKey,
+            deviceShare,
+            .block(until, _, phoneNumber, data)
+        ):
             if Date() >= until {
                 return .bindingPhoneNumber(
                     email: email,
+                    authProvider: authProvider,
                     seedPhrase: seedPhrase,
                     ethPublicKey: ethPublicKey,
                     deviceShare: deviceShare,

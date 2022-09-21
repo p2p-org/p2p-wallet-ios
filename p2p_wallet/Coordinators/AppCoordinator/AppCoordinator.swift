@@ -60,8 +60,6 @@ class AppCoordinator: Coordinator<Void> {
                 )
                 .receive(on: RunLoop.main)
                 .sink { wallet, _ in
-                    print("Here")
-                    print(wallet)
                     wallet != nil ? navigateToMain() : newOnboardingFlow()
                 }
                 .store(in: &subscriptions)
@@ -72,6 +70,10 @@ class AppCoordinator: Coordinator<Void> {
 
     func navigateToMain() {
         // TODO: - Change to Main.Coordinator.start()
+        Task.detached {
+            try await Resolver.resolve(WalletMetadataService.self).update()
+        }
+
         let vm = Main.ViewModel()
         let vc = Main.ViewController(viewModel: vm)
         vc.authenticateWhenAppears = showAuthenticationOnMainOnAppear
@@ -109,6 +111,10 @@ class AppCoordinator: Coordinator<Void> {
         let provider = Resolver.resolve(StartOnboardingNavigationProvider.self)
         let startCoordinator = provider.startCoordinator(for: window)
 
+        Task.detached {
+            try await Resolver.resolve(WalletMetadataService.self).clear()
+        }
+
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
                 self.showAuthenticationOnMainOnAppear = false
@@ -117,6 +123,7 @@ class AppCoordinator: Coordinator<Void> {
                 case let .created(data):
                     analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
 
+                    // Setup user wallet
                     try await userWalletManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
                         derivablePath: data.wallet.derivablePath,
@@ -125,8 +132,15 @@ class AppCoordinator: Coordinator<Void> {
                         ethAddress: data.ethAddress
                     )
 
+                    // Warmup metadata
+                    Task.detached {
+                        try await Resolver.resolve(WalletMetadataService.self).update(initialMetadata: data.metadata)
+                    }
+
                     saveSecurity(data: data.security)
                 case let .restored(data):
+
+                    // Setup user wallet
                     try await userWalletManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
                         derivablePath: data.wallet.derivablePath,
@@ -135,9 +149,17 @@ class AppCoordinator: Coordinator<Void> {
                         ethAddress: data.ethAddress
                     )
 
+                    // Warmup metadata
+                    if let metadata = data.metadata {
+                        Task.detached {
+                            try await Resolver.resolve(WalletMetadataService.self)
+                                .update(initialMetadata: data.metadata)
+                        }
+                    }
+
                     saveSecurity(data: data.security)
                 case .breakProcess:
-                    self.newOnboardingFlow()
+                    newOnboardingFlow()
                 }
             })
             .store(in: &subscriptions)

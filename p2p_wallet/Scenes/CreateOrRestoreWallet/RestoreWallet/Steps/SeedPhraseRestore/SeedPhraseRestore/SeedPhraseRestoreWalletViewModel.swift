@@ -4,14 +4,20 @@ import Foundation
 import Resolver
 import SolanaSwift
 
-class SeedPhraseRestoreWalletViewModel: ObservableObject {
-    var bag = Set<AnyCancellable>()
+class SeedPhraseRestoreWalletViewModel: BaseViewModel {
+    // MARK: - Dependencies
 
-    var coordinatorIO = CoordinatorIO()
+    @Injected private var notificationService: NotificationService
+    @Injected private var clipboardManager: ClipboardManagerType
+    @Injected private var analyticsManager: AnalyticsManager
 
-    @Injected var notificationService: NotificationService
-    @Injected var clipboardManager: ClipboardManagerType
-    @Injected var analyticsManager: AnalyticsManager
+    // MARK: - Output
+
+    let finishedWithSeed: PassthroughSubject<[String], Never> = .init()
+    let back: PassthroughSubject<Void, Never> = .init()
+    let info: PassthroughSubject<Void, Never> = .init()
+
+    // MARK: - Properties
 
     // Word suggestions should appearr here
     @Published var suggestions = [String]()
@@ -21,11 +27,24 @@ class SeedPhraseRestoreWalletViewModel: ObservableObject {
     #else
         @Published var seed = ""
     #endif
-    @Published var hasPasteboard: Bool = false
+    @Published var canContinue: Bool = false
+    @Published var isSeedFocused: Bool = false
+
+    override init() {
+        super.init()
+        $seed.sink { [weak self] value in
+            if value.split(separator: " ").count == 12 || value.split(separator: " ").count == 24 {
+                self?.canContinue = true
+            } else {
+                self?.canContinue = false
+            }
+        }
+        .store(in: &subscriptions)
+    }
 
     func continueButtonTapped() {
         if let phrase = try? Mnemonic(phrase: seed.components(separatedBy: " ")) {
-            coordinatorIO.finishedWithSeed.send(phrase.phrase)
+            finishedWithSeed.send(phrase.phrase)
         } else {
             // show error
             notificationService.showToast(
@@ -35,51 +54,12 @@ class SeedPhraseRestoreWalletViewModel: ObservableObject {
         }
     }
 
-    func back() {
-        coordinatorIO.back.send(())
-    }
-
-    func info() {
-        coordinatorIO.info.send(())
-    }
-
     func paste() {
         guard let pasteboard = clipboardManager.stringFromClipboard() else { return }
-        seed = pasteboard
+        seed.append(pasteboard)
     }
 
     func clear() {
         seed = ""
-    }
-
-    init() {
-        // swiftlint:disable clipboard_direct_api
-        UIPasteboard.general.hasStringsPublisher.sink { val in
-            self.hasPasteboard = val
-        }.store(in: &bag)
-        // swiftlint:enable clipboard_direct_api
-    }
-
-    struct CoordinatorIO {
-        var finishedWithSeed: PassthroughSubject<[String], Never> = .init()
-        var back: PassthroughSubject<Void, Never> = .init()
-        var info: PassthroughSubject<Void, Never> = .init()
-    }
-}
-
-extension UIPasteboard {
-    var hasStringsPublisher: AnyPublisher<Bool, Never> {
-        Just(hasStrings)
-            .merge(
-                with: NotificationCenter.default
-                    .publisher(for: UIPasteboard.changedNotification, object: self)
-                    .map { _ in self.hasStrings }
-            )
-            .merge(
-                with: NotificationCenter.default
-                    .publisher(for: UIApplication.didBecomeActiveNotification, object: nil)
-                    .map { _ in self.hasStrings }
-            )
-            .eraseToAnyPublisher()
     }
 }

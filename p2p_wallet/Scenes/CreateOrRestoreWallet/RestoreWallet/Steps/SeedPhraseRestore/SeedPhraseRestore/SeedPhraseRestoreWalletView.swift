@@ -3,11 +3,7 @@ import KeyAppUI
 import SwiftUI
 
 struct SeedPhraseRestoreWalletView: View {
-//    @FocusState private var isFocused: Bool
     @ObservedObject var viewModel: SeedPhraseRestoreWalletViewModel
-
-    @State private var seedText = ""
-    @State var isButtonEnabled = false
 
     init(viewModel: SeedPhraseRestoreWalletViewModel) {
         self.viewModel = viewModel
@@ -29,15 +25,23 @@ struct SeedPhraseRestoreWalletView: View {
 
             Group {
                 TextButtonView(
-                    title: L10n.continue,
+                    title: viewModel.canContinue ? L10n.continue : L10n.fill12Or24Words,
                     style: .primary,
                     size: .large,
-                    trailing: Asset.MaterialIcon.arrowForward.image,
-                    onPressed: {
-                        self.viewModel.continueButtonTapped()
-                    }
-                ).frame(height: 56)
-            }.padding([.leading, .trailing], 20)
+                    trailing: viewModel.canContinue ? Asset.MaterialIcon.arrowForward.image : nil,
+                    onPressed: { [weak viewModel] in viewModel?.continueButtonTapped() }
+                )
+                    .frame(height: 56)
+                    .disabled(!viewModel.canContinue)
+            }.padding(.horizontal, 20)
+        }.onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.viewModel.isSeedFocused = true
+            }
+        }.onDisappear {
+            self.viewModel.isSeedFocused = false
+        }.onTapGesture {
+            self.viewModel.isSeedFocused = false
         }
     }
 
@@ -45,7 +49,7 @@ struct SeedPhraseRestoreWalletView: View {
         VStack {
             VStack {
                 HStack {
-                    Text(L10n.seedPhrase)
+                    Text(viewModel.canContinue ? "\(L10n.seedPhrase) ✅" : L10n.seedPhrase)
                         .apply(style: .text4)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .padding(.top, 17)
@@ -55,7 +59,7 @@ struct SeedPhraseRestoreWalletView: View {
                         if !viewModel.seed.isEmpty {
                             clearButton
                                 .animation(.default)
-                                .transition(AnyTransition.opacity.animation(.easeInOut(duration: 0.1)))
+                                .transition(.opacity.animation(.easeInOut(duration: 0.4)))
                                 .padding(.leading, 5)
                         }
                     }
@@ -63,15 +67,15 @@ struct SeedPhraseRestoreWalletView: View {
                     .padding(.top, 11)
                 }
 
-//                    SeedPhraseTextView(text: self.$viewModel.seed)
-//                        .frame(maxHeight: 343)
+                SeedTextView(text: $viewModel.seed, isFirstResponder: $viewModel.isSeedFocused) { textView in
+                    textView.font = UIFont.font(of: .text3)
+                    textView.textColor = Asset.Colors.night.color
+                    textView.returnKeyType = .done
+                }
+                .frame(maxHeight: 343)
+                .colorMultiply(Color(Asset.Colors.smoke.color))
 
-                TextEditor(text: self.$viewModel.seed)
-                    .frame(maxHeight: 343)
-                    .colorMultiply(Color(Asset.Colors.smoke.color))
-//                        .focused($isFocused)
-
-            }.padding(EdgeInsets(top: 0, leading: 12, bottom: 0, trailing: 12))
+            }.padding(.horizontal, 12)
         }
         .background(Color(Asset.Colors.smoke.color))
         .overlay(
@@ -79,11 +83,11 @@ struct SeedPhraseRestoreWalletView: View {
                 .stroke(Color(Asset.Colors.rain.color), lineWidth: 1)
         )
         .cornerRadius(16)
-        .padding([.leading, .trailing], 16)
-        .onboardingNavigationBar(title: L10n.restoringYourWallet) {
-            self.viewModel.back()
-        } onInfo: {
-            self.viewModel.info()
+        .padding(.horizontal, 16)
+        .onboardingNavigationBar(title: L10n.restoringYourWallet) { [weak viewModel] in
+            viewModel?.back.send()
+        } onInfo: { [weak viewModel] in
+            viewModel?.info.send()
         }
     }
 
@@ -106,7 +110,7 @@ struct SeedPhraseRestoreWalletView: View {
         )
             .frame(height: 32)
             .padding(EdgeInsets(top: 0, leading: 15, bottom: 0, trailing: 14))
-            .background(viewModel.hasPasteboard ? Color(Asset.Colors.lime.color) : Color.clear)
+            .background(viewModel.seed.isEmpty ? Color(Asset.Colors.lime.color) : Color.clear)
             .cornerRadius(8)
             .fixedSize()
     }
@@ -153,79 +157,3 @@ struct SeedPhraseRestoreWalletView: View {
             )
     }
 }
-
-// struct SeedPhraseTextView: UIViewRepresentable {
-//
-//    @Binding var text: String
-//
-//    func makeUIView(context: Context) -> UITextView {
-//        print(context)
-//        let textView = UITextView()
-//    //        textView.delegate = context.coordinator
-//        return textView
-//    }
-//
-//    func updateUIView(_ uiView: UITextView, context _: Context) {
-//        print(uiView)
-//    //        uiView.attributedText = context.coordinator.textReducer(text: text)
-//    }
-//
-//    typealias UIViewType = UITextView
-//
-//    // MARK: -
-//
-//    final class Coordinator: NSObject, UITextViewDelegate {
-//        var text: Binding<String>
-//
-//        init(text: Binding<String>) {
-//            self.text = text
-//        }
-//
-//        func textViewDidChange(_ textView: UITextView) {
-//            if textView.attributedText.string != text.wrappedValue.string {
-//                let string = textReducer(text: textView.attributedText.string)
-//                text.wrappedValue = string.string
-//
-//                textView.attributedText = string
-//            }
-//        }
-//
-//        //        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-//        //            let newText = textView.attributedText.string.
-//        //            return true
-//        //        }
-//
-//        func textReducer(text: String) -> NSMutableAttributedString {
-//            let needsSpace = text.last == " "
-//            let words = text
-//                .components(separatedBy: CharacterSet.decimalDigits).joined(separator: " ")
-//                .split(separator: " ")
-//            let string = NSMutableAttributedString()
-//            for (index, word) in words.enumerated() {
-//                let index = NSAttributedString.attributedString(with: String(index + 1), of: .text4)
-//                    .withForegroundColor(Asset.Colors.mountain.color)
-//                string.append(index)
-//
-//                let padding4 = NSTextAttachment()
-//                padding4.bounds = CGRect(x: 0, y: 0, width: 4, height: 0)
-//                string.append(NSAttributedString(attachment: padding4))
-//
-//                let wordString = NSAttributedString.attributedString(with: String(word), of: .text3)
-//                string.append(wordString)
-//
-//                let padding16 = NSTextAttachment()
-//                padding16.bounds = CGRect(x: 0, y: 0, width: 16, height: 0)
-//                string.append(NSAttributedString(attachment: padding16))
-//            }
-//            if needsSpace {
-//                string.appending(.init(string: " "))
-//            }
-//
-//            return string
-//        }
-//    }
-//
-//    func makeCoordinator() -> Coordinator {
-//        Coordinator(text: $text)
-//    }
-// }

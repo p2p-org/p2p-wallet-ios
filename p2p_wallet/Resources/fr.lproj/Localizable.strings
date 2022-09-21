@@ -960,4 +960,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Support" = "Soutien";
 "Try another option" = "Essayez une autre option";
 "Try another account or use a phone number" = "Essayez un autre compte ou utilisez un numéro de téléphone";
+"Fill 12 or 24 words" = "Remplissez 12 ou 24 mots";
 "After 5 incorrect app PIN codes" = "Après 5 codes PIN d'application incorrects";

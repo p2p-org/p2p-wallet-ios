@@ -39,7 +39,7 @@ final class RestoreWalletViewModel: BaseViewModel {
             tKeyFacade: provider.createTKeyFacade(),
             deviceShare: deviceShare,
             authService: AuthServiceBridge(),
-            apiGatewayClient: provider.createApiGatewayClient(),
+            apiGatewayClient: Resolver.resolve(),
             icloudAccountProvider: keychainStorage
         ))
 
