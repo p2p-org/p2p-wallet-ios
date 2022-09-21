@@ -17,7 +17,7 @@ struct RecoveryKitRow: View {
         VStack(spacing: 0) {
             HStack {
                 Image(uiImage: icon)
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .apply(style: .text2)
                         .foregroundColor(Color(Asset.Colors.night.color))

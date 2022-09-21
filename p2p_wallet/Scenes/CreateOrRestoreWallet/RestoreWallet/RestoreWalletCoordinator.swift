@@ -163,7 +163,7 @@ final class RestoreWalletCoordinator: Coordinator<OnboardingResult> {
         case let .restoreSeed(innerState):
             return restoreSeedDelegatedCoordinator.buildViewController(for: innerState)
 
-        case let .securitySetup(_, _, innerState):
+        case let .securitySetup(_, _, _, innerState):
             let vc = securitySetupDelegatedCoordinator.buildViewController(for: innerState)
             vc?.title = ""
             return vc

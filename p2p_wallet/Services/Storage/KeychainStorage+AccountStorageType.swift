@@ -68,7 +68,7 @@ extension KeychainStorage: AccountStorageType {
 
     func save(deviceShare: String) throws {
         if deviceShare.isEmpty {
-            localKeychain.delete(deviceShare)
+            localKeychain.delete(deviceShareKey)
         } else {
             localKeychain.set(deviceShare, forKey: deviceShareKey)
         }

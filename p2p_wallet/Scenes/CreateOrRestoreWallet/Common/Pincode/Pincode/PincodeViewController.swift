@@ -44,7 +44,7 @@ final class PincodeViewController: BaseViewController {
                 )
                     .bind(titleLabel)
 
-                UIView.spacer
+                UIView(height: 100)
 
                 PinCode(correctPincode: viewModel.pincode, bottomLeftButton: nil)
                     .setup { view in
@@ -52,6 +52,8 @@ final class PincodeViewController: BaseViewController {
                         view.resetingDelayInSeconds = 1
                     }
                     .bind(pincodeView)
+
+                UIView.spacer
             }
         }
     }

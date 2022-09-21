@@ -4,6 +4,7 @@
 
 import Combine
 import Foundation
+import Onboarding
 import Resolver
 
 struct RecoveryKitTKeyData {
@@ -16,8 +17,11 @@ struct RecoveryKitTKeyData {
 
 class RecoveryKitViewModel: ObservableObject {
     @Injected private var userWalletManager: UserWalletManager
+    @Injected private var walletMetadataService: WalletMetadataService
 
-    @Published var tKeyData: RecoveryKitTKeyData?
+    @Published var walletMetadata: WalletMetaData?
+
+    private var subscriptions = [AnyCancellable]()
 
     struct Coordinator {
         var seedPhrase: (() -> Void)?
@@ -27,16 +31,10 @@ class RecoveryKitViewModel: ObservableObject {
     var coordinator: Coordinator = .init()
 
     init() {
-        if let wallet = userWalletManager.wallet {
-            if let ethAddress = wallet.ethAddress {
-                tKeyData = .init(
-                    device: wallet.deviceShare ?? "Unavailable",
-                    phone: "Unavailable",
-                    social: ethAddress,
-                    socialProvider: "Unavailable"
-                )
-            }
-        }
+        walletMetadataService.$metadata
+            .sink { [weak self] metadata in
+                self?.walletMetadata = metadata
+            }.store(in: &subscriptions)
     }
 
     func openSeedPhrase() {

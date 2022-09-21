@@ -39,7 +39,7 @@ struct RecoveryKitView: View {
                 .padding(.top, safeAreaInsets.top + 50)
 
                 // TKey info
-                if let tKeyData = viewModel.tKeyData {
+                if let metadata = viewModel.walletMetadata {
                     VStack(alignment: .leading) {
                         Text(L10n.multiFactorAuthentication)
                             .apply(style: .caps)
@@ -50,17 +50,17 @@ struct RecoveryKitView: View {
                             RecoveryKitRow(
                                 icon: .deviceIcon,
                                 title: "Device",
-                                subtitle: tKeyData.device
+                                subtitle: metadata.deviceName
                             )
                             RecoveryKitRow(
                                 icon: .callIcon,
                                 title: "Phone",
-                                subtitle: tKeyData.phone
+                                subtitle: metadata.phoneNumber
                             )
                             RecoveryKitRow(
                                 icon: .appleIcon,
-                                title: tKeyData.socialProvider,
-                                subtitle: tKeyData.social
+                                title: metadata.authProvider,
+                                subtitle: metadata.email
                             )
                         }
                         .foregroundColor(Color(Asset.Colors.night.color))
@@ -99,6 +99,22 @@ struct RecoveryKitView: View {
                 .frame(width: 30, height: 30)
                 .padding(.top, 20)
                 .padding(.trailing, 20)
+        }
+    }
+
+    func authProviderName(provider: String) -> String {
+        switch provider {
+        case "apple": return "AppleID"
+        case "google": return "Google"
+        default: return "Google"
+        }
+    }
+
+    func authProviderIcon(provider: String) -> UIImage? {
+        switch provider {
+        case "apple": return .appleIcon
+        case "google": return .google
+        default: return .google
         }
     }
 }

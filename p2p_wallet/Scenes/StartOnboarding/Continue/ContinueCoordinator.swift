@@ -85,10 +85,10 @@ final class ContinueCoordinator: Coordinator<OnboardingResult> {
 private extension CreateWalletFlowState {
     var email: String {
         switch self {
-        case let .bindingPhoneNumber(email, _, _, _, _):
+        case let .bindingPhoneNumber(email, _, _, _, _, _):
             return email
-        case let .securitySetup(email, _, _, _, _):
-            return email
+        case let .securitySetup(email, _, _, metadata, _):
+            return metadata.email
         default:
             return "?"
         }
