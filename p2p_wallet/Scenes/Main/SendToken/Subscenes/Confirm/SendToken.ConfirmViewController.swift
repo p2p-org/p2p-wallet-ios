@@ -5,8 +5,10 @@
 //  Created by Chung Tran on 02/12/2021.
 //
 
+import AnalyticsManager
 import BEPureLayout
 import Foundation
+import Resolver
 import RxCocoa
 import RxSwift
 import UIKit
@@ -14,6 +16,8 @@ import UIKit
 extension SendToken {
     final class ConfirmViewController: BaseVC {
         // MARK: - Dependencies
+
+        @Injected private var analyticsManager: AnalyticsManager
 
         private let viewModel: SendTokenViewModelType
 
@@ -34,6 +38,7 @@ extension SendToken {
         init(viewModel: SendTokenViewModelType) {
             self.viewModel = viewModel
             super.init()
+            analyticsManager.log(event: AmplitudeEvent.sendApprovedScreen)
         }
 
         override func setUp() {
@@ -79,8 +84,11 @@ extension SendToken {
                 }
                 .onTap { [weak self] in
                     self?.viewModel
-                        .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true,
-                                                                 preSelectedNetwork: nil))
+                        .navigate(to: .chooseRecipientAndNetwork(
+                            showAfterConfirmation: true,
+                            preSelectedNetwork: nil,
+                            maxWasClicked: false
+                        ))
                 }
 
                 // Network
@@ -134,8 +142,11 @@ extension SendToken {
                         }
                         .onTap { [weak self] in
                             self?.viewModel
-                                .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: true,
-                                                                         preSelectedNetwork: nil))
+                                .navigate(to: .chooseRecipientAndNetwork(
+                                    showAfterConfirmation: true,
+                                    preSelectedNetwork: nil,
+                                    maxWasClicked: false
+                                ))
                         }
                 }
 
