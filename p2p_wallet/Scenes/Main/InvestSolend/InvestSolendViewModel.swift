@@ -18,6 +18,11 @@ class InvestSolendViewModel: ObservableObject {
     @Published var loading: Bool = false
     @Published var market: [Invest] = []
     @Published var totalDeposit: Double = 0
+    @Published var isPresentingTutorial = false
+    
+    var isTutorialShown: Bool {
+        Defaults.isSolendTutorialShown
+    }
 
     init(mocked: Bool) throws {
         service = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
