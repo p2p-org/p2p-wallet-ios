@@ -10,7 +10,7 @@ final class ContinueViewModel: BaseViewModel {
 
     init(subtitle: String) {
         data = OnboardingContentData(
-            image: .safe,
+            image: .emailLetsContinue,
             title: L10n.letSContinue,
             subtitle: subtitle
         )

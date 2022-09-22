@@ -3,6 +3,12 @@ import SwiftUI
 
 struct OnboardingContentView: View {
     let data: OnboardingContentData
+    let maxWidth: CGFloat
+
+    init(data: OnboardingContentData, maxWidth: CGFloat = 300) {
+        self.data = data
+        self.maxWidth = maxWidth
+    }
 
     var body: some View {
         VStack(spacing: .zero) {
@@ -11,9 +17,7 @@ struct OnboardingContentView: View {
                 .scaledToFit()
                 .frame(
                     minWidth: 128,
-                    maxWidth: 300,
-                    minHeight: 96,
-                    maxHeight: 224
+                    maxWidth: maxWidth
                 )
             Text(data.title)
                 .font(.system(size: UIFont.fontSize(of: .largeTitle), weight: .bold))

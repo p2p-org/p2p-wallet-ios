@@ -75,7 +75,7 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
     private func weCanTSMSYouContent(phone: String, code: Int) -> OnboardingContentData {
         OnboardingContentData(
-            image: .box,
+            image: .catFail,
             title: L10n.weCanTSMSYou,
             subtitle: L10n
                 .SomethingWrongWithPhoneNumberOrSettings
@@ -201,7 +201,7 @@ private extension RestoreCustomDelegatedCoordinator {
 
     func handleNoMatch() -> UIViewController {
         let content = OnboardingContentData(
-            image: .box,
+            image: .catFail,
             title: L10n.noWalletFound,
             subtitle: L10n.tryWithAnotherAccount
         )
@@ -210,7 +210,7 @@ private extension RestoreCustomDelegatedCoordinator {
 
     func handleBroken(code: Int) -> UIViewController {
         let content = OnboardingContentData(
-            image: .box,
+            image: .womanNotFound,
             title: L10n.wellWell,
             subtitle: L10n.YouVeFindASeldonPage🦄ItSLikeAUnicornButItSACrush.WeReAlreadyFixingIt
                 .ifYouWishToReportTheIssueUseErrorCode(code)
@@ -232,7 +232,7 @@ private extension RestoreCustomDelegatedCoordinator {
     func tryAnother(wrongNumber: String, trySocial: Bool) -> UIViewController {
         if trySocial {
             let content = OnboardingContentData(
-                image: .box,
+                image: .catFail,
                 title: L10n.noWalletFound,
                 subtitle: L10n.tryWithAnotherAccountOrUseAPhoneNumber
             )
@@ -271,7 +271,7 @@ private extension RestoreCustomDelegatedCoordinator {
             return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: viewModel))
         } else {
             let content = OnboardingContentData(
-                image: .box,
+                image: .catFail,
                 title: L10n.accountNotFound,
                 subtitle: L10n.DoesnTWork.tryAnotherOption(wrongNumber)
             )
@@ -309,7 +309,7 @@ private extension RestoreCustomDelegatedCoordinator {
 
     func handleExpiredSocialTryAgain() -> UIViewController {
         let content = OnboardingContentData(
-            image: .box,
+            image: .catFail,
             title: L10n.noWalletFound,
             subtitle: L10n.repeatSocialAuth
         )
@@ -330,7 +330,7 @@ private extension RestoreCustomDelegatedCoordinator {
 
     func handleNotFound() -> UIViewController {
         let content = OnboardingContentData(
-            image: .box,
+            image: .catFail,
             title: L10n.noWalletFound,
             subtitle: L10n.tryWithAccountOrUseAnAnotherPhoneNumber
         )
