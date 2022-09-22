@@ -4,9 +4,12 @@
 
 import Combine
 import Onboarding
+import Resolver
 import SwiftUI
 
 final class RestoreICloudDelegatedCoordinator: DelegatedCoordinator<RestoreICloudState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: RestoreICloudState) -> UIViewController? {
         switch state {
         case .signIn:
@@ -19,11 +22,7 @@ final class RestoreICloudDelegatedCoordinator: DelegatedCoordinator<RestoreIClou
     }
 
     private func openInfo() {
-        let viewController = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        rootViewController?.present(viewController, animated: true)
+        helpLauncher.launch()
     }
 }
 
