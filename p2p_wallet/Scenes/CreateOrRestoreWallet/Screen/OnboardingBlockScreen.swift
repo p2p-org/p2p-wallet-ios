@@ -18,6 +18,7 @@ struct OnboardingBlockScreen: View {
     let onHome: () async throws -> Void
     let onCompletion: (() async throws -> Void)?
     let onTermAndCondition: () -> Void
+    let onInfo: (() -> Void)?
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -64,7 +65,9 @@ struct OnboardingBlockScreen: View {
                         .padding(.top, 24)
                 }
             }
-        }.onboardingScreen()
+        }
+        .onboardingScreen()
+        .onboardingNavigationBar(title: "", onInfo: onInfo)
     }
 
     private let formatter: DateComponentsFormatter = {

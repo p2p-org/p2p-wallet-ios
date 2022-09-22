@@ -300,7 +300,8 @@ private extension RestoreCustomDelegatedCoordinator {
             onCompletion: { [stateMachine] in
                 Task { _ = try await stateMachine <- .enterPhone }
             },
-            onTermAndCondition: { [weak self] in self?.openTermAndCondition() }
+            onTermAndCondition: { [weak self] in self?.openTermAndCondition() },
+            onInfo: { [weak self] in self?.openHelp() }
         )
         return UIHostingController(rootView: view)
     }
