@@ -7,12 +7,13 @@ import Reachability
 import Resolver
 import SwiftyUserDefaults
 
+@MainActor
 final class EnterSMSCodeViewModel: BaseOTPViewModel {
     // MARK: -
 
-    private static var phoneSteps = [String: Int]()
-
     private var cancellable = Set<AnyCancellable>()
+
+    private let attemptCounter: Wrapper<ResendCounter>
     private var countdown: Int
     private static let codeLength = 6
 
@@ -44,18 +45,31 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         coordinatorIO.onConfirm.send(rawCode)
     }
 
+    @MainActor
     func resendButtonTapped() {
         guard
             !isLoading,
             reachability.check()
         else { return }
-        coordinatorIO.onResend.send()
 
-        // Setup timer
-        countdown = OnboardingConfig.shared.enterOTPResendSteps[Self.phoneSteps[phone] ?? 0]
-        Self
-            .phoneSteps[phone] = min(OnboardingConfig.shared.enterOTPResendSteps.count - 1,
-                                     (Self.phoneSteps[phone] ?? 0) + 1)
+        isLoading = true
+        coordinatorIO.onResend.sendProcess { [weak self] error in
+            // Setup timer
+            DispatchQueue.main.sync {
+                if let error = error {
+                    self?.coordinatorIO.error.send(error)
+                    self?.isLoading = false
+                    return
+                }
+                self?.syncTimer()
+                self?.isLoading = false
+            }
+        }
+    }
+
+    @MainActor
+    func syncTimer() {
+        countdown = Int(Date().distance(to: attemptCounter.value.until))
         timer?.invalidate()
         startTimer()
         setResendCountdown()
@@ -75,13 +89,12 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     private var timer: Timer?
 
-    init(phone: String) {
+    init(phone: String, attemptCounter: Wrapper<ResendCounter>) {
         self.phone = phone
-        countdown = OnboardingConfig.shared.enterOTPResendSteps[Self.phoneSteps[phone] ?? 0]
+        self.attemptCounter = attemptCounter
+        countdown = Int(Date().distance(to: attemptCounter.value.until))
 
         super.init()
-
-        Self.phoneSteps[phone] = Self.phoneSteps[phone] ?? 1
 
         bind()
         startTimer()
@@ -196,7 +209,7 @@ extension EnterSMSCodeViewModel {
     struct CoordinatorIO {
         let error: PassthroughSubject<Error?, Never> = .init()
         let onConfirm: PassthroughSubject<String, Never> = .init()
-        let onResend: PassthroughSubject<Void, Never> = .init()
+        let onResend: PassthroughSubject<ReactiveProcess<Void>, Never> = .init()
         let showInfo: PassthroughSubject<Void, Never> = .init()
         let goBack: PassthroughSubject<Void, Never> = .init()
     }

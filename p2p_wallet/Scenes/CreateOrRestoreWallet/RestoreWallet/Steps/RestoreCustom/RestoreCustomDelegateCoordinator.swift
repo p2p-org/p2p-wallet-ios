@@ -14,11 +14,11 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
 
     override func buildViewController(for state: RestoreCustomState) -> UIViewController? {
         switch state {
-        case let .enterPhone(initialPhoneNumber, _, _, _):
+        case let .enterPhone(initialPhoneNumber, _, _, _, _):
             return handleEnterPhone(phone: initialPhoneNumber)
 
-        case let .enterOTP(phone, _, _, _):
-            return handleEnterOtp(phone: phone)
+        case let .enterOTP(phone, _, _, resendCounter):
+            return handleEnterOtp(phone: phone, resendCounter: resendCounter)
 
         case let .otpNotDeliveredTrySocial(phone, code):
             return handleOtpNotDeliveredRequireSocial(phone: phone, code: code)
@@ -123,8 +123,8 @@ private extension RestoreCustomDelegatedCoordinator {
         return viewController
     }
 
-    func handleEnterOtp(phone: String) -> UIViewController {
-        let viewModel = EnterSMSCodeViewModel(phone: phone)
+    func handleEnterOtp(phone: String, resendCounter: Wrapper<ResendCounter>) -> UIViewController {
+        let viewModel = EnterSMSCodeViewModel(phone: phone, attemptCounter: resendCounter)
         let viewController = EnterSMSCodeViewController(viewModel: viewModel)
 
         viewModel.coordinatorIO.onConfirm.sinkAsync { [weak viewModel, stateMachine] otp in
@@ -147,14 +147,8 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
-        viewModel.coordinatorIO.onResend.sinkAsync { [weak viewModel, stateMachine] in
-            viewModel?.isLoading = true
-            do {
-                try await stateMachine <- .resendOTP
-            } catch {
-                viewModel?.coordinatorIO.error.send(error)
-            }
-            viewModel?.isLoading = false
+        viewModel.coordinatorIO.onResend.sinkAsync { [stateMachine] process in
+            process.start { try await stateMachine <- .resendOTP }
         }.store(in: &subscriptions)
 
         return viewController
