@@ -66,6 +66,8 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
             case let .success(data):
                 self.subject.send(.created(data))
                 self.subject.send(completion: .finished)
+            case .breakProcess:
+                break
             }
         }
 
@@ -123,6 +125,8 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
                 case let .success(data):
                     self.subject.send(.created(data))
                     self.subject.send(completion: .finished)
+                case .breakProcess:
+                    break
                 }
             }.store(in: &subscriptions)
     }
