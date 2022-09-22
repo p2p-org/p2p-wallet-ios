@@ -10,13 +10,13 @@ import SwiftUI
 
 struct FixedList<Content: View>: View {
     @ViewBuilder public var content: () -> Content
-    
+
     init(
         @ViewBuilder content: @escaping () -> Content
     ) {
         self.content = content
     }
-    
+
     var body: some View {
         // Market
         List {

@@ -144,10 +144,10 @@ final class TabBarController: UITabBarController {
             }
         }
     }
-    
+
     func routeToSolendTutorial() {
         var view = SolendTutorialView(viewModel: .init())
-        view.doneHandler = {[weak self] in
+        view.doneHandler = { [weak self] in
             self?.changeItem(to: .history)
         }
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
@@ -188,9 +188,9 @@ extension TabBarController: UITabBarControllerDelegate {
         {
             homeCoordinator?.scrollToTop()
         }
-        
+
         // Solend tutorial first
-        if TabItem(rawValue: selectedIndex) == .history && !Defaults.isSolendTutorialShown {
+        if TabItem(rawValue: selectedIndex) == .history, !Defaults.isSolendTutorialShown {
             routeToSolendTutorial()
             return false
         }
