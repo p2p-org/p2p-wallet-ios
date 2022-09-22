@@ -5,7 +5,9 @@
 //  Created by Chung Tran on 23/11/2021.
 //
 
+import AnalyticsManager
 import Foundation
+import Resolver
 import UIKit
 
 extension SendToken.ChooseTokenAndAmount {
@@ -13,6 +15,7 @@ extension SendToken.ChooseTokenAndAmount {
         // MARK: - Dependencies
 
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
+        @Injected private var analyticsManager: AnalyticsManager
 
         // MARK: - Properties
 
@@ -42,6 +45,7 @@ extension SendToken.ChooseTokenAndAmount {
             self.viewModel = viewModel
             super.init()
             self.hidesBottomBarWhenPushed = hidesBottomBarWhenPushed
+            analyticsManager.log(event: AmplitudeEvent.sendStartScreen)
         }
 
         override func viewWillDisappear(_ animated: Bool) {
@@ -120,7 +124,7 @@ extension SendToken.ChooseTokenAndAmount {
                 ) { [weak self] selectedIndex in
                     guard selectedIndex == 1 else { return }
                     self?.viewModel.save()
-                    self?.viewModel.navigateNext()
+                    self?.viewModel.navigateNext(maxWasClicked: false)
                 }
             }
         }
@@ -128,7 +132,7 @@ extension SendToken.ChooseTokenAndAmount {
         @objc private func buttonNextDidTouch() {
             if viewModel.isTokenValidForSelectedNetwork() {
                 viewModel.save()
-                viewModel.navigateNext()
+                viewModel.navigateNext(maxWasClicked: false)
             }
         }
     }
