@@ -63,7 +63,7 @@ extension CreateWallet {
         }
 
         func navigateToCreatePhrases() {
-            analyticsManager.log(event: .createSeedInvoked)
+            analyticsManager.log(event: AmplitudeEvent.createSeedInvoked)
             navigatableScene = .createPhrases
         }
 

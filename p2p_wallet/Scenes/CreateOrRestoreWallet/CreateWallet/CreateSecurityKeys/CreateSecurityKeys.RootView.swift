@@ -109,7 +109,7 @@ extension CreateSecurityKeys {
         }
 
         func saveToPhoto() {
-            analyticsManager.log(event: .backingUpSaving)
+            analyticsManager.log(event: AmplitudeEvent.backingUpSaving)
             viewModel.saveKeysImage(keysView.asImage())
         }
     }

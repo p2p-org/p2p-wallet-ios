@@ -130,7 +130,7 @@ extension OrcaSwapV2 {
                 walletPublisher = viewModel.sourceWalletPublisher
 
                 textFieldKeydownEvent = { amount in
-                    .swapTokenAAmountKeydown(sum: amount)
+                    AmplitudeEvent.swapTokenAAmountKeydown(sum: amount)
                 }
 
                 outputPublisher = viewModel.inputAmountPublisher
@@ -170,7 +170,7 @@ extension OrcaSwapV2 {
                 walletPublisher = viewModel.destinationWalletPublisher
 
                 textFieldKeydownEvent = { amount in
-                    .swapTokenBAmountKeydown(sum: amount)
+                    AmplitudeEvent.swapTokenBAmountKeydown(sum: amount)
                 }
 
                 outputPublisher = viewModel.estimatedAmountPublisher

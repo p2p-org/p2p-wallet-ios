@@ -106,12 +106,12 @@ extension Onboarding {
         }
 
         @objc private func buttonAllowDidTouch() {
-            analyticsManager.log(event: .pushApproved(lastScreen: "Onboarding"))
+            analyticsManager.log(event: AmplitudeEvent.pushApproved(lastScreen: "Onboarding"))
             viewModel.requestRemoteNotifications()
         }
 
         @objc private func buttonSkipDidTouch() {
-            analyticsManager.log(event: .pushRejected)
+            analyticsManager.log(event: AmplitudeEvent.pushRejected)
             viewModel.markNotificationsAsSet()
         }
 

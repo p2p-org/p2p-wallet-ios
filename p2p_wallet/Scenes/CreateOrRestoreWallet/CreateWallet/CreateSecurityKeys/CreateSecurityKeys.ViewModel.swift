@@ -81,12 +81,12 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     // MARK: - Actions
 
     func renewPhrases() {
-        analyticsManager.log(event: .backingUpRenewing)
+        analyticsManager.log(event: AmplitudeEvent.backingUpRenewing)
         createPhrases()
     }
 
     func copyToClipboard() {
-        analyticsManager.log(event: .backingUpCopying)
+        analyticsManager.log(event: AmplitudeEvent.backingUpCopying)
         clipboardManager.copyToClipboard(phrases.joined(separator: " "))
         notificationsService.showInAppNotification(.message(L10n.seedPhraseCopiedToClipboard))
     }
@@ -128,13 +128,13 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
         )
 
         if result {
-            analyticsManager.log(event: .backingUpIcloud)
+            analyticsManager.log(event: AmplitudeEvent.backingUpIcloud)
             notificationsService.showInAppNotification(.done(L10n.savedToICloud))
             Task {
                 await createWalletViewModel.handlePhrases(phrases)
             }
         } else {
-            analyticsManager.log(event: .backingUpError)
+            analyticsManager.log(event: AmplitudeEvent.backingUpError)
             errorSubject.send(L10n.SecurityKeyCanTBeSavedIntoIcloud.pleaseTryAgain)
         }
     }
@@ -144,7 +144,7 @@ extension CreateSecurityKeys.ViewModel: CreateSecurityKeysViewModelType {
     }
 
     func verifyPhrase() {
-        analyticsManager.log(event: .backingUpManually)
+        analyticsManager.log(event: AmplitudeEvent.backingUpManually)
         createWalletViewModel.verifyPhrase(phrases)
     }
 

@@ -21,18 +21,18 @@ extension AppCoordinator: AppEventHandlerDelegate {
     func createWalletDidComplete() {
         isRestoration = false
         navigateToOnboarding()
-        analyticsManager.log(event: .setupOpen(fromPage: "create_wallet"))
+        analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
     }
 
     func restoreWalletDidComplete() {
         isRestoration = true
         navigateToOnboarding()
-        analyticsManager.log(event: .setupOpen(fromPage: "recovery"))
+        analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "recovery"))
     }
 
     func onboardingDidFinish(resolvedName: String?) {
         self.resolvedName = resolvedName
-        let event: AnalyticsEvent = isRestoration ? .setupWelcomeBackOpen : .setupFinishOpen
+        let event: AnalyticsEvent = isRestoration ? AmplitudeEvent.setupWelcomeBackOpen : AmplitudeEvent.setupFinishOpen
         analyticsManager.log(event: event)
         navigateToOnboardingDone()
     }

@@ -66,15 +66,15 @@ extension WalletDetail {
                 .map { $0!.token.symbol }
                 .prefix(1)
                 .sink { [weak self] ticker in
-                    self?.analyticsManager.log(event: .tokenDetailsOpen(tokenTicker: ticker))
+                    self?.analyticsManager.log(event: AmplitudeEvent.tokenDetailsOpen(tokenTicker: ticker))
                 }
                 .store(in: &subscriptions)
         }
 
         private func sendTokens() {
             guard let wallet = walletSubject else { return }
-            analyticsManager.log(event: .tokenDetailsSendClick)
-            analyticsManager.log(event: .sendViewed(lastScreen: "token_details"))
+            analyticsManager.log(event: AmplitudeEvent.tokenDetailsSendClick)
+            analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "token_details"))
             navigatableSceneSubject = .send(wallet: wallet)
         }
 
@@ -83,26 +83,25 @@ extension WalletDetail {
             if symbol == "SOL" {
                 tokens = .sol
             }
-            print(symbol)
             if symbol == "USDC" {
                 tokens = .usdc
             }
-            analyticsManager.log(event: .tokenDetailsBuyClick)
+            analyticsManager.log(event: AmplitudeEvent.tokenDetailsBuyClick)
             navigatableSceneSubject = .buy(tokens: tokens)
         }
 
         private func receiveTokens() {
             guard let pubkey = walletSubject?.pubkey else { return }
-            analyticsManager.log(event: .tokenDetailQrClick)
-            analyticsManager.log(event: .tokenReceiveViewed)
-            analyticsManager.log(event: .receiveViewed(fromPage: "token_details"))
+            analyticsManager.log(event: AmplitudeEvent.tokenDetailQrClick)
+            analyticsManager.log(event: AmplitudeEvent.tokenReceiveViewed)
+            analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "token_details"))
             navigatableSceneSubject = .receive(walletPubkey: pubkey)
         }
 
         private func swapTokens() {
             guard let wallet = walletSubject else { return }
-            analyticsManager.log(event: .tokenDetailsSwapClick)
-            analyticsManager.log(event: .swapViewed(lastScreen: "token_details"))
+            analyticsManager.log(event: AmplitudeEvent.tokenDetailsSwapClick)
+            analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "token_details"))
             navigatableSceneSubject = .swap(fromWallet: wallet)
         }
     }
@@ -152,7 +151,7 @@ extension WalletDetail.ViewModel: WalletDetailViewModelType {
     }
 
     func showTransaction(_ transaction: ParsedTransaction) {
-        analyticsManager.log(event: .tokenDetailsDetailsOpen)
+        analyticsManager.log(event: AmplitudeEvent.tokenDetailsDetailsOpen)
         navigatableSceneSubject = .transactionInfo(transaction)
     }
 }

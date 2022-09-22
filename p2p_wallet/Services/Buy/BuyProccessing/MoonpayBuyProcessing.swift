@@ -11,6 +11,12 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
         case production
     }
 
+    enum MoonpayPaymentMethod: String {
+        case creditDebitCard = "credit_debit_card"
+        case sepaBankTransfer = "sepa_bank_transfer"
+        case gbpBankTransfer = "gbp_bank_transfer"
+    }
+
     // Properties
     let environment: Environment
     let apiKey: String
@@ -23,6 +29,7 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
     let baseCurrencyCode: String?
     let baseCurrencyAmount: Double?
     let quoteCurrencyAmount: Double?
+    let paymentMethod: MoonpayPaymentMethod?
 
     init(
         environment: Environment,
@@ -34,7 +41,8 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
         walletAddresses: String? = nil,
         baseCurrencyCode: String? = nil,
         baseCurrencyAmount: Double? = nil,
-        quoteCurrencyAmount: Double? = nil
+        quoteCurrencyAmount: Double? = nil,
+        paymentMethod: MoonpayPaymentMethod? = nil
     ) {
         self.environment = environment
         self.apiKey = apiKey
@@ -46,10 +54,11 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
         self.baseCurrencyCode = baseCurrencyCode
         self.baseCurrencyAmount = baseCurrencyAmount
         self.quoteCurrencyAmount = quoteCurrencyAmount
+        self.paymentMethod = paymentMethod
     }
 
     func getUrl() -> String {
-        let params: BuyProviderUtils.Params = [
+        var params: BuyProviderUtils.Params = [
             "apiKey": apiKey,
             "showOnlyCurrencies": showOnlyCurrencies,
             "defaultCurrencyCode": defaultCurrencyCode,
@@ -61,9 +70,11 @@ struct MoonpayBuyProcessing: BuyProcessingServiceType {
             "quoteCurrencyAmount": quoteCurrencyAmount != nil ? "\(quoteCurrencyAmount!)" : nil,
         ]
 
-        let path = environment.endpoint + "?" + params.query
-        print(path)
+        if let paymentMethod = paymentMethod {
+            params["paymentMethod"] = paymentMethod.rawValue
+        }
 
+        let path = environment.endpoint + "?" + params.query
         return path
     }
 }
