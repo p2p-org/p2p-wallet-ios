@@ -16,7 +16,7 @@ struct SocialSignInAccountHasBeenUsedView: View {
             Spacer()
             OnboardingContentView(
                 data: .init(
-                    image: .introWelcomeToP2pFamily,
+                    image: .walletFound,
                     title: L10n.aWalletFound,
                     subtitle: L10n.looksLikeYouAlreadyHaveAWalletWith(viewModel.emailAddress)
                 )

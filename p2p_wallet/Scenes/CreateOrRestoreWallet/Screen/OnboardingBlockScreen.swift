@@ -26,7 +26,7 @@ struct OnboardingBlockScreen: View {
             Spacer()
             OnboardingContentView(
                 data: .init(
-                    image: .rocket,
+                    image: .womanHardError,
                     title: contentTitle,
                     subtitle: contentSubtitle(formattedCountDown)
                 )
