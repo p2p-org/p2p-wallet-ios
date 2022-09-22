@@ -147,7 +147,7 @@ extension ReserveName {
             geetest_validate: String
         ) {
             guard let name = textFieldTextSubject.value else { return }
-            analyticsManager.log(event: .usernameSaved(lastScreen: "Onboarding"))
+            analyticsManager.log(event: AmplitudeEvent.usernameSaved(lastScreen: "Onboarding"))
 
             isLoading = true
 
@@ -185,7 +185,7 @@ extension ReserveName {
         @MainActor
         private func nameDidReserve(_ name: String) {
             reserveNameHandler?.handleName(name)
-            analyticsManager.log(event: .usernameReserved)
+            analyticsManager.log(event: AmplitudeEvent.usernameReserved)
             notificationsService.showInAppNotification(
                 .message(L10n.usernameWasReserved(name))
             )
@@ -216,7 +216,7 @@ extension ReserveName.ViewModel: ReserveNameViewModelType {
         navigatableScene = .skipAlert { [weak self] in
             let isFilled = self?.textFieldState == ReserveName.TextFieldState
                 .empty ? "Not_Filled" : "Filled"
-            self?.analyticsManager.log(event: .usernameSkipped(usernameField: isFilled))
+            self?.analyticsManager.log(event: AmplitudeEvent.usernameSkipped(usernameField: isFilled))
             self?.handleSkipAlertAction(isProceed: $0)
         }
     }

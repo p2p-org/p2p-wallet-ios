@@ -85,7 +85,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
             notificationsService.showInAppNotification(.message(L10n.thereIsNoP2PWalletSavedInYourICloud))
             return
         }
-        analyticsManager.log(event: .restoreAppleInvoked)
+        analyticsManager.log(event: AmplitudeEvent.restoreAppleInvoked)
 
         // if there is only 1 account saved in iCloud
         if accounts.count == 1 {
@@ -98,7 +98,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
     }
 
     func restoreManually() {
-        analyticsManager.log(event: .restoreManualInvoked)
+        analyticsManager.log(event: AmplitudeEvent.restoreManualInvoked)
         navigatableScene = .enterPhrases
     }
 
@@ -124,7 +124,7 @@ extension RestoreWallet.ViewModel: RestoreWalletViewModelType {
 
 extension RestoreWallet.ViewModel {
     func derivablePathDidSelect(_ derivablePath: DerivablePath, phrases: [String]) {
-        analyticsManager.log(event: .recoveryRestoreClick)
+        analyticsManager.log(event: AmplitudeEvent.recoveryRestoreClick)
         self.derivablePath = derivablePath
         self.phrases = phrases
 

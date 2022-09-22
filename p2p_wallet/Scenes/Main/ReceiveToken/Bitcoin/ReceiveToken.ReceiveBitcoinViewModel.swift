@@ -147,22 +147,28 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     func copyToClipboard() {
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
-            clipboardManager.copyToClipboard(address)
-            notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-            analyticsManager.log(event: .receiveAddressCopied)
+            await MainActor.run {
+                clipboardManager.copyToClipboard(address)
+                notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
+                analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
+            }
         }
     }
 
     func share(image: UIImage) {
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
-            analyticsManager.log(event: .receiveAddressShare)
-            navigationSubject.send(.share(address: address, qrCode: image))
+            await MainActor.run {
+                analyticsManager.log(event: AmplitudeEvent.receiveAddressShare)
+                navigationSubject.send(
+                    .share(address: address, qrCode: image)
+                )
+            }
         }
     }
 
     func saveAction(image: UIImage) {
-        analyticsManager.log(event: .receiveQRSaved)
+        analyticsManager.log(event: AmplitudeEvent.receiveQRSaved)
         imageSaver.save(image: image) { [weak self] result in
             switch result {
             case .success:
@@ -183,8 +189,10 @@ extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType
     func showBTCAddressInExplorer() {
         Task {
             guard let address = await persistentStore.gatewayAddress else { return }
-            analyticsManager.log(event: .receiveViewingExplorer)
-            navigationSubject.send(.showBTCExplorer(address: address))
+            await MainActor.run {
+                analyticsManager.log(event: AmplitudeEvent.receiveViewingExplorer)
+                navigationSubject.send(.showBTCExplorer(address: address))
+            }
         }
     }
 

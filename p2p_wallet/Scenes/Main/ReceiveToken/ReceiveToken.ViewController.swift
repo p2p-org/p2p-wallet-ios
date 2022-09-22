@@ -13,7 +13,8 @@ extension ReceiveToken {
     final class ViewController: BaseViewController {
         private var viewModel: ReceiveSceneModel
         private let isOpeningFromToken: Bool
-        private var subscriptions = [AnyCancellable]()
+        private var subscriptions = Set<AnyCancellable>()
+        private var buyCoordinator: BuyCoordinator?
 
         init(viewModel: ReceiveSceneModel, isOpeningFromToken: Bool) {
             self.isOpeningFromToken = isOpeningFromToken
@@ -232,14 +233,25 @@ extension ReceiveToken.ViewController {
         case .showPhotoLibraryUnavailable:
             PhotoLibraryAlertPresenter().present(on: self)
         case .buy:
-            present(
-                BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
-                    let vm = BuyRoot.ViewModel()
-                    let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
-                    show(vc, sender: nil)
-                }),
-                animated: true
-            )
+            if available(.buyScenarioEnabled) {
+                buyCoordinator = BuyCoordinator(
+                    context: .fromRenBTC,
+                    presentingViewController: self,
+                    shouldPush: false
+                )
+                buyCoordinator?.start()
+                    .sink { _ in }
+                    .store(in: &subscriptions)
+            } else {
+                show(
+                    BuyTokenSelection.Scene(onTap: { [unowned self] crypto in
+                        let vm = BuyRoot.ViewModel()
+                        let vc = BuyRoot.ViewController(crypto: crypto, viewModel: vm)
+                        show(vc, sender: nil)
+                    }),
+                    sender: nil
+                )
+            }
         case .none:
             return
         }

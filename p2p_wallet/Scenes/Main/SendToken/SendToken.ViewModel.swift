@@ -159,7 +159,7 @@ extension SendToken {
             }
 
             analyticsManager.log(
-                event: .sendSendClick(
+                event: AmplitudeEvent.sendSendClick(
                     tokenTicker: wallet.token.symbol,
                     sum: amount
                 )
@@ -281,7 +281,7 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         guard let wallet = wallet else { return }
 
         analyticsManager.log(
-            event: .sendSelectTokenClick(tokenTicker: wallet.token.symbol)
+            event: AmplitudeEvent.sendSelectTokenClick(tokenTicker: wallet.token.symbol)
         )
 
         if !wallet.token.isRenBTC, network == .bitcoin {

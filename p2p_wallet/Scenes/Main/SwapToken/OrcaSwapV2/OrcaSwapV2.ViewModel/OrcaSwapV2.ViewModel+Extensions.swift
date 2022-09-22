@@ -141,7 +141,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     func chooseSourceWallet() {
         isSelectingSourceWallet = true
-        analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
+        analyticsManager.log(event: AmplitudeEvent.tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_A"))
         navigatableScene = .chooseSourceWallet(currentlySelectedWallet: sourceWallet)
     }
 
@@ -153,7 +153,7 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
             destinationMints = validMints
         }
         isSelectingSourceWallet = false
-        analyticsManager.log(event: .tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
+        analyticsManager.log(event: AmplitudeEvent.tokenListViewed(lastScreen: "Swap", tokenListLocation: "Token_B"))
         navigatableScene = .chooseDestinationWallet(
             currentlySelectedWallet: destinationWallet,
             validMints: Set(destinationMints),
@@ -234,10 +234,10 @@ extension OrcaSwapV2.ViewModel: OrcaSwapV2ViewModelType {
 
     func walletDidSelect(_ wallet: Wallet) {
         if isSelectingSourceWallet {
-            analyticsManager.log(event: .swapChangingTokenA(tokenAName: wallet.token.symbol))
+            analyticsManager.log(event: AmplitudeEvent.swapChangingTokenA(tokenAName: wallet.token.symbol))
             sourceWallet = wallet
         } else {
-            analyticsManager.log(event: .swapChangingTokenB(tokenBName: wallet.token.symbol))
+            analyticsManager.log(event: AmplitudeEvent.swapChangingTokenB(tokenBName: wallet.token.symbol))
             destinationWallet = wallet
         }
     }

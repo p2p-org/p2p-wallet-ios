@@ -83,7 +83,7 @@ class QrCodeScannerVC: BaseVC {
 
     func found(code: String) {
         if callback?(code) == true {
-            analyticsManager.log(event: .scanQrSuccess)
+            analyticsManager.log(event: AmplitudeEvent.scanQrSuccess)
             back()
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
         }
@@ -99,7 +99,7 @@ class QrCodeScannerVC: BaseVC {
     }
 
     @objc func closeButtonDidTouch() {
-        analyticsManager.log(event: .scanQrClose)
+        analyticsManager.log(event: AmplitudeEvent.scanQrClose)
         back()
     }
 

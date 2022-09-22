@@ -79,12 +79,12 @@ extension ChooseWallet {
         func search(keyword: String) {
             guard self.keyword != keyword else { return }
             self.keyword = keyword
-            analyticsManager.log(event: .tokenListSearching(searchString: keyword))
+            analyticsManager.log(event: AmplitudeEvent.tokenListSearching(searchString: keyword))
             reload()
         }
 
         func selectWallet(_ wallet: Wallet) {
-            analyticsManager.log(event: .tokenChosen(tokenName: wallet.token.symbol))
+            analyticsManager.log(event: AmplitudeEvent.tokenChosen(tokenName: wallet.token.symbol))
             handler.walletDidSelect(wallet)
             Task {
                 await pricesService.addToWatchList([wallet.token])

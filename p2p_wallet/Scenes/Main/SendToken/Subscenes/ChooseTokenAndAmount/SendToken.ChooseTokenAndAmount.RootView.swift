@@ -193,7 +193,7 @@ extension SendToken.ChooseTokenAndAmount {
                 .withLatestFrom(amountTextField.textPublisher)
                 .sink { [weak self] amount in
                     guard let amount = amount?.double else { return }
-                    self?.analyticsManager.log(event: .sendAmountKeydown(sum: amount))
+                    self?.analyticsManager.log(event: AmplitudeEvent.sendAmountKeydown(sum: amount))
                 }
                 .store(in: &subscriptions)
 

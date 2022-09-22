@@ -122,7 +122,7 @@ class AppCoordinator {
     }
 
     func finishSetUp() {
-        analyticsManager.log(event: .setupFinishClick)
+        analyticsManager.log(event: AmplitudeEvent.setupFinishClick)
         Task { await reload() }
     }
 

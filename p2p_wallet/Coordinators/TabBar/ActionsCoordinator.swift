@@ -55,29 +55,41 @@ final class ActionsCoordinator: Coordinator<Void> {
             .sink(receiveValue: { [unowned self] actionType in
                 switch actionType {
                 case .buy:
-                    navigationController.present(
-                        BuyTokenSelection.Scene(onTap: { [unowned self] in
-                            let coordinator = BuyPreparingCoordinator(
-                                navigationController: navigationController,
-                                strategy: .present,
-                                crypto: $0
-                            )
-                            coordinate(to: coordinator)
-                        }),
-                        animated: true
-                    )
+                    // Disabling on
+                    if available(.buyScenarioEnabled) {
+                        let coordinator = BuyCoordinator(
+                            context: .fromHome,
+                            presentingViewController: viewController,
+                            shouldPush: false
+                        )
+                        coordinate(to: coordinator)
+                            .sink { _ in }
+                            .store(in: &subscriptions)
+                    } else {
+                        navigationController.present(
+                            BuyTokenSelection.Scene(onTap: { [unowned self] in
+                                let coordinator = BuyPreparingCoordinator(
+                                    navigationController: navigationController,
+                                    strategy: .present,
+                                    crypto: $0
+                                )
+                                coordinate(to: coordinator)
+                            }),
+                            animated: true
+                        )
+                    }
                 case .receive:
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
                     let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
-                    coordinate(to: coordinator)
-                    analyticsManager.log(event: .mainScreenReceiveOpen)
-                    analyticsManager.log(event: .receiveViewed(fromPage: "main_screen"))
+                    coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
+                    analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
                 case .trade:
                     let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
                     let vc = OrcaSwapV2.ViewController(viewModel: vm)
                     let navigation = UINavigationController(rootViewController: vc)
-                    analyticsManager.log(event: .mainScreenSwapOpen)
-                    analyticsManager.log(event: .swapViewed(lastScreen: "main_screen"))
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
+                    analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
                     vc.doneHandler = { [weak self] in
                         self?.viewController.dismiss(animated: true)
                     }
@@ -92,8 +104,8 @@ final class ActionsCoordinator: Coordinator<Void> {
                         viewModel: vm,
                         navigationController: navigationController
                     )
-                    analyticsManager.log(event: .mainScreenSendOpen)
-                    analyticsManager.log(event: .sendViewed(lastScreen: "main_screen"))
+                    analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
+                    analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
 
                     sendCoordinator?.doneHandler = { [weak self] in
                         self?.viewController.dismiss(animated: true)

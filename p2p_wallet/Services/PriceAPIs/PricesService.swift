@@ -95,7 +95,6 @@ class PricesService: ObservableObject {
             return
         }
 
-        // get new prices
         var newPrices = try await api.getCurrentPrices(coins: coins, toFiat: Defaults.fiat.code)
         newPrices["renBTC"] = newPrices["BTC"]
         var prices = currentPrices
