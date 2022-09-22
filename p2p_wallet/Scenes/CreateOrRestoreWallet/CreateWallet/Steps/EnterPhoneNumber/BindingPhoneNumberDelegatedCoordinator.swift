@@ -111,13 +111,13 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             switch reason {
             case .blockEnterOTP:
                 title = L10n.itSOkayToBeWrong
-                contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeHaveFrozenAccountFor
+                contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeHaveFrozenYourAccountFor
             case .blockEnterPhoneNumber:
                 title = L10n.itSOkayToBeWrong
-                contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenAccountFor
+                contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
             case .blockResend:
                 title = L10n.soLetSBreathe
-                contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenAccountFor
+                contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
             }
 
             let view = OnboardingBlockScreen(
