@@ -11,7 +11,7 @@ import SwiftUI
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
-        case let .enterPhoneNumber(initialPhoneNumber, _, _):
+        case let .enterPhoneNumber(initialPhoneNumber, _, _, _):
             let mv = EnterPhoneNumberViewModel(phone: initialPhoneNumber, isBackAvailable: false)
             let vc = EnterPhoneNumberViewController(viewModel: mv)
             vc.title = L10n.stepOf("2", "3")
@@ -38,8 +38,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
 
             }.store(in: &subscriptions)
             return vc
-        case let .enterOTP(_, _, phoneNumber, _):
-            let vm = EnterSMSCodeViewModel(phone: phoneNumber)
+        case let .enterOTP(resendCounter, _, phoneNumber, _):
+            let vm = EnterSMSCodeViewModel(phone: phoneNumber, attemptCounter: resendCounter)
             let vc = EnterSMSCodeViewController(viewModel: vm)
             vc.title = L10n.stepOf("2", "3")
 
@@ -63,14 +63,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 vm?.isLoading = false
             }.store(in: &subscriptions)
 
-            vm.coordinatorIO.onResend.sinkAsync { [weak vm, stateMachine] in
-                vm?.isLoading = true
-                do {
-                    try await stateMachine <- .resendOTP
-                } catch {
-                    vm?.coordinatorIO.error.send(error)
-                }
-                vm?.isLoading = false
+            vm.coordinatorIO.onResend.sinkAsync { [stateMachine] process in
+                process.start { try await stateMachine <- .resendOTP }
             }.store(in: &subscriptions)
 
             return vc

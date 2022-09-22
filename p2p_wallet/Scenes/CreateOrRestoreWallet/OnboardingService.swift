@@ -27,7 +27,12 @@ final class OnboardingServiceImpl: OnboardingService {
                     seedPhrase: seedPhrase,
                     ethPublicKey: ethPublicKey,
                     deviceShare: deviceShare,
-                    .enterPhoneNumber(initialPhoneNumber: phoneNumber, didSend: false, data: data)
+                    .enterPhoneNumber(
+                        initialPhoneNumber: phoneNumber,
+                        didSend: false,
+                        resendCounter: nil,
+                        data: data
+                    )
                 )
             } else {
                 fallthrough
