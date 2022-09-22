@@ -70,6 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
         UIViewController.swizzleViewDidDisappear()
+        UIViewController.swizzleViewDidAppear()
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
