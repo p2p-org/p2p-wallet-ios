@@ -22,7 +22,7 @@ class SocialSignInTryAgainViewController: BaseViewController {
             BEVStack {
                 BESafeArea {
                     BEVStack {
-                        UIImageView(image: .introWelcomeToP2pFamily, contentMode: .scaleAspectFill)
+                        UIImageView(image: .womanNotFound, contentMode: .scaleAspectFill)
                             .frame(width: 220, height: 280)
                             .centered(.horizontal)
 

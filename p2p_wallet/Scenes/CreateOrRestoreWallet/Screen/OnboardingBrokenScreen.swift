@@ -112,7 +112,7 @@ struct OnboardingBrokenScreen_Previews: PreviewProvider {
             OnboardingBrokenScreen(
                 title: L10n.restore,
                 contentData: .init(
-                    image: .introWelcomeToP2pFamily,
+                    image: .easyToStart,
                     title: L10n.protectingTheFunds,
                     subtitle: L10n.WeUseMultiFactorAuthentication
                         .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts

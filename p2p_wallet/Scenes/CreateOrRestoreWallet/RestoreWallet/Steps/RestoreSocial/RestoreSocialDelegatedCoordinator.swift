@@ -35,7 +35,7 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
     }
 
     private func socialSignInParameters() -> SocialSignInParameters {
-        let content = OnboardingContentData(image: .safeRestore, title: L10n.howToContinue)
+        let content = OnboardingContentData(image: .easyToStart, title: L10n.howToContinue)
         let parameters = SocialSignInParameters(
             title: L10n.restoreYourWallet,
             content: content,
@@ -69,7 +69,7 @@ private extension RestoreSocialDelegatedCoordinator {
             .tryAnotherAccountOrUseAPhoneNumber
         let parameters = ChooseRestoreOptionParameters(
             isBackAvailable: false,
-            content: OnboardingContentData(image: .box, title: L10n.notFound, email: email, subtitle: subtitle),
+            content: OnboardingContentData(image: .catFail, title: L10n.notFound, email: email, subtitle: subtitle),
             options: [.socialApple, .socialGoogle, .custom],
             isStartAvailable: true
         )
@@ -105,7 +105,7 @@ private extension RestoreSocialDelegatedCoordinator {
 
     func handleNotFoundCustom(email: String) -> UIViewController {
         let content = OnboardingContentData(
-            image: .box,
+            image: .catFail,
             title: L10n.noWalletFound,
             email: email,
             subtitle: L10n.tryAnotherOption
