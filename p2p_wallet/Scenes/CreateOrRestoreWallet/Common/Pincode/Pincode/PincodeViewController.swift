@@ -126,7 +126,7 @@ final class PincodeViewController: BaseViewController {
             .sink { [weak self] _ in
                 self?.openForgotPIN(
                     text: L10n.After2MoreIncorrectAttemptsWeLlLogYouOutOfTheCurrentAccountForYourSafety
-                        .youCanLogoutRightNowToCreateANewPINCodeForTheApp,
+                        .youCanLogoutRightNowToCreateANewPINForTheApp,
                     height: 420.adaptiveHeight
                 )
             }.store(in: &subscriptions)
