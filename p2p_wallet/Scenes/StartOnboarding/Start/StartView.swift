@@ -13,16 +13,24 @@ struct StartView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 if isShowing {
-                    PagingView(
-                        index: $viewModel.currentDataIndex.animation(),
-                        maxIndex: viewModel.data.count - 1,
-                        fillColor: Color(Asset.Colors.night.color)
-                    ) {
-                        ForEach(viewModel.data, id: \.id) { data in
-                            OnboardingContentView(data: data)
+                    if viewModel.data.count == 1, let content = viewModel.data.first {
+                        Spacer()
+                        OnboardingContentView(data: content)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                            .padding(.bottom, 32)
+                        Spacer()
+                    } else {
+                        PagingView(
+                            index: $viewModel.currentDataIndex.animation(),
+                            maxIndex: viewModel.data.count - 1,
+                            fillColor: Color(Asset.Colors.night.color)
+                        ) {
+                            ForEach(viewModel.data, id: \.id) { data in
+                                OnboardingContentView(data: data)
+                            }
                         }
+                        .transition(.opacity.combined(with: .move(edge: .top)))
                     }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
 
                     bottomActionsView
                         .transition(.opacity.combined(with: .move(edge: .bottom)))

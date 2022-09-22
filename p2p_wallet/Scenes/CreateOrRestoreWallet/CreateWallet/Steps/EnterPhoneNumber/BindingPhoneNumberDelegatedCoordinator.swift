@@ -78,7 +78,7 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             let view = OnboardingBrokenScreen(
                 title: L10n.createANewWallet,
                 contentData: .init(
-                    image: .introWelcomeToP2pFamily,
+                    image: .womanNotFound,
                     title: L10n.wellWell,
                     subtitle: L10n
                         .WeVeBrokeSomethingReallyBig

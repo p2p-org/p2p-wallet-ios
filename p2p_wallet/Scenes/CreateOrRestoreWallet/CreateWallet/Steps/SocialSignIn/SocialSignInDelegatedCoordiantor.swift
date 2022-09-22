@@ -87,7 +87,7 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
 
     private func socialSignInParameters() -> SocialSignInParameters {
         let content = OnboardingContentData(
-            image: .introWelcomeToP2pFamily,
+            image: .easyToStart,
             title: L10n.protectingTheFunds,
             subtitle: L10n.WeUseMultiFactorAuthentication.youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
         )
