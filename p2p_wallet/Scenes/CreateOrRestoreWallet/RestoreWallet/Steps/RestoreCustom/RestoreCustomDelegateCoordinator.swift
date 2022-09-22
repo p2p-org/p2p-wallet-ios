@@ -6,9 +6,12 @@ import Combine
 import CountriesAPI
 import KeyAppUI
 import Onboarding
+import Resolver
 import SwiftUI
 
 final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCustomState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: RestoreCustomState) -> UIViewController? {
         switch state {
         case let .enterPhone(initialPhoneNumber, _, _, _):
@@ -46,13 +49,8 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         }
     }
 
-    private func openInfo() {
-        openTermAndCondition()
-    }
-
     private func openHelp() {
-        openInfo()
-        // TODO: possible entry point for https://p2pvalidator.atlassian.net/browse/PWN-4640
+        helpLauncher.launch()
     }
 
     private func openTermAndCondition() {
@@ -111,6 +109,12 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = false
 
         }.store(in: &subscriptions)
+
+        viewModel.coordinatorIO.helpClicked
+            .sink(receiveValue: { [unowned self] in
+                openHelp()
+            })
+            .store(in: &subscriptions)
 
         viewModel.coordinatorIO.back.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .back
@@ -183,7 +187,7 @@ private extension RestoreCustomDelegatedCoordinator {
         }
         .store(in: &subscriptions)
         viewModel.openInfo.sink { [weak self] in
-            self?.openInfo()
+            self?.openHelp()
         }
         .store(in: &subscriptions)
         viewModel.back.sinkAsync { [stateMachine] in
@@ -222,7 +226,7 @@ private extension RestoreCustomDelegatedCoordinator {
         let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
             Task { _ = try await stateMachine <- .start }
         }, info: { [weak self] in
-            self?.openInfo()
+            self?.openHelp()
         }, help: { [weak self] in
             self?.openHelp()
         })
@@ -264,7 +268,7 @@ private extension RestoreCustomDelegatedCoordinator {
             }
             .store(in: &subscriptions)
             viewModel.openInfo.sink { [weak self] in
-                self?.openInfo()
+                self?.openHelp()
             }
             .store(in: &subscriptions)
 
@@ -278,7 +282,7 @@ private extension RestoreCustomDelegatedCoordinator {
             let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
                 Task { _ = try await stateMachine <- .start }
             }, info: { [weak self] in
-                self?.openInfo()
+                self?.openHelp()
             }, help: nil,
             customActions: {
                 TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted,
@@ -323,7 +327,7 @@ private extension RestoreCustomDelegatedCoordinator {
         let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
             Task { _ = try await stateMachine <- .start }
         }, info: { [weak self] in
-            self?.openInfo()
+            self?.openHelp()
         }, customActions: { actionView })
         return UIHostingController(rootView: view)
     }
@@ -360,7 +364,7 @@ private extension RestoreCustomDelegatedCoordinator {
         }
         .store(in: &subscriptions)
         chooseRestoreOptionViewModel.openInfo.sink { [weak self] in
-            self?.openInfo()
+            self?.openHelp()
         }
         .store(in: &subscriptions)
         return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel))
