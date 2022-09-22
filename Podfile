@@ -66,7 +66,7 @@ target 'p2p_wallet' do
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
   pod 'RxCombine'
 
-  # kits
+  # Kits
   pod 'KeychainSwift', '~> 19.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
   pod 'Intercom', '~> 12.4.3'

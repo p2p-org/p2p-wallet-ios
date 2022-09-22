@@ -90,7 +90,7 @@ class HomeViewModel: ObservableObject {
     func copyToClipboard() {
         clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
         notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-        analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
+        analyticsManager.log(event: AmplitudeEvent.mainCopyAddress)
     }
 
     func receive() {

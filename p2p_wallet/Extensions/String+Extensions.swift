@@ -168,3 +168,9 @@ extension String {
 
     private func nonLetters(decimalSeparator: String) -> String { filter("0123456789\(decimalSeparator)".contains) }
 }
+
+extension String {
+    func firstUppercased() -> String {
+        prefix(1).uppercased() + dropFirst()
+    }
+}
