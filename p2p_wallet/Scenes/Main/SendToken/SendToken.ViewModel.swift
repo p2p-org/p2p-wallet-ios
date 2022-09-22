@@ -21,6 +21,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     var canGoBack: Bool { get }
     var navigationDriver: Driver<SendToken.NavigatableScene?> { get }
     var loadingStateDriver: Driver<LoadableState> { get }
+    var maxWasClicked: Bool { get set }
 
     func getPrice(for symbol: String) -> Double
     func getPrices(for symbols: [String]) -> [String: Double]
@@ -56,6 +57,7 @@ extension SendToken {
         let disposeBag = DisposeBag()
         let relayMethod: SendTokenRelayMethod
         let canGoBack: Bool
+        var maxWasClicked = false
 
         // MARK: - Subject
 
@@ -149,9 +151,10 @@ extension SendToken {
         }
 
         private func send() {
-            guard let wallet = walletSubject.value,
-                  var amount = amountSubject.value,
-                  let receiver = recipientSubject.value
+            guard
+                let wallet = walletSubject.value,
+                var amount = amountSubject.value,
+                let receiver = recipientSubject.value
             else { return }
 
             // modify amount if using source wallet as paying wallet
@@ -173,6 +176,19 @@ extension SendToken {
                     sum: amount
                 )
             )
+
+            let amountInFiat = (amount * wallet.priceInCurrentFiat.orZero).toString(maximumFractionDigits: 2)
+
+            analyticsManager.log(event: AmplitudeEvent.sendConfirmButtonPressed(
+                sendNetwork: network.rawValue.firstUppercased(),
+                sendCurrency: Buy.FiatCurrency.usd.name,
+                sendSum: "\(amount)",
+                sendMax: maxWasClicked,
+                sendUsd: amountInFiat,
+                sendFree: feeInfoSubject.value?.feeAmount.transaction == 0,
+                sendUsername: false,
+                sendAccountFeeToken: ""
+            ))
 
             navigationSubject.accept(
                 .processTransaction(
@@ -233,7 +249,11 @@ extension SendToken.ViewModel: SendTokenViewModelType {
 
     func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
         recipientSubject.accept(nil)
-        navigationSubject.accept(.chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: network))
+        navigationSubject.accept(.chooseRecipientAndNetwork(
+            showAfterConfirmation: true,
+            preSelectedNetwork: network,
+            maxWasClicked: false
+        ))
     }
 
     func chooseWallet(_ wallet: Wallet) {
