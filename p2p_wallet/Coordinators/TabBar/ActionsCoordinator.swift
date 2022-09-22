@@ -82,14 +82,16 @@ final class ActionsCoordinator: Coordinator<Void> {
                     guard let pubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
                     let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: pubkey)
                     coordinate(to: coordinator).sink { _ in }.store(in: &subscriptions)
+                    analyticsManager.log(event: AmplitudeEvent.actionButtonReceive)
                     analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-                    analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
+                    analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "Main_Screen"))
                 case .trade:
                     let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
                     let vc = OrcaSwapV2.ViewController(viewModel: vm)
                     let navigation = UINavigationController(rootViewController: vc)
+                    analyticsManager.log(event: AmplitudeEvent.actionButtonSwap)
                     analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)
-                    analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "main_screen"))
+                    analyticsManager.log(event: AmplitudeEvent.swapViewed(lastScreen: "Main_Screen"))
                     vc.doneHandler = { [weak self] in
                         self?.viewController.dismiss(animated: true)
                     }
@@ -104,8 +106,9 @@ final class ActionsCoordinator: Coordinator<Void> {
                         viewModel: vm,
                         navigationController: navigationController
                     )
+                    analyticsManager.log(event: AmplitudeEvent.actionButtonSend)
                     analyticsManager.log(event: AmplitudeEvent.mainScreenSendOpen)
-                    analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "main_screen"))
+                    analyticsManager.log(event: AmplitudeEvent.sendViewed(lastScreen: "Main_Screen"))
 
                     sendCoordinator?.doneHandler = { [weak self] in
                         self?.viewController.dismiss(animated: true)

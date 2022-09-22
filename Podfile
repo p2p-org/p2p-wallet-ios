@@ -69,7 +69,7 @@ target 'p2p_wallet' do
   pod 'RxCombine'
   pod 'CombineCocoa'
 
-  # kits
+  # Kits
   pod 'KeychainSwift', '~> 19.0'
   pod 'SwiftyUserDefaults', '~> 5.0'
   pod 'Intercom', '~> 12.4.3'
