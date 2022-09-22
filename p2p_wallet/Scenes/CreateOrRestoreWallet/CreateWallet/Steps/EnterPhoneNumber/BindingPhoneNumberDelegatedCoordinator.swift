@@ -6,9 +6,12 @@ import Combine
 import CountriesAPI
 import Foundation
 import Onboarding
+import Resolver
 import SwiftUI
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
         case let .enterPhoneNumber(initialPhoneNumber, _, _, _):
@@ -107,7 +110,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 untilTimestamp: until,
                 onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },
-                onTermAndCondition: { [weak self] in self?.showTermAndCondition() }
+                onTermAndCondition: { [weak self] in self?.showTermAndCondition() },
+                onInfo: { [weak self] in self?.openHelp() }
             )
 
             return UIHostingController(rootView: view)
@@ -132,5 +136,9 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             presentingViewController: rootViewController
         )
         return try await coordinator.start().async()
+    }
+
+    private func openHelp() {
+        helpLauncher.launch()
     }
 }
