@@ -295,9 +295,15 @@ private extension RestoreCustomDelegatedCoordinator {
     }
 
     func handleBlock(until: Date, reason: PhoneFlowBlockReason) -> UIViewController {
-        let subtitle = reason == .blockEnterPhoneNumber ?
-            L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenAccountFor
-            : L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenAccountFor
+        let subtitle: (_ value: Any) -> String
+        switch reason {
+        case .blockEnterOTP:
+            subtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeHaveFrozenYourAccountFor
+        case .blockEnterPhoneNumber:
+            subtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
+        case .blockResend:
+            subtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
+        }
         let view = OnboardingBlockScreen(
             contentTitle: L10n.soLetSBreathe,
             contentSubtitle: subtitle,

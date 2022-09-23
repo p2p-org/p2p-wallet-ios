@@ -113,9 +113,8 @@ struct OnboardingBrokenScreen_Previews: PreviewProvider {
                 title: L10n.restore,
                 contentData: .init(
                     image: .easyToStart,
-                    title: L10n.protectingTheFunds,
-                    subtitle: L10n.WeUseMultiFactorAuthentication
-                        .youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
+                    title: L10n.easyToStart,
+                    subtitle: L10n.createYourAccountIn1Minute
                 ),
                 back: {},
                 info: {},
