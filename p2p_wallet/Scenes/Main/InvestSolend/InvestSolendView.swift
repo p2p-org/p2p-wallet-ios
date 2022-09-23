@@ -105,14 +105,6 @@ struct InvestSolendView: View {
                 Spacer(minLength: 20)
             }
             .frame(maxHeight: .infinity)
-            .onAppear {
-                if !viewModel.isTutorialShown {
-                    viewModel.isPresentingTutorial = true
-                }
-            }
-            .fullScreenCover(isPresented: $viewModel.isPresentingTutorial) {
-                SolendTutorialView(viewModel: .init())
-            }
         }
     }
 }
