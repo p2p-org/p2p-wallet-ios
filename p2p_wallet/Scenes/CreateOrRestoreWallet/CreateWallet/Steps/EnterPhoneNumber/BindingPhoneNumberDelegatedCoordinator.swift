@@ -28,6 +28,12 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 mv.coordinatorIO.countrySelected.send(result)
             }.store(in: &subscriptions)
 
+            mv.coordinatorIO.helpClicked
+                .sink(receiveValue: { [unowned self] in
+                    openHelp()
+                })
+                .store(in: &subscriptions)
+
             mv.coordinatorIO.phoneEntered.sinkAsync { [weak mv, stateMachine] phone in
                 mv?.isLoading = true
                 do {
@@ -56,6 +62,12 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 vm?.isLoading = false
             }.store(in: &subscriptions)
 
+            vm.coordinatorIO.showInfo
+                .sink(receiveValue: { [unowned self] in
+                    openHelp()
+                })
+                .store(in: &subscriptions)
+
             vm.coordinatorIO.goBack.sinkAsync { [weak vm, stateMachine] in
                 vm?.isLoading = true
                 do {
@@ -83,8 +95,12 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                         .ifYouWishToReportTheIssueUseErrorCode(abs(code))
                 ),
                 back: { [stateMachine] in try await stateMachine <- .back },
-                info: { /* TODO: handle */ },
-                help: { /* TODO: handle */ }
+                info: { [unowned self] in
+                    openHelp()
+                },
+                help: { [unowned self] in
+                    openHelp()
+                }
             )
 
             return UIHostingController(rootView: view)

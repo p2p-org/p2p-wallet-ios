@@ -137,6 +137,12 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
+        viewModel.coordinatorIO.showInfo
+            .sink(receiveValue: { [unowned self] in
+                openHelp()
+            })
+            .store(in: &subscriptions)
+
         viewModel.coordinatorIO.goBack.sinkAsync { [weak viewModel, stateMachine] in
             viewModel?.isLoading = true
             do {

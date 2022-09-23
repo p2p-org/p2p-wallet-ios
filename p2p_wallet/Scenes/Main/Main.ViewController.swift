@@ -21,6 +21,7 @@ extension Main {
         // MARK: - Properties
 
         var authenticateWhenAppears: Bool!
+        @Injected private var helpLauncher: HelpCenterLauncher
 
         // MARK: - Subviews
 
@@ -130,6 +131,11 @@ extension Main {
                         authStyle.completion?(false)
                     }
                 }
+                .store(in: &subscriptions)
+            pincodeViewModel.infoDidTap
+                .sink(receiveValue: { [unowned self] in
+                    helpLauncher.launch()
+                })
                 .store(in: &subscriptions)
             localAuthVC?.onClose = { [weak self] in
                 self?.viewModel.authenticate(presentationStyle: nil)
