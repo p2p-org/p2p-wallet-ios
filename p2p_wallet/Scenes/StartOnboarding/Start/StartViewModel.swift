@@ -1,8 +1,12 @@
+import AnalyticsManager
 import Combine
+import Resolver
 import SwiftUI
 import UIKit
 
 final class StartViewModel: BaseViewModel {
+    @Injected private var analyticsManager: AnalyticsManager
+
     @Published var data: [OnboardingContentData] = []
     @Published var currentDataIndex: Int = .zero
 
@@ -16,6 +20,14 @@ final class StartViewModel: BaseViewModel {
         self.isAnimatable = isAnimatable
         super.init()
         setData()
+
+        createWalletDidTap.sink { [unowned self] in
+            self.analyticsManager.log(event: AmplitudeEvent.onboardingStartButton)
+        }.store(in: &subscriptions)
+
+        restoreWalletDidTap.sink { [unowned self] in
+            self.analyticsManager.log(event: AmplitudeEvent.restoreWalletButton)
+        }.store(in: &subscriptions)
     }
 
     private func setData() {
