@@ -962,3 +962,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@" = "Bạn đã sử dụng 5 mã không chính xác. \n Vì sự an toàn của bạn, chúng tôi đã phong tỏa tài khoản của bạn cho %@";
 "You didn’t use any of 5 codes.\nFor your safety, we have frozen your account for %@" = "Bạn không sử dụng bất kỳ mã nào trong số 5 mã. \n Vì sự an toàn của bạn, chúng tôi đã phong tỏa tài khoản của bạn cho %@";
 "You used too much numbers. For your safety, we have frozen your account for %@" = "Bạn đã sử dụng quá nhiều số.  Vì sự an toàn của bạn, chúng tôi đã đóng băng tài khoản của bạn cho %@";
+"Device" = "Thiết bị";
+"Phone" = "Điện thoại";

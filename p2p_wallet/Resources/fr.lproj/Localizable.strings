@@ -959,3 +959,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@" = "Vous avez utilisé 5 codes incorrects.\nPour votre sécurité, nous avons gelé votre compte pendant %@";
 "You didn’t use any of 5 codes.\nFor your safety, we have frozen your account for %@" = "Vous n'avez utilisé aucun des 5 codes.\nPour votre sécurité, nous avons gelé votre compte pendant %@";
 "You used too much numbers. For your safety, we have frozen your account for %@" = "Vous avez utilisé trop de chiffres.  Pour votre sécurité, nous avons gelé votre compte pendant %@";
+"Device" = "Dispositif";
+"Phone" = "Téléphoner";

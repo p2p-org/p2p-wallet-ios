@@ -954,3 +954,5 @@ Reset the PIN or wait for %@.";
 "You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@" = "You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@";
 "You didn’t use any of 5 codes.\nFor your safety, we have frozen your account for %@" = "You didn’t use any of 5 codes.\nFor your safety, we have frozen your account for %@";
 "You used too much numbers. For your safety, we have frozen your account for %@" = "You used too much numbers. For your safety, we have frozen your account for %@";
+"Device" = "Device";
+"Phone" = "Phone";
