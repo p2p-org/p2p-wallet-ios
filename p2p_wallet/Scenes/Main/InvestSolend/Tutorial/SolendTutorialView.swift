@@ -8,6 +8,7 @@ struct SolendTutorialView: View {
     @SwiftUI.Environment(\.presentationMode) var presentationMode
     
     @StateObject var viewModel: SolendTutorialViewModel
+    var doneHandler: (() -> Void)?
 
     var body: some View {
         ZStack {
@@ -49,6 +50,7 @@ struct SolendTutorialView: View {
     private func markAsReadAndDismiss() {
         Defaults.isSolendTutorialShown = true
         presentationMode.wrappedValue.dismiss()
+        doneHandler?()
     }
     
     // MARK: - ViewBuilders
