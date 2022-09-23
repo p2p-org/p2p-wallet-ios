@@ -18,10 +18,14 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
             return handleSocial()
         case let .notFoundCustom(_, email):
             return handleNotFoundCustom(email: email)
-        case .notFoundDevice:
-            return handleNotFoundDeviceSocial(email: nil)
+        case let .notFoundDevice(data, _):
+            let subtitle = L10n.IfYouWantToContinueWithSelectPhoneNumber
+                .ifYouMadeAMistakePleaseChooseAnotherMail(data.email)
+            return handleNotFoundDeviceSocial(title: L10n.almostDone, subtitle: subtitle, email: nil)
         case let .notFoundSocial(data, _):
-            return handleNotFoundDeviceSocial(email: data.email)
+            let subtitle = L10n
+                .tryAnotherAccountOrUseAPhoneNumber
+            return handleNotFoundDeviceSocial(title: L10n.notFound, subtitle: subtitle, email: data.email)
         case .expiredSocialTryAgain:
             return nil
         case .finish:
@@ -63,12 +67,10 @@ private extension RestoreSocialDelegatedCoordinator {
         return UIHostingController(rootView: view)
     }
 
-    func handleNotFoundDeviceSocial(email: String?) -> UIViewController {
-        let subtitle = email == nil ? L10n.tryWithAccountOrUseAnAnotherPhoneNumber : L10n
-            .tryAnotherAccountOrUseAPhoneNumber
+    func handleNotFoundDeviceSocial(title: String, subtitle: String, email: String?) -> UIViewController {
         let parameters = ChooseRestoreOptionParameters(
             isBackAvailable: false,
-            content: OnboardingContentData(image: .catFail, title: L10n.notFound, email: email, subtitle: subtitle),
+            content: OnboardingContentData(image: .catFail, title: title, email: email, subtitle: subtitle),
             options: [.socialApple, .socialGoogle, .custom],
             isStartAvailable: true
         )
