@@ -24,8 +24,8 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
         let viewController = PincodeViewController(viewModel: viewModel)
 
         viewModel.infoDidTap
-            .sink { [weak self] _ in
-                self?.openInfo()
+            .sink { [unowned self] _ in
+                openInfo()
             }
             .store(in: &subscriptions)
 
@@ -47,7 +47,9 @@ final class SecuritySetupDelegatedCoordinator: DelegatedCoordinator<SecuritySetu
         let viewController = PincodeViewController(viewModel: viewModel)
 
         viewModel.infoDidTap
-            .sink { [weak self] _ in self?.openInfo() }
+            .sink { [unowned self] _ in
+                openInfo()
+            }
             .store(in: &subscriptions)
 
         viewModel.openMain
