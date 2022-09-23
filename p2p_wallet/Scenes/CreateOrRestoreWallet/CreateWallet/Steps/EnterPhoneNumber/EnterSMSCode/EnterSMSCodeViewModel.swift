@@ -55,7 +55,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
         isLoading = true
         coordinatorIO.onResend.sendProcess { [weak self] error in
             // Setup timer
-            DispatchQueue.main.sync {
+            DispatchQueue.main.async {
                 if let error = error {
                     self?.coordinatorIO.error.send(error)
                     self?.isLoading = false
