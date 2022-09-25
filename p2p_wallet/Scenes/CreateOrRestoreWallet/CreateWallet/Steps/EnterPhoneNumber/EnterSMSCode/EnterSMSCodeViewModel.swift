@@ -110,8 +110,6 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
                     switch serviceError {
                     case .invalidOTP:
                         self.showCodeError(error: EnterSMSCodeViewModelError.incorrectCode)
-                    case .youRequestOTPTooOften:
-                        return
                     case .retry:
                         self.notificationService.showDefaultErrorNotification()
                     default:
