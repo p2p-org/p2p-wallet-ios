@@ -51,9 +51,20 @@ struct DebugMenuView: View {
 
                     HStack {
                         Text("Delete current share")
+                        Spacer()
                         Button {
                             do {
                                 try Resolver.resolve(KeychainStorage.self).save(deviceShare: "")
+                            } catch { print(error) }
+                        } label: { Text("Delete") }
+                    }
+
+                    HStack {
+                        Text("Delete last progress")
+                        Spacer()
+                        Button {
+                            do {
+                                try Resolver.resolve(OnboardingService.self).lastState = nil
                             } catch { print(error) }
                         } label: { Text("Delete") }
                     }
