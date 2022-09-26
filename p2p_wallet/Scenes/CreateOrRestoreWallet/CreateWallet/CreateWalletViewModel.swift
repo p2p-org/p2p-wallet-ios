@@ -23,7 +23,7 @@ final class CreateWalletViewModel: BaseViewModel {
                 authService: AuthServiceBridge(),
                 apiGatewayClient: Resolver.resolve(),
                 tKeyFacade: provider.createTKeyFacade(),
-                deviceName: AMPDeviceInfo().model
+                deviceName: Device.getDeviceNameFromIdentifier(AMPDeviceInfo().model)
             )
         )
 
