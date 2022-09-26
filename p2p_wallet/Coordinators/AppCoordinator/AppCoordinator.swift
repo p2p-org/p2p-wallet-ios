@@ -122,6 +122,7 @@ class AppCoordinator: Coordinator<Void> {
                 switch result {
                 case let .created(data):
                     analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
+                    analyticsManager.log(event: AmplitudeEvent.createConfirmPin(result: true))
 
                     // Setup user wallet
                     try await userWalletManager.add(
@@ -139,6 +140,7 @@ class AppCoordinator: Coordinator<Void> {
 
                     saveSecurity(data: data.security)
                 case let .restored(data):
+                    analyticsManager.log(event: AmplitudeEvent.restoreConfirmPin(result: true))
 
                     // Setup user wallet
                     try await userWalletManager.add(
