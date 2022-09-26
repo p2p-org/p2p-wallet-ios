@@ -76,7 +76,7 @@ final class PincodeViewController: BaseViewController {
             labelFont: UIFont.font(of: .text1),
             textColor: Asset.Colors.sky.color
         ).onTap {
-            self.openForgotPIN(height: 313.adaptiveHeight)
+            self.openForgotPIN()
         }
     }
 
