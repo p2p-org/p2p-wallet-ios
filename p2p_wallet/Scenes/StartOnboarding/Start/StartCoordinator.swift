@@ -101,15 +101,12 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
 
                         return
                     } else {
-                        // Open continuation
-                        coordinate(to: ContinueCoordinator(window: window))
-                            .sink { result in
-                                self.subject.send(result)
-                                self.subject.send(completion: .finished)
-                            }.store(in: &subscriptions)
-
+                        openContinue()
                         return
                     }
+                case .enterPhoneNumber:
+                    openContinue()
+                    return
                 default: break
                 }
             default: break
@@ -144,6 +141,14 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
             case .created, .breakProcess: break
             }
         }).store(in: &subscriptions)
+    }
+
+    private func openContinue() {
+        coordinate(to: ContinueCoordinator(window: window))
+            .sink { result in
+                self.subject.send(result)
+                self.subject.send(completion: .finished)
+            }.store(in: &subscriptions)
     }
 
     private func openTerms() {
