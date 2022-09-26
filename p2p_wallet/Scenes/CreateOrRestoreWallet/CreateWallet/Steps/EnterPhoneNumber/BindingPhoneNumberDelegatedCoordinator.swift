@@ -6,12 +6,15 @@ import Combine
 import CountriesAPI
 import Foundation
 import Onboarding
+import Resolver
 import SwiftUI
 
 class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneNumberState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: BindingPhoneNumberState) -> UIViewController? {
         switch state {
-        case let .enterPhoneNumber(initialPhoneNumber, _, _):
+        case let .enterPhoneNumber(initialPhoneNumber, _, _, _):
             let mv = EnterPhoneNumberViewModel(phone: initialPhoneNumber, isBackAvailable: false)
             let vc = EnterPhoneNumberViewController(viewModel: mv)
             vc.title = L10n.stepOf("2", "3")
@@ -24,6 +27,12 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 else { return }
                 mv.coordinatorIO.countrySelected.send(result)
             }.store(in: &subscriptions)
+
+            mv.coordinatorIO.helpClicked
+                .sink(receiveValue: { [unowned self] in
+                    openHelp()
+                })
+                .store(in: &subscriptions)
 
             mv.coordinatorIO.phoneEntered.sinkAsync { [weak mv, stateMachine] phone in
                 mv?.isLoading = true
@@ -38,8 +47,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
 
             }.store(in: &subscriptions)
             return vc
-        case let .enterOTP(_, _, phoneNumber, _):
-            let vm = EnterSMSCodeViewModel(phone: phoneNumber)
+        case let .enterOTP(resendCounter, _, phoneNumber, _):
+            let vm = EnterSMSCodeViewModel(phone: phoneNumber, attemptCounter: resendCounter)
             let vc = EnterSMSCodeViewController(viewModel: vm)
             vc.title = L10n.stepOf("2", "3")
 
@@ -53,6 +62,12 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 vm?.isLoading = false
             }.store(in: &subscriptions)
 
+            vm.coordinatorIO.showInfo
+                .sink(receiveValue: { [unowned self] in
+                    openHelp()
+                })
+                .store(in: &subscriptions)
+
             vm.coordinatorIO.goBack.sinkAsync { [weak vm, stateMachine] in
                 vm?.isLoading = true
                 do {
@@ -63,14 +78,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 vm?.isLoading = false
             }.store(in: &subscriptions)
 
-            vm.coordinatorIO.onResend.sinkAsync { [weak vm, stateMachine] in
-                vm?.isLoading = true
-                do {
-                    try await stateMachine <- .resendOTP
-                } catch {
-                    vm?.coordinatorIO.error.send(error)
-                }
-                vm?.isLoading = false
+            vm.coordinatorIO.onResend.sinkAsync { [stateMachine] process in
+                process.start { try await stateMachine <- .resendOTP }
             }.store(in: &subscriptions)
 
             return vc
@@ -86,8 +95,12 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                         .ifYouWishToReportTheIssueUseErrorCode(abs(code))
                 ),
                 back: { [stateMachine] in try await stateMachine <- .back },
-                info: { /* TODO: handle */ },
-                help: { /* TODO: handle */ }
+                info: { [unowned self] in
+                    openHelp()
+                },
+                help: { [unowned self] in
+                    openHelp()
+                }
             )
 
             return UIHostingController(rootView: view)
@@ -98,13 +111,13 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             switch reason {
             case .blockEnterOTP:
                 title = L10n.itSOkayToBeWrong
-                contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeHaveFrozenAccountFor
+                contentSubtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeHaveFrozenYourAccountFor
             case .blockEnterPhoneNumber:
                 title = L10n.itSOkayToBeWrong
-                contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenAccountFor
+                contentSubtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
             case .blockResend:
                 title = L10n.soLetSBreathe
-                contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenAccountFor
+                contentSubtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
             }
 
             let view = OnboardingBlockScreen(
@@ -113,7 +126,8 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
                 untilTimestamp: until,
                 onHome: { [stateMachine] in Task { try await stateMachine <- .home } },
                 onCompletion: { [stateMachine] in Task { try await stateMachine <- .blockFinish } },
-                onTermAndCondition: { [weak self] in self?.showTermAndCondition() }
+                onTermAndCondition: { [weak self] in self?.showTermAndCondition() },
+                onInfo: { [weak self] in self?.openHelp() }
             )
 
             return UIHostingController(rootView: view)
@@ -138,5 +152,9 @@ class BindingPhoneNumberDelegatedCoordinator: DelegatedCoordinator<BindingPhoneN
             presentingViewController: rootViewController
         )
         return try await coordinator.start().async()
+    }
+
+    private func openHelp() {
+        helpLauncher.launch()
     }
 }

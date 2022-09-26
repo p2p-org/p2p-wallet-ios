@@ -68,6 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
         UIViewController.swizzleViewDidDisappear()
+        UIViewController.swizzleViewDidAppear()
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -124,9 +125,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func setupNavigationAppearance() {
-        // Fix iOS 14 navigation bar
-        UINavigationBar.appearance().standardAppearance.configureWithTransparentBackground()
-
         let barButtonAppearance = UIBarButtonItem.appearance()
         let navBarAppearence = UINavigationBar.appearance()
         navBarAppearence.backIndicatorImage = .navigationBack
@@ -142,9 +140,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
         navBarAppearence.tintColor = Asset.Colors.night.color
         barButtonAppearance.tintColor = Asset.Colors.night.color
-
-        navBarAppearence.setBackgroundImage(UIImage(), for: .default)
-        navBarAppearence.backgroundColor = .clear
 
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true

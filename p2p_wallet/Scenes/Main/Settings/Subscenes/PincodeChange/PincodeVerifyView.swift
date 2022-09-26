@@ -5,6 +5,7 @@
 //  Created by Giang Long Tran on 03.09.2022.
 //
 
+import Combine
 import KeyAppUI
 import Resolver
 import SwiftUI
@@ -15,6 +16,8 @@ struct PincodeVerifyView: View {
     @Injected private var pincodeStorage: PincodeStorageType
     var onSuccess: (() -> Void)?
     var forgetPinCode: (() -> Void)?
+    private let helpSubject = PassthroughSubject<Void, Never>()
+    var help: AnyPublisher<Void, Never> { helpSubject.eraseToAnyPublisher() }
 
     var body: some View {
         VStack {
@@ -57,7 +60,7 @@ struct PincodeVerifyView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
-                    print("Pressed")
+                    helpSubject.send()
                 } label: {
                     Image(uiImage: Asset.MaterialIcon.helpOutline.image)
                 }

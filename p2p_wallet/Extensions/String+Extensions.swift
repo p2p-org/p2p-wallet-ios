@@ -191,4 +191,8 @@ extension String {
             Array(Array(self)[$0 ..< min($0 + every, Array(self).count)])
         }.joined(separator: separator))
     }
+
+    func firstUppercased() -> String {
+        prefix(1).uppercased() + dropFirst()
+    }
 }

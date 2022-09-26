@@ -10,6 +10,7 @@ import UIKit
 enum CreateWalletResult {
     case restore(socialProvider: SocialProvider, email: String)
     case success(CreateWalletData)
+    case breakProcess
 }
 
 final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
@@ -102,6 +103,7 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
             case let .newWallet(onboardingWallet):
                 self.result.send(.success(onboardingWallet))
             case .breakProcess:
+                self.result.send(.breakProcess)
                 self.navigationController.dismiss(animated: true)
             }
             self.result.send(completion: .finished)

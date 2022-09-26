@@ -27,11 +27,37 @@ final class OnboardingServiceImpl: OnboardingService {
                     seedPhrase: seedPhrase,
                     ethPublicKey: ethPublicKey,
                     deviceShare: deviceShare,
-                    .enterPhoneNumber(initialPhoneNumber: phoneNumber, didSend: false, data: data)
+                    .enterPhoneNumber(
+                        initialPhoneNumber: phoneNumber,
+                        didSend: false,
+                        resendCounter: nil,
+                        data: data
+                    )
                 )
             } else {
-                fallthrough
+                return lastState
             }
+        case let .bindingPhoneNumber(
+            email,
+            authProvider,
+            seedPhrase,
+            ethPublicKey,
+            deviceShare,
+            .enterOTP(resendCounter, channel, phoneNumber, data)
+        ):
+            return .bindingPhoneNumber(
+                email: email,
+                authProvider: authProvider,
+                seedPhrase: seedPhrase,
+                ethPublicKey: ethPublicKey,
+                deviceShare: deviceShare,
+                .enterPhoneNumber(
+                    initialPhoneNumber: phoneNumber,
+                    didSend: false,
+                    resendCounter: resendCounter,
+                    data: data
+                )
+            )
         default:
             return lastState
         }

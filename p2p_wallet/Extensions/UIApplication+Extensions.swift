@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension UIApplication {
     var kWindow: UIWindow? {
@@ -33,5 +34,24 @@ extension UIApplication {
                 open(appSettings)
             }
         }
+    }
+
+    class func topmostViewController(controller: UIViewController? = rootViewController()) -> UIViewController? {
+        if let navigationController = controller as? UINavigationController {
+            return topmostViewController(controller: navigationController.visibleViewController)
+        }
+        if let tabController = controller as? UITabBarController {
+            if let selected = tabController.selectedViewController {
+                return topmostViewController(controller: selected)
+            }
+        }
+        if let presented = controller?.presentedViewController {
+            return topmostViewController(controller: presented)
+        }
+        return controller
+    }
+
+    class func rootViewController() -> UIViewController? {
+        UIApplication.shared.keyWindow?.rootViewController
     }
 }

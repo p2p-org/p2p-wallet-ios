@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 22/12/2021.
 //
 
+import AnalyticsManager
 import Foundation
 import KeyAppUI
 import Resolver
@@ -33,6 +34,7 @@ protocol NotificationService {
 }
 
 final class NotificationServiceImpl: NSObject, NotificationService {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var accountStorage: AccountStorageType
     @Injected private var notificationRepository: NotificationRepository
 
@@ -144,7 +146,10 @@ final class NotificationServiceImpl: NSObject, NotificationService {
 
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         if launchOptions?[.remoteNotification] != nil {
+            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: .push))
             UserDefaults.standard.set(true, forKey: openAfterPushKey)
+        } else {
+            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: .direct))
         }
     }
 

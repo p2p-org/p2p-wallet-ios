@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 15/10/2021.
 //
 
+import AnalyticsManager
 import BEPureLayout
 import Foundation
 import Resolver
@@ -13,6 +14,8 @@ import UIKit
 
 extension OrcaSwapV2 {
     class ViewController: BaseViewController {
+        @Injected private var analyticsManager: AnalyticsManager
+
         private let settingButton = UIBarButtonItem(
             image: .settings,
             style: .plain,
@@ -37,6 +40,7 @@ extension OrcaSwapV2 {
             navigationItem.title = L10n.swap
             navigationItem.rightBarButtonItem = settingButton
             hidesBottomBarWhenPushed = true
+            analyticsManager.log(event: AmplitudeEvent.swapStartScreen)
         }
 
         // MARK: - Methods
@@ -110,6 +114,7 @@ extension OrcaSwapV2 {
                 let vm = ConfirmSwapping.ViewModel(swapViewModel: viewModel)
                 let vc = ConfirmSwapping.ViewController(viewModel: vm)
                 show(vc, sender: nil)
+                analyticsManager.log(event: AmplitudeEvent.swapClickReviewButton)
             case let .processTransaction(transaction):
                 let vm = ProcessTransaction.ViewModel(processingTransaction: transaction)
                 let vc = ProcessTransaction.ViewController(viewModel: vm)

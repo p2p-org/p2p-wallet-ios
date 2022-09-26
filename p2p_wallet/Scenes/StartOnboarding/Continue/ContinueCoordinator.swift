@@ -70,10 +70,13 @@ final class ContinueCoordinator: Coordinator<OnboardingResult> {
             initialState: lastState,
             animated: animated
         ))
-            .sink { result in
+            .sink { [weak self] result in
+                guard let self = self else { return }
                 switch result {
                 case let .success(onboardingWallet):
                     self.subject.send(.created(onboardingWallet))
+                case .breakProcess:
+                    self.openStart()
                 default:
                     break
                 }

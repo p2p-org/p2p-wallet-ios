@@ -6,16 +6,19 @@ import Combine
 import CountriesAPI
 import KeyAppUI
 import Onboarding
+import Resolver
 import SwiftUI
 
 final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCustomState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: RestoreCustomState) -> UIViewController? {
         switch state {
-        case let .enterPhone(initialPhoneNumber, _, _, _):
+        case let .enterPhone(initialPhoneNumber, _, _, _, _):
             return handleEnterPhone(phone: initialPhoneNumber)
 
-        case let .enterOTP(phone, _, _, _):
-            return handleEnterOtp(phone: phone)
+        case let .enterOTP(phone, _, _, resendCounter):
+            return handleEnterOtp(phone: phone, resendCounter: resendCounter)
 
         case let .otpNotDeliveredTrySocial(phone, code):
             return handleOtpNotDeliveredRequireSocial(phone: phone, code: code)
@@ -46,13 +49,8 @@ final class RestoreCustomDelegatedCoordinator: DelegatedCoordinator<RestoreCusto
         }
     }
 
-    private func openInfo() {
-        openTermAndCondition()
-    }
-
     private func openHelp() {
-        openInfo()
-        // TODO: possible entry point for https://p2pvalidator.atlassian.net/browse/PWN-4640
+        helpLauncher.launch()
     }
 
     private func openTermAndCondition() {
@@ -112,6 +110,12 @@ private extension RestoreCustomDelegatedCoordinator {
 
         }.store(in: &subscriptions)
 
+        viewModel.coordinatorIO.helpClicked
+            .sink(receiveValue: { [unowned self] in
+                openHelp()
+            })
+            .store(in: &subscriptions)
+
         viewModel.coordinatorIO.back.sinkAsync { [stateMachine] in
             _ = try await stateMachine <- .back
         }.store(in: &subscriptions)
@@ -119,8 +123,8 @@ private extension RestoreCustomDelegatedCoordinator {
         return viewController
     }
 
-    func handleEnterOtp(phone: String) -> UIViewController {
-        let viewModel = EnterSMSCodeViewModel(phone: phone)
+    func handleEnterOtp(phone: String, resendCounter: Wrapper<ResendCounter>) -> UIViewController {
+        let viewModel = EnterSMSCodeViewModel(phone: phone, attemptCounter: resendCounter)
         let viewController = EnterSMSCodeViewController(viewModel: viewModel)
 
         viewModel.coordinatorIO.onConfirm.sinkAsync { [weak viewModel, stateMachine] otp in
@@ -133,6 +137,12 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
+        viewModel.coordinatorIO.showInfo
+            .sink(receiveValue: { [unowned self] in
+                openHelp()
+            })
+            .store(in: &subscriptions)
+
         viewModel.coordinatorIO.goBack.sinkAsync { [weak viewModel, stateMachine] in
             viewModel?.isLoading = true
             do {
@@ -143,14 +153,8 @@ private extension RestoreCustomDelegatedCoordinator {
             viewModel?.isLoading = false
         }.store(in: &subscriptions)
 
-        viewModel.coordinatorIO.onResend.sinkAsync { [weak viewModel, stateMachine] in
-            viewModel?.isLoading = true
-            do {
-                try await stateMachine <- .resendOTP
-            } catch {
-                viewModel?.coordinatorIO.error.send(error)
-            }
-            viewModel?.isLoading = false
+        viewModel.coordinatorIO.onResend.sinkAsync { [stateMachine] process in
+            process.start { try await stateMachine <- .resendOTP }
         }.store(in: &subscriptions)
 
         return viewController
@@ -183,7 +187,7 @@ private extension RestoreCustomDelegatedCoordinator {
         }
         .store(in: &subscriptions)
         viewModel.openInfo.sink { [weak self] in
-            self?.openInfo()
+            self?.openHelp()
         }
         .store(in: &subscriptions)
         viewModel.back.sinkAsync { [stateMachine] in
@@ -222,7 +226,7 @@ private extension RestoreCustomDelegatedCoordinator {
         let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
             Task { _ = try await stateMachine <- .start }
         }, info: { [weak self] in
-            self?.openInfo()
+            self?.openHelp()
         }, help: { [weak self] in
             self?.openHelp()
         })
@@ -264,7 +268,7 @@ private extension RestoreCustomDelegatedCoordinator {
             }
             .store(in: &subscriptions)
             viewModel.openInfo.sink { [weak self] in
-                self?.openInfo()
+                self?.openHelp()
             }
             .store(in: &subscriptions)
 
@@ -278,7 +282,7 @@ private extension RestoreCustomDelegatedCoordinator {
             let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
                 Task { _ = try await stateMachine <- .start }
             }, info: { [weak self] in
-                self?.openInfo()
+                self?.openHelp()
             }, help: nil,
             customActions: {
                 TextButtonView(title: L10n.useAnAnotherPhone, style: .inverted,
@@ -291,18 +295,29 @@ private extension RestoreCustomDelegatedCoordinator {
     }
 
     func handleBlock(until: Date, reason: PhoneFlowBlockReason) -> UIViewController {
-        let subtitle = reason == .blockEnterPhoneNumber ?
-            L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenAccountFor
-            : L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenAccountFor
+        let title: String
+        let subtitle: (_ value: Any) -> String
+        switch reason {
+        case .blockEnterOTP:
+            title = L10n.itSOkayToBeWrong
+            subtitle = L10n.YouUsed5IncorrectCodes.forYourSafetyWeHaveFrozenYourAccountFor
+        case .blockEnterPhoneNumber:
+            title = L10n.itSOkayToBeWrong
+            subtitle = L10n.YouUsedTooMuchNumbers.forYourSafetyWeHaveFrozenYourAccountFor
+        case .blockResend:
+            title = L10n.soLetSBreathe
+            subtitle = L10n.YouDidnTUseAnyOf5Codes.forYourSafetyWeHaveFrozenYourAccountFor
+        }
         let view = OnboardingBlockScreen(
-            contentTitle: L10n.soLetSBreathe,
+            contentTitle: title,
             contentSubtitle: subtitle,
             untilTimestamp: until,
             onHome: { [stateMachine] in Task { _ = try await stateMachine <- .start } },
             onCompletion: { [stateMachine] in
                 Task { _ = try await stateMachine <- .enterPhone }
             },
-            onTermAndCondition: { [weak self] in self?.openTermAndCondition() }
+            onTermAndCondition: { [weak self] in self?.openTermAndCondition() },
+            onInfo: { [weak self] in self?.openHelp() }
         )
         return UIHostingController(rootView: view)
     }
@@ -323,7 +338,7 @@ private extension RestoreCustomDelegatedCoordinator {
         let view = OnboardingBrokenScreen(title: "", contentData: content, back: { [stateMachine] in
             Task { _ = try await stateMachine <- .start }
         }, info: { [weak self] in
-            self?.openInfo()
+            self?.openHelp()
         }, customActions: { actionView })
         return UIHostingController(rootView: view)
     }
@@ -360,7 +375,7 @@ private extension RestoreCustomDelegatedCoordinator {
         }
         .store(in: &subscriptions)
         chooseRestoreOptionViewModel.openInfo.sink { [weak self] in
-            self?.openInfo()
+            self?.openHelp()
         }
         .store(in: &subscriptions)
         return UIHostingController(rootView: ChooseRestoreOptionView(viewModel: chooseRestoreOptionViewModel))
