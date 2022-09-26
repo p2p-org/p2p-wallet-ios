@@ -36,7 +36,6 @@
 "We have not supported this type of biometry authentication yet" = "We have not supported this type of biometry authentication yet";
 "Use TouchId" = "Use TouchId";
 "Use your TouchID for quick access?" = "Use your TouchID for quick access?";
-"Almost done!" = "Almost done!";
 "We suggest you also to enable push notifications" = "We suggest you also to enable push notifications";
 "Enable now" = "Enable now";
 "Well done!" = "Well done!";
@@ -953,5 +952,7 @@ Reset the PIN or wait for %@.";
 "You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@" = "You used 5 incorrect codes.\nFor your safety, we have frozen your account for %@";
 "You didn’t use any of 5 codes.\nFor your safety, we have frozen your account for %@" = "You didn’t use any of 5 codes.\nFor your safety, we have frozen your account for %@";
 "You used too much numbers. For your safety, we have frozen your account for %@" = "You used too much numbers. For your safety, we have frozen your account for %@";
+"Almost done" = "Almost done";
+"If you want to continue with %@ select phone number. If you made a mistake, please choose another mail" = "If you want to continue with %@ select phone number. If you made a mistake, please choose another mail";
 "Device" = "Device";
 "Phone" = "Phone";
