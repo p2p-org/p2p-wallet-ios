@@ -300,7 +300,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func showLogoutAlert() {
-        analyticsManager.log(event: AmplitudeEvent.signOut(lastScreen: "Settings"))
+        analyticsManager.log(event: AmplitudeEvent.signOut)
         logoutAlertSubject.accept(())
     }
 

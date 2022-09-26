@@ -4,28 +4,25 @@
 
 import Combine
 import Onboarding
+import Resolver
 import SwiftUI
 
 final class RestoreSeedPhraseDelegatedCoordinator: DelegatedCoordinator<RestoreSeedState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: RestoreSeedState) -> UIViewController? {
         switch state {
         case .signInSeed:
             return signInViewController()
-
         case let .chooseDerivationPath(phrase):
             return chooseDerivationPathViewController(phrase: phrase)
-
         case .finish:
             return nil
         }
     }
 
     private func openInfo() {
-        let viewController = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        rootViewController?.present(viewController, animated: true)
+        helpLauncher.launch()
     }
 }
 

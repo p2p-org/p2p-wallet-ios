@@ -11,6 +11,7 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
     private let transition = PanelTransition()
 
     @Injected private var pincodeStorage: PincodeStorageType
+    @Injected private var helpLauncher: HelpCenterLauncher
     let result = PassthroughSubject<Bool, Never>()
 
     init(navVC: UINavigationController) {
@@ -55,6 +56,11 @@ class PincodeChangeCoordinator: Coordinator<Bool> {
             viewController.modalPresentationStyle = .custom
             self.navVC.present(viewController, animated: true)
         }
+        view.help
+            .sink(receiveValue: { [unowned self] in
+                helpLauncher.launch()
+            })
+            .store(in: &subscriptions)
 
         let vc = UIHostingController(rootView: view)
         vc.title = L10n.changePIN

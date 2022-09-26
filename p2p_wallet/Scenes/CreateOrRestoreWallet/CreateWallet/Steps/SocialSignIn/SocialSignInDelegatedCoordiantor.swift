@@ -5,9 +5,12 @@
 import Combine
 import Foundation
 import Onboarding
+import Resolver
 import SwiftUI
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
+    @Injected private var helpLauncher: HelpCenterLauncher
+
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
         switch state {
         case .socialSelection:
@@ -78,24 +81,20 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
     }
 
     public func openInfo() {
-        let vc = WLMarkdownVC(
-            title: L10n.termsOfUse.uppercaseFirst,
-            bundledMarkdownTxtFileName: "Terms_of_service"
-        )
-        rootViewController?.present(vc, animated: true)
+        helpLauncher.launch()
     }
 
     private func socialSignInParameters() -> SocialSignInParameters {
         let content = OnboardingContentData(
             image: .easyToStart,
-            title: L10n.protectingTheFunds,
-            subtitle: L10n.WeUseMultiFactorAuthentication.youCanEasilyRegainAccessToTheWalletUsingSocialAccounts
+            title: L10n.easyToStart,
+            subtitle: L10n.createYourAccountIn1Minute
         )
         let parameters = SocialSignInParameters(
             title: L10n.createAccount,
             content: content,
-            appleButtonTitle: L10n.signInWithApple,
-            googleButtonTitle: L10n.signInWithGoogle,
+            appleButtonTitle: L10n.continueWithApple,
+            googleButtonTitle: L10n.continueWithGoogle,
             isBackAvailable: true
         )
         return parameters
