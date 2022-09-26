@@ -224,10 +224,6 @@ enum AmplitudeEvent: AnalyticsEvent {
     case tokenListSearching(searchString: String)
     case tokenChosen(tokenName: String)
 
-    // User
-    case userHasPositiveBalance(_ positive: Bool)
-    case userAggregateBalance(_ balance: Double)
-
     // Buy
     case buyCurrencyChanged(fromCurrencyToCurrency: String)
     case buyCoinChanged(fromCoinToCoin: String)
@@ -249,6 +245,13 @@ enum AmplitudeEvent: AnalyticsEvent {
     // General
     case appOpened(sourceOpen: AppOpenedContext)
     case actionButtonClick
+
+    // Onboarding
+    case onboardingStartButton
+    case createConfirmPin(result: Bool)
+    case restoreWalletButton
+    case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
+    case restoreConfirmPin(result: Bool)
 }
 
 // MARK: - AppOpenedContext

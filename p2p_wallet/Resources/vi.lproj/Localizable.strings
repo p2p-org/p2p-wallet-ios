@@ -963,3 +963,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "You used too much numbers. For your safety, we have frozen your account for %@" = "Bạn đã sử dụng quá nhiều số.  Vì sự an toàn của bạn, chúng tôi đã đóng băng tài khoản của bạn cho %@";
 "Almost done" = "Sắp xong";
 "If you want to continue with %@ select phone number. If you made a mistake, please choose another mail" = "Nếu bạn muốn tiếp tục với %@, hãy chọn số điện thoại.  Nếu bạn nhầm lẫn, vui lòng chọn một thư khác";
+"Device" = "Thiết bị";
+"Phone" = "Điện thoại";
