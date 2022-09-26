@@ -1,3 +1,4 @@
+import AnalyticsManager
 import Combine
 import KeyAppUI
 import Onboarding
@@ -10,6 +11,7 @@ final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
 
     @Injected private var biometricsProvider: BiometricsAuthProvider
     @Injected private var keychainStorage: KeychainStorage
+    @Injected private var analyticsManager: AnalyticsManager
 
     // MARK: - Properties
 
@@ -44,6 +46,7 @@ final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
 
         optionDidTap.sink { [weak self] option in
             guard let self = self else { return }
+            self.log(option: option)
 
             switch option {
             case .socialGoogle, .socialApple:
@@ -125,5 +128,33 @@ final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
                 self?.isLoading = nil
             }
         })
+    }
+
+    private func log(option: RestoreOption) {
+        analyticsManager.log(
+            event: AmplitudeEvent.selectRestoreOption(
+                restoreOption: option.analyticsRawValue,
+                keychaineOption: options.contains(.keychain)
+            )
+        )
+    }
+}
+
+private extension RestoreOption {
+    var analyticsRawValue: String {
+        switch self {
+        case .seed:
+            return "seed"
+        case .keychain:
+            return "keychaine"
+        case .socialApple:
+            return "apple"
+        case .socialGoogle:
+            return "google"
+        case .custom:
+            return "phone"
+        default:
+            return ""
+        }
     }
 }

@@ -960,3 +960,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You used too much numbers. For your safety, we have frozen your account for %@" = "Vous avez utilisé trop de chiffres.  Pour votre sécurité, nous avons gelé votre compte pendant %@";
 "Almost done" = "Presque fini";
 "If you want to continue with %@ select phone number. If you made a mistake, please choose another mail" = "Si vous souhaitez continuer avec %@, sélectionnez le numéro de téléphone.  Si vous avez fait une erreur, veuillez choisir un autre mail";
+"Device" = "Dispositif";
+"Phone" = "Téléphoner";

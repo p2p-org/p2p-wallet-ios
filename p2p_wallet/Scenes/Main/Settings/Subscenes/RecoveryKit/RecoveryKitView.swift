@@ -49,12 +49,12 @@ struct RecoveryKitView: View {
                         VStack(spacing: 0) {
                             RecoveryKitRow(
                                 icon: .deviceIcon,
-                                title: "Device",
-                                subtitle: metadata.deviceName
+                                title: L10n.device,
+                                subtitle: Device.getDeviceNameFromIdentifier(metadata.deviceName)
                             )
                             RecoveryKitRow(
                                 icon: .callIcon,
-                                title: "Phone",
+                                title: L10n.phone,
                                 subtitle: metadata.phoneNumber
                             )
                             RecoveryKitRow(
