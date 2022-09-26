@@ -22,12 +22,14 @@ struct SolendTutorialView: View {
                 ) {
                     ForEach(viewModel.data) { data in
                         SolendTutorialSlideView(data: data)
+                            .padding(.bottom, 20)
                     }
                 }
                 .transition(.opacity.combined(with: .move(edge: .top)))
 
                 bottomActionsView
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    .padding(.bottom, 20)
             }
             .edgesIgnoringSafeArea(.bottom)
             
@@ -39,7 +41,7 @@ struct SolendTutorialView: View {
                     }
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(.system(size: UIFont.fontSize(of: .text1), weight: .medium))
-                    .padding(.init(top: max(safeAreaInsets.top, 20), leading: 0, bottom: 0, trailing: 20))
+                    .padding(.trailing, 20)
                     Spacer()
                 }
             }
