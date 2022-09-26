@@ -144,7 +144,7 @@ final class PincodeViewController: BaseViewController {
                 self?.close()
             }
             view.addSubview(closeButton)
-            closeButton.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 16)
+            closeButton.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 6, yInset: -4)
             return
         }
         let backButton = UIBarButtonItem(
