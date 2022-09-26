@@ -21,10 +21,12 @@ struct SolendTutorialSlideView: View {
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 24)
+                .padding(.horizontal)
 
             Text(data.subtitle)
                 .subtitleStyle()
                 .padding(.top, 16)
+                .padding(.horizontal)
         }
     }
 }
