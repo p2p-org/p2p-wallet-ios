@@ -140,11 +140,14 @@ final class PincodeViewController: BaseViewController {
     private func addLeftButton() {
         guard viewModel.isBackAvailable else { return }
         guard navigationController != nil else {
-            let closeButton = UIButton.close().onTap { [weak self] in
+            let closeButton = UIButton(width: 43, height: 43)
+            closeButton.setImage(Asset.MaterialIcon.arrowBackIos.image, for: .normal)
+            closeButton.tintColor = Asset.Colors.night.color
+            closeButton.onTap { [weak self] in
                 self?.close()
             }
             view.addSubview(closeButton)
-            closeButton.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 6, yInset: -4)
+            closeButton.autoPinToTopLeftCornerOfSuperviewSafeArea(xInset: 3, yInset: -6)
             return
         }
         let backButton = UIBarButtonItem(
