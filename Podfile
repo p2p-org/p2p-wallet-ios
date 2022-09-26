@@ -83,9 +83,9 @@ target 'p2p_wallet' do
   end
 
   pod 'Resolver'
-  pod 'TagListView', '~> 1.0'
-  pod 'UITextView+Placeholder'
-  pod 'SubviewAttachingTextView'
+  pod 'TagListView', '~> 1.0' # TODO: remove in future
+  pod 'UITextView+Placeholder' # TODO: remove in future
+  pod 'SubviewAttachingTextView' # TODO: remove in future
   pod 'JazziconSwift', '~> 1.1.0'
   pod 'Kingfisher'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
@@ -106,12 +106,8 @@ target 'p2p_wallet' do
   # Others
   pod 'SwiftJWT'
 
-
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
-
-  #SwiftUI
-  pod 'BottomSheet', :git => 'https://github.com/weitieda/bottom-sheet.git'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths

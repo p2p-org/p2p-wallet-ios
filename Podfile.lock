@@ -23,7 +23,6 @@ PODS:
   - BlueCryptor (1.0.32)
   - BlueECC (1.2.5)
   - BlueRSA (1.0.200)
-  - BottomSheet (1.0.6)
   - Cache (1.0.0)
   - CocoaDebug (1.7.2)
   - CombineCocoa (0.4.0)
@@ -248,7 +247,6 @@ DEPENDENCIES:
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
-  - BottomSheet (from `https://github.com/weitieda/bottom-sheet.git`)
   - Cache (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - CocoaDebug
   - CombineCocoa
@@ -379,8 +377,6 @@ EXTERNAL SOURCES:
   BEPureLayout:
     :branch: master
     :git: https://github.com/p2p-org/BEPureLayout.git
-  BottomSheet:
-    :git: https://github.com/weitieda/bottom-sheet.git
   Cache:
     :branch: develop
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -448,9 +444,6 @@ CHECKOUT OPTIONS:
   BEPureLayout:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
-  BottomSheet:
-    :commit: de09fedfb7a9c5ab4effbdb4df284229c60f72db
-    :git: https://github.com/weitieda/bottom-sheet.git
   Cache:
     :commit: 7f425242f19fde6929f278107986e8fa1fe8b46f
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -515,7 +508,6 @@ SPEC CHECKSUMS:
   BlueCryptor: b0aee3d9b8f367b49b30de11cda90e1735571c24
   BlueECC: 0d18e93347d3ec6d41416de21c1ffa4d4cd3c2cc
   BlueRSA: dfeef51db96bcc4edec654956c1581adbda4e6a3
-  BottomSheet: 0a164143e34470cc332db0ce4e55d6da202d7ac6
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
@@ -589,6 +581,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: eed607146a24e9be9dcb92b563856d387e6036ba
+PODFILE CHECKSUM: 29b0bcddcd1b4b0d313c36f47b6869ad904cffa6
 
 COCOAPODS: 1.11.3
