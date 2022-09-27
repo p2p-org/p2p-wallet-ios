@@ -55,7 +55,7 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
             }
             self?.initialDialCode = nil
 
-            if let index = (self?.cachedResult.firstIndex { $0.value.dialCode == value.value }) {
+            if let index = (self?.cachedResult.firstIndex { $0.value.dialCode == value }) {
                 self?.cachedResult[selectedIndex].isSelected = false
                 self?.cachedResult[index].isSelected = true
                 selectedIndex = index
@@ -67,11 +67,11 @@ final class ChoosePhoneCodeViewModel: BECollectionViewModel<SelectableCountry> {
     // MARK: - Methods
 
     override func createRequest() async throws -> [SelectableCountry] {
-        let selectedDialCode = selectedDialCode?.value ?? initialDialCode
-        let selectedCountryCode = selectedCountryCode?.value ?? initialCountryCode
+        let selectedDialCode = selectedDialCode ?? initialDialCode
+        let selectedCountryCode = selectedCountryCode ?? initialCountryCode
         cachedResult = try await CountriesAPIImpl().fetchCountries()
             .map { .init(value: $0, isSelected: $0.dialCode == selectedDialCode && $0.code == selectedCountryCode) }
-        var countries = cachedResult.filteredAndSorted(byKeyword: keyword.value)
+        var countries = cachedResult.filteredAndSorted(byKeyword: keyword)
         countries = placeInitialIfNeeded(countries: countries)
         return countries
     }

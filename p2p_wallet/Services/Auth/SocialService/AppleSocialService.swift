@@ -6,15 +6,13 @@
 //
 
 import AuthenticationServices
-import SwiftJWT
-
-class AppleClaims: Claims {
-    let email: String?
-}
+import Resolver
 
 final class AppleSocialService: NSObject, SocialService {
     private typealias AuthContinuation = CheckedContinuation<SocialAuthResponse, Error>
     private var authContinuation: AuthContinuation?
+
+    @Injected private var jwtValidator: JWTTokenValidator
 
     func auth() async throws -> SocialAuthResponse {
         try await withCheckedThrowingContinuation { continuation in
@@ -68,13 +66,13 @@ extension AppleSocialService: ASAuthorizationControllerDelegate {
             return
         }
 
-        let jwt: JWT<AppleClaims>? = try? JWT(jwtString: tokenID)
+        let jwtModel = jwtValidator.decode(tokenID: tokenID)
 
         authContinuation?.resume(with: .success(
             SocialAuthResponse(
                 accessToken: appleIDCredential.user,
                 tokenID: tokenID,
-                email: jwt?.claims.email ?? "?"
+                email: jwtModel?.email ?? "?"
             )
         ))
         authContinuation = nil
