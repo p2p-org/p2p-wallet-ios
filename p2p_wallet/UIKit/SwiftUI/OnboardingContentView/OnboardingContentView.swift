@@ -26,22 +26,21 @@ struct OnboardingContentView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 24)
 
-            if data.email != nil || data.subtitle != nil {
-                VStack(spacing: .zero) {
-                    if let email = data.email {
-                        Text(email)
+            VStack(spacing: .zero) {
+                ForEach(data.subtitles) { subtitle in
+                    if subtitle.isLimited {
+                        Text(subtitle.text)
                             .subtitleStyle()
                             .lineLimit(1)
                             .truncationMode(.middle)
                             .minimumScaleFactor(UIFont.fontSize(of: .text2) / UIFont.fontSize(of: .title3))
-                    }
-                    if let subtitle = data.subtitle {
-                        Text(subtitle)
+                    } else {
+                        Text(subtitle.text)
                             .subtitleStyle()
                     }
                 }
-                .padding(.top, 16)
             }
+            .padding(.top, 16)
         }
     }
 }

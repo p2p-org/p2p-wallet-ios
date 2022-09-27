@@ -19,13 +19,18 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
         case let .notFoundCustom(_, email):
             return handleNotFoundCustom(email: email)
         case let .notFoundDevice(data, _):
-            let subtitle = L10n.IfYouWantToContinueWithSelectPhoneNumber
-                .ifYouMadeAMistakePleaseChooseAnotherMail(data.email)
-            return handleNotFoundDeviceSocial(title: L10n.almostDone, subtitle: subtitle, email: nil)
+            let subtitles: [OnboardingContentData.Subtitle] = [
+                .init(text: L10n.ifYouWantToContinueWith),
+                .init(text: data.email, isLimited: true),
+                .init(text: L10n.SelectPhoneNumber.ifYouMadeAMistakePleaseChooseAnotherMail),
+            ]
+            return handleNotFoundDeviceSocial(title: L10n.almostDone, subtitles: subtitles)
         case let .notFoundSocial(data, _):
-            let subtitle = L10n
-                .tryAnotherAccountOrUseAPhoneNumber
-            return handleNotFoundDeviceSocial(title: L10n.notFound, subtitle: subtitle, email: data.email)
+            let subtitles: [OnboardingContentData.Subtitle] = [
+                .init(text: data.email, isLimited: true),
+                .init(text: L10n.tryAnotherAccountOrUseAPhoneNumber),
+            ]
+            return handleNotFoundDeviceSocial(title: L10n.notFound, subtitles: subtitles)
         case .expiredSocialTryAgain:
             return nil
         case .finish:
@@ -67,10 +72,10 @@ private extension RestoreSocialDelegatedCoordinator {
         return UIHostingController(rootView: view)
     }
 
-    func handleNotFoundDeviceSocial(title: String, subtitle: String, email: String?) -> UIViewController {
+    func handleNotFoundDeviceSocial(title: String, subtitles: [OnboardingContentData.Subtitle]) -> UIViewController {
         let parameters = ChooseRestoreOptionParameters(
             isBackAvailable: false,
-            content: OnboardingContentData(image: .catFail, title: title, email: email, subtitle: subtitle),
+            content: OnboardingContentData(image: .catFail, title: title, subtitles: subtitles),
             options: [.socialApple, .socialGoogle, .custom],
             isStartAvailable: true
         )
@@ -108,8 +113,10 @@ private extension RestoreSocialDelegatedCoordinator {
         let content = OnboardingContentData(
             image: .catFail,
             title: L10n.noWalletFound,
-            email: email,
-            subtitle: L10n.tryAnotherOption
+            subtitles: [
+                OnboardingContentData.Subtitle(text: email, isLimited: true),
+                OnboardingContentData.Subtitle(text: L10n.tryAnotherOption),
+            ]
         )
         let actionViewModel = RestoreSocialOptionViewModel()
         actionViewModel.optionChosen.sinkAsync { [stateMachine] process in
