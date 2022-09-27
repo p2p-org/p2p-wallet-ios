@@ -13,7 +13,7 @@ typealias Invest = (asset: SolendConfigAsset, market: SolendMarketInfo?, userDep
 @MainActor
 class InvestSolendViewModel: ObservableObject {
     private let service: SolendDataService
-    var subscriptions = Set<AnyCancellable>()
+    private var subscriptions = Set<AnyCancellable>()
 
     @Published var loading: Bool = false
     @Published var market: [Invest] = []
@@ -23,7 +23,7 @@ class InvestSolendViewModel: ObservableObject {
         Defaults.isSolendTutorialShown
     }
 
-    init(mocked: Bool) throws {
+    init(mocked: Bool = false) {
         service = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
 
         service.availableAssets
