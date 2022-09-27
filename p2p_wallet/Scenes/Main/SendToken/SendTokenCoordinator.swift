@@ -91,7 +91,7 @@ extension SendToken {
                 navigationController?.popViewController(animated: true)
             case let .chooseTokenAndAmount(showAfterConfirmation):
                 pushChooseToken(showAfterConfirmation: showAfterConfirmation, hidesBottomBarWhenPushed: true)
-            case let .chooseRecipientAndNetwork(showAfterConfirmation, preSelectedNetwork):
+            case let .chooseRecipientAndNetwork(showAfterConfirmation, preSelectedNetwork, maxWasClicked):
                 guard let navigationController = navigationController else { return }
 
                 let vm = ChooseRecipientAndNetwork.ViewModel(
@@ -100,6 +100,7 @@ extension SendToken {
                     sendTokenViewModel: viewModel,
                     relayMethod: viewModel.relayMethod
                 )
+                viewModel.maxWasClicked = maxWasClicked
                 coordinator = ChooseRecipientAndNetwork.Coordinator(
                     viewModel: vm,
                     navigationController: navigationController
