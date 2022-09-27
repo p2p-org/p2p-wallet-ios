@@ -38,12 +38,12 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        smsInputRef.view?.textField?.becomeFirstResponder()
+        openKeyboard()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        smsInputRef.view?.textField?.resignFirstResponder()
+        hideKeyboard()
     }
 
     override func build() -> UIView {
@@ -135,6 +135,7 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
             self?.smsInputRef.view?.style = error == nil ? .default : .error
             if error != nil {
                 self?.smsInputRef.view?.shake()
+                self?.openKeyboard()
             }
         }.store(in: &store)
 
@@ -178,5 +179,9 @@ final class EnterSMSCodeViewController: BaseOTPViewController {
 
     @objc func onInfo() {
         viewModel.infoTapped()
+    }
+
+    private func openKeyboard() {
+        smsInputRef.view?.textField?.becomeFirstResponder()
     }
 }
