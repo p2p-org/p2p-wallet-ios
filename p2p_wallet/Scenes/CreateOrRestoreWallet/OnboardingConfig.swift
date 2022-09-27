@@ -8,10 +8,12 @@ import Foundation
 class OnboardingConfig: ObservableObject {
     static let shared = OnboardingConfig()
 
-    @Published var torusEndpoint: String = String.secretConfig("TORUS_ENDPOINT") ?? ""
-    @Published var torusGoogleVerifier: String = String.secretConfig("TORUS_GOOGLE_VERIFIER") ?? ""
-    @Published var torusAppleVerifier: String = String.secretConfig("TORUS_APPLE_VERIFIER") ?? ""
-
+    @Published var torusEndpoint: String
+    @Published var torusGoogleVerifier: String
+    @Published var torusGoogleSubVerifier: String
+    @Published var torusAppleVerifier: String
+    @Published var torusNetwork: String
+    
     @Published var isDeviceShareMocked: Bool = false
     @Published var mockDeviceShare: String = ""
 
@@ -20,5 +22,20 @@ class OnboardingConfig: ObservableObject {
         enterOTPResend.split(separator: ",").map { Int($0) ?? 30 }
     }
 
-    private init() {}
+    private init() {
+        switch Environment.current {
+        case .release:
+            torusEndpoint = String.secretConfig("TORUS_ENDPOINT_PROD") ?? ""
+            torusGoogleVerifier = String.secretConfig("TORUS_GOOGLE_VERIFIER_PROD") ?? ""
+            torusGoogleSubVerifier = String.secretConfig("TORUS_GOOGLE_SUB_VERIFIER_PROD") ?? ""
+            torusAppleVerifier =  String.secretConfig("TORUS_APPLE_VERIFIER_PROD") ?? ""
+            torusNetwork = String.secretConfig("TORUS_NETWORK_PROD") ?? ""
+        default:
+            torusEndpoint = String.secretConfig("TORUS_ENDPOINT_DEV") ?? ""
+            torusGoogleVerifier = String.secretConfig("TORUS_GOOGLE_VERIFIER_DEV") ?? ""
+            torusGoogleSubVerifier = String.secretConfig("TORUS_GOOGLE_SUB_VERIFIER_DEV") ?? ""
+            torusAppleVerifier =  String.secretConfig("TORUS_APPLE_VERIFIER_DEV") ?? ""
+            torusNetwork = String.secretConfig("TORUS_NETWORK_DEV") ?? ""
+        }
+    }
 }
