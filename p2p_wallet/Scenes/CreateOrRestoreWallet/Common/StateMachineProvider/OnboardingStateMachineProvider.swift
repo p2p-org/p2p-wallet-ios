@@ -13,10 +13,21 @@ final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
                 config: .init(
                     torusEndpoint: OnboardingConfig.shared.torusEndpoint,
                     torusNetwork: "testnet",
-                    torusVerifierMapping: [
-                        "google": OnboardingConfig.shared.torusGoogleVerifier,
-                        "apple": OnboardingConfig.shared.torusAppleVerifier,
-                    ]
+                    verifierStrategyResolver: { authProvider in
+                        switch authProvider {
+                        case "google":
+                            return .aggregate(
+                                verifier: "key-app-google-testnet",
+                                subVerifier: "ios"
+                            )
+                        case "apple":
+                            return .single(
+                                verifier: OnboardingConfig.shared.torusAppleVerifier
+                            )
+                        default:
+                            fatalError("Invalid")
+                        }
+                    }
                 )
             )
         return tKeyFacade
