@@ -5,12 +5,16 @@
 //  Created by Andrew Vasiliev on 11.11.2021.
 //
 
+import AnalyticsManager
+import Resolver
 import RxSwift
 import UIKit
 
 extension EnterSeed {
     class RootView: BEView {
         // MARK: - Constants
+
+        @Injected private var analyticsManager: AnalyticsManager
 
         let disposeBag = DisposeBag()
 
@@ -80,6 +84,7 @@ extension EnterSeed {
         @objc
         private func buttonPasteDidTouch() {
             textView.paste()
+            analyticsManager.log(event: AmplitudeEvent.sendPaste)
         }
 
         @objc func resetAndTryAgainButtonDidTouch() {

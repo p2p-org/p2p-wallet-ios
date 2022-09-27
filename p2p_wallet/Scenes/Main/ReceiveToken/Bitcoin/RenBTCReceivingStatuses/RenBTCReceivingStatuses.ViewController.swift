@@ -5,9 +5,11 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
+import AnalyticsManager
 import BECollectionView
 import Foundation
 import RenVMSwift
+import Resolver
 import UIKit
 
 extension RenBTCReceivingStatuses {
@@ -18,6 +20,8 @@ extension RenBTCReceivingStatuses {
 
         // MARK: - Dependencies
 
+        @Injected private var analyticsManager: AnalyticsManager
+
         private var viewModel: RenBTCReceivingStatusesViewModelType
 
         init(viewModel: RenBTCReceivingStatusesViewModelType) {
@@ -27,6 +31,7 @@ extension RenBTCReceivingStatuses {
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
+            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
         }
 
         override func build() -> UIView {
