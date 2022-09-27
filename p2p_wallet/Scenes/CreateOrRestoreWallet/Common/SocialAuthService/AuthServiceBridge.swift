@@ -14,13 +14,9 @@ struct AuthServiceBridge: SocialAuthService {
         return (tokenID: authResult.tokenID, email: authResult.email)
     }
 
-    private final class TokenClaims: Claims {
-        let iat: Date
-    }
-
     func isExpired(token: String) -> Bool {
-        if let jwt: JWT<TokenClaims> = try? JWT(jwtString: token) {
-            return jwt.claims.iat.addingTimeInterval(Contants.tokenLifeTime) < Date()
+        if let jwt = JWTTokenValidator().decode(tokenID: token) {
+            return jwt.iat.addingTimeInterval(Contants.tokenLifeTime) < Date()
         }
         return true
     }
