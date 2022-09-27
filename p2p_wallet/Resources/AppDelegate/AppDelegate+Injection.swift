@@ -9,10 +9,12 @@ import AnalyticsManager
 import FeeRelayerSwift
 import NameService
 import OrcaSwapSwift
+import P2PSwift
 import RenVMSwift
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
+import Solend
 import SwiftyUserDefaults
 
 extension Resolver: ResolverRegistering {
@@ -326,6 +328,34 @@ extension Resolver: ResolverRegistering {
         }
         .implements(Banners.Service.self)
         .scope(.shared)
+
+        // Solend
+        register { SolendFFIWrapper() }
+            .implements(Solend.self)
+            .scope(.application)
+        register {
+            SolendDataServiceImpl(
+                solend: resolve(),
+                owner: resolve(AccountStorageType.self).account!,
+                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY"
+            )
+        }
+        .implements(SolendDataService.self)
+        .scope(.application)
+
+        register {
+            SolendActionServiceImpl(
+                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
+                userAccountStorage: resolve(),
+                solend: resolve(),
+                solana: resolve(),
+                feeRelayApi: resolve(),
+                feeRelay: resolve(),
+                feeRelayContextManager: resolve()
+            )
+        }
+        .implements(SolendActionService.self)
+        .scope(.application)
     }
 }
 
