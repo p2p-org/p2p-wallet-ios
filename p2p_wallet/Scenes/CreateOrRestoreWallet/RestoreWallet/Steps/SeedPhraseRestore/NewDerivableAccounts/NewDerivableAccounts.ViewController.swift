@@ -55,7 +55,7 @@ extension NewDerivableAccounts {
                             cellType: Cell.self,
                             itemHeight: .estimated(75)
                         ),
-                        viewModel: viewModel.accountsListViewModel as! BECollectionViewModelType
+                        viewModel: viewModel.accountsListViewModel
                     ),
                 ]
             )

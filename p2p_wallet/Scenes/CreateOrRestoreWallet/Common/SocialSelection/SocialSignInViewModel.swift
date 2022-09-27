@@ -16,6 +16,7 @@ struct SocialSignInParameters {
     let isBackAvailable: Bool
 }
 
+@MainActor
 class SocialSignInViewModel: BaseViewModel {
     enum Loading {
         case appleButton

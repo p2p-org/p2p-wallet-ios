@@ -21,6 +21,7 @@ jobs:
       - name: Copy xcconfig file
         run: |
           curl -o ./p2p_wallet/Config.xcconfig ${{ secrets.XCCONFIG_URL }}
+          export APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}
         shell: bash
 
       - name: Install project
