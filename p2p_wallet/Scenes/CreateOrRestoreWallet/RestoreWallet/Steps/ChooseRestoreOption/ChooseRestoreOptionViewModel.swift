@@ -6,6 +6,7 @@ import Resolver
 import SwiftUI
 import UIKit
 
+@MainActor
 final class ChooseRestoreOptionViewModel: BaseICloudRestoreViewModel {
     // MARK: - Dependencies
 
