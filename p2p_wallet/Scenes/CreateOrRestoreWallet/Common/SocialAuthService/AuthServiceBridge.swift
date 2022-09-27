@@ -1,13 +1,13 @@
 import Onboarding
 import Resolver
-import SwiftJWT
 
 private enum Contants {
     static let tokenLifeTime = TimeInterval(60)
 }
 
 struct AuthServiceBridge: SocialAuthService {
-    @Injected var authService: AuthService
+    @Injected private var authService: AuthService
+    @Injected private var jwtValidator: JWTTokenValidator
 
     func auth(type: SocialProvider) async throws -> (tokenID: String, email: String) {
         let authResult = try await authService.socialSignIn(type.socialType)
@@ -15,7 +15,7 @@ struct AuthServiceBridge: SocialAuthService {
     }
 
     func isExpired(token: String) -> Bool {
-        if let jwt = JWTTokenValidator().decode(tokenID: token) {
+        if let jwt = jwtValidator.decode(tokenID: token) {
             return jwt.iat.addingTimeInterval(Contants.tokenLifeTime) < Date()
         }
         return true

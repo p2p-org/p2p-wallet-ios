@@ -188,6 +188,9 @@ extension Resolver: ResolverRegistering {
 
         register { BiometricsAuthProviderImpl() }
             .implements(BiometricsAuthProvider.self)
+
+        register { JWTTokenValidatorImpl() }
+            .implements(JWTTokenValidator.self)
     }
 
     /// Session scope: Live when user is authenticated
