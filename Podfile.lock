@@ -20,9 +20,6 @@ PODS:
   - BECollectionView_Core (1.0.0)
   - BEPureLayout (0.4.0):
     - PureLayout
-  - BlueCryptor (1.0.32)
-  - BlueECC (1.2.5)
-  - BlueRSA (1.0.200)
   - Cache (1.0.0)
   - CocoaDebug (1.7.2)
   - CombineCocoa (0.4.0)
@@ -156,13 +153,8 @@ PODS:
     - SkeletonView (~> 1.7)
   - KeychainSwift (19.0.0)
   - Kingfisher (7.3.2)
-  - KituraContracts (1.2.1):
-    - LoggerAPI (~> 1.7)
   - ListPlaceholder (1.5)
-  - LoggerAPI (1.9.200):
-    - Logging (~> 1.1)
   - LoggerSwift (1.0.2)
-  - Logging (1.4.0)
   - NameService (1.0.0):
     - KeyAppKitLogger
   - nanopb (2.30909.0):
@@ -222,12 +214,6 @@ PODS:
   - SubviewAttachingTextView (1.5.0)
   - SwiftFormat/CLI (0.49.6)
   - SwiftGen (6.6.2)
-  - SwiftJWT (3.6.200):
-    - BlueCryptor (~> 1.0)
-    - BlueECC (~> 1.1)
-    - BlueRSA (~> 1.0)
-    - KituraContracts (~> 1.2)
-    - LoggerAPI (~> 1.7)
   - SwiftLint (0.49.1)
   - SwiftNotificationCenter (1.0.4)
   - SwiftSVG (2.3.2)
@@ -288,7 +274,6 @@ DEPENDENCIES:
   - SubviewAttachingTextView
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
-  - SwiftJWT
   - SwiftLint
   - SwiftNotificationCenter
   - SwiftSVG (~> 2.0)
@@ -302,9 +287,6 @@ SPEC REPOS:
     - Action
     - Amplitude
     - AppAuth
-    - BlueCryptor
-    - BlueECC
-    - BlueRSA
     - CocoaDebug
     - CombineCocoa
     - Firebase
@@ -328,10 +310,7 @@ SPEC REPOS:
     - JazziconSwift
     - KeychainSwift
     - Kingfisher
-    - KituraContracts
-    - LoggerAPI
     - LoggerSwift
-    - Logging
     - nanopb
     - Periphery
     - PhoneNumberKit
@@ -351,7 +330,6 @@ SPEC REPOS:
     - SubviewAttachingTextView
     - SwiftFormat
     - SwiftGen
-    - SwiftJWT
     - SwiftLint
     - SwiftNotificationCenter
     - SwiftSVG
@@ -505,9 +483,6 @@ SPEC CHECKSUMS:
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
   BEPureLayout: 970e31aa4fccf0f72ef2229b4e831ccdea33f026
-  BlueCryptor: b0aee3d9b8f367b49b30de11cda90e1735571c24
-  BlueECC: 0d18e93347d3ec6d41416de21c1ffa4d4cd3c2cc
-  BlueRSA: dfeef51db96bcc4edec654956c1581adbda4e6a3
   Cache: 63a27b5fe1aa85d9587eb557ce828de39867b6f4
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
@@ -538,11 +513,8 @@ SPEC CHECKSUMS:
   KeyAppUI: c1c83d207c55d53c9a438a752fb8f4e68f857a0e
   KeychainSwift: a06190cf933ad46b1e0abc3d77d29c06331715c7
   Kingfisher: 0086ad83719761ba9b2cdaf6ef4d5b4878cbae23
-  KituraContracts: e845e60dc8627ad0a76fa55ef20a45451d8f830b
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
-  LoggerAPI: ad9c4a6f1e32f518fdb43a1347ac14d765ab5e3d
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
-  Logging: beeb016c9c80cf77042d62e83495816847ef108b
   NameService: a5f786e710230ae26ea899b5fd7b894c740b86db
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   Onboarding: 68a96e945da8891b329481b69a7f051483f6005f
@@ -570,7 +542,6 @@ SPEC CHECKSUMS:
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
-  SwiftJWT: 88c412708f58c169d431d344c87bc79a87c830ae
   SwiftLint: 32ee33ded0636d0905ef6911b2b67bbaeeedafa5
   SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftSVG: ca7f64e403b8ea7ea8eba8c823b83ba4a059834c
@@ -581,6 +552,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 8fa55f915f0a121f3efb1661e74d93c69ca0af7d
+PODFILE CHECKSUM: 46aeaca7727bbf74ae29e982ffa4db60cf0d931d
 
 COCOAPODS: 1.11.3
