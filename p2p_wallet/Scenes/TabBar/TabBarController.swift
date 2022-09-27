@@ -9,6 +9,7 @@ import AnalyticsManager
 import Combine
 import KeyAppUI
 import Resolver
+import SwiftUI
 import UIKit
 
 final class TabBarController: UITabBarController {
@@ -93,7 +94,7 @@ final class TabBarController: UITabBarController {
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
 
-        let historyVC = History.Scene()
+        let historyVC = UIHostingControllerWithoutNavigation(rootView: InvestSolendView(viewModel: .init()))
 
         let vm = SendToken.ViewModel(
             walletPubkey: nil,
@@ -147,6 +148,16 @@ final class TabBarController: UITabBarController {
             }
         }
     }
+    
+    func routeToSolendTutorial() {
+        var view = SolendTutorialView(viewModel: .init())
+        view.doneHandler = {[weak self] in
+            self?.changeItem(to: .history)
+        }
+        let vc = UIHostingControllerWithoutNavigation(rootView: view)
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
+    }
 
     func routeToFeedback() {
         helpCenterLauncher.launch()
@@ -180,6 +191,12 @@ extension TabBarController: UITabBarControllerDelegate {
            self.selectedIndex == selectedIndex
         {
             homeCoordinator?.scrollToTop()
+        }
+        
+        // Solend tutorial first
+        if TabItem(rawValue: selectedIndex) == .history && !Defaults.isSolendTutorialShown {
+            routeToSolendTutorial()
+            return false
         }
 
         return true
