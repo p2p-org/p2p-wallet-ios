@@ -94,7 +94,7 @@ final class TabBarController: UITabBarController {
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
 
-        let historyVC = UIHostingControllerWithoutNavigation(rootView: InvestView())
+        let historyVC = UIHostingControllerWithoutNavigation(rootView: InvestSolendView(viewModel: .init()))
 
         let vm = SendToken.ViewModel(
             walletPubkey: nil,
