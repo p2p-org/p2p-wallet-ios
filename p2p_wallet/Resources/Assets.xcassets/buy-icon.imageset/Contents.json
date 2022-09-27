@@ -1,17 +1,16 @@
 {
   "images" : [
     {
-      "filename" : "Potted plant.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "Potted plant@2x.png",
+      "filename" : "Coins@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "Potted plant@3x.png",
+      "filename" : "Coins@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
