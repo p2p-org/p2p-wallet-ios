@@ -13,7 +13,7 @@ class OnboardingConfig: ObservableObject {
     @Published var torusGoogleSubVerifier: String
     @Published var torusAppleVerifier: String
     @Published var torusNetwork: String
-    
+
     @Published var isDeviceShareMocked: Bool = false
     @Published var mockDeviceShare: String = ""
 
@@ -24,17 +24,17 @@ class OnboardingConfig: ObservableObject {
 
     private init() {
         switch Environment.current {
-        case .release:
+        case .release, .test:
             torusEndpoint = String.secretConfig("TORUS_ENDPOINT_PROD") ?? ""
             torusGoogleVerifier = String.secretConfig("TORUS_GOOGLE_VERIFIER_PROD") ?? ""
             torusGoogleSubVerifier = String.secretConfig("TORUS_GOOGLE_SUB_VERIFIER_PROD") ?? ""
-            torusAppleVerifier =  String.secretConfig("TORUS_APPLE_VERIFIER_PROD") ?? ""
+            torusAppleVerifier = String.secretConfig("TORUS_APPLE_VERIFIER_PROD") ?? ""
             torusNetwork = String.secretConfig("TORUS_NETWORK_PROD") ?? ""
         default:
             torusEndpoint = String.secretConfig("TORUS_ENDPOINT_DEV") ?? ""
             torusGoogleVerifier = String.secretConfig("TORUS_GOOGLE_VERIFIER_DEV") ?? ""
             torusGoogleSubVerifier = String.secretConfig("TORUS_GOOGLE_SUB_VERIFIER_DEV") ?? ""
-            torusAppleVerifier =  String.secretConfig("TORUS_APPLE_VERIFIER_DEV") ?? ""
+            torusAppleVerifier = String.secretConfig("TORUS_APPLE_VERIFIER_DEV") ?? ""
             torusNetwork = String.secretConfig("TORUS_NETWORK_DEV") ?? ""
         }
     }
