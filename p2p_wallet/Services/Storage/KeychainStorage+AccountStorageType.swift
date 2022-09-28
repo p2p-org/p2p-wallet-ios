@@ -11,12 +11,12 @@ extension KeychainStorage: AccountStorageType {
     }
 
     var deviceShare: String? {
-        icloudKeychain.get(deviceShareKey)
+        localKeychain.get(deviceShareKey)
     }
 
     var derivablePath: DerivablePath {
-        let derivableTypeRaw = icloudKeychain.get(derivableTypeKey) ?? ""
-        let walletIndexRaw = icloudKeychain.get(walletIndexKey) ?? ""
+        let derivableTypeRaw = localKeychain.get(derivableTypeKey) ?? ""
+        let walletIndexRaw = localKeychain.get(walletIndexKey) ?? ""
         let defaultDerivablePath = DerivablePath.default
         let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw) ?? defaultDerivablePath.type
         let walletIndex = Int(walletIndexRaw) ?? defaultDerivablePath.walletIndex
@@ -25,7 +25,7 @@ extension KeychainStorage: AccountStorageType {
     }
 
     func reloadSolanaAccount() async throws {
-        guard let phrases = icloudKeychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
+        guard let phrases = localKeychain.get(phrasesKey)?.components(separatedBy: " ") else { return }
         _account = try await SolanaSwift.Account(
             phrase: phrases,
             network: Defaults.apiEndPoint.network,
@@ -34,29 +34,29 @@ extension KeychainStorage: AccountStorageType {
     }
 
     func save(phrases: [String]) throws {
-        icloudKeychain.set(phrases.joined(separator: " "), forKey: phrasesKey)
+        localKeychain.set(phrases.joined(separator: " "), forKey: phrasesKey)
         _account = nil
     }
 
     func save(walletIndex: Int) throws {
-        icloudKeychain.set("\(walletIndex)", forKey: walletIndexKey)
+        localKeychain.set("\(walletIndex)", forKey: walletIndexKey)
         _account = nil
     }
 
     func getDerivablePath() -> DerivablePath? {
         guard
-            let derivableTypeRaw = icloudKeychain.get(derivableTypeKey),
+            let derivableTypeRaw = localKeychain.get(derivableTypeKey),
             let derivableType = DerivablePath.DerivableType(rawValue: derivableTypeRaw)
         else { return nil }
 
-        let walletIndexRaw = icloudKeychain.get(walletIndexKey)
+        let walletIndexRaw = localKeychain.get(walletIndexKey)
         let walletIndex = Int(walletIndexRaw ?? "0")
 
         return .init(type: derivableType, walletIndex: walletIndex ?? 0)
     }
 
     func save(derivableType: DerivablePath.DerivableType) throws {
-        icloudKeychain.set(derivableType.rawValue, forKey: derivableTypeKey)
+        localKeychain.set(derivableType.rawValue, forKey: derivableTypeKey)
         _account = nil
     }
 
@@ -75,14 +75,14 @@ extension KeychainStorage: AccountStorageType {
     }
 
     var ethAddress: String? {
-        icloudKeychain.get(ethAddressKey)
+        localKeychain.get(ethAddressKey)
     }
 
     func save(ethAddress: String) throws {
         if ethAddress.isEmpty {
-            icloudKeychain.delete(ethAddressKey)
+            localKeychain.delete(ethAddressKey)
         } else {
-            icloudKeychain.set(ethAddress, forKey: ethAddressKey)
+            localKeychain.set(ethAddress, forKey: ethAddressKey)
         }
     }
 }

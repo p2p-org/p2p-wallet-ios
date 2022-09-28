@@ -31,11 +31,11 @@ class KeychainStorage {
     // MARK: - Services
 
     /// This keychain storage will sync across devices
-    let icloudKeychain: KeychainSwift = {
-        let kc = KeychainSwift()
-        kc.synchronizable = true
-        return kc
-    }()
+    // let icloudKeychain: KeychainSwift = {
+    //     let kc = KeychainSwift()
+    //     kc.synchronizable = true
+    //     return kc
+    // }()
 
     /// This keychain storage will only locally store in device
     let localKeychain: KeychainSwift = .init()
@@ -98,6 +98,9 @@ class KeychainStorage {
     // MARK: - Migration
 
     func migrate() {
+        let icloudKeychain = KeychainSwift()
+        icloudKeychain.synchronizable = true
+        
         // migrate iCloud storage from NSUbiquitousKeyValueStore to keychain
         let ubiquitousKeyValueStoreToKeychain = "UbiquitousKeyValueStoreToKeychain"
         if !UserDefaults.standard.bool(forKey: ubiquitousKeyValueStoreToKeychain) {
@@ -111,12 +114,12 @@ class KeychainStorage {
     }
 
     func removeCurrentAccount() {
-        icloudKeychain.delete(pincodeKey)
-        icloudKeychain.delete(phrasesKey)
-        icloudKeychain.delete(derivableTypeKey)
-        icloudKeychain.delete(walletIndexKey)
-        icloudKeychain.delete(nameKey)
-        icloudKeychain.delete(pincodeAttemptsKey)
+        localKeychain.delete(pincodeKey)
+        localKeychain.delete(phrasesKey)
+        localKeychain.delete(derivableTypeKey)
+        localKeychain.delete(walletIndexKey)
+        localKeychain.delete(nameKey)
+        localKeychain.delete(pincodeAttemptsKey)
 
         removeAccountCache()
     }
