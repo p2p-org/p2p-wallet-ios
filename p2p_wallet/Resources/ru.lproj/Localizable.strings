@@ -493,10 +493,8 @@
 "Successfully minted %@ renBTC!" = "Успешно отчеканено %@ renBTC!";
 "Receiving statuses" = "Статусы получения";
 "Receiving %@ renBTC" = "Получение %@ renBTC";
-"Reserve your P2P username" = "Зарезервируйте свое имя пользователя P2P";
 "username" = "имя пользователя";
 "Use any latin and special symbols or emojis." = "Используйте любые латинские и специальные символы или смайлики.";
-"You can also %@ this step and reserve a username later." = "Вы также можете %@ на этом шаге и зарезервировать имя пользователя позже.";
 "skip" = "пропускать";
 "By continuing, you agree to wallet's %@ and %@" = "Продолжая, вы соглашаетесь с %@ и %@ кошелька.";
 "Terms of Use" = "Условия эксплуатации";
@@ -506,13 +504,10 @@
 "name" = "имя";
 "%@ isn’t available" = "%@ недоступен";
 "Could not check name’s availability. Please check your internet connection!" = "Не удалось проверить наличие имени. Пожалуйста, проверьте ваше интернет-соединение!";
-"Reserve your P2P username now" = "Зарезервируйте свое имя пользователя P2P прямо сейчас";
 "Any token can be received using username regardless of whether it is in your wallet's list" = "Любой токен можно получить, используя имя пользователя, независимо от того, есть ли он в списке ваших кошельков.";
-"Username %@.p2p.sol has already been reserved for this user" = "Имя пользователя %@.p2p.sol уже зарезервировано для этого пользователя.";
-"Username %@ is successfully reserved" = "Имя пользователя %@ успешно зарезервировано";
 "Not yet reserved" = "Еще не зарезервировано";
-"Your p2p username" = "Ваше имя пользователя p2p";
-"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Ваше имя пользователя P2P позволяет вам получать любой токен в сети Solana, даже если он не включен в список вашего кошелька.";
+"Your username" = "Ваше имя пользователя";
+"Your username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Ваше имя пользователя позволяет вам получать любой токен в сети Solana, даже если он не включен в список вашего кошелька.";
 "Save" = "Сохранить";
 "Saved to photo library" = "Сохранено в фото-библиотеке";
 "There is an error occurred. You can either retry or reserve name later in Settings" = "Произошла ошибка. Вы можете повторить попытку или зарезервировать имя позже в настройках";
@@ -541,9 +536,7 @@
 "This username is not associated with anyone" = "Это имя пользователя ни с кем не связано";
 "There is an error occured, please try typing name again." = "Произошла ошибка, попробуйте ввести имя еще раз.";
 "Security key can't be saved into icloud. Please try again." = "Электронный ключ нельзя сохранить в icloud. Пожалуйста, попробуйте еще раз.";
-"You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "Вы можете получать и отправлять токены, используя свое имя пользователя P2P. Кроме того, пользователи, которые знают ваше имя пользователя, могут отправить вам любой токен, даже если у вас его нет в списке ваших кошельков.";
 "Combined tokens value" = "Комбинированная стоимость токенов";
-"P2P username / SOL address" = "P2P имя пользователя / адрес SOL";
 "The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "Будущее некастодиального банкинга: простой способ покупать, продавать и хранить криптовалюту";
 "Welcome to P2P Family Camp!" = "Добро пожаловать\nв семейный лагерь P2P!";
 "All the ways to buy" = "Все способы купить";
@@ -620,7 +613,7 @@
 "Hide details" = "Скрыть детали";
 "%@ is unavailable" = "%@ недоступен";
 "No more than 15 alphanumerical latin lowercase characters and dashes" = "Не более 15 буквенно-цифровых латинских строчных букв и тире";
-"P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Имя пользователя P2P - это ваш общедоступный адрес, который позволяет вам получать любой токен, даже если у вас его нет в списке кошельков.\n\nКрайне важно выбрать именно то имя пользователя, которое вы хотите, так как после установки вы не можете его изменить.";
+"Username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Имя пользователя - это ваш общедоступный адрес, который позволяет вам получать любой токен, даже если у вас его нет в списке кошельков.\n\nКрайне важно выбрать именно то имя пользователя, которое вы хотите, так как после установки вы не можете его изменить.";
 "Enter username or skip" = "Введите имя пользователя или пропустите";
 "Choose available username" = "Выберите доступное имя пользователя";
 "Enter the amount to proceed" = "Введите сумму, чтобы продолжить";
@@ -647,7 +640,7 @@
 "Pay swap fees with" = "Оплачивайте комиссию за своп с помощью";
 "Total fee" = "Общая комиссия";
 "Showing my address for" = "Показывает мой адрес для";
-"Reserve P2P username" = "Зарезервировать имя пользователя P2P";
+"Reserve username" = "Зарезервировать имя пользователя";
 "Enter username" = "Введите имя пользователя";
 "Change the token?" = "Сменить токен?";
 "If the token is changed to %@, the address field must be filled in with a %@." = "Если токен изменен на %@, поле адреса должно быть заполнено %@.";

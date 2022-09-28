@@ -23,7 +23,7 @@ extension ReserveName {
         init(viewModel: ReserveNameViewModelType) {
             self.viewModel = viewModel
             super.init()
-            navigationItem.title = L10n.reserveP2PUsername
+            navigationItem.title = L10n.reserveUsername
 
             if viewModel.kind == .reserveCreateWalletPart {
                 let rightButton = UIBarButtonItem(
