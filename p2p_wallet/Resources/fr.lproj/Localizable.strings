@@ -493,10 +493,8 @@
 "Successfully minted %@ renBTC!" = "Frappé avec succès %@ renBTC !";
 "Receiving statuses" = "Statuts de réception";
 "Receiving %@ renBTC" = "Réception de %@ renBTC";
-"Reserve your P2P username" = "Réservez votre nom d'utilisateur P2P";
 "username" = "Nom d'utilisateur";
 "Use any latin and special symbols or emojis." = "Utilisez des symboles ou des emojis latins et spéciaux.";
-"You can also %@ this step and reserve a username later." = "Vous pouvez également %@ cette étape et réserver un nom d'utilisateur plus tard.";
 "skip" = "sauter";
 "By continuing, you agree to wallet's %@ and %@" = "En continuant, vous acceptez les %@ et %@ du portefeuille";
 "Terms of Use" = "Conditions d'utilisation";
@@ -506,13 +504,10 @@
 "name" = "nom";
 "%@ isn’t available" = "%@ n'est pas disponible";
 "Could not check name’s availability. Please check your internet connection!" = "Impossible de vérifier la disponibilité du nom. S'il vous plait, vérifiez votre connexion internet!";
-"Reserve your P2P username now" = "Réservez votre nom d'utilisateur P2P maintenant";
 "Any token can be received using username regardless of whether it is in your wallet's list" = "N'importe quel jeton peut être reçu en utilisant le nom d'utilisateur, qu'il soit ou non dans votre liste de portefeuilles";
-"Username %@.p2p.sol has already been reserved for this user" = "Le nom d'utilisateur %@.p2p.sol a déjà été réservé pour cet utilisateur";
-"Username %@ is successfully reserved" = "Le nom d'utilisateur %@ est réservé avec succès";
 "Not yet reserved" = "Pas encore réservé";
-"Your p2p username" = "Votre nom d'utilisateur p2p";
-"Your P2P username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Votre nom d'utilisateur P2P vous permet de recevoir n'importe quel jeton au sein du réseau Solana même s'il n'est pas inclus dans votre liste de portefeuille.";
+"Your username" = "Votre nom d'utilisateur";
+"Your username allows you to receive any token within the Solana network even if it is not included in your wallet list." = "Votre nom d'utilisateur vous permet de recevoir n'importe quel jeton au sein du réseau Solana même s'il n'est pas inclus dans votre liste de portefeuille.";
 "Save" = "Sauvegarder";
 "Saved to photo library" = "Enregistré dans la photothèque";
 "There is an error occurred. You can either retry or reserve name later in Settings" = "Une erreur s'est produite. Vous pouvez réessayer ou réserver le nom plus tard dans les paramètres";
@@ -541,9 +536,7 @@
 "This username is not associated with anyone" = "Ce nom d'utilisateur n'est associé à personne";
 "There is an error occured, please try typing name again." = "Une erreur s'est produite, veuillez réessayer de saisir le nom.";
 "Security key can't be saved into icloud. Please try again." = "La clé de sécurité ne peut pas être enregistrée dans icloud. Veuillez réessayer.";
-"You can receive and send tokens using your P2P username. Also, users, who know your username, can send you any token, even if you don't have it in your wallets list." = "Vous pouvez recevoir et envoyer des jetons en utilisant votre nom d'utilisateur P2P. De plus, les utilisateurs qui connaissent votre nom d'utilisateur peuvent vous envoyer n'importe quel jeton, même si vous ne l'avez pas dans votre liste de portefeuilles.";
 "Combined tokens value" = "Valeur des jetons combinés";
-"P2P username / SOL address" = "Nom d'utilisateur P2P / adresse SOL";
 "The future of non-custodial banking: the easy way to buy, sell and hold cryptos" = "L'avenir de la banque non dépositaire : le moyen facile d'acheter, de vendre et de conserver des cryptos";
 "Welcome to P2P Family Camp!" = "Bienvenue au\ncamp familial P2P !";
 "All the ways to buy" = "Toutes les façons d'acheter";
@@ -620,7 +613,7 @@
 "Hide details" = "Cacher les détails";
 "%@ is unavailable" = "%@ n'est pas disponible";
 "No more than 15 alphanumerical latin lowercase characters and dashes" = "Pas plus de 15 caractères alphanumériques latins minuscules et tirets";
-"P2P username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Le nom d'utilisateur P2P est votre adresse publique, ce qui vous permet de recevoir n'importe quel jeton même si vous ne l'avez pas dans la liste des portefeuilles.\n\nIl est essentiel que vous sélectionniez le nom d'utilisateur exact que vous souhaitez, car une fois défini, vous ne pouvez pas le modifier.";
+"Username is your public address, which allows you to receive any token even if you don't have it in the wallet list.\n\nIt is vital you select the exact username you want, as once set, you cannot change it." = "Le nom d'utilisateur est votre adresse publique, ce qui vous permet de recevoir n'importe quel jeton même si vous ne l'avez pas dans la liste des portefeuilles.\n\nIl est essentiel que vous sélectionniez le nom d'utilisateur exact que vous souhaitez, car une fois défini, vous ne pouvez pas le modifier.";
 "Enter username or skip" = "Entrez le nom d'utilisateur ou ignorez";
 "Choose available username" = "Choisissez le nom d'utilisateur disponible";
 "Enter the amount to proceed" = "Entrez le montant pour continuer";
@@ -647,7 +640,7 @@
 "Pay swap fees with" = "Payez les frais de swap avec";
 "Total fee" = "Montant total";
 "Showing my address for" = "Affichage de mon adresse pour";
-"Reserve P2P username" = "Réserver le nom d'utilisateur P2P";
+"Reserve username" = "Réserver le nom d'utilisateur";
 "Enter username" = "Saisissez votre nom d'utilisateur";
 "Change the token?" = "Changer le jeton ?";
 "If the token is changed to %@, the address field must be filled in with a %@." = "Si le jeton est changé en %@, le champ d'adresse doit être rempli avec un %@.";
