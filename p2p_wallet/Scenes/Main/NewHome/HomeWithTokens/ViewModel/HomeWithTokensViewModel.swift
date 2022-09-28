@@ -70,7 +70,8 @@ class HomeWithTokensViewModel: ObservableObject {
             .asPublisher()
             .assertNoFailure()
             .sink(receiveValue: { [weak self] wallets in
-                guard let self = self, let wallets = wallets else { return }
+                guard let self = self, var wallets = wallets else { return }
+                wallets = wallets.filter { $0.token.decimals != .zero && !$0.token.symbol.isEmpty }
                 self.wallets = wallets
                 let items = wallets.map {
                     (
