@@ -17,11 +17,14 @@ extension SocialType {
         case .apple:
             return AppleSocialService()
         case .google:
-            return GoogleSocialService(
-                clientId: Environment.current == .release
-                    ? String.secretConfig("GOOGLE_SIGN_IN_ID_RELEASE")!
-                    : String.secretConfig("GOOGLE_SIGN_IN_ID_DEBUG")!
-            )
+            let clientId: String
+            switch Environment.current {
+            case .release, .test:
+                clientId = String.secretConfig("GOOGLE_SIGN_IN_ID_RELEASE")!
+            case .debug:
+                clientId = String.secretConfig("GOOGLE_SIGN_IN_ID_DEBUG")!
+            }
+            return GoogleSocialService(clientId: clientId)
         }
     }
 }
