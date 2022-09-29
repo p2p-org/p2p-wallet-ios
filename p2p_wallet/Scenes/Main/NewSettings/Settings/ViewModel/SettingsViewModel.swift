@@ -115,7 +115,7 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func sendSignOutAnalytics() {
-        analyticsManager.log(event: AmplitudeEvent.signOut(lastScreen: "Settings"))
+        analyticsManager.log(event: AmplitudeEvent.signOut)
     }
 
     func signOut() {

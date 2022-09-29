@@ -71,3 +71,9 @@ struct HomeView: View {
         }
     }
 }
+
+// MARK: - AnalyticView
+
+extension HomeView: AnalyticView {
+    var analyticId: String { "Main_New" }
+}
