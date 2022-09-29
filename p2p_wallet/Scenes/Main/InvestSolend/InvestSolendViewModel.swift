@@ -10,15 +10,21 @@ import Solend
 
 typealias Invest = (asset: SolendConfigAsset, market: SolendMarketInfo?, userDeposit: SolendUserDeposit?)
 
+enum InvestSolendError {
+    case missingRate
+}
+
 @MainActor
 class InvestSolendViewModel: ObservableObject {
     private let service: SolendDataService
     private var subscriptions = Set<AnyCancellable>()
 
     @Published var loading: Bool = false
-    @Published var market: [Invest] = []
+    @Published var market: [Invest]? = []
     @Published var totalDeposit: Double = 0
-    
+
+    @Published var bannerError: InvestSolendError? = nil
+
     var isTutorialShown: Bool {
         Defaults.isSolendTutorialShown
     }
@@ -26,10 +32,16 @@ class InvestSolendViewModel: ObservableObject {
     init(mocked: Bool = false) {
         service = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
 
+        service.marketInfo
+            .sink { [weak self] (marketInfo: [SolendMarketInfo]?) in
+                self?.bannerError = marketInfo == nil ? .missingRate : nil
+            }.store(in: &subscriptions)
+
         service.availableAssets
             .combineLatest(service.marketInfo, service.deposits)
-            .map { (assets: [SolendConfigAsset], marketInfo: [SolendMarketInfo], userDeposits: [SolendUserDeposit]) -> [Invest] in
-                assets.map { asset -> Invest in
+            .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest]? in
+                guard let assets = assets else { return nil }
+                return assets.map { asset -> Invest in
                     // Temporary fix for USDT logo
                     var asset = asset
                     if asset.symbol == "USDT" {
@@ -41,11 +53,11 @@ class InvestSolendViewModel: ObservableObject {
                             logo: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/BQcdHdAQW1hczDbBi9hiegXAR7A98Q9jx3X3iBBBDiq4/logo.png"
                         )
                     }
-                    
+
                     return (
                         asset: asset,
-                        market: marketInfo.first(where: { $0.symbol == asset.symbol }),
-                        userDeposit: userDeposits.first(where: { $0.symbol == asset.symbol })
+                        market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
+                        userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
                     )
                 }.sorted { (v1: Invest, v2: Invest) -> Bool in
                     let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
@@ -59,7 +71,9 @@ class InvestSolendViewModel: ObservableObject {
 
         service.deposits
             .map { deposits -> Double in
-                deposits.reduce(0) { (partialResult: Double, deposit: SolendUserDeposit) in
+                guard let deposits = deposits else { return 0 }
+
+                return deposits.reduce(0) { (partialResult: Double, deposit: SolendUserDeposit) in
                     partialResult + (Double(deposit.depositedAmount) ?? 0)
                 }
             }
@@ -80,7 +94,7 @@ class InvestSolendViewModel: ObservableObject {
             .assign(to: \.loading, on: self)
             .store(in: &subscriptions)
 
-        Task {try await update()}
+        Task { try await update() }
     }
 
     func update() async throws {
