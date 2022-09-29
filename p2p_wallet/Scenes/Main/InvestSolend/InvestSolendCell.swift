@@ -28,19 +28,23 @@ struct InvestSolendCell: View {
             VStack(alignment: .leading, spacing: 6) {
                 if let deposit = deposit {
                     Text("\(deposit) \(asset.symbol)")
+                        .foregroundColor(Color(Asset.Colors.night.color))
                         .apply(style: .text2)
                 } else {
                     Text(asset.symbol)
+                        .foregroundColor(Color(Asset.Colors.night.color))
                         .apply(style: .text2)
                 }
                 Text(asset.name)
-                    .apply(style: .label1)
                     .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .apply(style: .label1)
             }
             Spacer()
 
             if let apy = apy {
                 Text(formatApy(apy))
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .apply(style: .text2)
             }
         }
         .padding(.horizontal, 16)

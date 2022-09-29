@@ -10,7 +10,7 @@ import SwiftUI
 
 struct InvestSolendView: View {
     @StateObject var viewModel: InvestSolendViewModel
-    
+
     var body: some View {
         NavigationView {
             VStack {
@@ -23,20 +23,20 @@ struct InvestSolendView: View {
                 }
                 .padding(.top, 20)
                 .padding(.horizontal, 16)
-                
+
                 // Card
                 VStack(alignment: .leading) {
                     // Title
                     Text(L10n.totalRewardsEarned)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .apply(style: .text3)
-                    
+
                     // Reward
                     Text("$ 0.0000000000")
                         .fontWeight(.bold)
                         .apply(style: .title1)
                         .padding(.top, 8)
-                    
+
                     // Show deposit
                     HStack {
                         Text(L10n.showDeposit("$ \(viewModel.totalDeposit.fixedDecimal(2))"))
@@ -58,7 +58,7 @@ struct InvestSolendView: View {
                 )
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
-                
+
                 // Title
                 HStack {
                     Text(L10n.depositToEarnAYield)
@@ -69,41 +69,42 @@ struct InvestSolendView: View {
                         .fontWeight(.semibold)
                         .apply(style: .text1)
                 }.padding(.horizontal, 16)
-                
+
                 // Market
-                FixedList {
-                    if viewModel.loading {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                    } else if viewModel.market.isEmpty {
-                        HStack {
-                            Spacer()
-                            Text(L10n.somethingWentWrong + "...")
-                            Button {
-                                Task {try await viewModel.update()}
-                            } label: {
-                                Text(L10n.tryAgain)
+                ScrollView {
+                    VStack {
+                        if viewModel.loading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
                             }
-                            Spacer()
-                        }
-                    } else {
-                        // Cells
-                        ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
-                            NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
-                                InvestSolendCell(
-                                    asset: asset,
-                                    deposit: userDeposit?.depositedAmount,
-                                    apy: market?.supplyInterest
-                                )
+                        } else if let market = viewModel.market {
+                            // Cells
+                            ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in
+                                NavigationLink(destination: DepositSolendView(viewModel: try!
+                                        .init(initialAsset: asset))) {
+                                    InvestSolendCell(
+                                        asset: asset,
+                                        deposit: userDeposit?.depositedAmount,
+                                        apy: market?.supplyInterest
+                                    )
+                                }
                             }
-                            .padding(.trailing, 20)
+                        } else {
+                            HStack {
+                                Spacer()
+                                Text(L10n.somethingWentWrong + "...")
+                                Button {
+                                    Task { try await viewModel.update() }
+                                } label: {
+                                    Text(L10n.tryAgain)
+                                }
+                                Spacer()
+                            }
                         }
+                        Spacer(minLength: 20)
                     }
-                    
-                    Spacer(minLength: 20)
                 }
                 .frame(maxHeight: .infinity)
                 .navigationBarHidden(true)
