@@ -67,7 +67,7 @@ extension DefaultsKeys {
     var buyMinPrices: DefaultsKey<[String: [String: Double]]> {
         .init(#function, defaultValue: [:])
     }
-    
+
     // Solend
-    var isSolendTutorialShown: DefaultsKey<Bool> {.init(#function, defaultValue: false)}
+    var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 }

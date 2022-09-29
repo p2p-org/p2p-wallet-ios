@@ -5,7 +5,7 @@ import UIKit
 final class SolendTutorialViewModel: BaseViewModel {
     @Published var currentDataIndex: Int = .zero
     let data: [SolendTutorialContentData]
-    
+
     var isLastPage: Bool {
         currentDataIndex == data.count - 1
     }
@@ -28,10 +28,10 @@ final class SolendTutorialViewModel: BaseViewModel {
                 subtitle: L10n.asAllYourFundsAreInsuredYouDonTNeedToWorryAnymore
             ),
         ]
-        
+
         super.init()
     }
-    
+
     func next() {
         guard currentDataIndex < data.count - 1 else {
             currentDataIndex = 0
