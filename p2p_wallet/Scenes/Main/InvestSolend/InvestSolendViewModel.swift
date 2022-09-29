@@ -53,7 +53,7 @@ class InvestSolendViewModel: ObservableObject {
                             logo: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/BQcdHdAQW1hczDbBi9hiegXAR7A98Q9jx3X3iBBBDiq4/logo.png"
                         )
                     }
-
+                    
                     return (
                         asset: asset,
                         market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
