@@ -12,67 +12,72 @@ struct InvestSolendView: View {
     @StateObject var viewModel: InvestSolendViewModel
 
     var body: some View {
-        VStack {
-            // Title
-            HStack {
-                Text(L10n.earnAYield)
-                    .fontWeight(.bold)
-                    .apply(style: .largeTitle)
-                Spacer()
-            }
-            .padding(.top, 20)
-            .padding(.horizontal, 16)
-
-            InvestSolendBannerView(viewModel: InvestSolendBannerViewModel())
+        NavigationView {
+            VStack {
+                // Title
+                HStack {
+                    Text(L10n.earnAYield)
+                        .fontWeight(.bold)
+                        .apply(style: .largeTitle)
+                    Spacer()
+                }
+                .padding(.top, 20)
                 .padding(.horizontal, 16)
 
-            // Title
-            HStack {
-                Text(L10n.depositToEarnAYield)
-                    .fontWeight(.semibold)
-                    .apply(style: .text1)
-                Spacer()
-                Text(L10n.apy)
-                    .fontWeight(.semibold)
-                    .apply(style: .text1)
-            }.padding(.horizontal, 16)
+                // Banner
+                InvestSolendBannerView(viewModel: InvestSolendBannerViewModel())
+                    .padding(.horizontal, 16)
 
-            // Market
-            FixedList {
-                if viewModel.loading {
-                    HStack {
-                        Spacer()
-                        ProgressView()
-                        Spacer()
-                    }
-                } else if viewModel.market.isEmpty {
-                    HStack {
-                        Spacer()
-                        Text(L10n.somethingWentWrong + "...")
-                        Button {
-                            Task { try await viewModel.update() }
-                        } label: {
-                            Text(L10n.tryAgain)
+                // Title
+                HStack {
+                    Text(L10n.depositToEarnAYield)
+                        .fontWeight(.semibold)
+                        .apply(style: .text1)
+                    Spacer()
+                    Text(L10n.apy)
+                        .fontWeight(.semibold)
+                        .apply(style: .text1)
+                }.padding(.horizontal, 16)
+
+                // Market
+                ScrollView {
+                    VStack {
+                        if viewModel.loading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        } else if let market = viewModel.market {
+                            // Cells
+                            ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in
+                                NavigationLink(destination: DepositSolendView(viewModel: try!
+                                        .init(initialAsset: asset))) {
+                                    InvestSolendCell(
+                                        asset: asset,
+                                        deposit: userDeposit?.depositedAmount,
+                                        apy: market?.supplyInterest
+                                    )
+                                }
+                            }
+                        } else {
+                            HStack {
+                                Spacer()
+                                Text(L10n.somethingWentWrong + "...")
+                                Button {
+                                    Task { try await viewModel.update() }
+                                } label: {
+                                    Text(L10n.tryAgain)
+                                }
+                                Spacer()
+                            }
                         }
-                        Spacer()
-                    }
-                } else {
-                    // Cells
-                    ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
-                        NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
-                            InvestSolendCell(
-                                asset: asset,
-                                deposit: userDeposit?.depositedAmount,
-                                apy: market?.supplyInterest
-                            )
-                        }
-                        .padding(.trailing, 20)
+                        Spacer(minLength: 20)
                     }
                 }
-
-                Spacer(minLength: 20)
+                .frame(maxHeight: .infinity)
+                .navigationBarHidden(true)
             }
-            .frame(maxHeight: .infinity)
         }
     }
 }

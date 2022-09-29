@@ -55,7 +55,7 @@ extension ReceiveToken {
         var username: String? { nameStorage.getName() }
 
         func copyAction() {
-            analyticsManager.log(event: AmplitudeEvent.receiveWalletAddressCopy)
+            analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
             clipboardManger.copyToClipboard(pubkey)
             notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         }

@@ -44,7 +44,7 @@ class DepositSolendViewModel: ObservableObject {
         dataService.marketInfo
             .sink { [weak self] markets in
                 guard let self = self else { return }
-                let marketInfo = markets.first { $0.symbol == self.invest.asset.symbol }
+                let marketInfo = markets?.first { $0.symbol == self.invest.asset.symbol }
                 self.invest.market = marketInfo
             }
             .store(in: &subscriptions)
@@ -52,7 +52,7 @@ class DepositSolendViewModel: ObservableObject {
         dataService.deposits
             .sink { [weak self] deposits in
                 guard let self = self else { return }
-                let deposit = deposits.first { $0.symbol == self.invest.asset.symbol }
+                let deposit = deposits?.first { $0.symbol == self.invest.asset.symbol }
                 self.invest.userDeposit = deposit
             }
             .store(in: &subscriptions)
