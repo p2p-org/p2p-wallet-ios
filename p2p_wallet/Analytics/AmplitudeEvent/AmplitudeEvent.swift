@@ -108,7 +108,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sendStartScreen
     case sendViewed(lastScreen: String)
     case sendSelectTokenClick(tokenTicker: String)
-    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR), Token
+    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR)
     case sendAmountKeydown(sum: Double)
     case sendAvailableClick(sum: Double)
     case sendAddressKeydown
