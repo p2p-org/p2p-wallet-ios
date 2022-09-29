@@ -227,7 +227,7 @@ PODS:
   - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
-  - Action
+  - Action (= 5.0.0)
   - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
@@ -235,7 +235,7 @@ DEPENDENCIES:
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
   - Cache (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - CocoaDebug
-  - CombineCocoa
+  - CombineCocoa (= 0.4.0)
   - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
@@ -244,43 +244,43 @@ DEPENDENCIES:
   - Firebase/RemoteConfig
   - GoogleSignIn
   - GT3Captcha-iOS
-  - Intercom (~> 12.4.3)
-  - Introspect
-  - JazziconSwift (~> 1.1.0)
+  - Intercom (= 12.4.3)
+  - Introspect (= 0.1.4)
+  - JazziconSwift (from `https://github.com/p2p-org/JazziconSwift.git`, branch `master`)
   - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `develop`)"
-  - KeychainSwift (~> 19.0)
-  - Kingfisher
+  - KeychainSwift (= 19.0.0)
+  - Kingfisher (~> 7.3.2)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
   - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - Onboarding (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
   - Periphery
-  - PhoneNumberKit (~> 3.3.4)
+  - PhoneNumberKit (= 3.3.4)
   - ReachabilitySwift (~> 5.0.0)
   - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
-  - Resolver
-  - RxAppState
+  - Resolver (= 1.5.0)
+  - RxAppState (= 1.7.1)
   - RxCocoa (= 6.5.0)
-  - RxCombine
+  - RxCombine (= 2.0.1)
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
-  - RxGesture
+  - RxGesture (= 4.0.4)
   - RxSwift (= 6.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
-  - SkeletonUI
+  - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
   - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
   - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
-  - SubviewAttachingTextView
+  - SubviewAttachingTextView (= 1.5.0)
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
   - SwiftLint
   - SwiftNotificationCenter
-  - SwiftSVG (~> 2.0)
-  - SwiftyUserDefaults (~> 5.0)
-  - TagListView (~> 1.0)
+  - SwiftSVG (= 2.3.2)
+  - SwiftyUserDefaults (= 5.3.0)
+  - TagListView (= 1.4.1)
   - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
-  - "UITextView+Placeholder"
+  - "UITextView+Placeholder (= 1.4.0)"
 
 SPEC REPOS:
   trunk:
@@ -307,7 +307,6 @@ SPEC REPOS:
     - GTMSessionFetcher
     - Intercom
     - Introspect
-    - JazziconSwift
     - KeychainSwift
     - Kingfisher
     - LoggerSwift
@@ -325,7 +324,6 @@ SPEC REPOS:
     - RxRelay
     - RxSwift
     - secp256k1.swift
-    - SkeletonUI
     - SkeletonView
     - SubviewAttachingTextView
     - SwiftFormat
@@ -366,6 +364,9 @@ EXTERNAL SOURCES:
   FeeRelayerSwift:
     :branch: master
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
+  JazziconSwift:
+    :branch: master
+    :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
     :branch: develop
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -396,6 +397,9 @@ EXTERNAL SOURCES:
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
+  SkeletonUI:
+    :branch: master
+    :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
     :branch: develop
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -434,6 +438,9 @@ CHECKOUT OPTIONS:
   FeeRelayerSwift:
     :commit: 1a308c51278b2e877d183b9b6d679fe2b2ae7db5
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
+  JazziconSwift:
+    :commit: f9c9f898402db4e62d482f4c90670652c221fa12
+    :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
     :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -464,6 +471,9 @@ CHECKOUT OPTIONS:
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
+  SkeletonUI:
+    :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
+    :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
     :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
     :git: https://github.com/p2p-org/key-app-kit-swift.git
@@ -552,6 +562,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 46aeaca7727bbf74ae29e982ffa4db60cf0d931d
+PODFILE CHECKSUM: 0f9b63ec411cbc44c63a43379a404561ca4a7735
 
 COCOAPODS: 1.11.3

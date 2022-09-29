@@ -62,19 +62,19 @@ target 'p2p_wallet' do
   pod 'ReachabilitySwift', '~> 5.0.0'
 
   # reactive
-  pod 'Action'
-  pod "RxAppState"
-  pod "RxGesture"
+  pod 'Action', '5.0.0'
+  pod 'RxAppState', '1.7.1'
+  pod 'RxGesture', '4.0.4'
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
-  pod 'RxCombine'
-  pod 'CombineCocoa'
+  pod 'RxCombine', '2.0.1'
+  pod 'CombineCocoa', '0.4.0'
 
   # Kits
-  pod 'KeychainSwift', '~> 19.0'
-  pod 'SwiftyUserDefaults', '~> 5.0'
-  pod 'Intercom', '~> 12.4.3'
+  pod 'KeychainSwift', '19.0.0'
+  pod 'SwiftyUserDefaults', '5.3.0'
+  pod 'Intercom', '12.4.3'
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
@@ -84,18 +84,18 @@ target 'p2p_wallet' do
     pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
   end
 
-  pod 'Resolver'
-  pod 'TagListView', '~> 1.0' # TODO: remove in future
-  pod 'UITextView+Placeholder' # TODO: remove in future
-  pod 'SubviewAttachingTextView' # TODO: remove in future
-  pod 'JazziconSwift', '~> 1.1.0'
-  pod 'Kingfisher'
+  pod 'Resolver', '1.5.0'
+  pod 'TagListView', '1.4.1' # TODO: remove in future
+  pod 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
+  pod 'SubviewAttachingTextView', '1.5.0' # TODO: remove in future
+  pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
+  pod 'Kingfisher', '~> 7.3.2'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'GT3Captcha-iOS'
-  pod 'PhoneNumberKit', '~> 3.3.4'
-  pod 'SkeletonUI'
-  pod 'SwiftSVG', '~> 2.0'
-  pod 'Introspect'
+  pod 'PhoneNumberKit', '3.3.4'
+  pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
+  pod 'SwiftSVG', '2.3.2'
+  pod 'Introspect', '0.1.4'
 
   # Firebase
   pod 'Firebase/Analytics'
