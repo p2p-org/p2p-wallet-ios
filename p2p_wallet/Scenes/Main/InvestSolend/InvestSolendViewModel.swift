@@ -33,6 +33,7 @@ class InvestSolendViewModel: ObservableObject {
         service = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
 
         service.marketInfo
+            .receive(on: RunLoop.main)
             .sink { [weak self] (marketInfo: [SolendMarketInfo]?) in
                 self?.bannerError = marketInfo == nil ? .missingRate : nil
             }.store(in: &subscriptions)
