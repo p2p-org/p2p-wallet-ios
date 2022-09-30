@@ -84,6 +84,6 @@ struct InvestSolendView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        InvestSolendView(viewModel: try! .init(mocked: true))
+        InvestSolendView(viewModel: .init(mocked: true))
     }
 }
