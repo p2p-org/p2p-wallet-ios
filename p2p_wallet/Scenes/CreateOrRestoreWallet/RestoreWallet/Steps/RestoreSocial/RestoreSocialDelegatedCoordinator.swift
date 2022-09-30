@@ -18,14 +18,14 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
             return handleSocial()
         case let .notFoundCustom(_, email):
             return handleNotFoundCustom(email: email)
-        case let .notFoundDevice(data, _):
+        case let .notFoundDevice(data, _, _):
             let subtitles: [OnboardingContentData.Subtitle] = [
                 .init(text: L10n.ifYouWantToContinueWith),
                 .init(text: data.email, isLimited: true),
                 .init(text: L10n.SelectPhoneNumber.ifYouMadeAMistakePleaseChooseAnotherMail),
             ]
             return handleNotFoundDeviceSocial(title: L10n.almostDone, subtitles: subtitles)
-        case let .notFoundSocial(data, _):
+        case let .notFoundSocial(data, _, _):
             let subtitles: [OnboardingContentData.Subtitle] = [
                 .init(text: data.email, isLimited: true),
                 .init(text: L10n.tryAnotherAccountOrUseAPhoneNumber),
