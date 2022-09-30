@@ -68,7 +68,6 @@ struct HomeWithTokensView: View {
                     .font(uiFont: .font(of: .title1, weight: .bold))
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
-            .padding(.bottom, 32)
 
             // Action buttons
             HStack {
@@ -89,7 +88,7 @@ struct HomeWithTokensView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.bottom, 11)
+            .padding(.top, 32)
 
             // Earn banner
             ZStack {
@@ -122,13 +121,16 @@ struct HomeWithTokensView: View {
 
                     Spacer(minLength: 32)
 
-                    TextButtonView(title: L10n.earn, style: .third, size: .medium, isEnabled: .constant(true))
-                        .frame(width: 100, height: 32)
-                        .padding(.top, 56)
-                        .padding(.trailing, 38)
+                    TextButtonView(title: L10n.earn, style: .third, size: .medium, isEnabled: .constant(true)) {
+                        viewModel.earn()
+                    }
+                    .frame(width: 100, height: 32)
+                    .padding(.top, 56)
+                    .padding(.trailing, 38)
                 }
                 .frame(maxWidth: .infinity)
             }
+            .padding(.top, 11)
         }
     }
 
