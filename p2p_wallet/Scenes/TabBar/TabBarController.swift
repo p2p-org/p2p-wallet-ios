@@ -94,7 +94,8 @@ final class TabBarController: UITabBarController {
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
 
-        let historyVC = UIHostingControllerWithoutNavigation(rootView: InvestSolendView(viewModel: .init()))
+        let investVC = UIHostingControllerWithoutNavigation(rootView: InvestSolendView(viewModel: .init()))
+        let historyVC = History.Scene()
 
         let vm = SendToken.ViewModel(
             walletPubkey: nil,
@@ -128,9 +129,9 @@ final class TabBarController: UITabBarController {
 
         viewControllers = [
             homeNavigation,
-            UINavigationController(rootViewController: historyVC),
+            UINavigationController(rootViewController: investVC),
             sendTokenNavigationVC,
-            UIViewController(),
+            UINavigationController(rootViewController: historyVC),
             settingsNavigation,
         ]
     }
@@ -152,15 +153,11 @@ final class TabBarController: UITabBarController {
     func routeToSolendTutorial() {
         var view = SolendTutorialView(viewModel: .init())
         view.doneHandler = { [weak self] in
-            self?.changeItem(to: .history)
+            self?.changeItem(to: .invest)
         }
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
-    }
-
-    func routeToFeedback() {
-        helpCenterLauncher.launch()
     }
 
     func changeItem(to item: TabItem) {
@@ -182,11 +179,6 @@ extension TabBarController: UITabBarControllerDelegate {
             return true
         }
 
-        if TabItem(rawValue: selectedIndex) == .feedback || TabItem(rawValue: selectedIndex) == .actions {
-            routeToFeedback()
-            return false
-        }
-
         if TabItem(rawValue: selectedIndex) == .wallet,
            (viewController as! UINavigationController).viewControllers.count == 1,
            self.selectedIndex == selectedIndex
@@ -196,7 +188,7 @@ extension TabBarController: UITabBarControllerDelegate {
 
         // Solend tutorial first
 
-        if TabItem(rawValue: selectedIndex) == .history, !Defaults.isSolendTutorialShown {
+        if TabItem(rawValue: selectedIndex) == .invest, !Defaults.isSolendTutorialShown {
             routeToSolendTutorial()
             return false
         }
@@ -212,12 +204,12 @@ private extension TabItem {
         switch self {
         case .wallet:
             return .tabBarSelectedWallet
-        case .history:
-            return .tabBarHistory
+        case .invest:
+            return .tabBarEarn
         case .actions:
             return UIImage()
-        case .feedback:
-            return .tabBarFeedback
+        case .history:
+            return .tabBarHistory
         case .settings:
             return .tabBarSettings
         }
@@ -227,12 +219,12 @@ private extension TabItem {
         switch self {
         case .wallet:
             return L10n.wallet
-        case .history:
-            return L10n.history
+        case .invest:
+            return L10n.earn
         case .actions:
             return ""
-        case .feedback:
-            return L10n.feedback
+        case .history:
+            return L10n.history
         case .settings:
             return L10n.settings
         }
