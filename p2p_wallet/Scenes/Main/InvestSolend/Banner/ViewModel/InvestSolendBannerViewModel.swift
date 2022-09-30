@@ -20,34 +20,30 @@ class InvestSolendBannerViewModel: ObservableObject {
 
         solendService.availableAssets
             .combineLatest(solendService.deposits)
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { [weak self] (assets: [SolendConfigAsset]?, deposits: [SolendUserDeposit]?) in
-                self?.state = .learnMore
-
-                guard let assets = assets else {
-                    self?.state = .pending
-                    return
+            .map { [weak self] (assets: [SolendConfigAsset]?, deposits: [SolendUserDeposit]?) in
+                // assets is loading
+                guard let assets = assets, let deposits = deposits else {
+                    return .pending
                 }
 
-                guard let deposits = deposits else {
-                    self?.state = .learnMore
-                    return
-                }
-
+                // no assets
                 if deposits.isEmpty {
-                    self?.state = .learnMore
-                } else {
-                    let urls = assets
-                        .map { asset -> URL? in URL(string: asset.logo ?? "") }
-                        .compactMap { $0 }
-
-                    let total = self?.calculateBalance(assets: assets, deposits: deposits) ?? 0
-                    self?.state = .withBalance(model: .init(
-                        balance: "$ \(total.fixedDecimal(9))",
-                        depositUrls: urls
-                    ))
+                    return .learnMore
                 }
-            })
+
+                // combine assets
+                let urls = assets
+                    .map { asset -> URL? in URL(string: asset.logo ?? "") }
+                    .compactMap { $0 }
+
+                let total = self?.calculateBalance(assets: assets, deposits: deposits) ?? 0
+                return .withBalance(model: .init(
+                    balance: "$ \(total.fixedDecimal(9))",
+                    depositUrls: urls
+                ))
+            }
+            .receive(on: RunLoop.main)
+            .assign(to: \.state, on: self)
             .store(in: &cancellables)
     }
 
