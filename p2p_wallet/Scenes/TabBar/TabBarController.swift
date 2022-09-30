@@ -194,6 +194,7 @@ extension TabBarController: UITabBarControllerDelegate {
         }
 
         // Solend tutorial first
+
         if TabItem(rawValue: selectedIndex) == .history, !Defaults.isSolendTutorialShown {
             routeToSolendTutorial()
             return false
