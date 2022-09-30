@@ -33,7 +33,7 @@ final class HomeCoordinator: Coordinator<Void> {
         let tokensViewModel = HomeWithTokensViewModel()
         tokensViewModel.earnShow
             .sink(receiveValue: { [unowned self] in
-                self.tabBarController?.changeItem(to: .history)
+                self.tabBarController?.changeItem(to: .invest)
             })
             .store(in: &subscriptions)
         let emptyViewModel = HomeEmptyViewModel()
