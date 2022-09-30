@@ -17,7 +17,7 @@ final class OnboardingStateMachineProviderImpl: OnboardingStateMachineProvider {
                         switch authProvider {
                         case "google":
                             return .aggregate(
-                                verifier: OnboardingConfig.shared.torusGoogleVerifier ,
+                                verifier: OnboardingConfig.shared.torusGoogleVerifier,
                                 subVerifier: OnboardingConfig.shared.torusGoogleSubVerifier
                             )
                         case "apple":
