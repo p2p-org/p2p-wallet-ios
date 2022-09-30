@@ -18,6 +18,7 @@ struct HomeWithTokensView: View {
 
     @State private var currentUserInteractionCellID: String?
     @State private var scrollAnimationIsEnded = true
+    @State private var isEarnBannerClosed = Defaults.isEarnBannerClosed
 
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
@@ -58,7 +59,8 @@ struct HomeWithTokensView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .center, spacing: 32) {
+        VStack(alignment: .center) {
+            // Balance
             VStack(alignment: .center, spacing: 6) {
                 Text(L10n.balance)
                     .font(uiFont: .font(of: .text1, weight: .semibold))
@@ -67,6 +69,8 @@ struct HomeWithTokensView: View {
                     .font(uiFont: .font(of: .title1, weight: .bold))
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
+
+            // Action buttons
             HStack {
                 tokenOperation(title: L10n.buy, image: .homeBuy) {
                     viewModel.buy()
@@ -85,6 +89,20 @@ struct HomeWithTokensView: View {
                 }
             }
             .frame(maxWidth: .infinity)
+            .padding(.top, 32)
+
+            // Earn banner
+            if !isEarnBannerClosed {
+                EarnBannerView {
+                    viewModel.earn()
+                } closeAction: {
+                    Defaults.isEarnBannerClosed = true
+                    withAnimation {
+                        isEarnBannerClosed = true
+                    }
+                }
+                .padding(.top, 11)
+            }
         }
     }
 
