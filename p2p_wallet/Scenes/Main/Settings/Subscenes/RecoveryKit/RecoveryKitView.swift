@@ -58,8 +58,8 @@ struct RecoveryKitView: View {
                                 subtitle: metadata.phoneNumber
                             )
                             RecoveryKitRow(
-                                icon: .appleIcon,
-                                title: metadata.authProvider,
+                                icon: authProviderIcon(provider: metadata.authProvider),
+                                title: authProviderName(provider: metadata.authProvider),
                                 subtitle: metadata.email
                             )
                         }
