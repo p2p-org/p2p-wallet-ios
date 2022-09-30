@@ -23,7 +23,7 @@ class InvestSolendViewModel: ObservableObject {
     @Published var market: [Invest]? = []
     @Published var totalDeposit: Double = 0
 
-    @Published var bannerError: InvestSolendError? = nil
+    @Published var bannerError: InvestSolendError?
 
     var isTutorialShown: Bool {
         Defaults.isSolendTutorialShown

@@ -134,6 +134,10 @@ extension Double {
         "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
     }
 
+    func percentFormat(maximumFractionDigits: Int = 2) -> String {
+        "\(toString(maximumFractionDigits: maximumFractionDigits)) %"
+    }
+
     func rounded(decimals: Int?) -> Double {
         guard let decimals = decimals else { return self }
         let realAmount = toString(maximumFractionDigits: decimals, groupingSeparator: nil)
