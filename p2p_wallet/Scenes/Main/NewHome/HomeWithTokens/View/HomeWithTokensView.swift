@@ -58,7 +58,7 @@ struct HomeWithTokensView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .center, spacing: 32) {
+        VStack(alignment: .center) {
             // Balance
             VStack(alignment: .center, spacing: 6) {
                 Text(L10n.balance)
@@ -68,6 +68,7 @@ struct HomeWithTokensView: View {
                     .font(uiFont: .font(of: .title1, weight: .bold))
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
+            .padding(.bottom, 32)
 
             // Action buttons
             HStack {
@@ -88,6 +89,7 @@ struct HomeWithTokensView: View {
                 }
             }
             .frame(maxWidth: .infinity)
+            .padding(.bottom, 11)
 
             // Earn banner
             ZStack {
