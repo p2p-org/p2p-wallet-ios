@@ -18,6 +18,7 @@ struct HomeWithTokensView: View {
 
     @State private var currentUserInteractionCellID: String?
     @State private var scrollAnimationIsEnded = true
+    @State private var isEarnBannerClosed = Defaults.isEarnBannerClosed
 
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
@@ -91,46 +92,17 @@ struct HomeWithTokensView: View {
             .padding(.top, 32)
 
             // Earn banner
-            ZStack {
-                VStack {
-                    Color(._644aff)
-                        .cornerRadius(12)
-                        .padding(.top, 23)
-                }
-
-                HStack {
-                    Spacer()
-                    Image(uiImage: .earnBanner)
-                        .frame(width: 206, height: 142)
-                }
-                .frame(maxWidth: .infinity)
-
-                HStack(alignment: .center) {
-                    VStack(alignment: .leading) {
-                        Text(L10n.earnUpTo(4))
-                            .font(uiFont: .systemFont(ofSize: 16, weight: .medium))
-                            .foregroundColor(.white)
-
-                        Text(L10n.stakeYourTokensAndGetRewardsEveryDay)
-                            ._lineHeightMultiple(1.26)
-                            .font(uiFont: .systemFont(ofSize: 14))
-                            .foregroundColor(Color(.bdbdbd))
+            if !isEarnBannerClosed {
+                EarnBannerView {
+                    viewModel.earn()
+                } closeAction: {
+                    Defaults.isEarnBannerClosed = true
+                    withAnimation {
+                        isEarnBannerClosed = true
                     }
-                    .padding(.top, 23)
-                    .padding(.leading, 24)
-
-                    Spacer(minLength: 32)
-
-                    TextButtonView(title: L10n.earn, style: .third, size: .medium, isEnabled: .constant(true)) {
-                        viewModel.earn()
-                    }
-                    .frame(width: 100, height: 32)
-                    .padding(.top, 56)
-                    .padding(.trailing, 38)
                 }
-                .frame(maxWidth: .infinity)
+                .padding(.top, 11)
             }
-            .padding(.top, 11)
         }
     }
 

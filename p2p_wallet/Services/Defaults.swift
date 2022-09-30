@@ -70,4 +70,5 @@ extension DefaultsKeys {
 
     // Solend
     var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
 }
