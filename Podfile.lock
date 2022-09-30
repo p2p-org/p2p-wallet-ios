@@ -202,7 +202,7 @@ PODS:
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
   - SkeletonUI (1.0.9)
-  - SkeletonView (1.30.2)
+  - SkeletonView (1.30.3)
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -412,7 +412,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -427,10 +427,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -442,10 +442,10 @@ CHECKOUT OPTIONS:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: 85b19f738d0afab2c9dcdf36bd69f1d4caadfa9d
@@ -454,10 +454,10 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -475,13 +475,13 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: 72f1a7887b64b68f7430c06abca1b379f1738609
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: 4141af079c55dc59dff9187684705c11e1ee41ac
+    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -546,7 +546,7 @@ SPEC CHECKSUMS:
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
-  SkeletonView: 2a4536db5ded1b422459a73e05e08b20c6b3a69b
+  SkeletonView: f5b099c708e42a278079a12bcaaf71c303be65a3
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 1b4138640dd65f7ffa13eef3db178c8efe468922
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
