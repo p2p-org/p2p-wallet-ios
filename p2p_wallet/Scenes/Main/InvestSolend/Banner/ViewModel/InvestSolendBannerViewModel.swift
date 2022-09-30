@@ -20,11 +20,12 @@ class InvestSolendBannerViewModel: ObservableObject {
 
         solendService.availableAssets
             .combineLatest(solendService.deposits)
+            .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] (assets: [SolendConfigAsset]?, deposits: [SolendUserDeposit]?) in
                 self?.state = .learnMore
 
                 guard let assets = assets else {
-                    self?.state = .failure(title: L10n.somethingWentWrong, subtitle: L10n.pleaseTryAgainLater)
+                    self?.state = .pending
                     return
                 }
 
@@ -50,13 +51,12 @@ class InvestSolendBannerViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func calculateBalance(assets: [SolendConfigAsset], deposits: [SolendUserDeposit]) -> Double {
+    func calculateBalance(assets _: [SolendConfigAsset], deposits: [SolendUserDeposit]) -> Double {
         deposits
             .map { (deposit: SolendUserDeposit) -> (amount: Double, symbol: String) in
                 (deposit.depositedAmount.double ?? 0, deposit.symbol)
             }
             .map { [priceService] (amount: Double, symbol: String) -> Double in
-                guard let asset: SolendConfigAsset = assets.first(where: { $0.symbol == symbol }) else { return 0 }
                 let currentPrice = priceService.currentPrice(for: symbol)?.value ?? 0
                 return currentPrice * amount
             }
