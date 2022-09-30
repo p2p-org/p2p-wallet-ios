@@ -152,7 +152,7 @@ final class TabBarController: UITabBarController {
     func routeToSolendTutorial() {
         var view = SolendTutorialView(viewModel: .init())
         view.doneHandler = { [weak self] in
-            self?.changeItem(to: .history)
+            self?.changeItem(to: .invest)
         }
         let vc = UIHostingControllerWithoutNavigation(rootView: view)
         vc.modalPresentationStyle = .fullScreen
@@ -195,7 +195,7 @@ extension TabBarController: UITabBarControllerDelegate {
 
         // Solend tutorial first
 
-        if TabItem(rawValue: selectedIndex) == .history, !Defaults.isSolendTutorialShown {
+        if TabItem(rawValue: selectedIndex) == .invest, !Defaults.isSolendTutorialShown {
             routeToSolendTutorial()
             return false
         }
@@ -211,8 +211,8 @@ private extension TabItem {
         switch self {
         case .wallet:
             return .tabBarSelectedWallet
-        case .history:
-            return .tabBarHistory
+        case .invest:
+            return .tabBarEarn
         case .actions:
             return UIImage()
         case .feedback:
@@ -226,8 +226,8 @@ private extension TabItem {
         switch self {
         case .wallet:
             return L10n.wallet
-        case .history:
-            return L10n.history
+        case .invest:
+            return L10n.earn
         case .actions:
             return ""
         case .feedback:
