@@ -18,17 +18,24 @@ final class HomeCoordinator: Coordinator<Void> {
     @Injected private var analyticsManager: AnalyticsManager
 
     private let navigationController: UINavigationController
+    private weak var tabBarController: TabBarController?
 
     private var sendCoordinator: SendToken.Coordinator?
     private let scrollSubject = PassthroughSubject<Void, Never>()
 
-    init(navigationController: UINavigationController) {
+    init(navigationController: UINavigationController, tabBarController: TabBarController?) {
         self.navigationController = navigationController
+        self.tabBarController = tabBarController
     }
 
     override func start() -> AnyPublisher<Void, Never> {
         let viewModel = HomeViewModel()
         let tokensViewModel = HomeWithTokensViewModel()
+        tokensViewModel.earnShow
+            .sink(receiveValue: { [unowned self] in
+                self.tabBarController?.changeItem(to: .history)
+            })
+            .store(in: &subscriptions)
         let emptyViewModel = HomeEmptyViewModel()
         let emptyVMOutput = emptyViewModel.output.coord
         let homeView = HomeView(

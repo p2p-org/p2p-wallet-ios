@@ -89,7 +89,7 @@ final class TabBarController: UITabBarController {
 
     private func setupViewControllers() {
         let homeNavigation = UINavigationController()
-        homeCoordinator = HomeCoordinator(navigationController: homeNavigation)
+        homeCoordinator = HomeCoordinator(navigationController: homeNavigation, tabBarController: self)
         homeCoordinator?.start()
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
@@ -165,6 +165,7 @@ final class TabBarController: UITabBarController {
 
     func changeItem(to item: TabItem) {
         selectedIndex = item.rawValue
+        customTabBar.updateSelectedViewPositionIfNeeded()
     }
 }
 
@@ -175,6 +176,8 @@ extension TabBarController: UITabBarControllerDelegate {
         _ tabBarController: UITabBarController,
         shouldSelect viewController: UIViewController
     ) -> Bool {
+        customTabBar.updateSelectedViewPositionIfNeeded()
+
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else {
             return true
         }
@@ -183,8 +186,6 @@ extension TabBarController: UITabBarControllerDelegate {
             routeToFeedback()
             return false
         }
-
-        customTabBar.updateSelectedViewPositionIfNeeded()
 
         if TabItem(rawValue: selectedIndex) == .wallet,
            (viewController as! UINavigationController).viewControllers.count == 1,
