@@ -52,8 +52,11 @@ struct SolendTutorialView: View {
 
     private func markAsReadAndDismiss() {
         Defaults.isSolendTutorialShown = true
-        presentationMode.wrappedValue.dismiss()
+
+        // presentationMode.wrappedValue.dismiss()
+        // TODO: - Temporary solution for dismissing tutorial, since presentationMode.wrappedValue.dismiss() does not work
         doneHandler?()
+        UIApplication.topmostViewController()?.dismiss(animated: true)
     }
 
     // MARK: - ViewBuilders
