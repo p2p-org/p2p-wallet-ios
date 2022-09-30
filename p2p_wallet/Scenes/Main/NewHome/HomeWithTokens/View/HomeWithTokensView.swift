@@ -59,6 +59,7 @@ struct HomeWithTokensView: View {
 
     private var header: some View {
         VStack(alignment: .center, spacing: 32) {
+            // Balance
             VStack(alignment: .center, spacing: 6) {
                 Text(L10n.balance)
                     .font(uiFont: .font(of: .text1, weight: .semibold))
@@ -67,6 +68,8 @@ struct HomeWithTokensView: View {
                     .font(uiFont: .font(of: .title1, weight: .bold))
                     .foregroundColor(Color(Asset.Colors.night.color))
             }
+
+            // Action buttons
             HStack {
                 tokenOperation(title: L10n.buy, image: .homeBuy) {
                     viewModel.buy()
@@ -85,6 +88,45 @@ struct HomeWithTokensView: View {
                 }
             }
             .frame(maxWidth: .infinity)
+
+            // Earn banner
+            ZStack {
+                VStack {
+                    Color(._644aff)
+                        .cornerRadius(12)
+                        .padding(.top, 23)
+                }
+
+                HStack {
+                    Spacer()
+                    Image(uiImage: .earnBanner)
+                        .frame(width: 206, height: 142)
+                }
+                .frame(maxWidth: .infinity)
+
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading) {
+                        Text(L10n.earnUpTo(4))
+                            .font(uiFont: .systemFont(ofSize: 16, weight: .medium))
+                            .foregroundColor(.white)
+
+                        Text(L10n.stakeYourTokensAndGetRewardsEveryDay)
+                            ._lineHeightMultiple(1.26)
+                            .font(uiFont: .systemFont(ofSize: 14))
+                            .foregroundColor(Color(.bdbdbd))
+                    }
+                    .padding(.top, 23)
+                    .padding(.leading, 24)
+
+                    Spacer(minLength: 32)
+
+                    TextButtonView(title: L10n.earn, style: .third, size: .medium, isEnabled: .constant(true))
+                        .frame(width: 100, height: 32)
+                        .padding(.top, 56)
+                        .padding(.trailing, 38)
+                }
+                .frame(maxWidth: .infinity)
+            }
         }
     }
 
