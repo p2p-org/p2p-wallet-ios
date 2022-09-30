@@ -11,6 +11,6 @@ enum TabItem: Int, CaseIterable {
     case wallet = 0
     case invest
     case actions
-    case feedback
+    case history
     case settings
 }

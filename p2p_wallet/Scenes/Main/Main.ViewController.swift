@@ -65,6 +65,11 @@ extension Main {
                     .disposed(by: disposeBag)
             }
 
+            viewModel.moveToHistory
+                .drive(onNext: { [unowned self] in
+                    tabBar.changeItem(to: .history)
+                })
+                .disposed(by: disposeBag)
             // locking status
             viewModel.isLockedDriver
                 .drive(onNext: { [weak self] isLocked in
