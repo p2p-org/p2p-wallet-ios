@@ -100,7 +100,7 @@ class KeychainStorage {
     func migrate() {
         let icloudKeychain = KeychainSwift()
         icloudKeychain.synchronizable = true
-        
+
         // migrate iCloud storage from NSUbiquitousKeyValueStore to keychain
         let ubiquitousKeyValueStoreToKeychain = "UbiquitousKeyValueStoreToKeychain"
         if !UserDefaults.standard.bool(forKey: ubiquitousKeyValueStoreToKeychain) {

@@ -29,7 +29,7 @@ extension KeychainStorage: ICloudStorageType {
         if let data = try? JSONEncoder().encode(accountsToSave) {
             let icloudKeychain = KeychainSwift()
             icloudKeychain.synchronizable = true
-            
+
             return icloudKeychain.set(data, forKey: iCloudAccountsKey, withAccess: .accessibleAfterFirstUnlock)
         }
         return false
@@ -38,7 +38,7 @@ extension KeychainStorage: ICloudStorageType {
     func accountFromICloud() -> [RawAccount]? {
         let icloudKeychain = KeychainSwift()
         icloudKeychain.synchronizable = true
-        
+
         guard let data = icloudKeychain.getData(iCloudAccountsKey) else { return nil }
         return try? JSONDecoder().decode([RawAccount].self, from: data)
     }
