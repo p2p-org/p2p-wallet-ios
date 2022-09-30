@@ -33,7 +33,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     @Published var invest: Invest
-    @Published var depositFee: SolendDepositFee? = nil
+    @Published var depositFee: SolendDepositFee?
     @Published var inputLamport: UInt64 = 0
 
     init(initialAsset: SolendConfigAsset, mocked: Bool = false) throws {
