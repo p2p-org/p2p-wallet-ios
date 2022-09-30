@@ -5,7 +5,6 @@
 //  Created by Ivan on 29.09.2022.
 //
 
-import AnalyticsManager
 import Combine
 import Resolver
 import UIKit

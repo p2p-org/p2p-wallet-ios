@@ -866,3 +866,6 @@ another" = "одна крипта для
 "All your funds are insured. Withdraw your\ndeposit with all rewards at any time." = "Все ваши средства застрахованы.  Снимите \nдепозит со всеми вознаграждениями в любое время.";
 "Token to withdraw" = "Токен для вывода";
 "Yielding" = "Уступчивость";
+"Withdrawal fee" = "Комиссия за снятие средств";
+"Deposit fees" = "Комиссия за депозит";
+"Withdraw" = "Отзывать";
