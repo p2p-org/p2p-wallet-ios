@@ -27,7 +27,7 @@ struct DepositSolendView: View {
                     .apply(style: .text3)
                 Spacer()
                 Button { [weak viewModel] in
-                    //use max
+                    // use max
                     viewModel?.useMaxTapped()
                     viewModel?.focusSide = .left
                 } label: {
@@ -43,15 +43,16 @@ struct DepositSolendView: View {
                 }
             }.padding(.horizontal, 8)
 
-          BuyInputOutputView(
-            leftTitle: $viewModel.inputToken,
-            leftSubtitle: viewModel.invest.asset.symbol,
-            rightTitle: $viewModel.inputFiat,
-            rightSubtitle: viewModel.fiat.code,
-            activeSide: $viewModel.focusSide) { [weak viewModel] side in
+            BuyInputOutputView(
+                leftTitle: $viewModel.inputToken,
+                leftSubtitle: viewModel.invest.asset.symbol,
+                rightTitle: $viewModel.inputFiat,
+                rightSubtitle: viewModel.fiat.code,
+                activeSide: $viewModel.focusSide
+            ) { [weak viewModel] side in
                 viewModel?.focusSide = side
             }
-                .padding(.horizontal, 16)
+            .padding(.horizontal, 16)
 
             Group {
                 if viewModel.isButtonEnabled {
@@ -66,8 +67,8 @@ struct DepositSolendView: View {
                                 viewModel.isDepositOn = val
                             })
                         )
-                        .disabled(viewModel.loading)
-                        .frame(height: TextButton.Size.large.height)
+                            .disabled(viewModel.loading)
+                            .frame(height: TextButton.Size.large.height)
                         Button {
                             // Open info
                         } label: {
@@ -93,9 +94,9 @@ struct DepositSolendView: View {
                     }
                 }
             }
-                .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
-                .animation(.easeOut(duration: 0.1), value: viewModel.isButtonEnabled)
-                .padding(.top, 8)
+            .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
+            .animation(.easeOut(duration: 0.1), value: viewModel.isButtonEnabled)
+            .padding(.top, 8)
 
             HStack {
                 Spacer()
