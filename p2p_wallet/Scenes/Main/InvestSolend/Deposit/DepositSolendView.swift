@@ -26,34 +26,97 @@ struct DepositSolendView: View {
                 Text(L10n.enterTheAmount)
                     .apply(style: .text3)
                 Spacer()
-                Text("\(viewModel.inputLamport)")
-            }.padding(.horizontal, 24)
+                Button { [weak viewModel] in
+                    //use max
+                    viewModel?.useMaxTapped()
+                    viewModel?.focusSide = .left
+                } label: {
+                    if viewModel.isUsingMax {
+                        Text("✅ Using the MAX amount")
+                            .apply(style: .text4)
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                    } else {
+                        Text(viewModel.maxText)
+                            .apply(style: .text4)
+                            .foregroundColor(Color(Asset.Colors.sky.color))
+                    }
+                }
+            }.padding(.horizontal, 8)
 
-            TextField("Deposit amount", text: $viewModel.input)
-                .padding(.horizontal, 24)
-                .frame(height: 60)
-                .background(
-                    Color(Asset.Colors.smoke.color)
-                        .cornerRadius(radius: 12, corners: .allCorners)
-                )
-                .padding(.horizontal, 24)
+          BuyInputOutputView(
+            leftTitle: $viewModel.inputToken,
+            leftSubtitle: viewModel.invest.asset.symbol,
+            rightTitle: $viewModel.inputFiat,
+            rightSubtitle: viewModel.fiat.code,
+            activeSide: $viewModel.focusSide) { [weak viewModel] side in
+                viewModel?.focusSide = side
+            }
+                .padding(.horizontal, 16)
 
-            TextButtonView(
-                title: L10n.deposit,
-                style: .primary,
-                size: .large,
-                isEnabled: nil
-            ) {
-                Task {
-                    try await viewModel.deposit()
-                    presentationMode.wrappedValue.dismiss()
+            Group {
+                if viewModel.isButtonEnabled {
+                    HStack(spacing: 8) {
+                        SliderButtonView(
+                            title: "Slide to deposit",
+                            image: Asset.MaterialIcon.arrowRight.image,
+                            style: .black,
+                            isOn: .init(get: {
+                                viewModel.isDepositOn
+                            }, set: { val in
+                                viewModel.isDepositOn = val
+                            })
+                        )
+                        .disabled(viewModel.loading)
+                        .frame(height: TextButton.Size.large.height)
+                        Button {
+                            // Open info
+                        } label: {
+                            Circle()
+                                .fill(Color(Asset.Colors.lime.color))
+                                .frame(width: 56, height: 56)
+                                .overlay(Image(uiImage: UIImage.infoStraight))
+                        }
+                    }
+                } else {
+                    HStack(spacing: 8) {
+                        RoundedRectangle(cornerSize: .init(width: 28, height: 28))
+                            .fill(Color(Asset.Colors.rain.color))
+                            .overlay(Text(viewModel.buttonText))
+                            .frame(height: 56)
+                            .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
+                        if viewModel.hasError {
+                            Circle()
+                                .fill(Color(Asset.Colors.rose.color.withAlphaComponent(0.2)))
+                                .frame(width: 56, height: 56)
+                                .overlay(Image(uiImage: UIImage.solendSubtract))
+                        }
+                    }
                 }
             }
-            .disabled(viewModel.loading)
-            .frame(height: TextButton.Size.large.height)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
+                .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
+                .animation(.easeOut(duration: 0.1), value: viewModel.isButtonEnabled)
+                .padding(.top, 8)
+
+            HStack {
+                Spacer()
+                if viewModel.loading {
+                    ActivityIndicator(isAnimating: viewModel.loading)
+                        .frame(width: 16, height: 16)
+                        .padding(.top, 8)
+                        .padding(.bottom, 16)
+                } else {
+                    Text(viewModel.feeText)
+                        .apply(style: .text4)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .frame(minHeight: 16)
+                        .padding(.top, 8)
+                        .padding(.bottom, 16)
+                }
+                Spacer()
+            }
         }
+        .padding(.horizontal, 16)
         .navigationTitle(L10n.depositIntoSolend)
     }
 }
