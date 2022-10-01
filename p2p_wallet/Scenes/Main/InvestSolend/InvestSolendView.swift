@@ -40,37 +40,35 @@ struct InvestSolendView: View {
                 }.padding(.horizontal, 16)
 
                 // Market
-                ScrollView {
-                    VStack {
-                        if viewModel.loading {
-                            HStack {
-                                Spacer()
-                                ProgressView()
-                                Spacer()
+                FixedList {
+                    if viewModel.loading {
+                        HStack {
+                            Spacer()
+                            ProgressView()
+                            Spacer()
+                        }
+                    } else if viewModel.market.isEmpty {
+                        HStack {
+                            Spacer()
+                            Text(L10n.somethingWentWrong + "...")
+                            Button {
+                                Task { try await viewModel.update() }
+                            } label: {
+                                Text(L10n.tryAgain)
                             }
-                        } else if let market = viewModel.market {
-                            // Cells
-                            ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in
-                                NavigationLink(destination: DepositSolendView(viewModel: try!
-                                        .init(initialAsset: asset))) {
-                                    InvestSolendCell(
-                                        asset: asset,
-                                        deposit: userDeposit?.depositedAmount,
-                                        apy: market?.supplyInterest
-                                    )
-                                }
+                            Spacer()
+                        }
+                    } else {
+                        // Cells
+                        ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
+                            NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
+                                InvestSolendCell(
+                                    asset: asset,
+                                    deposit: userDeposit?.depositedAmount,
+                                    apy: market?.supplyInterest
+                                )
                             }
-                        } else {
-                            HStack {
-                                Spacer()
-                                Text(L10n.somethingWentWrong + "...")
-                                Button {
-                                    Task { try await viewModel.update() }
-                                } label: {
-                                    Text(L10n.tryAgain)
-                                }
-                                Spacer()
-                            }
+                            .padding(.trailing, 20)
                         }
                         Spacer(minLength: 20)
                     }

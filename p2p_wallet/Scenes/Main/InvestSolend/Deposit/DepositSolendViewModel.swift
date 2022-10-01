@@ -35,8 +35,9 @@ class DepositSolendViewModel: ObservableObject {
     @Published var isDepositOn = false
     /// Balance for selected Token
     private var currentWallet: Wallet? {
-        self.walletRepository.getWallets().filter { $0.token.address == self.invest.asset.mintAddress }.first
+        walletRepository.getWallets().filter { $0.token.address == self.invest.asset.mintAddress }.first
     }
+
     /// Rate for selected pair Token -> Fiat
     private var tokenFiatPrice: Double?
 
@@ -46,7 +47,7 @@ class DepositSolendViewModel: ObservableObject {
         invest = (asset: initialAsset, market: nil, userDeposit: nil)
 
         tokenFiatPrice = priceService.currentPrice(for: invest.asset.symbol)?.value
-        maxText = "Use all \(currentWallet?.amount?.toString(maximumFractionDigits: 9) ?? "0") \(self.invest.asset.symbol)"
+        maxText = "Use all \(currentWallet?.amount?.toString(maximumFractionDigits: 9) ?? "0") \(invest.asset.symbol)"
 
         dataService.marketInfo
             .sink { [weak self] markets in
@@ -81,8 +82,8 @@ class DepositSolendViewModel: ObservableObject {
                 let tokenAmount = Double(val.0)
                 let fiatAmount = Double(val.1)
                 self.loading = true
-                if self.focusSide == .left { //editing token
-                    if self.tokenFiatPrice > 0 && self.inputInLamport > 0 {
+                if self.focusSide == .left { // editing token
+                    if self.tokenFiatPrice > 0, self.inputInLamport > 0 {
                         self.inputFiat = ((self.tokenFiatPrice ?? 0) * tokenAmount).toString(maximumFractionDigits: 2)
                     } else {
                         self.inputFiat = "0"
@@ -97,30 +98,36 @@ class DepositSolendViewModel: ObservableObject {
                 self.inputLamport = self.inputInLamport
                 self.hasError = false
                 self.isUsingMax = false
-                if self.currentWallet?.amount ?? 0 < self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
+                if self.currentWallet?.amount ?? 0 < self.inputLamport
+                    .convertToBalance(decimals: self.invest.asset.decimals)
+                {
                     let maxAmount = (self.currentWallet?.amount ?? 0)
-                    self.buttonText = "MAX amount is \(maxAmount.toString(maximumFractionDigits: 9)) \(self.invest.asset.symbol)"
+                    self
+                        .buttonText =
+                        "MAX amount is \(maxAmount.toString(maximumFractionDigits: 9)) \(self.invest.asset.symbol)"
                     self.feeText = "Enter the correct amount to continue"
                     self.hasError = true
                     self.loading = false
                 } else {
                     self.feeText = L10n.withdrawYourFundsWithAllRewardsAtAnyTime
                 }
-                if self.currentWallet?.amount ?? 0 == self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
+                if self.currentWallet?.amount ?? 0 == self.inputLamport
+                    .convertToBalance(decimals: self.invest.asset.decimals)
+                {
                     self.isUsingMax = true
                 }
             })
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .map({ val -> AnyPublisher<SolendDepositFee?, Never> in
+            .map { val -> AnyPublisher<SolendDepositFee?, Never> in
                 guard self.inputInLamport > 0, !self.hasError else { return Just(nil).eraseToAnyPublisher() }
                 return self.calculateFee(
                     inputInLamports: self.lamportFrom(amount: Double(val.0)),
                     symbol: self.invest.asset.symbol
                 )
-                .map(Optional.init)
-                .replaceError(with: nil)
-                .eraseToAnyPublisher()
-            })
+                    .map(Optional.init)
+                    .replaceError(with: nil)
+                    .eraseToAnyPublisher()
+            }
             .switchToLatest()
             .sink(receiveValue: { [weak self] fee in
                 guard let self = self else { return }
@@ -128,14 +135,15 @@ class DepositSolendViewModel: ObservableObject {
                 if let fee {
                     let totalAmountLamports = self.inputInLamport.subtractingReportingOverflow(fee.fee).partialValue
                     let fiatAmount = self.amountFrom(lamports: totalAmountLamports) * (self.tokenFiatPrice ?? 0)
-                    let amountText = "\(self.amountFrom(lamports: totalAmountLamports).toString(maximumFractionDigits: 9)) \(self.invest.asset.symbol) (\(self.fiat.symbol) \(fiatAmount.toString(maximumFractionDigits: 2)))"
+                    let amountText =
+                        "\(self.amountFrom(lamports: totalAmountLamports).toString(maximumFractionDigits: 9)) \(self.invest.asset.symbol) (\(self.fiat.symbol) \(fiatAmount.toString(maximumFractionDigits: 2)))"
                     self.feeText = "Excluding fees you will deposit \(amountText)"
                 }
             })
             .store(in: &subscriptions)
 
         $isDepositOn.filter { $0 }
-            .sink { [weak self] val in
+            .sink { [weak self] _ in
                 Task {
                     do {
                         try await self?.deposit()
@@ -189,8 +197,8 @@ class DepositSolendViewModel: ObservableObject {
     // MARK: -
 
     func useMaxTapped() {
-        self.inputToken = currentWallet?.amount?.toString(maximumFractionDigits: 9) ?? "0"
-        self.inputFiat = ((tokenFiatPrice ?? 0) * currentWallet?.amount).toString(maximumFractionDigits: 2)
-        self.inputLamport = self.inputInLamport
+        inputToken = currentWallet?.amount?.toString(maximumFractionDigits: 9) ?? "0"
+        inputFiat = ((tokenFiatPrice ?? 0) * currentWallet?.amount).toString(maximumFractionDigits: 2)
+        inputLamport = inputInLamport
     }
 }
