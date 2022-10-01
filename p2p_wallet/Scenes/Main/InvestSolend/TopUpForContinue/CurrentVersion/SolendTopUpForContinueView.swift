@@ -1,0 +1,92 @@
+//
+//  SolendTopUpForContinueView.swift
+//  p2p_wallet
+//
+//  Created by Ivan on 01.10.2022.
+//
+
+import Combine
+import KeyAppUI
+import SwiftUI
+
+struct SolendTopUpForContinueView: View {
+    let viewModel: SolendTopUpForContinueViewModel
+
+    var body: some View {
+        VStack(spacing: 0) {
+            cell
+                .padding(24)
+            actions
+        }
+        .sheetHeader(title: L10n.topUpBalanceToContinue, withSeparator: false) {
+            viewModel.closeClicked()
+        }
+    }
+
+    private var cell: some View {
+        HStack(spacing: 12) {
+            if let url = viewModel.imageUrl {
+                ImageView(withURL: url)
+                    .frame(width: 48, height: 48)
+                    .cornerRadius(24)
+            }
+            VStack(alignment: .leading, spacing: 6) {
+                Text(viewModel.symbol)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .font(uiFont: .font(of: .text2))
+                Text(viewModel.name)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .font(uiFont: .font(of: .label1))
+            }
+            Spacer()
+            VStack(alignment: .trailing, spacing: 8) {
+                Text(viewModel.apy)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .font(uiFont: .font(of: .text2, weight: .semibold))
+                Text(L10n.apy)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .font(uiFont: .font(of: .label1))
+            }
+        }
+    }
+
+    private var actions: some View {
+        VStack(spacing: 16) {
+            Button(
+                action: {
+                    viewModel.buyClicked()
+                },
+                label: {
+                    Text(viewModel.withoutAnyTokens ? L10n.buy : L10n.buyWithCreditCard)
+                        .foregroundColor(Color(Asset.Colors.lime.color))
+                        .frame(height: 56)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(Asset.Colors.night.color))
+                        .cornerRadius(12)
+                }
+            )
+            Button(
+                action: {
+                    viewModel.swapOrReceiveClicked()
+                },
+                label: {
+                    Text(viewModel.withoutAnyTokens ? L10n.receive : L10n.swapWithCrypto)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .frame(height: 56)
+                        .frame(maxWidth: .infinity)
+                        .background(Color(Asset.Colors.rain.color))
+                        .cornerRadius(12)
+                }
+            )
+        }
+        .font(uiFont: .font(of: .text2, weight: .semibold))
+        .padding(.vertical, 16)
+        .padding(.horizontal, 24)
+    }
+}
+
+// MARK: - View Height
+
+extension SolendTopUpForContinueView {
+    var viewHeight: CGFloat { 360 }
+}
