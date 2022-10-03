@@ -20,6 +20,7 @@ final class TabBarController: UITabBarController {
 
     private var homeCoordinator: HomeCoordinator?
     private var sendTokenCoordinator: SendToken.Coordinator!
+    private var investSolendCoordinator: InvestSolendCoordinator?
     private var actionsCoordinator: ActionsCoordinator?
     private var settingsCoordinator: SettingsCoordinator?
 
@@ -94,7 +95,12 @@ final class TabBarController: UITabBarController {
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
 
-        let investVC = UIHostingControllerWithoutNavigation(rootView: InvestSolendView(viewModel: .init()))
+        let investVCNavigation = UINavigationController()
+        investSolendCoordinator = InvestSolendCoordinator(navigationController: investVCNavigation)
+        investSolendCoordinator?.start()
+            .sink { _ in }
+            .store(in: &cancellables)
+
         let historyVC = History.Scene()
 
         let vm = SendToken.ViewModel(
@@ -129,7 +135,7 @@ final class TabBarController: UITabBarController {
 
         viewControllers = [
             homeNavigation,
-            UINavigationController(rootViewController: investVC),
+            investVCNavigation,
             sendTokenNavigationVC,
             UINavigationController(rootViewController: historyVC),
             settingsNavigation,

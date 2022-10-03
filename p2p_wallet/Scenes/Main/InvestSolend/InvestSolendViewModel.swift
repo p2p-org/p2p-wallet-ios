@@ -20,7 +20,7 @@ class InvestSolendViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
 
     @Published var loading: Bool = false
-    @Published var market: [Invest]? = []
+    @Published var market: [Invest] = []
     @Published var totalDeposit: Double = 0
 
     @Published var bannerError: InvestSolendError?
@@ -40,8 +40,8 @@ class InvestSolendViewModel: ObservableObject {
 
         service.availableAssets
             .combineLatest(service.marketInfo, service.deposits)
-            .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest]? in
-                guard let assets = assets else { return nil }
+            .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
+                guard let assets = assets else { return [] }
                 return assets.map { asset -> Invest in
                     (
                         asset: asset,
