@@ -135,7 +135,7 @@ extension Double {
     }
 
     func percentFormat(maximumFractionDigits: Int = 2) -> String {
-        "\(toString(maximumFractionDigits: maximumFractionDigits)) %"
+        "\(toString(maximumFractionDigits: maximumFractionDigits))%"
     }
 
     func rounded(decimals: Int?) -> Double {
