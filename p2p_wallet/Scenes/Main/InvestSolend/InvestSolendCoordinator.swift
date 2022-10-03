@@ -1,9 +1,5 @@
-import AnalyticsManager
 import Combine
 import Foundation
-import Resolver
-import SafariServices
-import SolanaSwift
 import SwiftUI
 
 final class InvestSolendCoordinator: Coordinator<Void> {
