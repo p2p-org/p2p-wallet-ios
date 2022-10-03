@@ -34,11 +34,23 @@ final class SolendCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
         investViewModel.deposit
             .sink(receiveValue: { [unowned self] in
-                let view = DepositSolendView(viewModel: try! .init(initialAsset: $0))
+                let viewModel = try! DepositSolendViewModel(initialAsset: $0)
+                let view = DepositSolendView(viewModel: viewModel)
+                let depositVC = view.asViewController(withoutUIKitNavBar: false)
                 navigationController.pushViewController(
-                    view.asViewController(withoutUIKitNavBar: false),
+                    depositVC,
                     animated: true
                 )
+
+                viewModel.transactionDetails
+                    .sink(receiveValue: { [unowned self] in
+                        let coordinator = SolendTransactionDetailsCoordinator(
+                            controller: depositVC,
+                            model: $0
+                        )
+                        coordinate(to: coordinator)
+                    })
+                    .store(in: &subscriptions)
             })
             .store(in: &subscriptions)
         investViewModel.topUpForContinue
