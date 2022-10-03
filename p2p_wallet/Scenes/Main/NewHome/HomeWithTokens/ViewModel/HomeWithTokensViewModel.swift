@@ -71,7 +71,8 @@ class HomeWithTokensViewModel: ObservableObject {
             .assertNoFailure()
             .sink(receiveValue: { [weak self] wallets in
                 guard let self = self, var wallets = wallets else { return }
-                wallets = wallets.filter { !($0.token.decimals == 0 && $0.token.supply == 1) }
+                // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
+                wallets = wallets.filter { !($0.token.decimals == 0) }
                 self.wallets = wallets
                 let items = wallets.map {
                     (
