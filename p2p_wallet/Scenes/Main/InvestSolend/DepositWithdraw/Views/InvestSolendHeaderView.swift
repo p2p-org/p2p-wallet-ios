@@ -29,12 +29,12 @@ struct InvestSolendHeaderView: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 8) {
-                if let rightTitle {
+                if let rightTitle = rightTitle {
                     Text(rightTitle)
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .apply(style: .text2)
                 }
-                if let rightSubtitle {
+                if let rightSubtitle = rightTitle {
                     Text(rightSubtitle)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .apply(style: .label1)

@@ -11,6 +11,11 @@ class DepositSolendViewModel: ObservableObject {
     private let dataService: SolendDataService
     private let actionService: SolendActionService
 
+    private let transactionDetailsSubject = PassthroughSubject<SolendTransactionDetailsView.Model, Never>()
+    var transactionDetails: AnyPublisher<SolendTransactionDetailsView.Model, Never> {
+        transactionDetailsSubject.eraseToAnyPublisher()
+    }
+
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
     @Injected private var walletRepository: WalletsRepository
@@ -133,75 +138,74 @@ class DepositSolendViewModel: ObservableObject {
             $inputToken.map { Double($0.cryptoCurrencyFormat) ?? 0 }.removeDuplicates(),
             $inputFiat.map { Double($0.fiatFormat) ?? 0 }.removeDuplicates()
         )
-        .handleEvents(receiveOutput: { [weak self] val in
-            guard let self = self else { return }
-            let tokenAmount = Double(val.0)
-            let fiatAmount = Double(val.1)
-            let maxAmount = self.maxAmount()
-            self.inputLamport = self.lamportFrom(amount: tokenAmount)
-            self.loading = true
-            if self.focusSide == .left { // editing token
-                if self.tokenFiatPrice > 0, self.inputLamport > 0 {
-                    self.inputFiat = self.tokenToAmount(amount: tokenAmount).toString(maximumFractionDigits: 2)
+            .handleEvents(receiveOutput: { [weak self] val in
+                guard let self = self else { return }
+                let tokenAmount = Double(val.0)
+                let fiatAmount = Double(val.1)
+                let maxAmount = self.maxAmount()
+                self.inputLamport = self.lamportFrom(amount: tokenAmount)
+                self.loading = true
+                if self.focusSide == .left { // editing token
+                    if self.tokenFiatPrice > 0, self.inputLamport > 0 {
+                        self.inputFiat = self.tokenToAmount(amount: tokenAmount).toString(maximumFractionDigits: 2)
+                    } else {
+                        self.inputFiat = "0"
+                    }
                 } else {
-                    self.inputFiat = "0"
+                    if self.tokenFiatPrice > 0 {
+                        self.inputToken = self.fiatToToken(amount: fiatAmount).toString(maximumFractionDigits: 9)
+                    } else {
+                        self.inputToken = "0"
+                    }
                 }
-            } else {
-                if self.tokenFiatPrice > 0 {
-                    self.inputToken = self.fiatToToken(amount: fiatAmount).toString(maximumFractionDigits: 9)
-                } else {
-                    self.inputToken = "0"
-                }
-            }
 
-            self.hasError = false
-            self.isUsingMax = false
-            if maxAmount < self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
-                self
-                    .buttonText =
-                    "\(L10n.maxAmountIs) \(maxAmount.tokenAmount(symbol: self.invest.asset.symbol))"
-                self.feeText = L10n.enterTheCorrectAmountToContinue
-                self.hasError = true
+                self.hasError = false
+                self.isUsingMax = false
+                if maxAmount < self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
+                    self
+                        .buttonText =
+                        "\(L10n.maxAmountIs) \(maxAmount.tokenAmount(symbol: self.invest.asset.symbol))"
+                    self.feeText = L10n.enterTheCorrectAmountToContinue
+                    self.hasError = true
+                    self.loading = false
+                } else {
+                    self.feeText = self.defaultFeeText()
+                }
+                if maxAmount == self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
+                    self.isUsingMax = true
+                }
+            })
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .map { [weak self] val -> AnyPublisher<SolendDepositFee?, Never> in
+                if self?.strategy == .withdraw {
+                    return Just(nil).eraseToAnyPublisher()
+                }
+                guard let lamports = self?.lamportFrom(amount: Double(val.0)),
+                      let self = self,
+                      lamports > 0,
+                      !self.hasError else { return Just(nil).eraseToAnyPublisher() }
+
+                return self.calculateFee(
+                    inputInLamports: lamports,
+                    symbol: self.invest.asset.symbol
+                )
+                    .map(Optional.init)
+                    .replaceError(with: nil)
+                    .eraseToAnyPublisher()
+            }
+            .switchToLatest()
+            .sink(receiveValue: { [weak self] fee in
+                guard let self = self else { return }
                 self.loading = false
-            } else {
-                self.feeText = self.defaultFeeText()
-            }
-            if maxAmount == self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
-                self.isUsingMax = true
-            }
-        })
-        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-        .map { [weak self] val -> AnyPublisher<SolendDepositFee?, Never> in
-            if self?.strategy == .withdraw {
-                return Just(nil).eraseToAnyPublisher()
-            }
-            guard let lamports = self?.lamportFrom(amount: Double(val.0)),
-                  let self,
-                  lamports > 0,
-                  !self.hasError else { return Just(nil).eraseToAnyPublisher() }
-
-            return self.calculateFee(
-                inputInLamports: lamports,
-                symbol: self.invest.asset.symbol
-            )
-            .map(Optional.init)
-            .replaceError(with: nil)
-            .eraseToAnyPublisher()
-        }
-        .switchToLatest()
-        .sink(receiveValue: { [weak self] fee in
-            guard let self = self else { return }
-            self.loading = false
-            if let fee {
-                let totalAmountLamports = self.inputLamport.subtractingReportingOverflow(fee.fee).partialValue
-                let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports))
-                let amountText =
-                    "\(self.amountFrom(lamports: totalAmountLamports).tokenAmount(symbol: self.invest.asset.symbol)) (\(fiatAmount.fiatAmount(currency: self.fiat)))"
-                self.feeText = "\(L10n.excludingFeesYouWillDeposit) \(amountText)"
-//                self.detailItem = .init(strategy: <#T##Strategy#>, amount: <#T##Double#>, fiatAmount: <#T##Double#>, total: <#T##Double#>, fiatTotal: <#T##Double#>, symbol: <#T##String#>, feeSymbol: <#T##String#>)
-            }
-        })
-        .store(in: &subscriptions)
+                if let fee = fee {
+                    let totalAmountLamports = self.inputLamport.subtractingReportingOverflow(fee.fee).partialValue
+                    let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports))
+                    let amountText =
+                        "\(self.amountFrom(lamports: totalAmountLamports).tokenAmount(symbol: self.invest.asset.symbol)) (\(fiatAmount.fiatAmount(currency: self.fiat)))"
+                    self.feeText = "\(L10n.excludingFeesYouWillDeposit) \(amountText)"
+                }
+            })
+            .store(in: &subscriptions)
 
         $isSliderOn.filter { $0 }
             .sink { [weak self] _ in
@@ -239,7 +243,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     func fiatToToken(amount: Double) -> Double {
-        guard let tokenFiatPrice else { return 0 }
+        guard let tokenFiatPrice = tokenFiatPrice else { return 0 }
         return amount / tokenFiatPrice
     }
 
@@ -259,23 +263,29 @@ class DepositSolendViewModel: ObservableObject {
 
     private func deposit(lamports: UInt64) async throws {
         guard loading == false, lamports > 0 else { return }
+
+        notificationService.showInAppNotification(.done(L10n.SendingYourDepositToSolend.justWaitUntilItSDone))
         do {
             loading = true
             defer { loading = false }
             try await actionService.deposit(amount: lamports, symbol: invest.asset.symbol)
+            notificationService.showInAppNotification(.done(L10n.theFundsHaveBeenDepositedSuccessfully))
         } catch {
-            notificationService.showInAppNotification(.error(error.localizedDescription))
+            notificationService.showInAppNotification(.error(L10n.thereWasAProblemDepositingFunds))
         }
     }
 
     private func withdraw(lamports: UInt64) async throws {
         guard loading == false, lamports > 0 else { return }
+
+        notificationService.showInAppNotification(.done(L10n.WithdrawingYourFundsFromSolend.justWaitUntilItSDone))
         do {
             loading = true
             defer { loading = false }
             try await actionService.withdraw(amount: inputLamport, symbol: invest.asset.symbol)
+            notificationService.showInAppNotification(.done(L10n.theFundsHaveBeenWithdrawnSuccessfully))
         } catch {
-            notificationService.showInAppNotification(.error(error.localizedDescription))
+            notificationService.showInAppNotification(.error(L10n.thereWasAProblemWithdrawingFunds))
         }
     }
 
@@ -299,6 +309,10 @@ class DepositSolendViewModel: ObservableObject {
     func useMaxTapped() {
         focusSide = .left
         inputToken = maxAmount().toString(maximumFractionDigits: 9)
+    }
+
+    func showDetail() {
+        transactionDetailsSubject.send(detailItem)
     }
 }
 
