@@ -5,6 +5,7 @@ struct DepositSolendView: View {
     @SwiftUI.Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @StateObject var viewModel: DepositSolendViewModel
     @State private var showingAlert = false
+    @State private var showDetail = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -65,10 +66,17 @@ struct DepositSolendView: View {
                                 presentationMode.wrappedValue.dismiss()
                             })
                         )
-                            .disabled(viewModel.loading)
-                            .frame(height: TextButton.Size.large.height)
+                        .disabled(viewModel.loading)
+                        .frame(height: TextButton.Size.large.height)
+//                        NavigationLink(destination: SolendTransactionDetailsView(model: viewModel.detailItem)) {
+//                            Circle()
+//                                .fill(Color(Asset.Colors.lime.color))
+//                                .frame(width: 56, height: 56)
+//                                .overlay(Image(uiImage: UIImage.infoStraight))
+//                        }
                         Button {
                             // Open info
+                            self.showDetail = true
                         } label: {
                             Circle()
                                 .fill(Color(Asset.Colors.lime.color))
@@ -137,6 +145,9 @@ struct DepositSolendView: View {
         }
         .padding(.horizontal, 16)
         .navigationTitle(viewModel.title)
+        .sheet(isPresented: $showDetail) {
+            SolendTransactionDetailsView(model: viewModel.detailItem)
+        }
     }
 }
 
