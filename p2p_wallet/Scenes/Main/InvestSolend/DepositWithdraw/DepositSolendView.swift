@@ -1,24 +1,20 @@
-//
-//  DepositSolendView.swift
-//  p2p_wallet
-//
-//  Created by Giang Long Tran on 15.09.2022.
-//
-
 import KeyAppUI
 import SwiftUI
 
 struct DepositSolendView: View {
     @SwiftUI.Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @StateObject var viewModel: DepositSolendViewModel
+    @State private var showingAlert = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            InvestSolendCell(
-                asset: viewModel.invest.asset,
-                deposit: viewModel.invest.userDeposit?.depositedAmount,
-                apy: viewModel.invest.market?.supplyInterest
-            ).padding(.top, 8)
+            InvestSolendHeaderView(
+                title: viewModel.headerViewTitle,
+                logoURLString: viewModel.headerViewLogo,
+                subtitle: viewModel.headerViewSubtitle,
+                rightTitle: viewModel.headerViewRightTitle,
+                rightSubtitle: viewModel.headerViewRightSubtitle
+            ).padding(.top, 24)
 
             Spacer()
 
@@ -32,7 +28,7 @@ struct DepositSolendView: View {
                     viewModel?.focusSide = .left
                 } label: {
                     if viewModel.isUsingMax {
-                        Text("✅ Using the MAX amount")
+                        Text(L10n.usingTheMAXAmount)
                             .apply(style: .text4)
                             .foregroundColor(Color(Asset.Colors.mountain.color))
                     } else {
@@ -43,12 +39,13 @@ struct DepositSolendView: View {
                 }
             }.padding(.horizontal, 8)
 
-            BuyInputOutputView(
+            DepositWithdrawInputView(
                 leftTitle: $viewModel.inputToken,
                 leftSubtitle: viewModel.invest.asset.symbol,
                 rightTitle: $viewModel.inputFiat,
                 rightSubtitle: viewModel.fiat.code,
-                activeSide: $viewModel.focusSide
+                activeSide: $viewModel.focusSide,
+                inputError: $viewModel.hasError
             ) { [weak viewModel] side in
                 viewModel?.focusSide = side
             }
@@ -58,13 +55,14 @@ struct DepositSolendView: View {
                 if viewModel.isButtonEnabled {
                     HStack(spacing: 8) {
                         SliderButtonView(
-                            title: "Slide to deposit",
-                            image: Asset.MaterialIcon.arrowRight.image,
+                            title: viewModel.sliderTitle,
+                            image: UIImage.arrowRight,
                             style: .black,
-                            isOn: .init(get: {
-                                viewModel.isDepositOn
-                            }, set: { val in
-                                viewModel.isDepositOn = val
+                            isOn: .init(get: { [weak viewModel] in
+                                viewModel?.isSliderOn ?? false
+                            }, set: { [weak viewModel] val in
+                                viewModel?.isSliderOn = val
+                                presentationMode.wrappedValue.dismiss()
                             })
                         )
                             .disabled(viewModel.loading)
@@ -86,10 +84,30 @@ struct DepositSolendView: View {
                             .frame(height: 56)
                             .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
                         if viewModel.hasError {
-                            Circle()
-                                .fill(Color(Asset.Colors.rose.color.withAlphaComponent(0.2)))
-                                .frame(width: 56, height: 56)
-                                .overlay(Image(uiImage: UIImage.solendSubtract))
+                            Button(action: {
+                                showingAlert = true
+                            }) {
+                                Circle()
+                                    .fill(Color(Asset.Colors.rose.color.withAlphaComponent(0.2)))
+                                    .frame(width: 56, height: 56)
+                                    .overlay(Image(uiImage: UIImage.solendSubtract))
+                            }
+                            .alert(
+                                isPresented: $showingAlert
+                            ) {
+                                Alert(
+                                    title: Text(
+                                        L10n.YouAreTryingToDepositMoreFundsThanPossible
+                                            .ifYouWantToDepositTheMaximumAmountPressDepositMAXAmount
+                                    ),
+                                    primaryButton: .default(Text("Deposit MAX Amount"),
+                                                            action: { [weak viewModel] in
+                                                                viewModel?.useMaxTapped()
+                                                                showingAlert = false
+                                                            }),
+                                    secondaryButton: .default(Text(L10n.cancel))
+                                )
+                            }
                         }
                     }
                 }
@@ -118,7 +136,7 @@ struct DepositSolendView: View {
             }
         }
         .padding(.horizontal, 16)
-        .navigationTitle(L10n.depositIntoSolend)
+        .navigationTitle(viewModel.title)
     }
 }
 
