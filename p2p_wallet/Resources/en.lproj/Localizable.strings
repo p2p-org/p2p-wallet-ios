@@ -869,3 +869,8 @@ another";
 "Withdraw funds" = "Withdraw funds";
 "✅ Using the MAX amount" = "✅ Using the MAX amount";
 "You are trying to deposit more funds than possible. If you want to deposit the maximum amount, press “Deposit MAX amount”." = "You are trying to deposit more funds than possible. If you want to deposit the maximum amount, press “Deposit MAX amount”.";
+"Slide to deposit" = "Slide to deposit";
+"Slide to withdraw" = "Slide to withdraw";
+"Yielding" = "Yielding";
+"Use all" = "Use all";
+"Deposit MAX Amount" = "Deposit MAX Amount";

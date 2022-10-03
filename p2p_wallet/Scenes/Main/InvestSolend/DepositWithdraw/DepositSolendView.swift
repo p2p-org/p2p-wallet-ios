@@ -100,7 +100,7 @@ struct DepositSolendView: View {
                                         L10n.YouAreTryingToDepositMoreFundsThanPossible
                                             .ifYouWantToDepositTheMaximumAmountPressDepositMAXAmount
                                     ),
-                                    primaryButton: .default(Text("Deposit MAX Amount"),
+                                    primaryButton: .default(Text(L10n.depositMAXAmount),
                                                             action: { [weak viewModel] in
                                                                 viewModel?.useMaxTapped()
                                                                 showingAlert = false

@@ -36,7 +36,7 @@ class DepositSolendViewModel: ObservableObject {
     @Published var isSliderOn = false
 
     var sliderTitle: String {
-        strategy == .deposit ? "Slide to deposit" : "Slide to withdraw"
+        strategy == .deposit ? L10n.slideToDeposit : L10n.slideToWithdraw
     }
 
     var headerViewTitle: String {
@@ -44,7 +44,9 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var headerViewSubtitle: String {
-        strategy == .deposit ? invest.asset.name : "Yielding \(formatApy(invest.market?.supplyInterest ?? "")) APY"
+        strategy == .deposit ?
+            invest.asset.name :
+            L10n.yielding + " \(formatApy(invest.market?.supplyInterest ?? "")) APY"
     }
 
     var headerViewRightTitle: String {
@@ -86,7 +88,7 @@ class DepositSolendViewModel: ObservableObject {
         tokenFiatPrice = priceService.currentPrice(for: invest.asset.symbol)?.value
 
         feeText = defaultFeeText()
-        maxText = "Use all \(maxAmount().tokenAmount(symbol: invest.asset.symbol))"
+        maxText = L10n.useAll + " \(maxAmount().tokenAmount(symbol: invest.asset.symbol))"
 
         dataService.marketInfo
             .sink { [weak self] markets in
