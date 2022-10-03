@@ -10,4 +10,5 @@ public extension Feature {
     static let buyScenarioEnabled = Feature(rawValue: "keyapp_buy_scenario_enabled")
     static let buyBankTransferEnabled = Feature(rawValue: "buy_bank_transfer_enabled")
     static let settingsFeature = Feature(rawValue: "settingsFeature")
+    static let investSolendFeature = Feature(rawValue: "keyapp_invest_solend_enabled")
 }
