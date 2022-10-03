@@ -345,7 +345,7 @@ extension Resolver: ResolverRegistering {
 
         register {
             SolendActionServiceImpl(
-                rpcUrl: URL(string: Defaults.apiEndPoint.socketUrl)!.absoluteString,
+                rpcUrl: Defaults.apiEndPoint.getURL(),
                 lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
                 userAccountStorage: resolve(),
                 solend: resolve(),
