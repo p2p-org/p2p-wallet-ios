@@ -18,11 +18,10 @@ final class TabBarController: UITabBarController {
 
     private var cancellables = Set<AnyCancellable>()
 
-    private var homeCoordinator: HomeCoordinator?
-    private var sendTokenCoordinator: SendToken.Coordinator!
-    private var investSolendCoordinator: InvestSolendCoordinator?
+    private var solendCoordinator: SolendCoordinator!
+    private var homeCoordinator: HomeCoordinator!
     private var actionsCoordinator: ActionsCoordinator?
-    private var settingsCoordinator: SettingsCoordinator?
+    private var settingsCoordinator: SettingsCoordinator!
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -91,40 +90,29 @@ final class TabBarController: UITabBarController {
     private func setupViewControllers() {
         let homeNavigation = UINavigationController()
         homeCoordinator = HomeCoordinator(navigationController: homeNavigation, tabBarController: self)
-        homeCoordinator?.start()
+        homeCoordinator.start()
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
 
-        let investVCNavigation = UINavigationController()
-        investSolendCoordinator = InvestSolendCoordinator(navigationController: investVCNavigation)
-        investSolendCoordinator?.start()
-            .sink { _ in }
-            .store(in: &cancellables)
-
-        let historyVC = History.Scene()
-
-        let vm = SendToken.ViewModel(
-            walletPubkey: nil,
-            destinationAddress: nil,
-            relayMethod: .default,
-            canGoBack: false
-        )
-        sendTokenCoordinator = SendToken.Coordinator(viewModel: vm, navigationController: nil)
-        sendTokenCoordinator.doneHandler = { [weak self] in
-            CATransaction.begin()
-//            CATransaction.setCompletionBlock { [weak homeViewModel] in
-//                homeViewModel?.scrollToTop()
-//            }
-            self?.changeItem(to: .wallet)
-            CATransaction.commit()
+        let solendOrHistoryNavigation: UINavigationController
+        let historyOrFeedbackNavigation: UINavigationController
+        if available(.investSolendFeature) {
+            solendOrHistoryNavigation = UINavigationController()
+            solendCoordinator = SolendCoordinator(navigationController: solendOrHistoryNavigation)
+            solendCoordinator.start()
+                .sink(receiveValue: { _ in })
+                .store(in: &cancellables)
+            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
+        } else {
+            solendOrHistoryNavigation = UINavigationController(rootViewController: History.Scene())
+            historyOrFeedbackNavigation = UINavigationController(rootViewController: History.Scene())
         }
-        let sendTokenNavigationVC = sendTokenCoordinator.start(hidesBottomBarWhenPushed: false)
 
         let settingsNavigation: UINavigationController
         if available(.settingsFeature) {
             settingsNavigation = UINavigationController()
             settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
-            settingsCoordinator?.start()
+            settingsCoordinator.start()
                 .sink(receiveValue: { _ in })
                 .store(in: &cancellables)
         } else {
@@ -135,9 +123,9 @@ final class TabBarController: UITabBarController {
 
         viewControllers = [
             homeNavigation,
-            investVCNavigation,
-            sendTokenNavigationVC,
-            UINavigationController(rootViewController: historyVC),
+            solendOrHistoryNavigation,
+            UINavigationController(),
+            historyOrFeedbackNavigation,
             settingsNavigation,
         ]
     }
@@ -156,7 +144,11 @@ final class TabBarController: UITabBarController {
         }
     }
 
-    func routeToSolendTutorial() {
+    private func routeToFeedback() {
+        helpCenterLauncher.launch()
+    }
+
+    private func routeToSolendTutorial() {
         var view = SolendTutorialView(viewModel: .init())
         view.doneHandler = { [weak self] in
             self?.changeItem(to: .invest)
@@ -179,10 +171,20 @@ extension TabBarController: UITabBarControllerDelegate {
         _ tabBarController: UITabBarController,
         shouldSelect viewController: UIViewController
     ) -> Bool {
-        customTabBar.updateSelectedViewPositionIfNeeded()
-
         guard let selectedIndex = tabBarController.viewControllers?.firstIndex(of: viewController) else {
             return true
+        }
+
+        if TabItem(rawValue: selectedIndex) == .history, !available(.investSolendFeature) {
+            routeToFeedback()
+            return false
+        }
+        customTabBar.updateSelectedViewPositionIfNeeded()
+        if TabItem(rawValue: selectedIndex) == .invest {
+            if available(.investSolendFeature), !Defaults.isSolendTutorialShown {
+                routeToSolendTutorial()
+                return false
+            }
         }
 
         if TabItem(rawValue: selectedIndex) == .wallet,
@@ -190,13 +192,6 @@ extension TabBarController: UITabBarControllerDelegate {
            self.selectedIndex == selectedIndex
         {
             homeCoordinator?.scrollToTop()
-        }
-
-        // Solend tutorial first
-
-        if TabItem(rawValue: selectedIndex) == .invest, !Defaults.isSolendTutorialShown {
-            routeToSolendTutorial()
-            return false
         }
 
         return true
@@ -211,11 +206,11 @@ private extension TabItem {
         case .wallet:
             return .tabBarSelectedWallet
         case .invest:
-            return .tabBarEarn
+            return available(.investSolendFeature) ? .tabBarEarn : .tabBarHistory
         case .actions:
             return UIImage()
         case .history:
-            return .tabBarHistory
+            return available(.investSolendFeature) ? .tabBarHistory : .tabBarFeedback
         case .settings:
             return .tabBarSettings
         }
@@ -226,11 +221,11 @@ private extension TabItem {
         case .wallet:
             return L10n.wallet
         case .invest:
-            return L10n.earn
+            return available(.investSolendFeature) ? L10n.earn : L10n.history
         case .actions:
             return ""
         case .history:
-            return L10n.history
+            return available(.investSolendFeature) ? L10n.history : L10n.feedback
         case .settings:
             return L10n.settings
         }

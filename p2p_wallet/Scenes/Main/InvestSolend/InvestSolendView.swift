@@ -14,16 +14,6 @@ struct InvestSolendView: View {
     var body: some View {
         NavigationView {
             VStack {
-                // Title
-                HStack {
-                    Text(L10n.earnAYield)
-                        .fontWeight(.bold)
-                        .apply(style: .largeTitle)
-                    Spacer()
-                }
-                .padding(.top, 20)
-                .padding(.horizontal, 16)
-
                 // Banner
                 InvestSolendBannerView(viewModel: InvestSolendBannerViewModel())
                     .padding(.horizontal, 16)
@@ -40,21 +30,24 @@ struct InvestSolendView: View {
                 }.padding(.horizontal, 16)
 
                 // Market
-                FixedList {
-                    if viewModel.loading {
-                        HStack {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                    } else if viewModel.market.isEmpty {
-                        HStack {
-                            Spacer()
-                            Text(L10n.somethingWentWrong + "...")
-                            Button {
-                                Task { try await viewModel.update() }
-                            } label: {
-                                Text(L10n.tryAgain)
+                ScrollView {
+                    VStack {
+                        if viewModel.loading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        } else if let market = viewModel.market {
+                            // Cells
+                            ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in
+                                InvestSolendCell(
+                                    asset: asset,
+                                    deposit: userDeposit?.depositedAmount,
+                                    apy: market?.supplyInterest
+                                ).onTapGesture {
+                                    viewModel.assetClicked(asset, market: market)
+                                }
                             }
                             Spacer()
                         }
@@ -74,14 +67,9 @@ struct InvestSolendView: View {
                     }
                 }
                 .frame(maxHeight: .infinity)
-                .navigationBarHidden(true)
             }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .navigationBarTitle(L10n.earnAYield)
         }
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        InvestSolendView(viewModel: .init(mocked: true))
     }
 }

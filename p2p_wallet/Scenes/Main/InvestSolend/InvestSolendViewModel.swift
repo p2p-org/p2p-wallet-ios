@@ -19,6 +19,13 @@ class InvestSolendViewModel: ObservableObject {
     private let service: SolendDataService
     private var subscriptions = Set<AnyCancellable>()
 
+    private let depositSubject = PassthroughSubject<SolendConfigAsset, Never>()
+    var deposit: AnyPublisher<SolendConfigAsset, Never> { depositSubject.eraseToAnyPublisher() }
+    private let topUpForContinueSubject = PassthroughSubject<SolendTopUpForContinueCoordinator.Model, Never>()
+    var topUpForContinue: AnyPublisher<SolendTopUpForContinueCoordinator.Model, Never> {
+        topUpForContinueSubject.eraseToAnyPublisher()
+    }
+
     @Published var loading: Bool = false
     @Published var market: [Invest] = []
     @Published var totalDeposit: Double = 0
@@ -88,5 +95,20 @@ class InvestSolendViewModel: ObservableObject {
 
     func update() async throws {
         try await service.update()
+    }
+
+    func assetClicked(_ asset: SolendConfigAsset, market: SolendMarketInfo?) {
+        let haveThisToken = false
+        if haveThisToken {
+            depositSubject.send(asset)
+        } else {
+            // TODO: - Чек, есть у нас вообще токены или нет
+            let haveSomeTokens = true
+            topUpForContinueSubject.send(.init(
+                asset: asset,
+                apy: Double(market?.supplyInterest ?? ""),
+                strategy: haveSomeTokens ? .withoutOnlyTokenForDeposit : .withoutAnyTokens
+            ))
+        }
     }
 }
