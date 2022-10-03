@@ -24,6 +24,7 @@ PODS:
   - CocoaDebug (1.7.2)
   - CombineCocoa (0.4.0)
   - CountriesAPI (1.0.0)
+  - CryptoSwift (1.6.0)
   - Down (0.11.0)
   - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
@@ -163,6 +164,7 @@ PODS:
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
   - Onboarding (1.0.0):
+    - CryptoSwift (~> 1.6.0)
     - JSBridge
     - SolanaSwift (~> 2)
   - OrcaSwapSwift (2.1.1):
@@ -289,6 +291,7 @@ SPEC REPOS:
     - AppAuth
     - CocoaDebug
     - CombineCocoa
+    - CryptoSwift
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -412,7 +415,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -427,10 +430,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -442,10 +445,10 @@ CHECKOUT OPTIONS:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: 85b19f738d0afab2c9dcdf36bd69f1d4caadfa9d
@@ -454,10 +457,10 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
@@ -475,13 +478,13 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: 72f1a7887b64b68f7430c06abca1b379f1738609
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: 02fcc35f1b6b3eecc744347409244ca0f2933bd2
+    :commit: 70cee2c6e7291d4251a3aa7e8e81dc1d86213f19
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -497,6 +500,7 @@ SPEC CHECKSUMS:
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
   CountriesAPI: 26d03b67fb2fd4ff26111b71ed3d492a3babb592
+  CryptoSwift: 562f8eceb40e80796fffc668b0cad9313284cfa6
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
   Firebase: 5ae8b7cf8efce559a653aef0ad95bab3f427c351
@@ -527,7 +531,7 @@ SPEC CHECKSUMS:
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
   NameService: a5f786e710230ae26ea899b5fd7b894c740b86db
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  Onboarding: 68a96e945da8891b329481b69a7f051483f6005f
+  Onboarding: 9fad345659c5f43d4ceb718a22ea6820c9c3bfc5
   OrcaSwapSwift: 8184e41e83f5349b38cc229532331064f8ed1fe8
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
