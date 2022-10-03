@@ -18,10 +18,10 @@ final class TabBarController: UITabBarController {
 
     private var cancellables = Set<AnyCancellable>()
 
-    private var homeCoordinator: HomeCoordinator?
-    private var sendTokenCoordinator: SendToken.Coordinator!
+    private var solendCoordinator: SolendCoordinator!
+    private var homeCoordinator: HomeCoordinator!
     private var actionsCoordinator: ActionsCoordinator?
-    private var settingsCoordinator: SettingsCoordinator?
+    private var settingsCoordinator: SettingsCoordinator!
 
     private var customTabBar: CustomTabBar { tabBar as! CustomTabBar }
 
@@ -90,35 +90,21 @@ final class TabBarController: UITabBarController {
     private func setupViewControllers() {
         let homeNavigation = UINavigationController()
         homeCoordinator = HomeCoordinator(navigationController: homeNavigation, tabBarController: self)
-        homeCoordinator?.start()
+        homeCoordinator.start()
             .sink(receiveValue: { _ in })
             .store(in: &cancellables)
 
-        let investVC = UIHostingControllerWithoutNavigation(rootView: InvestSolendView(viewModel: .init()))
-        let historyVC = History.Scene()
-
-        let vm = SendToken.ViewModel(
-            walletPubkey: nil,
-            destinationAddress: nil,
-            relayMethod: .default,
-            canGoBack: false
-        )
-        sendTokenCoordinator = SendToken.Coordinator(viewModel: vm, navigationController: nil)
-        sendTokenCoordinator.doneHandler = { [weak self] in
-            CATransaction.begin()
-//            CATransaction.setCompletionBlock { [weak homeViewModel] in
-//                homeViewModel?.scrollToTop()
-//            }
-            self?.changeItem(to: .wallet)
-            CATransaction.commit()
-        }
-        let sendTokenNavigationVC = sendTokenCoordinator.start(hidesBottomBarWhenPushed: false)
+        let solendNavigation = UINavigationController()
+        solendCoordinator = SolendCoordinator(navigationController: solendNavigation)
+        solendCoordinator.start()
+            .sink(receiveValue: { _ in })
+            .store(in: &cancellables)
 
         let settingsNavigation: UINavigationController
         if available(.settingsFeature) {
             settingsNavigation = UINavigationController()
             settingsCoordinator = SettingsCoordinator(navigationController: settingsNavigation)
-            settingsCoordinator?.start()
+            settingsCoordinator.start()
                 .sink(receiveValue: { _ in })
                 .store(in: &cancellables)
         } else {
@@ -129,9 +115,9 @@ final class TabBarController: UITabBarController {
 
         viewControllers = [
             homeNavigation,
-            UINavigationController(rootViewController: investVC),
-            sendTokenNavigationVC,
-            UINavigationController(rootViewController: historyVC),
+            solendNavigation,
+            UINavigationController(),
+            UINavigationController(rootViewController: History.Scene()),
             settingsNavigation,
         ]
     }
