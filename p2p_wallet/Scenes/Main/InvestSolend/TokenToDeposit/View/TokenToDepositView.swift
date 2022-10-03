@@ -18,31 +18,6 @@ struct TokenToDepositView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Color(Asset.Colors.rain.color)
-                .frame(width: 31, height: 4)
-                .cornerRadius(2)
-            HStack(alignment: .bottom, spacing: 0) {
-                Spacer()
-                Text(L10n.tokenToDeposit)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .title3, weight: .semibold))
-                    .padding(.top, 18)
-                Spacer()
-                Button(
-                    action: {
-                        closeSubject.send()
-                    },
-                    label: {
-                        Image(uiImage: .closeAction)
-                    }
-                )
-            }
-            .padding(.trailing, 16)
-            .padding(.leading, 32)
-            Color(Asset.Colors.rain.color)
-                .frame(height: 1)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 20)
             VStack(spacing: 8) {
                 ForEach(models) { model in
                     token(model: model)
@@ -65,6 +40,7 @@ struct TokenToDepositView: View {
                 }
             ).padding(.top, 32)
         }
+        .sheetHeader(title: L10n.tokenToDeposit) { closeSubject.send() }
         .padding(.top, 6)
         .padding(.bottom, 16)
     }
