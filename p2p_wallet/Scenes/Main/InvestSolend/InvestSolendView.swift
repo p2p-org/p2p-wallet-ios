@@ -41,27 +41,16 @@ struct InvestSolendView: View {
                         } else if let market = viewModel.market {
                             // Cells
                             ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in
-                                InvestSolendCell(
-                                    asset: asset,
-                                    deposit: userDeposit?.depositedAmount,
-                                    apy: market?.supplyInterest
-                                ).onTapGesture {
+                                Button {
                                     viewModel.assetClicked(asset, market: market)
+                                } label: {
+                                    InvestSolendCell(
+                                        asset: asset,
+                                        deposit: userDeposit?.depositedAmount,
+                                        apy: market?.supplyInterest
+                                    )
                                 }
                             }
-                            Spacer()
-                        }
-                    } else {
-                        // Cells
-                        ForEach(viewModel.market, id: \.asset.symbol) { asset, market, userDeposit in
-                            NavigationLink(destination: DepositSolendView(viewModel: try! .init(initialAsset: asset))) {
-                                InvestSolendCell(
-                                    asset: asset,
-                                    deposit: userDeposit?.depositedAmount,
-                                    apy: market?.supplyInterest
-                                )
-                            }
-                            .padding(.trailing, 20)
                         }
                         Spacer(minLength: 20)
                     }
