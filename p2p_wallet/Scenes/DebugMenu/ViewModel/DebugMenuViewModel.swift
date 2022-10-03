@@ -60,11 +60,14 @@ extension DebugMenuViewModel {
 extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
         case newSettings
+        case investSolend
 
         var title: String {
             switch self {
             case .newSettings:
                 return "New Settings"
+            case .investSolend:
+                return "Invest Solend"
             }
         }
 
@@ -72,6 +75,8 @@ extension DebugMenuViewModel {
             switch self {
             case .newSettings:
                 return .settingsFeature
+            case .investSolend:
+                return .investSolendFeature
             }
         }
     }
