@@ -17,6 +17,8 @@ enum InvestSolendError {
 @MainActor
 class InvestSolendViewModel: ObservableObject {
     private let service: SolendDataService
+    @Injected private var wallets: WalletsRepository
+
     private var subscriptions = Set<AnyCancellable>()
 
     private let depositSubject = PassthroughSubject<SolendConfigAsset, Never>()
@@ -98,16 +100,21 @@ class InvestSolendViewModel: ObservableObject {
     }
 
     func assetClicked(_ asset: SolendConfigAsset, market: SolendMarketInfo?) {
-        let haveThisToken = false
-        if haveThisToken {
+        // Get user token account
+        let tokenAccount: Wallet? = wallets
+            .getWallets()
+            .first(where: { (wallet: Wallet) -> Bool in asset.mintAddress == wallet.mintAddress })
+
+        if (tokenAccount?.amount ?? 0) > 0 {
+            // User has this token for deposit
             depositSubject.send(asset)
         } else {
-            // TODO: - Чек, есть у нас вообще токены или нет
-            let haveSomeTokens = true
+            // Check user has another token to deposit
+            let hasAnotherToken: Bool = wallets.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
             topUpForContinueSubject.send(.init(
                 asset: asset,
                 apy: Double(market?.supplyInterest ?? ""),
-                strategy: haveSomeTokens ? .withoutOnlyTokenForDeposit : .withoutAnyTokens
+                strategy: hasAnotherToken ? .withoutOnlyTokenForDeposit : .withoutAnyTokens
             ))
         }
     }
