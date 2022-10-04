@@ -57,14 +57,14 @@ class InvestSolendViewModel: ObservableObject {
             .sink { [dataService] _ in Task { try await dataService.update() } }
             .store(in: &subscriptions)
 
-        /// Display error when rate is missing
+        // Display error when rate is missing
         dataService.marketInfo
             .receive(on: RunLoop.main)
             .sink { [weak self] (marketInfo: [SolendMarketInfo]?) in
                 self?.bannerError = marketInfo == nil ? .missingRate : nil
             }.store(in: &subscriptions)
 
-        /// Process data from data service
+        // Process data from data service
         dataService.availableAssets
             .combineLatest(dataService.marketInfo, dataService.deposits)
             .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
