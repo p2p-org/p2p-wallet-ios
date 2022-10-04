@@ -82,17 +82,18 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var detailItem: SolendTransactionDetailsView.Model {
-        .init(strategy: strategy == .deposit ? .deposit : .withdraw,
-              amount: 1,
-              fiatAmount: 2,
-              transferFee: 3,
-              fiatTransferFee: 4,
-              fee: 5,
-              fiatFee: 6,
-              total: 7,
-              fiatTotal: inputFiat.fiatFormat.double ?? 0,
-              symbol: invest.asset.symbol,
-              feeSymbol: invest.asset.symbol)
+        .init(
+            amount: 1,
+            fiatAmount: 2,
+            transferFee: 3,
+            fiatTransferFee: 4,
+            fee: 5,
+            fiatFee: 6,
+            total: 7,
+            fiatTotal: inputFiat.fiatFormat.double ?? 0,
+            symbol: invest.asset.symbol,
+            feeSymbol: invest.asset.symbol
+        )
     }
 
     /// Balance for selected Token

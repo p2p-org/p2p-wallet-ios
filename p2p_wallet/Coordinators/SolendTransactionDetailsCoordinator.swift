@@ -7,24 +7,31 @@
 
 import Combine
 import Resolver
+import SwiftUI
 import UIKit
 
 final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
+    typealias Strategy = SolendTransactionDetailsView.Strategy
+    typealias Model = SolendTransactionDetailsView.State
+
     private let controller: UIViewController
-    private let model: SolendTransactionDetailsView.Model
+    private let strategy: Strategy
+    private let model: Binding<Model>
 
     private let transition = PanelTransition()
 
     init(
         controller: UIViewController,
-        model: SolendTransactionDetailsView.Model
+        strategy: Strategy,
+        model: Binding<Model>
     ) {
         self.controller = controller
+        self.strategy = strategy
         self.model = model
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let view = SolendTransactionDetailsView(model: model)
+        let view = SolendTransactionDetailsView(strategy: strategy, model: model)
         transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
         viewController.view.layer.cornerRadius = 16
