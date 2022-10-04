@@ -61,6 +61,7 @@ struct EarnBannerView: View {
                             .resizable()
                             .frame(width: 28, height: 28)
                     }
+                    .buttonStyle(PlainButtonStyle()) // prevent getting called on tapping cell
                     .padding(.top, 30)
                     .padding(.trailing, 5)
                     Spacer()
