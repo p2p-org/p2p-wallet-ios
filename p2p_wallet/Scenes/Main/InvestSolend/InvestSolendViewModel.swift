@@ -99,6 +99,8 @@ class InvestSolendViewModel: ObservableObject {
         try await dataService.update()
     }
 
+    func showDeposits() {}
+
     func assetClicked(_ asset: SolendConfigAsset, market: SolendMarketInfo?) {
         // Get user token account
         let tokenAccount: Wallet? = wallets

@@ -10,10 +10,17 @@ class DepositSolendViewModel: ObservableObject {
     private let strategy: Strategy
     private let dataService: SolendDataService
     private let actionService: SolendActionService
+    private var subscriptions = Set<AnyCancellable>()
+    private var market: [Invest] = []
 
     private let transactionDetailsSubject = PassthroughSubject<SolendTransactionDetailsView.Model, Never>()
     var transactionDetails: AnyPublisher<SolendTransactionDetailsView.Model, Never> {
         transactionDetailsSubject.eraseToAnyPublisher()
+    }
+
+    private let tokenSelectSubject = PassthroughSubject<[Any], Never>()
+    var tokenSelect: AnyPublisher<[Any], Never> {
+        tokenSelectSubject.eraseToAnyPublisher()
     }
 
     private let aboutSolendSubject = PassthroughSubject<Void, Never>()
@@ -22,8 +29,6 @@ class DepositSolendViewModel: ObservableObject {
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
     @Injected private var walletRepository: WalletsRepository
-
-    var subscriptions = Set<AnyCancellable>()
 
     @Published var focusSide: DepositWithdrawInputViewActiveSide = .left
     /// Is loading fees
@@ -75,23 +80,19 @@ class DepositSolendViewModel: ObservableObject {
         strategy == .deposit ? L10n.depositIntoSolend : L10n.withdrawFunds
     }
 
-    private func formatApy(_ apy: String) -> String {
-        guard let apyDouble = Double(apy) else { return "" }
-        return "\(apyDouble.fixedDecimal(2))%"
-    }
-
     var detailItem: SolendTransactionDetailsView.Model {
-        .init(strategy: strategy == .deposit ? .deposit : .withdraw,
-              amount: 1,
-              fiatAmount: 2,
-              transferFee: 3,
-              fiatTransferFee: 4,
-              fee: 5,
-              fiatFee: 6,
-              total: 7,
-              fiatTotal: inputFiat.fiatFormat.double ?? 0,
-              symbol: invest.asset.symbol,
-              feeSymbol: invest.asset.symbol)
+        .init(
+            amount: 1,
+            fiatAmount: 2,
+            transferFee: 3,
+            fiatTransferFee: 4,
+            fee: 5,
+            fiatFee: 6,
+            total: 7,
+            fiatTotal: inputFiat.fiatFormat.double ?? 0,
+            symbol: invest.asset.symbol,
+            feeSymbol: invest.asset.symbol
+        )
     }
 
     /// Balance for selected Token
@@ -102,7 +103,11 @@ class DepositSolendViewModel: ObservableObject {
     /// Rate for selected pair Token -> Fiat
     private var tokenFiatPrice: Double?
 
-    init(strategy: Strategy = .deposit, initialAsset: SolendConfigAsset, mocked: Bool = false) throws {
+    init(
+        strategy: Strategy = .deposit,
+        initialAsset: SolendConfigAsset,
+        mocked: Bool = false
+    ) throws {
         self.strategy = strategy
         dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
         actionService = mocked ? SolendActionServiceMock() : Resolver.resolve(SolendActionService.self)
@@ -127,6 +132,26 @@ class DepositSolendViewModel: ObservableObject {
                 self.invest.userDeposit = deposit
                 self.maxText = L10n.useAll + " \(self.maxAmount().tokenAmount(symbol: self.invest.asset.symbol))"
             }
+            .store(in: &subscriptions)
+
+        dataService.availableAssets
+            .combineLatest(dataService.marketInfo, dataService.deposits)
+            .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
+                guard let assets = assets else { return [] }
+                return assets.map { asset -> Invest in
+                    (
+                        asset: asset,
+                        market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
+                        userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
+                    )
+                }.sorted { (v1: Invest, v2: Invest) -> Bool in
+                    let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
+                    let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
+                    return apy1 > apy2
+                }
+            }
+            .receive(on: RunLoop.main)
+            .assign(to: \.market, on: self)
             .store(in: &subscriptions)
         bind()
     }
@@ -314,8 +339,54 @@ class DepositSolendViewModel: ObservableObject {
         inputToken = maxAmount().toString(maximumFractionDigits: 9)
     }
 
-    func showDetail() {
+    func headerTapped() {
+        if strategy == .deposit {
+            tokenSelectSubject.send(
+                market
+                    .compactMap { asset, market, _ in
+                        let wallet = walletRepository.getWallets()
+                            .first { wallet in
+                                wallet.amount > 0 && market?.symbol == wallet.token.symbol
+                            }
+                        if let newWallet = wallet {
+                            return TokenToDepositView.Model(
+                                amount: newWallet.amount,
+                                imageUrl: URL(string: asset.logo ?? ""),
+                                symbol: newWallet.token.symbol,
+                                name: newWallet.token.name,
+                                apy: market?.supplyInterest.double ?? 0
+                            )
+                        }
+                        return nil
+                    }
+            )
+        } else {
+            tokenSelectSubject.send(
+                market
+                    .filter { $2 != nil }
+                    .map { asset, market, userDeposit in
+                        TokenToWithdrawView.Model(
+                            amount: userDeposit?.depositedAmount.double,
+                            imageUrl: URL(string: asset.logo ?? ""),
+                            symbol: userDeposit?.symbol ?? "",
+                            fiatAmount: userDeposit?.depositedAmount.double * priceService
+                                .currentPrice(for: userDeposit?.symbol ?? "")?.value,
+                            apy: market?.supplyInterest.double ?? 0
+                        )
+                    }
+            )
+        }
+    }
+
+    func showDetailTapped() {
         transactionDetailsSubject.send(detailItem)
+    }
+
+    // MARK: -
+
+    private func formatApy(_ apy: String) -> String {
+        guard let apyDouble = Double(apy) else { return "" }
+        return "\(apyDouble.fixedDecimal(2))%"
     }
 
     func showAboutSolend() {

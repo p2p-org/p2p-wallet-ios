@@ -8,13 +8,17 @@ struct DepositSolendView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            InvestSolendHeaderView(
-                title: viewModel.headerViewTitle,
-                logoURLString: viewModel.headerViewLogo,
-                subtitle: viewModel.headerViewSubtitle,
-                rightTitle: viewModel.headerViewRightTitle,
-                rightSubtitle: viewModel.headerViewRightSubtitle
-            ).padding(.top, 24)
+            Button {
+                viewModel.headerTapped()
+            } label: {
+                InvestSolendHeaderView(
+                    title: viewModel.headerViewTitle,
+                    logoURLString: viewModel.headerViewLogo,
+                    subtitle: viewModel.headerViewSubtitle,
+                    rightTitle: viewModel.headerViewRightTitle,
+                    rightSubtitle: viewModel.headerViewRightSubtitle
+                ).padding(.top, 24)
+            }
 
             Spacer()
 
@@ -67,14 +71,8 @@ struct DepositSolendView: View {
                         )
                             .disabled(viewModel.loading)
                             .frame(height: TextButton.Size.large.height)
-//                        NavigationLink(destination: SolendTransactionDetailsView(model: viewModel.detailItem)) {
-//                            Circle()
-//                                .fill(Color(Asset.Colors.lime.color))
-//                                .frame(width: 56, height: 56)
-//                                .overlay(Image(uiImage: UIImage.infoStraight))
-//                        }
                         Button {
-                            viewModel.showDetail()
+                            viewModel.showDetailTapped()
                         } label: {
                             Circle()
                                 .fill(Color(Asset.Colors.lime.color))
@@ -102,7 +100,8 @@ struct DepositSolendView: View {
                                 isPresented: $showingAlert
                             ) {
                                 Alert(
-                                    title: Text(
+                                    title: Text(""),
+                                    message: Text(
                                         L10n.YouAreTryingToDepositMoreFundsThanPossible
                                             .ifYouWantToDepositTheMaximumAmountPressDepositMAXAmount
                                     ),
@@ -142,7 +141,17 @@ struct DepositSolendView: View {
             }
         }
         .padding(.horizontal, 16)
-        .navigationTitle(viewModel.title)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack {
+                    Image(uiImage: .solend)
+                    Text(viewModel.title)
+                        .fontWeight(.semibold)
+                        .apply(style: .text1)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                }
+            }
+        }
         .toolbar {
             Button(
                 action: {

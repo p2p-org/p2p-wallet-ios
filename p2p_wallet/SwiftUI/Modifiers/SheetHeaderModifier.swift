@@ -41,7 +41,7 @@ private struct SheetHeaderView: View {
                 .padding(.top, 6)
             HStack(alignment: .bottom, spacing: 0) {
                 Spacer()
-                Text(L10n.tokenToDeposit)
+                Text(title)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .title3, weight: .semibold))
                     .padding(.top, 18)
