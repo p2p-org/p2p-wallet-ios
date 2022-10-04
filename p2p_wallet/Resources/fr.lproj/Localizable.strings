@@ -895,3 +895,7 @@ another" = "une crypto pour
 "What is Solend?" = "Qu'est-ce que Solend ?";
 "Like a deposit but with crypto.\nLow risks, all your funds are insured." = "Comme un dépôt mais avec crypto.\nFaibles risques, tous vos fonds sont assurés.";
 "🕑 Sending your deposit..." = "🕑 Envoi de votre acompte...";
+"Buying %@ as the base currency" = "Acheter %@ comme devise de base";
+"Exchanging %@ → %@" = "Échange %@ → %@";
+"Purchasing on the Moonpay’s website" = "Achat sur le site de Moonpay";
+"There would be no additional costs" = "Il n'y aurait pas de frais supplémentaires";

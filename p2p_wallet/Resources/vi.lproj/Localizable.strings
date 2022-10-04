@@ -899,3 +899,7 @@ another" = "một tiền điện tử cho
 "What is Solend?" = "Solend là gì?";
 "Like a deposit but with crypto.\nLow risks, all your funds are insured." = "Giống như một khoản tiền gửi nhưng với tiền điện tử. \n Rủi ro thấp, tất cả các khoản tiền của bạn đều được bảo hiểm.";
 "🕑 Sending your deposit..." = "🕑 Gửi tiền đặt cọc của bạn ...";
+"Buying %@ as the base currency" = "Mua %@ làm tiền tệ cơ bản";
+"Exchanging %@ → %@" = "Trao đổi %@ → %@";
+"Purchasing on the Moonpay’s website" = "Mua hàng trên trang web của Moonpay";
+"There would be no additional costs" = "Sẽ không có chi phí bổ sung";
