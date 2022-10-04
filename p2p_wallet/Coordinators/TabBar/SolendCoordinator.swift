@@ -46,33 +46,33 @@ final class SolendCoordinator: Coordinator<Void> {
                 )
 
                 viewModel.transactionDetails
-                    .flatMap { [unowned self] in
+                    .sink(receiveValue: { [unowned self] _ in
                         let coordinator = SolendTransactionDetailsCoordinator(
                             controller: depositVC,
-                            model: $0
+                            strategy: .deposit, // TODO: - Закончи это Леха
+                            model: .constant(.pending) // TODO: - И это
                         )
-                        return self.coordinate(to: coordinator)
-                    }
-                    .sink(receiveValue: { _ in })
+                        coordinate(to: coordinator)
+                    })
                     .store(in: &subscriptions)
 
-                viewModel.tokenSelect.flatMap { [unowned self] tokens in
-                    var coordinator: SolendTokenActionCoordinator!
-                    if let tokens = tokens as? [TokenToDepositView.Model] {
-                        coordinator = SolendTokenActionCoordinator(
-                            controller: depositVC,
-                            strategy: .tokenToDeposit(model: tokens)
-                        )
-                    } else if let tokens = tokens as? [TokenToWithdrawView.Model] {
-                        coordinator = SolendTokenActionCoordinator(
-                            controller: depositVC,
-                            strategy: .tokenToWithdraw(model: tokens)
-                        )
-                    }
-                    return self.coordinate(to: coordinator)
-                }
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+                viewModel.tokenSelect
+                    .sink(receiveValue: { [unowned self] tokens in
+                        var coordinator: SolendTokenActionCoordinator!
+                        if let tokens = tokens as? [TokenToDepositView.Model] {
+                            coordinator = SolendTokenActionCoordinator(
+                                controller: depositVC,
+                                strategy: .tokenToDeposit(model: tokens)
+                            )
+                        } else if let tokens = tokens as? [TokenToWithdrawView.Model] {
+                            coordinator = SolendTokenActionCoordinator(
+                                controller: depositVC,
+                                strategy: .tokenToWithdraw(model: tokens)
+                            )
+                        }
+                        coordinate(to: coordinator)
+                    })
+                    .store(in: &subscriptions)
 
                 viewModel.aboutSolend
                     .sink(receiveValue: { [unowned self] in
