@@ -17,10 +17,14 @@ class DepositSolendViewModel: ObservableObject {
         transactionDetailsSubject.eraseToAnyPublisher()
     }
 
+
     private let tokenSelectSubject = PassthroughSubject<[Any], Never>()
     var tokenSelect: AnyPublisher<[Any], Never> {
         tokenSelectSubject.eraseToAnyPublisher()
     }
+
+    private let aboutSolendSubject = PassthroughSubject<Void, Never>()
+    var aboutSolend: AnyPublisher<Void, Never> { aboutSolendSubject.eraseToAnyPublisher() }
 
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
@@ -51,7 +55,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var headerViewTitle: String {
-        maxAmount().tokenAmount(symbol: invest.asset.symbol)
+        invest.userDeposit?.depositedAmount ?? ""
     }
 
     var headerViewSubtitle: String {
@@ -379,11 +383,17 @@ class DepositSolendViewModel: ObservableObject {
         transactionDetailsSubject.send(detailItem)
     }
 
+
     // MARK: -
 
     private func formatApy(_ apy: String) -> String {
         guard let apyDouble = Double(apy) else { return "" }
         return "\(apyDouble.fixedDecimal(2))%"
+    }
+
+    func showAboutSolend() {
+        aboutSolendSubject.send()
+
     }
 }
 
