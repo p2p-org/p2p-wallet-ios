@@ -16,7 +16,8 @@ enum InvestSolendError {
 
 @MainActor
 class InvestSolendViewModel: ObservableObject {
-    private let service: SolendDataService
+    private let dataService: SolendDataService
+    private let actionService: SolendActionService
     @Injected private var wallets: WalletsRepository
 
     private var subscriptions = Set<AnyCancellable>()
@@ -30,8 +31,6 @@ class InvestSolendViewModel: ObservableObject {
 
     @Published var loading: Bool = false
     @Published var market: [Invest] = []
-    @Published var totalDeposit: Double = 0
-
     @Published var bannerError: InvestSolendError?
 
     var isTutorialShown: Bool {
@@ -39,16 +38,31 @@ class InvestSolendViewModel: ObservableObject {
     }
 
     init(mocked: Bool = false) {
-        service = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
+        dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
+        actionService = mocked ? SolendActionServiceMock() : Resolver.resolve(SolendActionService.self)
 
-        service.marketInfo
+        // Updating data service depends on action service
+        actionService.currentAction
+            .filter { (action: SolendAction?) -> Bool in
+                guard let action = action else { return false }
+                switch action.status {
+                case .processing: return false
+                case .success, .failed: return true
+                }
+            }
+            .sink { [dataService] _ in Task { try await dataService.update() } }
+            .store(in: &subscriptions)
+
+        /// Display error when rate is missing
+        dataService.marketInfo
             .receive(on: RunLoop.main)
             .sink { [weak self] (marketInfo: [SolendMarketInfo]?) in
                 self?.bannerError = marketInfo == nil ? .missingRate : nil
             }.store(in: &subscriptions)
 
-        service.availableAssets
-            .combineLatest(service.marketInfo, service.deposits)
+        /// Process data from data service
+        dataService.availableAssets
+            .combineLatest(dataService.marketInfo, dataService.deposits)
             .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
                 guard let assets = assets else { return [] }
                 return assets.map { asset -> Invest in
@@ -67,21 +81,7 @@ class InvestSolendViewModel: ObservableObject {
             .sink { [weak self] value in self?.market = value }
             .store(in: &subscriptions)
 
-        service.deposits
-            .map { deposits -> Double in
-                guard let deposits = deposits else { return 0 }
-
-                return deposits.reduce(0) { (partialResult: Double, deposit: SolendUserDeposit) in
-                    partialResult + (Double(deposit.depositedAmount) ?? 0)
-                }
-            }
-            .receive(on: RunLoop.main)
-            .sink { [weak self] (totalDeposit: Double) in
-                self?.totalDeposit = totalDeposit
-            }
-            .store(in: &subscriptions)
-
-        service.status
+        dataService.status
             .map { status in
                 switch status {
                 case .initialized, .ready: return false
@@ -96,7 +96,7 @@ class InvestSolendViewModel: ObservableObject {
     }
 
     func update() async throws {
-        try await service.update()
+        try await dataService.update()
     }
 
     func assetClicked(_ asset: SolendConfigAsset, market: SolendMarketInfo?) {

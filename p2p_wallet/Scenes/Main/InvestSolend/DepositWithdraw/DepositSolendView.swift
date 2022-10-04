@@ -142,6 +142,16 @@ struct DepositSolendView: View {
         }
         .padding(.horizontal, 16)
         .navigationTitle(viewModel.title)
+        .toolbar {
+            Button(
+                action: {
+                    viewModel.showAboutSolend()
+                },
+                label: {
+                    Image(uiImage: .questionNavBar)
+                }
+            )
+        }
     }
 }
 
