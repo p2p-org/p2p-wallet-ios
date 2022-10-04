@@ -2,7 +2,6 @@ import KeyAppUI
 import SwiftUI
 
 struct DepositSolendView: View {
-    @SwiftUI.Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     @StateObject var viewModel: DepositSolendViewModel
     @State private var showingAlert = false
 
@@ -66,7 +65,6 @@ struct DepositSolendView: View {
                                 viewModel?.isSliderOn ?? false
                             }, set: { [weak viewModel] val in
                                 viewModel?.isSliderOn = val
-                                presentationMode.wrappedValue.dismiss()
                             })
                         )
                             .disabled(viewModel.loading)

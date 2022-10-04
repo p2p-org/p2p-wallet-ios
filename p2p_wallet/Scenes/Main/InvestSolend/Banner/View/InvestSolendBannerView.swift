@@ -96,17 +96,11 @@ struct InvestSolendBannerView: View {
                 .font(uiFont: .font(of: .title1, weight: .bold))
                 .multilineTextAlignment(.center)
             Button(
-                action: {
-                    showDeposits?()
-                },
+                action: { showDeposits?() },
                 label: {
                     HStack(spacing: 4) {
-                        NavigationLink {
-                            SolendDepositsView(viewModel: SolendDepositsViewModel())
-                        } label: {
-                            Text(model.depositUrls.count > 1 ? L10n.showDeposits : L10n.showDeposit)
-                                .font(uiFont: .font(of: .text3, weight: .semibold))
-                        }
+                        Text(model.depositUrls.count > 1 ? L10n.showDeposits : L10n.showDeposit)
+                            .font(uiFont: .font(of: .text3, weight: .semibold))
                         Spacer()
                         HStack(spacing: -8) {
                             ForEach(model.depositUrls.indices, id: \.self) { index in
