@@ -37,11 +37,11 @@ class SolendDepositsViewModel: ObservableObject {
             .eraseToAnyPublisher()
     }
 
-    init(mocked: Bool = true) {
-        dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
+    init(dataService: SolendDataService? = nil) {
+        self.dataService = dataService ?? Resolver.resolve(SolendDataService.self)
 
-        dataService.availableAssets
-            .combineLatest(dataService.marketInfo, dataService.deposits)
+        self.dataService.availableAssets
+            .combineLatest(self.dataService.marketInfo, self.dataService.deposits)
             .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [SolendUserDepositItem] in
                 guard let assets = assets else { return [] }
                 return assets.compactMap { asset -> SolendUserDepositItem? in
