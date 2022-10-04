@@ -11,6 +11,7 @@ import UIKit
 
 final class SolendCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
+    private let transition = PanelTransition()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -45,33 +46,40 @@ final class SolendCoordinator: Coordinator<Void> {
                 )
 
                 viewModel.transactionDetails
-                    .flatMap { [unowned self] in
+                    .sink(receiveValue: { [unowned self] _ in
                         let coordinator = SolendTransactionDetailsCoordinator(
                             controller: depositVC,
-                            model: $0
+                            strategy: .deposit, // TODO: - Закончи это Леха
+                            model: .constant(.pending) // TODO: - И это
                         )
-                        return self.coordinate(to: coordinator)
-                    }
-                    .sink(receiveValue: { _ in })
+                        coordinate(to: coordinator)
+                    })
                     .store(in: &subscriptions)
 
-                viewModel.tokenSelect.flatMap { [unowned self] tokens in
-                    var coordinator: SolendTokenActionCoordinator!
-                    if let tokens = tokens as? [TokenToDepositView.Model] {
-                        coordinator = SolendTokenActionCoordinator(
-                            controller: depositVC,
-                            strategy: .tokenToDeposit(model: tokens)
-                        )
-                    } else if let tokens = tokens as? [TokenToWithdrawView.Model] {
-                        coordinator = SolendTokenActionCoordinator(
-                            controller: depositVC,
-                            strategy: .tokenToWithdraw(model: tokens)
-                        )
-                    }
-                    return self.coordinate(to: coordinator)
-                }
-                .sink(receiveValue: { _ in })
-                .store(in: &subscriptions)
+                viewModel.tokenSelect
+                    .sink(receiveValue: { [unowned self] tokens in
+                        var coordinator: SolendTokenActionCoordinator!
+                        if let tokens = tokens as? [TokenToDepositView.Model] {
+                            coordinator = SolendTokenActionCoordinator(
+                                controller: depositVC,
+                                strategy: .tokenToDeposit(model: tokens)
+                            )
+                        } else if let tokens = tokens as? [TokenToWithdrawView.Model] {
+                            coordinator = SolendTokenActionCoordinator(
+                                controller: depositVC,
+                                strategy: .tokenToWithdraw(model: tokens)
+                            )
+                        }
+                        coordinate(to: coordinator)
+                    })
+                    .store(in: &subscriptions)
+
+                viewModel.aboutSolend
+                    .sink(receiveValue: { [unowned self] in
+                        showAboutSolend(depositVC: depositVC)
+                    })
+                    .store(in: &subscriptions)
+
             })
             .store(in: &subscriptions)
 
@@ -83,17 +91,17 @@ final class SolendCoordinator: Coordinator<Void> {
                 )
                 coordinate(to: coordinator)
                     .sink(receiveValue: { [weak self] result in
-                        guard
-                            let self = self,
-                            result == .showTrade
-                        else { return }
-                        Task {
-                            do {
+                        guard let self = self else { return }
+                        switch result {
+                        case .showTrade:
+                            Task {
                                 let done = await self.showTrade()
                                 if done {
                                     self.navigationController.dismiss(animated: true)
                                 }
                             }
+                        case let .showBuy(symbol): self.showBuy(symbol: symbol)
+                        default: break
                         }
                     })
                     .store(in: &subscriptions)
@@ -102,6 +110,28 @@ final class SolendCoordinator: Coordinator<Void> {
 
         return Empty(completeImmediately: false)
             .eraseToAnyPublisher()
+    }
+
+    private func showBuy(symbol: String) {
+        // Preparing params for buy view model
+        var defaultToken: Buy.CryptoCurrency?
+        var targetSymbol: String?
+        switch symbol {
+        case "USDC": defaultToken = Buy.CryptoCurrency.usdc
+        case "SOL": defaultToken = Buy.CryptoCurrency.sol
+        default: targetSymbol = symbol
+        }
+
+        let coordinator = BuyCoordinator(
+            navigationController: navigationController,
+            context: .fromInvest,
+            defaultToken: defaultToken,
+            targetTokenSymbol: targetSymbol
+        )
+
+        coordinate(to: coordinator)
+            .sink {}
+            .store(in: &subscriptions)
     }
 
     private func showTrade() async -> Bool {
@@ -118,5 +148,26 @@ final class SolendCoordinator: Coordinator<Void> {
             }
             navigationController.show(vc, sender: nil)
         }
+    }
+
+    private func showAboutSolend(depositVC: UIViewController) {
+        let view = AboutSolendView()
+        transition.containerHeight = view.viewHeight
+        let viewController = view.asViewController()
+        viewController.view.layer.cornerRadius = 16
+        viewController.transitioningDelegate = transition
+        viewController.modalPresentationStyle = .custom
+        depositVC.present(viewController, animated: true)
+
+        transition.dimmClicked
+            .sink(receiveValue: {
+                viewController.dismiss(animated: true)
+            })
+            .store(in: &subscriptions)
+        view.cancel
+            .sink(receiveValue: {
+                viewController.dismiss(animated: true)
+            })
+            .store(in: &subscriptions)
     }
 }

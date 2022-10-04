@@ -11,9 +11,11 @@ struct InvestSolendBannerView: View {
     typealias BalanceModel = InvestSolendBannerViewModel.InvestSolendBannerBalanceModel
 
     @ObservedObject private var viewModel: InvestSolendBannerViewModel
+    private let showDeposits: (() -> Void)?
 
-    init(viewModel: InvestSolendBannerViewModel) {
+    init(viewModel: InvestSolendBannerViewModel, showDeposits: (() -> Void)? = nil) {
         self.viewModel = viewModel
+        self.showDeposits = showDeposits
     }
 
     var body: some View {
@@ -30,6 +32,8 @@ struct InvestSolendBannerView: View {
                     subtitle: L10n.AllYourFundsAreInsured.withdrawYourDepositWithAllRewardsAtAnyTime,
                     failure: false
                 )
+            case .processingAction:
+                processingAction()
             case let .withBalance(model):
                 withBalance(model: model)
             }
@@ -62,7 +66,11 @@ struct InvestSolendBannerView: View {
                 .font(uiFont: .font(of: .text4))
                 .multilineTextAlignment(.center)
             Button(
-                action: {},
+                action: {
+                    if failure == true {
+                        Task { try await viewModel.update() }
+                    }
+                },
                 label: {
                     Text(failure ? L10n.tryAgain : L10n.learnMore)
                         .font(uiFont: .font(of: .text2, weight: .semibold))
@@ -88,7 +96,9 @@ struct InvestSolendBannerView: View {
                 .font(uiFont: .font(of: .title1, weight: .bold))
                 .multilineTextAlignment(.center)
             Button(
-                action: {},
+                action: {
+                    showDeposits?()
+                },
                 label: {
                     HStack(spacing: 4) {
                         NavigationLink {
@@ -120,5 +130,65 @@ struct InvestSolendBannerView: View {
         .padding(.top, 36)
         .padding(.bottom, 20)
         .padding(.horizontal, 20)
+    }
+
+    private func processingAction() -> some View {
+        ProcessingAction()
+    }
+}
+
+private struct ProcessingAction: View {
+    @State var xOffset: Double = -UIScreen.main.bounds.size.width / 2 - 50
+
+    var repeatingAnimation: Animation {
+        Animation
+            .easeInOut(duration: 2)
+            .repeatForever(autoreverses: false)
+    }
+
+    var body: some View {
+        VStack {
+            VStack(alignment: .leading) {
+                Image(uiImage: .rocket)
+                    .frame(width: 48, height: 98)
+                    .offset(x: xOffset, y: 0)
+            }
+            HStack {
+                Text(L10n.🕑SendingYourDeposit)
+                    .font(uiFont: .font(of: .text2, weight: .semibold))
+                    .padding(.horizontal, 16)
+                Spacer()
+            }.frame(height: 48)
+                .frame(maxWidth: .infinity)
+                .background(Color(Asset.Colors.snow.color))
+                .cornerRadius(12)
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+        }
+
+            .onAppear {
+                withAnimation(repeatingAnimation) {
+                    xOffset = UIScreen.main.bounds.size.width / 2 + 50
+                }
+            }
+    }
+}
+
+struct InvestSolendBannerView_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack {
+            InvestSolendBannerView(
+                viewModel: .init(
+                    dataService: SolendDataServiceMock(),
+                    actionService: SolendActionServiceMock(currentAction: .init(
+                        type: .deposit,
+                        transactionID: "ae31cd1xcw1w2das21",
+                        status: .processing,
+                        amount: 5000,
+                        symbol: "SOL"
+                    ))
+                )
+            )
+        }.padding(.horizontal, 8)
     }
 }

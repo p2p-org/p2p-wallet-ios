@@ -101,6 +101,9 @@ struct HomeWithTokensView: View {
                         isEarnBannerClosed = true
                     }
                 }
+                .onTapGesture {
+                    viewModel.earn()
+                }
                 .padding(.top, 11)
             }
         }
@@ -166,7 +169,7 @@ struct HomeWithTokensView: View {
                 .frame(width: 56)
             }
         )
-            .buttonStyle(PlainButtonStyle())
+            .buttonStyle(PlainButtonStyle()) // prevent getting called on tapping cell
     }
 
     private func tokenCell(wallet: Wallet) -> some View {

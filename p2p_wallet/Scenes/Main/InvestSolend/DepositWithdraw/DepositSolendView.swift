@@ -141,7 +141,27 @@ struct DepositSolendView: View {
             }
         }
         .padding(.horizontal, 16)
-        .navigationTitle(viewModel.title)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack {
+                    Image(uiImage: .solend)
+                    Text(viewModel.title)
+                        .fontWeight(.semibold)
+                        .apply(style: .text1)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                }
+            }
+        }
+        .toolbar {
+            Button(
+                action: {
+                    viewModel.showAboutSolend()
+                },
+                label: {
+                    Image(uiImage: .questionNavBar)
+                }
+            )
+        }
     }
 }
 

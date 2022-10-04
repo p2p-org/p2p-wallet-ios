@@ -23,6 +23,9 @@ class DepositSolendViewModel: ObservableObject {
         tokenSelectSubject.eraseToAnyPublisher()
     }
 
+    private let aboutSolendSubject = PassthroughSubject<Void, Never>()
+    var aboutSolend: AnyPublisher<Void, Never> { aboutSolendSubject.eraseToAnyPublisher() }
+
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
     @Injected private var walletRepository: WalletsRepository
@@ -50,7 +53,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var headerViewTitle: String {
-        maxAmount().tokenAmount(symbol: invest.asset.symbol)
+        invest.userDeposit?.depositedAmount ?? ""
     }
 
     var headerViewSubtitle: String {
@@ -78,17 +81,18 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var detailItem: SolendTransactionDetailsView.Model {
-        .init(strategy: strategy == .deposit ? .deposit : .withdraw,
-              amount: 1,
-              fiatAmount: 2,
-              transferFee: 3,
-              fiatTransferFee: 4,
-              fee: 5,
-              fiatFee: 6,
-              total: 7,
-              fiatTotal: inputFiat.fiatFormat.double ?? 0,
-              symbol: invest.asset.symbol,
-              feeSymbol: invest.asset.symbol)
+        .init(
+            amount: 1,
+            fiatAmount: 2,
+            transferFee: 3,
+            fiatTransferFee: 4,
+            fee: 5,
+            fiatFee: 6,
+            total: 7,
+            fiatTotal: inputFiat.fiatFormat.double ?? 0,
+            symbol: invest.asset.symbol,
+            feeSymbol: invest.asset.symbol
+        )
     }
 
     /// Balance for selected Token
@@ -383,6 +387,10 @@ class DepositSolendViewModel: ObservableObject {
     private func formatApy(_ apy: String) -> String {
         guard let apyDouble = Double(apy) else { return "" }
         return "\(apyDouble.fixedDecimal(2))%"
+    }
+
+    func showAboutSolend() {
+        aboutSolendSubject.send()
     }
 }
 
