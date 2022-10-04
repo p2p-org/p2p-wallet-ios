@@ -43,7 +43,7 @@ struct InvestSolendView: View {
             // Market
             ScrollView {
                 VStack {
-                    if viewModel.loading && viewModel.market == nil {
+                    if viewModel.loading {
                         HStack {
                             Spacer()
                             ProgressView()

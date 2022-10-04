@@ -59,7 +59,7 @@ class InvestSolendBannerViewModel: ObservableObject {
             .map { asset -> URL? in URL(string: asset.logo ?? "") }
             .compactMap { $0 }
 
-        let total = calculateBalance(assets: assets, deposits: deposits) ?? 0
+        let total = calculateBalance(assets: assets, deposits: deposits)
         return .withBalance(model: .init(
             balance: "$ \(total.fixedDecimal(9))",
             depositUrls: urls
