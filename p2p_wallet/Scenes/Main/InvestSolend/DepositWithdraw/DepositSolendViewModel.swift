@@ -10,6 +10,7 @@ class DepositSolendViewModel: ObservableObject {
     private let strategy: Strategy
     private let dataService: SolendDataService
     private let actionService: SolendActionService
+    private var subscriptions = Set<AnyCancellable>()
     private var market: [Invest] = []
 
     private let transactionDetailsSubject = PassthroughSubject<SolendTransactionDetailsView.Model, Never>()
@@ -28,8 +29,6 @@ class DepositSolendViewModel: ObservableObject {
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
     @Injected private var walletRepository: WalletsRepository
-
-    var subscriptions = Set<AnyCancellable>()
 
     @Published var focusSide: DepositWithdrawInputViewActiveSide = .left
     /// Is loading fees
