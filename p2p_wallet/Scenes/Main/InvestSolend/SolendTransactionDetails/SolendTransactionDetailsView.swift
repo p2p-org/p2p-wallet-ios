@@ -115,6 +115,8 @@ struct SolendTransactionDetailsView: View {
                     Text(L10n.loading)
                         .foregroundColor(Color(.sea))
                         .font(uiFont: .font(of: .text2))
+                    Spinner()
+                        .frame(width: 16, height: 16)
                 }
             case let .model(text, free):
                 trailingCellContent(text: text, free: free)
