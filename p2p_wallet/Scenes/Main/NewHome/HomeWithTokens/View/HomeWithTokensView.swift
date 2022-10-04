@@ -101,6 +101,9 @@ struct HomeWithTokensView: View {
                         isEarnBannerClosed = true
                     }
                 }
+                .onTapGesture {
+                    viewModel.earn()
+                }
                 .padding(.top, 11)
             }
         }
