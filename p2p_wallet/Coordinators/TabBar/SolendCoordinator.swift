@@ -46,18 +46,19 @@ final class SolendCoordinator: Coordinator<Void> {
                 )
 
                 viewModel.transactionDetails
-                    .sink(receiveValue: { [unowned self] _ in
+                    .flatMap { [unowned self] strategy in
                         let coordinator = SolendTransactionDetailsCoordinator(
                             controller: depositVC,
-                            strategy: .deposit, // TODO: - Закончи это Леха
-                            model: .constant(.pending) // TODO: - И это
+                            strategy: strategy,
+                            model: viewModel.detailItem.eraseToAnyPublisher()
                         )
-                        coordinate(to: coordinator)
-                    })
+                        return self.coordinate(to: coordinator)
+                    }
+                    .sink(receiveValue: { _ in })
                     .store(in: &subscriptions)
 
                 viewModel.tokenSelect
-                    .sink(receiveValue: { [unowned self] tokens in
+                    .flatMap { [unowned self] tokens in
                         var coordinator: SolendTokenActionCoordinator!
                         if let tokens = tokens as? [TokenToDepositView.Model] {
                             coordinator = SolendTokenActionCoordinator(
@@ -70,7 +71,15 @@ final class SolendCoordinator: Coordinator<Void> {
                                 strategy: .tokenToWithdraw(model: tokens)
                             )
                         }
-                        coordinate(to: coordinator)
+                        return self.coordinate(to: coordinator)
+                    }
+                    .sink(receiveValue: { [weak viewModel] result in
+                        switch result {
+                        case let .symbol(symbol):
+                            viewModel?.symbolSelected.send(symbol)
+                        default:
+                            break
+                        }
                     })
                     .store(in: &subscriptions)
 

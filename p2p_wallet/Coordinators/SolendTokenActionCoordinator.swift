@@ -45,6 +45,7 @@ final class SolendTokenActionCoordinator: Coordinator<SolendTokenActionCoordinat
         view.symbol
             .sink(receiveValue: {
                 resultSubject.send(.symbol($0))
+                viewController.dismiss(animated: true)
             })
             .store(in: &subscriptions)
         view.close
