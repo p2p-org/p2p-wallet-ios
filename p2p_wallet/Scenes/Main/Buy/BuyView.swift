@@ -22,6 +22,11 @@ struct BuyView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
+                // Tutorial
+                if let targetSymbol = viewModel.targetSymbol {
+                    BuyTips(sourceSymbol: viewModel.token.symbol, destinationSymbol: targetSymbol)
+                }
+
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
                         Spacer()
@@ -59,7 +64,9 @@ struct BuyView: View {
 //                .offset(y: bottomOffset)
         }
         .edgesIgnoringSafeArea(.bottom)
-        .navigationTitle(L10n.buy)
+        .toolbar {
+            ToolbarItem(placement: .principal) { Text(L10n.buy).fontWeight(.semibold) }
+        }
         .onAppear {
             withAnimation {
 //                viewModel.navigationSlidingPercentage = 0
