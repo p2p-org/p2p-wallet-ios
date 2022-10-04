@@ -28,11 +28,13 @@ final class SolendCoordinator: Coordinator<Void> {
                 investVC.navigationIsHidden = true
             })
             .store(in: &subscriptions)
+
         investVC.viewWillDisappear
             .sink(receiveValue: { [unowned investVC] in
                 investVC.navigationIsHidden = false
             })
             .store(in: &subscriptions)
+
         investViewModel.deposit
             .sink(receiveValue: { [unowned self] in
                 let viewModel = try! DepositSolendViewModel(initialAsset: $0)
@@ -44,21 +46,44 @@ final class SolendCoordinator: Coordinator<Void> {
                 )
 
                 viewModel.transactionDetails
-                    .sink(receiveValue: { [unowned self] in
+                    .flatMap { [unowned self] in
                         let coordinator = SolendTransactionDetailsCoordinator(
                             controller: depositVC,
                             model: $0
                         )
-                        coordinate(to: coordinator)
-                    })
+                        return self.coordinate(to: coordinator)
+                    }
+                    .sink(receiveValue: { _ in })
                     .store(in: &subscriptions)
+
+
+                viewModel.tokenSelect.flatMap { [unowned self] tokens in
+                    var coordinator: SolendTokenActionCoordinator!
+                    if let tokens = tokens as? [TokenToDepositView.Model] {
+                        coordinator = SolendTokenActionCoordinator(
+                            controller: depositVC,
+                            strategy: .tokenToDeposit(model: tokens)
+                        )
+                    } else if let tokens = tokens as? [TokenToWithdrawView.Model] {
+                        coordinator = SolendTokenActionCoordinator(
+                            controller: depositVC,
+                            strategy: .tokenToWithdraw(model: tokens)
+                        )
+                    }
+                    return self.coordinate(to: coordinator)
+                }
+                .sink(receiveValue: { _ in })
+                .store(in: &subscriptions)
+
                 viewModel.aboutSolend
                     .sink(receiveValue: { [unowned self] in
                         showAboutSolend(depositVC: depositVC)
                     })
                     .store(in: &subscriptions)
+
             })
             .store(in: &subscriptions)
+
         investViewModel.topUpForContinue
             .sink(receiveValue: { [unowned self] in
                 let coordinator = SolendTopUpForContinueCoordinator(
