@@ -25,6 +25,7 @@ struct BuyView: View {
                 // Tutorial
                 if let targetSymbol = viewModel.targetSymbol {
                     BuyTips(sourceSymbol: viewModel.token.symbol, destinationSymbol: targetSymbol)
+                        .padding(.horizontal, 16)
                 }
 
                 VStack(alignment: .leading, spacing: 0) {
