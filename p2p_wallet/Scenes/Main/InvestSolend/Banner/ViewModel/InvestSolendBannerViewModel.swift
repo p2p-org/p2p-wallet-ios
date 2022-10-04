@@ -81,6 +81,10 @@ class InvestSolendBannerViewModel: ObservableObject {
             }
             .reduce(0, +)
     }
+
+    func update() async throws {
+        try await dataService.update()
+    }
 }
 
 // MARK: - State

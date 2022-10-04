@@ -25,6 +25,8 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
     }
 
     override func start() -> AnyPublisher<SolendTopUpForContinueCoordinator.Result, Never> {
+        let resultSubject = PassthroughSubject<Result, Never>()
+
         let viewModel = SolendTopUpForContinueViewModel(model: model)
         let view = SolendTopUpForContinueView(viewModel: viewModel)
         transition.containerHeight = view.viewHeight
@@ -42,8 +44,9 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
             })
             .store(in: &subscriptions)
         viewModel.buy
-            .sink(receiveValue: {
-                // TODO: - Buy flow
+            .sink(receiveValue: { [unowned self] in
+                viewController.dismiss(animated: true)
+                resultSubject.send(.showBuy(symbol: model.asset.symbol))
             })
             .store(in: &subscriptions)
         viewModel.receive
@@ -56,7 +59,6 @@ final class SolendTopUpForContinueCoordinator: Coordinator<SolendTopUpForContinu
             })
             .store(in: &subscriptions)
 
-        let resultSubject = PassthroughSubject<Result, Never>()
         viewModel.swap
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
@@ -77,5 +79,6 @@ extension SolendTopUpForContinueCoordinator {
     enum Result {
         case close
         case showTrade
+        case showBuy(symbol: String)
     }
 }
