@@ -10,7 +10,6 @@ import Solend
 
 struct SolendTopUpForContinueModel {
     let asset: SolendConfigAsset
-    let apy: Double?
     let strategy: Strategy
 
     enum Strategy {

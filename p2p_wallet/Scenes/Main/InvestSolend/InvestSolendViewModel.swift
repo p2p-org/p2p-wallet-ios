@@ -24,10 +24,14 @@ class InvestSolendViewModel: ObservableObject {
 
     private let depositSubject = PassthroughSubject<SolendConfigAsset, Never>()
     var deposit: AnyPublisher<SolendConfigAsset, Never> { depositSubject.eraseToAnyPublisher() }
+
     private let topUpForContinueSubject = PassthroughSubject<SolendTopUpForContinueCoordinator.Model, Never>()
     var topUpForContinue: AnyPublisher<SolendTopUpForContinueCoordinator.Model, Never> {
         topUpForContinueSubject.eraseToAnyPublisher()
     }
+
+    private let depositsSubject = PassthroughSubject<Void, Never>()
+    var deposits: AnyPublisher<Void, Never> { depositsSubject.eraseToAnyPublisher() }
 
     @Published var loading: Bool = false
     @Published var market: [Invest] = []
@@ -99,9 +103,11 @@ class InvestSolendViewModel: ObservableObject {
         try await dataService.update()
     }
 
-    func showDeposits() {}
+    func showDeposits() {
+        depositsSubject.send()
+    }
 
-    func assetClicked(_ asset: SolendConfigAsset, market: SolendMarketInfo?) {
+    func assetClicked(_ asset: SolendConfigAsset, market _: SolendMarketInfo?) {
         // Get user token account
         let tokenAccount: Wallet? = wallets
             .getWallets()
@@ -115,7 +121,6 @@ class InvestSolendViewModel: ObservableObject {
             let hasAnotherToken: Bool = wallets.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
             topUpForContinueSubject.send(.init(
                 asset: asset,
-                apy: Double(market?.supplyInterest ?? ""),
                 strategy: hasAnotherToken ? .withoutOnlyTokenForDeposit : .withoutAnyTokens
             ))
         }

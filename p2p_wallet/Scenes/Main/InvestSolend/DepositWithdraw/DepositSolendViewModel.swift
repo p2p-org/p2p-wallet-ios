@@ -27,6 +27,8 @@ class DepositSolendViewModel: ObservableObject {
     var aboutSolend: AnyPublisher<Void, Never> { aboutSolendSubject.eraseToAnyPublisher() }
 
     var symbolSelected = PassthroughSubject<String, Never>()
+    private let finishSubject = PassthroughSubject<Void, Never>()
+    var finish: AnyPublisher<Void, Never> { finishSubject.eraseToAnyPublisher() }
 
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
@@ -324,6 +326,7 @@ class DepositSolendViewModel: ObservableObject {
         do {
             loading = true
             defer { loading = false }
+            finishSubject.send()
             try await actionService.deposit(amount: lamports, symbol: invest.asset.symbol)
             notificationService.showInAppNotification(.done(L10n.theFundsHaveBeenDepositedSuccessfully))
         } catch {
@@ -338,6 +341,7 @@ class DepositSolendViewModel: ObservableObject {
         do {
             loading = true
             defer { loading = false }
+            finishSubject.send()
             try await actionService.withdraw(amount: inputLamport, symbol: invest.asset.symbol)
             notificationService.showInAppNotification(.done(L10n.theFundsHaveBeenWithdrawnSuccessfully))
         } catch {
