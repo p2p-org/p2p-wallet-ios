@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "help_outline_24px_outlined.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

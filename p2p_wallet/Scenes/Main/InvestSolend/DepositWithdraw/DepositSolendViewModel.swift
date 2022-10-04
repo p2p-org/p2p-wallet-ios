@@ -16,6 +16,9 @@ class DepositSolendViewModel: ObservableObject {
         transactionDetailsSubject.eraseToAnyPublisher()
     }
 
+    private let aboutSolendSubject = PassthroughSubject<Void, Never>()
+    var aboutSolend: AnyPublisher<Void, Never> { aboutSolendSubject.eraseToAnyPublisher() }
+
     @Injected private var notificationService: NotificationService
     @Injected private var priceService: PricesServiceType
     @Injected private var walletRepository: WalletsRepository
@@ -313,6 +316,10 @@ class DepositSolendViewModel: ObservableObject {
 
     func showDetail() {
         transactionDetailsSubject.send(detailItem)
+    }
+
+    func showAboutSolend() {
+        aboutSolendSubject.send()
     }
 }
 
