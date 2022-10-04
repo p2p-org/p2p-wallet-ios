@@ -9,7 +9,7 @@ import Combine
 import Resolver
 import UIKit
 
-final class SolendTokenActionCoordinator: Coordinator<Void> {
+final class SolendTokenActionCoordinator: Coordinator<SolendTokenActionCoordinator.Result> {
     private let controller: UIViewController
     private let strategy: Strategy
 
@@ -23,50 +23,62 @@ final class SolendTokenActionCoordinator: Coordinator<Void> {
         self.strategy = strategy
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
+    override func start() -> AnyPublisher<SolendTokenActionCoordinator.Result, Never> {
         let viewController: UIViewController
-        let resultSubject = PassthroughSubject<Void, Never>()
+        let view: SolendSelectTokenView
+        let resultSubject = PassthroughSubject<SolendTokenActionCoordinator.Result, Never>()
 
         switch strategy {
         case let .tokenToDeposit(model):
-            let view = TokenToDepositView(models: model)
-            transition.containerHeight = view.viewHeight
-            viewController = view.asViewController()
-            view.close
-                .sink(receiveValue: {
-                    viewController.dismiss(animated: true)
-                })
-                .store(in: &subscriptions)
+            view = TokenToDepositView(models: model)
+            viewController = (view as! TokenToDepositView).asViewController()
         case let .tokenToWithdraw(model):
-            let view = TokenToWithdrawView(models: model)
-            transition.containerHeight = view.viewHeight
-            viewController = view.asViewController()
-            view.close
-                .sink(receiveValue: {
-                    viewController.dismiss(animated: true)
-                })
-                .store(in: &subscriptions)
+            view = TokenToWithdrawView(models: model)
+            viewController = (view as! TokenToWithdrawView).asViewController()
         }
+        transition.containerHeight = view.viewHeight
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
 
+        view.symbol
+            .sink(receiveValue: {
+                resultSubject.send(.symbol($0))
+            })
+            .store(in: &subscriptions)
+        view.close
+            .sink(receiveValue: {
+                viewController.dismiss(animated: true)
+            })
+            .store(in: &subscriptions)
         transition.dimmClicked
             .sink(receiveValue: {
                 viewController.dismiss(animated: true)
             })
             .store(in: &subscriptions)
         viewController.onClose = {
-            resultSubject.send()
+            resultSubject.send(.close)
         }
+
         return resultSubject.eraseToAnyPublisher()
     }
 }
+
+// MARK: - Strategy
 
 extension SolendTokenActionCoordinator {
     enum Strategy {
         case tokenToDeposit(model: [TokenToDepositView.Model])
         case tokenToWithdraw(model: [TokenToWithdrawView.Model])
+    }
+}
+
+// MARK: - Result
+
+extension SolendTokenActionCoordinator {
+    enum Result {
+        case close
+        case symbol(String)
     }
 }
