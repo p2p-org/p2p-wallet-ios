@@ -50,7 +50,7 @@ final class SolendCoordinator: Coordinator<Void> {
                 )
 
                 viewModel.transactionDetails
-                    .flatMap { [unowned self] strategy in
+                    .flatMap { [unowned self] strategy -> AnyPublisher<Void, Never> in
                         let coordinator = SolendTransactionDetailsCoordinator(
                             controller: depositVC,
                             strategy: strategy,
@@ -62,7 +62,7 @@ final class SolendCoordinator: Coordinator<Void> {
                     .store(in: &subscriptions)
 
                 viewModel.tokenSelect
-                    .flatMap { [unowned self] tokens in
+                    .flatMap { [unowned self] tokens -> AnyPublisher<SolendTokenActionCoordinator.Result, Never> in
                         var coordinator: SolendTokenActionCoordinator!
                         if let tokens = tokens as? [TokenToDepositView.Model] {
                             coordinator = SolendTokenActionCoordinator(
