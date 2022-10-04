@@ -13,41 +13,64 @@ class InvestSolendBannerViewModel: ObservableObject {
     @Published var state: InvestSolendBannerState = .pending
 
     private var cancellables = Set<AnyCancellable>()
-    private let solendService: SolendDataService
+    private let dataService: SolendDataService
+    private let actionService: SolendActionService
 
-    init(mocked: Bool = false) {
-        solendService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
+    init(dataService: SolendDataService? = nil, actionService: SolendActionService? = nil) {
+        self.dataService = dataService ?? Resolver.resolve(SolendDataService.self)
+        self.actionService = actionService ?? Resolver.resolve(SolendActionService.self)
 
-        solendService.availableAssets
-            .combineLatest(solendService.deposits)
-            .map { [weak self] (assets: [SolendConfigAsset]?, deposits: [SolendUserDeposit]?) in
-                // assets is loading
-                guard let assets = assets, let deposits = deposits else {
-                    return .pending
-                }
-
-                // no assets
-                if deposits.isEmpty {
-                    return .learnMore
-                }
-
-                // combine assets
-                let urls = assets
-                    .map { asset -> URL? in URL(string: asset.logo ?? "") }
-                    .compactMap { $0 }
-
-                let total = self?.calculateBalance(assets: assets, deposits: deposits) ?? 0
-                return .withBalance(model: .init(
-                    balance: "$ \(total.fixedDecimal(9))",
-                    depositUrls: urls
-                ))
+        self.dataService.availableAssets
+            .combineLatest(self.dataService.deposits, self.actionService.currentAction)
+            .map { [weak self] (assets: [SolendConfigAsset]?, userDeposits: [SolendUserDeposit]?, action: SolendAction?) in
+                self?.stateMapping(assets: assets, deposits: userDeposits, action: action) ?? .pending
             }
             .receive(on: RunLoop.main)
+            .removeDuplicates()
             .assign(to: \.state, on: self)
             .store(in: &cancellables)
     }
 
-    func calculateBalance(assets _: [SolendConfigAsset], deposits: [SolendUserDeposit]) -> Double {
+    func stateMapping(
+        assets: [SolendConfigAsset]?,
+        deposits: [SolendUserDeposit]?,
+        action: SolendAction?
+    ) -> InvestSolendBannerState {
+        if let action = action {
+            return actionState(action: action)
+        } else {
+            return dataState(assets: assets, deposits: deposits)
+        }
+    }
+
+    private func dataState(assets: [SolendConfigAsset]?, deposits: [SolendUserDeposit]?) -> InvestSolendBannerState {
+        // assets is loading
+        guard let assets = assets, let deposits = deposits else {
+            return .pending
+        }
+
+        // no assets
+        if deposits.isEmpty {
+            return .learnMore
+        }
+
+        // combine assets
+        let urls = assets
+            .map { asset -> URL? in URL(string: asset.logo ?? "") }
+            .compactMap { $0 }
+
+        let total = calculateBalance(assets: assets, deposits: deposits) ?? 0
+        return .withBalance(model: .init(
+            balance: "$ \(total.fixedDecimal(9))",
+            depositUrls: urls
+        ))
+    }
+
+    private func actionState(action _: SolendAction) -> InvestSolendBannerState {
+        .processingAction
+    }
+
+    private func calculateBalance(assets _: [SolendConfigAsset], deposits: [SolendUserDeposit]) -> Double {
         deposits
             .map { (deposit: SolendUserDeposit) -> (amount: Double, symbol: String) in
                 (deposit.depositedAmount.double ?? 0, deposit.symbol)
@@ -63,15 +86,16 @@ class InvestSolendBannerViewModel: ObservableObject {
 // MARK: - State
 
 extension InvestSolendBannerViewModel {
-    enum InvestSolendBannerState {
+    enum InvestSolendBannerState: Equatable {
         case pending
         case failure(title: String, subtitle: String)
         case learnMore
+        case processingAction
         case withBalance(model: InvestSolendBannerBalanceModel)
 
         var notLearnMode: Bool {
             switch self {
-            case .pending, .failure, .withBalance:
+            case .pending, .failure, .withBalance, .processingAction:
                 return true
             case .learnMore:
                 return false
@@ -79,7 +103,7 @@ extension InvestSolendBannerViewModel {
         }
     }
 
-    struct InvestSolendBannerBalanceModel {
+    struct InvestSolendBannerBalanceModel: Equatable {
         let balance: String
         let depositUrls: [URL]
     }
