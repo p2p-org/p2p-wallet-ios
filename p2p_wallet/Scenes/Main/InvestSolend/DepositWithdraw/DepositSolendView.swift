@@ -122,7 +122,7 @@ struct DepositSolendView: View {
             HStack {
                 Spacer()
                 if viewModel.loading {
-                    ActivityIndicator(isAnimating: viewModel.loading)
+                    Spinner()
                         .frame(width: 16, height: 16)
                         .padding(.top, 8)
                         .padding(.bottom, 16)

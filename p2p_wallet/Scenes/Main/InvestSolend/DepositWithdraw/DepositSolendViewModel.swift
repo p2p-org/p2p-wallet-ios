@@ -13,9 +13,9 @@ class DepositSolendViewModel: ObservableObject {
     private var subscriptions = Set<AnyCancellable>()
     private var market: [Invest] = []
 
-    private let transactionDetailsSubject = PassthroughSubject<SolendTransactionDetailsView.Model, Never>()
-    var transactionDetails: AnyPublisher<SolendTransactionDetailsView.Model, Never> {
-        transactionDetailsSubject.eraseToAnyPublisher()
+    private let transactionDetailsSubject = PassthroughSubject<Void, Never>()
+    var transactionDetails: AnyPublisher<SolendTransactionDetailsCoordinator.Strategy, Never> {
+        transactionDetailsSubject.map { self.strategy == .withdraw ? .withdraw : .deposit }.eraseToAnyPublisher()
     }
 
     private let tokenSelectSubject = PassthroughSubject<[Any], Never>()
@@ -26,6 +26,7 @@ class DepositSolendViewModel: ObservableObject {
     private let aboutSolendSubject = PassthroughSubject<Void, Never>()
     var aboutSolend: AnyPublisher<Void, Never> { aboutSolendSubject.eraseToAnyPublisher() }
 
+    var symbolSelected = PassthroughSubject<String, Never>()
     private let finishSubject = PassthroughSubject<Void, Never>()
     var finish: AnyPublisher<Void, Never> { finishSubject.eraseToAnyPublisher() }
 
@@ -56,7 +57,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var headerViewTitle: String {
-        invest.userDeposit?.depositedAmount ?? ""
+        maxAmount().tokenAmount(symbol: invest.asset.symbol)
     }
 
     var headerViewSubtitle: String {
@@ -83,20 +84,7 @@ class DepositSolendViewModel: ObservableObject {
         strategy == .deposit ? L10n.depositIntoSolend : L10n.withdrawFunds
     }
 
-    var detailItem: SolendTransactionDetailsView.Model {
-        .init(
-            amount: 1,
-            fiatAmount: 2,
-            transferFee: 3,
-            fiatTransferFee: 4,
-            fee: 5,
-            fiatFee: 6,
-            total: 7,
-            fiatTotal: inputFiat.fiatFormat.double ?? 0,
-            symbol: invest.asset.symbol,
-            feeSymbol: invest.asset.symbol
-        )
-    }
+    var detailItem = CurrentValueSubject<SolendTransactionDetailsView.Model?, Never>(nil)
 
     /// Balance for selected Token
     private var currentWallet: Wallet? {
@@ -120,7 +108,18 @@ class DepositSolendViewModel: ObservableObject {
         feeText = defaultFeeText()
         maxText = L10n.useAll + " \(maxAmount().tokenAmount(symbol: invest.asset.symbol))"
 
-        dataService.marketInfo
+        symbolSelected.withLatestFrom(dataService.availableAssets) { symbol, assets in
+            assets?.first { $0.symbol == symbol }
+        }
+        .compactMap { $0 }
+        .map { (asset: $0, market: nil, userDeposit: nil) }
+        .handleEvents(receiveOutput: { _ in
+            self.inputToken = "0"
+        })
+        .assign(to: \.invest, on: self)
+        .store(in: &subscriptions)
+
+        symbolSelected.withLatestFrom(dataService.marketInfo)
             .sink { [weak self] markets in
                 guard let self = self else { return }
                 let marketInfo = markets?.first { $0.symbol == self.invest.asset.symbol }
@@ -128,7 +127,7 @@ class DepositSolendViewModel: ObservableObject {
             }
             .store(in: &subscriptions)
 
-        dataService.deposits
+        symbolSelected.withLatestFrom(dataService.deposits)
             .sink { [weak self] deposits in
                 guard let self = self else { return }
                 let deposit = deposits?.first { $0.symbol == self.invest.asset.symbol }
@@ -137,7 +136,7 @@ class DepositSolendViewModel: ObservableObject {
             }
             .store(in: &subscriptions)
 
-        dataService.availableAssets
+        symbolSelected.withLatestFrom(dataService.availableAssets)
             .combineLatest(dataService.marketInfo, dataService.deposits)
             .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
                 guard let assets = assets else { return [] }
@@ -156,6 +155,9 @@ class DepositSolendViewModel: ObservableObject {
             .receive(on: RunLoop.main)
             .assign(to: \.market, on: self)
             .store(in: &subscriptions)
+
+        symbolSelected.send(invest.asset.symbol)
+
         bind()
     }
 
@@ -176,6 +178,7 @@ class DepositSolendViewModel: ObservableObject {
                 let maxAmount = self.maxAmount()
                 self.inputLamport = self.lamportFrom(amount: tokenAmount)
                 self.loading = true
+                self.detailItem.send(nil)
                 if self.focusSide == .left { // editing token
                     if self.tokenFiatPrice > 0, self.inputLamport > 0 {
                         self.inputFiat = self.tokenToAmount(amount: tokenAmount).toString(maximumFractionDigits: 2)
@@ -229,11 +232,35 @@ class DepositSolendViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.loading = false
                 if let fee = fee {
-                    let totalAmountLamports = self.inputLamport.subtractingReportingOverflow(fee.fee).partialValue
+                    let (totalAmountLamports1, overflow1) = self.inputLamport.subtractingReportingOverflow(fee.fee)
+                    let (totalAmountLamports, overflow2) = totalAmountLamports1.subtractingReportingOverflow(fee.rent)
+                    if overflow1 || overflow2 {
+                        self.hasError = true
+                        self
+                            .buttonText =
+                            "MIN amount is \(self.amountFrom(lamports: fee.fee + fee.rent).tokenAmount(symbol: self.invest.asset.symbol))"
+                        self.isButtonEnabled = false
+                        return
+                    }
+                    let tokenAmount = self.amountFrom(lamports: totalAmountLamports)
                     let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports))
-                    let amountText =
-                        "\(self.amountFrom(lamports: totalAmountLamports).tokenAmount(symbol: self.invest.asset.symbol)) (\(fiatAmount.fiatAmount(currency: self.fiat)))"
+                    let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " " + fiatAmount
+                        .fiatAmount(currency: self.fiat)
                     self.feeText = "\(L10n.excludingFeesYouWillDeposit) \(amountText)"
+                    self.detailItem.send(
+                        .init(
+                            amount: tokenAmount,
+                            fiatAmount: fiatAmount,
+                            transferFee: self.amountFrom(lamports: fee.fee),
+                            fiatTransferFee: self.tokenToAmount(amount: self.amountFrom(lamports: fee.fee)),
+                            fee: self.amountFrom(lamports: fee.rent),
+                            fiatFee: self.tokenToAmount(amount: self.amountFrom(lamports: fee.rent)),
+                            total: self.amountFrom(lamports: totalAmountLamports),
+                            fiatTotal: self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports)),
+                            symbol: self.invest.asset.symbol,
+                            feeSymbol: self.invest.asset.symbol
+                        )
+                    )
                 }
             })
             .store(in: &subscriptions)
@@ -384,7 +411,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     func showDetailTapped() {
-        transactionDetailsSubject.send(detailItem)
+        transactionDetailsSubject.send()
     }
 
     // MARK: -
