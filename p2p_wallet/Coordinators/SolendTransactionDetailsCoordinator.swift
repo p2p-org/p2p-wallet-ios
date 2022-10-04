@@ -41,9 +41,6 @@ final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
         controller.present(viewController, animated: true)
 
         model.assign(to: \.model, on: viewModel).store(in: &subscriptions)
-//        model.sink { val in
-//            viewModel.model = val
-//        }.store(in: &subscriptions)
 
         view.close
             .sink(receiveValue: {
