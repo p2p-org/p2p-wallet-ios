@@ -1,5 +1,5 @@
 //
-//  TokenToDeposit.swift
+//  TokenToWithdraw.swift
 //  p2p_wallet
 //
 //  Created by Ivan on 28.09.2022.
@@ -10,11 +10,11 @@ import KeyAppUI
 import SwiftSVG
 import SwiftUI
 
-struct TokenToDepositView: View {
+struct TokenToWithdrawView: View {
     let models: [Model]
 
     private let closeSubject = PassthroughSubject<Void, Never>()
-    var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
+    private let symbolSubject = PassthroughSubject<String, Never>()
 
     var body: some View {
         VStack(spacing: 0) {
@@ -40,12 +40,23 @@ struct TokenToDepositView: View {
                 }
             ).padding(.top, 32)
         }
-        .sheetHeader(title: L10n.tokenToDeposit) { closeSubject.send() }
+        .sheetHeader(title: L10n.tokenToWithdraw) { closeSubject.send() }
         .padding(.top, 6)
         .padding(.bottom, 16)
     }
 
     private func token(model: Model) -> some View {
+        Button(
+            action: {
+                symbolSubject.send(model.symbol)
+            },
+            label: {
+                tokenView(model: model)
+            }
+        )
+    }
+
+    private func tokenView(model: Model) -> some View {
         HStack(spacing: 12) {
             if let url = model.imageUrl {
                 ImageView(withURL: url)
@@ -56,39 +67,38 @@ struct TokenToDepositView: View {
                 Text(model.amount != nil ? model.amount?.tokenAmount(symbol: model.symbol) ?? "" : model.symbol)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .text2))
-                Text(model.name)
+                Text("\(L10n.yielding) \(model.apy.percentFormat()) \(L10n.apy)")
                     .foregroundColor(Color(Asset.Colors.mountain.color))
                     .font(uiFont: .font(of: .label1))
             }
             Spacer()
-            VStack(alignment: .trailing, spacing: 8) {
-                Text(model.apy.percentFormat())
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .text2, weight: .semibold))
-                Text(L10n.apy)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .font(uiFont: .font(of: .label1))
-            }
+            Text(model.fiatAmount?.fiatAmount() ?? "")
+                .foregroundColor(Color(Asset.Colors.night.color))
+                .font(uiFont: .font(of: .text2, weight: .semibold))
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 8)
     }
 }
 
+// MARK: - SolendSelectTokenView
+
+extension TokenToWithdrawView: SolendSelectTokenView {
+    var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
+    var symbol: AnyPublisher<String, Never> { symbolSubject.eraseToAnyPublisher() }
+    var viewHeight: CGFloat { CGFloat(models.count * 64 + (models.count - 1) * 8 + 224) }
+}
+
 // MARK: - Model
 
-extension TokenToDepositView {
+extension TokenToWithdrawView {
     struct Model: Swift.Identifiable {
         let amount: Double?
         let imageUrl: URL?
         let symbol: String
-        let name: String
+        let fiatAmount: Double?
         let apy: Double
 
         var id: String { symbol }
     }
-}
-
-extension TokenToDepositView {
-    var viewHeight: CGFloat { CGFloat(models.count * 64 + (models.count - 1) * 8 + 224) }
 }
