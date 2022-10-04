@@ -11,6 +11,7 @@ import UIKit
 
 final class SolendCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
+    private let transition = PanelTransition()
 
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
@@ -49,6 +50,11 @@ final class SolendCoordinator: Coordinator<Void> {
                             model: $0
                         )
                         coordinate(to: coordinator)
+                    })
+                    .store(in: &subscriptions)
+                viewModel.aboutSolend
+                    .sink(receiveValue: { [unowned self] in
+                        showAboutSolend(depositVC: depositVC)
                     })
                     .store(in: &subscriptions)
             })
@@ -96,5 +102,26 @@ final class SolendCoordinator: Coordinator<Void> {
             }
             navigationController.show(vc, sender: nil)
         }
+    }
+
+    private func showAboutSolend(depositVC: UIViewController) {
+        let view = AboutSolendView()
+        transition.containerHeight = view.viewHeight
+        let viewController = view.asViewController()
+        viewController.view.layer.cornerRadius = 16
+        viewController.transitioningDelegate = transition
+        viewController.modalPresentationStyle = .custom
+        depositVC.present(viewController, animated: true)
+
+        transition.dimmClicked
+            .sink(receiveValue: {
+                viewController.dismiss(animated: true)
+            })
+            .store(in: &subscriptions)
+        view.cancel
+            .sink(receiveValue: {
+                viewController.dismiss(animated: true)
+            })
+            .store(in: &subscriptions)
     }
 }
