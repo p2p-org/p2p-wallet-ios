@@ -56,7 +56,6 @@ final class SolendCoordinator: Coordinator<Void> {
                     .sink(receiveValue: { _ in })
                     .store(in: &subscriptions)
 
-
                 viewModel.tokenSelect.flatMap { [unowned self] tokens in
                     var coordinator: SolendTokenActionCoordinator!
                     if let tokens = tokens as? [TokenToDepositView.Model] {
@@ -92,17 +91,17 @@ final class SolendCoordinator: Coordinator<Void> {
                 )
                 coordinate(to: coordinator)
                     .sink(receiveValue: { [weak self] result in
-                        guard
-                            let self = self,
-                            result == .showTrade
-                        else { return }
-                        Task {
-                            do {
+                        guard let self = self else { return }
+                        switch result {
+                        case .showTrade:
+                            Task {
                                 let done = await self.showTrade()
                                 if done {
                                     self.navigationController.dismiss(animated: true)
                                 }
                             }
+                        case let .showBuy(symbol): self.showBuy(symbol: symbol)
+                        default: break
                         }
                     })
                     .store(in: &subscriptions)
@@ -111,6 +110,28 @@ final class SolendCoordinator: Coordinator<Void> {
 
         return Empty(completeImmediately: false)
             .eraseToAnyPublisher()
+    }
+
+    private func showBuy(symbol: String) {
+        // Preparing params for buy view model
+        var defaultToken: Buy.CryptoCurrency?
+        var targetSymbol: String?
+        switch symbol {
+        case "USDC": defaultToken = Buy.CryptoCurrency.usdc
+        case "SOL": defaultToken = Buy.CryptoCurrency.sol
+        default: targetSymbol = symbol
+        }
+
+        let coordinator = BuyCoordinator(
+            navigationController: navigationController,
+            context: .fromInvest,
+            defaultToken: defaultToken,
+            targetTokenSymbol: targetSymbol
+        )
+
+        coordinate(to: coordinator)
+            .sink {}
+            .store(in: &subscriptions)
     }
 
     private func showTrade() async -> Bool {

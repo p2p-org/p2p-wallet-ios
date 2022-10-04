@@ -886,3 +886,7 @@ another";
 "What is Solend?" = "What is Solend?";
 "Like a deposit but with crypto.\nLow risks, all your funds are insured." = "Like a deposit but with crypto.\nLow risks, all your funds are insured.";
 "🕑 Sending your deposit..." = "🕑 Sending your deposit...";
+"Buying %@ as the base currency" = "Buying %@ as the base currency";
+"Exchanging %@ → %@" = "Exchanging %@ → %@";
+"Purchasing on the Moonpay’s website" = "Purchasing on the Moonpay’s website";
+"There would be no additional costs" = "There would be no additional costs";
