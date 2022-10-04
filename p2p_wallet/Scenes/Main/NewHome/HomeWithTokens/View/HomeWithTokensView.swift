@@ -92,7 +92,7 @@ struct HomeWithTokensView: View {
             .padding(.top, 32)
 
             // Earn banner
-            if !isEarnBannerClosed {
+            if !isEarnBannerClosed && available(.investSolendFeature) {
                 EarnBannerView {
                     viewModel.earn()
                 } closeAction: {
