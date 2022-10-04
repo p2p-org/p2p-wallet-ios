@@ -11,8 +11,7 @@ import SwiftSVG
 import SwiftUI
 
 struct SolendTransactionDetailsView: View {
-    let strategy: Strategy
-    @Binding var model: State
+    @ObservedObject var viewModel: SolendTransactionDetailsViewModel
 
     private let closeSubject = PassthroughSubject<Void, Never>()
     var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
@@ -45,27 +44,9 @@ struct SolendTransactionDetailsView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.top, 20)
             VStack(spacing: 32) {
-                switch model {
-                case .pending:
+                if let model = viewModel.model {
                     cell(
-                        title: strategy == .deposit ? L10n.deposit : L10n.withdraw,
-                        state: .pending
-                    )
-                    cell(
-                        title: L10n.transferFee,
-                        state: .pending
-                    )
-                    cell(
-                        title: strategy == .withdraw ? L10n.withdrawalFee : L10n.depositFees,
-                        state: .pending
-                    )
-                    cell(
-                        title: L10n.total,
-                        state: .pending
-                    )
-                case let .model(model):
-                    cell(
-                        title: strategy == .deposit ? L10n.deposit : L10n.withdraw,
+                        title: viewModel.strategy == .deposit ? L10n.deposit : L10n.withdraw,
                         state: .model(model.formattedAmount)
                     )
                     cell(
@@ -73,12 +54,29 @@ struct SolendTransactionDetailsView: View {
                         state: .model(model.formattedTransferFee, free: model.transferFee == nil)
                     )
                     cell(
-                        title: strategy == .withdraw ? L10n.withdrawalFee : L10n.depositFees,
+                        title: viewModel.strategy == .withdraw ? L10n.withdrawalFee : L10n.depositFees,
                         state: .model(model.formattedFee, free: model.fee == nil)
                     )
                     cell(
                         title: L10n.total,
                         state: .model(model.formattedTotal)
+                    )
+                } else {
+                    cell(
+                        title: viewModel.strategy == .deposit ? L10n.deposit : L10n.withdraw,
+                        state: .pending
+                    )
+                    cell(
+                        title: L10n.transferFee,
+                        state: .pending
+                    )
+                    cell(
+                        title: viewModel.strategy == .withdraw ? L10n.withdrawalFee : L10n.depositFees,
+                        state: .pending
+                    )
+                    cell(
+                        title: L10n.total,
+                        state: .pending
                     )
                 }
             }
@@ -146,11 +144,6 @@ struct SolendTransactionDetailsView: View {
 // MARK: - Model
 
 extension SolendTransactionDetailsView {
-    enum State {
-        case pending
-        case model(Model)
-    }
-
     struct Model: Equatable {
         let amount: Double
         let fiatAmount: Double
@@ -178,11 +171,6 @@ extension SolendTransactionDetailsView {
         var formattedFee: String {
             "\(fee?.tokenAmount(symbol: feeSymbol) ?? "") (~\(fiatFee?.fiatAmount() ?? ""))"
         }
-    }
-
-    enum Strategy {
-        case deposit
-        case withdraw
     }
 }
 
