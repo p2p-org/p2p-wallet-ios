@@ -48,7 +48,7 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     var headerViewTitle: String {
-        maxAmount().tokenAmount(symbol: invest.asset.symbol)
+        invest.userDeposit?.depositedAmount ?? ""
     }
 
     var headerViewSubtitle: String {
