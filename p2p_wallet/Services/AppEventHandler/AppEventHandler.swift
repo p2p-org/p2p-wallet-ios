@@ -98,6 +98,7 @@ extension AppEventHandler: LogoutResponder {
             Defaults.shouldShowConfirmAlertOnSend = true
             Defaults.shouldShowConfirmAlertOnSwap = true
             Defaults.isSolendTutorialShown = false
+            Defaults.isEarnBannerClosed = false
             self.delegate?.userDidLogout()
         }
     }
