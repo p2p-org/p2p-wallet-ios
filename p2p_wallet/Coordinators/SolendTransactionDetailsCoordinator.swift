@@ -11,19 +11,19 @@ import SwiftUI
 import UIKit
 
 final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
-    typealias Strategy = SolendTransactionDetailsView.Strategy
-    typealias Model = SolendTransactionDetailsView.State
+    typealias Strategy = SolendTransactionDetailsViewModel.Strategy
+    typealias Model = SolendTransactionDetailsView.Model
 
     private let controller: UIViewController
     private let strategy: Strategy
-    private let model: Binding<Model>
+    private let model: AnyPublisher<Model?, Never>
 
     private let transition = PanelTransition()
 
     init(
         controller: UIViewController,
         strategy: Strategy,
-        model: Binding<Model>
+        model: AnyPublisher<Model?, Never>
     ) {
         self.controller = controller
         self.strategy = strategy
@@ -31,13 +31,19 @@ final class SolendTransactionDetailsCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
-        let view = SolendTransactionDetailsView(strategy: strategy, model: model)
+        let viewModel = SolendTransactionDetailsViewModel(strategy: strategy, model: nil)
+        let view = SolendTransactionDetailsView(viewModel: viewModel)
         transition.containerHeight = view.viewHeight
         let viewController = view.asViewController()
         viewController.view.layer.cornerRadius = 16
         viewController.transitioningDelegate = transition
         viewController.modalPresentationStyle = .custom
         controller.present(viewController, animated: true)
+
+        model.assign(to: \.model, on: viewModel).store(in: &subscriptions)
+//        model.sink { val in
+//            viewModel.model = val
+//        }.store(in: &subscriptions)
 
         view.close
             .sink(receiveValue: {
