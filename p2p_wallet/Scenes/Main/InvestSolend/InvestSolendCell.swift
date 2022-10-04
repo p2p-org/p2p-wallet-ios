@@ -13,6 +13,7 @@ struct InvestSolendCell: View {
     let asset: SolendConfigAsset
     let deposit: String?
     let apy: String?
+    let isLoading: Bool
 
     var body: some View {
         HStack(spacing: 12) {
@@ -41,11 +42,10 @@ struct InvestSolendCell: View {
             }
             Spacer()
 
-            if let apy = apy {
-                Text(formatApy(apy))
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .apply(style: .text2)
-            }
+            Text(formatApy(apy ?? "0.00%"))
+                .foregroundColor(Color(Asset.Colors.night.color))
+                .apply(style: .text2)
+                .skeleton(with: isLoading, size: CGSize(width: 40, height: 20))
         }
         .padding(.horizontal, 16)
         .frame(height: 64)
@@ -69,7 +69,8 @@ struct InvestSolendCell_Previews: PreviewProvider {
                     logo: nil
                 ),
                 deposit: "12.3221",
-                apy: "2.31231"
+                apy: "2.31231",
+                isLoading: false
             )
         }
     }

@@ -17,7 +17,6 @@ class DepositSolendViewModel: ObservableObject {
         transactionDetailsSubject.eraseToAnyPublisher()
     }
 
-
     private let tokenSelectSubject = PassthroughSubject<[Any], Never>()
     var tokenSelect: AnyPublisher<[Any], Never> {
         tokenSelectSubject.eraseToAnyPublisher()
@@ -383,7 +382,6 @@ class DepositSolendViewModel: ObservableObject {
         transactionDetailsSubject.send(detailItem)
     }
 
-
     // MARK: -
 
     private func formatApy(_ apy: String) -> String {
@@ -393,7 +391,6 @@ class DepositSolendViewModel: ObservableObject {
 
     func showAboutSolend() {
         aboutSolendSubject.send()
-
     }
 }
 

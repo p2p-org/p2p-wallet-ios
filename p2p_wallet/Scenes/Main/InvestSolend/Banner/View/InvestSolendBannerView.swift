@@ -11,9 +11,11 @@ struct InvestSolendBannerView: View {
     typealias BalanceModel = InvestSolendBannerViewModel.InvestSolendBannerBalanceModel
 
     @ObservedObject private var viewModel: InvestSolendBannerViewModel
+    private let showDeposits: (() -> Void)?
 
-    init(viewModel: InvestSolendBannerViewModel) {
+    init(viewModel: InvestSolendBannerViewModel, showDeposits: (() -> Void)? = nil) {
         self.viewModel = viewModel
+        self.showDeposits = showDeposits
     }
 
     var body: some View {
@@ -64,7 +66,11 @@ struct InvestSolendBannerView: View {
                 .font(uiFont: .font(of: .text4))
                 .multilineTextAlignment(.center)
             Button(
-                action: {},
+                action: {
+                    if failure == true {
+                        Task { try await viewModel.update() }
+                    }
+                },
                 label: {
                     Text(failure ? L10n.tryAgain : L10n.learnMore)
                         .font(uiFont: .font(of: .text2, weight: .semibold))
@@ -90,7 +96,9 @@ struct InvestSolendBannerView: View {
                 .font(uiFont: .font(of: .title1, weight: .bold))
                 .multilineTextAlignment(.center)
             Button(
-                action: {},
+                action: {
+                    showDeposits?()
+                },
                 label: {
                     HStack(spacing: 4) {
                         Text(model.depositUrls.count > 1 ? L10n.showDeposits : L10n.showDeposit)
