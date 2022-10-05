@@ -159,8 +159,12 @@ final class TabBarController: UITabBarController {
     }
 
     func changeItem(to item: TabItem) {
+        guard let viewControllers = viewControllers,
+              item.rawValue < viewControllers.count
+        else { return }
+        let viewController = viewControllers[item.rawValue]
         selectedIndex = item.rawValue
-        customTabBar.updateSelectedViewPositionIfNeeded()
+        _ = tabBarController(self, shouldSelect: viewController)
     }
 }
 
