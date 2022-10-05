@@ -238,7 +238,7 @@ private extension RestoreCustomDelegatedCoordinator {
             let content = OnboardingContentData(
                 image: .catFail,
                 title: L10n.noWalletFound,
-                subtitle: L10n.tryWithAnotherAccountOrUseAPhoneNumber
+                subtitle: L10n.tryWithAccountOrUseAnAnotherPhoneNumber
             )
             let parameters = ChooseRestoreOptionParameters(
                 isBackAvailable: false,
@@ -346,8 +346,8 @@ private extension RestoreCustomDelegatedCoordinator {
     func handleNotFound() -> UIViewController {
         let content = OnboardingContentData(
             image: .catFail,
-            title: L10n.noWalletFound,
-            subtitle: L10n.tryWithAccountOrUseAnAnotherPhoneNumber
+            title: L10n.almostDone,
+            subtitle: L10n.useYourSocialAccountToContinue
         )
         let parameters = ChooseRestoreOptionParameters(
             isBackAvailable: false,

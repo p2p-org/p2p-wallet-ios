@@ -11,9 +11,9 @@ struct OnboardingTermAndConditionButton: View {
 
     var body: some View {
         VStack(spacing: 2) {
-            Text(isStart ? L10n.byContinuingYouAgreeToKeyAppS : L10n.keyAppS)
+            Text(isStart ? L10n.byContinuingYouAgreeWalletS : L10n.p2PWalletS)
                 .styled(color: Asset.Colors.mountain, font: .label1)
-            Text(L10n.capitalizedTermsAndConditions)
+            Text(L10n.termsOfUseAndPrivacyPolicy)
                 .styled(color: Asset.Colors.snow, font: .label1)
                 .onTapGesture(perform: onPressed)
         }
