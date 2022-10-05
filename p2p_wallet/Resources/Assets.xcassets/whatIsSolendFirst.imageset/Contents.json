@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "aboutSolendLock.png",
+      "filename" : "whatIsSolendFirst.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "aboutSolendLock@2x.png",
+      "filename" : "whatIsSolendFirst@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "aboutSolendLock@3x.png",
+      "filename" : "whatIsSolendFirst@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
