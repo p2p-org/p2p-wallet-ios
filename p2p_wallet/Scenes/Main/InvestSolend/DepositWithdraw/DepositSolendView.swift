@@ -4,23 +4,60 @@ import SwiftUI
 struct DepositSolendView: View {
     @StateObject var viewModel: DepositSolendViewModel
     @State private var showingAlert = false
+    @State private var showFinished = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Button {
-                viewModel.headerTapped()
-            } label: {
-                InvestSolendHeaderView(
-                    title: viewModel.headerViewTitle,
-                    logoURLString: viewModel.headerViewLogo,
-                    subtitle: viewModel.headerViewSubtitle,
-                    rightTitle: viewModel.headerViewRightTitle,
-                    rightSubtitle: viewModel.headerViewRightSubtitle
-                ).padding(.top, 24)
-            }
+            header
 
             Spacer()
 
+            input
+
+            button
+
+            fee
+        }
+        .padding(.horizontal, 16)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack {
+                    Image(uiImage: .solend)
+                    Text(viewModel.title)
+                        .fontWeight(.semibold)
+                        .apply(style: .text1)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                }
+            }
+        }
+        .toolbar {
+            Button(
+                action: {
+                    viewModel.showAboutSolend()
+                },
+                label: {
+                    Image(uiImage: .questionNavBar)
+                }
+            )
+        }
+    }
+
+    var header: some View {
+        Button {
+            viewModel.headerTapped()
+        } label: {
+            InvestSolendHeaderView(
+                title: viewModel.headerViewTitle,
+                logoURLString: viewModel.headerViewLogo,
+                subtitle: viewModel.headerViewSubtitle,
+                rightTitle: viewModel.headerViewRightTitle,
+                rightSubtitle: viewModel.headerViewRightSubtitle
+            ).padding(.top, 24)
+        }
+    }
+
+    var input: some View {
+        Group {
             HStack {
                 Text(L10n.enterTheAmount)
                     .apply(style: .text3)
@@ -53,8 +90,21 @@ struct DepositSolendView: View {
                 viewModel?.focusSide = side
             }
             .padding(.horizontal, 16)
+        }
+    }
 
-            Group {
+    var button: some View {
+        Group {
+            if showFinished {
+                HStack {
+                    Spacer()
+                    Circle()
+                        .fill(Color(Asset.Colors.mint.color))
+                        .frame(width: 56, height: 56)
+                        .overlay(Image(uiImage: UIImage.check))
+                    Spacer()
+                }
+            } else {
                 if viewModel.isButtonEnabled {
                     HStack(spacing: 8) {
                         SliderButtonView(
@@ -64,7 +114,12 @@ struct DepositSolendView: View {
                             isOn: .init(get: { [weak viewModel] in
                                 viewModel?.isSliderOn ?? false
                             }, set: { [weak viewModel] val in
-                                viewModel?.isSliderOn = val
+                                withAnimation {
+                                    showFinished = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                        viewModel?.isSliderOn = val
+                                    }
+                                }
                             })
                         )
                             .disabled(viewModel.loading)
@@ -84,7 +139,6 @@ struct DepositSolendView: View {
                             .fill(Color(Asset.Colors.rain.color))
                             .overlay(Text(viewModel.buttonText))
                             .frame(height: 56)
-                            .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
                         if viewModel.hasError {
                             Button(action: {
                                 showingAlert = true
@@ -115,50 +169,30 @@ struct DepositSolendView: View {
                     }
                 }
             }
-            .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
-            .animation(.easeOut(duration: 0.1), value: viewModel.isButtonEnabled)
-            .padding(.top, 8)
+        }
+        .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
+        .animation(.default, value: showFinished)
+        .padding(.top, 8)
+    }
 
-            HStack {
-                Spacer()
-                if viewModel.loading {
-                    Spinner()
-                        .frame(width: 16, height: 16)
-                        .padding(.top, 8)
-                        .padding(.bottom, 16)
-                } else {
-                    Text(viewModel.feeText)
-                        .apply(style: .text4)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color(Asset.Colors.mountain.color))
-                        .frame(minHeight: 16)
-                        .padding(.top, 8)
-                        .padding(.bottom, 16)
-                }
-                Spacer()
+    var fee: some View {
+        HStack {
+            Spacer()
+            if viewModel.loading {
+                Spinner()
+                    .frame(width: 16, height: 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 16)
+            } else {
+                Text(viewModel.feeText)
+                    .apply(style: .text4)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                    .frame(minHeight: 16)
+                    .padding(.top, 8)
+                    .padding(.bottom, 16)
             }
-        }
-        .padding(.horizontal, 16)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                HStack {
-                    Image(uiImage: .solend)
-                    Text(viewModel.title)
-                        .fontWeight(.semibold)
-                        .apply(style: .text1)
-                        .foregroundColor(Color(Asset.Colors.night.color))
-                }
-            }
-        }
-        .toolbar {
-            Button(
-                action: {
-                    viewModel.showAboutSolend()
-                },
-                label: {
-                    Image(uiImage: .questionNavBar)
-                }
-            )
+            Spacer()
         }
     }
 }
