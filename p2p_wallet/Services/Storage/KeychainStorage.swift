@@ -30,13 +30,6 @@ class KeychainStorage {
 
     // MARK: - Services
 
-    /// This keychain storage will sync across devices
-    // let icloudKeychain: KeychainSwift = {
-    //     let kc = KeychainSwift()
-    //     kc.synchronizable = true
-    //     return kc
-    // }()
-
     /// This keychain storage will only locally store in device
     let localKeychain: KeychainSwift = .init()
 
@@ -110,6 +103,27 @@ class KeychainStorage {
             }
             // mark as completed
             UserDefaults.standard.set(true, forKey: ubiquitousKeyValueStoreToKeychain)
+        }
+
+        // migrate from iCloud keychain to localKeychain
+        let iCloudKeychainToLocalKeychainMigrated = "iCloudKeychainToLocalKeychainMigrated"
+        if !UserDefaults.standard.bool(forKey: iCloudKeychainToLocalKeychainMigrated) {
+            // safely check all keys in localKeychain, only override when data in localKeychain is empty
+            if localKeychain.getData(pincodeKey) == nil,
+               localKeychain.getData(pincodeAttemptsKey) == nil,
+               localKeychain.getData(phrasesKey) == nil,
+               localKeychain.getData(derivableTypeKey) == nil,
+               localKeychain.getData(walletIndexKey) == nil,
+               localKeychain.getData(ethAddressKey) == nil
+            {
+                [pincodeKey, phrasesKey, derivableTypeKey, walletIndexKey].forEach { key in
+                    guard let data = icloudKeychain.getData(key) else { return }
+                    localKeychain.set(data, forKey: key)
+                }
+            }
+
+            // mark as completed
+            UserDefaults.standard.set(true, forKey: iCloudKeychainToLocalKeychainMigrated)
         }
     }
 
