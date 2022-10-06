@@ -8,7 +8,7 @@ import Solend
 import SwiftUI
 import UIKit
 
-final class SolendDepositCoordinator: Coordinator<Void> {
+final class SolendDepositCoordinator: Coordinator<Bool> {
     private let controller: UINavigationController
     private let transition = PanelTransition()
 
@@ -26,12 +26,14 @@ final class SolendDepositCoordinator: Coordinator<Void> {
         super.init()
     }
 
-    override func start() -> AnyPublisher<Void, Never> {
-        let resultSubject = PassthroughSubject<Void, Never>()
+    override func start() -> AnyPublisher<Bool, Never> {
+        let resultSubject = PassthroughSubject<Bool, Never>()
 
         let viewModel = try! DepositSolendViewModel(strategy: initialStrategy, initialAsset: initialAsset)
         viewModel.finish.sink { [unowned self] in
             controller.popViewController(animated: true)
+            resultSubject.send(true)
+            resultSubject.send(completion: .finished)
         }.store(in: &subscriptions)
 
         let view = DepositSolendView(viewModel: viewModel)
@@ -84,11 +86,11 @@ final class SolendDepositCoordinator: Coordinator<Void> {
                 showAboutSolend(depositVC: depositVC)
             })
             .store(in: &subscriptions)
-        
+
         depositVC.onClose = {
             resultSubject.send(completion: .finished)
         }
-        
+
         return resultSubject.eraseToAnyPublisher()
     }
 

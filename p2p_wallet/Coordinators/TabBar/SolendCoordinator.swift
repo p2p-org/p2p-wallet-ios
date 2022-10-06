@@ -42,7 +42,7 @@ final class SolendCoordinator: Coordinator<Void> {
                         controller: navigationController, initialAsset: $0,
                         initialStrategy: .deposit
                     ))
-                    .sink {}
+                    .sink { _ in }
                     .store(in: &subscriptions)
             })
             .store(in: &subscriptions)

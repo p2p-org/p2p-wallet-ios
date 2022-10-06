@@ -7,9 +7,10 @@
 
 import Combine
 import Resolver
+import SolanaSwift
+import Solend
 import SwiftUI
 import UIKit
-import SolanaSwift
 
 final class SolendDepositsCoordinator: Coordinator<Void> {
     private let controller: UINavigationController
@@ -21,27 +22,45 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
     override func start() -> AnyPublisher<Void, Never> {
         let resultSubject = PassthroughSubject<Void, Never>()
 
+        let actionService = Resolver.resolve(SolendActionService.self)
         let savePoint = controller.viewControllers.last
 
         let vm = SolendDepositsViewModel()
         vm.withdraw.sink { [unowned self] asset in
+            guard InvestSolendHelper.readyToStartAction(Resolver.resolve(), actionService.getCurrentAction()) == true
+            else {
+                return
+            }
+
             coordinate(to:
                 SolendDepositCoordinator(
                     controller: controller,
                     initialAsset: asset,
                     initialStrategy: .withdraw
                 ))
-                .sink {}
+                .sink { status in
+                    if status == true, let savePoint = savePoint, actionService.getCurrentAction() != nil {
+                        controller.popToViewController(savePoint, animated: true)
+                    }
+                }
                 .store(in: &subscriptions)
         }.store(in: &subscriptions)
 
         vm.deposit.sink { [unowned self] asset in
+            guard InvestSolendHelper.readyToStartAction(
+                Resolver.resolve(),
+                actionService.getCurrentAction()
+            ) == true
+            else {
+                return
+            }
+
             let wallets: WalletsRepository = Resolver.resolve()
-    
+
             let tokenAccount: Wallet? = wallets
                 .getWallets()
                 .first(where: { (wallet: Wallet) -> Bool in asset.mintAddress == wallet.mintAddress })
-    
+
             if (tokenAccount?.amount ?? 0) > 0 {
                 // User has a token
                 let coordinator = SolendDepositCoordinator(
@@ -50,7 +69,11 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
                     initialStrategy: .deposit
                 )
                 coordinate(to: coordinator)
-                    .sink {}
+                    .sink { status in
+                        if status == true, let savePoint = savePoint, actionService.getCurrentAction() != nil {
+                            controller.popToViewController(savePoint, animated: true)
+                        }
+                    }
                     .store(in: &subscriptions)
             } else {
                 // User doesn't have a token
