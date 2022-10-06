@@ -11,6 +11,8 @@ import SwiftUI
 struct InvestSolendView: View {
     @StateObject var viewModel: InvestSolendViewModel
 
+    let updating = Timer.publish(every: 60 * 10, on: .main, in: .common).autoconnect()
+
     var body: some View {
         VStack {
             // Title
@@ -74,7 +76,7 @@ struct InvestSolendView: View {
                 }
             }
             .frame(maxHeight: .infinity)
-        }
+        }.onReceive(updating) { _ in Task { try await viewModel.update() } }
     }
 }
 
