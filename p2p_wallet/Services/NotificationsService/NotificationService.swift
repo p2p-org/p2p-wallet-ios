@@ -253,7 +253,7 @@ private extension Data {
     }
 }
 
-extension UIWindow {
+private extension UIWindow {
     func topViewController() -> UIViewController? {
         rootViewController?.topMostViewController()
     }

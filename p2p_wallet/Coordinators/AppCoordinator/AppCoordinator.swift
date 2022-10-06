@@ -179,10 +179,3 @@ class AppCoordinator: Coordinator<Void> {
         window?.animate(newRootViewController: vc)
     }
 }
-
-extension UIWindow {
-    func animate(newRootViewController: UIViewController) {
-        rootViewController = newRootViewController
-        UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve, animations: {}, completion: nil)
-    }
-}
