@@ -24,9 +24,15 @@ struct InvestSolendView: View {
             .padding(.horizontal, 16)
 
             // Banner
-            InvestSolendBannerView(viewModel: InvestSolendBannerViewModel()) {
+            InvestSolendBannerView(
+                viewModel: InvestSolendBannerViewModel(
+                    dataService: viewModel.dataService,
+                    actionService: viewModel.actionService
+                )
+            ) {
                 viewModel.showDeposits()
             }
+            .padding(.bottom, 8)
             .padding(.horizontal, 16)
 
             // Title
@@ -43,7 +49,7 @@ struct InvestSolendView: View {
             // Market
             ScrollView {
                 VStack {
-                    if viewModel.loading {
+                    if viewModel.loading && viewModel.market.isEmpty {
                         HStack {
                             Spacer()
                             ProgressView()
@@ -69,5 +75,11 @@ struct InvestSolendView: View {
             }
             .frame(maxHeight: .infinity)
         }
+    }
+}
+
+struct InvestSolendView_Previews: PreviewProvider {
+    static var previews: some View {
+        InvestSolendView(viewModel: .init(mocked: true))
     }
 }

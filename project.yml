@@ -89,9 +89,6 @@ targets:
                   fi
                   "$PODS_ROOT/SwiftGen/bin/swiftgen"
             name: "[SCRIPT] Swiftgen Run"
-          - script: |
-                  "$SRCROOT"/Scripts/formatAndLint.sh
-            name: "[SCRIPT] Format and lint"
         postBuildScripts:
           - script: |
                   if [ "${CONFIGURATION}" != "Debug" ]; then
