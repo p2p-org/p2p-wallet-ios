@@ -63,9 +63,7 @@ struct DebugMenuView: View {
                         Text("Delete last progress")
                         Spacer()
                         Button {
-                            do {
-                                try Resolver.resolve(OnboardingService.self).lastState = nil
-                            } catch { print(error) }
+                            Resolver.resolve(OnboardingService.self).lastState = nil
                         } label: { Text("Delete") }
                     }
                 }
