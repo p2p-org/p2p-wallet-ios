@@ -19,158 +19,40 @@ struct InvestSolendBannerView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color(viewModel.state.notLearnMode ? Asset.Colors.rain.color : Asset.Colors.lime.color)
-            switch viewModel.state {
-            case .pending:
-                pending
-            case let .failure(title, subtitle):
-                single(title: title, subtitle: subtitle, failure: true)
-            case .learnMore:
-                single(
-                    title: L10n.depositYourTokensAndEarn,
-                    subtitle: L10n.AllYourFundsAreInsured.withdrawYourDepositWithAllRewardsAtAnyTime,
-                    failure: false
-                )
-            case .processingAction:
-                processingAction()
-            case let .withBalance(model):
-                withBalance(model: model)
+        switch viewModel.state {
+        case .pending:
+            SolendLoadingBannerView()
+        case let .failure(title, subtitle):
+            SolendErrorBannerView(title: title, subtitle: subtitle) {
+                Task { try await viewModel.update() }
+            }
+        case .learnMore:
+            SolendLearnMoreBannerView()
+        case .processingAction:
+            SolendProcessingBannerView()
+        case let .withBalance(model):
+            SolendBalanceBannerView(
+                balance: model.balance,
+                delta: Date().timeIntervalSince(model.lastUpdate),
+                depositUrls: model.depositUrls,
+                rewards: model.reward,
+                lastUpdateDate: model.lastUpdate
+            ) { [showDeposits] in
+                showDeposits?()
             }
         }
-        .frame(height: 180)
-        .frame(maxWidth: .infinity)
-        .cornerRadius(28)
-    }
-
-    private var pending: some View {
-        VStack(spacing: 12) {
-            Color.blue
-                .skeleton(with: true)
-                .frame(height: 32)
-                .padding(.horizontal, 87)
-            Color.blue
-                .skeleton(with: true)
-                .frame(height: 28)
-                .padding(.horizontal, 123)
-            Spacer()
-        }
-        .padding(.top, 30)
-    }
-
-    private func single(title: String, subtitle: String, failure: Bool) -> some View {
-        VStack(spacing: 12) {
-            Text(title)
-                .font(uiFont: .font(of: .title3, weight: .semibold))
-            Text(subtitle)
-                .font(uiFont: .font(of: .text4))
-                .multilineTextAlignment(.center)
-            Button(
-                action: {
-                    if failure == true {
-                        Task { try await viewModel.update() }
-                    }
-                },
-                label: {
-                    Text(failure ? L10n.tryAgain : L10n.learnMore)
-                        .font(uiFont: .font(of: .text2, weight: .semibold))
-                        .frame(height: 48)
-                        .frame(maxWidth: .infinity)
-                        .background(Color(Asset.Colors.snow.color))
-                        .cornerRadius(12)
-                        .padding(.top, 8)
-                }
-            )
-        }
-        .foregroundColor(Color(Asset.Colors.night.color))
-        .padding(.top, 24)
-        .padding(.bottom, 20)
-        .padding(.horizontal, 20)
-    }
-
-    private func withBalance(model: BalanceModel) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(L10n.earnBalance)
-                .font(uiFont: .font(of: .text3))
-            Text(model.balance)
-                .font(uiFont: .font(of: .title1, weight: .bold))
-                .multilineTextAlignment(.center)
-            Button(
-                action: { showDeposits?() },
-                label: {
-                    HStack(spacing: 4) {
-                        Text(model.depositUrls.count > 1 ? L10n.showDeposits : L10n.showDeposit)
-                            .font(uiFont: .font(of: .text3, weight: .semibold))
-                        Spacer()
-                        HStack(spacing: -8) {
-                            ForEach(model.depositUrls.indices, id: \.self) { index in
-                                ImageView(withURL: model.depositUrls[index])
-                                    .frame(width: 16, height: 16)
-                                    .cornerRadius(4)
-                                    .zIndex(Double(model.depositUrls.count - index))
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 16)
-                    .frame(height: 48)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(Asset.Colors.snow.color))
-                    .cornerRadius(12)
-                    .padding(.top, 8)
-                }
-            )
-        }
-        .foregroundColor(Color(Asset.Colors.night.color))
-        .padding(.top, 36)
-        .padding(.bottom, 20)
-        .padding(.horizontal, 20)
-    }
-
-    private func processingAction() -> some View {
-        ProcessingAction()
-    }
-}
-
-private struct ProcessingAction: View {
-    @State var xOffset: Double = -UIScreen.main.bounds.size.width / 2 - 50
-
-    var repeatingAnimation: Animation {
-        Animation
-            .easeInOut(duration: 2)
-            .repeatForever(autoreverses: false)
-    }
-
-    var body: some View {
-        VStack {
-            VStack(alignment: .leading) {
-                Image(uiImage: .rocket)
-                    .frame(width: 48, height: 98)
-                    .offset(x: xOffset, y: 0)
-            }
-            HStack {
-                Text(L10n.🕑SendingYourDeposit)
-                    .font(uiFont: .font(of: .text2, weight: .semibold))
-                    .padding(.horizontal, 16)
-                Spacer()
-            }.frame(height: 48)
-                .frame(maxWidth: .infinity)
-                .background(Color(Asset.Colors.snow.color))
-                .cornerRadius(12)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 20)
-        }
-
-            .onAppear {
-                withAnimation(repeatingAnimation) {
-                    xOffset = UIScreen.main.bounds.size.width / 2 + 50
-                }
-            }
     }
 }
 
 struct InvestSolendBannerView_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
+        VStack(spacing: 40) {
+            InvestSolendBannerView(
+                viewModel: .init(
+                    dataService: SolendDataServiceMock(),
+                    actionService: SolendActionServiceMock(currentAction: nil)
+                )
+            )
             InvestSolendBannerView(
                 viewModel: .init(
                     dataService: SolendDataServiceMock(),

@@ -7,6 +7,7 @@ import KeychainSwift
 import RxCocoa
 import RxSwift
 import SolanaSwift
+import Resolver
 
 class KeychainStorage {
     // MARK: - Constants
@@ -97,6 +98,7 @@ class KeychainStorage {
         keychain.delete(nameKey)
 
         removeAccountCache()
+        Resolver.resolve(UserSessionCache.self).clear()
     }
 
     private func removeAccountCache() {
