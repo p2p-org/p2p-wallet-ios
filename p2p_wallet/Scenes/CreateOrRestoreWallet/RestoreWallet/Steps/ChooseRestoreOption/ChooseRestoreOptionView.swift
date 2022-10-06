@@ -46,7 +46,7 @@ extension ChooseRestoreOptionView {
                     }
                     if viewModel.isStartAvailable {
                         TextButtonView(
-                            title: L10n.goToTheStartingScreen,
+                            title: L10n.startingScreen,
                             style: .outlineWhite,
                             size: .large,
                             onPressed: { [weak viewModel] in
