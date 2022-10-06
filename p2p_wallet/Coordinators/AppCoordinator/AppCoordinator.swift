@@ -36,9 +36,7 @@ class AppCoordinator: Coordinator<Void> {
 
     override init() {
         super.init()
-        defer {
-            appEventHandler.delegate = self
-        }
+        defer { Task { await appEventHandler.delegate = self } }
     }
 
     // MARK: - Methods
