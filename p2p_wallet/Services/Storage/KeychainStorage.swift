@@ -105,9 +105,25 @@ class KeychainStorage {
             UserDefaults.standard.set(true, forKey: ubiquitousKeyValueStoreToKeychain)
         }
 
-        [pincodeKey, phrasesKey, derivableTypeKey, walletIndexKey].forEach { key in
-            guard let data = icloudKeychain.getData(key), localKeychain.getData(key) == nil else { return }
-            localKeychain.set(data, forKey: key)
+        // migrate from iCloud keychain to localKeychain
+        let iCloudKeychainToLocalKeychainMigrated = "iCloudKeychainToLocalKeychainMigrated"
+        if !UserDefaults.standard.bool(forKey: iCloudKeychainToLocalKeychainMigrated) {
+            // safely check all keys in localKeychain, only override when data in localKeychain is empty
+            if localKeychain.getData(pincodeKey) == nil,
+               localKeychain.getData(pincodeAttemptsKey) == nil,
+               localKeychain.getData(phrasesKey) == nil,
+               localKeychain.getData(derivableTypeKey) == nil,
+               localKeychain.getData(walletIndexKey) == nil,
+               localKeychain.getData(ethAddressKey) == nil
+            {
+                [pincodeKey, phrasesKey, derivableTypeKey, walletIndexKey].forEach { key in
+                    guard let data = icloudKeychain.getData(key) else { return }
+                    localKeychain.set(data, forKey: key)
+                }
+            }
+
+            // mark as completed
+            UserDefaults.standard.set(true, forKey: iCloudKeychainToLocalKeychainMigrated)
         }
     }
 
