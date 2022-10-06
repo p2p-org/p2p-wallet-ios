@@ -6,6 +6,7 @@ import Combine
 import Foundation
 import Resolver
 import Solend
+import SolanaPricesAPIs
 
 class InvestSolendBannerViewModel: ObservableObject {
     @Injected private var priceService: PricesServiceType
@@ -16,14 +17,30 @@ class InvestSolendBannerViewModel: ObservableObject {
     private let dataService: SolendDataService
     private let actionService: SolendActionService
 
-    init(dataService: SolendDataService? = nil, actionService: SolendActionService? = nil) {
+    init(
+        dataService: SolendDataService? = nil,
+        actionService: SolendActionService? = nil
+    ) {
         self.dataService = dataService ?? Resolver.resolve(SolendDataService.self)
         self.actionService = actionService ?? Resolver.resolve(SolendActionService.self)
 
-        self.dataService.availableAssets
-            .combineLatest(self.dataService.deposits, self.actionService.currentAction)
-            .map { [weak self] (assets: [SolendConfigAsset]?, userDeposits: [SolendUserDeposit]?, action: SolendAction?) in
-                self?.stateMapping(assets: assets, deposits: userDeposits, action: action) ?? .pending
+        self.actionService.currentAction
+            .removeDuplicates()
+            .flatMap { [weak self] action -> AnyPublisher<InvestSolendBannerState, Never> in
+                guard let self = self else { return CurrentValueSubject(.pending).eraseToAnyPublisher() }
+                if action != nil {
+                    return CurrentValueSubject(.processingAction).eraseToAnyPublisher()
+                } else {
+                    return self.dataService.availableAssets
+                        .combineLatest(
+                            self.dataService.deposits,
+                            self.dataService.marketInfo,
+                            self.dataService.lastUpdateDate
+                        )
+                        .map(self.dataState)
+                        .removeDuplicates()
+                        .eraseToAnyPublisher()
+                }
             }
             .receive(on: RunLoop.main)
             .removeDuplicates()
@@ -31,19 +48,7 @@ class InvestSolendBannerViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func stateMapping(
-        assets: [SolendConfigAsset]?,
-        deposits: [SolendUserDeposit]?,
-        action: SolendAction?
-    ) -> InvestSolendBannerState {
-        if let action = action {
-            return actionState(action: action)
-        } else {
-            return dataState(assets: assets, deposits: deposits)
-        }
-    }
-
-    private func dataState(assets: [SolendConfigAsset]?, deposits: [SolendUserDeposit]?) -> InvestSolendBannerState {
+    private func dataState(assets: [SolendConfigAsset]?,deposits: [SolendUserDeposit]?, marketInfos: [SolendMarketInfo]?, lastUpdate: Date) -> InvestSolendBannerState {
         // assets is loading
         guard let assets = assets, let deposits = deposits else {
             return .pending
@@ -59,15 +64,37 @@ class InvestSolendBannerViewModel: ObservableObject {
             .map { asset -> URL? in URL(string: asset.logo ?? "") }
             .compactMap { $0 }
 
+        // Calculate current balance
         let total = calculateBalance(assets: assets, deposits: deposits)
+        
+        let reward: Double
+        if let marketInfos = marketInfos {
+            // Calculate reward rate
+            reward = calculateReward(marketInfos: marketInfos, userDeposits: deposits)
+        } else {
+            reward = 0
+        }
+        
         return .withBalance(model: .init(
-            balance: "$ \(total.fixedDecimal(9))",
+            balance: total,
+            lastUpdate: lastUpdate,
+            reward: reward,
             depositUrls: urls
         ))
     }
 
     private func actionState(action _: SolendAction) -> InvestSolendBannerState {
         .processingAction
+    }
+    
+    func calculateReward(marketInfos: [SolendMarketInfo], userDeposits: [SolendUserDeposit]) -> Double {
+        let rewards = SolendMath.reward(marketInfos: marketInfos, userDeposits: userDeposits)
+        return rewards
+            .map { [priceService] (reward: SolendMath.Reward) -> Double in
+                let price = priceService.currentPrice(for: reward.symbol)?.value ?? 0.0
+                return reward.rate * price
+            }
+            .reduce(0, +)
     }
 
     private func calculateBalance(assets _: [SolendConfigAsset], deposits: [SolendUserDeposit]) -> Double {
@@ -108,7 +135,9 @@ extension InvestSolendBannerViewModel {
     }
 
     struct InvestSolendBannerBalanceModel: Equatable {
-        let balance: String
+        let balance: Double
+        let lastUpdate: Date
+        let reward: Double
         let depositUrls: [URL]
     }
 }

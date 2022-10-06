@@ -144,6 +144,9 @@ extension Resolver: ResolverRegistering {
             .implements(AuthenticationHandlerType.self)
             .scope(.session)
 
+        register { UserSessionCache() }
+            .scope(.session)
+
         // SendService
         register { _, args in
             SendService(relayMethod: args())
@@ -337,11 +340,12 @@ extension Resolver: ResolverRegistering {
             SolendDataServiceImpl(
                 solend: resolve(),
                 owner: resolve(AccountStorageType.self).account!,
-                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY"
+                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
+                cache: resolve(UserSessionCache.self)
             )
         }
         .implements(SolendDataService.self)
-        .scope(.application)
+        .scope(.session)
 
         register {
             SolendActionServiceImpl(
@@ -356,7 +360,7 @@ extension Resolver: ResolverRegistering {
             )
         }
         .implements(SolendActionService.self)
-        .scope(.application)
+        .scope(.session)
     }
 }
 
