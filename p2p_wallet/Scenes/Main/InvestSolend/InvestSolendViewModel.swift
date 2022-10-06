@@ -16,9 +16,8 @@ enum InvestSolendError {
 
 @MainActor
 class InvestSolendViewModel: ObservableObject {
-    private let dataService: SolendDataService
-    private let actionService: SolendActionService
-    @Injected private var wallets: WalletsRepository
+    let dataService: SolendDataService
+    let actionService: SolendActionService
 
     private var subscriptions = Set<AnyCancellable>()
 
@@ -108,6 +107,8 @@ class InvestSolendViewModel: ObservableObject {
     }
 
     func assetClicked(_ asset: SolendConfigAsset, market _: SolendMarketInfo?) {
+        let wallets: WalletsRepository = Resolver.resolve()
+        
         // Get user token account
         let tokenAccount: Wallet? = wallets
             .getWallets()
