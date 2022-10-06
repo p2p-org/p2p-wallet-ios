@@ -53,7 +53,12 @@ class InvestSolendViewModel: ObservableObject {
                 case .success, .failed: return true
                 }
             }
-            .sink { [dataService] _ in Task { try await dataService.update() } }
+            .sink { [dataService] _ in
+                Task {
+                    dataService.clearDeposits()
+                    try await dataService.update()
+                }
+            }
             .store(in: &subscriptions)
 
         // Display error when rate is missing
