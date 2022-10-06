@@ -122,8 +122,8 @@ struct DepositSolendView: View {
                                 }
                             })
                         )
-                            .disabled(viewModel.loading)
-                            .frame(height: TextButton.Size.large.height)
+                        .disabled(viewModel.loading)
+                        .frame(height: TextButton.Size.large.height)
                         Button {
                             viewModel.showDetailTapped()
                         } label: {
@@ -170,6 +170,8 @@ struct DepositSolendView: View {
                 }
             }
         }
+        .disabled(viewModel.lock)
+        .allowsHitTesting(!viewModel.lock)
         .transition(.asymmetric(insertion: .scale, removal: .scale).combined(with: .opacity))
         .animation(.default, value: showFinished)
         .padding(.top, 8)

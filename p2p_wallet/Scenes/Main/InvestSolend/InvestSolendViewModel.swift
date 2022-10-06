@@ -16,6 +16,7 @@ enum InvestSolendError {
 
 @MainActor
 class InvestSolendViewModel: ObservableObject {
+    @Injected private var notificationService: NotificationService
     let dataService: SolendDataService
     let actionService: SolendActionService
 
@@ -54,12 +55,31 @@ class InvestSolendViewModel: ObservableObject {
                 }
             }
             .sink { [dataService] _ in
-                Task {
+                Task.detached {
                     dataService.clearDeposits()
                     try await dataService.update()
                 }
+                Task.detached {
+                    Resolver.resolve(WalletsRepository.self).reload()
+                }
             }
             .store(in: &subscriptions)
+
+        // Displaying notification
+        actionService.currentAction
+            .sink { [weak self] (action: SolendAction?) in
+                guard let action = action else { return }
+                if action.status == .success {
+                    switch action.type {
+                    case .deposit:
+                        self?.notificationService
+                            .showInAppNotification(.done(L10n.theFundsHaveBeenDepositedSuccessfully))
+                    case .withdraw:
+                        self?.notificationService
+                            .showInAppNotification(.done(L10n.theFundsHaveBeenWithdrawnSuccessfully))
+                    }
+                }
+            }
 
         // Display error when rate is missing
         dataService.marketInfo
@@ -90,7 +110,10 @@ class InvestSolendViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         dataService.status
-            .map { status in
+            .combineLatest(dataService.deposits)
+            .map { status, deposits in
+                if deposits == nil { return true }
+
                 switch status {
                 case .initialized, .ready: return false
                 case .updating: return true
@@ -112,8 +135,13 @@ class InvestSolendViewModel: ObservableObject {
     }
 
     func assetClicked(_ asset: SolendConfigAsset, market _: SolendMarketInfo?) {
+        guard InvestSolendHelper.readyToStartAction(notificationService, actionService.getCurrentAction()) == true
+        else {
+            return
+        }
+
         let wallets: WalletsRepository = Resolver.resolve()
-        
+
         // Get user token account
         let tokenAccount: Wallet? = wallets
             .getWallets()
