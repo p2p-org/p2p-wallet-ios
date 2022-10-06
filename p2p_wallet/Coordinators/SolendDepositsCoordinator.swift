@@ -24,22 +24,14 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
 
         let vm = SolendDepositsViewModel()
         vm.withdraw.sink { [unowned self] asset in
-            let viewModel = try! DepositSolendViewModel(strategy: .withdraw, initialAsset: asset)
-            viewModel.finish.sink { [unowned self] in
-                guard let savePoint = savePoint else {
-                    controller.popViewController(animated: true)
-                    return
-                }
-                controller.popToViewController(savePoint, animated: true)
-
-            }.store(in: &subscriptions)
-
-            let view = DepositSolendView(viewModel: viewModel)
-            let depositVC = view.asViewController(withoutUIKitNavBar: false)
-            controller.pushViewController(
-                depositVC,
-                animated: true
-            )
+            coordinate(to:
+                SolendDepositCoordinator(
+                    controller: controller,
+                    initialAsset: asset,
+                    initialStrategy: .deposit
+                ))
+                .sink {}
+                .store(in: &subscriptions)
         }.store(in: &subscriptions)
 
         vm.deposit.sink { [unowned self] asset in
