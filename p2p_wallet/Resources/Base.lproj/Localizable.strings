@@ -860,7 +860,6 @@ Reset the PIN or wait for %@.";
 "You request OTP too often. Try later." = "You request OTP too often. Try later.";
 "Sorry, we don't know such a country" = "Sorry, we don't know such a country";
 "Try with another account or use a phone number" = "Try with another account or use a phone number";
-"Go to the starting screen" = "Go to the starting screen";
 "No wallet found" = "No wallet found";
 "Well, well" = "Well, well";
 "Repeat social auth" = "Repeat social auth";

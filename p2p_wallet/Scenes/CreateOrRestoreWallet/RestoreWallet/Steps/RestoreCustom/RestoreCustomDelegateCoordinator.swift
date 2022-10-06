@@ -238,7 +238,7 @@ private extension RestoreCustomDelegatedCoordinator {
             let content = OnboardingContentData(
                 image: .catFail,
                 title: L10n.noWalletFound,
-                subtitle: L10n.tryWithAccountOrUseAnAnotherPhoneNumber
+                subtitle: L10n.tryAnotherOption
             )
             let parameters = ChooseRestoreOptionParameters(
                 isBackAvailable: false,
