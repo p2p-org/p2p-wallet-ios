@@ -36,7 +36,9 @@ class AppCoordinator: Coordinator<Void> {
 
     override init() {
         super.init()
-        defer { Task { await appEventHandler.delegate = self } }
+        defer {
+            appEventHandler.delegate = self
+        }
     }
 
     // MARK: - Methods
@@ -57,8 +59,8 @@ class AppCoordinator: Coordinator<Void> {
                         .prepend(())
                 )
                 .receive(on: RunLoop.main)
-                .sink { wallet, _ in
-                    wallet != nil ? navigateToMain() : newOnboardingFlow()
+                .sink { [weak self] wallet, _ in
+                    wallet != nil ? self?.navigateToMain() : self?.newOnboardingFlow()
                 }
                 .store(in: &subscriptions)
         }
@@ -153,7 +155,7 @@ class AppCoordinator: Coordinator<Void> {
                     if let metadata = data.metadata {
                         Task.detached {
                             try await Resolver.resolve(WalletMetadataService.self)
-                                .update(initialMetadata: data.metadata)
+                                .update(initialMetadata: metadata)
                         }
                     }
 

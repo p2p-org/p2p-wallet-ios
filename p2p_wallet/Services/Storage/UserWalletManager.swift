@@ -44,11 +44,11 @@ class UserWalletManager: ObservableObject {
         try storage.save(phrases: seedPhrase)
         try storage.save(derivableType: derivablePath.type)
         try storage.save(walletIndex: derivablePath.walletIndex)
-        try storage.save(name: name ?? "")
+        storage.save(name: name ?? "")
         try storage.save(ethAddress: ethAddress ?? "")
 
         // Save device share
-        if let deviceShare = deviceShare, let ethAddress = ethAddress {
+        if let deviceShare = deviceShare, ethAddress != nil {
             try storage.save(deviceShare: deviceShare)
         }
 

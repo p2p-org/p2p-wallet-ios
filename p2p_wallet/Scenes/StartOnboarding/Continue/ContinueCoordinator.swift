@@ -90,7 +90,7 @@ private extension CreateWalletFlowState {
         switch self {
         case let .bindingPhoneNumber(email, _, _, _, _, _):
             return email
-        case let .securitySetup(email, _, _, metadata, _):
+        case let .securitySetup(_, _, _, metadata, _):
             return metadata.email
         default:
             return "?"
