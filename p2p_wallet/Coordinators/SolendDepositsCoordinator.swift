@@ -9,6 +9,7 @@ import Combine
 import Resolver
 import SwiftUI
 import UIKit
+import SolanaSwift
 
 final class SolendDepositsCoordinator: Coordinator<Void> {
     private let controller: UINavigationController
@@ -28,7 +29,7 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
                 SolendDepositCoordinator(
                     controller: controller,
                     initialAsset: asset,
-                    initialStrategy: .deposit
+                    initialStrategy: .withdraw
                 ))
                 .sink {}
                 .store(in: &subscriptions)
@@ -36,25 +37,42 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
 
         vm.deposit.sink { [unowned self] asset in
             let wallets: WalletsRepository = Resolver.resolve()
-            let hasAnotherToken: Bool = wallets.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
-
-            let coordinator = SolendTopUpForContinueCoordinator(
-                navigationController: controller,
-                model: .init(
-                    asset: asset,
-                    strategy: hasAnotherToken ? .withoutOnlyTokenForDeposit : .withoutAnyTokens
+    
+            let tokenAccount: Wallet? = wallets
+                .getWallets()
+                .first(where: { (wallet: Wallet) -> Bool in asset.mintAddress == wallet.mintAddress })
+    
+            if (tokenAccount?.amount ?? 0) > 0 {
+                // User has a token
+                let coordinator = SolendDepositCoordinator(
+                    controller: controller,
+                    initialAsset: asset,
+                    initialStrategy: .deposit
                 )
-            )
-            coordinate(to: coordinator)
-                .sink { [unowned self] result in
-                    switch result {
-                    case .showTrade:
-                        Task { await showTrade() }
-                    case let .showBuy(symbol):
-                        showBuy(symbol: symbol)
-                    default: break
-                    }
-                }.store(in: &subscriptions)
+                coordinate(to: coordinator)
+                    .sink {}
+                    .store(in: &subscriptions)
+            } else {
+                // User doesn't have a token
+                let hasAnotherToken: Bool = wallets.getWallets().first(where: { ($0.lamports ?? 0) > 0 }) != nil
+                let coordinator = SolendTopUpForContinueCoordinator(
+                    navigationController: controller,
+                    model: .init(
+                        asset: asset,
+                        strategy: hasAnotherToken ? .withoutOnlyTokenForDeposit : .withoutAnyTokens
+                    )
+                )
+                coordinate(to: coordinator)
+                    .sink { [unowned self] result in
+                        switch result {
+                        case .showTrade:
+                            Task { await showTrade() }
+                        case let .showBuy(symbol):
+                            showBuy(symbol: symbol)
+                        default: break
+                        }
+                    }.store(in: &subscriptions)
+            }
         }.store(in: &subscriptions)
 
         let vc = UIHostingController(rootView: SolendDepositsView(viewModel: vm))
