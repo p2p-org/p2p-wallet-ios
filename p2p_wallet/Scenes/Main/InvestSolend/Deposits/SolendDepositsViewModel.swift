@@ -20,7 +20,7 @@ class SolendDepositsViewModel: ObservableObject {
     private var depositSubject = PassthroughSubject<SolendUserDepositItem, Never>()
     var deposit: AnyPublisher<Asset, Never> {
         depositSubject.map(\.id)
-            .withLatestFrom(dataService.availableAssets) { symbol, assets in
+            .combineLatest(dataService.availableAssets) { symbol, assets in
                 assets?.first { $0.symbol == symbol }
             }
             .compactMap { $0 }
@@ -30,7 +30,7 @@ class SolendDepositsViewModel: ObservableObject {
     private var withdrawSubject = PassthroughSubject<SolendUserDepositItem, Never>()
     var withdraw: AnyPublisher<Asset, Never> {
         withdrawSubject.map(\.id)
-            .withLatestFrom(dataService.availableAssets) { symbol, assets in
+            .combineLatest(dataService.availableAssets) { symbol, assets in
                 assets?.first { $0.symbol == symbol }
             }
             .compactMap { $0 }

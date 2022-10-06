@@ -108,27 +108,32 @@ class DepositSolendViewModel: ObservableObject {
         feeText = defaultFeeText()
         maxText = L10n.useAll + " \(maxAmount().tokenAmount(symbol: invest.asset.symbol))"
 
-        symbolSelected.withLatestFrom(dataService.availableAssets) { symbol, assets in
-            assets?.first { $0.symbol == symbol }
+        symbolSelected.combineLatest(
+            dataService.availableAssets,
+            dataService.marketInfo,
+            dataService.deposits
+        ) { (
+            symbol: String,
+            assets: [SolendConfigAsset]?,
+            marketInfo: [SolendMarketInfo]?,
+            deposits: [SolendUserDeposit]?
+        ) -> Invest? in
+            guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
+            return (
+                asset: asset,
+                market: marketInfo?.first(where: { $0.symbol == symbol }),
+                userDeposit: deposits?.first(where: { $0.symbol == symbol })
+            )
         }
         .compactMap { $0 }
-        .map { (asset: $0, market: nil, userDeposit: nil) }
         .handleEvents(receiveOutput: { _ in
             self.inputToken = "0"
         })
         .assign(to: \.invest, on: self)
         .store(in: &subscriptions)
 
-        symbolSelected.withLatestFrom(dataService.marketInfo)
-            .sink { [weak self] markets in
-                guard let self = self else { return }
-                let marketInfo = markets?.first { $0.symbol == self.invest.asset.symbol }
-                self.invest.market = marketInfo
-            }
-            .store(in: &subscriptions)
-
-        symbolSelected.withLatestFrom(dataService.deposits)
-            .sink { [weak self] deposits in
+        symbolSelected.combineLatest(dataService.deposits)
+            .sink { [weak self] (_: String, deposits: [SolendUserDeposit]?) in
                 guard let self = self else { return }
                 let deposit = deposits?.first { $0.symbol == self.invest.asset.symbol }
                 self.invest.userDeposit = deposit
@@ -136,9 +141,17 @@ class DepositSolendViewModel: ObservableObject {
             }
             .store(in: &subscriptions)
 
-        symbolSelected.withLatestFrom(dataService.availableAssets)
-            .combineLatest(dataService.marketInfo, dataService.deposits)
-            .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
+        symbolSelected.combineLatest(
+                dataService.availableAssets,
+                dataService.marketInfo,
+                dataService.deposits
+            )
+            .map { (
+                _: String,
+                assets: [SolendConfigAsset]?,
+                marketInfo: [SolendMarketInfo]?,
+                userDeposits: [SolendUserDeposit]?
+            ) -> [Invest] in
                 guard let assets = assets else { return [] }
                 return assets.map { asset -> Invest in
                     (
@@ -171,99 +184,99 @@ class DepositSolendViewModel: ObservableObject {
             $inputToken.map { Double($0.cryptoCurrencyFormat) ?? 0 }.removeDuplicates(),
             $inputFiat.map { Double($0.fiatFormat) ?? 0 }.removeDuplicates()
         )
-            .handleEvents(receiveOutput: { [weak self] val in
-                guard let self = self else { return }
-                let tokenAmount = Double(val.0)
-                let fiatAmount = Double(val.1)
-                let maxAmount = self.maxAmount()
-                self.inputLamport = self.lamportFrom(amount: tokenAmount)
-                self.loading = true
-                self.detailItem.send(nil)
-                if self.focusSide == .left { // editing token
-                    if self.tokenFiatPrice > 0, self.inputLamport > 0 {
-                        self.inputFiat = self.tokenToAmount(amount: tokenAmount).toString(maximumFractionDigits: 2)
-                    } else {
-                        self.inputFiat = "0"
-                    }
+        .handleEvents(receiveOutput: { [weak self] val in
+            guard let self = self else { return }
+            let tokenAmount = Double(val.0)
+            let fiatAmount = Double(val.1)
+            let maxAmount = self.maxAmount()
+            self.inputLamport = self.lamportFrom(amount: tokenAmount)
+            self.loading = true
+            self.detailItem.send(nil)
+            if self.focusSide == .left { // editing token
+                if self.tokenFiatPrice > 0, self.inputLamport > 0 {
+                    self.inputFiat = self.tokenToAmount(amount: tokenAmount).toString(maximumFractionDigits: 2)
                 } else {
-                    if self.tokenFiatPrice > 0 {
-                        self.inputToken = self.fiatToToken(amount: fiatAmount).toString(maximumFractionDigits: 9)
-                    } else {
-                        self.inputToken = "0"
-                    }
+                    self.inputFiat = "0"
                 }
+            } else {
+                if self.tokenFiatPrice > 0 {
+                    self.inputToken = self.fiatToToken(amount: fiatAmount).toString(maximumFractionDigits: 9)
+                } else {
+                    self.inputToken = "0"
+                }
+            }
 
-                self.hasError = false
-                self.isUsingMax = false
-                if maxAmount < self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
+            self.hasError = false
+            self.isUsingMax = false
+            if maxAmount < self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
+                self
+                    .buttonText =
+                    "\(L10n.maxAmountIs) \(maxAmount.tokenAmount(symbol: self.invest.asset.symbol))"
+                self.feeText = L10n.enterTheCorrectAmountToContinue
+                self.hasError = true
+                self.loading = false
+            } else {
+                self.feeText = self.defaultFeeText()
+            }
+            if maxAmount == self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
+                self.isUsingMax = true
+            }
+        })
+        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+        .map { [weak self] val -> AnyPublisher<SolendDepositFee?, Never> in
+            if self?.strategy == .withdraw {
+                return Just(nil).eraseToAnyPublisher()
+            }
+            guard let lamports = self?.lamportFrom(amount: Double(val.0)),
+                  let self = self,
+                  lamports > 0,
+                  !self.hasError else { return Just(nil).eraseToAnyPublisher() }
+
+            return self.calculateFee(
+                inputInLamports: lamports,
+                symbol: self.invest.asset.symbol
+            )
+            .map(Optional.init)
+            .replaceError(with: nil)
+            .eraseToAnyPublisher()
+        }
+        .switchToLatest()
+        .sink(receiveValue: { [weak self] fee in
+            guard let self = self else { return }
+            self.loading = false
+            if let fee = fee {
+                let (totalAmountLamports1, overflow1) = self.inputLamport.subtractingReportingOverflow(fee.fee)
+                let (totalAmountLamports, overflow2) = totalAmountLamports1.subtractingReportingOverflow(fee.rent)
+                if overflow1 || overflow2 {
+                    self.hasError = true
                     self
                         .buttonText =
-                        "\(L10n.maxAmountIs) \(maxAmount.tokenAmount(symbol: self.invest.asset.symbol))"
-                    self.feeText = L10n.enterTheCorrectAmountToContinue
-                    self.hasError = true
-                    self.loading = false
-                } else {
-                    self.feeText = self.defaultFeeText()
+                        "MIN amount is \(self.amountFrom(lamports: fee.fee + fee.rent).tokenAmount(symbol: self.invest.asset.symbol))"
+                    self.isButtonEnabled = false
+                    return
                 }
-                if maxAmount == self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
-                    self.isUsingMax = true
-                }
-            })
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
-            .map { [weak self] val -> AnyPublisher<SolendDepositFee?, Never> in
-                if self?.strategy == .withdraw {
-                    return Just(nil).eraseToAnyPublisher()
-                }
-                guard let lamports = self?.lamportFrom(amount: Double(val.0)),
-                      let self = self,
-                      lamports > 0,
-                      !self.hasError else { return Just(nil).eraseToAnyPublisher() }
-
-                return self.calculateFee(
-                    inputInLamports: lamports,
-                    symbol: self.invest.asset.symbol
-                )
-                    .map(Optional.init)
-                    .replaceError(with: nil)
-                    .eraseToAnyPublisher()
-            }
-            .switchToLatest()
-            .sink(receiveValue: { [weak self] fee in
-                guard let self = self else { return }
-                self.loading = false
-                if let fee = fee {
-                    let (totalAmountLamports1, overflow1) = self.inputLamport.subtractingReportingOverflow(fee.fee)
-                    let (totalAmountLamports, overflow2) = totalAmountLamports1.subtractingReportingOverflow(fee.rent)
-                    if overflow1 || overflow2 {
-                        self.hasError = true
-                        self
-                            .buttonText =
-                            "MIN amount is \(self.amountFrom(lamports: fee.fee + fee.rent).tokenAmount(symbol: self.invest.asset.symbol))"
-                        self.isButtonEnabled = false
-                        return
-                    }
-                    let tokenAmount = self.amountFrom(lamports: totalAmountLamports)
-                    let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports))
-                    let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " " + fiatAmount
-                        .fiatAmount(currency: self.fiat)
-                    self.feeText = "\(L10n.excludingFeesYouWillDeposit) \(amountText)"
-                    self.detailItem.send(
-                        .init(
-                            amount: tokenAmount,
-                            fiatAmount: fiatAmount,
-                            transferFee: self.amountFrom(lamports: fee.fee),
-                            fiatTransferFee: self.tokenToAmount(amount: self.amountFrom(lamports: fee.fee)),
-                            fee: self.amountFrom(lamports: fee.rent),
-                            fiatFee: self.tokenToAmount(amount: self.amountFrom(lamports: fee.rent)),
-                            total: self.amountFrom(lamports: totalAmountLamports),
-                            fiatTotal: self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports)),
-                            symbol: self.invest.asset.symbol,
-                            feeSymbol: self.invest.asset.symbol
-                        )
+                let tokenAmount = self.amountFrom(lamports: totalAmountLamports)
+                let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports))
+                let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " " + fiatAmount
+                    .fiatAmount(currency: self.fiat)
+                self.feeText = "\(L10n.excludingFeesYouWillDeposit) \(amountText)"
+                self.detailItem.send(
+                    .init(
+                        amount: tokenAmount,
+                        fiatAmount: fiatAmount,
+                        transferFee: self.amountFrom(lamports: fee.fee),
+                        fiatTransferFee: self.tokenToAmount(amount: self.amountFrom(lamports: fee.fee)),
+                        fee: self.amountFrom(lamports: fee.rent),
+                        fiatFee: self.tokenToAmount(amount: self.amountFrom(lamports: fee.rent)),
+                        total: self.amountFrom(lamports: totalAmountLamports),
+                        fiatTotal: self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports)),
+                        symbol: self.invest.asset.symbol,
+                        feeSymbol: self.invest.asset.symbol
                     )
-                }
-            })
-            .store(in: &subscriptions)
+                )
+            }
+        })
+        .store(in: &subscriptions)
 
         $isSliderOn.filter { $0 }
             .sink { [weak self] _ in
