@@ -23,6 +23,7 @@ class KeychainStorage {
     let deviceShareKey: String = "deviceShareKey"
 
     let iCloudAccountsKey = "Keychain.Accounts"
+    private let iCloudKeychainToLocalKeychainMigrated = "iCloudKeychainToLocalKeychainMigrated"
 
     // MARK: - Properties
 
@@ -57,6 +58,23 @@ class KeychainStorage {
             self.derivableTypeKey = derivableTypeKey
             self.walletIndexKey = walletIndexKey
             self.ethAddressKey = ethAddressKey
+        } else if
+            let pincodeKey = Defaults.keychainPincodeKey,
+            let phrasesKey = Defaults.keychainPhrasesKey,
+            let derivableTypeKey = Defaults.keychainDerivableTypeKey,
+            let walletIndexKey = Defaults.keychainWalletIndexKey,
+            !UserDefaults.standard.bool(forKey: iCloudKeychainToLocalKeychainMigrated)
+        {
+            self.pincodeKey = pincodeKey
+            self.phrasesKey = phrasesKey
+            self.derivableTypeKey = derivableTypeKey
+            self.walletIndexKey = walletIndexKey
+
+            pincodeAttemptsKey = UUID().uuidString
+            Defaults.pincodeAttemptsKey = pincodeAttemptsKey
+
+            ethAddressKey = UUID().uuidString
+            Defaults.keychainEthAddressKey = ethAddressKey
         } else {
             let pincodeKey = UUID().uuidString
             self.pincodeKey = pincodeKey
@@ -106,7 +124,6 @@ class KeychainStorage {
         }
 
         // migrate from iCloud keychain to localKeychain
-        let iCloudKeychainToLocalKeychainMigrated = "iCloudKeychainToLocalKeychainMigrated"
         if !UserDefaults.standard.bool(forKey: iCloudKeychainToLocalKeychainMigrated) {
             // safely check all keys in localKeychain, only override when data in localKeychain is empty
             if localKeychain.getData(pincodeKey) == nil,
