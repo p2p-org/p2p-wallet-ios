@@ -21,17 +21,17 @@ struct InvestSolendBannerView: View {
     var body: some View {
         switch viewModel.state {
         case .pending:
-            SolendLoadingBanner()
+            SolendLoadingBannerView()
         case let .failure(title, subtitle):
-            SolendErrorBanner(title: title, subtitle: subtitle) {
+            SolendErrorBannerView(title: title, subtitle: subtitle) {
                 Task { try await viewModel.update() }
             }
         case .learnMore:
-            SolendLearnMoreBanner()
+            SolendLearnMoreBannerView()
         case .processingAction:
-            SolendProcessingBanner()
+            SolendProcessingBannerView()
         case let .withBalance(model):
-            SolendBalanceBanner(
+            SolendBalanceBannerView(
                 balance: model.balance,
                 delta: Date().timeIntervalSince(model.lastUpdate),
                 depositUrls: model.depositUrls,

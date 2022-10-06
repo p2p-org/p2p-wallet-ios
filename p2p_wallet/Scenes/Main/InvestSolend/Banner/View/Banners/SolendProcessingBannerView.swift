@@ -8,7 +8,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct SolendProcessingBanner: View {
+struct SolendProcessingBannerView: View {
     @State var xOffset: Double = -UIScreen.main.bounds.size.width / 2 - 50
 
     var repeatingAnimation: Animation {
@@ -34,7 +34,7 @@ struct SolendProcessingBanner: View {
                 .background(Color(Asset.Colors.snow.color))
                 .cornerRadius(12)
         }
-        .modifier(SolendBanner(backgroundColor: Color(Asset.Colors.rain.color)))
+        .modifier(SolendBannerViewModifier(backgroundColor: Color(Asset.Colors.rain.color)))
         .onAppear {
             withAnimation(repeatingAnimation) {
                 xOffset = UIScreen.main.bounds.size.width / 2 + 50
@@ -45,6 +45,6 @@ struct SolendProcessingBanner: View {
 
 struct SolendProcessingBanner_Previews: PreviewProvider {
     static var previews: some View {
-        SolendProcessingBanner()
+        SolendProcessingBannerView()
     }
 }
