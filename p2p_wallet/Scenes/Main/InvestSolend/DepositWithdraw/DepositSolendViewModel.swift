@@ -37,6 +37,7 @@ class DepositSolendViewModel: ObservableObject {
     @Published var focusSide: DepositWithdrawInputViewActiveSide = .left
     /// Is loading fees
     @Published var loading: Bool = false
+    @Published var lock: Bool = false
     @Published var inputToken: String = "0"
     @Published var inputFiat: String = "0"
     @Published var fiat: Fiat = Defaults.fiat
@@ -142,32 +143,32 @@ class DepositSolendViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         symbolSelected.combineLatest(
-                dataService.availableAssets,
-                dataService.marketInfo,
-                dataService.deposits
-            )
-            .map { (
-                _: String,
-                assets: [SolendConfigAsset]?,
-                marketInfo: [SolendMarketInfo]?,
-                userDeposits: [SolendUserDeposit]?
-            ) -> [Invest] in
-                guard let assets = assets else { return [] }
-                return assets.map { asset -> Invest in
-                    (
-                        asset: asset,
-                        market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
-                        userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
-                    )
-                }.sorted { (v1: Invest, v2: Invest) -> Bool in
-                    let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
-                    let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
-                    return apy1 > apy2
-                }
+            dataService.availableAssets,
+            dataService.marketInfo,
+            dataService.deposits
+        )
+        .map { (
+            _: String,
+            assets: [SolendConfigAsset]?,
+            marketInfo: [SolendMarketInfo]?,
+            userDeposits: [SolendUserDeposit]?
+        ) -> [Invest] in
+            guard let assets = assets else { return [] }
+            return assets.map { asset -> Invest in
+                (
+                    asset: asset,
+                    market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
+                    userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
+                )
+            }.sorted { (v1: Invest, v2: Invest) -> Bool in
+                let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
+                let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
+                return apy1 > apy2
             }
-            .receive(on: RunLoop.main)
-            .assign(to: \.market, on: self)
-            .store(in: &subscriptions)
+        }
+        .receive(on: RunLoop.main)
+        .assign(to: \.market, on: self)
+        .store(in: &subscriptions)
 
         symbolSelected.send(invest.asset.symbol)
 
@@ -324,40 +325,40 @@ class DepositSolendViewModel: ObservableObject {
 
     // MARK: - Action
 
-    private func action(lamports: UInt64) async throws {
+    private func action(lamports: UInt64) async {
+        lock = true
         if strategy == .deposit {
-            try await deposit(lamports: lamports)
+            await deposit(lamports: lamports)
         } else {
-            try await withdraw(lamports: lamports)
+            await withdraw(lamports: lamports)
         }
+        lock = false
+        finishSubject.send()
     }
 
-    private func deposit(lamports: UInt64) async throws {
+    private func deposit(lamports: UInt64) async {
         guard loading == false, lamports > 0 else { return }
 
         notificationService.showInAppNotification(.done(L10n.SendingYourDepositToSolend.justWaitUntilItSDone))
         do {
             loading = true
             defer { loading = false }
-            finishSubject.send()
             try await actionService.deposit(amount: lamports, symbol: invest.asset.symbol)
-            notificationService.showInAppNotification(.done(L10n.theFundsHaveBeenDepositedSuccessfully))
         } catch {
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemDepositingFunds))
         }
     }
 
-    private func withdraw(lamports: UInt64) async throws {
+    private func withdraw(lamports: UInt64) async {
         guard loading == false, lamports > 0 else { return }
 
         notificationService.showInAppNotification(.done(L10n.WithdrawingYourFundsFromSolend.justWaitUntilItSDone))
         do {
             loading = true
             defer { loading = false }
-            finishSubject.send()
             try await actionService.withdraw(amount: inputLamport, symbol: invest.asset.symbol)
-            notificationService.showInAppNotification(.done(L10n.theFundsHaveBeenWithdrawnSuccessfully))
         } catch {
+            print(error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemWithdrawingFunds))
         }
     }
