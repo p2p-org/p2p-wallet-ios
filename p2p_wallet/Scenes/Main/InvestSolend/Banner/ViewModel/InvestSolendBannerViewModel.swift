@@ -29,7 +29,7 @@ class InvestSolendBannerViewModel: ObservableObject {
             .flatMap { [weak self] action -> AnyPublisher<InvestSolendBannerState, Never> in
                 guard let self = self else { return CurrentValueSubject(.pending).eraseToAnyPublisher() }
                 if action != nil {
-                    return CurrentValueSubject(.processingAction).eraseToAnyPublisher()
+                    return Just(.processingAction).eraseToAnyPublisher()
                 } else {
                     return self.dataService.availableAssets
                         .combineLatest(

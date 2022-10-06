@@ -8,7 +8,7 @@
 import SwiftUI
 import KeyAppUI
 
-struct SolendLoadingBanner: View {
+struct SolendLoadingBannerView: View {
     var body: some View {
         VStack(spacing: 12) {
             Color.blue
@@ -22,12 +22,12 @@ struct SolendLoadingBanner: View {
             Spacer()
         }
         .padding(.top, 10)
-        .modifier(SolendBanner(backgroundColor: Color(Asset.Colors.rain.color)))
+        .modifier(SolendBannerViewModifier(backgroundColor: Color(Asset.Colors.rain.color)))
     }
 }
 
 struct SolendLoadingBanner_Previews: PreviewProvider {
     static var previews: some View {
-        SolendLoadingBanner()
+        SolendLoadingBannerView()
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 import KeyAppUI
 
-struct SolendErrorBanner: View {
+struct SolendErrorBannerView: View {
     let title: String
     let subtitle: String
     let onTap: () -> Void
@@ -42,7 +42,7 @@ struct SolendErrorBanner: View {
 
 struct SolendErrorBanner_Previews: PreviewProvider {
     static var previews: some View {
-        SolendErrorBanner(
+        SolendErrorBannerView(
             title: "Something goes wrong",
             subtitle: "Contact Key App Team"
         ) {}

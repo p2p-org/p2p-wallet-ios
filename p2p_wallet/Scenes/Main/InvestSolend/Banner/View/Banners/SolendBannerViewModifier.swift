@@ -8,7 +8,7 @@
 import SwiftUI
 import KeyAppUI
 
-struct SolendBanner: ViewModifier {
+struct SolendBannerViewModifier: ViewModifier {
     let backgroundColor: Color
     
     func body(content: Content) -> some View {

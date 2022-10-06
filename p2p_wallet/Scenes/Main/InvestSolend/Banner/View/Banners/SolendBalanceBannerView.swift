@@ -8,7 +8,7 @@
 import KeyAppUI
 import SwiftUI
 
-struct SolendBalanceBanner: View {
+struct SolendBalanceBannerView: View {
     let balance: Double
     @State var delta: Double
     
@@ -50,7 +50,7 @@ struct SolendBalanceBanner: View {
                 }
             )
         }
-        .modifier(SolendBanner(backgroundColor: Color(Asset.Colors.rain.color)))
+        .modifier(SolendBannerViewModifier(backgroundColor: Color(Asset.Colors.rain.color)))
         .onReceive(timer) { _ in
             withAnimation(Animation.linear(duration: 0.5)) {
                 delta = Date().timeIntervalSince(lastUpdateDate)
@@ -65,7 +65,7 @@ struct SolendBalanceBanner: View {
 
 struct SolendBalanceBanner_Previews: PreviewProvider {
     static var previews: some View {
-        SolendBalanceBanner(
+        SolendBalanceBannerView(
             balance: 12.32219382,
             delta: 0,
             depositUrls: [

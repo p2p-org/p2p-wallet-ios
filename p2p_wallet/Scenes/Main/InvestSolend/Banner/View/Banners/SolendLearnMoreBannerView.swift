@@ -8,7 +8,7 @@
 import SwiftUI
 import KeyAppUI
 
-struct SolendLearnMoreBanner: View {
+struct SolendLearnMoreBannerView: View {
     var body: some View {
         VStack(spacing: 12) {
             Text(L10n.depositYourTokensAndEarn)
@@ -24,12 +24,12 @@ struct SolendLearnMoreBanner: View {
                 .cornerRadius(12)
                 .padding(.top, 8)
         }
-        .modifier(SolendBanner(backgroundColor: Color(Asset.Colors.lime.color)))
+        .modifier(SolendBannerViewModifier(backgroundColor: Color(Asset.Colors.lime.color)))
     }
 }
 
 struct SolendLearnMoreBanner_Previews: PreviewProvider {
     static var previews: some View {
-        SolendLearnMoreBanner()
+        SolendLearnMoreBannerView()
     }
 }
