@@ -18,6 +18,7 @@ struct StartView: View {
                         OnboardingContentView(data: content)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                             .padding(.bottom, 32)
+                            .padding(.horizontal, 20)
                         Spacer()
                     } else {
                         PagingView(
@@ -87,5 +88,11 @@ private extension TextButtonView {
     func styled() -> some View {
         frame(height: 56)
             .frame(maxWidth: .infinity)
+    }
+}
+
+struct StartView_Previews: PreviewProvider {
+    static var previews: some View {
+        StartView(viewModel: StartViewModel(isAnimatable: false))
     }
 }
