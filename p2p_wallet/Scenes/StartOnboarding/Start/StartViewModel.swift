@@ -33,9 +33,30 @@ final class StartViewModel: BaseViewModel {
     private func setData() {
         data = [
             OnboardingContentData(
-                image: .welcome,
-                title: L10n.welcomeToP2PWallet,
+                image: .startOne,
+                title: L10n.keyApp,
                 subtitle: L10n.easyWayToEarnInvestAndSendCryptoWithZeroFees
+            ),
+            OnboardingContentData(
+                image: .startTwo,
+                title: L10n.neverLoseYourFunds,
+                subtitle: L10n.OnlyYouHaveAccessToYourFunds.NobodyElse.YouCanRecoverYourWalletUsingYourPhoneOrEmail
+                    .noPaperBackupsNeeded
+            ),
+            OnboardingContentData(
+                image: .startThree,
+                title: L10n.sendForFree,
+                subtitle: L10n.usdcusdtbtcethsolAndOtherCryptocurrenciesWithLightspeedAndZeroFees
+            ),
+            OnboardingContentData(
+                image: .startFour,
+                title: L10n.buyOver150Currencies,
+                subtitle: L10n.easySwapWithCreditCardOrBankTransfer
+            ),
+            OnboardingContentData(
+                image: .startFive,
+                title: L10n.earnOnYourFunds,
+                subtitle: L10n.DepositYourCrypto.earnUpTo6OnUSD
             ),
         ]
     }
