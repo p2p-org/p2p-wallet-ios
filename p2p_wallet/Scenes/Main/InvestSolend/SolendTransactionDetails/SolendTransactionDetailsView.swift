@@ -99,6 +99,8 @@ struct SolendTransactionDetailsView: View {
         }
         .padding(.top, 6)
         .padding(.bottom, 16)
+        .background(Color(Asset.Colors.snow.color))
+        .cornerRadius(radius: 20, corners: [.topLeft, .topRight])
     }
 
     private func cell(title: String, state: CellState) -> some View {
@@ -188,3 +190,45 @@ extension SolendTransactionDetailsView {
 extension SolendTransactionDetailsView {
     var viewHeight: CGFloat { 433 }
 }
+
+// MARK: - Preview
+
+struct SolendTransactionDetailsView_Previews: PreviewProvider {
+    static var view: some View {
+        ZStack {
+            Color(.gray)
+            VStack {
+                Spacer()
+                SolendTransactionDetailsView(
+                    viewModel: .init(
+                        strategy: .deposit,
+                        model: .init(
+                            amount: 521,
+                            fiatAmount: 322,
+                            transferFee: 2,
+                            fiatTransferFee: 3,
+                            fee: 4,
+                            fiatFee: 5,
+                            total: 6,
+                            fiatTotal: 32,
+                            symbol: "SOL",
+                            feeSymbol: "USDT"
+                        )
+                    )
+                )
+            }
+        }
+    }
+    
+    static var previews: some View {
+        view
+            .previewDevice(.init(rawValue: "iPhone 12"))
+            .previewDisplayName("iPhone 12")
+        
+        view
+            .previewDevice(.init(rawValue: "iPhone 8"))
+            .previewDisplayName("iPhone 8")
+    }
+}
+
+

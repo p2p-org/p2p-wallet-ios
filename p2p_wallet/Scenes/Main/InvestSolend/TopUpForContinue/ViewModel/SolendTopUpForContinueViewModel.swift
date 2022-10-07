@@ -26,7 +26,6 @@ class SolendTopUpForContinueViewModel: ObservableObject {
     private let swapSubject = PassthroughSubject<Void, Never>()
     var swap: AnyPublisher<Void, Never> { swapSubject.eraseToAnyPublisher() }
 
-    @Injected private var walletsRepository: WalletsRepository
     private var dataService: SolendDataService
 
     let model: SolendTopUpForContinueModel
@@ -69,6 +68,8 @@ class SolendTopUpForContinueViewModel: ObservableObject {
     }
 
     func swapOrReceiveClicked() {
+        let walletsRepository: WalletsRepository = Resolver.resolve()
+        
         if withoutAnyTokens {
             guard let key = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
             receiveSubject.send(key)

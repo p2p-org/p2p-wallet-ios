@@ -39,3 +39,17 @@ private extension Text {
             .fixedSize(horizontal: false, vertical: true)
     }
 }
+
+// MARK: - Preview
+
+struct SolendTutorialSlideView_Previews: PreviewProvider {
+    static var previews: some View {
+        SolendTutorialSlideView(
+            data: .init(
+                image: .rocket,
+                title: "Welcome",
+                subtitle: "This app is amazing"
+            )
+        )
+    }
+}

@@ -38,11 +38,12 @@ struct TokenToDepositView: View {
                         .cornerRadius(12)
                         .padding(.horizontal, 24)
                 }
-            ).padding(.top, 32)
+            )
+            .padding(.top, 32)
+            .padding(.bottom, 16)
         }
-        .sheetHeader(title: L10n.tokenToDeposit) { closeSubject.send() }
         .padding(.top, 6)
-        .padding(.bottom, 16)
+        .sheetHeader(title: L10n.tokenToDeposit) { closeSubject.send() }
     }
 
     private func token(model: Model) -> some View {
@@ -105,5 +106,39 @@ extension TokenToDepositView {
         let apy: Double
 
         var id: String { symbol }
+    }
+}
+
+// MARK: - Preview
+
+struct TokenToDepositView_Previews: PreviewProvider {
+    static var view: some View {
+        ZStack {
+            Color(.gray)
+            VStack {
+                Spacer()
+                TokenToDepositView(
+                    models: [
+                        .init(
+                            amount: 50,
+                            imageUrl: URL(string: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png")!,
+                            symbol: "SOL",
+                            name: "Solana",
+                            apy: 3.142312
+                        )
+                    ]
+                )
+            }
+        }
+    }
+    
+    static var previews: some View {
+        view
+            .previewDevice(.init(rawValue: "iPhone 12"))
+            .previewDisplayName("iPhone 12")
+        
+        view
+            .previewDevice(.init(rawValue: "iPhone 8"))
+            .previewDisplayName("iPhone 8")
     }
 }
