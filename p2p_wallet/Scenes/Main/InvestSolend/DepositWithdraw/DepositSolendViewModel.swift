@@ -276,16 +276,17 @@ class DepositSolendViewModel: ObservableObject {
                 self.loading = false
                 if let fee = fee {
                     let (totalAmountLamports1, overflow1) = self.inputLamport.subtractingReportingOverflow(fee.fee)
-                    let (totalAmountLamports, overflow2) = totalAmountLamports1.subtractingReportingOverflow(fee.rent)
+                    var (totalAmountLamports, overflow2) = totalAmountLamports1.subtractingReportingOverflow(fee.rent)
                     // No min sum for now
-//                    if overflow1 || overflow2 {
+                    if overflow1 || overflow2 {
+                        totalAmountLamports = 0
 //                        self.hasError = true
 //                        self
 //                            .buttonText =
 //                            "MIN amount is \(self.amountFrom(lamports: fee.fee + fee.rent).tokenAmount(symbol: self.invest.asset.symbol))"
 //                        self.isButtonEnabled = false
 //                        return
-//                    }
+                    }
                     let tokenAmount = self.amountFrom(lamports: totalAmountLamports)
                     let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports))
                     let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " (" + fiatAmount
