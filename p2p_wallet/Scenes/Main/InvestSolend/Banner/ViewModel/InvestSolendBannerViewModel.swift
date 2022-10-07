@@ -48,7 +48,12 @@ class InvestSolendBannerViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    private func dataState(assets: [SolendConfigAsset]?,deposits: [SolendUserDeposit]?, marketInfos: [SolendMarketInfo]?, lastUpdate: Date) -> InvestSolendBannerState {
+    private func dataState(
+        assets: [SolendConfigAsset]?,
+        deposits: [SolendUserDeposit]?,
+        marketInfos: [SolendMarketInfo]?,
+        lastUpdate: Date
+    ) -> InvestSolendBannerState {
         // assets is loading
         guard let assets = assets, let deposits = deposits else {
             return .pending

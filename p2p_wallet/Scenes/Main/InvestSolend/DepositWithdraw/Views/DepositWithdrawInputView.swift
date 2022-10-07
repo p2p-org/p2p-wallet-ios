@@ -16,6 +16,7 @@ struct DepositWithdrawInputView: View {
 
     @Binding var activeSide: DepositWithdrawInputViewActiveSide
     @Binding var inputError: Bool
+    @Binding var maxTokenDigits: UInt
 
     let onTap: (DepositWithdrawInputViewActiveSide) -> Void
 
@@ -34,7 +35,8 @@ struct DepositWithdrawInputView: View {
                         fontSynchorinze: fontSynchorinze,
                         font: fontSynchorinze.font,
                         side: .left,
-                        isFocued: true
+                        isFocued: true,
+                        maxDecimals: $maxTokenDigits
                     )
                         .padding(.leading, 8)
 
@@ -55,7 +57,8 @@ struct DepositWithdrawInputView: View {
                         fontSynchorinze: fontSynchorinze,
                         font: fontSynchorinze.font,
                         side: .right,
-                        isFocued: false
+                        isFocued: false,
+                        maxDecimals: .constant(2)
                     )
                         .padding(.leading, 8)
 
@@ -164,6 +167,7 @@ private struct TextfieldView: UIViewRepresentable {
     let font: UIFont
     let side: Side
     var isFocued: Bool = false
+    @Binding var maxDecimals: UInt
 
     func makeUIView(context ctx: Context) -> UITextField {
         let textField = UITextField()
@@ -193,7 +197,7 @@ private struct TextfieldView: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(text: $text, activeSide: $activeSide, fontSynchorinze: fontSynchorinze, side: side)
+        Coordinator(text: $text, activeSide: $activeSide, fontSynchorinze: fontSynchorinze, side: side, maxDecimals: $maxDecimals)
     }
 
     enum Side {
@@ -206,24 +210,27 @@ private struct TextfieldView: UIViewRepresentable {
         @Binding var activeSide: DepositWithdrawInputViewActiveSide
         let fontSynchorinze: FontSynchorinze
         let side: Side
+        @Binding var maxDecimals: UInt
 
         init(
             text: Binding<String>,
             activeSide: Binding<DepositWithdrawInputViewActiveSide>,
             fontSynchorinze: FontSynchorinze,
-            side: Side
+            side: Side,
+            maxDecimals: Binding<UInt>
         ) {
             _text = text
             _activeSide = activeSide
             self.fontSynchorinze = fontSynchorinze
             self.side = side
+            _maxDecimals = maxDecimals
         }
 
         @objc func textDidChanged(_ textField: UITextField) {
             if activeSide == .right {
                 text = (textField.text ?? "").fiatFormat
             } else if activeSide == .left {
-                text = (textField.text ?? "").cryptoCurrencyFormat
+                text = (textField.text ?? "").formatToMoneyFormat(decimalSeparator: ".", maxDecimals: maxDecimals)
             } else {
                 text = textField.text ?? ""
             }
