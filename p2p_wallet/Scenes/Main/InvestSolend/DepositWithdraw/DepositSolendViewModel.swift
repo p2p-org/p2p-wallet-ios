@@ -126,12 +126,13 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ) { (
-                symbol: String,
-                assets: [SolendConfigAsset]?,
-                marketInfo: [SolendMarketInfo]?,
-                deposits: [SolendUserDeposit]?
-            ) -> Invest? in
+            ) {
+                (
+                    symbol: String,
+                    assets: [SolendConfigAsset]?,
+                    marketInfo: [SolendMarketInfo]?,
+                    deposits: [SolendUserDeposit]?
+                ) -> Invest? in
                 guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
                 return (
                     asset: asset,
