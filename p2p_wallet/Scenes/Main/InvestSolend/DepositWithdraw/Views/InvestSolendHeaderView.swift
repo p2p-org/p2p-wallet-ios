@@ -40,7 +40,10 @@ struct InvestSolendHeaderView: View {
                         .apply(style: .label1)
                 }
             }
-            // disclosure here
+            Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                .foregroundColor(Color(Asset.Colors.night.color))
+                .padding(.trailing, -8)
+                .padding(.leading, -4)
         }
         .frame(height: 64)
     }
