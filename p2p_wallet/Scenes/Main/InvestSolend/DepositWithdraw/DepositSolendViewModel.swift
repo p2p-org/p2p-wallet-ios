@@ -133,15 +133,15 @@ class DepositSolendViewModel: ObservableObject {
                     marketInfo: [SolendMarketInfo]?,
                     deposits: [SolendUserDeposit]?
                 ) -> Invest? in
-                guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
-                return (
-                    asset: asset,
-                    market: marketInfo?.first(where: { $0.symbol == symbol }),
-                    userDeposit: deposits?.first(where: { $0.symbol == symbol })
-                )
+                    guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
+                    return (
+                        asset: asset,
+                        market: marketInfo?.first(where: { $0.symbol == symbol }),
+                        userDeposit: deposits?.first(where: { $0.symbol == symbol })
+                    )
             }
             .compactMap { $0 }
-            .handleEvents(receiveOutput: { [weak self] asset in
+            .handleEvents(receiveOutput: { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.inputToken = "0"
                     self?.maxTokenDigits = UInt(self?.invest.asset.decimals ?? 9)
@@ -157,7 +157,8 @@ class DepositSolendViewModel: ObservableObject {
                 let deposit = deposits?.first { $0.symbol == self.invest.asset.symbol }
                 self.invest.userDeposit = deposit
                 DispatchQueue.main.async {
-                    self.maxText = self.useMaxTitle + " \(self.maxAmount().tokenAmount(symbol: self.invest.asset.symbol))"
+                    self.maxText = self
+                        .useMaxTitle + " \(self.maxAmount().tokenAmount(symbol: self.invest.asset.symbol))"
                 }
             }
             .store(in: &subscriptions)
@@ -167,24 +168,25 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ).map {(
-                _: String,
-                assets: [SolendConfigAsset]?,
-                marketInfo: [SolendMarketInfo]?,
-                userDeposits: [SolendUserDeposit]?
-            ) -> [Invest] in
-                guard let assets = assets else { return [] }
-                return assets.map { asset -> Invest in
-                    (
-                        asset: asset,
-                        market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
-                        userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
-                    )
-                }.sorted { (v1: Invest, v2: Invest) -> Bool in
-                    let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
-                    let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
-                    return apy1 > apy2
-                }
+            ).map {
+                (
+                    _: String,
+                    assets: [SolendConfigAsset]?,
+                    marketInfo: [SolendMarketInfo]?,
+                    userDeposits: [SolendUserDeposit]?
+                ) -> [Invest] in
+                    guard let assets = assets else { return [] }
+                    return assets.map { asset -> Invest in
+                        (
+                            asset: asset,
+                            market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
+                            userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
+                        )
+                    }.sorted { (v1: Invest, v2: Invest) -> Bool in
+                        let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
+                        let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
+                        return apy1 > apy2
+                    }
             }
             .receive(on: RunLoop.main)
             .assign(to: \.market, on: self)
@@ -325,7 +327,7 @@ class DepositSolendViewModel: ObservableObject {
 
     func maxAmount() -> Double {
         strategy == .deposit ? (currentWallet?.amount ?? 0) :
-        Double(invest.userDeposit?.depositedAmount ?? "0") ?? 0
+            Double(invest.userDeposit?.depositedAmount ?? "0") ?? 0
     }
 
     func defaultFeeText() -> String {
