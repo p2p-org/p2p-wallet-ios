@@ -58,10 +58,10 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
     private func openCreateWallet(vc: UIViewController) {
         let service: OnboardingService = Resolver.resolve()
 
-        let onFinish = { [weak vc] (result: CreateWalletResult) in
+        let onFinish = { [weak self] (result: CreateWalletResult) in
+            guard let self = self else { return }
             switch result {
             case .restore:
-                guard let vc = vc else { return }
                 self.openRestoreWallet(vc: vc)
             case let .success(data):
                 self.subject.send(.created(data))
@@ -114,18 +114,8 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
         }
 
         coordinate(to: CreateWalletCoordinator(parent: vc, navigationController: navigationController))
-            .sink { [weak self] result in
-                guard let self = self else { return }
-                switch result {
-                case .restore:
-                    self.openRestoreWallet(vc: vc)
-                case let .success(data):
-                    self.subject.send(.created(data))
-                    self.subject.send(completion: .finished)
-                case .breakProcess:
-                    break
-                }
-            }.store(in: &subscriptions)
+            .sink(receiveValue: onFinish)
+            .store(in: &subscriptions)
     }
 
     private func openRestoreWallet(vc: UIViewController) {
