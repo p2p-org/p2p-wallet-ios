@@ -18,7 +18,10 @@ struct SocialSignInAccountHasBeenUsedView: View {
                 data: .init(
                     image: .walletFound,
                     title: L10n.aWalletFound,
-                    subtitle: L10n.looksLikeYouAlreadyHaveAWalletWith(viewModel.emailAddress)
+                    subtitles: [
+                        OnboardingContentData.Subtitle(text: L10n.looksLikeYouAlreadyHaveAWalletWith),
+                        OnboardingContentData.Subtitle(text: viewModel.emailAddress, isLimited: true),
+                    ]
                 )
             )
             Spacer()
