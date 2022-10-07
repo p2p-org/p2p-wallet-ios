@@ -31,14 +31,16 @@ struct DepositSolendView: View {
             }
         }
         .toolbar {
-            Button(
-                action: {
-                    viewModel.showAboutSolend()
-                },
-                label: {
-                    Image(uiImage: .questionNavBar)
-                }
-            )
+            if viewModel.showAbout {
+                Button(
+                    action: {
+                        viewModel.showAboutSolend()
+                    },
+                    label: {
+                        Image(uiImage: .questionNavBar)
+                    }
+                )
+            }
         }
     }
 
@@ -59,8 +61,9 @@ struct DepositSolendView: View {
     var input: some View {
         Group {
             HStack {
-                Text(L10n.enterTheAmount)
+                Text(viewModel.amountTitle)
                     .apply(style: .text3)
+                    .foregroundColor(Color(Asset.Colors.night.color))
                 Spacer()
                 Button { [weak viewModel] in
                     // use max
@@ -85,7 +88,8 @@ struct DepositSolendView: View {
                 rightTitle: $viewModel.inputFiat,
                 rightSubtitle: viewModel.fiat.code,
                 activeSide: $viewModel.focusSide,
-                inputError: $viewModel.hasError
+                inputError: $viewModel.hasError,
+                maxTokenDigits: $viewModel.maxTokenDigits
             ) { [weak viewModel] side in
                 viewModel?.focusSide = side
             }
@@ -137,7 +141,11 @@ struct DepositSolendView: View {
                     HStack(spacing: 8) {
                         RoundedRectangle(cornerSize: .init(width: 28, height: 28))
                             .fill(Color(Asset.Colors.rain.color))
-                            .overlay(Text(viewModel.buttonText))
+                            .overlay(
+                                Text(viewModel.buttonText)
+                                    .foregroundColor(Color(Asset.Colors.mountain.color))
+                                    .apply(style: .text2)
+                            )
                             .frame(height: 56)
                         if viewModel.hasError {
                             Button(action: {

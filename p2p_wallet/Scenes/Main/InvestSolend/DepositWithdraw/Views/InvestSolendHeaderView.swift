@@ -34,7 +34,7 @@ struct InvestSolendHeaderView: View {
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .apply(style: .text2)
                 }
-                if let rightSubtitle = rightTitle {
+                if let rightSubtitle = rightSubtitle {
                     Text(rightSubtitle)
                         .foregroundColor(Color(Asset.Colors.mountain.color))
                         .apply(style: .label1)
