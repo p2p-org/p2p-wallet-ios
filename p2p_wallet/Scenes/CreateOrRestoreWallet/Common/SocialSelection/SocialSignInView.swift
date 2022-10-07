@@ -25,7 +25,6 @@ struct SocialSignInView: View {
 
     var content: some View {
         OnboardingContentView(data: viewModel.content)
-            .padding(.horizontal, 40)
     }
 
     var actions: some View {

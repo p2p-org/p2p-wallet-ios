@@ -15,7 +15,6 @@ struct ChooseRestoreOptionView: View {
 
                 OnboardingContentView(data: viewModel.data)
                     .padding(.vertical, 32)
-                    .padding(.horizontal, 20)
 
                 Spacer()
 

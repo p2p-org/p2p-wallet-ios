@@ -28,9 +28,9 @@ final class RestoreSocialDelegatedCoordinator: DelegatedCoordinator<RestoreSocia
         case let .notFoundSocial(data, _, _):
             let subtitles: [OnboardingContentData.Subtitle] = [
                 .init(text: data.email, isLimited: true),
-                .init(text: L10n.tryAnotherAccountOrUseAPhoneNumber),
+                .init(text: L10n.tryAnotherOption),
             ]
-            return handleNotFoundDeviceSocial(title: L10n.notFound, subtitles: subtitles)
+            return handleNotFoundDeviceSocial(title: L10n.noWalletFound, subtitles: subtitles)
         case .expiredSocialTryAgain:
             return nil
         case .finish:

@@ -12,10 +12,7 @@ struct ContinueView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 Spacer()
-
                 OnboardingContentView(data: viewModel.data)
-                    .padding(.horizontal, 40)
-
                 Spacer()
 
                 bottomActionsView

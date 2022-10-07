@@ -47,7 +47,6 @@ struct OnboardingBlockScreen: View {
                     formatCountdown()
                 }
                 .padding(.bottom, 48)
-                .padding(.horizontal, 20)
 
             BottomActionContainer {
                 VStack {

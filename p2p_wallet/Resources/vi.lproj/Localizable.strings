@@ -937,7 +937,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Something wrong with phone number %@ or settings. If you wish to report the issue, use error code #%@" = "Đã xảy ra lỗi với số điện thoại %@ hoặc cài đặt.  Nếu bạn muốn báo cáo sự cố, hãy sử dụng mã lỗi # %@";
 "Support" = "Ủng hộ";
 "Try another option" = "Hãy thử một tùy chọn khác";
-"Try another account or use a phone number" = "Thử tài khoản khác hoặc sử dụng số điện thoại";
 "Fill 12 or 24 words" = "Điền 12 hoặc 24 từ";
 "Restore your wallet" = "Khôi phục ví của bạn";
 "Add a phone number to restore your account" = "Thêm số điện thoại để khôi phục tài khoản của bạn";

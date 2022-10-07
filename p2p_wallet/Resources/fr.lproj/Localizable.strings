@@ -934,7 +934,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Something wrong with phone number %@ or settings. If you wish to report the issue, use error code #%@" = "Quelque chose ne va pas avec le numéro de téléphone %@ ou les paramètres.  Si vous souhaitez signaler le problème, utilisez le code d'erreur #%@";
 "Support" = "Soutien";
 "Try another option" = "Essayez une autre option";
-"Try another account or use a phone number" = "Essayez un autre compte ou utilisez un numéro de téléphone";
 "Fill 12 or 24 words" = "Remplissez 12 ou 24 mots";
 "Restore your wallet" = "Restaurer votre portefeuille";
 "Add a phone number to restore your account" = "Ajoutez un numéro de téléphone pour restaurer votre compte";

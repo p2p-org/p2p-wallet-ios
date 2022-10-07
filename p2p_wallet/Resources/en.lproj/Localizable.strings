@@ -927,7 +927,6 @@ Reset the PIN or wait for %@.";
 "Something wrong with phone number %@ or settings. If you wish to report the issue, use error code #%@" = "Something wrong with phone number %@ or settings. If you wish to report the issue, use error code #%@";
 "Support" = "Support";
 "Try another option" = "Try another option";
-"Try another account or use a phone number" = "Try another account or use a phone number";
 "Fill 12 or 24 words" = "Fill 12 or 24 words";
 "Restore your wallet" = "Restore your wallet";
 "Add a phone number to restore your account" = "Add a phone number to restore your account";

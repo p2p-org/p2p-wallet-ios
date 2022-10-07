@@ -43,7 +43,7 @@ final class OnboardingServiceImpl: OnboardingService {
             seedPhrase,
             ethPublicKey,
             deviceShare,
-            .enterOTP(resendCounter, channel, phoneNumber, data)
+            .enterOTP(resendCounter, _, phoneNumber, data)
         ):
             return .bindingPhoneNumber(
                 email: email,

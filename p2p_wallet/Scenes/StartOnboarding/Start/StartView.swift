@@ -18,7 +18,6 @@ struct StartView: View {
                         OnboardingContentView(data: content)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                             .padding(.bottom, 32)
-                            .padding(.horizontal, 20)
                         Spacer()
                     } else {
                         PagingView(

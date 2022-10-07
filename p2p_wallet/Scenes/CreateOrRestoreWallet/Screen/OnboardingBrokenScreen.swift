@@ -40,7 +40,6 @@ struct OnboardingBrokenScreen<CustomActions: View>: View {
             OnboardingContentView(
                 data: contentData
             )
-                .padding(.horizontal, 40)
                 .padding(.top, 60)
                 .padding(.bottom, 48)
             BottomActionContainer {

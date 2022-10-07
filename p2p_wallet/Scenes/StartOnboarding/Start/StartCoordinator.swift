@@ -75,7 +75,7 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
             switch lastState {
             case let .bindingPhoneNumber(email, authProvider, seedPhrase, ethPublicKey, deviceShare, innerState):
                 switch innerState {
-                case let .block(until, _, phoneNumber, data):
+                case let .block(until, reason, phoneNumber, data):
                     // Move user to block screen, after expired time move him to enter phone number
                     if Date() < until {
                         coordinate(to: CreateWalletCoordinator(
@@ -90,7 +90,7 @@ final class StartCoordinator: Coordinator<OnboardingResult> {
                                 BindingPhoneNumberState
                                     .block(
                                         until: until,
-                                        reason: .blockEnterPhoneNumber,
+                                        reason: reason,
                                         phoneNumber: phoneNumber,
                                         data: data
                                     )
