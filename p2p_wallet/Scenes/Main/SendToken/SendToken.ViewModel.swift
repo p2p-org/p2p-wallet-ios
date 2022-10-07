@@ -181,13 +181,13 @@ extension SendToken {
 
             analyticsManager.log(event: AmplitudeEvent.sendConfirmButtonPressed(
                 sendNetwork: network.rawValue.firstUppercased(),
-                sendCurrency: Buy.FiatCurrency.usd.name,
+                sendCurrency: wallet.token.symbol,
                 sendSum: "\(amount)",
-                sendMax: maxWasClicked,
-                sendUsd: amountInFiat,
+                sendMAX: maxWasClicked,
+                sendUSD: amountInFiat,
                 sendFree: feeInfoSubject.value?.feeAmount.transaction == 0,
-                sendUsername: false,
-                sendAccountFeeToken: ""
+                sendUsername: receiver.name != nil,
+                sendAccountFeeToken: feeInfoSubject.value?.feeAmount.transaction == 0 ? nil : "SOL"
             ))
 
             navigationSubject.accept(

@@ -118,10 +118,10 @@ final class NotificationServiceImpl: NSObject, NotificationService {
 
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         if launchOptions?[.remoteNotification] != nil {
-            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: .push))
+            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: "push"))
             UserDefaults.standard.set(true, forKey: openAfterPushKey)
         } else {
-            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: .direct))
+            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: "direct"))
         }
     }
 
