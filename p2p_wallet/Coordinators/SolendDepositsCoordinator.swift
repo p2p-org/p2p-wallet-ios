@@ -26,24 +26,19 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
         let savePoint = controller.viewControllers.last
 
         let vm = SolendDepositsViewModel()
-        vm.withdraw.sink { [unowned self] asset in
-            guard InvestSolendHelper.readyToStartAction(Resolver.resolve(), actionService.getCurrentAction()) == true
-            else {
-                return
-            }
-
+        vm.withdraw.filter { _ in
+            InvestSolendHelper.readyToStartAction(Resolver.resolve(), actionService.getCurrentAction())
+        }.flatMap { [unowned self] asset in
             coordinate(to:
                 SolendDepositCoordinator(
                     controller: controller,
                     initialAsset: asset,
                     initialStrategy: .withdraw
                 ))
-                .sink { status in
-                    if status == true, let savePoint = savePoint, actionService.getCurrentAction() != nil {
-                        controller.popToViewController(savePoint, animated: true)
-                    }
-                }
-                .store(in: &subscriptions)
+        }.sink { [weak self] status in
+            if status == true, let savePoint = savePoint, actionService.getCurrentAction() != nil {
+                self?.controller.popToViewController(savePoint, animated: true)
+            }
         }.store(in: &subscriptions)
 
         vm.deposit.sink { [unowned self] asset in
