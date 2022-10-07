@@ -121,33 +121,34 @@ class DepositSolendViewModel: ObservableObject {
         feeText = defaultFeeText()
         maxText = useMaxTitle + " \(maxAmount().tokenAmount(symbol: invest.asset.symbol))"
 
-        symbolSelected.combineLatest(
-            dataService.availableAssets,
-            dataService.marketInfo,
-            dataService.deposits
-        ) { (
-            symbol: String,
-            assets: [SolendConfigAsset]?,
-            marketInfo: [SolendMarketInfo]?,
-            deposits: [SolendUserDeposit]?
-        ) -> Invest? in
-            guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
-            return (
-                asset: asset,
-                market: marketInfo?.first(where: { $0.symbol == symbol }),
-                userDeposit: deposits?.first(where: { $0.symbol == symbol })
-            )
-        }
-        .compactMap { $0 }
-        .handleEvents(receiveOutput: { [weak self] asset in
-            DispatchQueue.main.async {
-                self?.inputToken = "0"
-                self?.maxTokenDigits = UInt(self?.invest.asset.decimals ?? 9)
+        symbolSelected
+            .combineLatest(
+                dataService.availableAssets,
+                dataService.marketInfo,
+                dataService.deposits
+            ) { (
+                symbol: String,
+                assets: [SolendConfigAsset]?,
+                marketInfo: [SolendMarketInfo]?,
+                deposits: [SolendUserDeposit]?
+            ) -> Invest? in
+                guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
+                return (
+                    asset: asset,
+                    market: marketInfo?.first(where: { $0.symbol == symbol }),
+                    userDeposit: deposits?.first(where: { $0.symbol == symbol })
+                )
             }
-        })
-        .receive(on: RunLoop.main)
-        .assign(to: \.invest, on: self)
-        .store(in: &subscriptions)
+            .compactMap { $0 }
+            .handleEvents(receiveOutput: { [weak self] asset in
+                DispatchQueue.main.async {
+                    self?.inputToken = "0"
+                    self?.maxTokenDigits = UInt(self?.invest.asset.decimals ?? 9)
+                }
+            })
+            .receive(on: RunLoop.main)
+            .assign(to: \.invest, on: self)
+            .store(in: &subscriptions)
 
         symbolSelected.combineLatest(dataService.deposits)
             .sink { [weak self] (_: String, deposits: [SolendUserDeposit]?) in
