@@ -144,7 +144,7 @@ struct DepositSolendView: View {
                             .overlay(
                                 Text(viewModel.buttonText)
                                     .foregroundColor(Color(Asset.Colors.mountain.color))
-                                    .apply(style: .text2)
+                                    .font(uiFont: .font(of: .text2, weight: .semibold))
                             )
                             .frame(height: 56)
                         if viewModel.hasError {

@@ -197,17 +197,22 @@ class DepositSolendViewModel: ObservableObject {
             .assign(to: \.isButtonEnabled, on: self)
             .store(in: &subscriptions)
 
-        $inputFiat.map {
-            if self.tokenFiatPrice > 0 {
-                return self.fiatToToken(amount: $0.fiatFormat.double ?? 0).toString(maximumFractionDigits: 9)
-            } else {
-                return "0"
+        $inputFiat
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .filter { _ in self.focusSide == .right }
+            .map {
+                if self.tokenFiatPrice > 0 {
+                    return self.fiatToToken(amount: $0.fiatFormat.double ?? 0)
+                        .toString(maximumFractionDigits: self.invest.asset.decimals)
+                } else {
+                    return "0"
+                }
             }
-        }
             .assign(to: \.inputToken, on: self)
             .store(in: &subscriptions)
 
         $inputToken
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .map { Double($0.cryptoCurrencyFormat) ?? 0 }
             .removeDuplicates()
             .handleEvents(receiveOutput: { [weak self] tokenAmount in
@@ -216,15 +221,17 @@ class DepositSolendViewModel: ObservableObject {
                 let inputLamport = self.lamportFrom(amount: tokenAmount)
                 self.loading = true
                 self.detailItem.send(nil)
-                if self.tokenFiatPrice > 0, inputLamport > 0 {
-                    self.inputFiat = self.tokenToAmount(amount: tokenAmount).toString(maximumFractionDigits: 2)
-                } else {
-                    self.inputFiat = "0"
+                if self.focusSide == .left {
+                    if self.tokenFiatPrice > 0, inputLamport > 0 {
+                        self.inputFiat = self.tokenToAmount(amount: tokenAmount).toString(maximumFractionDigits: 2)
+                    } else {
+                        self.inputFiat = "0"
+                    }
                 }
 
                 self.hasError = false
                 self.isUsingMax = false
-                if maxAmount < self.inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
+                if maxAmount < inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
                     self
                         .buttonText =
                         "\(L10n.maxAmountIs) \(maxAmount.tokenAmount(symbol: self.invest.asset.symbol))"
@@ -239,7 +246,6 @@ class DepositSolendViewModel: ObservableObject {
                 }
                 self.inputLamport = inputLamport
             })
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .map { [weak self] val -> AnyPublisher<SolendDepositFee?, Never> in
                 if self?.strategy == .withdraw {
                     return Just(nil).eraseToAnyPublisher()
