@@ -150,7 +150,7 @@ extension String {
         return formatted
     }
 
-    private func formatToMoneyFormat(decimalSeparator: String, maxDecimals: UInt) -> String {
+    func formatToMoneyFormat(decimalSeparator: String, maxDecimals: UInt) -> String {
         var formatted = replacingOccurrences(of: ",", with: decimalSeparator)
             .replacingOccurrences(of: ".", with: decimalSeparator)
             .nonLetters(decimalSeparator: decimalSeparator)
