@@ -25,7 +25,7 @@ struct PagingView<Content>: View where Content: View {
 
     var body: some View {
         GeometryReader { geometry in
-            VStack(spacing: 24) {
+            VStack(spacing: 16) {
                 Spacer()
 
                 ScrollView(.horizontal, showsIndicators: false) {
