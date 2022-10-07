@@ -231,6 +231,7 @@ class DepositSolendViewModel: ObservableObject {
 
                 self.hasError = false
                 self.isUsingMax = false
+                self.buttonText = L10n.enterTheAmount
                 if maxAmount < inputLamport.convertToBalance(decimals: self.invest.asset.decimals) {
                     self
                         .buttonText =
@@ -280,9 +281,9 @@ class DepositSolendViewModel: ObservableObject {
                     }
                     let tokenAmount = self.amountFrom(lamports: totalAmountLamports)
                     let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports))
-                    let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " " + fiatAmount
-                        .fiatAmount(currency: self.fiat)
-                    self.feeText = "\(L10n.excludingFeesYouWillDeposit) \(amountText)"
+                    let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " (" + fiatAmount
+                        .fiatAmount(currency: self.fiat) + ")"
+                    self.feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
                     self.detailItem.send(
                         .init(
                             amount: tokenAmount,
