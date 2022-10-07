@@ -154,7 +154,7 @@ class DepositSolendViewModel: ObservableObject {
                 guard let self = self else { return }
                 let deposit = deposits?.first { $0.symbol == self.invest.asset.symbol }
                 self.invest.userDeposit = deposit
-                self.maxText = L10n.useAll + " \(self.maxAmount().tokenAmount(symbol: self.invest.asset.symbol))"
+                self.maxText = self.useMaxTitle + " \(self.maxAmount().tokenAmount(symbol: self.invest.asset.symbol))"
             }
             .store(in: &subscriptions)
 
