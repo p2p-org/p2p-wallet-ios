@@ -7,11 +7,21 @@
 
 #if !RELEASE
     import CocoaDebug
+    import SwiftUI
+    /* script_delete_flag_end */
 
     final class DebugAppDelegateService: NSObject, AppDelegateService {
         func applicationDidFinishLaunching(_: UIApplication) {
             CocoaDebugSettings.shared.responseShake = false
             showDebugger(isShown)
+        }
+
+        func application(
+            _: UIApplication,
+            didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?
+        ) -> Bool {
+            CocoaDebug.additionalViewController = UIHostingController(rootView: DebugMenuView(viewModel: .init()))
+            return true
         }
     }
 #endif
