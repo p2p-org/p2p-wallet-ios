@@ -732,7 +732,6 @@
 "Please choose another token and try again!" = "Please choose another token and try again!";
 "beta" = "beta";
 "Top up your account to get started" = "Top up your account to get started";
-"Make your first deposit or make a purchase using your credit card or Apple Pay" = "Make your first deposit or make a purchase using your credit card or Apple Pay";
 "Tokens" = "Tokens";
 "Hidden tokens" = "Hidden tokens";
 "Exceeded maximum number of instructions allowed" = "Exceeded maximum number of instructions allowed";
@@ -853,6 +852,7 @@ Reset the PIN or wait for %@.";
 "PROFILE AND SECURITY" = "PROFILE AND SECURITY";
 "Recovery kit" = "Recovery kit";
 "Not reserved" = "Not reserved";
+"Make your first deposit or buy crypto\nwith your credit card or Apple pay" = "Make your first deposit or buy crypto\nwith your credit card or Apple pay";
 "The code from SMS" = "The code from SMS";
 "Enter the code to continue" = "Enter the code to continue";
 "So, let’s breathe" = "So, let’s breathe";
