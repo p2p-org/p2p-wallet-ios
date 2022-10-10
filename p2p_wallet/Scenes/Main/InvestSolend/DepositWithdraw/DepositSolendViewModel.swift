@@ -127,18 +127,18 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ) {
-                (symbol: String,
-                 assets: [SolendConfigAsset]?,
-                 marketInfo: [SolendMarketInfo]?,
-                 deposits: [SolendUserDeposit]?
-                ) -> Invest? in
-                    guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
-                    return (
-                        asset: asset,
-                        market: marketInfo?.first(where: { $0.symbol == symbol }),
-                        userDeposit: deposits?.first(where: { $0.symbol == symbol })
-                    )
+            ) { (
+                symbol: String,
+                assets: [SolendConfigAsset]?,
+                marketInfo: [SolendMarketInfo]?,
+                deposits: [SolendUserDeposit]?
+            ) -> Invest? in
+                guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
+                return (
+                    asset: asset,
+                    market: marketInfo?.first(where: { $0.symbol == symbol }),
+                    userDeposit: deposits?.first(where: { $0.symbol == symbol })
+                )
             }
             .compactMap { $0 }
             .handleEvents(receiveOutput: { [weak self] _ in
@@ -175,14 +175,12 @@ class DepositSolendViewModel: ObservableObject {
                 (_: String,
                  assets: [SolendConfigAsset]?,
                  marketInfo: [SolendMarketInfo]?,
-                 userDeposits: [SolendUserDeposit]?
-                ) -> [Invest] in
+                 userDeposits: [SolendUserDeposit]?) -> [Invest] in
                     guard let assets = assets else { return [] }
                     return assets.map { asset -> Invest in
                         (asset: asset,
                          market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
-                         userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
-                        )
+                         userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol }))
                     }.sorted { (v1: Invest, v2: Invest) -> Bool in
                         let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
                         let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
