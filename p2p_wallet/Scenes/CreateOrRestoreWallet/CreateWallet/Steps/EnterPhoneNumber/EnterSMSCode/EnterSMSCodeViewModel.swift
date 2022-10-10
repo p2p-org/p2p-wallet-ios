@@ -69,7 +69,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
 
     @MainActor
     func syncTimer() {
-        countdown = Int(Date().distance(to: attemptCounter.value.until))
+        countdown = Int(Date().ceiled().distance(to: attemptCounter.value.until))
         timer?.invalidate()
         startTimer()
         setResendCountdown()
@@ -92,8 +92,7 @@ final class EnterSMSCodeViewModel: BaseOTPViewModel {
     init(phone: String, attemptCounter: Wrapper<ResendCounter>) {
         self.phone = phone
         self.attemptCounter = attemptCounter
-        countdown = Int(Date().distance(to: attemptCounter.value.until))
-
+        countdown = Int(Date().ceiled().distance(to: attemptCounter.value.until))
         super.init()
 
         bind()
@@ -214,5 +213,12 @@ extension EnterSMSCodeViewModel {
 
     enum EnterSMSCodeViewModelError: Error {
         case incorrectCode
+    }
+}
+
+private extension Date {
+    func ceiled() -> Date {
+        let date = ceil(Date().timeIntervalSince1970)
+        return Date(timeIntervalSince1970: date)
     }
 }
