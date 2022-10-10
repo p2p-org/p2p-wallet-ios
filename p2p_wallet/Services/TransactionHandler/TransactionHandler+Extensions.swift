@@ -62,7 +62,6 @@ extension TransactionHandler {
             guard let self = self else { throw SolanaError.unknown }
             return try await self.apiClient.getSignatureStatus(signature: transactionId, configs: nil)
         }
-
         signatureStatus
             .subscribe(on: scheduler)
             .observe(on: MainScheduler.instance)

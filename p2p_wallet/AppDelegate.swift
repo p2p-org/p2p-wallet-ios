@@ -6,7 +6,6 @@
 //
 
 import Action
-import BECollectionView
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
@@ -15,6 +14,7 @@ import KeyAppUI
 import Resolver
 import Sentry
 import SolanaSwift
+import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -59,8 +59,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
 
-        setupRemoteConfig()
-
         // set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
@@ -93,6 +91,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
+    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        var result = false
+        Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
+        return result
+    }
+
     func application(
         _ application: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
@@ -106,43 +110,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    private func setupRemoteConfig() {
-        let remoteConfig = RemoteConfig.remoteConfig()
-        if Environment.current != .release {
-            let settings = RemoteConfigSettings()
-            // WARNING: Don't actually do this in production!
-            settings.minimumFetchInterval = 0
-            remoteConfig.configSettings = settings
-        }
-
-        let currentEndpoints = APIEndPoint.definedEndpoints
-        if Environment.current != .release {
-            FeatureFlagProvider.shared.fetchFeatureFlags(
-                mainFetcher: MergingFlagsFetcher(
-                    primaryFetcher: DebugMenuFeaturesProvider.shared,
-                    secondaryFetcher: MergingFlagsFetcher(
-                        primaryFetcher: defaultFlags,
-                        secondaryFetcher: remoteConfig
-                    )
-                )
-            ) { _ in
-                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
-            }
-        } else {
-            FeatureFlagProvider.shared.fetchFeatureFlags(
-                mainFetcher: MergingFlagsFetcher(
-                    primaryFetcher: remoteConfig,
-                    secondaryFetcher: defaultFlags
-                )
-            ) { _ in
-                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
-            }
-        }
-
-        Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
-            .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
-    }
-
     func setupLoggers() {
         var loggers: [LogManagerLogger] = [
             SentryLogger(),
@@ -154,16 +121,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
         FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
         KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
-    }
-
-    private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {
-        let newEndpoints = APIEndPoint.definedEndpoints
-        guard currentEndpoints != newEndpoints else { return }
-        if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
-           let firstEndpoint = newEndpoints.first
-        {
-            Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
-        }
+        DefaultLogManager.shared.setProviders(loggers)
     }
 
     private func setupNavigationAppearance() {
@@ -171,19 +129,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navBarAppearence = UINavigationBar.appearance()
         navBarAppearence.backIndicatorImage = .navigationBack
             .withRenderingMode(.alwaysTemplate)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+            .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
         navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
             .withRenderingMode(.alwaysTemplate)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+            .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
         barButtonAppearance.setBackButtonTitlePositionAdjustment(
             .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearence.tintColor = Asset.Colors.night.color
+        barButtonAppearance.tintColor = Asset.Colors.night.color
+
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true
-
-        navBarAppearence.tintColor = .black
-        barButtonAppearance.tintColor = .black
     }
 }
