@@ -13,7 +13,11 @@ enum SendToken {
         case back
         case chooseTokenAndAmount(showAfterConfirmation: Bool)
 
-        case chooseRecipientAndNetwork(showAfterConfirmation: Bool, preSelectedNetwork: Network?)
+        case chooseRecipientAndNetwork(
+            showAfterConfirmation: Bool,
+            preSelectedNetwork: Network?,
+            maxWasClicked: Bool
+        )
         case chooseNetwork
 
         case confirmation

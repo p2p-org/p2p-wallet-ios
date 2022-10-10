@@ -61,17 +61,25 @@ extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
         case newSettings
 
+        case mockedApiGateway
+        case mockedTKeyFacade
+        case simulatedSocialError
+
         var title: String {
             switch self {
-            case .newSettings:
-                return "New Settings"
+            case .newSettings: return "New Settings"
+            case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
+            case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
+            case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
             }
         }
 
         var feature: Feature {
             switch self {
-            case .newSettings:
-                return .settingsFeature
+            case .newSettings: return .settingsFeature
+            case .mockedApiGateway: return .mockedApiGateway
+            case .mockedTKeyFacade: return .mockedTKeyFacade
+            case .simulatedSocialError: return .simulatedSocialError
             }
         }
     }

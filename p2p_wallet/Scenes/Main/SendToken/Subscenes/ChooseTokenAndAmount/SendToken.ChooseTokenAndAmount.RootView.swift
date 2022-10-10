@@ -22,6 +22,8 @@ extension SendToken.ChooseTokenAndAmount {
         @Injected private var analyticsManager: AnalyticsManager
         private let viewModel: SendTokenChooseTokenAndAmountViewModelType
 
+        private var maxWasClicked = false
+
         // MARK: - Subviews
 
         private let walletImageView = UIImageView(
@@ -287,6 +289,7 @@ extension SendToken.ChooseTokenAndAmount {
             let string = availableAmount.toString(maximumFractionDigits: 9, groupingSeparator: "")
             amountTextField.text = string
             amountTextField.sendActions(for: .editingChanged)
+            maxWasClicked = true
         }
 
         @objc private func chooseWallet() {
@@ -303,7 +306,7 @@ extension SendToken.ChooseTokenAndAmount {
             if viewModel.showAfterConfirmation {
                 viewModel.navigate(to: .backToConfirmation)
             } else {
-                viewModel.navigateNext()
+                viewModel.navigateNext(maxWasClicked: maxWasClicked)
             }
         }
     }

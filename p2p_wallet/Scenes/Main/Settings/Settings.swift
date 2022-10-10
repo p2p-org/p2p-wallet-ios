@@ -20,6 +20,7 @@ enum Settings {
         case appearance
         case share(item: Any)
         case accessToPhoto
+        case recoveryKit
     }
 
     enum BiometryType {

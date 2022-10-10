@@ -5,10 +5,12 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
+import AnalyticsManager
 import BECollectionView_Combine
 import Combine
 import Foundation
 import RenVMSwift
+import Resolver
 import UIKit
 
 extension RenBTCReceivingStatuses {
@@ -21,6 +23,8 @@ extension RenBTCReceivingStatuses {
 
         // MARK: - Dependencies
 
+        @Injected private var analyticsManager: AnalyticsManager
+
         private var viewModel: RenBTCReceivingStatusesViewModelType
 
         init(viewModel: RenBTCReceivingStatusesViewModelType) {
@@ -30,6 +34,7 @@ extension RenBTCReceivingStatuses {
             viewModel.navigatableScenePublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
+            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
         }
 
         override func build() -> UIView {

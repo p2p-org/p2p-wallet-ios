@@ -5,13 +5,17 @@
 //  Created by Chung Tran on 29/11/2021.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
+import Resolver
 import UIKit
 
 extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
     class ViewController: BaseVC {
         // MARK: - Dependencies
+
+        @Injected private var analyticsManager: AnalyticsManager
 
         private let viewModel: SendTokenChooseRecipientAndNetworkSelectAddressViewModelType
         private var subscriptions = [AnyCancellable]()
@@ -29,6 +33,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
             self.viewModel = viewModel
             super.init()
             navigationItem.title = L10n.address
+            analyticsManager.log(event: AmplitudeEvent.sendRecipientScreen)
         }
 
         // MARK: - Methods
@@ -68,6 +73,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 }
                 vc.modalPresentationStyle = .custom
                 present(vc, animated: true)
+                analyticsManager.log(event: AmplitudeEvent.sendQrScanning)
             case .selectPayingWallet:
                 let vm = ChooseWallet.ViewModel(selectedWallet: nil, handler: viewModel, showOtherWallets: false)
                 vm.customFilter = { $0.amount > 0 }
