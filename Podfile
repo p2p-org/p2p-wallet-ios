@@ -85,6 +85,7 @@ target 'p2p_wallet' do
   end
 
   pod 'Resolver', '1.5.0'
+  pod 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
   pod 'TagListView', '1.4.1' # TODO: remove in futur 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
   pod 'SubviewAttachingTextView', '1.5.0' # TODO: remove in future
   pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
