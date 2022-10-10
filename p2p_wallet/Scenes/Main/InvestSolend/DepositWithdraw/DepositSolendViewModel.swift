@@ -128,11 +128,10 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.marketInfo,
                 dataService.deposits
             ) {
-                (
-                    symbol: String,
-                    assets: [SolendConfigAsset]?,
-                    marketInfo: [SolendMarketInfo]?,
-                    deposits: [SolendUserDeposit]?
+                (symbol: String,
+                 assets: [SolendConfigAsset]?,
+                 marketInfo: [SolendMarketInfo]?,
+                 deposits: [SolendUserDeposit]?
                 ) -> Invest? in
                     guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
                     return (
@@ -173,18 +172,16 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.marketInfo,
                 dataService.deposits
             ).map {
-                (
-                    _: String,
-                    assets: [SolendConfigAsset]?,
-                    marketInfo: [SolendMarketInfo]?,
-                    userDeposits: [SolendUserDeposit]?
+                (_: String,
+                 assets: [SolendConfigAsset]?,
+                 marketInfo: [SolendMarketInfo]?,
+                 userDeposits: [SolendUserDeposit]?
                 ) -> [Invest] in
                     guard let assets = assets else { return [] }
                     return assets.map { asset -> Invest in
-                        (
-                            asset: asset,
-                            market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
-                            userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
+                        (asset: asset,
+                         market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
+                         userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
                         )
                     }.sorted { (v1: Invest, v2: Invest) -> Bool in
                         let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
