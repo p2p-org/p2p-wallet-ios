@@ -1,38 +1,33 @@
+import Combine
 import KeyAppUI
 import SwiftUI
 import UIKit
 
 struct TextButtonView: UIViewRepresentable {
-    @Binding var titleBinding: String
     private let title: String
     private let style: TextButton.Style
     private let size: TextButton.Size
     private let leading: UIImage?
     private let trailing: UIImage?
-    @Binding var trailingBinding: UIImage?
-    @Binding var isEnabled: Bool
     private let onPressed: (() -> Void)?
+    private let isLoading: Bool
 
     init(
         title: String,
-        titleBinding: Binding<String>? = nil,
         style: TextButton.Style,
         size: TextButton.Size,
         leading: UIImage? = nil,
         trailing: UIImage? = nil,
-        trailingBinding: Binding<UIImage?>? = nil,
-        isEnabled: Binding<Bool>?,
+        isLoading: Bool = false,
         onPressed: (() -> Void)? = nil
     ) {
         self.title = title
-        _titleBinding = titleBinding ?? Binding.constant(title)
         self.style = style
         self.size = size
         self.leading = leading
         self.trailing = trailing
-        _trailingBinding = trailingBinding ?? Binding.constant(trailing)
-        _isEnabled = isEnabled ?? Binding.constant(true)
         self.onPressed = onPressed
+        self.isLoading = isLoading
     }
 
     func makeUIView(context _: Context) -> TextButton {
@@ -41,9 +36,11 @@ struct TextButtonView: UIViewRepresentable {
         return button
     }
 
-    func updateUIView(_ button: TextButton, context _: Context) {
-        button.title = titleBinding
-        button.trailingImage = trailingBinding
-        button.isEnabled = isEnabled
+    func updateUIView(_ textButton: TextButton, context _: Context) {
+        textButton.title = title
+        textButton.isLoading = isLoading
+        textButton.leadingImage = leading
+        textButton.trailingImage = trailing
+        textButton.onPressed { _ in onPressed?() }
     }
 }

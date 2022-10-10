@@ -23,6 +23,7 @@ protocol SendTokenViewModelType: SendTokenRecipientAndNetworkHandler, SendTokenT
     var loadingStatePublisher: AnyPublisher<LoadableState, Never> { get }
     var relayMethod: SendTokenRelayMethod { get }
     var canGoBack: Bool { get }
+    var maxWasClicked: Bool { get set }
 
     // Getters
     func getPrice(for symbol: String) -> Double
@@ -51,6 +52,7 @@ extension SendToken {
 
         let relayMethod: SendTokenRelayMethod
         let canGoBack: Bool
+        var maxWasClicked = false
 
         // MARK: - Subject
 
@@ -165,6 +167,19 @@ extension SendToken {
                 )
             )
 
+            let amountInFiat = (amount * wallet.priceInCurrentFiat.orZero).toString(maximumFractionDigits: 2)
+
+            analyticsManager.log(event: AmplitudeEvent.sendConfirmButtonPressed(
+                sendNetwork: network.rawValue.firstUppercased(),
+                sendCurrency: Buy.FiatCurrency.usd.name,
+                sendSum: "\(amount)",
+                sendMax: maxWasClicked,
+                sendUsd: amountInFiat,
+                sendFree: feeInfoSubject.value?.feeAmount.transaction == 0,
+                sendUsername: false,
+                sendAccountFeeToken: ""
+            ))
+
             navigatableScene = .processTransaction(
                 ProcessTransaction.SendTransaction(
                     sendService: sendService,
@@ -265,6 +280,15 @@ extension SendToken.ViewModel: SendTokenViewModelType {
         $network.receive(on: RunLoop.main).eraseToAnyPublisher()
     }
 
+    func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
+        recipient = nil
+        navigatableScene = .chooseRecipientAndNetwork(
+            showAfterConfirmation: true,
+            preSelectedNetwork: network,
+            maxWasClicked: false
+        )
+    }
+
     func setPayingWallet(_ payingWallet: Wallet?) {
         self.payingWallet = payingWallet
     }
@@ -309,12 +333,5 @@ extension SendToken.ViewModel: SendTokenViewModelType {
 
     func getSendService() -> SendServiceType {
         sendService
-    }
-
-    // MARK: - Helpers
-
-    func navigateToChooseRecipientAndNetworkWithPreSelectedNetwork(_ network: SendToken.Network) {
-        recipient = nil
-        navigatableScene = .chooseRecipientAndNetwork(showAfterConfirmation: true, preSelectedNetwork: network)
     }
 }

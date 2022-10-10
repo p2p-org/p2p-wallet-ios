@@ -52,9 +52,10 @@ struct PagingView<Content>: View where Content: View {
                     }
                 )
 
-                PageControl(index: $index, maxIndex: maxIndex, fillColor: fillColor)
-
                 Spacer()
+
+                PageControl(index: $index, maxIndex: maxIndex, fillColor: fillColor)
+                    .padding(.bottom, 32)
             }
         }
     }

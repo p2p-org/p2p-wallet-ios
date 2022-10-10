@@ -24,7 +24,7 @@ extension UIViewController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         var allButtons = buttonTitles ?? [String]()
         if allButtons.isEmpty {
-            allButtons.append("OK")
+            allButtons.append("Okay")
         }
 
         allButtons.enumerated().forEach { index, buttonTitle in
@@ -49,7 +49,8 @@ extension UIViewController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         if actions.isEmpty {
-            alertController.addAction(UIAlertAction(title: "OK", style: .default))
+            alertController.view.tintColor = UIColor.black
+            alertController.addAction(UIAlertAction(title: "Okay", style: .default))
         }
 
         for action in actions {
@@ -191,7 +192,7 @@ extension UIViewController {
         }
     }
 
-    @objc func viewDidDisappearOverride(_ animated: Bool) {
+    @objc dynamic func viewDidDisappearOverride(_ animated: Bool) {
         viewDidDisappearOverride(animated) // Incase we need to override this method
         if isMovingFromParent || isBeingDismissed {
             onClose?()
@@ -207,5 +208,27 @@ extension UIViewController {
             let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
         else { return }
         method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+}
+
+// MARK: - ViewDidAppearSwizzle
+
+extension UIViewController {
+    static func swizzleViewDidAppear() {
+        if self != UIViewController.self { return }
+        let originalSelector = #selector(UIViewController.viewDidAppear(_:))
+        let swizzledSelector = #selector(UIViewController.viewDidAppearOverride(_:))
+        guard
+            let originalMethod = class_getInstanceMethod(self, originalSelector),
+            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector)
+        else { return }
+        method_exchangeImplementations(originalMethod, swizzledMethod)
+    }
+
+    @objc dynamic func viewDidAppearOverride(_ animated: Bool) {
+        viewDidAppearOverride(animated)
+        // TODO: - Finish logic. We need to finish code for getting analyticId from UIViewControllers and SwiftUI Views
+        guard let viewId = (UIApplication.topmostViewController() as? AnalyticView)?.analyticId else { return }
+        ScreenAnalyticTracker.shared.setCurrentViewId(viewId)
     }
 }

@@ -5,12 +5,14 @@
 //  Created by Ivan on 09.07.2022.
 //
 
+import AnalyticsManager
 import Combine
 import KeyAppUI
 import Resolver
 import UIKit
 
 final class TabBarController: UITabBarController {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var helpCenterLauncher: HelpCenterLauncher
 
     private var cancellables = Set<AnyCancellable>()
@@ -48,6 +50,8 @@ final class TabBarController: UITabBarController {
     private func bind() {
         customTabBar.middleButtonClicked
             .sink(receiveValue: { [unowned self] in
+                analyticsManager.log(event: AmplitudeEvent.actionButtonClick)
+
                 let generator = UIImpactFeedbackGenerator(style: .light)
                 generator.impactOccurred()
                 actionsCoordinator = ActionsCoordinator(viewController: self)

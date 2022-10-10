@@ -29,7 +29,7 @@ protocol SendTokenChooseTokenAndAmountViewModelType: WalletDidSelectHandler, Sen
 
     func isTokenValidForSelectedNetwork() -> Bool
     func save()
-    func navigateNext()
+    func navigateNext(maxWasClicked: Bool)
 }
 
 extension SendTokenChooseTokenAndAmountViewModelType {
@@ -216,9 +216,12 @@ extension SendToken.ChooseTokenAndAmount.ViewModel: SendTokenChooseTokenAndAmoun
         amount = nil
     }
 
-    func navigateNext() {
+    func navigateNext(maxWasClicked: Bool) {
         sendTokenViewModel
-            .navigate(to: .chooseRecipientAndNetwork(showAfterConfirmation: showAfterConfirmation,
-                                                     preSelectedNetwork: nil))
+            .navigate(to: .chooseRecipientAndNetwork(
+                showAfterConfirmation: showAfterConfirmation,
+                preSelectedNetwork: nil,
+                maxWasClicked: maxWasClicked
+            ))
     }
 }

@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 15/12/2021.
 //
 
+import AnalyticsManager
 import Combine
 import Foundation
 import Resolver
@@ -14,6 +15,7 @@ extension OrcaSwapV2.ConfirmSwapping {
     final class ViewModel: BaseViewModel {
         // MARK: - Dependencies
 
+        @Injected private var analyticsManager: AnalyticsManager
         @Injected private var pricesService: PricesServiceType
 
         // MARK: - Properties
@@ -76,6 +78,7 @@ extension OrcaSwapV2.ConfirmSwapping.ViewModel: OrcaSwapV2ConfirmSwappingViewMod
 
     func authenticateAndSwap() {
         swapViewModel.authenticateAndSwap()
+        analyticsManager.log(event: AmplitudeEvent.swapClickApproveButton)
     }
 
     func showFeesInfo(_ info: PayingFee.Info) {
