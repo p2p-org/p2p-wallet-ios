@@ -7,6 +7,7 @@ struct InvestSolendHeaderView: View {
     let subtitle: String?
     let rightTitle: String?
     let rightSubtitle: String?
+    @Binding var showDisclosure: Bool
 
     var body: some View {
         HStack(spacing: 12) {
@@ -32,7 +33,7 @@ struct InvestSolendHeaderView: View {
                 if let rightTitle = rightTitle {
                     Text(rightTitle)
                         .foregroundColor(Color(Asset.Colors.night.color))
-                        .apply(style: .text2)
+                        .font(uiFont: .font(of: .text2, weight: .semibold))
                 }
                 if let rightSubtitle = rightSubtitle {
                     Text(rightSubtitle)
@@ -40,10 +41,12 @@ struct InvestSolendHeaderView: View {
                         .apply(style: .label1)
                 }
             }
-            Image(uiImage: Asset.MaterialIcon.chevronRight.image)
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .padding(.trailing, -8)
-                .padding(.leading, -4)
+            if showDisclosure {
+                Image(uiImage: Asset.MaterialIcon.chevronRight.image)
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .padding(.trailing, -8)
+                    .padding(.leading, -4)
+            }
         }
         .frame(height: 64)
     }
