@@ -53,6 +53,7 @@ class DepositSolendViewModel: ObservableObject {
     /// Deposit slider position
     @Published var isSliderOn = false
     @Published var maxTokenDigits: UInt = 9
+    @Published var showHeaderDisclosure = true
     var showAbout: Bool {
         strategy == .deposit
     }
@@ -145,6 +146,9 @@ class DepositSolendViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self?.inputToken = "0"
                     self?.maxTokenDigits = UInt(self?.invest.asset.decimals ?? 9)
+                    if strategy == .withdraw {
+                        self?.showHeaderDisclosure = (self?.market.filter { $2 != nil }.count ?? 0 > 1)
+                    }
                 }
             })
             .receive(on: RunLoop.main)
@@ -204,7 +208,7 @@ class DepositSolendViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $inputFiat
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.0), scheduler: DispatchQueue.main)
             .filter { _ in self.focusSide == .right }
             .map {
                 if self.tokenFiatPrice > 0 {
@@ -218,7 +222,7 @@ class DepositSolendViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $inputToken
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.0), scheduler: DispatchQueue.main)
             .map { Double($0.cryptoCurrencyFormat) ?? 0 }
             .removeDuplicates()
             .handleEvents(receiveOutput: { [weak self] tokenAmount in
@@ -439,9 +443,10 @@ class DepositSolendViewModel: ObservableObject {
                     }
             )
         } else {
+            let deposits = market.filter { $2 != nil }
+            guard deposits.count > 1 else { return }
             tokenSelectSubject.send(
-                market
-                    .filter { $2 != nil }
+                deposits
                     .map { asset, market, userDeposit in
                         TokenToWithdrawView.Model(
                             amount: userDeposit?.depositedAmount.double,
@@ -465,6 +470,7 @@ class DepositSolendViewModel: ObservableObject {
     private func formatApy(_ apy: String) -> String {
         guard let apyDouble = Double(apy) else { return "" }
         return "\(apyDouble.fixedDecimal(2))%"
+            .replacingOccurrences(of: ",", with: ".")
     }
 
     func showAboutSolend() {
