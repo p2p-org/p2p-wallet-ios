@@ -123,7 +123,6 @@ final class CreateWalletCoordinator: Coordinator<CreateWalletResult> {
     }
 
     private func buildViewController(state: CreateWalletFlowState) -> UIViewController? {
-        print(state)
         switch state {
         case let .socialSignIn(innerState):
             return socialSignInDelegatedCoordinator.buildViewController(for: innerState)
