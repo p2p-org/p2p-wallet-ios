@@ -166,11 +166,7 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ).map {
-                (_: String,
-                 assets: [SolendConfigAsset]?,
-                 marketInfo: [SolendMarketInfo]?,
-                 userDeposits: [SolendUserDeposit]?) -> [Invest] in
+            ).map { (_: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
                     guard let assets = assets else { return [] }
                     return assets.map { asset -> Invest in
                         (asset: asset,
