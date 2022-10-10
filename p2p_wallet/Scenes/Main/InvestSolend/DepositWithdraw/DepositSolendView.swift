@@ -56,7 +56,7 @@ struct DepositSolendView: View {
                 rightSubtitle: viewModel.headerViewRightSubtitle,
                 showDisclosure: Binding<Bool>(get: { [weak viewModel] in
                     viewModel?.showHeaderDisclosure ?? true
-                }, set: { [weak viewModel] val, tx in
+                }, set: { [weak viewModel] val, _ in
                     viewModel?.showHeaderDisclosure = val
                 })
             ).padding(.top, 24)
