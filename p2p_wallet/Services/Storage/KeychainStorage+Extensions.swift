@@ -6,13 +6,17 @@ import Foundation
 
 extension KeychainStorage: NameStorageType {
     func save(name: String) {
-        keychain.set(name, forKey: nameKey)
-        saveNameToICloudIfAccountSaved()
-        onValueChangeSubject.on(.next(("getName", name)))
+        if name.isEmpty {
+            localKeychain.delete(nameKey)
+        } else {
+            localKeychain.set(name, forKey: nameKey)
+            saveNameToICloudIfAccountSaved()
+            onValueChangeSubject.on(.next(("getName", name)))
+        }
     }
 
     func getName() -> String? {
-        keychain.get(nameKey)
+        localKeychain.get(nameKey)
     }
 
     private func saveNameToICloudIfAccountSaved() {
@@ -28,12 +32,21 @@ extension KeychainStorage: NameStorageType {
 }
 
 extension KeychainStorage: PincodeStorageType {
+    func saveAttempt(_ attempt: Int) {
+        localKeychain.set(String(attempt), forKey: pincodeAttemptsKey)
+    }
+
+    var attempt: Int? {
+        Int(localKeychain.get(pincodeAttemptsKey) ?? "")
+    }
+
     func save(_ pinCode: String) {
-        keychain.set(pinCode, forKey: pincodeKey)
+        localKeychain.set(pinCode, forKey: pincodeKey)
+        saveAttempt(0)
     }
 
     var pinCode: String? {
-        keychain.get(pincodeKey)
+        localKeychain.get(pincodeKey)
     }
 }
 

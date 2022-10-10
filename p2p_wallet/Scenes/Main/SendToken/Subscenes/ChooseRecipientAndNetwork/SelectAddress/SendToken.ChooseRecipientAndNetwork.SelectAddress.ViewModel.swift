@@ -253,6 +253,8 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
     func selectRecipient(_ recipient: SendToken.Recipient) {
         chooseRecipientAndNetworkViewModel.selectRecipient(recipient)
         inputStateSubject.accept(.recipientSelected)
+        analyticsManager.log(event: AmplitudeEvent.sendFillingAddress)
+        analyticsManager.log(event: AmplitudeEvent.sendReviewScreen)
     }
 
     func clearRecipient() {

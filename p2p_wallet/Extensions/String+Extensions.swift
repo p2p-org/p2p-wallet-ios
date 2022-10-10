@@ -168,3 +168,31 @@ extension String {
 
     private func nonLetters(decimalSeparator: String) -> String { filter("0123456789\(decimalSeparator)".contains) }
 }
+
+extension String {
+    var isPhoneNumber: Bool {
+        do {
+            let detector = try NSDataDetector(types: NSTextCheckingResult.CheckingType.phoneNumber.rawValue)
+            let matches = detector.matches(in: self, options: [], range: NSRange(location: 0, length: count))
+            if let res = matches.first {
+                return res.resultType == .phoneNumber && res.range.location == 0 && res.range.length == count
+            } else {
+                return false
+            }
+        } catch {
+            return false
+        }
+    }
+}
+
+extension String {
+    func separate(every: Int, with separator: String) -> String {
+        String(stride(from: 0, to: Array(self).count, by: every).map {
+            Array(Array(self)[$0 ..< min($0 + every, Array(self).count)])
+        }.joined(separator: separator))
+    }
+
+    func firstUppercased() -> String {
+        prefix(1).uppercased() + dropFirst()
+    }
+}
