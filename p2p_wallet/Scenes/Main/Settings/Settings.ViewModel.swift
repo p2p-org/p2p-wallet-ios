@@ -26,10 +26,6 @@ protocol ChangeThemeResponder {
     func changeThemeTo(_ style: UIUserInterfaceStyle)
 }
 
-protocol LogoutResponder {
-    func logout()
-}
-
 protocol SettingsViewModelType: ReserveNameHandler {
     var selectableLanguages: [(LocalizedLanguage, Bool)] { get }
     var navigationDriver: Driver<Settings.NavigatableScene?> { get }
@@ -71,7 +67,7 @@ extension Settings {
 
         @Injected private var storage: ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType
         @Injected private var analyticsManager: AnalyticsManager
-        @Injected private var logoutResponder: LogoutResponder
+        @Injected private var userWalletManager: UserWalletManager
         @Injected private var changeThemeResponder: ChangeThemeResponder
         @Injected private var authenticationHandler: AuthenticationHandlerType
         @Injected private var changeNetworkResponder: ChangeNetworkResponder
@@ -247,7 +243,7 @@ extension Settings.ViewModel: SettingsViewModelType {
         // get context
         let context = LAContext()
         let reason = L10n.identifyYourself
-
+        context.localizedFallbackTitle = ""
         // evaluate Policy
         context
             .evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
@@ -278,20 +274,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func changePincode() {
-        authenticationHandler.authenticate(
-            presentationStyle: .init(
-                title: L10n.enterCurrentPIN,
-                options: [.fullscreen, .disableBiometric, .withResetPassword],
-                completion: { [weak self] passwordReset in
-                    guard !passwordReset else {
-                        self?.notificationsService.showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
-                        return
-                    }
-                    // pin code vc
-                    self?.navigate(to: .changePincode)
-                }
-            )
-        )
+        navigate(to: .changePincode)
     }
 
     func savePincode(_ pincode: String) {
@@ -317,7 +300,7 @@ extension Settings.ViewModel: SettingsViewModelType {
     }
 
     func showLogoutAlert() {
-        analyticsManager.log(event: AmplitudeEvent.signOut(lastScreen: "Settings"))
+        analyticsManager.log(event: AmplitudeEvent.signOut)
         logoutAlertSubject.accept(())
     }
 
@@ -351,6 +334,6 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     func logout() {
         analyticsManager.log(event: AmplitudeEvent.signedOut)
-        logoutResponder.logout()
+        Task { try await userWalletManager.remove() }
     }
 }

@@ -5,7 +5,9 @@
 //  Created by Chung Tran on 22/12/2021.
 //
 
+import AnalyticsManager
 import Foundation
+import KeyAppUI
 import Resolver
 import RxCocoa
 import RxSwift
@@ -17,6 +19,10 @@ protocol NotificationService {
     func sendRegisteredDeviceToken(_ deviceToken: Data) async
     func deleteDeviceToken() async
     func showInAppNotification(_ notification: InAppNotification)
+    func showToast(title: String?, text: String?)
+    func showAlert(title: String, text: String)
+    func hideToasts()
+    func showDefaultErrorNotification()
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?)
     func didReceivePush(userInfo: [AnyHashable: Any])
     func notificationWasOpened()
@@ -28,6 +34,7 @@ protocol NotificationService {
 }
 
 final class NotificationServiceImpl: NSObject, NotificationService {
+    @Injected private var analyticsManager: AnalyticsManager
     @Injected private var accountStorage: AccountStorageType
     @Injected private var notificationRepository: NotificationRepository
 
@@ -114,9 +121,35 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         }
     }
 
+    func showToast(title: String? = nil, text: String? = nil) {
+        DispatchQueue.main.async {
+            UIApplication.shared.showToastError(title: title, text: text)
+        }
+    }
+
+    func showAlert(title: String, text: String) {
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.topViewController()?
+                .showAlert(title: title, message: text)
+        }
+    }
+
+    func hideToasts() {
+        SnackBarManager.shared.dismissAll()
+    }
+
+    func showDefaultErrorNotification() {
+        DispatchQueue.main.async {
+            UIApplication.shared.showToastError()
+        }
+    }
+
     func wasAppLaunchedFromPush(launchOptions: [UIApplication.LaunchOptionsKey: Any]?) {
         if launchOptions?[.remoteNotification] != nil {
+            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: .push))
             UserDefaults.standard.set(true, forKey: openAfterPushKey)
+        } else {
+            analyticsManager.log(event: AmplitudeEvent.appOpened(sourceOpen: .direct))
         }
     }
 
@@ -146,7 +179,7 @@ extension NotificationServiceImpl: UNUserNotificationCenterDelegate {
         willPresent _: UNNotification,
         withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
     ) {
-        completionHandler([.alert, .sound, .badge])
+        completionHandler([.list, .banner, .sound, .badge])
     }
 }
 
@@ -203,11 +236,44 @@ private extension UIApplication {
             }
         }
     }
+
+    func showToastError(title: String? = nil, text: String? = nil) {
+        guard let window = kWindow else { return }
+        SnackBar(
+            title: title ?? "😓",
+            text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
+        ).show(in: window)
+    }
 }
 
 private extension Data {
     var formattedDeviceToken: String {
         let tokenParts = map { data in String(format: "%02.2hhx", data) }
         return tokenParts.joined()
+    }
+}
+
+private extension UIWindow {
+    func topViewController() -> UIViewController? {
+        rootViewController?.topMostViewController()
+    }
+}
+
+private extension UIViewController {
+    func topMostViewController() -> UIViewController? {
+        if presentedViewController == nil { return self }
+
+        if let navigation = presentedViewController as? UINavigationController {
+            return navigation.visibleViewController!.topMostViewController() ?? self
+        }
+
+        if let tab = presentedViewController as? UITabBarController {
+            if let selectedTab = tab.selectedViewController {
+                return selectedTab.topMostViewController() ?? self
+            }
+            return tab.topMostViewController() ?? self
+        }
+
+        return presentedViewController!.topMostViewController() ?? self
     }
 }
