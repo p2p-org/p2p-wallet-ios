@@ -5,6 +5,12 @@ PODS:
   - Amplitude (8.3.1)
   - AnalyticsManager (1.0.0):
     - Amplitude (~> 8.3.0)
+  - AppAuth (1.6.0):
+    - AppAuth/Core (= 1.6.0)
+    - AppAuth/ExternalUserAgent (= 1.6.0)
+  - AppAuth/Core (1.6.0)
+  - AppAuth/ExternalUserAgent (1.6.0):
+    - AppAuth/Core
   - BECollectionView (1.0.0):
     - BECollectionView_Core
     - RxCocoa (~> 6.5.0)
@@ -18,6 +24,7 @@ PODS:
   - CocoaDebug (1.7.2)
   - CombineCocoa (0.4.0)
   - CountriesAPI (1.0.0)
+  - CryptoSwift (1.6.0)
   - Down (0.11.0)
   - FeeRelayerSwift (3.1.2):
     - OrcaSwapSwift (~> 2)
@@ -109,6 +116,10 @@ PODS:
     - GoogleUtilities/Environment (~> 7.7)
     - nanopb (< 2.30910.0, >= 2.30908.0)
     - PromisesObjC (< 3.0, >= 1.2)
+  - GoogleSignIn (6.2.4):
+    - AppAuth (~> 1.5)
+    - GTMAppAuth (~> 1.3)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.1)
   - GoogleUtilities/AppDelegateSwizzler (7.8.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -129,6 +140,10 @@ PODS:
   - GoogleUtilities/UserDefaults (7.8.0):
     - GoogleUtilities/Logger
   - GT3Captcha-iOS (0.15.4)
+  - GTMAppAuth (1.3.1):
+    - AppAuth/Core (~> 1.6)
+    - GTMSessionFetcher/Core (< 3.0, >= 1.5)
+  - GTMSessionFetcher/Core (2.1.0)
   - Intercom (12.4.3)
   - Introspect (0.1.4)
   - JazziconSwift (1.1.0)
@@ -148,11 +163,22 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
+  - Onboarding (1.0.0):
+    - CryptoSwift (~> 1.6.0)
+    - JSBridge
+    - SolanaSwift (~> 2)
   - OrcaSwapSwift (2.1.1):
     - SolanaSwift (~> 2)
   - Periphery (2.9.0)
+  - PhoneNumberKit (3.3.4):
+    - PhoneNumberKit/PhoneNumberKitCore (= 3.3.4)
+    - PhoneNumberKit/UIKit (= 3.3.4)
+  - PhoneNumberKit/PhoneNumberKitCore (3.3.4)
+  - PhoneNumberKit/UIKit (3.3.4):
+    - PhoneNumberKit/PhoneNumberKitCore
   - PromisesObjC (2.1.1)
   - PureLayout (3.1.9)
+  - ReachabilitySwift (5.0.0)
   - RenVMSwift (2.0.1):
     - SolanaSwift (~> 2)
   - Resolver (1.5.0)
@@ -178,11 +204,11 @@ PODS:
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
   - SkeletonUI (1.0.9)
-  - SkeletonView (1.30.2)
+  - SkeletonView (1.30.3)
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
-  - SolanaSwift (2.5.0):
+  - SolanaSwift (2.5.1):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -191,6 +217,7 @@ PODS:
   - SwiftFormat/CLI (0.49.6)
   - SwiftGen (6.6.2)
   - SwiftLint (0.49.1)
+  - SwiftNotificationCenter (1.0.4)
   - SwiftSVG (2.3.2)
   - SwiftyUserDefaults (5.3.0)
   - TagListView (1.4.1)
@@ -202,61 +229,69 @@ PODS:
   - "UITextView+Placeholder (1.4.0)"
 
 DEPENDENCIES:
-  - Action
-  - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
+  - Action (= 5.0.0)
+  - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BEPureLayout (from `https://github.com/p2p-org/BEPureLayout.git`, branch `master`)
-  - Cache (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
+  - Cache (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - CocoaDebug
-  - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
+  - CombineCocoa (= 0.4.0)
+  - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Down (from `https://github.com/p2p-org/Down.git`)
   - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
+  - GoogleSignIn
   - GT3Captcha-iOS
-  - Intercom (~> 12.4.3)
-  - Introspect
-  - JazziconSwift (~> 1.1.0)
-  - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
-  - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
+  - Intercom (= 12.4.3)
+  - Introspect (= 0.1.4)
+  - JazziconSwift (from `https://github.com/p2p-org/JazziconSwift.git`, branch `master`)
+  - JSBridge (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
+  - KeyAppKitLogger (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - "KeyAppUI (from `git@github.com:p2p-org/KeyAppUI.git`, branch `develop`)"
-  - KeychainSwift (~> 19.0)
-  - Kingfisher
+  - KeychainSwift (= 19.0.0)
+  - Kingfisher (~> 7.3.2)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
-  - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
+  - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
+  - Onboarding (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
   - Periphery
+  - PhoneNumberKit (= 3.3.4)
+  - ReachabilitySwift (~> 5.0.0)
   - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
-  - Resolver
-  - RxAppState
+  - Resolver (= 1.5.0)
+  - RxAppState (= 1.7.1)
   - RxCocoa (= 6.5.0)
-  - RxCombine
+  - RxCombine (= 2.0.1)
   - RxConcurrency (from `https://github.com/TrGiLong/RxConcurrency.git`, branch `main`)
-  - RxGesture
+  - RxGesture (= 4.0.4)
   - RxSwift (= 6.5.0)
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
-  - SkeletonUI
-  - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
+  - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
+  - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
-  - SubviewAttachingTextView
+  - SubviewAttachingTextView (= 1.5.0)
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
   - SwiftLint
-  - SwiftSVG (~> 2.0)
-  - SwiftyUserDefaults (~> 5.0)
-  - TagListView (~> 1.0)
-  - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `develop`)
-  - "UITextView+Placeholder"
+  - SwiftNotificationCenter
+  - SwiftSVG (= 2.3.2)
+  - SwiftyUserDefaults (= 5.3.0)
+  - TagListView (= 1.4.1)
+  - TransactionParser (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
+  - "UITextView+Placeholder (= 1.4.0)"
 
 SPEC REPOS:
   trunk:
     - Action
     - Amplitude
+    - AppAuth
     - CocoaDebug
     - CombineCocoa
+    - CryptoSwift
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
@@ -268,18 +303,22 @@ SPEC REPOS:
     - FirebaseRemoteConfig
     - GoogleAppMeasurement
     - GoogleDataTransport
+    - GoogleSignIn
     - GoogleUtilities
     - GT3Captcha-iOS
+    - GTMAppAuth
+    - GTMSessionFetcher
     - Intercom
     - Introspect
-    - JazziconSwift
     - KeychainSwift
     - Kingfisher
     - LoggerSwift
     - nanopb
     - Periphery
+    - PhoneNumberKit
     - PromisesObjC
     - PureLayout
+    - ReachabilitySwift
     - Resolver
     - RxAppState
     - RxCocoa
@@ -288,12 +327,12 @@ SPEC REPOS:
     - RxRelay
     - RxSwift
     - secp256k1.swift
-    - SkeletonUI
     - SkeletonView
     - SubviewAttachingTextView
     - SwiftFormat
     - SwiftGen
     - SwiftLint
+    - SwiftNotificationCenter
     - SwiftSVG
     - SwiftyUserDefaults
     - TagListView
@@ -303,7 +342,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   AnalyticsManager:
-    :branch: develop
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :branch: master
@@ -318,21 +357,24 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :branch: develop
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :branch: develop
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
     :branch: master
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
+  JazziconSwift:
+    :branch: master
+    :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :branch: develop
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :branch: develop
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :branch: develop
@@ -341,7 +383,10 @@ EXTERNAL SOURCES:
     :branch: custom_gradient_color
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :branch: develop
+    :branch: master
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
+  Onboarding:
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :branch: main
@@ -355,19 +400,22 @@ EXTERNAL SOURCES:
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
+  SkeletonUI:
+    :branch: master
+    :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :branch: develop
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :branch: main
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :branch: develop
+    :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 81988690f154f6ab606c86193534b92db3ba69a3
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -382,22 +430,25 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 81988690f154f6ab606c86193534b92db3ba69a3
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 81988690f154f6ab606c86193534b92db3ba69a3
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 1a308c51278b2e877d183b9b6d679fe2b2ae7db5
+    :commit: 4b6143533153f5c9b37f50027cc5ce8bbf3fc60a
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
+  JazziconSwift:
+    :commit: f9c9f898402db4e62d482f4c90670652c221fa12
+    :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 81988690f154f6ab606c86193534b92db3ba69a3
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 81988690f154f6ab606c86193534b92db3ba69a3
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: 85b19f738d0afab2c9dcdf36bd69f1d4caadfa9d
@@ -406,13 +457,16 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 81988690f154f6ab606c86193534b92db3ba69a3
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
+    :git: https://github.com/p2p-org/key-app-kit-swift.git
+  Onboarding:
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   RenVMSwift:
-    :commit: bc5bf3ec5ec36bb93cc8b53b655599809633087e
+    :commit: c7668f4ec4055780cf7854dc220a9c57ce3de410
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
@@ -420,20 +474,24 @@ CHECKOUT OPTIONS:
   Sentry:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
+  SkeletonUI:
+    :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
+    :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 81988690f154f6ab606c86193534b92db3ba69a3
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 72f1a7887b64b68f7430c06abca1b379f1738609
+    :commit: a6c160de5b7719f9b8d5c3f618f314f710fef182
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
-    :commit: 81988690f154f6ab606c86193534b92db3ba69a3
+    :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
   Action: 47f1825511907b4fcd79dd7a7db9526c20f78018
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
+  AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
   BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
@@ -442,6 +500,7 @@ SPEC CHECKSUMS:
   CocoaDebug: 61cf93ada6ce8f3407507dc01f9b874d91ac1d5c
   CombineCocoa: 68a050228ce7c53c1c5ac2c57cccf92a7f5c5085
   CountriesAPI: 26d03b67fb2fd4ff26111b71ed3d492a3babb592
+  CryptoSwift: 562f8eceb40e80796fffc668b0cad9313284cfa6
   Down: b6ba1bc985c9d2f4e15e3b293d2207766fa12612
   FeeRelayerSwift: 1fee81a40cc11c147b534b1afd46b147480a88dc
   Firebase: 5ae8b7cf8efce559a653aef0ad95bab3f427c351
@@ -455,8 +514,11 @@ SPEC CHECKSUMS:
   FirebaseRemoteConfig: ee09d77a7d7c7e31da6a0d1cf956cd611c85609c
   GoogleAppMeasurement: 6de2b1a69e4326eb82ee05d138f6a5cb7311bcb1
   GoogleDataTransport: 1c8145da7117bd68bbbed00cf304edb6a24de00f
+  GoogleSignIn: 5651ce3a61e56ca864160e79b484cd9ed3f49b7a
   GoogleUtilities: 1d20a6ad97ef46f67bbdec158ce00563a671ebb7
   GT3Captcha-iOS: c57d863e89065712f3a515b0814edb22e0ca6eca
+  GTMAppAuth: 0ff230db599948a9ad7470ca667337803b3fc4dd
+  GTMSessionFetcher: ffbb25ec00ebcb5201adab0a56d808f6f1902d9f
   Intercom: 43bfacc55b1c93cce9ec569833696d3f15678430
   Introspect: b62c4dd2063072327c21d618ef2bedc3c87bc366
   JazziconSwift: d1d6f81e5e460b94b2cd0a898dab66178aeab070
@@ -469,10 +531,13 @@ SPEC CHECKSUMS:
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
   NameService: a5f786e710230ae26ea899b5fd7b894c740b86db
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
+  Onboarding: 9fad345659c5f43d4ceb718a22ea6820c9c3bfc5
   OrcaSwapSwift: 8184e41e83f5349b38cc229532331064f8ed1fe8
   Periphery: a7aee85b5f5374a8bff3862342209b95d8e016b8
+  PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
   PromisesObjC: ab77feca74fa2823e7af4249b8326368e61014cb
   PureLayout: 5fb5e5429519627d60d079ccb1eaa7265ce7cf88
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   RenVMSwift: 9cfd6610adc9c74a6e761c615cd30a31129e79c6
   Resolver: 68984624572763018fd8ec7b8e3e8df0e3b6bba5
   RxAppState: 9c34f951d4ff8b9034f84016fe766202365bceb2
@@ -485,13 +550,14 @@ SPEC CHECKSUMS:
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
-  SkeletonView: 2a4536db5ded1b422459a73e05e08b20c6b3a69b
+  SkeletonView: f5b099c708e42a278079a12bcaaf71c303be65a3
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: 1b4138640dd65f7ffa13eef3db178c8efe468922
+  SolanaSwift: c35067e8faf40d57e37f6a31d1f6d7a079ab53a2
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
   SwiftLint: 32ee33ded0636d0905ef6911b2b67bbaeeedafa5
+  SwiftNotificationCenter: 760386da2ce03d3594cb5e96d1e22ec80b44b46f
   SwiftSVG: ca7f64e403b8ea7ea8eba8c823b83ba4a059834c
   SwiftyUserDefaults: 63f80248cf5bfb3458825d9a78f2eb7e1293a040
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
@@ -500,6 +566,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: bcaeda14bdb4f95f538604a782390383ab20f471
+PODFILE CHECKSUM: 6cac23bbdd8107b88569f843cbd59d314646b378
 
 COCOAPODS: 1.11.3

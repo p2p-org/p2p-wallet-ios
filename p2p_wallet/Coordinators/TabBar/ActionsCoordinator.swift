@@ -74,6 +74,9 @@ final class ActionsCoordinator: Coordinator<Void> {
                                     crypto: $0
                                 )
                                 coordinate(to: coordinator)
+                                    .sink { _ in }
+                                    .store(in: &subscriptions)
+
                             }),
                             animated: true
                         )
