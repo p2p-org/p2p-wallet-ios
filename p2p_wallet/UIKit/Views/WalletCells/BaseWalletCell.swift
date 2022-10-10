@@ -2,7 +2,6 @@
 // Created by Giang Long Tran on 16.02.2022.
 //
 
-import BECollectionView
 import BEPureLayout
 import RxCocoa
 import RxSwift

@@ -14,6 +14,10 @@ extension UIApplication {
         UIApplication.shared.windows.first { $0.isKeyWindow }
     }
 
+    func rootViewController() -> UIViewController? {
+        kWindow?.rootViewController
+    }
+
     func showIndetermineHud() {
         kWindow?.showIndetermineHud()
     }
