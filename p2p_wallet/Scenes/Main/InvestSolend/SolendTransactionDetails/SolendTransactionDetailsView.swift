@@ -219,16 +219,14 @@ struct SolendTransactionDetailsView_Previews: PreviewProvider {
             }
         }
     }
-    
+
     static var previews: some View {
         view
             .previewDevice(.init(rawValue: "iPhone 12"))
             .previewDisplayName("iPhone 12")
-        
+
         view
             .previewDevice(.init(rawValue: "iPhone 8"))
             .previewDisplayName("iPhone 8")
     }
 }
-
-
