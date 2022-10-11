@@ -11,13 +11,13 @@ import SwiftUI
 struct SolendBalanceBannerView: View {
     let balance: Double
     @State var delta: Double
-    
+
     let depositUrls: [URL]
     let rewards: Double
     let lastUpdateDate: Date
-    
+
     let showDeposits: () -> Void
-    
+
     private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
     var body: some View {
@@ -34,10 +34,14 @@ struct SolendBalanceBannerView: View {
                         Spacer()
                         HStack(spacing: -8) {
                             ForEach(depositUrls.indices, id: \.self) { index in
-                                ImageView(withURL: depositUrls[index])
-                                    .frame(width: 16, height: 16)
-                                    .cornerRadius(4)
-                                    .zIndex(Double(depositUrls.count - index))
+                                CoinLogoView(
+                                    size: 16,
+                                    cornerRadius: 4,
+                                    urlString: depositUrls[index].absoluteString
+                                )
+                                .frame(width: 16, height: 16)
+                                .cornerRadius(4)
+                                .zIndex(Double(depositUrls.count - index))
                             }
                         }
                     }
@@ -57,9 +61,9 @@ struct SolendBalanceBannerView: View {
             }
         }
     }
-    
+
     func realTimeBalance(_ delta: Double) -> Double {
-        return balance + (rewards * delta)
+        balance + (rewards * delta)
     }
 }
 
@@ -76,6 +80,6 @@ struct SolendBalanceBanner_Previews: PreviewProvider {
             rewards: 0.00001231,
             lastUpdateDate: Date()
         ) {}
-        .padding(.all, 16)
+            .padding(.all, 16)
     }
 }

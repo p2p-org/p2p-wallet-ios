@@ -35,7 +35,7 @@ struct SolendDepositsView: View {
                     viewModel?.withdrawTapped(item: deposit)
                 }
             )
-                .buttonStyle(PlainButtonStyle())
+            .buttonStyle(PlainButtonStyle())
         }
     }
 }

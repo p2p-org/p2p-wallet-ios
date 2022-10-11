@@ -27,9 +27,13 @@ struct SolendTopUpForContinueView: View {
     private var cell: some View {
         HStack(spacing: 12) {
             if let url = viewModel.imageUrl {
-                ImageView(withURL: url)
-                    .frame(width: 48, height: 48)
-                    .cornerRadius(24)
+                CoinLogoView(
+                    size: 48,
+                    cornerRadius: 24,
+                    urlString: url.absoluteString
+                )
+                .frame(width: 48, height: 48)
+                .cornerRadius(24)
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(viewModel.symbol)

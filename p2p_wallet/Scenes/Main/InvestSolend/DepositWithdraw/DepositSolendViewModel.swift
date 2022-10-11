@@ -69,12 +69,12 @@ class DepositSolendViewModel: ObservableObject {
     var headerViewSubtitle: String {
         strategy == .deposit ?
             invest.asset.name :
-        L10n.yielding + " \((invest.market?.supplyInterest ?? "0").formatApy) APY"
+            L10n.yielding + " \((invest.market?.supplyInterest ?? "0").formatApy) APY"
     }
 
     var headerViewRightTitle: String {
         strategy == .deposit ?
-        "\((invest.market?.supplyInterest ?? "0").formatApy)" :
+            "\((invest.market?.supplyInterest ?? "0").formatApy)" :
             tokenToAmount(amount: maxAmount()).fiatAmount(currency: fiat)
     }
 
@@ -166,17 +166,18 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ).map { (_: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
-                    guard let assets = assets else { return [] }
-                    return assets.map { asset -> Invest in
-                        (asset: asset,
-                         market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
-                         userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol }))
-                    }.sorted { (v1: Invest, v2: Invest) -> Bool in
-                        let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
-                        let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
-                        return apy1 > apy2
-                    }
+            )
+            .map { (_: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
+                guard let assets = assets else { return [] }
+                return assets.map { asset -> Invest in
+                    (asset: asset,
+                     market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
+                     userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol }))
+                }.sorted { (v1: Invest, v2: Invest) -> Bool in
+                    let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
+                    let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
+                    return apy1 > apy2
+                }
             }
             .receive(on: RunLoop.main)
             .assign(to: \.market, on: self)
@@ -189,17 +190,17 @@ class DepositSolendViewModel: ObservableObject {
 
     private func bind() {
         $inputToken
-            .map { self.maxAmount() >= Double($0) && Double($0) > 0 }
+            .map { [weak self] in self?.maxAmount() >= Double($0) && Double($0) > 0 }
             .assign(to: \.isButtonEnabled, on: self)
             .store(in: &subscriptions)
 
         $inputFiat
             .debounce(for: .seconds(0.0), scheduler: DispatchQueue.main)
-            .filter { _ in self.focusSide == .right }
-            .map {
-                if self.tokenFiatPrice > 0 {
-                    return self.fiatToToken(amount: $0.fiatFormat.double ?? 0)
-                        .toString(maximumFractionDigits: self.invest.asset.decimals)
+            .filter { [weak self] _ in self?.focusSide == .right }
+            .map { [weak self] in
+                if self?.tokenFiatPrice > 0 {
+                    return self?.fiatToToken(amount: $0.fiatFormat.double ?? 0)
+                        .toString(maximumFractionDigits: self?.invest.asset.decimals ?? 9) ?? ""
                 } else {
                     return "0"
                 }
@@ -380,7 +381,6 @@ class DepositSolendViewModel: ObservableObject {
             defer { loading = false }
             try await actionService.withdraw(amount: inputLamport, symbol: invest.asset.symbol)
         } catch {
-            print(error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemWithdrawingFunds))
         }
     }
@@ -388,8 +388,9 @@ class DepositSolendViewModel: ObservableObject {
     private func calculateFee(inputInLamports: UInt64, symbol: String) -> AnyPublisher<SolendDepositFee, Error> {
         Deferred {
             Future<SolendDepositFee, Error> { promise in
-                Task {
+                Task { [weak self] in
                     do {
+                        guard let self = self else { promise(.failure(DepositSolendViewModelError.unknown)); return }
                         let result = try await self.actionService.depositFee(amount: inputInLamports, symbol: symbol)
                         promise(.success(result))
                     } catch {
@@ -409,18 +410,20 @@ class DepositSolendViewModel: ObservableObject {
 
     func headerTapped() {
         if strategy == .deposit {
+            let wallets = walletRepository.getWallets()
             tokenSelectSubject.send(
                 market.compactMap { asset, market, _ in
-                    let wallet = walletRepository.getWallets().first { wallet in
-                        wallet.amount > 0 && asset.symbol == wallet.token.symbol
-                    }
+                    let wallet = wallets
+                        .first { wallet in
+                            wallet.amount > 0 && market?.symbol == wallet.token.symbol
+                        }
                     if let newWallet = wallet {
                         return TokenToDepositView.Model(
                             amount: newWallet.amount,
                             imageUrl: URL(string: asset.logo ?? ""),
                             symbol: newWallet.token.symbol,
                             name: newWallet.token.name,
-                            apy: market?.supplyInterest.double
+                            apy: market?.supplyInterest.double ?? 0
                         )
                     }
                     return nil
@@ -460,5 +463,9 @@ extension DepositSolendViewModel {
     enum Strategy {
         case deposit
         case withdraw
+    }
+
+    enum DepositSolendViewModelError: Error {
+        case unknown
     }
 }
