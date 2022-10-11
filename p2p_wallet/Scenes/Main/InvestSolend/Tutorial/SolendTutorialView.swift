@@ -85,3 +85,13 @@ struct SolendTutorialView: View {
         .padding(.bottom, max(safeAreaInsets.bottom, 20))
     }
 }
+
+// MARK: - Preview
+
+struct SolendTutorialView_Previews: PreviewProvider {
+    static var previews: some View {
+        SolendTutorialView(
+            viewModel: .init()
+        )
+    }
+}

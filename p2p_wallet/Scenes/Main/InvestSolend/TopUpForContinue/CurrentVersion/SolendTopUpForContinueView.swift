@@ -8,6 +8,7 @@
 import Combine
 import KeyAppUI
 import SwiftUI
+import Solend
 
 struct SolendTopUpForContinueView: View {
     let viewModel: SolendTopUpForContinueViewModel
@@ -95,4 +96,39 @@ struct SolendTopUpForContinueView: View {
 
 extension SolendTopUpForContinueView {
     var viewHeight: CGFloat { 360 }
+}
+
+// MARK: - Preview
+
+struct SolendTopUpForContinueView_Previews: PreviewProvider {
+    static var view: some View {
+        VStack {
+            Spacer()
+            SolendTopUpForContinueView(
+                viewModel: .init(
+                    model: .init(
+                        asset: .init(
+                            name: "Solana",
+                            symbol: "SOL",
+                            decimals: 8,
+                            mintAddress: "12345",
+                            logo: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+                        ),
+                        strategy: .withoutAnyTokens
+                    ),
+                    dataService: SolendDataServiceMock()
+                )
+            )
+        }
+    }
+    
+    static var previews: some View {
+        view
+            .previewDevice(.init(rawValue: "iPhone 12"))
+            .previewDisplayName("iPhone 12")
+        
+        view
+            .previewDevice(.init(rawValue: "iPhone 8"))
+            .previewDisplayName("iPhone 8")
+    }
 }

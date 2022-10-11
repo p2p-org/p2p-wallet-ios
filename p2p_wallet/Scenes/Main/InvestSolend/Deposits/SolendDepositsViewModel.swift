@@ -6,16 +6,20 @@ import Solend
 
 @MainActor
 class SolendDepositsViewModel: ObservableObject {
-    private let dataService: SolendDataService
     private var subscriptions = Set<AnyCancellable>()
 
-    // MARK: -
+    // MARK: - Services
 
     @Injected private var priceService: PricesService
     @Injected private var walletRepository: WalletsRepository
-
+    private let dataService: SolendDataService
+    
+    // MARK: - State
+    
     @Published var deposits: [SolendUserDepositItem] = []
 
+    // MARK: - Coordinator
+    
     typealias Asset = SolendConfigAsset
     private var depositSubject = PassthroughSubject<SolendUserDepositItem, Never>()
     var deposit: AnyPublisher<Asset, Never> {
@@ -36,9 +40,11 @@ class SolendDepositsViewModel: ObservableObject {
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
+    
+    // MARK: - Init
 
-    init(dataService: SolendDataService? = nil) {
-        self.dataService = dataService ?? Resolver.resolve(SolendDataService.self)
+    init(dataService: SolendDataService = Resolver.resolve()) {
+        self.dataService = dataService
 
         self.dataService.availableAssets
             .combineLatest(self.dataService.marketInfo, self.dataService.deposits)
@@ -66,7 +72,7 @@ class SolendDepositsViewModel: ObservableObject {
             .store(in: &subscriptions)
     }
 
-    // MARK: -
+    // MARK: - Actions
 
     func depositTapped(item: SolendUserDepositItem) {
         depositSubject.send(item)
@@ -74,5 +80,11 @@ class SolendDepositsViewModel: ObservableObject {
 
     func withdrawTapped(item: SolendUserDepositItem) {
         withdrawSubject.send(item)
+    }
+    
+    // MARK: - Helpers
+
+    private func formatAPY(_ apy: Double) -> String {
+        "\(apy.fixedDecimal(2))%"
     }
 }

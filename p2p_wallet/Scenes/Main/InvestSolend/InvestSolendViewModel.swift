@@ -16,11 +16,15 @@ enum InvestSolendError {
 
 @MainActor
 class InvestSolendViewModel: ObservableObject {
+    // MARK: - Services
+
     @Injected private var notificationService: NotificationService
     let dataService: SolendDataService
     let actionService: SolendActionService
 
     private var subscriptions = Set<AnyCancellable>()
+
+    // MARK: - Coordinator
 
     private let depositSubject = PassthroughSubject<SolendConfigAsset, Never>()
     var deposit: AnyPublisher<SolendConfigAsset, Never> { depositSubject.eraseToAnyPublisher() }
@@ -33,17 +37,21 @@ class InvestSolendViewModel: ObservableObject {
     private let depositsSubject = PassthroughSubject<Void, Never>()
     var deposits: AnyPublisher<Void, Never> { depositsSubject.eraseToAnyPublisher() }
 
+    // MARK: - State
+
     @Published var loading: Bool = false
-    @Published var market: [Invest] = []
+    @Published var invests: [Invest] = []
     @Published var bannerError: InvestSolendError?
 
     var isTutorialShown: Bool {
         Defaults.isSolendTutorialShown
     }
 
-    init(mocked: Bool = false) {
-        dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
-        actionService = mocked ? SolendActionServiceMock() : Resolver.resolve(SolendActionService.self)
+    // MARK: - Init
+
+    init(dataService: SolendDataService = Resolver.resolve(), actionService: SolendActionService = Resolver.resolve()) {
+        self.dataService = dataService
+        self.actionService = actionService
 
         // Updating data service depends on action service
         actionService.currentAction
@@ -107,9 +115,10 @@ class InvestSolendViewModel: ObservableObject {
                 }
             }
             .receive(on: RunLoop.main)
-            .sink { [weak self] value in self?.market = value }
+            .sink { [weak self] value in self?.invests = value }
             .store(in: &subscriptions)
 
+        /// Mapping status to loading var
         dataService.status
             .combineLatest(dataService.deposits)
             .map { status, deposits in
@@ -127,14 +136,19 @@ class InvestSolendViewModel: ObservableObject {
         Task { try await update() }
     }
 
+    // MARK: - Actions
+
+    /// Request new data for data service
     func update() async throws {
         try await dataService.update()
     }
 
+    /// Show user's deposits
     func showDeposits() {
         depositsSubject.send()
     }
 
+    /// User clicks invest
     func assetClicked(_ asset: SolendConfigAsset, market _: SolendMarketInfo?) {
         guard InvestSolendHelper.readyToStartAction(notificationService, actionService.getCurrentAction()) == true
         else {
