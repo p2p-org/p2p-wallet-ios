@@ -127,7 +127,12 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ) { (symbol: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, deposits: [SolendUserDeposit]?) -> Invest? in
+            ) { (
+                symbol: String,
+                assets: [SolendConfigAsset]?,
+                marketInfo: [SolendMarketInfo]?,
+                deposits: [SolendUserDeposit]?
+            ) -> Invest? in
                 guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
                 return (
                     asset: asset,
@@ -167,7 +172,12 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.marketInfo,
                 dataService.deposits
             )
-            .map { (_: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
+            .map { (
+                _: String,
+                assets: [SolendConfigAsset]?,
+                marketInfo: [SolendMarketInfo]?,
+                userDeposits: [SolendUserDeposit]?
+            ) -> [Invest] in
                 guard let assets = assets else { return [] }
                 return assets.map { asset -> Invest in
                     (asset: asset,
@@ -362,7 +372,9 @@ class DepositSolendViewModel: ObservableObject {
     private func deposit(lamports: UInt64) async {
         guard loading == false, lamports > 0 else { return }
 
-        notificationService.showInAppNotification(.done(L10n.SendingYourDepositToSolend.justWaitUntilItSDone))
+        notificationService
+            .showInAppNotification(.done(L10n.SendingYourDepositToSolend.justWaitUntilItSDone
+                    .replacingOccurrences(of: "\n", with: " ")))
         do {
             loading = true
             defer { loading = false }
@@ -375,7 +387,9 @@ class DepositSolendViewModel: ObservableObject {
     private func withdraw(lamports: UInt64) async {
         guard loading == false, lamports > 0 else { return }
 
-        notificationService.showInAppNotification(.done(L10n.WithdrawingYourFundsFromSolend.justWaitUntilItSDone))
+        notificationService
+            .showInAppNotification(.done(L10n.WithdrawingYourFundsFromSolend.justWaitUntilItSDone
+                    .replacingOccurrences(of: "\n", with: " ")))
         do {
             loading = true
             defer { loading = false }
