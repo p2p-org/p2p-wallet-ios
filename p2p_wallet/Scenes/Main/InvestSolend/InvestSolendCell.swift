@@ -45,13 +45,11 @@ struct InvestSolendCell: View {
                     .apply(style: .label1)
             }
             Spacer()
-
-            Text((apy ?? "0").formatApy)
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .apply(style: .text2)
+            Text(apy?.formatApy ?? "N/A")
+                .foregroundColor(Color(apy != nil ? Asset.Colors.night.color : Asset.Colors.rose.color))
+                .font(uiFont: .font(of: .text2, weight: .semibold))
                 .skeleton(with: isLoading, size: CGSize(width: 40, height: 20))
         }
-        .padding(.horizontal, 16)
         .frame(height: 64)
     }
 }
