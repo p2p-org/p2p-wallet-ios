@@ -80,7 +80,10 @@ extension Double {
         formatter.minimumFractionDigits = minDecimal
         formatter.maximumFractionDigits = maxDecimal
 
-        return formatter.string(for: self) ?? toString(minimumFractionDigits: minDecimal, maximumFractionDigits: maxDecimal)
+        return formatter.string(for: self) ?? toString(
+            minimumFractionDigits: minDecimal,
+            maximumFractionDigits: maxDecimal
+        )
     }
 
     public func toString(

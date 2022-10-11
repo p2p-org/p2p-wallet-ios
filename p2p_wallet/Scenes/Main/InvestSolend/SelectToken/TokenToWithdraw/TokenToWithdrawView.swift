@@ -67,9 +67,11 @@ struct TokenToWithdrawView: View {
                 Text(model.amount != nil ? model.amount?.tokenAmount(symbol: model.symbol) ?? "" : model.symbol)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .text2))
-                Text("\(L10n.yielding) \(model.apy.percentFormat()) \(L10n.apy)")
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .font(uiFont: .font(of: .label1))
+                if let apy = model.apy {
+                    Text("\(L10n.yielding) \(apy.percentFormat()) \(L10n.apy)")
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .font(uiFont: .font(of: .label1))
+                }
             }
             Spacer()
             Text(model.fiatAmount?.fiatAmount() ?? "")
@@ -97,7 +99,7 @@ extension TokenToWithdrawView {
         let imageUrl: URL?
         let symbol: String
         let fiatAmount: Double?
-        let apy: Double
+        let apy: Double?
 
         var id: String { symbol }
     }

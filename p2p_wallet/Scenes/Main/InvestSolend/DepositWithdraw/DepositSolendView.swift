@@ -53,7 +53,12 @@ struct DepositSolendView: View {
                 logoURLString: viewModel.headerViewLogo,
                 subtitle: viewModel.headerViewSubtitle,
                 rightTitle: viewModel.headerViewRightTitle,
-                rightSubtitle: viewModel.headerViewRightSubtitle
+                rightSubtitle: viewModel.headerViewRightSubtitle,
+                showDisclosure: Binding<Bool>(get: { [weak viewModel] in
+                    viewModel?.showHeaderDisclosure ?? true
+                }, set: { [weak viewModel] val, _ in
+                    viewModel?.showHeaderDisclosure = val
+                })
             ).padding(.top, 24)
         }
     }

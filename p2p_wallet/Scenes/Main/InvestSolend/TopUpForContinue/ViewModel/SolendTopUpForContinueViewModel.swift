@@ -32,7 +32,7 @@ class SolendTopUpForContinueViewModel: ObservableObject {
     let usdcOrSol: Bool
     let symbol: String
     let name: String
-    @Published var apy: String = ""
+    @Published var apy: String?
     let imageUrl: URL?
     let firstActionTitle: String
     let withoutAnyTokens: Bool
@@ -48,15 +48,17 @@ class SolendTopUpForContinueViewModel: ObservableObject {
         firstActionTitle = model.strategy == .withoutAnyTokens ? "Trade for \(symbol)" : "\(L10n.buy) \(symbol)"
         withoutAnyTokens = model.strategy == .withoutAnyTokens
 
-        dataService.marketInfo.sink { [weak self] (marketInfos: [SolendMarketInfo]?) in
-            guard let self = self else { return }
-            let marketInfo: SolendMarketInfo? = marketInfos?.first { $0.symbol == self.symbol }
-            guard let marketInfo = marketInfo, let apy = Double(marketInfo.supplyInterest) else {
-                self.apy = ""
-                return
+        dataService.marketInfo
+            .sink { [weak self] (marketInfos: [SolendMarketInfo]?) in
+                guard let self = self else { return }
+                let marketInfo: SolendMarketInfo? = marketInfos?.first { $0.symbol == self.symbol }
+                guard let marketInfo = marketInfo, let apy = Double(marketInfo.supplyInterest) else {
+                    self.apy = nil
+                    return
+                }
+                self.apy = apy.percentFormat()
             }
-            self.apy = apy.percentFormat()
-        }.store(in: &subscriptions)
+            .store(in: &subscriptions)
     }
 
     func closeClicked() {
