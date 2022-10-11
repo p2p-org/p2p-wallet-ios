@@ -909,3 +909,5 @@ another" = "одна крипта для
 "You will withdraw" = "Вы будете снимать";
 "Withdraw all" = "Вывести все";
 "Excluding fees, you'll deposit" = "Без учета комиссий вы вносите депозит";
+"An unexpected error occurred" = "произошла непредвиденная ошибка";
+"Don't worry, your deposits are safe. We just\nhave issues with showing the info." = "Не волнуйтесь, ваши депозиты в безопасности.  У нас просто\nпроблемы с отображением информации.";

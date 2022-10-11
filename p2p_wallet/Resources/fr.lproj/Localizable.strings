@@ -909,3 +909,5 @@ another" = "une crypto pour
 "You will withdraw" = "vous retirerez";
 "Withdraw all" = "Tout retirer";
 "Excluding fees, you'll deposit" = "Hors frais, vous déposerez";
+"An unexpected error occurred" = "une erreur inattendue est apparue";
+"Don't worry, your deposits are safe. We just\nhave issues with showing the info." = "Ne vous inquiétez pas, vos dépôts sont en sécurité.  Nous avons juste\ndes problèmes avec l'affichage des informations.";
