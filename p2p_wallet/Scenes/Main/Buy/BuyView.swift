@@ -26,8 +26,7 @@ struct BuyView: View {
                     HStack {
                         Spacer()
                         icon
-                            .padding(.top, 13)
-                            .padding(.trailing, 3)
+                            .padding(.top, 12)
                         Spacer()
                     }
                     input
@@ -69,7 +68,10 @@ struct BuyView: View {
     }
 
     var icon: some View {
-        Image("buy-icon")
+        Image(uiImage: UIImage.buyIcon)
+            .resizable()
+            .scaledToFit()
+            .frame(height: 48)
     }
 
     var input: some View {
