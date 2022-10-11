@@ -14,42 +14,42 @@ struct InvestSolendView: View {
     let updating = Timer.publish(every: 60 * 10, on: .main, in: .common).autoconnect()
 
     var body: some View {
-        VStack {
-            // Title
-            HStack {
-                Text(L10n.earnAYield)
-                    .fontWeight(.bold)
-                    .apply(style: .largeTitle)
-                Spacer()
-            }
-            .padding(.top, 20)
-            .padding(.horizontal, 16)
+        ScrollView {
+            VStack {
+                // Title
+                HStack {
+                    Text(L10n.earnAYield)
+                        .fontWeight(.bold)
+                        .apply(style: .largeTitle)
+                    Spacer()
+                }
+                .padding(.top, 20)
+                .padding(.horizontal, 16)
 
-            // Banner
-            InvestSolendBannerView(
-                viewModel: InvestSolendBannerViewModel(
-                    dataService: viewModel.dataService,
-                    actionService: viewModel.actionService
-                )
-            ) {
-                viewModel.showDeposits()
-            }
-            .padding(.bottom, 8)
-            .padding(.horizontal, 16)
+                // Banner
+                InvestSolendBannerView(
+                    viewModel: InvestSolendBannerViewModel(
+                        dataService: viewModel.dataService,
+                        actionService: viewModel.actionService
+                    )
+                ) {
+                    viewModel.showDeposits()
+                }
+                .padding(.bottom, 8)
+                .padding(.horizontal, 16)
 
-            // Title
-            HStack {
-                Text(L10n.depositToEarnAYield)
-                    .fontWeight(.semibold)
-                    .apply(style: .text1)
-                Spacer()
-                Text(L10n.apy)
-                    .fontWeight(.semibold)
-                    .apply(style: .text1)
-            }.padding(.horizontal, 16)
+                // Title
+                HStack {
+                    Text(L10n.depositToEarnAYield)
+                        .fontWeight(.semibold)
+                        .apply(style: .text1)
+                    Spacer()
+                    Text(L10n.apy)
+                        .fontWeight(.semibold)
+                        .apply(style: .text1)
+                }.padding(.horizontal, 16)
 
-            // Invests
-            ScrollView {
+                // Invests
                 VStack {
                     if viewModel.loading && viewModel.invests.isEmpty {
                         HStack {
@@ -75,7 +75,6 @@ struct InvestSolendView: View {
                     Spacer(minLength: 20)
                 }
             }
-            .frame(maxHeight: .infinity)
         }.onReceive(updating) { _ in Task { try await viewModel.update() } }
     }
 }
