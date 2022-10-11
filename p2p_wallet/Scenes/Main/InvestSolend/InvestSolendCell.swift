@@ -18,9 +18,13 @@ struct InvestSolendCell: View {
     var body: some View {
         HStack(spacing: 12) {
             if let logo = asset.logo, let url = URL(string: logo) {
-                ImageView(withURL: url)
-                    .clipShape(Circle())
-                    .frame(width: 48, height: 48)
+                CoinLogoView(
+                    size: 48,
+                    cornerRadius: 12,
+                    urlString: url.absoluteString
+                )
+                .clipShape(Circle())
+                .frame(width: 48, height: 48)
             } else {
                 Circle()
                     .fill(Color(Asset.Colors.mountain.color))

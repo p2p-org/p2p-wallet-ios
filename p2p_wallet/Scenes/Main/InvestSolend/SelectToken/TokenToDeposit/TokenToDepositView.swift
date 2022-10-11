@@ -60,9 +60,13 @@ struct TokenToDepositView: View {
     private func tokenView(model: Model) -> some View {
         HStack(spacing: 12) {
             if let url = model.imageUrl {
-                ImageView(withURL: url)
-                    .frame(width: 48, height: 48)
-                    .cornerRadius(24)
+                CoinLogoView(
+                    size: 48,
+                    cornerRadius: 24,
+                    urlString: url.absoluteString
+                )
+                .frame(width: 48, height: 48)
+                .cornerRadius(24)
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(model.amount != nil ? model.amount?.tokenAmount(symbol: model.symbol) ?? "" : model.symbol)
