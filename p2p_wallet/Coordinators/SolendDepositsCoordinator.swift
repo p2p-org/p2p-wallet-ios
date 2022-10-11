@@ -64,7 +64,7 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
                     initialStrategy: .deposit
                 )
                 coordinate(to: coordinator)
-                    .sink { status in
+                    .sink { [unowned self] status in
                         if status == true, let savePoint = savePoint, actionService.getCurrentAction() != nil {
                             controller.popToViewController(savePoint, animated: true)
                         }
