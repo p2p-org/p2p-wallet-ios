@@ -167,6 +167,11 @@ extension String {
     }
 
     private func nonLetters(decimalSeparator: String) -> String { filter("0123456789\(decimalSeparator)".contains) }
+
+    var formatApy: String {
+        guard let apyDouble = Double(self) else { return "" }
+        return "\(apyDouble.fixedDecimal(2))%".replacingOccurrences(of: ",", with: ".")
+    }
 }
 
 extension String {
