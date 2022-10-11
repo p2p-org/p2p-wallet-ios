@@ -410,23 +410,21 @@ class DepositSolendViewModel: ObservableObject {
     func headerTapped() {
         if strategy == .deposit {
             tokenSelectSubject.send(
-                market
-                    .compactMap { asset, market, _ in
-                        let wallet = walletRepository.getWallets()
-                            .first { wallet in
-                                wallet.amount > 0 && market?.symbol == wallet.token.symbol
-                            }
-                        if let newWallet = wallet {
-                            return TokenToDepositView.Model(
-                                amount: newWallet.amount,
-                                imageUrl: URL(string: asset.logo ?? ""),
-                                symbol: newWallet.token.symbol,
-                                name: newWallet.token.name,
-                                apy: market?.supplyInterest.double ?? 0
-                            )
-                        }
-                        return nil
+                market.compactMap { asset, market, _ in
+                    let wallet = walletRepository.getWallets().first { wallet in
+                        wallet.amount > 0 && asset.symbol == wallet.token.symbol
                     }
+                    if let newWallet = wallet {
+                        return TokenToDepositView.Model(
+                            amount: newWallet.amount,
+                            imageUrl: URL(string: asset.logo ?? ""),
+                            symbol: newWallet.token.symbol,
+                            name: newWallet.token.name,
+                            apy: market?.supplyInterest.double
+                        )
+                    }
+                    return nil
+                }
             )
         } else {
             let deposits = market.filter { $2 != nil }
@@ -440,7 +438,7 @@ class DepositSolendViewModel: ObservableObject {
                             symbol: userDeposit?.symbol ?? "",
                             fiatAmount: userDeposit?.depositedAmount.double * priceService
                                 .currentPrice(for: userDeposit?.symbol ?? "")?.value,
-                            apy: market?.supplyInterest.double ?? 0
+                            apy: market?.supplyInterest.double
                         )
                     }
             )
