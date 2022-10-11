@@ -37,6 +37,8 @@ class InvestSolendBannerViewModel: ObservableObject {
                             self.dataService.marketInfo,
                             self.dataService.lastUpdateDate
                         )
+                        .combineLatest(self.dataService.error)
+                        .map { ($0.0.0, $0.0.1, $0.0.2, $0.0.3, $0.1) }
                         .map(self.dataState)
                         .removeDuplicates()
                         .eraseToAnyPublisher()
@@ -52,8 +54,12 @@ class InvestSolendBannerViewModel: ObservableObject {
         assets: [SolendConfigAsset]?,
         deposits: [SolendUserDeposit]?,
         marketInfos: [SolendMarketInfo]?,
-        lastUpdate: Date
+        lastUpdate: Date,
+        error: Error?
     ) -> InvestSolendBannerState {
+        if error != nil {
+            return .failure(title: L10n.anUnexpectedErrorOccurred, subtitle: L10n.DonTWorryYourDepositsAreSafe.weJustHaveIssuesWithShowingTheInfo)
+        }
         // assets is loading
         guard let assets = assets, let deposits = deposits else {
             return .pending
@@ -71,7 +77,7 @@ class InvestSolendBannerViewModel: ObservableObject {
 
         // Calculate current balance
         let total = calculateBalance(assets: assets, deposits: deposits)
-        
+
         let reward: Double
         if let marketInfos = marketInfos {
             // Calculate reward rate
@@ -79,7 +85,7 @@ class InvestSolendBannerViewModel: ObservableObject {
         } else {
             reward = 0
         }
-        
+
         return .withBalance(model: .init(
             balance: total,
             lastUpdate: lastUpdate,

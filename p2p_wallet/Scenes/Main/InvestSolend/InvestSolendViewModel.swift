@@ -88,6 +88,7 @@ class InvestSolendViewModel: ObservableObject {
                     }
                 }
             }
+            .store(in: &subscriptions)
 
         // Display error when rate is missing
         dataService.marketInfo

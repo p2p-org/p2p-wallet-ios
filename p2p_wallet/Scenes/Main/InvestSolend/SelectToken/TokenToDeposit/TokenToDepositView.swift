@@ -73,13 +73,15 @@ struct TokenToDepositView: View {
                     .font(uiFont: .font(of: .label1))
             }
             Spacer()
-            VStack(alignment: .trailing, spacing: 8) {
-                Text(model.apy.percentFormat())
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .text2, weight: .semibold))
-                Text(L10n.apy)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .font(uiFont: .font(of: .label1))
+            if let apy = model.apy {
+                VStack(alignment: .trailing, spacing: 8) {
+                    Text(apy.percentFormat())
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .font(uiFont: .font(of: .text2, weight: .semibold))
+                    Text(L10n.apy)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .font(uiFont: .font(of: .label1))
+                }
             }
         }
         .padding(.horizontal, 16)
@@ -103,7 +105,7 @@ extension TokenToDepositView {
         let imageUrl: URL?
         let symbol: String
         let name: String
-        let apy: Double
+        let apy: Double?
 
         var id: String { symbol }
     }

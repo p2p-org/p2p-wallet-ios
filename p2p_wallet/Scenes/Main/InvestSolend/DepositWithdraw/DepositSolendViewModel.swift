@@ -53,6 +53,7 @@ class DepositSolendViewModel: ObservableObject {
     /// Deposit slider position
     @Published var isSliderOn = false
     @Published var maxTokenDigits: UInt = 9
+    @Published var showHeaderDisclosure = true
     var showAbout: Bool {
         strategy == .deposit
     }
@@ -68,12 +69,12 @@ class DepositSolendViewModel: ObservableObject {
     var headerViewSubtitle: String {
         strategy == .deposit ?
             invest.asset.name :
-            L10n.yielding + " \(formatApy(invest.market?.supplyInterest ?? "")) APY"
+        L10n.yielding + " \((invest.market?.supplyInterest ?? "0").formatApy) APY"
     }
 
     var headerViewRightTitle: String {
         strategy == .deposit ?
-            "\(formatApy(invest.market?.supplyInterest ?? ""))" :
+        "\((invest.market?.supplyInterest ?? "0").formatApy)" :
             tokenToAmount(amount: maxAmount()).fiatAmount(currency: fiat)
     }
 
@@ -126,25 +127,22 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ) {
-                (
-                    symbol: String,
-                    assets: [SolendConfigAsset]?,
-                    marketInfo: [SolendMarketInfo]?,
-                    deposits: [SolendUserDeposit]?
-                ) -> Invest? in
-                    guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
-                    return (
-                        asset: asset,
-                        market: marketInfo?.first(where: { $0.symbol == symbol }),
-                        userDeposit: deposits?.first(where: { $0.symbol == symbol })
-                    )
+            ) { (symbol: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, deposits: [SolendUserDeposit]?) -> Invest? in
+                guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
+                return (
+                    asset: asset,
+                    market: marketInfo?.first(where: { $0.symbol == symbol }),
+                    userDeposit: deposits?.first(where: { $0.symbol == symbol })
+                )
             }
             .compactMap { $0 }
             .handleEvents(receiveOutput: { [weak self] _ in
                 DispatchQueue.main.async {
                     self?.inputToken = "0"
                     self?.maxTokenDigits = UInt(self?.invest.asset.decimals ?? 9)
+                    if strategy == .withdraw {
+                        self?.showHeaderDisclosure = (self?.market.filter { $2 != nil }.count ?? 0 > 1)
+                    }
                 }
             })
             .receive(on: RunLoop.main)
@@ -168,20 +166,12 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ).map {
-                (
-                    _: String,
-                    assets: [SolendConfigAsset]?,
-                    marketInfo: [SolendMarketInfo]?,
-                    userDeposits: [SolendUserDeposit]?
-                ) -> [Invest] in
+            ).map { (_: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
                     guard let assets = assets else { return [] }
                     return assets.map { asset -> Invest in
-                        (
-                            asset: asset,
-                            market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
-                            userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
-                        )
+                        (asset: asset,
+                         market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
+                         userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol }))
                     }.sorted { (v1: Invest, v2: Invest) -> Bool in
                         let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
                         let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
@@ -204,7 +194,7 @@ class DepositSolendViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $inputFiat
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.0), scheduler: DispatchQueue.main)
             .filter { _ in self.focusSide == .right }
             .map {
                 if self.tokenFiatPrice > 0 {
@@ -218,7 +208,7 @@ class DepositSolendViewModel: ObservableObject {
             .store(in: &subscriptions)
 
         $inputToken
-            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.0), scheduler: DispatchQueue.main)
             .map { Double($0.cryptoCurrencyFormat) ?? 0 }
             .removeDuplicates()
             .handleEvents(receiveOutput: { [weak self] tokenAmount in
@@ -420,28 +410,27 @@ class DepositSolendViewModel: ObservableObject {
     func headerTapped() {
         if strategy == .deposit {
             tokenSelectSubject.send(
-                market
-                    .compactMap { asset, market, _ in
-                        let wallet = walletRepository.getWallets()
-                            .first { wallet in
-                                wallet.amount > 0 && market?.symbol == wallet.token.symbol
-                            }
-                        if let newWallet = wallet {
-                            return TokenToDepositView.Model(
-                                amount: newWallet.amount,
-                                imageUrl: URL(string: asset.logo ?? ""),
-                                symbol: newWallet.token.symbol,
-                                name: newWallet.token.name,
-                                apy: market?.supplyInterest.double ?? 0
-                            )
-                        }
-                        return nil
+                market.compactMap { asset, market, _ in
+                    let wallet = walletRepository.getWallets().first { wallet in
+                        wallet.amount > 0 && asset.symbol == wallet.token.symbol
                     }
+                    if let newWallet = wallet {
+                        return TokenToDepositView.Model(
+                            amount: newWallet.amount,
+                            imageUrl: URL(string: asset.logo ?? ""),
+                            symbol: newWallet.token.symbol,
+                            name: newWallet.token.name,
+                            apy: market?.supplyInterest.double
+                        )
+                    }
+                    return nil
+                }
             )
         } else {
+            let deposits = market.filter { $2 != nil }
+            guard deposits.count > 1 else { return }
             tokenSelectSubject.send(
-                market
-                    .filter { $2 != nil }
+                deposits
                     .map { asset, market, userDeposit in
                         TokenToWithdrawView.Model(
                             amount: userDeposit?.depositedAmount.double,
@@ -449,7 +438,7 @@ class DepositSolendViewModel: ObservableObject {
                             symbol: userDeposit?.symbol ?? "",
                             fiatAmount: userDeposit?.depositedAmount.double * priceService
                                 .currentPrice(for: userDeposit?.symbol ?? "")?.value,
-                            apy: market?.supplyInterest.double ?? 0
+                            apy: market?.supplyInterest.double
                         )
                     }
             )
@@ -461,11 +450,6 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     // MARK: -
-
-    private func formatApy(_ apy: String) -> String {
-        guard let apyDouble = Double(apy) else { return "" }
-        return "\(apyDouble.fixedDecimal(2))%"
-    }
 
     func showAboutSolend() {
         aboutSolendSubject.send()
