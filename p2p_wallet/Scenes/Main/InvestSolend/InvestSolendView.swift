@@ -48,16 +48,16 @@ struct InvestSolendView: View {
                     .apply(style: .text1)
             }.padding(.horizontal, 16)
 
-            // Market
+            // Invests
             ScrollView {
                 VStack {
-                    if viewModel.loading && viewModel.market.isEmpty {
+                    if viewModel.loading && viewModel.invests.isEmpty {
                         HStack {
                             Spacer()
                             ProgressView()
                             Spacer()
                         }
-                    } else if let market = viewModel.market {
+                    } else if let market = viewModel.invests {
                         // Cells
                         ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in
                             Button {
@@ -82,6 +82,11 @@ struct InvestSolendView: View {
 
 struct InvestSolendView_Previews: PreviewProvider {
     static var previews: some View {
-        InvestSolendView(viewModel: .init(mocked: true))
+        InvestSolendView(
+            viewModel: .init(
+                dataService: SolendDataServiceMock(),
+                actionService: SolendActionServiceMock()
+            )
+        )
     }
 }

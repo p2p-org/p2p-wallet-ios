@@ -40,9 +40,9 @@ struct TokenToWithdrawView: View {
                 }
             ).padding(.top, 32)
         }
-        .sheetHeader(title: L10n.tokenToWithdraw) { closeSubject.send() }
         .padding(.top, 6)
         .padding(.bottom, 16)
+        .sheetHeader(title: L10n.tokenToWithdraw) { closeSubject.send() }
     }
 
     private func token(model: Model) -> some View {
@@ -106,5 +106,41 @@ extension TokenToWithdrawView {
         let apy: Double?
 
         var id: String { symbol }
+    }
+}
+
+// MARK: - Preview
+
+struct TokenToWithdrawView_Previews: PreviewProvider {
+    static var view: some View {
+        ZStack {
+            Color(.gray)
+            VStack {
+                Spacer()
+                TokenToWithdrawView(
+                    models: [
+                        .init(
+                            amount: 50,
+                            imageUrl: URL(
+                                string: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+                            )!,
+                            symbol: "SOL",
+                            fiatAmount: 500,
+                            apy: 3.142312
+                        ),
+                    ]
+                )
+            }
+        }
+    }
+
+    static var previews: some View {
+        view
+            .previewDevice(.init(rawValue: "iPhone 12"))
+            .previewDisplayName("iPhone 12")
+
+        view
+            .previewDevice(.init(rawValue: "iPhone 8"))
+            .previewDisplayName("iPhone 8")
     }
 }

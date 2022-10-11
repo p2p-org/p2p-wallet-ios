@@ -213,7 +213,7 @@ struct DepositSolendView: View {
 }
 
 struct DepositSolendView_Previews: PreviewProvider {
-    static var previews: some View {
+    static var view: some View {
         NavigationView {
             DepositSolendView(
                 viewModel: try! .init(initialAsset: .init(
@@ -224,7 +224,17 @@ struct DepositSolendView_Previews: PreviewProvider {
                     logo: nil
                 ),
                 mocked: true)
-            )
+            ).navigationBarTitleDisplayMode(.inline)
         }
+    }
+    
+    static var previews: some View {
+        view
+            .previewDevice(.init(rawValue: "iPhone 12"))
+            .previewDisplayName("iPhone 12")
+        
+        view
+            .previewDevice(.init(rawValue: "iPhone 8"))
+            .previewDisplayName("iPhone 8")
     }
 }

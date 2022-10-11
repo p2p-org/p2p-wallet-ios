@@ -18,7 +18,8 @@ struct SheetHeaderModifier: ViewModifier {
         VStack(spacing: 0) {
             SheetHeaderView(title: title, withSeparator: withSeparator, close: close)
             content
-        }
+        }.background(Color(Asset.Colors.snow.color))
+            .cornerRadius(radius: 18, corners: [.topLeft, .topRight])
     }
 }
 
