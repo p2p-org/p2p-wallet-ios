@@ -274,7 +274,6 @@ extension Resolver: ResolverRegistering {
         // WalletsViewModel
         register { WalletsViewModel() }
             .implements(WalletsRepository.self)
-            .implements(WLNotificationsRepository.self)
             .scope(.session)
 
         // SwapService

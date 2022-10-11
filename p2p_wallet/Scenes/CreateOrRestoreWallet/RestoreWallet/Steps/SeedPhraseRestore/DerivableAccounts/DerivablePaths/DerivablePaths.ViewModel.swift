@@ -18,7 +18,7 @@ extension DerivablePaths {
         }
 
         deinit {
-            debugPrint("\(String(describing: self)) deinited")
+            print("\(String(describing: self)) deinited")
         }
 
         override func createRequest() -> Single<[SelectableDerivablePath]> {
