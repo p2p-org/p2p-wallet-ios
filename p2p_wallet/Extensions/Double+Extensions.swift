@@ -77,6 +77,7 @@ extension Double {
         let formatter = NumberFormatter()
         formatter.numberStyle = NumberFormatter.Style.decimal
         formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
+        formatter.decimalSeparator = "."
         formatter.minimumFractionDigits = minDecimal
         formatter.maximumFractionDigits = maxDecimal
 
