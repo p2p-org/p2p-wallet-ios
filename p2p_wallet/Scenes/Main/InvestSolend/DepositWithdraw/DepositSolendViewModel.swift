@@ -451,7 +451,7 @@ class DepositSolendViewModel: ObservableObject {
                             symbol: userDeposit?.symbol ?? "",
                             fiatAmount: userDeposit?.depositedAmount.double * priceService
                                 .currentPrice(for: userDeposit?.symbol ?? "")?.value,
-                            apy: market?.supplyInterest.double ?? 0
+                            apy: market?.supplyInterest.double
                         )
                     }
             )

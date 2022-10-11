@@ -43,13 +43,15 @@ struct SolendTopUpForContinueView: View {
                     .font(uiFont: .font(of: .label1))
             }
             Spacer()
-            VStack(alignment: .trailing, spacing: 8) {
-                Text(viewModel.apy)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .text2, weight: .semibold))
-                Text(L10n.apy)
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                    .font(uiFont: .font(of: .label1))
+            if let apy = viewModel.apy {
+                VStack(alignment: .trailing, spacing: 8) {
+                    Text(apy)
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .font(uiFont: .font(of: .text2, weight: .semibold))
+                    Text(L10n.apy)
+                        .foregroundColor(Color(Asset.Colors.mountain.color))
+                        .font(uiFont: .font(of: .label1))
+                }
             }
         }
     }
