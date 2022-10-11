@@ -31,8 +31,11 @@ struct InvestSolendBlindView: View {
     private var headerView: some View {
         HStack(spacing: 12) {
             if let url = viewModel.imageUrl {
-                ImageView(withURL: url)
-                    .frame(width: 48, height: 48)
+                CoinLogoView(
+                    size: 48,
+                    cornerRadius: 24,
+                    urlString: url.absoluteString
+                )
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(viewModel.symbol)
@@ -108,8 +111,11 @@ struct InvestSolendBlindView: View {
             Image(uiImage: .arrowForward)
                 .frame(width: 24, height: 24)
             if let url = viewModel.imageUrl {
-                ImageView(withURL: url)
-                    .frame(width: 64, height: 64)
+                CoinLogoView(
+                    size: 64,
+                    cornerRadius: 32,
+                    urlString: url.absoluteString
+                )
             }
         }
     }
