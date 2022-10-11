@@ -109,7 +109,6 @@ extension TokenToWithdrawView {
     }
 }
 
-
 // MARK: - Preview
 
 struct TokenToWithdrawView_Previews: PreviewProvider {
@@ -122,25 +121,26 @@ struct TokenToWithdrawView_Previews: PreviewProvider {
                     models: [
                         .init(
                             amount: 50,
-                            imageUrl: URL(string: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png")!,
+                            imageUrl: URL(
+                                string: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+                            )!,
                             symbol: "SOL",
                             fiatAmount: 500,
                             apy: 3.142312
-                        )
+                        ),
                     ]
                 )
             }
         }
     }
-    
+
     static var previews: some View {
         view
             .previewDevice(.init(rawValue: "iPhone 12"))
             .previewDisplayName("iPhone 12")
-        
+
         view
             .previewDevice(.init(rawValue: "iPhone 8"))
             .previewDisplayName("iPhone 8")
     }
 }
-
