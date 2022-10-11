@@ -36,6 +36,7 @@ struct InvestSolendBlindView: View {
                     cornerRadius: 24,
                     urlString: url.absoluteString
                 )
+                    .frame(width: 48, height: 48)
             }
             VStack(alignment: .leading, spacing: 6) {
                 Text(viewModel.symbol)
@@ -116,6 +117,7 @@ struct InvestSolendBlindView: View {
                     cornerRadius: 32,
                     urlString: url.absoluteString
                 )
+                    .frame(width: 64, height: 64)
             }
         }
     }
