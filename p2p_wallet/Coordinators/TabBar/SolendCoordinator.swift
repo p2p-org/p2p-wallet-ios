@@ -37,13 +37,13 @@ final class SolendCoordinator: Coordinator<Void> {
 
         investViewModel.deposit
             .sink(receiveValue: { [unowned self] in
-                coordinate(to:
-                    SolendDepositCoordinator(
-                        controller: navigationController, initialAsset: $0,
-                        initialStrategy: .deposit
-                    ))
-                    .sink { _ in }
-                    .store(in: &subscriptions)
+                coordinate(to: SolendDepositCoordinator(
+                    controller: navigationController, initialAsset: $0,
+                    initialStrategy: .deposit
+                )
+                )
+                .sink { _ in }
+                .store(in: &subscriptions)
             })
             .store(in: &subscriptions)
 

@@ -37,6 +37,8 @@ struct SolendErrorBannerView: View {
         .padding(.top, 24)
         .padding(.bottom, 20)
         .padding(.horizontal, 20)
+        .background(Color(Asset.Colors.rain.color))
+        .cornerRadius(28)
     }
 }
 
