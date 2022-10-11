@@ -69,12 +69,12 @@ class DepositSolendViewModel: ObservableObject {
     var headerViewSubtitle: String {
         strategy == .deposit ?
             invest.asset.name :
-            L10n.yielding + " \(formatApy(invest.market?.supplyInterest ?? "")) APY"
+        L10n.yielding + " \((invest.market?.supplyInterest ?? "0").formatApy) APY"
     }
 
     var headerViewRightTitle: String {
         strategy == .deposit ?
-            "\(formatApy(invest.market?.supplyInterest ?? ""))" :
+        "\((invest.market?.supplyInterest ?? "0").formatApy)" :
             tokenToAmount(amount: maxAmount()).fiatAmount(currency: fiat)
     }
 
@@ -452,12 +452,6 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     // MARK: -
-
-    private func formatApy(_ apy: String) -> String {
-        guard let apyDouble = Double(apy) else { return "" }
-        return "\(apyDouble.fixedDecimal(2))%"
-            .replacingOccurrences(of: ",", with: ".")
-    }
 
     func showAboutSolend() {
         aboutSolendSubject.send()

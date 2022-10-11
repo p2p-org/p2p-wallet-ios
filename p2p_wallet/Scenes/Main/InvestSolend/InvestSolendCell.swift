@@ -42,18 +42,13 @@ struct InvestSolendCell: View {
             }
             Spacer()
 
-            Text(formatApy(apy ?? "0.00%"))
+            Text((apy ?? "0").formatApy)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .apply(style: .text2)
                 .skeleton(with: isLoading, size: CGSize(width: 40, height: 20))
         }
         .padding(.horizontal, 16)
         .frame(height: 64)
-    }
-
-    func formatApy(_ apy: String) -> String {
-        guard let apyDouble = Double(apy) else { return "" }
-        return "\(apyDouble.fixedDecimal(2))%"
     }
 }
 
