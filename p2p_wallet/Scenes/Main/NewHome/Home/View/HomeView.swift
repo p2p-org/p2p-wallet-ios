@@ -16,9 +16,7 @@ struct HomeView: View {
     var body: some View {
         switch viewModel.state {
         case .pending:
-            ActivityIndicator(isAnimating: true) {
-                $0.style = .large
-            }
+            HomeSkeletonView()
         case .withTokens:
             navigation {
                 HomeWithTokensView(viewModel: viewModelWithTokens)
@@ -54,16 +52,6 @@ struct HomeView: View {
                                     .padding(.horizontal, 16)
                                     .padding(.vertical, 8)
                                 }
-                            }
-                        )
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(
-                            action: {
-                                viewModel.receive()
-                            },
-                            label: {
-                                Image(uiImage: .scanQr)
                             }
                         )
                     }

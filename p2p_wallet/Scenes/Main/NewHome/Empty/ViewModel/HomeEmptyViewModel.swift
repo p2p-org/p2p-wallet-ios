@@ -22,7 +22,7 @@ final class HomeEmptyViewModel: ObservableObject {
 
     let topUp = PassthroughSubject<Void, Never>()
     let topUpCoin = PassthroughSubject<Buy.CryptoCurrency, Never>()
-    private let receiveRenBtc = PassthroughSubject<PublicKey, Never>()
+    private let receiveSubject = PassthroughSubject<PublicKey, Never>()
 
     var popularCoins: [PopularCoin] {
         [
@@ -53,7 +53,7 @@ final class HomeEmptyViewModel: ObservableObject {
             coord: .init(
                 topUpShow: topUp.eraseToAnyPublisher(),
                 topUpCoinShow: topUpCoin.eraseToAnyPublisher(),
-                receiveRenBtcShow: receiveRenBtc.eraseToAnyPublisher()
+                receiveShow: receiveSubject.eraseToAnyPublisher()
             )
         )
     }
@@ -74,9 +74,17 @@ final class HomeEmptyViewModel: ObservableObject {
         }
     }
 
-    func receiveRenBtcClicked() {
+    func coinTapped(at index: Int) {
+        if index == 2 {
+            receiveClicked()
+        } else {
+            topUpCoin.send(index == 0 ? .usdc : .sol)
+        }
+    }
+
+    func receiveClicked() {
         guard let solanaPubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
-        receiveRenBtc.send(solanaPubkey)
+        receiveSubject.send(solanaPubkey)
     }
 }
 
@@ -99,16 +107,16 @@ extension HomeEmptyViewModel: ViewModel {
         class Coord {
             var topUpShow: AnyPublisher<Void, Never>
             var topUpCoinShow: AnyPublisher<Buy.CryptoCurrency, Never>
-            var receiveRenBtcShow: AnyPublisher<PublicKey, Never>
+            var receiveShow: AnyPublisher<PublicKey, Never>
 
             init(
                 topUpShow: AnyPublisher<Void, Never>,
                 topUpCoinShow: AnyPublisher<Buy.CryptoCurrency, Never>,
-                receiveRenBtcShow: AnyPublisher<PublicKey, Never>
+                receiveShow: AnyPublisher<PublicKey, Never>
             ) {
                 self.topUpShow = topUpShow
                 self.topUpCoinShow = topUpCoinShow
-                self.receiveRenBtcShow = receiveRenBtcShow
+                self.receiveShow = receiveShow
             }
         }
 
@@ -145,7 +153,7 @@ extension HomeEmptyViewModel {
         fileprivate var description: String {
             switch self {
             case .buy:
-                return L10n.buyIt
+                return L10n.buy
             case .receive:
                 return L10n.receive
             }

@@ -25,9 +25,7 @@ class HomeViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
-    private let receiveClicked = PassthroughSubject<Void, Never>()
     private let error = PassthroughSubject<Bool, Never>()
-    var receiveShow: AnyPublisher<PublicKey, Never>
     var errorShow: AnyPublisher<Bool, Never> { error.eraseToAnyPublisher() }
 
     private var initStateFinished = false
@@ -35,9 +33,6 @@ class HomeViewModel: ObservableObject {
     init() {
         let walletsRepository = Resolver.resolve(WalletsRepository.self)
         self.walletsRepository = walletsRepository
-        receiveShow = receiveClicked
-            .compactMap { try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) }
-            .eraseToAnyPublisher()
         address = accountStorage.account?.publicKey.base58EncodedString.shortAddress ?? ""
 
         Observable.combineLatest(
@@ -92,10 +87,6 @@ class HomeViewModel: ObservableObject {
         clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
         notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
         analyticsManager.log(event: AmplitudeEvent.mainCopyAddress)
-    }
-
-    func receive() {
-        receiveClicked.send()
     }
 }
 

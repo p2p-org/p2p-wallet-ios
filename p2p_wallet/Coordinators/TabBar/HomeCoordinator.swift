@@ -55,14 +55,6 @@ final class HomeCoordinator: Coordinator<Void> {
                 homeView.navigationIsHidden = false
             })
             .store(in: &subscriptions)
-        viewModel.receiveShow
-            .sink(receiveValue: { [unowned self] in
-                let coordinator = ReceiveCoordinator(navigationController: navigationController, pubKey: $0)
-                coordinate(to: coordinator)
-                analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
-                analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "main_screen"))
-            })
-            .store(in: &subscriptions)
         viewModel.errorShow
             .sink(receiveValue: { show in
                 let walletsRepository = Resolver.resolve(WalletsRepository.self)
@@ -104,7 +96,7 @@ final class HomeCoordinator: Coordinator<Void> {
                     .store(in: &subscriptions)
             })
             .store(in: &subscriptions)
-        emptyVMOutput.receiveRenBtcShow
+        emptyVMOutput.receiveShow
             .sink(receiveValue: { [unowned self] in
                 openReceiveScreen(pubKey: $0)
             })
