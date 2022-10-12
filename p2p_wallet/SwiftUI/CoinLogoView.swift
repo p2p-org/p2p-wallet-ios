@@ -42,7 +42,9 @@ struct CoinLogoView: UIViewRepresentable {
         )
     }
 
-    func updateUIView(_: CoinLogoViewWrapper, context _: Context) {}
+    func updateUIView(_ logoView: CoinLogoViewWrapper, context _: Context) {
+        logoView.setUp(image: image, url: urlString, wrappedByImage: wrappedByImage, placeholder: placeholder)
+    }
 
     typealias UIViewType = CoinLogoViewWrapper
 }
