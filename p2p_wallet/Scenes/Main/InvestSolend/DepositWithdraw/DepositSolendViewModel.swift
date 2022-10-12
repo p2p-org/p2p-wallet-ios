@@ -5,6 +5,10 @@ import Resolver
 import SolanaSwift
 import Solend
 
+enum DepositSolendViewModelError {
+    case invalidFeePayer
+}
+
 @MainActor
 class DepositSolendViewModel: ObservableObject {
     private let strategy: Strategy
@@ -264,9 +268,10 @@ class DepositSolendViewModel: ObservableObject {
                 .eraseToAnyPublisher()
             }
             .switchToLatest()
-            .sink(receiveValue: { [weak self] fee in
+            .sink(receiveValue: { [weak self] (fee: SolendDepositFee?) in
                 guard let self = self else { return }
                 self.loading = false
+                self.depositFee = fee
                 if let fee = fee {
                     let (totalAmountLamports1, overflow1) = self.inputLamport.subtractingReportingOverflow(fee.fee)
                     var (totalAmountLamports, overflow2) = totalAmountLamports1.subtractingReportingOverflow(fee.rent)
@@ -306,9 +311,7 @@ class DepositSolendViewModel: ObservableObject {
         $isSliderOn.filter { $0 }
             .sink { [weak self] _ in
                 guard let inputLamport = self?.inputLamport else { return }
-                Task {
-                    await self?.action(lamports: inputLamport)
-                }
+                Task { try await self?.action(lamports: inputLamport) }
             }.store(in: &subscriptions)
 
         NotificationCenter.default.addObserver(
@@ -369,27 +372,53 @@ class DepositSolendViewModel: ObservableObject {
 
     // MARK: - Action
 
-    private func action(lamports: UInt64) async {
+    private func action(lamports: UInt64) async throws {
         lock = true
+        defer {
+            lock = false
+            finishSubject.send()
+        }
+
         if strategy == .deposit {
-            await deposit(lamports: lamports)
+            try await deposit(lamports: lamports)
         } else {
             await withdraw(lamports: lamports)
         }
-        lock = false
-        finishSubject.send()
     }
 
-    private func deposit(lamports: UInt64) async {
+    private func deposit(lamports: UInt64) async throws {
         guard loading == false, lamports > 0 else { return }
+
+        let tokenAccount: Wallet? = walletRepository
+            .getWallets()
+            .first(where: { $0.token.symbol == invest.asset.symbol })
+
+        let fee = (depositFee?.fee ?? 0) + (depositFee?.rent ?? 0)
+        let feePayer: SolendFeePayer?
+        if
+            let tokenAccount = tokenAccount,
+            let address = tokenAccount.pubkey,
+            lamports + fee <= (tokenAccount.lamports ?? 0)
+        {
+            feePayer = .init(address: address, mint: tokenAccount.mintAddress)
+        } else {
+            feePayer = nil
+        }
+
         notificationService
             .showInAppNotification(.done(L10n.SendingYourDepositToSolend.justWaitUntilItSDone
                     .replacingOccurrences(of: "\n", with: " ")))
         do {
             loading = true
             defer { loading = false }
-            try await actionService.deposit(amount: lamports, symbol: invest.asset.symbol)
+            try await actionService.deposit(
+                amount: lamports,
+                symbol: invest.asset.symbol,
+                fee: .init(fee: 0, rent: 0),
+                feePayer: feePayer
+            )
         } catch {
+            debugPrint(error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemDepositingFunds))
         }
     }
@@ -402,8 +431,14 @@ class DepositSolendViewModel: ObservableObject {
         do {
             loading = true
             defer { loading = false }
-            try await actionService.withdraw(amount: inputLamport, symbol: invest.asset.symbol)
+            try await actionService.withdraw(
+                amount: inputLamport,
+                symbol: invest.asset.symbol,
+                fee: .init(fee: 0, rent: 0),
+                feePayer: nil
+            )
         } catch {
+            print(error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemWithdrawingFunds))
         }
     }

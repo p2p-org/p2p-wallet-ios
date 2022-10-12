@@ -142,7 +142,7 @@ targets:
                     ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
 
         dependencies:
-            - framework: Frameworks/p2p.xcframework
+            - framework: Frameworks/keyapp.xcframework
 
     Detect Unused Code:
         type: app-extension.intents-service

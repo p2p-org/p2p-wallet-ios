@@ -916,3 +916,5 @@ another" = "một tiền điện tử cho
 "An unexpected error occurred" = "Đã xảy ra lỗi không mong muốn";
 "Don't worry, your deposits are safe. We just\nhave issues with showing the info." = "Đừng lo lắng, tiền gửi của bạn được an toàn.  Chúng tôi chỉ \n gặp vấn đề với việc hiển thị thông tin.";
 "There’s a problem showing the rates.\nTry again later" = "Đã xảy ra sự cố khi hiển thị giá. \n Hãy thử lại sau";
+"Depositing funds failed" = "Gửi tiền không thành công";
+"The funds are returned to your wallet. You can try depositing again." = "Tiền sẽ được trả lại ví của bạn.  Bạn có thể thử gửi tiền lại.";

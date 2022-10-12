@@ -36,15 +36,25 @@ final class SolendCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         investViewModel.deposit
-            .sink(receiveValue: { [unowned self] in
+            .sink { [unowned self] in
                 coordinate(to: SolendDepositCoordinator(
                     controller: navigationController, initialAsset: $0,
                     initialStrategy: .deposit
-                )
-                )
+                ))
                 .sink { _ in }
                 .store(in: &subscriptions)
-            })
+            }
+            .store(in: &subscriptions)
+
+        investViewModel.withdraw
+            .sink { [unowned self] in
+                coordinate(to: SolendDepositCoordinator(
+                    controller: navigationController, initialAsset: $0,
+                    initialStrategy: .withdraw
+                ))
+                .sink { _ in }
+                .store(in: &subscriptions)
+            }
             .store(in: &subscriptions)
 
         investViewModel.deposits.sink { [unowned self] _ in
