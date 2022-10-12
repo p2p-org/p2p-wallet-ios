@@ -16,6 +16,7 @@ struct SolendLearnMoreBannerView: View {
             Text(L10n.AllYourFundsAreInsured.withdrawYourDepositWithAllRewardsAtAnyTime)
                 .font(uiFont: .font(of: .text4))
                 .multilineTextAlignment(.center)
+                .frame(height: 32)
             Text(L10n.learnMore)
                 .font(uiFont: .font(of: .text2, weight: .semibold))
                 .frame(height: 48)
