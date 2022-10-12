@@ -911,3 +911,4 @@ another" = "une crypto pour
 "Excluding fees, you'll deposit" = "Hors frais, vous déposerez";
 "An unexpected error occurred" = "une erreur inattendue est apparue";
 "Don't worry, your deposits are safe. We just\nhave issues with showing the info." = "Ne vous inquiétez pas, vos dépôts sont en sécurité.  Nous avons juste\ndes problèmes avec l'affichage des informations.";
+"There’s a problem showing the rates.\nTry again later" = "Un problème est survenu lors de l'affichage des tarifs.\nRéessayez plus tard";
