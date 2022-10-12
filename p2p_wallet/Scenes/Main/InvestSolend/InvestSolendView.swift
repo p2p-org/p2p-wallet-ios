@@ -32,8 +32,13 @@ struct InvestSolendView: View {
                         dataService: viewModel.dataService,
                         actionService: viewModel.actionService
                     )
-                ) {
-                    viewModel.showDeposits()
+                ) { action in
+                    switch action {
+                    case .showDeposit:
+                        viewModel.showDeposits()
+                    case .retry:
+                        viewModel.retry()
+                    }
                 }
                 .padding(.bottom, 16)
                 .padding(.horizontal, 16)

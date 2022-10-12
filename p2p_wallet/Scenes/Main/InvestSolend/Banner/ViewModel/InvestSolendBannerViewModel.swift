@@ -5,8 +5,8 @@
 import Combine
 import Foundation
 import Resolver
-import Solend
 import SolanaPricesAPIs
+import Solend
 
 class InvestSolendBannerViewModel: ObservableObject {
     @Injected private var priceService: PricesServiceType
@@ -28,8 +28,8 @@ class InvestSolendBannerViewModel: ObservableObject {
             .removeDuplicates()
             .flatMap { [weak self] action -> AnyPublisher<InvestSolendBannerState, Never> in
                 guard let self = self else { return CurrentValueSubject(.pending).eraseToAnyPublisher() }
-                if action != nil {
-                    return Just(.processingAction).eraseToAnyPublisher()
+                if let action = action {
+                    return Just(self.actionState(action: action)).eraseToAnyPublisher()
                 } else {
                     return self.dataService.availableAssets
                         .combineLatest(
@@ -37,8 +37,11 @@ class InvestSolendBannerViewModel: ObservableObject {
                             self.dataService.marketInfo,
                             self.dataService.lastUpdateDate
                         )
-                        .combineLatest(self.dataService.error)
-                        .map { ($0.0.0, $0.0.1, $0.0.2, $0.0.3, $0.1) }
+                        .combineLatest(
+                            self.dataService.error,
+                            self.dataService.status
+                        )
+                        .map { ($0.0.0, $0.0.1, $0.0.2, $0.0.3, $0.1, $0.2) }
                         .map(self.dataState)
                         .removeDuplicates()
                         .eraseToAnyPublisher()
@@ -50,19 +53,46 @@ class InvestSolendBannerViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
+    private func actionState(action: SolendAction) -> InvestSolendBannerState {
+        switch action.status {
+        case let .failed(msg):
+            return .failure(
+                title: L10n.depositingFundsFailed,
+                subtitle: L10n.TheFundsAreReturnedToYourWallet.youCanTryDepositingAgain
+            )
+        default:
+            return .processingAction
+        }
+    }
+
     private func dataState(
         assets: [SolendConfigAsset]?,
         deposits: [SolendUserDeposit]?,
         marketInfos: [SolendMarketInfo]?,
         lastUpdate: Date,
-        error: Error?
+        error: Error?,
+        status: SolendDataStatus
     ) -> InvestSolendBannerState {
         if error != nil {
-            return .failure(title: L10n.anUnexpectedErrorOccurred, subtitle: L10n.DonTWorryYourDepositsAreSafe.weJustHaveIssuesWithShowingTheInfo)
+            return .failure(
+                title: L10n.anUnexpectedErrorOccurred,
+                subtitle: L10n.DonTWorryYourDepositsAreSafe.weJustHaveIssuesWithShowingTheInfo
+            )
         }
         // assets is loading
-        guard let assets = assets, let deposits = deposits else {
+        switch status {
+        case .updating:
             return .pending
+        default:
+            break
+        }
+
+        // Sure market info is available
+        guard let assets = assets, let deposits = deposits, let marketInfos = marketInfos else {
+            return .failure(
+                title: L10n.anUnexpectedErrorOccurred,
+                subtitle: L10n.DonTWorryYourDepositsAreSafe.weJustHaveIssuesWithShowingTheInfo
+            )
         }
 
         // no assets
@@ -78,14 +108,7 @@ class InvestSolendBannerViewModel: ObservableObject {
         // Calculate current balance
         let total = calculateBalance(assets: assets, deposits: deposits)
 
-        let reward: Double
-        if let marketInfos = marketInfos {
-            // Calculate reward rate
-            reward = calculateReward(marketInfos: marketInfos, userDeposits: deposits)
-        } else {
-            reward = 0
-        }
-
+        let reward = calculateReward(marketInfos: marketInfos, userDeposits: deposits)
         return .withBalance(model: .init(
             balance: total,
             lastUpdate: lastUpdate,
@@ -94,10 +117,6 @@ class InvestSolendBannerViewModel: ObservableObject {
         ))
     }
 
-    private func actionState(action _: SolendAction) -> InvestSolendBannerState {
-        .processingAction
-    }
-    
     func calculateReward(marketInfos: [SolendMarketInfo], userDeposits: [SolendUserDeposit]) -> Double {
         let rewards = SolendMath.reward(marketInfos: marketInfos, userDeposits: userDeposits)
         return rewards
@@ -119,15 +138,16 @@ class InvestSolendBannerViewModel: ObservableObject {
             }
             .reduce(0, +)
     }
-
-    func update() async throws {
-        try await dataService.update()
-    }
 }
 
 // MARK: - State
 
 extension InvestSolendBannerViewModel {
+    enum InvestSolendBannerError: Equatable {
+        case fetchError
+        case actionError
+    }
+
     enum InvestSolendBannerState: Equatable {
         case pending
         case failure(title: String, subtitle: String)

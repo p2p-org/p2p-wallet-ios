@@ -7,24 +7,29 @@ import SkeletonUI
 import Solend
 import SwiftUI
 
+enum InvestSolendBannerAction: Equatable {
+    case showDeposit
+    case retry
+}
+
 struct InvestSolendBannerView: View {
     typealias BalanceModel = InvestSolendBannerViewModel.InvestSolendBannerBalanceModel
 
     @ObservedObject private var viewModel: InvestSolendBannerViewModel
-    private let showDeposits: (() -> Void)?
-
-    init(viewModel: InvestSolendBannerViewModel, showDeposits: (() -> Void)? = nil) {
+    private let onAction: (InvestSolendBannerAction) -> Void
+    
+    init(viewModel: InvestSolendBannerViewModel, _ onAction: @escaping (InvestSolendBannerAction) -> Void) {
         self.viewModel = viewModel
-        self.showDeposits = showDeposits
+        self.onAction = onAction
     }
-
+    
     var body: some View {
         switch viewModel.state {
         case .pending:
             SolendLoadingBannerView()
         case let .failure(title, subtitle):
             SolendErrorBannerView(title: title, subtitle: subtitle) {
-                Task { try await viewModel.update() }
+                onAction(.retry)
             }
         case .learnMore:
             SolendLearnMoreBannerView()
@@ -37,8 +42,8 @@ struct InvestSolendBannerView: View {
                 depositUrls: model.depositUrls,
                 rewards: model.reward,
                 lastUpdateDate: model.lastUpdate
-            ) { [showDeposits] in
-                showDeposits?()
+            ) { [onAction] in
+                onAction(.showDeposit)
             }
         }
     }
@@ -52,7 +57,7 @@ struct InvestSolendBannerView_Previews: PreviewProvider {
                     dataService: SolendDataServiceMock(),
                     actionService: SolendActionServiceMock(currentAction: nil)
                 )
-            )
+            ) { _ in }
             InvestSolendBannerView(
                 viewModel: .init(
                     dataService: SolendDataServiceMock(),
@@ -64,7 +69,7 @@ struct InvestSolendBannerView_Previews: PreviewProvider {
                         symbol: "SOL"
                     ))
                 )
-            )
+            ) { _ in }
         }.padding(.horizontal, 8)
     }
 }

@@ -29,6 +29,9 @@ class InvestSolendViewModel: ObservableObject {
     private let depositSubject = PassthroughSubject<SolendConfigAsset, Never>()
     var deposit: AnyPublisher<SolendConfigAsset, Never> { depositSubject.eraseToAnyPublisher() }
 
+    private let withdrawSubject = PassthroughSubject<SolendConfigAsset, Never>()
+    var withdraw: AnyPublisher<SolendConfigAsset, Never> { withdrawSubject.eraseToAnyPublisher() }
+
     private let topUpForContinueSubject = PassthroughSubject<SolendTopUpForContinueCoordinator.Model, Never>()
     var topUpForContinue: AnyPublisher<SolendTopUpForContinueCoordinator.Model, Never> {
         topUpForContinueSubject.eraseToAnyPublisher()
@@ -59,8 +62,8 @@ class InvestSolendViewModel: ObservableObject {
             .filter { (action: SolendAction?) -> Bool in
                 guard let action = action else { return false }
                 switch action.status {
-                case .processing: return false
-                case .success, .failed: return true
+                case .processing, .failed: return false
+                case .success: return true
                 }
             }
             .sink { [dataService] _ in
@@ -150,9 +153,46 @@ class InvestSolendViewModel: ObservableObject {
         depositsSubject.send()
     }
 
+    func retry() {
+        Task {
+            if let action = actionService.getCurrentAction() {
+                try await actionService.clearAction()
+
+                // TODO: refactor
+                switch action.type {
+                case .deposit:
+                    depositSubject.send(
+                        .init(
+                            name: "",
+                            symbol: action.symbol,
+                            decimals: 0,
+                            mintAddress: "",
+                            logo: ""
+                        )
+                    )
+                case .withdraw:
+                    withdrawSubject.send(
+                        .init(
+                            name: "",
+                            symbol: action.symbol,
+                            decimals: 0,
+                            mintAddress: "",
+                            logo: ""
+                        )
+                    )
+                }
+            } else {
+                try await update()
+            }
+        }
+    }
+
     /// User clicks invest
-    func assetClicked(_ asset: SolendConfigAsset, market _: SolendMarketInfo?) {
-        guard InvestSolendHelper.readyToStartAction(notificationService, actionService.getCurrentAction()) == true
+    func assetClicked(_ asset: SolendConfigAsset, market: SolendMarketInfo?) {
+        guard
+            InvestSolendHelper.readyToStartAction(notificationService, actionService.getCurrentAction()) == true,
+            market != nil,
+            loading == false
         else {
             return
         }
