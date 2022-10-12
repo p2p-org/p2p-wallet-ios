@@ -99,7 +99,10 @@ class InvestSolendViewModel: ObservableObject {
             .combineLatest(dataService.status)
             .receive(on: RunLoop.main)
             .sink { [weak self] (marketInfo: [SolendMarketInfo]?, status: SolendDataStatus) in
-                guard status == .ready else { return }
+                guard status == .ready else {
+                    self?.bannerError = nil
+                    return
+                }
                 self?.bannerError = marketInfo == nil ? .missingRate : nil
             }.store(in: &subscriptions)
 
