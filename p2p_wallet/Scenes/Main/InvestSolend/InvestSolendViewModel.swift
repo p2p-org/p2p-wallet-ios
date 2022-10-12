@@ -96,8 +96,10 @@ class InvestSolendViewModel: ObservableObject {
 
         // Display error when rate is missing
         dataService.marketInfo
+            .combineLatest(dataService.status)
             .receive(on: RunLoop.main)
-            .sink { [weak self] (marketInfo: [SolendMarketInfo]?) in
+            .sink { [weak self] (marketInfo: [SolendMarketInfo]?, status: SolendDataStatus) in
+                guard status == .ready else { return }
                 self?.bannerError = marketInfo == nil ? .missingRate : nil
             }.store(in: &subscriptions)
 
