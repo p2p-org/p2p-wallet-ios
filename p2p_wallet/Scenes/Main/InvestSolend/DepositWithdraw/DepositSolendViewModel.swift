@@ -325,7 +325,6 @@ class DepositSolendViewModel: ObservableObject {
                 )
             }
         }
-
         NotificationCenter.default.addObserver(
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
@@ -383,7 +382,6 @@ class DepositSolendViewModel: ObservableObject {
 
     private func deposit(lamports: UInt64) async {
         guard loading == false, lamports > 0 else { return }
-
         notificationService
             .showInAppNotification(.done(L10n.SendingYourDepositToSolend.justWaitUntilItSDone
                     .replacingOccurrences(of: "\n", with: " ")))
@@ -398,7 +396,6 @@ class DepositSolendViewModel: ObservableObject {
 
     private func withdraw(lamports: UInt64) async {
         guard loading == false, lamports > 0 else { return }
-
         notificationService
             .showInAppNotification(.done(L10n.WithdrawingYourFundsFromSolend.justWaitUntilItSDone
                     .replacingOccurrences(of: "\n", with: " ")))
