@@ -35,7 +35,7 @@ struct InvestSolendView: View {
                 ) {
                     viewModel.showDeposits()
                 }
-                .padding(.bottom, 8)
+                .padding(.bottom, 16)
                 .padding(.horizontal, 16)
 
                 // Title
@@ -58,7 +58,9 @@ struct InvestSolendView: View {
                             Spacer()
                         }
                     } else if let market = viewModel.invests {
-                        // Cells
+                        if !viewModel.apyLoaded {
+                            ratesError
+                        }
                         ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in
                             Button {
                                 viewModel.assetClicked(asset, market: market)
@@ -74,8 +76,24 @@ struct InvestSolendView: View {
                     }
                     Spacer(minLength: 20)
                 }
+                .padding(.horizontal, 16)
             }
         }.onReceive(updating) { _ in Task { try await viewModel.update() } }
+    }
+
+    private var ratesError: some View {
+        HStack(spacing: 8) {
+            Image(uiImage: .solendSubtract)
+            Text(L10n.ThereSAProblemShowingTheRates.tryAgainLater)
+                .font(uiFont: .font(of: .text3))
+                .foregroundColor(Color(Asset.Colors.rose.color))
+            Spacer()
+        }
+        .padding(.horizontal, 12)
+        .frame(height: 64)
+        .frame(maxWidth: .infinity)
+        .background(Color(Asset.Colors.rose.color.withAlphaComponent(0.1)))
+        .cornerRadius(8)
     }
 }
 

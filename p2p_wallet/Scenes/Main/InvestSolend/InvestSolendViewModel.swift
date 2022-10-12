@@ -42,6 +42,7 @@ class InvestSolendViewModel: ObservableObject {
     @Published var loading: Bool = false
     @Published var invests: [Invest] = []
     @Published var bannerError: InvestSolendError?
+    var apyLoaded: Bool { invests.contains { $0.market != nil } }
 
     var isTutorialShown: Bool {
         Defaults.isSolendTutorialShown
@@ -120,8 +121,9 @@ class InvestSolendViewModel: ObservableObject {
 
         /// Mapping status to loading var
         dataService.status
-            .combineLatest(dataService.deposits)
-            .map { status, deposits in
+            .combineLatest(dataService.deposits, dataService.error)
+            .map { status, deposits, error in
+                if error != nil { return false }
                 if deposits == nil { return true }
 
                 switch status {
