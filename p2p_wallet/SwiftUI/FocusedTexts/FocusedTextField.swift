@@ -1,29 +1,29 @@
 import SwiftUI
 import UIKit
 
-struct SeedTextView: UIViewRepresentable {
+struct FocusedTextField: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool
     @Binding private var text: String
-    private var configuration = { (_: UITextView) in }
+    private var configuration = { (_: UITextField) in }
 
     init(
         text: Binding<String>,
         isFirstResponder: Binding<Bool>,
-        configuration: @escaping (UITextView) -> Void = { _ in }
+        configuration: @escaping (UITextField) -> Void = { _ in }
     ) {
         self.configuration = configuration
         _text = text
         _isFirstResponder = isFirstResponder
     }
 
-    func makeUIView(context: Context) -> UITextView {
-        let view = UITextView()
+    func makeUIView(context: Context) -> UITextField {
+        let view = UITextField()
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.delegate = context.coordinator
         return view
     }
 
-    func updateUIView(_ uiView: UITextView, context _: Context) {
+    func updateUIView(_ uiView: UITextField, context _: Context) {
         uiView.text = text
         configuration(uiView)
         switch isFirstResponder {
@@ -36,7 +36,7 @@ struct SeedTextView: UIViewRepresentable {
         Coordinator($text, isFirstResponder: $isFirstResponder)
     }
 
-    class Coordinator: NSObject, UITextViewDelegate {
+    class Coordinator: NSObject, UITextFieldDelegate {
         var text: Binding<String>
         var isFirstResponder: Binding<Bool>
 
@@ -45,20 +45,22 @@ struct SeedTextView: UIViewRepresentable {
             self.isFirstResponder = isFirstResponder
         }
 
-        @objc func textViewDidChange(_ textField: UITextView) {
+        @objc func textViewDidChange(_ textField: UITextField) {
             text.wrappedValue = textField.text ?? ""
         }
 
-        func textViewDidBeginEditing(_: UITextView) {
+        func textFieldDidBeginEditing(_: UITextField) {
             isFirstResponder.wrappedValue = true
         }
 
-        func textViewDidEndEditing(_: UITextView) {
+        func textFieldDidEndEditing(_: UITextField) {
             isFirstResponder.wrappedValue = false
         }
 
-        func textView(_ textView: UITextView, shouldChangeTextIn _: NSRange, replacementText text: String) -> Bool {
-            if text == "\n", textView.returnKeyType == .done {
+        func textField(_ textField: UITextField, shouldChangeCharactersIn _: NSRange,
+                       replacementString text: String) -> Bool
+        {
+            if text == "\n", textField.returnKeyType == .done {
                 isFirstResponder.wrappedValue = false
                 return false
             }
