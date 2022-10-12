@@ -38,7 +38,7 @@ struct DepositWithdrawInputView: View {
                         maxDecimals: $maxTokenDigits,
                         isFocued: Binding<Bool>(get: {
                             activeSide == .left
-                        }, set: { val, _ in
+                        }, set: { _, _ in
                             activeSide = .left
                         })
                     )
@@ -64,7 +64,7 @@ struct DepositWithdrawInputView: View {
                         maxDecimals: .constant(2),
                         isFocued: Binding<Bool>(get: {
                             activeSide == .right
-                        }, set: { val, _ in
+                        }, set: { _, _ in
                             activeSide = .right
                         })
                     )
