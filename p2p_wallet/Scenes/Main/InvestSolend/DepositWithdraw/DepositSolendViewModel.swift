@@ -127,12 +127,7 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ) { (
-                symbol: String,
-                assets: [SolendConfigAsset]?,
-                marketInfo: [SolendMarketInfo]?,
-                deposits: [SolendUserDeposit]?
-            ) -> Invest? in
+            ) { (symbol: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, deposits: [SolendUserDeposit]?) -> Invest? in
                 guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
                 return (
                     asset: asset,
@@ -147,6 +142,8 @@ class DepositSolendViewModel: ObservableObject {
                     self?.maxTokenDigits = UInt(self?.invest.asset.decimals ?? 9)
                     if strategy == .withdraw {
                         self?.showHeaderDisclosure = (self?.market.filter { $2 != nil }.count ?? 0 > 1)
+                    } else {
+                        self?.showHeaderDisclosure = self?.availableDepositModels().count ?? 0 > 1
                     }
                 }
             })
@@ -172,12 +169,7 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.marketInfo,
                 dataService.deposits
             )
-            .map { (
-                _: String,
-                assets: [SolendConfigAsset]?,
-                marketInfo: [SolendMarketInfo]?,
-                userDeposits: [SolendUserDeposit]?
-            ) -> [Invest] in
+            .map { (_: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
                 guard let assets = assets else { return [] }
                 return assets.map { asset -> Invest in
                     (asset: asset,
@@ -315,12 +307,7 @@ class DepositSolendViewModel: ObservableObject {
             .sink { [weak self] _ in
                 guard let inputLamport = self?.inputLamport else { return }
                 Task {
-                    do {
-                        try await self?.action(lamports: inputLamport)
-                    } catch {
-                        self?.isSliderOn = false
-                        debugPrint(error)
-                    }
+                    await self?.action(lamports: inputLamport)
                 }
             }.store(in: &subscriptions)
     }
@@ -415,6 +402,26 @@ class DepositSolendViewModel: ObservableObject {
         }.eraseToAnyPublisher()
     }
 
+    private func availableDepositModels() -> [TokenToDepositView.Model] {
+        let wallets = walletRepository.getWallets()
+        return market.compactMap { asset, market, _ in
+            let wallet = wallets
+                .first { wallet in
+                    wallet.amount > 0 && market?.symbol == wallet.token.symbol
+                }
+            if let newWallet = wallet {
+                return TokenToDepositView.Model(
+                    amount: newWallet.amount,
+                    imageUrl: URL(string: asset.logo ?? ""),
+                    symbol: newWallet.token.symbol,
+                    name: newWallet.token.name,
+                    apy: market?.supplyInterest.double ?? 0
+                )
+            }
+            return nil
+        }
+    }
+
     // MARK: -
 
     func useMaxTapped() {
@@ -424,25 +431,9 @@ class DepositSolendViewModel: ObservableObject {
 
     func headerTapped() {
         if strategy == .deposit {
-            let wallets = walletRepository.getWallets()
-            tokenSelectSubject.send(
-                market.compactMap { asset, market, _ in
-                    let wallet = wallets
-                        .first { wallet in
-                            wallet.amount > 0 && market?.symbol == wallet.token.symbol
-                        }
-                    if let newWallet = wallet {
-                        return TokenToDepositView.Model(
-                            amount: newWallet.amount,
-                            imageUrl: URL(string: asset.logo ?? ""),
-                            symbol: newWallet.token.symbol,
-                            name: newWallet.token.name,
-                            apy: market?.supplyInterest.double ?? 0
-                        )
-                    }
-                    return nil
-                }
-            )
+            let models = availableDepositModels()
+            guard models.count > 1 else { return }
+            tokenSelectSubject.send(models)
         } else {
             let deposits = market.filter { $2 != nil }
             guard deposits.count > 1 else { return }
