@@ -102,6 +102,7 @@ class InvestSolendBannerViewModel: ObservableObject {
 
         // combine assets
         let urls = assets
+            .filter { asset in deposits.contains(where: { $0.symbol == asset.symbol }) }
             .map { asset -> URL? in URL(string: asset.logo ?? "") }
             .compactMap { $0 }
 

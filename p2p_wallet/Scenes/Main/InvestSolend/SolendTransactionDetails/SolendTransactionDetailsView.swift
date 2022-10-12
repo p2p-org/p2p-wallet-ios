@@ -51,11 +51,11 @@ struct SolendTransactionDetailsView: View {
                     )
                     cell(
                         title: L10n.transferFee,
-                        state: .model(model.formattedTransferFee, free: model.transferFee == nil)
+                        state: .model(model.formattedTransferFee, free: model.transferFee == 0)
                     )
                     cell(
                         title: viewModel.strategy == .withdraw ? L10n.withdrawalFee : L10n.depositFees,
-                        state: .model(model.formattedFee, free: model.fee == nil)
+                        state: .model(model.formattedFee, free: model.fee == 0)
                     )
                     cell(
                         title: L10n.total,
@@ -205,8 +205,8 @@ struct SolendTransactionDetailsView_Previews: PreviewProvider {
                         model: .init(
                             amount: 521,
                             fiatAmount: 322,
-                            transferFee: 2,
-                            fiatTransferFee: 3,
+                            transferFee: 0,
+                            fiatTransferFee: 0,
                             fee: 4,
                             fiatFee: 5,
                             total: 6,
