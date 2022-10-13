@@ -7,13 +7,19 @@ import SwiftUI
 struct CreateUsernameView: View {
     @ObservedObject var viewModel: CreateUsernameViewModel
 
+    private let mainColor = Color(Asset.Colors.night.color)
+    private let errorColor = Color(Asset.Colors.rose.color)
+    private let accentColor = Color(Asset.Colors.lime.color)
+
     var body: some View {
         ZStack {
-            background
+            accentColor
+                .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 0) {
-                VStack(spacing: .zero) {
+                VStack(spacing: 0) {
                     informativeContent
+                        .onTapGesture { viewModel.isTextFieldFocused = false }
 
                     usernameField
                         .padding(.top, 24)
@@ -21,6 +27,7 @@ struct CreateUsernameView: View {
                     statusView
                         .padding(.vertical, 4)
                         .padding(.leading, 8)
+                        .onTapGesture { viewModel.isTextFieldFocused = false }
                 }
                 .padding(.horizontal, 20)
 
@@ -34,7 +41,7 @@ struct CreateUsernameView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(trailing: skipButton)
         .onAppear {
-            viewModel.isTextFieldFocused = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { viewModel.isTextFieldFocused = true }
         }
         .onDisappear {
             viewModel.isTextFieldFocused = false
@@ -88,52 +95,60 @@ private extension CreateUsernameView {
     var bottomContainer: some View {
         BottomActionContainer {
             TextButtonView(
-                title: L10n.createName,
+                title: viewModel.status == .unavailable ? L10n.theNameIsNotAvailable : L10n.createName,
                 style: .inverted,
                 size: .large,
+                isLoading: viewModel.status == .processing,
                 onPressed: { [weak viewModel] in
                     viewModel?.createUsername.send()
                 }
             )
                 .frame(height: 56)
+                .disabled(viewModel.status == .unavailable)
         }
     }
 
     var usernameField: some View {
-        FocusedTextField(
-            text: $viewModel.username,
-            isFirstResponder: $viewModel.isTextFieldFocused,
-            configuration: { textField in
-                textField.font = UIFont.font(of: .text3)
-                textField.textColor = Asset.Colors.night.color
-                textField.returnKeyType = .done
-                let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: 56))
-                textField.leftView = paddingView
-                textField.rightView = paddingView
-                textField.leftViewMode = .always
-                textField.rightViewMode = .always
+        HStack(spacing: 0) {
+            Spacer()
+                .frame(width: 16)
+
+            FocusedTextField(
+                text: $viewModel.username,
+                isFirstResponder: $viewModel.isTextFieldFocused,
+                configuration: { textField in
+                    textField.font = UIFont.font(of: .title3)
+                    textField.textColor = Asset.Colors.night.color
+                    textField.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+                }
+            )
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(height: 56)
+
+            Text(viewModel.domain)
+                .font(.system(size: UIFont.fontSize(of: .title3)))
+                .foregroundColor(mainColor.opacity(0.3))
+                .padding(.horizontal, 6)
+
+            Spacer()
+
+            Button(action: viewModel.clearUsername.send) {
+                Image(uiImage: Asset.MaterialIcon.clear.image)
+                    .accentColor(mainColor)
             }
+            .frame(width: 16, height: 16)
+            .padding(.trailing, 16)
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 12).fill(Color.white)
+                .onTapGesture { viewModel.isTextFieldFocused = true }
         )
-            .background(RoundedRectangle(cornerRadius: 12).fill(Color.white))
-            .frame(height: 56)
+        .frame(height: 56)
     }
 
     var skipButton: some View {
         Button(L10n.skip.uppercaseFirst, action: viewModel.requireSkip.send)
             .foregroundColor(mainColor)
-    }
-
-    var background: some View {
-        Color(Asset.Colors.lime.color)
-            .edgesIgnoringSafeArea(.all)
-    }
-
-    var mainColor: Color {
-        Color(Asset.Colors.night.color)
-    }
-
-    var errorColor: Color {
-        Color(Asset.Colors.rose.color)
     }
 }
 
