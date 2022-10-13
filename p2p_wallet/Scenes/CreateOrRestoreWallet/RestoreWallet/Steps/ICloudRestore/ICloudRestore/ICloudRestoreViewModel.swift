@@ -33,9 +33,11 @@ final class ICloudRestoreViewModel: BaseICloudRestoreViewModel {
         guard loading == false else { return }
         loading = true
 
-        back.sendProcess { [weak self] error in
-            if error != nil { self?.notificationService.showDefaultErrorNotification() }
-            self?.loading = false
+        back.sendProcess { error in
+            DispatchQueue.main.async { [weak self] in
+                if error != nil { self?.notificationService.showDefaultErrorNotification() }
+                self?.loading = false
+            }
         }
     }
 
@@ -56,8 +58,10 @@ final class ICloudRestoreViewModel: BaseICloudRestoreViewModel {
             guard let self = self else { return }
             if success {
                 self.restore.sendProcess(data: account) { error in
-                    if error != nil { self.notificationService.showDefaultErrorNotification() }
-                    self.loading = false
+                    DispatchQueue.main.async { [weak self] in
+                        if error != nil { self?.notificationService.showDefaultErrorNotification() }
+                        self?.loading = false
+                    }
                 }
             } else {
                 self.loading = false
