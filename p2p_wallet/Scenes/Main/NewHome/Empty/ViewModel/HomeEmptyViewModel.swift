@@ -153,19 +153,19 @@ extension HomeEmptyViewModel {
 
     func image(for token: Token) -> UIImage {
         if token == .nativeSolana {
-            return .squircleSolanaIcon
+            return .solanaIcon
         }
         if token == .usdc {
-            return .usdc
+            return .usdcIcon
         }
         if token == .usdt {
-            return .usdt
+            return .usdtIcon
         }
         if token == .eth {
-            return .ethPlaceholder
+            return .ethereumIcon
         }
         if token == .renBTC {
-            return .squircleBitcoinIcon
+            return .bitcoinIcon
         }
         return token.image ?? .squircleSolanaIcon
     }
