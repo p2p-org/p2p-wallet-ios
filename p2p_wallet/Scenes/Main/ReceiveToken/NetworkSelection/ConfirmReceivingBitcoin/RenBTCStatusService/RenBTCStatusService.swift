@@ -40,6 +40,10 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         walletsRepository.getWallets().contains(where: \.token.isRenBTC)
     }
 
+    func hasRenBTCAccountBeenCreatedBefore() async throws -> Bool {
+        fatalError()
+    }
+
     func getPayableWallets() async throws -> [Wallet] {
         let wallets = walletsRepository
             .getWallets()
@@ -67,12 +71,38 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         }
     }
 
-    func createAccount(payingFeeAddress address: String, payingFeeMintAddress mint: String) async throws {
-        guard let address = try? PublicKey(string: address),
-              let mint = try? PublicKey(string: mint) else { throw SolanaError.unknown }
+    func createAccount(payingFeeAddress address: String?, payingFeeMintAddress mint: String?) async throws {
         guard let account = accountStorage.account else { throw SolanaError.unauthorized }
 
-        // prepare transaction
+        let feeCalculator: FeeCalculator?
+        let payingFeeToken: FeeRelayerSwift.TokenAccount?
+
+        // CASE 1: Account has already been created (but has been closed for some reason)
+        if try await hasRenBTCAccountBeenCreatedBefore() {
+            guard let address = address,
+                  let mint = mint
+            else {
+                throw SolanaError.unknown
+            }
+            feeCalculator = nil // use default solana's feeCalculator
+            payingFeeToken = .init(
+                address: try PublicKey(string: address),
+                mint: try PublicKey(string: mint)
+            )
+        }
+
+        // CASE 2: User has not create any renBTC account before, give user ability to create FREE renBTC account
+        else {
+            class RenBTCFreeFeeCalculator: FeeCalculator {
+                func calculateNetworkFee(transaction _: SolanaSwift.Transaction) throws -> SolanaSwift.FeeAmount {
+                    .zero
+                }
+            }
+            feeCalculator = RenBTCFreeFeeCalculator()
+            payingFeeToken = nil
+        }
+
+        // preparing process
         let feePayer = try await feeRelayerContextManager.getCurrentContext().feePayerAddress
         async let preparing = blockchainClient.prepareTransaction(
             instructions: [
@@ -84,21 +114,26 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             ],
             signers: [account],
             feePayer: feePayer,
-            feeCalculator: nil
+            feeCalculator: feeCalculator
         )
 
+        // updating process
         async let updating: () = feeRelayerContextManager.update()
 
+        // run concurrently
         let (preparedTransaction, _) = try await(preparing, updating)
 
+        // get context
         let context = try await feeRelayerContextManager.getCurrentContext()
+
+        // relay transaction
         let tx = try await feeRelayer.topUpAndRelayTransaction(
             context,
             preparedTransaction,
-            fee: .init(address: address, mint: mint),
+            fee: payingFeeToken,
             config: .init(
                 operationType: .transfer,
-                currency: mint.base58EncodedString
+                currency: mint ?? PublicKey.renBTCMint.base58EncodedString
             )
         )
 
