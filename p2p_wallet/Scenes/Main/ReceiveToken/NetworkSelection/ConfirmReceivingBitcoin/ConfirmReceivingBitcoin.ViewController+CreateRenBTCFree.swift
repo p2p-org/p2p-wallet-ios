@@ -32,9 +32,7 @@ extension ConfirmReceivingBitcoin.ViewController {
     func createRenBTCFreeButton() -> UIView {
         WLStepButton.main(image: .buttonBuy.withTintColor(.white), text: L10n.free)
             .onTap { [unowned self] in
-                self.dismiss(animated: true) {
-                    self.viewModel.dismissAndTopUp()
-                }
+                self.viewModel.createRenBTC()
             }
     }
 }

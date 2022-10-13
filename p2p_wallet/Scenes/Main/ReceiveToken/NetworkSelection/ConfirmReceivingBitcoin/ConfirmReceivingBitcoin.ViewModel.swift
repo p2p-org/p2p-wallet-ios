@@ -185,18 +185,14 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
     }
 
     func createRenBTC() {
-        guard let mintAddress = payingWalletSubject.value?.mintAddress,
-              let address = payingWalletSubject.value?.pubkey
-        else { return }
-
         isLoadingSubject.accept(true)
         errorSubject.accept(nil)
 
         Task {
             do {
                 try await renBTCStatusService.createAccount(
-                    payingFeeAddress: address,
-                    payingFeeMintAddress: mintAddress
+                    payingFeeAddress: payingWalletSubject.value?.pubkey,
+                    payingFeeMintAddress: payingWalletSubject.value?.mintAddress
                 )
                 errorSubject.accept(nil)
 
