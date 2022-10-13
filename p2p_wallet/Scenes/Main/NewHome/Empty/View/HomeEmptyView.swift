@@ -36,32 +36,34 @@ struct HomeEmptyView: View {
                 VStack(spacing: 0) {
                     Color(.clear)
                         .frame(height: 87)
-                    Color(._644aff)
+                    Color(.cdf6cd)
                         .frame(height: 200)
-                        .cornerRadius(12)
+                        .cornerRadius(16)
                 }
                 Image(uiImage: .homeBannerPerson)
             }
             VStack(spacing: 19) {
-                VStack(spacing: 9) {
+                VStack(spacing: 12) {
                     Text(L10n.topUpYourAccountToGetStarted)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
-                        .font(uiFont: .font(of: .text1, weight: .semibold))
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .fontWeight(.bold)
+                        .apply(style: .text1)
                     Text(L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay)
+                        .apply(style: .text3)
                         .minimumScaleFactor(0.5)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                        .foregroundColor(Color(Asset.Colors.cloud.color))
-                        .font(uiFont: .font(of: .text3))
+                        .foregroundColor(Color(Asset.Colors.night.color))
                         .padding(.horizontal, 24)
                 }
-                Text(L10n.topUp)
+                Text(L10n.receive)
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .font(uiFont: .font(of: .text4, weight: .semibold))
-                    .frame(height: 48)
+                    .frame(height: 50)
                     .frame(maxWidth: .infinity)
-                    .background(Color(.ddfa2b))
+                    .background(Color(Asset.Colors.snow.color))
                     .cornerRadius(8)
+                    .padding(.top, 3)
                     .padding(.horizontal, 24)
                     .onTapGesture {
                         viewModel.topUp.send()
@@ -94,11 +96,7 @@ struct HomeEmptyView: View {
     }
 
     private func coinTapped(at index: Int) {
-        if index == 2 {
-            viewModel.receiveRenBtcClicked()
-        } else {
-            viewModel.topUpCoin.send(index == 0 ? .usdc : .sol)
-        }
+        viewModel.buyTapped(index: index)
     }
 }
 
