@@ -272,7 +272,7 @@ DEPENDENCIES:
   - Sentry (from `https://github.com/getsentry/sentry-cocoa.git`, tag `7.18.1`)
   - SkeletonUI (from `https://github.com/p2p-org/SkeletonUI.git`, branch `master`)
   - SolanaPricesAPIs (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
-  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `main`)
+  - SolanaSwift (from `https://github.com/p2p-org/solana-swift.git`, branch `feature/pwn-5211`)
   - SubviewAttachingTextView (= 1.5.0)
   - SwiftFormat/CLI (= 0.49.6)
   - SwiftGen (~> 6.0)
@@ -407,7 +407,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :branch: main
+    :branch: feature/pwn-5211
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
     :branch: master
@@ -481,7 +481,7 @@ CHECKOUT OPTIONS:
     :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: a6c160de5b7719f9b8d5c3f618f314f710fef182
+    :commit: 528dd2a3fb2b066ed008c379c99ade097d6d1f44
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
     :commit: 26f1cc30cb4220c66cb63a9908b64e81ad42965d
@@ -566,6 +566,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: d66dd96fb7ed0d604cf0b16011c5cd7c4ee89cb6
+PODFILE CHECKSUM: 4e2f329c940a6687716bed599332f10ed5bef5d7
 
 COCOAPODS: 1.11.3
