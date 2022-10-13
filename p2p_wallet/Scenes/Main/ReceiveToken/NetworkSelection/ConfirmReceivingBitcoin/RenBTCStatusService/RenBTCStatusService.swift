@@ -27,6 +27,10 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     private var lamportsPerSignature: Lamports?
     private var rentExemptMinimum: Lamports?
 
+    private var renBTCMint: PublicKey {
+        Defaults.apiEndPoint.network == .mainnetBeta ? .renBTCMint : .renBTCMintDevnet
+    }
+
     func load() async throws {
         try await orcaSwap.load()
 
@@ -41,7 +45,17 @@ class RenBTCStatusService: RenBTCStatusServiceType {
     }
 
     func hasRenBTCAccountBeenCreatedBefore() async throws -> Bool {
-        fatalError()
+        // Check if there was any transactions using this address
+        guard let account = accountStorage.account else { throw SolanaError.unauthorized }
+        let renBTCAssociatedTokenAccount = try PublicKey.associatedTokenAddress(
+            walletAddress: account.publicKey,
+            tokenMintAddress: renBTCMint
+        )
+        let signatures = try await solanaAPIClient.getSignaturesForAddress(
+            address: renBTCAssociatedTokenAccount.base58EncodedString,
+            configs: nil
+        )
+        return !signatures.isEmpty
     }
 
     func getPayableWallets() async throws -> [Wallet] {
@@ -107,7 +121,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         async let preparing = blockchainClient.prepareTransaction(
             instructions: [
                 AssociatedTokenProgram.createAssociatedTokenAccountInstruction(
-                    mint: .renBTCMint,
+                    mint: renBTCMint,
                     owner: account.publicKey,
                     payer: feePayer
                 ),
@@ -133,7 +147,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             fee: payingFeeToken,
             config: .init(
                 operationType: .transfer,
-                currency: mint ?? PublicKey.renBTCMint.base58EncodedString
+                currency: mint ?? renBTCMint.base58EncodedString
             )
         )
 
@@ -144,7 +158,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
                   let nativeWalletAddress = try? PublicKey(string: string),
                   let renBTCAddress = try? PublicKey.associatedTokenAddress(
                       walletAddress: nativeWalletAddress,
-                      tokenMintAddress: .renBTCMint
+                      tokenMintAddress: renBTCMint
                   )
             else { return wallets }
 
