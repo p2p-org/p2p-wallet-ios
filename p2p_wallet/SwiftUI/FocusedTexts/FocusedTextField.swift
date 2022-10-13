@@ -20,16 +20,24 @@ struct FocusedTextField: UIViewRepresentable {
         let view = UITextField()
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         view.delegate = context.coordinator
+        view.addTarget(
+            context.coordinator,
+            action: #selector(context.coordinator.textViewDidChange),
+            for: .editingChanged
+        )
         return view
     }
 
     func updateUIView(_ uiView: UITextField, context _: Context) {
-        uiView.text = text
-        configuration(uiView)
-        switch isFirstResponder {
-        case true: uiView.becomeFirstResponder()
-        case false: uiView.resignFirstResponder()
+        if uiView.text != text {
+            uiView.text = text
         }
+        if uiView.isFirstResponder, !isFirstResponder {
+            DispatchQueue.main.async { uiView.resignFirstResponder() }
+        } else if !uiView.isFirstResponder, isFirstResponder {
+            DispatchQueue.main.async { uiView.becomeFirstResponder() }
+        }
+        configuration(uiView)
     }
 
     func makeCoordinator() -> Coordinator {
