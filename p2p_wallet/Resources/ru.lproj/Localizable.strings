@@ -970,3 +970,4 @@ Reset the PIN or wait for %@." = "У вас осталось %@ попыток �
 "name is available 👌 " = "имя свободно 👌";
 "😓 name is not available" = "😓 имя недоступно";
 "Create name" = "Создать имя";
+"The name is not available" = "Имя недоступно";

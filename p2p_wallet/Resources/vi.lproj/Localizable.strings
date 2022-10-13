@@ -973,3 +973,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "name is available 👌 " = "tên có sẵn 👌";
 "😓 name is not available" = "Tôi không có tên";
 "Create name" = "Tạo tên";
+"The name is not available" = "Tên không có sẵn";
