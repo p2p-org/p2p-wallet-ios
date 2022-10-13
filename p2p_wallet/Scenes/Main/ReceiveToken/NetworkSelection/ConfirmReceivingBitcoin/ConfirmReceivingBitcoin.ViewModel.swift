@@ -91,8 +91,15 @@ extension ConfirmReceivingBitcoin {
                     let payableWallets = try await renBTCStatusService.getPayableWallets()
 
                     errorSubject.accept(nil)
-                    accountStatusSubject
-                        .accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
+
+                    let accountStatus: RenBTCAccountStatus
+                    if try await renBTCStatusService.hasRenBTCAccountBeenCreatedBefore() {
+                        accountStatus = !payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired
+                    } else {
+                        accountStatus = .freeCreationAvailable
+                    }
+
+                    accountStatusSubject.accept(accountStatus)
                     payableWalletsSubject.accept(payableWallets)
                     payingWalletSubject.accept(payableWallets.first)
                 } catch {

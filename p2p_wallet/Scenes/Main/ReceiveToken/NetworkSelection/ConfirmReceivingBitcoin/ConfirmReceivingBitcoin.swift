@@ -14,6 +14,7 @@ enum ConfirmReceivingBitcoin {
     }
 
     enum RenBTCAccountStatus {
+        case freeCreationAvailable
         case topUpRequired
         case payingWalletAvailable
     }

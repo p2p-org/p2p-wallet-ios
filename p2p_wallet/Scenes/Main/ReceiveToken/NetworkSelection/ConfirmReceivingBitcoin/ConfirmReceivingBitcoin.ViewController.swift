@@ -86,6 +86,14 @@ extension ConfirmReceivingBitcoin {
 
                 // Button stack view
                 BEVStack(spacing: 10) {
+                    createRenBTCFreeButton()
+                        .setup { view in
+                            viewModel.accountStatusDriver
+                                .map { $0 != .freeCreationAvailable }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
+
                     topUpButtonsView()
                         .setup { view in
                             viewModel.accountStatusDriver
@@ -116,6 +124,14 @@ extension ConfirmReceivingBitcoin {
 
         func contentView() -> UIView {
             BEVStack(spacing: 12) {
+                createRenBTCFreeView()
+                    .setup { view in
+                        viewModel.accountStatusDriver
+                            .map { $0 != .freeCreationAvailable }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
+
                 topUpRequiredView()
                     .setup { view in
                         viewModel.accountStatusDriver
