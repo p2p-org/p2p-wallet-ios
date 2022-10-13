@@ -977,3 +977,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "name is available 👌 " = "le nom est disponible 👌";
 "😓 name is not available" = "😓 le nom n'est pas disponible";
 "Create name" = "Créer un nom";
+"The name is not available" = "Le nom n'est pas disponible";

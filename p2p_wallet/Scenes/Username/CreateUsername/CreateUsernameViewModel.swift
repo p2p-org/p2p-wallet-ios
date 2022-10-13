@@ -14,8 +14,10 @@ final class CreateUsernameViewModel: BaseViewModel {
 
     let requireSkip = PassthroughSubject<Void, Never>()
     let createUsername = PassthroughSubject<Void, Never>()
+    let clearUsername = PassthroughSubject<Void, Never>()
 
     @Published var username: String = ""
+    @Published var domain: String = .nameServiceDomain
     @Published var isTextFieldFocused: Bool = false
     @Published var statusText = L10n.from3Till15LowercaseLatinSumbols👌
     @Published var status: Status = .initial
@@ -34,6 +36,10 @@ final class CreateUsernameViewModel: BaseViewModel {
             case .processing:
                 self.statusText = ""
             }
+        }.store(in: &subscriptions)
+
+        clearUsername.sink { [unowned self] in
+            self.username.removeAll()
         }.store(in: &subscriptions)
 
         createUsername.sink { [unowned self] in
