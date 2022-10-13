@@ -19,7 +19,6 @@ struct CreateUsernameView: View {
             VStack(spacing: 0) {
                 VStack(spacing: 0) {
                     informativeContent
-                        .onTapGesture { viewModel.isTextFieldFocused = false }
 
                     usernameField
                         .padding(.top, 24)
@@ -27,7 +26,6 @@ struct CreateUsernameView: View {
                     statusView
                         .padding(.vertical, 4)
                         .padding(.leading, 8)
-                        .onTapGesture { viewModel.isTextFieldFocused = false }
                 }
                 .padding(.horizontal, 20)
 
@@ -37,6 +35,9 @@ struct CreateUsernameView: View {
             }
             .ignoresSafeArea(.keyboard)
             .edgesIgnoringSafeArea(.bottom)
+        }
+        .onTapGesture {
+            viewModel.isTextFieldFocused = false
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(trailing: skipButton)
@@ -110,27 +111,22 @@ private extension CreateUsernameView {
 
     var usernameField: some View {
         HStack(spacing: 0) {
-            Spacer()
-                .frame(width: 16)
-
             FocusedTextField(
                 text: $viewModel.username,
                 isFirstResponder: $viewModel.isTextFieldFocused,
                 configuration: { textField in
                     textField.font = UIFont.font(of: .title3)
                     textField.textColor = Asset.Colors.night.color
-                    textField.setContentHuggingPriority(.defaultHigh, for: .horizontal)
                 }
             )
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(height: 56)
+                .padding(.leading, 16)
 
             Text(viewModel.domain)
                 .font(.system(size: UIFont.fontSize(of: .title3)))
                 .foregroundColor(mainColor.opacity(0.3))
                 .padding(.horizontal, 6)
-
-            Spacer()
 
             Button(action: viewModel.clearUsername.send) {
                 Image(uiImage: Asset.MaterialIcon.clear.image)
@@ -140,8 +136,11 @@ private extension CreateUsernameView {
             .padding(.trailing, 16)
         }
         .background(
-            RoundedRectangle(cornerRadius: 12).fill(Color.white)
-                .onTapGesture { viewModel.isTextFieldFocused = true }
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.white)
+                .onTapGesture {
+                    viewModel.isTextFieldFocused = true
+                }
         )
         .frame(height: 56)
     }
