@@ -903,3 +903,4 @@ another";
 "There’s a problem showing the rates.\nTry again later" = "There’s a problem showing the rates.\nTry again later";
 "Depositing funds failed" = "Depositing funds failed";
 "The funds are returned to your wallet. You can try depositing again." = "The funds are returned to your wallet. You can try depositing again.";
+"Don't worry, your deposits are safe. Somehow, withdrawal did not happen" = "Don't worry, your deposits are safe. Somehow, withdrawal did not happen";

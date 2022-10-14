@@ -918,3 +918,4 @@ another" = "một tiền điện tử cho
 "There’s a problem showing the rates.\nTry again later" = "Đã xảy ra sự cố khi hiển thị giá. \n Hãy thử lại sau";
 "Depositing funds failed" = "Gửi tiền không thành công";
 "The funds are returned to your wallet. You can try depositing again." = "Tiền sẽ được trả lại ví của bạn.  Bạn có thể thử gửi tiền lại.";
+"Don't worry, your deposits are safe. Somehow, withdrawal did not happen" = "Đừng lo lắng, tiền gửi của bạn được an toàn.  Bằng cách nào đó, việc rút tiền đã không xảy ra";

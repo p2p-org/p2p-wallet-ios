@@ -914,3 +914,4 @@ another" = "une crypto pour
 "There’s a problem showing the rates.\nTry again later" = "Un problème est survenu lors de l'affichage des tarifs.\nRéessayez plus tard";
 "Depositing funds failed" = "Le dépôt de fonds a échoué";
 "The funds are returned to your wallet. You can try depositing again." = "Les fonds sont retournés dans votre portefeuille.  Vous pouvez réessayer de déposer.";
+"Don't worry, your deposits are safe. Somehow, withdrawal did not happen" = "Ne vous inquiétez pas, vos dépôts sont en sécurité.  D'une manière ou d'une autre, le retrait n'a pas eu lieu";
