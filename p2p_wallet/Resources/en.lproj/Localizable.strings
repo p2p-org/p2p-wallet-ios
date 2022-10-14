@@ -964,3 +964,4 @@ Reset the PIN or wait for %@.";
 "Create address" = "Create address";
 "You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions." = "You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions.";
 "It’s a **one-time address**, so if you send multiple transactions, your money will be lost." = "It’s a **one-time address**, so if you send multiple transactions, your money will be lost.";
+"Create Bitcoin address" = "Create Bitcoin address";
