@@ -34,23 +34,25 @@ extension Settings {
                     // Acount section
                     SectionView(title: L10n.profile) {
                         // Profile
-                        CellView(
-                            icon: .profileIcon,
-                            title: UILabel(text: L10n.username.onlyUppercaseFirst()),
-                            trailing: UILabel(textSize: 15).setup { label in
-                                viewModel.usernameDriver
-                                    .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notReserved }
-                                    .drive(label.rx.text)
-                                    .disposed(by: disposeBag)
-                                viewModel.usernameDriver.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
-                                    .drive(label.rx.textColor)
-                                    .disposed(by: disposeBag)
-                            }
-                        ).onTap { [unowned self] in
-                            if self.viewModel.getUsername() == nil {
-                                viewModel.showOrReserveUsername()
-                            } else {
-                                viewModel.navigate(to: .username)
+                        if available(.onboardingUsernameEnabled) || viewModel.getUsername() != nil {
+                            CellView(
+                                icon: .profileIcon,
+                                title: UILabel(text: L10n.username.onlyUppercaseFirst()),
+                                trailing: UILabel(textSize: 15).setup { label in
+                                    viewModel.usernameDriver
+                                        .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notReserved }
+                                        .drive(label.rx.text)
+                                        .disposed(by: disposeBag)
+                                    viewModel.usernameDriver.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
+                                        .drive(label.rx.textColor)
+                                        .disposed(by: disposeBag)
+                                }
+                            ).onTap { [unowned self] in
+                                if self.viewModel.getUsername() == nil {
+                                    viewModel.showOrReserveUsername()
+                                } else {
+                                    viewModel.navigate(to: .username)
+                                }
                             }
                         }
                         // Sign out button
@@ -208,16 +210,11 @@ extension Settings {
                 let vc = NewUsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .reserveUsername:
-                guard let owner = viewModel.getUserAddress() else { return }
-                let vm = ReserveName.ViewModel(
-                    kind: .independent,
-                    owner: owner,
-                    reserveNameHandler: viewModel,
-                    goBackOnCompletion: true,
-                    checkBeforeReserving: true
-                )
-                let vc = ReserveName.ViewController(viewModel: vm)
-                show(vc, sender: nil)
+                guard let navigationController = navigationController else { return }
+                CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController))
+                    .start()
+                    .sink { navigationController.popToViewController(ofClass: ViewController.self, animated: true) }
+                    .store(in: &subscriptions)
             case .backup:
                 let viewModel = Backup.ViewModel()
                 viewModel.didBackupHandler = { [weak self] in

@@ -9,11 +9,10 @@ struct CreateUsernameView: View {
 
     private let mainColor = Color(Asset.Colors.night.color)
     private let errorColor = Color(Asset.Colors.rose.color)
-    private let accentColor = Color(Asset.Colors.lime.color)
 
     var body: some View {
         ZStack {
-            accentColor
+            Color(viewModel.backgroundColor)
                 .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 0) {
@@ -33,14 +32,13 @@ struct CreateUsernameView: View {
 
                 bottomContainer
             }
-            .ignoresSafeArea(.keyboard)
             .edgesIgnoringSafeArea(.bottom)
         }
         .onTapGesture {
             viewModel.isTextFieldFocused = false
         }
         .navigationBarTitleDisplayMode(.inline)
-        .navigationBarItems(trailing: skipButton)
+        .navigationBarItems(trailing: viewModel.isSkipEnabled ? skipButton : nil)
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { viewModel.isTextFieldFocused = true }
         }
@@ -99,13 +97,13 @@ private extension CreateUsernameView {
                 title: viewModel.status == .unavailable ? L10n.theNameIsNotAvailable : L10n.createName,
                 style: .inverted,
                 size: .large,
-                isLoading: viewModel.status == .processing,
+                isLoading: viewModel.isLoading,
                 onPressed: { [weak viewModel] in
                     viewModel?.createUsername.send()
                 }
             )
                 .frame(height: 56)
-                .disabled(viewModel.status == .unavailable)
+                .disabled(viewModel.status != .available)
         }
     }
 
@@ -162,7 +160,14 @@ private extension Text {
 struct CreateUsernameView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            CreateUsernameView(viewModel: CreateUsernameViewModel())
+            CreateUsernameView(
+                viewModel: CreateUsernameViewModel(
+                    parameters: CreateUsernameParameters(
+                        isSkipEnabled: true,
+                        backgroundColor: Asset.Colors.rain.color
+                    )
+                )
+            )
         }
     }
 }
