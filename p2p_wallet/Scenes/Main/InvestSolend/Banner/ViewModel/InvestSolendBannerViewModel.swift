@@ -56,10 +56,19 @@ class InvestSolendBannerViewModel: ObservableObject {
     private func actionState(action: SolendAction) -> InvestSolendBannerState {
         switch action.status {
         case let .failed(msg):
-            return .failure(
-                title: L10n.depositingFundsFailed,
-                subtitle: L10n.TheFundsAreReturnedToYourWallet.youCanTryDepositingAgain
-            )
+            switch action.type {
+            case .deposit:
+                return .failure(
+                    title: L10n.depositingFundsFailed,
+                    subtitle: L10n.TheFundsAreReturnedToYourWallet.youCanTryDepositingAgain
+                )
+            case .withdraw:
+                return .failure(
+                    title: L10n.anUnexpectedErrorOccurred,
+                    subtitle: L10n.DonTWorryYourDepositsAreSafe.somehowWithdrawalDidNotHappen
+                )
+            }
+
         default:
             return .processingAction
         }
