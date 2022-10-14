@@ -385,25 +385,26 @@ class DepositSolendViewModel: ObservableObject {
             await withdraw(lamports: lamports)
         }
     }
-
-    private func deposit(lamports: UInt64) async throws {
-        guard loading == false, lamports > 0 else { return }
-
+    
+    private func calculateFeePayer(lamports: Lamports) -> SolendFeePayer? {
         let tokenAccount: Wallet? = walletRepository
             .getWallets()
             .first(where: { $0.token.symbol == invest.asset.symbol })
-
         let fee = (depositFee?.fee ?? 0) + (depositFee?.rent ?? 0)
-        let feePayer: SolendFeePayer?
+        
         if
             let tokenAccount = tokenAccount,
             let address = tokenAccount.pubkey,
             lamports + fee <= (tokenAccount.lamports ?? 0)
         {
-            feePayer = .init(address: address, mint: tokenAccount.mintAddress)
+            return .init(address: address, mint: tokenAccount.mintAddress)
         } else {
-            feePayer = nil
+            return nil
         }
+    }
+
+    private func deposit(lamports: UInt64) async throws {
+        guard loading == false, lamports > 0 else { return }
 
         notificationService
             .showInAppNotification(.done(L10n.SendingYourDepositToSolend.justWaitUntilItSDone
@@ -414,8 +415,7 @@ class DepositSolendViewModel: ObservableObject {
             try await actionService.deposit(
                 amount: lamports,
                 symbol: invest.asset.symbol,
-                fee: .init(fee: 0, rent: 0),
-                feePayer: feePayer
+                feePayer: calculateFeePayer(lamports: lamports)
             )
         } catch {
             debugPrint(error)
@@ -428,14 +428,18 @@ class DepositSolendViewModel: ObservableObject {
         notificationService
             .showInAppNotification(.done(L10n.WithdrawingYourFundsFromSolend.justWaitUntilItSDone
                     .replacingOccurrences(of: "\n", with: " ")))
+        
+        let withdrawAmount = lamports == lamportFrom(amount: maxAmount()) ? UINT64_MAX : lamports
+        print(maxAmount)
+        print(withdrawAmount)
+        
         do {
             loading = true
             defer { loading = false }
             try await actionService.withdraw(
-                amount: inputLamport,
+                amount: withdrawAmount,
                 symbol: invest.asset.symbol,
-                fee: .init(fee: 0, rent: 0),
-                feePayer: nil
+                feePayer: calculateFeePayer(lamports: 0)
             )
         } catch {
             print(error)
