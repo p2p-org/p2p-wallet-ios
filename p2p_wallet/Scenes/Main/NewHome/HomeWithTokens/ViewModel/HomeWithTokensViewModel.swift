@@ -36,7 +36,6 @@ class HomeWithTokensViewModel: ObservableObject {
     @Published var tokensIsHidden: Bool
 
     private var cancellables = Set<AnyCancellable>()
-    private var reloadCancellable: AnyCancellable?
 
     init(walletsRepository: WalletsRepository = Resolver.resolve()) {
         self.walletsRepository = walletsRepository
@@ -87,16 +86,11 @@ class HomeWithTokensViewModel: ObservableObject {
 
     func reloadData() async {
         walletsRepository.reload()
-        return await withCheckedContinuation { continuation in
-            reloadCancellable = walletsRepository.statePublisher
-                .assertNoFailure()
-                .sink(receiveValue: { [weak self] in
-                    if $0 == .loaded || $0 == .error {
-                        continuation.resume()
-                        self?.reloadCancellable = nil
-                    }
-                })
-        }
+        _ = try? await walletsRepository.statePublisher
+            .assertNoFailure()
+            .filter { $0 == .loaded || $0 == .error }
+            .eraseToAnyPublisher()
+            .async()
     }
 
     func buy() {
