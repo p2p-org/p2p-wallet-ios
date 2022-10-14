@@ -975,3 +975,4 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Create address" = "Tạo địa chỉ";
 "You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions." = "Bạn sẽ tạo một địa chỉ Bitcoin công khai sẽ có hiệu lực trong **24 giờ** tới.  Bạn vẫn có thể giữ và gửi Bitcoin mà không bị hạn chế.";
 "It’s a **one-time address**, so if you send multiple transactions, your money will be lost." = "Đây là **địa chỉ dùng một lần**, vì vậy nếu bạn gửi nhiều giao dịch, tiền của bạn sẽ bị mất.";
+"Create Bitcoin address" = "Tạo địa chỉ Bitcoin";
