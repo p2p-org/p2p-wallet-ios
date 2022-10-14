@@ -32,7 +32,7 @@ class AppCoordinator: Coordinator<Void> {
 
     var reloadEvent: PassthroughSubject<Void, Never> = .init()
 
-    private var wasOnboardingShown: Bool = false
+    private var walletCreated: Bool = false
 
     // MARK: - Initializers
 
@@ -61,7 +61,7 @@ class AppCoordinator: Coordinator<Void> {
                 .receive(on: RunLoop.main)
                 .sink { [unowned self] wallet, _ in
                     if wallet != nil {
-                        if self.wasOnboardingShown, available(.onboardingUsernameEnabled) {
+                        if self.walletCreated, available(.onboardingUsernameEnabled) {
                             self.openCreateUsername()
                         } else {
                             self.navigateToMain()
@@ -130,7 +130,6 @@ class AppCoordinator: Coordinator<Void> {
         Task.detached {
             try await Resolver.resolve(WalletMetadataService.self).clear()
         }
-        wasOnboardingShown = true
 
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
@@ -138,6 +137,8 @@ class AppCoordinator: Coordinator<Void> {
                 let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
                 case let .created(data):
+                    walletCreated = true
+
                     analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
                     analyticsManager.log(event: AmplitudeEvent.createConfirmPin(result: true))
 
