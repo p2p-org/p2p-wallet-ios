@@ -44,20 +44,6 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         walletsRepository.getWallets().contains(where: \.token.isRenBTC)
     }
 
-    func hasRenBTCAccountBeenCreatedBefore() async throws -> Bool {
-        // Check if there was any transactions using this address
-        guard let account = accountStorage.account else { throw SolanaError.unauthorized }
-        let renBTCAssociatedTokenAccount = try PublicKey.associatedTokenAddress(
-            walletAddress: account.publicKey,
-            tokenMintAddress: renBTCMint
-        )
-        let signatures = try await solanaAPIClient.getSignaturesForAddress(
-            address: renBTCAssociatedTokenAccount.base58EncodedString,
-            configs: nil
-        )
-        return !signatures.isEmpty
-    }
-
     func getPayableWallets() async throws -> [Wallet] {
         let wallets = walletsRepository
             .getWallets()
@@ -91,13 +77,10 @@ class RenBTCStatusService: RenBTCStatusServiceType {
         let feeCalculator: FeeCalculator?
         let payingFeeToken: FeeRelayerSwift.TokenAccount?
 
-        // CASE 1: Account has already been created (but has been closed for some reason)
-        if try await hasRenBTCAccountBeenCreatedBefore() {
-            guard let address = address,
-                  let mint = mint
-            else {
-                throw SolanaError.unknown
-            }
+        // CASE 1: User is paying for renBTC creation
+        if let address = address,
+           let mint = mint
+        {
             feeCalculator = nil // use default solana's feeCalculator
             payingFeeToken = .init(
                 address: try PublicKey(string: address),
@@ -105,7 +88,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             )
         }
 
-        // CASE 2: User has not create any renBTC account before, give user ability to create FREE renBTC account
+        // CASE 2: Free renBTC creation
         else {
             class RenBTCFreeFeeCalculator: FeeCalculator {
                 func calculateNetworkFee(transaction _: SolanaSwift.Transaction) throws -> SolanaSwift.FeeAmount {

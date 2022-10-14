@@ -50,6 +50,7 @@ extension ConfirmReceivingBitcoin {
         @Injected private var renBTCStatusService: RenBTCStatusServiceType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
+        @Injected private var userWalletManager: UserWalletManager
 
         // MARK: - Properties
 
@@ -88,20 +89,24 @@ extension ConfirmReceivingBitcoin {
             Task {
                 do {
                     try await renBTCStatusService.load()
-                    let payableWallets = try await renBTCStatusService.getPayableWallets()
 
                     errorSubject.accept(nil)
 
-                    let accountStatus: RenBTCAccountStatus
-                    if try await renBTCStatusService.hasRenBTCAccountBeenCreatedBefore() {
-                        accountStatus = !payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired
-                    } else {
-                        accountStatus = .freeCreationAvailable
+                    // CASE 1: User logged in using web3auth
+                    if userWalletManager.isUserLoggedInUsingWeb3 {
+                        let payableWallets = try await renBTCStatusService.getPayableWallets()
+                        accountStatusSubject.accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
+                        payableWalletsSubject.accept(payableWallets)
+                        payingWalletSubject.accept(payableWallets.first)
                     }
 
-                    accountStatusSubject.accept(accountStatus)
-                    payableWalletsSubject.accept(payableWallets)
-                    payingWalletSubject.accept(payableWallets.first)
+                    // CASE 2: User logged in using seed phrase
+                    else {
+                        accountStatusSubject.accept(.freeCreationAvailable)
+                        payableWalletsSubject.accept([])
+                        payingWalletSubject.accept(nil)
+                    }
+
                 } catch {
                     errorSubject.accept(error.readableDescription)
                     accountStatusSubject.accept(nil)

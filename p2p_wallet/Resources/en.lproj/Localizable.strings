@@ -961,3 +961,6 @@ Reset the PIN or wait for %@.";
 "P2P wallet's" = "P2P wallet's";
 "Use your social account to continue" = "Use your social account to continue";
 "Looks like you already have a wallet with" = "Looks like you already have a wallet with";
+"Create address" = "Create address";
+"You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions." = "You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions.";
+"It’s a **one-time address**, so if you send multiple transactions, your money will be lost." = "It’s a **one-time address**, so if you send multiple transactions, your money will be lost.";

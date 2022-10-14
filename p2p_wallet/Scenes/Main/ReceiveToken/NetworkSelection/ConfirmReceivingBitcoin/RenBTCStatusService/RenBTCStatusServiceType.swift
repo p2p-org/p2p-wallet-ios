@@ -22,13 +22,6 @@ protocol RenBTCStatusServiceType {
     /// - Returns: the status
     func hasRenBTCAccountBeenCreated() -> Bool
 
-    /// Check if RenBTC has been created before
-    ///
-    /// If there was any transaction with the participant of the renBTC account then account has been created before
-    ///
-    /// - Returns: boolean value
-    func hasRenBTCAccountBeenCreatedBefore() async throws -> Bool
-
     /// Checks the associated account is creatable.
     ///
     /// This methods calculate all factors, that may affect to fee like account creation fee, trx fee and fee relayer fee.
