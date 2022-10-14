@@ -11,7 +11,9 @@ extension KeychainStorage: ICloudStorageType {
 
         if var currentAccounts = accountFromICloud() {
             // if account exists
-            if let index = currentAccounts.firstIndex(where: { $0.phrase == account.phrase }) {
+            if let index = currentAccounts
+                .firstIndex(where: { $0.phrase == account.phrase && $0.derivablePath == account.derivablePath })
+            {
                 currentAccounts[index] = account
             }
             // new account
@@ -45,6 +47,7 @@ extension KeychainStorage: ICloudStorageType {
 
     var didBackupUsingIcloud: Bool {
         guard let phrases = account?.phrase.joined(separator: " ") else { return false }
-        return accountFromICloud()?.contains(where: { $0.phrase == phrases }) == true
+        return accountFromICloud()?
+            .contains(where: { $0.phrase == phrases && $0.derivablePath == derivablePath }) == true
     }
 }
