@@ -47,6 +47,7 @@ final class SettingsViewModel: ObservableObject {
 
     private var storageName: String? { nameStorage.getName() }
     @Published var name: String = ""
+    @Published var isNameEnabled: Bool = true
 
     private var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
     var appInfo: String {
@@ -130,6 +131,7 @@ final class SettingsViewModel: ObservableObject {
 
     func updateNameIfNeeded() {
         name = storageName != nil ? storageName!.withNameServiceDomain() : L10n.notReserved
+        isNameEnabled = storageName == nil ? available(.onboardingUsernameEnabled) : true
     }
 }
 
