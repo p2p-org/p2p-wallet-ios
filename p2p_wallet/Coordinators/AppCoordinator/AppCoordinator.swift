@@ -32,6 +32,8 @@ class AppCoordinator: Coordinator<Void> {
 
     var reloadEvent: PassthroughSubject<Void, Never> = .init()
 
+    private var wasOnboardingShown: Bool = false
+
     // MARK: - Initializers
 
     override init() {
@@ -57,14 +59,30 @@ class AppCoordinator: Coordinator<Void> {
                         .prepend(())
                 )
                 .receive(on: RunLoop.main)
-                .sink { [weak self] wallet, _ in
-                    wallet != nil ? self?.navigateToMain() : self?.newOnboardingFlow()
+                .sink { [unowned self] wallet, _ in
+                    if wallet != nil {
+                        if self.wasOnboardingShown, available(.onboardingUsernameEnabled) {
+                            self.openCreateUsername()
+                        } else {
+                            self.navigateToMain()
+                        }
+                    } else {
+                        self.newOnboardingFlow()
+                    }
                 }
                 .store(in: &subscriptions)
         }
     }
 
     // MARK: - Navigation
+
+    private func openCreateUsername() {
+        guard let window = window else { return }
+        coordinate(to: CreateUsernameCoordinator(navigationOption: .onboarding(window: window)))
+            .sink { [unowned self] in
+                self.navigateToMain()
+            }.store(in: &subscriptions)
+    }
 
     func navigateToMain() {
         // TODO: - Change to Main.Coordinator.start()
@@ -112,6 +130,7 @@ class AppCoordinator: Coordinator<Void> {
         Task.detached {
             try await Resolver.resolve(WalletMetadataService.self).clear()
         }
+        wasOnboardingShown = true
 
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
