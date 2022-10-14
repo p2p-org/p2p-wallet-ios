@@ -94,17 +94,17 @@ extension ConfirmReceivingBitcoin {
 
                     // CASE 1: User logged in using web3auth
                     if userWalletManager.isUserLoggedInUsingWeb3 {
-                        let payableWallets = try await renBTCStatusService.getPayableWallets()
-                        accountStatusSubject.accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
-                        payableWalletsSubject.accept(payableWallets)
-                        payingWalletSubject.accept(payableWallets.first)
+                        accountStatusSubject.accept(.freeCreationAvailable)
+                        payableWalletsSubject.accept([])
+                        payingWalletSubject.accept(nil)
                     }
 
                     // CASE 2: User logged in using seed phrase
                     else {
-                        accountStatusSubject.accept(.freeCreationAvailable)
-                        payableWalletsSubject.accept([])
-                        payingWalletSubject.accept(nil)
+                        let payableWallets = try await renBTCStatusService.getPayableWallets()
+                        accountStatusSubject.accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
+                        payableWalletsSubject.accept(payableWallets)
+                        payingWalletSubject.accept(payableWallets.first)
                     }
 
                 } catch {
