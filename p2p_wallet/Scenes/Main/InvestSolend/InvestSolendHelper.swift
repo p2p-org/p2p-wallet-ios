@@ -14,6 +14,13 @@ enum InvestSolendHelper {
     /// - Returns: True if there is no action, otherwise false
     static func readyToStartAction(_ notificationService: NotificationService, _ currentAction: SolendAction?) -> Bool {
         if let currentAction = currentAction {
+            switch currentAction.status {
+            case .success, .failed(_):
+                return true
+            default:
+                break
+            }
+            
             // There is already running action
             switch currentAction.type {
             case .deposit:
