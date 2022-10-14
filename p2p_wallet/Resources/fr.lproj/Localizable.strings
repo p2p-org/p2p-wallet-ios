@@ -969,3 +969,6 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "P2P wallet's" = "Les portefeuilles P2P";
 "Use your social account to continue" = "Utilisez votre compte social pour continuer";
 "Looks like you already have a wallet with" = "On dirait que vous avez déjà un portefeuille avec";
+"Create address" = "Créer une adresse";
+"You’re going to create a public Bitcoin address that will be valid for the next **24 hours**. You still can hold and send Bitcoin without restrictions." = "Vous allez créer une adresse Bitcoin publique qui sera valide pour les prochaines **24 heures**.  Vous pouvez toujours conserver et envoyer des Bitcoins sans restrictions.";
+"It’s a **one-time address**, so if you send multiple transactions, your money will be lost." = "Il s'agit d'une **adresse unique**, donc si vous envoyez plusieurs transactions, votre argent sera perdu.";
