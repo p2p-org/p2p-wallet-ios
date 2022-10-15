@@ -14,6 +14,18 @@ class DepositSolendViewModel: ObservableObject {
     private let strategy: Strategy
     private let dataService: SolendDataService
     private let actionService: SolendActionService
+    private let feePayingStrategy: [Strategy: SolendFeePayingStrategy] = [
+        .deposit: DefaultSolendDepositFeePayingStrategy(
+            orca: Resolver.resolve(),
+            actionService: Resolver.resolve(),
+            wallets: Resolver.resolve()
+        ),
+        .withdraw: DefaultSolendWithdrawFeePayingStrategy(
+            orca: Resolver.resolve(),
+            actionService: Resolver.resolve(),
+            wallets: Resolver.resolve()
+        ),
+    ]
     private var subscriptions = Set<AnyCancellable>()
     private var market: [Invest] = []
 
@@ -46,7 +58,7 @@ class DepositSolendViewModel: ObservableObject {
     @Published var inputFiat: String = "0"
     @Published var fiat: Fiat = Defaults.fiat
     @Published var invest: Invest
-    @Published var depositFee: SolendDepositFee?
+    @Published var depositFee: SolendFeePaying?
     @Published var inputLamport: UInt64 = 0
     @Published var isButtonEnabled: Bool = false
     @Published var buttonText: String = L10n.enterTheAmount
@@ -131,7 +143,12 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ) { (symbol: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, deposits: [SolendUserDeposit]?) -> Invest? in
+            ) { (
+                symbol: String,
+                assets: [SolendConfigAsset]?,
+                marketInfo: [SolendMarketInfo]?,
+                deposits: [SolendUserDeposit]?
+            ) -> Invest? in
                 guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
                 return (
                     asset: asset,
@@ -173,7 +190,12 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.marketInfo,
                 dataService.deposits
             )
-            .map { (_: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
+            .map { (
+                _: String,
+                assets: [SolendConfigAsset]?,
+                marketInfo: [SolendMarketInfo]?,
+                userDeposits: [SolendUserDeposit]?
+            ) -> [Invest] in
                 guard let assets = assets else { return [] }
                 return assets.map { asset -> Invest in
                     (asset: asset,
@@ -250,7 +272,7 @@ class DepositSolendViewModel: ObservableObject {
                 }
                 self.inputLamport = inputLamport
             })
-            .map { [weak self] val -> AnyPublisher<SolendDepositFee?, Never> in
+            .map { [weak self] val -> AnyPublisher<SolendFeePaying?, Never> in
                 if self?.strategy == .withdraw {
                     return Just(nil).eraseToAnyPublisher()
                 }
@@ -268,43 +290,11 @@ class DepositSolendViewModel: ObservableObject {
                 .eraseToAnyPublisher()
             }
             .switchToLatest()
-            .sink(receiveValue: { [weak self] (fee: SolendDepositFee?) in
+            .sink(receiveValue: { [weak self] (fee: SolendFeePaying?) in
                 guard let self = self else { return }
                 self.loading = false
                 self.depositFee = fee
-                if let fee = fee {
-                    let (totalAmountLamports1, overflow1) = self.inputLamport.subtractingReportingOverflow(fee.fee)
-                    var (totalAmountLamports, overflow2) = totalAmountLamports1.subtractingReportingOverflow(fee.rent)
-                    // No min sum for now
-                    if overflow1 || overflow2 {
-                        totalAmountLamports = 0
-//                        self.hasError = true
-//                        self
-//                            .buttonText =
-//                            "MIN amount is \(self.amountFrom(lamports: fee.fee + fee.rent).tokenAmount(symbol: self.invest.asset.symbol))"
-//                        self.isButtonEnabled = false
-//                        return
-                    }
-                    let tokenAmount = self.amountFrom(lamports: totalAmountLamports)
-                    let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports))
-                    let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " (" + fiatAmount
-                        .fiatAmount(currency: self.fiat) + ")"
-                    self.feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
-                    self.detailItem.send(
-                        .init(
-                            amount: tokenAmount,
-                            fiatAmount: fiatAmount,
-                            transferFee: self.amountFrom(lamports: fee.fee),
-                            fiatTransferFee: self.tokenToAmount(amount: self.amountFrom(lamports: fee.fee)),
-                            fee: self.amountFrom(lamports: fee.rent),
-                            fiatFee: self.tokenToAmount(amount: self.amountFrom(lamports: fee.rent)),
-                            total: self.amountFrom(lamports: totalAmountLamports),
-                            fiatTotal: self.tokenToAmount(amount: self.amountFrom(lamports: totalAmountLamports)),
-                            symbol: self.invest.asset.symbol,
-                            feeSymbol: self.invest.asset.symbol
-                        )
-                    )
-                }
+                if let fee = fee { self.processFee(fee: fee) }
             })
             .store(in: &subscriptions)
 
@@ -340,6 +330,48 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     // MARK: -
+    
+    func processFee(fee: SolendFeePaying) {
+        // Fee
+        let transferFee = Double(fee.fee.transaction) / pow(10, Double(fee.decimals))
+        let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
+        
+        let rentFee = Double(fee.fee.accountBalances) / pow(10, Double(fee.decimals))
+        let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
+
+        // Total
+        var total: Lamports = self.inputLamport
+        var fiatTotal: Double = self.tokenToAmount(amount: self.amountFrom(lamports: total))
+        
+        if invest.asset.symbol == fee.symbol {
+            total = total + fee.fee.transaction + fee.fee.accountBalances
+            fiatTotal = self.tokenToAmount(amount: self.amountFrom(lamports: total))
+        } else {
+            fiatTotal = fiatTotal + fiatTransferFee + fiatRentFee
+        }
+        
+        // Text label
+        let tokenAmount = self.amountFrom(lamports: total)
+        let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: total))
+        let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " (" + fiatAmount
+            .fiatAmount(currency: self.fiat) + ")"
+        self.feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
+        
+        self.detailItem.send(
+            .init(
+                amount: tokenAmount,
+                fiatAmount: fiatAmount,
+                transferFee: transferFee,
+                fiatTransferFee: fiatTransferFee,
+                fee: rentFee,
+                fiatFee: fiatRentFee,
+                total: invest.asset.symbol == fee.symbol ? self.amountFrom(lamports: total) : nil,
+                fiatTotal: fiatTotal,
+                symbol: self.invest.asset.symbol,
+                feeSymbol: fee.symbol
+            )
+        )
+    }
 
     func maxAmount() -> Double {
         strategy == .deposit ? (currentWallet?.amount ?? 0) :
@@ -385,26 +417,13 @@ class DepositSolendViewModel: ObservableObject {
             await withdraw(lamports: lamports)
         }
     }
-    
-    private func calculateFeePayer(lamports: Lamports) -> SolendFeePayer? {
-        let tokenAccount: Wallet? = walletRepository
-            .getWallets()
-            .first(where: { $0.token.symbol == invest.asset.symbol })
-        let fee = (depositFee?.fee ?? 0) + (depositFee?.rent ?? 0)
-        
-        if
-            let tokenAccount = tokenAccount,
-            let address = tokenAccount.pubkey,
-            lamports + fee <= (tokenAccount.lamports ?? 0)
-        {
-            return .init(address: address, mint: tokenAccount.mintAddress)
-        } else {
-            return nil
-        }
-    }
 
     private func deposit(lamports: UInt64) async throws {
-        guard loading == false, lamports > 0 else { return }
+        guard
+            loading == false,
+            lamports > 0,
+            let depositFee = depositFee
+        else { return }
 
         notificationService
             .showInAppNotification(.done(L10n.SendingYourDepositToSolend.justWaitUntilItSDone
@@ -415,7 +434,7 @@ class DepositSolendViewModel: ObservableObject {
             try await actionService.deposit(
                 amount: lamports,
                 symbol: invest.asset.symbol,
-                feePayer: calculateFeePayer(lamports: lamports)
+                feePayer: depositFee.feePayer
             )
         } catch {
             debugPrint(error)
@@ -424,22 +443,24 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     private func withdraw(lamports: UInt64) async {
-        guard loading == false, lamports > 0 else { return }
+        guard
+            loading == false,
+            lamports > 0,
+            let depositFee = depositFee
+        else { return }
         notificationService
             .showInAppNotification(.done(L10n.WithdrawingYourFundsFromSolend.justWaitUntilItSDone
                     .replacingOccurrences(of: "\n", with: " ")))
-        
+
         let withdrawAmount = lamports == lamportFrom(amount: maxAmount()) ? UINT64_MAX : lamports
-        print(maxAmount)
-        print(withdrawAmount)
-        
+
         do {
             loading = true
             defer { loading = false }
             try await actionService.withdraw(
                 amount: withdrawAmount,
                 symbol: invest.asset.symbol,
-                feePayer: calculateFeePayer(lamports: 0)
+                feePayer: depositFee.feePayer
             )
         } catch {
             print(error)
@@ -447,13 +468,19 @@ class DepositSolendViewModel: ObservableObject {
         }
     }
 
-    private func calculateFee(inputInLamports: UInt64, symbol: String) -> AnyPublisher<SolendDepositFee, Error> {
+    private func calculateFee(inputInLamports: UInt64, symbol: String) -> AnyPublisher<SolendFeePaying, Error> {
         Deferred {
-            Future<SolendDepositFee, Error> { promise in
+            Future<SolendFeePaying, Error> { promise in
                 Task { [weak self] in
                     do {
                         guard let self = self else { promise(.failure(DepositSolendViewModelError.unknown)); return }
-                        let result = try await self.actionService.depositFee(amount: inputInLamports, symbol: symbol)
+                        let result = try await self.feePayingStrategy[self.strategy]!
+                            .calculate(
+                                amount: inputInLamports,
+                                symbol: symbol,
+                                mintAddress: self.invest.asset.mintAddress
+                            )
+                        print(result)
                         promise(.success(result))
                     } catch {
                         promise(.failure(error))
@@ -526,7 +553,7 @@ class DepositSolendViewModel: ObservableObject {
 }
 
 extension DepositSolendViewModel {
-    enum Strategy {
+    enum Strategy: Equatable {
         case deposit
         case withdraw
     }
