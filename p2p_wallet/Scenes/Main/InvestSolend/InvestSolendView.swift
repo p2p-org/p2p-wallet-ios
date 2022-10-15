@@ -63,7 +63,7 @@ struct InvestSolendView: View {
                             Spacer()
                         }
                     } else if let market = viewModel.invests {
-                        if !viewModel.apyLoaded {
+                        if viewModel.bannerError == .missingRate {
                             ratesError
                         }
                         ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in

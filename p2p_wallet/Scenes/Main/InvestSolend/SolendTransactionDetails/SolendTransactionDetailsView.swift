@@ -9,6 +9,7 @@ import Combine
 import KeyAppUI
 import SwiftSVG
 import SwiftUI
+import Solend
 
 struct SolendTransactionDetailsView: View {
     @ObservedObject var viewModel: SolendTransactionDetailsViewModel
@@ -153,7 +154,7 @@ extension SolendTransactionDetailsView {
         let fiatTransferFee: Double?
         let fee: Double?
         let fiatFee: Double?
-        let total: Double
+        let total: Double?
         let fiatTotal: Double
         let symbol: String
         let feeSymbol: String
@@ -163,7 +164,11 @@ extension SolendTransactionDetailsView {
         }
 
         var formattedTotal: String {
-            "\(total.tokenAmount(symbol: symbol)) (~\(fiatTotal.fiatAmount()))"
+            if let total = total {
+                return "\(total.tokenAmount(symbol: symbol)) (~\(fiatTotal.fiatAmount()))"
+            } else {
+                return "~\(fiatTotal.fiatAmount())"
+            }
         }
 
         var formattedTransferFee: String {
