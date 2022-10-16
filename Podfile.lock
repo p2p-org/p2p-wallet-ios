@@ -443,7 +443,7 @@ CHECKOUT OPTIONS:
     :commit: a6c160de5b7719f9b8d5c3f618f314f710fef182
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
     :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
