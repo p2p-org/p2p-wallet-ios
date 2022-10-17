@@ -966,5 +966,5 @@ Reset the PIN or wait for %@.";
 "Purchasing on the Moonpay’s website" = "Purchasing on the Moonpay’s website";
 "Exchanging %@ → %@" = "Exchanging %@ → %@";
 "You need to buy USDC and Swap on Main Page" = "You need to buy USDC and Swap on Main Page";
-"You’re goung to buy" = "You’re goung to buy";
 "You first need to buy %@ and then swap for %@ on the Main Page" = "You first need to buy %@ and then swap for %@ on the Main Page";
+"You’re going to buy %@" = "You’re going to buy %@";

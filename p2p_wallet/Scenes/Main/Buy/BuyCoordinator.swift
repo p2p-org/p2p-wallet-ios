@@ -34,6 +34,7 @@ final class BuyCoordinator: Coordinator<Void> {
         let result = PassthroughSubject<Void, Never>()
         let viewModel = BuyViewModel(defaultToken: defaultToken)
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
+        viewController.title = "Buy"
         viewController.hidesBottomBarWhenPushed = true
         if navigationController == nil {
             navigationController = UINavigationController(rootViewController: viewController)
@@ -53,7 +54,6 @@ final class BuyCoordinator: Coordinator<Void> {
             }
         }
 
-        analyticsManager
         analyticsManager
             .log(event: AmplitudeEvent
                 .buyScreenOpened(lastScreen: context == .fromHome ? "Main_Screen" : "Token_Screen"))
