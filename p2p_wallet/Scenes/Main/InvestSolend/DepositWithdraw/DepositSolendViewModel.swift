@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 import Combine
 import FeeRelayerSwift
 import Foundation
