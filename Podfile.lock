@@ -11,6 +11,9 @@ PODS:
   - AppAuth/Core (1.6.0)
   - AppAuth/ExternalUserAgent (1.6.0):
     - AppAuth/Core
+  - AppsFlyerFramework (6.8.1):
+    - AppsFlyerFramework/Main (= 6.8.1)
+  - AppsFlyerFramework/Main (6.8.1)
   - BECollectionView (1.0.0):
     - BECollectionView_Core
     - RxCocoa (~> 6.5.0)
@@ -231,6 +234,7 @@ PODS:
 DEPENDENCIES:
   - Action (= 5.0.0)
   - AnalyticsManager (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
+  - AppsFlyerFramework
   - BECollectionView (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Combine (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
   - BECollectionView_Core (from `https://github.com/bigearsenal/BECollectionView.git`, branch `master`)
@@ -289,6 +293,7 @@ SPEC REPOS:
     - Action
     - Amplitude
     - AppAuth
+    - AppsFlyerFramework
     - CocoaDebug
     - CombineCocoa
     - CryptoSwift
@@ -492,6 +497,7 @@ SPEC CHECKSUMS:
   Amplitude: c25a44ad72b84e684fcf67c478c1fb5c95e286a3
   AnalyticsManager: 8c141df84886ab377bab4e662b9ebe26c1ea8509
   AppAuth: 8fca6b5563a5baef2c04bee27538025e4ceb2add
+  AppsFlyerFramework: a664325124485223296354b4eec335f5340a6df8
   BECollectionView: 43168463a4e95065f7856ac8d148e3eb1e77b808
   BECollectionView_Combine: f2f203853b4dfe83b5fd97998d6787857b641a12
   BECollectionView_Core: 439e92310adb5a8deab08cc7af508cc31ed6a4f6
@@ -566,6 +572,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: d66dd96fb7ed0d604cf0b16011c5cd7c4ee89cb6
+PODFILE CHECKSUM: e7feedb8867d31f22fcce80bc9c6a5aee8d1dcd6
 
 COCOAPODS: 1.11.3
