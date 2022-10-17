@@ -76,6 +76,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
 
         let feeCalculator: FeeCalculator?
         let payingFeeToken: FeeRelayerSwift.TokenAccount?
+        let signers: [Account]
 
         // CASE 1: User is paying for renBTC creation
         if let address = address,
@@ -86,6 +87,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
                 address: try PublicKey(string: address),
                 mint: try PublicKey(string: mint)
             )
+            signers = [account]
         }
 
         // CASE 2: Free renBTC creation
@@ -97,6 +99,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             }
             feeCalculator = RenBTCFreeFeeCalculator()
             payingFeeToken = nil
+            signers = []
         }
 
         // preparing process
@@ -109,7 +112,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
                     payer: feePayer
                 ),
             ],
-            signers: [account],
+            signers: signers,
             feePayer: feePayer,
             feeCalculator: feeCalculator
         )

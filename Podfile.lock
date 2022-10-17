@@ -208,7 +208,7 @@ PODS:
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
-  - SolanaSwift (2.5.1):
+  - SolanaSwift (2.5.2):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -240,7 +240,7 @@ DEPENDENCIES:
   - CombineCocoa (= 0.4.0)
   - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Down (from `https://github.com/p2p-org/Down.git`)
-  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
+  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `feature/free_renbtc_creation`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
@@ -365,7 +365,7 @@ EXTERNAL SOURCES:
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :branch: master
+    :branch: feature/free_renbtc_creation
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :branch: master
@@ -439,7 +439,7 @@ CHECKOUT OPTIONS:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :commit: 4b6143533153f5c9b37f50027cc5ce8bbf3fc60a
+    :commit: 8f6f2f0c600fd7bfb41ac99a86b3f98761dafc04
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
@@ -481,7 +481,7 @@ CHECKOUT OPTIONS:
     :commit: ba0ad6cb0ecb69d7e1796f5437791be4d4d00b60
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: a6c160de5b7719f9b8d5c3f618f314f710fef182
+    :commit: 596dab76f1e82f8e6c5d6b64534d989b2ba47f69
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
     :commit: ba0ad6cb0ecb69d7e1796f5437791be4d4d00b60
@@ -552,7 +552,7 @@ SPEC CHECKSUMS:
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
   SkeletonView: f5b099c708e42a278079a12bcaaf71c303be65a3
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: c35067e8faf40d57e37f6a31d1f6d7a079ab53a2
+  SolanaSwift: 05fd2b591117c8c0b4fe7b03bcde80374fe7e56d
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
@@ -566,6 +566,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: d66dd96fb7ed0d604cf0b16011c5cd7c4ee89cb6
+PODFILE CHECKSUM: 66f6a41c814220bf29975318281f5f998b891bf5
 
 COCOAPODS: 1.11.3
