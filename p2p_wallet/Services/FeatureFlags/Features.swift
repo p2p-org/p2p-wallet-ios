@@ -17,4 +17,8 @@ public extension Feature {
     static let mockedTKeyFacade = Feature(rawValue: "mockedTKeyFacade")
     static let mockedDeviceShare = Feature(rawValue: "mockedDeviceShare")
     static let simulatedSocialError = Feature(rawValue: "simulatedSocialError")
+
+    // MARK: - Solana tracking
+
+    static let solanaNegativeStatus = Feature(rawValue: "solana_negative_status_enabled")
 }
