@@ -1,4 +1,3 @@
-// swiftlint:disable file_length
 import AnalyticsManager
 import Combine
 import Foundation
