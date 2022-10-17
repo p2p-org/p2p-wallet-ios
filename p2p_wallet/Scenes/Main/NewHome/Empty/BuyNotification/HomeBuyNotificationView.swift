@@ -13,12 +13,13 @@ struct HomeBuyNotificationView: View {
             buttonTapped: buttonTapped
         ) {
             VStack(alignment: .center, spacing: 24) {
-                Text(L10n.youReGoungToBuy + " \(destinationSymbol)")
+                Text(L10n.youReGoingToBuy(destinationSymbol))
                     .fontWeight(.bold)
                     .apply(style: .title1)
                     .multilineTextAlignment(.center)
                 Text(L10n.youFirstNeedToBuyAndThenSwapForOnTheMainPage(sourceSymbol, destinationSymbol))
                     .apply(style: .title3)
+                    .minimumScaleFactor(0.5)
                     .multilineTextAlignment(.center)
                 HomeBuyTips(sourceSymbol: sourceSymbol, destinationSymbol: destinationSymbol)
             }
@@ -117,6 +118,7 @@ struct HomeBuyTips: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(L10n.buyingAsTheBaseCurrency(sourceSymbol))
                         .apply(style: .text1)
+                        .minimumScaleFactor(0.9)
                         .foregroundColor(Color(Asset.Colors.night.color))
 
                     Text(L10n.purchasingOnTheMoonpaySWebsite)

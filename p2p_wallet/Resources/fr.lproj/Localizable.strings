@@ -976,3 +976,4 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "You need to buy USDC and Swap on Main Page" = "Vous devez acheter USDC et Swap sur la page principale";
 "You’re goung to buy" = "Vous allez acheter";
 "You first need to buy %@ and then swap for %@ on the Main Page" = "Vous devez d'abord acheter %@ puis échanger contre %@ sur la page principale";
+"You’re going to buy %@" = "Vous allez acheter %@";

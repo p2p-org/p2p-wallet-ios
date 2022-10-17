@@ -23,7 +23,7 @@ final class HomeEmptyViewModel: ObservableObject {
     let topUp = PassthroughSubject<Void, Never>()
     let topUpCoin = PassthroughSubject<Token, Never>()
 
-    private var _popularCoins: [Token] = [.nativeSolana, .usdc, .renBTC, .eth, .usdt]
+    private var _popularCoins: [Token] = [.usdc, .nativeSolana, .renBTC, .eth, .usdt]
     var popularCoins: [PopularCoin] {
         _popularCoins.map { token in
             PopularCoin(
@@ -148,7 +148,7 @@ extension HomeEmptyViewModel {
         } else if token == .renBTC {
             return L10n.bitcoin
         }
-        return token.symbol
+        return token.name
     }
 
     func image(for token: Token) -> UIImage {

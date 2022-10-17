@@ -208,7 +208,7 @@ PODS:
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
-  - SolanaSwift (2.5.1):
+  - SolanaSwift (2.5.2):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -481,7 +481,7 @@ CHECKOUT OPTIONS:
     :commit: ba0ad6cb0ecb69d7e1796f5437791be4d4d00b60
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 115c65eda81b42e423025c070706303e5ac0818d
+    :commit: 596dab76f1e82f8e6c5d6b64534d989b2ba47f69
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
     :commit: ba0ad6cb0ecb69d7e1796f5437791be4d4d00b60
@@ -552,7 +552,7 @@ SPEC CHECKSUMS:
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
   SkeletonView: f5b099c708e42a278079a12bcaaf71c303be65a3
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: c35067e8faf40d57e37f6a31d1f6d7a079ab53a2
+  SolanaSwift: 05fd2b591117c8c0b4fe7b03bcde80374fe7e56d
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
   SwiftGen: 1366a7f71aeef49954ca5a63ba4bef6b0f24138c
