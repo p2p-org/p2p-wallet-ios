@@ -15,7 +15,7 @@ enum InvestSolendHelper {
     static func readyToStartAction(_ notificationService: NotificationService, _ currentAction: SolendAction?) -> Bool {
         if let currentAction = currentAction {
             switch currentAction.status {
-            case .success, .failed(_):
+            case .success, .failed:
                 return true
             default:
                 break
