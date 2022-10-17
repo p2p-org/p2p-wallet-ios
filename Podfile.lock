@@ -183,7 +183,7 @@ PODS:
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
-  - SolanaSwift (2.5.1):
+  - SolanaSwift (2.5.2):
     - LoggerSwift (~> 1.0.2)
     - secp256k1.swift (~> 0.1.0)
     - Task_retrying (~> 1.0.3)
@@ -380,7 +380,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -395,10 +395,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -407,10 +407,10 @@ CHECKOUT OPTIONS:
     :commit: e5bb3640b3b7556fe0753d2e0e4a9c9476a3e69c
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JSBridge:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: 85b19f738d0afab2c9dcdf36bd69f1d4caadfa9d
@@ -419,13 +419,13 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: c7668f4ec4055780cf7854dc220a9c57ce3de410
@@ -437,16 +437,16 @@ CHECKOUT OPTIONS:
     :git: https://github.com/getsentry/sentry-cocoa.git
     :tag: 7.18.1
   SolanaPricesAPIs:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: a6c160de5b7719f9b8d5c3f618f314f710fef182
+    :commit: 596dab76f1e82f8e6c5d6b64534d989b2ba47f69
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: a040a2568a401d2c5679b71b6a7d5cfcd285d582
+    :commit: c938b06a4c4f243905371ac0be88df17ab1e6613
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -507,7 +507,7 @@ SPEC CHECKSUMS:
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
   SkeletonView: f5b099c708e42a278079a12bcaaf71c303be65a3
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
-  SolanaSwift: c35067e8faf40d57e37f6a31d1f6d7a079ab53a2
+  SolanaSwift: 05fd2b591117c8c0b4fe7b03bcde80374fe7e56d
   Solend: ab24addcf64b5f689574f113c3ffd40ca0382c40
   SubviewAttachingTextView: 4b6e2d07bc4200f1d030887ead5c705200d105d1
   SwiftFormat: e40542bcf76fdaa006d0dc26a9ca8278ca028d76
@@ -521,6 +521,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: df42003c37a7ca9dd9cdd0611e061c758f0a9bb7
+PODFILE CHECKSUM: 161c80b1b6dbc47f81e6356bd3afb93ef577755a
 
 COCOAPODS: 1.11.3
