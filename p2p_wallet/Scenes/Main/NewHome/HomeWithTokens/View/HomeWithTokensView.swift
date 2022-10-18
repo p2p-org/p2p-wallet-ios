@@ -55,6 +55,9 @@ struct HomeWithTokensView: View {
                 scrollAnimationIsEnded = false
             }
         }
+        .onAppear {
+            viewModel.viewAppeared()
+        }
     }
 
     private var header: some View {
