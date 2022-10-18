@@ -36,7 +36,7 @@ class RemoteConfigWarmupProcess: WarmupProcess {
         }
 
         let currentEndpoints = APIEndPoint.definedEndpoints
-        if Environment.current != .release {
+        #if !RELEASE
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
             settings.minimumFetchInterval = 0
@@ -58,7 +58,7 @@ class RemoteConfigWarmupProcess: WarmupProcess {
                     timer.cancel()
                 }
             }
-        } else {
+        #else
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
                     primaryFetcher: RemoteConfig.remoteConfig(),
@@ -72,7 +72,7 @@ class RemoteConfigWarmupProcess: WarmupProcess {
                     timer.cancel()
                 }
             }
-        }
+        #endif
 
         Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
             .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
