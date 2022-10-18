@@ -969,3 +969,7 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "P2P wallet's" = "Les portefeuilles P2P";
 "Use your social account to continue" = "Utilisez votre compte social pour continuer";
 "Looks like you already have a wallet with" = "On dirait que vous avez déjà un portefeuille avec";
+"PIN code" = "Code PIN";
+"Your current PIN code" = "Votre code PIN actuel";
+"Create your new PIN code" = "Créez votre nouveau code PIN";
+"Confirm your new PIN code" = "Confirmez votre nouveau code PIN";
