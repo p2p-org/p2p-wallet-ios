@@ -25,19 +25,19 @@ struct AboutSolendView: View {
             ) {
                 AboutSolendSlideView(
                     image: .whatIsSolendFirst,
+                    title: L10n.easyWayToInvest,
                     subtitle: L10n
-                        .SolendIsTheMostScalableDeFiLendingProtocolWhichAllowsToEarnInterestAndBorrowAssetsWithTheLowestFee
-                        .thatSWhyWeIntegrateIt
+                        .solendIsOneOfTheMostScalableFastestAndLowestFeeDeFiLendingProtocolThatAllowsYouToEarnInterestOnYourAssets
                 )
                 AboutSolendSlideView(
                     image: .whatIsSolendSecond,
-                    subtitle: L10n.depositWithInterestDepositUSDTOrUSDCAndGetYourGuaranteedYieldOnIt
+                    title: L10n.earnInterestOnYourCrypto,
+                    subtitle: L10n.WeProvideYouWithThePossibilityToUseSecureAndTrustedProtocols.depositUSDTAndUSDCToEarnInterest
                 )
                 AboutSolendSlideView(
                     image: .whatIsSolendThird,
-                    subtitle: L10n
-                        .ControlYourAssetsLowRisksAllYourAssetsAreUnderYourControl
-                        .instantWithdrawalWithAllRewards
+                    title: L10n.yourCryptoIsUnderControl,
+                    subtitle: L10n.keepControlOfYourAssetsWithInstantWithdrawalsAtAnyTime
                 )
             }
             .padding(.top, 16)
@@ -67,5 +67,5 @@ struct AboutSolendView: View {
 // MARK: - View Height
 
 extension AboutSolendView {
-    var viewHeight: CGFloat { 514 }
+    var viewHeight: CGFloat { 543 }
 }
