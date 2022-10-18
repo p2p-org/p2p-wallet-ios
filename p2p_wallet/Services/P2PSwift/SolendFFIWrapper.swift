@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Foundation
-import P2pSdk
+import KeyappSdk
 import P2PSwift
 import SolanaSwift
 
@@ -14,12 +14,19 @@ internal struct SolendResponse<Success: Codable>: Codable {
 
 public class SolendFFIWrapper: Solend {
     private static let concurrentQueue = DispatchQueue(label: "SolendSDK", attributes: .concurrent)
+    private var runtime: UnsafeMutablePointer<Runtime>?
 
-    public init() {}
+    public init() {
+        runtime = spawn_runtime(3, 3)
+    }
+    
+    deinit {
+        drop_runtime(runtime)
+    }
 
     public func getConfig(environment: SolendEnvironment) async throws -> SolendConfig {
         // Fetch
-        let jsonResult: String = try await execute { get_solend_config(environment.rawValue) }
+        let jsonResult: String = try await execute { get_solend_config(&self.runtime, environment.rawValue) }
         print(jsonResult)
 
         // Decode
@@ -40,7 +47,7 @@ public class SolendFFIWrapper: Solend {
 
     public func getCollateralAccounts(rpcURL: String, owner: String) async throws -> [SolendCollateralAccount] {
         // Fetch
-        let jsonResult: String = try await execute { get_solend_collateral_accounts(rpcURL, owner) }
+        let jsonResult: String = try await execute { get_solend_collateral_accounts(&self.runtime, rpcURL, owner) }
 
         // Decode
         struct Success: Codable {
@@ -63,7 +70,7 @@ public class SolendFFIWrapper: Solend {
         pool: String
     ) async throws -> [(token: SolendSymbol, marketInfo: SolendMarketInfo)] {
         let jsonResult: String = try await execute {
-            get_solend_market_info(symbols.joined(separator: ","), pool)
+            get_solend_market_info(&self.runtime, symbols.joined(separator: ","), pool)
         }
 
         // Decode
@@ -130,7 +137,7 @@ public class SolendFFIWrapper: Solend {
 
     public func getUserDeposits(owner: String, poolAddress: String) async throws -> [SolendUserDeposit] {
         let jsonResult: String = try await execute {
-            get_solend_user_deposits(owner, poolAddress)
+            get_solend_user_deposits(&self.runtime, owner, poolAddress)
         }
 
         struct Success: Codable {
@@ -157,7 +164,7 @@ public class SolendFFIWrapper: Solend {
         poolAddress: String
     ) async throws -> SolendUserDeposit {
         let jsonResult: String = try await execute {
-            get_solend_user_deposit_by_symbol(owner, symbol, poolAddress)
+            get_solend_user_deposit_by_symbol(&self.runtime, owner, symbol, poolAddress)
         }
 
         struct Success: Codable {
@@ -185,7 +192,7 @@ public class SolendFFIWrapper: Solend {
         tokenSymbol: SolendSymbol
     ) async throws -> SolendDepositFee {
         let jsonResult: String = try await execute {
-            get_solend_deposit_fees(rpcUrl, owner, tokenAmount, tokenSymbol)
+            get_solend_deposit_fees(&self.runtime, rpcUrl, owner, tokenAmount, tokenSymbol)
         }
 
         let response = try JSONDecoder().decode(
@@ -219,6 +226,7 @@ public class SolendFFIWrapper: Solend {
 
         let jsonResult: String = try await execute {
             create_solend_deposit_transactions(
+                &self.runtime,
                 solanaRpcUrl,
                 relayProgramId,
                 amount,
@@ -269,6 +277,7 @@ public class SolendFFIWrapper: Solend {
 
         let jsonResult: String = try await execute {
             create_solend_withdraw_transactions(
+                &self.runtime,
                 solanaRpcUrl,
                 relayProgramId,
                 amount,

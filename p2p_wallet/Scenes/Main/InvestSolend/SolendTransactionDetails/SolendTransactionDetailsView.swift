@@ -9,6 +9,7 @@ import Combine
 import KeyAppUI
 import SwiftSVG
 import SwiftUI
+import Solend
 
 struct SolendTransactionDetailsView: View {
     @ObservedObject var viewModel: SolendTransactionDetailsViewModel
@@ -51,11 +52,11 @@ struct SolendTransactionDetailsView: View {
                     )
                     cell(
                         title: L10n.transferFee,
-                        state: .model(model.formattedTransferFee, free: model.transferFee == nil)
+                        state: .model(model.formattedTransferFee, free: model.transferFee == 0)
                     )
                     cell(
                         title: viewModel.strategy == .withdraw ? L10n.withdrawalFee : L10n.depositFees,
-                        state: .model(model.formattedFee, free: model.fee == nil)
+                        state: .model(model.formattedFee, free: model.fee == 0)
                     )
                     cell(
                         title: L10n.total,
@@ -153,7 +154,7 @@ extension SolendTransactionDetailsView {
         let fiatTransferFee: Double?
         let fee: Double?
         let fiatFee: Double?
-        let total: Double
+        let total: Double?
         let fiatTotal: Double
         let symbol: String
         let feeSymbol: String
@@ -163,7 +164,11 @@ extension SolendTransactionDetailsView {
         }
 
         var formattedTotal: String {
-            "\(total.tokenAmount(symbol: symbol)) (~\(fiatTotal.fiatAmount()))"
+            if let total = total {
+                return "\(total.tokenAmount(symbol: symbol)) (~\(fiatTotal.fiatAmount()))"
+            } else {
+                return "~\(fiatTotal.fiatAmount())"
+            }
         }
 
         var formattedTransferFee: String {
@@ -205,8 +210,8 @@ struct SolendTransactionDetailsView_Previews: PreviewProvider {
                         model: .init(
                             amount: 521,
                             fiatAmount: 322,
-                            transferFee: 2,
-                            fiatTransferFee: 3,
+                            transferFee: 0,
+                            fiatTransferFee: 0,
                             fee: 4,
                             fiatFee: 5,
                             total: 6,
