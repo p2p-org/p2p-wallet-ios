@@ -1,6 +1,0 @@
-
-module  P2pSdk {
-	header "p2p_sdk.h"
-	export *
-}
-
