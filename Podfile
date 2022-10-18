@@ -23,6 +23,7 @@ def key_app_kit
     "Onboarding",
     "JSBridge",
     "CountriesAPI",
+    "KeyAppKitCore"
   ]
 
   if $keyAppKitPath
