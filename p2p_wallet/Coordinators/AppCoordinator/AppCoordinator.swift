@@ -24,6 +24,7 @@ class AppCoordinator: Coordinator<Void> {
 
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
+    @Injected var createNameService: CreateNameService
 
     // MARK: - Properties
 
@@ -39,6 +40,7 @@ class AppCoordinator: Coordinator<Void> {
     override init() {
         super.init()
         defer { Task { await appEventHandler.delegate = self } }
+        bind()
     }
 
     // MARK: - Methods
@@ -195,5 +197,18 @@ class AppCoordinator: Coordinator<Void> {
     private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
         window?.rootViewController?.view.hideLoadingIndicatorView()
         window?.animate(newRootViewController: vc)
+    }
+
+    private func bind() {
+        createNameService.transactionDetails
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] result in
+                if result.isSuccess {
+                    guard let view = self?.window?.rootViewController?.view else { return }
+                    SnackBar(title: "🎉", icon: nil, text: L10n.nameWasBooked).show(in: view)
+                } else {
+                    self?.notificationService.showDefaultErrorNotification()
+                }
+            }.store(in: &subscriptions)
     }
 }

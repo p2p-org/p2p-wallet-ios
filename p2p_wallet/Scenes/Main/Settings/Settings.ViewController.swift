@@ -34,7 +34,7 @@ extension Settings {
                     // Acount section
                     SectionView(title: L10n.profile) {
                         // Profile
-                        if available(.onboardingUsernameEnabled) || viewModel.getUsername() != nil {
+                        if viewModel.isCreateNameEnabled {
                             CellView(
                                 icon: .profileIcon,
                                 title: UILabel(text: L10n.username.onlyUppercaseFirst()),

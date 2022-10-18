@@ -63,8 +63,7 @@ private extension CreateUsernameView {
                 .textStyle()
                 .padding(.top, 16)
 
-            Text(L10n.YourUsernameWillBeUsedToSendAndReceiveCryptoWithYourFriendsOnKeyApp
-                .theNameCannotBeChanged)
+            Text(L10n.receiveAndSendCryptocurrenciesInKeyApp)
                 .font(.system(size: UIFont.fontSize(of: .text3), weight: .regular))
                 .textStyle()
                 .padding(.top, 12)
@@ -98,10 +97,11 @@ private extension CreateUsernameView {
                 style: .inverted,
                 size: .large,
                 isLoading: viewModel.isLoading,
-                onPressed: { [weak viewModel] in
-                    viewModel?.createUsername.send()
-                }
+                onPressed: {}
             )
+                .onTapGesture {
+                    viewModel.createUsername.send()
+                }
                 .frame(height: 56)
                 .disabled(viewModel.status != .available)
         }
@@ -115,6 +115,7 @@ private extension CreateUsernameView {
                 configuration: { textField in
                     textField.font = UIFont.font(of: .title3)
                     textField.textColor = Asset.Colors.night.color
+                    textField.autocapitalizationType = .none
                 }
             )
                 .fixedSize(horizontal: false, vertical: true)
