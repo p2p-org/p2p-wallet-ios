@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 import Combine
 import KeyAppUI
+import NameService
 import SwiftUI
 import UIKit
 
@@ -47,6 +48,12 @@ final class CreateUsernameCoordinator: Coordinator<Void> {
 
         viewModel.requireSkip.sink { [unowned self] in
             self.subject.send(())
+            self.subject.send(completion: .finished)
+        }.store(in: &subscriptions)
+
+        viewModel.transactionCreated.sink { [weak self] in
+            self?.subject.send(())
+            self?.subject.send(completion: .finished)
         }.store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
