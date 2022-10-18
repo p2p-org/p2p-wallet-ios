@@ -59,6 +59,7 @@ extension DebugMenuViewModel {
 
 extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
+        case solanaNegativeStatus
         case newSettings
 
         case mockedApiGateway
@@ -67,6 +68,7 @@ extension DebugMenuViewModel {
 
         var title: String {
             switch self {
+            case .solanaNegativeStatus: return "Solana Negative Status"
             case .newSettings: return "New Settings"
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
@@ -76,6 +78,7 @@ extension DebugMenuViewModel {
 
         var feature: Feature {
             switch self {
+            case .solanaNegativeStatus: return .solanaNegativeStatus
             case .newSettings: return .settingsFeature
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade
