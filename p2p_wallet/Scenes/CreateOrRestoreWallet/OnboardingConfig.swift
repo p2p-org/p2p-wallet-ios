@@ -24,7 +24,7 @@ class OnboardingConfig: ObservableObject {
 
     private init() {
         switch Environment.current {
-        case .release, .test:
+        case .release:
             torusEndpoint = String.secretConfig("TORUS_ENDPOINT_PROD") ?? ""
             torusGoogleVerifier = String.secretConfig("TORUS_GOOGLE_VERIFIER_PROD") ?? ""
             torusGoogleSubVerifier = String.secretConfig("TORUS_GOOGLE_SUB_VERIFIER_PROD") ?? ""
