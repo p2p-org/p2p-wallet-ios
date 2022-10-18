@@ -40,6 +40,17 @@ struct DebugMenuView: View {
                     TextFieldRow(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
                 }
 
+                Section(header: Text("Solana endpoint")) {
+                    Picker(
+                        "URL",
+                        selection: $viewModel.selectedEndpoint
+                    ) {
+                        ForEach(viewModel.solanaEndpoints, id: \.self) {
+                            Text($0.address)
+                        }
+                    }
+                }
+
                 Section(header: Text("Mocked device share")) {
                     Toggle("Enabled", isOn: $onboardingConfig.isDeviceShareMocked)
                         .valueChanged(value: onboardingConfig.isDeviceShareMocked) { newValue in

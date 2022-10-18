@@ -19,6 +19,7 @@ final class SettingsViewModel: ObservableObject {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var userWalletManager: UserWalletManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
+    @Injected private var metadataService: WalletMetadataService
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
         didSet {
@@ -131,7 +132,11 @@ final class SettingsViewModel: ObservableObject {
 
     func updateNameIfNeeded() {
         name = storageName != nil ? storageName!.withNameServiceDomain() : L10n.notReserved
-        isNameEnabled = storageName == nil ? available(.onboardingUsernameEnabled) : true
+        if storageName == nil {
+            isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata != nil
+        } else {
+            isNameEnabled = true
+        }
     }
 }
 
