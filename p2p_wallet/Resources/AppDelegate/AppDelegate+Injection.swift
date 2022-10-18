@@ -392,6 +392,17 @@ extension Resolver: ResolverRegistering {
         }
         .implements(Banners.Service.self)
         .scope(.shared)
+
+        // Solana tracker
+        register {
+            SolanaTrackerImpl(
+                solanaNegativeStatusFrequency: nil,
+                solanaNegativeStatusPercent: nil,
+                solanaNegativeStatusTimeFrequency: nil
+            )
+        }
+        .implements(SolanaTracker.self)
+        .scope(.shared)
     }
 }
 
