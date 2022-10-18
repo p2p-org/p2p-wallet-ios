@@ -15,17 +15,17 @@ final class SolendTutorialViewModel: BaseViewModel {
             SolendTutorialContentData(
                 image: .solendTutorial1,
                 title: L10n.letYourCryptoWorkForYou,
-                subtitle: L10n.growYourPortfolioByReceivingRewardsUpTo("15")
+                subtitle: L10n.DepositYourCrypto.earnUpToOn("6%", "USD")
             ),
             SolendTutorialContentData(
                 image: .solendTutorial2,
-                title: L10n.noLockUpPeriods,
-                subtitle: L10n.withdrawYourFundsWithAllRewardsAtAnyTime
+                title: L10n.convenientAndFlexible,
+                subtitle: L10n.youCanWithdrawRewardsOrFundsAtAnyTime
             ),
             SolendTutorialContentData(
                 image: .solendTutorial3,
                 title: L10n.superheroProtection,
-                subtitle: L10n.asAllYourFundsAreInsuredYouDonTNeedToWorryAnymore
+                subtitle: L10n.weProvideYouWithThePossibilityToUseSecureAndTrustedProtocols
             ),
         ]
 
