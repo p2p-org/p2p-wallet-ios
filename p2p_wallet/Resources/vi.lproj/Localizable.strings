@@ -978,3 +978,5 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Easy swap with credit card or bank transfer" = "Trao đổi dễ dàng với thẻ tín dụng hoặc chuyển khoản ngân hàng";
 "Send for free" = "Gửi miễn phí";
 "USDC, USDT, BTC, ETH, SOL and other cryptocurrencies with lightspeed and zero fees" = "USDC, USDT, BTC, ETH, SOL và các loại tiền điện tử khác với tốc độ ánh sáng và không tính phí";
+"Never lose access to your funds" = "Không bao giờ mất quyền truy cập vào tiền của bạn";
+"Only you have access to your funds. You can recover your wallet using your phone or email" = "Chỉ bạn mới có quyền truy cập vào quỹ của mình.  Bạn có thể khôi phục ví của mình bằng điện thoại hoặc email";
