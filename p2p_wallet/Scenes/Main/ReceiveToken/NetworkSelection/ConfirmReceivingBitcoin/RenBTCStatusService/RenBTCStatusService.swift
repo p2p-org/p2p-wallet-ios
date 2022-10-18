@@ -137,7 +137,7 @@ class RenBTCStatusService: RenBTCStatusServiceType {
             )
         )
 
-        try await solanaAPIClient.waitForConfirmation(signature: tx, ignoreStatus: true)
+//        try await solanaAPIClient.waitForConfirmation(signature: tx, ignoreStatus: true)
 
         walletsRepository.batchUpdate { wallets in
             guard let string = wallets.first(where: { $0.isNativeSOL })?.pubkey,
