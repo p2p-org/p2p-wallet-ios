@@ -7,9 +7,10 @@
 
 import Combine
 import FirebaseRemoteConfig
+import SolanaSwift
 import SwiftyUserDefaults
 
-final class DebugMenuViewModel: ObservableObject {
+final class DebugMenuViewModel: BaseViewModel {
     @Published var networkLoggerVisible = isShown {
         didSet {
             updateNetworkLoggerState()
@@ -17,8 +18,14 @@ final class DebugMenuViewModel: ObservableObject {
     }
 
     @Published var features: [FeatureItem]
+    @Published var solanaEndpoints: [APIEndPoint] = [
+        .init(address: "https://api.mainnet-beta.solana.com", network: .mainnetBeta),
+        .init(address: "https://api.testnet.solana.com", network: .testnet),
+        .init(address: "https://api.devnet.solana.com", network: .devnet),
+    ]
+    @Published var selectedEndpoint = Defaults.apiEndPoint
 
-    init() {
+    override init() {
         features = Menu.allCases
             .map {
                 FeatureItem(
@@ -27,6 +34,11 @@ final class DebugMenuViewModel: ObservableObject {
                     isOn: available($0.feature)
                 )
             }
+        super.init()
+
+        $selectedEndpoint.sink { endpoint in
+            Defaults.apiEndPoint = endpoint
+        }.store(in: &subscriptions)
     }
 
     func setFeature(_ feature: Feature, isOn: Bool) {
@@ -83,4 +95,8 @@ extension DebugMenuViewModel {
             }
         }
     }
+}
+
+extension APIEndPoint: Identifiable {
+    public var id: String { address }
 }

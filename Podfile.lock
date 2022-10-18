@@ -148,6 +148,7 @@ PODS:
   - Introspect (0.1.4)
   - JazziconSwift (1.1.0)
   - JSBridge (1.0.0)
+  - KeyAppKitCore (1.0.0)
   - KeyAppKitLogger (1.0.7)
   - KeyAppUI (0.1.2):
     - BEPureLayout
@@ -157,7 +158,9 @@ PODS:
   - ListPlaceholder (1.5)
   - LoggerSwift (1.0.2)
   - NameService (1.0.0):
+    - KeyAppKitCore
     - KeyAppKitLogger
+    - SolanaSwift
   - nanopb (2.30909.0):
     - nanopb/decode (= 2.30909.0)
     - nanopb/encode (= 2.30909.0)
@@ -166,6 +169,7 @@ PODS:
   - Onboarding (1.0.0):
     - CryptoSwift (~> 1.6.0)
     - JSBridge
+    - KeyAppKitCore
     - SolanaSwift (~> 2)
   - OrcaSwapSwift (2.1.1):
     - SolanaSwift (~> 2)

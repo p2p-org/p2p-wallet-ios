@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import Foundation
 import LocalAuthentication
 import RenVMSwift
@@ -38,6 +39,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
     var isBiometryEnabledDriver: Driver<Bool> { get }
     var isBiometryAvailableDriver: Driver<Bool> { get }
     var appVersion: String { get }
+    var isCreateNameEnabled: Bool { get }
 
     func getUserAddress() -> String?
     func getUsername() -> String?
@@ -78,6 +80,7 @@ extension Settings {
         @Injected private var pricesService: PricesServiceType
         @Injected private var renVMService: LockAndMintService
         @Injected private var imageSaver: ImageSaverType
+        @Injected private var metadataService: WalletMetadataService
 
         // MARK: - Properties
 
@@ -172,6 +175,10 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     var logoutAlertSignal: Signal<Void> {
         logoutAlertSubject.asSignal()
+    }
+
+    var isCreateNameEnabled: Bool {
+        metadataService.metadata != nil && available(.onboardingUsernameEnabled) || getUsername() != nil
     }
 
     func getUserAddress() -> String? {
