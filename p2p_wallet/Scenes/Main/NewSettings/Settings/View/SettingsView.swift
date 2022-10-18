@@ -29,9 +29,9 @@ struct SettingsView: View {
                 securitySection
                 appearanceSection
                 appVersionSection
-                #if !RELEASE
+                if Environment.current != .release {
                     debugSection
-                #endif
+                }
             }
             .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
         }
@@ -53,6 +53,10 @@ struct SettingsView: View {
                         }
                     }
                 }
+            )
+            Button(
+                action: { viewModel.showView(.support) },
+                label: { cellView(image: .settingsSupport, title: L10n.support) }
             )
             Button(
                 action: {
