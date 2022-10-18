@@ -11,6 +11,7 @@ import UIKit
 
 final class SettingsCoordinator: Coordinator<Void> {
     @Injected private var pinStorage: PincodeStorageType
+    @Injected private var helpLauncher: HelpCenterLauncher
 
     private let navigationController: UINavigationController
 
@@ -31,6 +32,8 @@ final class SettingsCoordinator: Coordinator<Void> {
                 case .username:
                     let vc = Settings.NewUsernameViewController(viewModel: Settings.ViewModel())
                     navigationController.pushViewController(vc, animated: true)
+                case .support:
+                    helpLauncher.launch()
                 case let .reserveUsername(userAddress):
                     let vm = ReserveName.ViewModel(
                         kind: .independent,
