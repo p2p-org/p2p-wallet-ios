@@ -132,6 +132,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             AppsFlyerLib.shared().isDebug = true
             AppsFlyerLib.shared().useUninstallSandbox = true
         #endif
+        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
+        AppsFlyerLib.shared().start()
         if #available(iOS 14, *) {
             ATTrackingManager.requestTrackingAuthorization { status in
                 switch status {
@@ -172,8 +174,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY") ?? ""
         AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID") ?? ""
         AppsFlyerLib.shared().deepLinkDelegate = self
-        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
-        AppsFlyerLib.shared().start()
     }
 
     func setupLoggers() {
