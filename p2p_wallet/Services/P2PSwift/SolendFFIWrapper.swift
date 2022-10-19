@@ -240,7 +240,7 @@ public class SolendFFIWrapper: Solend {
         needToUseRelay: Bool,
         payInFeeToken: SolendPayFeeInToken?,
         feePayerAddress: String
-    ) async throws -> [SolanaSerializedTransaction] {
+    ) async throws -> [SolanaRawTransaction] {
         var payInFeeTokenJson = ""
         if let payInFeeToken = payInFeeToken {
             payInFeeTokenJson = String(data: try JSONEncoder().encode(payInFeeToken), encoding: .utf8)!
@@ -291,7 +291,7 @@ public class SolendFFIWrapper: Solend {
         needToUseRelay: Bool,
         payInFeeToken: SolendPayFeeInToken?,
         feePayerAddress: String
-    ) async throws -> [SolanaSerializedTransaction] {
+    ) async throws -> [SolanaRawTransaction] {
         var payInFeeTokenJson = ""
         if let payInFeeToken = payInFeeToken {
             payInFeeTokenJson = String(data: try JSONEncoder().encode(payInFeeToken), encoding: .utf8)!
