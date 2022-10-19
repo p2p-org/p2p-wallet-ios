@@ -135,9 +135,9 @@ public class SolendFFIWrapper: Solend {
         throw SolendError.noResult
     }
 
-    public func getUserDeposits(owner: String, poolAddress: String) async throws -> [SolendUserDeposit] {
+    public func getUserDeposits(owner: String, pool: String) async throws -> [SolendUserDeposit] {
         let jsonResult: String = try await execute {
-            get_solend_user_deposits(&self.runtime, owner, poolAddress)
+            get_solend_user_deposits(&self.runtime, owner, pool)
         }
 
         struct Success: Codable {
@@ -188,11 +188,12 @@ public class SolendFFIWrapper: Solend {
     public func getDepositFee(
         rpcUrl: String,
         owner: String,
+        feePayer: String,
         tokenAmount: UInt64,
         tokenSymbol: SolendSymbol
     ) async throws -> SolendDepositFee {
         let jsonResult: String = try await execute {
-            get_solend_deposit_fees(&self.runtime, rpcUrl, owner, tokenAmount, tokenSymbol)
+            get_solend_deposit_fees(&self.runtime, rpcUrl, owner, feePayer, tokenAmount, tokenSymbol)
         }
 
         let response = try JSONDecoder().decode(
