@@ -409,13 +409,13 @@ class DepositSolendViewModel: ObservableObject {
         }
 
         if strategy == .deposit {
-            try await deposit(lamports: lamports)
+            await deposit(lamports: lamports)
         } else {
             await withdraw(lamports: lamports)
         }
     }
 
-    private func deposit(lamports: UInt64) async throws {
+    private func deposit(lamports: UInt64) async {
         guard
             loading == false,
             lamports > 0,
