@@ -6,6 +6,7 @@
 //
 
 import Resolver
+import SolanaSwift
 import SwiftUI
 
 struct DebugMenuView: View {
@@ -41,12 +42,11 @@ struct DebugMenuView: View {
                 }
 
                 Section(header: Text("Solana endpoint")) {
-                    Picker(
-                        "URL",
-                        selection: $viewModel.selectedEndpoint
-                    ) {
-                        ForEach(viewModel.solanaEndpoints, id: \.self) {
-                            Text($0.address)
+                    Text("Selected: \(viewModel.selectedEndpoint?.address ?? "Unknown")")
+                    Picker("URL", selection: $viewModel.selectedEndpoint) {
+                        Text("Unknown").tag(nil as APIEndPoint?)
+                        ForEach(viewModel.solanaEndpoints, id: \.self) { endpoint in
+                            Text(endpoint.address).tag(endpoint as APIEndPoint?)
                         }
                     }
                 }

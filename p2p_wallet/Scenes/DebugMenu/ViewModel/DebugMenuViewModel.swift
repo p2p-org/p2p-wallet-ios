@@ -18,12 +18,8 @@ final class DebugMenuViewModel: BaseViewModel {
     }
 
     @Published var features: [FeatureItem]
-    @Published var solanaEndpoints: [APIEndPoint] = [
-        .init(address: "https://api.mainnet-beta.solana.com", network: .mainnetBeta),
-        .init(address: "https://api.testnet.solana.com", network: .testnet),
-        .init(address: "https://api.devnet.solana.com", network: .devnet),
-    ]
-    @Published var selectedEndpoint = Defaults.apiEndPoint
+    @Published var solanaEndpoints: [APIEndPoint]
+    @Published var selectedEndpoint: APIEndPoint?
 
     override init() {
         features = Menu.allCases
@@ -34,9 +30,20 @@ final class DebugMenuViewModel: BaseViewModel {
                     isOn: available($0.feature)
                 )
             }
+
+        let solanaEndpoints: [APIEndPoint] = [
+            .init(address: "https://api.mainnet-beta.solana.com", network: .mainnetBeta),
+            .init(address: "https://solana-api.projectserum.com", network: .mainnetBeta),
+            .init(address: "https://p2p.rpcpool.com", network: .mainnetBeta),
+            .init(address: "https://api.devnet.solana.com", network: .devnet),
+        ]
+        self.solanaEndpoints = solanaEndpoints
+        selectedEndpoint = solanaEndpoints.first(where: { $0 == Defaults.apiEndPoint })
+
         super.init()
 
         $selectedEndpoint.sink { endpoint in
+            guard let endpoint = endpoint else { return }
             Defaults.apiEndPoint = endpoint
         }.store(in: &subscriptions)
     }
