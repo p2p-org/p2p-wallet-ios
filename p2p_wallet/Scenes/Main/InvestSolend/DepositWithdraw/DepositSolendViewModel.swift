@@ -356,13 +356,13 @@ class DepositSolendViewModel: ObservableObject {
         
         self.detailItem.send(
             .init(
-                amount: tokenAmount,
-                fiatAmount: fiatAmount,
+                amount: self.amountFrom(lamports: inputLamport),
+                fiatAmount: self.tokenToAmount(amount: self.amountFrom(lamports: inputLamport)),
                 transferFee: transferFee,
                 fiatTransferFee: fiatTransferFee,
                 fee: rentFee,
                 fiatFee: fiatRentFee,
-                total: invest.asset.symbol == fee.symbol ? self.amountFrom(lamports: total) : nil,
+                total: invest.asset.symbol == fee.symbol ? tokenAmount : nil,
                 fiatTotal: fiatTotal,
                 symbol: self.invest.asset.symbol,
                 feeSymbol: fee.symbol
