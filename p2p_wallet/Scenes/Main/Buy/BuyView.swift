@@ -32,8 +32,7 @@ struct BuyView: View {
                     HStack {
                         Spacer()
                         icon
-                            .padding(.top, 13)
-                            .padding(.trailing, 3)
+                            .padding(.top, 12)
                         Spacer()
                     }
                     input
@@ -77,7 +76,10 @@ struct BuyView: View {
     }
 
     var icon: some View {
-        Image("buy-icon")
+        Image(uiImage: UIImage.buyIcon)
+            .resizable()
+            .scaledToFit()
+            .frame(height: 48)
     }
 
     var input: some View {
@@ -295,12 +297,9 @@ struct BuyView: View {
     private var bottomActionsView: some View {
         TextButtonView(
             title: viewModel.buttonItem.title,
-            titleBinding: $viewModel.buttonItem.title,
             style: .inverted,
             size: .large,
-            trailing: UIImage.buyWallet,
-            trailingBinding: $viewModel.buttonItem.icon,
-            isEnabled: $viewModel.buttonItem.enabled
+            trailing: viewModel.buttonItem.icon
         ) { [weak viewModel] in
             viewModel?.buyButtonTapped()
         }
@@ -309,6 +308,7 @@ struct BuyView: View {
         .padding(.top, 20)
         .padding(.bottom, max(60, SafeAreaInsetsKey.defaultValue.bottom))
         .background(Color(Asset.Colors.night.color))
+        .disabled(!viewModel.buttonItem.enabled)
         .cornerRadius(24, antialiased: false)
     }
 }

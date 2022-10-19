@@ -66,7 +66,8 @@ class HomeViewModel: ObservableObject {
                 self.initStateFinished = true
                 self.analyticsManager.setIdentifier(AmplitudeIdentifier.userHasPositiveBalance(positive: amount > 0))
                 if let amount = amount {
-                    self.analyticsManager.setIdentifier(AmplitudeIdentifier.userAggregateBalance(balance: amount))
+                    let formatted = round(amount * 100) / 100.0
+                    self.analyticsManager.setIdentifier(AmplitudeIdentifier.userAggregateBalance(balance: formatted))
                 }
             }
         })
