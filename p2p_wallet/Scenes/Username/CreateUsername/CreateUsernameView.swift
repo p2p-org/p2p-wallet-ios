@@ -93,7 +93,7 @@ private extension CreateUsernameView {
     var bottomContainer: some View {
         BottomActionContainer {
             TextButtonView(
-                title: viewModel.status == .unavailable ? L10n.theNameIsNotAvailable : L10n.createName,
+                title: viewModel.actionText,
                 style: .inverted,
                 size: .large,
                 isLoading: viewModel.isLoading,

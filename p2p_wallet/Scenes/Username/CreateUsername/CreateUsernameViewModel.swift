@@ -25,6 +25,7 @@ final class CreateUsernameViewModel: BaseViewModel {
     @Published var domain: String = .nameServiceDomain
     @Published var isTextFieldFocused: Bool = false
     @Published var statusText = L10n.from6Till15Characters👌
+    @Published var actionText = L10n.createName
     @Published var status = CreateUsernameStatus.initial
     @Published var isLoading: Bool = false
     @Published var isSkipEnabled: Bool = false
@@ -51,11 +52,15 @@ private extension CreateUsernameViewModel {
             switch currentStatus {
             case .initial:
                 self.statusText = L10n.from6Till15Characters👌
+                self.actionText = L10n.createName
             case .available:
                 self.statusText = L10n.nameIsAvailable👌
+                self.actionText = L10n.createName
             case .unavailable:
+                self.actionText = L10n.theNameIsNotAvailable
                 self.statusText = L10n.😓NameIsNotAvailable
             case .processing:
+                self.actionText = L10n.waitNameCheckingIsGoing
                 self.statusText = ""
             }
         }.store(in: &subscriptions)
