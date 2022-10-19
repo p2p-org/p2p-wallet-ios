@@ -225,8 +225,14 @@ enum AmplitudeEvent: AnalyticsEvent {
     case tokenChosen(tokenName: String)
 
     // Buy
-    case buyCurrencyChanged(fromCurrencyToCurrency: String)
-    case buyCoinChanged(fromCoinToCoin: String)
+    case buyCurrencyChanged(
+        fromCurrency: String,
+        toCurrency: String
+    )
+    case buyCoinChanged(
+        fromCoin: String,
+        toCoin: String
+    )
     case buyTotalShowed
     case buyChosenMethodPayment(type: String)
     case buyButtonPressed(
@@ -239,12 +245,19 @@ enum AmplitudeEvent: AnalyticsEvent {
         typeBankTransfer: String?
     )
     case buyStatusTransaction(success: Bool)
-    case buyScreenShowed(fromScreen: String)
-    case moonPayWindowClosed
+    case buyScreenOpened(lastScreen: String)
+    case moonpayWindowClosed
 
     // General
     case appOpened(sourceOpen: AppOpenedContext)
     case actionButtonClick
+
+    // Onboarding
+    case onboardingStartButton
+    case createConfirmPin(result: Bool)
+    case restoreWalletButton
+    case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
+    case restoreConfirmPin(result: Bool)
 }
 
 // MARK: - AppOpenedContext

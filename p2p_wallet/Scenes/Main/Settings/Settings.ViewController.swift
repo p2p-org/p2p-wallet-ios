@@ -5,12 +5,16 @@
 //  Created by Chung Tran on 11/10/2021.
 //
 
+import Combine
 import Foundation
 import Resolver
+import SwiftUI
 import UIKit
 
 extension Settings {
     class ViewController: p2p_wallet.BaseViewController {
+        var subscriptions = [AnyCancellable]()
+
         let viewModel: SettingsViewModelType
 
         init(viewModel: SettingsViewModelType) {
@@ -51,7 +55,7 @@ extension Settings {
                         }
                         // Sign out button
                         BECenter {
-                            UILabel(text: L10n.signOut, textColor: .ff3b30)
+                            UILabel(text: L10n.logOut, textColor: .ff3b30)
                         }
                         .frame(height: 60)
                         .onTap { [unowned self] in viewModel.showLogoutAlert() }
@@ -59,6 +63,13 @@ extension Settings {
 
                     // Security & network section
                     SectionView(title: L10n.securityNetwork) {
+                        // Recovery kit
+                        CellView(
+                            icon: .recoveryKitIcon,
+                            title: UILabel(text: "Recovery kit")
+                        )
+                            .onTap { [unowned self] in viewModel.navigate(to: .recoveryKit) }
+
                         // Backup
                         CellView(
                             icon: .backupIcon,
@@ -173,9 +184,9 @@ extension Settings {
             viewModel.logoutAlertSignal
                 .emit(onNext: { [weak self] in
                     self?.showAlert(
-                        title: L10n.areYouSureYouWantToSignOut,
-                        message: L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount,
-                        buttonTitles: [L10n.signOut, L10n.stay],
+                        title: L10n.doYouWantToLogOut,
+                        message: L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn,
+                        buttonTitles: [L10n.logOut, L10n.stay],
                         highlightedButtonIndex: 1,
                         destroingIndex: 0
                     ) { [weak self] index in
@@ -224,23 +235,32 @@ extension Settings {
                 let vc = ConfigureSecurityViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .changePincode:
-                let createPincodeVC = WLCreatePincodeVC(
-                    createPincodeTitle: L10n.setUpANewWalletPIN,
-                    confirmPincodeTitle: L10n.confirmPINCode
-                )
-
-                createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
-                    self?.viewModel.savePincode(String(pincode))
-                    createPincodeVC?.dismiss(animated: true) {
-                        Resolver.resolve(NotificationService.self)
-                            .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
+                guard let navigationController = navigationController else { return }
+                let pincodeChangeCoordinator = PincodeChangeCoordinator(navVC: navigationController)
+                pincodeChangeCoordinator
+                    .start()
+                    .sink { _ in
+                        navigationController.popToViewController(ofClass: ViewController.self, animated: true)
                     }
-                }
-                createPincodeVC.onCancel = { [weak createPincodeVC] in
-                    createPincodeVC?.dismiss(animated: true, completion: nil)
-                }
+                    .store(in: &subscriptions)
 
-                present(createPincodeVC, animated: true, completion: nil)
+            // let createPincodeVC = WLCreatePincodeVC(
+            //     createPincodeTitle: L10n.setUpANewWalletPIN,
+            //     confirmPincodeTitle: L10n.confirmPINCode
+            // )
+            //
+            // createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
+            //     self?.viewModel.savePincode(String(pincode))
+            //     createPincodeVC?.dismiss(animated: true) {
+            //         Resolver.resolve(NotificationService.self)
+            //             .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
+            //     }
+            // }
+            // createPincodeVC.onCancel = { [weak createPincodeVC] in
+            //     createPincodeVC?.dismiss(animated: true, completion: nil)
+            // }
+            //
+            // present(createPincodeVC, animated: true, completion: nil)
             case .language:
                 let vc = SelectLanguageViewController(viewModel: viewModel)
                 show(vc, sender: nil)
@@ -252,6 +272,12 @@ extension Settings {
                 present(vc, animated: true, completion: nil)
             case .accessToPhoto:
                 PhotoLibraryAlertPresenter().present(on: self)
+            case .recoveryKit:
+                guard let navigationController = navigationController else { return }
+                RecoveryKitCoordinator(navigationController: navigationController)
+                    .start()
+                    .sinkAsync {}
+                    .store(in: &subscriptions)
             }
         }
     }

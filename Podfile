@@ -4,9 +4,11 @@ platform :ios, '14.0'
 inhibit_all_warnings!
 
 # ENV Variables
+$teamID = ENV["APPLE_TEAM_ID"]
 $keyAppKitPath = ENV['KEY_APP_KIT']
 $keyAppUI = ENV['KEY_APP_UI']
 
+puts $teamID
 puts $keyAppKitPath
 puts $keyAppUI
 
@@ -18,6 +20,7 @@ def key_app_kit
     "Cache",
     "KeyAppKitLogger",
     "SolanaPricesAPIs",
+    "Onboarding",
     "JSBridge",
     "CountriesAPI",
     "P2PSwift",
@@ -58,45 +61,51 @@ target 'p2p_wallet' do
   pod 'SwiftLint'
   pod 'Periphery'
   pod 'SwiftFormat/CLI', '0.49.6'
+  pod 'ReachabilitySwift', '~> 5.0.0'
 
   # reactive
-  pod 'Action'
-  pod "RxAppState"
-  pod "RxGesture"
+  pod 'Action', '5.0.0'
+  pod 'RxAppState', '1.7.1'
+  pod 'RxGesture', '4.0.4'
   pod 'RxSwift', '6.5.0'
   pod 'RxCocoa', '6.5.0'
   pod 'RxConcurrency', :git => 'https://github.com/TrGiLong/RxConcurrency.git', :branch => 'main'
-  pod 'RxCombine'
+  pod 'RxCombine', '2.0.1'
+  pod 'CombineCocoa', '0.4.0'
 
   # Kits
-  pod 'KeychainSwift', '~> 19.0'
-  pod 'SwiftyUserDefaults', '~> 5.0'
-  pod 'Intercom', '~> 12.4.3'
+  pod 'KeychainSwift', '19.0.0'
+  pod 'SwiftyUserDefaults', '5.3.0'
+  pod 'Intercom', '12.4.3'
   pod 'Down', :git => 'https://github.com/p2p-org/Down.git'
 
   # ui
   if $keyAppUI
     pod "KeyAppUI", :path => $keyAppUI
   else
-    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'develop'
+    pod 'KeyAppUI', :git => 'git@github.com:p2p-org/KeyAppUI.git', :branch => 'main'
   end
 
-  pod 'Resolver'
-  pod 'TagListView', '~> 1.0'
-  pod 'UITextView+Placeholder'
-  pod 'SubviewAttachingTextView'
-  pod 'JazziconSwift', '~> 1.1.0'
-  pod 'Kingfisher'
+  pod 'Resolver', '1.5.0'
+  pod 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
+  pod 'TagListView', '1.4.1' # TODO: remove in futur 'UITextView+Placeholder', '1.4.0' # TODO: remove in future
+  pod 'SubviewAttachingTextView', '1.5.0' # TODO: remove in future
+  pod 'JazziconSwift', :git => 'https://github.com/p2p-org/JazziconSwift.git', :branch => 'master'
+  pod 'Kingfisher', '~> 7.3.2'
   pod 'ListPlaceholder', :git => 'https://github.com/p2p-org/ListPlaceholder.git', :branch => 'custom_gradient_color'
   pod 'GT3Captcha-iOS'
-  pod 'SkeletonUI'
-  pod 'SwiftSVG', '~> 2.0'
-  pod 'Introspect'
+  pod 'PhoneNumberKit', '3.3.4'
+  pod 'SkeletonUI', :git => 'https://github.com/p2p-org/SkeletonUI.git', :branch => 'master'
+  pod 'SwiftSVG', '2.3.2'
+  pod 'Introspect', '0.1.4'
 
   # Firebase
   pod 'Firebase/Analytics'
   pod 'Firebase/Crashlytics'
   pod 'Firebase/RemoteConfig'
+
+  pod 'SwiftNotificationCenter'
+  pod 'GoogleSignIn'
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
@@ -118,6 +127,10 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
+
+      if $teamID
+        config.build_settings["DEVELOPMENT_TEAM"] = $teamID
+      end
     end
 
     if target.name == 'BECollectionView_Combine' || target.name == 'BECollectionView' || target.name == 'BECollectionView_Core'

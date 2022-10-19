@@ -2,16 +2,18 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NAME_SERVICE_ENDPOINT</key>
-	<string>$(NAME_SERVICE_ENDPOINT)</string>
-	<key>SENTRY_DSN</key>
-	<string>$(SENTRY_DSN)</string>
 	<key>AMPLITUDE_API_KEY</key>
 	<string>$(AMPLITUDE_API_KEY)</string>
+	<key>API_GATEWAY_DEV</key>
+	<string>$(API_GATEWAY_DEV)</string>
+	<key>API_GATEWAY_PROD</key>
+	<string>$(API_GATEWAY_PROD)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
+	<key>TORUS_NETWORK_PROD</key>
+	<string>$(TORUS_NETWORK_PROD)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -22,25 +24,71 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<key>TORUS_NETWORK_DEV</key>
+	<string>$(TORUS_NETWORK_DEV)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>GoogleSignInTest</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(GOOGLE_SIGN_IN_ID_PLIST_DEBUG)</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>GoogleSignInProd</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(GOOGLE_SIGN_IN_ID_PLIST_RELEASE)</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CRYPTO_COMPARE_API_KEY</key>
 	<string>$(CRYPTO_COMPARE_API_KEY)</string>
-	<key>FEE_RELAYER_STAGING_ENDPOINT</key>
-	<string>$(FEE_RELAYER_STAGING_ENDPOINT)</string>
 	<key>FEE_RELAYER_ENDPOINT</key>
 	<string>$(FEE_RELAYER_ENDPOINT)</string>
+	<key>FEE_RELAYER_STAGING_ENDPOINT</key>
+	<string>$(FEE_RELAYER_STAGING_ENDPOINT)</string>
+	<key>GOOGLE_SIGN_IN_ID_DEBUG</key>
+	<string>$(GOOGLE_SIGN_IN_ID_DEBUG)</string>
+	<key>GOOGLE_SIGN_IN_ID_RELEASE</key>
+	<string>$(GOOGLE_SIGN_IN_ID_RELEASE)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>TORUS_GOOGLE_VERIFIER_PROD</key>
+	<string>$(TORUS_GOOGLE_VERIFIER_PROD)</string>
+	<key>TORUS_APPLE_VERIFIER_DEV</key>
+	<string>$(TORUS_APPLE_VERIFIER_DEV)</string>
 	<key>MOONPAY_PRODUCTION_API_KEY</key>
 	<string>$(MOONPAY_PRODUCTION_API_KEY)</string>
 	<key>MOONPAY_STAGING_API_KEY</key>
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
+	<key>NAME_SERVICE_ENDPOINT</key>
+	<string>$(NAME_SERVICE_ENDPOINT)</string>
+	<key>TORUS_APPLE_VERIFIER_PROD</key>
+	<string>$(TORUS_APPLE_VERIFIER_PROD)</string>
+	<key>TORUS_GOOGLE_SUB_VERIFIER_PROD</key>
+	<string>$(TORUS_GOOGLE_SUB_VERIFIER_PROD)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>35.234.120.240:9090</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+			<key>beardict.net</key>
 			<dict>
 				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
@@ -54,19 +102,31 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>This is required for the app to authenticate user with TouchID or FaceID.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>This is required for the app to save generated QR codes or back up of your seed phrases to your photo library.</string>
+	<string>This is required for the app to save generated QR codes or back up of your seed phrases to your photo
+            library.
+        </string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This is required for the app to send photos</string>
 	<key>RPCPOOL_API_KEY</key>
 	<string>$(RPCPOOL_API_KEY)</string>
+	<key>SENTRY_DSN</key>
+	<string>$(SENTRY_DSN)</string>
 	<key>TEST_ACCOUNT_SEED_PHRASE</key>
 	<string>$(TEST_ACCOUNT_SEED_PHRASE)</string>
 	<key>TRANSAK_HOST_URL</key>
 	<string>$(TRANSAK_HOST_URL)</string>
+	<key>TORUS_ENDPOINT_DEV</key>
+	<string>$(TORUS_ENDPOINT_DEV)</string>
+	<key>TORUS_ENDPOINT_PROD</key>
+	<string>$(TORUS_ENDPOINT_PROD)</string>
 	<key>TRANSAK_PRODUCTION_API_KEY</key>
 	<string>$(TRANSAK_PRODUCTION_API_KEY)</string>
+	<key>TORUS_GOOGLE_VERIFIER_DEV</key>
+	<string>$(TORUS_GOOGLE_VERIFIER_DEV)</string>
 	<key>TRANSAK_STAGING_API_KEY</key>
 	<string>$(TRANSAK_STAGING_API_KEY)</string>
+	<key>TORUS_GOOGLE_SUB_VERIFIER_DEV</key>
+	<string>$(TORUS_GOOGLE_SUB_VERIFIER_DEV)</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Montserrat-Black.ttf</string>
@@ -99,7 +159,7 @@
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UIStatusBarStyle</key>
-	<string>UIStatusBarStyleLightContent</string>
+	<string>UIStatusBarStyleDarkContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

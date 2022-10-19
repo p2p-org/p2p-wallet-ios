@@ -75,14 +75,25 @@ final class BuyViewModel: ObservableObject {
                 BuyViewModel.defaultMinAmount
         )
 
+        var initTokenWasSelected = false
+        var initFiatWasSelected = false
+
         coordinatorIO.tokenSelected
             .sink { [unowned self] token in
+                let oldToken = self.token
                 self.token = token ?? self.token
-                analyticsManager.log(event: AmplitudeEvent.buyCoinChanged(fromCoinToCoin: self.token.symbol))
+                if initTokenWasSelected {
+                    analyticsManager.log(event: AmplitudeEvent.buyCoinChanged(
+                        fromCoin: oldToken.symbol,
+                        toCoin: self.token.symbol
+                    ))
+                }
+                initTokenWasSelected = true
             }
             .store(in: &subscriptions)
         coordinatorIO.fiatSelected
             .sink { [unowned self] fiat in
+                let oldFiat = self.fiat
                 self.fiat = fiat ?? self.fiat
                 Task {
                     if isGBPBankTransferEnabled, fiat != .gbp {
@@ -91,7 +102,13 @@ final class BuyViewModel: ObservableObject {
                         await setPaymentMethod(.card)
                     }
                 }
-                analyticsManager.log(event: AmplitudeEvent.buyCurrencyChanged(fromCurrencyToCurrency: self.fiat.code))
+                if initFiatWasSelected {
+                    analyticsManager.log(event: AmplitudeEvent.buyCurrencyChanged(
+                        fromCurrency: oldFiat.code,
+                        toCurrency: self.fiat.code
+                    ))
+                }
+                initFiatWasSelected = true
             }
             .store(in: &subscriptions)
 
@@ -212,7 +229,7 @@ final class BuyViewModel: ObservableObject {
     @MainActor func didSelectPayment(_ payment: PaymentTypeItem) {
         selectedPayment = payment.type
         setPaymentMethod(payment.type)
-        analyticsManager.log(event: AmplitudeEvent.buyChosenMethodPayment(type: payment.type.rawValue))
+        analyticsManager.log(event: AmplitudeEvent.buyChosenMethodPayment(type: payment.type.analyticName))
     }
 
     // MARK: -
@@ -306,7 +323,7 @@ final class BuyViewModel: ObservableObject {
             sumCoin: tokenAmount,
             currency: from.name,
             coin: to.name,
-            paymentMethod: selectedPayment.rawValue,
+            paymentMethod: selectedPayment.analyticName,
             bankTransfer: typeBankTransfer != nil,
             typeBankTransfer: typeBankTransfer
         ))
