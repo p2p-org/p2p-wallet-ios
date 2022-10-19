@@ -67,8 +67,7 @@ struct SolendTutorialView: View {
         TextButtonView(
             title: viewModel.isLastPage ? L10n.continue : L10n.next.uppercaseFirst,
             style: .primary,
-            size: .large,
-            isEnabled: .constant(true)
+            size: .large
         ) { [weak viewModel] in
             if viewModel?.isLastPage == true {
                 markAsReadAndDismiss()
