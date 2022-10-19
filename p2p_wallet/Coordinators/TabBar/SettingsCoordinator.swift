@@ -45,24 +45,12 @@ final class SettingsCoordinator: Coordinator<Void> {
                     let coordinator = RecoveryKitCoordinator(navigationController: navigationController)
                     coordinate(to: coordinator)
                 case .yourPin:
-                    let createPincodeVC = WLCreatePincodeVC(
-                        createPincodeTitle: L10n.setUpANewWalletPIN,
-                        confirmPincodeTitle: L10n.confirmPINCode
-                    )
-                    createPincodeVC.modalPresentationStyle = .fullScreen
-
-                    createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
-                        self?.pinStorage.save(pincode)
-                        createPincodeVC?.dismiss(animated: true) {
-                            Resolver.resolve(NotificationService.self)
-                                .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
-                        }
-                    }
-                    createPincodeVC.onCancel = { [weak createPincodeVC] in
-                        createPincodeVC?.dismiss(animated: true)
-                    }
-
-                    navigationController.present(createPincodeVC, animated: true)
+                    let coordinator = PincodeChangeCoordinator(navVC: navigationController)
+                    coordinate(to: coordinator)
+                        .sink(receiveValue: { [unowned self] _ in
+                            navigationController.popToRootViewController(animated: true)
+                        })
+                        .store(in: &subscriptions)
                 case .network:
                     let coordinator = NetworkCoordinator(navigationController: navigationController)
                     coordinate(to: coordinator)
