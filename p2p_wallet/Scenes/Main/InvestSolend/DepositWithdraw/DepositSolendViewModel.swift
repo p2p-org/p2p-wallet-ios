@@ -273,9 +273,6 @@ class DepositSolendViewModel: ObservableObject {
                 self.inputLamport = inputLamport
             })
             .map { [weak self] val -> AnyPublisher<SolendFeePaying?, Never> in
-                if self?.strategy == .withdraw {
-                    return Just(nil).eraseToAnyPublisher()
-                }
                 guard let lamports = self?.lamportFrom(amount: val),
                       let self = self,
                       lamports > 0,
