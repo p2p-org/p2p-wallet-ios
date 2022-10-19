@@ -9,6 +9,9 @@ typedef struct Runtime {
 
 char *greet(const char *name);
 
+/**
+ * C-interface for calling [keyapp_sdk::api::transfer_spl_token]
+ */
 char *transfer_spl_token(const char *relay_program_id,
                          const char *sender_token_account_address,
                          const char *recipient_address,
@@ -22,6 +25,9 @@ char *transfer_spl_token(const char *relay_program_id,
                          bool needs_create_recipient_token_account,
                          const char *fee_payer_address);
 
+/**
+ * C-interface for calling [keyapp_sdk::api::top_up]
+ */
 char *top_up(const char *relay_program_id,
              const char *user_source_token_account_address,
              const char *source_token_mint_address,
@@ -34,6 +40,9 @@ char *top_up(const char *relay_program_id,
              bool needs_create_user_relay_account,
              const char *fee_payer_address);
 
+/**
+ * C-interface for calling [keyapp_sdk::api::sign_transaction]
+ */
 char *sign_transaction(const char *transaction, const char *keypair, const char *blockhash);
 
 /**
@@ -92,8 +101,24 @@ char *get_solend_user_deposit_by_symbol(struct Runtime *const *runtime,
 char *get_solend_deposit_fees(struct Runtime *const *runtime,
                               const char *rpc_url,
                               const char *owner,
+                              const char *fee_payer,
                               uint64_t token_amount,
                               const char *token_symbol);
+
+/**
+ * C-interface for [keyapp_sdk::api::get_solend_withdraw_fees]
+ *
+ * # iOS
+ * For iOS team added another extra argument [tokio::runtime::Runtime] it can be created by
+ * [keyapp_sdk::runtime::spawn_runtime] and dropped by [keyapp_sdk::runtime::drop_runtime]
+ * Other arguments described in [keyapp_sdk::api::nonblocking::get_solend_collateral_accounts]
+ */
+char *get_solend_withdraw_fees(struct Runtime *const *runtime,
+                               const char *rpc_url,
+                               const char *owner,
+                               const char *fee_payer,
+                               uint64_t token_amount,
+                               const char *token_symbol);
 
 /**
  * IOS native FFI API for calling [keyapp_sdk::api::nonblocking::create_solend_deposit_transactions]
