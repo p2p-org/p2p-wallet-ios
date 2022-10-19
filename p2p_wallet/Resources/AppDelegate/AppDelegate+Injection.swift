@@ -200,14 +200,21 @@ extension Resolver: ResolverRegistering {
         }
         .implements(SwapFeeRelayer.self)
 
-        register {
-            FeeRelayerContextManagerImpl(
-                accountStorage: resolve(),
-                solanaAPIClient: resolve(),
-                feeRelayerAPIClient: resolve()
-            )
+        register { () -> FeeRelayerContextManager in
+            if FeeRelayConfig.shared.disableFeeTransaction {
+                return FeeRelayerContextManagerDisabledFreeTrxImpl(
+                    accountStorage: resolve(),
+                    solanaAPIClient: resolve(),
+                    feeRelayerAPIClient: resolve()
+                )
+            } else {
+                return FeeRelayerContextManagerImpl(
+                    accountStorage: resolve(),
+                    solanaAPIClient: resolve(),
+                    feeRelayerAPIClient: resolve()
+                )
+            }
         }
-        .implements(FeeRelayerContextManager.self)
 
         // PricesService
         register { PricesService() }

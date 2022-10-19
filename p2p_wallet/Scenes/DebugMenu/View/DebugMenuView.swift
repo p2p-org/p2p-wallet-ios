@@ -9,6 +9,7 @@ import SwiftUI
 
 struct DebugMenuView: View {
     @ObservedObject private var viewModel: DebugMenuViewModel
+    @ObservedObject private var feeRelayerConfig: FeeRelayConfig = .shared
 
     init(viewModel: DebugMenuViewModel) {
         self.viewModel = viewModel
@@ -29,6 +30,9 @@ struct DebugMenuView: View {
                             Text(viewModel.features[index].title)
                         }
                     }
+                }
+                Section(header: Text("Fee relayer")) {
+                    Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                 }
             }
             .navigationBarTitle("Debug Menu", displayMode: .inline)

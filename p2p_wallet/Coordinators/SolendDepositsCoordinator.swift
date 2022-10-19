@@ -36,7 +36,7 @@ final class SolendDepositsCoordinator: Coordinator<Void> {
                     initialStrategy: .withdraw
                 ))
         }.sink { [weak self] status in
-            if status == true, let savePoint = savePoint, actionService.getCurrentAction() != nil {
+            if status == true, let savePoint = savePoint {
                 self?.controller.popToViewController(savePoint, animated: true)
             }
         }.store(in: &subscriptions)

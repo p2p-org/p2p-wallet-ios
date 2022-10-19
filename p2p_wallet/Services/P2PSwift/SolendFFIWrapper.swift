@@ -191,13 +191,34 @@ public class SolendFFIWrapper: Solend {
         feePayer: String,
         tokenAmount: UInt64,
         tokenSymbol: SolendSymbol
-    ) async throws -> SolendDepositFee {
+    ) async throws -> SolendFee {
         let jsonResult: String = try await execute {
             get_solend_deposit_fees(&self.runtime, rpcUrl, owner, feePayer, tokenAmount, tokenSymbol)
         }
 
         let response = try JSONDecoder().decode(
-            SolendResponse<SolendDepositFee>.self,
+            SolendResponse<SolendFee>.self,
+            from: jsonResult.data(using: .utf8)!
+        )
+
+        if let error = response.error { throw SolendError.message(error) }
+        if let success = response.success { return success }
+        throw SolendError.noResult
+    }
+    
+    public func getWithdrawFee(
+        rpcUrl: String,
+        owner: String,
+        feePayer: String,
+        tokenAmount: UInt64,
+        tokenSymbol: SolendSymbol
+    ) async throws -> SolendFee {
+        let jsonResult: String = try await execute {
+            get_solend_withdraw_fees(&self.runtime, rpcUrl, owner, feePayer, tokenAmount, tokenSymbol)
+        }
+
+        let response = try JSONDecoder().decode(
+            SolendResponse<SolendFee>.self,
             from: jsonResult.data(using: .utf8)!
         )
 
