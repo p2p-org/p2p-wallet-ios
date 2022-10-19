@@ -14,15 +14,19 @@ struct StartView: View {
             VStack(spacing: .zero) {
                 if isShowing {
                     PagingView(
-                        index: $viewModel.currentDataIndex.animation(),
-                        maxIndex: viewModel.data.count - 1,
-                        fillColor: Color(Asset.Colors.night.color)
-                    ) {
-                        ForEach(viewModel.data, id: \.id) { data in
-                            OnboardingContentView(data: data)
+                        fillColor: Color(Asset.Colors.night.color),
+                        content: viewModel.data.map { data in
+                            PageContent {
+                                VStack {
+                                    Spacer()
+                                    OnboardingContentView(data: data)
+                                }
+                            }
                         }
-                    }
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+                    )
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                        .padding(.bottom, 32)
+                        .padding(.top, 60)
 
                     bottomActionsView
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
