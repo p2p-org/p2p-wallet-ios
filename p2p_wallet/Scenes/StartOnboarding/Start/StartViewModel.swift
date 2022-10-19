@@ -39,9 +39,8 @@ final class StartViewModel: BaseViewModel {
             ),
             OnboardingContentData(
                 image: .startTwo,
-                title: L10n.neverLoseYourFunds,
-                subtitle: L10n.OnlyYouHaveAccessToYourFunds.NobodyElse.YouCanRecoverYourWalletUsingYourPhoneOrEmail
-                    .noPaperBackupsNeeded
+                title: L10n.neverLoseAccessToYourFunds,
+                subtitle: L10n.OnlyYouHaveAccessToYourFunds.youCanRecoverYourWalletUsingYourPhoneOrEmail
             ),
             OnboardingContentData(
                 image: .startThree,
