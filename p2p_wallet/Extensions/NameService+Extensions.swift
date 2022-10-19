@@ -12,7 +12,7 @@ import Resolver
 extension NameServiceImpl {
     static let endpoint: String = {
         if Environment.current == .release {
-            return "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT")!)"
+            return "https://\(String.secretConfig("NAME_SERVICE_ENDPOINT_NEW")!)"
         }
         return "https://\(String.secretConfig("NAME_SERVICE_STAGING_ENDPOINT")!)"
     }()
