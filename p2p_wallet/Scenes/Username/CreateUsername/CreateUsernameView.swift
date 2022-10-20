@@ -145,7 +145,7 @@ private extension CreateUsernameView {
     }
 
     var skipButton: some View {
-        Button(L10n.skip.uppercaseFirst, action: viewModel.requireSkip.send)
+        Button(L10n.skip.uppercaseFirst, action: viewModel.close.send)
             .foregroundColor(mainColor)
     }
 }

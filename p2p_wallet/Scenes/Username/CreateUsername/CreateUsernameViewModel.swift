@@ -11,15 +11,13 @@ final class CreateUsernameViewModel: BaseViewModel {
 
     @Injected private var nameService: NameService
     @Injected private var notificationService: NotificationService
-    @Injected private var storage: AccountStorageType
     @Injected private var createNameService: CreateNameService
 
     // MARK: - Properties
 
-    let requireSkip = PassthroughSubject<Void, Never>()
+    let close = PassthroughSubject<Void, Never>()
     let createUsername = PassthroughSubject<Void, Never>()
     let clearUsername = PassthroughSubject<Void, Never>()
-    let transactionCreated = PassthroughSubject<Void, Never>()
 
     @Published var username: String = ""
     @Published var domain: String = .nameServiceDomain
@@ -74,32 +72,8 @@ private extension CreateUsernameViewModel {
         createUsername.sink { [weak self] in
             guard let self = self else { return }
             self.isLoading = true
-            Task {
-                do {
-                    guard let account = self.storage.account else {
-                        throw UndefinedNameServiceError.unknown
-                    }
-                    let result = try await self.nameService.create(
-                        name: self.username,
-                        publicKey: account.publicKey.base58EncodedString,
-                        privateKey: account.secretKey
-                    )
-                    self.isLoading = false
-                    self.createNameService.send(
-                        transaction: result.transaction,
-                        name: self.username,
-                        owner: account.publicKey.base58EncodedString
-                    )
-                    self.transactionCreated.send(())
-                } catch NameServiceError.invalidName {
-                    self.isLoading = false
-                    self.status = .initial
-                } catch {
-                    self.isLoading = false
-                    self.showUndefinedError()
-                    self.status = .initial
-                }
-            }
+            self.createNameService.create(username: self.username)
+            self.close.send(())
         }.store(in: &subscriptions)
 
         $username
@@ -111,6 +85,12 @@ private extension CreateUsernameViewModel {
                     return
                 }
                 self.status = .processing
+
+                guard self.isValid(username: currentUsername) else {
+                    self.status = .unavailable
+                    return
+                }
+
                 Task {
                     do {
                         let result = try await self.nameService.isNameAvailable(currentUsername)
@@ -120,6 +100,12 @@ private extension CreateUsernameViewModel {
                     }
                 }
             }.store(in: &subscriptions)
+    }
+
+    func isValid(username: String) -> Bool {
+        let regex = "[0-9a-z-]{6,15}"
+        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
+        return predicate.evaluate(with: username)
     }
 
     func showUndefinedError() {
