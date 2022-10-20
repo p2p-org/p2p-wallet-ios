@@ -100,6 +100,7 @@ final class SolendCoordinator: Coordinator<Void> {
     private func startPlaceholder() -> AnyPublisher<Void, Never> {
         let placeholderVC = SolendPlaceholderView().asViewController(withoutUIKitNavBar: false)
         navigationController.navigationBar.prefersLargeTitles = true
+        navigationController.navigationItem.largeTitleDisplayMode = .always
         navigationController.setViewControllers([placeholderVC], animated: false)
         return Empty(completeImmediately: false)
             .eraseToAnyPublisher()
