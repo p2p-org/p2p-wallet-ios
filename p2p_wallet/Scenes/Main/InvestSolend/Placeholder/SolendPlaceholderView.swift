@@ -10,14 +10,14 @@ struct SolendPlaceholderView: View {
     ]
     var body: some View {
         NavigationView {
-            VStack {
+            ScrollView {
                 VStack(spacing: 24) {
                     Image(uiImage: .solendPlaceholder)
                         .padding(.top, 24)
                     Group {
                         VStack(spacing: 10) {
                             ForEach(texts, id: \.self) { text in
-                                HStack(spacing: 8) {
+                                HStack(alignment: .top, spacing: 8) {
                                     Text("•")
                                         .apply(style: .text2)
                                     Text(text)
@@ -48,5 +48,6 @@ struct SolendPlaceholderView: View {
             }
         }
             .navigationBarTitle(L10n.earnOnYourFunds, displayMode: .large)
+            .navigationBarTitleDisplayMode(.large)
     }
 }
