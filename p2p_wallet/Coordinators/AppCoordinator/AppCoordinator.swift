@@ -202,8 +202,8 @@ class AppCoordinator: Coordinator<Void> {
     private func bind() {
         createNameService.transactionDetails
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] result in
-                if result.isSuccess {
+            .sink { [weak self] isSuccess in
+                if isSuccess {
                     guard let view = self?.window?.rootViewController?.view else { return }
                     SnackBar(title: "🎉", icon: nil, text: L10n.nameWasBooked).show(in: view)
                 } else {
