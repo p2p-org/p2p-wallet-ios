@@ -18,6 +18,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
     @Injected private var accountStorage: AccountStorageType
+    @Injected private var nameStorage: NameStorageType
     private let walletsRepository: WalletsRepository
 
     @Published var state = State.pending
@@ -58,9 +59,7 @@ class HomeViewModel: ObservableObject {
             guard let self = self else { return }
             if self.initStateFinished, state == .pending { return }
 
-            if let address = self.accountStorage.account?.publicKey.base58EncodedString.shortAddress {
-                self.address = address
-            }
+            self.updateAddressIfNeeded()
             self.state = state
             if state != .pending {
                 self.initStateFinished = true
@@ -89,13 +88,25 @@ class HomeViewModel: ObservableObject {
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
-        notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
+        if let name = nameStorage.getName(), !name.isEmpty {
+            clipboardManager.copyToClipboard(name)
+        } else {
+            clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
+        }
+        notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
         analyticsManager.log(event: AmplitudeEvent.mainCopyAddress)
     }
 
     func receive() {
         receiveClicked.send()
+    }
+
+    func updateAddressIfNeeded() {
+        if let name = nameStorage.getName(), !name.isEmpty {
+            address = name
+        } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
+            self.address = address
+        }
     }
 }
 
