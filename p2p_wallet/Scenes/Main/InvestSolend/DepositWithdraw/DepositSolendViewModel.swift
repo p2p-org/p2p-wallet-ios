@@ -130,7 +130,6 @@ class DepositSolendViewModel: ObservableObject {
         initialAsset: SolendConfigAsset,
         mocked: Bool = false
     ) throws {
-        NSLog("Hello world")
         self.strategy = strategy
         dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
         actionService = mocked ? SolendActionServiceMock() : Resolver.resolve(SolendActionService.self)
@@ -332,10 +331,10 @@ class DepositSolendViewModel: ObservableObject {
     
     func processFee(fee: SolendFeePaying) {
         // Fee
-        let transferFee = Double(fee.fee.transaction) / pow(10, Double(fee.decimals))
+        let transferFee = Double(fee.fee.transaction) / pow(fee.decimals, Double(fee.decimals))
         let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
         
-        let rentFee = Double(fee.fee.accountBalances) / pow(10, Double(fee.decimals))
+        let rentFee = Double(fee.fee.accountBalances) / pow(fee.decimals, Double(fee.decimals))
         let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
 
         // Total
