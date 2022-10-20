@@ -13,13 +13,14 @@ import Resolver
 import RxCombine
 import SolanaSwift
 
-final class SettingsViewModel: ObservableObject {
+final class SettingsViewModel: BaseViewModel {
     @Injected private var nameStorage: NameStorageType
     @Injected private var solanaStorage: SolanaAccountStorage
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var userWalletManager: UserWalletManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
     @Injected private var metadataService: WalletMetadataService
+    @Injected private var createNameService: CreateNameService
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
         didSet {
@@ -55,9 +56,11 @@ final class SettingsViewModel: ObservableObject {
         "\(appVersion)\(Environment.current != .release ? ("(" + Bundle.main.buildVersionNumber + ")" + " " + Environment.current.description) : "")"
     }
 
-    init() {
+    override init() {
+        super.init()
         setUpAuthType()
         updateNameIfNeeded()
+        bind()
     }
 
     private func setUpAuthType() {
@@ -137,6 +140,15 @@ final class SettingsViewModel: ObservableObject {
         } else {
             isNameEnabled = true
         }
+    }
+
+    private func bind() {
+        createNameService.transactionDetails
+            .sink { [weak self] isSuccess in
+                guard let self = self, isSuccess else { return }
+                self.updateNameIfNeeded()
+            }
+            .store(in: &subscriptions)
     }
 }
 

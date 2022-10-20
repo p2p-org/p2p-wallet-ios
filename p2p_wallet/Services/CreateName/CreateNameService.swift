@@ -15,6 +15,7 @@ final class CreateNameServiceImpl: CreateNameService {
 
     @Injected private var solanaAPIClient: SolanaAPIClient
     @Injected private var nameCache: NameServiceCacheType
+    @Injected private var nameStorage: NameStorageType
     @Injected private var nameService: NameService
     @Injected private var storage: AccountStorageType
 
@@ -39,6 +40,7 @@ final class CreateNameServiceImpl: CreateNameService {
                     configs: RequestConfiguration(encoding: "base64")!
                 )
 
+                nameStorage.save(name: username)
                 nameCache.save(username, for: account.publicKey.base58EncodedString)
                 transactionDetailsSubject.send(true)
             } catch {
