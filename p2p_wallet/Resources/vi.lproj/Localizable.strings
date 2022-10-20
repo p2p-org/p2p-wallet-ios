@@ -1062,3 +1062,6 @@ Reset the PIN or wait for %@." = "Bạn còn %@ lần thử để nhập mã PIN
 "Earn up to %@ on %@" = "Kiếm tới %@ trên %@";
 "Withdraw rewards or funds at any time" = "Rút tiền thưởng hoặc tiền bất cứ lúc nào";
 "Coming soon" = "Sắp có";
+"Awesome" = "Đáng kinh ngạc";
+"Enjoy free transactions" = "Tận hưởng các giao dịch miễn phí";
+"On the Solana network, the first 100 transactions in a day are paid by P2P.org" = "Trên mạng Solana, 100 giao dịch đầu tiên trong ngày được P2P.org thanh toán";
