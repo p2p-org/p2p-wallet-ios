@@ -36,7 +36,7 @@ final class CreateUsernameCoordinator: Coordinator<Void> {
 
         let viewModel = CreateUsernameViewModel(parameters: parameters)
         let view = CreateUsernameView(viewModel: viewModel)
-        let controller = UIHostingController(rootView: view)
+        let controller = KeyboardAvoidingViewController(rootView: view)
 
         switch navigationOption {
         case let .onboarding(window):

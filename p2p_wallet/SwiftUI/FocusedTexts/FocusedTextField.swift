@@ -4,14 +4,17 @@ import UIKit
 struct FocusedTextField: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool
     @Binding private var text: String
+    private let validation: NSPredicate?
     private var configuration = { (_: UITextField) in }
 
     init(
         text: Binding<String>,
         isFirstResponder: Binding<Bool>,
+        validation: NSPredicate? = nil,
         configuration: @escaping (UITextField) -> Void = { _ in }
     ) {
         self.configuration = configuration
+        self.validation = validation
         _text = text
         _isFirstResponder = isFirstResponder
     }
@@ -41,16 +44,18 @@ struct FocusedTextField: UIViewRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator($text, isFirstResponder: $isFirstResponder)
+        Coordinator($text, isFirstResponder: $isFirstResponder, validation: validation)
     }
 
     class Coordinator: NSObject, UITextFieldDelegate {
         var text: Binding<String>
         var isFirstResponder: Binding<Bool>
+        private let validation: NSPredicate?
 
-        init(_ text: Binding<String>, isFirstResponder: Binding<Bool>) {
+        init(_ text: Binding<String>, isFirstResponder: Binding<Bool>, validation: NSPredicate? = nil) {
             self.text = text
             self.isFirstResponder = isFirstResponder
+            self.validation = validation
         }
 
         @objc func textViewDidChange(_ textField: UITextField) {
@@ -65,12 +70,19 @@ struct FocusedTextField: UIViewRepresentable {
             isFirstResponder.wrappedValue = false
         }
 
-        func textField(_ textField: UITextField, shouldChangeCharactersIn _: NSRange,
-                       replacementString text: String) -> Bool
+        func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange,
+                       replacementString string: String) -> Bool
         {
-            if text == "\n", textField.returnKeyType == .done {
+            if string == "\n", textField.returnKeyType == .done {
                 isFirstResponder.wrappedValue = false
                 return false
+            }
+
+            if let text = textField.text, let textRange = Range(range, in: text) {
+                let updatedText = text.replacingCharacters(in: textRange, with: string)
+                if let validation = validation, !validation.evaluate(with: updatedText) {
+                    return false
+                }
             }
             return true
         }
