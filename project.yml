@@ -80,6 +80,7 @@ targets:
           name: p2p_wallet
           excludes:
             - "Resources/*.lproj-backup/*"
+            - "**/*.a"
         - path: README.MD
         preBuildScripts:
           - script: |
@@ -143,6 +144,7 @@ targets:
 
         dependencies:
             - framework: Frameworks/keyapp.xcframework
+              embed: false
 
     Detect Unused Code:
         type: app-extension.intents-service

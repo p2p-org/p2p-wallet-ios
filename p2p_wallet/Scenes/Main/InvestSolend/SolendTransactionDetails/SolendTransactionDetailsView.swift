@@ -7,15 +7,17 @@
 
 import Combine
 import KeyAppUI
+import Solend
 import SwiftSVG
 import SwiftUI
-import Solend
 
 struct SolendTransactionDetailsView: View {
     @ObservedObject var viewModel: SolendTransactionDetailsViewModel
 
     private let closeSubject = PassthroughSubject<Void, Never>()
     var close: AnyPublisher<Void, Never> { closeSubject.eraseToAnyPublisher() }
+
+    @State private var coveredByP2PAlert = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -53,7 +55,17 @@ struct SolendTransactionDetailsView: View {
                     cell(
                         title: L10n.transferFee,
                         state: .model(model.formattedTransferFee, free: model.transferFee == 0)
-                    )
+                    ).onTapGesture {
+                        if model.transferFee == 0 {
+                            coveredByP2PAlert = true
+                        }
+                    }.alert(isPresented: $coveredByP2PAlert) {
+                        Alert(
+                            title: Text(L10n.enjoyFreeTransactions),
+                            message: Text(L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.org),
+                            dismissButton: .cancel(Text(L10n.awesome))
+                        )
+                    }
                     cell(
                         title: viewModel.strategy == .withdraw ? L10n.withdrawalFee : L10n.depositFees,
                         state: .model(model.formattedFee, free: model.fee == 0)
