@@ -20,4 +20,5 @@ public extension Feature {
     
     // Solend
     static let investSolendFeature = Feature(rawValue: "keyapp_invest_solend_enabled")
+    static let solendDisablePlaceholder = Feature(rawValue: "ios_solend_disable_placeholder")
 }

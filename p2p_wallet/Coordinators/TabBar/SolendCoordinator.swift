@@ -18,6 +18,10 @@ final class SolendCoordinator: Coordinator<Void> {
     }
 
     override func start() -> AnyPublisher<Void, Never> {
+        guard available(.solendDisablePlaceholder) else {
+            return startPlaceholder()
+        }
+
         let investViewModel = InvestSolendViewModel()
         let investVC = InvestSolendView(viewModel: investViewModel)
             .asViewController() as! UIHostingControllerWithoutNavigation<InvestSolendView>
@@ -89,6 +93,14 @@ final class SolendCoordinator: Coordinator<Void> {
             })
             .store(in: &subscriptions)
 
+        return Empty(completeImmediately: false)
+            .eraseToAnyPublisher()
+    }
+
+    private func startPlaceholder() -> AnyPublisher<Void, Never> {
+        let placeholderVC = SolendPlaceholderView().asViewController(withoutUIKitNavBar: false)
+        navigationController.navigationBar.prefersLargeTitles = true
+        navigationController.setViewControllers([placeholderVC], animated: false)
         return Empty(completeImmediately: false)
             .eraseToAnyPublisher()
     }
