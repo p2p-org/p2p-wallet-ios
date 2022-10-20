@@ -15,6 +15,8 @@ extension Settings {
     class ViewController: p2p_wallet.BaseViewController {
         var subscriptions = [AnyCancellable]()
 
+        private var childCoordinators = [UUID: Any]()
+
         let viewModel: SettingsViewModelType
 
         init(viewModel: SettingsViewModelType) {
@@ -211,10 +213,15 @@ extension Settings {
                 show(vc, sender: nil)
             case .reserveUsername:
                 guard let navigationController = navigationController else { return }
-                CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController))
+                let coordinator = CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController))
+                coordinator
                     .start()
-                    .sink { navigationController.popToViewController(ofClass: ViewController.self, animated: true) }
+                    .sink(receiveCompletion: { [weak self] _ in
+                        navigationController.popToViewController(ofClass: ViewController.self, animated: true)
+                        self?.childCoordinators.removeValue(forKey: coordinator.accessibleIdentifier)
+                    }, receiveValue: {})
                     .store(in: &subscriptions)
+                childCoordinators[coordinator.accessibleIdentifier] = coordinator
             case .backup:
                 let viewModel = Backup.ViewModel()
                 viewModel.didBackupHandler = { [weak self] in
