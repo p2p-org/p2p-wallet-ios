@@ -4,6 +4,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import Solend
+import Sentry
 
 enum DepositSolendViewModelError {
     case invalidFeePayer
@@ -129,6 +130,7 @@ class DepositSolendViewModel: ObservableObject {
         initialAsset: SolendConfigAsset,
         mocked: Bool = false
     ) throws {
+        NSLog("Hello world")
         self.strategy = strategy
         dataService = mocked ? SolendDataServiceMock() : Resolver.resolve(SolendDataService.self)
         actionService = mocked ? SolendActionServiceMock() : Resolver.resolve(SolendActionService.self)
@@ -435,6 +437,7 @@ class DepositSolendViewModel: ObservableObject {
             )
         } catch {
             debugPrint(error)
+            SentrySDK.capture(error: error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemDepositingFunds))
         }
     }
@@ -461,6 +464,7 @@ class DepositSolendViewModel: ObservableObject {
             )
         } catch {
             print(error)
+            SentrySDK.capture(error: error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemWithdrawingFunds))
         }
     }
