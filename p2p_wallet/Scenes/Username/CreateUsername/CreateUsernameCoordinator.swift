@@ -13,6 +13,8 @@ enum NavigationOption {
 }
 
 final class CreateUsernameCoordinator: Coordinator<Void> {
+    let accessibleIdentifier = UUID()
+
     private let navigationOption: NavigationOption
     private var subject = PassthroughSubject<Void, Never>()
 
@@ -46,14 +48,9 @@ final class CreateUsernameCoordinator: Coordinator<Void> {
             parent.pushViewController(controller, animated: true)
         }
 
-        viewModel.requireSkip.sink { [unowned self] in
+        viewModel.close.sink { [unowned self] in
             self.subject.send(())
             self.subject.send(completion: .finished)
-        }.store(in: &subscriptions)
-
-        viewModel.transactionCreated.sink { [weak self] in
-            self?.subject.send(())
-            self?.subject.send(completion: .finished)
         }.store(in: &subscriptions)
 
         return subject.eraseToAnyPublisher()
