@@ -61,6 +61,7 @@ extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
         case newSettings
         case investSolend
+        case solendDisablePlaceholder
 
         case mockedApiGateway
         case mockedTKeyFacade
@@ -74,6 +75,7 @@ extension DebugMenuViewModel {
             case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
             case .newSettings: return "New Settings"
             case .investSolend: return "Invest Solend"
+            case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             }
         }
 
@@ -85,6 +87,7 @@ extension DebugMenuViewModel {
             case .simulatedSocialError: return .simulatedSocialError
             case .newSettings: return .settingsFeature
             case .investSolend: return .investSolendFeature
+            case .solendDisablePlaceholder: return .solendDisablePlaceholder
             }
         }
     }
