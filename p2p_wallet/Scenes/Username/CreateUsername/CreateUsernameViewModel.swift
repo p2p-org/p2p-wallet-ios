@@ -29,6 +29,8 @@ final class CreateUsernameViewModel: BaseViewModel {
     @Published var isSkipEnabled: Bool = false
     @Published var backgroundColor: UIColor
 
+    let usernameValidation = NSPredicate(format: "SELF MATCHES %@", Constants.availableSymbols)
+
     init(parameters: CreateUsernameParameters) {
         isSkipEnabled = parameters.isSkipEnabled
         backgroundColor = parameters.backgroundColor
@@ -80,17 +82,12 @@ private extension CreateUsernameViewModel {
             .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .sink { [weak self] currentUsername in
                 guard let self = self else { return }
-                guard !currentUsername.isEmpty else {
+                guard currentUsername.count >= Constants.minChars else {
                     self.status = .initial
                     return
                 }
+
                 self.status = .processing
-
-                guard self.isValid(username: currentUsername) else {
-                    self.status = .unavailable
-                    return
-                }
-
                 Task {
                     do {
                         let result = try await self.nameService.isNameAvailable(currentUsername)
@@ -102,14 +99,13 @@ private extension CreateUsernameViewModel {
             }.store(in: &subscriptions)
     }
 
-    func isValid(username: String) -> Bool {
-        let regex = "[0-9a-z-]{6,15}"
-        let predicate = NSPredicate(format: "SELF MATCHES %@", regex)
-        return predicate.evaluate(with: username)
-    }
-
     func showUndefinedError() {
         status = .initial
         notificationService.showDefaultErrorNotification()
     }
+}
+
+private enum Constants {
+    static let availableSymbols = "^[0-9a-z-]{0,15}$"
+    static let minChars = 6
 }

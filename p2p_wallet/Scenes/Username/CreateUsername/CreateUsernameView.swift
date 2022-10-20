@@ -39,12 +39,6 @@ struct CreateUsernameView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(trailing: viewModel.isSkipEnabled ? skipButton : nil)
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { viewModel.isTextFieldFocused = true }
-        }
-        .onDisappear {
-            viewModel.isTextFieldFocused = false
-        }
     }
 }
 
@@ -112,10 +106,12 @@ private extension CreateUsernameView {
             FocusedTextField(
                 text: $viewModel.username,
                 isFirstResponder: $viewModel.isTextFieldFocused,
+                validation: viewModel.usernameValidation,
                 configuration: { textField in
                     textField.font = UIFont.font(of: .title3)
                     textField.textColor = Asset.Colors.night.color
                     textField.autocapitalizationType = .none
+                    textField.returnKeyType = .done
                 }
             )
                 .fixedSize(horizontal: false, vertical: true)
