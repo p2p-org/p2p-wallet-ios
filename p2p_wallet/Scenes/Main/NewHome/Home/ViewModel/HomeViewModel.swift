@@ -19,6 +19,7 @@ class HomeViewModel: ObservableObject {
     @Injected private var notificationsService: NotificationService
     @Injected private var accountStorage: AccountStorageType
     @Injected private var nameStorage: NameStorageType
+    @Injected private var createNameService: CreateNameService
     private let walletsRepository: WalletsRepository
 
     @Published var state = State.pending
@@ -85,6 +86,8 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
 
         walletsRepository.reload()
+
+        bind()
     }
 
     func copyToClipboard() {
@@ -107,6 +110,18 @@ class HomeViewModel: ObservableObject {
         } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
             self.address = address
         }
+    }
+}
+
+private extension HomeViewModel {
+    func bind() {
+        createNameService.createNameResult
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSuccess in
+                guard isSuccess else { return }
+                self?.updateAddressIfNeeded()
+            }
+            .store(in: &cancellables)
     }
 }
 
