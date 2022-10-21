@@ -75,7 +75,7 @@ final class HomeEmptyViewModel: ObservableObject {
         receiveSubject.send(solanaPubkey)
     }
 
-func buyTapped(index: Int) {
+    func buyTapped(index: Int) {
         let coin = _popularCoins[index]
         topUpCoin.send(coin)
     }
