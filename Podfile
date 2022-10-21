@@ -23,6 +23,7 @@ def key_app_kit
     "Onboarding",
     "JSBridge",
     "CountriesAPI",
+    "KeyAppKitCore"
   ]
 
   if $keyAppKitPath
@@ -50,7 +51,7 @@ target 'p2p_wallet' do
   pod 'BECollectionView_Core', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
   pod 'BECollectionView_Combine', :git => 'https://github.com/bigearsenal/BECollectionView.git', :branch => 'master'
-  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'master'
+  pod 'FeeRelayerSwift', :git => 'https://github.com/p2p-org/FeeRelayerSwift.git', :branch => 'feature/free_renbtc_creation'
   pod 'OrcaSwapSwift', :git => 'https://github.com/p2p-org/OrcaSwapSwift.git', :branch => 'main'
   pod 'RenVMSwift', :git => 'https://github.com/p2p-org/RenVMSwift.git', :branch => 'master'
 
@@ -107,6 +108,9 @@ target 'p2p_wallet' do
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
+
+  # AppsFlyer
+  pod 'AppsFlyerFramework'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths

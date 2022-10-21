@@ -43,7 +43,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
         private func findRecipientsBy(name: String) -> Single<[SendToken.Recipient]> {
             Single.async { [weak self] in
-                guard let self = self else { throw NameServiceError.unknown }
+                guard let self = self else { throw UndefinedNameServiceError.unknown }
                 let owners = try await self.nameService.getOwners(name)
                 return owners.map {
                     .init(
