@@ -22,13 +22,13 @@ class HomeWithTokensViewModel: ObservableObject {
     private let buyClicked = PassthroughSubject<Void, Never>()
     private let receiveClicked = PassthroughSubject<Void, Never>()
     private let sendClicked = PassthroughSubject<Void, Never>()
-    private let tradeClicked = PassthroughSubject<Void, Never>()
+    private let swapClicked = PassthroughSubject<Void, Never>()
     private let earnClicked = PassthroughSubject<Void, Never>()
     private let walletClicked = PassthroughSubject<(pubKey: String, tokenSymbol: String), Never>()
     let buyShow: AnyPublisher<Void, Never>
     let receiveShow: AnyPublisher<PublicKey, Never>
     let sendShow: AnyPublisher<Void, Never>
-    let tradeShow: AnyPublisher<Void, Never>
+    let swapShow: AnyPublisher<Void, Never>
     let earnShow: AnyPublisher<Void, Never>
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
 
@@ -53,7 +53,7 @@ class HomeWithTokensViewModel: ObservableObject {
             .compactMap { try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) }
             .eraseToAnyPublisher()
         sendShow = sendClicked.eraseToAnyPublisher()
-        tradeShow = tradeClicked.eraseToAnyPublisher()
+        swapShow = swapClicked.eraseToAnyPublisher()
         walletShow = walletClicked.eraseToAnyPublisher()
         earnShow = earnClicked.eraseToAnyPublisher()
 
@@ -125,8 +125,8 @@ class HomeWithTokensViewModel: ObservableObject {
         sendClicked.send()
     }
 
-    func trade() {
-        tradeClicked.send()
+    func swap() {
+        swapClicked.send()
     }
 
     func earn() {
