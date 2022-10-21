@@ -84,7 +84,6 @@ extension EnterSeed {
         @objc
         private func buttonPasteDidTouch() {
             textView.paste()
-            analyticsManager.log(event: AmplitudeEvent.sendPaste)
         }
 
         @objc func resetAndTryAgainButtonDidTouch() {
