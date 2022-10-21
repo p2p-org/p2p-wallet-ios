@@ -8,7 +8,18 @@ import Resolver
 import SolanaSwift
 import Solend
 
-typealias Invest = (asset: SolendConfigAsset, market: SolendMarketInfo?, userDeposit: SolendUserDeposit?)
+typealias DepositOffer = (
+    asset: SolendConfigAsset,
+    market: SolendMarketInfo?,
+    userDeposit: SolendUserDeposit?,
+    wallet: Wallet?
+)
+
+typealias Invest = (
+    asset: SolendConfigAsset,
+    market: SolendMarketInfo?,
+    userDeposit: SolendUserDeposit?
+)
 
 enum InvestSolendError {
     case missingRate
@@ -21,6 +32,7 @@ class InvestSolendViewModel: ObservableObject {
     @Injected private var notificationService: NotificationService
     let dataService: SolendDataService
     let actionService: SolendActionService
+    let walletRepository: WalletsRepository
 
     private var subscriptions = Set<AnyCancellable>()
 
@@ -43,7 +55,7 @@ class InvestSolendViewModel: ObservableObject {
     // MARK: - State
 
     @Published var loading: Bool = false
-    @Published var invests: [Invest] = []
+    @Published var invests: [DepositOffer] = []
     @Published var bannerError: InvestSolendError?
     var apyLoaded: Bool { invests.contains { $0.market != nil } }
 
@@ -53,9 +65,14 @@ class InvestSolendViewModel: ObservableObject {
 
     // MARK: - Init
 
-    init(dataService: SolendDataService = Resolver.resolve(), actionService: SolendActionService = Resolver.resolve()) {
+    init(
+        dataService: SolendDataService = Resolver.resolve(),
+        actionService: SolendActionService = Resolver.resolve(),
+        walletRepository: WalletsRepository = Resolver.resolve()
+    ) {
         self.dataService = dataService
         self.actionService = actionService
+        self.walletRepository = walletRepository
 
         // Updating data service depends on action service
         actionService.currentAction
@@ -99,25 +116,40 @@ class InvestSolendViewModel: ObservableObject {
             .combineLatest(dataService.marketInfo)
             .receive(on: RunLoop.main)
             .sink { [weak self] (status: SolendDataStatus, marketInfo: [SolendMarketInfo]?) in
-                if status == .ready && marketInfo == nil {
+                if status == .ready, marketInfo == nil {
                     self?.bannerError = .missingRate
                 }
-                
+
                 self?.bannerError = nil
             }.store(in: &subscriptions)
 
+        let walletsStream: AnyPublisher<[Wallet]?, Never> = walletRepository
+            .dataObservable
+            .asPublisher()
+            .catch { _ in Just(nil) }
+            .eraseToAnyPublisher()
         // Process data from data service
         dataService.availableAssets
-            .combineLatest(dataService.marketInfo, dataService.deposits)
-            .map { (assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
+            .combineLatest(
+                dataService.marketInfo,
+                dataService.deposits,
+                walletsStream
+            )
+            .map { (
+                assets: [SolendConfigAsset]?,
+                marketInfo: [SolendMarketInfo]?,
+                userDeposits: [SolendUserDeposit]?,
+                wallets: [Wallet]?
+            ) -> [DepositOffer] in
                 guard let assets = assets else { return [] }
-                return assets.map { asset -> Invest in
+                return assets.map { asset -> DepositOffer in
                     (
                         asset: asset,
                         market: marketInfo?.first(where: { $0.symbol == asset.symbol }),
-                        userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol })
+                        userDeposit: userDeposits?.first(where: { $0.symbol == asset.symbol }),
+                        wallet: wallets?.first(where: { $0.token.symbol == asset.symbol })
                     )
-                }.sorted { (v1: Invest, v2: Invest) -> Bool in
+                }.sorted { (v1: DepositOffer, v2: DepositOffer) -> Bool in
                     let apy1: Double = .init(v1.market?.supplyInterest ?? "") ?? 0
                     let apy2: Double = .init(v2.market?.supplyInterest ?? "") ?? 0
                     return apy1 > apy2
