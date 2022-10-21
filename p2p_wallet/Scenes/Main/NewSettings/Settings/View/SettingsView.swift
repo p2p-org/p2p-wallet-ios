@@ -57,6 +57,10 @@ struct SettingsView: View {
                 )
             }
             Button(
+                action: { viewModel.showView(.support) },
+                label: { cellView(image: .settingsSupport, title: L10n.support.uppercaseFirst) }
+            )
+            Button(
                 action: {
                     viewModel.sendSignOutAnalytics()
                     logOutPresented.toggle()

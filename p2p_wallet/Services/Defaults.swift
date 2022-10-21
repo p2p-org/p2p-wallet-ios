@@ -78,6 +78,10 @@ extension DefaultsKeys {
         .init(#function, defaultValue: [:])
     }
 
+    // Solend
+    var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
     var solanaNegativeStatusFrequency: DefaultsKey<String?> {
         .init(
             #function,

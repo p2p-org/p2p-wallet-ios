@@ -12,6 +12,7 @@ final class BuyCoordinator: Coordinator<Void> {
     private let context: Context
     private var shouldPush = true
     private var defaultToken: Token?
+    private let targetTokenSymbol: String?
 
     private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
     @Injected private var analyticsManager: AnalyticsManager
@@ -21,18 +22,20 @@ final class BuyCoordinator: Coordinator<Void> {
         context: Context,
         defaultToken: Token? = nil,
         presentingViewController: UIViewController? = nil,
-        shouldPush: Bool = true
+        shouldPush: Bool = true,
+        targetTokenSymbol: String? = nil
     ) {
         self.navigationController = navigationController
         self.presentingViewController = presentingViewController
         self.context = context
         self.shouldPush = shouldPush
         self.defaultToken = defaultToken
+        self.targetTokenSymbol = targetTokenSymbol
     }
 
     override func start() -> AnyPublisher<Void, Never> {
         let result = PassthroughSubject<Void, Never>()
-        let viewModel = BuyViewModel(defaultToken: defaultToken)
+        let viewModel = BuyViewModel(defaultToken: defaultToken, targetSymbol: targetTokenSymbol)
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
         viewController.title = "Buy"
         viewController.hidesBottomBarWhenPushed = true
@@ -174,5 +177,15 @@ extension BuyCoordinator {
         case fromHome
         case fromToken
         case fromRenBTC
+        case fromInvest
+
+        var screenName: String {
+            switch self {
+            case .fromHome: return "MainScreen"
+            case .fromToken: return "TokenScreen"
+            case .fromRenBTC: return "RenBTCScreen"
+            case .fromInvest: return "SolendScreen"
+            }
+        }
     }
 }

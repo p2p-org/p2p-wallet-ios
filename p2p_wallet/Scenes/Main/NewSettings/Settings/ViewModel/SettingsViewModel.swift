@@ -158,6 +158,7 @@ final class SettingsViewModel: BaseViewModel {
 extension SettingsViewModel {
     enum OpenAction {
         case username
+        case support
         case reserveUsername(userAddress: String)
         case recoveryKit
         case yourPin

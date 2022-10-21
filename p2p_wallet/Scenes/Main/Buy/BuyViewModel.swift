@@ -26,6 +26,7 @@ final class BuyViewModel: ObservableObject {
     @Published var isRightFocus = true
     @Published var exchangeOutput: Buy.ExchangeOutput?
     @Published var navigationSlidingPercentage: CGFloat = 1
+    @Published var targetSymbol: String?
     @Published var buttonItem: ButtonItem = .init(
         title: L10n.buy + " \(defaultToken.symbol)",
         icon: .buyWallet,
@@ -61,7 +62,9 @@ final class BuyViewModel: ObservableObject {
     private static let fiats: [Fiat] = available(.buyBankTransferEnabled) ? [.eur, .gbp, .usd] : [.usd]
     private static let defaultToken = Token.usdc
 
-    init(defaultToken: Token? = nil) {
+    init(defaultToken: Token? = nil, targetSymbol: String? = nil) {
+        self.targetSymbol = targetSymbol
+
         if let defaultToken = defaultToken {
             token = defaultToken
         } else {
@@ -95,9 +98,9 @@ final class BuyViewModel: ObservableObject {
                 self.fiat = fiat ?? self.fiat
                 Task {
                     if isGBPBankTransferEnabled, fiat != .gbp {
-                        await self.setPaymentMethod(.card)
+                        await setPaymentMethod(.card)
                     } else if isBankTransferEnabled, fiat != .eur {
-                        await self.setPaymentMethod(.card)
+                        await setPaymentMethod(.card)
                     }
                 }
                 if initFiatWasSelected {
@@ -283,8 +286,8 @@ final class BuyViewModel: ObservableObject {
             tokens.map {
                 TokenCellViewItem(
                     token: $0,
-                    amount: self.tokenPrices[self.fiat]?[$0.symbol.uppercased()] ?? 0,
-                    fiat: self.fiat
+                    amount: tokenPrices[fiat]?[$0.symbol.uppercased()] ?? 0,
+                    fiat: fiat
                 )
             }
         )
@@ -478,7 +481,7 @@ final class BuyViewModel: ObservableObject {
     func availablePaymentTypes() -> [PaymentType] {
         PaymentType.allCases.filter {
             if case .bank = $0 {
-                return self.isBankTransferEnabled || self.isGBPBankTransferEnabled
+                return isBankTransferEnabled || isGBPBankTransferEnabled
             }
             return true
         }

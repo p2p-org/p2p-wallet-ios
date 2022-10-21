@@ -15,6 +15,7 @@ class TransitionDriver: UIPercentDrivenInteractiveTransition {
 
         panRecognizer = UIPanGestureRecognizer(target: self, action: #selector(handle(recognizer:)))
         presentedController?.view.addGestureRecognizer(panRecognizer!)
+        panRecognizer?.delegate = self
     }
 
     private weak var presentedController: UIViewController?
@@ -119,5 +120,18 @@ private extension UIPanGestureRecognizer {
 
         let percentIncrement = translation / maxTranslation
         return percentIncrement
+    }
+}
+
+// MARK: - UIGestureRecognizerDelegate
+
+extension TransitionDriver: UIGestureRecognizerDelegate {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+                           shouldRequireFailureOf otherGestureRecognizer: UIGestureRecognizer) -> Bool
+    {
+        if gestureRecognizer == panRecognizer, !(otherGestureRecognizer is UIPanGestureRecognizer) {
+            return true
+        }
+        return false
     }
 }
