@@ -95,10 +95,6 @@ class HomeViewModel: ObservableObject {
         analyticsManager.log(event: AmplitudeEvent.mainCopyAddress)
     }
 
-    func receive() {
-        receiveClicked.send()
-    }
-
     func updateAddressIfNeeded() {
         if let name = nameStorage.getName(), !name.isEmpty {
             address = name

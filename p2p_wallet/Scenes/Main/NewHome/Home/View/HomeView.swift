@@ -55,18 +55,6 @@ struct HomeView: View {
                             }
                         )
                     }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        if showQR {
-                            Button(
-                                action: {
-                                    viewModel.receive()
-                                },
-                                label: {
-                                    Image(uiImage: .scanQr)
-                                }
-                            )
-                        }
-                    }
                 }
         }
         .onAppear {
