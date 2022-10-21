@@ -133,6 +133,10 @@ extension Resolver: ResolverRegistering {
         register { InMemoryTokensRepositoryCache() }
             .implements(SolanaTokensRepositoryCache.self)
             .scope(.application)
+
+        register { CreateNameServiceImpl() }
+            .implements(CreateNameService.self)
+            .scope(.application)
     }
 
     /// Graph scope: Recreate and reuse dependencies
@@ -151,6 +155,9 @@ extension Resolver: ResolverRegistering {
             cache: NameServiceUserDefaultCache()
         ) }
         .implements(NameService.self)
+
+        register { NameServiceUserDefaultCache() }
+            .implements(NameServiceCacheType.self)
 
         // ClipboardManager
         register { ClipboardManager() }
@@ -391,6 +398,17 @@ extension Resolver: ResolverRegistering {
             ])
         }
         .implements(Banners.Service.self)
+        .scope(.shared)
+
+        // Solana tracker
+        register {
+            SolanaTrackerImpl(
+                solanaNegativeStatusFrequency: nil,
+                solanaNegativeStatusPercent: nil,
+                solanaNegativeStatusTimeFrequency: nil
+            )
+        }
+        .implements(SolanaTracker.self)
         .scope(.shared)
     }
 }

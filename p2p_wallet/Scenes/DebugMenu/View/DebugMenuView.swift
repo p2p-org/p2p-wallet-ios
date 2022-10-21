@@ -6,6 +6,7 @@
 //
 
 import Resolver
+import SolanaSwift
 import SwiftUI
 
 struct DebugMenuView: View {
@@ -38,6 +39,16 @@ struct DebugMenuView: View {
                     TextFieldRow(title: "Google:", content: $onboardingConfig.torusGoogleVerifier)
                     TextFieldRow(title: "Apple", content: $onboardingConfig.torusAppleVerifier)
                     TextFieldRow(title: "OTP Resend", content: $onboardingConfig.enterOTPResend)
+                }
+
+                Section(header: Text("Solana endpoint")) {
+                    Text("Selected: \(viewModel.selectedEndpoint?.address ?? "Unknown")")
+                    Picker("URL", selection: $viewModel.selectedEndpoint) {
+                        Text("Unknown").tag(nil as APIEndPoint?)
+                        ForEach(viewModel.solanaEndpoints, id: \.self) { endpoint in
+                            Text(endpoint.address).tag(endpoint as APIEndPoint?)
+                        }
+                    }
                 }
 
                 Section(header: Text("Mocked device share")) {
