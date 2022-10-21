@@ -35,12 +35,8 @@ struct DepositWithdrawInputView: View {
                         fontSynchorinze: fontSynchorinze,
                         font: fontSynchorinze.font,
                         side: .left,
-                        maxDecimals: $maxTokenDigits,
-                        isFocued: Binding<Bool>(get: {
-                            activeSide == .left
-                        }, set: { _, _ in
-                            activeSide = .left
-                        })
+                        isFocued: true,
+                        maxDecimals: $maxTokenDigits
                     )
                         .padding(.leading, 8)
 
@@ -61,12 +57,8 @@ struct DepositWithdrawInputView: View {
                         fontSynchorinze: fontSynchorinze,
                         font: fontSynchorinze.font,
                         side: .right,
-                        maxDecimals: .constant(2),
-                        isFocued: Binding<Bool>(get: {
-                            activeSide == .right
-                        }, set: { _, _ in
-                            activeSide = .right
-                        })
+                        isFocued: false,
+                        maxDecimals: .constant(2)
                     )
                         .padding(.leading, 8)
 
@@ -174,8 +166,8 @@ private struct TextfieldView: UIViewRepresentable {
     let fontSynchorinze: FontSynchorinze
     let font: UIFont
     let side: Side
+    var isFocued: Bool = false
     @Binding var maxDecimals: UInt
-    @Binding var isFocued: Bool
 
     func makeUIView(context ctx: Context) -> UITextField {
         let textField = UITextField()
@@ -188,6 +180,11 @@ private struct TextfieldView: UIViewRepresentable {
         textField.text = text
         textField.keyboardType = .decimalPad
         textField.addTarget(ctx.coordinator, action: #selector(ctx.coordinator.textDidChanged), for: .editingChanged)
+        if isFocued {
+             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                 textField.becomeFirstResponder()
+             }
+         }
         return textField
     }
 
@@ -196,21 +193,10 @@ private struct TextfieldView: UIViewRepresentable {
         ctx.coordinator.adjustFont(textField)
         textField.font = fontSynchorinze.font
         textField.textColor = hasInputError ? Asset.Colors.rose.color : Asset.Colors.night.color
-        if isFocued {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                textField.becomeFirstResponder()
-            }
-        }
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(
-            text: $text,
-            activeSide: $activeSide,
-            fontSynchorinze: fontSynchorinze,
-            side: side,
-            maxDecimals: $maxDecimals
-        )
+        Coordinator(text: $text, activeSide: $activeSide, fontSynchorinze: fontSynchorinze, side: side, maxDecimals: $maxDecimals)
     }
 
     enum Side {

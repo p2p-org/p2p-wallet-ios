@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 import Combine
 import FeeRelayerSwift
 import Foundation
@@ -144,12 +145,7 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.availableAssets,
                 dataService.marketInfo,
                 dataService.deposits
-            ) { (
-                symbol: String,
-                assets: [SolendConfigAsset]?,
-                marketInfo: [SolendMarketInfo]?,
-                deposits: [SolendUserDeposit]?
-            ) -> Invest? in
+            ) { (symbol: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, deposits: [SolendUserDeposit]?) -> Invest? in
                 guard let asset = assets?.first(where: { $0.symbol == symbol }) else { return nil }
                 return (
                     asset: asset,
@@ -191,12 +187,7 @@ class DepositSolendViewModel: ObservableObject {
                 dataService.marketInfo,
                 dataService.deposits
             )
-            .map { (
-                _: String,
-                assets: [SolendConfigAsset]?,
-                marketInfo: [SolendMarketInfo]?,
-                userDeposits: [SolendUserDeposit]?
-            ) -> [Invest] in
+            .map { (_: String, assets: [SolendConfigAsset]?, marketInfo: [SolendMarketInfo]?, userDeposits: [SolendUserDeposit]?) -> [Invest] in
                 guard let assets = assets else { return [] }
                 return assets.map { asset -> Invest in
                     (asset: asset,
@@ -301,30 +292,6 @@ class DepositSolendViewModel: ObservableObject {
                 guard let inputLamport = self?.inputLamport else { return }
                 Task { try await self?.action(lamports: inputLamport) }
             }.store(in: &subscriptions)
-
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.willResignActiveNotification,
-            object: nil,
-            queue: nil
-        ) { _ in
-            DispatchQueue.main.async {
-                _ = UIApplication.shared.sendAction(
-                    #selector(UIResponder.resignFirstResponder),
-                    to: nil,
-                    from: nil,
-                    for: nil
-                )
-            }
-        }
-        NotificationCenter.default.addObserver(
-            forName: UIApplication.willEnterForegroundNotification,
-            object: nil,
-            queue: nil
-        ) { _ in
-            DispatchQueue.main.async {
-                self.focusSide = .left
-            }
-        }
     }
 
     // MARK: -
