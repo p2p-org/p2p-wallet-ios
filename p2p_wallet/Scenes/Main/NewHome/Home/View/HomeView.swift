@@ -24,13 +24,13 @@ struct HomeView: View {
                 HomeWithTokensView(viewModel: viewModelWithTokens)
             }
         case .empty:
-            navigation {
+            navigation(showQR: false) {
                 HomeEmptyView(viewModel: emptyViewModel)
             }
         }
     }
 
-    func navigation<Content: View>(@ViewBuilder content: @escaping () -> Content) -> some View {
+    func navigation<Content: View>(showQR: Bool = true, @ViewBuilder content: @escaping () -> Content) -> some View {
         NavigationView {
             content()
                 .navigationBarTitleDisplayMode(.inline)
@@ -58,16 +58,21 @@ struct HomeView: View {
                         )
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(
-                            action: {
-                                viewModel.receive()
-                            },
-                            label: {
-                                Image(uiImage: .scanQr)
-                            }
-                        )
+                        if showQR {
+                            Button(
+                                action: {
+                                    viewModel.receive()
+                                },
+                                label: {
+                                    Image(uiImage: .scanQr)
+                                }
+                            )
+                        }
                     }
                 }
+        }
+        .onAppear {
+            viewModel.updateAddressIfNeeded()
         }
     }
 }

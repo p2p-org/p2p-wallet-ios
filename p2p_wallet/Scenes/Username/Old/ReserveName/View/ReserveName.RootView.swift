@@ -94,7 +94,7 @@ extension ReserveName {
 
             descriptionLabel.attributedText = NSMutableAttributedString(
                 string: L10n
-                    .P2PUsernameIsYourPublicAddressWhichAllowsYouToReceiveAnyTokenEvenIfYouDonTHaveItInTheWalletList
+                    .UsernameIsYourPublicAddressWhichAllowsYouToReceiveAnyTokenEvenIfYouDonTHaveItInTheWalletList
                     .itIsVitalYouSelectTheExactUsernameYouWantAsOnceSetYouCannotChangeIt,
                 attributes: [
                     .kern: -0.24,

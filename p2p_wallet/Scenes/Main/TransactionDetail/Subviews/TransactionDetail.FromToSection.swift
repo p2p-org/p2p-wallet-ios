@@ -141,5 +141,5 @@ private func addressLabel() -> UILabel {
 }
 
 private func nameLabel() -> UILabel {
-    UILabel(text: "name.p2p.sol", textSize: 15, textColor: .textSecondary, textAlignment: .right)
+    UILabel(text: "%username", textSize: 15, textColor: .textSecondary, textAlignment: .right)
 }

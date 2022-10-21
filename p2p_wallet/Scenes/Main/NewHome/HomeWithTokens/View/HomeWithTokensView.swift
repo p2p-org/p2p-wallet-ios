@@ -56,6 +56,12 @@ struct HomeWithTokensView: View {
                 scrollAnimationIsEnded = false
             }
         }
+        .onAppear {
+            viewModel.viewAppeared()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            viewModel.viewAppeared()
+        }
     }
 
     private var header: some View {

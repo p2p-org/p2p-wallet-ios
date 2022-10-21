@@ -91,30 +91,52 @@ final class HomeCoordinator: Coordinator<Void> {
             .store(in: &subscriptions)
 
         emptyVMOutput.topUpCoinShow
-            .sink(receiveValue: { [unowned self] in
+            .filter { [Token.nativeSolana, .usdc].contains($0) }
+            .flatMap { [unowned self] cryto -> AnyPublisher<Void, Never> in
                 let coordinator: Coordinator<Void>
                 if available(.buyScenarioEnabled) {
                     coordinator = BuyCoordinator(
                         navigationController: navigationController,
                         context: .fromHome,
-                        defaultToken: $0
+                        defaultToken: cryto
                     )
                 } else {
                     coordinator = BuyPreparingCoordinator(
                         navigationController: navigationController,
                         strategy: .show,
-                        crypto: $0
+                        crypto: cryto == .usdc ? .usdc : cryto == .nativeSolana ? .sol : .eth
                     )
                 }
-                coordinate(to: coordinator)
-                    .sink { _ in }
-                    .store(in: &subscriptions)
-            })
+                return self.coordinate(to: coordinator)
+            }.sink {}
             .store(in: &subscriptions)
-        emptyVMOutput.receiveRenBtcShow
-            .sink(receiveValue: { [unowned self] in
-                openReceiveScreen(pubKey: $0)
-            })
+
+        emptyVMOutput.topUpCoinShow
+            .filter { [Token.renBTC, .eth, .usdt].contains($0) }
+            .map { $0 == .renBTC ? Token(.renBTC, customSymbol: "BTC") : $0 }
+            .flatMap { [unowned self] token -> AnyPublisher<Void, Never> in
+                self.coordinate(
+                    to:
+                    HomeBuyNotificationCoordinator(
+                        tokenFrom: .usdc, tokenTo: token, controller: navigationController
+                    )
+                )
+                .flatMap { result -> AnyPublisher<Void, Never> in
+                    switch result {
+                    case .showBuy:
+                        return self.coordinate(to:
+                            BuyCoordinator(
+                                navigationController: self.navigationController,
+                                context: .fromHome,
+                                defaultToken: .usdc
+                            ))
+                    default:
+                        return Just(()).eraseToAnyPublisher()
+                    }
+                }
+                .eraseToAnyPublisher()
+            }
+            .sink(receiveValue: { _ in })
             .store(in: &subscriptions)
 
         Publishers.Merge(tokensViewModel.buyShow, emptyVMOutput.topUpShow)

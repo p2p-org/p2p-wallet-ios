@@ -86,7 +86,9 @@ class SocialSignInViewModel: BaseViewModel {
                     self?.notificationService.showDefaultErrorNotification()
                 }
             }
-            self?.loading = nil
+            DispatchQueue.main.async {
+                self?.loading = nil
+            }
         }
     }
 }

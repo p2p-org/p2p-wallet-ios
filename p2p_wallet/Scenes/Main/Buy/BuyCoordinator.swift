@@ -20,7 +20,7 @@ final class BuyCoordinator: Coordinator<Void> {
     init(
         navigationController: UINavigationController? = nil,
         context: Context,
-        defaultToken: Buy.CryptoCurrency? = nil,
+        defaultToken: Token? = nil,
         presentingViewController: UIViewController? = nil,
         shouldPush: Bool = true,
         targetTokenSymbol: String? = nil
@@ -29,24 +29,15 @@ final class BuyCoordinator: Coordinator<Void> {
         self.presentingViewController = presentingViewController
         self.context = context
         self.shouldPush = shouldPush
+        self.defaultToken = defaultToken
         self.targetTokenSymbol = targetTokenSymbol
-
-        if let defaultToken = defaultToken {
-            switch defaultToken {
-            case .usdc:
-                self.defaultToken = Token.usdc
-            case .sol:
-                self.defaultToken = Token.nativeSolana
-            default:
-                self.defaultToken = nil
-            }
-        }
     }
 
     override func start() -> AnyPublisher<Void, Never> {
         let result = PassthroughSubject<Void, Never>()
         let viewModel = BuyViewModel(defaultToken: defaultToken, targetSymbol: targetTokenSymbol)
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
+        viewController.title = "Buy"
         viewController.hidesBottomBarWhenPushed = true
         if navigationController == nil {
             navigationController = UINavigationController(rootViewController: viewController)

@@ -16,6 +16,8 @@ import UIKit
 class HomeWithTokensViewModel: ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService = Resolver.resolve(PricesServiceType.self)
+    @Injected private var solanaTracker: SolanaTracker
+    @Injected private var notificationService: NotificationService
 
     private let buyClicked = PassthroughSubject<Void, Never>()
     private let receiveClicked = PassthroughSubject<Void, Never>()
@@ -76,16 +78,29 @@ class HomeWithTokensViewModel: ObservableObject {
                 // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
                 wallets = wallets.filter { !($0.token.decimals == 0) }
                 self.wallets = wallets
-                let items = wallets.map {
-                    (
-                        $0,
-                        $0.isHidden
-                    )
-                }
+                let items = wallets.map { ($0, $0.isHidden) }
                 self.items = items.filter { !$0.1 }.map(\.0)
                 self.hiddenItems = items.filter(\.1).map(\.0)
             })
             .store(in: &cancellables)
+
+        if available(.solanaNegativeStatus) {
+            solanaTracker.unstableSolana
+                .sink(receiveValue: { [weak self] in
+                    self?.notificationService.showToast(
+                        title: "😴",
+                        text: L10n.solanaHasSomeProblems,
+                        withAutoHidden: false
+                    )
+                })
+                .store(in: &cancellables)
+        }
+    }
+
+    func viewAppeared() {
+        if available(.solanaNegativeStatus) {
+            solanaTracker.startTracking()
+        }
     }
 
     func reloadData() async {
