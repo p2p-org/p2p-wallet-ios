@@ -71,6 +71,9 @@ struct HomeView: View {
                     }
                 }
         }
+        .onAppear {
+            viewModel.updateAddressIfNeeded()
+        }
     }
 }
 

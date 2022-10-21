@@ -14,7 +14,9 @@ class RemoteConfigWarmupProcess: WarmupProcess {
 
     private func setupRemoteConfig(timeout: TimeInterval) async {
         await withCheckedContinuation { continuation in
-            setupRemoteConfig(timeout: timeout) { continuation.resume() }
+            setupRemoteConfig(timeout: timeout) {
+                continuation.resume()
+            }
         }
     }
 
@@ -33,15 +35,13 @@ class RemoteConfigWarmupProcess: WarmupProcess {
             }
         }
 
+        let currentEndpoints = APIEndPoint.definedEndpoints
         #if !RELEASE
             let settings = RemoteConfigSettings()
             // WARNING: Don't actually do this in production!
             settings.minimumFetchInterval = 0
             RemoteConfig.remoteConfig().configSettings = settings
-        #endif
 
-        let currentEndpoints = APIEndPoint.definedEndpoints
-        #if !RELEASE
             FeatureFlagProvider.shared.fetchFeatureFlags(
                 mainFetcher: MergingFlagsFetcher(
                     primaryFetcher: DebugMenuFeaturesProvider.shared,
@@ -52,6 +52,7 @@ class RemoteConfigWarmupProcess: WarmupProcess {
                 )
             ) { _ in
                 self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
+                self.cacheConfigValues()
                 if completion != nil {
                     completion?()
                     timer.cancel()
@@ -65,6 +66,7 @@ class RemoteConfigWarmupProcess: WarmupProcess {
                 )
             ) { _ in
                 self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
+                self.cacheConfigValues()
                 if completion != nil {
                     completion?()
                     timer.cancel()
@@ -85,6 +87,13 @@ class RemoteConfigWarmupProcess: WarmupProcess {
         {
             Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
         }
+    }
+
+    private func cacheConfigValues() {
+        let remoteConfig = RemoteConfig.remoteConfig()
+        Defaults.solanaNegativeStatusFrequency = remoteConfig.solanaNegativeStatusFrequency
+        Defaults.solanaNegativeStatusPercent = remoteConfig.solanaNegativeStatusPercent
+        Defaults.solanaNegativeStatusTimeFrequency = remoteConfig.solanaNegativeStatusTimeFrequency
     }
 }
 

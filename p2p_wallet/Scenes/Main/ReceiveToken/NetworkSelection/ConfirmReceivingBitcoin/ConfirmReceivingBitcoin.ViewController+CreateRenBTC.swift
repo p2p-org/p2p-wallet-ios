@@ -69,18 +69,14 @@ extension ConfirmReceivingBitcoin.ViewController {
 
             ReceiveToken.textBuilder(
                 text: L10n
-                    .ThisAddressAcceptsOnly.youMayLoseAssetsBySendingAnotherCoin(L10n.bitcoin)
+                    .YouReGoingToCreateAPublicBitcoinAddressThatWillBeValidForTheNext24Hours
+                    .youStillCanHoldAndSendBitcoinWithoutRestrictions
                     .asMarkdown()
             )
 
             ReceiveToken.textBuilder(
                 text: L10n
-                    .minimumTransactionAmountOf("0.000112 BTC")
-                    .asMarkdown()
-            )
-
-            ReceiveToken.textBuilder(
-                text: L10n.isTheRemainingTimeToSafelySendTheAssets("35:59:59")
+                    .itSAOneTimeAddressSoIfYouSendMultipleTransactionsYourMoneyWillBeLost
                     .asMarkdown()
             )
         }

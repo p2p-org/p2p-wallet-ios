@@ -6,6 +6,7 @@
 //
 
 import Down
+import FirebaseRemoteConfig
 import Foundation
 
 extension Optional where Wrapped == String {
@@ -51,7 +52,7 @@ extension String {
     }
 
     static var nameServiceDomain: String {
-        ".p2p.sol"
+        RemoteConfig.remoteConfig().usernameDomain ?? ""
     }
 
     static func secretConfig(_ key: String) -> String? {
