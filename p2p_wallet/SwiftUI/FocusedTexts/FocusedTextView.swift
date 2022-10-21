@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-struct SeedTextView: UIViewRepresentable {
+struct FocusedTextView: UIViewRepresentable {
     @Binding private var isFirstResponder: Bool
     @Binding private var text: String
     private var configuration = { (_: UITextView) in }
