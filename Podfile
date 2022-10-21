@@ -23,7 +23,7 @@ def key_app_kit
     "Onboarding",
     "JSBridge",
     "CountriesAPI",
-    "KeyAppKitCore"
+    "KeyAppKitCore",
     "P2PSwift",
     "Solend"
   ]

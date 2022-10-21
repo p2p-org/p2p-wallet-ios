@@ -28,20 +28,23 @@ struct PopularCoinView: View {
 
     var body: some View {
         ZStack {
-            Color(Asset.Colors.smoke.color)
+            Color(Asset.Colors.snow.color)
                 .frame(height: 74)
-                .cornerRadius(20)
+                .cornerRadius(16)
             HStack {
                 HStack(spacing: 12) {
                     Image(uiImage: image)
                         .frame(width: 48, height: 48)
                         .cornerRadius(16)
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text(title)
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .font(uiFont: .font(of: .text2))
                         Text(subtitle)
+                            .foregroundColor(Color(Asset.Colors.mountain.color))
+                            .font(uiFont: .font(of: .label1))
                     }
                     .font(uiFont: .font(of: .text1, weight: .semibold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
                 }
                 .padding(.leading, 16)
                 Spacer()
