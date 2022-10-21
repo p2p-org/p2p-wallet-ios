@@ -12,6 +12,10 @@ public extension Feature {
     static let settingsFeature = Feature(rawValue: "settingsFeature")
     static let newOnboardingFlow = Feature(rawValue: "newOnboardingFlow")
 
+    // Username
+    static let onboardingUsernameEnabled = Feature(rawValue: "ios_onboarding_username_enabled")
+    static let onboardingUsernameButtonSkipEnabled = Feature(rawValue: "ios_onboarding_username_button_skip_enabled")
+
     // Onboarding
     static let mockedApiGateway = Feature(rawValue: "mockedApiGateway")
     static let mockedTKeyFacade = Feature(rawValue: "mockedTKeyFacade")
@@ -21,4 +25,7 @@ public extension Feature {
     // Solend
     static let investSolendFeature = Feature(rawValue: "keyapp_invest_solend_enabled")
     static let solendDisablePlaceholder = Feature(rawValue: "ios_solend_disable_placeholder")
+
+    // Solana tracking
+    static let solanaNegativeStatus = Feature(rawValue: "solana_negative_status_enabled")
 }

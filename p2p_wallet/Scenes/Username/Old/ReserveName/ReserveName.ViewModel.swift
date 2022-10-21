@@ -172,9 +172,7 @@ extension ReserveName {
                     await nameDidReserve(name)
                 } catch {
                     isLoadingSubject.accept(false)
-                    if let error = error as? NameServiceError,
-                       error == .invalidStatusCode(500)
-                    {
+                    if error is UndefinedNameServiceError {
                         notificationsService
                             .showInAppNotification(.error(L10n
                                     .theNameServiceIsExperiencingSomeIssuesPleaseTryAgainLater))

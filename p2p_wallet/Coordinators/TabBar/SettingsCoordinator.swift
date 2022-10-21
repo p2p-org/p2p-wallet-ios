@@ -35,15 +35,11 @@ final class SettingsCoordinator: Coordinator<Void> {
                 case .support:
                     helpLauncher.launch()
                 case let .reserveUsername(userAddress):
-                    let vm = ReserveName.ViewModel(
-                        kind: .independent,
-                        owner: userAddress,
-                        reserveNameHandler: Settings.ViewModel(),
-                        goBackOnCompletion: true,
-                        checkBeforeReserving: true
-                    )
-                    let vc = ReserveName.ViewController(viewModel: vm)
-                    navigationController.pushViewController(vc, animated: true)
+                    coordinate(to: CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController)))
+                        .sink { [unowned self] in
+                            self.navigationController.popToViewController(settingsVC, animated: true)
+                        }
+                        .store(in: &subscriptions)
                 case .recoveryKit:
                     let coordinator = RecoveryKitCoordinator(navigationController: navigationController)
                     coordinate(to: coordinator)

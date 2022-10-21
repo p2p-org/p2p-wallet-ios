@@ -23,6 +23,7 @@ def key_app_kit
     "Onboarding",
     "JSBridge",
     "CountriesAPI",
+    "KeyAppKitCore"
     "P2PSwift",
     "Solend"
   ]
@@ -109,6 +110,9 @@ target 'p2p_wallet' do
 
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
+
+  # AppsFlyer
+  pod 'AppsFlyerFramework'
 
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths
