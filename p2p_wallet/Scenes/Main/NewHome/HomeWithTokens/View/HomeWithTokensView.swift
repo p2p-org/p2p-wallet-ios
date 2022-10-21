@@ -14,18 +14,18 @@ import SwiftUI
 
 struct HomeWithTokensView: View {
     @Injected private var analyticsManager: AnalyticsManager
-
+    
     @ObservedObject var viewModel: HomeWithTokensViewModel
-
+    
     @State private var currentUserInteractionCellID: String?
     @State private var scrollAnimationIsEnded = true
     @State private var isEarnBannerClosed = Defaults.isEarnBannerClosed
-
+    
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
         analyticsManager.log(event: AmplitudeEvent.mainScreenWalletsOpen)
     }
-
+    
     var body: some View {
         ScrollViewReader { reader in
             ScrollView {
@@ -59,51 +59,52 @@ struct HomeWithTokensView: View {
             viewModel.viewAppeared()
         }
     }
-
+    
     private var header: some View {
         VStack(alignment: .center) {
             // Balance
             VStack(alignment: .center, spacing: 6) {
-            Text(viewModel.balance)
-                .font(uiFont: .font(of: .largeTitle, weight: .bold))
-                .foregroundColor(Color(Asset.Colors.night.color))
-                .padding(.top, 24)
-            HStack(spacing: 32) {
-                tokenOperation(title: L10n.buy, image: .homeBuy) {
-                    viewModel.buy()
-                }
-                tokenOperation(title: L10n.receive, image: .homeReceive) {
-                    viewModel.receive()
-                }
-                tokenOperation(title: L10n.send, image: .homeSend) {
-                    viewModel.send()
-                }
-                tokenOperation(title: L10n.trade, image: .homeSwap) {
-                    viewModel.trade()
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.bottom, 32)
-
-            // Earn banner
-            if !isEarnBannerClosed && available(.investSolendFeature) {
-                EarnBannerView {
-                    viewModel.earn()
-                } closeAction: {
-                    Defaults.isEarnBannerClosed = true
-                    withAnimation {
-                        isEarnBannerClosed = true
+                Text(viewModel.balance)
+                    .font(uiFont: .font(of: .largeTitle, weight: .bold))
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .padding(.top, 24)
+                HStack(spacing: 32) {
+                    tokenOperation(title: L10n.buy, image: .homeBuy) {
+                        viewModel.buy()
+                    }
+                    tokenOperation(title: L10n.receive, image: .homeReceive) {
+                        viewModel.receive()
+                    }
+                    tokenOperation(title: L10n.send, image: .homeSend) {
+                        viewModel.send()
+                    }
+                    tokenOperation(title: L10n.trade, image: .homeSwap) {
+                        viewModel.trade()
                     }
                 }
-                .onTapGesture {
-                    viewModel.earn()
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, 32)
+                
+                // Earn banner
+                if !isEarnBannerClosed && available(.investSolendFeature) {
+                    EarnBannerView {
+                        viewModel.earn()
+                    } closeAction: {
+                        Defaults.isEarnBannerClosed = true
+                        withAnimation {
+                            isEarnBannerClosed = true
+                        }
+                    }
+                    .onTapGesture {
+                        viewModel.earn()
+                    }
+                    .padding(.top, 11)
                 }
-                .padding(.top, 11)
             }
+            .background(Color(Asset.Colors.smoke.color))
         }
-        .background(Color(Asset.Colors.smoke.color))
     }
-
+    
     private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(L10n.tokens)
@@ -152,7 +153,7 @@ struct HomeWithTokensView: View {
             }
         }
     }
-
+    
     private func tokenOperation(title: String, image: UIImage, action: @escaping () -> Void) -> some View {
         Button(
             action: action,
@@ -168,9 +169,9 @@ struct HomeWithTokensView: View {
                 .frame(width: 56)
             }
         )
-            .buttonStyle(PlainButtonStyle()) // prevent getting called on tapping cell
+        .buttonStyle(PlainButtonStyle()) // prevent getting called on tapping cell
     }
-
+    
     private func tokenCell(wallet: Wallet) -> some View {
         TokenCellView(item: TokenCellViewItem(wallet: wallet))
             .frame(height: 72)
@@ -179,7 +180,7 @@ struct HomeWithTokensView: View {
                 viewModel.tokenClicked(wallet: wallet)
             }
     }
-
+    
     private func swipeTokenCell(isVisible: Bool, wallet: Wallet) -> some View {
         TokenCellView(item: TokenCellViewItem(wallet: wallet))
             .swipeActions(isVisible: isVisible, currentUserInteractionCellID: $currentUserInteractionCellID, action: {
@@ -193,7 +194,7 @@ struct HomeWithTokensView: View {
                 viewModel.tokenClicked(wallet: wallet)
             }
     }
-
+    
     @ViewBuilder
     private func wrappedList<Content: View>(
         itemsCount: Int,
@@ -214,8 +215,6 @@ struct HomeWithTokensView: View {
         }
     }
 }
-
-// MARK: - Swipe Actions
 
 private extension View {
     @ViewBuilder func swipeActions(
@@ -253,13 +252,13 @@ private extension View {
             )
         }
     }
-
+    
     func hideView(isVisible: Bool) -> AnyView {
         Image(uiImage: isVisible ? .eyeHide : .eyeShow)
             .animation(.default)
             .castToAnyView()
     }
-
+    
     @ViewBuilder
     func topPadding() -> some View {
         if #available(iOS 15, *) {
