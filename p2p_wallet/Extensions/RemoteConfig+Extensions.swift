@@ -44,4 +44,8 @@ extension RemoteConfig {
     var solanaNegativeStatusTimeFrequency: Int? {
         configValues(Int.self, forKey: "solana_negative_status_time_frequency")
     }
+
+    var usernameDomain: String? {
+        configValue(forKey: "username_domain").stringValue
+    }
 }
