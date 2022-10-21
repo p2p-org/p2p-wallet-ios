@@ -328,33 +328,33 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     // MARK: -
-    
+
     func processFee(fee: SolendFeePaying) {
         // Fee
-        let transferFee = Double(fee.fee.transaction) / pow(fee.decimals, Double(fee.decimals))
+        let transferFee = Double(fee.fee.transaction) / pow(Double(fee.decimals), Double(fee.decimals))
         let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
-        
-        let rentFee = Double(fee.fee.accountBalances) / pow(fee.decimals, Double(fee.decimals))
+
+        let rentFee = Double(fee.fee.accountBalances) / pow(Double(fee.decimals), Double(fee.decimals))
         let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
 
         // Total
         var total: Lamports = self.inputLamport
         var fiatTotal: Double = self.tokenToAmount(amount: self.amountFrom(lamports: total))
-        
+
         if invest.asset.symbol == fee.symbol {
             total = total + fee.fee.transaction + fee.fee.accountBalances
             fiatTotal = self.tokenToAmount(amount: self.amountFrom(lamports: total))
         } else {
             fiatTotal = fiatTotal + fiatTransferFee + fiatRentFee
         }
-        
+
         // Text label
         let tokenAmount = self.amountFrom(lamports: total)
         let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: total))
         let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " (" + fiatAmount
             .fiatAmount(currency: self.fiat) + ")"
         self.feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
-        
+
         self.detailItem.send(
             .init(
                 amount: self.amountFrom(lamports: inputLamport),
