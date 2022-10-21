@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import UIKit
+import SolanaSwift
 
 final class SolendCoordinator: Coordinator<Void> {
     private let navigationController: UINavigationController
@@ -108,11 +109,11 @@ final class SolendCoordinator: Coordinator<Void> {
 
     private func showBuy(symbol: String) {
         // Preparing params for buy view model
-        var defaultToken: Buy.CryptoCurrency?
+        var defaultToken: Token?
         var targetSymbol: String?
         switch symbol {
-        case "USDC": defaultToken = Buy.CryptoCurrency.usdc
-        case "SOL": defaultToken = Buy.CryptoCurrency.sol
+        case "USDC": defaultToken = Token.usdc
+        case "SOL": defaultToken = Token.nativeSolana
         default: targetSymbol = symbol
         }
 
