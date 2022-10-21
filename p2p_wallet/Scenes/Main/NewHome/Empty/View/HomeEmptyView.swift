@@ -20,6 +20,7 @@ struct HomeEmptyView: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 10)
+            .padding(.bottom, 16)
         }
         .background(Color(Asset.Colors.smoke.color))
         .customRefreshable {

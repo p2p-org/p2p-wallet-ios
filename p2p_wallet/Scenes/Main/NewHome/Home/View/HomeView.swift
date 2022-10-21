@@ -22,13 +22,13 @@ struct HomeView: View {
                 HomeWithTokensView(viewModel: viewModelWithTokens)
             }
         case .empty:
-            navigation(showQR: false) {
+            navigation {
                 HomeEmptyView(viewModel: emptyViewModel)
             }
         }
     }
 
-    func navigation<Content: View>(showQR: Bool = true, @ViewBuilder content: @escaping () -> Content) -> some View {
+    func navigation<Content: View>(@ViewBuilder content: @escaping () -> Content) -> some View {
         NavigationView {
             content()
                 .navigationBarTitleDisplayMode(.inline)
