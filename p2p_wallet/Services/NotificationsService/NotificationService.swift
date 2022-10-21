@@ -20,6 +20,7 @@ protocol NotificationService {
     func deleteDeviceToken() async
     func showInAppNotification(_ notification: InAppNotification)
     func showToast(title: String?, text: String?)
+    func showToast(title: String?, text: String?, haptic: Bool)
     func showAlert(title: String, text: String)
     func hideToasts()
     func showDefaultErrorNotification()
@@ -121,9 +122,17 @@ final class NotificationServiceImpl: NSObject, NotificationService {
         }
     }
 
-    func showToast(title: String? = nil, text: String? = nil) {
+    func showToast(title: String?, text: String?) {
         DispatchQueue.main.async {
             UIApplication.shared.showToastError(title: title, text: text)
+        }
+    }
+
+    func showToast(title: String?, text: String?, haptic: Bool) {
+        showToast(title: title, text: text)
+        if haptic {
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
         }
     }
 
