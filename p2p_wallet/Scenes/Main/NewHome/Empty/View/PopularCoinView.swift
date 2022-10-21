@@ -34,7 +34,8 @@ struct PopularCoinView: View {
             HStack {
                 HStack(spacing: 12) {
                     Image(uiImage: image)
-                        .frame(width: 42, height: 42)
+                        .frame(width: 48, height: 48)
+                        .cornerRadius(16)
                     VStack(alignment: .leading, spacing: 10) {
                         Text(title)
                         Text(subtitle)
