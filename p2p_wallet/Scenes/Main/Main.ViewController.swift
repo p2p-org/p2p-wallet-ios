@@ -22,6 +22,7 @@ extension Main {
 
         var authenticateWhenAppears: Bool!
         @Injected private var helpLauncher: HelpCenterLauncher
+        @Injected private var solanaTracker: SolanaTracker
 
         // MARK: - Subviews
 
@@ -93,6 +94,7 @@ extension Main {
             let lockView = LockView()
             UIApplication.shared.windows.last?.addSubview(lockView)
             lockView.autoPinEdgesToSuperviewEdges()
+            solanaTracker.stopTracking()
         }
 
         private func hideLockView() {
