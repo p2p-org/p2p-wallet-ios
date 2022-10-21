@@ -57,7 +57,7 @@ class DefaultSolendWithdrawFeePayingStrategy: SolendFeePayingStrategy {
         if feeInToken.total <= (userSplAccount.lamports ?? 0) {
             return .init(
                 symbol: symbol,
-                decimals: nativeAccount.token.decimals,
+                decimals: userSplAccount.token.decimals,
                 fee: feeInToken,
                 feePayer: TokenAccount(
                     address: try PublicKey(string: userSplAccount.pubkey),

@@ -30,4 +30,13 @@ extension PaymentType {
             )
         }
     }
+
+    var analyticName: String {
+        switch self {
+        case .card:
+            return "Card"
+        case .bank, .gbpBank:
+            return "BankTransfer"
+        }
+    }
 }

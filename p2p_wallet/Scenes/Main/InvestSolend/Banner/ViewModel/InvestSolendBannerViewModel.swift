@@ -7,6 +7,7 @@ import Foundation
 import Resolver
 import SolanaPricesAPIs
 import Solend
+import Sentry
 
 class InvestSolendBannerViewModel: ObservableObject {
     @Injected private var priceService: PricesServiceType
@@ -56,6 +57,7 @@ class InvestSolendBannerViewModel: ObservableObject {
     private func actionState(action: SolendAction) -> InvestSolendBannerState {
         switch action.status {
         case let .failed(msg):
+            SentrySDK.capture(error: NSError(domain: "Solend.Action", code: 1, userInfo: ["message": msg]))
             switch action.type {
             case .deposit:
                 return .failure(

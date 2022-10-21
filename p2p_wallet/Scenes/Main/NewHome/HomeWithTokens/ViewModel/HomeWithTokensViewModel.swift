@@ -40,7 +40,6 @@ class HomeWithTokensViewModel: ObservableObject {
     @Published var tokensIsHidden: Bool
 
     private var cancellables = Set<AnyCancellable>()
-    private var reloadCancellable: AnyCancellable?
 
     init(walletsRepository: WalletsRepository = Resolver.resolve()) {
         self.walletsRepository = walletsRepository
@@ -73,7 +72,9 @@ class HomeWithTokensViewModel: ObservableObject {
             .asPublisher()
             .assertNoFailure()
             .sink(receiveValue: { [weak self] wallets in
-                guard let self = self, let wallets = wallets else { return }
+                guard let self = self, var wallets = wallets else { return }
+                // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
+                wallets = wallets.filter { !($0.token.decimals == 0) }
                 self.wallets = wallets
                 let items = wallets.map {
                     (
@@ -89,17 +90,12 @@ class HomeWithTokensViewModel: ObservableObject {
 
     func reloadData() async {
         walletsRepository.reload()
-        return await withCheckedContinuation { continuation in
-            reloadCancellable = walletsRepository.stateObservable
-                .asPublisher()
-                .assertNoFailure()
-                .sink(receiveValue: { [weak self] in
-                    if $0 == .loaded || $0 == .error {
-                        continuation.resume()
-                        self?.reloadCancellable = nil
-                    }
-                })
-        }
+        _ = try? await walletsRepository.stateObservable
+            .asPublisher()
+            .assertNoFailure()
+            .filter { $0 == .loaded || $0 == .error }
+            .eraseToAnyPublisher()
+            .async()
     }
 
     func buy() {
