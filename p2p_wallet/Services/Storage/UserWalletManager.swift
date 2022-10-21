@@ -12,6 +12,7 @@ import SolanaSwift
 class UserWalletManager: ObservableObject {
     @Injected private var storage: KeychainStorage
     @Injected private var notificationsService: NotificationService
+    @Injected private var solanaTracker: SolanaTracker
 
     /// Current selected wallet
     @Published private(set) var wallet: UserWallet?
@@ -79,5 +80,6 @@ class UserWalletManager: ObservableObject {
 
         // Reset wallet
         wallet = nil
+        solanaTracker.stopTracking()
     }
 }

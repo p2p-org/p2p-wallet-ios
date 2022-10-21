@@ -20,6 +20,7 @@ protocol NotificationService {
     func deleteDeviceToken() async
     func showInAppNotification(_ notification: InAppNotification)
     func showToast(title: String?, text: String?)
+    func showToast(title: String?, text: String?, withAutoHidden: Bool)
     func showToast(title: String?, text: String?, haptic: Bool)
     func showAlert(title: String, text: String)
     func hideToasts()
@@ -125,6 +126,12 @@ final class NotificationServiceImpl: NSObject, NotificationService {
     func showToast(title: String?, text: String?) {
         DispatchQueue.main.async {
             UIApplication.shared.showToastError(title: title, text: text)
+        }
+    }
+
+    func showToast(title: String? = nil, text: String? = nil, withAutoHidden: Bool) {
+        DispatchQueue.main.async {
+            UIApplication.shared.showToastError(title: title, text: text, withAutoHidden: withAutoHidden)
         }
     }
 
@@ -246,12 +253,12 @@ private extension UIApplication {
         }
     }
 
-    func showToastError(title: String? = nil, text: String? = nil) {
+    func showToastError(title: String? = nil, text: String? = nil, withAutoHidden: Bool = true) {
         guard let window = kWindow else { return }
         SnackBar(
             title: title ?? "😓",
             text: text ?? L10n.SomethingWentWrong.pleaseTryAgain
-        ).show(in: window)
+        ).show(in: window, autoHide: withAutoHidden)
     }
 }
 
