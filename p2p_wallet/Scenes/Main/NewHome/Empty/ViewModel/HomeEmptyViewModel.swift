@@ -15,14 +15,15 @@ import SolanaSwift
 final class HomeEmptyViewModel: ObservableObject {
     let input = Input()
     let output: Output
-
+    
     @Injected private var walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType = Resolver.resolve()
     private var cancellable: AnyCancellable?
-
+    
     let topUp = PassthroughSubject<Void, Never>()
     let topUpCoin = PassthroughSubject<Token, Never>()
-
+    let receiveSubject = PassthroughSubject<PublicKey, Never>()
+    
     private var _popularCoins: [Token] = [.usdc, .nativeSolana, .renBTC, .eth, .usdt]
     var popularCoins: [PopularCoin] {
         _popularCoins.map { token in
@@ -35,20 +36,21 @@ final class HomeEmptyViewModel: ObservableObject {
             )
         }
     }
-
+    
     init() {
         output = Output(
             view: .init(),
             coord: .init(
                 topUpShow: topUp.eraseToAnyPublisher(),
-                topUpCoinShow: topUpCoin.eraseToAnyPublisher()
+                topUpCoinShow: topUpCoin.eraseToAnyPublisher(),
+                receive: receiveSubject.eraseToAnyPublisher()
             )
         )
     }
-
+    
     func reloadData() async {
         walletsRepository.reload()
-
+        
         return await withCheckedContinuation { continuation in
             cancellable = walletsRepository.stateObservable
                 .asPublisher()
@@ -61,7 +63,20 @@ final class HomeEmptyViewModel: ObservableObject {
                 })
         }
     }
-
+    
+    func coinTapped(at index: Int) {
+        if index == 2 {
+            receiveClicked()
+        } else {
+            topUpCoin.send(index == 0 ? .usdc : .nativeSolana)
+        }
+    }
+    
+    func receiveClicked() {
+        guard let solanaPubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
+        receiveSubject.send(solanaPubkey)
+    }
+    
     func buyTapped(index: Int) {
         let coin = _popularCoins[index]
         topUpCoin.send(coin)
@@ -87,13 +102,16 @@ extension HomeEmptyViewModel: ViewModel {
         class Coord {
             var topUpShow: AnyPublisher<Void, Never>
             var topUpCoinShow: AnyPublisher<Token, Never>
+            var receive: AnyPublisher<PublicKey, Never>
 
             init(
                 topUpShow: AnyPublisher<Void, Never>,
-                topUpCoinShow: AnyPublisher<Token, Never>
+                topUpCoinShow: AnyPublisher<Token, Never>,
+                receive: AnyPublisher<PublicKey, Never>
             ) {
                 self.topUpShow = topUpShow
                 self.topUpCoinShow = topUpCoinShow
+                self.receive = receive
             }
         }
 
