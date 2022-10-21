@@ -21,3 +21,9 @@ extension RemoteConfig {
         let additionalQuery: String?
     }
 }
+
+extension RemoteConfig {
+    var usernameDomain: String? {
+        configValue(forKey: "username_domain").stringValue
+    }
+}

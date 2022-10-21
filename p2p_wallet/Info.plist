@@ -89,6 +89,14 @@
 	<string>$(MOONPAY_STAGING_API_KEY)</string>
 	<key>NAME_SERVICE_ENDPOINT</key>
 	<string>$(NAME_SERVICE_ENDPOINT)</string>
+	<key>NAME_SERVICE_ENDPOINT_NEW</key>
+	<string>$(NAME_SERVICE_ENDPOINT_NEW)</string>
+	<key>NAME_SERVICE_STAGING_ENDPOINT</key>
+	<string>$(NAME_SERVICE_STAGING_ENDPOINT)</string>
+	<key>TORUS_APPLE_VERIFIER_PROD</key>
+	<string>$(TORUS_APPLE_VERIFIER_PROD)</string>
+	<key>TORUS_GOOGLE_SUB_VERIFIER_PROD</key>
+	<string>$(TORUS_GOOGLE_SUB_VERIFIER_PROD)</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>

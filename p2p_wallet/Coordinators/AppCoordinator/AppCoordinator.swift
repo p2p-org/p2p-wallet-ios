@@ -24,6 +24,7 @@ class AppCoordinator: Coordinator<Void> {
 
     @Injected var notificationService: NotificationService
     @Injected var userWalletManager: UserWalletManager
+    @Injected var createNameService: CreateNameService
 
     // MARK: - Properties
 
@@ -32,11 +33,14 @@ class AppCoordinator: Coordinator<Void> {
 
     var reloadEvent: PassthroughSubject<Void, Never> = .init()
 
+    private var walletCreated: Bool = false
+
     // MARK: - Initializers
 
     override init() {
         super.init()
         defer { Task { await appEventHandler.delegate = self } }
+        Task { await bind() }
     }
 
     // MARK: - Methods
@@ -57,14 +61,30 @@ class AppCoordinator: Coordinator<Void> {
                         .prepend(())
                 )
                 .receive(on: RunLoop.main)
-                .sink { [weak self] wallet, _ in
-                    wallet != nil ? self?.navigateToMain() : self?.newOnboardingFlow()
+                .sink { [unowned self] wallet, _ in
+                    if wallet != nil {
+                        if self.walletCreated, available(.onboardingUsernameEnabled) {
+                            self.openCreateUsername()
+                        } else {
+                            self.navigateToMain()
+                        }
+                    } else {
+                        self.newOnboardingFlow()
+                    }
                 }
                 .store(in: &subscriptions)
         }
     }
 
     // MARK: - Navigation
+
+    private func openCreateUsername() {
+        guard let window = window else { return }
+        coordinate(to: CreateUsernameCoordinator(navigationOption: .onboarding(window: window)))
+            .sink { [unowned self] in
+                self.navigateToMain()
+            }.store(in: &subscriptions)
+    }
 
     func navigateToMain() {
         // TODO: - Change to Main.Coordinator.start()
@@ -119,6 +139,8 @@ class AppCoordinator: Coordinator<Void> {
                 let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
                 case let .created(data):
+                    walletCreated = true
+
                     analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
                     analyticsManager.log(event: AmplitudeEvent.createConfirmPin(result: true))
 
@@ -175,5 +197,18 @@ class AppCoordinator: Coordinator<Void> {
     private func hideLoadingAndTransitionTo(_ vc: UIViewController) {
         window?.rootViewController?.view.hideLoadingIndicatorView()
         window?.animate(newRootViewController: vc)
+    }
+
+    private func bind() {
+        createNameService.createNameResult
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSuccess in
+                if isSuccess {
+                    guard let view = self?.window?.rootViewController?.view else { return }
+                    SnackBar(title: "🎉", icon: nil, text: L10n.nameWasBooked).show(in: view)
+                } else {
+                    self?.notificationService.showDefaultErrorNotification()
+                }
+            }.store(in: &subscriptions)
     }
 }
