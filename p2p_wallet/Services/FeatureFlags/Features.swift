@@ -21,8 +21,11 @@ public extension Feature {
     static let mockedTKeyFacade = Feature(rawValue: "mockedTKeyFacade")
     static let mockedDeviceShare = Feature(rawValue: "mockedDeviceShare")
     static let simulatedSocialError = Feature(rawValue: "simulatedSocialError")
+    
+    // Solend
+    static let investSolendFeature = Feature(rawValue: "keyapp_invest_solend_enabled")
+    static let solendDisablePlaceholder = Feature(rawValue: "ios_solend_disable_placeholder")
 
-    // MARK: - Solana tracking
-
+    // Solana tracking
     static let solanaNegativeStatus = Feature(rawValue: "solana_negative_status_enabled")
 }

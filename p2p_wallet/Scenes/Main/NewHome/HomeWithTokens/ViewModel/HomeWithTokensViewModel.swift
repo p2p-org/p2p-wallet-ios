@@ -23,11 +23,13 @@ class HomeWithTokensViewModel: ObservableObject {
     private let receiveClicked = PassthroughSubject<Void, Never>()
     private let sendClicked = PassthroughSubject<Void, Never>()
     private let tradeClicked = PassthroughSubject<Void, Never>()
+    private let earnClicked = PassthroughSubject<Void, Never>()
     private let walletClicked = PassthroughSubject<(pubKey: String, tokenSymbol: String), Never>()
     let buyShow: AnyPublisher<Void, Never>
     let receiveShow: AnyPublisher<PublicKey, Never>
     let sendShow: AnyPublisher<Void, Never>
     let tradeShow: AnyPublisher<Void, Never>
+    let earnShow: AnyPublisher<Void, Never>
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
 
     @Published var balance = ""
@@ -53,6 +55,7 @@ class HomeWithTokensViewModel: ObservableObject {
         sendShow = sendClicked.eraseToAnyPublisher()
         tradeShow = tradeClicked.eraseToAnyPublisher()
         walletShow = walletClicked.eraseToAnyPublisher()
+        earnShow = earnClicked.eraseToAnyPublisher()
 
         Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
             .filter { $0.1 == .loaded }
@@ -124,6 +127,10 @@ class HomeWithTokensViewModel: ObservableObject {
 
     func trade() {
         tradeClicked.send()
+    }
+
+    func earn() {
+        earnClicked.send()
     }
 
     func tokenClicked(wallet: Wallet) {

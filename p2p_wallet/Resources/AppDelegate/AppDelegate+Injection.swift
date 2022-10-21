@@ -11,11 +11,13 @@ import FeeRelayerSwift
 import NameService
 import Onboarding
 import OrcaSwapSwift
+import P2PSwift
 import Reachability
 import RenVMSwift
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
+import Solend
 import SwiftyUserDefaults
 
 extension Resolver: ResolverRegistering {
@@ -207,6 +209,9 @@ extension Resolver: ResolverRegistering {
             .implements(AuthenticationHandlerType.self)
             .scope(.session)
 
+        register { UserSessionCache() }
+            .scope(.session)
+
         register { PincodeServiceImpl() }
             .implements(PincodeService.self)
             .scope(.session)
@@ -264,14 +269,21 @@ extension Resolver: ResolverRegistering {
         }
         .implements(SwapFeeRelayer.self)
 
-        register {
-            FeeRelayerContextManagerImpl(
-                accountStorage: resolve(),
-                solanaAPIClient: resolve(),
-                feeRelayerAPIClient: resolve()
-            )
+        register { () -> FeeRelayerContextManager in
+            if FeeRelayConfig.shared.disableFeeTransaction {
+                return FeeRelayerContextManagerDisabledFreeTrxImpl(
+                    accountStorage: resolve(),
+                    solanaAPIClient: resolve(),
+                    feeRelayerAPIClient: resolve()
+                )
+            } else {
+                return FeeRelayerContextManagerImpl(
+                    accountStorage: resolve(),
+                    solanaAPIClient: resolve(),
+                    feeRelayerAPIClient: resolve()
+                )
+            }
         }
-        .implements(FeeRelayerContextManager.self)
 
         // PricesService
         register { PricesService() }
@@ -399,6 +411,36 @@ extension Resolver: ResolverRegistering {
         }
         .implements(Banners.Service.self)
         .scope(.shared)
+
+        // Solend
+        register { SolendFFIWrapper() }
+            .implements(Solend.self)
+            .scope(.application)
+        register {
+            SolendDataServiceImpl(
+                solend: resolve(),
+                owner: resolve(AccountStorageType.self).account!,
+                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
+                cache: resolve(UserSessionCache.self)
+            )
+        }
+        .implements(SolendDataService.self)
+        .scope(.session)
+
+        register {
+            SolendActionServiceImpl(
+                rpcUrl: Defaults.apiEndPoint.getURL(),
+                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
+                userAccountStorage: resolve(),
+                solend: resolve(),
+                solana: resolve(),
+                feeRelayApi: resolve(),
+                feeRelay: resolve(),
+                feeRelayContextManager: resolve()
+            )
+        }
+        .implements(SolendActionService.self)
+        .scope(.session)
 
         // Solana tracker
         register {

@@ -11,6 +11,7 @@ import SwiftUI
 
 struct DebugMenuView: View {
     @ObservedObject private var viewModel: DebugMenuViewModel
+    @ObservedObject private var feeRelayerConfig = FeeRelayConfig.shared
     @ObservedObject private var onboardingConfig = OnboardingConfig.shared
 
     init(viewModel: DebugMenuViewModel) {
@@ -32,6 +33,15 @@ struct DebugMenuView: View {
                             Text(viewModel.features[index].title)
                         }
                     }
+                }
+                Section(header: Text("Fee relayer")) {
+                    Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
+                        .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { newValue in
+                            showDebugger(false)
+                            
+                            let app: AppEventHandlerType = Resolver.resolve()
+                            app.delegate?.refresh()
+                        }
                 }
 
                 Section(header: Text("Onboarding configurations")) {

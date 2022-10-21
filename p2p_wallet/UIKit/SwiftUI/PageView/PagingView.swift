@@ -6,6 +6,7 @@ struct PagingView<Content>: View where Content: View {
 
     let maxIndex: Int
     let fillColor: Color
+    let withSpacers: Bool
     let content: () -> Content
 
     @State private var offset = CGFloat.zero
@@ -15,10 +16,12 @@ struct PagingView<Content>: View where Content: View {
         index: Binding<Int>,
         maxIndex: Int,
         fillColor: Color,
+        withSpacers: Bool = true,
         @ViewBuilder content: @escaping () -> Content
     ) {
         _index = index
         self.fillColor = fillColor
+        self.withSpacers = withSpacers
         self.maxIndex = maxIndex
         self.content = content
     }
@@ -26,8 +29,9 @@ struct PagingView<Content>: View where Content: View {
     var body: some View {
         GeometryReader { geometry in
             VStack(spacing: 24) {
-                Spacer()
-
+                if withSpacers {
+                    Spacer()
+                }
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: .zero) {
                         self.content()
@@ -52,10 +56,10 @@ struct PagingView<Content>: View where Content: View {
                     }
                 )
 
-                Spacer()
-
                 PageControl(index: $index, maxIndex: maxIndex, fillColor: fillColor)
-                    .padding(.bottom, 32)
+                if withSpacers {
+                    Spacer()
+                }
             }
         }
     }

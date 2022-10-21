@@ -3,100 +3,141 @@ import SkeletonUI
 import SwiftSVG
 import SwiftUI
 
-struct CoinLogoView: View {
-    var image: UIImage?
-    var imageURL: URL?
+struct CoinLogoView: UIViewRepresentable {
+    let size: CGFloat
+    let cornerRadius: CGFloat
+    let backgroundColor: UIColor?
+    let image: UIImage?
+    let urlString: String?
+    let wrappedByImage: UIImage?
+    let placeholder: UIImage?
 
-    var body: some View {
-        if let imageURL = self.imageURL {
-            ImageView(
-                withURL: imageURL
-            )
-        } else if let image = self.image {
-            Image(uiImage: image)
-        }
+    init(
+        size: CGFloat,
+        cornerRadius: CGFloat = 12,
+        backgroundColor: UIColor? = nil,
+        image: UIImage? = nil,
+        urlString: String? = nil,
+        wrappedByImage: UIImage? = nil,
+        placeholder: UIImage? = nil
+    ) {
+        self.size = size
+        self.cornerRadius = cornerRadius
+        self.backgroundColor = backgroundColor
+        self.image = image
+        self.urlString = urlString
+        self.wrappedByImage = wrappedByImage
+        self.placeholder = placeholder
     }
+
+    func makeUIView(context _: Context) -> CoinLogoViewWrapper {
+        CoinLogoViewWrapper(
+            size: size,
+            cornerRadius: cornerRadius,
+            backgroundColor: backgroundColor,
+            image: image,
+            urlString: urlString,
+            wrappedByImage: wrappedByImage,
+            placeholder: placeholder
+        )
+    }
+
+    func updateUIView(_ logoView: CoinLogoViewWrapper, context _: Context) {
+        logoView.setUp(image: image, url: urlString, wrappedByImage: wrappedByImage, placeholder: placeholder)
+    }
+
+    typealias UIViewType = CoinLogoViewWrapper
 }
 
-struct ImageView: View {
-    @ObservedObject var imageLoader: ImageLoader
-    @State var image: UIImage? = .init()
-    @State var svg: Data = .init()
-    @State var isLoading = true
+class CoinLogoViewWrapper: BEView {
+    static var cachedJazziconSeeds = [String: UInt32]()
 
-    init(withURL url: URL) {
-        imageLoader = ImageLoader(url: url)
+    // MARK: - Properties
+
+    private let size: CGFloat
+
+    // MARK: - Subviews
+
+    lazy var tokenIcon = UIImageView(tintColor: .textBlack)
+    lazy var wrappingTokenIcon = UIImageView(width: 16, height: 16, cornerRadius: 4)
+        .border(width: 1, color: .h464646)
+    lazy var wrappingView: BERoundedCornerShadowView = {
+        let view = BERoundedCornerShadowView(
+            shadowColor: UIColor.textWhite.withAlphaComponent(0.25),
+            radius: 2,
+            offset: CGSize(width: 0, height: 2),
+            opacity: 1,
+            cornerRadius: 4
+        )
+
+        view.addSubview(wrappingTokenIcon)
+        wrappingTokenIcon.autoPinEdgesToSuperviewEdges()
+
+        return view
+    }()
+
+    // MARK: - Initializer
+
+    init(
+        size: CGFloat,
+        cornerRadius: CGFloat = 12,
+        backgroundColor: UIColor? = nil,
+        image: UIImage?,
+        urlString: String?,
+        wrappedByImage: UIImage? = nil,
+        placeholder: UIImage? = nil
+    ) {
+        self.size = size
+        super.init(frame: .zero)
+        configureForAutoLayout()
+        autoSetDimensions(to: .init(width: size, height: size))
+
+        layer.cornerRadius = cornerRadius
+        layer.masksToBounds = true
+
+        self.backgroundColor = backgroundColor ?? .gray
+
+        setUp(image: image, url: urlString, wrappedByImage: wrappedByImage, placeholder: placeholder)
     }
 
-    var body: some View {
-        ZStack {
-            Image(uiImage: image)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .opacity($svg.isEmpty ? 1 : 0)
-                .skeleton(with: isLoading)
-            SVGView(svg: $svg)
-                .opacity($svg.isEmpty ? 0 : 1)
-                .frame(width: 48, height: 48)
-        }.onReceive(imageLoader.didChange) { data in
-            if let image = UIImage(data: data) {
-                self.image = image
-            } else {
-                self.svg = data
+    override func commonInit() {
+        super.commonInit()
+
+        addSubview(tokenIcon)
+        tokenIcon.autoPinEdgesToSuperviewEdges()
+
+        addSubview(wrappingView)
+        wrappingView.autoPinEdge(toSuperviewEdge: .trailing)
+        wrappingView.autoPinEdge(toSuperviewEdge: .bottom)
+        wrappingView.alpha = 0 // UNKNOWN: isHidden not working
+    }
+
+    func setUp(image: UIImage? = nil, url: String? = nil, wrappedByImage: UIImage? = nil, placeholder: UIImage? = nil) {
+        // default
+        wrappingView.alpha = 0
+        backgroundColor = .clear
+        tokenIcon.isHidden = false
+
+        // with token
+        if let image = image {
+            tokenIcon.image = image
+        } else if let url = url {
+            tokenIcon.setImage(urlString: url) { [weak self] result in
+                switch result {
+                case .success:
+                    self?.tokenIcon.isHidden = false
+                case .failure:
+                    self?.tokenIcon.isHidden = true
+                }
             }
-            self.isLoading = false
+        } else {
+            tokenIcon.image = placeholder
         }
-    }
-}
 
-/// UIView to show svgs
-struct SVGView: UIViewRepresentable {
-    func updateUIView(_ uiView: UIView, context _: Context) {
-        CALayer(SVGData: svg) { layer in
-            uiView.layer.sublayers?.removeAll()
-            layer.resizeToFit(uiView.bounds)
-            uiView.layer.addSublayer(layer)
+        // wrapped by
+        if let wrappedBy = wrappedByImage {
+            wrappingView.alpha = 1
+            wrappingTokenIcon.image = wrappedBy
         }
-    }
-
-    typealias UIViewType = UIView
-    @Binding var svg: Data
-
-    func makeUIView(context _: Context) -> UIView {
-        UIView(SVGData: svg)
-    }
-
-    static func dismantleUIView(_: UIViewType, coordinator _: Coordinator<Any>) {}
-
-    func makeCoordinator() -> SVGViewCoordinator<Data> {
-        SVGViewCoordinator(data: $svg)
-    }
-}
-
-class SVGViewCoordinator<T>: NSObject {
-    @Binding private var data: T
-
-    init(data: Binding<T>) {
-        _data = data
-    }
-}
-
-/// Loader to get retreive images
-class ImageLoader: ObservableObject {
-    var didChange = PassthroughSubject<Data, Never>()
-    var data = Data() {
-        didSet {
-            didChange.send(data)
-        }
-    }
-
-    init(url: URL) {
-        let task = URLSession.shared.dataTask(with: url) { data, _, _ in
-            guard let data = data else { return }
-            DispatchQueue.main.async {
-                self.data = data
-            }
-        }
-        task.resume()
     }
 }
