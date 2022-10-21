@@ -32,7 +32,7 @@ struct HomeWithTokensView: View {
                 VStack(spacing: 0) {
                     header
                         .topPadding()
-                        .padding(.bottom, 18)
+                        .padding(.bottom, 32)
                         .id(0)
                     content
                 }
@@ -68,6 +68,7 @@ struct HomeWithTokensView: View {
                     .font(uiFont: .font(of: .largeTitle, weight: .bold))
                     .foregroundColor(Color(Asset.Colors.night.color))
                     .padding(.top, 24)
+                    .padding(.bottom, 32)
                 HStack(spacing: 32) {
                     tokenOperation(title: L10n.buy, image: .homeBuy) {
                         viewModel.buy()
@@ -83,7 +84,7 @@ struct HomeWithTokensView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.bottom, 32)
+                .padding(.bottom, 25)
                 
                 // Earn banner
                 if !isEarnBannerClosed && available(.investSolendFeature) {
@@ -98,7 +99,7 @@ struct HomeWithTokensView: View {
                     .onTapGesture {
                         viewModel.earn()
                     }
-                    .padding(.top, 11)
+                    .padding(.horizontal, 16)
                 }
             }
             .background(Color(Asset.Colors.smoke.color))
@@ -111,6 +112,7 @@ struct HomeWithTokensView: View {
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .padding(.horizontal, 16)
+                .padding(.bottom, 8)
             wrappedList(itemsCount: viewModel.items.count) {
                 ForEach(viewModel.items, id: \.pubkey) {
                     if $0.isNativeSOL {
