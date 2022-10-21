@@ -108,6 +108,9 @@ target 'p2p_wallet' do
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
 
+  # AppsFlyer
+  pod 'AppsFlyerFramework'
+
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths
 #    common_pods
