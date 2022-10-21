@@ -11,6 +11,7 @@ import UIKit
 
 final class SettingsCoordinator: Coordinator<Void> {
     @Injected private var pinStorage: PincodeStorageType
+    @Injected private var helpLauncher: HelpCenterLauncher
 
     private let navigationController: UINavigationController
 
@@ -31,38 +32,24 @@ final class SettingsCoordinator: Coordinator<Void> {
                 case .username:
                     let vc = Settings.NewUsernameViewController(viewModel: Settings.ViewModel())
                     navigationController.pushViewController(vc, animated: true)
+                case .support:
+                    helpLauncher.launch()
                 case let .reserveUsername(userAddress):
-                    let vm = ReserveName.ViewModel(
-                        kind: .independent,
-                        owner: userAddress,
-                        reserveNameHandler: Settings.ViewModel(),
-                        goBackOnCompletion: true,
-                        checkBeforeReserving: true
-                    )
-                    let vc = ReserveName.ViewController(viewModel: vm)
-                    navigationController.pushViewController(vc, animated: true)
+                    coordinate(to: CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController)))
+                        .sink { [unowned self] in
+                            self.navigationController.popToViewController(settingsVC, animated: true)
+                        }
+                        .store(in: &subscriptions)
                 case .recoveryKit:
                     let coordinator = RecoveryKitCoordinator(navigationController: navigationController)
                     coordinate(to: coordinator)
                 case .yourPin:
-                    let createPincodeVC = WLCreatePincodeVC(
-                        createPincodeTitle: L10n.setUpANewWalletPIN,
-                        confirmPincodeTitle: L10n.confirmPINCode
-                    )
-                    createPincodeVC.modalPresentationStyle = .fullScreen
-
-                    createPincodeVC.onSuccess = { [weak self, weak createPincodeVC] pincode in
-                        self?.pinStorage.save(pincode)
-                        createPincodeVC?.dismiss(animated: true) {
-                            Resolver.resolve(NotificationService.self)
-                                .showInAppNotification(.done(L10n.youHaveSuccessfullySetYourPIN))
-                        }
-                    }
-                    createPincodeVC.onCancel = { [weak createPincodeVC] in
-                        createPincodeVC?.dismiss(animated: true)
-                    }
-
-                    navigationController.present(createPincodeVC, animated: true)
+                    let coordinator = PincodeChangeCoordinator(navVC: navigationController)
+                    coordinate(to: coordinator)
+                        .sink(receiveValue: { [unowned self] _ in
+                            navigationController.popToRootViewController(animated: true)
+                        })
+                        .store(in: &subscriptions)
                 case .network:
                     let coordinator = NetworkCoordinator(navigationController: navigationController)
                     coordinate(to: coordinator)

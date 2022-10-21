@@ -54,7 +54,7 @@ extension SendToken.ConfirmViewController {
     class RecipientView: UIStackView {
         // MARK: - Subviews
 
-        private lazy var nameLabel = UILabel(text: "<Recipient: a.p2p.sol>")
+        private lazy var nameLabel = UILabel(text: "<Recipient: %username>")
         private lazy var addressLabel = UILabel(
             text: "<DkmTQHutnUn9xWmismkm2zSvLQfiEkPQCq6rAXZKJnBw>",
             textSize: 17,

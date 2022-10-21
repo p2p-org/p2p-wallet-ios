@@ -6,6 +6,7 @@
 //
 
 import AnalyticsManager
+import Combine
 import KeyAppUI
 import Resolver
 import SolanaSwift
@@ -13,33 +14,29 @@ import SwiftUI
 
 struct HomeWithTokensView: View {
     @Injected private var analyticsManager: AnalyticsManager
-
+    
     @ObservedObject var viewModel: HomeWithTokensViewModel
-
+    
     @State private var currentUserInteractionCellID: String?
     @State private var scrollAnimationIsEnded = true
-
+    @State private var isEarnBannerClosed = Defaults.isEarnBannerClosed
+    
     init(viewModel: HomeWithTokensViewModel) {
         self.viewModel = viewModel
         analyticsManager.log(event: AmplitudeEvent.mainScreenWalletsOpen)
-        UITableView.appearance().showsVerticalScrollIndicator = false
     }
-
+    
     var body: some View {
         ScrollViewReader { reader in
-            List {
-                Group {
+            ScrollView {
+                VStack(spacing: 0) {
                     header
                         .topPadding()
-                        .padding(.bottom, 18)
+                        .padding(.bottom, 32)
                         .id(0)
                     content
                 }
-                .horizontalPadding()
-                .withoutSeparatorsAfterListContent()
             }
-            .withoutSeparatorsiOS14()
-            .listStyle(.plain)
             .customRefreshable {
                 await viewModel.reloadData()
             }
@@ -55,52 +52,76 @@ struct HomeWithTokensView: View {
                 scrollAnimationIsEnded = false
             }
         }
-    }
-
-    private var header: some View {
-        VStack(alignment: .center, spacing: 32) {
-            VStack(alignment: .center, spacing: 6) {
-                Text(L10n.balance)
-                    .font(uiFont: .font(of: .text1, weight: .semibold))
-                    .foregroundColor(Color(Asset.Colors.mountain.color))
-                Text(viewModel.balance)
-                    .font(uiFont: .font(of: .title1, weight: .bold))
-                    .foregroundColor(Color(Asset.Colors.night.color))
-            }
-            HStack {
-                tokenOperation(title: L10n.buy, image: .homeBuy) {
-                    viewModel.buy()
-                }
-                Spacer()
-                tokenOperation(title: L10n.receive, image: .homeReceive) {
-                    viewModel.receive()
-                }
-                Spacer()
-                tokenOperation(title: L10n.send, image: .homeSend) {
-                    viewModel.send()
-                }
-                Spacer()
-                tokenOperation(title: L10n.trade, image: .homeSwap) {
-                    viewModel.trade()
-                }
-            }
-            .frame(maxWidth: .infinity)
+        .onAppear {
+            viewModel.viewAppeared()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            viewModel.viewAppeared()
         }
     }
-
+    
+    private var header: some View {
+        VStack(alignment: .center) {
+            // Balance
+            VStack(alignment: .center, spacing: 6) {
+                Text(viewModel.balance)
+                    .font(uiFont: .font(of: .largeTitle, weight: .bold))
+                    .foregroundColor(Color(Asset.Colors.night.color))
+                    .padding(.top, 24)
+                    .padding(.bottom, 32)
+                HStack(spacing: 32) {
+                    tokenOperation(title: L10n.buy, image: .homeBuy) {
+                        viewModel.buy()
+                    }
+                    tokenOperation(title: L10n.receive, image: .homeReceive) {
+                        viewModel.receive()
+                    }
+                    tokenOperation(title: L10n.send, image: .homeSend) {
+                        viewModel.send()
+                    }
+                    tokenOperation(title: L10n.trade, image: .homeSwap) {
+                        viewModel.trade()
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, 25)
+                
+                // Earn banner
+                if !isEarnBannerClosed && available(.investSolendFeature) {
+                    EarnBannerView {
+                        viewModel.earn()
+                    } closeAction: {
+                        Defaults.isEarnBannerClosed = true
+                        withAnimation {
+                            isEarnBannerClosed = true
+                        }
+                    }
+                    .onTapGesture {
+                        viewModel.earn()
+                    }
+                    .padding(.horizontal, 16)
+                }
+            }
+            .background(Color(Asset.Colors.smoke.color))
+        }
+    }
+    
     private var content: some View {
-        Group {
+        VStack(alignment: .leading, spacing: 0) {
             Text(L10n.tokens)
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .foregroundColor(Color(Asset.Colors.night.color))
-            ForEach(viewModel.items, id: \.pubkey) {
-                if $0.isNativeSOL {
-                    tokenCell(wallet: $0)
-                } else {
-                    swipeTokenCell(isVisible: true, wallet: $0)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+            wrappedList(itemsCount: viewModel.items.count) {
+                ForEach(viewModel.items, id: \.pubkey) {
+                    if $0.isNativeSOL {
+                        tokenCell(wallet: $0)
+                    } else {
+                        swipeTokenCell(isVisible: true, wallet: $0)
+                    }
                 }
             }
-
             if !viewModel.hiddenItems.isEmpty {
                 Button(
                     action: {
@@ -109,9 +130,6 @@ struct HomeWithTokensView: View {
                         withAnimation {
                             viewModel.toggleHiddenTokensVisibility()
                         }
-//                        withAnimation {
-//                            viewModel.toggleHiddenTokensVisibility()
-//                        }
                     },
                     label: {
                         HStack(spacing: 8) {
@@ -119,20 +137,25 @@ struct HomeWithTokensView: View {
                             Text(L10n.hiddenTokens)
                                 .foregroundColor(Color(Asset.Colors.mountain.color))
                                 .font(.system(size: 16))
+                                .padding(.vertical, 12)
+                            Spacer()
                         }
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 16)
                     }
                 )
-
                 if !viewModel.tokensIsHidden {
-                    ForEach(viewModel.hiddenItems, id: \.token.symbol) {
-                        swipeTokenCell(isVisible: false, wallet: $0)
+                    wrappedList(itemsCount: viewModel.hiddenItems.count) {
+                        ForEach(viewModel.hiddenItems, id: \.token.symbol) {
+                            swipeTokenCell(isVisible: false, wallet: $0)
+                        }
+                        .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))
                     }
-                    .transition(AnyTransition.opacity.animation(.linear(duration: 0.3)))
                 }
             }
         }
     }
-
+    
     private func tokenOperation(title: String, image: UIImage, action: @escaping () -> Void) -> some View {
         Button(
             action: action,
@@ -142,23 +165,24 @@ struct HomeWithTokensView: View {
                         .resizable()
                         .scaledToFit()
                     Text(title)
-                        .font(uiFont: .font(of: .text4, weight: .semibold))
+                        .font(uiFont: .font(of: .label2, weight: .semibold))
                         .foregroundColor(Color(Asset.Colors.night.color))
                 }
                 .frame(width: 56)
             }
         )
-            .buttonStyle(PlainButtonStyle())
+        .buttonStyle(PlainButtonStyle()) // prevent getting called on tapping cell
     }
-
+    
     private func tokenCell(wallet: Wallet) -> some View {
         TokenCellView(item: TokenCellViewItem(wallet: wallet))
             .frame(height: 72)
+            .padding(.horizontal, 16)
             .onTapGesture {
                 viewModel.tokenClicked(wallet: wallet)
             }
     }
-
+    
     private func swipeTokenCell(isVisible: Bool, wallet: Wallet) -> some View {
         TokenCellView(item: TokenCellViewItem(wallet: wallet))
             .swipeActions(isVisible: isVisible, currentUserInteractionCellID: $currentUserInteractionCellID, action: {
@@ -167,13 +191,32 @@ struct HomeWithTokensView: View {
                 }
             })
             .frame(height: 72)
+            .padding(.horizontal, 16)
             .onTapGesture {
                 viewModel.tokenClicked(wallet: wallet)
             }
     }
+    
+    @ViewBuilder
+    private func wrappedList<Content: View>(
+        itemsCount: Int,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
+        if #available(iOS 15, *) {
+            List {
+                content()
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(EdgeInsets())
+            }
+            .listStyle(.plain)
+            .frame(height: CGFloat(itemsCount) * 72)
+        } else {
+            LazyVStack(spacing: 0) {
+                content()
+            }
+        }
+    }
 }
-
-// MARK: - Swipe Actions
 
 private extension View {
     @ViewBuilder func swipeActions(
@@ -211,28 +254,17 @@ private extension View {
             )
         }
     }
-
+    
     func hideView(isVisible: Bool) -> AnyView {
         Image(uiImage: isVisible ? .eyeHide : .eyeShow)
             .animation(.default)
             .castToAnyView()
     }
-}
-
-// MARK: - Paddings
-
-private extension View {
-    @ViewBuilder func horizontalPadding() -> some View {
+    
+    @ViewBuilder
+    func topPadding() -> some View {
         if #available(iOS 15, *) {
-            padding(.horizontal, 16)
-        } else {
-            self
-        }
-    }
-
-    @ViewBuilder func topPadding() -> some View {
-        if #available(iOS 15, *) {
-            padding(.top, 16)
+            padding(.top, 11)
         } else {
             self
         }

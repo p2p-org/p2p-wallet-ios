@@ -16,16 +16,20 @@ import UIKit
 class HomeWithTokensViewModel: ObservableObject {
     private let walletsRepository: WalletsRepository
     private let pricesService = Resolver.resolve(PricesServiceType.self)
+    @Injected private var solanaTracker: SolanaTracker
+    @Injected private var notificationService: NotificationService
 
     private let buyClicked = PassthroughSubject<Void, Never>()
     private let receiveClicked = PassthroughSubject<Void, Never>()
     private let sendClicked = PassthroughSubject<Void, Never>()
     private let tradeClicked = PassthroughSubject<Void, Never>()
+    private let earnClicked = PassthroughSubject<Void, Never>()
     private let walletClicked = PassthroughSubject<(pubKey: String, tokenSymbol: String), Never>()
     let buyShow: AnyPublisher<Void, Never>
     let receiveShow: AnyPublisher<PublicKey, Never>
     let sendShow: AnyPublisher<Void, Never>
     let tradeShow: AnyPublisher<Void, Never>
+    let earnShow: AnyPublisher<Void, Never>
     let walletShow: AnyPublisher<(pubKey: String, tokenSymbol: String), Never>
 
     @Published var balance = ""
@@ -51,6 +55,7 @@ class HomeWithTokensViewModel: ObservableObject {
         sendShow = sendClicked.eraseToAnyPublisher()
         tradeShow = tradeClicked.eraseToAnyPublisher()
         walletShow = walletClicked.eraseToAnyPublisher()
+        earnShow = earnClicked.eraseToAnyPublisher()
 
         Observable.zip(walletsRepository.dataObservable, walletsRepository.stateObservable)
             .filter { $0.1 == .loaded }
@@ -73,16 +78,29 @@ class HomeWithTokensViewModel: ObservableObject {
                 // Hide NFT TODO: $0.token.supply == 1 is also a condition for NFT but skipped atm
                 wallets = wallets.filter { !($0.token.decimals == 0) }
                 self.wallets = wallets
-                let items = wallets.map {
-                    (
-                        $0,
-                        $0.isHidden
-                    )
-                }
+                let items = wallets.map { ($0, $0.isHidden) }
                 self.items = items.filter { !$0.1 }.map(\.0)
                 self.hiddenItems = items.filter(\.1).map(\.0)
             })
             .store(in: &cancellables)
+
+        if available(.solanaNegativeStatus) {
+            solanaTracker.unstableSolana
+                .sink(receiveValue: { [weak self] in
+                    self?.notificationService.showToast(
+                        title: "😴",
+                        text: L10n.solanaHasSomeProblems,
+                        withAutoHidden: false
+                    )
+                })
+                .store(in: &cancellables)
+        }
+    }
+
+    func viewAppeared() {
+        if available(.solanaNegativeStatus) {
+            solanaTracker.startTracking()
+        }
     }
 
     func reloadData() async {
@@ -109,6 +127,10 @@ class HomeWithTokensViewModel: ObservableObject {
 
     func trade() {
         tradeClicked.send()
+    }
+
+    func earn() {
+        earnClicked.send()
     }
 
     func tokenClicked(wallet: Wallet) {

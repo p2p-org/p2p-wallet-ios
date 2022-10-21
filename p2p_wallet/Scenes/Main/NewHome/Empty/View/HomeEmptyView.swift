@@ -13,18 +13,16 @@ struct HomeEmptyView: View {
     @ObservedObject var viewModel: HomeEmptyViewModel
 
     var body: some View {
-        List {
-            Group {
+        ScrollView {
+            VStack(spacing: 36) {
                 banner
-                    .topPadding()
-                    .padding(.bottom, 32)
                 scrollingContent
             }
-            .horizontalPadding()
-            .withoutSeparatorsAfterListContent()
+            .padding(.horizontal, 16)
+            .padding(.top, 10)
+            .padding(.bottom, 16)
         }
-        .withoutSeparatorsiOS14()
-        .listStyle(.plain)
+        .background(Color(Asset.Colors.smoke.color))
         .customRefreshable {
             await viewModel.reloadData()
         }
@@ -36,36 +34,41 @@ struct HomeEmptyView: View {
                 VStack(spacing: 0) {
                     Color(.clear)
                         .frame(height: 87)
-                    Color(._644aff)
+                    Color(.fern)
                         .frame(height: 200)
-                        .cornerRadius(12)
+                        .cornerRadius(16)
                 }
                 Image(uiImage: .homeBannerPerson)
             }
             VStack(spacing: 19) {
-                VStack(spacing: 9) {
+                VStack(spacing: 8) {
                     Text(L10n.topUpYourAccountToGetStarted)
-                        .foregroundColor(Color(Asset.Colors.snow.color))
-                        .font(uiFont: .font(of: .text1, weight: .semibold))
+                        .foregroundColor(Color(Asset.Colors.night.color))
+                        .fontWeight(.bold)
+                        .apply(style: .text1)
                     Text(L10n.makeYourFirstDepositOrBuyCryptoWithYourCreditCardOrApplePay)
+                        .apply(style: .text3)
                         .minimumScaleFactor(0.5)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                        .foregroundColor(Color(Asset.Colors.cloud.color))
-                        .font(uiFont: .font(of: .text3))
+                        .foregroundColor(Color(Asset.Colors.night.color))
                         .padding(.horizontal, 24)
                 }
-                Text(L10n.topUp)
-                    .foregroundColor(Color(Asset.Colors.night.color))
-                    .font(uiFont: .font(of: .text4, weight: .semibold))
-                    .frame(height: 48)
-                    .frame(maxWidth: .infinity)
-                    .background(Color(.ddfa2b))
-                    .cornerRadius(8)
-                    .padding(.horizontal, 24)
-                    .onTapGesture {
-                        viewModel.topUp.send()
+                Button(
+                    action: {
+                        viewModel.receiveClicked()
+                    },
+                    label: {
+                        Text(L10n.receive)
+                            .foregroundColor(Color(Asset.Colors.night.color))
+                            .font(uiFont: .font(of: .text4, weight: .semibold))
+                            .frame(height: 48)
+                            .frame(maxWidth: .infinity)
+                            .background(Color(Asset.Colors.snow.color))
+                            .cornerRadius(8)
+                            .padding(.horizontal, 24)
                     }
+                )
             }
             .padding(.bottom, 24)
         }
@@ -73,49 +76,29 @@ struct HomeEmptyView: View {
     }
 
     private var scrollingContent: some View {
-        Group {
-            Text(L10n.popularCoins)
+        VStack(alignment: .leading, spacing: 12) {
+            Text(L10n.coinsToBuy)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .title3, weight: .semibold))
-                .padding(.bottom, 16)
-            ForEach(Array(viewModel.popularCoins.indices), id: \.self) { index in
-                let coin = viewModel.popularCoins[index]
-                PopularCoinView(
-                    title: coin.title,
-                    subtitle: coin.amount,
-                    actionTitle: coin.actionTitle,
-                    image: coin.image
-                ).onTapGesture {
-                    coinTapped(at: index)
+                .padding(.horizontal, 16)
+            VStack(spacing: 12) {
+                ForEach(Array(viewModel.popularCoins.indices), id: \.self) { index in
+                    let coin = viewModel.popularCoins[index]
+                    Button(
+                        action: {
+                            viewModel.coinTapped(at: index)
+                        },
+                        label: {
+                            PopularCoinView(
+                                title: coin.title,
+                                subtitle: coin.amount,
+                                actionTitle: coin.actionTitle,
+                                image: coin.image
+                            )
+                        }
+                    )
                 }
-                .padding(.bottom, 16)
             }
-        }
-    }
-
-    private func coinTapped(at index: Int) {
-        if index == 2 {
-            viewModel.receiveRenBtcClicked()
-        } else {
-            viewModel.topUpCoin.send(index == 0 ? .usdc : .sol)
-        }
-    }
-}
-
-private extension View {
-    @ViewBuilder func horizontalPadding() -> some View {
-        if #available(iOS 15, *) {
-            padding(.horizontal, 16)
-        } else {
-            self
-        }
-    }
-
-    @ViewBuilder func topPadding() -> some View {
-        if #available(iOS 15, *) {
-            padding(.top, 12)
-        } else {
-            padding(.top, 0)
         }
     }
 }

@@ -81,6 +81,7 @@ struct ActionsView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 16)
         .padding(.top, 6)
+        .previewLayout(.sizeThatFits)
     }
 
     func actionView(
