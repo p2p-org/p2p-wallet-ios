@@ -79,6 +79,8 @@ extension DebugMenuViewModel {
 extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
         case newSettings
+        case onboardingUsernameEnabled
+        case onboardingUsernameButtonSkipEnabled
 
         case mockedApiGateway
         case mockedTKeyFacade
@@ -87,6 +89,8 @@ extension DebugMenuViewModel {
         var title: String {
             switch self {
             case .newSettings: return "New Settings"
+            case .onboardingUsernameEnabled: return "Onboarding Username"
+            case .onboardingUsernameButtonSkipEnabled: return "Onboarding Username Skip Button"
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
             case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
@@ -96,6 +100,8 @@ extension DebugMenuViewModel {
         var feature: Feature {
             switch self {
             case .newSettings: return .settingsFeature
+            case .onboardingUsernameEnabled: return .onboardingUsernameEnabled
+            case .onboardingUsernameButtonSkipEnabled: return .onboardingUsernameButtonSkipEnabled
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade
             case .simulatedSocialError: return .simulatedSocialError
