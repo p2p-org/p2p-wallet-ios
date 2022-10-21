@@ -62,7 +62,20 @@ final class HomeEmptyViewModel: ObservableObject {
         }
     }
 
-    func buyTapped(index: Int) {
+    func coinTapped(at index: Int) {
+        if index == 2 {
+            receiveClicked()
+        } else {
+            topUpCoin.send(index == 0 ? .usdc : .sol)
+        }
+    }
+
+    func receiveClicked() {
+        guard let solanaPubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
+        receiveSubject.send(solanaPubkey)
+    }
+
+func buyTapped(index: Int) {
         let coin = _popularCoins[index]
         topUpCoin.send(coin)
     }

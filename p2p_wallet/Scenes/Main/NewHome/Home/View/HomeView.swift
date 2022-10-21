@@ -16,9 +16,7 @@ struct HomeView: View {
     var body: some View {
         switch viewModel.state {
         case .pending:
-            ActivityIndicator(isAnimating: true) {
-                $0.style = .large
-            }
+            HomeSkeletonView()
         case .withTokens:
             navigation {
                 HomeWithTokensView(viewModel: viewModelWithTokens)
