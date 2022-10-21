@@ -17,6 +17,11 @@ class UserWalletManager: ObservableObject {
     /// Current selected wallet
     @Published private(set) var wallet: UserWallet?
 
+    /// Check if user logged in using web3 auth
+    var isUserLoggedInUsingWeb3: Bool {
+        wallet?.ethAddress != nil
+    }
+
     init() {}
 
     func refresh() async throws {

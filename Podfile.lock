@@ -248,7 +248,7 @@ DEPENDENCIES:
   - CombineCocoa (= 0.4.0)
   - CountriesAPI (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Down (from `https://github.com/p2p-org/Down.git`)
-  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `master`)
+  - FeeRelayerSwift (from `https://github.com/p2p-org/FeeRelayerSwift.git`, branch `feature/free_renbtc_creation`)
   - Firebase/Analytics
   - Firebase/Crashlytics
   - Firebase/RemoteConfig
@@ -375,7 +375,7 @@ EXTERNAL SOURCES:
   Down:
     :git: https://github.com/p2p-org/Down.git
   FeeRelayerSwift:
-    :branch: master
+    :branch: feature/free_renbtc_creation
     :git: https://github.com/p2p-org/FeeRelayerSwift.git
   JazziconSwift:
     :branch: master
@@ -497,7 +497,7 @@ CHECKOUT OPTIONS:
     :commit: ba0ad6cb0ecb69d7e1796f5437791be4d4d00b60
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: 5d1998da703b5ed24be39d3fce966046f95b8240
+    :commit: 596dab76f1e82f8e6c5d6b64534d989b2ba47f69
     :git: https://github.com/p2p-org/solana-swift.git
   TransactionParser:
     :commit: ba0ad6cb0ecb69d7e1796f5437791be4d4d00b60
@@ -584,8 +584,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-
-
-PODFILE CHECKSUM: fad9147d46668856de45bbb1b571b574b36f7405
+PODFILE CHECKSUM: 66f6a41c814220bf29975318281f5f998b891bf5
 
 COCOAPODS: 1.11.3
