@@ -185,7 +185,7 @@ extension TabBarController: UITabBarControllerDelegate {
         }
         customTabBar.updateSelectedViewPositionIfNeeded()
         if TabItem(rawValue: selectedIndex) == .invest {
-            if available(.investSolendFeature), !Defaults.isSolendTutorialShown {
+            if available(.investSolendFeature), !Defaults.isSolendTutorialShown, available(.solendDisablePlaceholder) {
                 routeToSolendTutorial()
                 return false
             }
