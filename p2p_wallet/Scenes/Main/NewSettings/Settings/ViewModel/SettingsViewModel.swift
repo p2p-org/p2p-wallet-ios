@@ -17,7 +17,7 @@ final class SettingsViewModel: ObservableObject {
     @Injected private var nameStorage: NameStorageType
     @Injected private var solanaStorage: SolanaAccountStorage
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var logoutResponder: LogoutResponder
+    @Injected private var userWalletManager: UserWalletManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
 
     @Published var zeroBalancesIsHidden = Defaults.hideZeroBalances {
@@ -120,7 +120,7 @@ final class SettingsViewModel: ObservableObject {
 
     func signOut() {
         analyticsManager.log(event: AmplitudeEvent.signedOut)
-        logoutResponder.logout()
+        Task { try await userWalletManager.remove() }
     }
 
     private func toggleZeroBalancesVisibility() {
@@ -138,6 +138,7 @@ final class SettingsViewModel: ObservableObject {
 extension SettingsViewModel {
     enum OpenAction {
         case username
+        case support
         case reserveUsername(userAddress: String)
         case recoveryKit
         case yourPin

@@ -5,6 +5,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 import Solend
+import Sentry
 
 enum DepositSolendViewModelError {
     case invalidFeePayer
@@ -264,9 +265,6 @@ class DepositSolendViewModel: ObservableObject {
                 self.inputLamport = inputLamport
             })
             .map { [weak self] val -> AnyPublisher<SolendFeePaying?, Never> in
-                if self?.strategy == .withdraw {
-                    return Just(nil).eraseToAnyPublisher()
-                }
                 guard let lamports = self?.lamportFrom(amount: val),
                       let self = self,
                       lamports > 0,
@@ -297,42 +295,42 @@ class DepositSolendViewModel: ObservableObject {
     }
 
     // MARK: -
-    
+
     func processFee(fee: SolendFeePaying) {
         // Fee
         let transferFee = Double(fee.fee.transaction) / pow(10, Double(fee.decimals))
         let fiatTransferFee: Double = transferFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
-        
+
         let rentFee = Double(fee.fee.accountBalances) / pow(10, Double(fee.decimals))
         let fiatRentFee: Double = rentFee * (self.priceService.currentPrice(for: fee.symbol)?.value ?? 0)
 
         // Total
         var total: Lamports = self.inputLamport
         var fiatTotal: Double = self.tokenToAmount(amount: self.amountFrom(lamports: total))
-        
+
         if invest.asset.symbol == fee.symbol {
             total = total + fee.fee.transaction + fee.fee.accountBalances
             fiatTotal = self.tokenToAmount(amount: self.amountFrom(lamports: total))
         } else {
             fiatTotal = fiatTotal + fiatTransferFee + fiatRentFee
         }
-        
+
         // Text label
         let tokenAmount = self.amountFrom(lamports: total)
         let fiatAmount = self.tokenToAmount(amount: self.amountFrom(lamports: total))
         let amountText = tokenAmount.tokenAmount(symbol: self.invest.asset.symbol) + " (" + fiatAmount
             .fiatAmount(currency: self.fiat) + ")"
         self.feeText = "\(L10n.excludingFeesYouLlDeposit) \(amountText)"
-        
+
         self.detailItem.send(
             .init(
-                amount: tokenAmount,
-                fiatAmount: fiatAmount,
+                amount: self.amountFrom(lamports: inputLamport),
+                fiatAmount: self.tokenToAmount(amount: self.amountFrom(lamports: inputLamport)),
                 transferFee: transferFee,
                 fiatTransferFee: fiatTransferFee,
                 fee: rentFee,
                 fiatFee: fiatRentFee,
-                total: invest.asset.symbol == fee.symbol ? self.amountFrom(lamports: total) : nil,
+                total: invest.asset.symbol == fee.symbol ? tokenAmount : nil,
                 fiatTotal: fiatTotal,
                 symbol: self.invest.asset.symbol,
                 feeSymbol: fee.symbol
@@ -379,13 +377,13 @@ class DepositSolendViewModel: ObservableObject {
         }
 
         if strategy == .deposit {
-            try await deposit(lamports: lamports)
+            await deposit(lamports: lamports)
         } else {
             await withdraw(lamports: lamports)
         }
     }
 
-    private func deposit(lamports: UInt64) async throws {
+    private func deposit(lamports: UInt64) async {
         guard
             loading == false,
             lamports > 0,
@@ -405,6 +403,7 @@ class DepositSolendViewModel: ObservableObject {
             )
         } catch {
             debugPrint(error)
+            SentrySDK.capture(error: error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemDepositingFunds))
         }
     }
@@ -431,6 +430,7 @@ class DepositSolendViewModel: ObservableObject {
             )
         } catch {
             print(error)
+            SentrySDK.capture(error: error)
             notificationService.showInAppNotification(.error(L10n.thereWasAProblemWithdrawingFunds))
         }
     }

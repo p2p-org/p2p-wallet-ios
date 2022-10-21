@@ -11,7 +11,7 @@ import SwiftUI
 
 struct InvestSolendCell: View {
     let asset: SolendConfigAsset
-    let deposit: String?
+    let amount: String?
     let apy: String?
     let isLoading: Bool
 
@@ -31,7 +31,7 @@ struct InvestSolendCell: View {
                     .frame(width: 48, height: 48)
             }
             VStack(alignment: .leading, spacing: 6) {
-                if let deposit = deposit {
+                if let deposit = amount {
                     Text("\(deposit) \(asset.symbol)")
                         .foregroundColor(Color(Asset.Colors.night.color))
                         .apply(style: .text2)
@@ -65,7 +65,7 @@ struct InvestSolendCell_Previews: PreviewProvider {
                     mintAddress: "",
                     logo: nil
                 ),
-                deposit: "12.3221",
+                amount: "12.3221",
                 apy: "2.31231",
                 isLoading: false
             )

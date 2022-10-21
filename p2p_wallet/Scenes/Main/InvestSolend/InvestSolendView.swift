@@ -66,13 +66,13 @@ struct InvestSolendView: View {
                         if viewModel.bannerError == .missingRate {
                             ratesError
                         }
-                        ForEach(market, id: \.asset.symbol) { asset, market, userDeposit in
+                        ForEach(market, id: \.asset.symbol) { asset, market, userDeposit, wallet in
                             Button {
                                 viewModel.assetClicked(asset, market: market)
                             } label: {
                                 InvestSolendCell(
                                     asset: asset,
-                                    deposit: userDeposit?.depositedAmount,
+                                    amount: userDeposit?.depositedAmount,
                                     apy: market?.supplyInterest,
                                     isLoading: viewModel.loading
                                 )

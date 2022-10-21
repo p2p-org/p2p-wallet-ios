@@ -25,7 +25,7 @@ extension UIViewController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         var allButtons = buttonTitles ?? [String]()
         if allButtons.isEmpty {
-            allButtons.append("OK")
+            allButtons.append("Okay")
         }
 
         allButtons.enumerated().forEach { index, buttonTitle in
@@ -50,7 +50,8 @@ extension UIViewController {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         if actions.isEmpty {
-            alertController.addAction(UIAlertAction(title: "OK", style: .default))
+            alertController.view.tintColor = UIColor.black
+            alertController.addAction(UIAlertAction(title: "Okay", style: .default))
         }
 
         for action in actions {

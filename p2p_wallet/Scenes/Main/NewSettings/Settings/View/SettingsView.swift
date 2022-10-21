@@ -55,6 +55,10 @@ struct SettingsView: View {
                 }
             )
             Button(
+                action: { viewModel.showView(.support) },
+                label: { cellView(image: .settingsSupport, title: L10n.support.uppercaseFirst) }
+            )
+            Button(
                 action: {
                     viewModel.sendSignOutAnalytics()
                     logOutPresented.toggle()
@@ -62,7 +66,7 @@ struct SettingsView: View {
                 label: {
                     HStack(spacing: 8) {
                         Spacer()
-                        Text(L10n.signOut)
+                        Text(L10n.logOut)
                             .font(uiFont: .font(of: .text2, weight: .semibold))
                         Image(uiImage: .settingsSignOut)
                         Spacer()
@@ -72,9 +76,9 @@ struct SettingsView: View {
             )
                 .alert(isPresented: $logOutPresented) {
                     Alert(
-                        title: Text(L10n.areYouSureYouWantToSignOut),
-                        message: Text(L10n.withoutTheBackupYouMayNeverBeAbleToAccessThisAccount),
-                        primaryButton: .destructive(Text(L10n.signOut)) {
+                        title: Text(L10n.doYouWantToLogOut),
+                        message: Text(L10n.youWillNeedYourSocialAccountOrPhoneNumberToLogIn),
+                        primaryButton: .destructive(Text(L10n.logOut)) {
                             viewModel.signOut()
                         },
                         secondaryButton: .cancel(Text(L10n.stay))
@@ -85,11 +89,10 @@ struct SettingsView: View {
 
     private var securitySection: some View {
         Section(header: headerText(L10n.security)) {
-            // TODO: - Disabled before onboarding finish
-//            Button(
-//                action: { viewModel.showView(.recoveryKit) },
-//                label: { cellView(image: .recoveryKit, title: L10n.recoveryKit) }
-//            )
+            Button(
+                action: { viewModel.showView(.recoveryKit) },
+                label: { cellView(image: .recoveryKit, title: L10n.recoveryKit) }
+            )
             Button(
                 action: { viewModel.showView(.yourPin) },
                 label: { cellView(image: .pinIcon, title: L10n.yourPIN) }

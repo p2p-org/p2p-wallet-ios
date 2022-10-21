@@ -135,9 +135,9 @@ public class SolendFFIWrapper: Solend {
         throw SolendError.noResult
     }
 
-    public func getUserDeposits(owner: String, poolAddress: String) async throws -> [SolendUserDeposit] {
+    public func getUserDeposits(owner: String, pool: String) async throws -> [SolendUserDeposit] {
         let jsonResult: String = try await execute {
-            get_solend_user_deposits(&self.runtime, owner, poolAddress)
+            get_solend_user_deposits(&self.runtime, owner, pool)
         }
 
         struct Success: Codable {
@@ -188,15 +188,37 @@ public class SolendFFIWrapper: Solend {
     public func getDepositFee(
         rpcUrl: String,
         owner: String,
+        feePayer: String,
         tokenAmount: UInt64,
         tokenSymbol: SolendSymbol
-    ) async throws -> SolendDepositFee {
+    ) async throws -> SolendFee {
         let jsonResult: String = try await execute {
-            get_solend_deposit_fees(&self.runtime, rpcUrl, owner, tokenAmount, tokenSymbol)
+            get_solend_deposit_fees(&self.runtime, rpcUrl, owner, feePayer, tokenAmount, tokenSymbol)
         }
 
         let response = try JSONDecoder().decode(
-            SolendResponse<SolendDepositFee>.self,
+            SolendResponse<SolendFee>.self,
+            from: jsonResult.data(using: .utf8)!
+        )
+
+        if let error = response.error { throw SolendError.message(error) }
+        if let success = response.success { return success }
+        throw SolendError.noResult
+    }
+    
+    public func getWithdrawFee(
+        rpcUrl: String,
+        owner: String,
+        feePayer: String,
+        tokenAmount: UInt64,
+        tokenSymbol: SolendSymbol
+    ) async throws -> SolendFee {
+        let jsonResult: String = try await execute {
+            get_solend_withdraw_fees(&self.runtime, rpcUrl, owner, feePayer, tokenAmount, tokenSymbol)
+        }
+
+        let response = try JSONDecoder().decode(
+            SolendResponse<SolendFee>.self,
             from: jsonResult.data(using: .utf8)!
         )
 
@@ -218,7 +240,7 @@ public class SolendFFIWrapper: Solend {
         needToUseRelay: Bool,
         payInFeeToken: SolendPayFeeInToken?,
         feePayerAddress: String
-    ) async throws -> [SolanaSerializedTransaction] {
+    ) async throws -> [SolanaRawTransaction] {
         var payInFeeTokenJson = ""
         if let payInFeeToken = payInFeeToken {
             payInFeeTokenJson = String(data: try JSONEncoder().encode(payInFeeToken), encoding: .utf8)!
@@ -269,7 +291,7 @@ public class SolendFFIWrapper: Solend {
         needToUseRelay: Bool,
         payInFeeToken: SolendPayFeeInToken?,
         feePayerAddress: String
-    ) async throws -> [SolanaSerializedTransaction] {
+    ) async throws -> [SolanaRawTransaction] {
         var payInFeeTokenJson = ""
         if let payInFeeToken = payInFeeToken {
             payInFeeTokenJson = String(data: try JSONEncoder().encode(payInFeeToken), encoding: .utf8)!

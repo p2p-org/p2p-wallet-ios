@@ -34,7 +34,7 @@ configFiles:
 
 settings:
     base:
-        MARKETING_VERSION: 1.12.0
+        MARKETING_VERSION: 1.13.0
     configs:
         Debug:
             VALIDATE_PRODUCT: false
@@ -63,7 +63,7 @@ settings:
             SWIFT_COMPILATION_MODE: wholemodule
             SWIFT_OPTIMIZATION_LEVEL: "-O"
             ENABLE_TESTABILITY: true
-            ENABLE_BITCODE: true
+            ENABLE_BITCODE: false
             DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
             ONLY_ACTIVE_ARCH: false
             SWIFT_ACTIVE_COMPILATION_CONDITIONS: RELEASE
@@ -80,6 +80,7 @@ targets:
           name: p2p_wallet
           excludes:
             - "Resources/*.lproj-backup/*"
+            - "**/*.a"
         - path: README.MD
         preBuildScripts:
           - script: |
@@ -143,6 +144,7 @@ targets:
 
         dependencies:
             - framework: Frameworks/keyapp.xcframework
+              embed: false
 
     Detect Unused Code:
         type: app-extension.intents-service
