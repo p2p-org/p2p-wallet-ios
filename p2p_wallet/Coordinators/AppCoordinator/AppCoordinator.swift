@@ -200,7 +200,7 @@ class AppCoordinator: Coordinator<Void> {
     }
 
     private func bind() {
-        createNameService.transactionDetails
+        createNameService.createNameResult
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isSuccess in
                 if isSuccess {

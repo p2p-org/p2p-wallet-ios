@@ -4,13 +4,13 @@ import Resolver
 import SolanaSwift
 
 protocol CreateNameService {
-    var transactionDetails: AnyPublisher<Bool, Never> { get }
+    var createNameResult: AnyPublisher<Bool, Never> { get }
     func create(username: String)
 }
 
 final class CreateNameServiceImpl: CreateNameService {
-    var transactionDetails: AnyPublisher<Bool, Never> {
-        transactionDetailsSubject.eraseToAnyPublisher()
+    var createNameResult: AnyPublisher<Bool, Never> {
+        createNameResultSubject.eraseToAnyPublisher()
     }
 
     @Injected private var solanaAPIClient: SolanaAPIClient
@@ -19,13 +19,13 @@ final class CreateNameServiceImpl: CreateNameService {
     @Injected private var nameService: NameService
     @Injected private var storage: AccountStorageType
 
-    private let transactionDetailsSubject = PassthroughSubject<Bool, Never>()
+    private let createNameResultSubject = PassthroughSubject<Bool, Never>()
 
     func create(username: String) {
         Task {
             do {
                 guard let account = storage.account else {
-                    transactionDetailsSubject.send(false)
+                    createNameResultSubject.send(false)
                     return
                 }
 
@@ -42,9 +42,9 @@ final class CreateNameServiceImpl: CreateNameService {
 
                 nameStorage.save(name: username)
                 nameCache.save(username, for: account.publicKey.base58EncodedString)
-                transactionDetailsSubject.send(true)
+                createNameResultSubject.send(true)
             } catch {
-                transactionDetailsSubject.send(false)
+                createNameResultSubject.send(false)
             }
         }
     }

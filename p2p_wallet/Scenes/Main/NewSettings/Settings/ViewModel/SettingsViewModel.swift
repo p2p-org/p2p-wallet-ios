@@ -143,7 +143,8 @@ final class SettingsViewModel: BaseViewModel {
     }
 
     private func bind() {
-        createNameService.transactionDetails
+        createNameService.createNameResult
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] isSuccess in
                 guard let self = self, isSuccess else { return }
                 self.updateNameIfNeeded()
