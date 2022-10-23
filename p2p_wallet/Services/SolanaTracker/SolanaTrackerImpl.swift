@@ -47,11 +47,7 @@ class SolanaTrackerImpl: SolanaTracker {
         Task {
             guard let negativePercent = negativeStatusPercent else { return }
 
-            guard
-                let model = try? await solanaApiClient.getRecentPerformanceSamples(limit: [limitForAnalyze])
-            else {
-                solanaBecameUnstable()
-                startTimerIfNeeded()
+            guard let model = try? await solanaApiClient.getRecentPerformanceSamples(limit: [limitForAnalyze]) else {
                 return
             }
 
