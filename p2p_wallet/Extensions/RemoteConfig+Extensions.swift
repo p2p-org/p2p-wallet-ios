@@ -30,6 +30,14 @@ extension RemoteConfig {
     }
 }
 
+// MARK: - Username domain
+
+extension RemoteConfig {
+    var usernameDomain: String? {
+        configValue(forKey: "username_domain").stringValue
+    }
+}
+
 // MARK: - Solana Status
 
 extension RemoteConfig {
