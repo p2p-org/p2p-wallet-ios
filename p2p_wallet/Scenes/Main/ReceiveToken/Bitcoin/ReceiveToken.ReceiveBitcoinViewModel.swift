@@ -75,6 +75,8 @@ extension ReceiveToken {
                 let session = await persistentStore.session
                 if session == nil || session?.isValid == false {
                     try await lockAndMintService.createSession()
+                } else {
+                    await updateSessionEndDate()
                 }
             }
         }
@@ -115,6 +117,13 @@ extension ReceiveToken {
                 }
             }
         }
+        
+        private func updateSessionEndDate() async {
+            let endAt = await persistentStore.session?.endAt
+            await MainActor.run {
+                sessionEndDate = endAt
+            }
+        }
     }
 }
 
@@ -126,10 +135,7 @@ extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
     func lockAndMintService(_: LockAndMintService, didLoadWithGatewayAddress gatewayAddress: String) {
         addressSubject.accept(gatewayAddress)
         Task {
-            let endAt = await persistentStore.session?.endAt
-            await MainActor.run {
-                sessionEndDate = endAt
-            }
+            await updateSessionEndDate()
         }
     }
 
