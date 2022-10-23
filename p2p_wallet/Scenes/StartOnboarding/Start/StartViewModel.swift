@@ -8,7 +8,6 @@ final class StartViewModel: BaseViewModel {
     @Injected private var analyticsManager: AnalyticsManager
 
     @Published var data: [OnboardingContentData] = []
-    @Published var currentDataIndex: Int = .zero
 
     let isAnimatable: Bool
     let termsDidTap = PassthroughSubject<Void, Never>()
