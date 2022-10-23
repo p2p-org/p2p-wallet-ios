@@ -12,9 +12,15 @@ import SolanaSwift
 class UserWalletManager: ObservableObject {
     @Injected private var storage: KeychainStorage
     @Injected private var notificationsService: NotificationService
+    @Injected private var solanaTracker: SolanaTracker
 
     /// Current selected wallet
     @Published private(set) var wallet: UserWallet?
+
+    /// Check if user logged in using web3 auth
+    var isUserLoggedInUsingWeb3: Bool {
+        wallet?.ethAddress != nil
+    }
 
     init() {}
 
@@ -79,5 +85,6 @@ class UserWalletManager: ObservableObject {
 
         // Reset wallet
         wallet = nil
+        solanaTracker.stopTracking()
     }
 }

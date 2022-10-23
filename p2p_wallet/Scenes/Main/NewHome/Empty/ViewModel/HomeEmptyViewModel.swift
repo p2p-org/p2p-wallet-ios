@@ -15,52 +15,42 @@ import SolanaSwift
 final class HomeEmptyViewModel: ObservableObject {
     let input = Input()
     let output: Output
-
+    
     @Injected private var walletsRepository: WalletsRepository
     private let pricesService: PricesServiceType = Resolver.resolve()
     private var cancellable: AnyCancellable?
-
+    
     let topUp = PassthroughSubject<Void, Never>()
-    let topUpCoin = PassthroughSubject<Buy.CryptoCurrency, Never>()
-    private let receiveRenBtc = PassthroughSubject<PublicKey, Never>()
-
+    let topUpCoin = PassthroughSubject<Token, Never>()
+    let receiveSubject = PassthroughSubject<PublicKey, Never>()
+    
+    private var _popularCoins: [Token] = [.usdc, .nativeSolana, .renBTC, .eth, .usdt]
     var popularCoins: [PopularCoin] {
-        [
+        _popularCoins.map { token in
             PopularCoin(
-                title: L10n.usdc,
-                amount: pricesService.fiatAmount(for: Buy.CryptoCurrency.usdc.name),
+                id: token.symbol,
+                title: title(for: token),
+                amount: pricesService.fiatAmount(for: token.symbol),
                 actionTitle: ActionType.buy.description,
-                image: .usdc
-            ),
-            PopularCoin(
-                title: L10n.solana,
-                amount: pricesService.fiatAmount(for: Buy.CryptoCurrency.sol.name),
-                actionTitle: ActionType.buy.description,
-                image: .squircleSolanaIcon
-            ),
-            PopularCoin(
-                title: "RenBTC",
-                amount: pricesService.fiatAmount(for: "renBTC"),
-                actionTitle: ActionType.receive.description,
-                image: .renBTC
-            ),
-        ]
+                image: image(for: token)
+            )
+        }
     }
-
+    
     init() {
         output = Output(
             view: .init(),
             coord: .init(
                 topUpShow: topUp.eraseToAnyPublisher(),
                 topUpCoinShow: topUpCoin.eraseToAnyPublisher(),
-                receiveRenBtcShow: receiveRenBtc.eraseToAnyPublisher()
+                receive: receiveSubject.eraseToAnyPublisher()
             )
         )
     }
-
+    
     func reloadData() async {
         walletsRepository.reload()
-
+        
         return await withCheckedContinuation { continuation in
             cancellable = walletsRepository.stateObservable
                 .asPublisher()
@@ -74,9 +64,14 @@ final class HomeEmptyViewModel: ObservableObject {
         }
     }
 
-    func receiveRenBtcClicked() {
+    func receiveClicked() {
         guard let solanaPubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
-        receiveRenBtc.send(solanaPubkey)
+        receiveSubject.send(solanaPubkey)
+    }
+    
+    func buyTapped(index: Int) {
+        let coin = _popularCoins[index]
+        topUpCoin.send(coin)
     }
 }
 
@@ -98,17 +93,17 @@ extension HomeEmptyViewModel: ViewModel {
 
         class Coord {
             var topUpShow: AnyPublisher<Void, Never>
-            var topUpCoinShow: AnyPublisher<Buy.CryptoCurrency, Never>
-            var receiveRenBtcShow: AnyPublisher<PublicKey, Never>
+            var topUpCoinShow: AnyPublisher<Token, Never>
+            var receive: AnyPublisher<PublicKey, Never>
 
             init(
                 topUpShow: AnyPublisher<Void, Never>,
-                topUpCoinShow: AnyPublisher<Buy.CryptoCurrency, Never>,
-                receiveRenBtcShow: AnyPublisher<PublicKey, Never>
+                topUpCoinShow: AnyPublisher<Token, Never>,
+                receive: AnyPublisher<PublicKey, Never>
             ) {
                 self.topUpShow = topUpShow
                 self.topUpCoinShow = topUpCoinShow
-                self.receiveRenBtcShow = receiveRenBtcShow
+                self.receive = receive
             }
         }
 
@@ -120,17 +115,20 @@ extension HomeEmptyViewModel: ViewModel {
 
 extension HomeEmptyViewModel {
     class PopularCoin {
+        let id: String
         let title: String
         let amount: String
         @Published var actionTitle: String
         let image: UIImage
 
         init(
+            id: String,
             title: String,
             amount: String,
             actionTitle: String,
             image: UIImage
         ) {
+            self.id = id
             self.title = title
             self.amount = amount
             self.actionTitle = actionTitle
@@ -145,11 +143,41 @@ extension HomeEmptyViewModel {
         fileprivate var description: String {
             switch self {
             case .buy:
-                return L10n.buyIt
+                return L10n.buy
             case .receive:
                 return L10n.receive
             }
         }
+    }
+}
+
+extension HomeEmptyViewModel {
+    func title(for token: Token) -> String {
+        if token == .eth {
+            return "Ethereum"
+        } else if token == .renBTC {
+            return L10n.bitcoin
+        }
+        return token.name
+    }
+
+    func image(for token: Token) -> UIImage {
+        if token == .nativeSolana {
+            return .solanaIcon
+        }
+        if token == .usdc {
+            return .usdcIcon
+        }
+        if token == .usdt {
+            return .usdtIcon
+        }
+        if token == .eth {
+            return .ethereumIcon
+        }
+        if token == .renBTC {
+            return .bitcoinIcon
+        }
+        return token.image ?? .squircleSolanaIcon
     }
 }
 

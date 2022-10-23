@@ -9,10 +9,18 @@ import FirebaseRemoteConfig
 import SolanaSwift
 
 extension RemoteConfig {
-    var definedEndpoints: [NetworkValue] {
-        let jsonData = configValue(forKey: "settings_network_values").dataValue
-        let decoded = (try? JSONDecoder().decode([NetworkValue].self, from: jsonData)) ?? []
+    func configValues<T: Decodable>(_ type: T.Type, forKey key: String) -> T? {
+        let jsonData = configValue(forKey: key).dataValue
+        let decoded = try? JSONDecoder().decode(type, from: jsonData)
         return decoded
+    }
+}
+
+// MARK: - Defined Endpoints
+
+extension RemoteConfig {
+    var definedEndpoints: [NetworkValue] {
+        configValues([NetworkValue].self, forKey: "settings_network_values") ?? []
     }
 
     struct NetworkValue: Codable {
@@ -22,7 +30,29 @@ extension RemoteConfig {
     }
 }
 
+// MARK: - Username domain
+
 extension RemoteConfig {
+    var usernameDomain: String? {
+        configValue(forKey: "username_domain").stringValue
+    }
+}
+
+// MARK: - Solana Status
+
+extension RemoteConfig {
+    var solanaNegativeStatusFrequency: String? {
+        configValue(forKey: "solana_negative_status_frequency").stringValue
+    }
+
+    var solanaNegativeStatusPercent: Int? {
+        configValues(Int.self, forKey: "solana_negative_status_percent")
+    }
+
+    var solanaNegativeStatusTimeFrequency: Int? {
+        configValues(Int.self, forKey: "solana_negative_status_time_frequency")
+    }
+
     var usernameDomain: String? {
         configValue(forKey: "username_domain").stringValue
     }
