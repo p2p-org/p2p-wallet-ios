@@ -122,6 +122,7 @@ class CoinLogoViewWrapper: BEView {
         if let image = image {
             tokenIcon.image = image
         } else if let url = url {
+            tokenIcon.cancelPreviousTask()
             tokenIcon.setImage(urlString: url) { [weak self] result in
                 switch result {
                 case .success:
