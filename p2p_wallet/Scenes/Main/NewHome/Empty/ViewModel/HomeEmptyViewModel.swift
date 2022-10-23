@@ -63,15 +63,7 @@ final class HomeEmptyViewModel: ObservableObject {
                 })
         }
     }
-    
-    func coinTapped(at index: Int) {
-        if index == 2 {
-            receiveClicked()
-        } else {
-            topUpCoin.send(index == 0 ? .usdc : .nativeSolana)
-        }
-    }
-    
+
     func receiveClicked() {
         guard let solanaPubkey = try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) else { return }
         receiveSubject.send(solanaPubkey)

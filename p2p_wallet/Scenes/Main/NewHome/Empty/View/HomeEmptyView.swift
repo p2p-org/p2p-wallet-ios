@@ -77,7 +77,7 @@ struct HomeEmptyView: View {
 
     private var scrollingContent: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(L10n.coinsToBuy)
+            Text(L10n.currenciesAvailable)
                 .foregroundColor(Color(Asset.Colors.night.color))
                 .font(uiFont: .font(of: .title3, weight: .semibold))
                 .padding(.horizontal, 16)
@@ -86,7 +86,7 @@ struct HomeEmptyView: View {
                     let coin = viewModel.popularCoins[index]
                     Button(
                         action: {
-                            viewModel.coinTapped(at: index)
+                            viewModel.buyTapped(index: index)
                         },
                         label: {
                             PopularCoinView(
