@@ -50,6 +50,7 @@ extension ConfirmReceivingBitcoin {
         @Injected private var renBTCStatusService: RenBTCStatusServiceType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
+        @Injected private var userWalletManager: UserWalletManager
 
         // MARK: - Properties
 
@@ -88,13 +89,24 @@ extension ConfirmReceivingBitcoin {
             Task {
                 do {
                     try await renBTCStatusService.load()
-                    let payableWallets = try await renBTCStatusService.getPayableWallets()
 
                     errorSubject.accept(nil)
-                    accountStatusSubject
-                        .accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
-                    payableWalletsSubject.accept(payableWallets)
-                    payingWalletSubject.accept(payableWallets.first)
+
+                    // CASE 1: User logged in using web3auth
+                    if userWalletManager.isUserLoggedInUsingWeb3 {
+                        accountStatusSubject.accept(.freeCreationAvailable)
+                        payableWalletsSubject.accept([])
+                        payingWalletSubject.accept(nil)
+                    }
+
+                    // CASE 2: User logged in using seed phrase
+                    else {
+                        let payableWallets = try await renBTCStatusService.getPayableWallets()
+                        accountStatusSubject.accept(!payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired)
+                        payableWalletsSubject.accept(payableWallets)
+                        payingWalletSubject.accept(payableWallets.first)
+                    }
+
                 } catch {
                     errorSubject.accept(error.readableDescription)
                     accountStatusSubject.accept(nil)
@@ -178,18 +190,14 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
     }
 
     func createRenBTC() {
-        guard let mintAddress = payingWalletSubject.value?.mintAddress,
-              let address = payingWalletSubject.value?.pubkey
-        else { return }
-
         isLoadingSubject.accept(true)
         errorSubject.accept(nil)
 
         Task {
             do {
                 try await renBTCStatusService.createAccount(
-                    payingFeeAddress: address,
-                    payingFeeMintAddress: mintAddress
+                    payingFeeAddress: payingWalletSubject.value?.pubkey,
+                    payingFeeMintAddress: payingWalletSubject.value?.mintAddress
                 )
                 errorSubject.accept(nil)
 
