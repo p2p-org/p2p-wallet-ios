@@ -47,4 +47,9 @@ extension AppCoordinator: AppEventHandlerDelegate {
             window?.overrideUserInterfaceStyle = style
         }
     }
+    
+    func refresh() {
+        ResolverScope.session.reset()
+        reloadEvent.send()
+    }
 }
