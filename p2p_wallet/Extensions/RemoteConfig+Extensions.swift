@@ -30,6 +30,14 @@ extension RemoteConfig {
     }
 }
 
+// MARK: - Username domain
+
+extension RemoteConfig {
+    var usernameDomain: String? {
+        configValue(forKey: "username_domain").stringValue
+    }
+}
+
 // MARK: - Solana Status
 
 extension RemoteConfig {
@@ -43,9 +51,5 @@ extension RemoteConfig {
 
     var solanaNegativeStatusTimeFrequency: Int? {
         configValues(Int.self, forKey: "solana_negative_status_time_frequency")
-    }
-
-    var usernameDomain: String? {
-        configValue(forKey: "username_domain").stringValue
     }
 }

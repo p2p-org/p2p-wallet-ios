@@ -12,7 +12,7 @@ class LockView: BECompositionView {
                 $0.backgroundColor = Asset.Colors.lime.color
             }}
             BEZStackPosition(mode: .center) { UIImageView().setup {
-                $0.image = .pLogo
+                $0.image = .keyappLogo
                 $0.tintColor = .black
             }}
         }

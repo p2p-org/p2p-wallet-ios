@@ -176,7 +176,7 @@ private extension ParsedTransaction {
             .convertToBalance(decimals: payingWallet.token.decimals)
 
         if amount == 0, transferAmount == 0, swapFee == 0 {
-            return NSMutableAttributedString().text(L10n.FreeByP2p.org, size: 16, color: ._4d77ff)
+            return NSMutableAttributedString().text(L10n.freeByKeyApp, size: 16, color: ._4d77ff)
         } else {
             return NSMutableAttributedString().text(
                 max(amount, transferAmount, swapFee)
