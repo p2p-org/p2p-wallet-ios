@@ -8,7 +8,6 @@ final class StartViewModel: BaseViewModel {
     @Injected private var analyticsManager: AnalyticsManager
 
     @Published var data: [OnboardingContentData] = []
-    @Published var currentDataIndex: Int = .zero
 
     let isAnimatable: Bool
     let termsDidTap = PassthroughSubject<Void, Never>()
@@ -33,9 +32,29 @@ final class StartViewModel: BaseViewModel {
     private func setData() {
         data = [
             OnboardingContentData(
-                image: .welcome,
-                title: L10n.welcomeToP2PWallet,
+                image: .startOne,
+                title: L10n.keyApp,
                 subtitle: L10n.easyWayToEarnInvestAndSendCryptoWithZeroFees
+            ),
+            OnboardingContentData(
+                image: .startTwo,
+                title: L10n.neverLoseAccessToYourFunds,
+                subtitle: L10n.OnlyYouHaveAccessToYourFunds.youCanRecoverYourWalletUsingYourPhoneOrEmail
+            ),
+            OnboardingContentData(
+                image: .startThree,
+                title: L10n.sendForFree,
+                subtitle: L10n.usdcusdtbtcethsolAndOtherCryptocurrenciesWithLightspeedAndZeroFees
+            ),
+            OnboardingContentData(
+                image: .startFour,
+                title: L10n.buyOver150Currencies,
+                subtitle: L10n.easySwapWithCreditCardOrBankTransfer
+            ),
+            OnboardingContentData(
+                image: .startFive,
+                title: L10n.earnOnYourFunds,
+                subtitle: L10n.DepositYourCrypto.earnUpTo6OnUSD
             ),
         ]
     }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppUI
 import UIKit
 
 extension BuyProcessing {
@@ -31,7 +32,10 @@ extension BuyProcessing {
         // MARK: - Methods
 
         init(provider: Buy.ProcessingService) {
-            widgetVC = .init(provider: provider, loadingView: WLSpinnerView(size: 65, endColor: .h5887ff))
+            widgetVC = .init(
+                provider: provider,
+                loadingView: BESpinnerView(size: 27, endColor: Asset.Colors.night.color)
+            )
             super.init()
         }
 

@@ -16,15 +16,16 @@ struct SolendTutorialView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 PagingView(
-                    index: $viewModel.currentDataIndex.animation(),
-                    maxIndex: viewModel.data.count - 1,
-                    fillColor: Color(Asset.Colors.night.color)
-                ) {
-                    ForEach(viewModel.data) { data in
-                        SolendTutorialSlideView(data: data)
-                            .padding(.bottom, 20)
+                    fillColor: Color(Asset.Colors.night.color),
+                    content: viewModel.data.map { data in
+                        PageContent {
+                            VStack {
+                                SolendTutorialSlideView(data: data)
+                                    .padding(.bottom, 20)
+                            }
+                        }
                     }
-                }
+                )
                 .transition(.opacity.combined(with: .move(edge: .top)))
 
                 bottomActionsView

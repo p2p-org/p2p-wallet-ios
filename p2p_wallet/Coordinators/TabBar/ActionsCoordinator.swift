@@ -88,7 +88,7 @@ final class ActionsCoordinator: Coordinator<Void> {
                     analyticsManager.log(event: AmplitudeEvent.actionButtonReceive)
                     analyticsManager.log(event: AmplitudeEvent.mainScreenReceiveOpen)
                     analyticsManager.log(event: AmplitudeEvent.receiveViewed(fromPage: "Main_Screen"))
-                case .trade:
+                case .swap:
                     let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
                     let vc = OrcaSwapV2.ViewController(viewModel: vm)
                     let navigation = UINavigationController(rootViewController: vc)
