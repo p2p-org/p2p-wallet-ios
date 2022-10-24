@@ -108,11 +108,11 @@ enum AmplitudeEvent: AnalyticsEvent {
     case sendStartScreen
     case sendViewed(lastScreen: String)
     case sendSelectTokenClick(tokenTicker: String)
-    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR), Token
+    case sendChangeInputMode(selectedValue: String) // Fiat (USD, EUR)
     case sendAmountKeydown(sum: Double)
     case sendAvailableClick(sum: Double)
     case sendAddressKeydown
-    case sendQrScanning
+    case sendQR_Scanning
     case sendSendClick(tokenTicker: String, sum: Double)
     case sendMakeAnotherTransactionClick(txStatus: String)
     case sendExplorerClick(txStatus: String)
@@ -127,19 +127,19 @@ enum AmplitudeEvent: AnalyticsEvent {
         sendNetwork: String,
         sendCurrency: String,
         sendSum: String,
-        sendMax: Bool,
-        sendUsd: String,
+        sendMAX: Bool,
+        sendUSD: String,
         sendFree: Bool,
         sendUsername: Bool,
-        sendAccountFeeToken: String
+        sendAccountFeeToken: String?
     )
     case actionButtonSend
 
     // MARK: - Swap
 
     case swapViewed(lastScreen: String)
-    case swapChangingTokenA(tokenAName: String)
-    case swapChangingTokenB(tokenBName: String)
+    case swapChangingTokenA(tokenA_Name: String)
+    case swapChangingTokenB(tokenB_Name: String)
     case swapTokenAAmountKeydown(sum: Double)
     case swapTokenBAmountKeydown(sum: Double)
     case swapAvailableClick(sum: Double)
@@ -161,8 +161,8 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // #131
     case swapUserConfirmed(
-        tokenAName: String,
-        tokenBName: String,
+        tokenA_Name: String,
+        tokenB_Name: String,
         swapSum: Double,
         swapMAX: Bool,
         swapUSD: Double,
@@ -172,8 +172,8 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // #132
     case swapStarted(
-        tokenAName: String,
-        tokenBName: String,
+        tokenA_Name: String,
+        tokenB_Name: String,
         swapSum: Double,
         swapMAX: Bool,
         swapUSD: Double,
@@ -183,8 +183,8 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // #133
     case swapApprovedByNetwork(
-        tokenAName: String,
-        tokenBName: String,
+        tokenA_Name: String,
+        tokenB_Name: String,
         swapSum: Double,
         swapMAX: Bool,
         swapUSD: Double,
@@ -194,8 +194,8 @@ enum AmplitudeEvent: AnalyticsEvent {
 
     // #134
     case swapCompleted(
-        tokenAName: String,
-        tokenBName: String,
+        tokenA_Name: String,
+        tokenB_Name: String,
         swapSum: Double,
         swapMAX: Bool,
         swapUSD: Double,
@@ -249,7 +249,7 @@ enum AmplitudeEvent: AnalyticsEvent {
     case moonpayWindowClosed
 
     // General
-    case appOpened(sourceOpen: AppOpenedContext)
+    case appOpened(sourceOpen: String)
     case actionButtonClick
 
     // Onboarding
@@ -258,14 +258,4 @@ enum AmplitudeEvent: AnalyticsEvent {
     case restoreWalletButton
     case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
     case restoreConfirmPin(result: Bool)
-}
-
-// MARK: - AppOpenedContext
-
-extension AmplitudeEvent {
-    enum AppOpenedContext: String {
-        case direct
-        case push
-        case deeplink
-    }
 }

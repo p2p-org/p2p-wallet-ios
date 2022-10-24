@@ -23,6 +23,9 @@ def key_app_kit
     "Onboarding",
     "JSBridge",
     "CountriesAPI",
+    "KeyAppKitCore",
+    "P2PSwift",
+    "Solend"
   ]
 
   if $keyAppKitPath
@@ -108,6 +111,9 @@ target 'p2p_wallet' do
   # Sentry
   pod 'Sentry', :git => 'https://github.com/getsentry/sentry-cocoa.git', :tag => '7.18.1'
 
+  # AppsFlyer
+  pod 'AppsFlyerFramework'
+
 #  target 'p2p_walletTests' do
 #    inherit! :search_paths
 #    common_pods
@@ -125,7 +131,7 @@ post_install do |installer|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-      
+
       if $teamID
         config.build_settings["DEVELOPMENT_TEAM"] = $teamID
       end

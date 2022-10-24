@@ -123,9 +123,9 @@ private extension PincodeViewModel {
     func title(for state: PincodeState) -> String {
         switch state {
         case .create:
-            return L10n.createYourPIN
+            return L10n.createYourNewPINCode
         case .confirm:
-            return L10n.confirmYourPIN
+            return L10n.confirmYourNewPINCode
         case .check:
             return L10n.enterYourPIN
         }

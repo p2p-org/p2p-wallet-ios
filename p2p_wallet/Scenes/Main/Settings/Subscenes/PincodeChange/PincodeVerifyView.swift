@@ -23,11 +23,11 @@ struct PincodeVerifyView: View {
         VStack {
             // Header
             VStack {
-                Image(uiImage: .lockMagic)
+                Image(uiImage: .changePincode)
                     .resizable()
                     .frame(width: 160, height: 120)
 
-                Text(L10n.yourCurrentPIN)
+                Text(L10n.yourCurrentPINCode)
                     .apply(style: .title2)
                     .padding(.top, 24)
             }.padding(.top, 24)

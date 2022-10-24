@@ -31,7 +31,6 @@ extension RenBTCReceivingStatuses {
             viewModel.navigationDriver
                 .drive(onNext: { [weak self] in self?.navigate(to: $0) })
                 .disposed(by: disposeBag)
-            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
         }
 
         override func build() -> UIView {
