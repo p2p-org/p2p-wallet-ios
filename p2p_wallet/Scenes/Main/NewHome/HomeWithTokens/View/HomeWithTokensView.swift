@@ -79,8 +79,8 @@ struct HomeWithTokensView: View {
                     tokenOperation(title: L10n.send, image: .homeSend) {
                         viewModel.send()
                     }
-                    tokenOperation(title: L10n.trade, image: .homeSwap) {
-                        viewModel.trade()
+                    tokenOperation(title: L10n.swap, image: .homeSwap) {
+                        viewModel.swap()
                     }
                 }
                 .frame(maxWidth: .infinity)
