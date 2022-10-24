@@ -45,11 +45,11 @@ struct ActionsView: View {
                     }
                     HStack(spacing: 16) {
                         actionView(
-                            image: .homeTradeAction,
-                            title: L10n.trade,
+                            image: .homeSwapAction,
+                            title: L10n.swap,
                             subtitle: L10n.oneCryptoForAnother,
                             action: {
-                                actionSubject.send(.trade)
+                                actionSubject.send(.swap)
                             }
                         )
                         actionView(
@@ -133,7 +133,7 @@ extension ActionsView {
     enum Action {
         case buy
         case receive
-        case trade
+        case swap
         case send
     }
 }

@@ -166,11 +166,11 @@ final class HomeCoordinator: Coordinator<Void> {
                 }
             })
             .store(in: &subscriptions)
-        tokensViewModel.tradeShow
+        tokensViewModel.swapShow
             .sink(receiveValue: { [unowned self, weak tokensViewModel] in
                 Task {
                     do {
-                        let done = await showTrade()
+                        let done = await showSwap()
                         if done {
                             tokensViewModel?.scrollToTop()
                         }
@@ -241,7 +241,7 @@ final class HomeCoordinator: Coordinator<Void> {
         }
     }
 
-    private func showTrade() async -> Bool {
+    private func showSwap() async -> Bool {
         let vm = OrcaSwapV2.ViewModel(initialWallet: nil)
         let vc = OrcaSwapV2.ViewController(viewModel: vm)
         analyticsManager.log(event: AmplitudeEvent.mainScreenSwapOpen)

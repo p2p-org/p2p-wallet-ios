@@ -18,28 +18,32 @@ struct AboutSolendView: View {
     var body: some View {
         VStack(spacing: 26) {
             PagingView(
-                index: $index.animation(),
-                maxIndex: 2,
                 fillColor: Color(Asset.Colors.night.color),
-                withSpacers: false
-            ) {
-                AboutSolendSlideView(
-                    image: .whatIsSolendFirst,
-                    title: L10n.easyWayToInvest,
-                    subtitle: L10n
-                        .solendIsOneOfTheMostScalableFastestAndLowestFeeDeFiLendingProtocolThatAllowsYouToEarnInterestOnYourAssets
-                )
-                AboutSolendSlideView(
-                    image: .whatIsSolendSecond,
-                    title: L10n.earnInterestOnYourCrypto,
-                    subtitle: L10n.WeProvideYouWithThePossibilityToUseSecureAndTrustedProtocols.depositUSDTAndUSDCToEarnInterest
-                )
-                AboutSolendSlideView(
-                    image: .whatIsSolendThird,
-                    title: L10n.yourCryptoIsUnderControl,
-                    subtitle: L10n.keepControlOfYourAssetsWithInstantWithdrawalsAtAnyTime
-                )
-            }
+                content: [
+                    PageContent {
+                        AboutSolendSlideView(
+                            image: .whatIsSolendFirst,
+                            title: L10n.easyWayToInvest,
+                            subtitle: L10n
+                                .solendIsOneOfTheMostScalableFastestAndLowestFeeDeFiLendingProtocolThatAllowsYouToEarnInterestOnYourAssets
+                        )
+                    },
+                    PageContent {
+                        AboutSolendSlideView(
+                            image: .whatIsSolendSecond,
+                            title: L10n.earnInterestOnYourCrypto,
+                            subtitle: L10n.WeProvideYouWithThePossibilityToUseSecureAndTrustedProtocols.depositUSDTAndUSDCToEarnInterest
+                        )
+                    },
+                    PageContent {
+                        AboutSolendSlideView(
+                            image: .whatIsSolendThird,
+                            title: L10n.yourCryptoIsUnderControl,
+                            subtitle: L10n.keepControlOfYourAssetsWithInstantWithdrawalsAtAnyTime
+                        )
+                    }
+                ]
+            )
             .padding(.top, 16)
             Button(
                 action: {

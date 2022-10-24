@@ -3,11 +3,9 @@ import SwiftUI
 
 struct OnboardingContentView: View {
     let data: OnboardingContentData
-    let maxWidth: CGFloat
 
-    init(data: OnboardingContentData, maxWidth: CGFloat = 300) {
+    init(data: OnboardingContentData) {
         self.data = data
-        self.maxWidth = maxWidth
     }
 
     var body: some View {
@@ -17,7 +15,7 @@ struct OnboardingContentView: View {
                 .scaledToFit()
                 .frame(
                     minWidth: 128,
-                    maxWidth: maxWidth
+                    maxWidth: 300
                 )
             Text(data.title)
                 .font(.system(size: UIFont.fontSize(of: .largeTitle), weight: .bold))
