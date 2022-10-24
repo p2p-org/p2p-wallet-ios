@@ -62,7 +62,7 @@ struct SolendTransactionDetailsView: View {
                     }.alert(isPresented: $coveredByP2PAlert) {
                         Alert(
                             title: Text(L10n.enjoyFreeTransactions),
-                            message: Text(L10n.OnTheSolanaNetworkTheFirst100TransactionsInADayArePaidByP2P.org),
+                            message: Text(L10n.onTheSolanaNetworkTheFirst100TransactionsInADayArePaidByKeyApp),
                             dismissButton: .cancel(Text(L10n.awesome))
                         )
                     }

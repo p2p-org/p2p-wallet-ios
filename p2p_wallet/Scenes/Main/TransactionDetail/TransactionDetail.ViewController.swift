@@ -157,8 +157,8 @@ extension TransactionDetail {
                 showWebsite(url: "https://explorer.solana.com/tx/\(viewModel.getTransactionId() ?? "")")
             case .freeFeeInfo:
                 showAlert(
-                    title: L10n.paidByP2p,
-                    message: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                    title: L10n.paidByKeyApp,
+                    message: L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByKeyApp
                         .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(100)
                 )
             }
