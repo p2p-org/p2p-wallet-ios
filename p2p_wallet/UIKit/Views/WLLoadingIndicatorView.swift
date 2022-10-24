@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import KeyAppUI
 
 extension UIView {
     @discardableResult
@@ -30,7 +31,10 @@ class WLLoadingIndicatorView: BEView {
 
     // MARK: - Subviews
 
-    private lazy var spinner = WLSpinnerView(size: 65, endColor: .h5887ff)
+    private lazy var spinner = CircularProgressIndicator(
+        backgroundCircularColor: Asset.Colors.night.color.withAlphaComponent(0.6),
+        foregroundCircularColor: Asset.Colors.night.color
+    )
 
     // MARK: - Initializer
 
@@ -40,11 +44,6 @@ class WLLoadingIndicatorView: BEView {
         configureForAutoLayout()
     }
 
-    override func willMove(toWindow newWindow: UIWindow?) {
-        super.willMove(toWindow: newWindow)
-        animate()
-    }
-
     // MARK: - Methods
 
     override func commonInit() {
@@ -52,10 +51,7 @@ class WLLoadingIndicatorView: BEView {
         isUserInteractionEnabled = isBlocking
 
         addSubview(spinner)
+        spinner.autoSetDimensions(to: CGSize(width: 27, height: 27))
         spinner.autoCenterInSuperview()
-    }
-
-    func animate() {
-        spinner.animate()
     }
 }

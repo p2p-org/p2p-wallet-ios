@@ -10,7 +10,7 @@ import RxCocoa
 
 struct BuyProcessing {}
 
-extension WLSpinnerView: BuyTokenWidgetLoadingView {
+extension BESpinnerView: BuyTokenWidgetLoadingView {
     public func startLoading() {
         animate()
     }
