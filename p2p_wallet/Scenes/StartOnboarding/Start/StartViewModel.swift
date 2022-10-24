@@ -34,7 +34,7 @@ final class StartViewModel: BaseViewModel {
         data = [
             OnboardingContentData(
                 image: .welcome,
-                title: L10n.welcomeToP2PWallet,
+                title: L10n.welcomeToKeyApp,
                 subtitle: L10n.easyWayToEarnInvestAndSendCryptoWithZeroFees
             ),
         ]
