@@ -206,7 +206,7 @@ PODS:
     - Sentry/Core (= 7.18.1)
   - Sentry/Core (7.18.1)
   - SkeletonUI (1.0.9)
-  - SkeletonView (1.30.3)
+  - SkeletonView (1.30.4)
   - SolanaPricesAPIs (1.0.0):
     - Cache
     - SolanaSwift (~> 2)
@@ -434,7 +434,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -449,10 +449,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -464,13 +464,13 @@ CHECKOUT OPTIONS:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: b566adfe2a0e82014a7003671b9594d40db9a8ae
@@ -479,16 +479,16 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: c7668f4ec4055780cf7854dc220a9c57ce3de410
@@ -503,16 +503,16 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
-    :commit: b8f659fcb61b3ebacd3c0b3265fcdf6f91c55448
+    :commit: e3a6716d01a6c84f02d6052c3541f0313739ace4
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: 4735f6a257b4f77db1e294f23ae5ab1e1a145a26
+    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -580,7 +580,7 @@ SPEC CHECKSUMS:
   secp256k1.swift: a7e7a214f6db6ce5db32cc6b2b45e5c4dd633634
   Sentry: 2d70348d6247a29702a8317e710c5ba890672df5
   SkeletonUI: b5c868e6917123e3d442d6cef9c71fe048175f3b
-  SkeletonView: f5b099c708e42a278079a12bcaaf71c303be65a3
+  SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
   SolanaPricesAPIs: 994fc864deab0dad370bc1509102f91d81324019
   SolanaSwift: 5b5f638b0d9568cea01c382465f84ba85ebb3efa
   Solend: c1ea93f70694b61758a182e5b26a8799ad7376cd
