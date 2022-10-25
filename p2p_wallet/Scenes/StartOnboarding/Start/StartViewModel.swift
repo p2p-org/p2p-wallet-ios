@@ -50,12 +50,7 @@ final class StartViewModel: BaseViewModel {
                 image: .startFour,
                 title: L10n.buyOver150Currencies,
                 subtitle: L10n.easySwapWithCreditCardOrBankTransfer
-            ),
-            OnboardingContentData(
-                image: .startFive,
-                title: L10n.earnOnYourFunds,
-                subtitle: L10n.DepositYourCrypto.earnUpTo6OnUSD
-            ),
+            )
         ]
     }
 }
