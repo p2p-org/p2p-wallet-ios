@@ -37,8 +37,9 @@ struct DebugMenuView: View {
                 Section(header: Text("Fee relayer")) {
                     Toggle("Disable free transaction", isOn: $feeRelayerConfig.disableFeeTransaction)
                         .valueChanged(value: feeRelayerConfig.disableFeeTransaction) { newValue in
+                            #if !RELEASE
                             showDebugger(false)
-                            
+                            #endif
                             let app: AppEventHandlerType = Resolver.resolve()
                             app.delegate?.refresh()
                         }
