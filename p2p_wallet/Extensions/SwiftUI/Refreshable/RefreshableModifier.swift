@@ -43,10 +43,11 @@ struct RefreshableModifier: ViewModifier {
 
 public extension View {
     @ViewBuilder func customRefreshable(action: @escaping @Sendable () async -> Void) -> some View {
-        if #available(iOS 15, *) {
-            refreshable(action: action)
-        } else {
+        // TODO: - Uncomment later when migrating to xcode 14, refreshable not work for xcode 13
+//        if #available(iOS 15.0, *) {
+//            refreshable(action: action)
+//        } else {
             modifier(RefreshableModifier(action: action))
-        }
+//        }
     }
 }
