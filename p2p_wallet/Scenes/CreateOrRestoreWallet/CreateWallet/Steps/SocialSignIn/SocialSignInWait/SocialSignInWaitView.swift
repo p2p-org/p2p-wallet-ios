@@ -58,7 +58,7 @@ struct IndeterminateProgressBar: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack(alignment: .leading) {
-                Rectangle().frame(width: geometry.size.width , height: geometry.size.height)
+                Rectangle().frame(width: geometry.size.width, height: geometry.size.height)
                     .opacity(0.1)
                     .foregroundColor(Color(Asset.Colors.night.color))
 

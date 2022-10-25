@@ -66,7 +66,7 @@ final class SocialSignInWaitViewModel: BaseViewModel {
             .sink { [weak self] _ in
                 guard let self = self, !self.isProcessSent else { return }
                 self.isProcessSent = true
-                self.initiated.sendProcess() { error in
+                self.initiated.sendProcess { error in
                     guard error != nil else { return }
                     self.notificationService.showDefaultErrorNotification()
                     self.back.send()
