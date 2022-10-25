@@ -53,3 +53,11 @@ extension RemoteConfig {
         configValues(Int.self, forKey: "solana_negative_status_time_frequency")
     }
 }
+
+// MARK: - Token list parser
+
+extension RemoteConfig {
+    var tokenListURL: String? {
+        configValue(forKey: "solana_token_list_json").stringValue
+    }
+}

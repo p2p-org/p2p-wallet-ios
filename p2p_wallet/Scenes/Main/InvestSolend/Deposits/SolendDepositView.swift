@@ -111,7 +111,7 @@ struct SolendDepositView_Previews: PreviewProvider {
         SolendDepositView(
             item: .init(
                 id: "",
-                logo: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/BQcdHdAQW1hczDbBi9hiegXAR7A98Q9jx3X3iBBBDiq4/logo.png",
+                logo: "https://raw.githubusercontent.com/bigearsenal/solana-token-list/main/assets/mainnet/BQcdHdAQW1hczDbBi9hiegXAR7A98Q9jx3X3iBBBDiq4/logo.png",
                 title: "USDT",
                 subtitle: "Yielding 3,73% APY",
                 rightTitle: "$ 1.07"

@@ -19,6 +19,7 @@ import SolanaPricesAPIs
 import SolanaSwift
 import Solend
 import SwiftyUserDefaults
+import FirebaseRemoteConfig
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -177,7 +178,11 @@ extension Resolver: ResolverRegistering {
         register { BlockchainClient(apiClient: resolve()) }
             .implements(SolanaBlockchainClient.self)
 
-        register { TokensRepository(endpoint: Defaults.apiEndPoint, cache: resolve()) }
+        register { TokensRepository(
+            endpoint: Defaults.apiEndPoint,
+            tokenListParser: .init(url: RemoteConfig.remoteConfig().tokenListURL ?? "https://raw.githubusercontent.com/bigearsenal/solana-token-list/main/src/tokens/solana.tokenlist.json"),
+            cache: resolve()
+        )}
             .implements(SolanaTokensRepository.self)
 
         // DAppChannnel
