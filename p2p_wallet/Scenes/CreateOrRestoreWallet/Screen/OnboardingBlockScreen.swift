@@ -17,7 +17,8 @@ struct OnboardingBlockScreen: View {
 
     let onHome: () async throws -> Void
     let onCompletion: (() async throws -> Void)?
-    let onTermAndCondition: () -> Void
+    let onTermsOfService: () -> Void
+    let onPrivacyPolicy: () -> Void
     let onInfo: (() -> Void)?
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -60,8 +61,11 @@ struct OnboardingBlockScreen: View {
                     }
                     .frame(height: TextButton.Size.large.height)
 
-                    OnboardingTermAndConditionButton(onPressed: onTermAndCondition, isStart: false)
-                        .padding(.top, 24)
+                    OnboardingTermsAndPolicyButton(
+                        termsPressed: onTermsOfService,
+                        privacyPolicyPressed: onPrivacyPolicy
+                    )
+                    .padding(.top, 24)
                 }
             }
         }

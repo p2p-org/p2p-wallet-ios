@@ -66,11 +66,14 @@ extension StartView {
                 .styled()
                 .padding(.top, 12)
 
-                OnboardingTermAndConditionButton(
-                    onPressed: { [weak viewModel] in
+                OnboardingTermsAndPolicyButton(
+                    termsPressed: { [weak viewModel] in
                         viewModel?.termsDidTap.send()
                     },
-                    isStart: true
+                    privacyPolicyPressed: { [weak viewModel] in
+                        viewModel?.privacyPolicyDidTap.send()
+                    },
+                    termsText: L10n.byContinuingYouAgreeToKeyAppS
                 ).padding(.top, 24)
             }
         }
