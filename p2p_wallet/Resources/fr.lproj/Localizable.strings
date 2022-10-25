@@ -1074,3 +1074,5 @@ Reset the PIN or wait for %@." = "Il vous reste %@ tentatives pour saisir le cod
 "Paid by Key App" = "Payé par Key App";
 "Will be paid by Key App\nWe take care of all transfers costs." = "Sera payé par Key App\nNous prenons en charge tous les frais de transfert.";
 "Key App will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "Key App associera automatiquement votre adresse cible de retrait au bon réseau pour la plupart des retraits.  Cependant, avant d'envoyer vos fonds, assurez-vous de revérifier le réseau sélectionné.";
+"and" = "et";
+"Terms of Service" = "Conditions d'utilisation";

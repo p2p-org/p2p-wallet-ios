@@ -25,12 +25,19 @@ struct PincodeVerifyView: View {
             VStack {
                 Image(uiImage: .changePincode)
                     .resizable()
-                    .frame(width: 160, height: 120)
+                    .frame(
+                        minWidth: 85,
+                        maxWidth: 160,
+                        minHeight: 64,
+                        maxHeight: 120
+                    )
+                    .aspectRatio(CGSize(width: 160, height: 120), contentMode: .fit)
 
                 Text(L10n.yourCurrentPINCode)
                     .apply(style: .title2)
                     .padding(.top, 24)
-            }.padding(.top, 24)
+            }
+            .padding(.top, 24)
 
             Spacer()
 
@@ -44,7 +51,10 @@ struct PincodeVerifyView: View {
                     let generator = UINotificationFeedbackGenerator()
                     generator.notificationOccurred(.error)
                 }
-            ).padding(.top, 40)
+            )
+            .frame(minHeight: 332)
+            .padding(.top, 36)
+            .layoutPriority(-1)
 
             // Forgot your  PIN
             Button {
@@ -108,5 +118,12 @@ struct PincodeVerifyView_Previews: PreviewProvider {
                 .navigationTitle(Text("Change PIN"))
                 .navigationBarTitleDisplayMode(.inline)
         }
+        .previewDevice("iPhone 12 Pro Max")
+        NavigationView {
+            PincodeVerifyView()
+                .navigationTitle(Text("Change PIN"))
+                .navigationBarTitleDisplayMode(.inline)
+        }
+        .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
     }
 }
