@@ -74,7 +74,7 @@ struct SolendBalanceBanner_Previews: PreviewProvider {
             delta: 0,
             depositUrls: [
                 URL(
-                    string: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+                    string: "https://raw.githubusercontent.com/bigearsenal/solana-token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
                 )!,
             ],
             rewards: 0.00001231,

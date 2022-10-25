@@ -122,7 +122,7 @@ struct TokenToWithdrawView_Previews: PreviewProvider {
                         .init(
                             amount: 50,
                             imageUrl: URL(
-                                string: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+                                string: "https://raw.githubusercontent.com/bigearsenal/solana-token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
                             )!,
                             symbol: "SOL",
                             fiatAmount: 500,
