@@ -154,6 +154,7 @@ PODS:
   - Kingfisher (7.3.2)
   - ListPlaceholder (1.5)
   - LoggerSwift (1.0.2)
+  - lottie-ios (3.5.0)
   - NameService (1.0.0):
     - KeyAppKitCore
     - KeyAppKitLogger
@@ -263,6 +264,7 @@ DEPENDENCIES:
   - KeychainSwift (= 19.0.0)
   - Kingfisher (~> 7.3.2)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
+  - lottie-ios (~> 3.5.0)
   - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Onboarding (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
@@ -323,6 +325,7 @@ SPEC REPOS:
     - KeychainSwift
     - Kingfisher
     - LoggerSwift
+    - lottie-ios
     - nanopb
     - Periphery
     - PhoneNumberKit
@@ -558,6 +561,7 @@ SPEC CHECKSUMS:
   Kingfisher: 0086ad83719761ba9b2cdaf6ef4d5b4878cbae23
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
+  lottie-ios: c55158d67d0629a260625cc2ded2052b829e3c3e
   NameService: 0d7cf21b719169d254b0adb73aff97afde466a44
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   Onboarding: 37ef23c8a300e7742fe7d77bce6ca94c04b158b0
@@ -597,6 +601,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 5ce412bbd3233269173c4eaca90c21086565ad65
+PODFILE CHECKSUM: b7eaf4613786a0f740536ef97526318ba3607258
 
 COCOAPODS: 1.11.3
