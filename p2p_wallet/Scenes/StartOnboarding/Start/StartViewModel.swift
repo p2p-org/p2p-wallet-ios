@@ -11,6 +11,7 @@ final class StartViewModel: BaseViewModel {
 
     let isAnimatable: Bool
     let termsDidTap = PassthroughSubject<Void, Never>()
+    let privacyPolicyDidTap = PassthroughSubject<Void, Never>()
     let createWalletDidTap = PassthroughSubject<Void, Never>()
     let restoreWalletDidTap = PassthroughSubject<Void, Never>()
     let mockButtonDidTap = PassthroughSubject<Void, Never>()
