@@ -7,13 +7,17 @@ import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
+import AnalyticsManager
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var analyticsManager: AnalyticsManager
 
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
         switch state {
         case .socialSelection:
+            analyticsManager.log(event: AmplitudeEvent.creationLoginScreen)
+
             let vm = SocialSignInViewModel(parameters: socialSignInParameters())
             let vc = SocialSignInView(viewModel: vm)
             vc.viewModel.outInfo.sink { [weak self] in self?.openInfo() }

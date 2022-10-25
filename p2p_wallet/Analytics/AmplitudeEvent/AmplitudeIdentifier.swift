@@ -10,4 +10,8 @@ import AnalyticsManager
 enum AmplitudeIdentifier: AnalyticsIdentifier {
     case userHasPositiveBalance(positive: Bool)
     case userAggregateBalance(balance: Double)
+
+    // Onboarding
+    case userRestoreMethod(restoreMethod: String)
+    case userDeviceshare(deviceshare: Bool)
 }
