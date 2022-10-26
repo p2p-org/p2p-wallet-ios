@@ -64,6 +64,7 @@ class HomeWithTokensViewModel: ObservableObject {
                 return "\(Defaults.fiat.symbol) \(equityValue.toString(maximumFractionDigits: 2))"
             }
             .assertNoFailure()
+            .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] in
                 self?.balance = $0
             })
@@ -71,6 +72,7 @@ class HomeWithTokensViewModel: ObservableObject {
 
         walletsRepository.dataPublisher
             .assertNoFailure()
+            .receive(on: RunLoop.main)
             .sink(receiveValue: { [weak self] wallets in
                 guard let self = self else { return }
                 var wallets = wallets

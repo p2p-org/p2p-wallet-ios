@@ -96,6 +96,7 @@ extension ConfirmReceivingBitcoin.ViewController {
                         }
                         return L10n.payAndContinue(fee.toString(maximumFractionDigits: 9) + " " + wallet.token.symbol)
                     }
+                    .receive(on: RunLoop.main)
                     .sink { [weak button] in button?.text = $0 }
                     .store(in: &subscriptions)
             }

@@ -101,6 +101,7 @@ extension SendToken {
                                 viewModel.payingWalletPublisher,
                                 viewModel.feeInfoPublisher
                             )
+                                .receive(on: RunLoop.main)
                                 .sink { [weak self, weak view] network, payingWallet, feeInfo in
                                     guard let self = self else { return }
                                     view?.setUp(
@@ -260,6 +261,7 @@ extension SendToken {
                             let symbol = wallet?.token.symbol ?? ""
                             return L10n.send(amount.toString(maximumFractionDigits: 9), symbol)
                         }
+                        .receive(on: RunLoop.main)
                         .sink { [weak view] in view?.text = $0 }
                         .store(in: &subscriptions)
 

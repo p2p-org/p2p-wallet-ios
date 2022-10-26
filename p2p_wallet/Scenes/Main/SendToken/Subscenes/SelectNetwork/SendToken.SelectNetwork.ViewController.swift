@@ -76,6 +76,7 @@ extension SendToken.SelectNetwork {
                         viewModel.feeInfoPublisher,
                         viewModel.payingWalletPublisher
                     )
+                        .receive(on: RunLoop.main)
                         .sink { [weak view, weak self] feeInfo, payingWallet in
                             view?.setUp(
                                 network: network,

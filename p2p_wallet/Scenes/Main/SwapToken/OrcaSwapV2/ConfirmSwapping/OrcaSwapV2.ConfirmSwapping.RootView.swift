@@ -133,6 +133,7 @@ extension OrcaSwapV2.ConfirmSwapping {
                 viewModel.destinationWalletPublisher.map { $0?.token.symbol }
             )
                 .map { L10n.swap($0.0 ?? "", $0.1 ?? "") }
+                .receive(on: RunLoop.main)
                 .sink { [weak actionButton] in actionButton?.text = $0 }
                 .store(in: &subscriptions)
 

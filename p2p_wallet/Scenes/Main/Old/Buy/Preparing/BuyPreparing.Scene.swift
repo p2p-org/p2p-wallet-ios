@@ -68,9 +68,11 @@ extension BuyPreparing {
                         WLStepButton.main(text: L10n.continue)
                             .setup { view in
                                 viewModel.nextStatus.map(\.text)
+                                    .receive(on: RunLoop.main)
                                     .sink { [weak view] in view?.text = $0 }
                                     .store(in: &subscriptions)
                                 viewModel.nextStatus.map(\.isEnable)
+                                    .receive(on: RunLoop.main)
                                     .assign(to: \.isEnabled, on: view)
                                     .store(in: &subscriptions)
                             }

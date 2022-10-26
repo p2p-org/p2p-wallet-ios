@@ -59,15 +59,15 @@ extension ConfirmReceivingBitcoin {
 
         // MARK: - Subject
 
-        @Published private var navigatableScene: NavigatableScene?
-        @Published private var isLoading = true
-        @Published private var error: String?
-        @Published private var accountStatus: RenBTCAccountStatus?
-        @Published private var payableWallets = [Wallet]()
+        @MainActor @Published private var navigatableScene: NavigatableScene?
+        @MainActor @Published private var isLoading = true
+        @MainActor @Published private var error: String?
+        @MainActor @Published private var accountStatus: RenBTCAccountStatus?
+        @MainActor @Published private var payableWallets = [Wallet]()
 
-        @Published private var payingWallet: Wallet?
-        @Published private var totalFee: Double?
-        @Published private var feeInFiat: Double?
+        @MainActor @Published private var payingWallet: Wallet?
+        @MainActor @Published private var totalFee: Double?
+        @MainActor @Published private var feeInFiat: Double?
 
         // MARK: - Initializer
 
@@ -91,7 +91,7 @@ extension ConfirmReceivingBitcoin {
                     try await renBTCStatusService.load()
                     try await renBTCServiceDidLoad()
                 } catch {
-                    await renBTCServiceDidFailToLoadWithError(error)
+                    renBTCServiceDidFailToLoadWithError(error)
                 }
                 await MainActor.run {
                     isLoading = false
@@ -108,6 +108,7 @@ extension ConfirmReceivingBitcoin {
                     return fee.convertToBalance(decimals: wallet.token.decimals)
                 }
                 .replaceError(with: nil)
+                .receive(on: RunLoop.main)
                 .assign(to: \.totalFee, on: self)
                 .store(in: &subscriptions)
 

@@ -255,6 +255,7 @@ extension SendToken.ChooseTokenAndAmount {
                                 L10n.chooseTheRecipient
                         )
                 }
+                .receive(on: RunLoop.main)
                 .sink { [weak actionButton] in actionButton?.text = $0 }
                 .store(in: &subscriptions)
 

@@ -125,6 +125,7 @@ extension OrcaSwapV2 {
                 $sourceWallet.removeDuplicates(),
                 $destinationWallet.removeDuplicates()
             )
+                .receive(on: RunLoop.main)
                 .sink { [weak self] sourceWallet, destinationWallet in
                     guard let self = self,
                           let sourceWallet = sourceWallet,

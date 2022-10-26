@@ -132,6 +132,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                         .setup { label in
                             viewModel.feeInfoPublisher
                                 .map { $0.value?.feeAmountInSOL ?? .zero }
+                                .receive(on: RunLoop.main)
                                 .sink { [weak label] feeAmount in
                                     label?.attributedText = NSMutableAttributedString()
                                         .text(
@@ -342,6 +343,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
 
                     return L10n.reviewAndConfirm
                 }
+                .receive(on: RunLoop.main)
                 .sink { [weak actionButton] in actionButton?.text = $0 }
                 .store(in: &subscriptions)
 
@@ -391,6 +393,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                 viewModel.payingWalletPublisher,
                 viewModel.feeInfoPublisher
             )
+                .receive(on: RunLoop.main)
                 .sink { [weak self] network, payingWallet, feeInfo in
                     self?._networkView.setUp(
                         network: network,

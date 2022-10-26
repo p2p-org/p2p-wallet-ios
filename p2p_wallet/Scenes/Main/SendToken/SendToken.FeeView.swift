@@ -34,10 +34,12 @@ extension SendToken {
 
                         publisher
                             .map { $0 == nil && $1.value?.hasAvailableWalletToPayFee != false }
+                            .receive(on: RunLoop.main)
                             .assign(to: \.isHidden, on: imageView)
                             .store(in: &subscriptions)
 
                         publisher
+                            .receive(on: RunLoop.main)
                             .sink { [weak imageView] in
                                 if $1.value?.hasAvailableWalletToPayFee == false {
                                     imageView?.tokenIcon.image = .squircleNotEnoughFunds
@@ -52,12 +54,14 @@ extension SendToken {
                         .setup { label in
                             payingWalletPublisher
                                 .map { $0 == nil }
+                                .receive(on: RunLoop.main)
                                 .assign(to: \.isHidden, on: label)
                                 .store(in: &subscriptions)
 
                             feeInfoPublisher
                                 .map { $0.value?.feeAmountInSOL }
                                 .map { feeAmountToAttributedString(feeAmount: $0, solPrice: solPrice) }
+                                .receive(on: RunLoop.main)
                                 .assign(to: \.attributedText, on: label)
                                 .store(in: &subscriptions)
                         }
@@ -74,6 +78,7 @@ extension SendToken {
                                         payingWallet: payingWallet
                                     )
                                 }
+                                .receive(on: RunLoop.main)
 
                             publisher.map(\.0)
                                 .assign(to: \.text, on: label)

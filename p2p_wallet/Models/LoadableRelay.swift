@@ -123,14 +123,21 @@ public class LoadableRelay<T>: ObservableObject {
             do {
                 try Task.checkCancellation()
                 guard let data = try await request?() else {
-                    state = .loaded
+                    await MainActor.run { [weak self] in
+                        self?.state = .loaded
+                    }
                     return
                 }
                 try Task.checkCancellation()
-                self.value = self.map(oldData: self.value, newData: data)
-                self.state = .loaded
+                await MainActor.run { [weak self] in
+                    guard let self = self else {return}
+                    self.value = self.map(oldData: self.value, newData: data)
+                    self.state = .loaded
+                }
             } catch {
-                state = .error(error.readableDescription)
+                await MainActor.run { [weak self] in
+                    self?.state = .error(error.readableDescription)
+                }
             }
         }
     }

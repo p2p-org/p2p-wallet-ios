@@ -126,6 +126,7 @@ extension SendTokenRecipientAndNetworkHandler {
             recipientPublisher.removeDuplicates(),
             networkPublisher.removeDuplicates()
         )
+            .receive(on: RunLoop.main)
             .sink { [weak self] payingWallet, recipient, network in
                 guard let self = self else { return }
 

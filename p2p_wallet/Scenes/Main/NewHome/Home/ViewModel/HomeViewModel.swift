@@ -48,6 +48,7 @@ class HomeViewModel: ObservableObject {
             }
         }
         .assertNoFailure()
+        .receive(on: RunLoop.main)
         .sink(receiveValue: { [weak self] state, amount in
             guard let self = self else { return }
             if self.initStateFinished, state == .pending { return }
@@ -104,7 +105,7 @@ class HomeViewModel: ObservableObject {
 private extension HomeViewModel {
     func bind() {
         createNameService.createNameResult
-            .receive(on: DispatchQueue.main)
+            .receive(on: RunLoop.main)
             .sink { [weak self] isSuccess in
                 guard isSuccess else { return }
                 self?.updateAddressIfNeeded()
