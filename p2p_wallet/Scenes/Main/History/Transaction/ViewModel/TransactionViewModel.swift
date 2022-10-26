@@ -11,6 +11,8 @@ import RxSwift
 import SolanaSwift
 import TransactionParser
 import UIKit
+import NameService
+import Resolver
 
 extension History {
     final class TransactionViewModel {
@@ -26,15 +28,34 @@ extension History {
 
             let showWebView = fromView.transactionDetailClicked
                 .mapTo("https://explorer.solana.com/tx/\(transaction.signature ?? "")")
-            let model = fromView.viewDidLoad.mapTo(transaction.mapTransaction(pricesService: pricesService))
+            let model = Observable.combineLatest(fromView.viewDidLoad, transaction.getUsername())
+                .map { _, username in
+                    transaction.mapTransaction(
+                        pricesService: pricesService,
+                        username: username
+                    )
+                }
             let copyTransactionId = fromView.transactionIdClicked
                 .mapTo(transaction.signature ?? "")
                 .do(onNext: { clipboardManager.copyToClipboard($0) })
                 .mapToVoid()
 
+            let copyUsername = Observable.combineLatest(fromView.usernameClicked, model)
+                .compactMap { $0.1.username }
+                .do(onNext: { clipboardManager.copyToClipboard($0) })
+                .mapToVoid()
+
+            let copyAddress = fromView.addressClicked
+                .compactMap {
+                    let addresses = transaction.getRawAddresses()
+                    return addresses.from ?? addresses.to
+                }
+                .do(onNext: { clipboardManager.copyToClipboard($0) })
+                .mapToVoid()
+
             let view = Output.View(
                 model: model.asDriver(),
-                copied: copyTransactionId.asDriver()
+                copied: Observable.merge(copyTransactionId, copyUsername, copyAddress).asDriver()
             )
             let coord = Output.Coord(
                 done: fromView.doneClicked.asDriver(),
@@ -49,7 +70,8 @@ extension History {
 
 private extension ParsedTransaction {
     func mapTransaction(
-        pricesService: PricesServiceType
+        pricesService: PricesServiceType,
+        username: String?
     ) -> History.TransactionView.Model {
         let amounts = mapAmounts(pricesService: pricesService)
         return .init(
@@ -60,9 +82,9 @@ private extension ParsedTransaction {
             transactionId: signature?
                 .truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9) ?? "",
             addresses: getAddresses(),
+            username: username,
             fee: mapFee(),
-            status: .init(text: status.label, color: status.indicatorColor),
-            blockNumber: "#\(slot ?? 0)"
+            status: .init(text: status.label, color: status.indicatorColor)
         )
     }
 
@@ -138,6 +160,15 @@ private extension ParsedTransaction {
     }
 
     func getAddresses() -> (from: String?, to: String?) {
+        let (from, to) = getRawAddresses()
+
+        return (
+            from: from?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
+            to: to?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)
+        )
+    }
+
+    func getRawAddresses() -> (from: String?, to: String?) {
         let transaction = info
 
         let from: String?
@@ -160,10 +191,20 @@ private extension ParsedTransaction {
             to = nil
         }
 
-        return (
-            from: from?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
-            to: to?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9)
-        )
+        return (from: from, to: to)
+    }
+
+    func getUsername() -> Observable<String?> {
+        Single<String?>.async {
+            let nameService: NameService = Resolver.resolve()
+            let address = self.getAddresses()
+            guard let address = address.from ?? address.to else { return nil }
+            do {
+                return try await nameService.getName(address)
+            } catch {
+                return nil
+            }
+        }.asObservable()
     }
 
     func mapFee() -> NSAttributedString? {
@@ -198,6 +239,8 @@ extension History.TransactionViewModel: ViewModel {
         struct View {
             let viewDidLoad = PublishRelay<Void>()
             let transactionIdClicked = PublishRelay<Void>()
+            let usernameClicked = PublishRelay<Void>()
+            let addressClicked = PublishRelay<Void>()
             let doneClicked = PublishRelay<Void>()
             let transactionDetailClicked = PublishRelay<Void>()
         }
