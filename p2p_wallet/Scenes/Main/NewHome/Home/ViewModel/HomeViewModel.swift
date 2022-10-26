@@ -11,7 +11,7 @@ import Foundation
 import Resolver
 import SolanaSwift
 
-class HomeViewModel: ObservableObject {
+class HomeViewModel: BaseViewModel {
     @Injected private var analyticsManager: AnalyticsManager
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
@@ -23,18 +23,18 @@ class HomeViewModel: ObservableObject {
     @Published var state = State.pending
     @Published var address = ""
 
-    private var cancellables = Set<AnyCancellable>()
-
     private let error = PassthroughSubject<Bool, Never>()
     var errorShow: AnyPublisher<Bool, Never> { error.eraseToAnyPublisher() }
 
     private var initStateFinished = false
 
-    init() {
+    override init() {
         let walletsRepository = Resolver.resolve(WalletsRepository.self)
         self.walletsRepository = walletsRepository
+        
+        super.init()
         address = accountStorage.account?.publicKey.base58EncodedString.shortAddress ?? ""
-
+        
         Publishers.CombineLatest(
             walletsRepository.statePublisher,
             walletsRepository.dataPublisher.filter { !$0.isEmpty }
@@ -64,7 +64,7 @@ class HomeViewModel: ObservableObject {
                 }
             }
         })
-        .store(in: &cancellables)
+        .store(in: &subscriptions)
 
         walletsRepository.statePublisher
             .assertNoFailure()
@@ -76,7 +76,7 @@ class HomeViewModel: ObservableObject {
                     self?.error.send(false)
                 }
             })
-            .store(in: &cancellables)
+            .store(in: &subscriptions)
 
         walletsRepository.reload()
 
@@ -110,7 +110,7 @@ private extension HomeViewModel {
                 guard isSuccess else { return }
                 self?.updateAddressIfNeeded()
             }
-            .store(in: &cancellables)
+            .store(in: &subscriptions)
     }
 }
 
