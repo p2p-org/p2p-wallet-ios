@@ -55,7 +55,7 @@ private extension CreateUsernameView {
                 .textStyle()
                 .padding(.top, 16)
 
-            Text(L10n.receiveAndSendCryptocurrenciesInKeyApp)
+            Text(L10n.thisIsAnEasyWayToSendAndReceiveCryptocurrenciesInKeyApp)
                 .font(.system(size: UIFont.fontSize(of: .text3), weight: .regular))
                 .textStyle()
                 .padding(.top, 12)
