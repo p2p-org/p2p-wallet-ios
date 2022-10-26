@@ -210,11 +210,23 @@ private extension ParsedTransaction {
         }
         return (from: from, to: to)
     }
-
     func getUsername() -> Observable<String?> {
         Single<String?>.async {
             let nameService: NameService = Resolver.resolve()
-            let address = self.getAddress()
+            let address: String?
+            switch info {
+            case let transaction as TransferInfo:
+                switch transaction.transferType {
+                case .send:
+                    address = transaction.destinationAuthority ?? transaction.destination?.pubkey
+                case .receive:
+                    address = transaction.authority ?? transaction.source?.pubkey
+                default:
+                    address = transaction.destinationAuthority ?? transaction.destination?.pubkey
+                }
+            default:
+                address = nil
+            }
             guard let address = address else { return nil }
             do {
                 return try await nameService.getName(address)
