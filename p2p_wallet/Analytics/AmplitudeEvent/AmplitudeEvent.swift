@@ -260,7 +260,15 @@ enum AmplitudeEvent: AnalyticsEvent {
     case selectRestoreOption(restoreOption: String, keychaineOption: Bool)
     case restoreConfirmPin(result: Bool)
 
-    // MARK: - RenBTC
-
+    // RenBTC
     case renbtcCreation(result: String)
+    
+    // PhoneScreen
+    case creationPhoneScreen
+    case creationLoginScreen
+
+    // Username
+    case usernameCreationButton(result: Bool)
+    case usernameSkipButton(result: Bool)
+    case usernameCreationScreen
 }

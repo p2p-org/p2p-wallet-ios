@@ -21,7 +21,6 @@ class SocialSignInViewModel: BaseViewModel {
     enum Loading {
         case appleButton
         case googleButton
-        case other
     }
 
     @Injected var notificationService: NotificationService

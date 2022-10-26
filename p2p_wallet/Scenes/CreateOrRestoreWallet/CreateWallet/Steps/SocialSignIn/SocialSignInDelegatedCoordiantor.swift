@@ -7,13 +7,17 @@ import Foundation
 import Onboarding
 import Resolver
 import SwiftUI
+import AnalyticsManager
 
 class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> {
     @Injected private var helpLauncher: HelpCenterLauncher
+    @Injected private var analyticsManager: AnalyticsManager
 
     override func buildViewController(for state: SocialSignInState) -> UIViewController? {
         switch state {
         case .socialSelection:
+            analyticsManager.log(event: AmplitudeEvent.creationLoginScreen)
+
             let vm = SocialSignInViewModel(parameters: socialSignInParameters())
             let vc = SocialSignInView(viewModel: vm)
             vc.viewModel.outInfo.sink { [weak self] in self?.openInfo() }
@@ -28,6 +32,22 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             }.store(in: &subscriptions)
 
             return UIHostingController(rootView: vc)
+        case let .socialSignInProgress(tokenID, email, socialProvider):
+            let viewModel = SocialSignInWaitViewModel()
+            let view = SocialSignInWaitView(viewModel: viewModel)
+            viewModel.initiated
+                .sinkAsync { [stateMachine] process in
+                    process.start {
+                        try await stateMachine <- .signInTorus(tokenID: tokenID, email: email, socialProvider: socialProvider)
+                    }
+                }
+                .store(in: &subscriptions)
+            viewModel.back
+                .sinkAsync { [stateMachine] in
+                    try await stateMachine <- .signInBack
+                }
+                .store(in: &subscriptions)
+            return UIHostingController(rootView: view)
         case let .socialSignInAccountWasUsed(provider, usedEmail):
             let vm = SocialSignInAccountHasBeenUsedViewModel(
                 email: usedEmail,

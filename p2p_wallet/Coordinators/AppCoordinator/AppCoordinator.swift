@@ -162,6 +162,9 @@ class AppCoordinator: Coordinator<Void> {
                 case let .restored(data):
                     analyticsManager.log(event: AmplitudeEvent.restoreConfirmPin(result: true))
 
+                    let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
+                    analyticsManager.setIdentifier(AmplitudeIdentifier.userRestoreMethod(restoreMethod: restoreMethod))
+
                     // Setup user wallet
                     try await userWalletManager.add(
                         seedPhrase: data.wallet.seedPhrase.components(separatedBy: " "),
