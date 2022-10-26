@@ -125,7 +125,8 @@ class InvestSolendViewModel: ObservableObject {
 
         let walletsStream: AnyPublisher<[Wallet]?, Never> = walletRepository
             .dataPublisher
-            .catch { _ in Just(nil) }
+            .map(Optional.init)
+            .replaceError(with: nil)
             .eraseToAnyPublisher()
         // Process data from data service
         dataService.availableAssets

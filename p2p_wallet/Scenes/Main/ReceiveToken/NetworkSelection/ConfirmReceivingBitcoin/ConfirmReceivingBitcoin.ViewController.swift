@@ -89,7 +89,7 @@ extension ConfirmReceivingBitcoin {
                 BEVStack(spacing: 10) {
                     createRenBTCFreeButton()
                         .setup { view in
-                            viewModel.accountStatusDriver
+                            viewModel.accountStatusPublisher
                                 .map { $0 != .freeCreationAvailable }
                                 .assign(to: \.isHidden, on: view)
                                 .store(in: &subscriptions)
@@ -127,10 +127,10 @@ extension ConfirmReceivingBitcoin {
             BEVStack(spacing: 12) {
                 createRenBTCFreeView()
                     .setup { view in
-                        viewModel.accountStatusDriver
+                        viewModel.accountStatusPublisher
                             .map { $0 != .freeCreationAvailable }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
+                            .assign(to: \.isHidden, on: view)
+                            .store(in: &subscriptions)
                     }
 
                 topUpRequiredView()

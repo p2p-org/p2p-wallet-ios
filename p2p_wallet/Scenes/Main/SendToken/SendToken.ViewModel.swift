@@ -171,7 +171,7 @@ extension SendToken {
 
             var feeToken: String?
             if let value = feeInfoSubject.value, value.hasAvailableWalletToPayFee == true,
-               let payingWallet = payingWalletSubject.value
+               let payingWallet = payingWallet
             {
                 if value.feeAmount.total > 0 {
                     feeToken = payingWallet.token.symbol
