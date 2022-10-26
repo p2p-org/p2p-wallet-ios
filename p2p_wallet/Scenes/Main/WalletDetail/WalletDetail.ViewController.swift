@@ -47,17 +47,6 @@ extension WalletDetail {
         override func setUp() {
             super.setUp()
 
-            #if DEBUG
-                let rightButton = UIBarButtonItem(
-                    title: L10n.settings,
-                    style: .plain,
-                    target: self,
-                    action: #selector(showWalletSettings)
-                )
-                rightButton.setTitleTextAttributes([.foregroundColor: UIColor.red], for: .normal)
-                navigationItem.rightBarButtonItem = rightButton
-            #endif
-
             let containerView = UIView(forAutoLayout: ())
 
             actionsView.autoSetDimension(.height, toSize: 80)
@@ -129,11 +118,6 @@ extension WalletDetail {
                     let navigation = UINavigationController(rootViewController: vc)
                     present(navigation, animated: true)
                 }
-            case let .settings(pubkey):
-                let vm = TokenSettingsViewModel(pubkey: pubkey)
-                let vc = TokenSettingsViewController(viewModel: vm)
-                vc.delegate = self
-                present(vc, animated: true)
             case let .send(wallet):
                 let vm = SendToken.ViewModel(
                     walletPubkey: wallet.pubkey,
@@ -180,17 +164,5 @@ extension WalletDetail {
                 self?.viewModel.start(action: actionType)
             }
         }
-
-        // MARK: - Actions
-
-        @objc func showWalletSettings() {
-            viewModel.showWalletSettings()
-        }
-    }
-}
-
-extension WalletDetail.ViewController: TokenSettingsViewControllerDelegate {
-    func tokenSettingsViewControllerDidCloseToken(_: TokenSettingsViewController) {
-        dismiss(animated: true, completion: nil)
     }
 }
