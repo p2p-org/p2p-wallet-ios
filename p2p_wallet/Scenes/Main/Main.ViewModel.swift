@@ -66,7 +66,10 @@ extension Main {
 
 extension Main.ViewModel: MainViewModelType {
     var authenticationStatusPublisher: AnyPublisher<AuthenticationPresentationStyle?, Never> {
-        authenticationHandler.authenticationStatusPublisher
+        authenticationHandler
+            .authenticationStatusPublisher
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
     var moveToHistory: AnyPublisher<Void, Never> {
@@ -84,11 +87,14 @@ extension Main.ViewModel: MainViewModelType {
         )
             .map { _ in () }
             .replaceError(with: ())
+            .receive(on: RunLoop.main)
             .eraseToAnyPublisher()
     }
 
     var isLockedPublisher: AnyPublisher<Bool, Never> {
         authenticationHandler.isLockedPublisher
+            .receive(on: RunLoop.main)
+            .eraseToAnyPublisher()
     }
 
     func authenticate(presentationStyle: AuthenticationPresentationStyle?) {
