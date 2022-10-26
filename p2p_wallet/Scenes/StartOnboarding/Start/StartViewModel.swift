@@ -11,6 +11,7 @@ final class StartViewModel: BaseViewModel {
 
     let isAnimatable: Bool
     let termsDidTap = PassthroughSubject<Void, Never>()
+    let privacyPolicyDidTap = PassthroughSubject<Void, Never>()
     let createWalletDidTap = PassthroughSubject<Void, Never>()
     let restoreWalletDidTap = PassthroughSubject<Void, Never>()
     let mockButtonDidTap = PassthroughSubject<Void, Never>()
@@ -50,12 +51,7 @@ final class StartViewModel: BaseViewModel {
                 image: .startFour,
                 title: L10n.buyOver150Currencies,
                 subtitle: L10n.easySwapWithCreditCardOrBankTransfer
-            ),
-            OnboardingContentData(
-                image: .startFive,
-                title: L10n.earnOnYourFunds,
-                subtitle: L10n.DepositYourCrypto.earnUpTo6OnUSD
-            ),
+            )
         ]
     }
 }

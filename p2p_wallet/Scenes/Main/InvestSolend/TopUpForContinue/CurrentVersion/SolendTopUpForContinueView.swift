@@ -112,7 +112,7 @@ struct SolendTopUpForContinueView_Previews: PreviewProvider {
                             symbol: "SOL",
                             decimals: 8,
                             mintAddress: "12345",
-                            logo: "https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
+                            logo: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png"
                         ),
                         strategy: .withoutAnyTokens
                     ),
