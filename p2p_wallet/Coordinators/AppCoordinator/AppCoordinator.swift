@@ -64,6 +64,7 @@ class AppCoordinator: Coordinator<Void> {
                 .sink { [unowned self] wallet, _ in
                     if wallet != nil {
                         if self.walletCreated, available(.onboardingUsernameEnabled) {
+                            self.walletCreated = false
                             self.openCreateUsername()
                         } else {
                             self.navigateToMain()
