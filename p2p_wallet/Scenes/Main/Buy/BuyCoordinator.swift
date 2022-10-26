@@ -12,6 +12,7 @@ final class BuyCoordinator: Coordinator<Void> {
     private let context: Context
     private var shouldPush = true
     private var defaultToken: Token?
+    private let targetTokenSymbol: String?
 
     private let vcPresentedPercentage = PassthroughSubject<CGFloat, Never>()
     @Injected private var analyticsManager: AnalyticsManager
@@ -19,30 +20,24 @@ final class BuyCoordinator: Coordinator<Void> {
     init(
         navigationController: UINavigationController? = nil,
         context: Context,
-        defaultToken: Buy.CryptoCurrency? = nil,
+        defaultToken: Token? = nil,
         presentingViewController: UIViewController? = nil,
-        shouldPush: Bool = true
+        shouldPush: Bool = true,
+        targetTokenSymbol: String? = nil
     ) {
         self.navigationController = navigationController
         self.presentingViewController = presentingViewController
         self.context = context
         self.shouldPush = shouldPush
-        if let defaultToken = defaultToken {
-            switch defaultToken {
-            case .usdc:
-                self.defaultToken = Token.usdc
-            case .sol:
-                self.defaultToken = Token.nativeSolana
-            default:
-                self.defaultToken = nil
-            }
-        }
+        self.defaultToken = defaultToken
+        self.targetTokenSymbol = targetTokenSymbol
     }
 
     override func start() -> AnyPublisher<Void, Never> {
         let result = PassthroughSubject<Void, Never>()
-        let viewModel = BuyViewModel(defaultToken: defaultToken)
+        let viewModel = BuyViewModel(defaultToken: defaultToken, targetSymbol: targetTokenSymbol)
         let viewController = UIHostingController(rootView: BuyView(viewModel: viewModel))
+        viewController.title = "Buy"
         viewController.hidesBottomBarWhenPushed = true
         if navigationController == nil {
             navigationController = UINavigationController(rootViewController: viewController)
@@ -63,7 +58,8 @@ final class BuyCoordinator: Coordinator<Void> {
         }
 
         analyticsManager
-            .log(event: AmplitudeEvent.buyScreenShowed(fromScreen: context == .fromHome ? "MainScreen" : "TokenScreen"))
+            .log(event: AmplitudeEvent
+                .buyScreenOpened(lastScreen: context == .fromHome ? "Main_Screen" : "Token_Screen"))
 
         viewController.onClose = {
             result.send()
@@ -142,7 +138,7 @@ final class BuyCoordinator: Coordinator<Void> {
             viewController.present(vc, animated: true)
 
             vc.onClose = { [weak self] in
-                self?.analyticsManager.log(event: AmplitudeEvent.moonPayWindowClosed)
+                self?.analyticsManager.log(event: AmplitudeEvent.moonpayWindowClosed)
             }
         }).store(in: &subscriptions)
 
@@ -181,5 +177,15 @@ extension BuyCoordinator {
         case fromHome
         case fromToken
         case fromRenBTC
+        case fromInvest
+
+        var screenName: String {
+            switch self {
+            case .fromHome: return "MainScreen"
+            case .fromToken: return "TokenScreen"
+            case .fromRenBTC: return "RenBTCScreen"
+            case .fromInvest: return "SolendScreen"
+            }
+        }
     }
 }

@@ -155,7 +155,7 @@ public struct SwipeCellModifier: ViewModifier {
                 {
                     setOffsetX(value: 0)
                 } else if let leftItem = leadingSideGroup.filter({ $0.swipeOutAction == true }).first,
-                          self.offsetX.magnitude > swipeOutTriggerValue
+                          offsetX.magnitude > swipeOutTriggerValue
                 {
                     swipeOutAction(item: leftItem, sideFactor: 1)
                 } else {
@@ -173,7 +173,7 @@ public struct SwipeCellModifier: ViewModifier {
                 {
                     setOffsetX(value: 0)
                 } else if let rightItem = trailingSideGroup.filter({ $0.swipeOutAction == true }).first,
-                          self.offsetX.magnitude > swipeOutTriggerValue
+                          offsetX.magnitude > swipeOutTriggerValue
                 {
                     swipeOutAction(item: rightItem, sideFactor: -1)
                 } else {
@@ -192,7 +192,7 @@ public struct SwipeCellModifier: ViewModifier {
         let group = side == .leading ? leadingSideGroup : trailingSideGroup
         //  let triggerValue  = self.cellWidth * self.settings.swipeOutTriggerRatio
         let swipeOutActionCondition = warnSwipeOutCondition(side: side, hasSwipeOut: true)
-        if let item = swipeOutItemWithHapticFeedback(group: group), self.hapticFeedbackOccurred == false,
+        if let item = swipeOutItemWithHapticFeedback(group: group), hapticFeedbackOccurred == false,
            swipeOutActionCondition == true
         {
             generator.notificationOccurred(item.swipeOutHapticFeedbackType!)

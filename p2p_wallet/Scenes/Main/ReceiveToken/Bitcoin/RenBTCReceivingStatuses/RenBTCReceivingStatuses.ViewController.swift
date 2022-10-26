@@ -5,9 +5,11 @@
 //  Created by Chung Tran on 05/10/2021.
 //
 
+import AnalyticsManager
 import BECollectionView
 import Foundation
 import RenVMSwift
+import Resolver
 import UIKit
 
 extension RenBTCReceivingStatuses {
@@ -17,6 +19,8 @@ extension RenBTCReceivingStatuses {
         }
 
         // MARK: - Dependencies
+
+        @Injected private var analyticsManager: AnalyticsManager
 
         private var viewModel: RenBTCReceivingStatusesViewModelType
 

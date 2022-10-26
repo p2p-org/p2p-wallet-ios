@@ -218,7 +218,7 @@ extension TransactionDetail {
                                         } else {
                                             return NSMutableAttributedString()
                                                 .text(L10n.free, size: 15, weight: .semibold)
-                                                .text(" (\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                                                .text(" (\(L10n.paidByKeyApp))", size: 15, color: .h34c759)
                                         }
                                     }
                                     .drive(accountCreationLabel.rx.attributedText)

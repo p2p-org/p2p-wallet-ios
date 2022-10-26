@@ -6,14 +6,20 @@
 //
 
 import AnalyticsManager
+import CountriesAPI
 import FeeRelayerSwift
 import NameService
+import Onboarding
 import OrcaSwapSwift
+import P2PSwift
+import Reachability
 import RenVMSwift
 import Resolver
 import SolanaPricesAPIs
 import SolanaSwift
+import Solend
 import SwiftyUserDefaults
+import FirebaseRemoteConfig
 
 extension Resolver: ResolverRegistering {
     public static func registerAllServices() {
@@ -30,6 +36,13 @@ extension Resolver: ResolverRegistering {
 
     /// Application scope: Lifetime app's services
     private static func registerForApplicationScope() {
+        // Application warmup manager
+        register {
+            WarmupManager(processes: [
+                RemoteConfigWarmupProcess(),
+            ])
+        }.scope(.application)
+
         // AppEventHandler
         register { AppEventHandler() }
             .implements(AppEventHandlerType.self)
@@ -37,9 +50,6 @@ extension Resolver: ResolverRegistering {
             .implements(ChangeNetworkResponder.self)
             .implements(ChangeLanguageResponder.self)
             .implements(ChangeThemeResponder.self)
-            .implements(LogoutResponder.self)
-            .implements(CreateOrRestoreWalletHandler.self)
-            .implements(OnboardingHandler.self)
             .scope(.application)
 
         // Storages
@@ -56,14 +66,52 @@ extension Resolver: ResolverRegistering {
             .implements((ICloudStorageType & AccountStorageType & NameStorageType & PincodeStorageType).self)
             .scope(.application)
 
+        // API Gateway
+        register { () -> APIGatewayClient in
+            #if !RELEASE
+                let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_DEV")!
+            #else
+                let apiGatewayEndpoint = String.secretConfig("API_GATEWAY_PROD")!
+            #endif
+
+            return available(.mockedApiGateway) ?
+                APIGatewayClientImplMock() :
+                APIGatewayClientImpl(endpoint: apiGatewayEndpoint)
+        }
+
+        // WalletManager
+        register { UserWalletManager() }
+            .scope(.application)
+
+        // WalletMetadata
+        register { LocalWalletMetadataProvider() }
+        register { RemoteWalletMetadataProvider() }
+        register {
+            WalletMetadataService(
+                localProvider: resolve(LocalWalletMetadataProvider.self),
+                remoteProvider: resolve(RemoteWalletMetadataProvider.self)
+            )
+        }.scope(.application)
+
         // AnalyticsManager
         register { AnalyticsManagerImpl(apiKey: .secretConfig("AMPLITUDE_API_KEY")!) }
             .implements(AnalyticsManager.self)
             .scope(.application)
 
         // NotificationManager
+        register(Reachability.self) {
+            let reachability = try! Reachability()
+            try! reachability.startNotifier()
+            return reachability
+        }
+        .scope(.application)
+
         register { NotificationServiceImpl() }
             .implements(NotificationService.self)
+            .scope(.application)
+
+        register { CountriesAPIImpl() }
+            .implements(CountriesAPI.self)
             .scope(.application)
 
         register { NotificationRepositoryImpl() }
@@ -88,6 +136,10 @@ extension Resolver: ResolverRegistering {
         register { InMemoryTokensRepositoryCache() }
             .implements(SolanaTokensRepositoryCache.self)
             .scope(.application)
+
+        register { CreateNameServiceImpl() }
+            .implements(CreateNameService.self)
+            .scope(.application)
     }
 
     /// Graph scope: Recreate and reuse dependencies
@@ -107,6 +159,9 @@ extension Resolver: ResolverRegistering {
         ) }
         .implements(NameService.self)
 
+        register { NameServiceUserDefaultCache() }
+            .implements(NameServiceCacheType.self)
+
         // ClipboardManager
         register { ClipboardManager() }
             .implements(ClipboardManagerType.self)
@@ -123,7 +178,11 @@ extension Resolver: ResolverRegistering {
         register { BlockchainClient(apiClient: resolve()) }
             .implements(SolanaBlockchainClient.self)
 
-        register { TokensRepository(endpoint: Defaults.apiEndPoint, cache: resolve()) }
+        register { TokensRepository(
+            endpoint: Defaults.apiEndPoint,
+            tokenListParser: .init(url: RemoteConfig.remoteConfig().tokenListURL ?? "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/src/tokens/solana.tokenlist.json"),
+            cache: resolve()
+        )}
             .implements(SolanaTokensRepository.self)
 
         // DAppChannnel
@@ -133,6 +192,19 @@ extension Resolver: ResolverRegistering {
         // QrCodeImageRender
         register { ReceiveToken.QrCodeImageRenderImpl() }
             .implements(QrCodeImageRender.self)
+
+        // Navigation provider
+        register { StartOnboardingNavigationProviderImpl() }
+            .implements(StartOnboardingNavigationProvider.self)
+
+        register { OnboardingServiceImpl() }
+            .implements(OnboardingService.self)
+
+        register { BiometricsAuthProviderImpl() }
+            .implements(BiometricsAuthProvider.self)
+
+        register { JWTTokenValidatorImpl() }
+            .implements(JWTTokenValidator.self)
     }
 
     /// Session scope: Live when user is authenticated
@@ -140,6 +212,13 @@ extension Resolver: ResolverRegistering {
         // AuthenticationHandler
         register { AuthenticationHandler() }
             .implements(AuthenticationHandlerType.self)
+            .scope(.session)
+
+        register { UserSessionCache() }
+            .scope(.session)
+
+        register { PincodeServiceImpl() }
+            .implements(PincodeService.self)
             .scope(.session)
 
         // SendService
@@ -195,14 +274,21 @@ extension Resolver: ResolverRegistering {
         }
         .implements(SwapFeeRelayer.self)
 
-        register {
-            FeeRelayerContextManagerImpl(
-                accountStorage: resolve(),
-                solanaAPIClient: resolve(),
-                feeRelayerAPIClient: resolve()
-            )
+        register { () -> FeeRelayerContextManager in
+            if FeeRelayConfig.shared.disableFeeTransaction {
+                return FeeRelayerContextManagerDisabledFreeTrxImpl(
+                    accountStorage: resolve(),
+                    solanaAPIClient: resolve(),
+                    feeRelayerAPIClient: resolve()
+                )
+            } else {
+                return FeeRelayerContextManagerImpl(
+                    accountStorage: resolve(),
+                    solanaAPIClient: resolve(),
+                    feeRelayerAPIClient: resolve()
+                )
+            }
         }
-        .implements(FeeRelayerContextManager.self)
 
         // PricesService
         register { PricesService() }
@@ -212,7 +298,6 @@ extension Resolver: ResolverRegistering {
         // WalletsViewModel
         register { WalletsViewModel() }
             .implements(WalletsRepository.self)
-            .implements(WLNotificationsRepository.self)
             .scope(.session)
 
         // SwapService
@@ -295,6 +380,11 @@ extension Resolver: ResolverRegistering {
         register { HttpClientImpl() }
             .implements(HttpClient.self)
             .scope(.session)
+
+        // Auth
+        register { AuthServiceImpl() }
+            .implements(AuthService.self)
+            .scope(.session)
     }
 
     /// Shared scope: share between screens
@@ -325,6 +415,47 @@ extension Resolver: ResolverRegistering {
             ])
         }
         .implements(Banners.Service.self)
+        .scope(.shared)
+
+        // Solend
+        register { SolendFFIWrapper() }
+            .implements(Solend.self)
+            .scope(.application)
+        register {
+            SolendDataServiceImpl(
+                solend: resolve(),
+                owner: resolve(AccountStorageType.self).account!,
+                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
+                cache: resolve(UserSessionCache.self)
+            )
+        }
+        .implements(SolendDataService.self)
+        .scope(.session)
+
+        register {
+            SolendActionServiceImpl(
+                rpcUrl: Defaults.apiEndPoint.getURL(),
+                lendingMark: "4UpD2fh7xH3VP9QQaXtsS1YY3bxzWhtfpks7FatyKvdY",
+                userAccountStorage: resolve(),
+                solend: resolve(),
+                solana: resolve(),
+                feeRelayApi: resolve(),
+                feeRelay: resolve(),
+                feeRelayContextManager: resolve()
+            )
+        }
+        .implements(SolendActionService.self)
+        .scope(.session)
+
+        // Solana tracker
+        register {
+            SolanaTrackerImpl(
+                solanaNegativeStatusFrequency: nil,
+                solanaNegativeStatusPercent: nil,
+                solanaNegativeStatusTimeFrequency: nil
+            )
+        }
+        .implements(SolanaTracker.self)
         .scope(.shared)
     }
 }

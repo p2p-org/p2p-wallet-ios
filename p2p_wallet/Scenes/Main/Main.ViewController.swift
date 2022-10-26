@@ -6,7 +6,9 @@
 //
 
 import Action
+import Combine
 import Foundation
+import Resolver
 import UIKit
 
 extension Main {
@@ -14,16 +16,18 @@ extension Main {
         // MARK: - Dependencies
 
         private let viewModel: MainViewModelType
+        private var subscriptions = Set<AnyCancellable>()
 
         // MARK: - Properties
 
         var authenticateWhenAppears: Bool!
+        @Injected private var helpLauncher: HelpCenterLauncher
+        @Injected private var solanaTracker: SolanaTracker
 
         // MARK: - Subviews
 
         private lazy var blurEffectView: UIView = LockView()
-        private var localAuthVC: Authentication.ViewController?
-
+        private var localAuthVC: PincodeViewController?
         private lazy var tabBar = TabBarController()
 
         // MARK: - Initializer
@@ -90,6 +94,7 @@ extension Main {
             let lockView = LockView()
             UIApplication.shared.windows.last?.addSubview(lockView)
             lockView.autoPinEdgesToSuperviewEdges()
+            solanaTracker.stopTracking()
         }
 
         private func hideLockView() {
@@ -100,75 +105,60 @@ extension Main {
 
         // MARK: - Helpers
 
-        private func handleAuthenticationStatus(_ status: AuthenticationPresentationStyle?) {
+        private func handleAuthenticationStatus(_ authStyle: AuthenticationPresentationStyle?) {
             // dismiss
-            guard let authStyle = status else {
+            guard let authStyle = authStyle else {
                 localAuthVC?.dismiss(animated: true) { [weak self] in
                     self?.localAuthVC = nil
                 }
                 return
             }
-
-            // clean
-            var extraAction: Authentication.ExtraAction = .none
-            if authStyle.options.contains(.withResetPassword) { extraAction = .reset }
-            if authStyle.options.contains(.withSignOut) { extraAction = .signOut }
-
             localAuthVC?.dismiss(animated: false, completion: nil)
-            let vm = Authentication.ViewModel()
-            localAuthVC = Authentication.ViewController(viewModel: vm, extraAction: extraAction)
-            localAuthVC?.title = authStyle.title
-            localAuthVC?.isIgnorable = !authStyle.options.contains(.required)
-            localAuthVC?.useBiometry = !authStyle.options.contains(.disableBiometric)
-
+            let pincodeViewModel = PincodeViewModel(
+                state: .check,
+                isBackAvailable: !authStyle.options.contains(.required),
+                successNotification: ""
+            )
+            localAuthVC = PincodeViewController(viewModel: pincodeViewModel)
             if authStyle.options.contains(.fullscreen) {
                 localAuthVC?.modalPresentationStyle = .fullScreen
             }
 
-            if authStyle.options.contains(.withLogo) {
-                localAuthVC?.withLogo = true
-            }
-
-            // completion
-            localAuthVC?.onSuccess = { [weak self] resetPassword in
-                self?.viewModel.authenticate(presentationStyle: nil)
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    authStyle.completion?(resetPassword)
-                }
-            }
-
-            // cancelledCompletion
-            if !authStyle.options.contains(.required) {
-                // disable swipe down
-                localAuthVC?.isModalInPresentation = true
-
-                // handle cancelled by tapping <x>
-                localAuthVC?.onCancel = { [weak self] in
+            var authSuccess = false
+            pincodeViewModel.openMain.eraseToAnyPublisher()
+                .sink { [weak self] _ in
+                    authSuccess = true
                     self?.viewModel.authenticate(presentationStyle: nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        authStyle.completion?(false)
+                    }
+                }
+                .store(in: &subscriptions)
+            pincodeViewModel.infoDidTap
+                .sink(receiveValue: { [unowned self] in
+                    helpLauncher.launch()
+                })
+                .store(in: &subscriptions)
+            localAuthVC?.onClose = { [weak self] in
+                self?.viewModel.authenticate(presentationStyle: nil)
+                if authSuccess == false {
+                    authStyle.onCancel?()
                 }
             }
-
             presentLocalAuth()
         }
 
         private func presentLocalAuth() {
-            guard let localAuthVC = localAuthVC else {
-                return assertionFailure("There is no local auth controller")
-            }
-
             let keyWindow = UIApplication.shared.windows.filter(\.isKeyWindow).first
             let topController = keyWindow?.rootViewController?.findLastPresentedViewController()
-
             if topController is UIAlertController {
                 let presenting = topController?.presentingViewController
-
                 topController?.dismiss(animated: false) { [weak presenting, weak localAuthVC] in
                     guard let localAuthVC = localAuthVC else { return }
-
                     presenting?.present(localAuthVC, animated: true)
                 }
             } else {
-                topController?.present(localAuthVC, animated: true)
+                topController?.present(localAuthVC!, animated: true)
             }
         }
     }

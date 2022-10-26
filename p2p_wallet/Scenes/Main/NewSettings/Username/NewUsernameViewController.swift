@@ -13,7 +13,7 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
     init(viewModel: SettingsViewModel) {
         self.viewModel = viewModel
         super.init()
-        navigationItem.title = L10n.yourP2pUsername
+        navigationItem.title = L10n.yourUsername
     }
 
     override func build() -> UIView {
@@ -36,8 +36,7 @@ class NewUsernameViewController: p2p_wallet.BaseViewController {
                 UIView.greyBannerView {
                     UILabel(
                         text:
-                        L10n
-                            .yourP2PUsernameAllowsYouToReceiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletTokenList,
+                            L10n.yourUsernameAllowsYouToReceiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletTokenList,
                         textSize: 15,
                         numberOfLines: 0
                     )

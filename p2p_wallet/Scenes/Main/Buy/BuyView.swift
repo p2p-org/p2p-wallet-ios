@@ -22,12 +22,17 @@ struct BuyView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
+                // Tutorial
+                if let targetSymbol = viewModel.targetSymbol {
+                    BuyTips(sourceSymbol: viewModel.token.symbol, destinationSymbol: targetSymbol)
+                        .padding(.horizontal, 16)
+                }
+
                 VStack(alignment: .leading, spacing: 0) {
                     HStack {
                         Spacer()
                         icon
-                            .padding(.top, 13)
-                            .padding(.trailing, 3)
+                            .padding(.top, 12)
                         Spacer()
                     }
                     input
@@ -59,7 +64,9 @@ struct BuyView: View {
 //                .offset(y: bottomOffset)
         }
         .edgesIgnoringSafeArea(.bottom)
-        .navigationTitle(L10n.buy)
+        .toolbar {
+            ToolbarItem(placement: .principal) { Text(L10n.buy).fontWeight(.semibold) }
+        }
         .onAppear {
             withAnimation {
 //                viewModel.navigationSlidingPercentage = 0
@@ -69,7 +76,10 @@ struct BuyView: View {
     }
 
     var icon: some View {
-        Image("buy-icon")
+        Image(uiImage: UIImage.buyIcon)
+            .resizable()
+            .scaledToFit()
+            .frame(height: 48)
     }
 
     var input: some View {
@@ -287,12 +297,9 @@ struct BuyView: View {
     private var bottomActionsView: some View {
         TextButtonView(
             title: viewModel.buttonItem.title,
-            titleBinding: $viewModel.buttonItem.title,
             style: .inverted,
             size: .large,
-            trailing: UIImage.buyWallet,
-            trailingBinding: $viewModel.buttonItem.icon,
-            isEnabled: $viewModel.buttonItem.enabled
+            trailing: viewModel.buttonItem.icon
         ) { [weak viewModel] in
             viewModel?.buyButtonTapped()
         }
@@ -301,6 +308,7 @@ struct BuyView: View {
         .padding(.top, 20)
         .padding(.bottom, max(60, SafeAreaInsetsKey.defaultValue.bottom))
         .background(Color(Asset.Colors.night.color))
+        .disabled(!viewModel.buttonItem.enabled)
         .cornerRadius(24, antialiased: false)
     }
 }

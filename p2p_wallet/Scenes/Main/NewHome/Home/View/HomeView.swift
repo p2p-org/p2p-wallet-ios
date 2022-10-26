@@ -16,9 +16,7 @@ struct HomeView: View {
     var body: some View {
         switch viewModel.state {
         case .pending:
-            ActivityIndicator(isAnimating: true) {
-                $0.style = .large
-            }
+            HomeSkeletonView()
         case .withTokens:
             navigation {
                 HomeWithTokensView(viewModel: viewModelWithTokens)
@@ -57,17 +55,16 @@ struct HomeView: View {
                             }
                         )
                     }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(
-                            action: {
-                                viewModel.receive()
-                            },
-                            label: {
-                                Image(uiImage: .scanQr)
-                            }
-                        )
-                    }
                 }
         }
+        .onAppear {
+            viewModel.updateAddressIfNeeded()
+        }
     }
+}
+
+// MARK: - AnalyticView
+
+extension HomeView: AnalyticView {
+    var analyticId: String { "Main_New" }
 }

@@ -7,6 +7,7 @@
 
 import AnalyticsManager
 import Foundation
+import Resolver
 import SolanaSwift
 
 extension AppCoordinator: AppEventHandlerDelegate {
@@ -18,32 +19,13 @@ extension AppCoordinator: AppEventHandlerDelegate {
         window?.hideLoadingIndicatorView()
     }
 
-    func createWalletDidComplete() {
-        isRestoration = false
-        navigateToOnboarding()
-        analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "create_wallet"))
-    }
-
-    func restoreWalletDidComplete() {
-        isRestoration = true
-        navigateToOnboarding()
-        analyticsManager.log(event: AmplitudeEvent.setupOpen(fromPage: "recovery"))
-    }
-
-    func onboardingDidFinish(resolvedName: String?) {
-        self.resolvedName = resolvedName
-        let event: AnalyticsEvent = isRestoration ? AmplitudeEvent.setupWelcomeBackOpen : AmplitudeEvent.setupFinishOpen
-        analyticsManager.log(event: event)
-        navigateToOnboardingDone()
-    }
-
     func userDidChangeAPIEndpoint(to _: APIEndPoint) {
         showAuthenticationOnMainOnAppear = false
         Task {
-            await reload()
-            await MainActor.run {
-                notificationsService.showInAppNotification(.done(L10n.networkChanged))
-            }
+            ResolverScope.session.reset()
+            reloadEvent.send()
+
+            notificationsService.showInAppNotification(.done(L10n.networkChanged))
         }
     }
 
@@ -51,12 +33,12 @@ extension AppCoordinator: AppEventHandlerDelegate {
         showAuthenticationOnMainOnAppear = false
 
         Task {
-            await reload()
-            await MainActor.run {
-                let languageChangedText = language.originalName.map(L10n.changedLanguageTo) ?? L10n
-                    .interfaceLanguageChanged
-                notificationsService.showInAppNotification(.done(languageChangedText))
-            }
+            ResolverScope.session.reset()
+            reloadEvent.send()
+
+            let languageChangedText = language.originalName.map(L10n.changedLanguageTo) ?? L10n
+                .interfaceLanguageChanged
+            notificationsService.showInAppNotification(.done(languageChangedText))
         }
     }
 
@@ -65,10 +47,9 @@ extension AppCoordinator: AppEventHandlerDelegate {
             window?.overrideUserInterfaceStyle = style
         }
     }
-
-    func userDidLogout() {
-        Task {
-            await reload()
-        }
+    
+    func refresh() {
+        ResolverScope.session.reset()
+        reloadEvent.send()
     }
 }

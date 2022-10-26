@@ -6,7 +6,8 @@
 //
 
 import Action
-import BECollectionView
+import AppsFlyerLib
+import AppTrackingTransparency
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
@@ -15,6 +16,7 @@ import KeyAppUI
 import Resolver
 import Sentry
 import SolanaSwift
+import SwiftNotificationCenter
 @_exported import SwiftyUserDefaults
 import UIKit
 
@@ -45,6 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         setupLoggers()
+        setupAppsFlyer()
 
         // Sentry
         SentrySDK.start { options in
@@ -59,8 +62,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             options.enableOutOfMemoryTracking = true
         }
 
-        setupRemoteConfig()
-
         // set app coordinator
         appCoordinator = AppCoordinator()
         appCoordinator!.start()
@@ -70,6 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationService.wasAppLaunchedFromPush(launchOptions: launchOptions)
 
         UIViewController.swizzleViewDidDisappear()
+        UIViewController.swizzleViewDidAppear()
 
         return proxyAppDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
     }
@@ -81,6 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task.detached(priority: .background) { [unowned self] in
             await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
+        AppsFlyerLib.shared().registerUninstall(deviceToken)
         proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }
 
@@ -88,8 +91,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
-        debugPrint("Failed to register: \(error)")
+        DefaultLogManager.shared.log(
+            event: "Application: didFailToRegisterForRemoteNotificationsWithError: \(error)",
+            logLevel: .debug
+        )
         proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
+    }
+
+    func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        var result = false
+        Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
+        AppsFlyerLib.shared().handleOpen(url, options: options)
+        return result
+    }
+
+    func application(
+        _ application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
+        return proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
     func application(
@@ -105,41 +127,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
 
-    private func setupRemoteConfig() {
-        let remoteConfig = RemoteConfig.remoteConfig()
-        if Environment.current != .release {
-            let settings = RemoteConfigSettings()
-            // WARNING: Don't actually do this in production!
-            settings.minimumFetchInterval = 0
-            remoteConfig.configSettings = settings
-        }
-
-        let currentEndpoints = APIEndPoint.definedEndpoints
-        if Environment.current != .release {
-            FeatureFlagProvider.shared.fetchFeatureFlags(
-                mainFetcher: MergingFlagsFetcher(
-                    primaryFetcher: DebugMenuFeaturesProvider.shared,
-                    secondaryFetcher: MergingFlagsFetcher(
-                        primaryFetcher: defaultFlags,
-                        secondaryFetcher: remoteConfig
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        #if DEBUG
+            AppsFlyerLib.shared().isDebug = true
+            AppsFlyerLib.shared().useUninstallSandbox = true
+        #endif
+        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
+        AppsFlyerLib.shared().start()
+        if #available(iOS 14, *) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                switch status {
+                case .denied:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is denied",
+                        logLevel: .info
                     )
-                )
-            ) { _ in
-                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
-            }
-        } else {
-            FeatureFlagProvider.shared.fetchFeatureFlags(
-                mainFetcher: MergingFlagsFetcher(
-                    primaryFetcher: remoteConfig,
-                    secondaryFetcher: defaultFlags
-                )
-            ) { _ in
-                self.changeEndpointIfNeeded(currentEndpoints: currentEndpoints)
+                case .notDetermined:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is notDetermined",
+                        logLevel: .debug
+                    )
+                case .restricted:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is restricted",
+                        logLevel: .info
+                    )
+                case .authorized:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is authorized",
+                        logLevel: .debug
+                    )
+                @unknown default:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager Invalid authorization status",
+                        logLevel: .error
+                    )
+                }
             }
         }
+        proxyAppDelegate.applicationDidBecomeActive(application)
+    }
 
-        Defaults.isCoingeckoProviderDisabled = !RemoteConfig.remoteConfig()
-            .configValue(forKey: Feature.coinGeckoPriceProvider.rawValue).boolValue
+    // MARK: - AppsFlyer
+
+    func setupAppsFlyer() {
+        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY") ?? ""
+        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID") ?? ""
+        AppsFlyerLib.shared().deepLinkDelegate = self
     }
 
     func setupLoggers() {
@@ -153,16 +187,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SolanaSwift.Logger.setLoggers(loggers as! [SolanaSwiftLogger])
         FeeRelayerSwift.Logger.setLoggers(loggers as! [FeeRelayerSwiftLogger])
         KeyAppKitLogger.Logger.setLoggers(loggers as! [KeyAppKitLoggerType])
-    }
-
-    private func changeEndpointIfNeeded(currentEndpoints: [APIEndPoint]) {
-        let newEndpoints = APIEndPoint.definedEndpoints
-        guard currentEndpoints != newEndpoints else { return }
-        if !(newEndpoints.contains { $0 == Defaults.apiEndPoint }),
-           let firstEndpoint = newEndpoints.first
-        {
-            Resolver.resolve(ChangeNetworkResponder.self).changeAPIEndpoint(to: firstEndpoint)
-        }
+        DefaultLogManager.shared.setProviders(loggers)
     }
 
     private func setupNavigationAppearance() {
@@ -170,19 +195,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let navBarAppearence = UINavigationBar.appearance()
         navBarAppearence.backIndicatorImage = .navigationBack
             .withRenderingMode(.alwaysTemplate)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+            .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
         navBarAppearence.backIndicatorTransitionMaskImage = .navigationBack
             .withRenderingMode(.alwaysTemplate)
-            .withAlignmentRectInsets(.init(top: 0, left: -6, bottom: 0, right: 0))
+            .withAlignmentRectInsets(.init(top: 0, left: -12, bottom: 0, right: 0))
         barButtonAppearance.setBackButtonTitlePositionAdjustment(
             .init(horizontal: -UIScreen.main.bounds.width * 1.5, vertical: 0),
             for: .default
         )
         navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.black]
+        navBarAppearence.tintColor = Asset.Colors.night.color
+        barButtonAppearance.tintColor = Asset.Colors.night.color
+
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true
-
-        navBarAppearence.tintColor = .black
-        barButtonAppearance.tintColor = .black
     }
+}
+
+extension AppDelegate: DeepLinkDelegate {
+    func didResolveDeepLink(_: DeepLinkResult) {}
 }

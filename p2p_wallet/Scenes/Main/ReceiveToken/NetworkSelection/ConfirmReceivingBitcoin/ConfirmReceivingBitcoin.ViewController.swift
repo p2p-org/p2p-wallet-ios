@@ -29,39 +29,39 @@ extension ConfirmReceivingBitcoin {
             BEVStack {
                 // Receiving via bitcoin network
                 UILabel(
-                    text: L10n.receivingViaBitcoinNetwork,
+                    text: L10n.createBitcoinAddress,
                     textSize: 20,
                     weight: .semibold,
                     numberOfLines: 0,
                     textAlignment: .center
                 )
-                    .padding(.init(top: 18, left: 18, bottom: 4, right: 18))
+                    .padding(.init(top: 18, left: 18, bottom: 18, right: 18))
 
                 // Make sure you understand the aspect
-                UILabel(
-                    text: L10n.makeSureYouUnderstandTheseAspects,
-                    textSize: 15,
-                    textColor: .textSecondary,
-                    numberOfLines: 0,
-                    textAlignment: .center
-                )
-                    .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
-                    .setup { label in
-                        viewModel.accountStatusDriver
-                            .map { $0 != .payingWalletAvailable }
-                            .drive(label.rx.isHidden)
-                            .disposed(by: disposeBag)
-                    }
+//                UILabel(
+//                    text: L10n.makeSureYouUnderstandTheseAspects,
+//                    textSize: 15,
+//                    textColor: .textSecondary,
+//                    numberOfLines: 0,
+//                    textAlignment: .center
+//                )
+//                    .padding(.init(top: 0, left: 18, bottom: 18, right: 18))
+//                    .setup { label in
+//                        viewModel.accountStatusDriver
+//                            .map { $0 != .payingWalletAvailable }
+//                            .drive(label.rx.isHidden)
+//                            .disposed(by: disposeBag)
+//                    }
 
                 // Additional spacer in top up view
-                UIView.spacer
-                    .setup { view in
-                        view.autoSetDimension(.height, toSize: 14)
-                        viewModel.accountStatusDriver
-                            .map { $0 != .topUpRequired }
-                            .drive(view.rx.isHidden)
-                            .disposed(by: disposeBag)
-                    }
+//                UIView.spacer
+//                    .setup { view in
+//                        view.autoSetDimension(.height, toSize: 14)
+//                        viewModel.accountStatusDriver
+//                            .map { $0 != .topUpRequired && $0 != .freeCreationAvailable }
+//                            .drive(view.rx.isHidden)
+//                            .disposed(by: disposeBag)
+//                    }
 
                 // Alert and separator
                 UIView()
@@ -86,6 +86,14 @@ extension ConfirmReceivingBitcoin {
 
                 // Button stack view
                 BEVStack(spacing: 10) {
+                    createRenBTCFreeButton()
+                        .setup { view in
+                            viewModel.accountStatusDriver
+                                .map { $0 != .freeCreationAvailable }
+                                .drive(view.rx.isHidden)
+                                .disposed(by: disposeBag)
+                        }
+
                     topUpButtonsView()
                         .setup { view in
                             viewModel.accountStatusDriver
@@ -116,6 +124,14 @@ extension ConfirmReceivingBitcoin {
 
         func contentView() -> UIView {
             BEVStack(spacing: 12) {
+                createRenBTCFreeView()
+                    .setup { view in
+                        viewModel.accountStatusDriver
+                            .map { $0 != .freeCreationAvailable }
+                            .drive(view.rx.isHidden)
+                            .disposed(by: disposeBag)
+                    }
+
                 topUpRequiredView()
                     .setup { view in
                         viewModel.accountStatusDriver

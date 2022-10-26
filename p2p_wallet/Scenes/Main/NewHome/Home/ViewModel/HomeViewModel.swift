@@ -18,6 +18,8 @@ class HomeViewModel: ObservableObject {
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
     @Injected private var accountStorage: AccountStorageType
+    @Injected private var nameStorage: NameStorageType
+    @Injected private var createNameService: CreateNameService
     private let walletsRepository: WalletsRepository
 
     @Published var state = State.pending
@@ -25,9 +27,7 @@ class HomeViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
-    private let receiveClicked = PassthroughSubject<Void, Never>()
     private let error = PassthroughSubject<Bool, Never>()
-    var receiveShow: AnyPublisher<PublicKey, Never>
     var errorShow: AnyPublisher<Bool, Never> { error.eraseToAnyPublisher() }
 
     private var initStateFinished = false
@@ -35,9 +35,6 @@ class HomeViewModel: ObservableObject {
     init() {
         let walletsRepository = Resolver.resolve(WalletsRepository.self)
         self.walletsRepository = walletsRepository
-        receiveShow = receiveClicked
-            .compactMap { try? PublicKey(string: walletsRepository.nativeWallet?.pubkey) }
-            .eraseToAnyPublisher()
         address = accountStorage.account?.publicKey.base58EncodedString.shortAddress ?? ""
 
         Observable.combineLatest(
@@ -48,8 +45,8 @@ class HomeViewModel: ObservableObject {
             case .initializing, .loading:
                 return (State.pending, nil)
             case .loaded, .error:
-                let amount = data?.reduce(0) { partialResult, wallet in partialResult + wallet.amount } ?? 0
-                return (amount > 0 ? State.withTokens : State.empty, amount)
+                let fiatAmount = data?.reduce(0) { $0 + $1.amountInCurrentFiat } ?? 0
+                return (fiatAmount > 0 ? State.withTokens : State.empty, fiatAmount)
             }
         }
         .asPublisher()
@@ -58,15 +55,14 @@ class HomeViewModel: ObservableObject {
             guard let self = self else { return }
             if self.initStateFinished, state == .pending { return }
 
-            if let address = self.accountStorage.account?.publicKey.base58EncodedString.shortAddress {
-                self.address = address
-            }
+            self.updateAddressIfNeeded()
             self.state = state
             if state != .pending {
                 self.initStateFinished = true
-                self.analyticsManager.log(event: AmplitudeEvent.userHasPositiveBalance(amount > 0))
+                self.analyticsManager.setIdentifier(AmplitudeIdentifier.userHasPositiveBalance(positive: amount > 0))
                 if let amount = amount {
-                    self.analyticsManager.log(event: AmplitudeEvent.userAggregateBalance(amount))
+                    let formatted = round(amount * 100) / 100.0
+                    self.analyticsManager.setIdentifier(AmplitudeIdentifier.userAggregateBalance(balance: formatted))
                 }
             }
         })
@@ -85,16 +81,38 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
 
         walletsRepository.reload()
+
+        bind()
     }
 
     func copyToClipboard() {
-        clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
-        notificationsService.showInAppNotification(.done(L10n.addressCopiedToClipboard))
-        analyticsManager.log(event: AmplitudeEvent.receiveAddressCopied)
+        if let name = nameStorage.getName(), !name.isEmpty {
+            clipboardManager.copyToClipboard("\(name) \(walletsRepository.nativeWallet?.pubkey ?? "")")
+        } else {
+            clipboardManager.copyToClipboard(walletsRepository.nativeWallet?.pubkey ?? "")
+        }
+        notificationsService.showToast(title: "🖤", text: L10n.addressWasCopiedToClipboard, haptic: true)
+        analyticsManager.log(event: AmplitudeEvent.mainCopyAddress)
     }
 
-    func receive() {
-        receiveClicked.send()
+    func updateAddressIfNeeded() {
+        if let name = nameStorage.getName(), !name.isEmpty {
+            address = "\(name).key"
+        } else if let address = accountStorage.account?.publicKey.base58EncodedString.shortAddress {
+            self.address = address
+        }
+    }
+}
+
+private extension HomeViewModel {
+    func bind() {
+        createNameService.createNameResult
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSuccess in
+                guard isSuccess else { return }
+                self?.updateAddressIfNeeded()
+            }
+            .store(in: &cancellables)
     }
 }
 

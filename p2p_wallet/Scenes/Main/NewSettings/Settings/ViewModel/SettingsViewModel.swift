@@ -13,12 +13,14 @@ import Resolver
 import RxCombine
 import SolanaSwift
 
-final class SettingsViewModel: ObservableObject {
+final class SettingsViewModel: BaseViewModel {
     @Injected private var nameStorage: NameStorageType
     @Injected private var solanaStorage: SolanaAccountStorage
     @Injected private var analyticsManager: AnalyticsManager
-    @Injected private var logoutResponder: LogoutResponder
+    @Injected private var userWalletManager: UserWalletManager
     @Injected private var authenticationHandler: AuthenticationHandlerType
+    @Injected private var metadataService: WalletMetadataService
+    @Injected private var createNameService: CreateNameService
     @Injected private var clipboardManager: ClipboardManagerType
     @Injected private var notificationsService: NotificationService
     @Injected private var imageSaver: ImageSaverType
@@ -50,19 +52,22 @@ final class SettingsViewModel: ObservableObject {
 
     private var storageName: String? { nameStorage.getName() }
     @Published var name: String = ""
+    @Published var isNameEnabled: Bool = true
 
     private var appVersion: String { Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "" }
     var appInfo: String {
         "\(appVersion)\(Environment.current != .release ? ("(" + Bundle.main.buildVersionNumber + ")" + " " + Environment.current.description) : "")"
     }
-
+    
     var userSOLAddress: String? {
-        solanaStorage.account?.publicKey.base58EncodedString
+        userWalletManager.wallet?.account.publicKey.base58EncodedString
     }
 
-    init() {
+    override init() {
+        super.init()
         setUpAuthType()
         updateNameIfNeeded()
+        bind()
     }
 
     private func setUpAuthType() {
@@ -122,12 +127,12 @@ final class SettingsViewModel: ObservableObject {
     }
 
     func sendSignOutAnalytics() {
-        analyticsManager.log(event: AmplitudeEvent.signOut(lastScreen: "Settings"))
+        analyticsManager.log(event: AmplitudeEvent.signOut)
     }
 
     func signOut() {
         analyticsManager.log(event: AmplitudeEvent.signedOut)
-        logoutResponder.logout()
+        Task { try await userWalletManager.remove() }
     }
 
     private func toggleZeroBalancesVisibility() {
@@ -137,6 +142,21 @@ final class SettingsViewModel: ObservableObject {
 
     func updateNameIfNeeded() {
         name = storageName != nil ? storageName!.withNameServiceDomain() : L10n.notReserved
+        if storageName == nil {
+            isNameEnabled = available(.onboardingUsernameEnabled) && metadataService.metadata != nil
+        } else {
+            isNameEnabled = true
+        }
+    }
+
+    private func bind() {
+        createNameService.createNameResult
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isSuccess in
+                guard let self = self, isSuccess else { return }
+                self.updateNameIfNeeded()
+            }
+            .store(in: &subscriptions)
     }
 
     func copyUsernameToClipboard() {
@@ -180,6 +200,7 @@ extension SettingsViewModel: ReserveNameHandler {
 extension SettingsViewModel {
     enum OpenAction {
         case username
+        case support
         case reserveUsername(userAddress: String)
         case recoveryKit
         case yourPin

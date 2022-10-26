@@ -109,13 +109,26 @@ extension WalletDetail {
         private func navigate(to scene: NavigatableScene?) {
             switch scene {
             case let .buy(crypto):
-                buyCoordinator = BuyCoordinator(
-                    context: .fromToken,
-                    defaultToken: crypto,
-                    presentingViewController: self,
-                    shouldPush: false
-                )
-                buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
+                let vc: UIViewController
+                if available(.buyScenarioEnabled) {
+                    // TODO: remove after moving to coordinator
+                    buyCoordinator = BuyCoordinator(
+                        context: .fromToken,
+                        defaultToken: crypto == .sol ? .nativeSolana : crypto == .usdc ? .usdc : .eth,
+                        presentingViewController: self,
+                        shouldPush: false
+                    )
+                    buyCoordinator?.start().sink { _ in }.store(in: &subscriptions)
+                } else {
+                    vc = BuyPreparing.Scene(
+                        viewModel: BuyPreparing.SceneModel(
+                            crypto: crypto,
+                            exchangeService: Resolver.resolve()
+                        )
+                    )
+                    let navigation = UINavigationController(rootViewController: vc)
+                    present(navigation, animated: true)
+                }
             case let .settings(pubkey):
                 let vm = TokenSettingsViewModel(pubkey: pubkey)
                 let vc = TokenSettingsViewController(viewModel: vm)
