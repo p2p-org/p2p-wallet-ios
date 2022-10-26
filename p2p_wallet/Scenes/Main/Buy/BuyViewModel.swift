@@ -328,6 +328,7 @@ final class BuyViewModel: ObservableObject {
             bankTransfer: typeBankTransfer != nil,
             typeBankTransfer: typeBankTransfer
         ))
+        analyticsManager.log(event: AmplitudeEvent.moonpayWindowOpened)
     }
 
     // MARK: -

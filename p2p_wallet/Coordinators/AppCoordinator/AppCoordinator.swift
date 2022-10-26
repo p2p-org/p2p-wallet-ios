@@ -135,6 +135,7 @@ class AppCoordinator: Coordinator<Void> {
 
         coordinate(to: startCoordinator)
             .sinkAsync(receiveValue: { [unowned self] result in
+                GlobalAppState.shared.shouldPlayAnimationOnHome = true
                 showAuthenticationOnMainOnAppear = false
                 let userWalletManager: UserWalletManager = Resolver.resolve()
                 switch result {
@@ -161,6 +162,9 @@ class AppCoordinator: Coordinator<Void> {
                     saveSecurity(data: data.security)
                 case let .restored(data):
                     analyticsManager.log(event: AmplitudeEvent.restoreConfirmPin(result: true))
+
+                    let restoreMethod: String = data.metadata == nil ? "seed" : "web3auth"
+                    analyticsManager.setIdentifier(AmplitudeIdentifier.userRestoreMethod(restoreMethod: restoreMethod))
 
                     // Setup user wallet
                     try await userWalletManager.add(
