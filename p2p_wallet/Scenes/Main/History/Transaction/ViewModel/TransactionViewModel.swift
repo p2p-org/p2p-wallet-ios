@@ -81,7 +81,7 @@ private extension ParsedTransaction {
             blockTime: blockTime?.string(withFormat: "MMMM dd, yyyy @ HH:mm a") ?? "",
             transactionId: signature?
                 .truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9) ?? "",
-            addresses: getAddresses(),
+            address: getAddress()?.truncatingMiddle(numOfSymbolsRevealed: 9, numOfSymbolsRevealedInSuffix: 9),
             username: username,
             fee: mapFee(),
             status: .init(text: status.label, color: status.indicatorColor)
@@ -168,6 +168,24 @@ private extension ParsedTransaction {
         )
     }
 
+    func getAddress() -> String? {
+        let (from, to) = getRawAddresses()
+        switch info {
+        case let transaction as TransferInfo:
+            switch transaction.transferType {
+            case .send:
+                return to
+            case .receive:
+                return from
+            default:
+                return to
+            }
+        default:
+            break
+        }
+        return to
+    }
+
     func getRawAddresses() -> (from: String?, to: String?) {
         let transaction = info
 
@@ -190,15 +208,14 @@ private extension ParsedTransaction {
         default:
             to = nil
         }
-
         return (from: from, to: to)
     }
 
     func getUsername() -> Observable<String?> {
         Single<String?>.async {
             let nameService: NameService = Resolver.resolve()
-            let address = self.getAddresses()
-            guard let address = address.from ?? address.to else { return nil }
+            let address = self.getAddress()
+            guard let address = address else { return nil }
             do {
                 return try await nameService.getName(address)
             } catch {
