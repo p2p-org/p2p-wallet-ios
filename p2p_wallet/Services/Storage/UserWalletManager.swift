@@ -57,6 +57,8 @@ class UserWalletManager: ObservableObject {
         if let deviceShare = deviceShare, ethAddress != nil {
             try storage.save(deviceShare: deviceShare)
         }
+        
+        notificationsService.registerForRemoteNotifications()
 
         try await refresh()
     }
