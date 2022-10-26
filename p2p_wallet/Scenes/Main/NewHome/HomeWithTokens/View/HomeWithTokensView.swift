@@ -84,23 +84,21 @@ struct HomeWithTokensView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.bottom, 25)
-                
-                // Earn banner
-                if !isEarnBannerClosed && available(.investSolendFeature) && available(.solendDisablePlaceholder) {
-                    EarnBannerView {
-                        viewModel.earn()
-                    } closeAction: {
-                        Defaults.isEarnBannerClosed = true
-                        withAnimation {
-                            isEarnBannerClosed = true
-                        }
-                    }
-                    .onTapGesture {
-                        viewModel.earn()
-                    }
-                    .padding(.horizontal, 16)
-                }
+                .padding(.bottom, 32)
+//                if !isEarnBannerClosed && available(.investSolendFeature) && available(.solendDisablePlaceholder) {
+//                    EarnBannerView {
+//                        viewModel.earn()
+//                    } closeAction: {
+//                        Defaults.isEarnBannerClosed = true
+//                        withAnimation {
+//                            isEarnBannerClosed = true
+//                        }
+//                    }
+//                    .onTapGesture {
+//                        viewModel.earn()
+//                    }
+//                    .padding(.horizontal, 16)
+//                }
             }
             .background(Color(Asset.Colors.smoke.color))
         }

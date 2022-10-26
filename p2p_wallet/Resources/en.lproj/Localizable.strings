@@ -1048,3 +1048,8 @@ Reset the PIN or wait for %@.";
 "Paid by Key App" = "Paid by Key App";
 "Will be paid by Key App\nWe take care of all transfers costs." = "Will be paid by Key App\nWe take care of all transfers costs.";
 "Key App will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network." = "Key App will automatically match your withdrawal target address to the correct network for most withdrawals. However, before sending your funds, make sure to double-check the selected network.";
+"and" = "and";
+"Terms of Service" = "Terms of Service";
+"Securing key" = "Securing key";
+"Creating wallet" = "Creating wallet";
+"Please wait, it won't take long" = "Please wait, it won't take long";
