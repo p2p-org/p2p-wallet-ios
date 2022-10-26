@@ -13,24 +13,20 @@ struct StartView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack(spacing: .zero) {
                 if isShowing {
-                    if viewModel.data.count == 1, let content = viewModel.data.first {
-                        Spacer()
-                        OnboardingContentView(data: content)
-                            .transition(.opacity.combined(with: .move(edge: .top)))
-                            .padding(.bottom, 32)
-                        Spacer()
-                    } else {
-                        PagingView(
-                            index: $viewModel.currentDataIndex.animation(),
-                            maxIndex: viewModel.data.count - 1,
-                            fillColor: Color(Asset.Colors.night.color)
-                        ) {
-                            ForEach(viewModel.data, id: \.id) { data in
-                                OnboardingContentView(data: data)
+                    PagingView(
+                        fillColor: Color(Asset.Colors.night.color),
+                        content: viewModel.data.map { data in
+                            PageContent {
+                                VStack {
+                                    Spacer()
+                                    OnboardingContentView(data: data)
+                                }
                             }
                         }
+                    )
                         .transition(.opacity.combined(with: .move(edge: .top)))
-                    }
+                        .padding(.bottom, 32)
+                        .padding(.top, 60)
 
                     bottomActionsView
                         .transition(.opacity.combined(with: .move(edge: .bottom)))
@@ -70,11 +66,14 @@ extension StartView {
                 .styled()
                 .padding(.top, 12)
 
-                OnboardingTermAndConditionButton(
-                    onPressed: { [weak viewModel] in
+                OnboardingTermsAndPolicyButton(
+                    termsPressed: { [weak viewModel] in
                         viewModel?.termsDidTap.send()
                     },
-                    isStart: true
+                    privacyPolicyPressed: { [weak viewModel] in
+                        viewModel?.privacyPolicyDidTap.send()
+                    },
+                    termsText: L10n.byContinuingYouAgreeToKeyAppS
                 ).padding(.top, 24)
             }
         }

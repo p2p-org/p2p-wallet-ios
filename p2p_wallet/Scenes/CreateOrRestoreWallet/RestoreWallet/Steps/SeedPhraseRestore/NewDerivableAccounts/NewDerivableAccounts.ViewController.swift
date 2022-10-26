@@ -39,7 +39,7 @@ extension NewDerivableAccounts {
             UIView.greyBannerView {
                 UILabel(
                     text: L10n.ThisIsTheThingYouUseToGetAllYourAccountsFromYourMnemonicPhrase
-                        .byDefaultP2PWalletWillUseM4450100AsTheDerivationPathForTheMainWallet,
+                        .byDefaultKeyAppWillUseM4450100AsTheDerivationPathForTheMainWallet,
                     numberOfLines: 0
                 )
             }

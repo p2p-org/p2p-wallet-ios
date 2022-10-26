@@ -53,7 +53,7 @@ extension SendToken.ConfirmViewController {
     class RecipientView: UIStackView {
         // MARK: - Subviews
 
-        private lazy var nameLabel = UILabel(text: "<Recipient: a.p2p.sol>")
+        private lazy var nameLabel = UILabel(text: "<Recipient: %username>")
         private lazy var addressLabel = UILabel(
             text: "<DkmTQHutnUn9xWmismkm2zSvLQfiEkPQCq6rAXZKJnBw>",
             textSize: 17,
@@ -283,7 +283,7 @@ extension SendToken.ConfirmViewController {
             switch viewModel.relayMethod {
             case .reward:
                 let title = L10n.free.uppercaseFirst
-                let message = L10n.WillBePaidByP2p.orgWeTakeCareOfAllTransfersCosts
+                let message = L10n.willBePaidByKeyAppWeTakeCareOfAllTransfersCosts
                 feeInfoDidTouch(title, message)
             case .relay:
                 showIndetermineHud()
@@ -293,11 +293,10 @@ extension SendToken.ConfirmViewController {
                         await MainActor.run { [weak self] in
                             self?.hideHud()
                             let title = L10n.thereAreFreeTransactionsLeftForToday(limit.maxUsage - limit.currentUsage)
-                            let message = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P.Org
+                            let message = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByKeyApp
                                 .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(limit.maxUsage)
                             self?.feeInfoDidTouch(title, message)
                         }
-
                     } catch {
                         await MainActor.run { [weak self] in
                             self?.hideHud()
@@ -316,7 +315,7 @@ private extension FeeAmount {
         if transaction == 0 {
             return NSMutableAttributedString()
                 .text(L10n.free + " ", size: 15, weight: .semibold)
-                .text("(\(L10n.PaidByP2p.org))", size: 15, color: .h34c759)
+                .text("(\(L10n.paidByKeyApp))", size: 15, color: .h34c759)
         } else {
             let fee = transaction.convertToBalance(decimals: decimals ?? 0)
             return feeAttributedString(fee: fee, unit: symbol, price: prices[symbol])

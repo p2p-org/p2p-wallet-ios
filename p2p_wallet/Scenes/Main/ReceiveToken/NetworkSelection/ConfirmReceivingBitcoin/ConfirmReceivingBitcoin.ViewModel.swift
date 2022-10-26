@@ -50,6 +50,7 @@ extension ConfirmReceivingBitcoin {
         @Injected private var renBTCStatusService: RenBTCStatusServiceType
         @Injected private var pricesService: PricesServiceType
         @Injected private var walletsRepository: WalletsRepository
+        @Injected private var userWalletManager: UserWalletManager
 
         // MARK: - Properties
 
@@ -88,20 +89,13 @@ extension ConfirmReceivingBitcoin {
             Task {
                 do {
                     try await renBTCStatusService.load()
-                    let payableWallets = try await renBTCStatusService.getPayableWallets()
-
-                    error = nil
-                    accountStatus
-                        = !payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired
-                    self.payableWallets = payableWallets
-                    payingWallet = payableWallets.first
+                    try await renBTCServiceDidLoad()
                 } catch {
-                    self.error = error.readableDescription
-                    accountStatus = nil
-                    payableWallets = []
-                    payingWallet = nil
+                    await renBTCServiceDidFailToLoadWithError(error)
                 }
-                isLoading = false
+                await MainActor.run {
+                    isLoading = false
+                }
             }
         }
 
@@ -125,6 +119,32 @@ extension ConfirmReceivingBitcoin {
                 }
                 .assign(to: \.feeInFiat, on: self)
                 .store(in: &subscriptions)
+        }
+        
+        private func renBTCServiceDidLoad() async throws {
+            error = nil
+
+            // CASE 1: User logged in using web3auth
+            if userWalletManager.isUserLoggedInUsingWeb3 {
+                accountStatus = .freeCreationAvailable
+                payableWallets = []
+                payingWallet = nil
+            }
+
+            // CASE 2: User logged in using seed phrase
+            else {
+                let payableWallets = try await renBTCStatusService.getPayableWallets()
+                accountStatus = !payableWallets.isEmpty ? .payingWalletAvailable : .topUpRequired
+                self.payableWallets = payableWallets
+                payingWallet = payableWallets.first
+            }
+        }
+        
+        private func renBTCServiceDidFailToLoadWithError(_ error: Error) {
+            self.error = error.readableDescription
+            accountStatus = nil
+            payableWallets = []
+            payingWallet = nil
         }
     }
 }
@@ -176,18 +196,14 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
     }
 
     func createRenBTC() {
-        guard let mintAddress = payingWallet?.mintAddress,
-              let address = payingWallet?.pubkey
-        else { return }
-
         isLoading = true
         error = nil
 
         Task {
             do {
                 try await renBTCStatusService.createAccount(
-                    payingFeeAddress: address,
-                    payingFeeMintAddress: mintAddress
+                    payingFeeAddress: payingWallet?.pubkey,
+                    payingFeeMintAddress: payingWallet?.mintAddress
                 )
                 error = nil
 
@@ -195,10 +211,13 @@ extension ConfirmReceivingBitcoin.ViewModel: ConfirmReceivingBitcoinViewModelTyp
                     self?.completion?()
                 }
             } catch {
-                self.error = error.readableDescription
+                await MainActor.run { [weak self] in
+                    self?.error = error.readableDescription
+                }
             }
-
-            isLoading = false
+            await MainActor.run { [weak self] in
+                self?.isLoading = false
+            }
         }
     }
 

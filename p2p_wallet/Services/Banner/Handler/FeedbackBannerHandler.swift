@@ -17,7 +17,7 @@ class FeedbackBanner: Banners.Banner {
 
     override func getInfo() -> [InfoKey: Any] {
         [
-            .title: L10n.suggestWaysToImproveP2PWallet,
+            .title: L10n.suggestWaysToImproveKeyApp,
             .action: L10n.leaveFeedback,
             .background: UIColor(red: 0.843, green: 0.819, blue: 1, alpha: 1),
             .icon: UIImage.bannerFeedback,

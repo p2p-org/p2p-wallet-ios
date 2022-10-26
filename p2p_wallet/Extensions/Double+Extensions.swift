@@ -66,20 +66,25 @@ extension Optional where Wrapped == Double {
 extension Double {
     static var maxSlippage: Self { 0.5 }
 
-    public func fixedDecimal(_ value: Int) -> String {
-        if value <= 0 { return "\(value)" }
+    public func fixedDecimal(_ maxDecimal: Int, minDecimal: Int = 0) -> String {
+        if maxDecimal <= 0 { return "\(maxDecimal)" }
         if self == 0.0 {
             var r = "0."
-            for _ in 0 ..< value { r += "0" }
+            for _ in 0 ..< maxDecimal { r += "0" }
             return r
         }
 
         let formatter = NumberFormatter()
         formatter.numberStyle = NumberFormatter.Style.decimal
         formatter.roundingMode = NumberFormatter.RoundingMode.halfUp
-        formatter.maximumFractionDigits = value
+        formatter.decimalSeparator = "."
+        formatter.minimumFractionDigits = minDecimal
+        formatter.maximumFractionDigits = maxDecimal
 
-        return formatter.string(for: self) ?? toString(maximumFractionDigits: value)
+        return formatter.string(for: self) ?? toString(
+            minimumFractionDigits: minDecimal,
+            maximumFractionDigits: maxDecimal
+        )
     }
 
     public func toString(
@@ -132,6 +137,10 @@ extension Double {
 
     func tokenAmount(symbol: String, maximumFractionDigits: Int = 9) -> String {
         "\(toString(maximumFractionDigits: maximumFractionDigits)) \(symbol)"
+    }
+
+    func percentFormat(maximumFractionDigits: Int = 2) -> String {
+        "\(toString(maximumFractionDigits: maximumFractionDigits))%"
     }
 
     func rounded(decimals: Int?) -> Double {

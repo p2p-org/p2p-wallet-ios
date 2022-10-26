@@ -33,7 +33,7 @@ final class AppEventHandler: AppEventHandlerType {
     }
 
     private func disableDevnetTestnetIfDebug() {
-        #if !DEBUG
+        if Environment.current == Environment.release {
             switch Defaults.apiEndPoint.network {
             case .mainnetBeta:
                 break
@@ -44,7 +44,7 @@ final class AppEventHandler: AppEventHandlerType {
                     changeAPIEndpoint(to: definedEndpoint)
                 }
             }
-        #endif
+        }
     }
 }
 

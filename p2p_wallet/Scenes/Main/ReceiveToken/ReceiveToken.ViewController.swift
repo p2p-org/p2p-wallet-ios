@@ -2,6 +2,7 @@
 // Created by Giang Long Tran on 13.12.21.
 //
 
+import AnalyticsManager
 import BEPureLayout
 import Combine
 import CombineCocoa
@@ -15,6 +16,8 @@ extension ReceiveToken {
         private let isOpeningFromToken: Bool
         private var subscriptions = Set<AnyCancellable>()
         private var buyCoordinator: BuyCoordinator?
+
+        @Injected private var analyticsManager: AnalyticsManager
 
         init(viewModel: ReceiveSceneModel, isOpeningFromToken: Bool) {
             self.isOpeningFromToken = isOpeningFromToken
@@ -36,6 +39,8 @@ extension ReceiveToken {
                 navigationItem.title = L10n.receive
             }
             hidesBottomBarWhenPushed = true
+
+            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
         }
 
         @objc func goBack() {

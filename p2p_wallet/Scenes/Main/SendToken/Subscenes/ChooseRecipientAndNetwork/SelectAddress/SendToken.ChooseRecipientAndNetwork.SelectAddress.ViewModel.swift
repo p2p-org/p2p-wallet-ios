@@ -238,6 +238,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress
     }
 
     func userDidTapPaste() {
+        analyticsManager.log(event: AmplitudeEvent.sendPaste)
         search(clipboardManager.stringFromClipboard())
     }
 

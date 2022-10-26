@@ -5,6 +5,8 @@
 //  Created by Chung Tran on 10/22/20.
 //
 
+import AppsFlyerLib
+import AppTrackingTransparency
 @_exported import BEPureLayout
 import FeeRelayerSwift
 import Firebase
@@ -44,6 +46,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FirebaseApp.configure()
 
         setupLoggers()
+        setupAppsFlyer()
 
         // Sentry
         SentrySDK.start { options in
@@ -79,6 +82,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Task.detached(priority: .background) { [unowned self] in
             await notificationService.sendRegisteredDeviceToken(deviceToken)
         }
+        AppsFlyerLib.shared().registerUninstall(deviceToken)
         proxyAppDelegate.application(application, didRegisterForRemoteNotificationsWithDeviceToken: deviceToken)
     }
 
@@ -86,14 +90,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error
     ) {
-        print("Failed to register: \(error)")
+        DefaultLogManager.shared.log(
+            event: "Application: didFailToRegisterForRemoteNotificationsWithError: \(error)",
+            logLevel: .debug
+        )
         proxyAppDelegate.application(application, didFailToRegisterForRemoteNotificationsWithError: error)
     }
 
     func application(_: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
         var result = false
         Broadcaster.notify(AppUrlHandler.self) { result = result || $0.handle(url: url, options: options) }
+        AppsFlyerLib.shared().handleOpen(url, options: options)
         return result
+    }
+
+    func application(
+        _ application: UIApplication,
+        continue userActivity: NSUserActivity,
+        restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
+    ) -> Bool {
+        AppsFlyerLib.shared().continue(userActivity, restorationHandler: nil)
+        return proxyAppDelegate.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
     func application(
@@ -107,6 +124,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             didReceiveRemoteNotification: userInfo,
             fetchCompletionHandler: completionHandler
         )
+    }
+
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        #if DEBUG
+            AppsFlyerLib.shared().isDebug = true
+            AppsFlyerLib.shared().useUninstallSandbox = true
+        #endif
+        AppsFlyerLib.shared().waitForATTUserAuthorization(timeoutInterval: 60)
+        AppsFlyerLib.shared().start()
+        if #available(iOS 14, *) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                switch status {
+                case .denied:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is denied",
+                        logLevel: .info
+                    )
+                case .notDetermined:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is notDetermined",
+                        logLevel: .debug
+                    )
+                case .restricted:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is restricted",
+                        logLevel: .info
+                    )
+                case .authorized:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager AuthorizationSatus is authorized",
+                        logLevel: .debug
+                    )
+                @unknown default:
+                    DefaultLogManager.shared.log(
+                        event: "AppsFlyerLib ATTrackingManager Invalid authorization status",
+                        logLevel: .error
+                    )
+                }
+            }
+        }
+        proxyAppDelegate.applicationDidBecomeActive(application)
+    }
+
+    // MARK: - AppsFlyer
+
+    func setupAppsFlyer() {
+        AppsFlyerLib.shared().appsFlyerDevKey = String.secretConfig("APPSFLYER_DEV_KEY") ?? ""
+        AppsFlyerLib.shared().appleAppID = String.secretConfig("APPSFLYER_APP_ID") ?? ""
+        AppsFlyerLib.shared().deepLinkDelegate = self
     }
 
     func setupLoggers() {
@@ -143,4 +209,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         navBarAppearence.shadowImage = UIImage()
         navBarAppearence.isTranslucent = true
     }
+}
+
+extension AppDelegate: DeepLinkDelegate {
+    func didResolveDeepLink(_: DeepLinkResult) {}
 }
