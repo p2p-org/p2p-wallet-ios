@@ -86,7 +86,7 @@ extension SendToken.ChooseRecipientAndNetwork.SelectAddress {
                     .init(
                         address: address,
                         name: nil,
-                        hasNoFunds: $0
+                        hasNoFunds: !$0
                     ),
                 ]
             }
