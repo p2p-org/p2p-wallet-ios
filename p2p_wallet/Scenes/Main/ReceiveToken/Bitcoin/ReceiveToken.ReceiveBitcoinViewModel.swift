@@ -127,6 +127,8 @@ extension ReceiveToken {
     }
 }
 
+// MARK: - LockAndMintServiceDelegate
+
 extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
     func lockAndMintServiceWillStartLoading(_: LockAndMintService) {
         isLoadingSubject.accept(true)
@@ -150,6 +152,8 @@ extension ReceiveToken.ReceiveBitcoinViewModel: LockAndMintServiceDelegate {
         processingTransactionsSubject.accept(processingTransactions)
     }
 }
+
+// MARK: - ReceiveTokenBitcoinViewModelType
 
 extension ReceiveToken.ReceiveBitcoinViewModel: ReceiveTokenBitcoinViewModelType {
     var addressDriver: Driver<String?> {
