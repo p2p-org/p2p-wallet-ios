@@ -154,7 +154,7 @@ extension History {
                 descriptionTitleLabel(text: L10n.address)
                 BEHStack(spacing: 6, alignment: .center) {
                     label.setup {
-                        model.map { $0.addresses.from != nil ? $0.addresses.from : $0.addresses.to }
+                        model.map { $0.address }
                             .drive($0.rx.text)
                             .disposed(by: disposeBag)
                     }
@@ -258,8 +258,8 @@ extension History {
                 usernameView.removeFromSuperview()
             }
             usernameLabel.text = model.username
-            addressView.isHidden = model.addresses.from == nil ? model.addresses.to == nil : model.addresses.to == nil
-            addressLabel.text = model.addresses.from ?? model.addresses.to
+            addressView.isHidden = model.address == nil
+            addressLabel.text = model.address
             modelRelay.accept(model)
             hideSkeleton()
         }
@@ -340,7 +340,7 @@ extension History.TransactionView {
         let usdAmount: String?
         let blockTime: String
         let transactionId: String
-        let addresses: (from: String?, to: String?)
+        let address: String?
         let username: String?
         let fee: NSAttributedString?
         let status: Status
