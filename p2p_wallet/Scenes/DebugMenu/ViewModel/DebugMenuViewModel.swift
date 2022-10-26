@@ -79,7 +79,6 @@ extension DebugMenuViewModel {
 extension DebugMenuViewModel {
     enum Menu: Int, CaseIterable {
         case solanaNegativeStatus
-        case newSettings
         case onboardingUsernameEnabled
         case onboardingUsernameButtonSkipEnabled
         
@@ -93,13 +92,11 @@ extension DebugMenuViewModel {
         var title: String {
             switch self {
             case .solanaNegativeStatus: return "Solana Negative Status"
-            case .newSettings: return "New Settings"
             case .onboardingUsernameEnabled: return "Onboarding Username"
             case .onboardingUsernameButtonSkipEnabled: return "Onboarding Username Skip Button"
             case .mockedApiGateway: return "[Onboarding] API Gateway Mock"
             case .mockedTKeyFacade: return "[Onboarding] TKeyFacade Mock"
             case .simulatedSocialError: return "[Onboarding] Simulated Social Error"
-            case .newSettings: return "New Settings"
             case .investSolend: return "Invest Solend"
             case .solendDisablePlaceholder: return "Solend Disable Placeholder"
             }
@@ -108,13 +105,11 @@ extension DebugMenuViewModel {
         var feature: Feature {
             switch self {
             case .solanaNegativeStatus: return .solanaNegativeStatus
-            case .newSettings: return .settingsFeature
             case .onboardingUsernameEnabled: return .onboardingUsernameEnabled
             case .onboardingUsernameButtonSkipEnabled: return .onboardingUsernameButtonSkipEnabled
             case .mockedApiGateway: return .mockedApiGateway
             case .mockedTKeyFacade: return .mockedTKeyFacade
             case .simulatedSocialError: return .simulatedSocialError
-            case .newSettings: return .settingsFeature
             case .investSolend: return .investSolendFeature
             case .solendDisablePlaceholder: return .solendDisablePlaceholder
             }
