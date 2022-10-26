@@ -20,7 +20,7 @@ extension History {
         let viewModel: SceneModel
         private var subscriptions = [AnyCancellable]()
 
-        init(account: String?, symbol: String?, isEmbeded: Bool = true) {
+        init(account: String? = nil, symbol: String? = nil, isEmbeded: Bool = true) {
             if let account = account, let symbol = symbol {
                 viewModel = SceneModel(accountSymbol: (account, symbol))
                 isEmbedded = isEmbeded
