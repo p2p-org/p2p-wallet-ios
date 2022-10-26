@@ -23,3 +23,7 @@ protocol ChangeThemeResponder {
 protocol LogoutResponder {
     func logout()
 }
+
+protocol ReserveNameHandler: AnyObject {
+    func handleName(_ name: String?)
+}
