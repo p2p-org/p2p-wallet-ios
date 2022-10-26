@@ -41,7 +41,7 @@ final class SocialSignInWaitViewModel: BaseViewModel {
                 case .securingKey:
                     self.title = L10n.securingKey
                 case .almostDone:
-                    self.title = L10n.almostDone
+                    self.title = "\(L10n.almostDone)!"
                 }
             }
             .store(in: &subscriptions)

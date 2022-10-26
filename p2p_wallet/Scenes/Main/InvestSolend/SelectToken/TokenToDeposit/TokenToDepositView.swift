@@ -127,7 +127,7 @@ struct TokenToDepositView_Previews: PreviewProvider {
                     models: [
                         .init(
                             amount: 50,
-                            imageUrl: URL(string: "https://raw.githubusercontent.com/bigearsenal/solana-token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png")!,
+                            imageUrl: URL(string: "https://raw.githubusercontent.com/p2p-org/solana-token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png")!,
                             symbol: "SOL",
                             name: "Solana",
                             apy: 3.142312
