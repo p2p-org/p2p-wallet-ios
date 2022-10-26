@@ -14,7 +14,7 @@ import SolanaSwift
 protocol RenBTCStatusServiceType {
     func load() async throws
 
-    /// Checks the associated account has been created.
+    /// Check if the associated account has been created.
     ///
     /// RenBTC works, when account has been created.
     ///
@@ -35,8 +35,8 @@ protocol RenBTCStatusServiceType {
     ///   - payingFeeMintAddress: the mint address that will pay a fee.
     /// - Returns: transaction signature
     func createAccount(
-        payingFeeAddress: String,
-        payingFeeMintAddress: String
+        payingFeeAddress: String?,
+        payingFeeMintAddress: String?
     ) async throws
 
     /// Get amount of feed needed to create renBTC account.

@@ -14,7 +14,7 @@ extension Settings {
         init(viewModel: SettingsViewModelType) {
             self.viewModel = viewModel
             super.init()
-            navigationItem.title = L10n.yourP2pUsername
+            navigationItem.title = L10n.yourUsername
         }
 
         override func build() -> UIView {
@@ -38,7 +38,7 @@ extension Settings {
                         UILabel(
                             text:
                             L10n
-                                .yourP2PUsernameAllowsYouToReceiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletTokenList,
+                                .yourUsernameAllowsYouToReceiveAnyTokenWithinTheSolanaNetworkEvenIfItIsNotIncludedInYourWalletTokenList,
                             textSize: 15,
                             numberOfLines: 0
                         )

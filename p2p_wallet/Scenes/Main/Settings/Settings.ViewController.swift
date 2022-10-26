@@ -16,6 +16,8 @@ extension Settings {
     class ViewController: p2p_wallet.BaseViewController {
         private var subscriptions = [AnyCancellable]()
 
+        private var childCoordinators = [UUID: Any]()
+
         let viewModel: SettingsViewModelType
 
         init(viewModel: SettingsViewModelType) {
@@ -35,23 +37,25 @@ extension Settings {
                     // Acount section
                     SectionView(title: L10n.profile) {
                         // Profile
-                        CellView(
-                            icon: .profileIcon,
-                            title: UILabel(text: L10n.username.onlyUppercaseFirst()),
-                            trailing: UILabel(textSize: 15).setup { label in
-                                viewModel.usernamePublisher
-                                    .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notReserved }
-                                    .assign(to: \.text, on: label)
-                                    .store(in: &subscriptions)
-                                viewModel.usernamePublisher.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
-                                    .assign(to: \.textColor, on: label)
-                                    .store(in: &subscriptions)
-                            }
-                        ).onTap { [unowned self] in
-                            if self.viewModel.getUsername() == nil {
-                                viewModel.showOrReserveUsername()
-                            } else {
-                                viewModel.navigate(to: .username)
+                        if viewModel.isCreateNameEnabled {
+                            CellView(
+                                icon: .profileIcon,
+                                title: UILabel(text: L10n.username.onlyUppercaseFirst()),
+                                trailing: UILabel(textSize: 15).setup { label in
+                                    viewModel.usernamePublisher
+                                        .map { $0 != nil ? $0!.withNameServiceDomain() : L10n.notReserved }
+                                        .assign(to: \.text, on: label)
+                                        .store(in: &subscriptions)
+                                    viewModel.usernamePublisher.map { $0 != nil ? UIColor.textBlack : UIColor.ff3b30 }
+                                        .assign(to: \.textColor, on: label)
+                                        .store(in: &subscriptions)
+                                }
+                            ).onTap { [unowned self] in
+                                if self.viewModel.getUsername() == nil {
+                                    viewModel.showOrReserveUsername()
+                                } else {
+                                    viewModel.navigate(to: .username)
+                                }
                             }
                         }
                         // Sign out button
@@ -213,16 +217,16 @@ extension Settings {
                 let vc = NewUsernameViewController(viewModel: viewModel)
                 show(vc, sender: nil)
             case .reserveUsername:
-                guard let owner = viewModel.getUserAddress() else { return }
-                let vm = ReserveName.ViewModel(
-                    kind: .independent,
-                    owner: owner,
-                    reserveNameHandler: viewModel,
-                    goBackOnCompletion: true,
-                    checkBeforeReserving: true
-                )
-                let vc = ReserveName.ViewController(viewModel: vm)
-                show(vc, sender: nil)
+                guard let navigationController = navigationController else { return }
+                let coordinator = CreateUsernameCoordinator(navigationOption: .settings(parent: navigationController))
+                coordinator
+                    .start()
+                    .sink(receiveCompletion: { [weak self] _ in
+                        navigationController.popToViewController(ofClass: ViewController.self, animated: true)
+                        self?.childCoordinators.removeValue(forKey: coordinator.accessibleIdentifier)
+                    }, receiveValue: {})
+                    .store(in: &subscriptions)
+                childCoordinators[coordinator.accessibleIdentifier] = coordinator
             case .backup:
                 let viewModel = Backup.ViewModel()
                 viewModel.didBackupHandler = { [weak self] in

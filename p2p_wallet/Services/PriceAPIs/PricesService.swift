@@ -48,7 +48,9 @@ class PricesService: ObservableObject {
 
     // MARK: - Properties
 
-    @MainActor private var watchList = [Token(.renBTC), Token(.nativeSolana), Token(.usdc)]
+    @MainActor private var watchList = [
+        Token(.renBTC), Token(.nativeSolana), Token(.usdc), Token(.eth), Token(.usdt),
+    ]
     private var timer: Timer?
     @Published private var currentPrices = [String: CurrentPrice]()
     @Published private var state = LoadableState.notRequested

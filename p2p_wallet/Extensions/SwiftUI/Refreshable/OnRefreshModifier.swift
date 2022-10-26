@@ -39,6 +39,7 @@ extension UIScrollView {
 
     @objc func onValueChangedAction(sender: UIRefreshControl) {
         onValueChanged?(sender)
+        refreshControl?.endRefreshing()
     }
 }
 
@@ -46,10 +47,9 @@ struct OnListRefreshModifier: ViewModifier {
     let onValueChanged: UIScrollView.ValueChangedAction
 
     func body(content: Content) -> some View {
-        content
-            .introspectTableView { tableView in
-                tableView.onRefresh(onValueChanged)
-            }
+        content.introspectScrollView { scrollView in
+            scrollView.onRefresh(onValueChanged)
+        }
     }
 }
 

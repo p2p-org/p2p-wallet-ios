@@ -111,7 +111,7 @@ extension WalletDetail {
                     // TODO: remove after moving to coordinator
                     buyCoordinator = BuyCoordinator(
                         context: .fromToken,
-                        defaultToken: crypto,
+                        defaultToken: crypto == .sol ? .nativeSolana : crypto == .usdc ? .usdc : .eth,
                         presentingViewController: self,
                         shouldPush: false
                     )

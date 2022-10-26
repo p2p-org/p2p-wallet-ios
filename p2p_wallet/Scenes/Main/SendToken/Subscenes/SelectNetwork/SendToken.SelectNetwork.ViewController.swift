@@ -30,7 +30,7 @@ extension SendToken.SelectNetwork {
                     UIView.greyBannerView {
                         UILabel(
                             text: L10n
-                                .P2PWalletWillAutomaticallyMatchYourWithdrawalTargetAddressToTheCorrectNetworkForMostWithdrawals
+                                .KeyAppWillAutomaticallyMatchYourWithdrawalTargetAddressToTheCorrectNetworkForMostWithdrawals
                                 .howeverBeforeSendingYourFundsMakeSureToDoubleCheckTheSelectedNetwork,
                             textSize: 15,
                             numberOfLines: 0
@@ -49,11 +49,12 @@ extension SendToken.SelectNetwork {
                                 .setup { label in
                                     Task {
                                         let maxUsage = try await viewModel.getFreeTransactionFeeLimit().maxUsage
-                                        label.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByP2P
-                                            .Org
-                                            .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(
-                                                maxUsage
-                                            )
+                                        await MainActor.run {[weak label] in
+                                            label?.text = L10n.OnTheSolanaNetworkTheFirstTransactionsInADayArePaidByKeyApp
+                                                .subsequentTransactionsWillBeChargedBasedOnTheSolanaBlockchainGasFee(
+                                                    maxUsage
+                                                )
+                                        }
                                     }
                                 }
                         }.padding(.init(only: .top, inset: 18))

@@ -34,7 +34,6 @@ extension RenBTCReceivingStatuses {
             viewModel.navigatableScenePublisher
                 .sink { [weak self] in self?.navigate(to: $0) }
                 .store(in: &subscriptions)
-            analyticsManager.log(event: AmplitudeEvent.receiveStartScreen)
         }
 
         override func build() -> UIView {

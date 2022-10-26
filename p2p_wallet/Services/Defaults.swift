@@ -5,6 +5,7 @@
 //  Created by Chung Tran on 10/30/20.
 //
 
+import FirebaseRemoteConfig
 import Foundation
 import Onboarding
 import RenVMSwift
@@ -75,5 +76,30 @@ extension DefaultsKeys {
 
     var buyMinPrices: DefaultsKey<[String: [String: Double]]> {
         .init(#function, defaultValue: [:])
+    }
+
+    // Solend
+    var isSolendTutorialShown: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+    var isEarnBannerClosed: DefaultsKey<Bool> { .init(#function, defaultValue: false) }
+
+    var solanaNegativeStatusFrequency: DefaultsKey<String?> {
+        .init(
+            #function,
+            defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusFrequency
+        )
+    }
+
+    var solanaNegativeStatusPercent: DefaultsKey<Int?> {
+        .init(
+            #function,
+            defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusPercent
+        )
+    }
+
+    var solanaNegativeStatusTimeFrequency: DefaultsKey<Int?> {
+        .init(
+            #function,
+            defaultValue: RemoteConfig.remoteConfig().solanaNegativeStatusTimeFrequency
+        )
     }
 }

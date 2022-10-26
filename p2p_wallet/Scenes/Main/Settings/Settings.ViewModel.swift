@@ -37,6 +37,7 @@ protocol SettingsViewModelType: ReserveNameHandler {
     var isBiometryEnabledPublisher: AnyPublisher<Bool, Never> { get }
     var isBiometryAvailablePublisher: AnyPublisher<Bool, Never> { get }
     var appVersion: String { get }
+    var isCreateNameEnabled: Bool { get }
 
     func getUserAddress() -> String?
     func getUsername() -> String?
@@ -77,6 +78,7 @@ extension Settings {
         @Injected private var pricesService: PricesServiceType
         @Injected private var renVMService: LockAndMintService
         @Injected private var imageSaver: ImageSaverType
+        @Injected private var metadataService: WalletMetadataService
 
         // MARK: - Properties
 
@@ -170,6 +172,10 @@ extension Settings.ViewModel: SettingsViewModelType {
 
     var logoutAlertPublisher: AnyPublisher<Void, Never> {
         logoutAlertSubject.eraseToAnyPublisher()
+    }
+
+    var isCreateNameEnabled: Bool {
+        metadataService.metadata != nil && available(.onboardingUsernameEnabled) || getUsername() != nil
     }
 
     func getUserAddress() -> String? {
