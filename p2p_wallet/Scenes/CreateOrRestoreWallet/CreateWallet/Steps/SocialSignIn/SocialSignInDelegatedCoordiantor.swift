@@ -28,6 +28,22 @@ class SocialSignInDelegatedCoordinator: DelegatedCoordinator<SocialSignInState> 
             }.store(in: &subscriptions)
 
             return UIHostingController(rootView: vc)
+        case let .socialSignInProgress(tokenID, email, socialProvider):
+            let viewModel = SocialSignInWaitViewModel()
+            let view = SocialSignInWaitView(viewModel: viewModel)
+            viewModel.initiated
+                .sinkAsync { [stateMachine] process in
+                    process.start {
+                        try await stateMachine <- .signInTorus(tokenID: tokenID, email: email, socialProvider: socialProvider)
+                    }
+                }
+                .store(in: &subscriptions)
+            viewModel.back
+                .sinkAsync { [stateMachine] in
+                    try await stateMachine <- .signInBack
+                }
+                .store(in: &subscriptions)
+            return UIHostingController(rootView: view)
         case let .socialSignInAccountWasUsed(provider, usedEmail):
             let vm = SocialSignInAccountHasBeenUsedViewModel(
                 email: usedEmail,

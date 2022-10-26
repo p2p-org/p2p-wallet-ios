@@ -148,6 +148,7 @@ PODS:
   - Kingfisher (7.3.2)
   - ListPlaceholder (1.5)
   - LoggerSwift (1.0.2)
+  - lottie-ios (3.5.0)
   - NameService (1.0.0):
     - KeyAppKitCore
     - KeyAppKitLogger
@@ -237,6 +238,7 @@ DEPENDENCIES:
   - KeychainSwift (= 19.0.0)
   - Kingfisher (~> 7.3.2)
   - ListPlaceholder (from `https://github.com/p2p-org/ListPlaceholder.git`, branch `custom_gradient_color`)
+  - lottie-ios (~> 3.5.0)
   - NameService (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - Onboarding (from `https://github.com/p2p-org/key-app-kit-swift.git`, branch `master`)
   - OrcaSwapSwift (from `https://github.com/p2p-org/OrcaSwapSwift.git`, branch `main`)
@@ -290,6 +292,7 @@ SPEC REPOS:
     - KeychainSwift
     - Kingfisher
     - LoggerSwift
+    - lottie-ios
     - nanopb
     - Periphery
     - PhoneNumberKit
@@ -389,7 +392,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   AnalyticsManager:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   BECollectionView_Combine:
     :commit: fa27fd346aa54e8cac58b34f861b08a39e38db6f
@@ -401,10 +404,10 @@ CHECKOUT OPTIONS:
     :commit: 9b4ab977660c8554d23a2d9b83b6ac6c6058b3b7
     :git: https://github.com/p2p-org/BEPureLayout.git
   Cache:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   CountriesAPI:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Down:
     :commit: eee1d66d7ef71b892e72c8bc8d84fcdfeaab1918
@@ -416,13 +419,13 @@ CHECKOUT OPTIONS:
     :commit: f9c9f898402db4e62d482f4c90670652c221fa12
     :git: https://github.com/p2p-org/JazziconSwift.git
   JSBridge:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitCore:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppKitLogger:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   KeyAppUI:
     :commit: b566adfe2a0e82014a7003671b9594d40db9a8ae
@@ -431,16 +434,16 @@ CHECKOUT OPTIONS:
     :commit: 78dd312eb762d66a54c87cd6dd8045140da28c4b
     :git: https://github.com/p2p-org/ListPlaceholder.git
   NameService:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   Onboarding:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   OrcaSwapSwift:
     :commit: 7877642f7d6fd3765eee0143c21f3f8a7b93fe13
     :git: https://github.com/p2p-org/OrcaSwapSwift.git
   P2PSwift:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
     :commit: c7668f4ec4055780cf7854dc220a9c57ce3de410
@@ -452,16 +455,16 @@ CHECKOUT OPTIONS:
     :commit: 98225dbb0459477dfeac063e1c7d0750102325d1
     :git: https://github.com/p2p-org/SkeletonUI.git
   SolanaPricesAPIs:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   SolanaSwift:
     :commit: e3a6716d01a6c84f02d6052c3541f0313739ace4
     :git: https://github.com/p2p-org/solana-swift.git
   Solend:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: db00b238ef126b4040b55d974897fe1d0e48027d
+    :commit: 90355742f306c86648cd92868f92d84bd9b72335
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
@@ -505,6 +508,7 @@ SPEC CHECKSUMS:
   Kingfisher: 0086ad83719761ba9b2cdaf6ef4d5b4878cbae23
   ListPlaceholder: 2d7950014852ee5613d636cf14fd1bb93419e330
   LoggerSwift: df24fc6290d4a9ccd3b5d87a2301504cd9f49b3d
+  lottie-ios: c55158d67d0629a260625cc2ded2052b829e3c3e
   NameService: 0d7cf21b719169d254b0adb73aff97afde466a44
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
   Onboarding: 37ef23c8a300e7742fe7d77bce6ca94c04b158b0
@@ -537,6 +541,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: 4fe196c4cf74a89b6392e2eb876ede15e9bd2366
+PODFILE CHECKSUM: 6e9e0be94ae5435f9cfe04deb7b14561d5aa0c57
 
 COCOAPODS: 1.11.3
