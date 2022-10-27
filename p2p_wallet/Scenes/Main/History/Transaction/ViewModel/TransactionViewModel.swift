@@ -229,7 +229,6 @@ private extension ParsedTransaction {
 
     func getUsername() -> Observable<String?> {
         Single<String?>.async {
-            sleep(2)
             let nameService: NameService = Resolver.resolve()
             let address: String?
             switch info {
@@ -263,7 +262,7 @@ private extension ParsedTransaction {
         let swapFee = ((feeAmount?.transaction ?? 0) + (feeAmount?.accountBalances ?? 0))
             .convertToBalance(decimals: payingWallet.token.decimals)
 
-        if (amount == 0 && transferAmount == 0 && swapFee == 0) || paidByP2POrg {
+        if feeAmount?.transaction == 0 {
             return NSMutableAttributedString().text(L10n.freeByKeyApp, size: 16, color: ._4d77ff)
         } else {
             return NSMutableAttributedString().text(
