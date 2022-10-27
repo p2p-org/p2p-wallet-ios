@@ -19,6 +19,8 @@ class HomeWithTokensViewModel: ObservableObject {
     @Injected private var solanaTracker: SolanaTracker
     @Injected private var notificationService: NotificationService
 
+    private var balanceWorkItem: DispatchWorkItem?
+
     private let buyClicked = PassthroughSubject<Void, Never>()
     private let receiveClicked = PassthroughSubject<Void, Never>()
     private let sendClicked = PassthroughSubject<Void, Never>()
@@ -100,7 +102,26 @@ class HomeWithTokensViewModel: ObservableObject {
     func viewAppeared() {
         if available(.solanaNegativeStatus) {
             solanaTracker.startTracking()
+            startBalanceTracking()
         }
+        Task {
+            await reloadData()
+        }
+    }
+
+    private func startBalanceTracking() {
+        balanceWorkItem?.cancel()
+        balanceWorkItem = nil
+        let requestWorkItem = DispatchWorkItem { [weak self] in
+            guard let self = self else { return }
+            debugPrint("---reloadData")
+            self.startBalanceTracking()
+            Task {
+                await self.reloadData()
+            }
+        }
+        balanceWorkItem = requestWorkItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5, execute: requestWorkItem)
     }
 
     func reloadData() async {
