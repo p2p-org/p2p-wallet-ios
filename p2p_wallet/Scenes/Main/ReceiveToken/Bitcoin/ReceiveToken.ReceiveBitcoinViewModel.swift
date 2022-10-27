@@ -78,7 +78,7 @@ extension ReceiveToken {
             Task {
                 let session = await persistentStore.session
                 if session == nil || session?.isValid == false {
-                    try await lockAndMintService.createSession()
+                    try await lockAndMintService.createSession(endAt: Calendar.current.date(byAdding: .hour, value: 40, to: Date()))
                 } else {
                     await updateSessionEndDate()
                 }
