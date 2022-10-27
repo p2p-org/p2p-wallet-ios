@@ -76,7 +76,7 @@ class SolanaTrackerImpl: SolanaTracker {
     private func startTimerIfNeeded() {
         if negativeStatusFrequency == .once, solanaWasUnstable { return }
 
-        pendingRequestWorkItem?.cancel()
+        stopTracking()
         let requestWorkItem = DispatchWorkItem { [unowned self] in
             startTracking()
         }
