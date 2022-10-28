@@ -26,10 +26,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     private var defaultsDisposables = [DefaultsDisposable]()
     private var disposeBag = DisposeBag()
-    private var getNewWalletTimer: Timer?
-    private var updateBalanceTimer: Timer?
-    @MainActor private var lastGetNewWalletTime = Date()
     
+    @MainActor private var lastGetNewWalletTime = Date()
     private var updatingTask: Task<Void, Error>?
 
     // MARK: - Getters
