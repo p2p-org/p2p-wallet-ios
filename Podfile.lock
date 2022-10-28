@@ -515,7 +515,7 @@ CHECKOUT OPTIONS:
     :commit: 25a7bcdc45520b445636fd4c96898b668d82696e
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   TransactionParser:
-    :commit: 25a7bcdc45520b445636fd4c96898b668d82696e
+    :commit: 7d9647ccfe76e9d40df27b82a0517e044e2c5875
     :git: https://github.com/p2p-org/key-app-kit-swift.git
 
 SPEC CHECKSUMS:
