@@ -272,7 +272,7 @@ DEPENDENCIES:
   - Periphery
   - PhoneNumberKit (= 3.3.4)
   - ReachabilitySwift (~> 5.0.0)
-  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `master`)
+  - RenVMSwift (from `https://github.com/p2p-org/RenVMSwift.git`, branch `fix/legacy-bitcoin-address`)
   - Resolver (= 1.5.0)
   - RxAppState (= 1.7.1)
   - RxCocoa (= 6.5.0)
@@ -411,7 +411,7 @@ EXTERNAL SOURCES:
     :branch: master
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :branch: master
+    :branch: fix/legacy-bitcoin-address
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :branch: main
@@ -494,7 +494,7 @@ CHECKOUT OPTIONS:
     :commit: 30bc1c7172020d8309993ebee9ceb80c2e75b352
     :git: https://github.com/p2p-org/key-app-kit-swift.git
   RenVMSwift:
-    :commit: 74b5363ea671befc252e5b03363a4940aae49f60
+    :commit: 22c393558d0dc818d5facd2e124afd20d0e32b3e
     :git: https://github.com/p2p-org/RenVMSwift.git
   RxConcurrency:
     :commit: dadb16c54bd42ca83c08f3d80f61fbfca93a585c
@@ -601,6 +601,6 @@ SPEC CHECKSUMS:
   TweetNacl: 3abf4d1d2082b0114e7a67410e300892448951e6
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
 
-PODFILE CHECKSUM: b7eaf4613786a0f740536ef97526318ba3607258
+PODFILE CHECKSUM: cf98b5ffa22ff3b33e4c2dff2e48b4fc41163cec
 
 COCOAPODS: 1.11.3
