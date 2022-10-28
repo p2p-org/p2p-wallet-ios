@@ -26,7 +26,9 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     private var defaultsDisposables = [DefaultsDisposable]()
     private var disposeBag = DisposeBag()
-    private var timer: Timer?
+    
+    @MainActor private var lastGetNewWalletTime = Date()
+    private var updatingTask: Task<Void, Error>?
 
     // MARK: - Getters
 
@@ -41,11 +43,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     init() {
         super.init()
         bind()
-        startObserving()
-    }
-
-    deinit {
-        stopObserving()
     }
 
     // MARK: - Binding
@@ -85,32 +82,13 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             })
             .disposed(by: disposeBag)
 
-        // observe app state
-        UIApplication.shared.rx
-            .applicationDidBecomeActive
-            .subscribe(onNext: { [weak self] _ in
-                self?.appDidBecomeActive()
+        // observe timer to update
+        Timer.observable(seconds: 10)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: {[weak self] _ in
+                self?.updateBalancesAndGetNewWalletIfNeeded()
             })
             .disposed(by: disposeBag)
-
-        UIApplication.shared.rx
-            .applicationDidEnterBackground
-            .subscribe(onNext: { [weak self] _ in
-                self?.appDidEnterBackground()
-            })
-            .disposed(by: disposeBag)
-    }
-
-    // MARK: - Observing
-
-    func startObserving() {
-        timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true, block: { [weak self] _ in
-            self?.getNewWallet()
-        })
-    }
-
-    func stopObserving() {
-        timer?.invalidate()
     }
 
     // MARK: - Methods
@@ -166,32 +144,63 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
         super.reload()
     }
-
-    @objc private func getNewWallet() {
-        Single<[Wallet]>.async { [weak self] in
-            guard let self = self,
-                  let account = self.accountStorage.account?.publicKey.base58EncodedString
+    
+    private func updateBalancesAndGetNewWalletIfNeeded() {
+        updatingTask?.cancel()
+        
+        updatingTask = Task {
+            // Update balances needs to happen every 10 secs
+            guard let account = self.accountStorage.account?.publicKey.base58EncodedString
             else { throw SolanaError.unknown }
-            return try await self.solanaAPIClient.getTokenWallets(account: account)
-        }
-        .observe(on: ConcurrentDispatchQueueScheduler(qos: .userInteractive))
-        .map { [weak self] newData -> [Wallet] in
-            guard let self = self else { return [] }
+            
+            let (solBalance, newData) = try await(
+                self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
+                try await self.solanaAPIClient.getTokenWallets(account: account)
+            )
+            
             var data = self.data
-            var newWallets = newData
-                .filter { wl in !data.contains(where: { $0.pubkey == wl.pubkey }) }
-                .filter { $0.lamports != 0 }
-            newWallets = self.mapPrices(wallets: newWallets)
-            newWallets = self.mapVisibility(wallets: newWallets)
-            data.append(contentsOf: newWallets)
-            data.sort(by: Wallet.defaultSorter)
-            return data
+            
+            if !data.isEmpty {
+                data[0].lamports = solBalance
+            }
+            
+            // update balance
+            for i in 0..<data.count  {
+                if let newDataIndex = newData.firstIndex(where: {$0.pubkey == data[i].pubkey})
+                {
+                    data[i].lamports = newData[newDataIndex].lamports
+                }
+            }
+            
+            // On the other hands, The process of maping, shorting is time-comsuming, so we only retrieve new wallet and sort after 2 minutes
+            let minComp = DateComponents(minute: 2)
+            if let date = Calendar.current.date(byAdding: minComp, to: await lastGetNewWalletTime),
+               Date() > date
+            {
+                // 2 minutes has ended
+                var newWallets = newData
+                    .filter { wl in !data.contains(where: { $0.pubkey == wl.pubkey }) }
+                    .filter { $0.lamports != 0 }
+                
+                if !newWallets.isEmpty {
+                    newWallets = self.mapPrices(wallets: newWallets)
+                    newWallets = self.mapVisibility(wallets: newWallets)
+                    data.append(contentsOf: newWallets)
+                    data.sort(by: Wallet.defaultSorter)
+                }
+                
+                // save timestamp
+                await MainActor.run {
+                    lastGetNewWalletTime = Date()
+                }
+            }
+            
+            // save
+            let updatedData = data
+            await MainActor.run { [weak self] in
+                self?.overrideData(by: updatedData)
+            }
         }
-        .observe(on: MainScheduler.instance)
-        .subscribe(onSuccess: { [weak self] data in
-            self?.overrideData(by: data)
-        })
-        .disposed(by: disposeBag)
     }
 
     override var dataDidChange: Observable<Void> {
@@ -274,21 +283,6 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             wallet.updateVisibility()
             return wallet
         }
-    }
-
-    // MARK: - App state
-
-    private(set) var shouldUpdateBalance = false
-    private func appDidBecomeActive() {
-        // update balance
-        if shouldUpdateBalance {
-            getNewWallet()
-            shouldUpdateBalance = false
-        }
-    }
-
-    private func appDidEnterBackground() {
-        shouldUpdateBalance = true
     }
 
     // MARK: - Account notifications
