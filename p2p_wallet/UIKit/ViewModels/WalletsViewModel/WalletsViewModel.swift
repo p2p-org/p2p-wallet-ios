@@ -153,9 +153,16 @@ class WalletsViewModel: BEListViewModel<Wallet> {
             guard let account = self.accountStorage.account?.publicKey.base58EncodedString
             else { throw SolanaError.unknown }
             
-            let newData = try await self.solanaAPIClient.getTokenWallets(account: account)
+            let (solBalance, newData) = try await(
+                self.solanaAPIClient.getBalance(account: account, commitment: "recent"),
+                try await self.solanaAPIClient.getTokenWallets(account: account)
+            )
             
             var data = self.data
+            
+            if !data.isEmpty {
+                data[0].lamports = solBalance
+            }
             
             // update balance
             for i in 0..<data.count  {
