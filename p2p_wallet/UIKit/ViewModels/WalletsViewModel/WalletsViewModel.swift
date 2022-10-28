@@ -26,7 +26,8 @@ class WalletsViewModel: BEListViewModel<Wallet> {
 
     private var defaultsDisposables = [DefaultsDisposable]()
     private var disposeBag = DisposeBag()
-    private var timer: Timer?
+    private var getNewWalletTimer: Timer?
+    private var updateBalanceTimer: Timer?
 
     // MARK: - Getters
 
@@ -104,13 +105,18 @@ class WalletsViewModel: BEListViewModel<Wallet> {
     // MARK: - Observing
 
     func startObserving() {
-        timer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true, block: { [weak self] _ in
+        getNewWalletTimer = Timer.scheduledTimer(withTimeInterval: 120, repeats: true, block: { [weak self] _ in
+            self?.getNewWallet()
+        })
+        
+        updateBalanceTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: true, block: { [weak self] _ in
             self?.getNewWallet()
         })
     }
 
     func stopObserving() {
-        timer?.invalidate()
+        getNewWalletTimer?.invalidate()
+        updateBalanceTimer?.invalidate()
     }
 
     // MARK: - Methods
